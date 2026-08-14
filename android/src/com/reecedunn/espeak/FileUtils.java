@@ -17,12 +17,15 @@
 
 package com.reecedunn.espeak;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class FileUtils {
     public static String read(File file) throws IOException {
@@ -70,6 +73,47 @@ public class FileUtils {
             outputStream.write(contents, 0, contents.length);
         } finally {
             outputStream.close();
+        }
+    }
+
+    /**
+     * Extracts every entry of a zip stream under outputDir, rejecting any
+     * entry whose path would land outside it (zip-slip). Shared by
+     * CheckVoiceData (the base voice data bundled in the APK) and
+     * LanguagePackManager (the optional downloaded language pack) so both
+     * extraction paths get the same path-traversal protection instead of
+     * two independently-maintained copies of it.
+     */
+    public static void extractZip(InputStream stream, File outputDir) throws IOException {
+        final ZipInputStream zipStream = new ZipInputStream(new BufferedInputStream(stream));
+        try {
+            final String canonicalOutputDirPath = outputDir.getCanonicalPath() + File.separator;
+            final byte[] buffer = new byte[10240];
+            int bytesRead;
+            ZipEntry entry;
+
+            while ((entry = zipStream.getNextEntry()) != null) {
+                final File file = new File(outputDir, entry.getName());
+                if (!file.getCanonicalPath().startsWith(canonicalOutputDirPath)) {
+                    throw new SecurityException("Zip entry outside target dir: " + entry.getName());
+                }
+                if (entry.isDirectory()) {
+                    file.mkdirs();
+                    continue;
+                }
+                file.getParentFile().mkdirs();
+                final FileOutputStream outputStream = new FileOutputStream(file);
+                try {
+                    while ((bytesRead = zipStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                } finally {
+                    outputStream.close();
+                }
+                zipStream.closeEntry();
+            }
+        } finally {
+            zipStream.close();
         }
     }
 

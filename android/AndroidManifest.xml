@@ -10,6 +10,14 @@
         android:name="android.hardware.type.watch"
         android:required="false" />
 
+    <!-- Only used to download the optional "extra languages" pack
+         (LanguagePackManager) on explicit user request from Settings. The
+         app has no other network use: base voice data for English and the
+         Indic/Dravidian languages ships in the APK and never touches the
+         network. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name="com.reecedunn.espeak.EspeakApp"
         android:icon="@mipmap/icon"

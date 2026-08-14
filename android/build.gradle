@@ -19,6 +19,30 @@ repositories {
     mavenCentral()
 }
 
+// Release signing - keystore.properties and the .jks it points to are both
+// gitignored. Without it, assembleRelease still produces an unsigned APK
+// rather than failing, matching the debug/lint/test flow this file already
+// supports with no keystore present.
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+
+
+// AGP's built-in Kotlin support pulls in kotlin-stdlib as a runtime
+// dependency of every com.android.application project by default, even one
+// with zero .kt files (compileDebugKotlin is NO-SOURCE here) - this app is
+// plain Java throughout, and nothing packaged ever references it. Excluding
+// it project-wide via configurations.configureEach also strips it from
+// AGP's own internal lint tooling classpath, which needs kotlin-stdlib to
+// run at all (broke lintVitalRelease/assembleRelease with a
+// kotlin/enums/EnumEntriesKt NoClassDefFoundError) - so this only targets
+// the app variants' own runtime classpaths by exact name, not every
+// configuration in the project.
+configurations.matching { it.name ==~ /(debug|release)RuntimeClasspath/ }.all {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+}
 
 dependencies {
     testImplementation 'junit:junit:4.13.2'
@@ -58,6 +82,25 @@ android {
         }
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            release {
+                storeFile rootProject.file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
     externalNativeBuild {
         cmake {
             path = "jni/CMakeLists.txt"
@@ -86,6 +129,76 @@ android {
     }
 }
 
+// Languages bundled directly in the APK: English (all regional variants
+// share a single en_dict) plus every Indic (lang/inc) and Dravidian
+// (lang/dra) language. Together they cost well under 3MB versus ~28MB for
+// the other ~100 languages, while covering this app's core userbase.
+// Everything else ships as a separate, downloadable "extra languages" pack
+// (createExtraDataArchive below) rather than bloating the base install -
+// see TtsSettingsActivity's "Download more languages" preference.
+def CORE_LANG_FAMILY_DIRS = ['inc', 'dra'] as Set
+def CORE_DICT_CODES = ['en', 'as', 'bn', 'bpy', 'gu', 'hi', 'kok', 'mr', 'ne',
+                        'or', 'pa', 'sd', 'si', 'ur', 'kn', 'ml', 'ta', 'te'] as Set
+
+tasks.register('splitLanguageData') {
+    def srcDir = file('build/generated/espeak-ng-data')
+    def coreDir = file('build/generated/espeak-ng-data-core')
+    def extraDir = file('build/generated/espeak-ng-data-extra')
+    outputs.dir(coreDir)
+    outputs.dir(extraDir)
+
+    doLast {
+        delete(coreDir, extraDir)
+        coreDir.mkdirs()
+        extraDir.mkdirs()
+
+        // Shared files every voice needs regardless of language.
+        ['intonations', 'phondata', 'phondata-manifest', 'phonindex', 'phontab'].each { name ->
+            copy {
+                from new File(srcDir, name)
+                into coreDir
+            }
+        }
+
+        // Voice variants (the NVDA-style character voices) apply to any
+        // base language voice, so they always stay in the core bundle.
+        copy {
+            from new File(srcDir, 'voices')
+            into new File(coreDir, 'voices')
+        }
+
+        // Top-level <code>_dict files: split by code against CORE_DICT_CODES.
+        fileTree(srcDir) { include '*_dict' }.each { dictFile ->
+            def code = dictFile.name - '_dict'
+            def targetDir = CORE_DICT_CODES.contains(code) ? coreDir : extraDir
+            copy {
+                from dictFile
+                into targetDir
+            }
+        }
+
+        // lang/<family>/<code> voice config files. A voice listed here with
+        // no matching dict bundled would appear selectable and then fail to
+        // synthesize, so this must split in lockstep with the dict split
+        // above: whole families (inc, dra) go entirely to core; within gmw
+        // (English plus af/de/lb/nl), only the English entries do.
+        new File(srcDir, 'lang').eachDir { familyDir ->
+            if (CORE_LANG_FAMILY_DIRS.contains(familyDir.name)) {
+                def targetLangDir = new File(coreDir, "lang/${familyDir.name}")
+                targetLangDir.mkdirs()
+                copy { from familyDir; into targetLangDir }
+            } else {
+                familyDir.eachFile { langFile ->
+                    def isEnglish = langFile.name == 'en' || langFile.name.startsWith('en-') || langFile.name.startsWith('en_')
+                    def targetLangDir = new File(isEnglish ? coreDir : extraDir, "lang/${familyDir.name}")
+                    targetLangDir.mkdirs()
+                    copy { from langFile; into targetLangDir }
+                }
+            }
+        }
+    }
+}
+
 tasks.register('checkData') {
     doFirst {
         assert file("../espeak-ng-data/en_dict").exists()
@@ -98,12 +211,31 @@ tasks.register('checkData') {
 }
 
 tasks.register('createDataArchive', Zip) {
+    dependsOn tasks.splitLanguageData
     preserveFileTimestamps = false
     reproducibleFileOrder = true
     archiveFileName = "espeakdata.zip"
     destinationDirectory = file("res/raw")
 
-    from("build/generated/espeak-ng-data/") {
+    from("build/generated/espeak-ng-data-core/") {
+        into "espeak-ng-data"
+    }
+}
+
+// The "extra languages" pack: everything splitLanguageData didn't put in
+// the core set. This is deliberately NOT wired into assembleDebug/
+// assembleRelease - it's not bundled in the APK at all. Build it explicitly
+// (./gradlew createExtraDataArchive) and upload build/outputs/data/
+// espeakdata-extra.zip as a GitHub Release asset; the app downloads it from
+// there on request (see LanguagePackDownloader).
+tasks.register('createExtraDataArchive', Zip) {
+    dependsOn tasks.splitLanguageData
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    archiveFileName = "espeakdata-extra.zip"
+    destinationDirectory = file("build/outputs/data")
+
+    from("build/generated/espeak-ng-data-extra/") {
         into "espeak-ng-data"
     }
 }
@@ -133,7 +265,7 @@ createDataVersion.mustRunAfter 'externalNativeBuildRelease'
 
 project.afterEvaluate {
     tasks.checkData.dependsOn(externalNativeBuildDebug)
-    tasks.createDataArchive.dependsOn(externalNativeBuildDebug)
+    tasks.splitLanguageData.dependsOn(externalNativeBuildDebug)
     tasks.named('mapDebugSourceSetPaths') {
         dependsOn ':createDataVersion', ':createDataArchive'
     }

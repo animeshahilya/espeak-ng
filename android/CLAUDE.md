@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 # Build debug APK (from android/ directory)
 ./gradlew assembleDebug
 
-# Build release APK (unsigned)
+# Build release APK (signed if android/keystore.properties exists, unsigned otherwise)
 ./gradlew assembleRelease
 
 # Run instrumentation tests (requires connected device/emulator)
@@ -24,15 +24,41 @@ Output APKs land in `build/outputs/apk/debug/` and `build/outputs/apk/release/`.
 - JDK 17 (Temurin) in CI
 
 The Gradle build has custom tasks that run automatically:
-1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/`
-2. `createDataArchive` zips the data into `res/raw/espeakdata.zip`
-3. `createDataHash` generates SHA256 for upgrade detection
-4. `createDataVersion` writes the hash to `res/raw/espeakdata_version`
+1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/` (all ~120 languages)
+2. `splitLanguageData` splits that into `espeak-ng-data-core/` (English + every
+   Indic/Dravidian language - see below) and `espeak-ng-data-extra/`
+   (everything else)
+3. `createDataArchive` zips the **core** subset into `res/raw/espeakdata.zip` -
+   this is what actually ships in the APK
+4. `createDataHash` generates SHA256 for upgrade detection
+5. `createDataVersion` writes the hash to `res/raw/espeakdata_version`
+
+`createExtraDataArchive` (not run automatically, and not wired into
+`assembleDebug`/`assembleRelease`) zips the extra subset into
+`build/outputs/data/espeakdata-extra.zip`. Run it explicitly and upload that
+file as a GitHub Release asset named exactly `espeakdata-extra.zip` - the app
+downloads it from `.../releases/latest/download/espeakdata-extra.zip` (see
+"Language packs" below). Forgetting to re-upload it after a data-affecting
+change leaves the app fetching a stale pack indefinitely, since nothing
+currently version-checks it beyond a fresh `latest` release existing.
 
 Native build disables `USE_ASYNC` and `USE_MBROLA` (not needed on Android) and
 enables `USE_LIBSONIC` for speech rates above `espeakRATE_MAXIMUM`. libsonic has
 no NDK sysroot package, so `jni/CMakeLists.txt` fetches and builds it from
 source and pre-seeds `SONIC_LIB`/`SONIC_INC` for `cmake/deps.cmake`.
+
+### Release signing
+
+`build.gradle` loads `android/keystore.properties` (gitignored, alongside the
+`.jks` it points to under `android/keystore/`) if present, and signs
+`assembleRelease` with it; without the file, `assembleRelease` silently falls
+back to an unsigned APK rather than failing. This app deliberately does **not**
+enable R8/minification on the release build type: `SpeechSynthesis`'s native
+methods are matched against exact unmangled Java method names by
+`jni/jni/eSpeakService.c` (`Java_com_reecedunn_espeak_SpeechSynthesis_*`), and
+an unguarded minify pass could rename them and silently break every JNI call
+in the release build. Don't turn on `minifyEnabled` without adding a `-keep`
+rule for that class first, and verifying on a real device.
 
 ## Architecture
 
@@ -57,6 +83,7 @@ Android TTS Framework
 - **LanguageSettings** — Filters available voices by user-selected languages
 - **CheckVoiceData** — Intent handler that verifies voice data files exist on device
 - **DownloadVoiceData** — Extracts `espeakdata.zip` to device-protected storage
+- **LanguagePackManager** — Downloads and extracts the optional "extra languages" pack from GitHub Releases (see "Language packs" below)
 - **TtsSettingsActivity** — Preferences UI (voice variant, rate, pitch, etc.); also the `CONFIGURE_ENGINE` target and, on Wear, the launcher entry point
 - **Voice / VoiceVariant** — Data models for voice metadata and variant parsing
 
@@ -82,13 +109,40 @@ against a configuration with no UI mode, so it always resolves to the default.
 
 ### Voice Data Lifecycle
 
-On first launch (or version mismatch), `DownloadVoiceData` extracts `res/raw/espeakdata.zip` to device-protected storage. `CheckVoiceData` validates required files: `version`, `intonations`, `phondata`, `phonindex`, `phontab`, `en_dict`.
+On first launch (or version mismatch), `DownloadVoiceData` extracts `res/raw/espeakdata.zip` (the core bundle) to device-protected storage. `CheckVoiceData` validates required files: `version`, `intonations`, `phondata`, `phonindex`, `phontab`, `en_dict`.
+
+### Language packs
+
+The APK only bundles English and the Indic (`lang/inc`)/Dravidian (`lang/dra`)
+languages - roughly 3MB of dict/lang data versus ~28MB for the other ~100
+languages `espeak-ng-data` ships. `android/build.gradle`'s `splitLanguageData`
+task does this split (see `CORE_DICT_CODES`/`CORE_LANG_FAMILY_DIRS` there); it
+operates purely at the Android packaging layer, after the shared CMake `data`
+target has already built the full dataset, so it doesn't touch anything other
+platforms/consumers of this repo depend on.
+
+The rest is downloadable from Settings ("Download more languages",
+`TtsSettingsActivity.createLanguagePackPreference`), fetched by
+`LanguagePackManager` from a GitHub Release asset on this fork and extracted
+into the *same* device-protected data path the core bundle uses - a
+downloaded language's `_dict`/`lang/` files just become more files alongside
+the core ones. This reuses `BROADCAST_LANGUAGES_UPDATED` (see `TtsService`
+above) to make a running service pick up the new voices immediately.
+
+Splitting `lang/` in lockstep with the dict files matters: a `lang/<family>/<code>`
+file with no matching `_dict` bundled would make that voice appear selectable
+in the picker and then fail to synthesize once chosen, rather than just not
+appearing until its pack is downloaded.
+
+This is the only thing in the app that uses the network
+(`INTERNET`/`ACCESS_NETWORK_STATE` permissions exist solely for it) - it's
+user-triggered from a confirmation dialog, never automatic.
 
 ## Source Layout
 
 ```
 android/
-├── src/com/reecedunn/espeak/   # Java sources (13 classes)
+├── src/com/reecedunn/espeak/   # Java sources (14 classes)
 │   └── preference/             # Custom preference widgets (5 classes)
 ├── jni/
 │   ├── CMakeLists.txt          # Native build (links espeak-ng + JNI, builds libsonic)

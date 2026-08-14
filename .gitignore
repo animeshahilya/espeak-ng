@@ -45,6 +45,11 @@ build*/
 *.iml
 !gradlew.bat
 
+# android release signing - never commit the keystore or its credentials:
+android/keystore.properties
+*.jks
+*.keystore
+
 # emscripten output:
 a.out
 a.out.js
