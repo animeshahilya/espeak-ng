@@ -102,7 +102,7 @@ android/
 
 ## Testing
 
-Tests are in `eSpeakTests/src/com/reecedunn/espeak/test/` — instrumentation tests covering voice enumeration, settings, variant parsing, data checking, and synthesis. They require a connected device or emulator.
+Tests are in `eSpeakTests/src/com/reecedunn/espeak/test/` — instrumentation tests covering voice enumeration, settings, variant parsing, variant-catalog/data consistency (`VoiceVariantCatalogTest` checks `VoiceVariantPreference`'s hardcoded picker against the actual shipped `voices/!v/` files - see upstream #2376), and synthesis. They require a connected device or emulator.
 
 ## Common Workflows
 

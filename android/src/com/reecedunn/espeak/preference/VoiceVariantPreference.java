@@ -160,7 +160,7 @@ public class VoiceVariantPreference extends DialogPreference {
             new VariantData(R.string.variant_anika, "anika"),
             new VariantData(R.string.variant_anika_robot, "anikaRobot"),
             new VariantData(R.string.variant_annie, "Annie"),
-            new VariantData(R.string.variant_anouncer, "anouncer"),
+            new VariantData(R.string.variant_anouncer, "announcer"),
             new VariantData(R.string.variant_antonio, "antonio"),
             new VariantData(R.string.variant_anxious_andy, "AnxiousAndy"),
             new VariantData(R.string.variant_aunty, "aunty"),
@@ -193,7 +193,7 @@ public class VoiceVariantPreference extends DialogPreference {
             new VariantData(R.string.variant_kaukovalta, "kaukovalta"),
             new VariantData(R.string.variant_lee, "Lee"),
             new VariantData(R.string.variant_linda, "linda"),
-            new VariantData(R.string.variant_marcelo, "Marcelo"),
+            new VariantData(R.string.variant_marcelo, "marcelo"),
             new VariantData(R.string.variant_marco, "Marco"),
             new VariantData(R.string.variant_mario, "Mario"),
             new VariantData(R.string.variant_max, "max"),
@@ -247,6 +247,30 @@ public class VoiceVariantPreference extends DialogPreference {
             new VariantData(R.string.variant_female, "whisperf"),
         },
     };
+
+    /**
+     * Every filename-backed variant identifier the picker references (skips
+     * the synthetic gender-only "male"/"female" entries, which have no
+     * backing file - VoiceVariant stores those as a null variant string).
+     *
+     * Exists so a test can catch drift against espeak-ng-data/voices/!v/
+     * without duplicating this table - see #2376 upstream. A typo or renamed
+     * file here doesn't fail to build; it silently makes one picker entry
+     * select a voice that doesn't exist (found and fixed twice already:
+     * "anouncer" vs "announcer", "Marcelo" vs "marcelo").
+     */
+    public static java.util.Set<String> getReferencedVariantFiles() {
+        final java.util.Set<String> names = new java.util.HashSet<String>();
+        for (VariantData[] group : variants) {
+            for (VariantData data : group) {
+                final String name = data.getVariant().variant;
+                if (name != null) {
+                    names.add(name);
+                }
+            }
+        }
+        return names;
+    }
 
     public VoiceVariantPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
