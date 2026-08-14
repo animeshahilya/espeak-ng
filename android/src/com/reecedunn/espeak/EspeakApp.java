@@ -20,7 +20,6 @@ import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.util.Log;
 
 public class EspeakApp extends Application {
@@ -31,13 +30,7 @@ public class EspeakApp extends Application {
 
     public void onCreate() {
         super.onCreate();
-        Context appContext = getApplicationContext();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            EspeakApp.storageContext = appContext.createDeviceProtectedStorageContext();
-        }
-        else {
-            EspeakApp.storageContext = appContext;
-        }
+        EspeakApp.storageContext = getApplicationContext().createDeviceProtectedStorageContext();
         syncWearLauncherState();
     }
 

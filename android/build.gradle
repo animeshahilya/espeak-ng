@@ -30,7 +30,7 @@ dependencies {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 37
     ndkVersion = "29.0.14206865"
     namespace = "com.reecedunn.espeak"
 
@@ -39,8 +39,8 @@ android {
     }
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 34
+        minSdk = 34
+        targetSdk = 37
         versionCode = 24
         versionName = "1.53.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -79,6 +79,10 @@ android {
 
     lint {
         abortOnError = false
+        // AGP's lint tool crashes parsing JavaDoc in the upstream-copied
+        // eSpeak Android .java files under this detector (not a real
+        // finding) - see BidirectionalTextDetector in the crash trace.
+        disable += "BidiSpoofing"
     }
 }
 

@@ -25,7 +25,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -42,7 +41,6 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.reecedunn.espeak.BuildConfig;
 import com.reecedunn.espeak.preference.ImportVoicePreference;
 import com.reecedunn.espeak.preference.SeekBarPreference;
 import com.reecedunn.espeak.preference.SpeakPunctuationPreference;
@@ -79,11 +77,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-        {
-            PreferenceManager preferenceManager = getPreferenceManager();
-            preferenceManager.setStorageDeviceProtected ();
-        }
+        getPreferenceManager().setStorageDeviceProtected();
         // Migrate old eyes-free settings to the new settings:
 
         storageContext = EspeakApp.getStorageContext();
@@ -129,17 +123,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         editor.commit();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-        {
-            getFragmentManager().beginTransaction().replace(
-                    android.R.id.content,
-                    new PrefsEspeakFragment()).commit();
-        }
-        else
-        {
-            addPreferencesFromResource(R.xml.preferences);
-            createPreferences(TtsSettingsActivity.this, getPreferenceScreen());
-        }
+        getFragmentManager().beginTransaction().replace(
+                android.R.id.content,
+                new PrefsEspeakFragment()).commit();
     }
 
     public static final int REQUEST_CODE_IMPORT_VOICE = 1001;
@@ -539,11 +525,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
             return false;
         }
         final Activity activity = (Activity) context;
-        if (activity.isFinishing()) {
-            return true;
-        }
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
-                && activity.isDestroyed();
+        return activity.isFinishing() || activity.isDestroyed();
     }
 
     /**

@@ -18,7 +18,6 @@ package com.reecedunn.espeak.test;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -78,9 +77,7 @@ public class LanguageFilterSynthesisTest {
     public void setUp() throws Exception {
         final Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mOutDir = ctx.getCacheDir();
-        mPrefContext = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                ? ctx.createDeviceProtectedStorageContext()
-                : ctx;
+        mPrefContext = ctx.createDeviceProtectedStorageContext();
         clearFilter();
 
         final CountDownLatch ready = new CountDownLatch(1);

@@ -18,8 +18,8 @@
 /*
  * This file implements the Java API to eSpeak using the JNI bindings.
  *
- * Android Version: 4.0 (Ice Cream Sandwich)
- * API Version:     14
+ * Minimum Android Version: 14.0 (Upside Down Cake)
+ * Minimum API Version:     34
  */
 
 package com.reecedunn.espeak;
@@ -31,8 +31,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -122,9 +122,9 @@ public class SpeechSynthesis {
     }
 
     public List<Voice> getAvailableVoices() {
-        final List<Voice> voices = new LinkedList<Voice>();
         final String[] results = nativeGetAvailableVoices();
         mVoiceCount = results.length / 4;
+        final List<Voice> voices = new ArrayList<Voice>(mVoiceCount);
 
         for (int i = 0; i < results.length; i += 4) {
             final String name = results[i];

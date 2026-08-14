@@ -18,4 +18,13 @@
 <li>Potential for other languages. Several are included in varying stages
    of progress. Help from native speakers for these or other languages is
    welcome.</li>
+<li>Choose which languages appear in the system Text-to-speech voice list,
+   and import additional voice or dictionary data from a file.</li>
+<li>Optional speech rate boost beyond the normal maximum, for users who
+   listen at very high speeds.</li>
+<li>Optional Unicode text normalization and configurable emoji handling
+   (announced or silently skipped).</li>
+<li>Reports word boundaries to the system for screen readers such as
+   TalkBack, and supports Android's Direct Boot mode.</li>
+<li>Runs standalone on Wear OS.</li>
 </ol>

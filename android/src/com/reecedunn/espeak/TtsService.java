@@ -19,20 +19,18 @@
 /*
  * This file implements the Android Text-to-Speech engine for eSpeak.
  *
- * Android Version: 4.0 (Ice Cream Sandwich)
- * API Version:     14
+ * Minimum Android Version: 14.0 (Upside Down Cake)
+ * Minimum API Version:     34
  */
 
 package com.reecedunn.espeak;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioTrack;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.SynthesisCallback;
@@ -60,7 +58,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author msclrhd@gmail.com (Reece H. Dunn)
  * @author alanv@google.com (Alan Viverette)
  */
-@SuppressLint("NewApi")
 public class TtsService extends TextToSpeechService {
     private static final String TAG = TtsService.class.getSimpleName();
     private static Context storageContext;
@@ -126,8 +123,7 @@ public class TtsService extends TextToSpeechService {
     @Override
     public void onCreate() {
         storageContext = EspeakApp.getStorageContext();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            storageContext.moveSharedPreferencesFrom(this, this.getPackageName() + "_preferences");
+        storageContext.moveSharedPreferencesFrom(this, this.getPackageName() + "_preferences");
         mPreferences = PreferenceManager.getDefaultSharedPreferences(storageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         if (!CheckVoiceData.hasBaseResources(storageContext)
@@ -136,11 +132,7 @@ public class TtsService extends TextToSpeechService {
         }
         initializeTtsEngine();
         final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(mLanguagesUpdatedReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
-        } else {
-            registerReceiver(mLanguagesUpdatedReceiver, filter);
-        }
+        registerReceiver(mLanguagesUpdatedReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
         super.onCreate();
     }
 
@@ -342,13 +334,8 @@ public class TtsService extends TextToSpeechService {
         mEngine.stop();
     }
 
-    @SuppressWarnings("deprecation")
     private String getRequestString(SynthesisRequest request) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return request.getCharSequenceText().toString();
-        } else {
-            return request.getText();
-        }
+        return request.getCharSequenceText().toString();
     }
 
     protected int selectLanguageWithFallback(String language, String country, String variant) {
@@ -378,20 +365,18 @@ public class TtsService extends TextToSpeechService {
     }
 
     private int selectVoice(SynthesisRequest request) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final String name = request.getVoiceName();
-            if (name != null && !name.isEmpty()
-                    && onLoadVoice(name) == TextToSpeech.SUCCESS) {
-                return TextToSpeech.SUCCESS;
-            }
-            // Deliberately fall through when the named voice is unknown rather
-            // than returning its error. The framework attaches a voice name to
-            // every request on API 21+ -- including the system default one when
-            // the client never picked a voice itself -- so a name that has been
-            // filtered out of the user's language selection would otherwise
-            // fail every request and make selectLanguageWithFallback() below
-            // unreachable. The name is a hint; the language cascade decides.
+        final String name = request.getVoiceName();
+        if (name != null && !name.isEmpty()
+                && onLoadVoice(name) == TextToSpeech.SUCCESS) {
+            return TextToSpeech.SUCCESS;
         }
+        // Deliberately fall through when the named voice is unknown rather
+        // than returning its error. The framework attaches a voice name to
+        // every request -- including the system default one when the client
+        // never picked a voice itself -- so a name that has been filtered out
+        // of the user's language selection would otherwise fail every
+        // request and make selectLanguageWithFallback() below unreachable.
+        // The name is a hint; the language cascade decides.
         return selectLanguageWithFallback(request.getLanguage(), request.getCountry(), request.getVariant());
     }
 
@@ -639,9 +624,7 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthWordBoundary(int textPosition, int textLength, int markerInFrames) {
-            // rangeStart() is API 26; below that the framework has no way to
-            // deliver word boundaries to the caller.
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || mSynthText == null) {
+            if (mSynthText == null) {
                 return;
             }
 

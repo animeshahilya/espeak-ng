@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import android.annotation.SuppressLint;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -40,7 +38,6 @@ public class TextToSpeechTest extends TextToSpeechTestCase
     private Set<String> mAdded = new HashSet<String>();
     private Set<String> mRemoved = new HashSet<String>();
 
-    @SuppressLint("NewApi")
     public Set<Object> getVoices()
     {
         if (mVoices == null)
@@ -100,10 +97,7 @@ public class TextToSpeechTest extends TextToSpeechTestCase
     @Test
     public void testAddedVoices()
     {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            return;
-
-        getVoices(); // Verify voice data loads without crashing.
+getVoices(); // Verify voice data loads without crashing.
         // Not asserting on specific voices since new languages are regularly
         // added to eSpeak NG.
     }
@@ -111,21 +105,14 @@ public class TextToSpeechTest extends TextToSpeechTestCase
     @Test
     public void testRemovedVoices()
     {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            return;
-
-        getVoices(); // Ensure that the voice data has been populated.
+getVoices(); // Ensure that the voice data has been populated.
         assertThat(mRemoved.toString(), is("[]"));
     }
 
-    @SuppressLint("NewApi")
     @Test
     public void testVoices()
     {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            return;
-
-        getVoices(); // Ensure that the voice data has been populated.
+getVoices(); // Ensure that the voice data has been populated.
         for (Object item : mVoices)
         {
             android.speech.tts.Voice voice = (android.speech.tts.Voice)item;
@@ -214,40 +201,34 @@ public class TextToSpeechTest extends TextToSpeechTestCase
             checkLanguage(data, iana1, TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE, data.javaLanguage, data.javaCountry, data.variant);
             checkLanguage(data, java1, TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE, data.javaLanguage, data.javaCountry, data.variant);
 
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
-                // Android Lollipop sets variant to "" when TextToSpeech.LANG_COUNTRY_AVAILABLE is returned.
-                checkLanguage(data, iana2, TextToSpeech.LANG_COUNTRY_AVAILABLE, data.javaLanguage, data.javaCountry, "");
-                checkLanguage(data, java2, TextToSpeech.LANG_COUNTRY_AVAILABLE, data.javaLanguage, data.javaCountry, "");
-            } else {
-                // For LANG_COUNTRY_AVAILABLE (country matches but variant doesn't),
-                // the fallback variant depends on HashMap iteration order for languages
-                // with multiple regional variants (vi-VN, hy-AM). Only check the
-                // availability status and language/country, not the specific variant.
-                String context2 = "";
-                try {
-                    context2 = "isLanguageAvailable";
-                    assertThat(getEngine().isLanguageAvailable(iana2), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
-                    context2 = "setLanguage";
-                    assertThat(getEngine().setLanguage(iana2), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
-                    context2 = "getLanguage:language";
-                    assertThat(getLanguage(getEngine()).getLanguage(), is(data.javaLanguage));
-                    context2 = "getLanguage:country";
-                    assertThat(getLanguage(getEngine()).getCountry(), is(data.javaCountry));
-                } catch (AssertionError e) {
-                    throw new VoiceData.Exception(data, context2 + "|" + iana2.toString().replace('_', '-'), e);
-                }
-                try {
-                    context2 = "isLanguageAvailable";
-                    assertThat(getEngine().isLanguageAvailable(java2), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
-                    context2 = "setLanguage";
-                    assertThat(getEngine().setLanguage(java2), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
-                    context2 = "getLanguage:language";
-                    assertThat(getLanguage(getEngine()).getLanguage(), is(data.javaLanguage));
-                    context2 = "getLanguage:country";
-                    assertThat(getLanguage(getEngine()).getCountry(), is(data.javaCountry));
-                } catch (AssertionError e) {
-                    throw new VoiceData.Exception(data, context2 + "|" + java2.toString().replace('_', '-'), e);
-                }
+            // For LANG_COUNTRY_AVAILABLE (country matches but variant doesn't),
+            // the fallback variant depends on HashMap iteration order for languages
+            // with multiple regional variants (vi-VN, hy-AM). Only check the
+            // availability status and language/country, not the specific variant.
+            String context2 = "";
+            try {
+                context2 = "isLanguageAvailable";
+                assertThat(getEngine().isLanguageAvailable(iana2), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
+                context2 = "setLanguage";
+                assertThat(getEngine().setLanguage(iana2), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
+                context2 = "getLanguage:language";
+                assertThat(getLanguage(getEngine()).getLanguage(), is(data.javaLanguage));
+                context2 = "getLanguage:country";
+                assertThat(getLanguage(getEngine()).getCountry(), is(data.javaCountry));
+            } catch (AssertionError e) {
+                throw new VoiceData.Exception(data, context2 + "|" + iana2.toString().replace('_', '-'), e);
+            }
+            try {
+                context2 = "isLanguageAvailable";
+                assertThat(getEngine().isLanguageAvailable(java2), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
+                context2 = "setLanguage";
+                assertThat(getEngine().setLanguage(java2), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
+                context2 = "getLanguage:language";
+                assertThat(getLanguage(getEngine()).getLanguage(), is(data.javaLanguage));
+                context2 = "getLanguage:country";
+                assertThat(getLanguage(getEngine()).getCountry(), is(data.javaCountry));
+            } catch (AssertionError e) {
+                throw new VoiceData.Exception(data, context2 + "|" + java2.toString().replace('_', '-'), e);
             }
 
             // For LANG_AVAILABLE (language-only match), the engine falls back to a

@@ -19,7 +19,6 @@ package com.reecedunn.espeak.test;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 
@@ -98,10 +97,8 @@ public class TextToSpeechServiceTest
     @Before
     public void setUp() throws Exception
     {
-        mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mContext = mContext.createDeviceProtectedStorageContext();
-        }
+        mContext = InstrumentationRegistry.getInstrumentation().getTargetContext()
+                .createDeviceProtectedStorageContext();
         mService = new TtsServiceTest(mContext);
         mService.onCreate();
     }
@@ -272,26 +269,21 @@ public class TextToSpeechServiceTest
         for (VoiceData.Voice data : VoiceData.voices)
         {
             assertThat(mService.onIsLanguageAvailable(data.javaLanguage, data.javaCountry, data.variant), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                assertThat(mService.onLoadLanguage(data.javaLanguage, data.javaCountry, data.variant), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
-                checkLanguage(mService.onGetLanguage(), data.javaLanguage, data.javaCountry, data.variant);
-            } else {
-                assertThat(mService.onGetDefaultVoiceNameFor(data.javaLanguage, data.javaCountry, data.variant), is(data.name));
-                assertThat(mService.onLoadVoice(data.name), is(TextToSpeech.SUCCESS));
+            assertThat(mService.onGetDefaultVoiceNameFor(data.javaLanguage, data.javaCountry, data.variant), is(data.name));
+            assertThat(mService.onLoadVoice(data.name), is(TextToSpeech.SUCCESS));
 
-                android.speech.tts.Voice voice = mService.getVoice(data.name);
-                assertThat(voice, is(notNullValue()));
+            android.speech.tts.Voice voice = mService.getVoice(data.name);
+            assertThat(voice, is(notNullValue()));
 
-                Locale locale = voice.getLocale();
-                assertThat(locale, is(notNullValue()));
-                assertThat(locale.getISO3Language(), is(data.javaLanguage));
-                assertThat(locale.getISO3Country(), is(data.javaCountry));
-                assertThat(locale.getVariant(), is(data.variant));
+            Locale locale = voice.getLocale();
+            assertThat(locale, is(notNullValue()));
+            assertThat(locale.getISO3Language(), is(data.javaLanguage));
+            assertThat(locale.getISO3Country(), is(data.javaCountry));
+            assertThat(locale.getVariant(), is(data.variant));
 
-                Set<String> features = mService.onGetFeaturesForLanguage(data.javaLanguage, data.javaCountry, data.variant);
-                assertThat(features, is(notNullValue()));
-                assertThat(features.size(), is(0));
-            }
+            Set<String> features = mService.onGetFeaturesForLanguage(data.javaLanguage, data.javaCountry, data.variant);
+            assertThat(features, is(notNullValue()));
+            assertThat(features.size(), is(0));
         }
     }
 

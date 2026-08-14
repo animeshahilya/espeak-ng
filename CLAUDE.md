@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 eSpeak NG is an open-source formant-based speech synthesizer supporting 100+ languages. It's a C project built with CMake, producing both the `espeak-ng` CLI and `libespeak-ng` library.
 
+For the Android app (`android/`), which builds on this library via JNI, see [android/CLAUDE.md](android/CLAUDE.md) instead — it covers the Gradle/NDK build, the Java service layer, and Android-specific workflows not covered here.
+
 ## Build Commands
 
 ```bash

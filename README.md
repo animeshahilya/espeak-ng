@@ -56,7 +56,7 @@ The following platforms are supported:
 |-------------|-----------------|--------|
 | Linux       |                 | ![CI](https://github.com/espeak-ng/espeak-ng/actions/workflows/ci.yml/badge.svg) |
 | BSD         |                 |        |
-| Android     | 4.0             |        |
+| Android     | 14.0            |        |
 | Windows     | Windows 8       |        |
 | Mac         |                 |        |
 

@@ -17,7 +17,6 @@
 
 package com.reecedunn.espeak;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,7 +27,6 @@ import java.util.Locale;
 /*
  * Returns the sample text string for the language requested
  */
-@SuppressLint("NewApi")
 public class GetSampleText extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

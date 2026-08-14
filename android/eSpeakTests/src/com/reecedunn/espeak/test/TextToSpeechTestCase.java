@@ -17,7 +17,6 @@
 package com.reecedunn.espeak.test;
 
 import android.content.Context;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.Log;
@@ -51,11 +50,8 @@ public class TextToSpeechTestCase
 
     protected Context getContext()
     {
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return context.createDeviceProtectedStorageContext();
-        }
-        return context;
+        return InstrumentationRegistry.getInstrumentation().getTargetContext()
+                .createDeviceProtectedStorageContext();
     }
 
     @Before

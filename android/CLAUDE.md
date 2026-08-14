@@ -19,7 +19,7 @@ Output APKs land in `build/outputs/apk/debug/` and `build/outputs/apk/release/`.
 
 ## Build Configuration
 
-- compileSdk 34, minSdk 21, targetSdk 33
+- compileSdk 37, minSdk 34 (Android 14+), targetSdk 37
 - NDK 29.0.14206865, CMake 3.22.1
 - JDK 17 (Temurin) in CI
 
@@ -51,7 +51,7 @@ Android TTS Framework
 ### Key Classes (`src/com/reecedunn/espeak/`)
 
 - **EspeakApp** — `Application` subclass; owns the device-protected storage context and the Wear launcher alias state (see below)
-- **TtsService** — Android TTS engine service; handles `onSynthesizeText()`, voice selection, parameter setup
+- **TtsService** — Android TTS engine service; handles `onSynthesizeText()`, voice selection, parameter setup. Also registers a receiver for `DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED` and reloads the engine's voice list on receipt, so a voice imported through `TtsSettingsActivity` becomes selectable without restarting the process.
 - **SpeechSynthesis** — JNI wrapper; loads `libttsespeak.so`, exposes native functions as Java API
 - **VoiceSettings** — SharedPreferences wrapper for rate, pitch, volume, punctuation, variant
 - **LanguageSettings** — Filters available voices by user-selected languages
@@ -88,7 +88,7 @@ On first launch (or version mismatch), `DownloadVoiceData` extracts `res/raw/esp
 
 ```
 android/
-├── src/com/reecedunn/espeak/   # Java sources (14 classes)
+├── src/com/reecedunn/espeak/   # Java sources (13 classes)
 │   └── preference/             # Custom preference widgets (5 classes)
 ├── jni/
 │   ├── CMakeLists.txt          # Native build (links espeak-ng + JNI, builds libsonic)
