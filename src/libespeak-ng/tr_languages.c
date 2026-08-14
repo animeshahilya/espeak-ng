@@ -841,6 +841,9 @@ Translator *SelectTranslator(const char *name)
 		break;
 	case L('e', 't'): // Estonian
 		tr->encoding = ESPEAKNG_ENCODING_ISO_8859_4;
+#if defined(__GNUC__) && __GNUC__ >= 7
+		__attribute__((fallthrough));
+#endif
 		// fallthrough:
 	case L('f', 'i'): // Finnish
 	{
@@ -936,7 +939,6 @@ Translator *SelectTranslator(const char *name)
 			SetupTranslator(tr, stress_lengths_equal, stress_amps_equal);
 			tr->langopts.break_numbers = BREAK_LAKH;
 			tr->langopts.max_digits = 22;
-			tr->langopts.numbers2 |= NUM2_ENGLISH_NUMERALS;
 		} else if (name2 == L('o', 'r'))
 			tr->letter_bits_offset = OFFSET_ORIYA;
 		SetIndicLetters(tr);

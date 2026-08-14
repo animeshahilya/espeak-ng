@@ -26,6 +26,10 @@ if (WITH_COVERAGE)
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
 endif()
 
+if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wimplicit-fallthrough)
+endif()
+
 include(GNUInstallDirs)
 include(cmake/deps.cmake)
 include(cmake/config.cmake)
