@@ -154,6 +154,7 @@ public class VoiceVariantPreference extends DialogPreference {
         },{ // NVDA
             new VariantData(R.string.variant_adam, "adam"),
             new VariantData(R.string.variant_alex, "Alex"),
+            new VariantData(R.string.variant_ali, "ali"),
             new VariantData(R.string.variant_alicia, "Alicia"),
             new VariantData(R.string.variant_andy, "Andy"),
             new VariantData(R.string.variant_andrea, "Andrea"),

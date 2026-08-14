@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Implements the eSpeak engine as a {@link TextToSpeechService}.
@@ -64,6 +65,7 @@ public class TtsService extends TextToSpeechService {
 
     private SpeechSynthesis mEngine;
     private SynthesisCallback mCallback;
+    private final AtomicBoolean mCallbackDone = new AtomicBoolean(false);
 
     /** Text handed to eSpeak for the current request. */
     private String mSynthText;
@@ -445,6 +447,7 @@ public class TtsService extends TextToSpeechService {
         }
 
         mCallback = callback;
+        mCallbackDone.set(false);
         mCallback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
 
         final VoiceSettings settings = new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext), mEngine);
@@ -581,7 +584,9 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthDataComplete() {
-            mCallback.done();
+            if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
+                mCallback.done();
+            }
         }
 
         @Override

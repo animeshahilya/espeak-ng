@@ -155,13 +155,10 @@ public class SpeechSynthesis {
 
                 final Voice voice = new Voice(name, identifier, gender, age, locale);
                 voices.add(voice);
-            } catch (MissingResourceException e) {
-                // Android 4.3 throws this exception if the 3-letter language
-                // (e.g. nci) or country (e.g. 021) code is missing for a locale.
-                // Earlier versions return an empty string (handled above).
+            } catch (MissingResourceException | IllegalArgumentException e) {
                 Log.d(TAG, "getAvailableResources: skipping " + name + " => " + e.getMessage());
-            } catch (IllegalArgumentException e) {
-                Log.d(TAG, "getAvailableResources: skipping " + name + " => " + e.getMessage());
+            } catch (Exception e) {
+                Log.w(TAG, "getAvailableResources: unexpected error loading " + name + ": " + e.getMessage());
             }
         }
 
