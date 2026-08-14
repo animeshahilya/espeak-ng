@@ -449,11 +449,11 @@ public class TtsService extends TextToSpeechService {
 
         final VoiceSettings settings = new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext), mEngine);
 
-        if (settings.isUnicodeNormalizationEnabled() && text != null) {
+        if (settings.isUnicodeNormalizationEnabled() && text != null && !isAsciiOnly(text)) {
             text = Normalizer.normalize(text, Normalizer.Form.NFKC);
         }
 
-        if (settings.isEmojiIgnoreEnabled() && text != null) {
+        if (settings.isEmojiIgnoreEnabled() && text != null && containsPotentialEmoji(text)) {
             text = filterEmojis(text);
         }
 
@@ -477,7 +477,30 @@ public class TtsService extends TextToSpeechService {
         mEngine.Volume.setValue(settings.getVolume());
         mEngine.Punctuation.setValue(settings.getPunctuationLevel());
         mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
+        mEngine.Capitals.setValue(settings.getCapitals());
+        mEngine.WordGap.setValue(settings.getWordGap());
         mEngine.synthesize(text, text != null && text.startsWith("<speak"));
+    }
+
+    private static boolean isAsciiOnly(String text) {
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            if (text.charAt(i) > 127) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean containsPotentialEmoji(String text) {
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            char c = text.charAt(i);
+            if (Character.isHighSurrogate(c) || c >= 0x2600) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String filterEmojis(String text) {

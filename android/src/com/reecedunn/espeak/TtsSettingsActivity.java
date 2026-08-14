@@ -307,16 +307,20 @@ public class TtsSettingsActivity extends PreferenceActivity {
             pref.enableRateBoost(VoiceSettings.PREF_RATE_BOOST);
         }
 
-        switch (parameter.getUnitType())
-        {
-            case Percentage:
-                pref.setFormatter(context.getString(R.string.formatter_percentage));
-                break;
-            case WordsPerMinute:
-                pref.setFormatter(context.getString(R.string.formatter_wpm));
-                break;
-            default:
-                throw new IllegalStateException("Unsupported unit type for the parameter.");
+        if (VoiceSettings.PREF_WORD_GAP.equals(key)) {
+            pref.setFormatter(context.getString(R.string.formatter_gap_ms));
+        } else {
+            switch (parameter.getUnitType())
+            {
+                case Percentage:
+                    pref.setFormatter(context.getString(R.string.formatter_percentage));
+                    break;
+                case WordsPerMinute:
+                    pref.setFormatter(context.getString(R.string.formatter_wpm));
+                    break;
+                default:
+                    throw new IllegalStateException("Unsupported unit type for the parameter.");
+            }
         }
 
         pref.setMin(parameter.getMinValue());
@@ -586,6 +590,32 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
+    private static Preference createCapitalsPreference(Context context) {
+        final ListPreference pref = new ListPreference(context);
+        pref.setTitle(R.string.setting_capitals);
+        pref.setDialogTitle(R.string.setting_capitals);
+        pref.setKey(VoiceSettings.PREF_CAPITALS);
+        pref.setEntries(new CharSequence[] {
+                context.getString(R.string.capitals_none),
+                context.getString(R.string.capitals_sound),
+                context.getString(R.string.capitals_pitch),
+                context.getString(R.string.capitals_say)
+        });
+        pref.setEntryValues(new CharSequence[] { "0", "1", "2", "3" });
+        pref.setDefaultValue("0");
+        pref.setPersistent(true);
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        String current = prefs.getString(VoiceSettings.PREF_CAPITALS, "0");
+        int idx = 0;
+        try { idx = Integer.parseInt(current); } catch (Exception e) {}
+        if (idx >= 0 && idx < pref.getEntries().length) {
+            pref.setSummary(pref.getEntries()[idx]);
+        }
+        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
+        return pref;
+    }
+
     private static void addPreferences(Context context, PreferenceGroup group,
                                        SpeechSynthesis engine, List<Voice> voices,
                                        boolean isWatch) {
@@ -602,11 +632,13 @@ public class TtsSettingsActivity extends PreferenceActivity {
             group.addPreference(createRateBoostPreference(context));
         }
         group.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
+        group.addPreference(createCapitalsPreference(context));
         group.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));
         group.addPreference(createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate));
         group.addPreference(createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
         group.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
         group.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
+        group.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
     }
 
     private static final OnPreferenceChangeListener mOnPreferenceChanged =

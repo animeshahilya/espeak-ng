@@ -69,4 +69,12 @@
   <string name="setting_rate_boost_summary">Enable high speech rates above normal maximum using Sonic acceleration</string>
   <string name="import_voice_success">Successfully imported dictionary data.</string>
   <string name="import_voice_error">Failed to import dictionary file.</string>
+  <string name="setting_capitals">Capital letters</string>
+  <string name="setting_capitals_summary">How capital letters are announced</string>
+  <string name="capitals_none">None</string>
+  <string name="capitals_sound">Play sound icon (beep)</string>
+  <string name="capitals_pitch">Raise pitch</string>
+  <string name="capitals_say">Say \"capital\"</string>
+  <string name="setting_wordgap">Word pause length</string>
+  <string name="formatter_gap_ms">%s0 ms</string>
 </resources>

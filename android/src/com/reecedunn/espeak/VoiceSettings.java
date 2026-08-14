@@ -39,6 +39,8 @@ public class VoiceSettings {
     public static final int RATE_BOOST_MULTIPLIER = 3;
     public static final String PREF_NORMALIZE_UNICODE = "espeak_normalize_unicode";
     public static final String PREF_EMOJI_PROCESSING = "espeak_emoji_processing";
+    public static final String PREF_CAPITALS = "espeak_capitals";
+    public static final String PREF_WORD_GAP = "espeak_wordgap";
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
@@ -187,5 +189,23 @@ public class VoiceSettings {
 
     public boolean isEmojiIgnoreEnabled() {
         return EMOJI_IGNORE.equals(getEmojiProcessingMode());
+    }
+
+    public int getCapitals() {
+        int min = mEngine.Capitals.getMinValue();
+        int max = mEngine.Capitals.getMaxValue();
+        int value = getPreferenceValue(PREF_CAPITALS, mEngine.Capitals.getDefaultValue());
+        if (value > max) value = max;
+        if (value < min) value = min;
+        return value;
+    }
+
+    public int getWordGap() {
+        int min = mEngine.WordGap.getMinValue();
+        int max = mEngine.WordGap.getMaxValue();
+        int value = getPreferenceValue(PREF_WORD_GAP, mEngine.WordGap.getDefaultValue());
+        if (value > max) value = max;
+        if (value < min) value = min;
+        return value;
     }
 }
