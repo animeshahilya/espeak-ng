@@ -41,6 +41,7 @@ import android.util.Pair;
 
 import com.reecedunn.espeak.SpeechSynthesis.SynthReadyCallback;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -443,16 +444,25 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
-        mSynthText = text;
-        mSynthTextOffset = textOffset;
-        mSynthTextCodePoints = text.codePointCount(0, text.length());
-        mAnchorCodePoint = 0;
-        mAnchorOffset = 0;
-
         mCallback = callback;
         mCallback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
 
         final VoiceSettings settings = new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext), mEngine);
+
+        if (settings.isUnicodeNormalizationEnabled() && text != null) {
+            text = Normalizer.normalize(text, Normalizer.Form.NFKC);
+        }
+
+        if (settings.isEmojiIgnoreEnabled() && text != null) {
+            text = filterEmojis(text);
+        }
+
+        mSynthText = text;
+        mSynthTextOffset = textOffset;
+        mSynthTextCodePoints = (text != null) ? text.codePointCount(0, text.length()) : 0;
+        mAnchorCodePoint = 0;
+        mAnchorOffset = 0;
+
         mEngine.setVoice(voice, settings.getVoiceVariant());
 
         int rate = settings.getRate();
@@ -467,7 +477,31 @@ public class TtsService extends TextToSpeechService {
         mEngine.Volume.setValue(settings.getVolume());
         mEngine.Punctuation.setValue(settings.getPunctuationLevel());
         mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
-        mEngine.synthesize(text, text.startsWith("<speak"));
+        mEngine.synthesize(text, text != null && text.startsWith("<speak"));
+    }
+
+    private static String filterEmojis(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        final StringBuilder sb = new StringBuilder(text.length());
+        final int len = text.length();
+        for (int i = 0; i < len; ) {
+            final int codePoint = text.codePointAt(i);
+            final int type = Character.getType(codePoint);
+            final boolean isEmoji = (type == Character.OTHER_SYMBOL || type == Character.SURROGATE)
+                    || (codePoint >= 0x1F000 && codePoint <= 0x1FAFF)
+                    || (codePoint >= 0x2600 && codePoint <= 0x27BF)
+                    || (codePoint >= 0xFE00 && codePoint <= 0xFE0F)
+                    || (codePoint >= 0x1F900 && codePoint <= 0x1F9FF);
+            if (!isEmoji) {
+                sb.appendCodePoint(codePoint);
+            } else {
+                sb.append(' ');
+            }
+            i += Character.charCount(codePoint);
+        }
+        return sb.toString();
     }
 
     protected void rebuildAvailableVoices() {

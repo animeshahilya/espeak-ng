@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.14)
 
 project(espeak-android)
 
+# Ensure 16 KB page-size alignment for Android 14/15 ARM64 kernels
+add_link_options("-Wl,-z,max-page-size=16384")
+
 # Build libsonic from source for Android and pre-seed the find results so
 # cmake/deps.cmake in the main project detects it (the NDK sysroot has no sonic).
 include(FetchContent)

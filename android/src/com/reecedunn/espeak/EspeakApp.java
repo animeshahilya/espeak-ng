@@ -38,7 +38,6 @@ public class EspeakApp extends Application {
         else {
             EspeakApp.storageContext = appContext;
         }
-        syncWearLauncherState();
     }
 
     /**

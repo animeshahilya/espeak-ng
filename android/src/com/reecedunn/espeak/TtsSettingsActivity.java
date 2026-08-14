@@ -20,13 +20,16 @@ package com.reecedunn.espeak;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.util.Log;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
@@ -35,6 +38,9 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.provider.OpenableColumns;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.reecedunn.espeak.BuildConfig;
 import com.reecedunn.espeak.preference.ImportVoicePreference;
@@ -43,11 +49,15 @@ import com.reecedunn.espeak.preference.SpeakPunctuationPreference;
 import com.reecedunn.espeak.preference.SupportedLanguagesPreference;
 import com.reecedunn.espeak.preference.VoiceVariantPreference;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,6 +65,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class TtsSettingsActivity extends PreferenceActivity {
 
@@ -125,6 +137,117 @@ public class TtsSettingsActivity extends PreferenceActivity {
         }
     }
 
+    public static final int REQUEST_CODE_IMPORT_VOICE = 1001;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_IMPORT_VOICE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            importVoiceUri(this, data.getData());
+        }
+    }
+
+    private static String getFileNameFromUri(Context context, Uri uri) {
+        String result = null;
+        if ("content".equals(uri.getScheme())) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex != -1) {
+                        result = cursor.getString(nameIndex);
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore fallback
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+            if (result != null) {
+                int cut = result.lastIndexOf('/');
+                if (cut != -1) {
+                    result = result.substring(cut + 1);
+                }
+            }
+        }
+        return result != null ? result : "imported_data";
+    }
+
+    private static void importVoiceUri(final Activity activity, final Uri uri) {
+        final Context storage = storageContext != null ? storageContext : activity;
+        final Handler handler = new Handler(Looper.getMainLooper());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean success = false;
+                String fileName = getFileNameFromUri(activity, uri);
+                File targetDir = CheckVoiceData.getDataPath(storage);
+                if (!targetDir.exists()) {
+                    targetDir.mkdirs();
+                }
+
+                try (InputStream inputStream = activity.getContentResolver().openInputStream(uri)) {
+                    if (inputStream != null) {
+                        if (fileName.toLowerCase().endsWith(".zip")) {
+                            try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(inputStream))) {
+                                ZipEntry entry;
+                                byte[] buffer = new byte[8192];
+                                while ((entry = zis.getNextEntry()) != null) {
+                                    String entryName = entry.getName();
+                                    // Prevent zip path traversal
+                                    if (entryName.contains("..")) continue;
+                                    File outFile = new File(targetDir, entryName);
+                                    if (entry.isDirectory()) {
+                                        outFile.mkdirs();
+                                    } else {
+                                        File parent = outFile.getParentFile();
+                                        if (parent != null && !parent.exists()) {
+                                            parent.mkdirs();
+                                        }
+                                        try (OutputStream fos = new FileOutputStream(outFile)) {
+                                            int len;
+                                            while ((len = zis.read(buffer)) > 0) {
+                                                fos.write(buffer, 0, len);
+                                            }
+                                        }
+                                    }
+                                    zis.closeEntry();
+                                }
+                                success = true;
+                            }
+                        } else {
+                            File outFile = new File(targetDir, fileName);
+                            try (OutputStream fos = new FileOutputStream(outFile)) {
+                                byte[] buffer = new byte[8192];
+                                int len;
+                                while ((len = inputStream.read(buffer)) > 0) {
+                                    fos.write(buffer, 0, len);
+                                }
+                                success = true;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error importing voice data from URI", e);
+                    success = false;
+                }
+
+                final boolean finalSuccess = success;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (finalSuccess) {
+                            activity.sendBroadcast(new Intent(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED));
+                            Toast.makeText(activity, R.string.import_voice_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(activity, R.string.import_voice_error, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }, "voice-import-thread").start();
+    }
+
     public static class PrefsEspeakFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -140,7 +263,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         final ImportVoicePreference pref = new ImportVoicePreference(context);
         pref.setTitle(title);
-        pref.setDialogTitle(title);
         pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
         pref.setDescription(R.string.import_voice_description);
         return pref;
@@ -420,6 +542,50 @@ public class TtsSettingsActivity extends PreferenceActivity {
      * change listener for all {@link ListPreference} views to fill in the
      * summary with the current entry value.
      */
+    private static Preference createUnicodeNormalizationPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_normalize_unicode);
+        pref.setSummary(R.string.setting_normalize_unicode_summary);
+        pref.setKey(VoiceSettings.PREF_NORMALIZE_UNICODE);
+        pref.setDefaultValue(true);
+        pref.setPersistent(true);
+        return pref;
+    }
+
+    private static Preference createEmojiProcessingPreference(Context context) {
+        final ListPreference pref = new ListPreference(context);
+        pref.setTitle(R.string.setting_emoji_processing);
+        pref.setDialogTitle(R.string.setting_emoji_processing);
+        pref.setKey(VoiceSettings.PREF_EMOJI_PROCESSING);
+        pref.setEntries(new CharSequence[] {
+                context.getString(R.string.emoji_announce),
+                context.getString(R.string.emoji_ignore)
+        });
+        pref.setEntryValues(new CharSequence[] {
+                VoiceSettings.EMOJI_ANNOUNCE,
+                VoiceSettings.EMOJI_IGNORE
+        });
+        pref.setDefaultValue(VoiceSettings.EMOJI_ANNOUNCE);
+        pref.setPersistent(true);
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        String current = prefs.getString(VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.EMOJI_ANNOUNCE);
+        pref.setSummary(VoiceSettings.EMOJI_IGNORE.equals(current) ?
+                context.getString(R.string.emoji_ignore) : context.getString(R.string.emoji_announce));
+        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
+        return pref;
+    }
+
+    private static Preference createRateBoostPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_rate_boost);
+        pref.setSummary(R.string.setting_rate_boost_summary);
+        pref.setKey(VoiceSettings.PREF_RATE_BOOST);
+        pref.setDefaultValue(false);
+        pref.setPersistent(true);
+        return pref;
+    }
+
     private static void addPreferences(Context context, PreferenceGroup group,
                                        SpeechSynthesis engine, List<Voice> voices,
                                        boolean isWatch) {
@@ -431,6 +597,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         if (!isWatch) {
             group.addPreference(createSupportedLanguagesPreference(context, voices));
             group.addPreference(createImportVoicePreference(context));
+            group.addPreference(createUnicodeNormalizationPreference(context));
+            group.addPreference(createEmojiProcessingPreference(context));
+            group.addPreference(createRateBoostPreference(context));
         }
         group.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
         group.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));

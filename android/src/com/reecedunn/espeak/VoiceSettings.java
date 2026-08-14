@@ -37,6 +37,11 @@ public class VoiceSettings {
     public static final String PREF_PUNCTUATION_CHARACTERS = "espeak_punctuation_characters";
     public static final String PREF_RATE_BOOST = "espeak_rate_boost";
     public static final int RATE_BOOST_MULTIPLIER = 3;
+    public static final String PREF_NORMALIZE_UNICODE = "espeak_normalize_unicode";
+    public static final String PREF_EMOJI_PROCESSING = "espeak_emoji_processing";
+
+    public static final String EMOJI_ANNOUNCE = "announce";
+    public static final String EMOJI_IGNORE = "ignore";
 
     public static final String PRESET_VARIANT = "variant";
     public static final String PRESET_RATE = "rate";
@@ -170,5 +175,17 @@ public class VoiceSettings {
 
     public boolean isRateBoostEnabled() {
         return mPreferences.getBoolean(PREF_RATE_BOOST, false);
+    }
+
+    public boolean isUnicodeNormalizationEnabled() {
+        return mPreferences.getBoolean(PREF_NORMALIZE_UNICODE, true);
+    }
+
+    public String getEmojiProcessingMode() {
+        return mPreferences.getString(PREF_EMOJI_PROCESSING, EMOJI_ANNOUNCE);
+    }
+
+    public boolean isEmojiIgnoreEnabled() {
+        return EMOJI_IGNORE.equals(getEmojiProcessingMode());
     }
 }

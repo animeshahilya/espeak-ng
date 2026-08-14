@@ -17,42 +17,19 @@
 package com.reecedunn.espeak.preference;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.preference.DialogPreference;
+import android.preference.Preference;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.Spinner;
 
-import com.reecedunn.espeak.CheckVoiceData;
-import com.reecedunn.espeak.DownloadVoiceData;
-import com.reecedunn.espeak.FileListAdapter;
-import com.reecedunn.espeak.FileUtils;
 import com.reecedunn.espeak.R;
+import com.reecedunn.espeak.TtsSettingsActivity;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-
-public class ImportVoicePreference extends DialogPreference {
-    private File mRoot;
-    private Spinner mDictionaries;
+public class ImportVoicePreference extends Preference {
 
     public ImportVoicePreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setDialogLayoutResource(R.layout.import_voice_preference);
         setLayoutResource(R.layout.information_view);
-        setPositiveButtonText(android.R.string.ok);
-        setNegativeButtonText(android.R.string.cancel);
-
-        mRoot = Environment.getExternalStorageDirectory();
     }
 
     public ImportVoicePreference(Context context, AttributeSet attrs) {
@@ -64,61 +41,31 @@ public class ImportVoicePreference extends DialogPreference {
     }
 
     public void setDescription(int resId) {
-        callChangeListener(getContext().getString(resId));
+        setSummary(getContext().getString(resId));
     }
 
     @Override
-    protected View onCreateDialogView() {
-        View root = super.onCreateDialogView();
-        mDictionaries = (Spinner)root.findViewById(R.id.dictionaries);
-        return root;
-    }
-
-    @Override
-    protected void onBindDialogView(View view) {
-        super.onBindDialogView(view);
-        File[] dictionaries = mRoot.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return !file.isDirectory() && file.getName().endsWith("_dict");
+    protected void onClick() {
+        super.onClick();
+        if (getContext() instanceof Activity) {
+            Activity activity = (Activity) getContext();
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            String[] mimeTypes = {"application/zip", "application/octet-stream", "*/*"};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            try {
+                activity.startActivityForResult(intent, TtsSettingsActivity.REQUEST_CODE_IMPORT_VOICE);
+            } catch (Exception e) {
+                try {
+                    Intent fallback = new Intent(Intent.ACTION_GET_CONTENT);
+                    fallback.setType("*/*");
+                    activity.startActivityForResult(fallback, TtsSettingsActivity.REQUEST_CODE_IMPORT_VOICE);
+                } catch (Exception ex) {
+                    // Ignore if no file picker available
+                }
             }
-        });
-        if (dictionaries != null) {
-            Arrays.sort(dictionaries);
-            mDictionaries.setAdapter(new FileListAdapter((Activity) getContext(), dictionaries));
         }
-    }
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-            case DialogInterface.BUTTON_POSITIVE:
-                new AsyncTask<Object,Object,File>() {
-                    @Override
-                    protected File doInBackground(Object... objects) {
-                        File source = (File)mDictionaries.getSelectedItem();
-                        if (source != null) {
-                            File destination = new File(CheckVoiceData.getDataPath(getContext()), source.getName());
-                            try {
-                                byte[] data = FileUtils.readBinary(source);
-                                FileUtils.write(destination, data);
-                                return source;
-                            } catch (IOException e) {
-                            }
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(File file) {
-                        if (file != null) {
-                            final Intent intent = new Intent(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
-                            getContext().sendBroadcast(intent);
-                        }
-                    }
-                }.execute();
-                break;
-        }
-        super.onClick(dialog, which);
     }
 }
+

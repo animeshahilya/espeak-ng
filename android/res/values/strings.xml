@@ -59,5 +59,14 @@
   <string name="variant_croak">Croak</string>
   <string name="variant_whisper">Whisper</string>
   <string name="import_voice_title">Import eSpeak dictionary</string>
-  <string name="import_voice_description">Import an eSpeak voice dictionary file from the SD card.</string>
+  <string name="import_voice_description">Import an eSpeak voice dictionary (*_dict) or voice archive (*.zip).</string>
+  <string name="setting_normalize_unicode">Normalize Unicode (NFKC)</string>
+  <string name="setting_normalize_unicode_summary">Convert stylized fonts and symbols to standard text (e.g. 𝖁𝕰𝕹𝖀𝕾, 𝘛𝘢𝘳𝘢)</string>
+  <string name="setting_emoji_processing">Emoji processing</string>
+  <string name="setting_emoji_processing_summary">Control whether emojis are announced or skipped during reading</string>
+  <string name="emoji_announce">Announce emojis</string>
+  <string name="emoji_ignore">Ignore / skip emojis</string>
+  <string name="setting_rate_boost_summary">Enable high speech rates above normal maximum using Sonic acceleration</string>
+  <string name="import_voice_success">Successfully imported dictionary data.</string>
+  <string name="import_voice_error">Failed to import dictionary file.</string>
 </resources>
