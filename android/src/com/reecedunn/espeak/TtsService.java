@@ -63,7 +63,16 @@ public class TtsService extends TextToSpeechService {
     private static Context storageContext;
     private static final boolean DEBUG = BuildConfig.DEBUG;
 
-    private SpeechSynthesis mEngine;
+    /**
+     * volatile: onStop() reads this from the framework's control thread,
+     * deliberately without taking the {@code this} monitor (it has to be
+     * able to interrupt a synthesis in progress on the synth thread, not
+     * queue up behind it - see stop_requested in eSpeakService.c). That
+     * makes it a genuine concurrent reader against initializeTtsEngine(),
+     * which now also runs off the main thread (via mLanguagesUpdatedReceiver)
+     * instead of only ever during the single-threaded onCreate() it used to.
+     */
+    private volatile SpeechSynthesis mEngine;
     private SynthesisCallback mCallback;
     private final AtomicBoolean mCallbackDone = new AtomicBoolean(false);
 
@@ -331,7 +340,14 @@ public class TtsService extends TextToSpeechService {
     protected void onStop() {
         Log.i(TAG, "Received stop request.");
 
-        mEngine.stop();
+        // Local snapshot: mEngine can be briefly reassigned (old engine
+        // stopped, new one not yet in place) by a concurrent
+        // initializeTtsEngine() reload; a null field read here would NPE
+        // instead of just missing that one edge of the reload window.
+        final SpeechSynthesis engine = mEngine;
+        if (engine != null) {
+            engine.stop();
+        }
     }
 
     private String getRequestString(SynthesisRequest request) {
@@ -485,17 +501,19 @@ public class TtsService extends TextToSpeechService {
 
         final VoiceSettings settings = new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext), mEngine);
 
-        if (settings.isUnicodeNormalizationEnabled() && text != null && !isAsciiOnly(text)) {
+        // text is non-null from here on: the only reassignment above is
+        // substring(...).trim(), and the null case already returned.
+        if (settings.isUnicodeNormalizationEnabled() && !isAsciiOnly(text)) {
             text = Normalizer.normalize(text, Normalizer.Form.NFKC);
         }
 
-        if (settings.isEmojiIgnoreEnabled() && text != null && containsPotentialEmoji(text)) {
+        if (settings.isEmojiIgnoreEnabled() && containsPotentialEmoji(text)) {
             text = filterEmojis(text);
         }
 
         mSynthText = text;
         mSynthTextOffset = textOffset;
-        mSynthTextCodePoints = (text != null) ? text.codePointCount(0, text.length()) : 0;
+        mSynthTextCodePoints = text.codePointCount(0, text.length());
         mAnchorCodePoint = 0;
         mAnchorOffset = 0;
 
@@ -515,7 +533,7 @@ public class TtsService extends TextToSpeechService {
         mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
         mEngine.Capitals.setValue(settings.getCapitals());
         mEngine.WordGap.setValue(settings.getWordGap());
-        mEngine.synthesize(text, text != null && text.startsWith("<speak"));
+        mEngine.synthesize(text, text.startsWith("<speak"));
     }
 
     private static boolean isAsciiOnly(String text) {

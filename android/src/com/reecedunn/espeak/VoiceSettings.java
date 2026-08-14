@@ -150,7 +150,14 @@ public class VoiceSettings {
         if (prefString == null) {
             return defaultValue;
         }
-        return Integer.parseInt(prefString);
+        try {
+            return Integer.parseInt(prefString);
+        } catch (NumberFormatException e) {
+            // A malformed value here (e.g. hand-edited prefs) would otherwise
+            // crash every synthesis request through this method, since
+            // getRate()/getPitch()/etc. all route through it.
+            return defaultValue;
+        }
     }
 
     public JSONObject toJSON() throws JSONException {

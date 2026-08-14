@@ -360,7 +360,10 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSynthesize(
   espeak_SetSynthCallback(SynthCallback);
   frames_delivered = 0;
   atomic_store(&stop_requested, 0);
-  const espeak_ERROR result = espeak_Synth(c_text, strlen(c_text), 0,  // position
+  /* c_text is NULL whenever the caller passes a null jstring; strlen(NULL)
+   * is undefined behaviour (a crash on bionic), so a null text is treated
+   * as empty rather than dereferenced. */
+  const espeak_ERROR result = espeak_Synth(c_text, c_text ? strlen(c_text) : 0, 0,  // position
                POS_CHARACTER, 0, // end position (0 means no end position)
                isSsml ? espeakCHARS_UTF8 | espeakSSML // UTF-8 encoded SSML
                       : espeakCHARS_UTF8,             // UTF-8 encoded text

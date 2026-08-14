@@ -49,7 +49,7 @@ public class VoiceVariantPreference extends DialogPreference {
         public TextView text;
     }
 
-    private class VariantData {
+    private static class VariantData {
         private final int name;
         private final Object arg;
         private final VoiceVariant variant;
@@ -77,7 +77,7 @@ public class VoiceVariantPreference extends DialogPreference {
         }
     }
 
-    public class VariantDataListAdapter extends ArrayAdapter<VariantData>
+    public static class VariantDataListAdapter extends ArrayAdapter<VariantData>
     {
         private final LayoutInflater mInflater;
 
@@ -114,7 +114,7 @@ public class VoiceVariantPreference extends DialogPreference {
         }
     }
 
-    private Integer[] categories = {
+    private static final Integer[] categories = {
         R.string.variant_male,
         R.string.variant_female,
         R.string.variant_klatt,
@@ -125,7 +125,7 @@ public class VoiceVariantPreference extends DialogPreference {
         R.string.variant_whisper,
     };
 
-    private VariantData[][] variants = {
+    private static final VariantData[][] variants = {
         {   // Male
             new VariantData(R.string.variant_default, "male"),
             new VariantData(R.string.variant_n, 1, "m1"),

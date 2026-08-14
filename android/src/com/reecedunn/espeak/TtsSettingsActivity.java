@@ -88,8 +88,14 @@ public class TtsSettingsActivity extends PreferenceActivity {
         if (pitch == null) {
             // Try the old eyes-free setting:
             pitch = prefs.getString(VoiceSettings.PREF_DEFAULT_PITCH, "100");
-            int pitchValue = Integer.parseInt(pitch) / 2;
-            editor.putString(VoiceSettings.PREF_PITCH, Integer.toString(pitchValue));
+            try {
+                int pitchValue = Integer.parseInt(pitch) / 2;
+                editor.putString(VoiceSettings.PREF_PITCH, Integer.toString(pitchValue));
+            } catch (NumberFormatException e) {
+                // Malformed legacy value - leave PREF_PITCH unset so
+                // VoiceSettings.getPitch() falls back to the engine default
+                // instead of crashing the settings screen on open.
+            }
         }
 
         String rate = prefs.getString(VoiceSettings.PREF_RATE, null);
@@ -105,10 +111,15 @@ public class TtsSettingsActivity extends PreferenceActivity {
             int maxValue = engine.Rate.getMaxValue();
 
             rate = prefs.getString(VoiceSettings.PREF_DEFAULT_RATE, "100");
-            int rateValue = (Integer.parseInt(rate) / 100) * defaultValue;
-            if (rateValue < defaultValue) rateValue = defaultValue;
-            if (rateValue > maxValue) rateValue = maxValue;
-            editor.putString(VoiceSettings.PREF_RATE, Integer.toString(rateValue));
+            try {
+                int rateValue = (Integer.parseInt(rate) / 100) * defaultValue;
+                if (rateValue < defaultValue) rateValue = defaultValue;
+                if (rateValue > maxValue) rateValue = maxValue;
+                editor.putString(VoiceSettings.PREF_RATE, Integer.toString(rateValue));
+            } catch (NumberFormatException e) {
+                // Malformed legacy value - leave PREF_RATE unset so
+                // VoiceSettings.getRate() falls back to the engine default.
+            }
         }
 
         String variant = prefs.getString(VoiceSettings.PREF_VARIANT, null);
@@ -320,11 +331,16 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
         final String prefString = prefs.getString(key, null);
-        if (prefString == null) {
-            pref.setProgress(defaultValue);
-        } else {
-            pref.setProgress(Integer.parseInt(prefString));
+        int progress = defaultValue;
+        if (prefString != null) {
+            try {
+                progress = Integer.parseInt(prefString);
+            } catch (NumberFormatException e) {
+                // Malformed value - fall back to the default rather than
+                // crashing the settings screen on open.
+            }
         }
+        pref.setProgress(progress);
 
         return pref;
     }
