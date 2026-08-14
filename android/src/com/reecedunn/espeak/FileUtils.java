@@ -50,12 +50,12 @@ public class FileUtils {
     }
 
     private static ByteArrayOutputStream readByteArray(InputStream stream, int length) throws IOException {
-        ByteArrayOutputStream content = new ByteArrayOutputStream(length);
-        int c = stream.read();
-        while (c != -1)
+        ByteArrayOutputStream content = new ByteArrayOutputStream(Math.max(length, 0));
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        while ((bytesRead = stream.read(buffer)) != -1)
         {
-            content.write((byte)c);
-            c = stream.read();
+            content.write(buffer, 0, bytesRead);
         }
         return content;
     }

@@ -71,6 +71,14 @@ public class VoiceVariant {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int result = variant == null ? 0 : variant.hashCode();
+        result = 31 * result + gender;
+        result = 31 * result + age;
+        return result;
+    }
+
     public static VoiceVariant parseVoiceVariant(String value) {
         String[] parts = mVariantPattern.split(value);
         int age = SpeechSynthesis.AGE_ANY;

@@ -26,7 +26,10 @@
 package com.reecedunn.espeak;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioTrack;
 import android.os.Build;
@@ -92,6 +95,34 @@ public class TtsService extends TextToSpeechService {
                 }
             };
 
+    /**
+     * Reloads the voice list from the native engine when new voice data lands
+     * on disk (first-run extraction or a user-imported voice/zip). Without
+     * this, a service instance that was already running keeps serving the
+     * voice list it enumerated at onCreate() until the process happens to be
+     * killed and restarted, so an imported voice never becomes selectable.
+     *
+     * initializeTtsEngine() re-runs native JNI init (the same seconds-long
+     * disk/JNI cost documented on TtsSettingsActivity.createPreferences()),
+     * so it is pushed off this receiver's main-thread callback. It still
+     * needs to serialize with onSynthesizeText() -- both touch mEngine
+     * without their own lock -- so the background thread takes the same
+     * monitor onSynthesizeText() is synchronized on, rather than racing it.
+     */
+    private final BroadcastReceiver mLanguagesUpdatedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (TtsService.this) {
+                        initializeTtsEngine();
+                    }
+                }
+            }, "espeak-voices-reload").start();
+        }
+    };
+
     @Override
     public void onCreate() {
         storageContext = EspeakApp.getStorageContext();
@@ -104,6 +135,12 @@ public class TtsService extends TextToSpeechService {
             CheckVoiceData.extractVoiceData(storageContext);
         }
         initializeTtsEngine();
+        final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mLanguagesUpdatedReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mLanguagesUpdatedReceiver, filter);
+        }
         super.onCreate();
     }
 
@@ -112,6 +149,11 @@ public class TtsService extends TextToSpeechService {
         super.onDestroy();
         if (mPreferences != null) {
             mPreferences.unregisterOnSharedPreferenceChangeListener(mOnPreferencesChanged);
+        }
+        try {
+            unregisterReceiver(mLanguagesUpdatedReceiver);
+        } catch (IllegalArgumentException e) {
+            // Not registered (onCreate() never completed) - nothing to undo.
         }
     }
 

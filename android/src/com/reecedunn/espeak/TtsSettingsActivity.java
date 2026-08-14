@@ -99,8 +99,13 @@ public class TtsSettingsActivity extends PreferenceActivity {
         }
 
         String rate = prefs.getString(VoiceSettings.PREF_RATE, null);
-        if (rate == null) {
-            // Try the old eyes-free setting:
+        // Only a real eyes-free install has PREF_DEFAULT_RATE set; a fresh
+        // install has neither pref, and VoiceSettings.getRate() already
+        // falls back to the engine default in that case. Constructing
+        // SpeechSynthesis here is seconds of JNI/disk work on the main
+        // thread (the same ANR risk fixed for createPreferences() below),
+        // so skip it unless there is actually something to migrate.
+        if (rate == null && prefs.contains(VoiceSettings.PREF_DEFAULT_RATE)) {
             SpeechSynthesis engine = new SpeechSynthesis(storageContext, null);
             int defaultValue = engine.Rate.getDefaultValue();
             int maxValue = engine.Rate.getMaxValue();
