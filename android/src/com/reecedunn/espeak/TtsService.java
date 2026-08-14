@@ -375,20 +375,26 @@ public class TtsService extends TextToSpeechService {
      * order; the occasional out-of-order event falls back to a full rescan.
      */
     private int codePointToOffset(int codePointIndex) {
-        if (codePointIndex <= 0) {
+        if (mSynthText == null || codePointIndex <= 0) {
             return 0;
         }
         if (codePointIndex >= mSynthTextCodePoints) {
             return mSynthText.length();
         }
-        if (codePointIndex < mAnchorCodePoint) {
+        try {
+            if (codePointIndex < mAnchorCodePoint || mAnchorOffset > mSynthText.length()) {
+                mAnchorCodePoint = 0;
+                mAnchorOffset = 0;
+            }
+            mAnchorOffset = mSynthText.offsetByCodePoints(
+                    mAnchorOffset, codePointIndex - mAnchorCodePoint);
+            mAnchorCodePoint = codePointIndex;
+            return mAnchorOffset;
+        } catch (Exception e) {
             mAnchorCodePoint = 0;
             mAnchorOffset = 0;
+            return 0;
         }
-        mAnchorOffset = mSynthText.offsetByCodePoints(
-                mAnchorOffset, codePointIndex - mAnchorCodePoint);
-        mAnchorCodePoint = codePointIndex;
-        return mAnchorOffset;
     }
 
     @Override

@@ -33,6 +33,7 @@
   <string name="variant_ed">Ed</string>
   <string name="variant_edward">Edward</string>
   <string name="variant_edward2">Edward2</string>
+  <string name="variant_fast">Fast</string>
   <string name="variant_gene">Gene</string>
   <string name="variant_gene2">Gene 2</string>
   <string name="variant_grandma">Grandma</string>
@@ -58,6 +59,7 @@
   <string name="variant_michael">Michael</string>
   <string name="variant_michel">Michel</string>
   <string name="variant_mike">Mike</string>
+  <string name="variant_mike2">Mike 2</string>
   <string name="variant_mr_serious">Mr Serious</string>
   <string name="variant_nguyen">Nguyen</string>
   <string name="variant_norbert">Norbert</string>
