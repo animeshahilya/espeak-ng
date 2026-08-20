@@ -131,6 +131,9 @@ espeak_ng_SetPunctuationList(const wchar_t *punctlist);
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_SetVoiceByName(const char *name);
 
+ESPEAK_NG_API void
+espeak_ng_SetFallbackLanguage(const char *lang);
+
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_SetVoiceByFile(const char *filename);
 

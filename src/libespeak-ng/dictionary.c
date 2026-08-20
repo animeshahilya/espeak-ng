@@ -2217,7 +2217,8 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 						if (tr->letter_bits_offset > 0) {
 							// not a Latin alphabet, switch to the default Latin alphabet language
 							if ((letter <= 0x241) && iswalpha(letter)) {
-								sprintf(phonemes, "%cen", phonSWITCH);
+								extern char espeakng_fallback_language[20];
+								sprintf(phonemes, "%c%s", phonSWITCH, espeakng_fallback_language);
 								return 0;
 							}
 						}

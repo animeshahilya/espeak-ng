@@ -56,6 +56,8 @@ static char translator2_language[20] = { 0 };
 Translator *translator3 = NULL; // tertiary translator for certain words
 static char translator3_language[20] = { 0 };
 
+char espeakng_fallback_language[20] = "en";
+
 FILE *f_trans = NULL; // phoneme output text
 int option_tone_flags = 0; // bit 8=emphasize allcaps, bit 9=emphasize penultimate stress
 int option_phonemes = 0;
@@ -344,10 +346,20 @@ static void Word_EmbeddedCmd(void)
 	} while (((embedded_cmd & 0x80) == 0) && (embedded_read < embedded_ix));
 }
 
+ESPEAK_NG_API void espeak_ng_SetFallbackLanguage(const char *lang) {
+    if (lang && strlen(lang) > 0 && strlen(lang) < sizeof(espeakng_fallback_language)) {
+        strcpy(espeakng_fallback_language, lang);
+    }
+}
+
 static int SetAlternateTranslator(const char *new_language, Translator **translator, char translator_language[20])
 {
 	// Set alternate translator to a second language
 	int new_phoneme_tab;
+	
+	if (strcmp(new_language, "en") == 0 || strcmp(new_language, "en-gb") == 0 || strcmp(new_language, ESPEAKNG_DEFAULT_VOICE) == 0) {
+		new_language = espeakng_fallback_language;
+	}
 
 	if ((new_phoneme_tab = SelectPhonemeTableName(new_language)) >= 0) {
 		if ((*translator != NULL) && (strcmp(new_language, translator_language) != 0)) {
