@@ -257,6 +257,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
                     @Override
                     public void run() {
                         if (finalSuccess) {
+                            synchronized (TtsSettingsActivity.class) {
+                                sLangInfo.clear();
+                            }
                             activity.sendBroadcast(new Intent(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED));
                             Toast.makeText(activity, R.string.import_voice_success, Toast.LENGTH_SHORT).show();
                         } else {
@@ -342,6 +345,11 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
             @Override
             public void onComplete(boolean success, String errorMessage) {
+                if (success) {
+                    synchronized (TtsSettingsActivity.class) {
+                        sLangInfo.clear();
+                    }
+                }
                 Toast.makeText(context,
                         success ? R.string.language_pack_download_success : R.string.language_pack_download_failed,
                         Toast.LENGTH_SHORT).show();

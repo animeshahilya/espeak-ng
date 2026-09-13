@@ -38,20 +38,27 @@ tuned for the accessibility use case rather than general-purpose narration.
   high-speed TalkBack use), selectable from the Voice variant picker's
   Klatt category.
 * **Context-aware digit reading** — an opt-in "read numbers digit by digit"
-  mode for the general case, plus an always-on heuristic that reads likely
-  OTPs/PINs/verification codes (4-8 digits near a keyword like "OTP" or
-  "code") digit-by-digit while leaving ordinary numbers and rupee amounts
-  read naturally. The ₹ symbol expands to "rupees".
+  mode for the general case, plus an always-on bidirectional heuristic that reads
+  likely OTPs/PINs/verification codes (4-8 digits near a keyword like "OTP", "PIN",
+  or "code", matching whole-word patterns like `Your OTP is 123456` or `123456 is your code`)
+  digit-by-digit while leaving ordinary numbers and rupee amounts read naturally.
+  Regex word boundary checks prevent false positives on words like "paid", "valid", or
+  "president". The ₹ symbol expands to "rupees".
 * **Clearer emoji announcements** — eSpeak NG's own CLDR-quality emoji
   dictionary ("😂" → "face with tears of joy") is set off from the
-  surrounding sentence with a light pause, so it reads as an aside rather
-  than running into the sentence as if it were literal text.
-* **Reliability work**: several file-descriptor leaks in the voice-data
-  extraction path, a native return value that silently masked synthesis
-  failures, a build task that could silently ship stale voice data on
-  incremental builds, and a debug-build native-debugging regression, all
-  found and fixed on this fork — see `android/CLAUDE.md` for the details
-  and the reasoning behind each.
+  surrounding sentence with a light pause and comma formatting, so it reads as an aside
+  rather than running into the sentence as if it were literal text. Consecutive emojis
+  are cleanly separated.
+* **Reliability & Direct-Boot Storage**:
+  - All voice data and preferences strictly reside in Android Direct-Boot device-protected
+    storage (`/data/user_de/`), ensuring full TalkBack accessibility before device unlock.
+  - Multi-hop HTTP redirect handling (up to 5 hops) in `LanguagePackManager` ensuring
+    flawless extra language pack downloads from GitHub Releases / S3 CDN.
+  - Missing ISO 3166-1 alpha-3 locale mappings (`AUS`, `CAN`, `IND`, `SGP`) added to
+    JNI locale translator for accurate Android TTS locale matching.
+  - Clean C/C++ compilation with standardized `ESPEAK_FALLTHROUGH;` annotations across
+    the native engine, eliminating compiler warnings on modern NDK Clang.
+  - Fixed file-descriptor leaks in voice extraction and native return value masking.
 
 ## Building the Android app
 

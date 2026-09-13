@@ -458,15 +458,19 @@ public class SpeechSynthesis {
         mJavaToIanaLanguageCode.put("zho", "zh");
 
         mJavaToIanaCountryCode.put("ARM", "AM");
+        mJavaToIanaCountryCode.put("AUS", "AU");
         mJavaToIanaCountryCode.put("BEL", "BE");
         mJavaToIanaCountryCode.put("BRA", "BR");
+        mJavaToIanaCountryCode.put("CAN", "CA");
         mJavaToIanaCountryCode.put("CHE", "CH");
         mJavaToIanaCountryCode.put("FRA", "FR");
         mJavaToIanaCountryCode.put("GBR", "GB");
         mJavaToIanaCountryCode.put("HKG", "HK");
+        mJavaToIanaCountryCode.put("IND", "IN");
         mJavaToIanaCountryCode.put("JAM", "JM");
         mJavaToIanaCountryCode.put("MEX", "MX");
         mJavaToIanaCountryCode.put("PRT", "PT");
+        mJavaToIanaCountryCode.put("SGP", "SG");
         mJavaToIanaCountryCode.put("USA", "US");
         mJavaToIanaCountryCode.put("VNM", "VN");
 

@@ -271,8 +271,8 @@ createDataVersion.mustRunAfter 'externalNativeBuildDebug'
 createDataVersion.mustRunAfter 'externalNativeBuildRelease'
 
 project.afterEvaluate {
-    tasks.checkData.dependsOn(externalNativeBuildDebug)
-    tasks.splitLanguageData.dependsOn(externalNativeBuildDebug)
+    tasks.checkData.dependsOn('externalNativeBuildDebug')
+    tasks.splitLanguageData.dependsOn('externalNativeBuildDebug')
     tasks.named('mapDebugSourceSetPaths') {
         dependsOn ':createDataVersion', ':createDataArchive'
     }

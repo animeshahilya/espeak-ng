@@ -55,7 +55,16 @@ public class CheckVoiceData extends Activity {
     };
 
     public static File getDataPath(Context context) {
-        return new File(context.getDir("voices", MODE_PRIVATE), "espeak-ng-data");
+        Context storage = EspeakApp.getStorageContext();
+        if (storage == null && context != null) {
+            storage = context.isDeviceProtectedStorage()
+                    ? context
+                    : context.createDeviceProtectedStorageContext();
+        }
+        if (storage == null) {
+            storage = context;
+        }
+        return new File(storage.getDir("voices", MODE_PRIVATE), "espeak-ng-data");
     }
 
     public static boolean hasBaseResources(Context context) {

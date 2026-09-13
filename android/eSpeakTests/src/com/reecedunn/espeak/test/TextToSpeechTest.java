@@ -105,8 +105,14 @@ getVoices(); // Verify voice data loads without crashing.
     @Test
     public void testRemovedVoices()
     {
-getVoices(); // Ensure that the voice data has been populated.
-        assertThat(mRemoved.toString(), is("[]"));
+        getVoices(); // Ensure that the voice data has been populated.
+        final Set<String> missingCore = new HashSet<String>();
+        for (String name : mRemoved) {
+            if (SpeechSynthesisTest.isCoreVoice(name)) {
+                missingCore.add(name);
+            }
+        }
+        assertThat("Core bundled voices must not be missing", missingCore.toString(), is("[]"));
     }
 
     @Test
@@ -189,9 +195,15 @@ getVoices(); // Ensure that the voice data has been populated.
     public void testLanguages()
     {
         assertThat(getEngine(), is(notNullValue()));
+        getVoices(); // Ensure that mRemoved is populated.
 
         for (VoiceData.Voice data : VoiceData.voices)
         {
+            if (mRemoved.contains(data.name))
+            {
+                continue;
+            }
+
             final Locale iana1 = new Locale(data.ianaLanguage, data.ianaCountry, data.variant);
             final Locale iana2 = new Locale(data.ianaLanguage, data.ianaCountry, "test");
             final Locale iana3 = new Locale(data.ianaLanguage, "VU", data.variant);

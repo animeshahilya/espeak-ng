@@ -64,12 +64,24 @@ public class LanguagePackManager {
     }
 
     public static boolean isInstalled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+        Context storageContext = EspeakApp.getStorageContext();
+        if (storageContext == null && context != null) {
+            storageContext = context.isDeviceProtectedStorage()
+                    ? context
+                    : context.createDeviceProtectedStorageContext();
+        }
+        if (storageContext == null) {
+            storageContext = context;
+        }
+        return PreferenceManager.getDefaultSharedPreferences(storageContext)
                 .getBoolean(PREF_EXTRA_LANGUAGES_INSTALLED, false);
     }
 
     public static void download(final Context context, final Callback callback) {
         final Context appContext = context.getApplicationContext();
+        final Context storageContext = EspeakApp.getStorageContext() != null
+                ? EspeakApp.getStorageContext()
+                : (appContext.isDeviceProtectedStorage() ? appContext : appContext.createDeviceProtectedStorageContext());
         final Handler mainHandler = new Handler(Looper.getMainLooper());
 
         new Thread(new Runnable() {
@@ -83,8 +95,8 @@ public class LanguagePackManager {
                     downloadToFile(DOWNLOAD_URL, tempFile, mainHandler, callback);
                     FileUtils.extractZip(
                             new java.io.FileInputStream(tempFile),
-                            CheckVoiceData.getDataPath(appContext).getParentFile());
-                    PreferenceManager.getDefaultSharedPreferences(appContext).edit()
+                            CheckVoiceData.getDataPath(storageContext).getParentFile());
+                    PreferenceManager.getDefaultSharedPreferences(storageContext).edit()
                             .putBoolean(PREF_EXTRA_LANGUAGES_INSTALLED, true)
                             .apply();
                     success = true;
@@ -117,14 +129,37 @@ public class LanguagePackManager {
 
     private static void downloadToFile(String urlString, File outFile, Handler mainHandler, Callback callback)
             throws IOException {
-        final HttpURLConnection connection = (HttpURLConnection) new URL(urlString).openConnection();
-        connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
-        connection.setReadTimeout(READ_TIMEOUT_MS);
-        try {
+        URL url = new URL(urlString);
+        HttpURLConnection connection = null;
+        for (int redirects = 0; redirects < 5; redirects++) {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
+            connection.setReadTimeout(READ_TIMEOUT_MS);
+            connection.setInstanceFollowRedirects(true);
             final int status = connection.getResponseCode();
+            if (status == HttpURLConnection.HTTP_MOVED_PERM
+                    || status == HttpURLConnection.HTTP_MOVED_TEMP
+                    || status == HttpURLConnection.HTTP_SEE_OTHER
+                    || status == 307
+                    || status == 308) {
+                String location = connection.getHeaderField("Location");
+                connection.disconnect();
+                if (location == null) {
+                    throw new IOException("Redirect status " + status + " with no Location header");
+                }
+                url = new URL(url, location);
+                continue;
+            }
             if (status != HttpURLConnection.HTTP_OK) {
+                connection.disconnect();
                 throw new IOException("Unexpected HTTP status " + status + " downloading language pack");
             }
+            break;
+        }
+        if (connection == null) {
+            throw new IOException("Failed to establish connection to " + urlString);
+        }
+        try {
             final int contentLength = connection.getContentLength();
 
             final InputStream in = connection.getInputStream();

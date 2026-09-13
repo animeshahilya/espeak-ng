@@ -3,9 +3,9 @@ name: Android
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [ master, android ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, android ]
 
 jobs:
   build-debug:

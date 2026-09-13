@@ -36,6 +36,19 @@ extern "C"
 #define ESPEAK_NG_API
 #endif
 
+#ifndef ESPEAK_FALLTHROUGH
+#  if defined(__has_attribute)
+#    if __has_attribute(fallthrough)
+#      define ESPEAK_FALLTHROUGH __attribute__((fallthrough))
+#    endif
+#  elif defined(__GNUC__) && __GNUC__ >= 7
+#    define ESPEAK_FALLTHROUGH __attribute__((fallthrough))
+#  endif
+#  ifndef ESPEAK_FALLTHROUGH
+#    define ESPEAK_FALLTHROUGH ((void)0)
+#  endif
+#endif
+
 #define ESPEAKNG_DEFAULT_VOICE "en"
 
 typedef enum {

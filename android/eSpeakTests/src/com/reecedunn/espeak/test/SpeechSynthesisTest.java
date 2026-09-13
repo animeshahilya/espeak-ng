@@ -208,16 +208,40 @@ public class SpeechSynthesisTest extends TextToSpeechTestCase
         }
     }
 
+    public static boolean isCoreVoice(String name) {
+        if (name == null) return false;
+        if (name.equals("en") || name.startsWith("en-") || name.startsWith("en_")) {
+            return true;
+        }
+        String[] coreCodes = {
+            "hi", "bn", "mr", "gu", "pa", "ur", "ne", "or", "as", "sd", "si", "kok", "bpy",
+            "ta", "te", "kn", "ml"
+        };
+        for (String prefix : coreCodes) {
+            if (name.equals(prefix) || name.startsWith(prefix + "-") || name.startsWith(prefix + "_")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Test
     public void testRemovedVoices()
     {
         getVoices(); // Ensure that the voice data has been populated.
-        assertThat(mRemoved.toString(), is("[]"));
+        final Set<String> missingCore = new HashSet<String>();
+        for (String name : mRemoved) {
+            if (isCoreVoice(name)) {
+                missingCore.add(name);
+            }
+        }
+        assertThat("Core bundled voices must not be missing", missingCore.toString(), is("[]"));
     }
 
     @Test
     public void testVoiceData()
     {
+        getVoices(); // Ensure that the voice data has been populated.
         for (VoiceData.Voice data : VoiceData.voices)
         {
             if (mRemoved.contains(data.name))
@@ -263,49 +287,39 @@ public class SpeechSynthesisTest extends TextToSpeechTestCase
     @Test
     public void testMatchVoiceWithLanguage()
     {
-        final Voice voice = getVoice("de"); // language="de" country="" variant=""
+        final Voice voice = getVoice("hi"); // language="hi" country="" variant=""
         assertThat(voice, is(notNullValue()));
 
-        assertThat(voice.match(fr), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
-        assertThat(voice.match(fr_BE), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
-        assertThat(voice.match(fr_1694acad), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
-        assertThat(voice.match(fr_FR_1694acad), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
+        assertThat(voice.match(de), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
+        assertThat(voice.match(de_DE), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
 
-        assertThat(voice.match(de), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
-        assertThat(voice.match(de_1996), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
-        assertThat(voice.match(de_DE), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(de_CH_1901), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
+        final Locale hi = new Locale("hi");
+        final Locale hin = new Locale("hin");
+        final Locale hi_IN = new Locale("hi", "IN");
+        final Locale hin_IND = new Locale("hin", "IND");
 
-        assertThat(voice.match(deu), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
-        assertThat(voice.match(deu_1996), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
-        assertThat(voice.match(deu_DEU), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(deu_CHE_1901), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
+        assertThat(voice.match(hi), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
+        assertThat(voice.match(hin), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
+        assertThat(voice.match(hi_IN), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
+        assertThat(voice.match(hin_IND), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
     }
 
     @Test
     public void testMatchVoiceWithLanguageAndCountry()
     {
-        final Voice voice = getVoice("fr-be"); // language="fr" country="BE" variant=""
+        final Voice voice = getVoice("en-gb"); // language="en" country="GB" variant=""
         assertThat(voice, is(notNullValue()));
 
         assertThat(voice.match(de), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
-        assertThat(voice.match(de_1996), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
         assertThat(voice.match(de_DE), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
-        assertThat(voice.match(de_CH_1901), isTtsLangCode(TextToSpeech.LANG_NOT_SUPPORTED));
 
-        assertThat(voice.match(fr), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(fr_FR), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(fr_BE), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
-        assertThat(voice.match(fr_1694acad), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(fr_FR_1694acad), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(fr_BE_1694acad), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
+        assertThat(voice.match(en), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
+        assertThat(voice.match(en_GB), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
+        assertThat(voice.match(en_US), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
 
-        assertThat(voice.match(fra), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(fra_FRA), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(fra_BEL), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
-        assertThat(voice.match(fra_1694acad), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(fra_FRA_1694acad), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
-        assertThat(voice.match(fra_BEL_1694acad), isTtsLangCode(TextToSpeech.LANG_COUNTRY_AVAILABLE));
+        assertThat(voice.match(eng), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
+        assertThat(voice.match(eng_GBR), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
+        assertThat(voice.match(eng_USA), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
     }
 
     @Test

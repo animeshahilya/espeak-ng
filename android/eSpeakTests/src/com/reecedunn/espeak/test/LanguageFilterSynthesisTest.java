@@ -111,17 +111,23 @@ public class LanguageFilterSynthesisTest {
                 .commit();
     }
 
-    /** The id LanguageSettings filters on is Voice.toString(), e.g. "fas". */
+    /** The id LanguageSettings filters on is Voice.toString(), e.g. "fas" or "hin". */
     private String persianFilterId() {
         final SpeechSynthesis engine = new SpeechSynthesis(mPrefContext, null);
         final List<com.reecedunn.espeak.Voice> voices = engine.getAvailableVoices();
         for (com.reecedunn.espeak.Voice voice : voices) {
             if (voice.locale.getLanguage().equals(new Locale("fa").getLanguage())) {
-                Log.i(TAG, "Persian voice: name=" + voice.name + " id=" + voice.toString());
+                Log.i(TAG, "Filter voice (Persian): name=" + voice.name + " id=" + voice.toString());
                 return voice.toString();
             }
         }
-        return null;
+        for (com.reecedunn.espeak.Voice voice : voices) {
+            if (!voice.locale.getLanguage().equals("en") && !voice.locale.getLanguage().equals("eng")) {
+                Log.i(TAG, "Filter voice (Non-English fallback): name=" + voice.name + " id=" + voice.toString());
+                return voice.toString();
+            }
+        }
+        return voices.isEmpty() ? null : voices.get(0).toString();
     }
 
     private void filterTo(String voiceId) {

@@ -610,6 +610,16 @@ public class TtsService extends TextToSpeechService {
         return sb.toString();
     }
 
+    private static final java.util.regex.Pattern SMART_CODE_KEYWORD =
+            java.util.regex.Pattern.compile("(?i)\\b(otp|pin|code|passcode|password|secret|verification|security|token|login|id)\\b");
+
+    private static boolean containsSmartCodeKeyword(String context) {
+        if (context == null || context.isEmpty()) {
+            return false;
+        }
+        return SMART_CODE_KEYWORD.matcher(context).find();
+    }
+
     /**
      * Sets off each run of emoji from the surrounding sentence with a light
      * pause (", "), so eSpeak's own emoji dictionary description (e.g. "😂"
@@ -652,7 +662,16 @@ public class TtsService extends TextToSpeechService {
                     out.append(' ');
                 }
             }
-            out.append(text, runStart, i);
+
+            // Separate adjacent emojis in the run with spaces so eSpeak announces each one distinctly
+            for (int j = runStart; j < i; ) {
+                int cp = text.codePointAt(j);
+                if (j > runStart) {
+                    out.append(' ');
+                }
+                out.appendCodePoint(cp);
+                j += Character.charCount(cp);
+            }
 
             // Only add a trailing pause if more text follows and it isn't
             // already punctuation (avoids ",." or ",," doubling up).
@@ -660,6 +679,9 @@ public class TtsService extends TextToSpeechService {
                 char next = text.charAt(i);
                 if (next != ' ' && next != ',' && next != '.' && next != '!' && next != '?' && next != ':' && next != ';') {
                     out.append(',');
+                }
+                if (next != ' ') {
+                    out.append(' ');
                 }
             }
         }
@@ -697,7 +719,7 @@ public class TtsService extends TextToSpeechService {
 
     /**
      * Intelligently detects verification codes, OTPs, and PINs (4-to-8 digit runs
-     * preceded by a keyword like "OTP", "PIN", "code", "verification") and
+     * surrounded by a keyword like "OTP", "PIN", "code", "verification") and
      * space-separates only those numbers so they are read digit-by-digit, while
      * preserving natural reading for normal quantities ("25 items", "year 2024",
      * "₹150000 credited") that happen to have the same digit count but no
@@ -725,10 +747,11 @@ public class TtsService extends TextToSpeechService {
 
                 boolean separate = false;
                 if (digitCount >= 4 && digitCount <= 8) {
-                    int contextStart = Math.max(0, runStart - 20);
-                    String prefix = text.substring(contextStart, runStart).toLowerCase(Locale.ROOT);
-                    if (prefix.contains("otp") || prefix.contains("pin") || prefix.contains("code") ||
-                        prefix.contains("pass") || prefix.contains("verification") || prefix.contains("id")) {
+                    int contextStart = Math.max(0, runStart - 25);
+                    String prefix = text.substring(contextStart, runStart);
+                    int contextEnd = Math.min(len, runEnd + 25);
+                    String suffix = text.substring(runEnd, contextEnd);
+                    if (containsSmartCodeKeyword(prefix) || containsSmartCodeKeyword(suffix)) {
                         separate = true;
                     }
                 }

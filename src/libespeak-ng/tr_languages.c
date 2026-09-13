@@ -846,9 +846,7 @@ Translator *SelectTranslator(const char *name)
 		break;
 	case L('e', 't'): // Estonian
 		tr->encoding = ESPEAKNG_ENCODING_ISO_8859_4;
-#if defined(__GNUC__) && __GNUC__ >= 7
-		__attribute__((fallthrough));
-#endif
+		ESPEAK_FALLTHROUGH;
 		// fallthrough:
 	case L('f', 'i'): // Finnish
 	{

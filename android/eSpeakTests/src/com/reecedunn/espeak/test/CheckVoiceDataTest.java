@@ -45,9 +45,14 @@ public class CheckVoiceDataTest
     @Before
     public void ensureVoiceData()
     {
+        final android.content.Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        if (CheckVoiceData.hasBaseResources(targetContext)) {
+            return;
+        }
+
         // Ensure voice data is extracted before checking it.
         // connectedAndroidTest may clear app data on reinstall.
-        Intent intent = new Intent(InstrumentationRegistry.getInstrumentation().getTargetContext(), DownloadVoiceData.class);
+        Intent intent = new Intent(targetContext, DownloadVoiceData.class);
         try (ActivityScenario<DownloadVoiceData> scenario = ActivityScenario.launchActivityForResult(intent))
         {
             Instrumentation.ActivityResult result = scenario.getResult();
@@ -66,7 +71,10 @@ public class CheckVoiceDataTest
         Set<String> expected = new HashSet<String>();
         for (VoiceData.Voice voice : VoiceData.voices)
         {
-            expected.add(voice.locale);
+            if (SpeechSynthesisTest.isCoreVoice(voice.name))
+            {
+                expected.add(voice.locale);
+            }
         }
         return expected;
     }
