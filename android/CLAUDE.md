@@ -33,6 +33,17 @@ The Gradle build has custom tasks that run automatically:
 4. `createDataHash` generates SHA256 for upgrade detection
 5. `createDataVersion` writes the hash to `res/raw/espeakdata_version`
 
+`splitLanguageData` declares `inputs.dir(srcDir)` on the CMake-generated
+`espeak-ng-data/` tree - without it Gradle has no way to know that directory
+changed (it isn't produced by a task Gradle tracks file-by-file) and treats
+the split as up-to-date forever after the first run, silently shipping a
+stale core bundle on any incremental build that only touches
+`espeak-ng-data/` (a new voice file, an updated dictionary) without also
+touching a C/C++ source file. If a data-only change doesn't seem to reach
+the APK, that input declaration is the first thing to check hasn't
+regressed; `rm -rf build/generated/espeak-ng-data-core build/generated/espeak-ng-data-extra res/raw/espeakdata.zip`
+forces a clean re-split either way.
+
 `createExtraDataArchive` (not run automatically, and not wired into
 `assembleDebug`/`assembleRelease`) zips the extra subset into
 `build/outputs/data/espeakdata-extra.zip`. Run it explicitly and upload that
@@ -45,7 +56,15 @@ currently version-checks it beyond a fresh `latest` release existing.
 Native build disables `USE_ASYNC` and `USE_MBROLA` (not needed on Android) and
 enables `USE_LIBSONIC` for speech rates above `espeakRATE_MAXIMUM`. libsonic has
 no NDK sysroot package, so `jni/CMakeLists.txt` fetches and builds it from
-source and pre-seeds `SONIC_LIB`/`SONIC_INC` for `cmake/deps.cmake`.
+source (pinned to a specific commit, bumped occasionally for upstream fixes
+in `sonic.c` itself - that's the only file of the library actually compiled
+here) and pre-seeds `SONIC_LIB`/`SONIC_INC` for `cmake/deps.cmake`.
+
+`jni/CMakeLists.txt` also sets `-O3` gated to Release only (`$<$<CONFIG:Release>:-O3>`).
+Don't make it unconditional again - it was for a while, and made native
+breakpoints/variable inspection unreliable on debug builds since Gradle
+never passes `-DCMAKE_BUILD_TYPE` explicitly here (AGP infers it from the
+Debug/Release variant).
 
 ### Release signing
 
@@ -77,7 +96,7 @@ Android TTS Framework
 ### Key Classes (`src/com/reecedunn/espeak/`)
 
 - **EspeakApp** — `Application` subclass; owns the device-protected storage context, the one-time migration of pre-2022 preferences into it, and the Wear launcher alias state (see below)
-- **TtsService** — Android TTS engine service; handles `onSynthesizeText()`, voice selection, parameter setup. Also registers a receiver for `DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED` and reloads the engine's voice list on receipt, so a voice imported through `TtsSettingsActivity` becomes selectable without restarting the process.
+- **TtsService** — Android TTS engine service; handles `onSynthesizeText()`, voice selection, parameter setup. Also registers a receiver for `DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED` and reloads the engine's voice list on receipt, so a voice imported through `TtsSettingsActivity` becomes selectable without restarting the process. Also does text preprocessing before handing text to the native engine: `spaceSeparateDigits()` (the "Read numbers digit by digit" setting), `spaceSeparateSmartCodes()` (context-gated OTP/PIN/verification-code digit-by-digit reading plus ₹ → "rupees" expansion - gated on a nearby keyword like "otp"/"pin"/"code" so it doesn't misread ordinary numbers, e.g. a bare rupee amount), and `clarifyEmojiAnnouncements()` (sets emoji descriptions off with a light pause - "I'm happy, grinning face, today" - so they read as an aside rather than plain sentence text; only applies when the "Emoji processing" setting is Announce, not Ignore).
 - **SpeechSynthesis** — JNI wrapper; loads `libttsespeak.so`, exposes native functions as Java API
 - **UnicodeNormalization** — NFKC normalization of synthesis input (stylized Unicode → plain text) with a normalized→original offset map for `rangeStart()` word boundaries
 - **VoiceSettings** — SharedPreferences wrapper for rate, pitch, volume, punctuation, variant
@@ -106,7 +125,7 @@ against a configuration with no UI mode, so it always resolves to the default.
 
 ### JNI Layer (`jni/jni/eSpeakService.c`)
 
-11 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls. Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
+10 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (plus `JNI_OnLoad`, which isn't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
 
 ### Voice Data Lifecycle
 
@@ -114,7 +133,8 @@ On first launch (or version mismatch), `DownloadVoiceData` extracts `res/raw/esp
 
 ### Language packs
 
-The APK only bundles English and the Indic (`lang/inc`)/Dravidian (`lang/dra`)
+The APK only bundles English (including `en-in`, this fork's own Indian
+English voice - see below) and the Indic (`lang/inc`)/Dravidian (`lang/dra`)
 languages - roughly 3MB of dict/lang data versus ~28MB for the other ~100
 languages `espeak-ng-data` ships. `android/build.gradle`'s `splitLanguageData`
 task does this split (see `CORE_DICT_CODES`/`CORE_LANG_FAMILY_DIRS` there); it
@@ -139,15 +159,39 @@ This is the only thing in the app that uses the network
 (`INTERNET`/`ACCESS_NETWORK_STATE` permissions exist solely for it) - it's
 user-triggered from a confirmation dialog, never automatic.
 
+### Indian English (`en-in`) and voice variants
+
+`espeak-ng-data/lang/gmw/en-in` (added on this fork; upstream espeak-ng ships
+no Indian English voice at all) tunes the base English phoneme table via
+lightweight `replace` directives rather than a duplicated phoneme table:
+retroflex `r.` for `r`, dental `t[`/`d[` stops for `T`/`D`, `v` for `w`/`v`,
+plus `dictrules 1 2 8` for syllable-timed rhythm with unreduced full vowels.
+Prefer this `replace`-directive style for any further Indian-language
+phonetic tuning over copying a whole phoneme table - an upstream attempt at
+en-IN that did the latter ([espeak-ng#1981](https://github.com/espeak-ng/espeak-ng/pull/1981))
+was closed unmerged and covers less ground than this file does.
+
+`espeak-ng-data/voices/!v/klatt_*` are custom Klatt-synthesis personas
+(`klatt_paul`, `betty`, `harry`, `frank`, `kit`, `dennis`, `ursula`, `rita`,
+`wendy`, `fast`/"Turbo") exposed in the Klatt category of
+`VoiceVariantPreference`'s picker (`android/src/.../preference/VoiceVariantPreference.java`),
+each needing a matching `variant_klatt_*` string in `res/values/strings.xml`
+and a `VariantData` entry - `VoiceVariantCatalogTest` (see Testing) catches a
+mismatch between the two. These are original parameter values in this
+project's own style (character names as homage, not copied data) - the real
+DECtalk source (`dectalk/dectalk`, `dectalk/463`) exists on GitHub but is
+licensed `Other`/`NOASSERTION` with no clear redistribution rights, so it is
+not a safe source to copy actual voice parameters from into this GPLv3 repo.
+
 ## Source Layout
 
 ```
 android/
-├── src/com/reecedunn/espeak/   # Java sources (14 classes)
+├── src/com/reecedunn/espeak/   # Java sources (15 classes)
 │   └── preference/             # Custom preference widgets (5 classes)
 ├── jni/
 │   ├── CMakeLists.txt          # Native build (links espeak-ng + JNI, builds libsonic)
-│   ├── jni/eSpeakService.c     # JNI bridge (11 native methods)
+│   ├── jni/eSpeakService.c     # JNI bridge (10 native methods)
 │   └── include/                # config.h, Log.h
 ├── res/                        # Resources (46 locale translations, plus values-v21/-watch)
 ├── eSpeakTests/                # Instrumentation tests
