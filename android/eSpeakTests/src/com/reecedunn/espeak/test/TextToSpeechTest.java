@@ -124,7 +124,8 @@ getVoices(); // Ensure that the voice data has been populated.
             assertThat(voice.getLocale().getCountry(), is(data.ianaCountry));
             assertThat(voice.getLocale().getVariant(), is(data.variant));
             assertThat(voice.getFeatures(), is(notNullValue()));
-            assertThat(voice.getFeatures().size(), is(0));
+            assertThat(voice.getFeatures(), hasItem(TextToSpeech.Engine.KEY_FEATURE_EMBEDDED_SYNTHESIS));
+            assertThat(voice.getFeatures().size(), is(1));
             assertThat(voice.getLatency(), is(android.speech.tts.Voice.LATENCY_VERY_LOW));
             assertThat(voice.getQuality(), is(android.speech.tts.Voice.QUALITY_NORMAL));
 
@@ -140,7 +141,8 @@ getVoices(); // Ensure that the voice data has been populated.
             assertThat(voice2.getLocale().getCountry(), is(data.ianaCountry));
             assertThat(voice2.getLocale().getVariant(), is(data.variant));
             assertThat(voice2.getFeatures(), is(notNullValue()));
-            assertThat(voice2.getFeatures().size(), is(0));
+            assertThat(voice2.getFeatures(), hasItem(TextToSpeech.Engine.KEY_FEATURE_EMBEDDED_SYNTHESIS));
+            assertThat(voice2.getFeatures().size(), is(1));
             assertThat(voice2.getLatency(), is(android.speech.tts.Voice.LATENCY_VERY_LOW));
             assertThat(voice2.getQuality(), is(android.speech.tts.Voice.QUALITY_NORMAL));
         }

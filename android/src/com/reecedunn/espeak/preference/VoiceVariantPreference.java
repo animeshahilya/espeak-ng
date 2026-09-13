@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -357,7 +356,7 @@ public class VoiceVariantPreference extends DialogPreference {
             case DialogInterface.BUTTON_POSITIVE:
                 onDataChanged();
                 if (shouldCommit()) {
-                    getPreferenceManager().setStorageDeviceProtected();
+
                     SharedPreferences.Editor editor = getEditor();
                     if (editor != null) {
                         VoiceVariant variant = variants[mCategoryIndex][mVariantIndex].getVariant();

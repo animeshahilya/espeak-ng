@@ -57,4 +57,4 @@ int utf8_out(unsigned int c, char *buf);
 }
 #endif
 
-#endif // SPEECH_H
+#endif // ESPEAK_NG_COMMON_H

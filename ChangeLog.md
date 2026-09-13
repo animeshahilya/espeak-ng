@@ -34,6 +34,7 @@ updated languages:
 *  tlh (Klingon) -- fionnlagh
 
 bug fixes:
+*  fixed Han ideographs under the Arabic voice being spelled as "Chinese letter" instead of read with the Mandarin translator -- uyt3ar
 *  numerous buffer-overflow, out-of-bounds and memory-safety hardening fixes across number, clause, dictionary, letter-lookup, Roman-numeral, klatt and mbrola code (fuzzing-driven) -- Samuel Thibault, Rudi Heitbaum, Jiami Lin, Erik Chan
 *  fixed infinite loop in rule matching with UTF-8 input -- Samuel Thibault
 *  fixed loss of final input byte from stdin -- Samuel Thibault
@@ -61,6 +62,7 @@ bug fixes:
 *  fixed subdivision flag emoji (England, Scotland, Wales) being read as "black flag" -- Alexander Epaneshnikov
 *  fixed the first letter of emoji descriptions being dropped when it is a non-ASCII capital ("Казахстан" was read as "азахстан") -- Alexander Epaneshnikov
 *  fixed hyphenated emoji descriptions losing everything from the hyphen on, which left flags such as 🇧🇫 silent in 84 languages -- Alexander Epaneshnikov
+*  fixed word and phoneme event positions drifting past the audio they belong to at speech rates where libsonic compresses the output, which broke word-boundary highlighting for API callers -- Alexander Epaneshnikov
 
 features:
 *  matched ZWJ emoji sequences against multi-codepoint dictionary entries -- Alexander Epaneshnikov
@@ -95,6 +97,8 @@ build:
 *  restored the fo (Faroese), kaa (Karakalpak) and xex dictionary builds under CMake -- Alexander Epaneshnikov
 
 android:
+*  fixed voice settings not being applied live when a slider is changed by a TalkBack gesture -- Amir Mahdi Fard
+*  combined the voice parameter sliders into one dialog, keeping one dialog per parameter on Wear -- Amir Mahdi Fard, Alexander Epaneshnikov
 *  added fallback to available voice when requested language is filtered out -- Alexander Epaneshnikov
 *  implemented Wear rotary crown support for numeric preferences -- Alexander Epaneshnikov
 *  removed ActionBar and tailored settings UI for Wear OS -- Alexander Epaneshnikov

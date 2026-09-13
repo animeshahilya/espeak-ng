@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -130,7 +129,7 @@ public class SpeakPunctuationPreference extends DialogPreference {
                 onDataChanged(level, characters);
 
                 if (shouldCommit()) {
-                    getPreferenceManager().setStorageDeviceProtected();
+
                     SharedPreferences.Editor editor = getEditor();
                     if (editor != null) {
                         editor.putString(VoiceSettings.PREF_PUNCTUATION_CHARACTERS, characters);

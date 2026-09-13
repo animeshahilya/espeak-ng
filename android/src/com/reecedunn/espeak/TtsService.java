@@ -80,6 +80,11 @@ public class TtsService extends TextToSpeechService {
     private String mSynthText;
     /** Where {@link #mSynthText} starts within the text the caller supplied. */
     private int mSynthTextOffset;
+    /**
+     * Offset map back to the caller's text when {@link #mSynthText} is a
+     * normalized copy of it, or null when they are the same string.
+     */
+    private UnicodeNormalization.Result mSynthNormalization;
     /** Number of code points in {@link #mSynthText}. */
     private int mSynthTextCodePoints;
     /** Anchor for incremental code point to UTF-16 index conversion. */
@@ -132,7 +137,7 @@ public class TtsService extends TextToSpeechService {
     @Override
     public void onCreate() {
         storageContext = EspeakApp.getStorageContext();
-        storageContext.moveSharedPreferencesFrom(this, this.getPackageName() + "_preferences");
+
         mPreferences = PreferenceManager.getDefaultSharedPreferences(storageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         if (!CheckVoiceData.hasBaseResources(storageContext)
@@ -291,7 +296,14 @@ public class TtsService extends TextToSpeechService {
 
     @Override
     protected Set<String> onGetFeaturesForLanguage(String lang, String country, String variant) {
-        return new HashSet<String>();
+        // eSpeak synthesizes on the device for every language it offers, and never
+        // needs a network connection. Clients read this set -- directly, or through
+        // the features of the voices built in onGetVoices() -- to decide whether a
+        // language can be spoken offline; leaving it empty makes eSpeak look like an
+        // engine that cannot answer the question.
+        final Set<String> features = new HashSet<String>();
+        features.add(TextToSpeech.Engine.KEY_FEATURE_EMBEDDED_SYNTHESIS);
+        return features;
     }
 
     @Override
@@ -495,16 +507,20 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
-        mCallback = callback;
-        mCallbackDone.set(false);
-        mCallback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
-
         final VoiceSettings settings = new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext), mEngine);
 
-        // text is non-null from here on: the only reassignment above is
-        // substring(...).trim(), and the null case already returned.
-        if (settings.isUnicodeNormalizationEnabled() && !isAsciiOnly(text)) {
-            text = Normalizer.normalize(text, Normalizer.Form.NFKC);
+        // Detect SSML before normalizing. Real markup is ASCII, which NFKC
+        // leaves untouched, but normalization can turn lookalikes such as a
+        // fullwidth "＜ｓｐｅａｋ" into "<speak", and plain text must not
+        // switch into SSML parsing because of that.
+        final boolean isSsml = text.startsWith("<speak");
+
+        UnicodeNormalization.Result normalization = null;
+        if (settings.isUnicodeNormalizationEnabled()) {
+            normalization = UnicodeNormalization.normalize(text);
+            if (normalization != null) {
+                text = normalization.text;
+            }
         }
 
         if (settings.isEmojiIgnoreEnabled() && containsPotentialEmoji(text)) {
@@ -513,10 +529,14 @@ public class TtsService extends TextToSpeechService {
 
         mSynthText = text;
         mSynthTextOffset = textOffset;
+        mSynthNormalization = normalization;
         mSynthTextCodePoints = text.codePointCount(0, text.length());
         mAnchorCodePoint = 0;
         mAnchorOffset = 0;
 
+        mCallback = callback;
+        mCallbackDone.set(false);
+        mCallback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
         mEngine.setVoice(voice, settings.getVoiceVariant());
 
         int rate = settings.getRate();
@@ -533,7 +553,7 @@ public class TtsService extends TextToSpeechService {
         mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
         mEngine.Capitals.setValue(settings.getCapitals());
         mEngine.WordGap.setValue(settings.getWordGap());
-        mEngine.synthesize(text, text.startsWith("<speak"));
+        mEngine.synthesize(text, isSsml);
     }
 
     private static boolean isAsciiOnly(String text) {
@@ -649,8 +669,14 @@ public class TtsService extends TextToSpeechService {
             // eSpeak counts code points from 1, rangeStart() wants 0-based UTF-16
             // indices into the text the caller supplied.
             final int wordStart = textPosition - 1;
-            final int start = codePointToOffset(wordStart);
-            final int end = codePointToOffset(wordStart + Math.max(textLength, 0));
+            int start = codePointToOffset(wordStart);
+            int end = codePointToOffset(wordStart + Math.max(textLength, 0));
+            if (mSynthNormalization != null) {
+                // The engine spoke normalized text; report the range against
+                // the original so highlighting tracks the caller's string.
+                start = mSynthNormalization.toOriginalOffset(start);
+                end = mSynthNormalization.toOriginalOffset(end);
+            }
             if (end <= start) {
                 return;
             }

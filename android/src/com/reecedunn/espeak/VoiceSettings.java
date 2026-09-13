@@ -36,6 +36,7 @@ public class VoiceSettings {
     public static final String PREF_PUNCTUATION_LEVEL = "espeak_punctuation_level";
     public static final String PREF_PUNCTUATION_CHARACTERS = "espeak_punctuation_characters";
     public static final String PREF_RATE_BOOST = "espeak_rate_boost";
+    public static final String PREF_UNICODE_NORMALIZATION = "espeak_unicode_normalization";
     public static final int RATE_BOOST_MULTIPLIER = 3;
     public static final String PREF_NORMALIZE_UNICODE = "espeak_normalize_unicode";
     public static final String PREF_EMOJI_PROCESSING = "espeak_emoji_processing";
@@ -186,7 +187,16 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_RATE_BOOST, false);
     }
 
+    /**
+     * Whether to NFKC-normalize text before synthesis, so stylized Unicode
+     * (e.g. 𝖇𝖔𝖑𝖉 social media "fonts") is read as words instead of being
+     * spelled out codepoint by codepoint. On by default, matching NVDA's
+     * speech setting and speech-dispatcher's always-on server behaviour.
+     */
     public boolean isUnicodeNormalizationEnabled() {
+        if (mPreferences.contains(PREF_UNICODE_NORMALIZATION)) {
+            return mPreferences.getBoolean(PREF_UNICODE_NORMALIZATION, true);
+        }
         return mPreferences.getBoolean(PREF_NORMALIZE_UNICODE, true);
     }
 

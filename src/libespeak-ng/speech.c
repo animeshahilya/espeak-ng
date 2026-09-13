@@ -544,9 +544,13 @@ void RescaleEventSamples(int length_pre, int length_post)
 {
 	// MarkerEvent() records positions while the buffer is being filled, which
 	// happens before libsonic compresses it, so the positions refer to audio
-	// that is longer than what is handed to the caller. Map them onto the
+	// that is longer than what is handed to the caller.  Map them onto the
 	// audio actually produced, keeping ep->sample and ep->audio_position
 	// consistent with the buffer passed to the synth callback.
+	//
+	// libsonic is a stream and can carry samples over between calls, so this
+	// linear mapping is an approximation; what it guarantees is that an event
+	// never points past the audio its buffer produced.
 
 #if !USE_MBROLA
 	static const int mbrola_delay = 0;
@@ -570,7 +574,8 @@ void RescaleEventSamples(int length_pre, int length_post)
 		if (offset > length_pre)
 			offset = length_pre;
 		// Both factors are bounded by the buffer length, so the product can
-		// exceed 32 bits for buffers over about two seconds.
+		// exceed 32 bits for buffers over about two seconds.  long is 32-bit on
+		// Windows, so widen explicitly rather than relying on it.
 		offset = (int)(((int64_t)offset * length_post) / length_pre);
 
 		ep->sample = base + offset;
