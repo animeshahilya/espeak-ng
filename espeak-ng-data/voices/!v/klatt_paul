@@ -1,0 +1,17 @@
+language variant
+name klatt_paul
+gender male 80
+
+klatt 2
+
+pitch 82 118
+flutter 6
+roughness 2
+
+formant 0  98 100 100
+formant 1  98 100 100
+formant 2 100 100 100
+formant 3 100  95 100
+formant 4 100  90 100
+formant 5 100  85 100
+formant 6 100  80 100

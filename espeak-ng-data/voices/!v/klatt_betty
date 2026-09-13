@@ -1,0 +1,15 @@
+language variant
+name klatt_betty
+gender female 80
+
+klatt 3
+
+pitch 165 235
+flutter 8
+roughness 3
+
+formant 0 115  80 150
+formant 1 115  85 150
+formant 2 112  85 150
+formant 3 110  85 150
+formant 4 108  90 150

@@ -1,0 +1,14 @@
+language variant
+name klatt_harry
+gender male 90
+
+klatt 1
+
+pitch 68 96
+flutter 4
+roughness 6
+
+formant 0  88 115 110
+formant 1  90 115 110
+formant 2  92 110 105
+formant 3  95 105 100

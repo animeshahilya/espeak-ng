@@ -109,4 +109,10 @@
         Description: Explains the digit-by-digit reading setting.
     -->
   <string name="setting_speak_digits_summary">Speak each digit separately, for example reading \"123\" as \"one two three\" instead of \"one hundred twenty three\"</string>
+  <string name="variant_klatt_paul">Paul (Classic Male)</string>
+  <string name="variant_klatt_betty">Betty (Classic Female)</string>
+  <string name="variant_klatt_harry">Harry (Deep Male)</string>
+  <string name="variant_klatt_frank">Frank (Older / Textured)</string>
+  <string name="variant_klatt_kit">Kit (High Pitch / Child)</string>
+  <string name="variant_klatt_fast">Turbo (TalkBack High Speed)</string>
 </resources>

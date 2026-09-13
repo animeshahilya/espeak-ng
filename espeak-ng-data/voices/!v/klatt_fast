@@ -1,0 +1,14 @@
+language variant
+name klatt_fast
+gender male 80
+
+klatt 1
+
+pitch 90 112
+flutter 0
+roughness 0
+consonants 120 80
+
+formant 1 100 100 115
+formant 2 105 100 120
+formant 3 110  95 125

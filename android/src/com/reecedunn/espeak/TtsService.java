@@ -518,6 +518,8 @@ public class TtsService extends TextToSpeechService {
         final boolean speakDigits = settings.isSpeakDigitsEnabled() && !isSsml;
         if (speakDigits) {
             text = spaceSeparateDigits(text);
+        } else if (!isSsml) {
+            text = spaceSeparateSmartCodes(text);
         }
 
         UnicodeNormalization.Result normalization = null;
@@ -528,6 +530,12 @@ public class TtsService extends TextToSpeechService {
                 if (speakDigits) {
                     text = spaceSeparateDigits(text);
                     normalization = null;
+                } else if (!isSsml) {
+                    final String smart = spaceSeparateSmartCodes(text);
+                    if (!smart.equals(text)) {
+                        text = smart;
+                        normalization = null;
+                    }
                 }
             }
         }
@@ -635,6 +643,69 @@ public class TtsService extends TextToSpeechService {
             out.appendCodePoint(c);
             prevWasDigit = isDigit;
             i += charCount;
+        }
+        return out.toString();
+    }
+
+    /**
+     * Intelligently detects verification codes, OTPs, and PINs (e.g. 5-to-8 digit
+     * banking OTPs, Indian postal PIN codes, 4-digit PINs preceded by keywords)
+     * and space-separates only those numbers so they are read digit-by-digit,
+     * while preserving natural reading for normal quantities ("25 items", "year 2024").
+     * Also expands the Indian Rupee symbol (₹) to "rupees".
+     */
+    static String spaceSeparateSmartCodes(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        final int len = text.length();
+        StringBuilder out = new StringBuilder(len + 16);
+        int i = 0;
+        while (i < len) {
+            int cp = text.codePointAt(i);
+            if (Character.isDigit(cp)) {
+                int runStart = i;
+                int digitCount = 0;
+                while (i < len) {
+                    int c = text.codePointAt(i);
+                    if (!Character.isDigit(c)) break;
+                    digitCount++;
+                    i += Character.charCount(c);
+                }
+                int runEnd = i;
+
+                boolean separate = false;
+                if (digitCount >= 5 && digitCount <= 8) {
+                    separate = true;
+                } else if (digitCount == 4) {
+                    int contextStart = Math.max(0, runStart - 20);
+                    String prefix = text.substring(contextStart, runStart).toLowerCase(Locale.ROOT);
+                    if (prefix.contains("otp") || prefix.contains("pin") || prefix.contains("code") ||
+                        prefix.contains("pass") || prefix.contains("verification") || prefix.contains("id")) {
+                        separate = true;
+                    }
+                }
+
+                if (separate) {
+                    for (int j = runStart; j < runEnd; ) {
+                        int c = text.codePointAt(j);
+                        if (j > runStart) {
+                            out.append(' ');
+                        }
+                        out.appendCodePoint(c);
+                        j += Character.charCount(c);
+                    }
+                } else {
+                    out.append(text, runStart, runEnd);
+                }
+            } else {
+                if (cp == 0x20B9) { // '₹' Indian Rupee symbol
+                    out.append(" rupees ");
+                } else {
+                    out.appendCodePoint(cp);
+                }
+                i += Character.charCount(cp);
+            }
         }
         return out.toString();
     }

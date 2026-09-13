@@ -143,6 +143,12 @@ public class VoiceVariantPreference extends DialogPreference {
             new VariantData(R.string.variant_n, 4, "f4"),
             new VariantData(R.string.variant_n, 5, "f5"),
         },{ // Klatt
+            new VariantData(R.string.variant_klatt_paul, "klatt_paul"),
+            new VariantData(R.string.variant_klatt_betty, "klatt_betty"),
+            new VariantData(R.string.variant_klatt_harry, "klatt_harry"),
+            new VariantData(R.string.variant_klatt_frank, "klatt_frank"),
+            new VariantData(R.string.variant_klatt_kit, "klatt_kit"),
+            new VariantData(R.string.variant_klatt_fast, "klatt_fast"),
             new VariantData(R.string.variant_n, 1, "klatt"),
             new VariantData(R.string.variant_n, 2, "klatt2"),
             new VariantData(R.string.variant_n, 3, "klatt3"),
