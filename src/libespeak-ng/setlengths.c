@@ -338,6 +338,15 @@ espeak_ng_STATUS SetParameter(int parameter, int value, int relative)
 		break;
   case espeakSSML_BREAK_MUL:
     break;
+	case espeakPUNCTUATION:
+	case espeakCAPITALS:
+		// No immediate side effect needed here: the value is already stored
+		// into param_stack[0]/saved_parameters above, and readclause.c reads
+		// option_punctuation/option_capitals from speech_parameters[] at
+		// clause-processing time. Without this case they fell through to
+		// default and returned EINVAL on every call (Android's TtsService
+		// applies these on every synthesis), even though the setting worked.
+		break;
 	default:
 		return EINVAL;
 	}
