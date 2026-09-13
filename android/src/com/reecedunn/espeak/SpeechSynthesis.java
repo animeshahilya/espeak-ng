@@ -64,6 +64,7 @@ public class SpeechSynthesis {
 
     private boolean mInitialized = false;
     private static int mVoiceCount = 0;
+    private static volatile int sSampleRate = 0;
     private int mSampleRate = 0;
 
     public SpeechSynthesis(Context context, SynthReadyCallback callback) {
@@ -285,7 +286,7 @@ public class SpeechSynthesis {
         mCallback.onSynthWordBoundary(textPosition, textLength, markerInFrames);
     }
 
-    private void attemptInit() {
+    private synchronized void attemptInit() {
         if (mInitialized) {
             return;
         }
@@ -295,12 +296,19 @@ public class SpeechSynthesis {
             return;
         }
 
+        if (sSampleRate > 0) {
+            mSampleRate = sSampleRate;
+            mInitialized = true;
+            return;
+        }
+
         mSampleRate = nativeCreate(mDatapath);
         if (mSampleRate == 0) {
             Log.e(TAG, "Failed to initialize speech synthesis library");
             return;
         }
 
+        sSampleRate = mSampleRate;
         Log.i(TAG, "Initialized synthesis library with sample rate = " + getSampleRate());
 
         mInitialized = true;

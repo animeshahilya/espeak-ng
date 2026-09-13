@@ -95,6 +95,10 @@ public class TtsSettingsActivity extends PreferenceActivity {
         // Migrate old eyes-free settings to the new settings:
 
         storageContext = EspeakApp.getStorageContext();
+        if (!CheckVoiceData.hasBaseResources(storageContext)
+                || CheckVoiceData.canUpgradeResources(storageContext)) {
+            CheckVoiceData.extractVoiceData(storageContext);
+        }
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
         final SharedPreferences.Editor editor = prefs.edit();
 

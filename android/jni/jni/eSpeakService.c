@@ -195,19 +195,26 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeClassInit(
   return JNI_TRUE;
 }
 
+static int s_sampleRate = 0;
+
 JNIEXPORT jint
 JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeCreate(
     JNIEnv *env, jobject object, jstring path) {
   if (DEBUG) LOGV("%s [env=%p, object=%p]", __FUNCTION__, env, object);
 
+  if (s_sampleRate > 0) {
+    if (DEBUG) LOGV("Already initialized with sample rate %d", s_sampleRate);
+    return s_sampleRate;
+  }
+
   const char *c_path = path ? (*env)->GetStringUTFChars(env, path, NULL) : NULL;
 
   if (DEBUG) LOGV("Initializing with path %s", c_path);
-  int sampleRate = espeak_Initialize(AUDIO_OUTPUT_SYNCHRONOUS, BUFFER_SIZE_IN_MILLISECONDS, c_path, 0);
+  s_sampleRate = espeak_Initialize(AUDIO_OUTPUT_SYNCHRONOUS, BUFFER_SIZE_IN_MILLISECONDS, c_path, 0);
 
   if (c_path) (*env)->ReleaseStringUTFChars(env, path, c_path);
 
-  return sampleRate;
+  return s_sampleRate;
 }
 
 JNIEXPORT jobject
