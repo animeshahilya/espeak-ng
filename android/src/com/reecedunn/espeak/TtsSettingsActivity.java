@@ -30,6 +30,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -687,20 +688,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return activity.isFinishing() || activity.isDestroyed();
     }
 
-    /**
-     * Since the "%s" summary is currently broken, this sets the preference
-     * change listener for all {@link ListPreference} views to fill in the
-     * summary with the current entry value.
-     */
-    private static Preference createUnicodeNormalizationPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_normalize_unicode);
-        pref.setSummary(R.string.setting_normalize_unicode_summary);
-        pref.setKey(VoiceSettings.PREF_NORMALIZE_UNICODE);
-        pref.setDefaultValue(true);
-        pref.setPersistent(true);
-        return pref;
-    }
 
     private static Preference createEmojiProcessingPreference(Context context) {
         final ListPreference pref = new ListPreference(context);
@@ -774,7 +761,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
             group.addPreference(createSupportedLanguagesPreference(context, voices));
             group.addPreference(createLanguagePackPreference(context));
             group.addPreference(createImportVoicePreference(context));
-            group.addPreference(createUnicodeNormalizationPreference(context));
             group.addPreference(createEmojiProcessingPreference(context));
             group.addPreference(createRateBoostPreference(context));
         }

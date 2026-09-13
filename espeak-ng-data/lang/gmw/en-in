@@ -1,0 +1,21 @@
+name English (India)
+language en-in 2
+language en 3
+
+maintainer Animesh Ahilya <animesh@example.com>
+status mature
+
+phonemes en
+dictrules 1 2 8
+
+stressLength 160 160  180 180  200 200  240 260
+stressAmp    18 18   19 19   19 19   20 20
+
+replace 00 w v
+replace 00 v v
+replace 00 T t[
+replace 00 D d[
+replace 00 r r.
+
+formant 1 100 100 100
+formant 2 100 100 100
