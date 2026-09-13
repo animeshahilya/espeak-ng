@@ -1,0 +1,17 @@
+language variant
+name klatt_wendy
+gender female 40
+
+klatt 3
+
+pitch 150 210
+flutter 6
+roughness 3
+
+breath  25 25 18 10
+breathw 150 150 200 200
+
+formant 0 108  85 140
+formant 1 107  88 140
+formant 2 105  88 135
+formant 3 103  88 130

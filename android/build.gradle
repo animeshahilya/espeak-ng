@@ -144,6 +144,13 @@ tasks.register('splitLanguageData') {
     def srcDir = file('build/generated/espeak-ng-data')
     def coreDir = file('build/generated/espeak-ng-data-core')
     def extraDir = file('build/generated/espeak-ng-data-extra')
+    // Without a declared input, Gradle has no way to know srcDir's content
+    // changed (it's produced by the CMake `data` target, not a task Gradle
+    // tracks file-by-file) and treats this task as up-to-date forever after
+    // the first run - silently shipping stale voice/language data on any
+    // incremental build that only touches espeak-ng-data/ (new voice,
+    // updated dictionary, etc.) without also touching a C/C++ source file.
+    inputs.dir(srcDir)
     outputs.dir(coreDir)
     outputs.dir(extraDir)
 

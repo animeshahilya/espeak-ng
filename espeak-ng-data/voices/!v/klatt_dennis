@@ -1,0 +1,16 @@
+language variant
+name klatt_dennis
+gender male 45
+
+klatt 1
+
+pitch 78 108
+flutter 3
+roughness 1
+
+formant 0 102 105  95
+formant 1 100 105  95
+formant 2  98 100 100
+formant 3  97  95 100
+formant 4  96  90 100
+formant 5  95  85 100

@@ -114,5 +114,9 @@
   <string name="variant_klatt_harry">Harry (Deep Male)</string>
   <string name="variant_klatt_frank">Frank (Older / Textured)</string>
   <string name="variant_klatt_kit">Kit (High Pitch / Child)</string>
+  <string name="variant_klatt_dennis">Dennis (Clear Alternate Male)</string>
+  <string name="variant_klatt_ursula">Ursula (Warm Alternate Female)</string>
+  <string name="variant_klatt_rita">Rita (Bright / Crisp Female)</string>
+  <string name="variant_klatt_wendy">Wendy (Soft / Breathy Female)</string>
   <string name="variant_klatt_fast">Turbo (TalkBack High Speed)</string>
 </resources>

@@ -1,0 +1,15 @@
+language variant
+name klatt_ursula
+gender female 50
+
+klatt 3
+
+pitch 135 195
+flutter 5
+roughness 4
+
+formant 0 105  90 130
+formant 1 104  90 130
+formant 2 102  90 125
+formant 3 100  90 120
+formant 4  98  90 115
