@@ -1,134 +1,84 @@
-# eSpeak NG Text-to-Speech
+# eSpeak NG — Android Fork
 
-- [Features](#features)
+- [What this fork is](#what-this-fork-is)
+- [What's different from upstream](#whats-different-from-upstream)
+- [Building the Android app](#building-the-android-app)
 - [Supported languages](docs/languages.md)
-- [Documentation](#documentation)
-- [eSpeak Compatibility](#espeak-compatibility)
-- [History](#history)
+- [Relationship to upstream eSpeak NG](#relationship-to-upstream-espeak-ng)
 - [License Information](#license-information)
 ----------
 
-The eSpeak NG is a compact open source software text-to-speech synthesizer for 
-Linux, Windows, Android and other operating systems. It supports 
-[more than 100 languages and accents](docs/languages.md). It is based on the eSpeak engine
-created by Jonathan Duddington.
+This is [animeshahilya](https://github.com/animeshahilya)'s fork of
+[eSpeak NG](https://github.com/espeak-ng/espeak-ng), an open source formant
+("Klatt") speech synthesizer supporting 100+ languages. **This repository is
+maintained for the Android app only** — everything in `android/` is the
+active focus. The rest of the tree (the core `espeak-ng`/`libespeak-ng` C
+library, `src/`, `dictsource/`, `phsource/`, the CLI, the Windows/Linux/Mac
+build paths) is kept because the Android app builds directly on top of it via
+CMake, not because those other platforms are being developed here — for
+Linux, Windows, SAPI5, or general library use, go to the
+[upstream project](https://github.com/espeak-ng/espeak-ng) instead.
 
-eSpeak NG uses a "formant synthesis" method. This allows many languages to be
-provided in a small size. The speech is clear, and can be used at high speeds,
-but is not as natural or smooth as larger synthesizers which are based on human
-speech recordings. It also supports Klatt formant synthesis, and the ability
-to use MBROLA as backend speech synthesizer.
+The Android app is a `TextToSpeechService` engine aimed at blind and
+visually impaired users navigating with TalkBack: fast, fully offline,
+zero network dependency beyond an optional language-pack download, and
+tuned for the accessibility use case rather than general-purpose narration.
 
-eSpeak NG is available as:
+## What's different from upstream
 
-*  A [command line](src/espeak-ng.1.ronn) program (Linux and Windows) to speak text from a file or
-   from stdin.
-*  A [shared library](docs/integration.md) version for use by other programs. (On Windows this is
-   a DLL).
-*  A SAPI5 version for Windows, so it can be used with screen-readers and
-   other programs that support the Windows SAPI5 interface.
-*  eSpeak NG has been ported to other platforms, including Solaris and Mac
-   OSX.
+* **Indian English (`en-in`)** — upstream eSpeak NG ships no Indian English
+  voice at all. This fork adds one (`espeak-ng-data/lang/gmw/en-in`):
+  retroflex `r`, dental `t`/`d` stops, syllable-timed rhythm with unreduced
+  full vowels. Bundled in the app's core language set alongside the full
+  Indic (`lang/inc`) and Dravidian (`lang/dra`) language families — Hindi,
+  Bengali, Marathi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Punjabi,
+  and more are built in, not a separate download.
+* **10 Klatt-synthesis voice personas** — Paul, Betty, Harry, Frank, Kit,
+  Dennis, Ursula, Rita, Wendy, and Turbo (a rate-optimized voice for
+  high-speed TalkBack use), selectable from the Voice variant picker's
+  Klatt category.
+* **Context-aware digit reading** — an opt-in "read numbers digit by digit"
+  mode for the general case, plus an always-on heuristic that reads likely
+  OTPs/PINs/verification codes (4-8 digits near a keyword like "OTP" or
+  "code") digit-by-digit while leaving ordinary numbers and rupee amounts
+  read naturally. The ₹ symbol expands to "rupees".
+* **Clearer emoji announcements** — eSpeak NG's own CLDR-quality emoji
+  dictionary ("😂" → "face with tears of joy") is set off from the
+  surrounding sentence with a light pause, so it reads as an aside rather
+  than running into the sentence as if it were literal text.
+* **Reliability work**: several file-descriptor leaks in the voice-data
+  extraction path, a native return value that silently masked synthesis
+  failures, a build task that could silently ship stale voice data on
+  incremental builds, and a debug-build native-debugging regression, all
+  found and fixed on this fork — see `android/CLAUDE.md` for the details
+  and the reasoning behind each.
 
-## Features
+## Building the Android app
 
-*  Includes different Voices, whose characteristics can be altered.
-*  Can produce speech output as a WAV file.
-*  SSML (Speech Synthesis Markup Language) is supported (not complete),
-   and also HTML.
-*  Compact size.  The program and its data, including many languages,
-   totals about few Mbytes.
-*  Can be used as a front-end to [MBROLA diphone voices](docs/mbrola.md).
-   eSpeak NG converts text to phonemes with pitch and length information.
-*  Can translate text into phoneme codes, so it could be adapted as a
-   front end for another speech synthesis engine.
-*  Potential for other languages. Several are included in varying stages
-   of progress. Help from native speakers for these or other languages is
-   welcome.
-*  Written in C.
+See [`android/CLAUDE.md`](android/CLAUDE.md) for the full build/architecture
+reference (data pipeline, signing, JNI layer, testing). Short version:
 
-See the [ChangeLog](ChangeLog.md) for a description of the changes in the
-various releases and with the eSpeak NG project.
+```bash
+cd android
+./gradlew assembleDebug     # debug APK, always builds
+./gradlew assembleRelease   # release APK; signed if android/keystore.properties
+                             # exists, unsigned otherwise (see CLAUDE.md)
+```
 
-The following platforms are supported:
+Output APKs land in `android/build/outputs/apk/{debug,release}/`.
+Requires NDK 29.0.14206865 and CMake 3.22.1 (pinned in `android/build.gradle`).
 
-| Platform    | Minimum Version | Status |
-|-------------|-----------------|--------|
-| Linux       |                 | ![CI](https://github.com/espeak-ng/espeak-ng/actions/workflows/ci.yml/badge.svg) |
-| BSD         |                 |        |
-| Android     | 14.0            |        |
-| Windows     | Windows 8       |        |
-| Mac         |                 |        |
+## Relationship to upstream eSpeak NG
 
-## Documentation
-
-1. [User guide](docs/guide.md) explains how to set up and use eSpeak NG from command line or as a library.
-2. [Building guide](docs/building.md) provides info how to compile and build eSpeak NG from the source.
-4. [Index](docs/index.md) provides full list of more detailed information for contributors and developers.
-5. Look at [contribution guide](docs/contributing.md) to start your contribution.
-6. Look at [eSpeak NG roadmap](https://github.com/espeak-ng/espeak-ng/wiki/eSpeak-NG-roadmap) to participate in development of eSpeak NG.
-
-## eSpeak Compatibility
-
-The *espeak-ng* binaries use the same command-line options as *espeak*, with
-several additions to provide new functionality from *espeak-ng* such as specifying
-the output audio device name to use. The build creates symlinks of `espeak` to
-`espeak-ng`, and `speak` to `speak-ng`.
-
-The espeak `speak_lib.h` include file is located in `espeak-ng/speak_lib.h` with
-an optional symlink in `espeak/speak_lib.h`. This file contains the espeak 1.48.15
-API, with a change to the `ESPEAK_API` macro to fix building on Windows
-and some minor changes to the documentation comments. This C API is API and ABI
-compatible with espeak.
-
-The `espeak-data` data has been moved to `espeak-ng-data` to avoid conflicts with
-espeak. There have been various changes to the voice, dictionary and phoneme files
-that make them incompatible with espeak.
-
-The *espeak-ng* project does not include the *espeakedit* program. It has moved
-the logic to build the dictionary, phoneme and intonation binary files into the
-`libespeak-ng.so` file that is accessible from the `espeak-ng` command line and
-C API.
-
-## Related projects
-
-* **[espeak-ng-sapi](https://github.com/gozaltech/espeak-ng-sapi)** –  
-  A third-party Windows SAPI 5 engine implementation for eSpeak NG.
-
-## History
-
-The program was originally known as __speak__ and originally written
-for Acorn/RISC\_OS computers starting in 1995 by Jonathan Duddington. This was
-enhanced and re-written in 2007 as __eSpeak__, including a relaxation of the
-original memory and processing power constraints, and with support for additional
-languages.
-
-In 2010, Reece H. Dunn started maintaining a version of eSpeak on GitHub that
-was designed to make it easier to build eSpeak on POSIX systems, porting the
-build system to autotools in 2012. In late 2015, this project was officially
-forked to a new __eSpeak NG__ project. The new eSpeak NG project is a significant
-departure from the eSpeak project, with the intention of cleaning up the
-existing codebase, adding new features, and adding to and improving the
-supported languages.
-
-The *historical* branch contains the available older releases of the original
-eSpeak that are not contained in the subversion repository.
-
-1.24.02 is the first version of eSpeak to appear in the subversion
-repository, but releases from 1.05 to 1.24 are available at
-[http://sourceforge.net/projects/espeak/files/espeak/](http://sourceforge.net/projects/espeak/files/espeak/).
-
-These early releases have been checked into the historical branch,
-with the 1.24.02 release as the last entry. This makes it possible
-to use the replace functionality of git to see the earlier history:
-
-	git replace 8d59235f 63c1c019
-
-__NOTE:__ The source releases contain the `big_endian`, `espeak-edit`,
-`praat-mod`, `riskos`, `windows_dll` and `windows_sapi` folders. These
-do not appear in the source repository until later releases, so have
-been excluded from the historical commits to align them better with
-the 1.24.02 source commit.
+Everything outside `android/` — the core synthesis engine, phoneme/dictionary
+sources, and the CLI/library build — is upstream eSpeak NG, periodically
+synced from [espeak-ng/espeak-ng](https://github.com/espeak-ng/espeak-ng).
+eSpeak NG itself is a compact, formant-based ("Klatt") text-to-speech
+synthesizer supporting more than 100 languages, originally based on the
+eSpeak engine by Jonathan Duddington and maintained as eSpeak NG by Reece H.
+Dunn and contributors since 2015. For the general-purpose library, CLI,
+Windows SAPI5 build, or the full list of supported languages and platforms,
+see the upstream README and [documentation index](docs/index.md).
 
 ## License Information
 
@@ -140,9 +90,3 @@ taken from the NetBSD `getopt_long` implementation, which is licensed under a
 [2-clause BSD](COPYING.BSD2) license.
 
 Android is a trademark of Google LLC.
-
-## Acknowledgements
-
-The catalan extension was funded by [Departament de la Vicepresidència i de Polítiques Digitals i Territori de la Generalitat de Catalunya](https://politiquesdigitals.gencat.cat/ca/inici/index.html#googtrans(ca|en))
-within the framework of
-[Projecte AINA](https://politiquesdigitals.gencat.cat/ca/economia/catalonia-ai/aina).
