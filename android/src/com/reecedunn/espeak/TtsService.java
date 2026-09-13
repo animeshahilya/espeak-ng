@@ -515,11 +515,20 @@ public class TtsService extends TextToSpeechService {
         // switch into SSML parsing because of that.
         final boolean isSsml = text.startsWith("<speak");
 
+        final boolean speakDigits = settings.isSpeakDigitsEnabled() && !isSsml;
+        if (speakDigits) {
+            text = spaceSeparateDigits(text);
+        }
+
         UnicodeNormalization.Result normalization = null;
         if (settings.isUnicodeNormalizationEnabled()) {
             normalization = UnicodeNormalization.normalize(text);
             if (normalization != null) {
                 text = normalization.text;
+                if (speakDigits) {
+                    text = spaceSeparateDigits(text);
+                    normalization = null;
+                }
             }
         }
 
@@ -599,6 +608,35 @@ public class TtsService extends TextToSpeechService {
             i += Character.charCount(codePoint);
         }
         return sb.toString();
+    }
+
+    /**
+     * Inserts spaces between adjacent digits so that eSpeak reads each digit
+     * individually (e.g. "123" becomes "1 2 3").
+     *
+     * <p>Supports all Unicode decimal digit ranges (ASCII 0-9, Arabic-Indic
+     * ٠-٩, Extended Arabic-Indic ۰-۹, Devanagari ०-९, etc.) as classified by
+     * {@link Character#isDigit(int)}.
+     */
+    static String spaceSeparateDigits(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        final int len = text.length();
+        StringBuilder out = new StringBuilder(len * 2);
+        boolean prevWasDigit = false;
+        for (int i = 0; i < len; ) {
+            final int c = text.codePointAt(i);
+            final int charCount = Character.charCount(c);
+            final boolean isDigit = Character.isDigit(c);
+            if (isDigit && prevWasDigit) {
+                out.append(' ');
+            }
+            out.appendCodePoint(c);
+            prevWasDigit = isDigit;
+            i += charCount;
+        }
+        return out.toString();
     }
 
     protected void rebuildAvailableVoices() {

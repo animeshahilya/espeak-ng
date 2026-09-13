@@ -10,25 +10,25 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp" >
 
-    <TextView
-        android:id="@+id/parameterTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
+    <!-- SeekBarPreference writes the same string here and into the slider's
+         content description, so leaving this label in the accessibility tree
+         would announce every parameter twice. The slider is the thing you
+         operate, so it keeps the announcement and this label is skipped. -->
     <TextView
         android:id="@+id/valueText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:gravity="center_horizontal"
+        android:importantForAccessibility="no"
+        android:layout_marginStart="@dimen/parameter_bezel_inset"
+        android:layout_marginEnd="@dimen/parameter_bezel_inset"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/parameter_bezel_inset"
+        android:layout_marginEnd="@dimen/parameter_bezel_inset" />
 
     <LinearLayout
         android:layout_width="match_parent"

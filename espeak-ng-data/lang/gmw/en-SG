@@ -1,0 +1,13 @@
+name English (Singapore)
+language en-sg 2
+language en 3
+
+maintainer Andy Vladescu <andyvladescu770@gmail.com>
+status mature
+
+phonemes en
+dictrules 1 2
+
+replace 00 D d
+replace 03 I i
+replace 03 I2 i
