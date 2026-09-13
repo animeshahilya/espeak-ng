@@ -42,7 +42,6 @@ import android.util.Pair;
 
 import com.reecedunn.espeak.SpeechSynthesis.SynthReadyCallback;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -540,8 +539,8 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
-        if (settings.isEmojiIgnoreEnabled() && containsPotentialEmoji(text)) {
-            text = filterEmojis(text);
+        if (!isSsml && containsPotentialEmoji(text)) {
+            text = settings.isEmojiIgnoreEnabled() ? filterEmojis(text) : clarifyEmojiAnnouncements(text);
         }
 
         mSynthText = text;
@@ -573,16 +572,6 @@ public class TtsService extends TextToSpeechService {
         mEngine.synthesize(text, isSsml);
     }
 
-    private static boolean isAsciiOnly(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            if (text.charAt(i) > 127) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private static boolean containsPotentialEmoji(String text) {
         final int len = text.length();
         for (int i = 0; i < len; i++) {
@@ -594,6 +583,15 @@ public class TtsService extends TextToSpeechService {
         return false;
     }
 
+    private static boolean isEmojiCodePoint(int codePoint) {
+        final int type = Character.getType(codePoint);
+        return (type == Character.OTHER_SYMBOL || type == Character.SURROGATE)
+                || (codePoint >= 0x1F000 && codePoint <= 0x1FAFF)
+                || (codePoint >= 0x2600 && codePoint <= 0x27BF)
+                || (codePoint >= 0xFE00 && codePoint <= 0xFE0F)
+                || (codePoint >= 0x1F900 && codePoint <= 0x1F9FF);
+    }
+
     private static String filterEmojis(String text) {
         if (text == null || text.isEmpty()) {
             return text;
@@ -602,13 +600,7 @@ public class TtsService extends TextToSpeechService {
         final int len = text.length();
         for (int i = 0; i < len; ) {
             final int codePoint = text.codePointAt(i);
-            final int type = Character.getType(codePoint);
-            final boolean isEmoji = (type == Character.OTHER_SYMBOL || type == Character.SURROGATE)
-                    || (codePoint >= 0x1F000 && codePoint <= 0x1FAFF)
-                    || (codePoint >= 0x2600 && codePoint <= 0x27BF)
-                    || (codePoint >= 0xFE00 && codePoint <= 0xFE0F)
-                    || (codePoint >= 0x1F900 && codePoint <= 0x1F9FF);
-            if (!isEmoji) {
+            if (!isEmojiCodePoint(codePoint)) {
                 sb.appendCodePoint(codePoint);
             } else {
                 sb.append(' ');
@@ -616,6 +608,62 @@ public class TtsService extends TextToSpeechService {
             i += Character.charCount(codePoint);
         }
         return sb.toString();
+    }
+
+    /**
+     * Sets off each run of emoji from the surrounding sentence with a light
+     * pause (", "), so eSpeak's own emoji dictionary description (e.g. "😂"
+     * -&gt; "face with tears of joy") reads as an aside rather than plain
+     * sentence text. Without this, "I'm happy 😀 today" is indistinguishable
+     * by ear from someone literally describing a face - "I'm happy, grinning
+     * face, today" makes clear to a blind listener that a symbol was there.
+     */
+    static String clarifyEmojiAnnouncements(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        final int len = text.length();
+        final StringBuilder out = new StringBuilder(len + 16);
+        int i = 0;
+        while (i < len) {
+            final int codePoint = text.codePointAt(i);
+            if (!isEmojiCodePoint(codePoint)) {
+                out.appendCodePoint(codePoint);
+                i += Character.charCount(codePoint);
+                continue;
+            }
+
+            final int runStart = i;
+            while (i < len) {
+                final int c = text.codePointAt(i);
+                if (!isEmojiCodePoint(c)) break;
+                i += Character.charCount(c);
+            }
+
+            // Only add a leading pause if the emoji isn't already at the very
+            // start of the text or right after existing punctuation/space.
+            final int lastOut = out.length() - 1;
+            if (lastOut >= 0) {
+                char prev = out.charAt(lastOut);
+                if (prev != ' ' && prev != ',' && prev != '.' && prev != '!' && prev != '?' && prev != ':' && prev != ';') {
+                    out.append(',');
+                }
+                if (prev != ' ') {
+                    out.append(' ');
+                }
+            }
+            out.append(text, runStart, i);
+
+            // Only add a trailing pause if more text follows and it isn't
+            // already punctuation (avoids ",." or ",," doubling up).
+            if (i < len) {
+                char next = text.charAt(i);
+                if (next != ' ' && next != ',' && next != '.' && next != '!' && next != '?' && next != ':' && next != ';') {
+                    out.append(',');
+                }
+            }
+        }
+        return out.toString();
     }
 
     /**

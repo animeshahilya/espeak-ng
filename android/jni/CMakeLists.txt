@@ -4,14 +4,20 @@ project(espeak-android)
 
 # Ensure 16 KB page-size alignment for Android 14/15 ARM64 kernels
 add_link_options("-Wl,-z,max-page-size=16384")
-add_compile_options("-O3")
+# Release only: an unconditional -O3 also applied to debug builds, making
+# native breakpoints/variable inspection unreliable during development.
+add_compile_options("$<$<CONFIG:Release>:-O3>")
 
 # Build libsonic from source for Android and pre-seed the find results so
 # cmake/deps.cmake in the main project detects it (the NDK sysroot has no sonic).
+# Pinned past fbf75c3 (2024) to pick up two upstream fixes directly relevant
+# to correctness here: a buffer-allocation skip-calculation fix (PR #55) and
+# a downSampleBuffer overflow fix (PR #57) in sonic.c, the only file of this
+# library actually compiled in - not just following upstream for its own sake.
 include(FetchContent)
 FetchContent_Declare(sonic-git
         GIT_REPOSITORY https://github.com/waywardgeek/sonic.git
-        GIT_TAG fbf75c3d6d846bad3bb3d456cbc5d07d9fd8c104
+        GIT_TAG b93885dcb70aae50c6f76b0fe4e0868f029a077e
 )
 FetchContent_MakeAvailable(sonic-git)
 add_library(sonic OBJECT ${sonic-git_SOURCE_DIR}/sonic.c)

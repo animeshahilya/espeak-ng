@@ -217,13 +217,6 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeCreate(
   return s_sampleRate;
 }
 
-JNIEXPORT jobject
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeGetVersion(
-    JNIEnv *env, jclass clazz) {
-  if (DEBUG) LOGV("%s", __FUNCTION__);
-  return (*env)->NewStringUTF(env, espeak_Info(NULL));
-}
-
 JNIEXPORT jobjectArray
 JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeGetAvailableVoices(
     JNIEnv *env, jobject object) {
@@ -386,7 +379,7 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSynthesize(
     case EE_NOT_FOUND:      LOGE("espeak_Synth: not found."); break;
   }
 
-  return JNI_TRUE;
+  return JNI_FALSE;
 }
 
 JNIEXPORT jboolean

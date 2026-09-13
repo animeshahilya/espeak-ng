@@ -83,14 +83,6 @@ public class SpeechSynthesis {
         attemptInit();
     }
 
-    public static String getVersion() {
-        return nativeGetVersion();
-    }
-
-    public static int getVoiceCount() {
-        return mVoiceCount;
-    }
-
     public int getSampleRate() {
         return mSampleRate;
     }
@@ -329,8 +321,6 @@ public class SpeechSynthesis {
     private static native final boolean nativeClassInit();
 
     private native final int nativeCreate(String path);
-
-    private native final static String nativeGetVersion();
 
     private native final String[] nativeGetAvailableVoices();
 

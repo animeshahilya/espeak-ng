@@ -74,8 +74,8 @@ public class CheckVoiceData extends Activity {
     }
 
     public static boolean canUpgradeResources(Context context) {
-        try {
-            final String version = FileUtils.read(context.getResources().openRawResource(R.raw.espeakdata_version));
+        try (java.io.InputStream stream = context.getResources().openRawResource(R.raw.espeakdata_version)) {
+            final String version = FileUtils.read(stream);
             final String installedVersion = FileUtils.read(new File(getDataPath(context), "version"));
             return !version.equals(installedVersion);
         } catch (Exception e) {
@@ -87,11 +87,13 @@ public class CheckVoiceData extends Activity {
         final File dataPath = getDataPath(context);
         FileUtils.rmdir(dataPath);
 
-        try {
-            FileUtils.extractZip(context.getResources().openRawResource(R.raw.espeakdata), dataPath.getParentFile());
+        try (java.io.InputStream dataStream = context.getResources().openRawResource(R.raw.espeakdata)) {
+            FileUtils.extractZip(dataStream, dataPath.getParentFile());
 
-            final String version = FileUtils.read(
-                context.getResources().openRawResource(R.raw.espeakdata_version));
+            final String version;
+            try (java.io.InputStream versionStream = context.getResources().openRawResource(R.raw.espeakdata_version)) {
+                version = FileUtils.read(versionStream);
+            }
             FileUtils.write(new File(getDataPath(context), "version"), version);
             return true;
         } catch (Exception e) {

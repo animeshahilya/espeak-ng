@@ -40,11 +40,6 @@ public final class LanguageSettings {
         return new HashSet<String>(selected);
     }
 
-    public static boolean isVoiceEnabled(Voice voice, SharedPreferences preferences) {
-        final Set<String> selected = getSelectedLanguages(preferences);
-        return selected == null || selected.contains(voice.toString());
-    }
-
     public static List<Voice> filterVoices(List<Voice> voices, SharedPreferences preferences) {
         final Set<String> selected = getSelectedLanguages(preferences);
         if (selected == null) {

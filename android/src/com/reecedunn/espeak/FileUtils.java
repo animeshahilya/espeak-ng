@@ -29,7 +29,12 @@ import java.util.zip.ZipInputStream;
 
 public class FileUtils {
     public static String read(File file) throws IOException {
-        return readByteArray(new FileInputStream(file), (int)file.length()).toString();
+        final FileInputStream stream = new FileInputStream(file);
+        try {
+            return readByteArray(stream, (int) file.length()).toString();
+        } finally {
+            stream.close();
+        }
     }
 
     public static String read(InputStream stream) throws IOException {
@@ -38,18 +43,6 @@ public class FileUtils {
 
     public static String read(InputStream stream, int length) throws IOException {
         return readByteArray(stream, length).toString();
-    }
-
-    public static byte[] readBinary(File file) throws IOException {
-        return readByteArray(new FileInputStream(file), (int)file.length()).toByteArray();
-    }
-
-    public static byte[] readBinary(InputStream stream) throws IOException {
-        return readByteArray(stream, stream.available()).toByteArray();
-    }
-
-    public static byte[] readBinary(InputStream stream, int length) throws IOException {
-        return readByteArray(stream, length).toByteArray();
     }
 
     private static ByteArrayOutputStream readByteArray(InputStream stream, int length) throws IOException {
