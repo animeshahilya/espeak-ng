@@ -648,11 +648,12 @@ public class TtsService extends TextToSpeechService {
     }
 
     /**
-     * Intelligently detects verification codes, OTPs, and PINs (e.g. 5-to-8 digit
-     * banking OTPs, Indian postal PIN codes, 4-digit PINs preceded by keywords)
-     * and space-separates only those numbers so they are read digit-by-digit,
-     * while preserving natural reading for normal quantities ("25 items", "year 2024").
-     * Also expands the Indian Rupee symbol (₹) to "rupees".
+     * Intelligently detects verification codes, OTPs, and PINs (4-to-8 digit runs
+     * preceded by a keyword like "OTP", "PIN", "code", "verification") and
+     * space-separates only those numbers so they are read digit-by-digit, while
+     * preserving natural reading for normal quantities ("25 items", "year 2024",
+     * "₹150000 credited") that happen to have the same digit count but no
+     * such keyword nearby. Also expands the Indian Rupee symbol (₹) to "rupees".
      */
     static String spaceSeparateSmartCodes(String text) {
         if (text == null || text.isEmpty()) {
@@ -675,9 +676,7 @@ public class TtsService extends TextToSpeechService {
                 int runEnd = i;
 
                 boolean separate = false;
-                if (digitCount >= 5 && digitCount <= 8) {
-                    separate = true;
-                } else if (digitCount == 4) {
+                if (digitCount >= 4 && digitCount <= 8) {
                     int contextStart = Math.max(0, runStart - 20);
                     String prefix = text.substring(contextStart, runStart).toLowerCase(Locale.ROOT);
                     if (prefix.contains("otp") || prefix.contains("pin") || prefix.contains("code") ||
