@@ -79,6 +79,8 @@ public class TtsService extends TextToSpeechService {
     private String mSynthText;
     /** Where {@link #mSynthText} starts within the text the caller supplied. */
     private int mSynthTextOffset;
+    /** Length of the original text passed by the caller for boundary clamping. */
+    private int mOriginalTextLength;
     /**
      * Offset map back to the caller's text when {@link #mSynthText} is a
      * normalized copy of it, or null when they are the same string.
@@ -362,7 +364,11 @@ public class TtsService extends TextToSpeechService {
     }
 
     private String getRequestString(SynthesisRequest request) {
-        return request.getCharSequenceText().toString();
+        if (request == null) {
+            return null;
+        }
+        final CharSequence cs = request.getCharSequenceText();
+        return cs != null ? cs.toString() : null;
     }
 
     protected int selectLanguageWithFallback(String language, String country, String variant) {
@@ -474,6 +480,16 @@ public class TtsService extends TextToSpeechService {
             return;
         }
 
+        // Fast-path empty or whitespace-only utterances: avoid full voice/param setup
+        // and JNI overhead for TalkBack spacers, empty lines, and blank elements.
+        if (text.trim().isEmpty()) {
+            callback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
+            callback.done();
+            return;
+        }
+
+        mOriginalTextLength = text.length();
+
         if (DEBUG) {
             Log.i(TAG, "Received synthesis request: {language=\"" + voice.name + "\"}");
 
@@ -552,7 +568,11 @@ public class TtsService extends TextToSpeechService {
 
         mCallback = callback;
         mCallbackDone.set(false);
-        mCallback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
+        int startStatus = mCallback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
+        if (startStatus != TextToSpeech.SUCCESS) {
+            mCallback = null;
+            return;
+        }
         mEngine.setVoice(voice, settings.getVoiceVariant());
 
         int rate = settings.getRate();
@@ -562,9 +582,37 @@ public class TtsService extends TextToSpeechService {
         }
         rate = (int)(((long)rate * rateScale) / 100);
         mEngine.Rate.setValue(rate);
-        mEngine.Pitch.setValue(settings.getPitch(), request.getPitch());
+
+        int pitchScale = request.getPitch();
+        if (pitchScale <= 0) {
+            pitchScale = 100;
+        }
+        mEngine.Pitch.setValue(settings.getPitch(), pitchScale);
+
         mEngine.PitchRange.setValue(settings.getPitchRange());
-        mEngine.Volume.setValue(settings.getVolume());
+
+        // Accessibility volume ducking support (KEY_PARAM_VOLUME)
+        float volumeScale = 1.0f;
+        final Bundle params = request.getParams();
+        if (params != null) {
+            Object volObj = params.get(TextToSpeech.Engine.KEY_PARAM_VOLUME);
+            if (volObj instanceof Number) {
+                volumeScale = ((Number) volObj).floatValue();
+            } else if (volObj instanceof String) {
+                try {
+                    volumeScale = Float.parseFloat((String) volObj);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+        if (volumeScale < 0.0f) {
+            volumeScale = 0.0f;
+        } else if (volumeScale > 1.0f) {
+            volumeScale = 1.0f;
+        }
+        int targetVolume = Math.round(settings.getVolume() * volumeScale);
+        mEngine.Volume.setValue(targetVolume);
+
         mEngine.Punctuation.setValue(settings.getPunctuationLevel());
         mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
         mEngine.Capitals.setValue(settings.getCapitals());
@@ -812,7 +860,11 @@ public class TtsService extends TextToSpeechService {
                 return;
             }
 
-            final int maxBytesToCopy = mCallback.getMaxBufferSize();
+            if (mCallback == null) {
+                return;
+            }
+
+            final int maxBytesToCopy = Math.max(mCallback.getMaxBufferSize(), 512);
 
             int offset = 0;
 
@@ -841,7 +893,7 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthWordBoundary(int textPosition, int textLength, int markerInFrames) {
-            if (mSynthText == null) {
+            if (mSynthText == null || mCallback == null) {
                 return;
             }
 
@@ -856,11 +908,18 @@ public class TtsService extends TextToSpeechService {
                 start = mSynthNormalization.toOriginalOffset(start);
                 end = mSynthNormalization.toOriginalOffset(end);
             }
-            if (end <= start) {
+
+            int finalStart = mSynthTextOffset + start;
+            int finalEnd = mSynthTextOffset + end;
+            if (mOriginalTextLength > 0) {
+                finalStart = Math.max(0, Math.min(mOriginalTextLength, finalStart));
+                finalEnd = Math.max(0, Math.min(mOriginalTextLength, finalEnd));
+            }
+            if (finalEnd <= finalStart) {
                 return;
             }
 
-            mCallback.rangeStart(markerInFrames, mSynthTextOffset + start, mSynthTextOffset + end);
+            mCallback.rangeStart(markerInFrames, finalStart, finalEnd);
         }
     };
 }

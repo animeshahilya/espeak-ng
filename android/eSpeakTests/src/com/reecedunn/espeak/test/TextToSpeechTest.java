@@ -19,8 +19,12 @@ package com.reecedunn.espeak.test;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -272,4 +276,60 @@ getVoices(); // Ensure that the voice data has been populated.
             }
         }
     }
+
+    @Test
+    public void testSpeakEmptyAndWhitespaceUtterances() throws Exception
+    {
+        final CountDownLatch latch = new CountDownLatch(2);
+        getEngine().setOnUtteranceProgressListener(new UtteranceProgressListener() {
+            @Override
+            public void onStart(String utteranceId) {}
+
+            @Override
+            public void onDone(String utteranceId) {
+                latch.countDown();
+            }
+
+            @Override
+            public void onError(String utteranceId) {}
+        });
+
+        int res1 = getEngine().speak("", TextToSpeech.QUEUE_FLUSH, null, "empty");
+        assertThat(res1, is(TextToSpeech.SUCCESS));
+
+        int res2 = getEngine().speak("   \t\n", TextToSpeech.QUEUE_ADD, null, "whitespace");
+        assertThat(res2, is(TextToSpeech.SUCCESS));
+
+        boolean completed = latch.await(5, TimeUnit.SECONDS);
+        assertThat(completed, is(true));
+    }
+
+    @Test
+    public void testSpeakWithVolumeDuckingAndZeroPitch() throws Exception
+    {
+        final CountDownLatch latch = new CountDownLatch(1);
+        getEngine().setOnUtteranceProgressListener(new UtteranceProgressListener() {
+            @Override
+            public void onStart(String utteranceId) {}
+
+            @Override
+            public void onDone(String utteranceId) {
+                latch.countDown();
+            }
+
+            @Override
+            public void onError(String utteranceId) {}
+        });
+
+        Bundle params = new Bundle();
+        params.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 0.5f);
+        getEngine().setPitch(0.0f); // TalkBack / client passing zero pitch
+
+        int res = getEngine().speak("Testing TalkBack volume and pitch.", TextToSpeech.QUEUE_FLUSH, params, "volume_duck");
+        assertThat(res, is(TextToSpeech.SUCCESS));
+
+        boolean completed = latch.await(10, TimeUnit.SECONDS);
+        assertThat(completed, is(true));
+    }
 }
+
