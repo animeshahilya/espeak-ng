@@ -139,6 +139,7 @@ android {
 def CORE_LANG_FAMILY_DIRS = ['inc', 'dra'] as Set
 def CORE_DICT_CODES = ['en', 'as', 'bn', 'bpy', 'gu', 'hi', 'kok', 'mr', 'ne',
                         'or', 'pa', 'sd', 'si', 'ur', 'kn', 'ml', 'ta', 'te'] as Set
+def DISTINCT_ENGLISH_VOICES = ['en', 'en-in', 'en-US', 'en-AU', 'en-CA', 'en-GB-scotland'] as Set
 
 tasks.register('splitLanguageData') {
     def srcDir = file('build/generated/espeak-ng-data')
@@ -196,7 +197,7 @@ tasks.register('splitLanguageData') {
                 copy { from familyDir; into targetLangDir }
             } else {
                 familyDir.eachFile { langFile ->
-                    def isEnglish = langFile.name == 'en' || langFile.name.startsWith('en-') || langFile.name.startsWith('en_')
+                    def isEnglish = DISTINCT_ENGLISH_VOICES.contains(langFile.name)
                     def targetLangDir = new File(isEnglish ? coreDir : extraDir, "lang/${familyDir.name}")
                     targetLangDir.mkdirs()
                     copy { from langFile; into targetLangDir }

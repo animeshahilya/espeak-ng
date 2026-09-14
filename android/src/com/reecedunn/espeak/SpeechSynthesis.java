@@ -32,14 +32,22 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Set;
 
 public class SpeechSynthesis {
     private static final String TAG = SpeechSynthesis.class.getSimpleName();
+
+    // Obscure or redundant English variants filtered from the UI to show genuinely distinct voices only:
+    private static final Set<String> REDUNDANT_VOICE_NAMES = new HashSet<String>(Arrays.asList(
+            "en-029", "en-GB-x-gbclan", "en-GB-x-gbcwmd", "en-GB-x-rp", "en-Shaw", "en-US-nyc"
+    ));
 
     public static final int GENDER_UNSPECIFIED = 0;
     public static final int GENDER_MALE = 1;
@@ -124,6 +132,10 @@ public class SpeechSynthesis {
             final String identifier = results[i + 1];
             final int gender = Integer.parseInt(results[i + 2]);
             final int age = Integer.parseInt(results[i + 3]);
+
+            if (REDUNDANT_VOICE_NAMES.contains(name)) {
+                continue;
+            }
 
             try {
                 final Locale locale;

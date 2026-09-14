@@ -686,17 +686,56 @@ public class TtsService extends TextToSpeechService {
     private static final java.util.regex.Pattern SHORTHAND_CRORE =
             java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:cr|crore|crores)\\b");
 
+    // NVDA-inspired programming, mathematical, and syntax symbol patterns:
+    private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=");
+    private static final java.util.regex.Pattern SYM_DOUBLE_EQUALS = java.util.regex.Pattern.compile("==");
+    private static final java.util.regex.Pattern SYM_LESS_EQUAL = java.util.regex.Pattern.compile("<=");
+    private static final java.util.regex.Pattern SYM_GREATER_EQUAL = java.util.regex.Pattern.compile(">=");
+    private static final java.util.regex.Pattern SYM_FAT_ARROW = java.util.regex.Pattern.compile("=>");
+    private static final java.util.regex.Pattern SYM_THIN_ARROW = java.util.regex.Pattern.compile("->");
+    private static final java.util.regex.Pattern SYM_LOGICAL_AND = java.util.regex.Pattern.compile("&&");
+    private static final java.util.regex.Pattern SYM_LOGICAL_OR = java.util.regex.Pattern.compile("\\|\\|");
+    private static final java.util.regex.Pattern SYM_COMMENT_START = java.util.regex.Pattern.compile("/\\*");
+    private static final java.util.regex.Pattern SYM_COMMENT_END = java.util.regex.Pattern.compile("\\*/");
+    private static final java.util.regex.Pattern SYM_DOUBLE_SLASH = java.util.regex.Pattern.compile("(?<!https?:)//");
+    private static final java.util.regex.Pattern SYM_ELLIPSIS = java.util.regex.Pattern.compile("\\.{3,}");
+
     /**
-     * Preprocesses Indian-specific textual nuances before synthesis:
-     * 1. Inserts spacing after Danda (।) and Double Danda (॥) if directly adjacent to text.
-     * 2. Separates slash-concatenated banking tokens (UPI/423891028341/PAYTM -> UPI / 423891028341 / PAYTM).
-     * 3. Normalizes currency prefixes (₹500, Rs. 500, INR 500 -> 500 rupees).
-     * 4. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
+     * Expands multi-character programming, logical, and mathematical symbols
+     * (borrowed from NVDA symbols.dic) so they read naturally instead of literal character lists.
+     */
+    static String expandProgrammingSymbols(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        text = SYM_NOT_EQUAL.matcher(text).replaceAll(" not equal ");
+        text = SYM_DOUBLE_EQUALS.matcher(text).replaceAll(" double equals ");
+        text = SYM_LESS_EQUAL.matcher(text).replaceAll(" less than or equal to ");
+        text = SYM_GREATER_EQUAL.matcher(text).replaceAll(" greater than or equal to ");
+        text = SYM_FAT_ARROW.matcher(text).replaceAll(" implies ");
+        text = SYM_THIN_ARROW.matcher(text).replaceAll(" arrow ");
+        text = SYM_LOGICAL_AND.matcher(text).replaceAll(" double ampersand ");
+        text = SYM_LOGICAL_OR.matcher(text).replaceAll(" double pipe ");
+        text = SYM_COMMENT_START.matcher(text).replaceAll(" comment start ");
+        text = SYM_COMMENT_END.matcher(text).replaceAll(" comment end ");
+        text = SYM_DOUBLE_SLASH.matcher(text).replaceAll(" double slash ");
+        text = SYM_ELLIPSIS.matcher(text).replaceAll(" ellipsis ");
+        return text;
+    }
+
+    /**
+     * Preprocesses Indian-specific textual nuances and common technical syntax before synthesis:
+     * 1. Expands multi-character programming and math symbols (NVDA symbols.dic style).
+     * 2. Inserts spacing after Danda (।) and Double Danda (॥) if directly adjacent to text.
+     * 3. Separates slash-concatenated banking tokens (UPI/423891028341/PAYTM -> UPI / 423891028341 / PAYTM).
+     * 4. Normalizes currency prefixes (₹500, Rs. 500, INR 500 -> 500 rupees).
+     * 5. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
      */
     static String preprocessIndianText(String text) {
         if (text == null || text.isEmpty()) {
             return text;
         }
+        text = expandProgrammingSymbols(text);
         text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
         text = BANKING_SLASH_TXN.matcher(text).replaceAll("$1 / $2");
         text = CURRENCY_PREFIX.matcher(text).replaceAll("$1 rupees");
