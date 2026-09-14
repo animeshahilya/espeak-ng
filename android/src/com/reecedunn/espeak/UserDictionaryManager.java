@@ -35,6 +35,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class UserDictionaryManager {
     private static final String TAG = "UserDictionaryManager";
@@ -42,7 +45,8 @@ public class UserDictionaryManager {
 
     private static UserDictionaryManager sInstance;
     private final Context mContext;
-    private final List<UserDictionary> mRules = new ArrayList<>();
+    private final List<UserDictionary> mRules = new CopyOnWriteArrayList<>();
+    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     private UserDictionaryManager(Context context) {
         mContext = context.getApplicationContext();
@@ -56,37 +60,40 @@ public class UserDictionaryManager {
         return sInstance;
     }
 
-    public synchronized List<UserDictionary> getRules() {
+    public List<UserDictionary> getRules() {
         return Collections.unmodifiableList(new ArrayList<>(mRules));
     }
 
-    public synchronized void addRule(UserDictionary rule) {
+    public void addRule(UserDictionary rule) {
         if (rule != null) {
             mRules.add(rule);
             save();
         }
     }
 
-    public synchronized void setRule(int index, UserDictionary rule) {
+    public void setRule(int index, UserDictionary rule) {
         if (index >= 0 && index < mRules.size() && rule != null) {
             mRules.set(index, rule);
             save();
         }
     }
 
-    public synchronized void removeRule(int index) {
+    public void removeRule(int index) {
         if (index >= 0 && index < mRules.size()) {
             mRules.remove(index);
             save();
         }
     }
 
-    public synchronized void clearRules() {
+    public void clearRules() {
         mRules.clear();
         save();
     }
 
-    public synchronized String applyRules(String text) {
+    /**
+     * Lock-free rule application for high-frequency TTS synthesis pipeline.
+     */
+    public String applyRules(String text) {
         if (text == null || text.isEmpty() || mRules.isEmpty()) {
             return text;
         }
@@ -125,15 +132,39 @@ public class UserDictionaryManager {
         }
     }
 
-    public synchronized void save() {
+    /**
+     * Asynchronously and atomically persists user dictionary rules without blocking
+     * the UI or speech synthesis threads.
+     */
+    public void save() {
+        final List<UserDictionary> snapshot = new ArrayList<>(mRules);
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                saveAtomic(snapshot);
+            }
+        });
+    }
+
+    private synchronized void saveAtomic(List<UserDictionary> rules) {
         File file = new File(mContext.getFilesDir(), FILE_NAME);
-        try (FileOutputStream fos = new FileOutputStream(file);
+        File tempFile = new File(mContext.getFilesDir(), FILE_NAME + ".tmp");
+        try (FileOutputStream fos = new FileOutputStream(tempFile);
              Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
             JSONArray arr = new JSONArray();
-            for (UserDictionary rule : mRules) {
+            for (UserDictionary rule : rules) {
                 arr.put(rule.toJson());
             }
             writer.write(arr.toString(2));
+            writer.flush();
+            fos.getFD().sync();
+            if (!tempFile.renameTo(file)) {
+                if (file.delete() && tempFile.renameTo(file)) {
+                    // Succeeded on delete + rename
+                } else {
+                    Log.w(TAG, "Could not atomic rename temp user dictionary");
+                }
+            }
         } catch (Exception e) {
             Log.e(TAG, "Failed to save user dictionary", e);
         }

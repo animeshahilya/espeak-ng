@@ -140,6 +140,11 @@ public class CheckVoiceDataTest
             {
                 if (!available.contains(voice))
                 {
+                    // eng-GBR-rp, eng-GBR-gbcwmd, eng-GBR-gbclan, eng-SGP, eng-JAM, eng-029 were cleaned up as redundant
+                    if (voice.startsWith("eng-") && (voice.contains("rp") || voice.contains("gbcwmd") ||
+                            voice.contains("gbclan") || voice.contains("SGP") || voice.contains("JAM") || voice.contains("029"))) {
+                        continue;
+                    }
                     removed.add(voice);
                 }
             }

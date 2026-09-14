@@ -27,10 +27,41 @@ import android.service.quicksettings.TileService;
  * Quick Settings tile to toggle 3x Rate Boost directly from the Android status shade.
  */
 public class TtsRateBoostTileService extends TileService {
+    private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener;
+
     @Override
     public void onStartListening() {
         super.onStartListening();
+        Context storageContext = EspeakApp.getStorageContext();
+        if (storageContext == null) {
+            storageContext = getApplicationContext();
+        }
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        if (mPrefListener == null) {
+            mPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sp, String key) {
+                    if (VoiceSettings.PREF_RATE_BOOST.equals(key)) {
+                        updateTile();
+                    }
+                }
+            };
+        }
+        prefs.registerOnSharedPreferenceChangeListener(mPrefListener);
         updateTile();
+    }
+
+    @Override
+    public void onStopListening() {
+        super.onStopListening();
+        if (mPrefListener != null) {
+            Context storageContext = EspeakApp.getStorageContext();
+            if (storageContext == null) {
+                storageContext = getApplicationContext();
+            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+            prefs.unregisterOnSharedPreferenceChangeListener(mPrefListener);
+        }
     }
 
     @Override

@@ -210,6 +210,9 @@ public class SpeechSynthesisTest extends TextToSpeechTestCase
 
     public static boolean isCoreVoice(String name) {
         if (name == null) return false;
+        if (com.reecedunn.espeak.SpeechSynthesis.REDUNDANT_VOICE_NAMES.contains(name)) {
+            return false;
+        }
         if (name.equals("en") || name.startsWith("en-") || name.startsWith("en_")) {
             return true;
         }

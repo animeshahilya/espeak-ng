@@ -120,7 +120,7 @@ public class UserDictionary {
         }
         try {
             return mCompiledPattern.matcher(text).replaceAll(mReplacement);
-        } catch (Exception e) {
+        } catch (Throwable t) {
             return text;
         }
     }

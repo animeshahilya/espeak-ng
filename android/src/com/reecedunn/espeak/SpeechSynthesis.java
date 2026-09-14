@@ -45,8 +45,9 @@ public class SpeechSynthesis {
     private static final String TAG = SpeechSynthesis.class.getSimpleName();
 
     // Obscure or redundant English variants filtered from the UI to show genuinely distinct voices only:
-    private static final Set<String> REDUNDANT_VOICE_NAMES = new HashSet<String>(Arrays.asList(
-            "en-029", "en-GB-x-gbclan", "en-GB-x-gbcwmd", "en-GB-x-rp", "en-Shaw", "en-US-nyc"
+    public static final Set<String> REDUNDANT_VOICE_NAMES = new HashSet<String>(Arrays.asList(
+            "en-029", "en-GB-x-gbclan", "en-GB-x-gbcwmd", "en-GB-x-rp", "en-Shaw", "en-US-nyc",
+            "en-gb-x-gbclan", "en-gb-x-gbcwmd", "en-gb-x-rp", "en-shaw", "en-us-nyc", "en-sg"
     ));
 
     public static final int GENDER_UNSPECIFIED = 0;

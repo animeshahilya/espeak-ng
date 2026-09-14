@@ -75,6 +75,7 @@ public class TtsService extends TextToSpeechService {
     private SynthesisCallback mCallback;
     private final AtomicBoolean mCallbackDone = new AtomicBoolean(false);
     private final java.util.concurrent.atomic.AtomicInteger mSegmentsRemaining = new java.util.concurrent.atomic.AtomicInteger(1);
+    private final AtomicBoolean mIsStopped = new AtomicBoolean(false);
 
     /** Text handed to eSpeak for the current request. */
     private String mSynthText;
@@ -353,6 +354,7 @@ public class TtsService extends TextToSpeechService {
     @Override
     protected void onStop() {
         Log.i(TAG, "Received stop request.");
+        mIsStopped.set(true);
 
         // Local snapshot: mEngine can be briefly reassigned (old engine
         // stopped, new one not yet in place) by a concurrent
@@ -597,6 +599,7 @@ public class TtsService extends TextToSpeechService {
 
         mCallback = callback;
         mCallbackDone.set(false);
+        mIsStopped.set(false);
         int startStatus = mCallback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
         if (startStatus != TextToSpeech.SUCCESS) {
             mCallback = null;
@@ -650,7 +653,7 @@ public class TtsService extends TextToSpeechService {
         boolean enableBilingual = settings.isBilingualSwitchingEnabled() && !isSsml;
         List<ScriptSpan> spans = null;
         Voice secondaryVoice = null;
-        if (enableBilingual) {
+        if (enableBilingual && hasMixedLatinAndIndic(text)) {
             synchronized (mAvailableVoices) {
                 secondaryVoice = mAvailableVoices.get(settings.getSecondaryVoice());
             }
@@ -662,6 +665,9 @@ public class TtsService extends TextToSpeechService {
         if (spans != null && spans.size() > 1 && secondaryVoice != null) {
             mSegmentsRemaining.set(spans.size());
             for (ScriptSpan span : spans) {
+                if (mIsStopped.get()) {
+                    break;
+                }
                 Voice spanVoice = span.isLatin ? secondaryVoice : voice;
                 mEngine.setVoice(spanVoice, settings.getVoiceVariant());
                 mEngine.synthesize(span.text, false);
@@ -734,6 +740,8 @@ public class TtsService extends TextToSpeechService {
 
     private static final java.util.regex.Pattern SHORTHAND_CRORE =
             java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:cr|crore|crores)\\b");
+    private static final java.util.regex.Pattern SLASH_RUN =
+            java.util.regex.Pattern.compile("/+");
 
     // NVDA-inspired programming, mathematical, and syntax symbol patterns:
     private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=");
@@ -749,12 +757,26 @@ public class TtsService extends TextToSpeechService {
     private static final java.util.regex.Pattern SYM_DOUBLE_SLASH = java.util.regex.Pattern.compile("(?<!https?:)//");
     private static final java.util.regex.Pattern SYM_ELLIPSIS = java.util.regex.Pattern.compile("\\.{3,}");
 
+    private static boolean containsProgrammingSymbolChars(String text) {
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            char c = text.charAt(i);
+            switch (c) {
+                case '!': case '=': case '<': case '>':
+                case '-': case '&': case '|': case '/':
+                case '*': case '.':
+                    return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Expands multi-character programming, logical, and mathematical symbols
      * (borrowed from NVDA symbols.dic) so they read naturally instead of literal character lists.
      */
     public static String expandProgrammingSymbols(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null || text.isEmpty() || !containsProgrammingSymbolChars(text)) {
             return text;
         }
         text = SYM_NOT_EQUAL.matcher(text).replaceAll(" not equal ");
@@ -781,15 +803,17 @@ public class TtsService extends TextToSpeechService {
         for (int i = 0; i < len; i++) {
             char c = text.charAt(i);
             char ascii = 0;
-            if (c >= 0x0966 && c <= 0x096F) ascii = (char) ('0' + (c - 0x0966)); // Devanagari ०-९
-            else if (c >= 0x0A66 && c <= 0x0A6F) ascii = (char) ('0' + (c - 0x0A66)); // Gurmukhi ੦-੯
-            else if (c >= 0x09E6 && c <= 0x09EF) ascii = (char) ('0' + (c - 0x09E6)); // Bengali ০-৯
-            else if (c >= 0x0AE6 && c <= 0x0AEF) ascii = (char) ('0' + (c - 0x0AE6)); // Gujarati ૦-૯
-            else if (c >= 0x0B66 && c <= 0x0B6F) ascii = (char) ('0' + (c - 0x0B66)); // Odia ୦-୯
-            else if (c >= 0x0BE6 && c <= 0x0BEF) ascii = (char) ('0' + (c - 0x0BE6)); // Tamil ௦-௯
-            else if (c >= 0x0C66 && c <= 0x0C6F) ascii = (char) ('0' + (c - 0x0C66)); // Telugu ౦-౯
-            else if (c >= 0x0CE6 && c <= 0x0CEF) ascii = (char) ('0' + (c - 0x0CE6)); // Kannada ೦-೯
-            else if (c >= 0x0D66 && c <= 0x0D6F) ascii = (char) ('0' + (c - 0x0D66)); // Malayalam ൦-൯
+            if (c >= 0x0966 && c <= 0x0D6F) {
+                if (c <= 0x096F) ascii = (char) ('0' + (c - 0x0966)); // Devanagari ०-९
+                else if (c >= 0x09E6 && c <= 0x09EF) ascii = (char) ('0' + (c - 0x09E6)); // Bengali ০-৯
+                else if (c >= 0x0A66 && c <= 0x0A6F) ascii = (char) ('0' + (c - 0x0A66)); // Gurmukhi ੦-੯
+                else if (c >= 0x0AE6 && c <= 0x0AEF) ascii = (char) ('0' + (c - 0x0AE6)); // Gujarati ૦-૯
+                else if (c >= 0x0B66 && c <= 0x0B6F) ascii = (char) ('0' + (c - 0x0B66)); // Odia ୦-୯
+                else if (c >= 0x0BE6 && c <= 0x0BEF) ascii = (char) ('0' + (c - 0x0BE6)); // Tamil ௦-௯
+                else if (c >= 0x0C66 && c <= 0x0C6F) ascii = (char) ('0' + (c - 0x0C66)); // Telugu ౦-౯
+                else if (c >= 0x0CE6 && c <= 0x0CEF) ascii = (char) ('0' + (c - 0x0CE6)); // Kannada ೦-೯
+                else if (c >= 0x0D66 && c <= 0x0D6F) ascii = (char) ('0' + (c - 0x0D66)); // Malayalam ൦-൯
+            }
 
             if (ascii != 0) {
                 if (sb == null) {
@@ -861,6 +885,27 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
+    public static boolean hasMixedLatinAndIndic(String text) {
+        if (text == null || text.length() < 2) {
+            return false;
+        }
+        boolean hasLatin = false;
+        boolean hasIndic = false;
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            char c = text.charAt(i);
+            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+                hasLatin = true;
+            } else if (c >= 0x0900 && c <= 0x0D7F) {
+                hasIndic = true;
+            }
+            if (hasLatin && hasIndic) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static List<ScriptSpan> splitByScriptRuns(String text) {
         List<ScriptSpan> spans = new ArrayList<>();
         if (text == null || text.isEmpty()) {
@@ -904,6 +949,19 @@ public class TtsService extends TextToSpeechService {
         return spans;
     }
 
+    public static boolean containsIndianNuanceChars(String text) {
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            char c = text.charAt(i);
+            if ((c >= 0x0900 && c <= 0x0D7F) || c == 0x20B9 || c == '/' || c == ',' ||
+                c == 'k' || c == 'K' || c == 'l' || c == 'L' || c == 'c' || c == 'C' ||
+                c == 'r' || c == 'R' || c == 's' || c == 'S' || c == 'i' || c == 'I') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Preprocesses Indian-specific textual nuances and common technical syntax before synthesis:
      * 1. Normalizes native Indic numerals across 9 scripts to ASCII 0-9.
@@ -914,16 +972,16 @@ public class TtsService extends TextToSpeechService {
      * 6. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
      */
     public static String preprocessIndianText(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null || text.isEmpty() || !containsIndianNuanceChars(text)) {
             return text;
         }
         text = normalizeIndicDigits(text);
         text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
         java.util.regex.Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
         if (txnMatcher.find()) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             do {
-                String expanded = txnMatcher.group(0).replaceAll("/+", " / ");
+                String expanded = SLASH_RUN.matcher(txnMatcher.group(0)).replaceAll(" / ");
                 txnMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(expanded));
             } while (txnMatcher.find());
             txnMatcher.appendTail(sb);
@@ -933,7 +991,7 @@ public class TtsService extends TextToSpeechService {
         // Normalize Indian currency prefixes, stripping grouping commas from the figure
         java.util.regex.Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
         if (currMatcher.find()) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             do {
                 String amount = currMatcher.group(1).replace(",", "");
                 currMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(amount + " rupees"));
@@ -945,7 +1003,7 @@ public class TtsService extends TextToSpeechService {
         // Normalize Indian number comma groupings (e.g. 1,00,000 -> 100000)
         java.util.regex.Matcher numMatcher = INDIAN_NUMBER_COMMAS.matcher(text);
         if (numMatcher.find()) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             do {
                 String normalizedNum = numMatcher.group(0).replace(",", "");
                 numMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(normalizedNum));
@@ -1160,7 +1218,7 @@ public class TtsService extends TextToSpeechService {
                 return;
             }
 
-            if (mCallback == null) {
+            if (mCallback == null || mCallbackDone.get() || mIsStopped.get()) {
                 return;
             }
 
@@ -1169,6 +1227,9 @@ public class TtsService extends TextToSpeechService {
             int offset = 0;
 
             while (offset < audioData.length) {
+                if (mIsStopped.get() || mCallbackDone.get()) {
+                    return;
+                }
                 final int bytesToWrite = Math.min(maxBytesToCopy, (audioData.length - offset));
                 if (mCallback.audioAvailable(audioData, offset, bytesToWrite)
                         != TextToSpeech.SUCCESS) {
@@ -1186,7 +1247,7 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthDataComplete() {
-            if (mSegmentsRemaining.decrementAndGet() <= 0) {
+            if (mSegmentsRemaining.decrementAndGet() <= 0 || mIsStopped.get()) {
                 if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
                     mCallback.done();
                 }
@@ -1195,7 +1256,7 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthWordBoundary(int textPosition, int textLength, int markerInFrames) {
-            if (mSynthText == null || mCallback == null) {
+            if (mSynthText == null || mCallback == null || mCallbackDone.get() || mIsStopped.get()) {
                 return;
             }
 
@@ -1221,7 +1282,10 @@ public class TtsService extends TextToSpeechService {
                 return;
             }
 
-            mCallback.rangeStart(markerInFrames, finalStart, finalEnd);
+            try {
+                mCallback.rangeStart(markerInFrames, finalStart, finalEnd);
+            } catch (Throwable ignored) {
+            }
         }
     };
 }
