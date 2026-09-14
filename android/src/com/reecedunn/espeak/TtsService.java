@@ -715,7 +715,7 @@ public class TtsService extends TextToSpeechService {
      * Expands multi-character programming, logical, and mathematical symbols
      * (borrowed from NVDA symbols.dic) so they read naturally instead of literal character lists.
      */
-    static String expandProgrammingSymbols(String text) {
+    public static String expandProgrammingSymbols(String text) {
         if (text == null || text.isEmpty()) {
             return text;
         }
@@ -743,12 +743,21 @@ public class TtsService extends TextToSpeechService {
      * 5. Normalizes Indian comma grouping (1,00,000 -> 100000).
      * 6. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
      */
-    static String preprocessIndianText(String text) {
+    public static String preprocessIndianText(String text) {
         if (text == null || text.isEmpty()) {
             return text;
         }
         text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
-        text = BANKING_SLASH_TXN.matcher(text).replaceAll("$1 / $2");
+        java.util.regex.Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
+        if (txnMatcher.find()) {
+            StringBuffer sb = new StringBuffer();
+            do {
+                String expanded = txnMatcher.group(0).replaceAll("/+", " / ");
+                txnMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(expanded));
+            } while (txnMatcher.find());
+            txnMatcher.appendTail(sb);
+            text = sb.toString();
+        }
 
         // Normalize Indian currency prefixes, stripping grouping commas from the figure
         java.util.regex.Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
@@ -796,7 +805,7 @@ public class TtsService extends TextToSpeechService {
      * by ear from someone literally describing a face - "I'm happy, grinning
      * face, today" makes clear to a blind listener that a symbol was there.
      */
-    static String clarifyEmojiAnnouncements(String text) {
+    public static String clarifyEmojiAnnouncements(String text) {
         if (text == null || text.isEmpty()) {
             return text;
         }
@@ -864,7 +873,7 @@ public class TtsService extends TextToSpeechService {
      * ٠-٩, Extended Arabic-Indic ۰-۹, Devanagari ०-९, etc.) as classified by
      * {@link Character#isDigit(int)}.
      */
-    static String spaceSeparateDigits(String text) {
+    public static String spaceSeparateDigits(String text) {
         if (text == null || text.isEmpty()) {
             return text;
         }
@@ -893,7 +902,7 @@ public class TtsService extends TextToSpeechService {
      * "₹150000 credited") that happen to have the same digit count but no
      * such keyword nearby. Also expands the Indian Rupee symbol (₹) to "rupees".
      */
-    static String spaceSeparateSmartCodes(String text) {
+    public static String spaceSeparateSmartCodes(String text) {
         if (text == null || text.isEmpty()) {
             return text;
         }
