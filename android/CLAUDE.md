@@ -58,13 +58,19 @@ Debug/Release variant).
 `build.gradle` loads `android/keystore.properties` (gitignored, alongside the
 `.jks` it points to under `android/keystore/`) if present, and signs
 `assembleRelease` with it; without the file, `assembleRelease` silently falls
-back to an unsigned APK rather than failing. This app deliberately does **not**
-enable R8/minification on the release build type: `SpeechSynthesis`'s native
-methods are matched against exact unmangled Java method names by
-`jni/jni/eSpeakService.c` (`Java_com_animeshahilya_espeakng_SpeechSynthesis_*`), and
-an unguarded minify pass could rename them and silently break every JNI call
-in the release build. Don't turn on `minifyEnabled` without adding a `-keep`
-rule for that class first, and verifying on a real device.
+back to an unsigned APK rather than failing.
+
+The release build type has `minifyEnabled true`. This is safe only because
+`proguard-rules.pro` explicitly `-keep`s the whole `SpeechSynthesis` class:
+`jni/jni/eSpeakService.c` binds to it by exact unmangled name -
+`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 10 `native`
+methods, plus explicit `GetMethodID()` lookups in `nativeClassInit()` for
+`nativeSynthCallback`/`nativeSynthWordCallback` (private methods invoked
+*from* native code, with no Java-side call site R8 can see marking them
+used). If that keep rule is ever narrowed or removed, minification will
+silently break every JNI call in the release build with no compile-time
+warning - verify a real release build's TTS synthesis on a real device after
+touching either `proguard-rules.pro` or this class.
 
 ## Architecture
 
