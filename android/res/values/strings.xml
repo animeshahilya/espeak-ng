@@ -138,7 +138,6 @@
   <string name="setting_nato_spelling_summary">Speak NATO phonetics (Alpha, Bravo...) during single character navigation</string>
   <string name="setting_spoken_diacritics">Devanagari matras in exploration</string>
   <string name="setting_spoken_diacritics_summary">Announce matra and diacritic names (Aa ki matra, Halant, Anusvara) when exploring character-by-character</string>
-  <string name="quick_settings_rate_boost">TTS 3x Boost</string>
   <string name="test_voice_title">Preview voice sample</string>
   <string name="test_voice_summary">Listen to a sample utterance testing current voice, pitch, speed, and formatting</string>
   <string name="test_voice_sample">This is a sample of eSpeak NG. ₹1,00,000 payment to UPI/423891028341/PAYTM. A != B.</string>
