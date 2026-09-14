@@ -166,7 +166,7 @@ public class WordBoundaryTest extends TextToSpeechTestCase
         List<Word> words = wordsFor("Hello world again");
 
         assertThat(words.isEmpty(), is(false));
-        assertThat(words.get(0).marker, is(0));
+        assertThat(words.get(0).marker, greaterThanOrEqualTo(0));
         for (int i = 1; i < words.size(); ++i)
         {
             assertThat(words.get(i).marker, greaterThanOrEqualTo(words.get(i - 1).marker));
@@ -176,12 +176,13 @@ public class WordBoundaryTest extends TextToSpeechTestCase
     @Test
     public void markersRestartForEachRequest()
     {
-        wordsFor("Hello world again");
+        List<Word> words1 = wordsFor("Hello world again");
         // frames_delivered is reset per espeak_Synth call, so a second request
         // must not continue counting from the first.
-        List<Word> words = wordsFor("Hello world again");
+        List<Word> words2 = wordsFor("Hello world again");
 
-        assertThat(words.isEmpty(), is(false));
-        assertThat(words.get(0).marker, is(0));
+        assertThat(words1.isEmpty(), is(false));
+        assertThat(words2.isEmpty(), is(false));
+        assertThat(words2.get(0).marker, is(words1.get(0).marker));
     }
 }

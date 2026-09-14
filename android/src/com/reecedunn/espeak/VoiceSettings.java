@@ -67,6 +67,11 @@ public class VoiceSettings {
     public static final String PUNCTUATION_SOME = "some";
     public static final String PUNCTUATION_ALL = "all";
 
+    public static final String DEFAULT_VARIANT_NVDA = "max";
+    public static final int DEFAULT_PITCH_NVDA = 40;
+    public static final int DEFAULT_PITCH_RANGE_NVDA = 75;
+    public static final int DEFAULT_CAPITALS_NVDA = 3;
+
     public VoiceSettings(SharedPreferences preferences, SpeechSynthesis engine) {
         mPreferences = preferences;
         mEngine = engine;
@@ -75,11 +80,13 @@ public class VoiceSettings {
     public VoiceVariant getVoiceVariant() {
         String variant = mPreferences.getString(PREF_VARIANT, null);
         if (variant == null) {
-            int gender = getPreferenceValue(PREF_DEFAULT_GENDER, SpeechSynthesis.GENDER_MALE);
+            int gender = getPreferenceValue(PREF_DEFAULT_GENDER, -1);
             if (gender == SpeechSynthesis.GENDER_FEMALE) {
                 return VoiceVariant.parseVoiceVariant(VoiceVariant.FEMALE);
+            } else if (gender == SpeechSynthesis.GENDER_MALE) {
+                return VoiceVariant.parseVoiceVariant(VoiceVariant.MALE);
             }
-            return VoiceVariant.parseVoiceVariant(VoiceVariant.MALE);
+            return VoiceVariant.parseVoiceVariant(DEFAULT_VARIANT_NVDA);
         }
         return VoiceVariant.parseVoiceVariant(variant);
     }
@@ -113,7 +120,11 @@ public class VoiceSettings {
 
         int pitch = getPreferenceValue(PREF_PITCH, Integer.MIN_VALUE);
         if (pitch == Integer.MIN_VALUE) {
-            pitch = getPreferenceValue(PREF_DEFAULT_PITCH, 100) / 2;
+            if (mPreferences.contains(PREF_DEFAULT_PITCH)) {
+                pitch = getPreferenceValue(PREF_DEFAULT_PITCH, 100) / 2;
+            } else {
+                pitch = DEFAULT_PITCH_NVDA;
+            }
         }
 
         if (pitch > max) pitch = max;
@@ -125,7 +136,7 @@ public class VoiceSettings {
         int min = mEngine.PitchRange.getMinValue();
         int max = mEngine.PitchRange.getMaxValue();
 
-        int range = getPreferenceValue(PREF_PITCH_RANGE, mEngine.PitchRange.getDefaultValue());
+        int range = getPreferenceValue(PREF_PITCH_RANGE, DEFAULT_PITCH_RANGE_NVDA);
         if (range > max) range = max;
         if (range < min) range = min;
         return range;
@@ -220,7 +231,7 @@ public class VoiceSettings {
     public int getCapitals() {
         int min = mEngine.Capitals.getMinValue();
         int max = mEngine.Capitals.getMaxValue();
-        int value = getPreferenceValue(PREF_CAPITALS, mEngine.Capitals.getDefaultValue());
+        int value = getPreferenceValue(PREF_CAPITALS, DEFAULT_CAPITALS_NVDA);
         if (value > max) value = max;
         if (value < min) value = min;
         return value;

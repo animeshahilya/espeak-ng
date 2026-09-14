@@ -81,13 +81,31 @@ public class IndianFeaturesDeviceTest {
     @Test
     public void testExpandProgrammingSymbols() {
         assertThat(TtsService.expandProgrammingSymbols("if (x != y)"), containsString("not equal"));
+        assertThat(TtsService.expandProgrammingSymbols("x ≠ y"), containsString("not equal"));
         assertThat(TtsService.expandProgrammingSymbols("if (a == b)"), containsString("double equals"));
         assertThat(TtsService.expandProgrammingSymbols("while (i <= 10)"), containsString("less than or equal to"));
+        assertThat(TtsService.expandProgrammingSymbols("i ≤ 10"), containsString("less than or equal to"));
         assertThat(TtsService.expandProgrammingSymbols("if (score >= 50)"), containsString("greater than or equal to"));
+        assertThat(TtsService.expandProgrammingSymbols("score ≥ 50"), containsString("greater than or equal to"));
         assertThat(TtsService.expandProgrammingSymbols("(x) => x * 2"), containsString("implies"));
+        assertThat(TtsService.expandProgrammingSymbols("A ⇒ B"), containsString("implies"));
         assertThat(TtsService.expandProgrammingSymbols("ptr->value"), containsString("arrow"));
+        assertThat(TtsService.expandProgrammingSymbols("go → right"), containsString("arrow"));
+        assertThat(TtsService.expandProgrammingSymbols("go ← left"), containsString("left arrow"));
+        assertThat(TtsService.expandProgrammingSymbols("go ↑ up"), containsString("up arrow"));
+        assertThat(TtsService.expandProgrammingSymbols("go ↓ down"), containsString("down arrow"));
         assertThat(TtsService.expandProgrammingSymbols("a && b"), containsString("double ampersand"));
         assertThat(TtsService.expandProgrammingSymbols("c || d"), containsString("double pipe"));
+        assertThat(TtsService.expandProgrammingSymbols("/* comment */"), containsString("comment start"));
+        assertThat(TtsService.expandProgrammingSymbols("Wait..."), containsString("dot dot dot"));
+        assertThat(TtsService.expandProgrammingSymbols("Wait…"), containsString("dot dot dot"));
+        assertThat(TtsService.expandProgrammingSymbols("± 5"), containsString("plus or minus"));
+        assertThat(TtsService.expandProgrammingSymbols("5 × 10"), containsString("times"));
+        assertThat(TtsService.expandProgrammingSymbols("10 ÷ 2"), containsString("divided by"));
+        assertThat(TtsService.expandProgrammingSymbols("x ≈ y"), containsString("almost equal to"));
+        assertThat(TtsService.expandProgrammingSymbols("Done ✓"), containsString("check"));
+        assertThat(TtsService.expandProgrammingSymbols("• Item"), containsString("bullet"));
+        assertThat(TtsService.expandProgrammingSymbols("30° C"), containsString("30 degrees"));
     }
 
     @Test
@@ -220,6 +238,41 @@ public class IndianFeaturesDeviceTest {
             assertThat("Synthesis for Hindi emoji " + emoji + " timed out", done, is(true));
             assertThat("Audio bytes for Hindi emoji " + emoji + " should be > 0", mAudioBytesReceived.get(), greaterThan(0));
             Log.i(TAG, "Hindi emoji " + emoji + " synthesized: " + mAudioBytesReceived.get() + " bytes");
+        }
+    }
+
+    @Test
+    public void testNvdaReadingStyleAndSymbols() throws InterruptedException {
+        List<Voice> availableVoices = mEngine.getAvailableVoices();
+        Voice enVoice = null;
+        for (Voice v : availableVoices) {
+            if ("en".equals(v.name) || "en-in".equals(v.name)) {
+                enVoice = v;
+                break;
+            }
+        }
+        assertThat("English voice should be available", enVoice, is(notNullValue()));
+
+        VoiceVariant maxVariant = VoiceVariant.parseVoiceVariant(VoiceSettings.DEFAULT_VARIANT_NVDA);
+        mEngine.setVoice(enVoice, maxVariant);
+
+        String[] testPhrases = new String[]{
+                "Testing NVDA symbols: x != y, a <= b, and A => B.",
+                "Moving right: go -> door, or follow the arrow →.",
+                "Math check: 5 × 10 = 50, 10 ÷ 2 = 5, ± 3 error margin.",
+                "Reading ellipsis: waiting... done…",
+                "Testing bracket protection: [[phoneme]] and [brackets]."
+        };
+
+        for (String phrase : testPhrases) {
+            String expanded = TtsService.expandProgrammingSymbols(phrase);
+            mAudioBytesReceived.set(0);
+            mLatch = new CountDownLatch(1);
+            mEngine.synthesize(expanded, false);
+            boolean done = mLatch.await(5, TimeUnit.SECONDS);
+            assertThat("Synthesis for phrase timed out: " + phrase, done, is(true));
+            assertThat("Audio bytes should be > 0 for phrase: " + phrase, mAudioBytesReceived.get(), greaterThan(0));
+            Log.i(TAG, "NVDA phrase synthesized successfully: " + mAudioBytesReceived.get() + " bytes");
         }
     }
 }

@@ -533,6 +533,19 @@ public class TtsService extends TextToSpeechService {
         // switch into SSML parsing because of that.
         final boolean isSsml = text.startsWith("<speak");
 
+        if (!isSsml) {
+            // NVDA eSpeak driver fix: Strip control character 0x01, which eSpeak reserves
+            // for embedded commands and whose presence causes pronunciation corruption or aborts.
+            if (text.indexOf('\u0001') != -1) {
+                text = text.replace("\u0001", "");
+            }
+            // NVDA eSpeak driver fix: Prevent unintentional [[ phoneme syntax entry by
+            // separating consecutive left brackets when not in phoneme mode.
+            if (text.contains("[[")) {
+                text = text.replace("[[", "[ [");
+            }
+        }
+
         if (!isSsml && settings.isUserDictionaryEnabled()) {
             text = UserDictionaryManager.getInstance(storageContext).applyRules(text);
         }
@@ -613,6 +626,9 @@ public class TtsService extends TextToSpeechService {
             rateScale = 100;
         }
         rate = (int)(((long)rate * rateScale) / 100);
+        if (!settings.isRateBoostEnabled() && rate > 449) {
+            rate = 449; // NVDA issue #131: avoid unintended Sonic engagement at 450 WPM
+        }
         mEngine.Rate.setValue(rate);
 
         int pitchScale = request.getPitch();
@@ -743,19 +759,29 @@ public class TtsService extends TextToSpeechService {
     private static final java.util.regex.Pattern SLASH_RUN =
             java.util.regex.Pattern.compile("/+");
 
-    // NVDA-inspired programming, mathematical, and syntax symbol patterns:
-    private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=");
+    // NVDA-inspired programming, mathematical, and syntax symbol patterns (from NVDA symbols.dic):
+    private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=|≠");
     private static final java.util.regex.Pattern SYM_DOUBLE_EQUALS = java.util.regex.Pattern.compile("==");
-    private static final java.util.regex.Pattern SYM_LESS_EQUAL = java.util.regex.Pattern.compile("<=");
-    private static final java.util.regex.Pattern SYM_GREATER_EQUAL = java.util.regex.Pattern.compile(">=");
-    private static final java.util.regex.Pattern SYM_FAT_ARROW = java.util.regex.Pattern.compile("=>");
-    private static final java.util.regex.Pattern SYM_THIN_ARROW = java.util.regex.Pattern.compile("->");
+    private static final java.util.regex.Pattern SYM_LESS_EQUAL = java.util.regex.Pattern.compile("<=|≤");
+    private static final java.util.regex.Pattern SYM_GREATER_EQUAL = java.util.regex.Pattern.compile(">=|≥");
+    private static final java.util.regex.Pattern SYM_FAT_ARROW = java.util.regex.Pattern.compile("=>|⇒");
+    private static final java.util.regex.Pattern SYM_THIN_ARROW = java.util.regex.Pattern.compile("->|→");
+    private static final java.util.regex.Pattern SYM_LEFT_ARROW = java.util.regex.Pattern.compile("<-|←");
+    private static final java.util.regex.Pattern SYM_UP_ARROW = java.util.regex.Pattern.compile("↑");
+    private static final java.util.regex.Pattern SYM_DOWN_ARROW = java.util.regex.Pattern.compile("↓");
     private static final java.util.regex.Pattern SYM_LOGICAL_AND = java.util.regex.Pattern.compile("&&");
     private static final java.util.regex.Pattern SYM_LOGICAL_OR = java.util.regex.Pattern.compile("\\|\\|");
     private static final java.util.regex.Pattern SYM_COMMENT_START = java.util.regex.Pattern.compile("/\\*");
     private static final java.util.regex.Pattern SYM_COMMENT_END = java.util.regex.Pattern.compile("\\*/");
     private static final java.util.regex.Pattern SYM_DOUBLE_SLASH = java.util.regex.Pattern.compile("(?<!https?:)//");
-    private static final java.util.regex.Pattern SYM_ELLIPSIS = java.util.regex.Pattern.compile("\\.{3,}");
+    private static final java.util.regex.Pattern SYM_ELLIPSIS = java.util.regex.Pattern.compile("\\.{3,}|…");
+    private static final java.util.regex.Pattern SYM_PLUS_MINUS = java.util.regex.Pattern.compile("±|\\+/-");
+    private static final java.util.regex.Pattern SYM_TIMES = java.util.regex.Pattern.compile("(?<=\\d)\\s*[×*]\\s*(?=\\d)");
+    private static final java.util.regex.Pattern SYM_DIVIDE = java.util.regex.Pattern.compile("(?<=\\d)\\s*÷\\s*(?=\\d)|÷");
+    private static final java.util.regex.Pattern SYM_ALMOST_EQUAL = java.util.regex.Pattern.compile("≈");
+    private static final java.util.regex.Pattern SYM_CHECKMARK = java.util.regex.Pattern.compile("[✓✔]");
+    private static final java.util.regex.Pattern SYM_BULLET = java.util.regex.Pattern.compile("[•⁃◦]");
+    private static final java.util.regex.Pattern SYM_DEGREES = java.util.regex.Pattern.compile("(?<=\\d)°");
 
     private static boolean containsProgrammingSymbolChars(String text) {
         final int len = text.length();
@@ -764,7 +790,12 @@ public class TtsService extends TextToSpeechService {
             switch (c) {
                 case '!': case '=': case '<': case '>':
                 case '-': case '&': case '|': case '/':
-                case '*': case '.':
+                case '*': case '.': case '≠': case '≤':
+                case '≥': case '⇒': case '→': case '←':
+                case '↑': case '↓': case '…': case '±':
+                case '×': case '÷': case '≈': case '✓':
+                case '✔': case '•': case '⁃': case '◦':
+                case '°':
                     return true;
             }
         }
@@ -785,12 +816,22 @@ public class TtsService extends TextToSpeechService {
         text = SYM_GREATER_EQUAL.matcher(text).replaceAll(" greater than or equal to ");
         text = SYM_FAT_ARROW.matcher(text).replaceAll(" implies ");
         text = SYM_THIN_ARROW.matcher(text).replaceAll(" arrow ");
+        text = SYM_LEFT_ARROW.matcher(text).replaceAll(" left arrow ");
+        text = SYM_UP_ARROW.matcher(text).replaceAll(" up arrow ");
+        text = SYM_DOWN_ARROW.matcher(text).replaceAll(" down arrow ");
         text = SYM_LOGICAL_AND.matcher(text).replaceAll(" double ampersand ");
         text = SYM_LOGICAL_OR.matcher(text).replaceAll(" double pipe ");
         text = SYM_COMMENT_START.matcher(text).replaceAll(" comment start ");
         text = SYM_COMMENT_END.matcher(text).replaceAll(" comment end ");
         text = SYM_DOUBLE_SLASH.matcher(text).replaceAll(" double slash ");
-        text = SYM_ELLIPSIS.matcher(text).replaceAll(" ellipsis ");
+        text = SYM_ELLIPSIS.matcher(text).replaceAll(" dot dot dot ");
+        text = SYM_PLUS_MINUS.matcher(text).replaceAll(" plus or minus ");
+        text = SYM_TIMES.matcher(text).replaceAll(" times ");
+        text = SYM_DIVIDE.matcher(text).replaceAll(" divided by ");
+        text = SYM_ALMOST_EQUAL.matcher(text).replaceAll(" almost equal to ");
+        text = SYM_CHECKMARK.matcher(text).replaceAll(" check ");
+        text = SYM_BULLET.matcher(text).replaceAll(" bullet ");
+        text = SYM_DEGREES.matcher(text).replaceAll(" degrees ");
         return text;
     }
 
