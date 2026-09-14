@@ -530,14 +530,19 @@ public class TtsService extends TextToSpeechService {
         // switch into SSML parsing because of that.
         final boolean isSsml = text.startsWith("<speak");
 
-        if (!isSsml) {
+        if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
+            text = expandProgrammingSymbols(text);
+        }
+
+        if (!isSsml && settings.isIndianNumberingEnabled()) {
             text = preprocessIndianText(text);
         }
 
         final boolean speakDigits = settings.isSpeakDigitsEnabled() && !isSsml;
+        final boolean smartCodes = settings.isSmartCodesEnabled() && !isSsml;
         if (speakDigits) {
             text = spaceSeparateDigits(text);
-        } else if (!isSsml) {
+        } else if (smartCodes) {
             text = spaceSeparateSmartCodes(text);
         }
 
@@ -546,13 +551,16 @@ public class TtsService extends TextToSpeechService {
             normalization = UnicodeNormalization.normalize(text);
             if (normalization != null) {
                 text = normalization.text;
-                if (!isSsml) {
+                if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
+                    text = expandProgrammingSymbols(text);
+                }
+                if (!isSsml && settings.isIndianNumberingEnabled()) {
                     text = preprocessIndianText(text);
                 }
                 if (speakDigits) {
                     text = spaceSeparateDigits(text);
                     normalization = null;
-                } else if (!isSsml) {
+                } else if (smartCodes) {
                     final String smart = spaceSeparateSmartCodes(text);
                     if (!smart.equals(text)) {
                         text = smart;
@@ -739,7 +747,6 @@ public class TtsService extends TextToSpeechService {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        text = expandProgrammingSymbols(text);
         text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
         text = BANKING_SLASH_TXN.matcher(text).replaceAll("$1 / $2");
 

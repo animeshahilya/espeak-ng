@@ -43,6 +43,9 @@ public class VoiceSettings {
     public static final String PREF_EMOJI_PROCESSING = "espeak_emoji_processing";
     public static final String PREF_CAPITALS = "espeak_capitals";
     public static final String PREF_WORD_GAP = "espeak_wordgap";
+    public static final String PREF_INDIAN_NUMBERING = "espeak_indian_numbering";
+    public static final String PREF_SPEAK_PROGRAMMING_SYMBOLS = "espeak_speak_programming_symbols";
+    public static final String PREF_SMART_CODES = "espeak_smart_codes";
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
@@ -236,5 +239,17 @@ public class VoiceSettings {
      */
     public boolean isSpeakDigitsEnabled() {
         return mPreferences.getBoolean(PREF_SPEAK_DIGITS, false);
+    }
+
+    public boolean isIndianNumberingEnabled() {
+        return mPreferences.getBoolean(PREF_INDIAN_NUMBERING, true);
+    }
+
+    public boolean isSpeakProgrammingSymbolsEnabled() {
+        return mPreferences.getBoolean(PREF_SPEAK_PROGRAMMING_SYMBOLS, true);
+    }
+
+    public boolean isSmartCodesEnabled() {
+        return mPreferences.getBoolean(PREF_SMART_CODES, true);
     }
 }

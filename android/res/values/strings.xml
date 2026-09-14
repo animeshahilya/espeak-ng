@@ -116,4 +116,21 @@
   <string name="variant_klatt_rita">Rita (Bright / Crisp Female)</string>
   <string name="variant_klatt_wendy">Wendy (Soft / Breathy Female)</string>
   <string name="variant_klatt_fast">Turbo (TalkBack High Speed)</string>
+
+  <!-- Preference Categories -->
+  <string name="category_voice_language">Voice and language</string>
+  <string name="category_voice_parameters">Voice parameters</string>
+  <string name="category_speech_processing">Text and speech processing</string>
+  <string name="category_testing">Preview and testing</string>
+
+  <!-- Feature Settings -->
+  <string name="setting_indian_numbering">Indian number and currency formatting</string>
+  <string name="setting_indian_numbering_summary">Format amounts (₹1,00,000, 5L, 2cr) as lakhs and crores, split UPI IDs, and handle Indian comma grouping</string>
+  <string name="setting_programming_symbols">Speak programming and math symbols</string>
+  <string name="setting_programming_symbols_summary">Announce code and math symbols (!=, ==, &lt;=, &gt;=, =&gt;, -&gt;, &amp;&amp;, ||) as words</string>
+  <string name="setting_smart_codes">Smart OTP and PIN code reading</string>
+  <string name="setting_smart_codes_summary">Automatically read verification codes, OTPs, and security PINs digit by digit</string>
+  <string name="test_voice_title">Preview voice sample</string>
+  <string name="test_voice_summary">Listen to a sample utterance testing current voice, pitch, speed, and formatting</string>
+  <string name="test_voice_sample">This is a sample of eSpeak NG. ₹1,00,000 payment to UPI/423891028341/PAYTM. A != B.</string>
 </resources>

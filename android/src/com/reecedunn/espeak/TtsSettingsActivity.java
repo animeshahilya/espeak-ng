@@ -40,9 +40,11 @@ import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Toast;
@@ -155,6 +157,21 @@ public class TtsSettingsActivity extends PreferenceActivity {
         getFragmentManager().beginTransaction().replace(
                 android.R.id.content,
                 new PrefsEspeakFragment()).commit();
+    }
+
+    private static TextToSpeech sTts;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (sTts != null) {
+            try {
+                sTts.stop();
+                sTts.shutdown();
+            } catch (Exception ignored) {
+            }
+            sTts = null;
+        }
     }
 
     public static final int REQUEST_CODE_IMPORT_VOICE = 1001;
@@ -770,37 +787,119 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
+    private static Preference createIndianNumberingPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_indian_numbering);
+        pref.setSummary(R.string.setting_indian_numbering_summary);
+        pref.setKey(VoiceSettings.PREF_INDIAN_NUMBERING);
+        pref.setDefaultValue(true);
+        pref.setPersistent(true);
+        return pref;
+    }
+
+    private static Preference createProgrammingSymbolsPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_programming_symbols);
+        pref.setSummary(R.string.setting_programming_symbols_summary);
+        pref.setKey(VoiceSettings.PREF_SPEAK_PROGRAMMING_SYMBOLS);
+        pref.setDefaultValue(true);
+        pref.setPersistent(true);
+        return pref;
+    }
+
+    private static Preference createSmartCodesPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_smart_codes);
+        pref.setSummary(R.string.setting_smart_codes_summary);
+        pref.setKey(VoiceSettings.PREF_SMART_CODES);
+        pref.setDefaultValue(true);
+        pref.setPersistent(true);
+        return pref;
+    }
+
+    private static Preference createTestVoicePreference(final Context context) {
+        final Preference pref = new Preference(context);
+        pref.setTitle(R.string.test_voice_title);
+        pref.setSummary(R.string.test_voice_summary);
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                playTestVoice(context);
+                return true;
+            }
+        });
+        return pref;
+    }
+
+    private static void playTestVoice(final Context context) {
+        final String sampleText = context.getString(R.string.test_voice_sample);
+        if (sTts == null) {
+            sTts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status == TextToSpeech.SUCCESS && sTts != null) {
+                        sTts.speak(sampleText, TextToSpeech.QUEUE_FLUSH, null, "sample_utterance");
+                    }
+                }
+            }, context.getPackageName());
+        } else {
+            sTts.speak(sampleText, TextToSpeech.QUEUE_FLUSH, null, "sample_utterance");
+        }
+    }
+
     private static void addPreferences(Context context, PreferenceGroup group,
                                        SpeechSynthesis engine, List<Voice> voices,
                                        boolean isWatch) {
         VoiceSettings settings = new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext), engine);
 
-        // The supported-languages multi-select and the file-picker-driven
-        // voice import don't fit on a watch screen and have no meaningful
-        // input affordance there, so omit them on Wear.
-        if (!isWatch) {
-            group.addPreference(createSupportedLanguagesPreference(context, voices));
-            group.addPreference(createLanguagePackPreference(context));
-            group.addPreference(createImportVoicePreference(context));
-        }
-        group.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
+        // 1. Voice and language
+        PreferenceCategory langCategory = new PreferenceCategory(context);
+        langCategory.setTitle(R.string.category_voice_language);
+        group.addPreference(langCategory);
 
-        // Voice parameters (OG interface: dedicated, accessible seekbar per parameter with live formatted summary)
-        group.addPreference(createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate));
         if (!isWatch) {
-            group.addPreference(createRateBoostPreference(context));
+            langCategory.addPreference(createSupportedLanguagesPreference(context, voices));
+            langCategory.addPreference(createLanguagePackPreference(context));
+            langCategory.addPreference(createImportVoicePreference(context));
         }
-        group.addPreference(createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
-        group.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
-        group.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
-        group.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
+        langCategory.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
 
-        group.addPreference(createCapitalsPreference(context));
-        group.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));
-        group.addPreference(createSpeakDigitsPreference(context));
-        group.addPreference(createUnicodeNormalizationPreference(context));
+        // 2. Voice parameters (OG interface: dedicated, accessible seekbars with live formatted summary)
+        PreferenceCategory paramCategory = new PreferenceCategory(context);
+        paramCategory.setTitle(R.string.category_voice_parameters);
+        group.addPreference(paramCategory);
+
+        paramCategory.addPreference(createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate));
         if (!isWatch) {
-            group.addPreference(createEmojiProcessingPreference(context));
+            paramCategory.addPreference(createRateBoostPreference(context));
+        }
+        paramCategory.addPreference(createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
+        paramCategory.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
+        paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
+        paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
+
+        // 3. Text & speech processing (NVDA symbols, Indian currency/numbers, smart codes)
+        PreferenceCategory processCategory = new PreferenceCategory(context);
+        processCategory.setTitle(R.string.category_speech_processing);
+        group.addPreference(processCategory);
+
+        processCategory.addPreference(createCapitalsPreference(context));
+        processCategory.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));
+        processCategory.addPreference(createProgrammingSymbolsPreference(context));
+        processCategory.addPreference(createIndianNumberingPreference(context));
+        processCategory.addPreference(createSmartCodesPreference(context));
+        processCategory.addPreference(createSpeakDigitsPreference(context));
+        processCategory.addPreference(createUnicodeNormalizationPreference(context));
+        if (!isWatch) {
+            processCategory.addPreference(createEmojiProcessingPreference(context));
+        }
+
+        // 4. Preview and testing
+        if (!isWatch) {
+            PreferenceCategory testCategory = new PreferenceCategory(context);
+            testCategory.setTitle(R.string.category_testing);
+            group.addPreference(testCategory);
+            testCategory.addPreference(createTestVoicePreference(context));
         }
     }
 
