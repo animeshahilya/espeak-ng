@@ -129,84 +129,6 @@ android {
     }
 }
 
-// Languages bundled directly in the APK: English (all regional variants
-// share a single en_dict) plus every Indic (lang/inc) and Dravidian
-// (lang/dra) language. Together they cost well under 3MB versus ~28MB for
-// the other ~100 languages, while covering this app's core userbase.
-// Everything else ships as a separate, downloadable "extra languages" pack
-// (createExtraDataArchive below) rather than bloating the base install -
-// see TtsSettingsActivity's "Download more languages" preference.
-def CORE_LANG_FAMILY_DIRS = ['inc', 'dra'] as Set
-def CORE_DICT_CODES = ['en', 'as', 'bn', 'bpy', 'gu', 'hi', 'kok', 'mr', 'ne',
-                        'or', 'pa', 'sd', 'si', 'ur', 'kn', 'ml', 'ta', 'te'] as Set
-def DISTINCT_ENGLISH_VOICES = ['en', 'en-in', 'en-US', 'en-AU', 'en-CA', 'en-GB-scotland'] as Set
-
-tasks.register('splitLanguageData') {
-    def srcDir = file('build/generated/espeak-ng-data')
-    def coreDir = file('build/generated/espeak-ng-data-core')
-    def extraDir = file('build/generated/espeak-ng-data-extra')
-    // Without a declared input, Gradle has no way to know srcDir's content
-    // changed (it's produced by the CMake `data` target, not a task Gradle
-    // tracks file-by-file) and treats this task as up-to-date forever after
-    // the first run - silently shipping stale voice/language data on any
-    // incremental build that only touches espeak-ng-data/ (new voice,
-    // updated dictionary, etc.) without also touching a C/C++ source file.
-    inputs.dir(srcDir)
-    outputs.dir(coreDir)
-    outputs.dir(extraDir)
-
-    doLast {
-        delete(coreDir, extraDir)
-        coreDir.mkdirs()
-        extraDir.mkdirs()
-
-        // Shared files every voice needs regardless of language.
-        ['intonations', 'phondata', 'phondata-manifest', 'phonindex', 'phontab'].each { name ->
-            copy {
-                from new File(srcDir, name)
-                into coreDir
-            }
-        }
-
-        // Voice variants (character and formant voices) apply to any
-        // base language voice, so they always stay in the core bundle.
-        copy {
-            from new File(srcDir, 'voices')
-            into new File(coreDir, 'voices')
-        }
-
-        // Top-level <code>_dict files: split by code against CORE_DICT_CODES.
-        fileTree(srcDir) { include '*_dict' }.each { dictFile ->
-            def code = dictFile.name - '_dict'
-            def targetDir = CORE_DICT_CODES.contains(code) ? coreDir : extraDir
-            copy {
-                from dictFile
-                into targetDir
-            }
-        }
-
-        // lang/<family>/<code> voice config files. A voice listed here with
-        // no matching dict bundled would appear selectable and then fail to
-        // synthesize, so this must split in lockstep with the dict split
-        // above: whole families (inc, dra) go entirely to core; within gmw
-        // (English plus af/de/lb/nl), only the English entries do.
-        new File(srcDir, 'lang').eachDir { familyDir ->
-            if (CORE_LANG_FAMILY_DIRS.contains(familyDir.name)) {
-                def targetLangDir = new File(coreDir, "lang/${familyDir.name}")
-                targetLangDir.mkdirs()
-                copy { from familyDir; into targetLangDir }
-            } else {
-                familyDir.eachFile { langFile ->
-                    def isEnglish = DISTINCT_ENGLISH_VOICES.contains(langFile.name)
-                    def targetLangDir = new File(isEnglish ? coreDir : extraDir, "lang/${familyDir.name}")
-                    targetLangDir.mkdirs()
-                    copy { from langFile; into targetLangDir }
-                }
-            }
-        }
-    }
-}
-
 tasks.register('checkData') {
     doFirst {
         assert file("../espeak-ng-data/en_dict").exists()
@@ -218,32 +140,19 @@ tasks.register('checkData') {
     }
 }
 
+// Every language espeak-ng-data ships (all ~120) goes straight into the APK
+// - there is no core/extra split and no separate downloadable pack. This
+// costs roughly 30MB versus the ~3MB a previous English/Indic/Dravidian-only
+// bundle used, traded for every language working offline immediately with
+// no "download more languages" step.
 tasks.register('createDataArchive', Zip) {
-    dependsOn tasks.splitLanguageData
+    dependsOn tasks.checkData
     preserveFileTimestamps = false
     reproducibleFileOrder = true
     archiveFileName = "espeakdata.zip"
     destinationDirectory = file("res/raw")
 
-    from("build/generated/espeak-ng-data-core/") {
-        into "espeak-ng-data"
-    }
-}
-
-// The "extra languages" pack: everything splitLanguageData didn't put in
-// the core set. This is deliberately NOT wired into assembleDebug/
-// assembleRelease - it's not bundled in the APK at all. Build it explicitly
-// (./gradlew createExtraDataArchive) and upload build/outputs/data/
-// espeakdata-extra.zip as a GitHub Release asset; the app downloads it from
-// there on request (see LanguagePackDownloader).
-tasks.register('createExtraDataArchive', Zip) {
-    dependsOn tasks.splitLanguageData
-    preserveFileTimestamps = false
-    reproducibleFileOrder = true
-    archiveFileName = "espeakdata-extra.zip"
-    destinationDirectory = file("build/outputs/data")
-
-    from("build/generated/espeak-ng-data-extra/") {
+    from("build/generated/espeak-ng-data/") {
         into "espeak-ng-data"
     }
 }
@@ -273,7 +182,7 @@ createDataVersion.mustRunAfter 'externalNativeBuildRelease'
 
 project.afterEvaluate {
     tasks.checkData.dependsOn('externalNativeBuildDebug')
-    tasks.splitLanguageData.dependsOn('externalNativeBuildDebug')
+    tasks.createDataArchive.dependsOn('externalNativeBuildDebug')
     tasks.named('mapDebugSourceSetPaths') {
         dependsOn ':createDataVersion', ':createDataArchive'
     }

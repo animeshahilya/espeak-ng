@@ -20,23 +20,22 @@ Linux, Windows, SAPI5, or general library use, go to the
 [upstream project](https://github.com/espeak-ng/espeak-ng) instead.
 
 The Android app is a `TextToSpeechService` engine aimed at blind and
-visually impaired users navigating with TalkBack: fast, fully offline,
-zero network dependency beyond an optional language-pack download, and
-tuned for the accessibility use case rather than general-purpose narration.
+visually impaired users navigating with TalkBack: fast, fully offline, with
+zero network dependency — every language eSpeak NG supports (100+) ships in
+the APK, so there is nothing to download — and tuned for the accessibility
+use case rather than general-purpose narration.
 
 ## What's different from upstream
 
 * **Indian English (`en-in`)** — upstream eSpeak NG ships no Indian English
   voice at all. This fork adds one (`espeak-ng-data/lang/gmw/en-in`):
   retroflex `r`, dental `t`/`d` stops, syllable-timed rhythm with unreduced
-  full vowels. Bundled in the app's core language set alongside the full
-  Indic (`lang/inc`) and Dravidian (`lang/dra`) language families — Hindi,
-  Bengali, Marathi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Punjabi,
-  and more are built in, not a separate download.
-* **10 Klatt-synthesis voice personas** — Paul, Betty, Harry, Frank, Kit,
-  Dennis, Ursula, Rita, Wendy, and Turbo (a rate-optimized voice for
-  high-speed TalkBack use), selectable from the Voice variant picker's
-  Klatt category.
+  full vowels.
+* **Every language bundled, nothing to download** — all ~120 languages
+  eSpeak NG data ships with are packed directly into the APK, selectable
+  from first launch with no network step.
+* **Klatt formant voices** — the 6 upstream cascade-parallel formant models
+  (Klatt 1-6), selectable from the Voice variant picker's Klatt category.
 * **Context-aware digit reading** — an opt-in "read numbers digit by digit"
   mode for the general case, plus an always-on bidirectional heuristic that reads
   likely OTPs/PINs/verification codes (4-8 digits near a keyword like "OTP", "PIN",
@@ -52,8 +51,6 @@ tuned for the accessibility use case rather than general-purpose narration.
 * **Reliability & Direct-Boot Storage**:
   - All voice data and preferences strictly reside in Android Direct-Boot device-protected
     storage (`/data/user_de/`), ensuring full TalkBack accessibility before device unlock.
-  - Multi-hop HTTP redirect handling (up to 5 hops) in `LanguagePackManager` ensuring
-    flawless extra language pack downloads from GitHub Releases / S3 CDN.
   - Missing ISO 3166-1 alpha-3 locale mappings (`AUS`, `CAN`, `IND`, `SGP`) added to
     JNI locale translator for accurate Android TTS locale matching.
   - Clean C/C++ compilation with standardized `ESPEAK_FALLTHROUGH;` annotations across

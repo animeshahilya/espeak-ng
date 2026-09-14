@@ -26,9 +26,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -332,86 +329,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
         pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
         pref.setDescription(R.string.import_voice_description);
         return pref;
-    }
-
-    // Approximate size of the "extra languages" GitHub Release asset - update
-    // this if createExtraDataArchive's output changes size significantly.
-    // Only used for the confirmation prompt, not for anything functional.
-    private static final String EXTRA_LANGUAGES_APPROX_SIZE = "~14 MB";
-
-    private static Preference createLanguagePackPreference(final Context context) {
-        final Preference pref = new Preference(context);
-        pref.setTitle(R.string.language_pack_title);
-        updateLanguagePackSummary(context, pref);
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (LanguagePackManager.isInstalled(context)) {
-                    return true;
-                }
-                if (!isNetworkAvailable(context)) {
-                    Toast.makeText(context, R.string.language_pack_no_network, Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                new AlertDialog.Builder(context)
-                        .setTitle(R.string.language_pack_confirm_title)
-                        .setMessage(context.getString(R.string.language_pack_confirm_message, EXTRA_LANGUAGES_APPROX_SIZE))
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                startLanguagePackDownload(context, pref);
-                            }
-                        })
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show();
-                return true;
-            }
-        });
-        return pref;
-    }
-
-    private static void startLanguagePackDownload(final Context context, final Preference pref) {
-        LanguagePackManager.download(context, new LanguagePackManager.Callback() {
-            @Override
-            public void onProgress(int percent) {
-                pref.setSummary(context.getString(R.string.language_pack_downloading, percent));
-            }
-
-            @Override
-            public void onComplete(boolean success, String errorMessage) {
-                if (success) {
-                    synchronized (TtsSettingsActivity.class) {
-                        sLangInfo.clear();
-                    }
-                }
-                Toast.makeText(context,
-                        success ? R.string.language_pack_download_success : R.string.language_pack_download_failed,
-                        Toast.LENGTH_SHORT).show();
-                updateLanguagePackSummary(context, pref);
-            }
-        });
-    }
-
-    private static void updateLanguagePackSummary(Context context, Preference pref) {
-        if (LanguagePackManager.isInstalled(context)) {
-            pref.setSummary(R.string.language_pack_description_installed);
-        } else {
-            pref.setSummary(context.getString(R.string.language_pack_description_not_installed, EXTRA_LANGUAGES_APPROX_SIZE));
-        }
-    }
-
-    private static boolean isNetworkAvailable(Context context) {
-        final ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) {
-            return false;
-        }
-        final Network network = cm.getActiveNetwork();
-        if (network == null) {
-            return false;
-        }
-        final NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
-        return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
     private static Preference createVoiceVariantPreference(Context context, VoiceSettings settings, int titleRes) {
@@ -1043,6 +960,43 @@ public class TtsSettingsActivity extends PreferenceActivity {
         }
     }
 
+    private static Preference createAboutPreference(final Context context) {
+        final Preference pref = new Preference(context);
+        pref.setTitle(R.string.about_title);
+        pref.setSummary(R.string.about_summary);
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                showAboutDialog(context);
+                return true;
+            }
+        });
+        return pref;
+    }
+
+    private static void showAboutDialog(final Context context) {
+        String versionName;
+        try {
+            versionName = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            versionName = "";
+        }
+
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.about_title)
+                .setMessage(context.getString(R.string.about_body, versionName))
+                .setPositiveButton(R.string.about_view_source, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        context.startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://github.com/animeshahilya/espeak-ng")));
+                    }
+                })
+                .setNegativeButton(android.R.string.ok, null)
+                .show();
+    }
+
     private static void addPreferences(Context context, PreferenceGroup group,
                                        SpeechSynthesis engine, List<Voice> voices,
                                        boolean isWatch) {
@@ -1055,12 +1009,12 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         if (!isWatch) {
             langCategory.addPreference(createSupportedLanguagesPreference(context, voices));
-            langCategory.addPreference(createLanguagePackPreference(context));
             langCategory.addPreference(createImportVoicePreference(context));
         }
         langCategory.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
         if (!isWatch) {
             langCategory.addPreference(createBilingualSwitchingPreference(context));
+            langCategory.addPreference(createTestVoicePreference(context));
         }
 
         // 2. Voice parameters (OG interface: dedicated, accessible seekbars with live formatted summary)
@@ -1099,13 +1053,11 @@ public class TtsSettingsActivity extends PreferenceActivity {
             processCategory.addPreference(createEmojiProcessingPreference(context));
         }
 
-        // 4. Preview and testing
-        if (!isWatch) {
-            PreferenceCategory testCategory = new PreferenceCategory(context);
-            testCategory.setTitle(R.string.category_testing);
-            group.addPreference(testCategory);
-            testCategory.addPreference(createTestVoicePreference(context));
-        }
+        // 4. About
+        PreferenceCategory aboutCategory = new PreferenceCategory(context);
+        aboutCategory.setTitle(R.string.category_about);
+        group.addPreference(aboutCategory);
+        aboutCategory.addPreference(createAboutPreference(context));
     }
 
     private static final OnPreferenceChangeListener mOnPreferenceChanged =

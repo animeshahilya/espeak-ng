@@ -78,15 +78,6 @@
   <string name="setting_rate_boost_summary">Enable high speech rates above normal maximum using Sonic acceleration</string>
   <string name="import_voice_success">Successfully imported dictionary data.</string>
   <string name="import_voice_error">Failed to import dictionary file.</string>
-  <string name="language_pack_title">Download more languages</string>
-  <string name="language_pack_description_not_installed">English and Indian languages are built in. Download the rest (~%1$s) to add other languages.</string>
-  <string name="language_pack_description_installed">All languages are installed.</string>
-  <string name="language_pack_downloading">Downloading… %1$d%%</string>
-  <string name="language_pack_confirm_title">Download more languages?</string>
-  <string name="language_pack_confirm_message">This downloads about %1$s over the network. Continue?</string>
-  <string name="language_pack_download_success">Additional languages installed.</string>
-  <string name="language_pack_download_failed">Download failed. Try again later.</string>
-  <string name="language_pack_no_network">No network connection.</string>
   <string name="setting_capitals">Capital letters</string>
   <string name="setting_capitals_summary">How capital letters are announced</string>
   <string name="capitals_none">None</string>
@@ -117,7 +108,11 @@
   <string name="category_voice_language">Voice and language</string>
   <string name="category_voice_parameters">Voice parameters</string>
   <string name="category_speech_processing">Text and speech processing</string>
-  <string name="category_testing">Preview and testing</string>
+  <string name="category_about">About</string>
+  <string name="about_title">About eSpeak NG</string>
+  <string name="about_summary">Version, credits, and source code</string>
+  <string name="about_body">eSpeak NG for Android\nVersion %1$s\n\nDeveloped and built by Animesh Ahilya.\n\nBased on eSpeak NG, an open-source formant speech synthesizer, with additional fixes and features drawn from NVDA\'s speech engine.\n\nLicensed under the GNU GPL v3 or later.</string>
+  <string name="about_view_source">View source</string>
 
   <!-- Feature Settings -->
   <string name="setting_indian_numbering">Indian number and currency formatting</string>

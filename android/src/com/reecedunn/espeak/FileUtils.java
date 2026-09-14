@@ -73,9 +73,9 @@ public class FileUtils {
      * Extracts every entry of a zip stream under outputDir, rejecting any
      * entry whose path would land outside it (zip-slip). Shared by
      * CheckVoiceData (the base voice data bundled in the APK) and
-     * LanguagePackManager (the optional downloaded language pack) so both
-     * extraction paths get the same path-traversal protection instead of
-     * two independently-maintained copies of it.
+     * TtsSettingsActivity's voice-import feature so both extraction paths
+     * get the same path-traversal protection instead of two
+     * independently-maintained copies of it.
      */
     public static void extractZip(InputStream stream, File outputDir) throws IOException {
         final ZipInputStream zipStream = new ZipInputStream(new BufferedInputStream(stream));

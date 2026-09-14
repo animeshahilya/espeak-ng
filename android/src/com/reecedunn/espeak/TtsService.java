@@ -539,6 +539,11 @@ public class TtsService extends TextToSpeechService {
             if (text.indexOf('\u0001') != -1) {
                 text = text.replace("\u0001", "");
             }
+            // NVDA-style hardening (NVDA's _espeak.py encodes with errors="ignore" before
+            // the native call): drop unpaired UTF-16 surrogates - e.g. from a clipboard paste
+            // truncated mid-emoji - before they reach the JNI/native layer, which expects
+            // well-formed text and can otherwise mis-decode or corrupt trailing output.
+            text = stripUnpairedSurrogates(text);
             // NVDA eSpeak driver fix: Prevent unintentional [[ phoneme syntax entry by
             // separating consecutive left brackets when not in phoneme mode.
             if (text.contains("[[")) {
@@ -782,6 +787,28 @@ public class TtsService extends TextToSpeechService {
     private static final java.util.regex.Pattern SYM_CHECKMARK = java.util.regex.Pattern.compile("[✓✔]");
     private static final java.util.regex.Pattern SYM_BULLET = java.util.regex.Pattern.compile("[•⁃◦]");
     private static final java.util.regex.Pattern SYM_DEGREES = java.util.regex.Pattern.compile("(?<=\\d)°");
+    // Extended math, set-theory, and currency symbols from NVDA's symbols.dic
+    // (source/locale/en/symbols.dic) not already covered above. Deliberately
+    // excludes common punctuation like ~ ^ _ | ` that NVDA only reads at
+    // certain verbosity levels - this app has no such tiering, and those
+    // characters are frequent enough in ordinary prose/code (snake_case,
+    // markdown, etc.) that always expanding them would be noisy rather than
+    // helpful. These symbols are rare outside genuinely symbolic text.
+    private static final java.util.regex.Pattern SYM_SQRT = java.util.regex.Pattern.compile("√");
+    private static final java.util.regex.Pattern SYM_INFINITY = java.util.regex.Pattern.compile("∞");
+    private static final java.util.regex.Pattern SYM_INTEGRAL = java.util.regex.Pattern.compile("∫");
+    private static final java.util.regex.Pattern SYM_FOR_ALL = java.util.regex.Pattern.compile("∀");
+    private static final java.util.regex.Pattern SYM_EXISTS = java.util.regex.Pattern.compile("∃");
+    private static final java.util.regex.Pattern SYM_NOT_ELEMENT_OF = java.util.regex.Pattern.compile("∉");
+    private static final java.util.regex.Pattern SYM_ELEMENT_OF = java.util.regex.Pattern.compile("∈");
+    private static final java.util.regex.Pattern SYM_UNION = java.util.regex.Pattern.compile("∪");
+    private static final java.util.regex.Pattern SYM_INTERSECTION = java.util.regex.Pattern.compile("∩");
+    private static final java.util.regex.Pattern SYM_LOGICAL_NOT = java.util.regex.Pattern.compile("¬");
+    private static final java.util.regex.Pattern SYM_SET_AND = java.util.regex.Pattern.compile("∧");
+    private static final java.util.regex.Pattern SYM_SET_OR = java.util.regex.Pattern.compile("∨");
+    private static final java.util.regex.Pattern SYM_CENT = java.util.regex.Pattern.compile("¢");
+    private static final java.util.regex.Pattern SYM_YEN = java.util.regex.Pattern.compile("¥");
+    private static final java.util.regex.Pattern SYM_FLORIN = java.util.regex.Pattern.compile("ƒ");
 
     private static boolean containsProgrammingSymbolChars(String text) {
         final int len = text.length();
@@ -795,7 +822,10 @@ public class TtsService extends TextToSpeechService {
                 case '↑': case '↓': case '…': case '±':
                 case '×': case '÷': case '≈': case '✓':
                 case '✔': case '•': case '⁃': case '◦':
-                case '°':
+                case '°': case '√': case '∞': case '∫':
+                case '∀': case '∃': case '∉': case '∈':
+                case '∪': case '∩': case '¬': case '∧':
+                case '∨': case '¢': case '¥': case 'ƒ':
                     return true;
             }
         }
@@ -832,6 +862,21 @@ public class TtsService extends TextToSpeechService {
         text = SYM_CHECKMARK.matcher(text).replaceAll(" check ");
         text = SYM_BULLET.matcher(text).replaceAll(" bullet ");
         text = SYM_DEGREES.matcher(text).replaceAll(" degrees ");
+        text = SYM_SQRT.matcher(text).replaceAll(" square root ");
+        text = SYM_INFINITY.matcher(text).replaceAll(" infinity ");
+        text = SYM_INTEGRAL.matcher(text).replaceAll(" integral ");
+        text = SYM_FOR_ALL.matcher(text).replaceAll(" for all ");
+        text = SYM_EXISTS.matcher(text).replaceAll(" there exists ");
+        text = SYM_NOT_ELEMENT_OF.matcher(text).replaceAll(" not an element of ");
+        text = SYM_ELEMENT_OF.matcher(text).replaceAll(" element of ");
+        text = SYM_UNION.matcher(text).replaceAll(" union ");
+        text = SYM_INTERSECTION.matcher(text).replaceAll(" intersection ");
+        text = SYM_LOGICAL_NOT.matcher(text).replaceAll(" not ");
+        text = SYM_SET_AND.matcher(text).replaceAll(" and ");
+        text = SYM_SET_OR.matcher(text).replaceAll(" or ");
+        text = SYM_CENT.matcher(text).replaceAll(" cents ");
+        text = SYM_YEN.matcher(text).replaceAll(" yen ");
+        text = SYM_FLORIN.matcher(text).replaceAll(" florin ");
         return text;
     }
 
@@ -863,6 +908,40 @@ public class TtsService extends TextToSpeechService {
                 }
                 sb.append(ascii);
             } else if (sb != null) {
+                sb.append(c);
+            }
+        }
+        return sb != null ? sb.toString() : text;
+    }
+
+    /**
+     * Drops any UTF-16 surrogate code unit that isn't part of a valid
+     * high/low surrogate pair, leaving well-formed text otherwise untouched.
+     * A trailing high surrogate with no low surrogate after it (or vice
+     * versa) most often comes from a clipboard paste or IME composition
+     * truncated mid-codepoint.
+     */
+    static String stripUnpairedSurrogates(String text) {
+        if (text == null) return null;
+        StringBuilder sb = null;
+        int length = text.length();
+        for (int i = 0; i < length; i++) {
+            char c = text.charAt(i);
+            boolean drop = false;
+            if (Character.isHighSurrogate(c)) {
+                if (i + 1 >= length || !Character.isLowSurrogate(text.charAt(i + 1))) {
+                    drop = true;
+                }
+            } else if (Character.isLowSurrogate(c)) {
+                if (i == 0 || !Character.isHighSurrogate(text.charAt(i - 1))) {
+                    drop = true;
+                }
+            }
+            if (drop && sb == null) {
+                sb = new StringBuilder(length);
+                sb.append(text, 0, i);
+            }
+            if (sb != null && !drop) {
                 sb.append(c);
             }
         }
