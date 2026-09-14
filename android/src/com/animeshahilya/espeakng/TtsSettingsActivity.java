@@ -702,6 +702,16 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
+    private static Preference createAudioOptimizerPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_audio_optimizer);
+        pref.setSummary(R.string.setting_audio_optimizer_summary);
+        pref.setKey(VoiceSettings.PREF_AUDIO_OPTIMIZER);
+        pref.setDefaultValue(false);
+        pref.setPersistent(true);
+        return pref;
+    }
+
     private static Preference createCapitalsPreference(Context context) {
         final ListPreference pref = new ListPreference(context);
         pref.setTitle(R.string.setting_capitals);
@@ -1023,6 +1033,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         paramCategory.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
         paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
+        paramCategory.addPreference(createAudioOptimizerPreference(context));
         if (!isWatch) {
             paramCategory.addPreference(createRecommendedDefaultsPreference(context));
         }

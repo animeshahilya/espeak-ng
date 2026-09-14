@@ -51,6 +51,7 @@ public class VoiceSettings {
     public static final String PREF_SECONDARY_VOICE = "espeak_secondary_voice";
     public static final String PREF_NATO_SPELLING = "espeak_nato_spelling";
     public static final String PREF_SPOKEN_DIACRITICS = "espeak_spoken_diacritics";
+    public static final String PREF_AUDIO_OPTIMIZER = "espeak_audio_optimizer";
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
@@ -268,6 +269,15 @@ public class VoiceSettings {
 
     public boolean isSpeakProgrammingSymbolsEnabled() {
         return mPreferences.getBoolean(PREF_SPEAK_PROGRAMMING_SYMBOLS, true);
+    }
+
+    /**
+     * Default false: this tone-shaping chain was tuned by ear against a different synthesis
+     * engine (see {@link AudioOptimizer}'s own doc comment) - worth trying, not assumed to suit
+     * eSpeak's own formant timbre until actually confirmed on a real device.
+     */
+    public boolean isAudioOptimizerEnabled() {
+        return mPreferences.getBoolean(PREF_AUDIO_OPTIMIZER, false);
     }
 
     public boolean isSmartCodesEnabled() {

@@ -74,6 +74,13 @@ public class TtsService extends TextToSpeechService {
      */
     private volatile SpeechSynthesis mEngine;
     private SynthesisCallback mCallback;
+    /**
+     * Post-synthesis tone shaping for the current request only - null when the setting is off,
+     * or freshly constructed per {@link #onSynthesizeText} call otherwise (never reused across
+     * requests: it carries per-utterance filter/leveler state that must not leak into the next
+     * one). Read from {@link #mSynthCallback}'s onSynthDataReady on the same thread that set it.
+     */
+    private AudioOptimizer mAudioOptimizer;
     private final AtomicBoolean mCallbackDone = new AtomicBoolean(false);
     private final java.util.concurrent.atomic.AtomicInteger mSegmentsRemaining = new java.util.concurrent.atomic.AtomicInteger(1);
     private final AtomicBoolean mIsStopped = new AtomicBoolean(false);
@@ -632,6 +639,9 @@ public class TtsService extends TextToSpeechService {
             mCallback = null;
             return;
         }
+        mAudioOptimizer = settings.isAudioOptimizerEnabled()
+                ? new AudioOptimizer(mEngine.getSampleRate())
+                : null;
         mEngine.setVoice(voice, settings.getVoiceVariant());
 
         int rate = settings.getRate();
@@ -1352,6 +1362,10 @@ public class TtsService extends TextToSpeechService {
 
             if (mCallback == null || mCallbackDone.get() || mIsStopped.get()) {
                 return;
+            }
+
+            if (mAudioOptimizer != null) {
+                mAudioOptimizer.process(audioData, audioData.length);
             }
 
             final int maxBytesToCopy = Math.max(mCallback.getMaxBufferSize(), 512);

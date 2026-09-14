@@ -76,6 +76,8 @@
   <string name="emoji_announce">Announce emojis</string>
   <string name="emoji_ignore">Ignore / skip emojis</string>
   <string name="setting_rate_boost_summary">Enable high speech rates above normal maximum using Sonic acceleration</string>
+  <string name="setting_audio_optimizer">Richer, fuller voice (Audio Optimizer)</string>
+  <string name="setting_audio_optimizer_summary">Adds warmth and presence to the raw synthesized voice with gentle tone shaping and loudness leveling. Try it and see if you like the sound - it was tuned against a different engine originally.</string>
   <string name="import_voice_success">Successfully imported dictionary data.</string>
   <string name="import_voice_error">Failed to import dictionary file.</string>
   <string name="setting_capitals">Capital letters</string>
