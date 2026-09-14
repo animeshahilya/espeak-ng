@@ -179,7 +179,7 @@ C)        ੌੰ         O~
 .group ਕ
         ਕ          kV        // inherent vowel
         ਕ (B       k         // no inherent vowel if vowel or virama follows
-     @) ਕ (_       k         // omit inherent vowel at end of word
+        ਕ (_       k         // omit inherent vowel at end of word
      ੱ) ਕ          k:V
      ੱ) ਕ (B       k:
      ੱ) ਕ (_       k:
@@ -187,7 +187,7 @@ C)        ੌੰ         O~
 .group ਖ
         ਖ          k#V
         ਖ (B       k#
-     @) ਖ (_       k#
+        ਖ (_       k#
      ੱ) ਖ          k#:V
      ੱ) ਖ (B       k#:
      ੱ) ਖ (_       k#:
@@ -195,7 +195,7 @@ C)        ੌੰ         O~
 .group ਗ
         ਗ          gV
         ਗ (B       g
-     @) ਗ (_       g
+        ਗ (_       g
      ੱ) ਗ          g:V
      ੱ) ਗ (B       g:
      ੱ) ਗ (_       g:
@@ -203,14 +203,14 @@ C)        ੌੰ         O~
 .group ਘ
         ਘ          g#V
         ਘ (B       g#
-     @) ਘ (_       g#
+        ਘ (_       g#
      _) ਘ          k+V       // high tone
      _) ਘ (B       k+
 
 .group ਙ
         ਙ          NV
         ਙ (B       N
-     @) ਙ (_       N
+        ਙ (_       N
      ੱ) ਙ          N:V
      ੱ) ਙ (B       N:
      ੱ) ਙ (_       N:
@@ -218,7 +218,7 @@ C)        ੌੰ         O~
 .group ਚ
         ਚ          cV
         ਚ (B       c
-     @) ਚ (_       c
+        ਚ (_       c
      ੱ) ਚ          c:V
      ੱ) ਚ (B       c:
      ੱ) ਚ (_       c:
@@ -226,7 +226,7 @@ C)        ੌੰ         O~
 .group ਛ
         ਛ          c#V
         ਛ (B       c#
-     @) ਛ (_       c#
+        ਛ (_       c#
      ੱ) ਛ          c#:V
      ੱ) ਛ (B       c#:
      ੱ) ਛ (_       c#:
@@ -234,7 +234,7 @@ C)        ੌੰ         O~
 .group ਜ
         ਜ          JV
         ਜ (B       J
-     @) ਜ (_       J
+        ਜ (_       J
      ੱ) ਜ          J:V
      ੱ) ਜ (B       J:
      ੱ) ਜ (_       J:
@@ -242,14 +242,14 @@ C)        ੌੰ         O~
 .group ਝ
         ਝ          J#V
         ਝ (B       J#
-     @) ਝ (_       J#
+        ਝ (_       J#
      _) ਝ          c+V
      _) ਝ (B       c+
 
 .group ਞ
         ਞ          n^V
         ਞ (B       n^
-     @) ਞ (_       n^
+        ਞ (_       n^
      ੱ) ਞ          n^:V
      ੱ) ਞ (B       n^:
      ੱ) ਞ (_       n^:
@@ -257,7 +257,7 @@ C)        ੌੰ         O~
 .group ਟ
         ਟ          t.V
         ਟ (B       t.
-     @) ਟ (_       t.
+        ਟ (_       t.
      ੱ) ਟ          t.:V
      ੱ) ਟ (B       t.:
      ੱ) ਟ (_       t.:
@@ -265,7 +265,7 @@ C)        ੌੰ         O~
 .group ਠ
         ਠ          t.#V
         ਠ (B       t.#
-     @) ਠ (_       t.#
+        ਠ (_       t.#
      ੱ) ਠ          t.#:V
      ੱ) ਠ (B       t.#:
      ੱ) ਠ (_       t.#:
@@ -273,7 +273,7 @@ C)        ੌੰ         O~
 .group ਡ
         ਡ          d.V
         ਡ (B       d.
-     @) ਡ (_       d.
+        ਡ (_       d.
      ੱ) ਡ          d.:V
      ੱ) ਡ (B       d.:
      ੱ) ਡ (_       d.:
@@ -281,14 +281,14 @@ C)        ੌੰ         O~
 .group ਢ
         ਢ          d.#V
         ਢ (B       d.#
-     @) ਢ (_       d.#
+        ਢ (_       d.#
      _) ਢ          t.+V
      _) ਢ (B       t.
 
 .group ਣ
         ਣ          n.V
         ਣ (B       n.
-     @) ਣ (_       n.
+        ਣ (_       n.
      ੱ) ਣ          n.:V
      ੱ) ਣ (B       n.:
      ੱ) ਣ (_       n.:
@@ -296,7 +296,7 @@ C)        ੌੰ         O~
 .group ਤ
         ਤ          tV
         ਤ (B       t
-     @) ਤ (_       t
+        ਤ (_       t
      ੱ) ਤ          t:V
      ੱ) ਤ (B       t:
      ੱ) ਤ (_       t:
@@ -304,7 +304,7 @@ C)        ੌੰ         O~
 .group ਥ
         ਥ          t#V
         ਥ (B       t#
-     @) ਥ (_       t#
+        ਥ (_       t#
      ੱ) ਥ          t#:V
      ੱ) ਥ (B       t#:
      ੱ) ਥ (_       t#:
@@ -312,7 +312,7 @@ C)        ੌੰ         O~
 .group ਦ
         ਦ          dV
         ਦ (B       d
-     @) ਦ (_       d
+        ਦ (_       d
      ੱ) ਦ          d:V
      ੱ) ਦ (B       d:
      ੱ) ਦ (_       d:
@@ -320,14 +320,14 @@ C)        ੌੰ         O~
 .group ਧ
         ਧ          d#V
         ਧ (B       d#
-     @) ਧ (_       d#
+        ਧ (_       d#
      _) ਧ          t+V
      _) ਧ (B       t+
 
 .group ਨ
         ਨ          nV
         ਨ (B       n
-     @) ਨ (_       n
+        ਨ (_       n
      ੱ) ਨ          n:V
      ੱ) ਨ (B       n:
      ੱ) ਨ (_       n:
@@ -335,7 +335,7 @@ C)        ੌੰ         O~
 .group ਪ
         ਪ          pV
         ਪ (B       p
-     @) ਪ (_       p
+        ਪ (_       p
      ੱ) ਪ          p:V
      ੱ) ਪ (B       p:
      ੱ) ਪ (_       p:
@@ -343,7 +343,7 @@ C)        ੌੰ         O~
 .group ਫ
         ਫ          p#V
         ਫ (B       p#
-     @) ਫ (_       p#
+        ਫ (_       p#
      ੱ) ਫ          p#:V
      ੱ) ਫ (B       p#:
      ੱ) ਫ (_       p#:
@@ -351,7 +351,7 @@ C)        ੌੰ         O~
 .group ਬ
         ਬ          bV
         ਬ (B       b
-     @) ਬ (_       b
+        ਬ (_       b
      ੱ) ਬ          b:V
      ੱ) ਬ (B       b:
      ੱ) ਬ (_       b:
@@ -359,14 +359,14 @@ C)        ੌੰ         O~
 .group ਭ
         ਭ          b#V
         ਭ (B       b#
-     @) ਭ (_       b#
+        ਭ (_       b#
      _) ਭ          p+V
      _) ਭ (B       p+
 
 .group ਮ
         ਮ          mV
         ਮ (B       m
-     @) ਮ (_       m
+        ਮ (_       m
      ੱ) ਮ          m:V
      ੱ) ਮ (B       m:
      ੱ) ਮ (_       m:
@@ -374,7 +374,7 @@ C)        ੌੰ         O~
 .group ਯ
         ਯ          jV
         ਯ (B       j
-     @) ਯ (_       j
+        ਯ (_       j
      ੱ) ਯ          j:V
      ੱ) ਯ (B       j:
      ੱ) ਯ (_       j:
@@ -382,7 +382,7 @@ C)        ੌੰ         O~
 .group ਰ
         ਰ          rV
         ਰ (B       r
-     @) ਰ (_       r
+        ਰ (_       r
      ੱ) ਰ          r:V
      ੱ) ਰ (B       r:
      ੱ) ਰ (_       r:
@@ -390,7 +390,7 @@ C)        ੌੰ         O~
 .group ਲ
         ਲ          lV
         ਲ (B       l
-     @) ਲ (_       l
+        ਲ (_       l
      ੱ) ਲ          l:V
      ੱ) ਲ (B       l:
      ੱ) ਲ (_       l:
@@ -398,12 +398,12 @@ C)        ੌੰ         O~
 .group ਲ਼
         ਲ਼          l.V
         ਲ਼ (B       l.
-     @) ਲ਼ (_       l.
+        ਲ਼ (_       l.
 
 .group ਵ
         ਵ          vV
         ਵ (B       v
-     @) ਵ (_       v
+        ਵ (_       v
      ੱ) ਵ          v:V
      ੱ) ਵ (B       v:
      ੱ) ਵ (_       v:
@@ -411,7 +411,7 @@ C)        ੌੰ         O~
 .group ਸ਼
         ਸ਼          SV
         ਸ਼ (B       S
-     @) ਸ਼ (_       S
+        ਸ਼ (_       S
      ੱ) ਸ਼          S:V
      ੱ) ਸ਼ (B       S:
      ੱ) ਸ਼ (_       S:
@@ -419,7 +419,7 @@ C)        ੌੰ         O~
 .group ਸ
         ਸ          sV
         ਸ (B       s
-     @) ਸ (_       s
+        ਸ (_       s
      ੱ) ਸ          s:V
      ੱ) ਸ (B       s:
      ੱ) ਸ (_       s:
@@ -427,32 +427,32 @@ C)        ੌੰ         O~
 .group ਹ
         ਹ          HV
         ਹ (B       H
-     @) ਹ (_       H
+        ਹ (_       H
 
 .group ਖ਼
         ਖ਼          xV
         ਖ਼ (B       x
-     @) ਖ਼ (_       x
+        ਖ਼ (_       x
 
 .group ਗ਼
         ਗ਼          QV
         ਗ਼ (B       Q
-     @) ਗ਼ (_       Q
+        ਗ਼ (_       Q
 
 .group ਜ਼
         ਜ਼          zV
         ਜ਼ (B       z
-     @) ਜ਼ (_       z
+        ਜ਼ (_       z
 
 .group ੜ
         ੜ          r.V
         ੜ (B       r.
-     @) ੜ (_       r.
+        ੜ (_       r.
 
 .group ਫ਼
         ਫ਼          fV
         ਫ਼ (B       f
-     @) ਫ਼ (_       f
+        ਫ਼ (_       f
 
 
 .group ੍
@@ -467,9 +467,49 @@ C)	੍
         ੱ                    // addak
 
 .group ਂ
+        ਂ (ਕ       N
+        ਂ (ਖ       N
+        ਂ (ਗ       N
+        ਂ (ਘ       N
+        ਂ (ਚ       n^
+        ਂ (ਛ       n^
+        ਂ (ਜ       n^
+        ਂ (ਝ       n^
+        ਂ (ਟ       n.
+        ਂ (ਠ       n.
+        ਂ (ਡ       n.
+        ਂ (ਢ       n.
+        ਂ (ਤ       n
+        ਂ (ਥ       n
+        ਂ (ਦ       n
+        ਂ (ਧ       n
+        ਂ (ਪ       m
+        ਂ (ਫ       m
+        ਂ (ਬ       m
+        ਂ (ਭ       m
         ਂ          N         // bindi
 
 .group ੰ
+        ੰ (ਕ       N
+        ੰ (ਖ       N
+        ੰ (ਗ       N
+        ੰ (ਘ       N
+        ੰ (ਚ       n^
+        ੰ (ਛ       n^
+        ੰ (ਜ       n^
+        ੰ (ਝ       n^
+        ੰ (ਟ       n.
+        ੰ (ਠ       n.
+        ੰ (ਡ       n.
+        ੰ (ਢ       n.
+        ੰ (ਤ       n
+        ੰ (ਥ       n
+        ੰ (ਦ       n
+        ੰ (ਧ       n
+        ੰ (ਪ       m
+        ੰ (ਫ       m
+        ੰ (ਬ       m
+        ੰ (ਭ       m
         ੰ          n         // tippi
 
 .group ਃ

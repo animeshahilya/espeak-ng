@@ -675,7 +675,10 @@ public class TtsService extends TextToSpeechService {
             java.util.regex.Pattern.compile("(?i)\\b(UPI|TXN|REF|IMPS|NEFT|RTGS)/([A-Za-z0-9/]+)");
 
     private static final java.util.regex.Pattern CURRENCY_PREFIX =
-            java.util.regex.Pattern.compile("(?:₹|(?i)\\b(?:Rs\\.?|INR)\\s*)(\\d+(?:[.,]\\d+)?)");
+            java.util.regex.Pattern.compile("(?i)(?:₹|\\b(?:Rs\\.?|INR)\\s*)([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)");
+
+    private static final java.util.regex.Pattern INDIAN_NUMBER_COMMAS =
+            java.util.regex.Pattern.compile("\\b(\\d{1,2}(?:,\\d{2})+),(\\d{3})\\b");
 
     private static final java.util.regex.Pattern SHORTHAND_THOUSAND =
             java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*k\\b");
@@ -728,8 +731,9 @@ public class TtsService extends TextToSpeechService {
      * 1. Expands multi-character programming and math symbols (NVDA symbols.dic style).
      * 2. Inserts spacing after Danda (।) and Double Danda (॥) if directly adjacent to text.
      * 3. Separates slash-concatenated banking tokens (UPI/423891028341/PAYTM -> UPI / 423891028341 / PAYTM).
-     * 4. Normalizes currency prefixes (₹500, Rs. 500, INR 500 -> 500 rupees).
-     * 5. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
+     * 4. Normalizes currency prefixes (₹500, Rs. 500, INR 500 -> 500 rupees), stripping commas.
+     * 5. Normalizes Indian comma grouping (1,00,000 -> 100000).
+     * 6. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
      */
     static String preprocessIndianText(String text) {
         if (text == null || text.isEmpty()) {
@@ -738,7 +742,31 @@ public class TtsService extends TextToSpeechService {
         text = expandProgrammingSymbols(text);
         text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
         text = BANKING_SLASH_TXN.matcher(text).replaceAll("$1 / $2");
-        text = CURRENCY_PREFIX.matcher(text).replaceAll("$1 rupees");
+
+        // Normalize Indian currency prefixes, stripping grouping commas from the figure
+        java.util.regex.Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
+        if (currMatcher.find()) {
+            StringBuffer sb = new StringBuffer();
+            do {
+                String amount = currMatcher.group(1).replace(",", "");
+                currMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(amount + " rupees"));
+            } while (currMatcher.find());
+            currMatcher.appendTail(sb);
+            text = sb.toString();
+        }
+
+        // Normalize Indian number comma groupings (e.g. 1,00,000 -> 100000)
+        java.util.regex.Matcher numMatcher = INDIAN_NUMBER_COMMAS.matcher(text);
+        if (numMatcher.find()) {
+            StringBuffer sb = new StringBuffer();
+            do {
+                String normalizedNum = numMatcher.group(0).replace(",", "");
+                numMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(normalizedNum));
+            } while (numMatcher.find());
+            numMatcher.appendTail(sb);
+            text = sb.toString();
+        }
+
         text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
         text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");
         text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 crore");

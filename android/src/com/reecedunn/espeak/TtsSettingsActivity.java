@@ -756,14 +756,13 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 context.getString(R.string.capitals_pitch),
                 context.getString(R.string.capitals_say)
         });
-        pref.setEntryValues(new CharSequence[] { "0", "1", "2", "3" });
+        pref.setEntryValues(new CharSequence[] { "0", "1", "3", "2" });
         pref.setDefaultValue("0");
         pref.setPersistent(true);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
         String current = prefs.getString(VoiceSettings.PREF_CAPITALS, "0");
-        int idx = 0;
-        try { idx = Integer.parseInt(current); } catch (Exception e) {}
+        int idx = pref.findIndexOfValue(current);
         if (idx >= 0 && idx < pref.getEntries().length) {
             pref.setSummary(pref.getEntries()[idx]);
         }
