@@ -174,4 +174,52 @@ public class IndianFeaturesDeviceTest {
             Log.i(TAG, "Successfully synthesized " + lang + ": " + mAudioBytesReceived.get() + " audio bytes generated");
         }
     }
+
+    @Test
+    public void testEmojiSynthesisRichDescriptions() throws InterruptedException {
+        List<Voice> availableVoices = mEngine.getAvailableVoices();
+        Map<String, Voice> voiceMap = new HashMap<String, Voice>();
+        for (Voice v : availableVoices) {
+            voiceMap.put(v.name, v);
+        }
+
+        VoiceVariant defaultVariant = VoiceVariant.parseVoiceVariant(VoiceVariant.MALE);
+
+        // 1. Test rich modern emojis in English: smiling face with hearts, diya lamp, hindu temple, pink heart, phoenix, heart hands
+        Voice enVoice = voiceMap.get("en");
+        if (enVoice == null) enVoice = voiceMap.get("en-in");
+        assertThat("English voice should be available", enVoice, is(notNullValue()));
+        mEngine.setVoice(enVoice, defaultVariant);
+
+        String[] enEmojiTests = new String[]{
+                "🥰", "🪔", "🛕", "🩷", "🐦‍🔥", "🫶", "🫡"
+        };
+        for (String emoji : enEmojiTests) {
+            mAudioBytesReceived.set(0);
+            mLatch = new CountDownLatch(1);
+            mEngine.synthesize("Emoji test: " + emoji, false);
+            boolean done = mLatch.await(5, TimeUnit.SECONDS);
+            assertThat("Synthesis for English emoji " + emoji + " timed out", done, is(true));
+            assertThat("Audio bytes for English emoji " + emoji + " should be > 0", mAudioBytesReceived.get(), greaterThan(0));
+            Log.i(TAG, "English emoji " + emoji + " synthesized: " + mAudioBytesReceived.get() + " bytes");
+        }
+
+        // 2. Test rich modern emojis in Hindi: प्यार में डूबा चेहरा, दीपक, हिंदू मंदिर, अभिवादन, गुलाबी दिल, गिलहरी
+        Voice hiVoice = voiceMap.get("hi");
+        assertThat("Hindi voice should be available", hiVoice, is(notNullValue()));
+        mEngine.setVoice(hiVoice, defaultVariant);
+
+        String[] hiEmojiTests = new String[]{
+                "🥰", "🙏", "🪔", "🛕", "🩷", "🐿", "🐸", "🥺"
+        };
+        for (String emoji : hiEmojiTests) {
+            mAudioBytesReceived.set(0);
+            mLatch = new CountDownLatch(1);
+            mEngine.synthesize("इमोजी परीक्षण: " + emoji, false);
+            boolean done = mLatch.await(5, TimeUnit.SECONDS);
+            assertThat("Synthesis for Hindi emoji " + emoji + " timed out", done, is(true));
+            assertThat("Audio bytes for Hindi emoji " + emoji + " should be > 0", mAudioBytesReceived.get(), greaterThan(0));
+            Log.i(TAG, "Hindi emoji " + emoji + " synthesized: " + mAudioBytesReceived.get() + " bytes");
+        }
+    }
 }

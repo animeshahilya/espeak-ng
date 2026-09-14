@@ -311,7 +311,7 @@ $textmode
 
 // 2460..24FF : Enclosed Alphanumerics
 
-Ⓜ	dairəvi m hərfi							// [24C2] text|emoji
+Ⓜ	dairə içində M						// [24C2] text|emoji
 
 // 25A0..25FF : Geometric Shapes
 
@@ -388,7 +388,7 @@ $textmode
 ◻	ağ orta ölçülü kvadrat						// [25FB] text|emoji
 ◼	qara orta ölçülü kvadrat					// [25FC] text|emoji
 ◽	ağ orta kiçiklikdə kvadrat					// [25FD]
-◾	qara orta kiçiklikdə kvadrat					// [25FE]
+◾	qara orta-kiçik kvadrat					// [25FE]
 ◿	aşağı sağa yönəlmiş üçbucaq				// [25FF]
 
 // 2600..26FF : Miscellaneous Symbols
@@ -399,7 +399,7 @@ $textmode
 ☃	qar adam							// [2603] text|emoji
 ☄	kometa								// [2604] text|emoji
 ☎	telefon								// [260E] text|emoji
-☑	təsdiqlənmiş seçki qutusu					// [2611] text|emoji
+☑	təsdiqlənmiş seçim düzbucaqlısı				// [2611] text|emoji
 ☔	yağış damcıları düşən çətir					// [2614]
 ☕	isti içki							// [2615]
 ☘	yonca								// [2618] text|emoji
@@ -439,7 +439,7 @@ $textmode
 ♯	diez							// [266F]
 ♻	təkrar istifadə simvolu						// [267B] text|emoji
 ♾	sonsuzluq							// [267E] text|emoji
-♿	əlil arabası							// [267F]
+♿	əlil arabası işarəsi					// [267F]
 ⚒	çəkic və külüng							// [2692] text|emoji
 ⚓	lövbər								// [2693]
 ⚔	kəsişən qılınclar						// [2694] text|emoji
@@ -483,7 +483,7 @@ $textmode
 // 2700..27BF : Dingbats
 
 ✂	qayçı								// [2702] text|emoji
-✅	ağ qalın təsdiq işarəsi						// [2705]
+✅	təsdiq işarəsi						// [2705]
 ✈	təyyarə								// [2708] text|emoji
 ✉	zərf								// [2709] text|emoji
 ✊	qaldırılmış yumruq						// [270A]
@@ -503,14 +503,14 @@ $textmode
 ❇	qığılcım							// [2747] text|emoji
 ❌	çarpazlamaq işarəsi						// [274C]
 ❎	çarpazlamaq düyməsi						// [274E]
-❓	sual işarəsi							// [2753]
+❓	qırmızı sual işarəsi					// [2753]
 ❔	ağ sual işarəsi							// [2754]
 ❕	ağ nida işarəsi							// [2755]
-❗	nida işarəsi							// [2757]
+❗	qırmızı nida işarəsi					// [2757]
 ❣	ürək nida işarəsi ornamenti					// [2763] text|emoji
 ❤	qırmızı ürək							// [2764] text|emoji
-➕	qalın plus işarəsi						// [2795]
-➖	qalın minus işarəsi						// [2796]
+➕	qalın üstəgəl işarəsi					// [2795]
+➖	qalın çıxma işarəsi					// [2796]
 ➗	qalın bölmə işarəsi						// [2797]
 ➡	sağa ox								// [27A1] text|emoji
 ➰	spiral ilmə							// [27B0]
@@ -537,7 +537,7 @@ $textmode
 ⬛	qara böyük kvadrat						// [2B1B]
 ⬜	ağ böyük kvadrat						// [2B1C]
 ⭐	ağ orta ulduz							// [2B50]
-⭕	qalın böyük dairə						// [2B55]
+⭕	qırmızı qalın dairə					// [2B55]
 
 // 3000..303F : CJK Symbols and Punctuation
 
@@ -546,8 +546,8 @@ $textmode
 
 // 3200..32FF : Enclosed CJK Letters and Months
 
-㊗	dairə təbrik ideoqramı						// [3297] text|emoji
-㊙	dairə sirr ideoqramı						// [3299] text|emoji
+㊗	yapon təbriklər düyməsi					// [3297] text|emoji
+㊙	yapon məxfi düyməsi					// [3299] text|emoji
 ﷼	rial							// [FDFC]
 
 // 1F100..1F1FF : Enclosed Alphanumeric Supplement
@@ -560,32 +560,32 @@ $textmode
 🆑	kvadrat cl düyməsi						// [1F191]
 🆒	kvadrat əla düyməsi						// [1F192]
 🆓	kvadrat ödənişsiz						// [1F193]
-🆔	kvadrat kimlik							// [1F194]
-🆕	kvadrat yeni							// [1F195]
-🆖	kvadrat ng							// [1F196]
-🆗	kvadrat ok							// [1F197]
-🆘	kvadrat sos							// [1F198]
-🆙	up! button							// [1F199]
-🆚	kvadrat vs							// [1F19A]
+🆔	kimlik düyməsi						// [1F194]
+🆕	yeni düyməsi						// [1F195]
+🆖	NG düyməsi						// [1F196]
+🆗	OK düyməsi						// [1F197]
+🆘	SOS düyməsi						// [1F198]
+🆙	YUXARI düyməsi						// [1F199]
+🆚	QARŞI düyməsi						// [1F19A]
 🇨🇶	sark ingilis dili dialekti				// [1F1E8 1F1F6]
 
 // 1F200..1F2FF : Enclosed Ideographic Supplement
 
 🈁	kvadrat katakana koko						// [1F201]
 🈂	kvadrat katakana sa						// [1F202] text|emoji
-🈚	kvadrat inkar ideoqramı						// [1F21A]
-🈯	kvadrat barmaq ideoqramı					// [1F22F]
+🈚	yapon pulsuzdur düyməsi					// [1F21A]
+🈯	yapon məxsusdur düyməsi					// [1F22F]
 🈲	kvadrat qadağa ideoqramı					// [1F232]
 🈳	kvadrat boş ideoqramı						// [1F233]
-🈴	kvadrat birlikdə ideoqramı					// [1F234]
-🈵	kvadrat dolğunluq ideoqramı					// [1F235]
-🈶	kvadrat çıxış ideoqramı						// [1F236]
-🈷	kvadrat ay ideoqramı						// [1F237] text|emoji
+🈴	yapon keçən qiymət düyməsi				// [1F234]
+🈵	yapon tamamilə dolu düyməsi				// [1F235]
+🈶	yapon pulsuz deyil düyməsi				// [1F236]
+🈷	yapon aylıq məbləğ düyməsi				// [1F237] text|emoji
 🈸	kvadrat tətbiq ideoqramı					// [1F238]
 🈹	kvadrat bölmə ideoqramı						// [1F239]
-🈺	kvadrat idarə ideoqramı						// [1F23A]
-🉐	dairə üstünlük ideoqramı					// [1F250]
-🉑	dairə qəbul etmək ideoqramı					// [1F251]
+🈺	yapon iş düyməsi					// [1F23A]
+🉐	yapon yaxşı sövdələşmə düyməsi				// [1F250]
+🉑	yapon qəbul edilə bilən düyməsi				// [1F251]
 
 // 1F000..1F02F : Mahjong Tiles
 
@@ -714,7 +714,7 @@ $textmode
 🍴	çəngəl və bıçaq							// [1F374]
 🍵	qulpsuz çay fincanı						// [1F375]
 🍶	sake								// [1F376]
-🍷	şərəb bakalı							// [1F377]
+🍷	şərab bakalı						// [1F377]
 🍸	kokteyl bakalı							// [1F378]
 🍹	tropik içki							// [1F379]
 🍺	pivə krujkası							// [1F37A]
@@ -751,7 +751,7 @@ $textmode
 🎞	film kadrları							// [1F39E] text|emoji
 🎟	giriş biletləri							// [1F39F] text|emoji
 🎠	karusel at							// [1F3A0]
-🎡	feris çarxı							// [1F3A1]
+🎡	şeytan çarxı						// [1F3A1]
 🎢	maneəli dəmir yolu attraksionu					// [1F3A2]
 🎣	balıq tilovu							// [1F3A3]
 🎤	mikrofon							// [1F3A4]
@@ -759,7 +759,7 @@ $textmode
 🎦	kino								// [1F3A6]
 🎧	qulaqlıq							// [1F3A7]
 🎨	rəssam palitrası						// [1F3A8]
-🎩	silindir şlayapa						// [1F3A9]
+🎩	silindr şlyapa						// [1F3A9]
 🎪	sirk çadırı							// [1F3AA]
 🎫	bilet								// [1F3AB]
 🎬	numerator							// [1F3AC]
@@ -832,8 +832,8 @@ $textmode
 🏮	qırmızı kağız fənər						// [1F3EE]
 🏯	yapon qəsri							// [1F3EF]
 🏰	qəsr								// [1F3F0]
-🏳	dalğalanan ağ bayraq						// [1F3F3] text|emoji
-🏴	dalğalanan qara bayraq						// [1F3F4]
+🏳	ağ bayraq						// [1F3F3] text|emoji
+🏴	qara bayraq						// [1F3F4]
 🏵	rozetka								// [1F3F5] text|emoji
 🏷	etiket								// [1F3F7] text|emoji
 🏸	badminton							// [1F3F8]
@@ -874,7 +874,7 @@ $textmode
 🐛	böcək								// [1F41B]
 🐜	qarışqa								// [1F41C]
 🐝	bal arısı							// [1F41D]
-🐞	parabizən							// [1F41E]
+🐞	parabüzən						// [1F41E]
 🐟	balıq								// [1F41F]
 🐠	tropik balıq							// [1F420]
 🐡	iynəqarın balıq							// [1F421]
@@ -902,7 +902,7 @@ $textmode
 🐷	donuz üzü							// [1F437]
 🐸	qurbağa üzü							// [1F438]
 🐹	dağsiçanı							// [1F439]
-🐺	canavar üzü							// [1F43A]
+🐺	canavar							// [1F43A]
 🐻	ayı üzü								// [1F43B]
 🐼	panda üzü							// [1F43C]
 🐽	donuz burnu							// [1F43D]
@@ -929,7 +929,7 @@ $textmode
 👒	qadın şlyapası							// [1F452]
 👓	eynək								// [1F453]
 👔	qalstuk								// [1F454]
-👕	köynək								// [1F455]
+👕	qısaqol köynək						// [1F455]
 👖	cins								// [1F456]
 👗	don								// [1F457]
 👘	kimono								// [1F458]
@@ -956,7 +956,7 @@ $textmode
 👭	əl-ələ tutan iki qadın						// [1F46D]
 👮	polis məmuru							// [1F46E]
 👯	şənlənən qadınlar						// [1F46F]
-👰	duvaqlı gəlin							// [1F470]
+👰	duvaqlı şəxs						// [1F470]
 👱	sarı saçlı adam							// [1F471]
 👲	çin kepkalı kişi						// [1F472]
 👳	çalmalı kişi							// [1F473]
@@ -1126,11 +1126,11 @@ $textmode
 🔘	radio düyməsi							// [1F518]
 🔙	geriyə yönəlmiş ox						// [1F519]
 🔚	sona yönəlmiş ox						// [1F51A]
-🔛	aktivdir! oxu							// [1F51B]
+🔛	aktivdir oxu						// [1F51B]
 🔜	tezliklə oxu							// [1F51C]
 🔝	yuxarı yönəlmiş ox						// [1F51D]
 🔞	18 yaşından aşağı olanlara olmaz				// [1F51E]
-🔟	klaviatura qapağı: 10						// [1F51F]
+🔟	klaviatura qapağı 10					// [1F51F]
 🔠	böyük hərflərlə latın daxiletməsi				// [1F520]
 🔡	kiçik hərflərlə latın daxiletməsi				// [1F521]
 🔢	daxiletmə rəqəmləri						// [1F522]
@@ -1321,7 +1321,7 @@ $textmode
 
 // 1F680..1F6FF : Transport and Map Symbols
 
-🚀	raketa								// [1F680]
+🚀	raket							// [1F680]
 🚁	helikopter							// [1F681]
 🚂	lokomotiv							// [1F682]
 🚃	dəmir yolu qatarı vaqonu					// [1F683]
@@ -1389,7 +1389,7 @@ $textmode
 🛁	vanna								// [1F6C1]
 🛂	pasport yoxlaması						// [1F6C2]
 🛃	gömrük								// [1F6C3]
-🛄	baqaj tələbi							// [1F6C4]
+🛄	baqajın verilməsi					// [1F6C4]
 🛅	saxlama kamerası						// [1F6C5]
 🛋	divan və lampa							// [1F6CB] text|emoji
 🛌	yataqda uzanmış adam						// [1F6CC]
@@ -1402,6 +1402,8 @@ $textmode
 🛕	hindu məbədi						// [1F6D5]
 🛖	alaçıq							// [1F6D6]
 🛗	lift							// [1F6D7]
+🛘	torpaq sürüşməsi					// [1F6D8]
+🛙	mayak							// [1F6D9]
 🛜	naqilsiz						// [1F6DC]
 🛝	oyun slaydı						// [1F6DD]
 🛞	təkər							// [1F6DE]
@@ -1421,7 +1423,7 @@ $textmode
 🛵	motorlu skuter							// [1F6F5]
 🛶	qayıq								// [1F6F6]
 🛷	sanka								// [1F6F7]
-🛸	uşan boşqab							// [1F6F8]
+🛸	uçan boşqab						// [1F6F8]
 🛹	skeytbord							// [1F6F9]
 🛺	avto-rikşa						// [1F6FA]
 🛻	pikap yüngül avtomobil					// [1F6FB]
@@ -1485,7 +1487,7 @@ $textmode
 🤲	əllər yuxarı							// [1F932]
 🤳	özçəkim								// [1F933]
 🤴	oğlan şahzadə							// [1F934]
-🤵	smokinqli kişi							// [1F935]
+🤵	smokinqli şəxs						// [1F935]
 🤶	xanım Klaus							// [1F936]
 🤷	çiynini çəkmək							// [1F937]
 🤸	akrobatik hərəkət						// [1F938]
@@ -1555,20 +1557,20 @@ $textmode
 🥺	yalvaran üz							// [1F97A]
 🥻	sari							// [1F97B]
 🥼	laboratoriya geyimi						// [1F97C]
-🥽	su eynəyi							// [1F97D]
+🥽	qoruyucu eynək						// [1F97D]
 🥾	gəzinti botinkası						// [1F97E]
 🥿	yastı ayaqqabı							// [1F97F]
 🦀	qırmızı xərçəng							// [1F980]
-🦁	şir üzü								// [1F981]
+🦁	aslan							// [1F981]
 🦂	əqrəb								// [1F982]
 🦃	hinduşka							// [1F983]
-🦄	təkbuynuz üzü							// [1F984]
+🦄	təkbuynuz						// [1F984]
 🦅	qartal								// [1F985]
 🦆	ördək								// [1F986]
 🦇	yarasa								// [1F987]
 🦈	akula								// [1F988]
 🦉	bayquş								// [1F989]
-🦊	tülkü sifət							// [1F98A]
+🦊	tülkü							// [1F98A]
 🦋	kəpənək								// [1F98B]
 🦌	maral								// [1F98C]
 🦍	qorilla								// [1F98D]
@@ -1589,7 +1591,7 @@ $textmode
 🦜	tutuquşu							// [1F99C]
 🦝	yenot								// [1F99D]
 🦞	lobster								// [1F99E]
-🦟	ağcaqənəd							// [1F99F]
+🦟	ağcaqanad						// [1F99F]
 🦠	mikrob								// [1F9A0]
 🦡	porsuq								// [1F9A1]
 🦢	qu								// [1F9A2]
@@ -1663,7 +1665,7 @@ $textmode
 🧦	corablar							// [1F9E6]
 🧧	qırmızı zərf							// [1F9E7]
 🧨	feyerverk							// [1F9E8]
-🧩	başsındırma							// [1F9E9]
+🧩	pazl							// [1F9E9]
 🧪	sınaq şüşəsi							// [1F9EA]
 🧫	Petri qabı							// [1F9EB]
 🧬	dnt								// [1F9EC]
@@ -1689,264 +1691,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	bayraq: Askenson adası						// [1F1E6 1F1E8] AC
-🇦🇩	bayraq: Andorra							// [1F1E6 1F1E9] AD
-🇦🇪	bayraq: Birləşmiş Ərəb Əmirlikləri				// [1F1E6 1F1EA] AE
-🇦🇫	bayraq: Əfqanıstan						// [1F1E6 1F1EB] AF
-🇦🇬	bayraq: Antiqua və Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	bayraq: Angilya							// [1F1E6 1F1EE] AI
-🇦🇱	bayraq: Albaniya						// [1F1E6 1F1F1] AL
-🇦🇲	bayraq: Ermənistan						// [1F1E6 1F1F2] AM
-🇦🇴	bayraq: Anqola							// [1F1E6 1F1F4] AO
-🇦🇶	bayraq: Antarktika						// [1F1E6 1F1F6] AQ
-🇦🇷	bayraq: Argentina						// [1F1E6 1F1F7] AR
-🇦🇸	bayraq: Amerika Samoası						// [1F1E6 1F1F8] AS
-🇦🇹	bayraq: Avstriya						// [1F1E6 1F1F9] AT
-🇦🇺	bayraq: Avstraliya						// [1F1E6 1F1FA] AU
-🇦🇼	bayraq: Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	bayraq: Aland adaları						// [1F1E6 1F1FD] AX
-🇦🇿	bayraq: Azərbaycan						// [1F1E6 1F1FF] AZ
-🇧🇦	bayraq: Bosniya və Herseqovina					// [1F1E7 1F1E6] BA
-🇧🇧	bayraq: Barbados						// [1F1E7 1F1E7] BB
-🇧🇩	bayraq: Banqladeş						// [1F1E7 1F1E9] BD
-🇧🇪	bayraq: Belçika							// [1F1E7 1F1EA] BE
-🇧🇫	bayraq: Burkina Faso						// [1F1E7 1F1EB] BF
-🇧🇬	bayraq: Bolqarıstan						// [1F1E7 1F1EC] BG
-🇧🇭	bayraq: Bəhreyn							// [1F1E7 1F1ED] BH
-🇧🇮	bayraq: Burundi							// [1F1E7 1F1EE] BI
-🇧🇯	bayraq: Benin							// [1F1E7 1F1EF] BJ
-🇧🇱	bayraq: Sent-Bartelemi						// [1F1E7 1F1F1] BL
-🇧🇲	bayraq: Bermud adaları						// [1F1E7 1F1F2] BM
-🇧🇳	bayraq: Bruney							// [1F1E7 1F1F3] BN
-🇧🇴	bayraq: Boliviya						// [1F1E7 1F1F4] BO
-🇧🇶	bayraq: Karib Niderlandı					// [1F1E7 1F1F6] BQ
-🇧🇷	bayraq: Braziliya						// [1F1E7 1F1F7] BR
-🇧🇸	bayraq: Baham adaları						// [1F1E7 1F1F8] BS
-🇧🇹	bayraq: Butan							// [1F1E7 1F1F9] BT
-🇧🇻	bayraq: Buve adası						// [1F1E7 1F1FB] BV
-🇧🇼	bayraq: Botsvana						// [1F1E7 1F1FC] BW
-🇧🇾	bayraq: Belarus							// [1F1E7 1F1FE] BY
-🇧🇿	bayraq: Beliz							// [1F1E7 1F1FF] BZ
-🇨🇦	bayraq: Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	bayraq: Kokos (Kilinq) adaları					// [1F1E8 1F1E8] CC
-🇨🇩	bayraq: Konqo - Kinşasa						// [1F1E8 1F1E9] CD
-🇨🇫	bayraq: Mərkəzi Afrika Respublikası				// [1F1E8 1F1EB] CF
-🇨🇬	bayraq: Konqo - Brazzavil					// [1F1E8 1F1EC] CG
-🇨🇭	bayraq: İsveçrə							// [1F1E8 1F1ED] CH
-🇨🇮	bayraq: Kotd’ivuar						// [1F1E8 1F1EE] CI
-🇨🇰	bayraq: Kuk adaları						// [1F1E8 1F1F0] CK
-🇨🇱	bayraq: Çili							// [1F1E8 1F1F1] CL
-🇨🇲	bayraq: Kamerun							// [1F1E8 1F1F2] CM
-🇨🇳	bayraq: Çin							// [1F1E8 1F1F3] CN
-🇨🇴	bayraq: Kolumbiya						// [1F1E8 1F1F4] CO
-🇨🇵	bayraq: Klipperton adası					// [1F1E8 1F1F5] CP
-🇨🇷	bayraq: Kosta Rika						// [1F1E8 1F1F7] CR
-🇨🇺	bayraq: Kuba							// [1F1E8 1F1FA] CU
-🇨🇻	bayraq: Kabo-Verde						// [1F1E8 1F1FB] CV
-🇨🇼	bayraq: Kurasao							// [1F1E8 1F1FC] CW
-🇨🇽	bayraq: Milad adası						// [1F1E8 1F1FD] CX
-🇨🇾	bayraq: Kipr							// [1F1E8 1F1FE] CY
-🇨🇿	bayraq: Çexiya							// [1F1E8 1F1FF] CZ
-🇩🇪	bayraq: Almaniya						// [1F1E9 1F1EA] DE
-🇩🇬	bayraq: Dieqo Qarsiya						// [1F1E9 1F1EC] DG
-🇩🇯	bayraq: Cibuti							// [1F1E9 1F1EF] DJ
-🇩🇰	bayraq: Danimarka						// [1F1E9 1F1F0] DK
-🇩🇲	bayraq: Dominika						// [1F1E9 1F1F2] DM
-🇩🇴	bayraq: Dominikan Respublikası					// [1F1E9 1F1F4] DO
-🇩🇿	bayraq: Əlcəzair						// [1F1E9 1F1FF] DZ
-🇪🇦	bayraq: Seuta və Melilya					// [1F1EA 1F1E6] EA
-🇪🇨	bayraq: Ekvador							// [1F1EA 1F1E8] EC
-🇪🇪	bayraq: Estoniya						// [1F1EA 1F1EA] EE
-🇪🇬	bayraq: Misir							// [1F1EA 1F1EC] EG
-🇪🇭	bayraq: Qərbi Saxara						// [1F1EA 1F1ED] EH
-🇪🇷	bayraq: Eritreya						// [1F1EA 1F1F7] ER
-🇪🇸	bayraq: İspaniya						// [1F1EA 1F1F8] ES
-🇪🇹	bayraq: Efiopiya						// [1F1EA 1F1F9] ET
-🇪🇺	bayraq: Avropa Birliyi						// [1F1EA 1F1FA] EU
-🇫🇮	bayraq: Finlandiya						// [1F1EB 1F1EE] FI
-🇫🇯	bayraq: Fici							// [1F1EB 1F1EF] FJ
-🇫🇰	bayraq: Folklend adaları					// [1F1EB 1F1F0] FI
-🇫🇲	bayraq: Mikroneziya						// [1F1EB 1F1F2] FM
-🇫🇴	bayraq: Farer adaları						// [1F1EB 1F1F4] FO
-🇫🇷	bayraq: Fransa							// [1F1EB 1F1F7] FR
-🇬🇦	bayraq: Qabon							// [1F1EC 1F1E6] GA
-🇬🇧	bayraq: Birləşmiş Krallıq					// [1F1EC 1F1E7] GB
-🇬🇩	bayraq: Qrenada							// [1F1EC 1F1E9] GD
-🇬🇪	bayraq: Gürcüstan						// [1F1EC 1F1EA] GE
-🇬🇫	bayraq: Fransa Qvianası						// [1F1EC 1F1EB] GF
-🇬🇬	bayraq: Gernsi							// [1F1EC 1F1EC] GG
-🇬🇭	bayraq: Qana							// [1F1EC 1F1ED] GH
-🇬🇮	bayraq: Cəbəllütariq						// [1F1EC 1F1EE] GI
-🇬🇱	bayraq: Qrenlandiya						// [1F1EC 1F1F1] GL
-🇬🇲	bayraq: Qambiya							// [1F1EC 1F1F2] GM
-🇬🇳	bayraq: Qvineya							// [1F1EC 1F1F3] GN
-🇬🇵	bayraq: Qvadelupa						// [1F1EC 1F1F5] GP
-🇬🇶	bayraq: Ekvatorial Qvineya					// [1F1EC 1F1F6] GQ
-🇬🇷	bayraq: Yunanıstan						// [1F1EC 1F1F7] GR
-🇬🇸	bayraq: Cənubi Corciya və Cənubi Sendviç adaları		// [1F1EC 1F1F8] GS
-🇬🇹	bayraq: Qvatemala						// [1F1EC 1F1F9] GT
-🇬🇺	bayraq: Quam							// [1F1EC 1F1FA] GU
-🇬🇼	bayraq: Qvineya-Bisau						// [1F1EC 1F1FC] GW
-🇬🇾	bayraq: Qayana							// [1F1EC 1F1FE] GY
-🇭🇰	bayraq: Honq Konq Xüsusi İnzibati Ərazi Çin			// [1F1ED 1F1F0] HK
-🇭🇲	bayraq: Herd və Makdonald adaları				// [1F1ED 1F1F2] HM
-🇭🇳	bayraq: Honduras						// [1F1ED 1F1F3] HN
-🇭🇷	bayraq: Xorvatiya						// [1F1ED 1F1F7] HR
-🇭🇹	bayraq: Haiti							// [1F1ED 1F1F9] HT
-🇭🇺	bayraq: Macarıstan						// [1F1ED 1F1FA] HU
-🇮🇨	bayraq: Kanar adaları						// [1F1EE 1F1E8] IC
-🇮🇩	bayraq: İndoneziya						// [1F1EE 1F1E9] ID
-🇮🇪	bayraq: İrlandiya						// [1F1EE 1F1EA] IE
-🇮🇱	bayraq: İsrail							// [1F1EE 1F1F1] IL
-🇮🇲	bayraq: Men adası						// [1F1EE 1F1F2] IM
-🇮🇳	bayraq: Hindistan						// [1F1EE 1F1F3] IN
-🇮🇴	bayraq: Britaniyanın Hind Okeanı Ərazisi			// [1F1EE 1F1F4] IO
-🇮🇶	bayraq: İraq							// [1F1EE 1F1F6] IQ
-🇮🇷	bayraq: İran							// [1F1EE 1F1F7] IR
-🇮🇸	bayraq: İslandiya						// [1F1EE 1F1F8] IS
-🇮🇹	bayraq: İtaliya							// [1F1EE 1F1F9] IT
-🇯🇪	bayraq: Cersi							// [1F1EF 1F1EA] JE
-🇯🇲	bayraq: Yamayka							// [1F1EF 1F1F2] JM
-🇯🇴	bayraq: İordaniya						// [1F1EF 1F1F4] JO
-🇯🇵	bayraq: Yaponiya						// [1F1EF 1F1F5] JP
-🇰🇪	bayraq: Keniya							// [1F1F0 1F1EA] KE
-🇰🇬	bayraq: Qırğızıstan						// [1F1F0 1F1EC] KG
-🇰🇭	bayraq: Kamboca							// [1F1F0 1F1ED] KH
-🇰🇮	bayraq: Kiribati						// [1F1F0 1F1EE] KI
-🇰🇲	bayraq: Komor adaları						// [1F1F0 1F1F2] KM
-🇰🇳	bayraq: Sent-Kits və Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	bayraq: Şimali Koreya						// [1F1F0 1F1F5] KP
-🇰🇷	bayraq: Cənubi Koreya						// [1F1F0 1F1F7] KR
-🇰🇼	bayraq: Küveyt							// [1F1F0 1F1FC] KW
-🇰🇾	bayraq: Kayman adaları						// [1F1F0 1F1FE] KY
-🇰🇿	bayraq: Qazaxıstan						// [1F1F0 1F1FF] KZ
-🇱🇦	bayraq: Laos							// [1F1F1 1F1E6] LA
-🇱🇧	bayraq: Livan							// [1F1F1 1F1E7] LB
-🇱🇨	bayraq: Sent-Lusiya						// [1F1F1 1F1E8] LC
-🇱🇮	bayraq: Lixtenşteyn						// [1F1F1 1F1EE] LI
-🇱🇰	bayraq: Şri-Lanka						// [1F1F1 1F1F0] LK
-🇱🇷	bayraq: Liberiya						// [1F1F1 1F1F7] LR
-🇱🇸	bayraq: Lesoto							// [1F1F1 1F1F8] LS
-🇱🇹	bayraq: Litva							// [1F1F1 1F1F9] LT
-🇱🇺	bayraq: Lüksemburq						// [1F1F1 1F1FA] LU
-🇱🇻	bayraq: Latviya							// [1F1F1 1F1FB] LV
-🇱🇾	bayraq: Liviya							// [1F1F1 1F1FE] LY
-🇲🇦	bayraq: Mərakeş							// [1F1F2 1F1E6] MA
-🇲🇨	bayraq: Monako							// [1F1F2 1F1E8] MC
-🇲🇩	bayraq: Moldova							// [1F1F2 1F1E9] MD
-🇲🇪	bayraq: Monteneqro						// [1F1F2 1F1EA] ME
-🇲🇫	bayraq: Sent Martin						// [1F1F2 1F1EB] MF
-🇲🇬	bayraq: Madaqaskar						// [1F1F2 1F1EC] MG
-🇲🇭	bayraq: Marşal adaları						// [1F1F2 1F1ED] MH
-🇲🇰	bayraq: Makedoniya						// [1F1F2 1F1F0] MK
-🇲🇱	bayraq: Mali							// [1F1F2 1F1F1] ML
-🇲🇲	bayraq: Myanma							// [1F1F2 1F1F2] MM
-🇲🇳	bayraq: Monqolustan						// [1F1F2 1F1F3] MN
-🇲🇴	bayraq: Makao Xüsusi İnzibati Ərazi Çin				// [1F1F2 1F1F4] MO
-🇲🇵	bayraq: Şimali Marian adaları					// [1F1F2 1F1F5] MP
-🇲🇶	bayraq: Martinik						// [1F1F2 1F1F6] MQ
-🇲🇷	bayraq: Mavritaniya						// [1F1F2 1F1F7] MR
-🇲🇸	bayraq: Monserat						// [1F1F2 1F1F8] MS
-🇲🇹	bayraq: Malta							// [1F1F2 1F1F9] MT
-🇲🇺	bayraq: Mavriki							// [1F1F2 1F1FA] MU
-🇲🇻	bayraq: Maldiv adaları						// [1F1F2 1F1FB] MV
-🇲🇼	bayraq: Malavi							// [1F1F2 1F1FC] MW
-🇲🇽	bayraq: Meksika							// [1F1F2 1F1FD] MX
-🇲🇾	bayraq: Malayziya						// [1F1F2 1F1FE] MY
-🇲🇿	bayraq: Mozambik						// [1F1F2 1F1FF] MZ
-🇳🇦	bayraq: Namibiya						// [1F1F3 1F1E6] NA
-🇳🇨	bayraq: Yeni Kaledoniya						// [1F1F3 1F1E8] NC
-🇳🇪	bayraq: Niger							// [1F1F3 1F1EA] NE
-🇳🇫	bayraq: Norfolk adası						// [1F1F3 1F1EB] NF
-🇳🇬	bayraq: Nigeriya						// [1F1F3 1F1EC] NG
-🇳🇮	bayraq: Nikaraqua						// [1F1F3 1F1EE] NI
-🇳🇱	bayraq: Niderland						// [1F1F3 1F1F1] NL
-🇳🇴	bayraq: Norveç							// [1F1F3 1F1F4] NO
-🇳🇵	bayraq: Nepal							// [1F1F3 1F1F5] NP
-🇳🇷	bayraq: Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	bayraq: Niue							// [1F1F3 1F1FA] NU
-🇳🇿	bayraq: Yeni Zelandiya						// [1F1F3 1F1FF] NZ
-🇴🇲	bayraq: Oman							// [1F1F4 1F1F2] OM
-🇵🇦	bayraq: Panama							// [1F1F5 1F1E6] PA
-🇵🇪	bayraq: Peru							// [1F1F5 1F1EA] PE
-🇵🇫	bayraq: Fransa Polineziyası					// [1F1F5 1F1EB] PF
-🇵🇬	bayraq: Papua-Yeni Qvineya					// [1F1F5 1F1EC] PG
-🇵🇭	bayraq: Filippin						// [1F1F5 1F1ED] PH
-🇵🇰	bayraq: Pakistan						// [1F1F5 1F1F0] PK
-🇵🇱	bayraq: Polşa							// [1F1F5 1F1F1] PL
-🇵🇲	bayraq: Müqəddəs Pyer və Mikelon				// [1F1F5 1F1F2] PM
-🇵🇳	bayraq: Pitkern adaları						// [1F1F5 1F1F3] PN
-🇵🇷	bayraq: Puerto Riko						// [1F1F5 1F1F7] PR
-🇵🇸	bayraq: Fələstin Əraziləri					// [1F1F5 1F1F8] PS
-🇵🇹	bayraq: Portuqaliya						// [1F1F5 1F1F9] PT
-🇵🇼	bayraq: Palau							// [1F1F5 1F1FC] PW
-🇵🇾	bayraq: Paraqvay						// [1F1F5 1F1FE] PY
-🇶🇦	bayraq: Qətər							// [1F1F6 1F1E6] QA
-🇷🇪	bayraq: Reyunyon						// [1F1F7 1F1EA] RE
-🇷🇴	bayraq: Rumıniya						// [1F1F7 1F1F4] RO
-🇷🇸	bayraq: Serbiya							// [1F1F7 1F1F8] RS
-🇷🇺	bayraq: Rusiya							// [1F1F7 1F1FA] RU
-🇷🇼	bayraq: Ruanda							// [1F1F7 1F1FC] RW
-🇸🇦	bayraq: Səudiyyə Ərəbistanı					// [1F1F8 1F1E6] SA
-🇸🇧	bayraq: Solomon adaları						// [1F1F8 1F1E7] SB
-🇸🇨	bayraq: Seyşel adaları						// [1F1F8 1F1E8] SC
-🇸🇩	bayraq: Sudan							// [1F1F8 1F1E9] SD
-🇸🇪	bayraq: İsveç							// [1F1F8 1F1EA] SE
-🇸🇬	bayraq: Sinqapur						// [1F1F8 1F1EC] SG
-🇸🇭	bayraq: Müqəddəs Yelena						// [1F1F8 1F1ED] SH
-🇸🇮	bayraq: Sloveniya						// [1F1F8 1F1EE] SI
-🇸🇯	bayraq: Svalbard və Yan-Mayen					// [1F1F8 1F1EF] SJ
-🇸🇰	bayraq: Slovakiya						// [1F1F8 1F1F0] SK
-🇸🇱	bayraq: Syerra-Leone						// [1F1F8 1F1F1] SL
-🇸🇲	bayraq: San-Marino						// [1F1F8 1F1F2] SM
-🇸🇳	bayraq: Seneqal							// [1F1F8 1F1F3] SN
-🇸🇴	bayraq: Somali							// [1F1F8 1F1F4] SO
-🇸🇷	bayraq: Surinam							// [1F1F8 1F1F7] SR
-🇸🇸	bayraq: Cənubi Sudan						// [1F1F8 1F1F8] SS
-🇸🇹	bayraq: San-Tome və Prinsipi					// [1F1F8 1F1F9] ST
-🇸🇻	bayraq: Salvador						// [1F1F8 1F1FB] SV
-🇸🇽	bayraq: Sint-Marten						// [1F1F8 1F1FD] SX
-🇸🇾	bayraq: Suriya							// [1F1F8 1F1FE] SY
-🇸🇿	bayraq: Svazilend						// [1F1F8 1F1FF] SZ
-🇹🇦	bayraq: Tristan da Kunya					// [1F1F9 1F1E6] TA
-🇹🇨	bayraq: Törks və Kaykos adaları					// [1F1F9 1F1E8] TC
-🇹🇩	bayraq: Çad							// [1F1F9 1F1E9] TD
-🇹🇫	bayraq: Fransanın Cənub Əraziləri				// [1F1F9 1F1EB] TF
-🇹🇬	bayraq: Toqo							// [1F1F9 1F1EC] TG
-🇹🇭	bayraq: Tailand							// [1F1F9 1F1ED] TH
-🇹🇯	bayraq: Tacikistan						// [1F1F9 1F1EF] TJ
-🇹🇰	bayraq: Tokelau							// [1F1F9 1F1F0] TK
-🇹🇱	bayraq: Şərqi Timor						// [1F1F9 1F1F1] TL
-🇹🇲	bayraq: Türkmənistan						// [1F1F9 1F1F2] TM
-🇹🇳	bayraq: Tunis							// [1F1F9 1F1F3] TN
-🇹🇴	bayraq: Tonqa							// [1F1F9 1F1F4] TO
-🇹🇷	bayraq: Türkiyə							// [1F1F9 1F1F7] TR
-🇹🇹	bayraq: Trinidad və Tobaqo					// [1F1F9 1F1F9] TT
-🇹🇻	bayraq: Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	bayraq: Tayvan							// [1F1F9 1F1FC] TW
-🇹🇿	bayraq: Tanzaniya						// [1F1F9 1F1FF] TZ
-🇺🇦	bayraq: Ukrayna							// [1F1FA 1F1E6] UA
-🇺🇬	bayraq: Uqanda							// [1F1FA 1F1EC] UG
-🇺🇲	bayraq: ABŞ-a bağlı kiçik adacıqlar				// [1F1FA 1F1F2] UM
-🇺🇳	bayraq: Birləşmiş Millətlər Təşkilatı				// [1F1FA 1F1F3] UN
-🇺🇸	bayraq: Amerika Birləşmiş Ştatları				// [1F1FA 1F1F8] US
-🇺🇾	bayraq: Uruqvay							// [1F1FA 1F1FE] UY
-🇺🇿	bayraq: Özbəkistan						// [1F1FA 1F1FF] UZ
-🇻🇦	bayraq: Vatikan							// [1F1FB 1F1E6] VA
-🇻🇨	bayraq: Sent-Vinsent və Qrenadinlər				// [1F1FB 1F1E8] VC
-🇻🇪	bayraq: Venesuela						// [1F1FB 1F1EA] VE
-🇻🇬	bayraq: Britaniyanın Virgin adaları				// [1F1FB 1F1EC] VG
-🇻🇮	bayraq: ABŞ Virgin adaları					// [1F1FB 1F1EE] VI
-🇻🇳	bayraq: Vyetnam							// [1F1FB 1F1F3] VN
-🇻🇺	bayraq: Vanuatu							// [1F1FB 1F1FA] VU
-🇼🇫	bayraq: Uollis və Futuna					// [1F1FC 1F1EB] WF
-🇼🇸	bayraq: Samoa							// [1F1FC 1F1F8] WS
-🇽🇰	bayraq: Kosovo							// [1F1FD 1F1F0] XK
-🇾🇪	bayraq: Yəmən							// [1F1FE 1F1EA] YE
-🇾🇹	bayraq: Mayot							// [1F1FE 1F1F9] YT
-🇿🇦	bayraq: Cənub Afrika						// [1F1FF 1F1E6] ZA
-🇿🇲	bayraq: Zambiya							// [1F1FF 1F1F2] ZM
-🇿🇼	bayraq: Zimbabve						// [1F1FF 1F1FC] ZW
+🇦🇨	Askenson adası						// [1F1E6 1F1E8] AC
+🇦🇩	Andorra							// [1F1E6 1F1E9] AD
+🇦🇪	Birləşmiş Ərəb Əmirlikləri				// [1F1E6 1F1EA] AE
+🇦🇫	Əfqanıstan						// [1F1E6 1F1EB] AF
+🇦🇬	Antiqua və Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	Angilya							// [1F1E6 1F1EE] AI
+🇦🇱	Albaniya						// [1F1E6 1F1F1] AL
+🇦🇲	Ermənistan						// [1F1E6 1F1F2] AM
+🇦🇴	Anqola							// [1F1E6 1F1F4] AO
+🇦🇶	Antarktika						// [1F1E6 1F1F6] AQ
+🇦🇷	Argentina						// [1F1E6 1F1F7] AR
+🇦🇸	Amerika Samoası						// [1F1E6 1F1F8] AS
+🇦🇹	Avstriya						// [1F1E6 1F1F9] AT
+🇦🇺	Avstraliya						// [1F1E6 1F1FA] AU
+🇦🇼	Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	Aland adaları						// [1F1E6 1F1FD] AX
+🇦🇿	Azərbaycan						// [1F1E6 1F1FF] AZ
+🇧🇦	Bosniya və Herseqovina					// [1F1E7 1F1E6] BA
+🇧🇧	Barbados						// [1F1E7 1F1E7] BB
+🇧🇩	Banqladeş						// [1F1E7 1F1E9] BD
+🇧🇪	Belçika							// [1F1E7 1F1EA] BE
+🇧🇫	Burkina Faso						// [1F1E7 1F1EB] BF
+🇧🇬	Bolqarıstan						// [1F1E7 1F1EC] BG
+🇧🇭	Bəhreyn							// [1F1E7 1F1ED] BH
+🇧🇮	Burundi							// [1F1E7 1F1EE] BI
+🇧🇯	Benin							// [1F1E7 1F1EF] BJ
+🇧🇱	Sent-Bartelemi						// [1F1E7 1F1F1] BL
+🇧🇲	Bermud adaları						// [1F1E7 1F1F2] BM
+🇧🇳	Bruney							// [1F1E7 1F1F3] BN
+🇧🇴	Boliviya						// [1F1E7 1F1F4] BO
+🇧🇶	Karib Niderlandı					// [1F1E7 1F1F6] BQ
+🇧🇷	Braziliya						// [1F1E7 1F1F7] BR
+🇧🇸	Baham adaları						// [1F1E7 1F1F8] BS
+🇧🇹	Butan							// [1F1E7 1F1F9] BT
+🇧🇻	Buve adası						// [1F1E7 1F1FB] BV
+🇧🇼	Botsvana						// [1F1E7 1F1FC] BW
+🇧🇾	Belarus							// [1F1E7 1F1FE] BY
+🇧🇿	Beliz							// [1F1E7 1F1FF] BZ
+🇨🇦	Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	Kokos Kilinq adaları					// [1F1E8 1F1E8] CC
+🇨🇩	Konqo - Kinşasa						// [1F1E8 1F1E9] CD
+🇨🇫	Mərkəzi Afrika Respublikası				// [1F1E8 1F1EB] CF
+🇨🇬	Konqo - Brazzavil					// [1F1E8 1F1EC] CG
+🇨🇭	İsveçrə							// [1F1E8 1F1ED] CH
+🇨🇮	Kotd’ivuar						// [1F1E8 1F1EE] CI
+🇨🇰	Kuk adaları						// [1F1E8 1F1F0] CK
+🇨🇱	Çili							// [1F1E8 1F1F1] CL
+🇨🇲	Kamerun							// [1F1E8 1F1F2] CM
+🇨🇳	Çin							// [1F1E8 1F1F3] CN
+🇨🇴	Kolumbiya						// [1F1E8 1F1F4] CO
+🇨🇵	Klipperton adası					// [1F1E8 1F1F5] CP
+🇨🇷	Kosta Rika						// [1F1E8 1F1F7] CR
+🇨🇺	Kuba							// [1F1E8 1F1FA] CU
+🇨🇻	Kabo-Verde						// [1F1E8 1F1FB] CV
+🇨🇼	Kurasao							// [1F1E8 1F1FC] CW
+🇨🇽	Milad adası						// [1F1E8 1F1FD] CX
+🇨🇾	Kipr							// [1F1E8 1F1FE] CY
+🇨🇿	Çexiya							// [1F1E8 1F1FF] CZ
+🇩🇪	Almaniya						// [1F1E9 1F1EA] DE
+🇩🇬	Dieqo Qarsiya						// [1F1E9 1F1EC] DG
+🇩🇯	Cibuti							// [1F1E9 1F1EF] DJ
+🇩🇰	Danimarka						// [1F1E9 1F1F0] DK
+🇩🇲	Dominika						// [1F1E9 1F1F2] DM
+🇩🇴	Dominikan Respublikası					// [1F1E9 1F1F4] DO
+🇩🇿	Əlcəzair						// [1F1E9 1F1FF] DZ
+🇪🇦	Seuta və Melilya					// [1F1EA 1F1E6] EA
+🇪🇨	Ekvador							// [1F1EA 1F1E8] EC
+🇪🇪	Estoniya						// [1F1EA 1F1EA] EE
+🇪🇬	Misir							// [1F1EA 1F1EC] EG
+🇪🇭	Qərbi Saxara						// [1F1EA 1F1ED] EH
+🇪🇷	Eritreya						// [1F1EA 1F1F7] ER
+🇪🇸	İspaniya						// [1F1EA 1F1F8] ES
+🇪🇹	Efiopiya						// [1F1EA 1F1F9] ET
+🇪🇺	Avropa Birliyi						// [1F1EA 1F1FA] EU
+🇫🇮	Finlandiya						// [1F1EB 1F1EE] FI
+🇫🇯	Fici							// [1F1EB 1F1EF] FJ
+🇫🇰	Folklend adaları					// [1F1EB 1F1F0] FI
+🇫🇲	Mikroneziya						// [1F1EB 1F1F2] FM
+🇫🇴	Farer adaları						// [1F1EB 1F1F4] FO
+🇫🇷	Fransa							// [1F1EB 1F1F7] FR
+🇬🇦	Qabon							// [1F1EC 1F1E6] GA
+🇬🇧	Birləşmiş Krallıq					// [1F1EC 1F1E7] GB
+🇬🇩	Qrenada							// [1F1EC 1F1E9] GD
+🇬🇪	Gürcüstan						// [1F1EC 1F1EA] GE
+🇬🇫	Fransa Qvianası						// [1F1EC 1F1EB] GF
+🇬🇬	Gernsi							// [1F1EC 1F1EC] GG
+🇬🇭	Qana							// [1F1EC 1F1ED] GH
+🇬🇮	Cəbəllütariq						// [1F1EC 1F1EE] GI
+🇬🇱	Qrenlandiya						// [1F1EC 1F1F1] GL
+🇬🇲	Qambiya							// [1F1EC 1F1F2] GM
+🇬🇳	Qvineya							// [1F1EC 1F1F3] GN
+🇬🇵	Qvadelupa						// [1F1EC 1F1F5] GP
+🇬🇶	Ekvatorial Qvineya					// [1F1EC 1F1F6] GQ
+🇬🇷	Yunanıstan						// [1F1EC 1F1F7] GR
+🇬🇸	Cənubi Corciya və Cənubi Sendviç adaları		// [1F1EC 1F1F8] GS
+🇬🇹	Qvatemala						// [1F1EC 1F1F9] GT
+🇬🇺	Quam							// [1F1EC 1F1FA] GU
+🇬🇼	Qvineya-Bisau						// [1F1EC 1F1FC] GW
+🇬🇾	Qayana							// [1F1EC 1F1FE] GY
+🇭🇰	Honq Konq Xüsusi İnzibati Rayonu Çin			// [1F1ED 1F1F0] HK
+🇭🇲	Herd və Makdonald adaları				// [1F1ED 1F1F2] HM
+🇭🇳	Honduras						// [1F1ED 1F1F3] HN
+🇭🇷	Xorvatiya						// [1F1ED 1F1F7] HR
+🇭🇹	Haiti							// [1F1ED 1F1F9] HT
+🇭🇺	Macarıstan						// [1F1ED 1F1FA] HU
+🇮🇨	Kanar adaları						// [1F1EE 1F1E8] IC
+🇮🇩	İndoneziya						// [1F1EE 1F1E9] ID
+🇮🇪	İrlandiya						// [1F1EE 1F1EA] IE
+🇮🇱	İsrail							// [1F1EE 1F1F1] IL
+🇮🇲	Men adası						// [1F1EE 1F1F2] IM
+🇮🇳	Hindistan						// [1F1EE 1F1F3] IN
+🇮🇴	Britaniyanın Hind Okeanı Ərazisi			// [1F1EE 1F1F4] IO
+🇮🇶	İraq							// [1F1EE 1F1F6] IQ
+🇮🇷	İran							// [1F1EE 1F1F7] IR
+🇮🇸	İslandiya						// [1F1EE 1F1F8] IS
+🇮🇹	İtaliya							// [1F1EE 1F1F9] IT
+🇯🇪	Cersi							// [1F1EF 1F1EA] JE
+🇯🇲	Yamayka							// [1F1EF 1F1F2] JM
+🇯🇴	İordaniya						// [1F1EF 1F1F4] JO
+🇯🇵	Yaponiya						// [1F1EF 1F1F5] JP
+🇰🇪	Keniya							// [1F1F0 1F1EA] KE
+🇰🇬	Qırğızıstan						// [1F1F0 1F1EC] KG
+🇰🇭	Kamboca							// [1F1F0 1F1ED] KH
+🇰🇮	Kiribati						// [1F1F0 1F1EE] KI
+🇰🇲	Komor adaları						// [1F1F0 1F1F2] KM
+🇰🇳	Sent-Kits və Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	Şimali Koreya						// [1F1F0 1F1F5] KP
+🇰🇷	Cənubi Koreya						// [1F1F0 1F1F7] KR
+🇰🇼	Küveyt							// [1F1F0 1F1FC] KW
+🇰🇾	Kayman adaları						// [1F1F0 1F1FE] KY
+🇰🇿	Qazaxıstan						// [1F1F0 1F1FF] KZ
+🇱🇦	Laos							// [1F1F1 1F1E6] LA
+🇱🇧	Livan							// [1F1F1 1F1E7] LB
+🇱🇨	Sent-Lusiya						// [1F1F1 1F1E8] LC
+🇱🇮	Lixtenşteyn						// [1F1F1 1F1EE] LI
+🇱🇰	Şri-Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	Liberiya						// [1F1F1 1F1F7] LR
+🇱🇸	Lesoto							// [1F1F1 1F1F8] LS
+🇱🇹	Litva							// [1F1F1 1F1F9] LT
+🇱🇺	Lüksemburq						// [1F1F1 1F1FA] LU
+🇱🇻	Latviya							// [1F1F1 1F1FB] LV
+🇱🇾	Liviya							// [1F1F1 1F1FE] LY
+🇲🇦	Mərakeş							// [1F1F2 1F1E6] MA
+🇲🇨	Monako							// [1F1F2 1F1E8] MC
+🇲🇩	Moldova							// [1F1F2 1F1E9] MD
+🇲🇪	Monteneqro						// [1F1F2 1F1EA] ME
+🇲🇫	Sent Martin						// [1F1F2 1F1EB] MF
+🇲🇬	Madaqaskar						// [1F1F2 1F1EC] MG
+🇲🇭	Marşal adaları						// [1F1F2 1F1ED] MH
+🇲🇰	Şimali Makedoniya					// [1F1F2 1F1F0] MK
+🇲🇱	Mali							// [1F1F2 1F1F1] ML
+🇲🇲	Myanma							// [1F1F2 1F1F2] MM
+🇲🇳	Monqolustan						// [1F1F2 1F1F3] MN
+🇲🇴	Makao XİR Çin						// [1F1F2 1F1F4] MO
+🇲🇵	Şimali Marian adaları					// [1F1F2 1F1F5] MP
+🇲🇶	Martinik						// [1F1F2 1F1F6] MQ
+🇲🇷	Mavritaniya						// [1F1F2 1F1F7] MR
+🇲🇸	Monserat						// [1F1F2 1F1F8] MS
+🇲🇹	Malta							// [1F1F2 1F1F9] MT
+🇲🇺	Mavriki							// [1F1F2 1F1FA] MU
+🇲🇻	Maldiv adaları						// [1F1F2 1F1FB] MV
+🇲🇼	Malavi							// [1F1F2 1F1FC] MW
+🇲🇽	Meksika							// [1F1F2 1F1FD] MX
+🇲🇾	Malayziya						// [1F1F2 1F1FE] MY
+🇲🇿	Mozambik						// [1F1F2 1F1FF] MZ
+🇳🇦	Namibiya						// [1F1F3 1F1E6] NA
+🇳🇨	Yeni Kaledoniya						// [1F1F3 1F1E8] NC
+🇳🇪	Niger							// [1F1F3 1F1EA] NE
+🇳🇫	Norfolk adası						// [1F1F3 1F1EB] NF
+🇳🇬	Nigeriya						// [1F1F3 1F1EC] NG
+🇳🇮	Nikaraqua						// [1F1F3 1F1EE] NI
+🇳🇱	Niderland						// [1F1F3 1F1F1] NL
+🇳🇴	Norveç							// [1F1F3 1F1F4] NO
+🇳🇵	Nepal							// [1F1F3 1F1F5] NP
+🇳🇷	Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	Niue							// [1F1F3 1F1FA] NU
+🇳🇿	Yeni Zelandiya						// [1F1F3 1F1FF] NZ
+🇴🇲	Oman							// [1F1F4 1F1F2] OM
+🇵🇦	Panama							// [1F1F5 1F1E6] PA
+🇵🇪	Peru							// [1F1F5 1F1EA] PE
+🇵🇫	Fransa Polineziyası					// [1F1F5 1F1EB] PF
+🇵🇬	Papua-Yeni Qvineya					// [1F1F5 1F1EC] PG
+🇵🇭	Filippin						// [1F1F5 1F1ED] PH
+🇵🇰	Pakistan						// [1F1F5 1F1F0] PK
+🇵🇱	Polşa							// [1F1F5 1F1F1] PL
+🇵🇲	Müqəddəs Pyer və Mikelon				// [1F1F5 1F1F2] PM
+🇵🇳	Pitkern adaları						// [1F1F5 1F1F3] PN
+🇵🇷	Puerto Riko						// [1F1F5 1F1F7] PR
+🇵🇸	Fələstin Əraziləri					// [1F1F5 1F1F8] PS
+🇵🇹	Portuqaliya						// [1F1F5 1F1F9] PT
+🇵🇼	Palau							// [1F1F5 1F1FC] PW
+🇵🇾	Paraqvay						// [1F1F5 1F1FE] PY
+🇶🇦	Qətər							// [1F1F6 1F1E6] QA
+🇷🇪	Reyunyon						// [1F1F7 1F1EA] RE
+🇷🇴	Rumıniya						// [1F1F7 1F1F4] RO
+🇷🇸	Serbiya							// [1F1F7 1F1F8] RS
+🇷🇺	Rusiya							// [1F1F7 1F1FA] RU
+🇷🇼	Ruanda							// [1F1F7 1F1FC] RW
+🇸🇦	Səudiyyə Ərəbistanı					// [1F1F8 1F1E6] SA
+🇸🇧	Solomon adaları						// [1F1F8 1F1E7] SB
+🇸🇨	Seyşel adaları						// [1F1F8 1F1E8] SC
+🇸🇩	Sudan							// [1F1F8 1F1E9] SD
+🇸🇪	İsveç							// [1F1F8 1F1EA] SE
+🇸🇬	Sinqapur						// [1F1F8 1F1EC] SG
+🇸🇭	Müqəddəs Yelena						// [1F1F8 1F1ED] SH
+🇸🇮	Sloveniya						// [1F1F8 1F1EE] SI
+🇸🇯	Svalbard və Yan-Mayen					// [1F1F8 1F1EF] SJ
+🇸🇰	Slovakiya						// [1F1F8 1F1F0] SK
+🇸🇱	Syerra-Leone						// [1F1F8 1F1F1] SL
+🇸🇲	San-Marino						// [1F1F8 1F1F2] SM
+🇸🇳	Seneqal							// [1F1F8 1F1F3] SN
+🇸🇴	Somali							// [1F1F8 1F1F4] SO
+🇸🇷	Surinam							// [1F1F8 1F1F7] SR
+🇸🇸	Cənubi Sudan						// [1F1F8 1F1F8] SS
+🇸🇹	San-Tome və Prinsipi					// [1F1F8 1F1F9] ST
+🇸🇻	Salvador						// [1F1F8 1F1FB] SV
+🇸🇽	Sint-Marten						// [1F1F8 1F1FD] SX
+🇸🇾	Suriya							// [1F1F8 1F1FE] SY
+🇸🇿	Esvatini						// [1F1F8 1F1FF] SZ
+🇹🇦	Tristan da Kunya					// [1F1F9 1F1E6] TA
+🇹🇨	Törks və Kaykos adaları					// [1F1F9 1F1E8] TC
+🇹🇩	Çad							// [1F1F9 1F1E9] TD
+🇹🇫	Fransanın Cənub Əraziləri				// [1F1F9 1F1EB] TF
+🇹🇬	Toqo							// [1F1F9 1F1EC] TG
+🇹🇭	Tailand							// [1F1F9 1F1ED] TH
+🇹🇯	Tacikistan						// [1F1F9 1F1EF] TJ
+🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
+🇹🇱	Şərqi Timor						// [1F1F9 1F1F1] TL
+🇹🇲	Türkmənistan						// [1F1F9 1F1F2] TM
+🇹🇳	Tunis							// [1F1F9 1F1F3] TN
+🇹🇴	Tonqa							// [1F1F9 1F1F4] TO
+🇹🇷	Türkiyə							// [1F1F9 1F1F7] TR
+🇹🇹	Trinidad və Tobaqo					// [1F1F9 1F1F9] TT
+🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	Tayvan							// [1F1F9 1F1FC] TW
+🇹🇿	Tanzaniya						// [1F1F9 1F1FF] TZ
+🇺🇦	Ukrayna							// [1F1FA 1F1E6] UA
+🇺🇬	Uqanda							// [1F1FA 1F1EC] UG
+🇺🇲	ABŞ-a bağlı kiçik adacıqlar				// [1F1FA 1F1F2] UM
+🇺🇳	Birləşmiş Millətlər Təşkilatı				// [1F1FA 1F1F3] UN
+🇺🇸	Amerika Birləşmiş Ştatları				// [1F1FA 1F1F8] US
+🇺🇾	Uruqvay							// [1F1FA 1F1FE] UY
+🇺🇿	Özbəkistan						// [1F1FA 1F1FF] UZ
+🇻🇦	Vatikan							// [1F1FB 1F1E6] VA
+🇻🇨	Sent-Vinsent və Qrenadinlər				// [1F1FB 1F1E8] VC
+🇻🇪	Venesuela						// [1F1FB 1F1EA] VE
+🇻🇬	Britaniyanın Virgin adaları				// [1F1FB 1F1EC] VG
+🇻🇮	ABŞ Virgin adaları					// [1F1FB 1F1EE] VI
+🇻🇳	Vyetnam							// [1F1FB 1F1F3] VN
+🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
+🇼🇫	Uollis və Futuna					// [1F1FC 1F1EB] WF
+🇼🇸	Samoa							// [1F1FC 1F1F8] WS
+🇽🇰	Kosovo							// [1F1FD 1F1F0] XK
+🇾🇪	Yəmən							// [1F1FE 1F1EA] YE
+🇾🇹	Mayot							// [1F1FE 1F1F9] YT
+🇿🇦	Cənub Afrika						// [1F1FF 1F1E6] ZA
+🇿🇲	Zambiya							// [1F1FF 1F1F2] ZM
+🇿🇼	Zimbabve						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1956,18 +1958,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#️⃣	klaviatura qapağı: #						// [0023 FE0F 20E3]
-*️⃣	klaviatura qapağı: *						// [002A FE0F 20E3]
-0️⃣	klaviatura qapağı: 0						// [0030 FE0F 20E3]
-1️⃣	klaviatura qapağı: 1						// [0031 FE0F 20E3]
-2️⃣	klaviatura qapağı: 2						// [0032 FE0F 20E3]
-3️⃣	klaviatura qapağı: 3						// [0033 FE0F 20E3]
-4️⃣	klaviatura qapağı: 4						// [0034 FE0F 20E3]
-5️⃣	klaviatura qapağı: 5						// [0035 FE0F 20E3]
-6️⃣	klaviatura qapağı: 6						// [0036 FE0F 20E3]
-7️⃣	klaviatura qapağı: 7						// [0037 FE0F 20E3]
-8️⃣	klaviatura qapağı: 8						// [0038 FE0F 20E3]
-9️⃣	klaviatura qapağı: 9						// [0039 FE0F 20E3]
+#⃣	klaviatura qapağı					// [0023 20E3]
+*⃣	klaviatura qapağı					// [002A 20E3]
+0⃣	klaviatura qapağı 0					// [0030 20E3]
+1⃣	klaviatura qapağı 1					// [0031 20E3]
+2⃣	klaviatura qapağı 2					// [0032 20E3]
+3⃣	klaviatura qapağı 3					// [0033 20E3]
+4⃣	klaviatura qapağı 4					// [0034 20E3]
+5⃣	klaviatura qapağı 5					// [0035 20E3]
+6⃣	klaviatura qapağı 6					// [0036 20E3]
+7⃣	klaviatura qapağı 7					// [0037 20E3]
+8⃣	klaviatura qapağı 8					// [0038 20E3]
+9⃣	klaviatura qapağı 9					// [0039 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	balet ayaqqabıları					// [1FA70]
@@ -1993,6 +1995,11 @@ $textmode
 🪇	marakas							// [1FA87]
 🪈	fleyta							// [1FA88]
 🪉	arfa							// [1FA89]
+🪊	trombon							// [1FA8A]
+🪋	meteor							// [1FA8B]
+🪌	pozan							// [1FA8C]
+🪍	kəpənəktutan						// [1FA8D]
+🪎	xəzinə sandığı						// [1FA8E]
 🪏	bel							// [1FA8F]
 🪐	üzüklü planet						// [1FA90]
 🪑	stul							// [1FA91]
@@ -2049,6 +2056,9 @@ $textmode
 🫄	hamilə adam						// [1FAC4]
 🫅	taclı adam						// [1FAC5]
 🫆	barmaq izi						// [1FAC6]
+🫈	tüklü məxluq						// [1FAC8]
+🫌	monarx kəpənəyi						// [1FACC]
+🫍	orka							// [1FACD]
 🫎	sığın							// [1FACE]
 🫏	eşşək							// [1FACF]
 🫐	qaragilələr						// [1FAD0]
@@ -2064,6 +2074,7 @@ $textmode
 🫚	zəncəfil kökü						// [1FADA]
 🫛	noxud qabığı						// [1FADB]
 🫜	meyvəköklü						// [1FADC]
+🫝	xiyar turşusu						// [1FADD]
 🫟	sıçratmaq						// [1FADF]
 🫠	əriyən üz						// [1FAE0]
 🫡	salamlayan üz						// [1FAE1]
@@ -2075,6 +2086,9 @@ $textmode
 🫧	köpüklər						// [1FAE7]
 🫨	silkələnən üz						// [1FAE8]
 🫩	altı torbalanmış gözləri olan üz			// [1FAE9]
+🫪	əyilmiş üz						// [1FAEA]
+🫫	Sınıq üz						// [1FAEB]
+🫯	savaş buludu						// [1FAEF]
 🫰	əl barmağı və baş barmağı çarpazlanmış vəziyyətdə	// [1FAF0]
 🫱	sağ əl							// [1FAF1]
 🫲	sol əl							// [1FAF2]
@@ -2084,6 +2098,8 @@ $textmode
 🫶	əldən ürək						// [1FAF6]
 🫷	sola itələyən əl					// [1FAF7]
 🫸	sağa basan əl						// [1FAF8]
+🫹	sola baxan baş barmaq işarəsi				// [1FAF9]
+🫺	sağa baş barmaq işarəsi					// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2112,38 +2128,38 @@ $textmode
 👨‍🦼‍➡	motorlu oturacaqda kişi sağa baxan			// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	manual oturacaqda kişi					// [1F468 200D 1F9BD]
 👨‍🦽‍➡	manual oturacaqda kişi sağa baxan			// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	öpüş: qadın, kişi			// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	öpüş: kişi, kişi			// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	öpüş: qadın, qadın			// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	ürəkli cütlük: qadın, kişi			// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	ürəkli cütlük: kişi, kişi			// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	ürəkli cütlük: qadın, qadın			// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	ailə: kişi, qadın, oğlan			// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	ailə: kişi, qadın, qız uşağı			// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	ailə: kişi, qadın, qız uşağı, oğlan	// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	ailə: kişi, qadın, oğlan, oğlan		// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	ailə: kişi, qadın, qız uşağı, qız uşağı	// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	ailə: kişi, kişi, oğlan				// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	ailə: kişi, kişi, qız uşağı			// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	ailə: kişi, kişi, qız uşağı, oğlan	// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	ailə: kişi, kişi, oğlan, oğlan		// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	ailə: kişi, kişi, qız uşağı, qız uşağı	// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	öpüş qadın kişi						// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	öpüş kişi kişi						// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	öpüş qadın qadın					// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	ürəkli cütlük qadın kişi				// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	ürəkli cütlük kişi kişi					// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	ürəkli cütlük qadın qadın				// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	ailə kişi qadın oğlan					// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	ailə kişi qadın qız uşağı				// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	ailə kişi qadın qız uşağı oğlan				// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	ailə kişi qadın oğlan oğlan				// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	ailə kişi qadın qız uşağı qız uşağı			// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	ailə kişi kişi oğlan					// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	ailə kişi kişi qız uşağı				// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	ailə kişi kişi qız uşağı oğlan				// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	ailə kişi kişi oğlan oğlan				// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	ailə kişi kişi qız uşağı qız uşağı			// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	körpə əmizdirən qadın					// [1F469 200D 1F37C]
-👩‍👩‍👦	ailə: qadın, qadın, oğlan			// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	ailə: qadın, qadın, qız uşağı			// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	ailə: qadın, qadın, qız uşağı, oğlan	// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	ailə: qadın, qadın, oğlan, oğlan	// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	ailə: qadın, qadın, qız uşağı, qız uşağı// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	ailə: kişi, oğlan					// [1F468 200D 1F466]
-👨‍👦‍👦	ailə: kişi, oğlan, oğlan			// [1F468 200D 1F466 200D 1F466]
-👨‍👧	ailə: kişi, qız uşağı					// [1F468 200D 1F467]
-👨‍👧‍👦	ailə: kişi, qız uşağı, oğlan			// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	ailə: kişi, qız uşağı, qız uşağı		// [1F468 200D 1F467 200D 1F467]
-👩‍👦	ailə: qadın, oğlan					// [1F469 200D 1F466]
-👩‍👦‍👦	ailə: qadın, oğlan, oğlan			// [1F469 200D 1F466 200D 1F466]
-👩‍👧	ailə: qadın, qız uşağı					// [1F469 200D 1F467]
-👩‍👧‍👦	ailə: qadın, qız uşağı, oğlan			// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	ailə: qadın, qız uşağı, qız uşağı		// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	ailə qadın qadın oğlan					// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	ailə qadın qadın qız uşağı				// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	ailə qadın qadın qız uşağı oğlan			// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	ailə qadın qadın oğlan oğlan				// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	ailə qadın qadın qız uşağı qız uşağı			// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	ailə kişi oğlan						// [1F468 200D 1F466]
+👨‍👦‍👦	ailə kişi oğlan oğlan					// [1F468 200D 1F466 200D 1F466]
+👨‍👧	ailə kişi qız uşağı					// [1F468 200D 1F467]
+👨‍👧‍👦	ailə kişi qız uşağı oğlan				// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	ailə kişi qız uşağı qız uşağı				// [1F468 200D 1F467 200D 1F467]
+👩‍👦	ailə qadın oğlan					// [1F469 200D 1F466]
+👩‍👦‍👦	ailə qadın oğlan oğlan					// [1F469 200D 1F466 200D 1F466]
+👩‍👧	ailə qadın qız uşağı					// [1F469 200D 1F467]
+👩‍👧‍👦	ailə qadın qız uşağı oğlan				// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	ailə qadın qız uşağı qız uşağı				// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 

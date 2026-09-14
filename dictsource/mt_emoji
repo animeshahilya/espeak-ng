@@ -7,16 +7,16 @@ $textmode
 
 //#⃣								// [0023 20E3] (no translation)
 //*⃣								// [002A 20E3] (no translation)
-//0⃣								// [0030 20E3] (no translation)
-//1⃣								// [0031 20E3] (no translation)
-//2⃣								// [0032 20E3] (no translation)
-//3⃣								// [0033 20E3] (no translation)
-//4⃣								// [0034 20E3] (no translation)
-//5⃣								// [0035 20E3] (no translation)
-//6⃣								// [0036 20E3] (no translation)
-//7⃣								// [0037 20E3] (no translation)
-//8⃣								// [0038 20E3] (no translation)
-//9⃣								// [0039 20E3] (no translation)
+0⃣	keycap 0						// [0030 20E3]
+1⃣	keycap 1						// [0031 20E3]
+2⃣	keycap 2						// [0032 20E3]
+3⃣	keycap 3						// [0033 20E3]
+4⃣	keycap 4						// [0034 20E3]
+5⃣	keycap 5						// [0035 20E3]
+6⃣	keycap 6						// [0036 20E3]
+7⃣	keycap 7						// [0037 20E3]
+8⃣	keycap 8						// [0038 20E3]
+9⃣	keycap 9						// [0039 20E3]
 //¢								// [00A2] (no translation)
 //¤								// [00A4] (no translation)
 //¥								// [00A5] (no translation)
@@ -1751,6 +1751,8 @@ $textmode
 //🛕								// [1F6D5] (no translation)
 //🛖								// [1F6D6] (no translation)
 //🛗								// [1F6D7] (no translation)
+//🛘								// [1F6D8] (no translation)
+//🛙								// [1F6D9] (no translation)
 //🛜								// [1F6DC] (no translation)
 //🛝								// [1F6DD] (no translation)
 //🛞								// [1F6DE] (no translation)
@@ -2142,6 +2144,11 @@ $textmode
 //🪇								// [1FA87] (no translation)
 //🪈								// [1FA88] (no translation)
 //🪉								// [1FA89] (no translation)
+//🪊								// [1FA8A] (no translation)
+//🪋								// [1FA8B] (no translation)
+//🪌								// [1FA8C] (no translation)
+//🪍								// [1FA8D] (no translation)
+//🪎								// [1FA8E] (no translation)
 //🪏								// [1FA8F] (no translation)
 //🪐								// [1FA90] (no translation)
 //🪑								// [1FA91] (no translation)
@@ -2198,6 +2205,9 @@ $textmode
 //🫄								// [1FAC4] (no translation)
 //🫅								// [1FAC5] (no translation)
 //🫆								// [1FAC6] (no translation)
+//🫈								// [1FAC8] (no translation)
+//🫌								// [1FACC] (no translation)
+//🫍								// [1FACD] (no translation)
 //🫎								// [1FACE] (no translation)
 //🫏								// [1FACF] (no translation)
 //🫐								// [1FAD0] (no translation)
@@ -2213,6 +2223,7 @@ $textmode
 //🫚								// [1FADA] (no translation)
 //🫛								// [1FADB] (no translation)
 //🫜								// [1FADC] (no translation)
+//🫝								// [1FADD] (no translation)
 //🫟								// [1FADF] (no translation)
 //🫠								// [1FAE0] (no translation)
 //🫡								// [1FAE1] (no translation)
@@ -2224,6 +2235,9 @@ $textmode
 //🫧								// [1FAE7] (no translation)
 //🫨								// [1FAE8] (no translation)
 //🫩								// [1FAE9] (no translation)
+//🫪								// [1FAEA] (no translation)
+//🫫								// [1FAEB] (no translation)
+//🫯								// [1FAEF] (no translation)
 //🫰								// [1FAF0] (no translation)
 //🫱								// [1FAF1] (no translation)
 //🫲								// [1FAF2] (no translation)
@@ -2233,3 +2247,5 @@ $textmode
 //🫶								// [1FAF6] (no translation)
 //🫷								// [1FAF7] (no translation)
 //🫸								// [1FAF8] (no translation)
+//🫹								// [1FAF9] (no translation)
+//🫺								// [1FAFA] (no translation)

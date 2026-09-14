@@ -397,13 +397,13 @@ $textmode
 ☁	wingu								// [2601] text|emoji
 ☂	mwavuli								// [2602] text|emoji
 ☃	sanamu ya mtu ya theluji					// [2603] text|emoji
-☄	kimondo								// [2604] text|emoji
+☄	Nyotamkia						// [2604] text|emoji
 ☎	simu								// [260E] text|emoji
-☑	sanduku la kura lenye alama ya tiki				// [2611] text|emoji
+☑	sanduku la kuteua lenye tiki				// [2611] text|emoji
 ☔	mwavuli na matone ya mvua					// [2614]
 ☕	kinywaji moto							// [2615]
 ☘	shamroki							// [2618] text|emoji
-☝	kidole cha kwanza kinachoelekeza juu				// [261D] text|emoji
+☝	kidole cha shahada kinachoelekeza juu			// [261D] text|emoji
 ☠	fuvu na mifupa							// [2620] text|emoji
 ☢	mnururisho							// [2622] text|emoji
 ☣	tahadhari ya kibayalojia					// [2623] text|emoji
@@ -420,13 +420,13 @@ $textmode
 ♉	fahali								// [2649]
 ♊	mapacha								// [264A]
 ♋	nyota ya kaa							// [264B]
-♌	simba								// [264C]
+♌	nyota ya simba						// [264C]
 ♍	mashuke								// [264D]
 ♎	mizani								// [264E]
 ♏	nyota ya ng’e							// [264F]
 ♐	mshale								// [2650]
 ♑	nyota ya mbuzi							// [2651]
-♒	ndoo								// [2652]
+♒	nyota ya ndoo						// [2652]
 ♓	nyota ya samaki							// [2653]
 ♟	kipande cha saratanji						// [265F] text|emoji
 ♠	shupaza								// [2660] text|emoji
@@ -439,7 +439,7 @@ $textmode
 ♯	kipandisho						// [266F]
 ♻	alama ya kutumia tena						// [267B] text|emoji
 ♾	milele								// [267E] text|emoji
-♿	kiti cha magurudumu						// [267F]
+♿	ishara ya kiti cha magurudumu				// [267F]
 ⚒	nyundo na sululu						// [2692] text|emoji
 ⚓	nanga								// [2693]
 ⚔	panga zilizopishanishwa						// [2694] text|emoji
@@ -483,7 +483,7 @@ $textmode
 // 2700..27BF : Dingbats
 
 ✂	makasi								// [2702] text|emoji
-✅	alama nyeupe ya tiki iliyokolea					// [2705]
+✅	alama nyeupe ya tiki					// [2705]
 ✈	eropleni							// [2708] text|emoji
 ✉	bahasha								// [2709] text|emoji
 ✊	ngumi iliyoinuliwa						// [270A]
@@ -492,26 +492,26 @@ $textmode
 ✍	mkono unaoandika						// [270D] text|emoji
 ✏	penseli								// [270F] text|emoji
 ✒	nibu nyeusi							// [2712] text|emoji
-✔	alama ya tiki iliyokolea					// [2714] text|emoji
-✖	alama ya x iliyokolea						// [2716] text|emoji
+✔	alama ya tiki						// [2714] text|emoji
+✖	zidisha							// [2716] text|emoji
 ✝	msalaba wa kilatini						// [271D] text|emoji
 ✡	nyota ya daudi							// [2721] text|emoji
-✨	kumetameta							// [2728]
+✨	nyota							// [2728]
 ✳	kinyota chenye ncha nane					// [2733] text|emoji
 ✴	nyota yenye ncha nane						// [2734] text|emoji
 ❄	chembe ya theluji						// [2744] text|emoji
 ❇	metameta							// [2747] text|emoji
-❌	alama ya kuzidisha						// [274C]
+❌	alama ya X						// [274C]
 ❎	kitufe cha alama ya kuzidisha					// [274E]
-❓	alama ya kuuliza						// [2753]
+❓	alama nyekundu ya kuuliza				// [2753]
 ❔	alama nyeupe ya kuuliza						// [2754]
 ❕	alama nyeupe ya mshangao					// [2755]
-❗	alama ya mshangao						// [2757]
-❣	pambo la moyo ulio na alama ya mshangao				// [2763] text|emoji
+❗	alama nyekundu ya mshangao				// [2757]
+❣	umbo la moyo lenye alama ya mshangao			// [2763] text|emoji
 ❤	moyo mwekundu							// [2764] text|emoji
-➕	alama ya kuongeza iliyokolea					// [2795]
-➖	alama ya kutoa iliyokolea					// [2796]
-➗	alama ya kugawanya iliyokolea					// [2797]
+➕	kuongeza						// [2795]
+➖	kutoa							// [2796]
+➗	gawanya							// [2797]
 ➡	mshale unaoelekeza kulia					// [27A1] text|emoji
 ➰	kitanzi kilichopinda						// [27B0]
 ➿	kitanzi kilichopinda mara mbili					// [27BF]
@@ -533,11 +533,11 @@ $textmode
 
 ⬅	mshale unaoelekeza kushoto					// [2B05] text|emoji
 ⬆	mshale unaoelekeza juu						// [2B06] text|emoji
-⬇	mshale unaoelekea chini						// [2B07] text|emoji
+⬇	mshale unaoangalia chini				// [2B07] text|emoji
 ⬛	mraba mkubwa mweusi						// [2B1B]
 ⬜	mraba mkubwa mweupe						// [2B1C]
 ⭐	nyota nyeupe ya wastani						// [2B50]
-⭕	mduara mkubwa							// [2B55]
+⭕	mduara mwekundu wenye shimo				// [2B55]
 
 // 3000..303F : CJK Symbols and Punctuation
 
@@ -565,7 +565,7 @@ $textmode
 🆖	kitufe chenye herufi NG						// [1F196]
 🆗	kitufe chenye neno 'OK’						// [1F197]
 🆘	kitufe chenye neno 'SOS’					// [1F198]
-🆙	kitufe cha UP!							// [1F199]
+🆙	kitufe cha UP						// [1F199]
 🆚	kitufe cha VS							// [1F19A]
 🇨🇶	Sark							// [1F1E8 1F1F6]
 
@@ -617,7 +617,7 @@ $textmode
 🌑	mwezi mpya							// [1F311]
 🌒	mwezi mwandamo							// [1F312]
 🌓	mwezi wa robo ya kwanza						// [1F313]
-🌔	mwezi ulioangazwa zaidi ya nusu unaotanda			// [1F314]
+🌔	mwezi ulioangazwa zaidi ya nusu unaopevuka		// [1F314]
 🌕	mwezi kamili							// [1F315]
 🌖	mwezi ulioangazwa zaidi ya nusu unaofifia			// [1F316]
 🌗	mwezi wa robo ya mwisho						// [1F317]
@@ -683,7 +683,7 @@ $textmode
 🍕	piza								// [1F355]
 🍖	nyama kwenye mfupa						// [1F356]
 🍗	paja la kuku							// [1F357]
-🍘	chakula kilichotengenezwa kutoka kwa mchele			// [1F358]
+🍘	biskuti za mchele					// [1F358]
 🍙	mchele uliotengenezwa kwa mtindo wa tufe			// [1F359]
 🍚	wali								// [1F35A]
 🍛	wali ulio na mchuzi wa viungo					// [1F35B]
@@ -698,7 +698,7 @@ $textmode
 🍤	uduvi iliyokaangwa						// [1F364]
 🍥	keki ya samaki iliyozingwa					// [1F365]
 🍦	aisikrimu laini							// [1F366]
-🍧	aisikrimu iliyotengenezwa kwa barafu iliyokatwakatwa		// [1F367]
+🍧	barafu iliyochongwa					// [1F367]
 🍨	aisikrimu							// [1F368]
 🍩	kitumbua							// [1F369]
 🍪	biskuti								// [1F36A]
@@ -713,7 +713,7 @@ $textmode
 🍳	kupika								// [1F373]
 🍴	uma na kisu							// [1F374]
 🍵	kikombe kisicho na kishikio					// [1F375]
-🍶	kinywaji cha kijapani kinachotengenezwa kwa kuvundika mchele	// [1F376]
+🍶	mvinyo wa kijapani unaotokana na mchele			// [1F376]
 🍷	glasi ya divai							// [1F377]
 🍸	glasi ya kokteli						// [1F378]
 🍹	kinywaji cha tropiki						// [1F379]
@@ -742,7 +742,7 @@ $textmode
 🎐	kengele ya upepo						// [1F390]
 🎑	sherehe ya mwezi						// [1F391]
 🎒	mfuko wa shuleni						// [1F392]
-🎓	kofia inayovaliwa kwenye sherehe za kuhitimu masomo		// [1F393]
+🎓	kofia ya mahafali					// [1F393]
 🎖	tuzo ya kijeshi							// [1F396] text|emoji
 🎗	utepe wa ukumbusho						// [1F397] text|emoji
 🎙	maikrofoni ya studio						// [1F399] text|emoji
@@ -779,9 +779,9 @@ $textmode
 🎺	tarumbeta							// [1F3BA]
 🎻	fidla								// [1F3BB]
 🎼	karatasi ya muziki						// [1F3BC]
-🎽	shati ya kukimbia						// [1F3BD]
+🎽	shati la kukimbia					// [1F3BD]
 🎾	mpira wa tenisi							// [1F3BE]
-🎿	ski								// [1F3BF]
+🎿	skii							// [1F3BF]
 🏀	mpira wa kikapu							// [1F3C0]
 🏁	bendera yenye mirabaraba					// [1F3C1]
 🏂	mtu anayeteleza kwenye theluji					// [1F3C2]
@@ -873,7 +873,7 @@ $textmode
 🐛	mdudu								// [1F41B]
 🐜	siafu								// [1F41C]
 🐝	nyuki								// [1F41D]
-🐞	kombamwiko							// [1F41E]
+🐞	kombamwiko mwenye madoa					// [1F41E]
 🐟	samaki								// [1F41F]
 🐠	samaki wa tropiki						// [1F420]
 🐡	aina ya samaki							// [1F421]
@@ -886,7 +886,7 @@ $textmode
 🐨	koala								// [1F428]
 🐩	kijibwa								// [1F429]
 🐪	ngamia								// [1F42A]
-🐫	ngamia mwenye vibyongo viwili					// [1F42B]
+🐫	ngamia mwenye nundu mbili				// [1F42B]
 🐬	pomboo								// [1F42C]
 🐭	uso wa panya							// [1F42D]
 🐮	uso wa ng’ombe							// [1F42E]
@@ -901,9 +901,9 @@ $textmode
 🐷	uso wa nguruwe							// [1F437]
 🐸	uso wa chura							// [1F438]
 🐹	uso wa buku							// [1F439]
-🐺	uso wa mbwa mwitu						// [1F43A]
-🐻	uso wa dubu							// [1F43B]
-🐼	uso wa panda							// [1F43C]
+🐺	mbwa mwitu						// [1F43A]
+🐻	dubu							// [1F43B]
+🐼	panda							// [1F43C]
 🐽	pua la nguruwe							// [1F43D]
 🐾	nyayo za mnyama							// [1F43E]
 🐿	kindimilia							// [1F43F] text|emoji
@@ -915,8 +915,8 @@ $textmode
 👅	ulimi								// [1F445]
 👆	kidole cha kwanza kinachoelekeza juu kwa nyuma			// [1F446]
 👇	kidole cha kwanza kinachoelekeza chini kwa nyuma		// [1F447]
-👈	kidole cha kwanza kinachoelekeza kushoto			// [1F448]
-👉	kidole cha kwanza kinachoelekeza kulia				// [1F449]
+👈	kidole cha shahada kinachoelekeza kushoto		// [1F448]
+👉	kidole cha shahada kinachoelekeza kulia			// [1F449]
 👊	ngumi uliyonyooshewa						// [1F44A]
 👋	mkono unaopunga							// [1F44B]
 👌	mkono wa kuonyesha mambo yako shwari				// [1F44C]
@@ -930,7 +930,7 @@ $textmode
 👔	tai								// [1F454]
 👕	fulana								// [1F455]
 👖	suruali ya jinzi						// [1F456]
-👗	nguo								// [1F457]
+👗	rinda							// [1F457]
 👘	kimono								// [1F458]
 👙	bikini								// [1F459]
 👚	nguo za wanawake						// [1F45A]
@@ -943,20 +943,20 @@ $textmode
 👡	ndara ya mwanamke						// [1F461]
 👢	buti la mwanamke						// [1F462]
 👣	nyayo								// [1F463]
-👤	sanamu ya kichwa na mabega ya mtu katika kivuli			// [1F464]
-👥	sanamu za kichwa na mabega ya mtu katika kivuli			// [1F465]
+👤	kivuli cha kichwa na mabega ya mtu			// [1F464]
+👥	vivuli vya vichwa na mabega ya watu			// [1F465]
 👦	mvulana								// [1F466]
 👧	msichana							// [1F467]
 👨	mwanamume							// [1F468]
 👩	mwanamke							// [1F469]
 👪	familia								// [1F46A]
-👫	mwanamume na mwanamke walioshikana mikono			// [1F46B]
-👬	wanaume wawili walioshikana mikono				// [1F46C]
-👭	wanawake wawili walioshikana mikono				// [1F46D]
+👫	mwanamke na mwanamume walioshikana mikono		// [1F46B]
+👬	wanaume walioshikana mikono				// [1F46C]
+👭	wanawake walioshikana mikono				// [1F46D]
 👮	askari polisi							// [1F46E]
 👯	watu wanaosherehekea						// [1F46F]
-👰	bi harusi aliyevaa shela					// [1F470]
-👱	mtu mwenye nywele za rangi ya shaba au kimanjano		// [1F471]
+👰	mtu aliyevaa shela					// [1F470]
+👱	mtu mwenye nywele za shaba				// [1F471]
 👲	mwanamume aliyevaa kofia ya kichina				// [1F472]
 👳	mwanaume aliyefunga kilemba					// [1F473]
 👴	babu								// [1F474]
@@ -1028,8 +1028,8 @@ $textmode
 💶	noti ya yuro							// [1F4B6]
 💷	noti ya pauni							// [1F4B7]
 💸	pesa za noti zenye mabawa					// [1F4B8]
-💹	chayi inayopanda yenye yeni					// [1F4B9]
-💺	kiti								// [1F4BA]
+💹	chati inayopanda yenye yeni				// [1F4B9]
+💺	kikalio							// [1F4BA]
 💻	kompyuta ndogo							// [1F4BB]
 💼	mkoba								// [1F4BC]
 💽	diski ndogo							// [1F4BD]
@@ -1042,7 +1042,7 @@ $textmode
 📄	ukurasa unaotazama juu						// [1F4C4]
 📅	kalenda								// [1F4C5]
 📆	kalenda unayoweza kuchana kurasa				// [1F4C6]
-📇	kadi								// [1F4C7]
+📇	farahasa ya kadi					// [1F4C7]
 📈	chati inayopanda						// [1F4C8]
 📉	chati inayoshuka						// [1F4C9]
 📊	chati ya miraba							// [1F4CA]
@@ -1125,11 +1125,11 @@ $textmode
 🔘	kitufe								// [1F518]
 🔙	mshale wa nyuma							// [1F519]
 🔚	mshale wa mwisho						// [1F51A]
-🔛	mshale wa hewani!						// [1F51B]
+🔛	mshale wa hewani					// [1F51B]
 🔜	mshale unaoashiria hivi karibuni				// [1F51C]
-🔝	mshale unaoelekea juu						// [1F51D]
+🔝	mshale unaoangalia juu					// [1F51D]
 🔞	walio chini ya miaka kumi na nane hawaruhusiwi			// [1F51E]
-🔟	kitufe: 10							// [1F51F]
+🔟	kitufe 10						// [1F51F]
 🔠	weka herufi kubwa za kilatini					// [1F520]
 🔡	weka hefuri ndogo za kilatini					// [1F521]
 🔢	weka nambari							// [1F522]
@@ -1137,17 +1137,17 @@ $textmode
 🔤	weka herufi za kilatini						// [1F524]
 🔥	moto								// [1F525]
 🔦	kurunzi								// [1F526]
-🔧	spana malaya							// [1F527]
+🔧	spana							// [1F527]
 🔨	nyundo								// [1F528]
 🔩	nati na bolti							// [1F529]
 🔪	kisu kinachotumika jikoni					// [1F52A]
-🔫	bastola								// [1F52B]
+🔫	bastola ya maji						// [1F52B]
 🔬	hadubini							// [1F52C]
 🔭	darubini							// [1F52D]
 🔮	tufe la kioo							// [1F52E]
 🔯	nyota yenye pembe sita na kitone katikati			// [1F52F]
 🔰	alama ya kijapani ya anayeanza					// [1F530]
-🔱	nembo ya chusa chenye ncha tatu, mkuki wa vyembe vitatu		// [1F531]
+🔱	nembo ya ncha tatu					// [1F531]
 🔲	kitufe cheusi cha mraba						// [1F532]
 🔳	kitufe cheupe cha mraba						// [1F533]
 🔴	mduara mwekundu							// [1F534]
@@ -1208,7 +1208,7 @@ $textmode
 🖐	mkono ulioinuliwa wenye vidole vilivyotanuliwa			// [1F590] text|emoji
 🖕	kidole cha kati							// [1F595]
 🖖	ishara ya vulkani						// [1F596]
-🖤	moyo								// [1F5A4]
+🖤	umbo nyeusi la moyo					// [1F5A4]
 🖥	kompyuta ya mezani						// [1F5A5] text|emoji
 🖨	printa								// [1F5A8] text|emoji
 🖱	kipanya cha kompyuta						// [1F5B1] text|emoji
@@ -1237,12 +1237,12 @@ $textmode
 
 // 1F600..1F64F : Emoticons
 
-😀	sura inayokenua							// [1F600]
+😀	uso unaokenua						// [1F600]
 😁	uso uliokenua na macho yanayotabasamu				// [1F601]
 😂	uso wenye machozi ya furaha					// [1F602]
-😃	uso unaotabasamu na mdomo uliofunguliwa				// [1F603]
-😄	uso unaotabasamu wenye mdomo uliofunguliwa na macho yanayotabasamu// [1F604]
-😅	uso unaotabasamu wenye tone la jasho na mdomo uliofunguliwa	// [1F605]
+😃	uso unaotabasamu wenye macho makubwa			// [1F603]
+😄	uso unaotabasamu wenye macho ya tabasamu		// [1F604]
+😅	uso unaotabasamu wenye tone la jasho			// [1F605]
 😆	uso unaotabasamu wenye mdomo wazi na macho yaliyofungwa		// [1F606]
 😇	uso unaotabasamu ulio na mduara wa mwangaza juu yake		// [1F607]
 😈	uso unaotabasamu wenye pembe					// [1F608]
@@ -1266,7 +1266,7 @@ $textmode
 😚	uso unaobusu na macho yaliyofungwa				// [1F61A]
 😛	uso wenye ulimi nje						// [1F61B]
 😜	uso unaotoa ulimi nje na kukonyeza jicho			// [1F61C]
-😝	uso unaotoa ulimi nje na kufunga macho kabisa			// [1F61D]
+😝	uso wenye makengeza na ulimi unaochomoza		// [1F61D]
 😞	uso uliosikitika						// [1F61E]
 😟	uso ulio na wasiwasi						// [1F61F]
 😠	uso uliojaa hasira						// [1F620]
@@ -1274,7 +1274,7 @@ $textmode
 😢	uso unaolia							// [1F622]
 😣	uso unaovumilia							// [1F623]
 😤	uso wenye mvuke unaotoka puani					// [1F624]
-😥	uso uliosikitika lakini unaoonyesha kufarijika			// [1F625]
+😥	Uso wenye huzuni lakini unaoonyesha kufarijika		// [1F625]
 😦	uso ulionuna wenye mdomo uliofunguliwa				// [1F626]
 😧	uso unaoonyesha uchungu						// [1F627]
 😨	uso unaoogopa							// [1F628]
@@ -1285,7 +1285,7 @@ $textmode
 😭	uso unaolia kwa sauti						// [1F62D]
 😮	uso wenye mdomo ulio wazi					// [1F62E]
 😯	uso ulionyamaa							// [1F62F]
-😰	uso wenye mdomo uliofunguliwa na jasho jembamba			// [1F630]
+😰	uso wenye wasiwasi unaotokwa na jasho			// [1F630]
 😱	uso unaopiga mayowe ya hofu					// [1F631]
 😲	uso uliostaajabu						// [1F632]
 😳	uso uliojawa msisimko						// [1F633]
@@ -1293,12 +1293,12 @@ $textmode
 😵	uso unaoonyesha kuwa na kizunguzungu				// [1F635]
 😶	uso bila mdomo							// [1F636]
 😷	uso uliovaa barakoa ya matibabu					// [1F637]
-😸	uso wa paka unaokenua wenye macho yanayotabasamu		// [1F638]
-😹	uso wa paka wenye machozi ya furaha				// [1F639]
-😺	uso wa paka unaocheka ukiwa umefungua mdomo			// [1F63A]
+😸	uso wa paka mwenye tabasamu wenye macho ya tabasamu	// [1F638]
+😹	paka mwenye machozi ya furaha				// [1F639]
+😺	uso wa paka mwenye tabasamu				// [1F63A]
 😻	uso wa paka unaotabasamu wenye macho yenye umbo la moyo		// [1F63B]
 😼	uso wa paka wenye tabasamu la kulazimisha			// [1F63C]
-😽	uso wa paka wenye busu na macho yaliyofungwa			// [1F63D]
+😽	uso wa paka anayebusu					// [1F63D]
 😾	uso wa paka uliobibidua midomo					// [1F63E]
 😿	uso wa paka unaolia						// [1F63F]
 🙀	uso wa paka uliochoka						// [1F640]
@@ -1309,9 +1309,9 @@ $textmode
 🙅	mtu anayeonyesha ishara ya kukataa				// [1F645]
 🙆	mtu anayeonyesha ishara ya kukubali				// [1F646]
 🙇	mtu aliyeinama							// [1F647]
-🙈	uso wenye macho yaliyofunikwa kwa mikono			// [1F648]
-🙉	uso wenye masikio yaliyofunikwa kwa mikono			// [1F649]
-🙊	uso wenye mdomo uliofunikwa kwa mikono				// [1F64A]
+🙈	nyani aliyefumba macho kwa mikono			// [1F648]
+🙉	nyani aliyefunika masikio kwa mikono			// [1F649]
+🙊	nyani aliyefunika mdomo kwa mikono			// [1F64A]
 🙋	mtu mwenye furaha aliyeinua mkono				// [1F64B]
 🙌	mikono iliyoinuliwa						// [1F64C]
 🙍	mtu anayekunja kipaji cha uso					// [1F64D]
@@ -1392,7 +1392,7 @@ $textmode
 🛅	mahali pa kuhifadhi mizigo					// [1F6C5]
 🛋	kochi na taa							// [1F6CB] text|emoji
 🛌	mtu aliyelala kitandani						// [1F6CC]
-🛍	mifuko ya kubeba bidhaa baada ya kununua			// [1F6CD] text|emoji
+🛍	mifuko ya kubebea bidhaa				// [1F6CD] text|emoji
 🛎	kengele ya mwandazi						// [1F6CE] text|emoji
 🛏	kitanda								// [1F6CF] text|emoji
 🛐	mahali pa kuabudu						// [1F6D0]
@@ -1401,11 +1401,13 @@ $textmode
 🛕	hekalu la kihindi					// [1F6D5]
 🛖	kibanda cha mviringo					// [1F6D6]
 🛗	kambarau						// [1F6D7]
+🛘	maporomoko ya ardhi					// [1F6D8]
+🛙	mnara wa taa						// [1F6D9]
 🛜	pasiwaya						// [1F6DC]
 🛝	mtelezo wa watoto					// [1F6DD]
 🛞	gurudumu						// [1F6DE]
 🛟	boya okozi						// [1F6DF]
-🛠	nyundo na spana malaya						// [1F6E0] text|emoji
+🛠	nyundo na spana						// [1F6E0] text|emoji
 🛡	ngao								// [1F6E1] text|emoji
 🛢	pipa la mafuta							// [1F6E2] text|emoji
 🛣	barabara kuu							// [1F6E3] text|emoji
@@ -1417,7 +1419,7 @@ $textmode
 🛰	setilaiti							// [1F6F0] text|emoji
 🛳	meli ya abiria							// [1F6F3] text|emoji
 🛴	skuta								// [1F6F4]
-🛵	pikipiki (skuta)						// [1F6F5]
+🛵	pikipiki skuta						// [1F6F5]
 🛶	mtumbwi								// [1F6F6]
 🛷	sleji								// [1F6F7]
 🛸	kisahani kinachopaa						// [1F6F8]
@@ -1453,10 +1455,10 @@ $textmode
 🤓	uso wa mjuaji							// [1F913]
 🤔	uso unaotafakari						// [1F914]
 🤕	uso uliofungwa bandeji kichwani					// [1F915]
-🤖	uso wa roboti							// [1F916]
+🤖	roboti							// [1F916]
 🤗	uso unaokumbatia						// [1F917]
 🤘	ishara ya pembe							// [1F918]
-🤙	ishara ya nipigie simu”						// [1F919]
+🤙	ishara ya nipigie simu					// [1F919]
 🤚	kuinua mkono							// [1F91A]
 🤛	ngumi ya kulia							// [1F91B]
 🤜	ngumi ya kushoto						// [1F91C]
@@ -1468,7 +1470,7 @@ $textmode
 🤢	kichefuchefu							// [1F922]
 🤣	angua kicheko							// [1F923]
 🤤	kutema mate							// [1F924]
-🤥	kudanganya							// [1F925]
+🤥	uso unaodanganya					// [1F925]
 🤦	ishara ya kutoamini						// [1F926]
 🤧	kupiga chafya							// [1F927]
 🤨	uso wenye nyusi zilizoinuka					// [1F928]
@@ -1482,9 +1484,9 @@ $textmode
 🤰	mwanamke mjamzito						// [1F930]
 🤱	kunyonyesha mtoto						// [1F931]
 🤲	viganja vilivyoshikana						// [1F932]
-🤳	selfie								// [1F933]
+🤳	selfi							// [1F933]
 🤴	mwana wa mfalme							// [1F934]
-🤵	mwanamume mwenye tuxedo						// [1F935]
+🤵	mtu aliyevaa tuxedo					// [1F935]
 🤶	mkongwe								// [1F936]
 🤷	ishara ya kutojali						// [1F937]
 🤸	sarakasi							// [1F938]
@@ -1558,11 +1560,11 @@ $textmode
 🥾	kiatu cha kutembea mbali					// [1F97E]
 🥿	kiatu kisicho na kisigino					// [1F97F]
 🦀	kaa								// [1F980]
-🦁	uso wa simba							// [1F981]
+🦁	simba							// [1F981]
 🦂	ng’e								// [1F982]
 🦃	bata mzinga							// [1F983]
 🦄	uso wa farasi mwenye pembe moja					// [1F984]
-🦅	tai (ndege)							// [1F985]
+🦅	tai ndege						// [1F985]
 🦆	bata								// [1F986]
 🦇	popo								// [1F987]
 🦈	papa								// [1F988]
@@ -1655,7 +1657,7 @@ $textmode
 🧟	dubwana								// [1F9DF]
 🧠	ubongo								// [1F9E0]
 🧡	moyo wa rangi ya chungwa					// [1F9E1]
-🧢	kofia iliyochorwa emoji						// [1F9E2]
+🧢	chepeo							// [1F9E2]
 🧣	shali								// [1F9E3]
 🧤	glavu								// [1F9E4]
 🧥	koti								// [1F9E5]
@@ -1688,264 +1690,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	bendera: Kisiwa cha Ascension					// [1F1E6 1F1E8] AC
-🇦🇩	bendera: Andorra						// [1F1E6 1F1E9] AD
-🇦🇪	bendera: Falme za Kiarabu					// [1F1E6 1F1EA] AE
-🇦🇫	bendera: Afghanistan						// [1F1E6 1F1EB] AF
-🇦🇬	bendera: Antigua na Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	bendera: Anguilla						// [1F1E6 1F1EE] AI
-🇦🇱	bendera: Albania						// [1F1E6 1F1F1] AL
-🇦🇲	bendera: Armenia						// [1F1E6 1F1F2] AM
-🇦🇴	bendera: Angola							// [1F1E6 1F1F4] AO
-🇦🇶	bendera: Antaktiki						// [1F1E6 1F1F6] AQ
-🇦🇷	bendera: Ajentina						// [1F1E6 1F1F7] AR
-🇦🇸	bendera: Samoa ya Marekani					// [1F1E6 1F1F8] AS
-🇦🇹	bendera: Austria						// [1F1E6 1F1F9] AT
-🇦🇺	bendera: Australia						// [1F1E6 1F1FA] AU
-🇦🇼	bendera: Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	bendera: Visiwa vya Aland					// [1F1E6 1F1FD] AX
-🇦🇿	bendera: Azerbaijan						// [1F1E6 1F1FF] AZ
-🇧🇦	bendera: Bosnia na Hezegovina					// [1F1E7 1F1E6] BA
-🇧🇧	bendera: Babadosi						// [1F1E7 1F1E7] BB
-🇧🇩	bendera: Bangladeshi						// [1F1E7 1F1E9] BD
-🇧🇪	bendera: Ubelgiji						// [1F1E7 1F1EA] BE
-🇧🇫	bendera: Bukinafaso						// [1F1E7 1F1EB] BF
-🇧🇬	bendera: Bulgaria						// [1F1E7 1F1EC] BG
-🇧🇭	bendera: Bahareni						// [1F1E7 1F1ED] BH
-🇧🇮	bendera: Burundi						// [1F1E7 1F1EE] BI
-🇧🇯	bendera: Benin							// [1F1E7 1F1EF] BJ
-🇧🇱	bendera: St. Barthelemy						// [1F1E7 1F1F1] BL
-🇧🇲	bendera: Bermuda						// [1F1E7 1F1F2] BM
-🇧🇳	bendera: Brunei							// [1F1E7 1F1F3] BN
-🇧🇴	bendera: Bolivia						// [1F1E7 1F1F4] BO
-🇧🇶	bendera: Uholanzi ya Karibiani					// [1F1E7 1F1F6] BQ
-🇧🇷	bendera: Brazil							// [1F1E7 1F1F7] BR
-🇧🇸	bendera: Bahama							// [1F1E7 1F1F8] BS
-🇧🇹	bendera: Bhutan							// [1F1E7 1F1F9] BT
-🇧🇻	bendera: Kisiwa cha Bouvet					// [1F1E7 1F1FB] BV
-🇧🇼	bendera: Botswana						// [1F1E7 1F1FC] BW
-🇧🇾	bendera: Belarus						// [1F1E7 1F1FE] BY
-🇧🇿	bendera: Belize							// [1F1E7 1F1FF] BZ
-🇨🇦	bendera: Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	bendera: Visiwa vya Cocos (Keeling)				// [1F1E8 1F1E8] CC
-🇨🇩	bendera: Jamhuri ya Kidemokrasia ya Kongo			// [1F1E8 1F1E9] CD
-🇨🇫	bendera: Jamhuri ya Afrika ya Kati				// [1F1E8 1F1EB] CF
-🇨🇬	bendera: Kongo - Brazzaville					// [1F1E8 1F1EC] CG
-🇨🇭	bendera: Uswisi							// [1F1E8 1F1ED] CH
-🇨🇮	bendera: Cote d’Ivoire						// [1F1E8 1F1EE] CI
-🇨🇰	bendera: Visiwa vya Cook					// [1F1E8 1F1F0] CK
-🇨🇱	bendera: Chile							// [1F1E8 1F1F1] CL
-🇨🇲	bendera: Kameruni						// [1F1E8 1F1F2] CM
-🇨🇳	bendera: Uchina							// [1F1E8 1F1F3] CN
-🇨🇴	bendera: Kolombia						// [1F1E8 1F1F4] CO
-🇨🇵	bendera: Kisiwa cha Clipperton					// [1F1E8 1F1F5] CP
-🇨🇷	bendera: Kostarika						// [1F1E8 1F1F7] CR
-🇨🇺	bendera: Cuba							// [1F1E8 1F1FA] CU
-🇨🇻	bendera: Cape Verde						// [1F1E8 1F1FB] CV
-🇨🇼	bendera: Curacao						// [1F1E8 1F1FC] CW
-🇨🇽	bendera: Kisiwa cha Krismasi					// [1F1E8 1F1FD] CX
-🇨🇾	bendera: Cyprus							// [1F1E8 1F1FE] CY
-🇨🇿	bendera: Chechia						// [1F1E8 1F1FF] CZ
-🇩🇪	bendera: Ujerumani						// [1F1E9 1F1EA] DE
-🇩🇬	bendera: Diego Garcia						// [1F1E9 1F1EC] DG
-🇩🇯	bendera: Jibuti							// [1F1E9 1F1EF] DJ
-🇩🇰	bendera: Denmark						// [1F1E9 1F1F0] DK
-🇩🇲	bendera: Dominika						// [1F1E9 1F1F2] DM
-🇩🇴	bendera: Jamhuri ya Dominika					// [1F1E9 1F1F4] DO
-🇩🇿	bendera: Aljeria						// [1F1E9 1F1FF] DZ
-🇪🇦	bendera: Ceuta na Melilla					// [1F1EA 1F1E6] EA
-🇪🇨	bendera: Ecuador						// [1F1EA 1F1E8] EC
-🇪🇪	bendera: Estonia						// [1F1EA 1F1EA] EE
-🇪🇬	bendera: Misri							// [1F1EA 1F1EC] EG
-🇪🇭	bendera: Sahara Magharibi					// [1F1EA 1F1ED] EH
-🇪🇷	bendera: Eritrea						// [1F1EA 1F1F7] ER
-🇪🇸	bendera: Uhispania						// [1F1EA 1F1F8] ES
-🇪🇹	bendera: Ethiopia						// [1F1EA 1F1F9] ET
-🇪🇺	bendera: Umoja wa Ulaya						// [1F1EA 1F1FA] EU
-🇫🇮	bendera: Ufini							// [1F1EB 1F1EE] FI
-🇫🇯	bendera: Fiji							// [1F1EB 1F1EF] FJ
-🇫🇰	bendera: Visiwa vya Falkland					// [1F1EB 1F1F0] FI
-🇫🇲	bendera: Micronesia						// [1F1EB 1F1F2] FM
-🇫🇴	bendera: Visiwa vya Faroe					// [1F1EB 1F1F4] FO
-🇫🇷	bendera: Ufaransa						// [1F1EB 1F1F7] FR
-🇬🇦	bendera: Gabon							// [1F1EC 1F1E6] GA
+🇦🇨	Kisiwa cha Ascension					// [1F1E6 1F1E8] AC
+🇦🇩	Andorra							// [1F1E6 1F1E9] AD
+🇦🇪	Falme za Kiarabu					// [1F1E6 1F1EA] AE
+🇦🇫	Afghanistan						// [1F1E6 1F1EB] AF
+🇦🇬	Antigua na Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	Anguilla						// [1F1E6 1F1EE] AI
+🇦🇱	Albania							// [1F1E6 1F1F1] AL
+🇦🇲	Armenia							// [1F1E6 1F1F2] AM
+🇦🇴	Angola							// [1F1E6 1F1F4] AO
+🇦🇶	Antaktiki						// [1F1E6 1F1F6] AQ
+🇦🇷	Ajentina						// [1F1E6 1F1F7] AR
+🇦🇸	Samoa ya Marekani					// [1F1E6 1F1F8] AS
+🇦🇹	Austria							// [1F1E6 1F1F9] AT
+🇦🇺	Australia						// [1F1E6 1F1FA] AU
+🇦🇼	Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	Visiwa vya Aland					// [1F1E6 1F1FD] AX
+🇦🇿	Azerbaijani						// [1F1E6 1F1FF] AZ
+🇧🇦	Bosnia na Hezegovina					// [1F1E7 1F1E6] BA
+🇧🇧	Babadosi						// [1F1E7 1F1E7] BB
+🇧🇩	Bangladeshi						// [1F1E7 1F1E9] BD
+🇧🇪	Ubelgiji						// [1F1E7 1F1EA] BE
+🇧🇫	Bukinafaso						// [1F1E7 1F1EB] BF
+🇧🇬	Bulgaria						// [1F1E7 1F1EC] BG
+🇧🇭	Bahareni						// [1F1E7 1F1ED] BH
+🇧🇮	Burundi							// [1F1E7 1F1EE] BI
+🇧🇯	Benini							// [1F1E7 1F1EF] BJ
+🇧🇱	St. Barthelemy						// [1F1E7 1F1F1] BL
+🇧🇲	Bermuda							// [1F1E7 1F1F2] BM
+🇧🇳	Brunei							// [1F1E7 1F1F3] BN
+🇧🇴	Bolivia							// [1F1E7 1F1F4] BO
+🇧🇶	Uholanzi ya Karibiani					// [1F1E7 1F1F6] BQ
+🇧🇷	Brazili							// [1F1E7 1F1F7] BR
+🇧🇸	Bahama							// [1F1E7 1F1F8] BS
+🇧🇹	Bhutan							// [1F1E7 1F1F9] BT
+🇧🇻	Kisiwa cha Bouvet					// [1F1E7 1F1FB] BV
+🇧🇼	Botswana						// [1F1E7 1F1FC] BW
+🇧🇾	Belarusi						// [1F1E7 1F1FE] BY
+🇧🇿	Belize							// [1F1E7 1F1FF] BZ
+🇨🇦	Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	Visiwa vya Cocos Keeling				// [1F1E8 1F1E8] CC
+🇨🇩	Kongo - Kinshasa					// [1F1E8 1F1E9] CD
+🇨🇫	Jamhuri ya Afrika ya Kati				// [1F1E8 1F1EB] CF
+🇨🇬	Kongo - Brazzaville					// [1F1E8 1F1EC] CG
+🇨🇭	Uswisi							// [1F1E8 1F1ED] CH
+🇨🇮	Cote d’Ivoire						// [1F1E8 1F1EE] CI
+🇨🇰	Visiwa vya Cook						// [1F1E8 1F1F0] CK
+🇨🇱	Chile							// [1F1E8 1F1F1] CL
+🇨🇲	Kameruni						// [1F1E8 1F1F2] CM
+🇨🇳	Uchina							// [1F1E8 1F1F3] CN
+🇨🇴	Kolombia						// [1F1E8 1F1F4] CO
+🇨🇵	Kisiwa cha Clipperton					// [1F1E8 1F1F5] CP
+🇨🇷	Kostarika						// [1F1E8 1F1F7] CR
+🇨🇺	Kuba							// [1F1E8 1F1FA] CU
+🇨🇻	Cape Verde						// [1F1E8 1F1FB] CV
+🇨🇼	Curacao							// [1F1E8 1F1FC] CW
+🇨🇽	Kisiwa cha Krismasi					// [1F1E8 1F1FD] CX
+🇨🇾	Saiprasi						// [1F1E8 1F1FE] CY
+🇨🇿	Chechia							// [1F1E8 1F1FF] CZ
+🇩🇪	Ujerumani						// [1F1E9 1F1EA] DE
+🇩🇬	Diego Garcia						// [1F1E9 1F1EC] DG
+🇩🇯	Jibuti							// [1F1E9 1F1EF] DJ
+🇩🇰	Denmaki							// [1F1E9 1F1F0] DK
+🇩🇲	Dominika						// [1F1E9 1F1F2] DM
+🇩🇴	Jamhuri ya Dominika					// [1F1E9 1F1F4] DO
+🇩🇿	Aljeria							// [1F1E9 1F1FF] DZ
+🇪🇦	Ceuta na Melilla					// [1F1EA 1F1E6] EA
+🇪🇨	Ekwado							// [1F1EA 1F1E8] EC
+🇪🇪	Estonia							// [1F1EA 1F1EA] EE
+🇪🇬	Misri							// [1F1EA 1F1EC] EG
+🇪🇭	Sahara Magharibi					// [1F1EA 1F1ED] EH
+🇪🇷	Eritrea							// [1F1EA 1F1F7] ER
+🇪🇸	Uhispania						// [1F1EA 1F1F8] ES
+🇪🇹	Ethiopia						// [1F1EA 1F1F9] ET
+🇪🇺	Umoja wa Ulaya						// [1F1EA 1F1FA] EU
+🇫🇮	Ufini							// [1F1EB 1F1EE] FI
+🇫🇯	Fiji							// [1F1EB 1F1EF] FJ
+🇫🇰	Visiwa vya Falkland					// [1F1EB 1F1F0] FI
+🇫🇲	Mikronesia						// [1F1EB 1F1F2] FM
+🇫🇴	Visiwa vya Faroe					// [1F1EB 1F1F4] FO
+🇫🇷	Ufaransa						// [1F1EB 1F1F7] FR
+🇬🇦	Goboni							// [1F1EC 1F1E6] GA
 🇬🇧	Ufalme wa Muungano					// [1F1EC 1F1E7]
-🇬🇩	bendera: Grenada						// [1F1EC 1F1E9] GD
-🇬🇪	bendera: Jojia							// [1F1EC 1F1EA] GE
-🇬🇫	bendera: Guiana ya Ufaransa					// [1F1EC 1F1EB] GF
-🇬🇬	bendera: Guernsey						// [1F1EC 1F1EC] GG
-🇬🇭	bendera: Ghana							// [1F1EC 1F1ED] GH
-🇬🇮	bendera: Gibraltar						// [1F1EC 1F1EE] GI
-🇬🇱	bendera: Greenland						// [1F1EC 1F1F1] GL
-🇬🇲	bendera: Gambia							// [1F1EC 1F1F2] GM
-🇬🇳	bendera: Gine							// [1F1EC 1F1F3] GN
-🇬🇵	bendera: Guadeloupe						// [1F1EC 1F1F5] GP
-🇬🇶	bendera: Guinea ya Ikweta					// [1F1EC 1F1F6] GQ
-🇬🇷	bendera: Ugiriki						// [1F1EC 1F1F7] GR
-🇬🇸	bendera: Georgia Kusini na Visiwa vya Sandwich Kusini		// [1F1EC 1F1F8] GS
-🇬🇹	bendera: Guatemala						// [1F1EC 1F1F9] GT
-🇬🇺	bendera: Guam							// [1F1EC 1F1FA] GU
-🇬🇼	bendera: Ginebisau						// [1F1EC 1F1FC] GW
-🇬🇾	bendera: Guyana							// [1F1EC 1F1FE] GY
-🇭🇰	bendera: Hong Kong SAR China					// [1F1ED 1F1F0] HK
-🇭🇲	bendera: Kisiwa cha Heard na Visiwa vya McDonald		// [1F1ED 1F1F2] HM
-🇭🇳	bendera: Honduras						// [1F1ED 1F1F3] HN
-🇭🇷	bendera: Croatia						// [1F1ED 1F1F7] HR
-🇭🇹	bendera: Haiti							// [1F1ED 1F1F9] HT
-🇭🇺	bendera: Hungaria						// [1F1ED 1F1FA] HU
-🇮🇨	bendera: Visiwa vya Kanari					// [1F1EE 1F1E8] IC
-🇮🇩	bendera: Indonesia						// [1F1EE 1F1E9] ID
-🇮🇪	bendera: Ayalandi						// [1F1EE 1F1EA] IE
-🇮🇱	bendera: Israeli						// [1F1EE 1F1F1] IL
-🇮🇲	bendera: Isle of Man						// [1F1EE 1F1F2] IM
-🇮🇳	bendera: India							// [1F1EE 1F1F3] IN
-🇮🇴	bendera: Eneo la Uingereza katika Bahari Hindi			// [1F1EE 1F1F4] IO
-🇮🇶	bendera: Iraki							// [1F1EE 1F1F6] IQ
-🇮🇷	bendera: Iran							// [1F1EE 1F1F7] IR
-🇮🇸	bendera: Aislandi						// [1F1EE 1F1F8] IS
-🇮🇹	bendera: Italia							// [1F1EE 1F1F9] IT
-🇯🇪	bendera: Jersey							// [1F1EF 1F1EA] JE
-🇯🇲	bendera: Jamaika						// [1F1EF 1F1F2] JM
-🇯🇴	bendera: Jordan							// [1F1EF 1F1F4] JO
-🇯🇵	bendera: Japani							// [1F1EF 1F1F5] JP
-🇰🇪	bendera: Kenya							// [1F1F0 1F1EA] KE
-🇰🇬	bendera: Kirigizistani						// [1F1F0 1F1EC] KG
-🇰🇭	bendera: Kambodia						// [1F1F0 1F1ED] KH
-🇰🇮	bendera: Kiribati						// [1F1F0 1F1EE] KI
-🇰🇲	bendera: Komoro							// [1F1F0 1F1F2] KM
-🇰🇳	bendera: St. Kitts na Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	bendera: Korea Kaskazini					// [1F1F0 1F1F5] KP
-🇰🇷	bendera: Korea Kusini						// [1F1F0 1F1F7] KR
-🇰🇼	bendera: Kuwait							// [1F1F0 1F1FC] KW
-🇰🇾	bendera: Visiwa vya Cayman					// [1F1F0 1F1FE] KY
-🇰🇿	bendera: Kazakistani						// [1F1F0 1F1FF] KZ
-🇱🇦	bendera: Laos							// [1F1F1 1F1E6] LA
-🇱🇧	bendera: Lebanon						// [1F1F1 1F1E7] LB
-🇱🇨	bendera: St. Lucia						// [1F1F1 1F1E8] LC
-🇱🇮	bendera: Liechtenstein						// [1F1F1 1F1EE] LI
-🇱🇰	bendera: Sri Lanka						// [1F1F1 1F1F0] LK
-🇱🇷	bendera: Liberia						// [1F1F1 1F1F7] LR
-🇱🇸	bendera: Lesoto							// [1F1F1 1F1F8] LS
-🇱🇹	bendera: Lithuania						// [1F1F1 1F1F9] LT
-🇱🇺	bendera: Luxembourg						// [1F1F1 1F1FA] LU
-🇱🇻	bendera: Latvia							// [1F1F1 1F1FB] LV
-🇱🇾	bendera: Libya							// [1F1F1 1F1FE] LY
-🇲🇦	bendera: Morocco						// [1F1F2 1F1E6] MA
-🇲🇨	bendera: Monaco							// [1F1F2 1F1E8] MC
-🇲🇩	bendera: Moldova						// [1F1F2 1F1E9] MD
-🇲🇪	bendera: Montenegro						// [1F1F2 1F1EA] ME
-🇲🇫	bendera: St. Martin						// [1F1F2 1F1EB] MF
-🇲🇬	bendera: Madagaska						// [1F1F2 1F1EC] MG
-🇲🇭	bendera: Visiwa vya Marshall					// [1F1F2 1F1ED] MH
-🇲🇰	bendera: Macedonia						// [1F1F2 1F1F0] MK
-🇲🇱	bendera: Mali							// [1F1F2 1F1F1] ML
-🇲🇲	bendera: Myanmar (Burma)					// [1F1F2 1F1F2] MM
-🇲🇳	bendera: Mongolia						// [1F1F2 1F1F3] MN
-🇲🇴	bendera: Macau SAR China					// [1F1F2 1F1F4] MO
-🇲🇵	bendera: Visiwa vya Mariana vya Kaskazini			// [1F1F2 1F1F5] MP
-🇲🇶	bendera: Martinique						// [1F1F2 1F1F6] MQ
-🇲🇷	bendera: Moritania						// [1F1F2 1F1F7] MR
-🇲🇸	bendera: Montserrat						// [1F1F2 1F1F8] MS
-🇲🇹	bendera: Malta							// [1F1F2 1F1F9] MT
-🇲🇺	bendera: Morisi							// [1F1F2 1F1FA] MU
-🇲🇻	bendera: Maldives						// [1F1F2 1F1FB] MV
-🇲🇼	bendera: Malawi							// [1F1F2 1F1FC] MW
-🇲🇽	bendera: Meksiko						// [1F1F2 1F1FD] MX
-🇲🇾	bendera: Malesia						// [1F1F2 1F1FE] MY
-🇲🇿	bendera: Msumbiji						// [1F1F2 1F1FF] MZ
-🇳🇦	bendera: Namibia						// [1F1F3 1F1E6] NA
-🇳🇨	bendera: New Caledonia						// [1F1F3 1F1E8] NC
-🇳🇪	bendera: Niger							// [1F1F3 1F1EA] NE
-🇳🇫	bendera: Kisiwa cha Norfolk					// [1F1F3 1F1EB] NF
-🇳🇬	bendera: Nigeria						// [1F1F3 1F1EC] NG
-🇳🇮	bendera: Nikaragwa						// [1F1F3 1F1EE] NI
-🇳🇱	bendera: Uholanzi						// [1F1F3 1F1F1] NL
-🇳🇴	bendera: Norway							// [1F1F3 1F1F4] NO
-🇳🇵	bendera: Nepal							// [1F1F3 1F1F5] NP
-🇳🇷	bendera: Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	bendera: Niue							// [1F1F3 1F1FA] NU
-🇳🇿	bendera: Nyuzilandi						// [1F1F3 1F1FF] NZ
-🇴🇲	bendera: Oman							// [1F1F4 1F1F2] OM
-🇵🇦	bendera: Panama							// [1F1F5 1F1E6] PA
-🇵🇪	bendera: Peru							// [1F1F5 1F1EA] PE
-🇵🇫	bendera: Polynesia ya Ufaransa					// [1F1F5 1F1EB] PF
-🇵🇬	bendera: Papua New Guinea					// [1F1F5 1F1EC] PG
-🇵🇭	bendera: Ufilipino						// [1F1F5 1F1ED] PH
-🇵🇰	bendera: Pakistani						// [1F1F5 1F1F0] PK
-🇵🇱	bendera: Poland							// [1F1F5 1F1F1] PL
-🇵🇲	bendera: Santapierre na Miquelon				// [1F1F5 1F1F2] PM
-🇵🇳	bendera: Visiwa vya Pitcairn					// [1F1F5 1F1F3] PN
-🇵🇷	bendera: Puerto Rico						// [1F1F5 1F1F7] PR
-🇵🇸	bendera: Maeneo ya Palestina					// [1F1F5 1F1F8] PS
-🇵🇹	bendera: Ureno							// [1F1F5 1F1F9] PT
-🇵🇼	bendera: Palau							// [1F1F5 1F1FC] PW
-🇵🇾	bendera: Paraguay						// [1F1F5 1F1FE] PY
-🇶🇦	bendera: Qatar							// [1F1F6 1F1E6] QA
-🇷🇪	bendera: Reunion						// [1F1F7 1F1EA] RE
-🇷🇴	bendera: Romania						// [1F1F7 1F1F4] RO
-🇷🇸	bendera: Serbia							// [1F1F7 1F1F8] RS
-🇷🇺	bendera: Urusi							// [1F1F7 1F1FA] RU
-🇷🇼	bendera: Rwanda							// [1F1F7 1F1FC] RW
-🇸🇦	bendera: Saudia							// [1F1F8 1F1E6] SA
-🇸🇧	bendera: Visiwa vya Solomon					// [1F1F8 1F1E7] SB
-🇸🇨	bendera: Ushelisheli						// [1F1F8 1F1E8] SC
-🇸🇩	bendera: Sudan							// [1F1F8 1F1E9] SD
-🇸🇪	bendera: Uswidi							// [1F1F8 1F1EA] SE
-🇸🇬	bendera: Singapore						// [1F1F8 1F1EC] SG
-🇸🇭	bendera: St. Helena						// [1F1F8 1F1ED] SH
-🇸🇮	bendera: Slovenia						// [1F1F8 1F1EE] SI
-🇸🇯	bendera: Svalbard na Jan Mayen					// [1F1F8 1F1EF] SJ
-🇸🇰	bendera: Slovakia						// [1F1F8 1F1F0] SK
-🇸🇱	bendera: Siera Leoni						// [1F1F8 1F1F1] SL
-🇸🇲	bendera: San Marino						// [1F1F8 1F1F2] SM
-🇸🇳	bendera: Senegali						// [1F1F8 1F1F3] SN
-🇸🇴	bendera: Somalia						// [1F1F8 1F1F4] SO
-🇸🇷	bendera: Suriname						// [1F1F8 1F1F7] SR
-🇸🇸	bendera: Sudan Kusini						// [1F1F8 1F1F8] SS
-🇸🇹	bendera: São Tomé na Príncipe					// [1F1F8 1F1F9] ST
-🇸🇻	bendera: El Salvador						// [1F1F8 1F1FB] SV
-🇸🇽	bendera: Sint Maarten						// [1F1F8 1F1FD] SX
-🇸🇾	bendera: Syria							// [1F1F8 1F1FE] SY
-🇸🇿	bendera: Uswazi							// [1F1F8 1F1FF] SZ
-🇹🇦	bendera: Tristan da Cunha					// [1F1F9 1F1E6] TA
-🇹🇨	bendera: Visiwa vya Turks na Caicos				// [1F1F9 1F1E8] TC
-🇹🇩	bendera: Chad							// [1F1F9 1F1E9] TD
-🇹🇫	bendera: Maeneo ya Kusini ya Ufaransa				// [1F1F9 1F1EB] TF
-🇹🇬	bendera: Togo							// [1F1F9 1F1EC] TG
-🇹🇭	bendera: Tailandi						// [1F1F9 1F1ED] TH
-🇹🇯	bendera: Tajikistani						// [1F1F9 1F1EF] TJ
-🇹🇰	bendera: Tokelau						// [1F1F9 1F1F0] TK
-🇹🇱	bendera: Timor-Leste						// [1F1F9 1F1F1] TL
-🇹🇲	bendera: Turkmenistan						// [1F1F9 1F1F2] TM
-🇹🇳	bendera: Tunisia						// [1F1F9 1F1F3] TN
-🇹🇴	bendera: Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	bendera: Uturuki						// [1F1F9 1F1F7] TR
-🇹🇹	bendera: Trinidad na Tobago					// [1F1F9 1F1F9] TT
-🇹🇻	bendera: Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	bendera: Taiwan							// [1F1F9 1F1FC] TW
-🇹🇿	bendera: Tanzania						// [1F1F9 1F1FF] TZ
-🇺🇦	bendera: Ukraine						// [1F1FA 1F1E6] UA
-🇺🇬	bendera: Uganda							// [1F1FA 1F1EC] UG
-🇺🇲	bendera: Visiwa Vidogo vya Nje vya Marekani			// [1F1FA 1F1F2] UM
-🇺🇳	bendera: Umoja wa Mataifa					// [1F1FA 1F1F3] UN
-🇺🇸	bendera: Marekani						// [1F1FA 1F1F8] US
-🇺🇾	bendera: Uruguay						// [1F1FA 1F1FE] UY
-🇺🇿	bendera: Uzibekistani						// [1F1FA 1F1FF] UZ
-🇻🇦	bendera: Mji wa Vatican						// [1F1FB 1F1E6] VA
-🇻🇨	bendera: St. Vincent na Grenadines				// [1F1FB 1F1E8] VC
-🇻🇪	bendera: Venezuela						// [1F1FB 1F1EA] VE
-🇻🇬	bendera: Visiwa vya Virgin, Uingereza				// [1F1FB 1F1EC] VG
-🇻🇮	bendera: Visiwa vya Virgin, Marekani				// [1F1FB 1F1EE] VI
-🇻🇳	bendera: Vietnam						// [1F1FB 1F1F3] VN
-🇻🇺	bendera: Vanuatu						// [1F1FB 1F1FA] VU
-🇼🇫	bendera: Wallis na Futuna					// [1F1FC 1F1EB] WF
-🇼🇸	bendera: Samoa							// [1F1FC 1F1F8] WS
-🇽🇰	bendera: Kosovo							// [1F1FD 1F1F0] XK
-🇾🇪	bendera: Yemeni							// [1F1FE 1F1EA] YE
-🇾🇹	bendera: Mayotte						// [1F1FE 1F1F9] YT
-🇿🇦	bendera: Afrika Kusini						// [1F1FF 1F1E6] ZA
-🇿🇲	bendera: Zambia							// [1F1FF 1F1F2] ZM
-🇿🇼	bendera: Zimbabwe						// [1F1FF 1F1FC] ZW
+🇬🇩	Grenada							// [1F1EC 1F1E9] GD
+🇬🇪	Jojia							// [1F1EC 1F1EA] GE
+🇬🇫	Guiana ya Ufaransa					// [1F1EC 1F1EB] GF
+🇬🇬	Guernsey						// [1F1EC 1F1EC] GG
+🇬🇭	Ghana							// [1F1EC 1F1ED] GH
+🇬🇮	Gibraltar						// [1F1EC 1F1EE] GI
+🇬🇱	Greenland						// [1F1EC 1F1F1] GL
+🇬🇲	Gambia							// [1F1EC 1F1F2] GM
+🇬🇳	Gine							// [1F1EC 1F1F3] GN
+🇬🇵	Guadeloupe						// [1F1EC 1F1F5] GP
+🇬🇶	Guinea ya Ikweta					// [1F1EC 1F1F6] GQ
+🇬🇷	Ugiriki							// [1F1EC 1F1F7] GR
+🇬🇸	Visiwa vya Georgia Kusini na Sandwich Kusini		// [1F1EC 1F1F8] GS
+🇬🇹	Guatemala						// [1F1EC 1F1F9] GT
+🇬🇺	Guam							// [1F1EC 1F1FA] GU
+🇬🇼	Ginebisau						// [1F1EC 1F1FC] GW
+🇬🇾	Guyana							// [1F1EC 1F1FE] GY
+🇭🇰	Hong Kong SAR China					// [1F1ED 1F1F0] HK
+🇭🇲	Kisiwa cha Heard na Visiwa vya McDonald			// [1F1ED 1F1F2] HM
+🇭🇳	Honduras						// [1F1ED 1F1F3] HN
+🇭🇷	Croatia							// [1F1ED 1F1F7] HR
+🇭🇹	Haiti							// [1F1ED 1F1F9] HT
+🇭🇺	Hungaria						// [1F1ED 1F1FA] HU
+🇮🇨	Visiwa vya Kanari					// [1F1EE 1F1E8] IC
+🇮🇩	Indonesia						// [1F1EE 1F1E9] ID
+🇮🇪	Ayalandi						// [1F1EE 1F1EA] IE
+🇮🇱	Israeli							// [1F1EE 1F1F1] IL
+🇮🇲	Kisiwa cha Man						// [1F1EE 1F1F2] IM
+🇮🇳	India							// [1F1EE 1F1F3] IN
+🇮🇴	Eneo la Uingereza katika Bahari Hindi			// [1F1EE 1F1F4] IO
+🇮🇶	Iraki							// [1F1EE 1F1F6] IQ
+🇮🇷	Iran							// [1F1EE 1F1F7] IR
+🇮🇸	Aisilandi						// [1F1EE 1F1F8] IS
+🇮🇹	Italia							// [1F1EE 1F1F9] IT
+🇯🇪	Jersey							// [1F1EF 1F1EA] JE
+🇯🇲	Jamaika							// [1F1EF 1F1F2] JM
+🇯🇴	Jordan							// [1F1EF 1F1F4] JO
+🇯🇵	Japani							// [1F1EF 1F1F5] JP
+🇰🇪	Kenya							// [1F1F0 1F1EA] KE
+🇰🇬	Kirigizistani						// [1F1F0 1F1EC] KG
+🇰🇭	Kambodia						// [1F1F0 1F1ED] KH
+🇰🇮	Kiribati						// [1F1F0 1F1EE] KI
+🇰🇲	Komoro							// [1F1F0 1F1F2] KM
+🇰🇳	St. Kitts na Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	Korea Kaskazini						// [1F1F0 1F1F5] KP
+🇰🇷	Korea Kusini						// [1F1F0 1F1F7] KR
+🇰🇼	Kuwait							// [1F1F0 1F1FC] KW
+🇰🇾	Visiwa vya Cayman					// [1F1F0 1F1FE] KY
+🇰🇿	Kazakistani						// [1F1F0 1F1FF] KZ
+🇱🇦	Laos							// [1F1F1 1F1E6] LA
+🇱🇧	Lebanon							// [1F1F1 1F1E7] LB
+🇱🇨	St. Lucia						// [1F1F1 1F1E8] LC
+🇱🇮	Liechtenstein						// [1F1F1 1F1EE] LI
+🇱🇰	Sri Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	Liberia							// [1F1F1 1F1F7] LR
+🇱🇸	Lesoto							// [1F1F1 1F1F8] LS
+🇱🇹	Lithuania						// [1F1F1 1F1F9] LT
+🇱🇺	Lasembagi						// [1F1F1 1F1FA] LU
+🇱🇻	Latvia							// [1F1F1 1F1FB] LV
+🇱🇾	Libya							// [1F1F1 1F1FE] LY
+🇲🇦	Moroko							// [1F1F2 1F1E6] MA
+🇲🇨	Monako							// [1F1F2 1F1E8] MC
+🇲🇩	Moldova							// [1F1F2 1F1E9] MD
+🇲🇪	Montenegro						// [1F1F2 1F1EA] ME
+🇲🇫	St. Martin						// [1F1F2 1F1EB] MF
+🇲🇬	Madagaska						// [1F1F2 1F1EC] MG
+🇲🇭	Visiwa vya Marshall					// [1F1F2 1F1ED] MH
+🇲🇰	Masedonia ya Kaskazini					// [1F1F2 1F1F0] MK
+🇲🇱	Mali							// [1F1F2 1F1F1] ML
+🇲🇲	Myanmar Burma						// [1F1F2 1F1F2] MM
+🇲🇳	Mongolia						// [1F1F2 1F1F3] MN
+🇲🇴	Makau SAR China						// [1F1F2 1F1F4] MO
+🇲🇵	Visiwa vya Mariana vya Kaskazini			// [1F1F2 1F1F5] MP
+🇲🇶	Martinique						// [1F1F2 1F1F6] MQ
+🇲🇷	Moritania						// [1F1F2 1F1F7] MR
+🇲🇸	Montserrat						// [1F1F2 1F1F8] MS
+🇲🇹	Malta							// [1F1F2 1F1F9] MT
+🇲🇺	Morisi							// [1F1F2 1F1FA] MU
+🇲🇻	Maldivi							// [1F1F2 1F1FB] MV
+🇲🇼	Malawi							// [1F1F2 1F1FC] MW
+🇲🇽	Meksiko							// [1F1F2 1F1FD] MX
+🇲🇾	Malesia							// [1F1F2 1F1FE] MY
+🇲🇿	Msumbiji						// [1F1F2 1F1FF] MZ
+🇳🇦	Namibia							// [1F1F3 1F1E6] NA
+🇳🇨	New Caledonia						// [1F1F3 1F1E8] NC
+🇳🇪	Niger							// [1F1F3 1F1EA] NE
+🇳🇫	Kisiwa cha Norfolk					// [1F1F3 1F1EB] NF
+🇳🇬	Nigeria							// [1F1F3 1F1EC] NG
+🇳🇮	Nikaragwa						// [1F1F3 1F1EE] NI
+🇳🇱	Uholanzi						// [1F1F3 1F1F1] NL
+🇳🇴	Norway							// [1F1F3 1F1F4] NO
+🇳🇵	Nepal							// [1F1F3 1F1F5] NP
+🇳🇷	Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	Niue							// [1F1F3 1F1FA] NU
+🇳🇿	Nyuzilandi						// [1F1F3 1F1FF] NZ
+🇴🇲	Omani							// [1F1F4 1F1F2] OM
+🇵🇦	Panama							// [1F1F5 1F1E6] PA
+🇵🇪	Peru							// [1F1F5 1F1EA] PE
+🇵🇫	Polynesia ya Ufaransa					// [1F1F5 1F1EB] PF
+🇵🇬	Papua New Guinea					// [1F1F5 1F1EC] PG
+🇵🇭	Ufilipino						// [1F1F5 1F1ED] PH
+🇵🇰	Pakistani						// [1F1F5 1F1F0] PK
+🇵🇱	Polandi							// [1F1F5 1F1F1] PL
+🇵🇲	Santapierre na Miquelon					// [1F1F5 1F1F2] PM
+🇵🇳	Visiwa vya Pitcairn					// [1F1F5 1F1F3] PN
+🇵🇷	Puerto Rico						// [1F1F5 1F1F7] PR
+🇵🇸	Maeneo ya Palestina					// [1F1F5 1F1F8] PS
+🇵🇹	Ureno							// [1F1F5 1F1F9] PT
+🇵🇼	Palau							// [1F1F5 1F1FC] PW
+🇵🇾	Paragwai						// [1F1F5 1F1FE] PY
+🇶🇦	Katari							// [1F1F6 1F1E6] QA
+🇷🇪	Reunion							// [1F1F7 1F1EA] RE
+🇷🇴	Romania							// [1F1F7 1F1F4] RO
+🇷🇸	Serbia							// [1F1F7 1F1F8] RS
+🇷🇺	Urusi							// [1F1F7 1F1FA] RU
+🇷🇼	Rwanda							// [1F1F7 1F1FC] RW
+🇸🇦	Saudia							// [1F1F8 1F1E6] SA
+🇸🇧	Visiwa vya Solomon					// [1F1F8 1F1E7] SB
+🇸🇨	Ushelisheli						// [1F1F8 1F1E8] SC
+🇸🇩	Sudani							// [1F1F8 1F1E9] SD
+🇸🇪	Uswidi							// [1F1F8 1F1EA] SE
+🇸🇬	Singapore						// [1F1F8 1F1EC] SG
+🇸🇭	St. Helena						// [1F1F8 1F1ED] SH
+🇸🇮	Slovenia						// [1F1F8 1F1EE] SI
+🇸🇯	Svalbard na Jan Mayen					// [1F1F8 1F1EF] SJ
+🇸🇰	Slovakia						// [1F1F8 1F1F0] SK
+🇸🇱	Siera Leoni						// [1F1F8 1F1F1] SL
+🇸🇲	San Marino						// [1F1F8 1F1F2] SM
+🇸🇳	Senegali						// [1F1F8 1F1F3] SN
+🇸🇴	Somalia							// [1F1F8 1F1F4] SO
+🇸🇷	Suriname						// [1F1F8 1F1F7] SR
+🇸🇸	Sudan Kusini						// [1F1F8 1F1F8] SS
+🇸🇹	Sao Tome na Principe					// [1F1F8 1F1F9] ST
+🇸🇻	El Salvador						// [1F1F8 1F1FB] SV
+🇸🇽	Sint Maarten						// [1F1F8 1F1FD] SX
+🇸🇾	Siria							// [1F1F8 1F1FE] SY
+🇸🇿	Eswatini						// [1F1F8 1F1FF] SZ
+🇹🇦	Tristan da Cunha					// [1F1F9 1F1E6] TA
+🇹🇨	Visiwa vya Turks na Caicos				// [1F1F9 1F1E8] TC
+🇹🇩	Chadi							// [1F1F9 1F1E9] TD
+🇹🇫	Himaya za Kusini za Kifaranza				// [1F1F9 1F1EB] TF
+🇹🇬	Togo							// [1F1F9 1F1EC] TG
+🇹🇭	Tailandi						// [1F1F9 1F1ED] TH
+🇹🇯	Tajikistani						// [1F1F9 1F1EF] TJ
+🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
+🇹🇱	Timor-Leste						// [1F1F9 1F1F1] TL
+🇹🇲	Turkmenistan						// [1F1F9 1F1F2] TM
+🇹🇳	Tunisia							// [1F1F9 1F1F3] TN
+🇹🇴	Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	Uturuki							// [1F1F9 1F1F7] TR
+🇹🇹	Trinidad na Tobago					// [1F1F9 1F1F9] TT
+🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	Taiwan							// [1F1F9 1F1FC] TW
+🇹🇿	Tanzania						// [1F1F9 1F1FF] TZ
+🇺🇦	Ukraine							// [1F1FA 1F1E6] UA
+🇺🇬	Uganda							// [1F1FA 1F1EC] UG
+🇺🇲	Visiwa Vidogo vya Nje vya Marekani			// [1F1FA 1F1F2] UM
+🇺🇳	Umoja wa Mataifa					// [1F1FA 1F1F3] UN
+🇺🇸	Marekani						// [1F1FA 1F1F8] US
+🇺🇾	Urugwai							// [1F1FA 1F1FE] UY
+🇺🇿	Uzibekistani						// [1F1FA 1F1FF] UZ
+🇻🇦	Mji wa Vatican						// [1F1FB 1F1E6] VA
+🇻🇨	St. Vincent na Grenadines				// [1F1FB 1F1E8] VC
+🇻🇪	Venezuela						// [1F1FB 1F1EA] VE
+🇻🇬	Visiwa vya Virgin Uingereza				// [1F1FB 1F1EC] VG
+🇻🇮	Visiwa vya Virgin Marekani				// [1F1FB 1F1EE] VI
+🇻🇳	Vietnamu						// [1F1FB 1F1F3] VN
+🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
+🇼🇫	Wallis na Futuna					// [1F1FC 1F1EB] WF
+🇼🇸	Samoa							// [1F1FC 1F1F8] WS
+🇽🇰	Kosovo							// [1F1FD 1F1F0] XK
+🇾🇪	Yemeni							// [1F1FE 1F1EA] YE
+🇾🇹	Mayotte							// [1F1FE 1F1F9] YT
+🇿🇦	Afrika Kusini						// [1F1FF 1F1E6] ZA
+🇿🇲	Zambia							// [1F1FF 1F1F2] ZM
+🇿🇼	Zimbabwe						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1955,18 +1957,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#️⃣	kitufe: #							// [0023 FE0F 20E3]
-*️⃣	kitufe: *							// [002A FE0F 20E3]
-0️⃣	kitufe: 0							// [0030 FE0F 20E3]
-1️⃣	kitufe: 1							// [0031 FE0F 20E3]
-2️⃣	kitufe: 2							// [0032 FE0F 20E3]
-3️⃣	kitufe: 3							// [0033 FE0F 20E3]
-4️⃣	kitufe: 4							// [0034 FE0F 20E3]
-5️⃣	kitufe: 5							// [0035 FE0F 20E3]
-6️⃣	kitufe: 6							// [0036 FE0F 20E3]
-7️⃣	kitufe: 7							// [0037 FE0F 20E3]
-8️⃣	kitufe: 8							// [0038 FE0F 20E3]
-9️⃣	kitufe: 9							// [0039 FE0F 20E3]
+#⃣	kitufe							// [0023 20E3]
+*⃣	kitufe							// [002A 20E3]
+0⃣	kitufe 0						// [0030 20E3]
+1⃣	kitufe 1						// [0031 20E3]
+2⃣	kitufe 2						// [0032 20E3]
+3⃣	kitufe 3						// [0033 20E3]
+4⃣	kitufe 4						// [0034 20E3]
+5⃣	kitufe 5						// [0035 20E3]
+6⃣	kitufe 6						// [0036 20E3]
+7⃣	kitufe 7						// [0037 20E3]
+8⃣	kitufe 8						// [0038 20E3]
+9⃣	kitufe 9						// [0039 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	viatu vya bale						// [1FA70]
@@ -1992,6 +1994,11 @@ $textmode
 🪇	maraka							// [1FA87]
 🪈	zumari							// [1FA88]
 🪉	kinubi							// [1FA89]
+🪊	tromboni						// [1FA8A]
+🪋	kimondo							// [1FA8B]
+🪌	kifutio							// [1FA8C]
+🪍	wavu wenye mpini					// [1FA8D]
+🪎	kasha							// [1FA8E]
 🪏	sepetu							// [1FA8F]
 🪐	sayari yenye duara					// [1FA90]
 🪑	kiti							// [1FA91]
@@ -2048,6 +2055,9 @@ $textmode
 🫄	mtu mwenye mimba					// [1FAC4]
 🫅	kichwa chenye taji					// [1FAC5]
 🫆	alama ya kidole						// [1FAC6]
+🫈	mnyama mwenye manyoya					// [1FAC8]
+🫌	kipepeo mkubwa						// [1FACC]
+🫍	Chengo							// [1FACD]
 🫎	kongoni							// [1FACE]
 🫏	punda							// [1FACF]
 🫐	forosadi						// [1FAD0]
@@ -2063,6 +2073,7 @@ $textmode
 🫚	tangawizi						// [1FADA]
 🫛	ganda la njegere					// [1FADB]
 🫜	mzizi mboga						// [1FADC]
+🫝	achali							// [1FADD]
 🫟	mtawanyiko						// [1FADF]
 🫠	uso unaoyeyuka						// [1FAE0]
 🫡	uso unaopiga saluti					// [1FAE1]
@@ -2074,6 +2085,9 @@ $textmode
 🫧	viputo							// [1FAE7]
 🫨	uso unaotikisika					// [1FAE8]
 🫩	uso wenye macho yaliyovimba				// [1FAE9]
+🫪	uso ulioumbuka						// [1FAEA]
+🫫	uso unaopasuka						// [1FAEB]
+🫯	wingu la vita						// [1FAEF]
 🫰	vidole vya shahada na gumba vinavyopitana		// [1FAF0]
 🫱	mkono unaoelekea kulia					// [1FAF1]
 🫲	mkono unaoelekea kushoto				// [1FAF2]
@@ -2083,6 +2097,8 @@ $textmode
 🫶	mikono inayoonyesha ishara ya moyo			// [1FAF6]
 🫷	mkono unaosukuma kushoto				// [1FAF7]
 🫸	mkono unaosukuma kulia					// [1FAF8]
+🫹	ishara ya dole gumba inayoelekea kushoto		// [1FAF9]
+🫺	ishara ya dole gumba inayoelekea kulia			// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2111,38 +2127,38 @@ $textmode
 👨‍🦼‍➡	Mtu aliyeketi kwenye kiti cha magurudumu inayoangalia kulia	// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	mwanamume anayejiendesha kwa kiti cha magurudumu	// [1F468 200D 1F9BD]
 👨‍🦽‍➡	mwanamume anayejiendesha kwa kiti cha magurudumu inayoangalia kulia	// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	busu: mwanamke na mwanamume		// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	busu: mwanamume na mwanamume		// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	busu: mwanamke na mwanamke		// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	mume na mke na ishara ya moyo: mwanamke na mwanamume// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	mume na mke na ishara ya moyo: mwanamume na mwanamume// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	mume na mke na ishara ya moyo: mwanamke na mwanamke// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	familia: mwanamume, mwanamke na mvulana		// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	familia: mwanamume, mwanamke na msichana	// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	familia: mwanamume, mwanamke, msichana na mvulana// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	familia: mwanamume, mwanamke, mvulana na mvulana// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	familia: mwanamume, mwanamke, msichana na msichana// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	familia: mwanamume, mwanamume na mvulana	// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	familia: mwanamume, mwanamume na msichana	// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	familia: mwanamume, mwanamume, msichana na mvulana// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	familia: mwanamume, mwanamume, mvulana na mvulana// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	familia: mwanamume, mwanamume, msichana na msichana// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	busu mwanamke na mwanamume				// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	busu mwanamume na mwanamume				// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	busu mwanamke na mwanamke				// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	mume na mke na ishara ya moyo mwanamke na mwanamume	// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	mume na mke na ishara ya moyo mwanamume na mwanamume	// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	mume na mke na ishara ya moyo mwanamke na mwanamke	// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	familia mwanamume mwanamke na mvulana			// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	familia mwanamume mwanamke na msichana			// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	familia mwanamume mwanamke msichana na mvulana		// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	familia mwanamume mwanamke mvulana na mvulana		// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	familia mwanamume mwanamke msichana na msichana		// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	familia mwanamume mwanamume na mvulana			// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	familia mwanamume mwanamume na msichana			// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	familia mwanamume mwanamume msichana na mvulana		// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	familia mwanamume mwanamume mvulana na mvulana		// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	familia mwanamume mwanamume msichana na msichana	// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	mwanamke anayemlisha mtoto				// [1F469 200D 1F37C]
-👩‍👩‍👦	familia: mwanamke, mwanamke na mvulana		// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	familia: mwanamke, mwanamke na msichana		// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	familia: mwanamke, mwanamke, msichana na mvulana// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	familia: mwanamke, mwanamke, mvulana na mvulana// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	familia: mwanamke, mwanamke, msichana na msichana// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	familia: mwanamume na mvulana				// [1F468 200D 1F466]
-👨‍👦‍👦	familia: mwanamume, mvulana na mvulana		// [1F468 200D 1F466 200D 1F466]
-👨‍👧	familia: mwanamume na msichana				// [1F468 200D 1F467]
-👨‍👧‍👦	familia: mwanamume, msichana na mvulana		// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	familia: mwanamume, msichana na msichana	// [1F468 200D 1F467 200D 1F467]
-👩‍👦	familia: mwanamke na mvulana				// [1F469 200D 1F466]
-👩‍👦‍👦	familia: mwanamke, mvulana na mvulana		// [1F469 200D 1F466 200D 1F466]
-👩‍👧	familia: mwanamke na msichana				// [1F469 200D 1F467]
-👩‍👧‍👦	familia: mwanamke, msichana na mvulana		// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	familia: mwanamke, msichana na msichana		// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	familia mwanamke mwanamke na mvulana			// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	familia mwanamke mwanamke na msichana			// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	familia mwanamke mwanamke msichana na mvulana		// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	familia mwanamke mwanamke mvulana na mvulana		// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	familia mwanamke mwanamke msichana na msichana		// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	familia mwanamume na mvulana				// [1F468 200D 1F466]
+👨‍👦‍👦	familia mwanamume mvulana na mvulana			// [1F468 200D 1F466 200D 1F466]
+👨‍👧	familia mwanamume na msichana				// [1F468 200D 1F467]
+👨‍👧‍👦	familia mwanamume msichana na mvulana			// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	familia mwanamume msichana na msichana			// [1F468 200D 1F467 200D 1F467]
+👩‍👦	familia mwanamke na mvulana				// [1F469 200D 1F466]
+👩‍👦‍👦	familia mwanamke mvulana na mvulana			// [1F469 200D 1F466 200D 1F466]
+👩‍👧	familia mwanamke na msichana				// [1F469 200D 1F467]
+👩‍👧‍👦	familia mwanamke msichana na mvulana			// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	familia mwanamke msichana na msichana			// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 
@@ -2304,16 +2320,16 @@ $textmode
 🚴‍♀	mwanamke anayeendesha baisikeli				// [1F6B4 200D 2640]
 🚴‍♂	mwanaume anayeendesha baisikeli				// [1F6B4 200D 2642]
 🚵‍♀	mwanamke anayeendesha baiskeli mlimani			// [1F6B5 200D 2640]
-🚵‍♂	mwanamume anayeendesha baiskeli mlimani			// [1F6B5 200D 2642]
+🚵‍♂	Mtu anayeendesha baiskeli mlimani			// [1F6B5 200D 2642]
 🚶‍♀	mwanamke anayetembea					// [1F6B6 200D 2640]
 🚶‍♂	mwanamume anayetembea					// [1F6B6 200D 2642]
 🤸‍♀	mwanamke anayefanya sarakasi				// [1F938 200D 2640]
 🤸‍♂	mwanamume anayefanya sarakasi				// [1F938 200D 2642]
-🤹‍♀	mwanamke anayechezea mipira mingi mikononi		// [1F939 200D 2640]
-🤹‍♂	mwanamume anayechezea mipira mingi mkononi		// [1F939 200D 2642]
+🤹‍♀	Mtu anayecheza mipira mingi mikononi			// [1F939 200D 2640]
+🤹‍♂	Mtu anayecheza mipira mingi mkononi			// [1F939 200D 2642]
 🤼‍♀	wanawake wanaomenyana miereka				// [1F93C 200D 2640]
 🤼‍♂	wanaume wanaomenyana miereka				// [1F93C 200D 2642]
-🤽‍♀	mwanamke anayecheza mpira wa mikono majini		// [1F93D 200D 2640]
+🤽‍♀	Mtu anayecheza mpira wa mikono majini			// [1F93D 200D 2640]
 🤽‍♂	mwanamume anayecheza mpira wa mikono majini		// [1F93D 200D 2642]
 🤾‍♀	mwanamke anayecheza mpira wa mikono			// [1F93E 200D 2640]
 🤾‍♂	mwanamume anayecheza mpira wa mikono			// [1F93E 200D 2642]
@@ -2329,13 +2345,13 @@ $textmode
 💁‍♀	mwanamke anayetoa maelezo				// [1F481 200D 2640]
 💁‍♂	mwanamume anayetoa maelezo				// [1F481 200D 2642]
 🙅‍♀	mwanamke anayeonyesha ishara ya kukataa			// [1F645 200D 2640]
-🙅‍♂	mwanamume anayeonyesha ishara ya kukataa		// [1F645 200D 2642]
+🙅‍♂	Mtu anayeonyesha ishara ya HAPANA			// [1F645 200D 2642]
 🙆‍♀	mwanamke anayeonyesha ishara ya kukubali		// [1F646 200D 2640]
-🙆‍♂	mwanamume anayeonyesha ishara ya kukubali		// [1F646 200D 2642]
+🙆‍♂	Mtu anayeonyesha ishara ya NDIO				// [1F646 200D 2642]
 🙇‍♀	mwanamke aliyeinama					// [1F647 200D 2640]
 🙇‍♂	mwanamume aliyeinama					// [1F647 200D 2642]
 🙋‍♀	mwanamke mwenye furaha aliyeinua mnoko			// [1F64B 200D 2640]
-🙋‍♂	mwanamume mwenye furaha aliyeinua mkono			// [1F64B 200D 2642]
+🙋‍♂	mtu aliyeinua mkono					// [1F64B 200D 2642]
 🙍‍♀	mwanamke anayekunja kipaji cha uso			// [1F64D 200D 2640]
 🙍‍♂	mwanamume anayekunja kipaji cha uso			// [1F64D 200D 2642]
 🙎‍♀	mwanamke anayebibidua midomo				// [1F64E 200D 2640]
@@ -2349,7 +2365,7 @@ $textmode
 
 🏳‍🌈	bendera ya upinde wa mvua				// [1F3F3 200D 1F308]
 🏴‍☠	bendera ya maharamia					// [1F3F4 200D 2620]
-👁‍🗨	jicho ndani ya puto la usemi unaelekea kulia		// [1F441 200D 1F5E8]
+👁‍🗨	jicho ndani ya puto la usemi unaoelekea kulia		// [1F441 200D 1F5E8]
 
 // References:
 //   [UCD]	Unicode Character Database 11.0.0 [http://www.unicode.org/Public/11.0.0/ucd/]

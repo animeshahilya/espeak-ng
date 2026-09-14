@@ -400,7 +400,7 @@ $textmode
 ☃	lumiukko							// [2603] text|emoji
 ☄	komeetta							// [2604] text|emoji
 ☎	puhelin								// [260E] text|emoji
-☑	harmaa oikein-merkki						// [2611] text|emoji
+☑	punainen valintamerkki					// [2611] text|emoji
 ☔	sateenvarjo ja pisarat						// [2614]
 ☕	kuuma juoma							// [2615]
 ☘	kolmiapila							// [2618] text|emoji
@@ -438,7 +438,7 @@ $textmode
 ♪	kahdeksasosanuotti					// [266A]
 ♭	alennusmerkki						// [266D]
 ♯	ylennysmerkki						// [266F]
-♻	kierrätys							// [267B] text|emoji
+♻	kierrätyssymboli					// [267B] text|emoji
 ♾	äärettömyys							// [267E] text|emoji
 ♿	pyörätuoli							// [267F]
 ⚒	hakku ja vasara							// [2692] text|emoji
@@ -449,7 +449,7 @@ $textmode
 ⚗	tislauskolvi							// [2697] text|emoji
 ⚙	hammasratas							// [2699] text|emoji
 ⚛	atomi								// [269B] text|emoji
-⚜	lilja								// [269C] text|emoji
+⚜	Ranskan lilja						// [269C] text|emoji
 ⚠	varoitus							// [26A0] text|emoji
 ⚡	korkeajännite							// [26A1]
 ⚧	transsymboli						// [26A7]
@@ -464,7 +464,7 @@ $textmode
 ⛈	ukkospilvi ja sade						// [26C8] text|emoji
 ⛎	käärmeenkantaja							// [26CE]
 ⛏	hakku								// [26CF] text|emoji
-⛑	kypärä, jossa valkoinen risti					// [26D1] text|emoji
+⛑	kypärä jossa valkoinen risti				// [26D1] text|emoji
 ⛓	ketjut								// [26D3] text|emoji
 ⛔	kielletty ajosuunta						// [26D4]
 ⛩	shinto-temppeli							// [26E9] text|emoji
@@ -493,8 +493,8 @@ $textmode
 ✍	kirjoittava käsi						// [270D] text|emoji
 ✏	lyijykynä							// [270F] text|emoji
 ✒	musta kynänkärki						// [2712] text|emoji
-✔	paksu oikein-merkki						// [2714] text|emoji
-✖	paksu kertomerkki						// [2716] text|emoji
+✔	paksu valintamerkki					// [2714] text|emoji
+✖	kertomerkki						// [2716] text|emoji
 ✝	latinalainen risti						// [271D] text|emoji
 ✡	Daavidin tähti							// [2721] text|emoji
 ✨	säihke								// [2728]
@@ -566,7 +566,7 @@ $textmode
 🆖	NG								// [1F196]
 🆗	OK								// [1F197]
 🆘	SOS								// [1F198]
-🆙	UP!								// [1F199]
+🆙	UP							// [1F199]
 🆚	VS								// [1F19A]
 🇨🇶	Sark							// [1F1E8 1F1F6]
 
@@ -721,7 +721,7 @@ $textmode
 🍺	oluttuoppi							// [1F37A]
 🍻	kilisevät oluttuopit						// [1F37B]
 🍼	tuttipullo							// [1F37C]
-🍽	haarukka, veitsi ja lautanen					// [1F37D] text|emoji
+🍽	haarukka veitsi ja lautanen				// [1F37D] text|emoji
 🍾	pullo ja korkin poksautus					// [1F37E]
 🍿	popcorn								// [1F37F]
 🎀	rusetti								// [1F380]
@@ -900,11 +900,11 @@ $textmode
 🐵	apinan naama							// [1F435]
 🐶	koiran naama							// [1F436]
 🐷	sian naama							// [1F437]
-🐸	sammakon naama							// [1F438]
-🐹	hamsterin naama							// [1F439]
-🐺	suden naama							// [1F43A]
-🐻	karhun naama							// [1F43B]
-🐼	pandan naama							// [1F43C]
+🐸	sammakko						// [1F438]
+🐹	hamsteri						// [1F439]
+🐺	susi							// [1F43A]
+🐻	karhu							// [1F43B]
+🐼	panda							// [1F43C]
 🐽	sian kärsä							// [1F43D]
 🐾	tassunjäljet							// [1F43E]
 🐿	maaorava							// [1F43F] text|emoji
@@ -914,10 +914,10 @@ $textmode
 👃	nenä								// [1F443]
 👄	suu								// [1F444]
 👅	kieli								// [1F445]
-👆	ylös osoittava etusormi kämmenselkä katsojaan päin		// [1F446]
-👇	alas osoittava etusormi kämmenselkä katsojaan päin		// [1F447]
-👈	vasemmalle osoittava etusormi kämmenselkä katsojaan päin	// [1F448]
-👉	oikealle osoittava etusormi kämmenselkä katsojaan päin		// [1F449]
+👆	kämmenselkä ja etusormi ylös				// [1F446]
+👇	kämmenselkä ja etusormi alas				// [1F447]
+👈	kämmenselkä ja etusormi vasemmalle			// [1F448]
+👉	kämmenselkä ja etusormi oikealle			// [1F449]
 👊	kohti tuleva nyrkki						// [1F44A]
 👋	käden heilautus							// [1F44B]
 👌	ok-sormiele							// [1F44C]
@@ -956,8 +956,8 @@ $textmode
 👭	kaksi naista käsi kädessä					// [1F46D]
 👮	poliisi								// [1F46E]
 👯	puputytöt							// [1F46F]
-👰	huntupäinen morsian						// [1F470]
-👱	vaaleahiuksinen henkilö						// [1F471]
+👰	huntupäinen henkilö					// [1F470]
+👱	vaaleatukkainen henkilö					// [1F471]
 👲	mies ja kiinalainen hattu					// [1F472]
 👳	turbaanipäinen henkilö						// [1F473]
 👴	vanha mies							// [1F474]
@@ -968,7 +968,7 @@ $textmode
 👹	peikko								// [1F479]
 👺	hiisi								// [1F47A]
 👻	kummitus							// [1F47B]
-👼	enkelivauva							// [1F47C]
+👼	vauvaenkeli						// [1F47C]
 👽	avaruusolio							// [1F47D]
 👾	avaruushirviö							// [1F47E]
 👿	pikkupaholainen							// [1F47F]
@@ -1079,10 +1079,10 @@ $textmode
 📧	sähköposti							// [1F4E7]
 📨	saapuva kirjekuori						// [1F4E8]
 📩	kirjekuori ja nuoli						// [1F4E9]
-📪	suljettu postilaatikko, lippu alhaalla				// [1F4EA]
-📫	suljettu postilaatikko, lippu ylhäällä				// [1F4EB]
-📬	avoin postilaatikko, lippu ylhäällä				// [1F4EC]
-📭	avoin postilaatikko, lippu alhaalla				// [1F4ED]
+📪	suljettu postilaatikko lippu alhaalla			// [1F4EA]
+📫	suljettu postilaatikko lippu ylhäällä			// [1F4EB]
+📬	avoin postilaatikko lippu ylhäällä			// [1F4EC]
+📭	avoin postilaatikko lippu alhaalla			// [1F4ED]
 📮	postilaatikko							// [1F4EE]
 📯	postitorvi							// [1F4EF]
 📰	sanomalehti							// [1F4F0]
@@ -1127,11 +1127,11 @@ $textmode
 🔘	valintanappi							// [1F518]
 🔙	BACK-nuoli							// [1F519]
 🔚	END-nuoli							// [1F51A]
-🔛	ON!-nuoli							// [1F51B]
+🔛	ON -nuoli						// [1F51B]
 🔜	SOON-nuoli							// [1F51C]
 🔝	TOP-nuoli							// [1F51D]
 🔞	kielletty alaikäisiltä						// [1F51E]
-🔟	näppäin: 10							// [1F51F]
+🔟	näppäin 10						// [1F51F]
 🔠	syötä isoja kirjaimia						// [1F520]
 🔡	syötä pieniä kirjaimia						// [1F521]
 🔢	syötä numeroja							// [1F522]
@@ -1292,13 +1292,13 @@ $textmode
 😲	ällistynyt							// [1F632]
 😳	punastunut naama						// [1F633]
 😴	nukkuva								// [1F634]
-😵	pyörtyvä							// [1F635]
+😵	tajuton							// [1F635]
 😶	naama ilman suuta						// [1F636]
 😷	naama ja hengityssuoja						// [1F637]
 😸	virnistävä kissa ja hymyilevät silmät				// [1F638]
-😹	kissanaama ja naurunkyyneleet					// [1F639]
+😹	kissa ja naurunkyyneleet				// [1F639]
 😺	leveästi hymyilevä kissa					// [1F63A]
-😻	kissanaama ja sydänsilmät					// [1F63B]
+😻	kissa ja sydänsilmät					// [1F63B]
 😼	vinosti hymyilevä kissa						// [1F63C]
 😽	kissan pusunaama ja suljetut silmät				// [1F63D]
 😾	mököttävä kissa							// [1F63E]
@@ -1373,7 +1373,7 @@ $textmode
 🚰	juomakelpoista vettä						// [1F6B0]
 🚱	vesi ei juomakelpoista						// [1F6B1]
 🚲	polkupyörä							// [1F6B2]
-🚳	ei polkupyörille						// [1F6B3]
+🚳	polkupyörällä ajo kielletty				// [1F6B3]
 🚴	pyöräilijä							// [1F6B4]
 🚵	maastopyöräilijä						// [1F6B5]
 🚶	jalankulkija							// [1F6B6]
@@ -1403,6 +1403,8 @@ $textmode
 🛕	hindutemppeli						// [1F6D5]
 🛖	maja							// [1F6D6]
 🛗	hissi							// [1F6D7]
+🛘	maanvyörymä						// [1F6D8]
+🛙	majakka							// [1F6D9]
 🛜	langaton						// [1F6DC]
 🛝	liukumäki						// [1F6DD]
 🛞	rengas							// [1F6DE]
@@ -1455,7 +1457,7 @@ $textmode
 🤓	nörtti								// [1F913]
 🤔	mietteliäs							// [1F914]
 🤕	naama ja pääside						// [1F915]
-🤖	robottinaama							// [1F916]
+🤖	robotti							// [1F916]
 🤗	halaava naama							// [1F917]
 🤘	sarviele							// [1F918]
 🤙	soita minulle							// [1F919]
@@ -1486,7 +1488,7 @@ $textmode
 🤲	kämmenet vierekkäin						// [1F932]
 🤳	selfie								// [1F933]
 🤴	prinssi								// [1F934]
-🤵	smokkipukuinen mies						// [1F935]
+🤵	henkilö smokissa					// [1F935]
 🤶	joulupukin muori						// [1F936]
 🤷	olkapäitään kohauttava henkilö					// [1F937]
 🤸	kärrynpyörä							// [1F938]
@@ -1510,7 +1512,7 @@ $textmode
 🥌	curling-kivi							// [1F94C]
 🥍	lacrosse						// [1F94D]
 🥎	softball							// [1F94E]
-🥏	frisbee								// [1F94F]
+🥏	liitokiekko						// [1F94F]
 🥐	voisarvi							// [1F950]
 🥑	avokado								// [1F951]
 🥒	kurkku								// [1F952]
@@ -1543,13 +1545,13 @@ $textmode
 🥭	mango								// [1F96D]
 🥮	kuukakku							// [1F96E]
 🥯	vesirinkeli							// [1F96F]
-🥰	hymy ja neljä sydäntä						// [1F970]
+🥰	hymy ja kolme sydäntä					// [1F970]
 🥱	haukotteleva naama					// [1F971]
 🥲	hymyilevät kasvot ja kyynel				// [1F972]
 🥳	juhliva								// [1F973]
 🥴	tokkurainen naama						// [1F974]
 🥵	kuumottava							// [1F975]
-🥶	jäätynyt naama							// [1F976]
+🥶	paleleva						// [1F976]
 🥷	ninja							// [1F977]
 🥸	naamioitunut						// [1F978]
 🥹	kyyneliä pidättelevä naama				// [1F979]
@@ -1560,16 +1562,16 @@ $textmode
 🥾	vaelluskenkä							// [1F97E]
 🥿	balleriina							// [1F97F]
 🦀	rapu								// [1F980]
-🦁	leijonan naama							// [1F981]
+🦁	leijona							// [1F981]
 🦂	skorpioni							// [1F982]
 🦃	kalkkuna							// [1F983]
-🦄	yksisarvisen naama						// [1F984]
+🦄	yksisarvinen						// [1F984]
 🦅	kotka								// [1F985]
 🦆	sorsa								// [1F986]
 🦇	lepakko								// [1F987]
 🦈	hai								// [1F988]
 🦉	pöllö								// [1F989]
-🦊	ketun naama							// [1F98A]
+🦊	kettu							// [1F98A]
 🦋	perhonen							// [1F98B]
 🦌	peura								// [1F98C]
 🦍	gorilla								// [1F98D]
@@ -1610,13 +1612,13 @@ $textmode
 🦰	punatukkainen							// [1F9B0]
 🦱	kiharatukkainen							// [1F9B1]
 🦲	kalju								// [1F9B2]
-🦳	harmaa tukka							// [1F9B3]
+🦳	valkotukkainen						// [1F9B3]
 🦴	luu								// [1F9B4]
 🦵	jalka								// [1F9B5]
 🦶	jalkaterä							// [1F9B6]
 🦷	hammas								// [1F9B7]
 🦸	supersankari							// [1F9B8]
-🦹	roisto								// [1F9B9]
+🦹	superpahis						// [1F9B9]
 🦺	turvaliivi						// [1F9BA]
 🦻	kuulolaite korvassa					// [1F9BB]
 🦼	moottoroitu pyörätuoli					// [1F9BC]
@@ -1624,7 +1626,7 @@ $textmode
 🦾	tekokäsi						// [1F9BE]
 🦿	tekojalka						// [1F9BF]
 🧀	juustopala							// [1F9C0]
-🧁	kuppikakku							// [1F9C1]
+🧁	vuokaleivos						// [1F9C1]
 🧂	suola								// [1F9C2]
 🧃	juomatetra						// [1F9C3]
 🧄	valkosipuli						// [1F9C4]
@@ -1674,8 +1676,8 @@ $textmode
 🧰	työkalulaatikko							// [1F9F0]
 🧱	tiili								// [1F9F1]
 🧲	magneetti							// [1F9F2]
-🧳	matkalaukku							// [1F9F3]
-🧴	ihonhoito							// [1F9F4]
+🧳	matkatavara						// [1F9F3]
+🧴	hoitoainepullo						// [1F9F4]
 🧵	lankarulla							// [1F9F5]
 🧶	lankakerä							// [1F9F6]
 🧷	hakaneula							// [1F9F7]
@@ -1690,264 +1692,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	lippu: Ascension-saari						// [1F1E6 1F1E8] AC
-🇦🇩	lippu: Andorra							// [1F1E6 1F1E9] AD
-🇦🇪	lippu: Arabiemiirikunnat					// [1F1E6 1F1EA] AE
-🇦🇫	lippu: Afganistan						// [1F1E6 1F1EB] AF
-🇦🇬	lippu: Antigua ja Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	lippu: Anguilla							// [1F1E6 1F1EE] AI
-🇦🇱	lippu: Albania							// [1F1E6 1F1F1] AL
-🇦🇲	lippu: Armenia							// [1F1E6 1F1F2] AM
-🇦🇴	lippu: Angola							// [1F1E6 1F1F4] AO
-🇦🇶	lippu: Antarktis						// [1F1E6 1F1F6] AQ
-🇦🇷	lippu: Argentiina						// [1F1E6 1F1F7] AR
-🇦🇸	lippu: Amerikan Samoa						// [1F1E6 1F1F8] AS
-🇦🇹	lippu: Itävalta							// [1F1E6 1F1F9] AT
-🇦🇺	lippu: Australia						// [1F1E6 1F1FA] AU
-🇦🇼	lippu: Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	lippu: Ahvenanmaa						// [1F1E6 1F1FD] AX
-🇦🇿	lippu: Azerbaidžan						// [1F1E6 1F1FF] AZ
-🇧🇦	lippu: Bosnia ja Hertsegovina					// [1F1E7 1F1E6] BA
-🇧🇧	lippu: Barbados							// [1F1E7 1F1E7] BB
-🇧🇩	lippu: Bangladesh						// [1F1E7 1F1E9] BD
-🇧🇪	lippu: Belgia							// [1F1E7 1F1EA] BE
-🇧🇫	lippu: Burkina Faso						// [1F1E7 1F1EB] BF
-🇧🇬	lippu: Bulgaria							// [1F1E7 1F1EC] BG
-🇧🇭	lippu: Bahrain							// [1F1E7 1F1ED] BH
-🇧🇮	lippu: Burundi							// [1F1E7 1F1EE] BI
-🇧🇯	lippu: Benin							// [1F1E7 1F1EF] BJ
-🇧🇱	lippu: Saint-Barthélemy						// [1F1E7 1F1F1] BL
-🇧🇲	lippu: Bermuda							// [1F1E7 1F1F2] BM
-🇧🇳	lippu: Brunei							// [1F1E7 1F1F3] BN
-🇧🇴	lippu: Bolivia							// [1F1E7 1F1F4] BO
-🇧🇶	lippu: Karibian Alankomaat					// [1F1E7 1F1F6] BQ
-🇧🇷	lippu: Brasilia							// [1F1E7 1F1F7] BR
-🇧🇸	lippu: Bahama							// [1F1E7 1F1F8] BS
-🇧🇹	lippu: Bhutan							// [1F1E7 1F1F9] BT
-🇧🇻	lippu: Bouvet’nsaari						// [1F1E7 1F1FB] BV
-🇧🇼	lippu: Botswana							// [1F1E7 1F1FC] BW
-🇧🇾	lippu: Valko-Venäjä						// [1F1E7 1F1FE] BY
-🇧🇿	lippu: Belize							// [1F1E7 1F1FF] BZ
-🇨🇦	lippu: Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	lippu: Kookossaaret (Keelingsaaret)				// [1F1E8 1F1E8] CC
-🇨🇩	lippu: Kongon demokraattinen tasavalta				// [1F1E8 1F1E9] CD
-🇨🇫	lippu: Keski-Afrikan tasavalta					// [1F1E8 1F1EB] CF
-🇨🇬	lippu: Kongon tasavalta						// [1F1E8 1F1EC] CG
-🇨🇭	lippu: Sveitsi							// [1F1E8 1F1ED] CH
-🇨🇮	lippu: Norsunluurannikko					// [1F1E8 1F1EE] CI
-🇨🇰	lippu: Cookinsaaret						// [1F1E8 1F1F0] CK
-🇨🇱	lippu: Chile							// [1F1E8 1F1F1] CL
-🇨🇲	lippu: Kamerun							// [1F1E8 1F1F2] CM
-🇨🇳	lippu: Kiina							// [1F1E8 1F1F3] CN
-🇨🇴	lippu: Kolumbia							// [1F1E8 1F1F4] CO
-🇨🇵	lippu: Clippertoninsaari					// [1F1E8 1F1F5] CP
-🇨🇷	lippu: Costa Rica						// [1F1E8 1F1F7] CR
-🇨🇺	lippu: Kuuba							// [1F1E8 1F1FA] CU
-🇨🇻	lippu: Kap Verde						// [1F1E8 1F1FB] CV
-🇨🇼	lippu: Curaçao							// [1F1E8 1F1FC] CW
-🇨🇽	lippu: Joulusaari						// [1F1E8 1F1FD] CX
-🇨🇾	lippu: Kypros							// [1F1E8 1F1FE] CY
-🇨🇿	lippu: Tšekki							// [1F1E8 1F1FF] CZ
-🇩🇪	lippu: Saksa							// [1F1E9 1F1EA] DE
-🇩🇬	lippu: Diego Garcia						// [1F1E9 1F1EC] DG
-🇩🇯	lippu: Djibouti							// [1F1E9 1F1EF] DJ
-🇩🇰	lippu: Tanska							// [1F1E9 1F1F0] DK
-🇩🇲	lippu: Dominica							// [1F1E9 1F1F2] DM
-🇩🇴	lippu: Dominikaaninen tasavalta					// [1F1E9 1F1F4] DO
-🇩🇿	lippu: Algeria							// [1F1E9 1F1FF] DZ
-🇪🇦	lippu: Ceuta ja Melilla						// [1F1EA 1F1E6] EA
-🇪🇨	lippu: Ecuador							// [1F1EA 1F1E8] EC
-🇪🇪	lippu: Viro							// [1F1EA 1F1EA] EE
-🇪🇬	lippu: Egypti							// [1F1EA 1F1EC] EG
-🇪🇭	lippu: Länsi-Sahara						// [1F1EA 1F1ED] EH
-🇪🇷	lippu: Eritrea							// [1F1EA 1F1F7] ER
-🇪🇸	lippu: Espanja							// [1F1EA 1F1F8] ES
-🇪🇹	lippu: Etiopia							// [1F1EA 1F1F9] ET
-🇪🇺	lippu: Euroopan unioni						// [1F1EA 1F1FA] EU
-🇫🇮	lippu: Suomi							// [1F1EB 1F1EE] FI
-🇫🇯	lippu: Fidži							// [1F1EB 1F1EF] FJ
-🇫🇰	lippu: Falklandinsaaret						// [1F1EB 1F1F0] FI
-🇫🇲	lippu: Mikronesian liittovaltio					// [1F1EB 1F1F2] FM
-🇫🇴	lippu: Färsaaret						// [1F1EB 1F1F4] FO
-🇫🇷	lippu: Ranska							// [1F1EB 1F1F7] FR
-🇬🇦	lippu: Gabon							// [1F1EC 1F1E6] GA
-🇬🇧	lippu: Iso-Britannia						// [1F1EC 1F1E7] GB
-🇬🇩	lippu: Grenada							// [1F1EC 1F1E9] GD
-🇬🇪	lippu: Georgia							// [1F1EC 1F1EA] GE
-🇬🇫	lippu: Ranskan Guayana						// [1F1EC 1F1EB] GF
-🇬🇬	lippu: Guernsey							// [1F1EC 1F1EC] GG
-🇬🇭	lippu: Ghana							// [1F1EC 1F1ED] GH
-🇬🇮	lippu: Gibraltar						// [1F1EC 1F1EE] GI
-🇬🇱	lippu: Grönlanti						// [1F1EC 1F1F1] GL
-🇬🇲	lippu: Gambia							// [1F1EC 1F1F2] GM
-🇬🇳	lippu: Guinea							// [1F1EC 1F1F3] GN
-🇬🇵	lippu: Guadeloupe						// [1F1EC 1F1F5] GP
-🇬🇶	lippu: Päiväntasaajan Guinea					// [1F1EC 1F1F6] GQ
-🇬🇷	lippu: Kreikka							// [1F1EC 1F1F7] GR
-🇬🇸	lippu: Etelä-Georgia ja Eteläiset Sandwichsaaret		// [1F1EC 1F1F8] GS
-🇬🇹	lippu: Guatemala						// [1F1EC 1F1F9] GT
-🇬🇺	lippu: Guam							// [1F1EC 1F1FA] GU
-🇬🇼	lippu: Guinea-Bissau						// [1F1EC 1F1FC] GW
-🇬🇾	lippu: Guyana							// [1F1EC 1F1FE] GY
-🇭🇰	lippu: Hongkong – Kiinan e.h.a.					// [1F1ED 1F1F0] HK
-🇭🇲	lippu: Heard ja McDonaldinsaaret				// [1F1ED 1F1F2] HM
-🇭🇳	lippu: Honduras							// [1F1ED 1F1F3] HN
-🇭🇷	lippu: Kroatia							// [1F1ED 1F1F7] HR
-🇭🇹	lippu: Haiti							// [1F1ED 1F1F9] HT
-🇭🇺	lippu: Unkari							// [1F1ED 1F1FA] HU
-🇮🇨	lippu: Kanariansaaret						// [1F1EE 1F1E8] IC
-🇮🇩	lippu: Indonesia						// [1F1EE 1F1E9] ID
-🇮🇪	lippu: Irlanti							// [1F1EE 1F1EA] IE
-🇮🇱	lippu: Israel							// [1F1EE 1F1F1] IL
-🇮🇲	lippu: Mansaari							// [1F1EE 1F1F2] IM
-🇮🇳	lippu: Intia							// [1F1EE 1F1F3] IN
-🇮🇴	lippu: Brittiläinen Intian valtameren alue			// [1F1EE 1F1F4] IO
-🇮🇶	lippu: Irak							// [1F1EE 1F1F6] IQ
-🇮🇷	lippu: Iran							// [1F1EE 1F1F7] IR
-🇮🇸	lippu: Islanti							// [1F1EE 1F1F8] IS
-🇮🇹	lippu: Italia							// [1F1EE 1F1F9] IT
-🇯🇪	lippu: Jersey							// [1F1EF 1F1EA] JE
-🇯🇲	lippu: Jamaika							// [1F1EF 1F1F2] JM
-🇯🇴	lippu: Jordania							// [1F1EF 1F1F4] JO
-🇯🇵	lippu: Japani							// [1F1EF 1F1F5] JP
-🇰🇪	lippu: Kenia							// [1F1F0 1F1EA] KE
-🇰🇬	lippu: Kirgisia							// [1F1F0 1F1EC] KG
-🇰🇭	lippu: Kambodža							// [1F1F0 1F1ED] KH
-🇰🇮	lippu: Kiribati							// [1F1F0 1F1EE] KI
-🇰🇲	lippu: Komorit							// [1F1F0 1F1F2] KM
-🇰🇳	lippu: Saint Kitts ja Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	lippu: Pohjois-Korea						// [1F1F0 1F1F5] KP
-🇰🇷	lippu: Etelä-Korea						// [1F1F0 1F1F7] KR
-🇰🇼	lippu: Kuwait							// [1F1F0 1F1FC] KW
-🇰🇾	lippu: Caymansaaret						// [1F1F0 1F1FE] KY
-🇰🇿	lippu: Kazakstan						// [1F1F0 1F1FF] KZ
-🇱🇦	lippu: Laos							// [1F1F1 1F1E6] LA
-🇱🇧	lippu: Libanon							// [1F1F1 1F1E7] LB
-🇱🇨	lippu: Saint Lucia						// [1F1F1 1F1E8] LC
-🇱🇮	lippu: Liechtenstein						// [1F1F1 1F1EE] LI
-🇱🇰	lippu: Sri Lanka						// [1F1F1 1F1F0] LK
-🇱🇷	lippu: Liberia							// [1F1F1 1F1F7] LR
-🇱🇸	lippu: Lesotho							// [1F1F1 1F1F8] LS
-🇱🇹	lippu: Liettua							// [1F1F1 1F1F9] LT
-🇱🇺	lippu: Luxemburg						// [1F1F1 1F1FA] LU
-🇱🇻	lippu: Latvia							// [1F1F1 1F1FB] LV
-🇱🇾	lippu: Libya							// [1F1F1 1F1FE] LY
-🇲🇦	lippu: Marokko							// [1F1F2 1F1E6] MA
-🇲🇨	lippu: Monaco							// [1F1F2 1F1E8] MC
-🇲🇩	lippu: Moldova							// [1F1F2 1F1E9] MD
-🇲🇪	lippu: Montenegro						// [1F1F2 1F1EA] ME
-🇲🇫	lippu: Saint-Martin						// [1F1F2 1F1EB] MF
-🇲🇬	lippu: Madagaskar						// [1F1F2 1F1EC] MG
-🇲🇭	lippu: Marshallinsaaret						// [1F1F2 1F1ED] MH
-🇲🇰	lippu: Makedonia						// [1F1F2 1F1F0] MK
-🇲🇱	lippu: Mali							// [1F1F2 1F1F1] ML
-🇲🇲	lippu: Myanmar (Burma)						// [1F1F2 1F1F2] MM
-🇲🇳	lippu: Mongolia							// [1F1F2 1F1F3] MN
-🇲🇴	lippu: Macao – Kiinan e.h.a.					// [1F1F2 1F1F4] MO
-🇲🇵	lippu: Pohjois-Mariaanit					// [1F1F2 1F1F5] MP
-🇲🇶	lippu: Martinique						// [1F1F2 1F1F6] MQ
-🇲🇷	lippu: Mauritania						// [1F1F2 1F1F7] MR
-🇲🇸	lippu: Montserrat						// [1F1F2 1F1F8] MS
-🇲🇹	lippu: Malta							// [1F1F2 1F1F9] MT
-🇲🇺	lippu: Mauritius						// [1F1F2 1F1FA] MU
-🇲🇻	lippu: Malediivit						// [1F1F2 1F1FB] MV
-🇲🇼	lippu: Malawi							// [1F1F2 1F1FC] MW
-🇲🇽	lippu: Meksiko							// [1F1F2 1F1FD] MX
-🇲🇾	lippu: Malesia							// [1F1F2 1F1FE] MY
-🇲🇿	lippu: Mosambik							// [1F1F2 1F1FF] MZ
-🇳🇦	lippu: Namibia							// [1F1F3 1F1E6] NA
-🇳🇨	lippu: Uusi-Kaledonia						// [1F1F3 1F1E8] NC
-🇳🇪	lippu: Niger							// [1F1F3 1F1EA] NE
-🇳🇫	lippu: Norfolkinsaari						// [1F1F3 1F1EB] NF
-🇳🇬	lippu: Nigeria							// [1F1F3 1F1EC] NG
-🇳🇮	lippu: Nicaragua						// [1F1F3 1F1EE] NI
-🇳🇱	lippu: Alankomaat						// [1F1F3 1F1F1] NL
-🇳🇴	lippu: Norja							// [1F1F3 1F1F4] NO
-🇳🇵	lippu: Nepal							// [1F1F3 1F1F5] NP
-🇳🇷	lippu: Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	lippu: Niue							// [1F1F3 1F1FA] NU
-🇳🇿	lippu: Uusi-Seelanti						// [1F1F3 1F1FF] NZ
-🇴🇲	lippu: Oman							// [1F1F4 1F1F2] OM
-🇵🇦	lippu: Panama							// [1F1F5 1F1E6] PA
-🇵🇪	lippu: Peru							// [1F1F5 1F1EA] PE
-🇵🇫	lippu: Ranskan Polynesia					// [1F1F5 1F1EB] PF
-🇵🇬	lippu: Papua-Uusi-Guinea					// [1F1F5 1F1EC] PG
-🇵🇭	lippu: Filippiinit						// [1F1F5 1F1ED] PH
-🇵🇰	lippu: Pakistan							// [1F1F5 1F1F0] PK
-🇵🇱	lippu: Puola							// [1F1F5 1F1F1] PL
-🇵🇲	lippu: Saint-Pierre ja Miquelon					// [1F1F5 1F1F2] PM
-🇵🇳	lippu: Pitcairn							// [1F1F5 1F1F3] PN
-🇵🇷	lippu: Puerto Rico						// [1F1F5 1F1F7] PR
-🇵🇸	lippu: Palestiinalaisalueet					// [1F1F5 1F1F8] PS
-🇵🇹	lippu: Portugali						// [1F1F5 1F1F9] PT
-🇵🇼	lippu: Palau							// [1F1F5 1F1FC] PW
-🇵🇾	lippu: Paraguay							// [1F1F5 1F1FE] PY
-🇶🇦	lippu: Qatar							// [1F1F6 1F1E6] QA
-🇷🇪	lippu: Réunion							// [1F1F7 1F1EA] RE
-🇷🇴	lippu: Romania							// [1F1F7 1F1F4] RO
-🇷🇸	lippu: Serbia							// [1F1F7 1F1F8] RS
-🇷🇺	lippu: Venäjä							// [1F1F7 1F1FA] RU
-🇷🇼	lippu: Ruanda							// [1F1F7 1F1FC] RW
-🇸🇦	lippu: Saudi-Arabia						// [1F1F8 1F1E6] SA
-🇸🇧	lippu: Salomonsaaret						// [1F1F8 1F1E7] SB
-🇸🇨	lippu: Seychellit						// [1F1F8 1F1E8] SC
-🇸🇩	lippu: Sudan							// [1F1F8 1F1E9] SD
-🇸🇪	lippu: Ruotsi							// [1F1F8 1F1EA] SE
-🇸🇬	lippu: Singapore						// [1F1F8 1F1EC] SG
-🇸🇭	lippu: Saint Helena						// [1F1F8 1F1ED] SH
-🇸🇮	lippu: Slovenia							// [1F1F8 1F1EE] SI
-🇸🇯	lippu: Huippuvuoret ja Jan Mayen				// [1F1F8 1F1EF] SJ
-🇸🇰	lippu: Slovakia							// [1F1F8 1F1F0] SK
-🇸🇱	lippu: Sierra Leone						// [1F1F8 1F1F1] SL
-🇸🇲	lippu: San Marino						// [1F1F8 1F1F2] SM
-🇸🇳	lippu: Senegal							// [1F1F8 1F1F3] SN
-🇸🇴	lippu: Somalia							// [1F1F8 1F1F4] SO
-🇸🇷	lippu: Suriname							// [1F1F8 1F1F7] SR
-🇸🇸	lippu: Etelä-Sudan						// [1F1F8 1F1F8] SS
-🇸🇹	lippu: São Tomé ja Príncipe					// [1F1F8 1F1F9] ST
-🇸🇻	lippu: El Salvador						// [1F1F8 1F1FB] SV
-🇸🇽	lippu: Sint Maarten						// [1F1F8 1F1FD] SX
-🇸🇾	lippu: Syyria							// [1F1F8 1F1FE] SY
-🇸🇿	lippu: Swazimaa							// [1F1F8 1F1FF] SZ
-🇹🇦	lippu: Tristan da Cunha						// [1F1F9 1F1E6] TA
-🇹🇨	lippu: Turks- ja Caicossaaret					// [1F1F9 1F1E8] TC
-🇹🇩	lippu: Tšad							// [1F1F9 1F1E9] TD
-🇹🇫	lippu: Ranskan eteläiset alueet					// [1F1F9 1F1EB] TF
-🇹🇬	lippu: Togo							// [1F1F9 1F1EC] TG
-🇹🇭	lippu: Thaimaa							// [1F1F9 1F1ED] TH
-🇹🇯	lippu: Tadžikistan						// [1F1F9 1F1EF] TJ
-🇹🇰	lippu: Tokelau							// [1F1F9 1F1F0] TK
-🇹🇱	lippu: Itä-Timor						// [1F1F9 1F1F1] TL
-🇹🇲	lippu: Turkmenistan						// [1F1F9 1F1F2] TM
-🇹🇳	lippu: Tunisia							// [1F1F9 1F1F3] TN
-🇹🇴	lippu: Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	lippu: Turkki							// [1F1F9 1F1F7] TR
-🇹🇹	lippu: Trinidad ja Tobago					// [1F1F9 1F1F9] TT
-🇹🇻	lippu: Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	lippu: Taiwan							// [1F1F9 1F1FC] TW
-🇹🇿	lippu: Tansania							// [1F1F9 1F1FF] TZ
-🇺🇦	lippu: Ukraina							// [1F1FA 1F1E6] UA
-🇺🇬	lippu: Uganda							// [1F1FA 1F1EC] UG
-🇺🇲	lippu: Yhdysvaltain erillissaaret				// [1F1FA 1F1F2] UM
-🇺🇳	lippu: Yhdistyneet kansakunnat					// [1F1FA 1F1F3] UN
-🇺🇸	lippu: Yhdysvallat						// [1F1FA 1F1F8] US
-🇺🇾	lippu: Uruguay							// [1F1FA 1F1FE] UY
-🇺🇿	lippu: Uzbekistan						// [1F1FA 1F1FF] UZ
-🇻🇦	lippu: Vatikaani						// [1F1FB 1F1E6] VA
-🇻🇨	lippu: Saint Vincent ja Grenadiinit				// [1F1FB 1F1E8] VC
-🇻🇪	lippu: Venezuela						// [1F1FB 1F1EA] VE
-🇻🇬	lippu: Brittiläiset Neitsytsaaret				// [1F1FB 1F1EC] VG
-🇻🇮	lippu: Yhdysvaltain Neitsytsaaret				// [1F1FB 1F1EE] VI
-🇻🇳	lippu: Vietnam							// [1F1FB 1F1F3] VN
-🇻🇺	lippu: Vanuatu							// [1F1FB 1F1FA] VU
-🇼🇫	lippu: Wallis ja Futuna						// [1F1FC 1F1EB] WF
-🇼🇸	lippu: Samoa							// [1F1FC 1F1F8] WS
-🇽🇰	lippu: Kosovo							// [1F1FD 1F1F0] XK
-🇾🇪	lippu: Jemen							// [1F1FE 1F1EA] YE
-🇾🇹	lippu: Mayotte							// [1F1FE 1F1F9] YT
-🇿🇦	lippu: Etelä-Afrikka						// [1F1FF 1F1E6] ZA
-🇿🇲	lippu: Sambia							// [1F1FF 1F1F2] ZM
-🇿🇼	lippu: Zimbabwe							// [1F1FF 1F1FC] ZW
+🇦🇨	Ascension-saari						// [1F1E6 1F1E8] AC
+🇦🇩	Andorra							// [1F1E6 1F1E9] AD
+🇦🇪	Arabiemiirikunnat					// [1F1E6 1F1EA] AE
+🇦🇫	Afganistan						// [1F1E6 1F1EB] AF
+🇦🇬	Antigua ja Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	Anguilla						// [1F1E6 1F1EE] AI
+🇦🇱	Albania							// [1F1E6 1F1F1] AL
+🇦🇲	Armenia							// [1F1E6 1F1F2] AM
+🇦🇴	Angola							// [1F1E6 1F1F4] AO
+🇦🇶	Antarktis						// [1F1E6 1F1F6] AQ
+🇦🇷	Argentiina						// [1F1E6 1F1F7] AR
+🇦🇸	Amerikan Samoa						// [1F1E6 1F1F8] AS
+🇦🇹	Itävalta						// [1F1E6 1F1F9] AT
+🇦🇺	Australia						// [1F1E6 1F1FA] AU
+🇦🇼	Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	Ahvenanmaa						// [1F1E6 1F1FD] AX
+🇦🇿	Azerbaidžan						// [1F1E6 1F1FF] AZ
+🇧🇦	Bosnia ja Hertsegovina					// [1F1E7 1F1E6] BA
+🇧🇧	Barbados						// [1F1E7 1F1E7] BB
+🇧🇩	Bangladesh						// [1F1E7 1F1E9] BD
+🇧🇪	Belgia							// [1F1E7 1F1EA] BE
+🇧🇫	Burkina Faso						// [1F1E7 1F1EB] BF
+🇧🇬	Bulgaria						// [1F1E7 1F1EC] BG
+🇧🇭	Bahrain							// [1F1E7 1F1ED] BH
+🇧🇮	Burundi							// [1F1E7 1F1EE] BI
+🇧🇯	Benin							// [1F1E7 1F1EF] BJ
+🇧🇱	Saint-Barthélemy					// [1F1E7 1F1F1] BL
+🇧🇲	Bermuda							// [1F1E7 1F1F2] BM
+🇧🇳	Brunei							// [1F1E7 1F1F3] BN
+🇧🇴	Bolivia							// [1F1E7 1F1F4] BO
+🇧🇶	Karibian Alankomaat					// [1F1E7 1F1F6] BQ
+🇧🇷	Brasilia						// [1F1E7 1F1F7] BR
+🇧🇸	Bahama							// [1F1E7 1F1F8] BS
+🇧🇹	Bhutan							// [1F1E7 1F1F9] BT
+🇧🇻	Bouvet’nsaari						// [1F1E7 1F1FB] BV
+🇧🇼	Botswana						// [1F1E7 1F1FC] BW
+🇧🇾	Valko-Venäjä						// [1F1E7 1F1FE] BY
+🇧🇿	Belize							// [1F1E7 1F1FF] BZ
+🇨🇦	Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	Kookossaaret Keelingsaaret				// [1F1E8 1F1E8] CC
+🇨🇩	Kongon demokraattinen tasavalta				// [1F1E8 1F1E9] CD
+🇨🇫	Keski-Afrikan tasavalta					// [1F1E8 1F1EB] CF
+🇨🇬	Kongon tasavalta					// [1F1E8 1F1EC] CG
+🇨🇭	Sveitsi							// [1F1E8 1F1ED] CH
+🇨🇮	Norsunluurannikko					// [1F1E8 1F1EE] CI
+🇨🇰	Cookinsaaret						// [1F1E8 1F1F0] CK
+🇨🇱	Chile							// [1F1E8 1F1F1] CL
+🇨🇲	Kamerun							// [1F1E8 1F1F2] CM
+🇨🇳	Kiina							// [1F1E8 1F1F3] CN
+🇨🇴	Kolumbia						// [1F1E8 1F1F4] CO
+🇨🇵	Clippertoninsaari					// [1F1E8 1F1F5] CP
+🇨🇷	Costa Rica						// [1F1E8 1F1F7] CR
+🇨🇺	Kuuba							// [1F1E8 1F1FA] CU
+🇨🇻	Kap Verde						// [1F1E8 1F1FB] CV
+🇨🇼	Curaçao							// [1F1E8 1F1FC] CW
+🇨🇽	Joulusaari						// [1F1E8 1F1FD] CX
+🇨🇾	Kypros							// [1F1E8 1F1FE] CY
+🇨🇿	Tšekki							// [1F1E8 1F1FF] CZ
+🇩🇪	Saksa							// [1F1E9 1F1EA] DE
+🇩🇬	Diego Garcia						// [1F1E9 1F1EC] DG
+🇩🇯	Djibouti						// [1F1E9 1F1EF] DJ
+🇩🇰	Tanska							// [1F1E9 1F1F0] DK
+🇩🇲	Dominica						// [1F1E9 1F1F2] DM
+🇩🇴	Dominikaaninen tasavalta				// [1F1E9 1F1F4] DO
+🇩🇿	Algeria							// [1F1E9 1F1FF] DZ
+🇪🇦	Ceuta ja Melilla					// [1F1EA 1F1E6] EA
+🇪🇨	Ecuador							// [1F1EA 1F1E8] EC
+🇪🇪	Viro							// [1F1EA 1F1EA] EE
+🇪🇬	Egypti							// [1F1EA 1F1EC] EG
+🇪🇭	Länsi-Sahara						// [1F1EA 1F1ED] EH
+🇪🇷	Eritrea							// [1F1EA 1F1F7] ER
+🇪🇸	Espanja							// [1F1EA 1F1F8] ES
+🇪🇹	Etiopia							// [1F1EA 1F1F9] ET
+🇪🇺	Euroopan unioni						// [1F1EA 1F1FA] EU
+🇫🇮	Suomi							// [1F1EB 1F1EE] FI
+🇫🇯	Fidži							// [1F1EB 1F1EF] FJ
+🇫🇰	Falklandinsaaret					// [1F1EB 1F1F0] FI
+🇫🇲	Mikronesia						// [1F1EB 1F1F2] FM
+🇫🇴	Färsaaret						// [1F1EB 1F1F4] FO
+🇫🇷	Ranska							// [1F1EB 1F1F7] FR
+🇬🇦	Gabon							// [1F1EC 1F1E6] GA
+🇬🇧	Iso-Britannia						// [1F1EC 1F1E7] GB
+🇬🇩	Grenada							// [1F1EC 1F1E9] GD
+🇬🇪	Georgia							// [1F1EC 1F1EA] GE
+🇬🇫	Ranskan Guayana						// [1F1EC 1F1EB] GF
+🇬🇬	Guernsey						// [1F1EC 1F1EC] GG
+🇬🇭	Ghana							// [1F1EC 1F1ED] GH
+🇬🇮	Gibraltar						// [1F1EC 1F1EE] GI
+🇬🇱	Grönlanti						// [1F1EC 1F1F1] GL
+🇬🇲	Gambia							// [1F1EC 1F1F2] GM
+🇬🇳	Guinea							// [1F1EC 1F1F3] GN
+🇬🇵	Guadeloupe						// [1F1EC 1F1F5] GP
+🇬🇶	Päiväntasaajan Guinea					// [1F1EC 1F1F6] GQ
+🇬🇷	Kreikka							// [1F1EC 1F1F7] GR
+🇬🇸	Etelä-Georgia ja Eteläiset Sandwichinsaaret		// [1F1EC 1F1F8] GS
+🇬🇹	Guatemala						// [1F1EC 1F1F9] GT
+🇬🇺	Guam							// [1F1EC 1F1FA] GU
+🇬🇼	Guinea-Bissau						// [1F1EC 1F1FC] GW
+🇬🇾	Guyana							// [1F1EC 1F1FE] GY
+🇭🇰	Hongkong Kiinan erityishallintoalue			// [1F1ED 1F1F0] HK
+🇭🇲	Heard ja McDonaldinsaaret				// [1F1ED 1F1F2] HM
+🇭🇳	Honduras						// [1F1ED 1F1F3] HN
+🇭🇷	Kroatia							// [1F1ED 1F1F7] HR
+🇭🇹	Haiti							// [1F1ED 1F1F9] HT
+🇭🇺	Unkari							// [1F1ED 1F1FA] HU
+🇮🇨	Kanariansaaret						// [1F1EE 1F1E8] IC
+🇮🇩	Indonesia						// [1F1EE 1F1E9] ID
+🇮🇪	Irlanti							// [1F1EE 1F1EA] IE
+🇮🇱	Israel							// [1F1EE 1F1F1] IL
+🇮🇲	Mansaari						// [1F1EE 1F1F2] IM
+🇮🇳	Intia							// [1F1EE 1F1F3] IN
+🇮🇴	Brittiläinen Intian valtameren alue			// [1F1EE 1F1F4] IO
+🇮🇶	Irak							// [1F1EE 1F1F6] IQ
+🇮🇷	Iran							// [1F1EE 1F1F7] IR
+🇮🇸	Islanti							// [1F1EE 1F1F8] IS
+🇮🇹	Italia							// [1F1EE 1F1F9] IT
+🇯🇪	Jersey							// [1F1EF 1F1EA] JE
+🇯🇲	Jamaika							// [1F1EF 1F1F2] JM
+🇯🇴	Jordania						// [1F1EF 1F1F4] JO
+🇯🇵	Japani							// [1F1EF 1F1F5] JP
+🇰🇪	Kenia							// [1F1F0 1F1EA] KE
+🇰🇬	Kirgisia						// [1F1F0 1F1EC] KG
+🇰🇭	Kambodža						// [1F1F0 1F1ED] KH
+🇰🇮	Kiribati						// [1F1F0 1F1EE] KI
+🇰🇲	Komorit							// [1F1F0 1F1F2] KM
+🇰🇳	Saint Kitts ja Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	Pohjois-Korea						// [1F1F0 1F1F5] KP
+🇰🇷	Etelä-Korea						// [1F1F0 1F1F7] KR
+🇰🇼	Kuwait							// [1F1F0 1F1FC] KW
+🇰🇾	Caymansaaret						// [1F1F0 1F1FE] KY
+🇰🇿	Kazakstan						// [1F1F0 1F1FF] KZ
+🇱🇦	Laos							// [1F1F1 1F1E6] LA
+🇱🇧	Libanon							// [1F1F1 1F1E7] LB
+🇱🇨	Saint Lucia						// [1F1F1 1F1E8] LC
+🇱🇮	Liechtenstein						// [1F1F1 1F1EE] LI
+🇱🇰	Sri Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	Liberia							// [1F1F1 1F1F7] LR
+🇱🇸	Lesotho							// [1F1F1 1F1F8] LS
+🇱🇹	Liettua							// [1F1F1 1F1F9] LT
+🇱🇺	Luxemburg						// [1F1F1 1F1FA] LU
+🇱🇻	Latvia							// [1F1F1 1F1FB] LV
+🇱🇾	Libya							// [1F1F1 1F1FE] LY
+🇲🇦	Marokko							// [1F1F2 1F1E6] MA
+🇲🇨	Monaco							// [1F1F2 1F1E8] MC
+🇲🇩	Moldova							// [1F1F2 1F1E9] MD
+🇲🇪	Montenegro						// [1F1F2 1F1EA] ME
+🇲🇫	Saint-Martin						// [1F1F2 1F1EB] MF
+🇲🇬	Madagaskar						// [1F1F2 1F1EC] MG
+🇲🇭	Marshallinsaaret					// [1F1F2 1F1ED] MH
+🇲🇰	Pohjois-Makedonia					// [1F1F2 1F1F0] MK
+🇲🇱	Mali							// [1F1F2 1F1F1] ML
+🇲🇲	Myanmar Burma						// [1F1F2 1F1F2] MM
+🇲🇳	Mongolia						// [1F1F2 1F1F3] MN
+🇲🇴	Macao Kiinan erityishallintoalue			// [1F1F2 1F1F4] MO
+🇲🇵	Pohjois-Mariaanit					// [1F1F2 1F1F5] MP
+🇲🇶	Martinique						// [1F1F2 1F1F6] MQ
+🇲🇷	Mauritania						// [1F1F2 1F1F7] MR
+🇲🇸	Montserrat						// [1F1F2 1F1F8] MS
+🇲🇹	Malta							// [1F1F2 1F1F9] MT
+🇲🇺	Mauritius						// [1F1F2 1F1FA] MU
+🇲🇻	Malediivit						// [1F1F2 1F1FB] MV
+🇲🇼	Malawi							// [1F1F2 1F1FC] MW
+🇲🇽	Meksiko							// [1F1F2 1F1FD] MX
+🇲🇾	Malesia							// [1F1F2 1F1FE] MY
+🇲🇿	Mosambik						// [1F1F2 1F1FF] MZ
+🇳🇦	Namibia							// [1F1F3 1F1E6] NA
+🇳🇨	Uusi-Kaledonia						// [1F1F3 1F1E8] NC
+🇳🇪	Niger							// [1F1F3 1F1EA] NE
+🇳🇫	Norfolkinsaari						// [1F1F3 1F1EB] NF
+🇳🇬	Nigeria							// [1F1F3 1F1EC] NG
+🇳🇮	Nicaragua						// [1F1F3 1F1EE] NI
+🇳🇱	Alankomaat						// [1F1F3 1F1F1] NL
+🇳🇴	Norja							// [1F1F3 1F1F4] NO
+🇳🇵	Nepal							// [1F1F3 1F1F5] NP
+🇳🇷	Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	Niue							// [1F1F3 1F1FA] NU
+🇳🇿	Uusi-Seelanti						// [1F1F3 1F1FF] NZ
+🇴🇲	Oman							// [1F1F4 1F1F2] OM
+🇵🇦	Panama							// [1F1F5 1F1E6] PA
+🇵🇪	Peru							// [1F1F5 1F1EA] PE
+🇵🇫	Ranskan Polynesia					// [1F1F5 1F1EB] PF
+🇵🇬	Papua-Uusi-Guinea					// [1F1F5 1F1EC] PG
+🇵🇭	Filippiinit						// [1F1F5 1F1ED] PH
+🇵🇰	Pakistan						// [1F1F5 1F1F0] PK
+🇵🇱	Puola							// [1F1F5 1F1F1] PL
+🇵🇲	Saint-Pierre ja Miquelon				// [1F1F5 1F1F2] PM
+🇵🇳	Pitcairn						// [1F1F5 1F1F3] PN
+🇵🇷	Puerto Rico						// [1F1F5 1F1F7] PR
+🇵🇸	Palestiinalaisalue					// [1F1F5 1F1F8] PS
+🇵🇹	Portugali						// [1F1F5 1F1F9] PT
+🇵🇼	Palau							// [1F1F5 1F1FC] PW
+🇵🇾	Paraguay						// [1F1F5 1F1FE] PY
+🇶🇦	Qatar							// [1F1F6 1F1E6] QA
+🇷🇪	Réunion							// [1F1F7 1F1EA] RE
+🇷🇴	Romania							// [1F1F7 1F1F4] RO
+🇷🇸	Serbia							// [1F1F7 1F1F8] RS
+🇷🇺	Venäjä							// [1F1F7 1F1FA] RU
+🇷🇼	Ruanda							// [1F1F7 1F1FC] RW
+🇸🇦	Saudi-Arabia						// [1F1F8 1F1E6] SA
+🇸🇧	Salomonsaaret						// [1F1F8 1F1E7] SB
+🇸🇨	Seychellit						// [1F1F8 1F1E8] SC
+🇸🇩	Sudan							// [1F1F8 1F1E9] SD
+🇸🇪	Ruotsi							// [1F1F8 1F1EA] SE
+🇸🇬	Singapore						// [1F1F8 1F1EC] SG
+🇸🇭	Saint Helena Ascension ja Tristan da Cunha		// [1F1F8 1F1ED] SH
+🇸🇮	Slovenia						// [1F1F8 1F1EE] SI
+🇸🇯	Huippuvuoret ja Jan Mayen				// [1F1F8 1F1EF] SJ
+🇸🇰	Slovakia						// [1F1F8 1F1F0] SK
+🇸🇱	Sierra Leone						// [1F1F8 1F1F1] SL
+🇸🇲	San Marino						// [1F1F8 1F1F2] SM
+🇸🇳	Senegal							// [1F1F8 1F1F3] SN
+🇸🇴	Somalia							// [1F1F8 1F1F4] SO
+🇸🇷	Suriname						// [1F1F8 1F1F7] SR
+🇸🇸	Etelä-Sudan						// [1F1F8 1F1F8] SS
+🇸🇹	São Tomé ja Príncipe					// [1F1F8 1F1F9] ST
+🇸🇻	El Salvador						// [1F1F8 1F1FB] SV
+🇸🇽	Sint Maarten						// [1F1F8 1F1FD] SX
+🇸🇾	Syyria							// [1F1F8 1F1FE] SY
+🇸🇿	Eswatini						// [1F1F8 1F1FF] SZ
+🇹🇦	Tristan da Cunha					// [1F1F9 1F1E6] TA
+🇹🇨	Turks- ja Caicossaaret					// [1F1F9 1F1E8] TC
+🇹🇩	Tšad							// [1F1F9 1F1E9] TD
+🇹🇫	Ranskan eteläiset ja antarktiset alueet			// [1F1F9 1F1EB] TF
+🇹🇬	Togo							// [1F1F9 1F1EC] TG
+🇹🇭	Thaimaa							// [1F1F9 1F1ED] TH
+🇹🇯	Tadžikistan						// [1F1F9 1F1EF] TJ
+🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
+🇹🇱	Itä-Timor						// [1F1F9 1F1F1] TL
+🇹🇲	Turkmenistan						// [1F1F9 1F1F2] TM
+🇹🇳	Tunisia							// [1F1F9 1F1F3] TN
+🇹🇴	Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	Turkki							// [1F1F9 1F1F7] TR
+🇹🇹	Trinidad ja Tobago					// [1F1F9 1F1F9] TT
+🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	Taiwan							// [1F1F9 1F1FC] TW
+🇹🇿	Tansania						// [1F1F9 1F1FF] TZ
+🇺🇦	Ukraina							// [1F1FA 1F1E6] UA
+🇺🇬	Uganda							// [1F1FA 1F1EC] UG
+🇺🇲	Yhdysvaltain erillissaaret				// [1F1FA 1F1F2] UM
+🇺🇳	Yhdistyneet kansakunnat					// [1F1FA 1F1F3] UN
+🇺🇸	Yhdysvallat						// [1F1FA 1F1F8] US
+🇺🇾	Uruguay							// [1F1FA 1F1FE] UY
+🇺🇿	Uzbekistan						// [1F1FA 1F1FF] UZ
+🇻🇦	Vatikaani						// [1F1FB 1F1E6] VA
+🇻🇨	Saint Vincent ja Grenadiinit				// [1F1FB 1F1E8] VC
+🇻🇪	Venezuela						// [1F1FB 1F1EA] VE
+🇻🇬	Brittiläiset Neitsytsaaret				// [1F1FB 1F1EC] VG
+🇻🇮	Yhdysvaltain Neitsytsaaret				// [1F1FB 1F1EE] VI
+🇻🇳	Vietnam							// [1F1FB 1F1F3] VN
+🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
+🇼🇫	Wallis ja Futuna					// [1F1FC 1F1EB] WF
+🇼🇸	Samoa							// [1F1FC 1F1F8] WS
+🇽🇰	Kosovo							// [1F1FD 1F1F0] XK
+🇾🇪	Jemen							// [1F1FE 1F1EA] YE
+🇾🇹	Mayotte							// [1F1FE 1F1F9] YT
+🇿🇦	Etelä-Afrikka						// [1F1FF 1F1E6] ZA
+🇿🇲	Sambia							// [1F1FF 1F1F2] ZM
+🇿🇼	Zimbabwe						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1957,18 +1959,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#️⃣	näppäin: #							// [0023 FE0F 20E3]
-*️⃣	näppäin: *							// [002A FE0F 20E3]
-0️⃣	näppäin: 0							// [0030 FE0F 20E3]
-1️⃣	näppäin: 1							// [0031 FE0F 20E3]
-2️⃣	näppäin: 2							// [0032 FE0F 20E3]
-3️⃣	näppäin: 3							// [0033 FE0F 20E3]
-4️⃣	näppäin: 4							// [0034 FE0F 20E3]
-5️⃣	näppäin: 5							// [0035 FE0F 20E3]
-6️⃣	näppäin: 6							// [0036 FE0F 20E3]
-7️⃣	näppäin: 7							// [0037 FE0F 20E3]
-8️⃣	näppäin: 8							// [0038 FE0F 20E3]
-9️⃣	näppäin: 9							// [0039 FE0F 20E3]
+#⃣	näppäin							// [0023 20E3]
+*⃣	näppäin							// [002A 20E3]
+0⃣	näppäin 0						// [0030 20E3]
+1⃣	näppäin 1						// [0031 20E3]
+2⃣	näppäin 2						// [0032 20E3]
+3⃣	näppäin 3						// [0033 20E3]
+4⃣	näppäin 4						// [0034 20E3]
+5⃣	näppäin 5						// [0035 20E3]
+6⃣	näppäin 6						// [0036 20E3]
+7⃣	näppäin 7						// [0037 20E3]
+8⃣	näppäin 8						// [0038 20E3]
+9⃣	näppäin 9						// [0039 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	balettitossut						// [1FA70]
@@ -1994,6 +1996,11 @@ $textmode
 🪇	marakassit						// [1FA87]
 🪈	huilu							// [1FA88]
 🪉	harppu							// [1FA89]
+🪊	pasuuna							// [1FA8A]
+🪋	meteori							// [1FA8B]
+🪌	pyyhekumi						// [1FA8C]
+🪍	haavi							// [1FA8D]
+🪎	aarrearkku						// [1FA8E]
 🪏	lapio							// [1FA8F]
 🪐	rengasplaneetta						// [1FA90]
 🪑	tuoli							// [1FA91]
@@ -2050,6 +2057,9 @@ $textmode
 🫄	raskaana oleva henkilö					// [1FAC4]
 🫅	kruunua kantava henkilö					// [1FAC5]
 🫆	sormenjälki						// [1FAC6]
+🫈	karvainen otus						// [1FAC8]
+🫌	monarkkiperhonen					// [1FACC]
+🫍	miekkavalas						// [1FACD]
 🫎	hirvi							// [1FACE]
 🫏	aasi							// [1FACF]
 🫐	mustikat						// [1FAD0]
@@ -2065,6 +2075,7 @@ $textmode
 🫚	inkivääri						// [1FADA]
 🫛	herneenpalko						// [1FADB]
 🫜	juures							// [1FADC]
+🫝	suolakurkku						// [1FADD]
 🫟	roiske							// [1FADF]
 🫠	sulava naama						// [1FAE0]
 🫡	kunnioittava tervehdys					// [1FAE1]
@@ -2076,6 +2087,9 @@ $textmode
 🫧	kuplat							// [1FAE7]
 🫨	tärisevä						// [1FAE8]
 🫩	silmäpussit						// [1FAE9]
+🫪	vääristyneet kasvot					// [1FAEA]
+🫫	halkeileva naama					// [1FAEB]
+🫯	tappelupilvi						// [1FAEF]
 🫰	etusormi ja peukalo ristissä				// [1FAF0]
 🫱	oikealle ojentuva käsi					// [1FAF1]
 🫲	vasemmalle ojentuva käsi				// [1FAF2]
@@ -2085,6 +2099,8 @@ $textmode
 🫶	sydänkuvio käsillä					// [1FAF6]
 🫷	vasemmalle työntävä käsi				// [1FAF7]
 🫸	oikealle työntävä käsi					// [1FAF8]
+🫹	peukalo vasemmalle					// [1FAF9]
+🫺	peukalo oikealle					// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2113,38 +2129,38 @@ $textmode
 👨‍🦼‍➡	mies moottoroidussa pyörätuolissa kohti oikeaa		// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	mies käsikäyttöisessä pyörätuolissa			// [1F468 200D 1F9BD]
 👨‍🦽‍➡	mies käsikäyttöisessä pyörätuolissa kohti oikeaa	// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	pusu: nainen, mies			// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	pusu: mies, mies			// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	pusu: nainen, nainen			// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	pariskunta ja sydän: nainen, mies		// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	pariskunta ja sydän: mies, mies			// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	pariskunta ja sydän: nainen, nainen		// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	perhe: mies, nainen, poika			// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	perhe: mies, nainen, tyttö			// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	perhe: mies, nainen, tyttö, poika	// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	perhe: mies, nainen, poika, poika	// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	perhe: mies, nainen, tyttö, tyttö	// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	perhe: mies, mies, poika			// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	perhe: mies, mies, tyttö			// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	perhe: mies, mies, tyttö, poika		// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	perhe: mies, mies, poika, poika		// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	perhe: mies, mies, tyttö, tyttö		// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	pusu nainen mies					// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	pusu mies mies						// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	pusu nainen nainen					// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	pariskunta ja sydän nainen mies				// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	pariskunta ja sydän mies mies				// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	pariskunta ja sydän nainen nainen			// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	perhe mies nainen poika					// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	perhe mies nainen tyttö					// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	perhe mies nainen tyttö poika				// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	perhe mies nainen poika poika				// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	perhe mies nainen tyttö tyttö				// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	perhe mies mies poika					// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	perhe mies mies tyttö					// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	perhe mies mies tyttö poika				// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	perhe mies mies poika poika				// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	perhe mies mies tyttö tyttö				// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	vauvaa syöttävä nainen					// [1F469 200D 1F37C]
-👩‍👩‍👦	perhe: nainen, nainen, poika			// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	perhe: nainen, nainen, tyttö			// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	perhe: nainen, nainen, tyttö, poika	// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	perhe: nainen, nainen, poika, poika	// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	perhe: nainen, nainen, tyttö, tyttö	// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	perhe: mies, poika					// [1F468 200D 1F466]
-👨‍👦‍👦	perhe: mies, poika, poika			// [1F468 200D 1F466 200D 1F466]
-👨‍👧	perhe: mies, tyttö					// [1F468 200D 1F467]
-👨‍👧‍👦	perhe: mies, tyttö, poika			// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	perhe: mies, tyttö, tyttö			// [1F468 200D 1F467 200D 1F467]
-👩‍👦	perhe: nainen, poika					// [1F469 200D 1F466]
-👩‍👦‍👦	perhe: nainen, poika, poika			// [1F469 200D 1F466 200D 1F466]
-👩‍👧	perhe: nainen, tyttö					// [1F469 200D 1F467]
-👩‍👧‍👦	perhe: nainen, tyttö, poika			// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	perhe: nainen, tyttö, tyttö			// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	perhe nainen nainen poika				// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	perhe nainen nainen tyttö				// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	perhe nainen nainen tyttö poika				// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	perhe nainen nainen poika poika				// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	perhe nainen nainen tyttö tyttö				// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	perhe mies poika					// [1F468 200D 1F466]
+👨‍👦‍👦	perhe mies poika poika					// [1F468 200D 1F466 200D 1F466]
+👨‍👧	perhe mies tyttö					// [1F468 200D 1F467]
+👨‍👧‍👦	perhe mies tyttö poika					// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	perhe mies tyttö tyttö					// [1F468 200D 1F467 200D 1F467]
+👩‍👦	perhe nainen poika					// [1F469 200D 1F466]
+👩‍👦‍👦	perhe nainen poika poika				// [1F469 200D 1F466 200D 1F466]
+👩‍👧	perhe nainen tyttö					// [1F469 200D 1F467]
+👩‍👧‍👦	perhe nainen tyttö poika				// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	perhe nainen tyttö tyttö				// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 
@@ -2162,8 +2178,8 @@ $textmode
 👩‍🎓	naisopiskelija						// [1F469 200D 1F393]
 👨‍🎤	mieslaulaja						// [1F468 200D 1F3A4]
 👩‍🎤	naislaulaja						// [1F469 200D 1F3A4]
-👨‍🎨	miesartisti						// [1F468 200D 1F3A8]
-👩‍🎨	naisartisti						// [1F469 200D 1F3A8]
+👨‍🎨	miestaiteilija						// [1F468 200D 1F3A8]
+👩‍🎨	naistaiteilija						// [1F469 200D 1F3A8]
 👨‍🏫	miesopettaja						// [1F468 200D 1F3EB]
 👩‍🏫	naisopettaja						// [1F469 200D 1F3EB]
 👨‍🏭	miestehdastyöntekijä					// [1F468 200D 1F3ED]
@@ -2197,8 +2213,8 @@ $textmode
 👮‍♂	miespoliisi						// [1F46E 200D 2642]
 👰‍♀	huntupäinen nainen					// [1F470 200D 2640]
 👰‍♂	huntupäinen mies					// [1F470 200D 2642]
-👱‍♀	vaaleahiuksinen nainen					// [1F471 200D 2640]
-👱‍♂	vaaleahiuksinen mies					// [1F471 200D 2642]
+👱‍♀	vaaleatukkainen nainen					// [1F471 200D 2640]
+👱‍♂	vaaleatukkainen mies					// [1F471 200D 2642]
 👳‍♀	turbaanipäinen nainen					// [1F473 200D 2640]
 👳‍♂	turbaanipäinen mies					// [1F473 200D 2642]
 👷‍♀	rakennusnainen						// [1F477 200D 2640]
@@ -2219,8 +2235,8 @@ $textmode
 🤵‍♂	mies smokissa						// [1F935 200D 2642]
 🦸‍♀	naissupersankari					// [1F9B8 200D 2640]
 🦸‍♂	miessupersankari					// [1F9B8 200D 2642]
-🦹‍♀	naiskonna						// [1F9B9 200D 2640]
-🦹‍♂	mieskonna						// [1F9B9 200D 2642]
+🦹‍♀	naissuperpahis						// [1F9B9 200D 2640]
+🦹‍♂	miessuperpahis						// [1F9B9 200D 2642]
 🧍‍♀	seisova nainen						// [1F9CD 200D 2640]
 🧍‍♂	seisova mies						// [1F9CD 200D 2642]
 🧎‍♀	polvistuva nainen					// [1F9CE 200D 2640]
@@ -2344,8 +2360,8 @@ $textmode
 🙎‍♂	mököttävä mies						// [1F64E 200D 2642]
 🤦‍♀	kasvonsa kädellä peittävä nainen			// [1F926 200D 2640]
 🤦‍♂	kasvonsa kädellä peittävä mies				// [1F926 200D 2642]
-🤷‍♀	kämmeniään levittelevä nainen				// [1F937 200D 2640]
-🤷‍♂	kämmeniään levittelevä mies				// [1F937 200D 2642]
+🤷‍♀	olkapäitään kohauttava nainen				// [1F937 200D 2640]
+🤷‍♂	olkapäitään kohauttava mies				// [1F937 200D 2642]
 
 // Emoji ZWJ Sequence: Other
 

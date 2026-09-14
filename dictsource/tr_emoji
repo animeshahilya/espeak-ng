@@ -311,7 +311,7 @@ $textmode
 
 // 2460..24FF : Enclosed Alphanumerics
 
-Ⓜ	daire içinde m harfi						// [24C2] text|emoji
+Ⓜ	daire içinde M harfi					// [24C2] text|emoji
 
 // 25A0..25FF : Geometric Shapes
 
@@ -399,7 +399,7 @@ $textmode
 ☃	kardan adam							// [2603] text|emoji
 ☄	kuyruklu yıldız							// [2604] text|emoji
 ☎	telefon								// [260E] text|emoji
-☑	kutulu onay işareti						// [2611] text|emoji
+☑	seçilmiş onay kutusu					// [2611] text|emoji
 ☔	yağmur damlalı şemsiye						// [2614]
 ☕	sıcak içecek							// [2615]
 ☘	yonca								// [2618] text|emoji
@@ -483,7 +483,7 @@ $textmode
 // 2700..27BF : Dingbats
 
 ✂	makas								// [2702] text|emoji
-✅	beyaz kalın onay işareti					// [2705]
+✅	onay işareti düğmesi					// [2705]
 ✈	uçak								// [2708] text|emoji
 ✉	zarf								// [2709] text|emoji
 ✊	yumruk kaldırma							// [270A]
@@ -492,8 +492,8 @@ $textmode
 ✍	yazı yazan el							// [270D] text|emoji
 ✏	kurşun kalem							// [270F] text|emoji
 ✒	siyah uç							// [2712] text|emoji
-✔	kalın onay işareti						// [2714] text|emoji
-✖	kalın çarpı işareti						// [2716] text|emoji
+✔	onay işareti						// [2714] text|emoji
+✖	çarpım işareti						// [2716] text|emoji
 ✝	Latin haçı							// [271D] text|emoji
 ✡	Davut yıldızı							// [2721] text|emoji
 ✨	parıltılar							// [2728]
@@ -503,15 +503,15 @@ $textmode
 ❇	parlama								// [2747] text|emoji
 ❌	çarpı işareti							// [274C]
 ❎	çarpı işareti düğmesi						// [274E]
-❓	soru işareti							// [2753]
+❓	kırmızı soru işareti					// [2753]
 ❔	beyaz soru işareti						// [2754]
 ❕	beyaz ünlem işareti						// [2755]
-❗	ünlem işareti							// [2757]
+❗	kırmızı ünlem işareti					// [2757]
 ❣	kalp şeklinde ünlem işareti					// [2763] text|emoji
 ❤	kırmızı kalp							// [2764] text|emoji
-➕	kalın artı işareti						// [2795]
-➖	kalın eksi işareti						// [2796]
-➗	kalın bölü işareti						// [2797]
+➕	artı							// [2795]
+➖	eksi							// [2796]
+➗	bölü işareti						// [2797]
 ➡	sağ ok								// [27A1] text|emoji
 ➰	kıvrık döngü							// [27B0]
 ➿	çift kıvrık döngü						// [27BF]
@@ -537,7 +537,7 @@ $textmode
 ⬛	büyük siyah kare						// [2B1B]
 ⬜	büyük beyaz kare						// [2B1C]
 ⭐	yıldız								// [2B50]
-⭕	kalın çember							// [2B55]
+⭕	kalın kırmızı çember					// [2B55]
 
 // 3000..303F : CJK Symbols and Punctuation
 
@@ -552,11 +552,11 @@ $textmode
 
 // 1F100..1F1FF : Enclosed Alphanumeric Supplement
 
-🅰	A düğmesi (kan grubu)						// [1F170] text|emoji
-🅱	B grubu (kan grubu)						// [1F171] text|emoji
-🅾	0 düğmesi (kan grubu)						// [1F17E] text|emoji
-🅿	p düğmesi							// [1F17F] text|emoji
-🆎	AB düğmesi (kan grubu)						// [1F18E]
+🅰	A düğmesi kan grubu					// [1F170] text|emoji
+🅱	B grubu kan grubu					// [1F171] text|emoji
+🅾	0 düğmesi kan grubu					// [1F17E] text|emoji
+🅿	P düğmesi						// [1F17F] text|emoji
+🆎	AB düğmesi kan grubu					// [1F18E]
 🆑	CL düğmesi							// [1F191]
 🆒	COOL düğmesi							// [1F192]
 🆓	FREE düğmesi							// [1F193]
@@ -565,7 +565,7 @@ $textmode
 🆖	NG düğmesi							// [1F196]
 🆗	OK düğmesi							// [1F197]
 🆘	SOS düğmesi							// [1F198]
-🆙	UP! düğmesi							// [1F199]
+🆙	UP düğmesi						// [1F199]
 🆚	VS düğmesi							// [1F19A]
 🇨🇶	Sark							// [1F1E8 1F1F6]
 
@@ -870,7 +870,7 @@ $textmode
 🐘	fil								// [1F418]
 🐙	ahtapot								// [1F419]
 🐚	deniz kabuğu							// [1F41A]
-🐛	böcek								// [1F41B]
+🐛	tırtıl							// [1F41B]
 🐜	karınca								// [1F41C]
 🐝	bal arısı							// [1F41D]
 🐞	uğur böceği							// [1F41E]
@@ -899,11 +899,11 @@ $textmode
 🐵	maymun yüzü							// [1F435]
 🐶	köpek yüzü							// [1F436]
 🐷	domuz yüzü							// [1F437]
-🐸	kurbağa yüzü							// [1F438]
-🐹	hamster yüzü							// [1F439]
-🐺	kurt yüzü							// [1F43A]
-🐻	ayı yüzü							// [1F43B]
-🐼	panda yüzü							// [1F43C]
+🐸	kurbağa							// [1F438]
+🐹	hamster							// [1F439]
+🐺	kurt							// [1F43A]
+🐻	ayı							// [1F43B]
+🐼	panda							// [1F43C]
 🐽	domuz burnu							// [1F43D]
 🐾	pençe izi							// [1F43E]
 🐿	sincap								// [1F43F] text|emoji
@@ -951,8 +951,8 @@ $textmode
 👩	kadın								// [1F469]
 👪	aile								// [1F46A]
 👫	el ele tutuşan erkek ve kadın					// [1F46B]
-👬	el ele tutuşan iki erkek					// [1F46C]
-👭	el ele tutuşan iki kadın					// [1F46D]
+👬	el ele tutuşan erkekler					// [1F46C]
+👭	el ele tutuşan kadınlar					// [1F46D]
 👮	polis memuru							// [1F46E]
 👯	tavşan kulaklı kişiler						// [1F46F]
 👰	duvaklı gelin							// [1F470]
@@ -989,7 +989,7 @@ $textmode
 💏	öpücük								// [1F48F]
 💐	buket								// [1F490]
 💑	kalpli çift							// [1F491]
-💒	kilisede evlenme						// [1F492]
+💒	düğün							// [1F492]
 💓	çarpan kalp							// [1F493]
 💔	kırık kalp							// [1F494]
 💕	iki kalp							// [1F495]
@@ -1129,7 +1129,7 @@ $textmode
 🔜	yakında işareti							// [1F51C]
 🔝	yukarı oku							// [1F51D]
 🔞	18 yaş altı yasak						// [1F51E]
-🔟	tuş: 10								// [1F51F]
+🔟	tuş 10							// [1F51F]
 🔠	büyük harfler							// [1F520]
 🔡	küçük harfler							// [1F521]
 🔢	sayılar								// [1F522]
@@ -1141,7 +1141,7 @@ $textmode
 🔨	çekiç								// [1F528]
 🔩	somun ve vida							// [1F529]
 🔪	mutfak bıçağı							// [1F52A]
-🔫	tabanca								// [1F52B]
+🔫	su tabancası						// [1F52B]
 🔬	mikroskop							// [1F52C]
 🔭	teleskop							// [1F52D]
 🔮	kristal küre							// [1F52E]
@@ -1293,15 +1293,15 @@ $textmode
 😵	sersemlemiş yüz							// [1F635]
 😶	ağzı olmayan yüz						// [1F636]
 😷	maskeli yüz							// [1F637]
-😸	sırıtan kedi yüzü						// [1F638]
-😹	sevinç gözyaşları döken kedi yüzü				// [1F639]
-😺	gülümseyen kedi yüzü						// [1F63A]
-😻	kalp gözlü gülümseyen kedi yüzü					// [1F63B]
+😸	gülen gözlerle sırıtan kedi				// [1F638]
+😹	sevinç gözyaşları döken kedi				// [1F639]
+😺	sırıtan kedi						// [1F63A]
+😻	kalp gözlü gülümseyen kedi				// [1F63B]
 😼	iğneleyici kedi yüzü						// [1F63C]
-😽	kapalı gözle öpen kedi yüzü					// [1F63D]
-😾	somurtan kedi yüzü						// [1F63E]
-😿	ağlayan kedi yüzü						// [1F63F]
-🙀	şaşkın kedi yüzü						// [1F640]
+😽	öpen kedi						// [1F63D]
+😾	somurtan kedi						// [1F63E]
+😿	ağlayan kedi						// [1F63F]
+🙀	korkuyla bağıran kedi					// [1F640]
 🙁	biraz asık surat						// [1F641]
 🙂	hafifçe gülümseyen yüz						// [1F642]
 🙃	ters yüz							// [1F643]
@@ -1401,6 +1401,8 @@ $textmode
 🛕	Hindu tapınağı						// [1F6D5]
 🛖	kulübe							// [1F6D6]
 🛗	asansör							// [1F6D7]
+🛘	heyelan							// [1F6D8]
+🛙	deniz feneri						// [1F6D9]
 🛜	kablosuz						// [1F6DC]
 🛝	kaydırak						// [1F6DD]
 🛞	tekerlek						// [1F6DE]
@@ -1453,7 +1455,7 @@ $textmode
 🤓	ukala yüz							// [1F913]
 🤔	düşünen yüz							// [1F914]
 🤕	kafası sarılı yüz						// [1F915]
-🤖	robot yüzü							// [1F916]
+🤖	robot							// [1F916]
 🤗	kucaklayarak gülümseme						// [1F917]
 🤘	boynuz işareti							// [1F918]
 🤙	beni ara işareti						// [1F919]
@@ -1484,7 +1486,7 @@ $textmode
 🤲	iki avuç açık							// [1F932]
 🤳	selfie								// [1F933]
 🤴	prens								// [1F934]
-🤵	smokinli adam							// [1F935]
+🤵	smokinli kişi						// [1F935]
 🤶	Noel Anne							// [1F936]
 🤷	omuz silkme							// [1F937]
 🤸	perende atan kişi						// [1F938]
@@ -1558,16 +1560,16 @@ $textmode
 🥾	yürüyüş botu							// [1F97E]
 🥿	düz ayakkabı							// [1F97F]
 🦀	yengeç								// [1F980]
-🦁	aslan yüzü							// [1F981]
+🦁	aslan							// [1F981]
 🦂	akrep								// [1F982]
 🦃	hindi								// [1F983]
-🦄	tek boynuzlu at yüzü						// [1F984]
+🦄	tek boynuzlu at						// [1F984]
 🦅	kartal								// [1F985]
 🦆	ördek								// [1F986]
 🦇	yarasa								// [1F987]
 🦈	köpek balığı							// [1F988]
 🦉	baykuş								// [1F989]
-🦊	tilki yüzü							// [1F98A]
+🦊	tilki							// [1F98A]
 🦋	kelebek								// [1F98B]
 🦌	geyik								// [1F98C]
 🦍	goril								// [1F98D]
@@ -1662,7 +1664,7 @@ $textmode
 🧦	çorap								// [1F9E6]
 🧧	kırmızı zarf							// [1F9E7]
 🧨	maytap								// [1F9E8]
-🧩	yapboz								// [1F9E9]
+🧩	yapboz parçası						// [1F9E9]
 🧪	deney tüpü							// [1F9EA]
 🧫	petri kabı							// [1F9EB]
 🧬	dna								// [1F9EC]
@@ -1688,264 +1690,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	bayrak: Ascension Adası						// [1F1E6 1F1E8] AC
-🇦🇩	bayrak: Andorra							// [1F1E6 1F1E9] AD
-🇦🇪	bayrak: Birleşik Arap Emirlikleri				// [1F1E6 1F1EA] AE
-🇦🇫	bayrak: Afganistan						// [1F1E6 1F1EB] AF
-🇦🇬	bayrak: Antigua ve Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	bayrak: Anguilla						// [1F1E6 1F1EE] AI
-🇦🇱	bayrak: Arnavutluk						// [1F1E6 1F1F1] AL
-🇦🇲	bayrak: Ermenistan						// [1F1E6 1F1F2] AM
-🇦🇴	bayrak: Angola							// [1F1E6 1F1F4] AO
-🇦🇶	bayrak: Antarktika						// [1F1E6 1F1F6] AQ
-🇦🇷	bayrak: Arjantin						// [1F1E6 1F1F7] AR
-🇦🇸	bayrak: Amerikan Samoası					// [1F1E6 1F1F8] AS
-🇦🇹	bayrak: Avusturya						// [1F1E6 1F1F9] AT
-🇦🇺	bayrak: Avustralya						// [1F1E6 1F1FA] AU
-🇦🇼	bayrak: Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	bayrak: Åland Adaları						// [1F1E6 1F1FD] AX
-🇦🇿	bayrak: Azerbaycan						// [1F1E6 1F1FF] AZ
-🇧🇦	bayrak: Bosna-Hersek						// [1F1E7 1F1E6] BA
-🇧🇧	bayrak: Barbados						// [1F1E7 1F1E7] BB
-🇧🇩	bayrak: Bangladeş						// [1F1E7 1F1E9] BD
-🇧🇪	bayrak: Belçika							// [1F1E7 1F1EA] BE
-🇧🇫	bayrak: Burkina Faso						// [1F1E7 1F1EB] BF
-🇧🇬	bayrak: Bulgaristan						// [1F1E7 1F1EC] BG
-🇧🇭	bayrak: Bahreyn							// [1F1E7 1F1ED] BH
-🇧🇮	bayrak: Burundi							// [1F1E7 1F1EE] BI
-🇧🇯	bayrak: Benin							// [1F1E7 1F1EF] BJ
-🇧🇱	bayrak: Saint Barthelemy					// [1F1E7 1F1F1] BL
-🇧🇲	bayrak: Bermuda							// [1F1E7 1F1F2] BM
-🇧🇳	bayrak: Brunei							// [1F1E7 1F1F3] BN
-🇧🇴	bayrak: Bolivya							// [1F1E7 1F1F4] BO
-🇧🇶	bayrak: Karayip Hollandası					// [1F1E7 1F1F6] BQ
-🇧🇷	bayrak: Brezilya						// [1F1E7 1F1F7] BR
-🇧🇸	bayrak: Bahamalar						// [1F1E7 1F1F8] BS
-🇧🇹	bayrak: Butan							// [1F1E7 1F1F9] BT
-🇧🇻	bayrak: Bouvet Adası						// [1F1E7 1F1FB] BV
-🇧🇼	bayrak: Botsvana						// [1F1E7 1F1FC] BW
-🇧🇾	bayrak: Belarus							// [1F1E7 1F1FE] BY
-🇧🇿	bayrak: Belize							// [1F1E7 1F1FF] BZ
-🇨🇦	bayrak: Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	bayrak: Cocos (Keeling) Adaları					// [1F1E8 1F1E8] CC
-🇨🇩	bayrak: Kongo - Kinşasa						// [1F1E8 1F1E9] CD
-🇨🇫	bayrak: Orta Afrika Cumhuriyeti					// [1F1E8 1F1EB] CF
-🇨🇬	bayrak: Kongo - Brazavil					// [1F1E8 1F1EC] CG
-🇨🇭	bayrak: İsviçre							// [1F1E8 1F1ED] CH
-🇨🇮	bayrak: Fildişi Sahili						// [1F1E8 1F1EE] CI
-🇨🇰	bayrak: Cook Adaları						// [1F1E8 1F1F0] CK
-🇨🇱	bayrak: Şili							// [1F1E8 1F1F1] CL
-🇨🇲	bayrak: Kamerun							// [1F1E8 1F1F2] CM
-🇨🇳	bayrak: Çin							// [1F1E8 1F1F3] CN
-🇨🇴	bayrak: Kolombiya						// [1F1E8 1F1F4] CO
-🇨🇵	bayrak: Clipperton Adası					// [1F1E8 1F1F5] CP
-🇨🇷	bayrak: Kosta Rika						// [1F1E8 1F1F7] CR
-🇨🇺	bayrak: Küba							// [1F1E8 1F1FA] CU
-🇨🇻	bayrak: Cape Verde						// [1F1E8 1F1FB] CV
-🇨🇼	bayrak: Curaçao							// [1F1E8 1F1FC] CW
-🇨🇽	bayrak: Christmas Adası						// [1F1E8 1F1FD] CX
-🇨🇾	bayrak: Kıbrıs							// [1F1E8 1F1FE] CY
-🇨🇿	bayrak: Çekya							// [1F1E8 1F1FF] CZ
-🇩🇪	bayrak: Almanya							// [1F1E9 1F1EA] DE
-🇩🇬	bayrak: Diego Garcia						// [1F1E9 1F1EC] DG
-🇩🇯	bayrak: Cibuti							// [1F1E9 1F1EF] DJ
-🇩🇰	bayrak: Danimarka						// [1F1E9 1F1F0] DK
-🇩🇲	bayrak: Dominika						// [1F1E9 1F1F2] DM
-🇩🇴	bayrak: Dominik Cumhuriyeti					// [1F1E9 1F1F4] DO
-🇩🇿	bayrak: Cezayir							// [1F1E9 1F1FF] DZ
-🇪🇦	bayrak: Septe ve Melilla					// [1F1EA 1F1E6] EA
-🇪🇨	bayrak: Ekvador							// [1F1EA 1F1E8] EC
-🇪🇪	bayrak: Estonya							// [1F1EA 1F1EA] EE
-🇪🇬	bayrak: Mısır							// [1F1EA 1F1EC] EG
-🇪🇭	bayrak: Batı Sahra						// [1F1EA 1F1ED] EH
-🇪🇷	bayrak: Eritre							// [1F1EA 1F1F7] ER
-🇪🇸	bayrak: İspanya							// [1F1EA 1F1F8] ES
-🇪🇹	bayrak: Etiyopya						// [1F1EA 1F1F9] ET
-🇪🇺	bayrak: Avrupa Birliği						// [1F1EA 1F1FA] EU
-🇫🇮	bayrak: Finlandiya						// [1F1EB 1F1EE] FI
-🇫🇯	bayrak: Fiji							// [1F1EB 1F1EF] FJ
-🇫🇰	bayrak: Falkland Adaları					// [1F1EB 1F1F0] FI
-🇫🇲	bayrak: Mikronezya						// [1F1EB 1F1F2] FM
-🇫🇴	bayrak: Faroe Adaları						// [1F1EB 1F1F4] FO
-🇫🇷	bayrak: Fransa							// [1F1EB 1F1F7] FR
-🇬🇦	bayrak: Gabon							// [1F1EC 1F1E6] GA
-🇬🇧	bayrak: Birleşik Krallık					// [1F1EC 1F1E7] GB
-🇬🇩	bayrak: Grenada							// [1F1EC 1F1E9] GD
-🇬🇪	bayrak: Gürcistan						// [1F1EC 1F1EA] GE
-🇬🇫	bayrak: Fransız Guyanası					// [1F1EC 1F1EB] GF
-🇬🇬	bayrak: Guernsey						// [1F1EC 1F1EC] GG
-🇬🇭	bayrak: Gana							// [1F1EC 1F1ED] GH
-🇬🇮	bayrak: Cebelitarık						// [1F1EC 1F1EE] GI
-🇬🇱	bayrak: Grönland						// [1F1EC 1F1F1] GL
-🇬🇲	bayrak: Gambiya							// [1F1EC 1F1F2] GM
-🇬🇳	bayrak: Gine							// [1F1EC 1F1F3] GN
-🇬🇵	bayrak: Guadeloupe						// [1F1EC 1F1F5] GP
-🇬🇶	bayrak: Ekvator Ginesi						// [1F1EC 1F1F6] GQ
-🇬🇷	bayrak: Yunanistan						// [1F1EC 1F1F7] GR
-🇬🇸	bayrak: Güney Georgia ve Güney Sandwich Adaları			// [1F1EC 1F1F8] GS
-🇬🇹	bayrak: Guatemala						// [1F1EC 1F1F9] GT
-🇬🇺	bayrak: Guam							// [1F1EC 1F1FA] GU
-🇬🇼	bayrak: Gine-Bissau						// [1F1EC 1F1FC] GW
-🇬🇾	bayrak: Guyana							// [1F1EC 1F1FE] GY
-🇭🇰	bayrak: Çin Hong Kong ÖİB					// [1F1ED 1F1F0] HK
-🇭🇲	bayrak: Heard Adası ve McDonald Adaları				// [1F1ED 1F1F2] HM
-🇭🇳	bayrak: Honduras						// [1F1ED 1F1F3] HN
-🇭🇷	bayrak: Hırvatistan						// [1F1ED 1F1F7] HR
-🇭🇹	bayrak: Haiti							// [1F1ED 1F1F9] HT
-🇭🇺	bayrak: Macaristan						// [1F1ED 1F1FA] HU
-🇮🇨	bayrak: Kanarya Adaları						// [1F1EE 1F1E8] IC
-🇮🇩	bayrak: Endonezya						// [1F1EE 1F1E9] ID
-🇮🇪	bayrak: İrlanda							// [1F1EE 1F1EA] IE
-🇮🇱	bayrak: İsrail							// [1F1EE 1F1F1] IL
-🇮🇲	bayrak: Man Adası						// [1F1EE 1F1F2] IM
-🇮🇳	bayrak: Hindistan						// [1F1EE 1F1F3] IN
-🇮🇴	bayrak: Britanya Hint Okyanusu Toprakları			// [1F1EE 1F1F4] IO
-🇮🇶	bayrak: Irak							// [1F1EE 1F1F6] IQ
-🇮🇷	bayrak: İran							// [1F1EE 1F1F7] IR
-🇮🇸	bayrak: İzlanda							// [1F1EE 1F1F8] IS
-🇮🇹	bayrak: İtalya							// [1F1EE 1F1F9] IT
-🇯🇪	bayrak: Jersey							// [1F1EF 1F1EA] JE
-🇯🇲	bayrak: Jamaika							// [1F1EF 1F1F2] JM
-🇯🇴	bayrak: Ürdün							// [1F1EF 1F1F4] JO
-🇯🇵	bayrak: Japonya							// [1F1EF 1F1F5] JP
-🇰🇪	bayrak: Kenya							// [1F1F0 1F1EA] KE
-🇰🇬	bayrak: Kırgızistan						// [1F1F0 1F1EC] KG
-🇰🇭	bayrak: Kamboçya						// [1F1F0 1F1ED] KH
-🇰🇮	bayrak: Kiribati						// [1F1F0 1F1EE] KI
-🇰🇲	bayrak: Komorlar						// [1F1F0 1F1F2] KM
-🇰🇳	bayrak: Saint Kitts ve Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	bayrak: Kuzey Kore						// [1F1F0 1F1F5] KP
-🇰🇷	bayrak: Güney Kore						// [1F1F0 1F1F7] KR
-🇰🇼	bayrak: Kuveyt							// [1F1F0 1F1FC] KW
-🇰🇾	bayrak: Cayman Adaları						// [1F1F0 1F1FE] KY
-🇰🇿	bayrak: Kazakistan						// [1F1F0 1F1FF] KZ
-🇱🇦	bayrak: Laos							// [1F1F1 1F1E6] LA
-🇱🇧	bayrak: Lübnan							// [1F1F1 1F1E7] LB
-🇱🇨	bayrak: Saint Lucia						// [1F1F1 1F1E8] LC
-🇱🇮	bayrak: Liechtenstein						// [1F1F1 1F1EE] LI
-🇱🇰	bayrak: Sri Lanka						// [1F1F1 1F1F0] LK
-🇱🇷	bayrak: Liberya							// [1F1F1 1F1F7] LR
-🇱🇸	bayrak: Lesotho							// [1F1F1 1F1F8] LS
-🇱🇹	bayrak: Litvanya						// [1F1F1 1F1F9] LT
-🇱🇺	bayrak: Lüksemburg						// [1F1F1 1F1FA] LU
-🇱🇻	bayrak: Letonya							// [1F1F1 1F1FB] LV
-🇱🇾	bayrak: Libya							// [1F1F1 1F1FE] LY
-🇲🇦	bayrak: Fas							// [1F1F2 1F1E6] MA
-🇲🇨	bayrak: Monako							// [1F1F2 1F1E8] MC
-🇲🇩	bayrak: Moldova							// [1F1F2 1F1E9] MD
-🇲🇪	bayrak: Karadağ							// [1F1F2 1F1EA] ME
-🇲🇫	bayrak: Saint Martin						// [1F1F2 1F1EB] MF
-🇲🇬	bayrak: Madagaskar						// [1F1F2 1F1EC] MG
-🇲🇭	bayrak: Marshall Adaları					// [1F1F2 1F1ED] MH
-🇲🇰	bayrak: Makedonya						// [1F1F2 1F1F0] MK
-🇲🇱	bayrak: Mali							// [1F1F2 1F1F1] ML
-🇲🇲	bayrak: Myanmar (Burma)						// [1F1F2 1F1F2] MM
-🇲🇳	bayrak: Moğolistan						// [1F1F2 1F1F3] MN
-🇲🇴	bayrak: Çin Makao ÖİB						// [1F1F2 1F1F4] MO
-🇲🇵	bayrak: Kuzey Mariana Adaları					// [1F1F2 1F1F5] MP
-🇲🇶	bayrak: Martinik						// [1F1F2 1F1F6] MQ
-🇲🇷	bayrak: Moritanya						// [1F1F2 1F1F7] MR
-🇲🇸	bayrak: Montserrat						// [1F1F2 1F1F8] MS
-🇲🇹	bayrak: Malta							// [1F1F2 1F1F9] MT
-🇲🇺	bayrak: Mauritius						// [1F1F2 1F1FA] MU
-🇲🇻	bayrak: Maldivler						// [1F1F2 1F1FB] MV
-🇲🇼	bayrak: Malavi							// [1F1F2 1F1FC] MW
-🇲🇽	bayrak: Meksika							// [1F1F2 1F1FD] MX
-🇲🇾	bayrak: Malezya							// [1F1F2 1F1FE] MY
-🇲🇿	bayrak: Mozambik						// [1F1F2 1F1FF] MZ
-🇳🇦	bayrak: Namibya							// [1F1F3 1F1E6] NA
-🇳🇨	bayrak: Yeni Kaledonya						// [1F1F3 1F1E8] NC
-🇳🇪	bayrak: Nijer							// [1F1F3 1F1EA] NE
-🇳🇫	bayrak: Norfolk Adası						// [1F1F3 1F1EB] NF
-🇳🇬	bayrak: Nijerya							// [1F1F3 1F1EC] NG
-🇳🇮	bayrak: Nikaragua						// [1F1F3 1F1EE] NI
-🇳🇱	bayrak: Hollanda						// [1F1F3 1F1F1] NL
-🇳🇴	bayrak: Norveç							// [1F1F3 1F1F4] NO
-🇳🇵	bayrak: Nepal							// [1F1F3 1F1F5] NP
-🇳🇷	bayrak: Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	bayrak: Niue							// [1F1F3 1F1FA] NU
-🇳🇿	bayrak: Yeni Zelanda						// [1F1F3 1F1FF] NZ
-🇴🇲	bayrak: Umman							// [1F1F4 1F1F2] OM
-🇵🇦	bayrak: Panama							// [1F1F5 1F1E6] PA
-🇵🇪	bayrak: Peru							// [1F1F5 1F1EA] PE
-🇵🇫	bayrak: Fransız Polinezyası					// [1F1F5 1F1EB] PF
-🇵🇬	bayrak: Papua Yeni Gine						// [1F1F5 1F1EC] PG
-🇵🇭	bayrak: Filipinler						// [1F1F5 1F1ED] PH
-🇵🇰	bayrak: Pakistan						// [1F1F5 1F1F0] PK
-🇵🇱	bayrak: Polonya							// [1F1F5 1F1F1] PL
-🇵🇲	bayrak: Saint Pierre ve Miquelon				// [1F1F5 1F1F2] PM
-🇵🇳	bayrak: Pitcairn Adaları					// [1F1F5 1F1F3] PN
-🇵🇷	bayrak: Porto Riko						// [1F1F5 1F1F7] PR
-🇵🇸	bayrak: Filistin Bölgeleri					// [1F1F5 1F1F8] PS
-🇵🇹	bayrak: Portekiz						// [1F1F5 1F1F9] PT
-🇵🇼	bayrak: Palau							// [1F1F5 1F1FC] PW
-🇵🇾	bayrak: Paraguay						// [1F1F5 1F1FE] PY
-🇶🇦	bayrak: Katar							// [1F1F6 1F1E6] QA
-🇷🇪	bayrak: Réunion							// [1F1F7 1F1EA] RE
-🇷🇴	bayrak: Romanya							// [1F1F7 1F1F4] RO
-🇷🇸	bayrak: Sırbistan						// [1F1F7 1F1F8] RS
-🇷🇺	bayrak: Rusya							// [1F1F7 1F1FA] RU
-🇷🇼	bayrak: Ruanda							// [1F1F7 1F1FC] RW
-🇸🇦	bayrak: Suudi Arabistan						// [1F1F8 1F1E6] SA
-🇸🇧	bayrak: Solomon Adaları						// [1F1F8 1F1E7] SB
-🇸🇨	bayrak: Seyşeller						// [1F1F8 1F1E8] SC
-🇸🇩	bayrak: Sudan							// [1F1F8 1F1E9] SD
-🇸🇪	bayrak: İsveç							// [1F1F8 1F1EA] SE
-🇸🇬	bayrak: Singapur						// [1F1F8 1F1EC] SG
-🇸🇭	bayrak: Saint Helena						// [1F1F8 1F1ED] SH
-🇸🇮	bayrak: Slovenya						// [1F1F8 1F1EE] SI
-🇸🇯	bayrak: Svalbard ve Jan Mayen					// [1F1F8 1F1EF] SJ
-🇸🇰	bayrak: Slovakya						// [1F1F8 1F1F0] SK
-🇸🇱	bayrak: Sierra Leone						// [1F1F8 1F1F1] SL
-🇸🇲	bayrak: San Marino						// [1F1F8 1F1F2] SM
-🇸🇳	bayrak: Senegal							// [1F1F8 1F1F3] SN
-🇸🇴	bayrak: Somali							// [1F1F8 1F1F4] SO
-🇸🇷	bayrak: Surinam							// [1F1F8 1F1F7] SR
-🇸🇸	bayrak: Güney Sudan						// [1F1F8 1F1F8] SS
-🇸🇹	bayrak: São Tomé ve Príncipe					// [1F1F8 1F1F9] ST
-🇸🇻	bayrak: El Salvador						// [1F1F8 1F1FB] SV
-🇸🇽	bayrak: Sint Maarten						// [1F1F8 1F1FD] SX
-🇸🇾	bayrak: Suriye							// [1F1F8 1F1FE] SY
-🇸🇿	bayrak: Svaziland						// [1F1F8 1F1FF] SZ
-🇹🇦	bayrak: Tristan da Cunha					// [1F1F9 1F1E6] TA
-🇹🇨	bayrak: Turks ve Caicos Adaları					// [1F1F9 1F1E8] TC
-🇹🇩	bayrak: Çad							// [1F1F9 1F1E9] TD
-🇹🇫	bayrak: Fransız Güney Toprakları				// [1F1F9 1F1EB] TF
-🇹🇬	bayrak: Togo							// [1F1F9 1F1EC] TG
-🇹🇭	bayrak: Tayland							// [1F1F9 1F1ED] TH
-🇹🇯	bayrak: Tacikistan						// [1F1F9 1F1EF] TJ
-🇹🇰	bayrak: Tokelau							// [1F1F9 1F1F0] TK
-🇹🇱	bayrak: Timor-Leste						// [1F1F9 1F1F1] TL
-🇹🇲	bayrak: Türkmenistan						// [1F1F9 1F1F2] TM
-🇹🇳	bayrak: Tunus							// [1F1F9 1F1F3] TN
-🇹🇴	bayrak: Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	bayrak: Türkiye							// [1F1F9 1F1F7] TR
-🇹🇹	bayrak: Trinidad ve Tobago					// [1F1F9 1F1F9] TT
-🇹🇻	bayrak: Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	bayrak: Tayvan							// [1F1F9 1F1FC] TW
-🇹🇿	bayrak: Tanzanya						// [1F1F9 1F1FF] TZ
-🇺🇦	bayrak: Ukrayna							// [1F1FA 1F1E6] UA
-🇺🇬	bayrak: Uganda							// [1F1FA 1F1EC] UG
-🇺🇲	bayrak: ABD Küçük Harici Adaları				// [1F1FA 1F1F2] UM
-🇺🇳	bayrak: Birleşmiş Milletler					// [1F1FA 1F1F3] UN
-🇺🇸	bayrak: Amerika Birleşik Devletleri				// [1F1FA 1F1F8] US
-🇺🇾	bayrak: Uruguay							// [1F1FA 1F1FE] UY
-🇺🇿	bayrak: Özbekistan						// [1F1FA 1F1FF] UZ
-🇻🇦	bayrak: Vatikan							// [1F1FB 1F1E6] VA
-🇻🇨	bayrak: Saint Vincent ve Grenadinler				// [1F1FB 1F1E8] VC
-🇻🇪	bayrak: Venezuela						// [1F1FB 1F1EA] VE
-🇻🇬	bayrak: Britanya Virjin Adaları					// [1F1FB 1F1EC] VG
-🇻🇮	bayrak: ABD Virjin Adaları					// [1F1FB 1F1EE] VI
-🇻🇳	bayrak: Vietnam							// [1F1FB 1F1F3] VN
-🇻🇺	bayrak: Vanuatu							// [1F1FB 1F1FA] VU
-🇼🇫	bayrak: Wallis ve Futuna					// [1F1FC 1F1EB] WF
-🇼🇸	bayrak: Samoa							// [1F1FC 1F1F8] WS
-🇽🇰	bayrak: Kosova							// [1F1FD 1F1F0] XK
-🇾🇪	bayrak: Yemen							// [1F1FE 1F1EA] YE
-🇾🇹	bayrak: Mayotte							// [1F1FE 1F1F9] YT
-🇿🇦	bayrak: Güney Afrika						// [1F1FF 1F1E6] ZA
-🇿🇲	bayrak: Zambiya							// [1F1FF 1F1F2] ZM
-🇿🇼	bayrak: Zimbabve						// [1F1FF 1F1FC] ZW
+🇦🇨	Ascension Adası						// [1F1E6 1F1E8] AC
+🇦🇩	Andorra							// [1F1E6 1F1E9] AD
+🇦🇪	Birleşik Arap Emirlikleri				// [1F1E6 1F1EA] AE
+🇦🇫	Afganistan						// [1F1E6 1F1EB] AF
+🇦🇬	Antigua ve Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	Anguilla						// [1F1E6 1F1EE] AI
+🇦🇱	Arnavutluk						// [1F1E6 1F1F1] AL
+🇦🇲	Ermenistan						// [1F1E6 1F1F2] AM
+🇦🇴	Angola							// [1F1E6 1F1F4] AO
+🇦🇶	Antarktika						// [1F1E6 1F1F6] AQ
+🇦🇷	Arjantin						// [1F1E6 1F1F7] AR
+🇦🇸	Amerikan Samoası					// [1F1E6 1F1F8] AS
+🇦🇹	Avusturya						// [1F1E6 1F1F9] AT
+🇦🇺	Avustralya						// [1F1E6 1F1FA] AU
+🇦🇼	Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	Åland Adaları						// [1F1E6 1F1FD] AX
+🇦🇿	Azerbaycan						// [1F1E6 1F1FF] AZ
+🇧🇦	Bosna-Hersek						// [1F1E7 1F1E6] BA
+🇧🇧	Barbados						// [1F1E7 1F1E7] BB
+🇧🇩	Bangladeş						// [1F1E7 1F1E9] BD
+🇧🇪	Belçika							// [1F1E7 1F1EA] BE
+🇧🇫	Burkina Faso						// [1F1E7 1F1EB] BF
+🇧🇬	Bulgaristan						// [1F1E7 1F1EC] BG
+🇧🇭	Bahreyn							// [1F1E7 1F1ED] BH
+🇧🇮	Burundi							// [1F1E7 1F1EE] BI
+🇧🇯	Benin							// [1F1E7 1F1EF] BJ
+🇧🇱	Saint Barthelemy					// [1F1E7 1F1F1] BL
+🇧🇲	Bermuda							// [1F1E7 1F1F2] BM
+🇧🇳	Brunei							// [1F1E7 1F1F3] BN
+🇧🇴	Bolivya							// [1F1E7 1F1F4] BO
+🇧🇶	Karayip Hollandası					// [1F1E7 1F1F6] BQ
+🇧🇷	Brezilya						// [1F1E7 1F1F7] BR
+🇧🇸	Bahamalar						// [1F1E7 1F1F8] BS
+🇧🇹	Butan							// [1F1E7 1F1F9] BT
+🇧🇻	Bouvet Adası						// [1F1E7 1F1FB] BV
+🇧🇼	Botsvana						// [1F1E7 1F1FC] BW
+🇧🇾	Belarus							// [1F1E7 1F1FE] BY
+🇧🇿	Belize							// [1F1E7 1F1FF] BZ
+🇨🇦	Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	Cocos Keeling Adaları					// [1F1E8 1F1E8] CC
+🇨🇩	Kongo - Kinşasa						// [1F1E8 1F1E9] CD
+🇨🇫	Orta Afrika Cumhuriyeti					// [1F1E8 1F1EB] CF
+🇨🇬	Kongo - Brazavil					// [1F1E8 1F1EC] CG
+🇨🇭	İsviçre							// [1F1E8 1F1ED] CH
+🇨🇮	Côte d’Ivoire						// [1F1E8 1F1EE] CI
+🇨🇰	Cook Adaları						// [1F1E8 1F1F0] CK
+🇨🇱	Şili							// [1F1E8 1F1F1] CL
+🇨🇲	Kamerun							// [1F1E8 1F1F2] CM
+🇨🇳	Çin							// [1F1E8 1F1F3] CN
+🇨🇴	Kolombiya						// [1F1E8 1F1F4] CO
+🇨🇵	Clipperton Adası					// [1F1E8 1F1F5] CP
+🇨🇷	Kosta Rika						// [1F1E8 1F1F7] CR
+🇨🇺	Küba							// [1F1E8 1F1FA] CU
+🇨🇻	Cabo Verde						// [1F1E8 1F1FB] CV
+🇨🇼	Curaçao							// [1F1E8 1F1FC] CW
+🇨🇽	Christmas Adası						// [1F1E8 1F1FD] CX
+🇨🇾	Kıbrıs							// [1F1E8 1F1FE] CY
+🇨🇿	Çekya							// [1F1E8 1F1FF] CZ
+🇩🇪	Almanya							// [1F1E9 1F1EA] DE
+🇩🇬	Diego Garcia						// [1F1E9 1F1EC] DG
+🇩🇯	Cibuti							// [1F1E9 1F1EF] DJ
+🇩🇰	Danimarka						// [1F1E9 1F1F0] DK
+🇩🇲	Dominika						// [1F1E9 1F1F2] DM
+🇩🇴	Dominik Cumhuriyeti					// [1F1E9 1F1F4] DO
+🇩🇿	Cezayir							// [1F1E9 1F1FF] DZ
+🇪🇦	Ceuta ve Melilla					// [1F1EA 1F1E6] EA
+🇪🇨	Ekvador							// [1F1EA 1F1E8] EC
+🇪🇪	Estonya							// [1F1EA 1F1EA] EE
+🇪🇬	Mısır							// [1F1EA 1F1EC] EG
+🇪🇭	Batı Sahra						// [1F1EA 1F1ED] EH
+🇪🇷	Eritre							// [1F1EA 1F1F7] ER
+🇪🇸	İspanya							// [1F1EA 1F1F8] ES
+🇪🇹	Etiyopya						// [1F1EA 1F1F9] ET
+🇪🇺	Avrupa Birliği						// [1F1EA 1F1FA] EU
+🇫🇮	Finlandiya						// [1F1EB 1F1EE] FI
+🇫🇯	Fiji							// [1F1EB 1F1EF] FJ
+🇫🇰	Falkland Adaları					// [1F1EB 1F1F0] FI
+🇫🇲	Mikronezya						// [1F1EB 1F1F2] FM
+🇫🇴	Faroe Adaları						// [1F1EB 1F1F4] FO
+🇫🇷	Fransa							// [1F1EB 1F1F7] FR
+🇬🇦	Gabon							// [1F1EC 1F1E6] GA
+🇬🇧	Birleşik Krallık					// [1F1EC 1F1E7] GB
+🇬🇩	Grenada							// [1F1EC 1F1E9] GD
+🇬🇪	Gürcistan						// [1F1EC 1F1EA] GE
+🇬🇫	Fransız Guyanası					// [1F1EC 1F1EB] GF
+🇬🇬	Guernsey						// [1F1EC 1F1EC] GG
+🇬🇭	Gana							// [1F1EC 1F1ED] GH
+🇬🇮	Cebelitarık						// [1F1EC 1F1EE] GI
+🇬🇱	Grönland						// [1F1EC 1F1F1] GL
+🇬🇲	Gambiya							// [1F1EC 1F1F2] GM
+🇬🇳	Gine							// [1F1EC 1F1F3] GN
+🇬🇵	Guadeloupe						// [1F1EC 1F1F5] GP
+🇬🇶	Ekvator Ginesi						// [1F1EC 1F1F6] GQ
+🇬🇷	Yunanistan						// [1F1EC 1F1F7] GR
+🇬🇸	Güney Georgia ve Güney Sandwich Adaları			// [1F1EC 1F1F8] GS
+🇬🇹	Guatemala						// [1F1EC 1F1F9] GT
+🇬🇺	Guam							// [1F1EC 1F1FA] GU
+🇬🇼	Gine-Bissau						// [1F1EC 1F1FC] GW
+🇬🇾	Guyana							// [1F1EC 1F1FE] GY
+🇭🇰	Çin Hong Kong ÖİB					// [1F1ED 1F1F0] HK
+🇭🇲	Heard Adası ve McDonald Adaları				// [1F1ED 1F1F2] HM
+🇭🇳	Honduras						// [1F1ED 1F1F3] HN
+🇭🇷	Hırvatistan						// [1F1ED 1F1F7] HR
+🇭🇹	Haiti							// [1F1ED 1F1F9] HT
+🇭🇺	Macaristan						// [1F1ED 1F1FA] HU
+🇮🇨	Kanarya Adaları						// [1F1EE 1F1E8] IC
+🇮🇩	Endonezya						// [1F1EE 1F1E9] ID
+🇮🇪	İrlanda							// [1F1EE 1F1EA] IE
+🇮🇱	İsrail							// [1F1EE 1F1F1] IL
+🇮🇲	Man Adası						// [1F1EE 1F1F2] IM
+🇮🇳	Hindistan						// [1F1EE 1F1F3] IN
+🇮🇴	Britanya Hint Okyanusu Toprakları			// [1F1EE 1F1F4] IO
+🇮🇶	Irak							// [1F1EE 1F1F6] IQ
+🇮🇷	İran							// [1F1EE 1F1F7] IR
+🇮🇸	İzlanda							// [1F1EE 1F1F8] IS
+🇮🇹	İtalya							// [1F1EE 1F1F9] IT
+🇯🇪	Jersey							// [1F1EF 1F1EA] JE
+🇯🇲	Jamaika							// [1F1EF 1F1F2] JM
+🇯🇴	Ürdün							// [1F1EF 1F1F4] JO
+🇯🇵	Japonya							// [1F1EF 1F1F5] JP
+🇰🇪	Kenya							// [1F1F0 1F1EA] KE
+🇰🇬	Kırgızistan						// [1F1F0 1F1EC] KG
+🇰🇭	Kamboçya						// [1F1F0 1F1ED] KH
+🇰🇮	Kiribati						// [1F1F0 1F1EE] KI
+🇰🇲	Komorlar						// [1F1F0 1F1F2] KM
+🇰🇳	Saint Kitts ve Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	Kuzey Kore						// [1F1F0 1F1F5] KP
+🇰🇷	Güney Kore						// [1F1F0 1F1F7] KR
+🇰🇼	Kuveyt							// [1F1F0 1F1FC] KW
+🇰🇾	Cayman Adaları						// [1F1F0 1F1FE] KY
+🇰🇿	Kazakistan						// [1F1F0 1F1FF] KZ
+🇱🇦	Laos							// [1F1F1 1F1E6] LA
+🇱🇧	Lübnan							// [1F1F1 1F1E7] LB
+🇱🇨	Saint Lucia						// [1F1F1 1F1E8] LC
+🇱🇮	Liechtenstein						// [1F1F1 1F1EE] LI
+🇱🇰	Sri Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	Liberya							// [1F1F1 1F1F7] LR
+🇱🇸	Lesotho							// [1F1F1 1F1F8] LS
+🇱🇹	Litvanya						// [1F1F1 1F1F9] LT
+🇱🇺	Lüksemburg						// [1F1F1 1F1FA] LU
+🇱🇻	Letonya							// [1F1F1 1F1FB] LV
+🇱🇾	Libya							// [1F1F1 1F1FE] LY
+🇲🇦	Fas							// [1F1F2 1F1E6] MA
+🇲🇨	Monako							// [1F1F2 1F1E8] MC
+🇲🇩	Moldova							// [1F1F2 1F1E9] MD
+🇲🇪	Karadağ							// [1F1F2 1F1EA] ME
+🇲🇫	Saint Martin						// [1F1F2 1F1EB] MF
+🇲🇬	Madagaskar						// [1F1F2 1F1EC] MG
+🇲🇭	Marshall Adaları					// [1F1F2 1F1ED] MH
+🇲🇰	Kuzey Makedonya						// [1F1F2 1F1F0] MK
+🇲🇱	Mali							// [1F1F2 1F1F1] ML
+🇲🇲	Myanmar Burma						// [1F1F2 1F1F2] MM
+🇲🇳	Moğolistan						// [1F1F2 1F1F3] MN
+🇲🇴	Çin Makao ÖİB						// [1F1F2 1F1F4] MO
+🇲🇵	Kuzey Mariana Adaları					// [1F1F2 1F1F5] MP
+🇲🇶	Martinik						// [1F1F2 1F1F6] MQ
+🇲🇷	Moritanya						// [1F1F2 1F1F7] MR
+🇲🇸	Montserrat						// [1F1F2 1F1F8] MS
+🇲🇹	Malta							// [1F1F2 1F1F9] MT
+🇲🇺	Mauritius						// [1F1F2 1F1FA] MU
+🇲🇻	Maldivler						// [1F1F2 1F1FB] MV
+🇲🇼	Malavi							// [1F1F2 1F1FC] MW
+🇲🇽	Meksika							// [1F1F2 1F1FD] MX
+🇲🇾	Malezya							// [1F1F2 1F1FE] MY
+🇲🇿	Mozambik						// [1F1F2 1F1FF] MZ
+🇳🇦	Namibya							// [1F1F3 1F1E6] NA
+🇳🇨	Yeni Kaledonya						// [1F1F3 1F1E8] NC
+🇳🇪	Nijer							// [1F1F3 1F1EA] NE
+🇳🇫	Norfolk Adası						// [1F1F3 1F1EB] NF
+🇳🇬	Nijerya							// [1F1F3 1F1EC] NG
+🇳🇮	Nikaragua						// [1F1F3 1F1EE] NI
+🇳🇱	Hollanda						// [1F1F3 1F1F1] NL
+🇳🇴	Norveç							// [1F1F3 1F1F4] NO
+🇳🇵	Nepal							// [1F1F3 1F1F5] NP
+🇳🇷	Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	Niue							// [1F1F3 1F1FA] NU
+🇳🇿	Yeni Zelanda						// [1F1F3 1F1FF] NZ
+🇴🇲	Umman							// [1F1F4 1F1F2] OM
+🇵🇦	Panama							// [1F1F5 1F1E6] PA
+🇵🇪	Peru							// [1F1F5 1F1EA] PE
+🇵🇫	Fransız Polinezyası					// [1F1F5 1F1EB] PF
+🇵🇬	Papua Yeni Gine						// [1F1F5 1F1EC] PG
+🇵🇭	Filipinler						// [1F1F5 1F1ED] PH
+🇵🇰	Pakistan						// [1F1F5 1F1F0] PK
+🇵🇱	Polonya							// [1F1F5 1F1F1] PL
+🇵🇲	Saint Pierre ve Miquelon				// [1F1F5 1F1F2] PM
+🇵🇳	Pitcairn Adaları					// [1F1F5 1F1F3] PN
+🇵🇷	Porto Riko						// [1F1F5 1F1F7] PR
+🇵🇸	Filistin Bölgeleri					// [1F1F5 1F1F8] PS
+🇵🇹	Portekiz						// [1F1F5 1F1F9] PT
+🇵🇼	Palau							// [1F1F5 1F1FC] PW
+🇵🇾	Paraguay						// [1F1F5 1F1FE] PY
+🇶🇦	Katar							// [1F1F6 1F1E6] QA
+🇷🇪	Reunion							// [1F1F7 1F1EA] RE
+🇷🇴	Romanya							// [1F1F7 1F1F4] RO
+🇷🇸	Sırbistan						// [1F1F7 1F1F8] RS
+🇷🇺	Rusya							// [1F1F7 1F1FA] RU
+🇷🇼	Ruanda							// [1F1F7 1F1FC] RW
+🇸🇦	Suudi Arabistan						// [1F1F8 1F1E6] SA
+🇸🇧	Solomon Adaları						// [1F1F8 1F1E7] SB
+🇸🇨	Seyşeller						// [1F1F8 1F1E8] SC
+🇸🇩	Sudan							// [1F1F8 1F1E9] SD
+🇸🇪	İsveç							// [1F1F8 1F1EA] SE
+🇸🇬	Singapur						// [1F1F8 1F1EC] SG
+🇸🇭	Saint Helena						// [1F1F8 1F1ED] SH
+🇸🇮	Slovenya						// [1F1F8 1F1EE] SI
+🇸🇯	Svalbard ve Jan Mayen					// [1F1F8 1F1EF] SJ
+🇸🇰	Slovakya						// [1F1F8 1F1F0] SK
+🇸🇱	Sierra Leone						// [1F1F8 1F1F1] SL
+🇸🇲	San Marino						// [1F1F8 1F1F2] SM
+🇸🇳	Senegal							// [1F1F8 1F1F3] SN
+🇸🇴	Somali							// [1F1F8 1F1F4] SO
+🇸🇷	Surinam							// [1F1F8 1F1F7] SR
+🇸🇸	Güney Sudan						// [1F1F8 1F1F8] SS
+🇸🇹	Sao Tome ve Principe					// [1F1F8 1F1F9] ST
+🇸🇻	El Salvador						// [1F1F8 1F1FB] SV
+🇸🇽	Sint Maarten						// [1F1F8 1F1FD] SX
+🇸🇾	Suriye							// [1F1F8 1F1FE] SY
+🇸🇿	Esvatini						// [1F1F8 1F1FF] SZ
+🇹🇦	Tristan da Cunha					// [1F1F9 1F1E6] TA
+🇹🇨	Turks ve Caicos Adaları					// [1F1F9 1F1E8] TC
+🇹🇩	Çad							// [1F1F9 1F1E9] TD
+🇹🇫	Fransız Güney Toprakları				// [1F1F9 1F1EB] TF
+🇹🇬	Togo							// [1F1F9 1F1EC] TG
+🇹🇭	Tayland							// [1F1F9 1F1ED] TH
+🇹🇯	Tacikistan						// [1F1F9 1F1EF] TJ
+🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
+🇹🇱	Timor-Leste						// [1F1F9 1F1F1] TL
+🇹🇲	Türkmenistan						// [1F1F9 1F1F2] TM
+🇹🇳	Tunus							// [1F1F9 1F1F3] TN
+🇹🇴	Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	Türkiye							// [1F1F9 1F1F7] TR
+🇹🇹	Trinidad ve Tobago					// [1F1F9 1F1F9] TT
+🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	Tayvan							// [1F1F9 1F1FC] TW
+🇹🇿	Tanzanya						// [1F1F9 1F1FF] TZ
+🇺🇦	Ukrayna							// [1F1FA 1F1E6] UA
+🇺🇬	Uganda							// [1F1FA 1F1EC] UG
+🇺🇲	ABD Küçük Harici Adaları				// [1F1FA 1F1F2] UM
+🇺🇳	Birleşmiş Milletler					// [1F1FA 1F1F3] UN
+🇺🇸	Amerika Birleşik Devletleri				// [1F1FA 1F1F8] US
+🇺🇾	Uruguay							// [1F1FA 1F1FE] UY
+🇺🇿	Özbekistan						// [1F1FA 1F1FF] UZ
+🇻🇦	Vatikan							// [1F1FB 1F1E6] VA
+🇻🇨	Saint Vincent ve Grenadinler				// [1F1FB 1F1E8] VC
+🇻🇪	Venezuela						// [1F1FB 1F1EA] VE
+🇻🇬	Britanya Virjin Adaları					// [1F1FB 1F1EC] VG
+🇻🇮	ABD Virjin Adaları					// [1F1FB 1F1EE] VI
+🇻🇳	Vietnam							// [1F1FB 1F1F3] VN
+🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
+🇼🇫	Wallis ve Futuna					// [1F1FC 1F1EB] WF
+🇼🇸	Samoa							// [1F1FC 1F1F8] WS
+🇽🇰	Kosova							// [1F1FD 1F1F0] XK
+🇾🇪	Yemen							// [1F1FE 1F1EA] YE
+🇾🇹	Mayotte							// [1F1FE 1F1F9] YT
+🇿🇦	Güney Afrika						// [1F1FF 1F1E6] ZA
+🇿🇲	Zambiya							// [1F1FF 1F1F2] ZM
+🇿🇼	Zimbabve						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1955,18 +1957,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#️⃣	tuş: #								// [0023 FE0F 20E3]
-*️⃣	tuş: *								// [002A FE0F 20E3]
-0️⃣	tuş: 0								// [0030 FE0F 20E3]
-1️⃣	tuş: 1								// [0031 FE0F 20E3]
-2️⃣	tuş: 2								// [0032 FE0F 20E3]
-3️⃣	tuş: 3								// [0033 FE0F 20E3]
-4️⃣	tuş: 4								// [0034 FE0F 20E3]
-5️⃣	tuş: 5								// [0035 FE0F 20E3]
-6️⃣	tuş: 6								// [0036 FE0F 20E3]
-7️⃣	tuş: 7								// [0037 FE0F 20E3]
-8️⃣	tuş: 8								// [0038 FE0F 20E3]
-9️⃣	tuş: 9								// [0039 FE0F 20E3]
+#⃣	tuş							// [0023 20E3]
+*⃣	tuş							// [002A 20E3]
+0⃣	tuş 0							// [0030 20E3]
+1⃣	tuş 1							// [0031 20E3]
+2⃣	tuş 2							// [0032 20E3]
+3⃣	tuş 3							// [0033 20E3]
+4⃣	tuş 4							// [0034 20E3]
+5⃣	tuş 5							// [0035 20E3]
+6⃣	tuş 6							// [0036 20E3]
+7⃣	tuş 7							// [0037 20E3]
+8⃣	tuş 8							// [0038 20E3]
+9⃣	tuş 9							// [0039 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	bale ayakkabıları					// [1FA70]
@@ -1992,6 +1994,11 @@ $textmode
 🪇	marakas							// [1FA87]
 🪈	flüt							// [1FA88]
 🪉	arp							// [1FA89]
+🪊	trombon							// [1FA8A]
+🪋	gök taşı						// [1FA8B]
+🪌	silgi							// [1FA8C]
+🪍	kelebek ağı						// [1FA8D]
+🪎	hazine sandığı						// [1FA8E]
 🪏	kürek							// [1FA8F]
 🪐	halkalı gezegen						// [1FA90]
 🪑	sandalye						// [1FA91]
@@ -2048,6 +2055,9 @@ $textmode
 🫄	hamile kişi						// [1FAC4]
 🫅	taç takmış insan					// [1FAC5]
 🫆	parmak izi						// [1FAC6]
+🫈	tüylü yaratık						// [1FAC8]
+🫌	kral kelebeği						// [1FACC]
+🫍	orka							// [1FACD]
 🫎	sığın							// [1FACE]
 🫏	eşek							// [1FACF]
 🫐	yaban mersini						// [1FAD0]
@@ -2063,6 +2073,7 @@ $textmode
 🫚	kök zencefil						// [1FADA]
 🫛	kabuklu bezelye						// [1FADB]
 🫜	kök sebze						// [1FADC]
+🫝	turşu							// [1FADD]
 🫟	sıçratma						// [1FADF]
 🫠	eriyen yüz						// [1FAE0]
 🫡	selamlayan yüz						// [1FAE1]
@@ -2074,6 +2085,9 @@ $textmode
 🫧	baloncuk						// [1FAE7]
 🫨	sallanan yüz						// [1FAE8]
 🫩	gözlerinin altı torbalı yüz				// [1FAE9]
+🫪	biçimsiz yüz						// [1FAEA]
+🫫	çatlayan yüz						// [1FAEB]
+🫯	dövüş bulutu						// [1FAEF]
 🫰	işaret parmağı ve baş parmak birbirine geçmiş el	// [1FAF0]
 🫱	sağa bakan el						// [1FAF1]
 🫲	sola bakan el						// [1FAF2]
@@ -2083,6 +2097,8 @@ $textmode
 🫶	kalp oluşturan eller					// [1FAF6]
 🫷	sola iten el						// [1FAF7]
 🫸	sağa iten el						// [1FAF8]
+🫹	baş parmak solda					// [1FAF9]
+🫺	başparmak sağda						// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2111,38 +2127,38 @@ $textmode
 👨‍🦼‍➡	elektrikli tekerlekli sandalyede erkek sağa dönük	// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	tekerlekli sandalyede erkek				// [1F468 200D 1F9BD]
 👨‍🦽‍➡	tekerlekli sandalyede erkek sağa dönük			// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	öpücük: kadın erkek			// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	öpücük: erkek erkek			// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	öpücük: kadın kadın			// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	kalpli çift: kadın erkek			// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	kalpli çift: erkek erkek			// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	kalpli çift: kadın kadın			// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	aile: erkek kadın erkek çocuk			// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	aile: erkek kadın kız çocuk			// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	aile: erkek kadın kız çocuk erkek çocuk	// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	aile: erkek kadın erkek çocuk erkek çocuk// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	aile: erkek kadın kız çocuk kız çocuk	// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	aile: erkek erkek erkek çocuk			// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	aile: erkek erkek kız çocuk			// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	aile: erkek erkek kız çocuk erkek çocuk	// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	aile: erkek erkek erkek çocuk erkek çocuk// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	aile: erkek erkek kız çocuk kız çocuk	// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	öpücük kadın erkek					// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	öpücük erkek erkek					// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	öpücük kadın kadın					// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	kalpli çift kadın erkek					// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	kalpli çift erkek erkek					// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	kalpli çift kadın kadın					// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	aile erkek kadın erkek çocuk				// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	aile erkek kadın kız çocuk				// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	aile erkek kadın kız çocuk erkek çocuk			// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	aile erkek kadın erkek çocuk erkek çocuk		// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	aile erkek kadın kız çocuk kız çocuk			// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	aile erkek erkek erkek çocuk				// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	aile erkek erkek kız çocuk				// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	aile erkek erkek kız çocuk erkek çocuk			// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	aile erkek erkek erkek çocuk erkek çocuk		// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	aile erkek erkek kız çocuk kız çocuk			// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	bebek emziren kadın					// [1F469 200D 1F37C]
-👩‍👩‍👦	aile: kadın kadın erkek çocuk			// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	aile: kadın kadın kız çocuk			// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	aile: kadın kadın kız çocuk erkek çocuk	// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	aile: kadın kadın erkek çocuk erkek çocuk// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	aile: kadın kadın kız çocuk kız çocuk	// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	aile: erkek erkek çocuk					// [1F468 200D 1F466]
-👨‍👦‍👦	aile: erkek erkek çocuk erkek çocuk		// [1F468 200D 1F466 200D 1F466]
-👨‍👧	aile: erkek kız çocuk					// [1F468 200D 1F467]
-👨‍👧‍👦	aile: erkek kız çocuk erkek çocuk		// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	aile: erkek kız çocuk kız çocuk			// [1F468 200D 1F467 200D 1F467]
-👩‍👦	aile: kadın erkek çocuk					// [1F469 200D 1F466]
-👩‍👦‍👦	aile: kadın erkek çocuk erkek çocuk		// [1F469 200D 1F466 200D 1F466]
-👩‍👧	aile: kadın kız çocuk					// [1F469 200D 1F467]
-👩‍👧‍👦	aile: kadın kız çocuk erkek çocuk		// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	aile: kadın kız çocuk kız çocuk			// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	aile kadın kadın erkek çocuk				// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	aile kadın kadın kız çocuk				// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	aile kadın kadın kız çocuk erkek çocuk			// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	aile kadın kadın erkek çocuk erkek çocuk		// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	aile kadın kadın kız çocuk kız çocuk			// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	aile erkek erkek çocuk					// [1F468 200D 1F466]
+👨‍👦‍👦	aile erkek erkek çocuk erkek çocuk			// [1F468 200D 1F466 200D 1F466]
+👨‍👧	aile erkek kız çocuk					// [1F468 200D 1F467]
+👨‍👧‍👦	aile erkek kız çocuk erkek çocuk			// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	aile erkek kız çocuk kız çocuk				// [1F468 200D 1F467 200D 1F467]
+👩‍👦	aile kadın erkek çocuk					// [1F469 200D 1F466]
+👩‍👦‍👦	aile kadın erkek çocuk erkek çocuk			// [1F469 200D 1F466 200D 1F466]
+👩‍👧	aile kadın kız çocuk					// [1F469 200D 1F467]
+👩‍👧‍👦	aile kadın kız çocuk erkek çocuk			// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	aile kadın kız çocuk kız çocuk				// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 

@@ -291,27 +291,27 @@ $textmode
 // 2300..23FF : Miscellaneous Technical
 
 ⌚	horlosie							// [231A]
-⌛	uurglas								// [231B]
+⌛	leë uurglas						// [231B]
 ⌨	sleutelbord							// [2328] text|emoji
 ⏏	uitskietknoppie							// [23CF] text|emoji
-⏩	spoel vorentoe-knoppie						// [23E9]
-⏪	spoel terug-knoppie						// [23EA]
-⏫	vinnig op-knoppie						// [23EB]
-⏬	vinnigknoppie							// [23EC]
-⏭	volgende snit-knoppie						// [23ED] text|emoji
-⏮	vorige snit-knoppie						// [23EE] text|emoji
-⏯	speel of onderbreek-knoppie					// [23EF] text|emoji
+⏩	spoelvorentoe-knoppie					// [23E9]
+⏪	spoelterug-knoppie					// [23EA]
+⏫	vinnig-op-knoppie					// [23EB]
+⏬	vinnig-af-knoppie					// [23EC]
+⏭	volgendesnit-knoppie					// [23ED] text|emoji
+⏮	vorigesnit-knoppie					// [23EE] text|emoji
+⏯	speel-of-onderbreekknoppie				// [23EF] text|emoji
 ⏰	wekker								// [23F0]
 ⏱	stophorlosie							// [23F1] text|emoji
 ⏲	afteller							// [23F2] text|emoji
 ⏳	uurglas met sand wat uitloop					// [23F3]
 ⏸	onderbreekknoppie						// [23F8] text|emoji
 ⏹	stopknoppie							// [23F9] text|emoji
-⏺	neem op-knoppie							// [23FA] text|emoji
+⏺	opneemknoppie						// [23FA] text|emoji
 
 // 2460..24FF : Enclosed Alphanumerics
 
-Ⓜ	letter m in sirkel						// [24C2] text|emoji
+Ⓜ	M in sirkel						// [24C2] text|emoji
 
 // 25A0..25FF : Geometric Shapes
 
@@ -345,7 +345,7 @@ $textmode
 ▽	hol driehoek wat af wys					// [25BD]
 ▾	gevulde klein driehoek wat af wys			// [25BE]
 ▿	hol klein driehoek wat af wys				// [25BF]
-◀	speel terug-knoppie						// [25C0] text|emoji
+◀	speelterug-knoppie					// [25C0] text|emoji
 ◁	hol driehoek wat links wys				// [25C1]
 ◂	gevulde klein driehoek wat links wys			// [25C2]
 ◃	hol klein driehoek wat links wys			// [25C3]
@@ -399,14 +399,14 @@ $textmode
 ☃	sneeuman							// [2603] text|emoji
 ☄	komeet								// [2604] text|emoji
 ☎	telefoon							// [260E] text|emoji
-☑	stembus met regmerk						// [2611] text|emoji
+☑	merkblokkie met regmerk					// [2611] text|emoji
 ☔	sambreel met reëndruppels					// [2614]
 ☕	warm drankie							// [2615]
 ☘	klawer								// [2618] text|emoji
 ☝	wysvinger wat op wys						// [261D] text|emoji
 ☠	kopbeen en gekruiste beendere					// [2620] text|emoji
 ☢	radioaktief							// [2622] text|emoji
-☣	biologiese gevaar						// [2623] text|emoji
+☣	biogevaar						// [2623] text|emoji
 ☦	ortodokse kruis							// [2626] text|emoji
 ☪	ster en sekelmaan						// [262A] text|emoji
 ☮	vredesimbool							// [262E] text|emoji
@@ -416,18 +416,18 @@ $textmode
 ☺	glimlaggende gesig						// [263A] text|emoji
 ♀	vroulik-teken							// [2640] text|emoji
 ♂	manlik-teken							// [2642] text|emoji
-♈	ramsterrebeeld							// [2648]
-♉	bulsterrebeeld							// [2649]
-♊	tweelingsterrebeeld						// [264A]
-♋	kreefsterrebeeld						// [264B]
-♌	leeusterrebeeld							// [264C]
-♍	maagdsterrebeeld						// [264D]
-♎	weegskaalsterrebeeld						// [264E]
-♏	skerpioensterrebeeld						// [264F]
-♐	boogskuttersterrebeeld						// [2650]
-♑	steenboksterrebeeld						// [2651]
-♒	waterdraersterrebeeld						// [2652]
-♓	vissesterrebeeld						// [2653]
+♈	Ram-sterrebeeld						// [2648]
+♉	Bul-sterrebeeld						// [2649]
+♊	Tweeling-sterrebeeld					// [264A]
+♋	Kreef-sterrebeeld					// [264B]
+♌	Leeu-sterrebeeld					// [264C]
+♍	Maagd-sterrebeeld					// [264D]
+♎	Weegskaal-sterrebeeld					// [264E]
+♏	Skerpioen-sterrebeeld					// [264F]
+♐	Boogskutter-sterrebeeld					// [2650]
+♑	Steenbok-sterrebeeld					// [2651]
+♒	Waterdraer-sterrebeeld					// [2652]
+♓	Visse-sterrebeeld					// [2653]
 ♟	skaakpion							// [265F] text|emoji
 ♠	skoppens							// [2660] text|emoji
 ♣	klawers								// [2663] text|emoji
@@ -439,7 +439,7 @@ $textmode
 ♯	kruis							// [266F]
 ♻	herwinningsimbool						// [267B] text|emoji
 ♾	oneindigheid							// [267E] text|emoji
-♿	rolstoel							// [267F]
+♿	rolstoel-simbool					// [267F]
 ⚒	hamer en pik							// [2692] text|emoji
 ⚓	anker								// [2693]
 ⚔	gekruiste swaarde						// [2694] text|emoji
@@ -454,18 +454,18 @@ $textmode
 ⚧	transgendersimbool					// [26A7]
 ⚪	wit sirkel							// [26AA]
 ⚫	swart sirkel							// [26AB]
-⚰	kis								// [26B0] text|emoji
+⚰	doodskis						// [26B0] text|emoji
 ⚱	begrafniskruik							// [26B1] text|emoji
 ⚽	sokkerbal							// [26BD]
 ⚾	bofbal								// [26BE]
 ⛄	sneeuman sonder sneeu						// [26C4]
 ⛅	son agter wolk							// [26C5]
 ⛈	wolk met weerlig en reën					// [26C8] text|emoji
-⛎	slangdraersterrebeeld						// [26CE]
+⛎	Slangdraer-sterrebeeld					// [26CE]
 ⛏	pik								// [26CF] text|emoji
 ⛑	helm met wit kruis						// [26D1] text|emoji
 ⛓	kettings							// [26D3] text|emoji
-⛔	geen toegang nie						// [26D4]
+⛔	geen toegang						// [26D4]
 ⛩	sjinto-altaar							// [26E9] text|emoji
 ⛪	kerk								// [26EA]
 ⛰	berg								// [26F0] text|emoji
@@ -476,14 +476,14 @@ $textmode
 ⛵	seilboot							// [26F5]
 ⛷	skiër								// [26F7] text|emoji
 ⛸	ysskaats							// [26F8] text|emoji
-⛹	persoon met bal							// [26F9] text|emoji
+⛹	persoon hop bal						// [26F9] text|emoji
 ⛺	tent								// [26FA]
 ⛽	petrolpomp							// [26FD]
 
 // 2700..27BF : Dingbats
 
 ✂	skêr								// [2702] text|emoji
-✅	dik wit regmerk							// [2705]
+✅	regmerkknoppie						// [2705]
 ✈	vliegtuig							// [2708] text|emoji
 ✉	koevert								// [2709] text|emoji
 ✊	vuis in die lug							// [270A]
@@ -492,26 +492,26 @@ $textmode
 ✍	hand wat skryf							// [270D] text|emoji
 ✏	potlood								// [270F] text|emoji
 ✒	swart penpunt							// [2712] text|emoji
-✔	dik regmerk							// [2714] text|emoji
-✖	dik maalteken							// [2716] text|emoji
-✝	latynse kruis							// [271D] text|emoji
-✡	dawidster							// [2721] text|emoji
+✔	regmerk							// [2714] text|emoji
+✖	maal							// [2716] text|emoji
+✝	Latynse kruis						// [271D] text|emoji
+✡	Dawidster						// [2721] text|emoji
 ✨	vonke								// [2728]
 ✳	agtspeekasterisk						// [2733] text|emoji
 ✴	agtpuntster							// [2734] text|emoji
 ❄	sneeuvlokkie							// [2744] text|emoji
 ❇	vonkster							// [2747] text|emoji
-❌	kuismerk							// [274C]
-❎	kruimerkknoppie							// [274E]
-❓	vraagteken							// [2753]
+❌	kruismerkie						// [274C]
+❎	kruismerkknoppie					// [274E]
+❓	rooi vraagteken						// [2753]
 ❔	wit vraagteken							// [2754]
 ❕	wit uitroepteken						// [2755]
-❗	uitroepteken							// [2757]
+❗	rooi uitroepteken					// [2757]
 ❣	dik hartuitroepteken						// [2763] text|emoji
 ❤	rooi hartjie							// [2764] text|emoji
-➕	dik plusteken							// [2795]
-➖	dik minusteken							// [2796]
-➗	dik deelteken							// [2797]
+➕	plus							// [2795]
+➖	minus							// [2796]
+➗	deel							// [2797]
 ➡	pyl na regs							// [27A1] text|emoji
 ➰	krullus								// [27B0]
 ➿	dubbelkrullus							// [27BF]
@@ -536,8 +536,8 @@ $textmode
 ⬇	pyl na onder							// [2B07] text|emoji
 ⬛	groot swart vierkant						// [2B1B]
 ⬜	groot wit vierkant						// [2B1C]
-⭐	wit mediumster							// [2B50]
-⭕	groot dik sirkel						// [2B55]
+⭐	ster							// [2B50]
+⭕	hol rooi sirkel						// [2B55]
 
 // 3000..303F : CJK Symbols and Punctuation
 
@@ -546,46 +546,46 @@ $textmode
 
 // 3200..32FF : Enclosed CJK Letters and Months
 
-㊗	gelukwensideogram in sirkel					// [3297] text|emoji
-㊙	geheimideogram in sirkel					// [3299] text|emoji
+㊗	Japannese veels geluk -knoppie				// [3297] text|emoji
+㊙	Japannese geheim -knoppie				// [3299] text|emoji
 ﷼	rial							// [FDFC]
 
 // 1F100..1F1FF : Enclosed Alphanumeric Supplement
 
-🅰	a-knoppie							// [1F170] text|emoji
-🅱	b-knoppie							// [1F171] text|emoji
-🅾	o-knoppie							// [1F17E] text|emoji
-🅿	p-knoppie							// [1F17F] text|emoji
-🆎	ab-knoppie							// [1F18E]
-🆑	cl-knoppie							// [1F191]
-🆒	koel in raam							// [1F192]
-🆓	gratis in raam							// [1F193]
-🆔	id in raam							// [1F194]
-🆕	nuut in raam							// [1F195]
-🆖	ng in raam							// [1F196]
-🆗	ok in raam							// [1F197]
-🆘	sos in raam							// [1F198]
-🆙	op!-knoppie							// [1F199]
-🆚	vs in raam							// [1F19A]
+🅰	A-knopie bloedgroep					// [1F170] text|emoji
+🅱	B-knopie bloedgroep					// [1F171] text|emoji
+🅾	O-knopie bloedgroep					// [1F17E] text|emoji
+🅿	P-knopie						// [1F17F] text|emoji
+🆎	AB-knopie bloedgroep					// [1F18E]
+🆑	CL-knopie						// [1F191]
+🆒	COOL-knopie						// [1F192]
+🆓	FREE-knopie						// [1F193]
+🆔	ID-knopie						// [1F194]
+🆕	NEW-knopie						// [1F195]
+🆖	NG-knopie						// [1F196]
+🆗	OK-knopie						// [1F197]
+🆘	SOS-knopie						// [1F198]
+🆙	UP -knopie						// [1F199]
+🆚	VS-knopie						// [1F19A]
 🇨🇶	Sark							// [1F1E8 1F1F6]
 
 // 1F200..1F2FF : Enclosed Ideographic Supplement
 
-🈁	katakana koko in raam						// [1F201]
-🈂	katakana sa in raam						// [1F202] text|emoji
-🈚	ontkenningideogram in raam					// [1F21A]
-🈯	vingerideogram in raam						// [1F22F]
-🈲	verbiedideogram in raam						// [1F232]
-🈳	leegideogram in raam						// [1F233]
-🈴	saamideogram in raam						// [1F234]
-🈵	volheidideogram in raam						// [1F235]
-🈶	bestaanideogram in raam						// [1F236]
-🈷	maanideogram in raam						// [1F237] text|emoji
-🈸	doen aansoek-ideogram in raam					// [1F238]
-🈹	verdeelideogram in raam						// [1F239]
-🈺	werk tans-ideogram in raam					// [1F23A]
-🉐	voordeelideogram in sirkel					// [1F250]
-🉑	aanvaarideogram in sirkel					// [1F251]
+🈁	Japannese hier -knopie					// [1F201]
+🈂	Japannese diensfooi -knopie				// [1F202] text|emoji
+🈚	Japannese gratis -knoppie				// [1F21A]
+🈯	Japannese gereserveer -knoppie				// [1F22F]
+🈲	Japannese verbode -knoppie				// [1F232]
+🈳	Japannese vakant -knoppie				// [1F233]
+🈴	Japannese slaagsyfer -knoppie				// [1F234]
+🈵	Japannese geen vakant -knoppie				// [1F235]
+🈶	Japannese nie gratis nie -knoppie			// [1F236]
+🈷	Japannese maandrekening -knoppie			// [1F237] text|emoji
+🈸	Japannese aansoek -knoppie				// [1F238]
+🈹	Japannese afslag -knoppie				// [1F239]
+🈺	Japannese oop vir besigheid -knoppie			// [1F23A]
+🉐	Japannese winskopie -knoppie				// [1F250]
+🉑	Japannese aanvaarbaar -knoppie				// [1F251]
 
 // 1F000..1F02F : Mahjong Tiles
 
@@ -603,16 +603,16 @@ $textmode
 🌃	nag met sterre							// [1F303]
 🌄	sonsopkoms oor berge						// [1F304]
 🌅	sonsopkoms							// [1F305]
-🌆	stad teen skemer						// [1F306]
+🌆	skemer stadslandskap					// [1F306]
 🌇	sonsondergang							// [1F307]
 🌈	reënboog							// [1F308]
 🌉	brug in die aand						// [1F309]
 🌊	brander								// [1F30A]
 🌋	vulkaan								// [1F30B]
 🌌	melkweg								// [1F30C]
-🌍	aardbol met europa-afrika					// [1F30D]
-🌎	aardbol met amerikas						// [1F30E]
-🌏	aardbol met asië-australië					// [1F30F]
+🌍	aardbol met Europa en Afrika				// [1F30D]
+🌎	aardbol met Amerikas					// [1F30E]
+🌏	aardbol met Asië en Australië				// [1F30F]
 🌐	aardbol met kringlyne						// [1F310]
 🌑	nuwemaan							// [1F311]
 🌒	groeiende sekelmaan						// [1F312]
@@ -709,7 +709,7 @@ $textmode
 🍯	heuningpot							// [1F36F]
 🍰	broskoek							// [1F370]
 🍱	bentoboks							// [1F371]
-🍲	bak kos								// [1F372]
+🍲	'n pot kos						// [1F372]
 🍳	gebakte eier in pan						// [1F373]
 🍴	mes en vurk							// [1F374]
 🍵	teekoppie sonder handvatsel					// [1F375]
@@ -728,7 +728,7 @@ $textmode
 🎂	verjaardagkoek							// [1F382]
 🎃	pampoenlantern							// [1F383]
 🎄	kersboom							// [1F384]
-🎅	kersvader							// [1F385]
+🎅	Kersvader						// [1F385]
 🎆	vuurwerke							// [1F386]
 🎇	vonkstok							// [1F387]
 🎈	ballon								// [1F388]
@@ -737,14 +737,14 @@ $textmode
 🎋	tanabataboom							// [1F38B]
 🎌	gekruiste vlae							// [1F38C]
 🎍	denneversiering							// [1F38D]
-🎎	japanse poppe							// [1F38E]
+🎎	Japanse poppe						// [1F38E]
 🎏	karpbanier							// [1F38F]
 🎐	windklokkie							// [1F390]
 🎑	maankykseremonie						// [1F391]
-🎒	skoolrugsak							// [1F392]
-🎓	gradeplegtigheidmus						// [1F393]
+🎒	rugsak							// [1F392]
+🎓	gradeplegtigheidsmus					// [1F393]
 🎖	militêre medalje						// [1F396] text|emoji
-🎗	herinneringlint							// [1F397] text|emoji
+🎗	herinneringslint					// [1F397] text|emoji
 🎙	ateljeemikrofoon						// [1F399] text|emoji
 🎚	vlakglyer							// [1F39A] text|emoji
 🎛	kontroleknoppe							// [1F39B] text|emoji
@@ -785,7 +785,7 @@ $textmode
 🏀	basketbal							// [1F3C0]
 🏁	ruitvlag							// [1F3C1]
 🏂	sneeuplankryer							// [1F3C2]
-🏃	hardloper							// [1F3C3]
+🏃	persoon wat hardloop					// [1F3C3]
 🏄	branderplankryer						// [1F3C4]
 🏅	sportmedalje							// [1F3C5]
 🏆	trofee								// [1F3C6]
@@ -800,14 +800,14 @@ $textmode
 🏏	krieket								// [1F3CF]
 🏐	vlugbal								// [1F3D0]
 🏑	hokkie								// [1F3D1]
-🏒	yshokkiestok en -skyf						// [1F3D2]
+🏒	yshokkie						// [1F3D2]
 🏓	tafeltennis							// [1F3D3]
 🏔	berg met sneeu op						// [1F3D4] text|emoji
 🏕	kampeer								// [1F3D5] text|emoji
 🏖	strand met sambreel						// [1F3D6] text|emoji
 🏗	konstruksie							// [1F3D7] text|emoji
 🏘	huise								// [1F3D8] text|emoji
-🏙	stad								// [1F3D9] text|emoji
+🏙	stadslandskap						// [1F3D9] text|emoji
 🏚	vervalle huis							// [1F3DA] text|emoji
 🏛	klassieke gebou							// [1F3DB] text|emoji
 🏜	woestyn								// [1F3DC] text|emoji
@@ -817,11 +817,11 @@ $textmode
 🏠	huis								// [1F3E0]
 🏡	huis met tuin							// [1F3E1]
 🏢	kantoorgebou							// [1F3E2]
-🏣	japanse poskantoor						// [1F3E3]
+🏣	Japanse poskantoor					// [1F3E3]
 🏤	poskantoor							// [1F3E4]
 🏥	hospitaal							// [1F3E5]
 🏦	bank								// [1F3E6]
-🏧	otm-teken							// [1F3E7]
+🏧	OTM-teken						// [1F3E7]
 🏨	hotel								// [1F3E8]
 🏩	liefdeshotel							// [1F3E9]
 🏪	geriefswinkel							// [1F3EA]
@@ -829,10 +829,10 @@ $textmode
 🏬	afdelingswinkel							// [1F3EC]
 🏭	fabriek								// [1F3ED]
 🏮	rooi papierlantern						// [1F3EE]
-🏯	japanse kasteel							// [1F3EF]
+🏯	Japanse kasteel						// [1F3EF]
 🏰	kasteel								// [1F3F0]
-🏳	wapperende wit vlag						// [1F3F3] text|emoji
-🏴	wapperende swart vlag						// [1F3F4]
+🏳	wit vlag						// [1F3F3] text|emoji
+🏴	swart vlag						// [1F3F4]
 🏵	roset								// [1F3F5] text|emoji
 🏷	etiket								// [1F3F7] text|emoji
 🏸	pluimbal							// [1F3F8]
@@ -859,8 +859,8 @@ $textmode
 🐍	slang								// [1F40D]
 🐎	perd								// [1F40E]
 🐏	ram								// [1F40F]
-🐐	boerbok								// [1F410]
-🐑	skaap								// [1F411]
+🐐	bok							// [1F410]
+🐑	skaapooi						// [1F411]
 🐒	aap								// [1F412]
 🐓	haan								// [1F413]
 🐔	hoender								// [1F414]
@@ -870,18 +870,18 @@ $textmode
 🐘	olifant								// [1F418]
 🐙	seekat								// [1F419]
 🐚	spiraalskulp							// [1F41A]
-🐛	ruspe								// [1F41B]
+🐛	gogga							// [1F41B]
 🐜	mier								// [1F41C]
 🐝	heuningby							// [1F41D]
-🐞	skilpadbesie							// [1F41E]
+🐞	liewenheersbesie					// [1F41E]
 🐟	vis								// [1F41F]
 🐠	tropiese vis							// [1F420]
 🐡	blaasoppie							// [1F421]
 🐢	waterskilpad							// [1F422]
 🐣	kuiken wat uitbroei						// [1F423]
-🐤	kuikengesig							// [1F424]
-🐥	kuiken								// [1F425]
-🐦	voëltjie							// [1F426]
+🐤	babakuiken						// [1F424]
+🐥	kuiken wat vorentoe kyk					// [1F425]
+🐦	voël							// [1F426]
 🐧	pikkewyn							// [1F427]
 🐨	koala								// [1F428]
 🐩	poedel								// [1F429]
@@ -899,12 +899,12 @@ $textmode
 🐵	aapgesig							// [1F435]
 🐶	hondgesig							// [1F436]
 🐷	varkgesig							// [1F437]
-🐸	paddagesig							// [1F438]
+🐸	padda							// [1F438]
 🐹	hamstergesig							// [1F439]
-🐺	wolfgesig							// [1F43A]
+🐺	wolf							// [1F43A]
 🐻	beergesig							// [1F43B]
 🐼	pandagesig							// [1F43C]
-🐽	varkneus							// [1F43D]
+🐽	varksnoet						// [1F43D]
 🐾	pootafdrukke							// [1F43E]
 🐿	grondeekhoring							// [1F43F] text|emoji
 👀	oë								// [1F440]
@@ -936,7 +936,7 @@ $textmode
 👚	vroueklere							// [1F45A]
 👛	beursie								// [1F45B]
 👜	handsak								// [1F45C]
-👝	sak								// [1F45D]
+👝	palmtassie						// [1F45D]
 👞	manskoen							// [1F45E]
 👟	hardloopskoen							// [1F45F]
 👠	hoëhakskoen							// [1F460]
@@ -954,11 +954,11 @@ $textmode
 👬	twee mans wat hande vashou					// [1F46C]
 👭	twee vroue wat hande vashou					// [1F46D]
 👮	polisiebeampte							// [1F46E]
-👯	vroue wat dans							// [1F46F]
-👰	bruid met sluier						// [1F470]
+👯	mense met haasore					// [1F46F]
+👰	persoon met sluier					// [1F470]
 👱	persoon met blonde hare						// [1F471]
-👲	man met chinese mus						// [1F472]
-👳	met met tulband							// [1F473]
+👲	man met mus						// [1F472]
+👳	persoon met tulband					// [1F473]
 👴	ou man								// [1F474]
 👵	ou vrou								// [1F475]
 👶	baba								// [1F476]
@@ -972,12 +972,12 @@ $textmode
 👾	buiteruimtelike monster						// [1F47E]
 👿	duiwel								// [1F47F]
 💀	kopbeen								// [1F480]
-💁	persoon by inligtingtoonbank					// [1F481]
-💂	gardesoldaat							// [1F482]
+💁	persoon hou hand geknak					// [1F481]
+💂	gardeoffisier						// [1F482]
 💃	vrou dans							// [1F483]
 💄	lipstiffie							// [1F484]
 💅	naellak								// [1F485]
-💆	gesigmassering							// [1F486]
+💆	persoon kry massering					// [1F486]
 💇	haarsny								// [1F487]
 💈	barbierpaal							// [1F488]
 💉	inspuiting							// [1F489]
@@ -1069,7 +1069,7 @@ $textmode
 📟	roeper								// [1F4DF]
 📠	faksmasjien							// [1F4E0]
 📡	satellietantenna						// [1F4E1]
-📢	aankondigingluidspreker						// [1F4E2]
+📢	aankondigingsluidspreker				// [1F4E2]
 📣	megafoon							// [1F4E3]
 📤	uitkassie							// [1F4E4]
 📥	inkassie							// [1F4E5]
@@ -1098,16 +1098,16 @@ $textmode
 📼	videokasset							// [1F4FC]
 📽	rolprentprojektor						// [1F4FD] text|emoji
 📿	bidkrale							// [1F4FF]
-🔀	skommel snitte-knoppie						// [1F500]
+🔀	skommelsnitteknoppie					// [1F500]
 🔁	herhaalknoppie							// [1F501]
-🔂	herhaal snit-knoppie						// [1F502]
+🔂	herhaalsnitknoppie					// [1F502]
 🔃	kloksgewyse vertikale pyle					// [1F503]
-🔄	teenkloksgewyse pyle						// [1F504]
-🔅	dofknoppie							// [1F505]
+🔄	knoppie vir teenkloksgewyse pyle			// [1F504]
+🔅	verdofknoppie						// [1F505]
 🔆	helderknoppie							// [1F506]
 🔇	luidspreker af							// [1F507]
-🔈	luidspreker							// [1F508]
-🔉	luidspreker aan							// [1F509]
+🔈	luidspreker sag						// [1F508]
+🔉	luidspreker medium volume				// [1F509]
 🔊	luidspreker hard						// [1F50A]
 🔋	battery								// [1F50B]
 🔌	elektriese prop							// [1F50C]
@@ -1125,16 +1125,16 @@ $textmode
 🔘	radioknoppie							// [1F518]
 🔙	terugpyl							// [1F519]
 🔚	eindpyl								// [1F51A]
-🔛	aan!-pyl							// [1F51B]
+🔛	aan -pyl						// [1F51B]
 🔜	binnekortpyl							// [1F51C]
 🔝	toppyl								// [1F51D]
 🔞	jonger as agtien verbode					// [1F51E]
-🔟	sleutelbordtoets: 10						// [1F51F]
-🔠	invoer latyns bokas						// [1F520]
-🔡	invoer latyns onderkas						// [1F521]
-🔢	invoer syfers							// [1F522]
-🔣	invoer simbole							// [1F523]
-🔤	invoer latyns letters						// [1F524]
+🔟	knoppiesimbool 10					// [1F51F]
+🔠	invoer- Latynse bokas					// [1F520]
+🔡	invoer- Latynse onderkas				// [1F521]
+🔢	invoersyfers						// [1F522]
+🔣	invoersimbole						// [1F523]
+🔤	invoer- Latynse letters					// [1F524]
 🔥	vuur								// [1F525]
 🔦	flits								// [1F526]
 🔧	moersleutel							// [1F527]
@@ -1162,19 +1162,19 @@ $textmode
 🔽	afknoppie							// [1F53D]
 🕉	om								// [1F549] text|emoji
 🕊	duif								// [1F54A] text|emoji
-🕋	kaäba								// [1F54B]
+🕋	Kaäba							// [1F54B]
 🕌	moskee								// [1F54C]
 🕍	sinagoge							// [1F54D]
 🕎	menora								// [1F54E]
 🕐	eenuur								// [1F550]
-🕑	twee-uur							// [1F551]
-🕒	drie-uur							// [1F552]
+🕑	tweeuur							// [1F551]
+🕒	drieuur							// [1F552]
 🕓	vieruur								// [1F553]
 🕔	vyfuur								// [1F554]
 🕕	sesuur								// [1F555]
-🕖	sewe-uur							// [1F556]
+🕖	seweuur							// [1F556]
 🕗	agtuur								// [1F557]
-🕘	nege-uur							// [1F558]
+🕘	negeuur							// [1F558]
 🕙	tienuur								// [1F559]
 🕚	elfuur								// [1F55A]
 🕛	twaalfuur							// [1F55B]
@@ -1191,13 +1191,13 @@ $textmode
 🕦	halftwaalf							// [1F566]
 🕧	halfeen								// [1F567]
 🕯	kers								// [1F56F] text|emoji
-🕰	kaggelrakklok							// [1F570] text|emoji
+🕰	kaggelklok						// [1F570] text|emoji
 🕳	gat								// [1F573] text|emoji
 🕴	man in sakepak wat sweef					// [1F574] text|emoji
 🕵	speurder							// [1F575] text|emoji
 🕶	sonbril								// [1F576] text|emoji
 🕷	spinnekop							// [1F577] text|emoji
-🕸	spinnekopweb							// [1F578] text|emoji
+🕸	spinnerak						// [1F578] text|emoji
 🕹	speelstok							// [1F579] text|emoji
 🕺	man dans							// [1F57A]
 🖇	ingehaakte skuifspeld						// [1F587] text|emoji
@@ -1220,7 +1220,7 @@ $textmode
 🗑	snippermandjie							// [1F5D1] text|emoji
 🗒	spiraalnotaboek							// [1F5D2] text|emoji
 🗓	spiraalkalender							// [1F5D3] text|emoji
-🗜	samepersing							// [1F5DC] text|emoji
+🗜	klamp							// [1F5DC] text|emoji
 🗝	ou sleutel							// [1F5DD] text|emoji
 🗞	opgerolde koerant						// [1F5DE] text|emoji
 🗡	dolk								// [1F5E1] text|emoji
@@ -1230,20 +1230,20 @@ $textmode
 🗳	stembus met stembriefie						// [1F5F3] text|emoji
 🗺	wêreldkaart							// [1F5FA] text|emoji
 🗻	berg foedji							// [1F5FB]
-🗼	tokio-toring							// [1F5FC]
+🗼	Tokio-toring						// [1F5FC]
 🗽	vryheidstandbeeld						// [1F5FD]
-🗾	kaart van japan							// [1F5FE]
+🗾	kaart van Japan						// [1F5FE]
 🗿	moai								// [1F5FF]
 
 // 1F600..1F64F : Emoticons
 
 😀	grinnikende gesig						// [1F600]
-😁	grinnikende gesig met glimlaggende oë				// [1F601]
+😁	stralende gesiggie met glimlaggende oë			// [1F601]
 😂	gesig met trane van vreugde					// [1F602]
-😃	glimlaggende gesig met oop mond					// [1F603]
-😄	glimlaggende gesig met oop mond en glimlaggende oë		// [1F604]
-😅	glimlaggende gesig met oop mond en koue sweet			// [1F605]
-😆	glimlaggende gesig met oop mond en oë styf toe			// [1F606]
+😃	grinnikende gesiggie met groot oë			// [1F603]
+😄	grinnikende gesiggie met glimlaggende oë		// [1F604]
+😅	lag gesig met sweet					// [1F605]
+😆	grynslaggesiggie met toegeknypte oë			// [1F606]
 😇	glimlaggende gesig met stralekrans				// [1F607]
 😈	glimlaggende gesig met horings					// [1F608]
 😉	gesig wat knipoog						// [1F609]
@@ -1306,16 +1306,16 @@ $textmode
 🙂	gesig wat effens glimlag					// [1F642]
 🙃	onderstebo gesig						// [1F643]
 🙄	gesig met oë wat rol						// [1F644]
-🙅	wys nee								// [1F645]
-🙆	wys goed							// [1F646]
+🙅	persoon wat NEE wys					// [1F645]
+🙆	persoon wys als is goed					// [1F646]
 🙇	persoon wat buig						// [1F647]
 🙈	sien geen kwaad nie						// [1F648]
 🙉	hoor geen kwaad nie						// [1F649]
 🙊	praat geen kwaad nie						// [1F64A]
-🙋	gelukkige persoon met hand in die lug				// [1F64B]
+🙋	persoon wat hand opsteek				// [1F64B]
 🙌	persoon met hande in die lug					// [1F64C]
 🙍	persoon wat frons						// [1F64D]
-🙎	persoon wat pruil						// [1F64E]
+🙎	dikbek persoon						// [1F64E]
 🙏	gevoude hande							// [1F64F]
 
 // 1F680..1F6FF : Transport and Map Symbols
@@ -1355,7 +1355,7 @@ $textmode
 🚠	bergkabelspoor							// [1F6A0]
 🚡	sweefspoor							// [1F6A1]
 🚢	skip								// [1F6A2]
-🚣	roeiboot							// [1F6A3]
+🚣	persoon in roeiboot					// [1F6A3]
 🚤	snelboot							// [1F6A4]
 🚥	horisontale verkeerslig						// [1F6A5]
 🚦	vertikale verkeerslig						// [1F6A6]
@@ -1366,27 +1366,27 @@ $textmode
 🚫	verbode								// [1F6AB]
 🚬	rook								// [1F6AC]
 🚭	rook verbode							// [1F6AD]
-🚮	gooi vullis in drom-teken					// [1F6AE]
+🚮	vullis in drom -teken					// [1F6AE]
 🚯	moenie rommel strooi nie					// [1F6AF]
 🚰	drinkbare water							// [1F6B0]
 🚱	niedrinkbare water						// [1F6B1]
 🚲	fiets								// [1F6B2]
 🚳	fietse verbode							// [1F6B3]
 🚴	fietsryer							// [1F6B4]
-🚵	bergietsryer							// [1F6B5]
+🚵	bergfietsryer						// [1F6B5]
 🚶	voetganger							// [1F6B6]
 🚷	voetgangers verbode						// [1F6B7]
-🚸	krinders stap oor						// [1F6B8]
+🚸	kinders stap oor					// [1F6B8]
 🚹	manskleedkamer							// [1F6B9]
 🚺	vrouekleedkamer							// [1F6BA]
 🚻	kleedkamer							// [1F6BB]
 🚼	babasimbool							// [1F6BC]
 🚽	toilet								// [1F6BD]
-🚾	badkamer							// [1F6BE]
+🚾	WC							// [1F6BE]
 🚿	stort								// [1F6BF]
 🛀	persoon wat bad							// [1F6C0]
 🛁	bad								// [1F6C1]
-🛂	paspoortbeheer							// [1F6C2]
+🛂	paspoortkontrole					// [1F6C2]
 🛃	doeane								// [1F6C3]
 🛄	bagasiesaal							// [1F6C4]
 🛅	bagasiesluitkas							// [1F6C5]
@@ -1401,6 +1401,8 @@ $textmode
 🛕	Hindoetempel						// [1F6D5]
 🛖	hut							// [1F6D6]
 🛗	hysbak							// [1F6D7]
+🛘	grondstorting						// [1F6D8]
+🛙	lugtoring						// [1F6D9]
 🛜	draadloos						// [1F6DC]
 🛝	glyplank						// [1F6DD]
 🛞	wiel							// [1F6DE]
@@ -1469,7 +1471,7 @@ $textmode
 🤣	gesig wat hard lag						// [1F923]
 🤤	gesig wat kwyl							// [1F924]
 🤥	gesig wat jok							// [1F925]
-🤦	facepalm							// [1F926]
+🤦	hand teen voorkop slaan					// [1F926]
 🤧	gesig wat nies							// [1F927]
 🤨	gesig met geligte wenkbroue					// [1F928]
 🤩	sterre in die oë						// [1F929]
@@ -1484,15 +1486,15 @@ $textmode
 🤲	palms op teen mekaar						// [1F932]
 🤳	selfie								// [1F933]
 🤴	prins								// [1F934]
-🤵	man in pak							// [1F935]
-🤶	moeder kersfees							// [1F936]
-🤷	weet nie							// [1F937]
-🤸	wawiel								// [1F938]
-🤹	jongleer							// [1F939]
-🤺	skerm								// [1F93A]
+🤵	persoon in pak						// [1F935]
+🤶	Moeder Kersfees						// [1F936]
+🤷	persoon skouerophaal					// [1F937]
+🤸	persoon wat 'n wawiel doen				// [1F938]
+🤹	jongleur						// [1F939]
+🤺	skermvegter						// [1F93A]
 🤼	stoeiers							// [1F93C]
 🤽	waterpolo							// [1F93D]
-🤾	handbal								// [1F93E]
+🤾	persoon wat handbal speel				// [1F93E]
 🤿	duikmasker						// [1F93F]
 🥀	verlepte blom							// [1F940]
 🥁	trom								// [1F941]
@@ -1517,13 +1519,13 @@ $textmode
 🥕	wortel								// [1F955]
 🥖	baguette							// [1F956]
 🥗	groenslaai							// [1F957]
-🥘	paella								// [1F958]
+🥘	vlak pan met kos					// [1F958]
 🥙	wrap								// [1F959]
 🥚	eier								// [1F95A]
 🥛	glas melk							// [1F95B]
 🥜	grondboontjies							// [1F95C]
 🥝	kiwivrug							// [1F95D]
-🥞	plaatkoekies							// [1F95E]
+🥞	pannekoeke						// [1F95E]
 🥟	kluitjie							// [1F95F]
 🥠	fortuinkoekie							// [1F960]
 🥡	wegneemeteboks							// [1F961]
@@ -1576,7 +1578,7 @@ $textmode
 🦐	garnaal								// [1F990]
 🦑	inkvis								// [1F991]
 🦒	kameelperd							// [1F992]
-🦓	zebra								// [1F993]
+🦓	sebra							// [1F993]
 🦔	krimpvarkie							// [1F994]
 🦕	souropode							// [1F995]
 🦖	T-Rex								// [1F996]
@@ -1621,7 +1623,7 @@ $textmode
 🦽	handgedrewe rolstoel					// [1F9BD]
 🦾	meganiese arm						// [1F9BE]
 🦿	meganiese been						// [1F9BF]
-🧀	kaswig								// [1F9C0]
+🧀	kaaswiggie						// [1F9C0]
 🧁	kolwyntjie							// [1F9C1]
 🧂	sout								// [1F9C2]
 🧃	koeldrankboksie						// [1F9C3]
@@ -1645,7 +1647,7 @@ $textmode
 🧕	vrou met kopdoek						// [1F9D5]
 🧖	persoon in stoomkamer						// [1F9D6]
 🧗	persoon wat rotsklim						// [1F9D7]
-🧘	persoon in die lotus-posisie					// [1F9D8]
+🧘	persoon in die lotusposisie				// [1F9D8]
 🧙	magus								// [1F9D9]
 🧚	feetjie								// [1F9DA]
 🧛	vampier								// [1F9DB]
@@ -1662,7 +1664,7 @@ $textmode
 🧦	sokkies								// [1F9E6]
 🧧	rooi koevert							// [1F9E7]
 🧨	klapper								// [1F9E8]
-🧩	legkaart							// [1F9E9]
+🧩	legkaartstuk						// [1F9E9]
 🧪	proefbuis							// [1F9EA]
 🧫	petribakkie							// [1F9EB]
 🧬	dna								// [1F9EC]
@@ -1688,264 +1690,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	vlag: Ascensioneiland						// [1F1E6 1F1E8] AC
-🇦🇩	vlag: Andorra							// [1F1E6 1F1E9] AD
-🇦🇪	vlag: Verenigde Arabiese Emirate				// [1F1E6 1F1EA] AE
-🇦🇫	vlag: Afganistan						// [1F1E6 1F1EB] AF
-🇦🇬	vlag: Antigua en Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	vlag: Anguilla							// [1F1E6 1F1EE] AI
-🇦🇱	vlag: Albanië							// [1F1E6 1F1F1] AL
-🇦🇲	vlag: Armenië							// [1F1E6 1F1F2] AM
-🇦🇴	vlag: Angola							// [1F1E6 1F1F4] AO
-🇦🇶	vlag: Antarktika						// [1F1E6 1F1F6] AQ
-🇦🇷	vlag: Argentinië						// [1F1E6 1F1F7] AR
-🇦🇸	vlag: Amerikaanse Samoa						// [1F1E6 1F1F8] AS
-🇦🇹	vlag: Oostenryk							// [1F1E6 1F1F9] AT
-🇦🇺	vlag: Australië							// [1F1E6 1F1FA] AU
-🇦🇼	vlag: Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	vlag: Ålandeilande						// [1F1E6 1F1FD] AX
-🇦🇿	vlag: Azerbeidjan						// [1F1E6 1F1FF] AZ
-🇧🇦	vlag: Bosnië en Herzegowina					// [1F1E7 1F1E6] BA
-🇧🇧	vlag: Barbados							// [1F1E7 1F1E7] BB
-🇧🇩	vlag: Bangladesj						// [1F1E7 1F1E9] BD
-🇧🇪	vlag: België							// [1F1E7 1F1EA] BE
-🇧🇫	vlag: Burkina Faso						// [1F1E7 1F1EB] BF
-🇧🇬	vlag: Bulgarye							// [1F1E7 1F1EC] BG
-🇧🇭	vlag: Bahrein							// [1F1E7 1F1ED] BH
-🇧🇮	vlag: Burundi							// [1F1E7 1F1EE] BI
-🇧🇯	vlag: Benin							// [1F1E7 1F1EF] BJ
-🇧🇱	vlag: Sint Barthélemy						// [1F1E7 1F1F1] BL
-🇧🇲	vlag: Bermuda							// [1F1E7 1F1F2] BM
-🇧🇳	vlag: Broenei							// [1F1E7 1F1F3] BN
-🇧🇴	vlag: Bolivië							// [1F1E7 1F1F4] BO
-🇧🇶	vlag: Karibiese Nederland					// [1F1E7 1F1F6] BQ
-🇧🇷	vlag: Brasilië							// [1F1E7 1F1F7] BR
-🇧🇸	vlag: Bahamas							// [1F1E7 1F1F8] BS
-🇧🇹	vlag: Bhoetan							// [1F1E7 1F1F9] BT
-🇧🇻	vlag: Bouvet-eiland						// [1F1E7 1F1FB] BV
-🇧🇼	vlag: Botswana							// [1F1E7 1F1FC] BW
-🇧🇾	vlag: Belarus							// [1F1E7 1F1FE] BY
-🇧🇿	vlag: Belize							// [1F1E7 1F1FF] BZ
-🇨🇦	vlag: Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	vlag: Kokoseilande						// [1F1E8 1F1E8] CC
-🇨🇩	vlag: Demokratiese Republiek van die Kongo			// [1F1E8 1F1E9] CD
-🇨🇫	vlag: Sentraal-Afrikaanse Republiek				// [1F1E8 1F1EB] CF
-🇨🇬	vlag: Kongo - Brazzaville					// [1F1E8 1F1EC] CG
-🇨🇭	vlag: Switserland						// [1F1E8 1F1ED] CH
-🇨🇮	vlag: Ivoorkus							// [1F1E8 1F1EE] CI
-🇨🇰	vlag: Cookeilande						// [1F1E8 1F1F0] CK
-🇨🇱	vlag: Chili							// [1F1E8 1F1F1] CL
-🇨🇲	vlag: Kameroen							// [1F1E8 1F1F2] CM
-🇨🇳	vlag: Sjina							// [1F1E8 1F1F3] CN
-🇨🇴	vlag: Colombië							// [1F1E8 1F1F4] CO
-🇨🇵	vlag: Clippertoneiland						// [1F1E8 1F1F5] CP
-🇨🇷	vlag: Costa Rica						// [1F1E8 1F1F7] CR
-🇨🇺	vlag: Kuba							// [1F1E8 1F1FA] CU
-🇨🇻	vlag: Kaap Verde						// [1F1E8 1F1FB] CV
-🇨🇼	vlag: Curaçao							// [1F1E8 1F1FC] CW
-🇨🇽	vlag: Kerseiland						// [1F1E8 1F1FD] CX
-🇨🇾	vlag: Siprus							// [1F1E8 1F1FE] CY
-🇨🇿	vlag: Tsjeggië							// [1F1E8 1F1FF] CZ
-🇩🇪	vlag: Duitsland							// [1F1E9 1F1EA] DE
-🇩🇬	vlag: Diego Garcia						// [1F1E9 1F1EC] DG
-🇩🇯	vlag: Djiboeti							// [1F1E9 1F1EF] DJ
-🇩🇰	vlag: Denemarke							// [1F1E9 1F1F0] DK
-🇩🇲	vlag: Dominica							// [1F1E9 1F1F2] DM
-🇩🇴	vlag: Dominikaanse Republiek					// [1F1E9 1F1F4] DO
-🇩🇿	vlag: Algerië							// [1F1E9 1F1FF] DZ
-🇪🇦	vlag: Ceuta en Melilla						// [1F1EA 1F1E6] EA
-🇪🇨	vlag: Ecuador							// [1F1EA 1F1E8] EC
-🇪🇪	vlag: Estland							// [1F1EA 1F1EA] EE
-🇪🇬	vlag: Egipte							// [1F1EA 1F1EC] EG
-🇪🇭	vlag: Wes-Sahara						// [1F1EA 1F1ED] EH
-🇪🇷	vlag: Eritrea							// [1F1EA 1F1F7] ER
-🇪🇸	vlag: Spanje							// [1F1EA 1F1F8] ES
-🇪🇹	vlag: Ethiopië							// [1F1EA 1F1F9] ET
-🇪🇺	vlag: Europese Unie						// [1F1EA 1F1FA] EU
-🇫🇮	vlag: Finland							// [1F1EB 1F1EE] FI
-🇫🇯	vlag: Fidji							// [1F1EB 1F1EF] FJ
-🇫🇰	vlag: Falklandeilande						// [1F1EB 1F1F0] FI
-🇫🇲	vlag: Mikronesië						// [1F1EB 1F1F2] FM
-🇫🇴	vlag: Faroëreilande						// [1F1EB 1F1F4] FO
-🇫🇷	vlag: Frankryk							// [1F1EB 1F1F7] FR
-🇬🇦	vlag: Gaboen							// [1F1EC 1F1E6] GA
-🇬🇧	vlag: Verenigde Koninkryk					// [1F1EC 1F1E7] GB
-🇬🇩	vlag: Grenada							// [1F1EC 1F1E9] GD
-🇬🇪	vlag: Georgië							// [1F1EC 1F1EA] GE
-🇬🇫	vlag: Frans-Guyana						// [1F1EC 1F1EB] GF
-🇬🇬	vlag: Guernsey							// [1F1EC 1F1EC] GG
-🇬🇭	vlag: Ghana							// [1F1EC 1F1ED] GH
-🇬🇮	vlag: Gibraltar							// [1F1EC 1F1EE] GI
-🇬🇱	vlag: Groenland							// [1F1EC 1F1F1] GL
-🇬🇲	vlag: Gambië							// [1F1EC 1F1F2] GM
-🇬🇳	vlag: Guinee							// [1F1EC 1F1F3] GN
-🇬🇵	vlag: Guadeloupe						// [1F1EC 1F1F5] GP
-🇬🇶	vlag: Ekwatoriaal-Guinee					// [1F1EC 1F1F6] GQ
-🇬🇷	vlag: Griekeland						// [1F1EC 1F1F7] GR
-🇬🇸	vlag: Suid-Georgië en die Suidelike Sandwicheilande		// [1F1EC 1F1F8] GS
-🇬🇹	vlag: Guatemala							// [1F1EC 1F1F9] GT
-🇬🇺	vlag: Guam							// [1F1EC 1F1FA] GU
-🇬🇼	vlag: Guinee-Bissau						// [1F1EC 1F1FC] GW
-🇬🇾	vlag: Guyana							// [1F1EC 1F1FE] GY
-🇭🇰	vlag: Hongkong SAS Sjina					// [1F1ED 1F1F0] HK
-🇭🇲	vlag: Heardeiland en McDonaldeilande				// [1F1ED 1F1F2] HM
-🇭🇳	vlag: Honduras							// [1F1ED 1F1F3] HN
-🇭🇷	vlag: Kroasië							// [1F1ED 1F1F7] HR
-🇭🇹	vlag: Haïti							// [1F1ED 1F1F9] HT
-🇭🇺	vlag: Hongarye							// [1F1ED 1F1FA] HU
-🇮🇨	vlag: Kanariese Eilande						// [1F1EE 1F1E8] IC
-🇮🇩	vlag: Indonesië							// [1F1EE 1F1E9] ID
-🇮🇪	vlag: Ierland							// [1F1EE 1F1EA] IE
-🇮🇱	vlag: Israel							// [1F1EE 1F1F1] IL
-🇮🇲	vlag: Eiland Man						// [1F1EE 1F1F2] IM
-🇮🇳	vlag: Indië							// [1F1EE 1F1F3] IN
-🇮🇴	vlag: Brits-Indiese Oseaangebied				// [1F1EE 1F1F4] IO
-🇮🇶	vlag: Irak							// [1F1EE 1F1F6] IQ
-🇮🇷	vlag: Iran							// [1F1EE 1F1F7] IR
-🇮🇸	vlag: Ysland							// [1F1EE 1F1F8] IS
-🇮🇹	vlag: Italië							// [1F1EE 1F1F9] IT
-🇯🇪	vlag: Jersey							// [1F1EF 1F1EA] JE
-🇯🇲	vlag: Jamaika							// [1F1EF 1F1F2] JM
-🇯🇴	vlag: Jordanië							// [1F1EF 1F1F4] JO
-🇯🇵	vlag: Japan							// [1F1EF 1F1F5] JP
-🇰🇪	vlag: Kenia							// [1F1F0 1F1EA] KE
-🇰🇬	vlag: Kirgistan							// [1F1F0 1F1EC] KG
-🇰🇭	vlag: Kambodja							// [1F1F0 1F1ED] KH
-🇰🇮	vlag: Kiribati							// [1F1F0 1F1EE] KI
-🇰🇲	vlag: Comore							// [1F1F0 1F1F2] KM
-🇰🇳	vlag: Sint Kitts en Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	vlag: Noord-Korea						// [1F1F0 1F1F5] KP
-🇰🇷	vlag: Suid-Korea						// [1F1F0 1F1F7] KR
-🇰🇼	vlag: Koeweit							// [1F1F0 1F1FC] KW
-🇰🇾	vlag: Kaaimanseilande						// [1F1F0 1F1FE] KY
-🇰🇿	vlag: Kazakstan							// [1F1F0 1F1FF] KZ
-🇱🇦	vlag: Laos							// [1F1F1 1F1E6] LA
-🇱🇧	vlag: Libanon							// [1F1F1 1F1E7] LB
-🇱🇨	vlag: Sint Lucia						// [1F1F1 1F1E8] LC
-🇱🇮	vlag: Liechtenstein						// [1F1F1 1F1EE] LI
-🇱🇰	vlag: Sri Lanka							// [1F1F1 1F1F0] LK
-🇱🇷	vlag: Liberië							// [1F1F1 1F1F7] LR
-🇱🇸	vlag: Lesotho							// [1F1F1 1F1F8] LS
-🇱🇹	vlag: Litaue							// [1F1F1 1F1F9] LT
-🇱🇺	vlag: Luxemburg							// [1F1F1 1F1FA] LU
-🇱🇻	vlag: Letland							// [1F1F1 1F1FB] LV
-🇱🇾	vlag: Libië							// [1F1F1 1F1FE] LY
-🇲🇦	vlag: Marokko							// [1F1F2 1F1E6] MA
-🇲🇨	vlag: Monaco							// [1F1F2 1F1E8] MC
-🇲🇩	vlag: Moldowa							// [1F1F2 1F1E9] MD
-🇲🇪	vlag: Montenegro						// [1F1F2 1F1EA] ME
-🇲🇫	vlag: Sint Martin						// [1F1F2 1F1EB] MF
-🇲🇬	vlag: Madagaskar						// [1F1F2 1F1EC] MG
-🇲🇭	vlag: Marshalleilande						// [1F1F2 1F1ED] MH
-🇲🇰	vlag: Macedonië							// [1F1F2 1F1F0] MK
-🇲🇱	vlag: Mali							// [1F1F2 1F1F1] ML
-🇲🇲	vlag: Mianmar (Birma)						// [1F1F2 1F1F2] MM
-🇲🇳	vlag: Mongolië							// [1F1F2 1F1F3] MN
-🇲🇴	vlag: Macau SAS Sjina						// [1F1F2 1F1F4] MO
-🇲🇵	vlag: Noord-Mariane-eilande					// [1F1F2 1F1F5] MP
-🇲🇶	vlag: Martinique						// [1F1F2 1F1F6] MQ
-🇲🇷	vlag: Mauritanië						// [1F1F2 1F1F7] MR
-🇲🇸	vlag: Montserrat						// [1F1F2 1F1F8] MS
-🇲🇹	vlag: Malta							// [1F1F2 1F1F9] MT
-🇲🇺	vlag: Mauritius							// [1F1F2 1F1FA] MU
-🇲🇻	vlag: Maledive							// [1F1F2 1F1FB] MV
-🇲🇼	vlag: Malawi							// [1F1F2 1F1FC] MW
-🇲🇽	vlag: Meksiko							// [1F1F2 1F1FD] MX
-🇲🇾	vlag: Maleisië							// [1F1F2 1F1FE] MY
-🇲🇿	vlag: Mosambiek							// [1F1F2 1F1FF] MZ
-🇳🇦	vlag: Namibië							// [1F1F3 1F1E6] NA
-🇳🇨	vlag: Nieu-Kaledonië						// [1F1F3 1F1E8] NC
-🇳🇪	vlag: Niger							// [1F1F3 1F1EA] NE
-🇳🇫	vlag: Norfolkeiland						// [1F1F3 1F1EB] NF
-🇳🇬	vlag: Nigerië							// [1F1F3 1F1EC] NG
-🇳🇮	vlag: Nicaragua							// [1F1F3 1F1EE] NI
-🇳🇱	vlag: Nederland							// [1F1F3 1F1F1] NL
-🇳🇴	vlag: Noorweë							// [1F1F3 1F1F4] NO
-🇳🇵	vlag: Nepal							// [1F1F3 1F1F5] NP
-🇳🇷	vlag: Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	vlag: Niue							// [1F1F3 1F1FA] NU
-🇳🇿	vlag: Nieu-Seeland						// [1F1F3 1F1FF] NZ
-🇴🇲	vlag: Oman							// [1F1F4 1F1F2] OM
-🇵🇦	vlag: Panama							// [1F1F5 1F1E6] PA
-🇵🇪	vlag: Peru							// [1F1F5 1F1EA] PE
-🇵🇫	vlag: Frans-Polinesië						// [1F1F5 1F1EB] PF
-🇵🇬	vlag: Papoea-Nieu-Guinee					// [1F1F5 1F1EC] PG
-🇵🇭	vlag: Filippyne							// [1F1F5 1F1ED] PH
-🇵🇰	vlag: Pakistan							// [1F1F5 1F1F0] PK
-🇵🇱	vlag: Pole							// [1F1F5 1F1F1] PL
-🇵🇲	vlag: Sint Pierre en Miquelon					// [1F1F5 1F1F2] PM
-🇵🇳	vlag: Pitcairneilande						// [1F1F5 1F1F3] PN
-🇵🇷	vlag: Puerto Rico						// [1F1F5 1F1F7] PR
-🇵🇸	vlag: Palestynse gebiede					// [1F1F5 1F1F8] PS
-🇵🇹	vlag: Portugal							// [1F1F5 1F1F9] PT
-🇵🇼	vlag: Palau							// [1F1F5 1F1FC] PW
-🇵🇾	vlag: Paraguay							// [1F1F5 1F1FE] PY
-🇶🇦	vlag: Katar							// [1F1F6 1F1E6] QA
-🇷🇪	vlag: Réunion							// [1F1F7 1F1EA] RE
-🇷🇴	vlag: Roemenië							// [1F1F7 1F1F4] RO
-🇷🇸	vlag: Serwië							// [1F1F7 1F1F8] RS
-🇷🇺	vlag: Rusland							// [1F1F7 1F1FA] RU
-🇷🇼	vlag: Rwanda							// [1F1F7 1F1FC] RW
-🇸🇦	vlag: Saoedi-Arabië						// [1F1F8 1F1E6] SA
-🇸🇧	vlag: Salomonseilande						// [1F1F8 1F1E7] SB
-🇸🇨	vlag: Seychelle							// [1F1F8 1F1E8] SC
-🇸🇩	vlag: Soedan							// [1F1F8 1F1E9] SD
-🇸🇪	vlag: Swede							// [1F1F8 1F1EA] SE
-🇸🇬	vlag: Singapoer							// [1F1F8 1F1EC] SG
-🇸🇭	vlag: Sint Helena						// [1F1F8 1F1ED] SH
-🇸🇮	vlag: Slowenië							// [1F1F8 1F1EE] SI
-🇸🇯	vlag: Svalbard en Jan Mayen					// [1F1F8 1F1EF] SJ
-🇸🇰	vlag: Slowakye							// [1F1F8 1F1F0] SK
-🇸🇱	vlag: Sierra Leone						// [1F1F8 1F1F1] SL
-🇸🇲	vlag: San Marino						// [1F1F8 1F1F2] SM
-🇸🇳	vlag: Senegal							// [1F1F8 1F1F3] SN
-🇸🇴	vlag: Somalië							// [1F1F8 1F1F4] SO
-🇸🇷	vlag: Suriname							// [1F1F8 1F1F7] SR
-🇸🇸	vlag: Suid-Soedan						// [1F1F8 1F1F8] SS
-🇸🇹	vlag: São Tomé en Príncipe					// [1F1F8 1F1F9] ST
-🇸🇻	vlag: El Salvador						// [1F1F8 1F1FB] SV
-🇸🇽	vlag: Sint Maarten						// [1F1F8 1F1FD] SX
-🇸🇾	vlag: Sirië							// [1F1F8 1F1FE] SY
-🇸🇿	vlag: Swaziland							// [1F1F8 1F1FF] SZ
-🇹🇦	vlag: Tristan da Cunha						// [1F1F9 1F1E6] TA
-🇹🇨	vlag: Turks- en Caicoseilande					// [1F1F9 1F1E8] TC
-🇹🇩	vlag: Tsjad							// [1F1F9 1F1E9] TD
-🇹🇫	vlag: Franse Suidelike Gebiede					// [1F1F9 1F1EB] TF
-🇹🇬	vlag: Togo							// [1F1F9 1F1EC] TG
-🇹🇭	vlag: Thailand							// [1F1F9 1F1ED] TH
-🇹🇯	vlag: Tadjikistan						// [1F1F9 1F1EF] TJ
-🇹🇰	vlag: Tokelau							// [1F1F9 1F1F0] TK
-🇹🇱	vlag: Oos-Timor							// [1F1F9 1F1F1] TL
-🇹🇲	vlag: Turkmenistan						// [1F1F9 1F1F2] TM
-🇹🇳	vlag: Tunisië							// [1F1F9 1F1F3] TN
-🇹🇴	vlag: Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	vlag: Turkye							// [1F1F9 1F1F7] TR
-🇹🇹	vlag: Trinidad en Tobago					// [1F1F9 1F1F9] TT
-🇹🇻	vlag: Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	vlag: Taiwan							// [1F1F9 1F1FC] TW
-🇹🇿	vlag: Tanzanië							// [1F1F9 1F1FF] TZ
-🇺🇦	vlag: Oekraïne							// [1F1FA 1F1E6] UA
-🇺🇬	vlag: Uganda							// [1F1FA 1F1EC] UG
-🇺🇲	vlag: Klein afgeleë eilande van die VSA				// [1F1FA 1F1F2] UM
-🇺🇳	vlag: Verenigde Nasies						// [1F1FA 1F1F3] UN
-🇺🇸	vlag: Verenigde State van Amerika				// [1F1FA 1F1F8] US
-🇺🇾	vlag: Uruguay							// [1F1FA 1F1FE] UY
-🇺🇿	vlag: Oesbekistan						// [1F1FA 1F1FF] UZ
-🇻🇦	vlag: Vatikaanstad						// [1F1FB 1F1E6] VA
-🇻🇨	vlag: Sint Vincent en die Grenadine				// [1F1FB 1F1E8] VC
-🇻🇪	vlag: Venezuela							// [1F1FB 1F1EA] VE
-🇻🇬	vlag: Britse Maagde-eilande					// [1F1FB 1F1EC] VG
-🇻🇮	vlag: VSA se Maagde-eilande					// [1F1FB 1F1EE] VI
-🇻🇳	vlag: Viëtnam							// [1F1FB 1F1F3] VN
-🇻🇺	vlag: Vanuatu							// [1F1FB 1F1FA] VU
-🇼🇫	vlag: Wallis en Futuna						// [1F1FC 1F1EB] WF
-🇼🇸	vlag: Samoa							// [1F1FC 1F1F8] WS
-🇽🇰	vlag: Kosovo							// [1F1FD 1F1F0] XK
-🇾🇪	vlag: Jemen							// [1F1FE 1F1EA] YE
-🇾🇹	vlag: Mayotte							// [1F1FE 1F1F9] YT
-🇿🇦	vlag: Suid-Afrika						// [1F1FF 1F1E6] ZA
-🇿🇲	vlag: Zambië							// [1F1FF 1F1F2] ZM
-🇿🇼	vlag: Zimbabwe							// [1F1FF 1F1FC] ZW
+🇦🇨	Ascensioneiland						// [1F1E6 1F1E8] AC
+🇦🇩	Andorra							// [1F1E6 1F1E9] AD
+🇦🇪	Verenigde Arabiese Emirate				// [1F1E6 1F1EA] AE
+🇦🇫	Afganistan						// [1F1E6 1F1EB] AF
+🇦🇬	Antigua en Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	Anguilla						// [1F1E6 1F1EE] AI
+🇦🇱	Albanië							// [1F1E6 1F1F1] AL
+🇦🇲	Armenië							// [1F1E6 1F1F2] AM
+🇦🇴	Angola							// [1F1E6 1F1F4] AO
+🇦🇶	Antarktika						// [1F1E6 1F1F6] AQ
+🇦🇷	Argentinië						// [1F1E6 1F1F7] AR
+🇦🇸	Amerikaanse Samoa					// [1F1E6 1F1F8] AS
+🇦🇹	Oostenryk						// [1F1E6 1F1F9] AT
+🇦🇺	Australië						// [1F1E6 1F1FA] AU
+🇦🇼	Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	Ålandeilande						// [1F1E6 1F1FD] AX
+🇦🇿	Azerbeidjan						// [1F1E6 1F1FF] AZ
+🇧🇦	Bosnië en Herzegowina					// [1F1E7 1F1E6] BA
+🇧🇧	Barbados						// [1F1E7 1F1E7] BB
+🇧🇩	Bangladesj						// [1F1E7 1F1E9] BD
+🇧🇪	België							// [1F1E7 1F1EA] BE
+🇧🇫	Burkina Faso						// [1F1E7 1F1EB] BF
+🇧🇬	Bulgarye						// [1F1E7 1F1EC] BG
+🇧🇭	Bahrein							// [1F1E7 1F1ED] BH
+🇧🇮	Burundi							// [1F1E7 1F1EE] BI
+🇧🇯	Benin							// [1F1E7 1F1EF] BJ
+🇧🇱	Sint Barthélemy						// [1F1E7 1F1F1] BL
+🇧🇲	Bermuda							// [1F1E7 1F1F2] BM
+🇧🇳	Broenei							// [1F1E7 1F1F3] BN
+🇧🇴	Bolivië							// [1F1E7 1F1F4] BO
+🇧🇶	Karibiese Nederland					// [1F1E7 1F1F6] BQ
+🇧🇷	Brasilië						// [1F1E7 1F1F7] BR
+🇧🇸	Bahamas							// [1F1E7 1F1F8] BS
+🇧🇹	Bhoetan							// [1F1E7 1F1F9] BT
+🇧🇻	Bouvet-eiland						// [1F1E7 1F1FB] BV
+🇧🇼	Botswana						// [1F1E7 1F1FC] BW
+🇧🇾	Belarus							// [1F1E7 1F1FE] BY
+🇧🇿	Belize							// [1F1E7 1F1FF] BZ
+🇨🇦	Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	Kokoseilande						// [1F1E8 1F1E8] CC
+🇨🇩	Demokratiese Republiek van die Kongo			// [1F1E8 1F1E9] CD
+🇨🇫	Sentraal-Afrikaanse Republiek				// [1F1E8 1F1EB] CF
+🇨🇬	Kongo-Brazzaville					// [1F1E8 1F1EC] CG
+🇨🇭	Switserland						// [1F1E8 1F1ED] CH
+🇨🇮	Ivoorkus						// [1F1E8 1F1EE] CI
+🇨🇰	Cookeilande						// [1F1E8 1F1F0] CK
+🇨🇱	Chili							// [1F1E8 1F1F1] CL
+🇨🇲	Kameroen						// [1F1E8 1F1F2] CM
+🇨🇳	China							// [1F1E8 1F1F3] CN
+🇨🇴	Colombië						// [1F1E8 1F1F4] CO
+🇨🇵	Clippertoneiland					// [1F1E8 1F1F5] CP
+🇨🇷	Costa Rica						// [1F1E8 1F1F7] CR
+🇨🇺	Kuba							// [1F1E8 1F1FA] CU
+🇨🇻	Kaap Verde						// [1F1E8 1F1FB] CV
+🇨🇼	Curaçao							// [1F1E8 1F1FC] CW
+🇨🇽	Kerseiland						// [1F1E8 1F1FD] CX
+🇨🇾	Siprus							// [1F1E8 1F1FE] CY
+🇨🇿	Tsjeggië						// [1F1E8 1F1FF] CZ
+🇩🇪	Duitsland						// [1F1E9 1F1EA] DE
+🇩🇬	Diego Garcia						// [1F1E9 1F1EC] DG
+🇩🇯	Djiboeti						// [1F1E9 1F1EF] DJ
+🇩🇰	Denemarke						// [1F1E9 1F1F0] DK
+🇩🇲	Dominica						// [1F1E9 1F1F2] DM
+🇩🇴	Dominikaanse Republiek					// [1F1E9 1F1F4] DO
+🇩🇿	Algerië							// [1F1E9 1F1FF] DZ
+🇪🇦	Ceuta en Melilla					// [1F1EA 1F1E6] EA
+🇪🇨	Ecuador							// [1F1EA 1F1E8] EC
+🇪🇪	Estland							// [1F1EA 1F1EA] EE
+🇪🇬	Egipte							// [1F1EA 1F1EC] EG
+🇪🇭	Wes-Sahara						// [1F1EA 1F1ED] EH
+🇪🇷	Eritrea							// [1F1EA 1F1F7] ER
+🇪🇸	Spanje							// [1F1EA 1F1F8] ES
+🇪🇹	Ethiopië						// [1F1EA 1F1F9] ET
+🇪🇺	Europese Unie						// [1F1EA 1F1FA] EU
+🇫🇮	Finland							// [1F1EB 1F1EE] FI
+🇫🇯	Fidji							// [1F1EB 1F1EF] FJ
+🇫🇰	Falklandeilande						// [1F1EB 1F1F0] FI
+🇫🇲	Mikronesië						// [1F1EB 1F1F2] FM
+🇫🇴	Faroëreilande						// [1F1EB 1F1F4] FO
+🇫🇷	Frankryk						// [1F1EB 1F1F7] FR
+🇬🇦	Gaboen							// [1F1EC 1F1E6] GA
+🇬🇧	Verenigde Koninkryk					// [1F1EC 1F1E7] GB
+🇬🇩	Grenada							// [1F1EC 1F1E9] GD
+🇬🇪	Georgië							// [1F1EC 1F1EA] GE
+🇬🇫	Frans-Guyana						// [1F1EC 1F1EB] GF
+🇬🇬	Guernsey						// [1F1EC 1F1EC] GG
+🇬🇭	Ghana							// [1F1EC 1F1ED] GH
+🇬🇮	Gibraltar						// [1F1EC 1F1EE] GI
+🇬🇱	Groenland						// [1F1EC 1F1F1] GL
+🇬🇲	Gambië							// [1F1EC 1F1F2] GM
+🇬🇳	Guinee							// [1F1EC 1F1F3] GN
+🇬🇵	Guadeloupe						// [1F1EC 1F1F5] GP
+🇬🇶	Ekwatoriaal-Guinee					// [1F1EC 1F1F6] GQ
+🇬🇷	Griekeland						// [1F1EC 1F1F7] GR
+🇬🇸	Suid-Georgië en die Suidelike Sandwicheilande		// [1F1EC 1F1F8] GS
+🇬🇹	Guatemala						// [1F1EC 1F1F9] GT
+🇬🇺	Guam							// [1F1EC 1F1FA] GU
+🇬🇼	Guinee-Bissau						// [1F1EC 1F1FC] GW
+🇬🇾	Guyana							// [1F1EC 1F1FE] GY
+🇭🇰	Hongkong SAS China					// [1F1ED 1F1F0] HK
+🇭🇲	Heardeiland en McDonaldeilande				// [1F1ED 1F1F2] HM
+🇭🇳	Honduras						// [1F1ED 1F1F3] HN
+🇭🇷	Kroasië							// [1F1ED 1F1F7] HR
+🇭🇹	Haïti							// [1F1ED 1F1F9] HT
+🇭🇺	Hongarye						// [1F1ED 1F1FA] HU
+🇮🇨	Kanariese Eilande					// [1F1EE 1F1E8] IC
+🇮🇩	Indonesië						// [1F1EE 1F1E9] ID
+🇮🇪	Ierland							// [1F1EE 1F1EA] IE
+🇮🇱	Israel							// [1F1EE 1F1F1] IL
+🇮🇲	Eiland Man						// [1F1EE 1F1F2] IM
+🇮🇳	Indië							// [1F1EE 1F1F3] IN
+🇮🇴	Brits-Indiese Oseaangebied				// [1F1EE 1F1F4] IO
+🇮🇶	Irak							// [1F1EE 1F1F6] IQ
+🇮🇷	Iran							// [1F1EE 1F1F7] IR
+🇮🇸	Ysland							// [1F1EE 1F1F8] IS
+🇮🇹	Italië							// [1F1EE 1F1F9] IT
+🇯🇪	Jersey							// [1F1EF 1F1EA] JE
+🇯🇲	Jamaika							// [1F1EF 1F1F2] JM
+🇯🇴	Jordanië						// [1F1EF 1F1F4] JO
+🇯🇵	Japan							// [1F1EF 1F1F5] JP
+🇰🇪	Kenia							// [1F1F0 1F1EA] KE
+🇰🇬	Kirgistan						// [1F1F0 1F1EC] KG
+🇰🇭	Kambodja						// [1F1F0 1F1ED] KH
+🇰🇮	Kiribati						// [1F1F0 1F1EE] KI
+🇰🇲	Comore							// [1F1F0 1F1F2] KM
+🇰🇳	Sint Kitts en Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	Noord-Korea						// [1F1F0 1F1F5] KP
+🇰🇷	Suid-Korea						// [1F1F0 1F1F7] KR
+🇰🇼	Koeweit							// [1F1F0 1F1FC] KW
+🇰🇾	Kaaimanseilande						// [1F1F0 1F1FE] KY
+🇰🇿	Kazakstan						// [1F1F0 1F1FF] KZ
+🇱🇦	Laos							// [1F1F1 1F1E6] LA
+🇱🇧	Libanon							// [1F1F1 1F1E7] LB
+🇱🇨	Sint Lucia						// [1F1F1 1F1E8] LC
+🇱🇮	Liechtenstein						// [1F1F1 1F1EE] LI
+🇱🇰	Sri Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	Liberië							// [1F1F1 1F1F7] LR
+🇱🇸	Lesotho							// [1F1F1 1F1F8] LS
+🇱🇹	Litaue							// [1F1F1 1F1F9] LT
+🇱🇺	Luxemburg						// [1F1F1 1F1FA] LU
+🇱🇻	Letland							// [1F1F1 1F1FB] LV
+🇱🇾	Libië							// [1F1F1 1F1FE] LY
+🇲🇦	Marokko							// [1F1F2 1F1E6] MA
+🇲🇨	Monaco							// [1F1F2 1F1E8] MC
+🇲🇩	Moldowa							// [1F1F2 1F1E9] MD
+🇲🇪	Montenegro						// [1F1F2 1F1EA] ME
+🇲🇫	Sint Martin						// [1F1F2 1F1EB] MF
+🇲🇬	Madagaskar						// [1F1F2 1F1EC] MG
+🇲🇭	Marshalleilande						// [1F1F2 1F1ED] MH
+🇲🇰	Noord-Macedonië						// [1F1F2 1F1F0] MK
+🇲🇱	Mali							// [1F1F2 1F1F1] ML
+🇲🇲	Mianmar Birma						// [1F1F2 1F1F2] MM
+🇲🇳	Mongolië						// [1F1F2 1F1F3] MN
+🇲🇴	Macau SAS China						// [1F1F2 1F1F4] MO
+🇲🇵	Noord-Mariane-eilande					// [1F1F2 1F1F5] MP
+🇲🇶	Martinique						// [1F1F2 1F1F6] MQ
+🇲🇷	Mauritanië						// [1F1F2 1F1F7] MR
+🇲🇸	Montserrat						// [1F1F2 1F1F8] MS
+🇲🇹	Malta							// [1F1F2 1F1F9] MT
+🇲🇺	Mauritius						// [1F1F2 1F1FA] MU
+🇲🇻	Maledive						// [1F1F2 1F1FB] MV
+🇲🇼	Malawi							// [1F1F2 1F1FC] MW
+🇲🇽	Meksiko							// [1F1F2 1F1FD] MX
+🇲🇾	Maleisië						// [1F1F2 1F1FE] MY
+🇲🇿	Mosambiek						// [1F1F2 1F1FF] MZ
+🇳🇦	Namibië							// [1F1F3 1F1E6] NA
+🇳🇨	Nieu-Kaledonië						// [1F1F3 1F1E8] NC
+🇳🇪	Niger							// [1F1F3 1F1EA] NE
+🇳🇫	Norfolkeiland						// [1F1F3 1F1EB] NF
+🇳🇬	Nigerië							// [1F1F3 1F1EC] NG
+🇳🇮	Nicaragua						// [1F1F3 1F1EE] NI
+🇳🇱	Nederland						// [1F1F3 1F1F1] NL
+🇳🇴	Noorweë							// [1F1F3 1F1F4] NO
+🇳🇵	Nepal							// [1F1F3 1F1F5] NP
+🇳🇷	Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	Niue							// [1F1F3 1F1FA] NU
+🇳🇿	Nieu-Seeland						// [1F1F3 1F1FF] NZ
+🇴🇲	Oman							// [1F1F4 1F1F2] OM
+🇵🇦	Panama							// [1F1F5 1F1E6] PA
+🇵🇪	Peru							// [1F1F5 1F1EA] PE
+🇵🇫	Frans-Polinesië						// [1F1F5 1F1EB] PF
+🇵🇬	Papoea-Nieu-Guinee					// [1F1F5 1F1EC] PG
+🇵🇭	Filippyne						// [1F1F5 1F1ED] PH
+🇵🇰	Pakistan						// [1F1F5 1F1F0] PK
+🇵🇱	Pole							// [1F1F5 1F1F1] PL
+🇵🇲	Sint Pierre en Miquelon					// [1F1F5 1F1F2] PM
+🇵🇳	Pitcairneilande						// [1F1F5 1F1F3] PN
+🇵🇷	Puerto Rico						// [1F1F5 1F1F7] PR
+🇵🇸	Palestynse Grondgebiede					// [1F1F5 1F1F8] PS
+🇵🇹	Portugal						// [1F1F5 1F1F9] PT
+🇵🇼	Palau							// [1F1F5 1F1FC] PW
+🇵🇾	Paraguay						// [1F1F5 1F1FE] PY
+🇶🇦	Katar							// [1F1F6 1F1E6] QA
+🇷🇪	Réunion							// [1F1F7 1F1EA] RE
+🇷🇴	Roemenië						// [1F1F7 1F1F4] RO
+🇷🇸	Serwië							// [1F1F7 1F1F8] RS
+🇷🇺	Rusland							// [1F1F7 1F1FA] RU
+🇷🇼	Rwanda							// [1F1F7 1F1FC] RW
+🇸🇦	Saoedi-Arabië						// [1F1F8 1F1E6] SA
+🇸🇧	Salomonseilande						// [1F1F8 1F1E7] SB
+🇸🇨	Seychelle						// [1F1F8 1F1E8] SC
+🇸🇩	Soedan							// [1F1F8 1F1E9] SD
+🇸🇪	Swede							// [1F1F8 1F1EA] SE
+🇸🇬	Singapoer						// [1F1F8 1F1EC] SG
+🇸🇭	Sint Helena						// [1F1F8 1F1ED] SH
+🇸🇮	Slowenië						// [1F1F8 1F1EE] SI
+🇸🇯	Spitsbergen en Jan Mayen				// [1F1F8 1F1EF] SJ
+🇸🇰	Slowakye						// [1F1F8 1F1F0] SK
+🇸🇱	Sierra Leone						// [1F1F8 1F1F1] SL
+🇸🇲	San Marino						// [1F1F8 1F1F2] SM
+🇸🇳	Senegal							// [1F1F8 1F1F3] SN
+🇸🇴	Somalië							// [1F1F8 1F1F4] SO
+🇸🇷	Suriname						// [1F1F8 1F1F7] SR
+🇸🇸	Suid-Soedan						// [1F1F8 1F1F8] SS
+🇸🇹	São Tomé en Príncipe					// [1F1F8 1F1F9] ST
+🇸🇻	El Salvador						// [1F1F8 1F1FB] SV
+🇸🇽	Sint Maarten						// [1F1F8 1F1FD] SX
+🇸🇾	Sirië							// [1F1F8 1F1FE] SY
+🇸🇿	Eswatini						// [1F1F8 1F1FF] SZ
+🇹🇦	Tristan da Cunha					// [1F1F9 1F1E6] TA
+🇹🇨	Turks- en Caicoseilande					// [1F1F9 1F1E8] TC
+🇹🇩	Tsjad							// [1F1F9 1F1E9] TD
+🇹🇫	Franse Suidelike Gebiede				// [1F1F9 1F1EB] TF
+🇹🇬	Togo							// [1F1F9 1F1EC] TG
+🇹🇭	Thailand						// [1F1F9 1F1ED] TH
+🇹🇯	Tadjikistan						// [1F1F9 1F1EF] TJ
+🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
+🇹🇱	Oos-Timor						// [1F1F9 1F1F1] TL
+🇹🇲	Turkmenistan						// [1F1F9 1F1F2] TM
+🇹🇳	Tunisië							// [1F1F9 1F1F3] TN
+🇹🇴	Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	Turkye							// [1F1F9 1F1F7] TR
+🇹🇹	Trinidad en Tobago					// [1F1F9 1F1F9] TT
+🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	Taiwan							// [1F1F9 1F1FC] TW
+🇹🇿	Tanzanië						// [1F1F9 1F1FF] TZ
+🇺🇦	Oekraïne						// [1F1FA 1F1E6] UA
+🇺🇬	Uganda							// [1F1FA 1F1EC] UG
+🇺🇲	Klein afgeleë eilande van die VSA			// [1F1FA 1F1F2] UM
+🇺🇳	Verenigde Nasies					// [1F1FA 1F1F3] UN
+🇺🇸	Verenigde State van Amerika				// [1F1FA 1F1F8] US
+🇺🇾	Uruguay							// [1F1FA 1F1FE] UY
+🇺🇿	Oesbekistan						// [1F1FA 1F1FF] UZ
+🇻🇦	Vatikaanstad						// [1F1FB 1F1E6] VA
+🇻🇨	Sint Vincent en die Grenadine				// [1F1FB 1F1E8] VC
+🇻🇪	Venezuela						// [1F1FB 1F1EA] VE
+🇻🇬	Britse Maagde-eilande					// [1F1FB 1F1EC] VG
+🇻🇮	VSA se Maagde-eilande					// [1F1FB 1F1EE] VI
+🇻🇳	Viëtnam							// [1F1FB 1F1F3] VN
+🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
+🇼🇫	Wallis en Futuna					// [1F1FC 1F1EB] WF
+🇼🇸	Samoa							// [1F1FC 1F1F8] WS
+🇽🇰	Kosovo							// [1F1FD 1F1F0] XK
+🇾🇪	Jemen							// [1F1FE 1F1EA] YE
+🇾🇹	Mayotte							// [1F1FE 1F1F9] YT
+🇿🇦	Suid-Afrika						// [1F1FF 1F1E6] ZA
+🇿🇲	Zambië							// [1F1FF 1F1F2] ZM
+🇿🇼	Zimbabwe						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1955,18 +1957,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#️⃣	sleutelbordtoets: #						// [0023 FE0F 20E3]
-*️⃣	sleutelbordtoets: *						// [002A FE0F 20E3]
-0️⃣	sleutelbordtoets: 0						// [0030 FE0F 20E3]
-1️⃣	sleutelbordtoets: 1						// [0031 FE0F 20E3]
-2️⃣	sleutelbordtoets: 2						// [0032 FE0F 20E3]
-3️⃣	sleutelbordtoets: 3						// [0033 FE0F 20E3]
-4️⃣	sleutelbordtoets: 4						// [0034 FE0F 20E3]
-5️⃣	sleutelbordtoets: 5						// [0035 FE0F 20E3]
-6️⃣	sleutelbordtoets: 6						// [0036 FE0F 20E3]
-7️⃣	sleutelbordtoets: 7						// [0037 FE0F 20E3]
-8️⃣	sleutelbordtoets: 8						// [0038 FE0F 20E3]
-9️⃣	sleutelbordtoets: 9						// [0039 FE0F 20E3]
+#⃣	knoppiesimbool						// [0023 20E3]
+*⃣	knoppiesimbool						// [002A 20E3]
+0⃣	knoppiesimbool 0					// [0030 20E3]
+1⃣	knoppiesimbool 1					// [0031 20E3]
+2⃣	knoppiesimbool 2					// [0032 20E3]
+3⃣	knoppiesimbool 3					// [0033 20E3]
+4⃣	knoppiesimbool 4					// [0034 20E3]
+5⃣	knoppiesimbool 5					// [0035 20E3]
+6⃣	knoppiesimbool 6					// [0036 20E3]
+7⃣	knoppiesimbool 7					// [0037 20E3]
+8⃣	knoppiesimbool 8					// [0038 20E3]
+9⃣	knoppiesimbool 9					// [0039 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	balletskoene						// [1FA70]
@@ -1992,6 +1994,11 @@ $textmode
 🪇	marakkas						// [1FA87]
 🪈	fluit							// [1FA88]
 🪉	harp							// [1FA89]
+🪊	tromboon						// [1FA8A]
+🪋	meteoor							// [1FA8B]
+🪌	uitveër							// [1FA8C]
+🪍	vangnet met steel					// [1FA8D]
+🪎	skatkis							// [1FA8E]
 🪏	graaf							// [1FA8F]
 🪐	planeet met ring om					// [1FA90]
 🪑	stoel							// [1FA91]
@@ -2048,6 +2055,9 @@ $textmode
 🫄	swanger persoon						// [1FAC4]
 🫅	persoon met kroon					// [1FAC5]
 🫆	vingerafdruk						// [1FAC6]
+🫈	harige skepsel						// [1FAC8]
+🫌	koningvlinder						// [1FACC]
+🫍	moordvis						// [1FACD]
 🫎	eland							// [1FACE]
 🫏	donkie							// [1FACF]
 🫐	bloubessies						// [1FAD0]
@@ -2063,6 +2073,7 @@ $textmode
 🫚	gemmerwortel						// [1FADA]
 🫛	ertjiepeul						// [1FADB]
 🫜	wortelgroente						// [1FADC]
+🫝	agurkie							// [1FADD]
 🫟	spat							// [1FADF]
 🫠	gesig wat smelt						// [1FAE0]
 🫡	saluut							// [1FAE1]
@@ -2074,6 +2085,9 @@ $textmode
 🫧	borrels							// [1FAE7]
 🫨	gesig wat skud						// [1FAE8]
 🫩	gesig met sakke onder oë				// [1FAE9]
+🫪	verwronge gesiggie					// [1FAEA]
+🫫	gekraakte gesig						// [1FAEB]
+🫯	bakleiwolkie						// [1FAEF]
 🫰	hand met duim en wysvinger gekruis			// [1FAF0]
 🫱	hand na regs						// [1FAF1]
 🫲	hand na links						// [1FAF2]
@@ -2083,6 +2097,8 @@ $textmode
 🫶	handhartjie						// [1FAF6]
 🫷	hand wat linkswaarts druk				// [1FAF7]
 🫸	regswaarts drukkende hand				// [1FAF8]
+🫹	links duimgooi						// [1FAF9]
+🫺	regs duimgooi						// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2111,43 +2127,43 @@ $textmode
 👨‍🦼‍➡	man in motoraangedrewe rolstoel kyk na regs		// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	man in handgedrewe rolstoel				// [1F468 200D 1F9BD]
 👨‍🦽‍➡	man in handgedrewe rolstoel kyk na regs			// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	soen: vrou en man			// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	soen: man en man			// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	soen: vrou en vrou			// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	paartjie met hartjie: vrou en man		// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	paartjie met hartjie: man en man		// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	paartjie met hartjie: vrou en vrou		// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	gesin: man, vrou en seun			// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	gesin: man, vrou en meisie			// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	gesin: man, vrou, meisie en seun	// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	gesin: man, vrou, seun en seun		// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	gesin: man, vrou, meisie en meisie	// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	gesin: man, man en seun				// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	gesin: man, man en meisie			// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	gesin: man, man, meisie en seun		// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	gesin: man, man, seun en seun		// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	gesin: man, man, meisie en meisie	// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	soen vrou man						// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	soen man man						// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	soen vrou vrou						// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	paartjie met hartjie vrou man				// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	paartjie met hartjie man man				// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	paartjie met hartjie vrou vrou				// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	gesin man vrou seun					// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	gesin man vrou meisie					// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	gesin man vrou meisie seun				// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	gesin man vrou seun seun				// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	gesin man vrou meisie meisie				// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	gesin man man seun					// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	gesin man man meisie					// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	gesin man man meisie seun				// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	gesin man man seun seun					// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	gesin man man meisie meisie				// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	vrou wat baba voed					// [1F469 200D 1F37C]
-👩‍👩‍👦	gesin: vrou, vrou en seun			// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	gesin: vrou, vrou en meisie			// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	gesin: vrou, vrou, meisie en seun	// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	gesin: vrou, vrou, seun en seun		// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	gesin: vrou, vrou, meisie en meisie	// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	gesin: man en seun					// [1F468 200D 1F466]
-👨‍👦‍👦	gesin: man, seun en seun			// [1F468 200D 1F466 200D 1F466]
-👨‍👧	gesin: man en meisie					// [1F468 200D 1F467]
-👨‍👧‍👦	gesin: man, meisie en seun			// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	gesin: man, meisie en meisie			// [1F468 200D 1F467 200D 1F467]
-👩‍👦	gesin: vrou en seun					// [1F469 200D 1F466]
-👩‍👦‍👦	gesin: vrou, seun en seun			// [1F469 200D 1F466 200D 1F466]
-👩‍👧	gesin: vrou en meisie					// [1F469 200D 1F467]
-👩‍👧‍👦	gesin: vrou, meisie en seun			// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	gesin: vrou, meisie en meisie			// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	gesin vrou vrou seun					// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	gesin vrou vrou meisie					// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	gesin vrou vrou meisie seun				// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	gesin vrou vrou seun seun				// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	gesin vrou vrou meisie meisie				// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	gesin man seun						// [1F468 200D 1F466]
+👨‍👦‍👦	gesin man seun seun					// [1F468 200D 1F466 200D 1F466]
+👨‍👧	gesin man meisie					// [1F468 200D 1F467]
+👨‍👧‍👦	gesin man meisie seun					// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	gesin man meisie meisie					// [1F468 200D 1F467 200D 1F467]
+👩‍👦	gesin vrou seun						// [1F469 200D 1F466]
+👩‍👦‍👦	gesin vrou seun seun					// [1F469 200D 1F466 200D 1F466]
+👩‍👧	gesin vrou meisie					// [1F469 200D 1F467]
+👩‍👧‍👦	gesin vrou meisie seun					// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	gesin vrou meisie meisie				// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 
-👨‍⚕	manlike dokter						// [1F468 200D 2695]
-👩‍⚕	vroulike dokter						// [1F469 200D 2695]
+👨‍⚕	manlike gesondheidswerker				// [1F468 200D 2695]
+👩‍⚕	vroulike gesondheidswerker				// [1F469 200D 2695]
 👨‍⚖	manlike regter						// [1F468 200D 2696]
 👩‍⚖	vroulike regter						// [1F469 200D 2696]
 👨‍✈	manlike vlieënier					// [1F468 200D 2708]
@@ -2162,8 +2178,8 @@ $textmode
 👩‍🎤	vroulike sanger						// [1F469 200D 1F3A4]
 👨‍🎨	manlike kunstenaar					// [1F468 200D 1F3A8]
 👩‍🎨	vroulike kunstenaar					// [1F469 200D 1F3A8]
-👨‍🏫	meneer							// [1F468 200D 1F3EB]
-👩‍🏫	juffrou							// [1F469 200D 1F3EB]
+👨‍🏫	manlike onderwyser					// [1F468 200D 1F3EB]
+👩‍🏫	vroulike onderwyser					// [1F469 200D 1F3EB]
 👨‍🏭	manlike fabriekswerker					// [1F468 200D 1F3ED]
 👩‍🏭	vroulike fabriekswerker					// [1F469 200D 1F3ED]
 👨‍💻	manlike tegnoloog					// [1F468 200D 1F4BB]
@@ -2281,8 +2297,8 @@ $textmode
 
 // Emoji ZWJ Sequence: Gendered Activity
 
-⛹‍♀	vrou met bal						// [26F9 200D 2640]
-⛹‍♂	man met bal						// [26F9 200D 2642]
+⛹‍♀	vrou hop bal						// [26F9 200D 2640]
+⛹‍♂	man hop bal						// [26F9 200D 2642]
 🏃‍♀	vrou hardloop						// [1F3C3 200D 2640]
 🏃‍♂	man hardloop						// [1F3C3 200D 2642]
 🏄‍♀	vroulike branderplankryer				// [1F3C4 200D 2640]
@@ -2293,8 +2309,8 @@ $textmode
 🏋️‍♂	manlike gewigopteller					// [1F3CB 200D 2642]
 🏌️‍♀	vroulike gholfspeler					// [1F3CC 200D 2640]
 🏌️‍♂	manlike gholfspeler					// [1F3CC 200D 2642]
-👯‍♀	vroue dans						// [1F46F 200D 2640]
-👯‍♂	mans dans						// [1F46F 200D 2642]
+👯‍♀	vroue met haasore					// [1F46F 200D 2640]
+👯‍♂	mans met haasore					// [1F46F 200D 2642]
 💆‍♀	vrou kry massering					// [1F486 200D 2640]
 💆‍♂	man kry massering					// [1F486 200D 2642]
 💇‍♀	vrou kry haarsny					// [1F487 200D 2640]
@@ -2307,8 +2323,8 @@ $textmode
 🚵‍♂	manlike bergfietsryer					// [1F6B5 200D 2642]
 🚶‍♀	vrou stap						// [1F6B6 200D 2640]
 🚶‍♂	man stap						// [1F6B6 200D 2642]
-🤸‍♀	vrou wawiel						// [1F938 200D 2640]
-🤸‍♂	man wawiel						// [1F938 200D 2642]
+🤸‍♀	vrou doen wawiel					// [1F938 200D 2640]
+🤸‍♂	man doen wawiel						// [1F938 200D 2642]
 🤹‍♀	vroulike jongleur					// [1F939 200D 2640]
 🤹‍♂	manlike jongleur					// [1F939 200D 2642]
 🤼‍♀	vroulike stoeiers					// [1F93C 200D 2640]
@@ -2321,27 +2337,27 @@ $textmode
 🧖‍♂	man in stoomkamer					// [1F9D6 200D 2642]
 🧗‍♀	vroulike rotsklimmer					// [1F9D7 200D 2640]
 🧗‍♂	manlike rotsklimmer					// [1F9D7 200D 2642]
-🧘‍♀	vrou in lotus-posisie					// [1F9D8 200D 2640]
-🧘‍♂	man in lotus-posisie					// [1F9D8 200D 2642]
+🧘‍♀	vrou in lotusposisie					// [1F9D8 200D 2640]
+🧘‍♂	man in lotusposisie					// [1F9D8 200D 2642]
 
 // Emoji ZWJ Sequence: Gendered Gestures
 
-💁‍♀	vrou met handpalm					// [1F481 200D 2640]
-💁‍♂	man met handpalm					// [1F481 200D 2642]
-🙅‍♀	vrou wys nee						// [1F645 200D 2640]
-🙅‍♂	man wys nee						// [1F645 200D 2642]
-🙆‍♀	vrou wys ja						// [1F646 200D 2640]
-🙆‍♂	man wys ja						// [1F646 200D 2642]
+💁‍♀	vrou hou hand geknak					// [1F481 200D 2640]
+💁‍♂	man hou hand geknak					// [1F481 200D 2642]
+🙅‍♀	vrou wys NEE						// [1F645 200D 2640]
+🙅‍♂	man wys NEE						// [1F645 200D 2642]
+🙆‍♀	vrou wys als is goed					// [1F646 200D 2640]
+🙆‍♂	man wys als is goed					// [1F646 200D 2642]
 🙇‍♀	vrou buig						// [1F647 200D 2640]
 🙇‍♂	man buig						// [1F647 200D 2642]
-🙋‍♀	vrou lig hand						// [1F64B 200D 2640]
-🙋‍♂	man lig hand						// [1F64B 200D 2642]
+🙋‍♀	vrou wat hand opsteek					// [1F64B 200D 2640]
+🙋‍♂	man wat hand opsteek					// [1F64B 200D 2642]
 🙍‍♀	vrou wat frons						// [1F64D 200D 2640]
 🙍‍♂	man wat frons						// [1F64D 200D 2642]
 🙎‍♀	dikbek vrou						// [1F64E 200D 2640]
 🙎‍♂	dikbek man						// [1F64E 200D 2642]
-🤦‍♀	moedelose vrou						// [1F926 200D 2640]
-🤦‍♂	moedelose man						// [1F926 200D 2642]
+🤦‍♀	vrou slaan hand teen voorkop				// [1F926 200D 2640]
+🤦‍♂	man slaan hand teen voorkop				// [1F926 200D 2642]
 🤷‍♀	vrou skouerophaal					// [1F937 200D 2640]
 🤷‍♂	man skouerophaal					// [1F937 200D 2642]
 

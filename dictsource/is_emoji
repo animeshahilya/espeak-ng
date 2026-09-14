@@ -200,7 +200,7 @@ $textmode
 ∇	nafla							// [2207]
 ∈	stak í							// [2208]
 ∉	ekki stak						// [2209]
-∋	stak							// [220B]
+∋	inniheldur sem stak					// [220B]
 ∎	endanleg sönnun						// [220E]
 ∏	n-unda-margfeldi					// [220F]
 ∑	n-unda-summun						// [2211]
@@ -399,7 +399,7 @@ $textmode
 ☃	snjókarl í snjókomu						// [2603] text|emoji
 ☄	halastjarna							// [2604] text|emoji
 ☎	sími								// [260E] text|emoji
-☑	kjörkassi með hakmerki						// [2611] text|emoji
+☑	hakreitur með hakmerki					// [2611] text|emoji
 ☔	regnhlíf með regndropum						// [2614]
 ☕	heitur drykkur							// [2615]
 ☘	músarsmári							// [2618] text|emoji
@@ -418,22 +418,22 @@ $textmode
 ♂	karlkyns merki							// [2642] text|emoji
 ♈	hrúturinn							// [2648]
 ♉	nautið								// [2649]
-♊	tvíburar							// [264A]
+♊	tvíburarnir						// [264A]
 ♋	krabbinn							// [264B]
-♌	ljón								// [264C]
-♍	meyja								// [264D]
+♌	ljónið							// [264C]
+♍	meyjan							// [264D]
 ♎	vogin								// [264E]
 ♏	sporðdrekinn							// [264F]
-♐	bogmaður							// [2650]
-♑	steingeit							// [2651]
-♒	vatnsberi							// [2652]
-♓	fiskar								// [2653]
+♐	bogmaðurinn						// [2650]
+♑	steingeitin						// [2651]
+♒	vatnsberinn						// [2652]
+♓	fiskarnir						// [2653]
 ♟	taflpeð								// [265F] text|emoji
 ♠	spaði								// [2660] text|emoji
 ♣	lauf								// [2663] text|emoji
 ♥	hjarta								// [2665] text|emoji
 ♦	tígull								// [2666] text|emoji
-♨	heitar laugar							// [2668] text|emoji
+♨	hverir							// [2668] text|emoji
 ♪	áttundapartsnóta					// [266A]
 ♭	lækkaður tónn						// [266D]
 ♯	hækkaður tónn						// [266F]
@@ -469,7 +469,7 @@ $textmode
 ⛩	sjintó-hof							// [26E9] text|emoji
 ⛪	kirkja								// [26EA]
 ⛰	fjall								// [26F0] text|emoji
-⛱	regnhlíf á jörðinni						// [26F1] text|emoji
+⛱	sólhlíf á jörðinni					// [26F1] text|emoji
 ⛲	gosbrunnur							// [26F2]
 ⛳	golf								// [26F3]
 ⛴	ferja								// [26F4] text|emoji
@@ -483,7 +483,7 @@ $textmode
 // 2700..27BF : Dingbats
 
 ✂	skæri								// [2702] text|emoji
-✅	hak								// [2705]
+✅	hakmerki						// [2705]
 ✈	flugvél								// [2708] text|emoji
 ✉	umslag								// [2709] text|emoji
 ✊	hnefi								// [270A]
@@ -492,8 +492,8 @@ $textmode
 ✍	skrifandi hönd							// [270D] text|emoji
 ✏	blýantur							// [270F] text|emoji
 ✒	svartur pennaoddur						// [2712] text|emoji
-✔	stórt hakmerki							// [2714] text|emoji
-✖	stórt margföldunar-x						// [2716] text|emoji
+✔	hak							// [2714] text|emoji
+✖	margföldunartákn					// [2716] text|emoji
 ✝	latneskur kross							// [271D] text|emoji
 ✡	davíðsstjarna							// [2721] text|emoji
 ✨	stjörnur							// [2728]
@@ -503,10 +503,10 @@ $textmode
 ❇	leiftur								// [2747] text|emoji
 ❌	kross								// [274C]
 ❎	krosshnappur							// [274E]
-❓	spurningarmerki							// [2753]
+❓	rautt spurningarmerki					// [2753]
 ❔	hvítt spurningarmerki						// [2754]
 ❕	hvítt upphrópunarmerki						// [2755]
-❗	upphrópunarmerki						// [2757]
+❗	rautt upphrópunarmerki					// [2757]
 ❣	hjarta sem upphrópunarmerki					// [2763] text|emoji
 ❤	rautt hjarta							// [2764] text|emoji
 ➕	plús								// [2795]
@@ -518,7 +518,7 @@ $textmode
 
 // 2900..297F : Supplemental Arrows-B
 
-⤴	sveig ör upp							// [2934] text|emoji
+⤴	sveigð ör upp						// [2934] text|emoji
 ⤵	sveigð ör niður							// [2935] text|emoji
 ⨧	plús og hnéletrað tveir					// [2A27]
 ⨯	krossfeldi						// [2A2F]
@@ -536,8 +536,8 @@ $textmode
 ⬇	ör niður							// [2B07] text|emoji
 ⬛	stór svartur ferningur						// [2B1B]
 ⬜	stór hvítur ferningur						// [2B1C]
-⭐	hvít stjarna							// [2B50]
-⭕	stór og breiður hringur						// [2B55]
+⭐	gul stjarna						// [2B50]
+⭕	holur rauður hringur					// [2B55]
 
 // 3000..303F : CJK Symbols and Punctuation
 
@@ -546,7 +546,7 @@ $textmode
 
 // 3200..32FF : Enclosed CJK Letters and Months
 
-㊗	Til hamingju ´a japönsku					// [3297] text|emoji
+㊗	Til hamingju á japönsku					// [3297] text|emoji
 ㊙	Leyndarmál á japönsku						// [3299] text|emoji
 ﷼	ríal							// [FDFC]
 
@@ -565,14 +565,14 @@ $textmode
 🆖	NG								// [1F196]
 🆗	OK								// [1F197]
 🆘	SOS								// [1F198]
-🆙	UP!								// [1F199]
+🆙	UP							// [1F199]
 🆚	VS								// [1F19A]
 🇨🇶	Sark							// [1F1E8 1F1F6]
 
 // 1F200..1F2FF : Enclosed Ideographic Supplement
 
-🈁	katakana koko, kassi						// [1F201]
-🈂	katakana sa, kassi						// [1F202] text|emoji
+🈁	katakana koko kassi					// [1F201]
+🈂	katakana sa kassi					// [1F202] text|emoji
 🈚	Ókeypis á japönsku						// [1F21A]
 🈯	Frátekið á japönsku						// [1F22F]
 🈲	Bannað á japönsku						// [1F232]
@@ -580,7 +580,7 @@ $textmode
 🈴	Viðunandi einkunn á japönsku					// [1F234]
 🈵	Allt fullt á japönsku						// [1F235]
 🈶	Ekki ókeypis á japönsku						// [1F236]
-🈷	mánaðarleg upphæð, kassi					// [1F237] text|emoji
+🈷	mánaðarleg upphæð kassi					// [1F237] text|emoji
 🈸	Umsókn á japönsku						// [1F238]
 🈹	Afsláttur á japönsku						// [1F239]
 🈺	Opið á japönsku							// [1F23A]
@@ -615,13 +615,13 @@ $textmode
 🌏	hnöttur sem sýnir Asíu-Ástralíu					// [1F30F]
 🌐	hnöttur sem sýnir lengdarbauga					// [1F310]
 🌑	nýtt tungl							// [1F311]
-🌒	vaxandi tungl (minna en hálft)					// [1F312]
+🌒	vaxandi tungl minna en hálft				// [1F312]
 🌓	fyrsta kvartil tungls						// [1F313]
-🌔	vaxandi tungl (meira en hálft)					// [1F314]
+🌔	vaxandi tungl meira en hálft				// [1F314]
 🌕	fullt tungl							// [1F315]
-🌖	minnkandi tungl (meira en hálft)				// [1F316]
+🌖	minnkandi tungl meira en hálft				// [1F316]
 🌗	síðasta kvartil							// [1F317]
-🌘	minnkandi tungl (minna en hálft)				// [1F318]
+🌘	minnkandi tungl minna en hálft				// [1F318]
 🌙	hálfmáni							// [1F319]
 🌚	nýtt tungl með andliti						// [1F31A]
 🌛	fyrsta kvartil tungls með andliti				// [1F31B]
@@ -749,11 +749,11 @@ $textmode
 🎚	hljóðstyrkssleði						// [1F39A] text|emoji
 🎛	stýritakkar							// [1F39B] text|emoji
 🎞	kvikmyndafilma							// [1F39E] text|emoji
-🎟	aðgöngumiði							// [1F39F] text|emoji
+🎟	aðgöngumiðar						// [1F39F] text|emoji
 🎠	hringekjuhestur							// [1F3A0]
 🎡	parísarhjól							// [1F3A1]
 🎢	rússíbani							// [1F3A2]
-🎣	stangveiði							// [1F3A3]
+🎣	veiðistöng						// [1F3A3]
 🎤	hljóðnemi							// [1F3A4]
 🎥	kvikmyndatökuvél						// [1F3A5]
 🎦	bíó								// [1F3A6]
@@ -846,7 +846,7 @@ $textmode
 🐀	rotta								// [1F400]
 🐁	mús								// [1F401]
 🐂	uxi								// [1F402]
-🐃	vatnabuffaló							// [1F403]
+🐃	vatnabuffall						// [1F403]
 🐄	kýr								// [1F404]
 🐅	tígrisdýr							// [1F405]
 🐆	hlébarði							// [1F406]
@@ -899,17 +899,17 @@ $textmode
 🐵	apahöfuð							// [1F435]
 🐶	hundshöfuð							// [1F436]
 🐷	svínshöfuð							// [1F437]
-🐸	froskshöfuð							// [1F438]
-🐹	hamsturshöfuð							// [1F439]
-🐺	úlfshöfuð							// [1F43A]
-🐻	bjarnarhöfuð							// [1F43B]
-🐼	pönduhöfuð							// [1F43C]
+🐸	froskur							// [1F438]
+🐹	hamstur							// [1F439]
+🐺	úlfur							// [1F43A]
+🐻	björn							// [1F43B]
+🐼	panda							// [1F43C]
 🐽	svínstrýni							// [1F43D]
 🐾	loppa								// [1F43E]
 🐿	jarðíkorni							// [1F43F] text|emoji
 👀	augu								// [1F440]
 👁	auga								// [1F441] text|emoji
-👂	eyru								// [1F442]
+👂	eyra							// [1F442]
 👃	nef								// [1F443]
 👄	munnur								// [1F444]
 👅	tunga								// [1F445]
@@ -950,9 +950,9 @@ $textmode
 👨	karl								// [1F468]
 👩	kona								// [1F469]
 👪	fjölskylda							// [1F46A]
-👫	karl og kona							// [1F46B]
-👬	tveir karlar							// [1F46C]
-👭	tvær konur							// [1F46D]
+👫	karl og kona sem leiðast				// [1F46B]
+👬	karlar sem leiðast					// [1F46C]
+👭	konur sem leiðast					// [1F46D]
 👮	lögregluþjónn							// [1F46E]
 👯	kanínueyru							// [1F46F]
 👰	brúður								// [1F470]
@@ -962,7 +962,7 @@ $textmode
 👴	eldri maður							// [1F474]
 👵	eldri kona							// [1F475]
 👶	ungbarn								// [1F476]
-👷	verkamaður							// [1F477]
+👷	byggingaverkamaður					// [1F477]
 👸	prinsessa							// [1F478]
 👹	tröll								// [1F479]
 👺	ári								// [1F47A]
@@ -1010,7 +1010,7 @@ $textmode
 💤	þreyta								// [1F4A4]
 💥	árekstur							// [1F4A5]
 💦	svitadropar							// [1F4A6]
-💧	smádropi							// [1F4A7]
+💧	dropi							// [1F4A7]
 💨	hraðferð							// [1F4A8]
 💩	kúkur								// [1F4A9]
 💪	upphandleggsvöðvar						// [1F4AA]
@@ -1052,7 +1052,7 @@ $textmode
 📎	bréfaklemma							// [1F4CE]
 📏	reglustika							// [1F4CF]
 📐	þríhyrnd reglustika						// [1F4D0]
-📑	bókamerki í tölvu						// [1F4D1]
+📑	merkiflipar						// [1F4D1]
 📒	dagbók								// [1F4D2]
 📓	glósubók							// [1F4D3]
 📔	glósubók með skrautkápu						// [1F4D4]
@@ -1107,7 +1107,7 @@ $textmode
 🔆	mikil birta							// [1F506]
 🔇	hljóðlaus hátalari						// [1F507]
 🔈	lágvær hátalari							// [1F508]
-🔉	hátalari í gangi						// [1F509]
+🔉	hátalari á meðalstyrk					// [1F509]
 🔊	hávær hátalari							// [1F50A]
 🔋	rafhlaða							// [1F50B]
 🔌	innstunga							// [1F50C]
@@ -1129,7 +1129,7 @@ $textmode
 🔜	bráðum-ör							// [1F51C]
 🔝	efst-ör								// [1F51D]
 🔞	enginn undir 18 ára						// [1F51E]
-🔟	takki: 10							// [1F51F]
+🔟	takki 10						// [1F51F]
 🔠	hástafir							// [1F520]
 🔡	lágstafir							// [1F521]
 🔢	tölustafir							// [1F522]
@@ -1162,7 +1162,7 @@ $textmode
 🔽	niðurvísandi þríhyrningur					// [1F53D]
 🕉	om-merki							// [1F549] text|emoji
 🕊	dúfa								// [1F54A] text|emoji
-🕋	kaaba-bygging							// [1F54B]
+🕋	kaaba-byggingin						// [1F54B]
 🕌	moska								// [1F54C]
 🕍	sýnagóga							// [1F54D]
 🕎	menorah-ljósastika						// [1F54E]
@@ -1227,7 +1227,7 @@ $textmode
 🗣	talandi höfuð							// [1F5E3] text|emoji
 🗨	vinstri talblaðra						// [1F5E8] text|emoji
 🗯	reiðileg hægri talblaðra					// [1F5EF] text|emoji
-🗳	kjörseðlakassi með kjörseðli					// [1F5F3] text|emoji
+🗳	kjörkassi með kjörseðli					// [1F5F3] text|emoji
 🗺	heimskort							// [1F5FA] text|emoji
 🗻	fuji-fjall							// [1F5FB]
 🗼	tokyo-turninn							// [1F5FC]
@@ -1294,7 +1294,7 @@ $textmode
 😶	andlit án munns							// [1F636]
 😷	andlit með grímu						// [1F637]
 😸	glottandi köttur						// [1F638]
-😹	gleðitár							// [1F639]
+😹	köttur með gleðitár					// [1F639]
 😺	hlæjandi köttur							// [1F63A]
 😻	brosandi köttur							// [1F63B]
 😼	lúmskur köttur							// [1F63C]
@@ -1366,13 +1366,13 @@ $textmode
 🚫	bannað								// [1F6AB]
 🚬	sígaretta							// [1F6AC]
 🚭	reykingar bannaðar						// [1F6AD]
-🚮	merki, rusl í ruslatunnu					// [1F6AE]
+🚮	merki rusl í ruslatunnu					// [1F6AE]
 🚯	ekkert rusl							// [1F6AF]
 🚰	drykkjarvatn							// [1F6B0]
 🚱	óhæft drykkjarvatn						// [1F6B1]
 🚲	hjólreiðar							// [1F6B2]
 🚳	hjólreiðar bannaðar						// [1F6B3]
-🚴	hjól								// [1F6B4]
+🚴	manneskja á hjóli					// [1F6B4]
 🚵	fjallahjól							// [1F6B5]
 🚶	vegfarandi							// [1F6B6]
 🚷	bannað að ganga							// [1F6B7]
@@ -1401,6 +1401,8 @@ $textmode
 🛕	hindúahof						// [1F6D5]
 🛖	kofi							// [1F6D6]
 🛗	lyfta							// [1F6D7]
+🛘	skriða							// [1F6D8]
+🛙	viti							// [1F6D9]
 🛜	þráðlaust						// [1F6DC]
 🛝	rennibraut						// [1F6DD]
 🛞	hjól							// [1F6DE]
@@ -1416,12 +1418,12 @@ $textmode
 🛬	flugvél í lendingu						// [1F6EC]
 🛰	gervihnöttur							// [1F6F0] text|emoji
 🛳	farþegaskip							// [1F6F3] text|emoji
-🛴	sparkhjól							// [1F6F4]
+🛴	hlaupahjól						// [1F6F4]
 🛵	vespa								// [1F6F5]
 🛶	kanó								// [1F6F6]
 🛷	sleði								// [1F6F7]
 🛸	fljúgandi diskur						// [1F6F8]
-🛹	hlaupabretti							// [1F6F9]
+🛹	hjólabretti						// [1F6F9]
 🛺	vélknúinn léttvagn					// [1F6FA]
 🛻	pallbíll						// [1F6FB]
 🛼	hjólaskautar						// [1F6FC]
@@ -1474,7 +1476,7 @@ $textmode
 🤨	andlit með yppta brún						// [1F928]
 🤩	stjörnustjarfur							// [1F929]
 🤪	sturlað andlit							// [1F92A]
-🤫	andilt að segja uss						// [1F92B]
+🤫	andlit að segja uss					// [1F92B]
 🤬	andlit með tákn fyrir munni					// [1F92C]
 🤭	andlit með hendi fyrir munn					// [1F92D]
 🤮	ælandi andlit							// [1F92E]
@@ -1487,7 +1489,7 @@ $textmode
 🤵	smóking								// [1F935]
 🤶	jólamamma							// [1F936]
 🤷	yppir öxlum							// [1F937]
-🤸	handalaup							// [1F938]
+🤸	handahlaup						// [1F938]
 🤹	boltakast							// [1F939]
 🤺	skylmingar							// [1F93A]
 🤼	glíma								// [1F93C]
@@ -1509,7 +1511,7 @@ $textmode
 🥍	háfleikur						// [1F94D]
 🥎	mjúkbolti							// [1F94E]
 🥏	frisbídiskur							// [1F94F]
-🥐	horn								// [1F950]
+🥐	smjördeigshorn						// [1F950]
 🥑	avókadó								// [1F951]
 🥒	gúrka								// [1F952]
 🥓	beikon								// [1F953]
@@ -1524,7 +1526,7 @@ $textmode
 🥜	jarðhneta							// [1F95C]
 🥝	kíví								// [1F95D]
 🥞	pönnukökur							// [1F95E]
-🥟	dumpling							// [1F95F]
+🥟	soðkaka							// [1F95F]
 🥠	spádómskaka							// [1F960]
 🥡	takeaway-box							// [1F961]
 🥢	matprjónar							// [1F962]
@@ -1541,7 +1543,7 @@ $textmode
 🥭	mangó								// [1F96D]
 🥮	tunglkaka							// [1F96E]
 🥯	beygla								// [1F96F]
-🥰	brosandi andlit með 3 hjörtum					// [1F970]
+🥰	brosandi andlit með hjörtum				// [1F970]
 🥱	geispandi andlit					// [1F971]
 🥲	brosandi andlit með tár					// [1F972]
 🥳	partíandlit							// [1F973]
@@ -1558,18 +1560,18 @@ $textmode
 🥾	gönguskór							// [1F97E]
 🥿	lágbotna skór							// [1F97F]
 🦀	krabbi								// [1F980]
-🦁	ljónshöfuð							// [1F981]
+🦁	ljón							// [1F981]
 🦂	sporðdreki							// [1F982]
 🦃	kalkúnn								// [1F983]
-🦄	einhyrningshöfuð						// [1F984]
+🦄	einhyrningur						// [1F984]
 🦅	örn								// [1F985]
 🦆	önd								// [1F986]
 🦇	leðurblaka							// [1F987]
 🦈	hákarl								// [1F988]
 🦉	ugla								// [1F989]
-🦊	refshöfuð							// [1F98A]
+🦊	refur							// [1F98A]
 🦋	fiðrildi							// [1F98B]
-🦌	´hjartardýr							// [1F98C]
+🦌	hjartardýr						// [1F98C]
 🦍	górilla								// [1F98D]
 🦎	eðla								// [1F98E]
 🦏	nashyrningur							// [1F98F]
@@ -1612,7 +1614,7 @@ $textmode
 🦴	bein								// [1F9B4]
 🦵	fótleggur							// [1F9B5]
 🦶	fótur								// [1F9B6]
-🦷	tennur								// [1F9B7]
+🦷	tönn							// [1F9B7]
 🦸	ofurhetja							// [1F9B8]
 🦹	skúrkur								// [1F9B9]
 🦺	öryggisvesti						// [1F9BA]
@@ -1662,9 +1664,9 @@ $textmode
 🧦	sokkar								// [1F9E6]
 🧧	rautt umslag							// [1F9E7]
 🧨	púðurkerling							// [1F9E8]
-🧩	pússl								// [1F9E9]
+🧩	púsl							// [1F9E9]
 🧪	tilraunaglas							// [1F9EA]
-🧫	petrílskál							// [1F9EB]
+🧫	petrískál						// [1F9EB]
 🧬	dna								// [1F9EC]
 🧭	áttaviti							// [1F9ED]
 🧮	talnagrind							// [1F9EE]
@@ -1688,264 +1690,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	fáni: Ascension-eyja						// [1F1E6 1F1E8] AC
-🇦🇩	fáni: Andorra							// [1F1E6 1F1E9] AD
-🇦🇪	fáni: Sameinuðu arabísku furstadæmin				// [1F1E6 1F1EA] AE
-🇦🇫	fáni: Afganistan						// [1F1E6 1F1EB] AF
-🇦🇬	fáni: Antígva og Barbúda					// [1F1E6 1F1EC] AG
-🇦🇮	fáni: Angvilla							// [1F1E6 1F1EE] AI
-🇦🇱	fáni: Albanía							// [1F1E6 1F1F1] AL
-🇦🇲	fáni: Armenía							// [1F1E6 1F1F2] AM
-🇦🇴	fáni: Angóla							// [1F1E6 1F1F4] AO
-🇦🇶	fáni: Suðurskautslandið						// [1F1E6 1F1F6] AQ
-🇦🇷	fáni: Argentína							// [1F1E6 1F1F7] AR
-🇦🇸	fáni: Bandaríska Samóa						// [1F1E6 1F1F8] AS
-🇦🇹	fáni: Austurríki						// [1F1E6 1F1F9] AT
-🇦🇺	fáni: Ástralía							// [1F1E6 1F1FA] AU
-🇦🇼	fáni: Arúba							// [1F1E6 1F1FC] AW
-🇦🇽	fáni: Álandseyjar						// [1F1E6 1F1FD] AX
-🇦🇿	fáni: Aserbaídsjan						// [1F1E6 1F1FF] AZ
-🇧🇦	fáni: Bosnía og Hersegóvína					// [1F1E7 1F1E6] BA
-🇧🇧	fáni: Barbados							// [1F1E7 1F1E7] BB
-🇧🇩	fáni: Bangladess						// [1F1E7 1F1E9] BD
-🇧🇪	fáni: Belgía							// [1F1E7 1F1EA] BE
-🇧🇫	fáni: Búrkína Fasó						// [1F1E7 1F1EB] BF
-🇧🇬	fáni: Búlgaría							// [1F1E7 1F1EC] BG
-🇧🇭	fáni: Barein							// [1F1E7 1F1ED] BH
-🇧🇮	fáni: Búrúndí							// [1F1E7 1F1EE] BI
-🇧🇯	fáni: Benín							// [1F1E7 1F1EF] BJ
-🇧🇱	fáni: Sankti Bartólómeusareyjar					// [1F1E7 1F1F1] BL
-🇧🇲	fáni: Bermúdaeyjar						// [1F1E7 1F1F2] BM
-🇧🇳	fáni: Brúnei							// [1F1E7 1F1F3] BN
-🇧🇴	fáni: Bólivía							// [1F1E7 1F1F4] BO
-🇧🇶	fáni: Karíbahafshluti Hollands					// [1F1E7 1F1F6] BQ
-🇧🇷	fáni: Brasilía							// [1F1E7 1F1F7] BR
-🇧🇸	fáni: Bahamaeyjar						// [1F1E7 1F1F8] BS
-🇧🇹	fáni: Bútan							// [1F1E7 1F1F9] BT
-🇧🇻	fáni: Bouveteyja						// [1F1E7 1F1FB] BV
-🇧🇼	fáni: Botsvana							// [1F1E7 1F1FC] BW
-🇧🇾	fáni: Hvíta-Rússland						// [1F1E7 1F1FE] BY
-🇧🇿	fáni: Belís							// [1F1E7 1F1FF] BZ
-🇨🇦	fáni: Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	fáni: Kókoseyjar (Keeling)					// [1F1E8 1F1E8] CC
-🇨🇩	fáni: Kongó-Kinshasa						// [1F1E8 1F1E9] CD
-🇨🇫	fáni: Mið-Afríkulýðveldið					// [1F1E8 1F1EB] CF
-🇨🇬	fáni: Kongó-Brazzaville						// [1F1E8 1F1EC] CG
-🇨🇭	fáni: Sviss							// [1F1E8 1F1ED] CH
-🇨🇮	fáni: Côte d’Ivoire						// [1F1E8 1F1EE] CI
-🇨🇰	fáni: Cooks-eyjar						// [1F1E8 1F1F0] CK
-🇨🇱	fáni: Síle							// [1F1E8 1F1F1] CL
-🇨🇲	fáni: Kamerún							// [1F1E8 1F1F2] CM
-🇨🇳	fáni: Kína							// [1F1E8 1F1F3] CN
-🇨🇴	fáni: Kólumbía							// [1F1E8 1F1F4] CO
-🇨🇵	fáni: Clipperton-eyja						// [1F1E8 1F1F5] CP
-🇨🇷	fáni: Kostaríka							// [1F1E8 1F1F7] CR
-🇨🇺	fáni: Kúba							// [1F1E8 1F1FA] CU
-🇨🇻	fáni: Grænhöfðaeyjar						// [1F1E8 1F1FB] CV
-🇨🇼	fáni: Curacao							// [1F1E8 1F1FC] CW
-🇨🇽	fáni: Jólaey							// [1F1E8 1F1FD] CX
-🇨🇾	fáni: Kýpur							// [1F1E8 1F1FE] CY
-🇨🇿	fáni: Tékkland							// [1F1E8 1F1FF] CZ
-🇩🇪	fáni: Þýskaland							// [1F1E9 1F1EA] DE
-🇩🇬	fáni: Diego Garcia						// [1F1E9 1F1EC] DG
-🇩🇯	fáni: Djíbútí							// [1F1E9 1F1EF] DJ
-🇩🇰	fáni: Danmörk							// [1F1E9 1F1F0] DK
-🇩🇲	fáni: Dóminíka							// [1F1E9 1F1F2] DM
-🇩🇴	fáni: Dóminíska lýðveldið					// [1F1E9 1F1F4] DO
-🇩🇿	fáni: Alsír							// [1F1E9 1F1FF] DZ
-🇪🇦	fáni: Ceuta og Melilla						// [1F1EA 1F1E6] EA
-🇪🇨	fáni: Ekvador							// [1F1EA 1F1E8] EC
-🇪🇪	fáni: Eistland							// [1F1EA 1F1EA] EE
-🇪🇬	fáni: Egyptaland						// [1F1EA 1F1EC] EG
-🇪🇭	fáni: Vestur-Sahara						// [1F1EA 1F1ED] EH
-🇪🇷	fáni: Erítrea							// [1F1EA 1F1F7] ER
-🇪🇸	fáni: Spánn							// [1F1EA 1F1F8] ES
-🇪🇹	fáni: Eþíópía							// [1F1EA 1F1F9] ET
-🇪🇺	fáni: Evrópusambandið						// [1F1EA 1F1FA] EU
-🇫🇮	fáni: Finnland							// [1F1EB 1F1EE] FI
-🇫🇯	fáni: Fídjíeyjar						// [1F1EB 1F1EF] FJ
-🇫🇰	fáni: Falklandseyjar						// [1F1EB 1F1F0] FI
-🇫🇲	fáni: Míkrónesía						// [1F1EB 1F1F2] FM
-🇫🇴	fáni: Færeyjar							// [1F1EB 1F1F4] FO
-🇫🇷	fáni: Frakkland							// [1F1EB 1F1F7] FR
-🇬🇦	fáni: Gabon							// [1F1EC 1F1E6] GA
-🇬🇧	fáni: Bretland							// [1F1EC 1F1E7] GB
-🇬🇩	fáni: Grenada							// [1F1EC 1F1E9] GD
-🇬🇪	fáni: Georgía							// [1F1EC 1F1EA] GE
-🇬🇫	fáni: Franska Gvæjana						// [1F1EC 1F1EB] GF
-🇬🇬	fáni: Guernsey							// [1F1EC 1F1EC] GG
-🇬🇭	fáni: Gana							// [1F1EC 1F1ED] GH
-🇬🇮	fáni: Gíbraltar							// [1F1EC 1F1EE] GI
-🇬🇱	fáni: Grænland							// [1F1EC 1F1F1] GL
-🇬🇲	fáni: Gambía							// [1F1EC 1F1F2] GM
-🇬🇳	fáni: Gínea							// [1F1EC 1F1F3] GN
-🇬🇵	fáni: Gvadelúpeyjar						// [1F1EC 1F1F5] GP
-🇬🇶	fáni: Miðbaugs-Gínea						// [1F1EC 1F1F6] GQ
-🇬🇷	fáni: Grikkland							// [1F1EC 1F1F7] GR
-🇬🇸	fáni: Suður-Georgía og Suður-Sandvíkureyjar			// [1F1EC 1F1F8] GS
-🇬🇹	fáni: Gvatemala							// [1F1EC 1F1F9] GT
-🇬🇺	fáni: Gvam							// [1F1EC 1F1FA] GU
-🇬🇼	fáni: Gínea-Bissá						// [1F1EC 1F1FC] GW
-🇬🇾	fáni: Gvæjana							// [1F1EC 1F1FE] GY
-🇭🇰	fáni: sérstjórnarsvæðið Hong Kong				// [1F1ED 1F1F0] HK
-🇭🇲	fáni: Heard og McDonaldseyjar					// [1F1ED 1F1F2] HM
-🇭🇳	fáni: Hondúras							// [1F1ED 1F1F3] HN
-🇭🇷	fáni: Króatía							// [1F1ED 1F1F7] HR
-🇭🇹	fáni: Haítí							// [1F1ED 1F1F9] HT
-🇭🇺	fáni: Ungverjaland						// [1F1ED 1F1FA] HU
-🇮🇨	fáni: Kanaríeyjar						// [1F1EE 1F1E8] IC
-🇮🇩	fáni: Indónesía							// [1F1EE 1F1E9] ID
-🇮🇪	fáni: Írland							// [1F1EE 1F1EA] IE
-🇮🇱	fáni: Ísrael							// [1F1EE 1F1F1] IL
-🇮🇲	fáni: Mön							// [1F1EE 1F1F2] IM
-🇮🇳	fáni: Indland							// [1F1EE 1F1F3] IN
-🇮🇴	fáni: Bresku Indlandshafseyjar					// [1F1EE 1F1F4] IO
-🇮🇶	fáni: Írak							// [1F1EE 1F1F6] IQ
-🇮🇷	fáni: Íran							// [1F1EE 1F1F7] IR
-🇮🇸	fáni: Ísland							// [1F1EE 1F1F8] IS
-🇮🇹	fáni: Ítalía							// [1F1EE 1F1F9] IT
-🇯🇪	fáni: Jersey							// [1F1EF 1F1EA] JE
-🇯🇲	fáni: Jamaíka							// [1F1EF 1F1F2] JM
-🇯🇴	fáni: Jórdanía							// [1F1EF 1F1F4] JO
-🇯🇵	fáni: Japan							// [1F1EF 1F1F5] JP
-🇰🇪	fáni: Kenía							// [1F1F0 1F1EA] KE
-🇰🇬	fáni: Kirgistan							// [1F1F0 1F1EC] KG
-🇰🇭	fáni: Kambódía							// [1F1F0 1F1ED] KH
-🇰🇮	fáni: Kíribatí							// [1F1F0 1F1EE] KI
-🇰🇲	fáni: Kómoreyjar						// [1F1F0 1F1F2] KM
-🇰🇳	fáni: Sankti Kitts og Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	fáni: Norður-Kórea						// [1F1F0 1F1F5] KP
-🇰🇷	fáni: Suður-Kórea						// [1F1F0 1F1F7] KR
-🇰🇼	fáni: Kúveit							// [1F1F0 1F1FC] KW
-🇰🇾	fáni: Caymaneyjar						// [1F1F0 1F1FE] KY
-🇰🇿	fáni: Kasakstan							// [1F1F0 1F1FF] KZ
-🇱🇦	fáni: Laos							// [1F1F1 1F1E6] LA
-🇱🇧	fáni: Líbanon							// [1F1F1 1F1E7] LB
-🇱🇨	fáni: Sankti Lúsía						// [1F1F1 1F1E8] LC
-🇱🇮	fáni: Liechtenstein						// [1F1F1 1F1EE] LI
-🇱🇰	fáni: Srí Lanka							// [1F1F1 1F1F0] LK
-🇱🇷	fáni: Líbería							// [1F1F1 1F1F7] LR
-🇱🇸	fáni: Lesótó							// [1F1F1 1F1F8] LS
-🇱🇹	fáni: Litháen							// [1F1F1 1F1F9] LT
-🇱🇺	fáni: Lúxemborg							// [1F1F1 1F1FA] LU
-🇱🇻	fáni: Lettland							// [1F1F1 1F1FB] LV
-🇱🇾	fáni: Líbía							// [1F1F1 1F1FE] LY
-🇲🇦	fáni: Marokkó							// [1F1F2 1F1E6] MA
-🇲🇨	fáni: Mónakó							// [1F1F2 1F1E8] MC
-🇲🇩	fáni: Moldóva							// [1F1F2 1F1E9] MD
-🇲🇪	fáni: Svartfjallaland						// [1F1F2 1F1EA] ME
-🇲🇫	fáni: St. Martin						// [1F1F2 1F1EB] MF
-🇲🇬	fáni: Madagaskar						// [1F1F2 1F1EC] MG
-🇲🇭	fáni: Marshalleyjar						// [1F1F2 1F1ED] MH
-🇲🇰	fáni: Makedónía							// [1F1F2 1F1F0] MK
-🇲🇱	fáni: Malí							// [1F1F2 1F1F1] ML
-🇲🇲	fáni: Mjanmar (Búrma)						// [1F1F2 1F1F2] MM
-🇲🇳	fáni: Mongólía							// [1F1F2 1F1F3] MN
-🇲🇴	fáni: sérstjórnarsvæðið Makaó					// [1F1F2 1F1F4] MO
-🇲🇵	fáni: Norður-Maríanaeyjar					// [1F1F2 1F1F5] MP
-🇲🇶	fáni: Martiník							// [1F1F2 1F1F6] MQ
-🇲🇷	fáni: Máritanía							// [1F1F2 1F1F7] MR
-🇲🇸	fáni: Montserrat						// [1F1F2 1F1F8] MS
-🇲🇹	fáni: Malta							// [1F1F2 1F1F9] MT
-🇲🇺	fáni: Máritíus							// [1F1F2 1F1FA] MU
-🇲🇻	fáni: Maldíveyjar						// [1F1F2 1F1FB] MV
-🇲🇼	fáni: Malaví							// [1F1F2 1F1FC] MW
-🇲🇽	fáni: Mexíkó							// [1F1F2 1F1FD] MX
-🇲🇾	fáni: Malasía							// [1F1F2 1F1FE] MY
-🇲🇿	fáni: Mósambík							// [1F1F2 1F1FF] MZ
-🇳🇦	fáni: Namibía							// [1F1F3 1F1E6] NA
-🇳🇨	fáni: Nýja-Kaledónía						// [1F1F3 1F1E8] NC
-🇳🇪	fáni: Níger							// [1F1F3 1F1EA] NE
-🇳🇫	fáni: Norfolkeyja						// [1F1F3 1F1EB] NF
-🇳🇬	fáni: Nígería							// [1F1F3 1F1EC] NG
-🇳🇮	fáni: Níkaragva							// [1F1F3 1F1EE] NI
-🇳🇱	fáni: Holland							// [1F1F3 1F1F1] NL
-🇳🇴	fáni: Noregur							// [1F1F3 1F1F4] NO
-🇳🇵	fáni: Nepal							// [1F1F3 1F1F5] NP
-🇳🇷	fáni: Nárú							// [1F1F3 1F1F7] NR
-🇳🇺	fáni: Niue							// [1F1F3 1F1FA] NU
-🇳🇿	fáni: Nýja-Sjáland						// [1F1F3 1F1FF] NZ
-🇴🇲	fáni: Óman							// [1F1F4 1F1F2] OM
-🇵🇦	fáni: Panama							// [1F1F5 1F1E6] PA
-🇵🇪	fáni: Perú							// [1F1F5 1F1EA] PE
-🇵🇫	fáni: Franska Pólýnesía						// [1F1F5 1F1EB] PF
-🇵🇬	fáni: Papúa Nýja-Gínea						// [1F1F5 1F1EC] PG
-🇵🇭	fáni: Filippseyjar						// [1F1F5 1F1ED] PH
-🇵🇰	fáni: Pakistan							// [1F1F5 1F1F0] PK
-🇵🇱	fáni: Pólland							// [1F1F5 1F1F1] PL
-🇵🇲	fáni: Sankti Pierre og Miquelon					// [1F1F5 1F1F2] PM
-🇵🇳	fáni: Pitcairn-eyjar						// [1F1F5 1F1F3] PN
-🇵🇷	fáni: Púertó Ríkó						// [1F1F5 1F1F7] PR
-🇵🇸	fáni: Heimastjórnarsvæði Palestínumanna				// [1F1F5 1F1F8] PS
-🇵🇹	fáni: Portúgal							// [1F1F5 1F1F9] PT
-🇵🇼	fáni: Palá							// [1F1F5 1F1FC] PW
-🇵🇾	fáni: Paragvæ							// [1F1F5 1F1FE] PY
-🇶🇦	fáni: Katar							// [1F1F6 1F1E6] QA
-🇷🇪	fáni: Réunion							// [1F1F7 1F1EA] RE
-🇷🇴	fáni: Rúmenía							// [1F1F7 1F1F4] RO
-🇷🇸	fáni: Serbía							// [1F1F7 1F1F8] RS
-🇷🇺	fáni: Rússland							// [1F1F7 1F1FA] RU
-🇷🇼	fáni: Rúanda							// [1F1F7 1F1FC] RW
-🇸🇦	fáni: Sádi-Arabía						// [1F1F8 1F1E6] SA
-🇸🇧	fáni: Salómonseyjar						// [1F1F8 1F1E7] SB
-🇸🇨	fáni: Seychelles-eyjar						// [1F1F8 1F1E8] SC
-🇸🇩	fáni: Súdan							// [1F1F8 1F1E9] SD
-🇸🇪	fáni: Svíþjóð							// [1F1F8 1F1EA] SE
-🇸🇬	fáni: Singapúr							// [1F1F8 1F1EC] SG
-🇸🇭	fáni: Sankti Helena						// [1F1F8 1F1ED] SH
-🇸🇮	fáni: Slóvenía							// [1F1F8 1F1EE] SI
-🇸🇯	fáni: Svalbarði og Jan Mayen					// [1F1F8 1F1EF] SJ
-🇸🇰	fáni: Slóvakía							// [1F1F8 1F1F0] SK
-🇸🇱	fáni: Síerra Leóne						// [1F1F8 1F1F1] SL
-🇸🇲	fáni: San Marínó						// [1F1F8 1F1F2] SM
-🇸🇳	fáni: Senegal							// [1F1F8 1F1F3] SN
-🇸🇴	fáni: Sómalía							// [1F1F8 1F1F4] SO
-🇸🇷	fáni: Súrínam							// [1F1F8 1F1F7] SR
-🇸🇸	fáni: Suður-Súdan						// [1F1F8 1F1F8] SS
-🇸🇹	fáni: Saó Tóme og Prinsípe					// [1F1F8 1F1F9] ST
-🇸🇻	fáni: El Salvador						// [1F1F8 1F1FB] SV
-🇸🇽	fáni: Sankti Martin						// [1F1F8 1F1FD] SX
-🇸🇾	fáni: Sýrland							// [1F1F8 1F1FE] SY
-🇸🇿	fáni: Svasíland							// [1F1F8 1F1FF] SZ
-🇹🇦	fáni: Tristan da Cunha						// [1F1F9 1F1E6] TA
-🇹🇨	fáni: Turks- og Caicoseyjar					// [1F1F9 1F1E8] TC
-🇹🇩	fáni: Tsjad							// [1F1F9 1F1E9] TD
-🇹🇫	fáni: Frönsku suðlægu landsvæðin				// [1F1F9 1F1EB] TF
-🇹🇬	fáni: Tógó							// [1F1F9 1F1EC] TG
-🇹🇭	fáni: Taíland							// [1F1F9 1F1ED] TH
-🇹🇯	fáni: Tadsjikistan						// [1F1F9 1F1EF] TJ
-🇹🇰	fáni: Tókelá							// [1F1F9 1F1F0] TK
-🇹🇱	fáni: Tímor-Leste						// [1F1F9 1F1F1] TL
-🇹🇲	fáni: Túrkmenistan						// [1F1F9 1F1F2] TM
-🇹🇳	fáni: Túnis							// [1F1F9 1F1F3] TN
-🇹🇴	fáni: Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	fáni: Tyrkland							// [1F1F9 1F1F7] TR
-🇹🇹	fáni: Trínidad og Tóbagó					// [1F1F9 1F1F9] TT
-🇹🇻	fáni: Túvalú							// [1F1F9 1F1FB] TV
-🇹🇼	fáni: Taívan							// [1F1F9 1F1FC] TW
-🇹🇿	fáni: Tansanía							// [1F1F9 1F1FF] TZ
-🇺🇦	fáni: Úkraína							// [1F1FA 1F1E6] UA
-🇺🇬	fáni: Úganda							// [1F1FA 1F1EC] UG
-🇺🇲	fáni: Smáeyjar Bandaríkjanna					// [1F1FA 1F1F2] UM
-🇺🇳	fáni: Sameinuðu þjóðirnar					// [1F1FA 1F1F3] UN
-🇺🇸	fáni: Bandaríkin						// [1F1FA 1F1F8] US
-🇺🇾	fáni: Úrúgvæ							// [1F1FA 1F1FE] UY
-🇺🇿	fáni: Úsbekistan						// [1F1FA 1F1FF] UZ
-🇻🇦	fáni: Vatíkanið							// [1F1FB 1F1E6] VA
-🇻🇨	fáni: Sankti Vinsent og Grenadíneyjar				// [1F1FB 1F1E8] VC
-🇻🇪	fáni: Venesúela							// [1F1FB 1F1EA] VE
-🇻🇬	fáni: Bresku Jómfrúaeyjar					// [1F1FB 1F1EC] VG
-🇻🇮	fáni: Bandarísku Jómfrúaeyjar					// [1F1FB 1F1EE] VI
-🇻🇳	fáni: Víetnam							// [1F1FB 1F1F3] VN
-🇻🇺	fáni: Vanúatú							// [1F1FB 1F1FA] VU
-🇼🇫	fáni: Wallis- og Fútúnaeyjar					// [1F1FC 1F1EB] WF
-🇼🇸	fáni: Samóa							// [1F1FC 1F1F8] WS
-🇽🇰	fáni: Kósóvó							// [1F1FD 1F1F0] XK
-🇾🇪	fáni: Jemen							// [1F1FE 1F1EA] YE
-🇾🇹	fáni: Mayotte							// [1F1FE 1F1F9] YT
-🇿🇦	fáni: Suður-Afríka						// [1F1FF 1F1E6] ZA
-🇿🇲	fáni: Sambía							// [1F1FF 1F1F2] ZM
-🇿🇼	fáni: Simbabve							// [1F1FF 1F1FC] ZW
+🇦🇨	Ascension-eyja						// [1F1E6 1F1E8] AC
+🇦🇩	Andorra							// [1F1E6 1F1E9] AD
+🇦🇪	Sameinuðu arabísku furstadæmin				// [1F1E6 1F1EA] AE
+🇦🇫	Afganistan						// [1F1E6 1F1EB] AF
+🇦🇬	Antígva og Barbúda					// [1F1E6 1F1EC] AG
+🇦🇮	Angvilla						// [1F1E6 1F1EE] AI
+🇦🇱	Albanía							// [1F1E6 1F1F1] AL
+🇦🇲	Armenía							// [1F1E6 1F1F2] AM
+🇦🇴	Angóla							// [1F1E6 1F1F4] AO
+🇦🇶	Suðurskautslandið					// [1F1E6 1F1F6] AQ
+🇦🇷	Argentína						// [1F1E6 1F1F7] AR
+🇦🇸	Bandaríska Samóa					// [1F1E6 1F1F8] AS
+🇦🇹	Austurríki						// [1F1E6 1F1F9] AT
+🇦🇺	Ástralía						// [1F1E6 1F1FA] AU
+🇦🇼	Arúba							// [1F1E6 1F1FC] AW
+🇦🇽	Álandseyjar						// [1F1E6 1F1FD] AX
+🇦🇿	Aserbaídsjan						// [1F1E6 1F1FF] AZ
+🇧🇦	Bosnía og Hersegóvína					// [1F1E7 1F1E6] BA
+🇧🇧	Barbados						// [1F1E7 1F1E7] BB
+🇧🇩	Bangladess						// [1F1E7 1F1E9] BD
+🇧🇪	Belgía							// [1F1E7 1F1EA] BE
+🇧🇫	Búrkína Fasó						// [1F1E7 1F1EB] BF
+🇧🇬	Búlgaría						// [1F1E7 1F1EC] BG
+🇧🇭	Barein							// [1F1E7 1F1ED] BH
+🇧🇮	Búrúndí							// [1F1E7 1F1EE] BI
+🇧🇯	Benín							// [1F1E7 1F1EF] BJ
+🇧🇱	Sankti Bartólómeusareyjar				// [1F1E7 1F1F1] BL
+🇧🇲	Bermúdaeyjar						// [1F1E7 1F1F2] BM
+🇧🇳	Brúnei							// [1F1E7 1F1F3] BN
+🇧🇴	Bólivía							// [1F1E7 1F1F4] BO
+🇧🇶	Karíbahafshluti Hollands				// [1F1E7 1F1F6] BQ
+🇧🇷	Brasilía						// [1F1E7 1F1F7] BR
+🇧🇸	Bahamaeyjar						// [1F1E7 1F1F8] BS
+🇧🇹	Bútan							// [1F1E7 1F1F9] BT
+🇧🇻	Bouveteyja						// [1F1E7 1F1FB] BV
+🇧🇼	Botsvana						// [1F1E7 1F1FC] BW
+🇧🇾	Hvíta-Rússland						// [1F1E7 1F1FE] BY
+🇧🇿	Belís							// [1F1E7 1F1FF] BZ
+🇨🇦	Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	Kókoseyjar Keeling					// [1F1E8 1F1E8] CC
+🇨🇩	Kongó-Kinshasa						// [1F1E8 1F1E9] CD
+🇨🇫	Mið-Afríkulýðveldið					// [1F1E8 1F1EB] CF
+🇨🇬	Kongó-Brazzaville					// [1F1E8 1F1EC] CG
+🇨🇭	Sviss							// [1F1E8 1F1ED] CH
+🇨🇮	Fílabeinsströndin					// [1F1E8 1F1EE] CI
+🇨🇰	Cooks-eyjar						// [1F1E8 1F1F0] CK
+🇨🇱	Síle							// [1F1E8 1F1F1] CL
+🇨🇲	Kamerún							// [1F1E8 1F1F2] CM
+🇨🇳	Kína							// [1F1E8 1F1F3] CN
+🇨🇴	Kólumbía						// [1F1E8 1F1F4] CO
+🇨🇵	Clipperton-eyja						// [1F1E8 1F1F5] CP
+🇨🇷	Kostaríka						// [1F1E8 1F1F7] CR
+🇨🇺	Kúba							// [1F1E8 1F1FA] CU
+🇨🇻	Grænhöfðaeyjar						// [1F1E8 1F1FB] CV
+🇨🇼	Curacao							// [1F1E8 1F1FC] CW
+🇨🇽	Jólaey							// [1F1E8 1F1FD] CX
+🇨🇾	Kýpur							// [1F1E8 1F1FE] CY
+🇨🇿	Tékkland						// [1F1E8 1F1FF] CZ
+🇩🇪	Þýskaland						// [1F1E9 1F1EA] DE
+🇩🇬	Diego Garcia						// [1F1E9 1F1EC] DG
+🇩🇯	Djíbútí							// [1F1E9 1F1EF] DJ
+🇩🇰	Danmörk							// [1F1E9 1F1F0] DK
+🇩🇲	Dóminíka						// [1F1E9 1F1F2] DM
+🇩🇴	Dóminíska lýðveldið					// [1F1E9 1F1F4] DO
+🇩🇿	Alsír							// [1F1E9 1F1FF] DZ
+🇪🇦	Ceuta og Melilla					// [1F1EA 1F1E6] EA
+🇪🇨	Ekvador							// [1F1EA 1F1E8] EC
+🇪🇪	Eistland						// [1F1EA 1F1EA] EE
+🇪🇬	Egyptaland						// [1F1EA 1F1EC] EG
+🇪🇭	Vestur-Sahara						// [1F1EA 1F1ED] EH
+🇪🇷	Erítrea							// [1F1EA 1F1F7] ER
+🇪🇸	Spánn							// [1F1EA 1F1F8] ES
+🇪🇹	Eþíópía							// [1F1EA 1F1F9] ET
+🇪🇺	Evrópusambandið						// [1F1EA 1F1FA] EU
+🇫🇮	Finnland						// [1F1EB 1F1EE] FI
+🇫🇯	Fídjíeyjar						// [1F1EB 1F1EF] FJ
+🇫🇰	Falklandseyjar						// [1F1EB 1F1F0] FI
+🇫🇲	Míkrónesía						// [1F1EB 1F1F2] FM
+🇫🇴	Færeyjar						// [1F1EB 1F1F4] FO
+🇫🇷	Frakkland						// [1F1EB 1F1F7] FR
+🇬🇦	Gabon							// [1F1EC 1F1E6] GA
+🇬🇧	Bretland						// [1F1EC 1F1E7] GB
+🇬🇩	Grenada							// [1F1EC 1F1E9] GD
+🇬🇪	Georgía							// [1F1EC 1F1EA] GE
+🇬🇫	Franska Gvæjana						// [1F1EC 1F1EB] GF
+🇬🇬	Guernsey						// [1F1EC 1F1EC] GG
+🇬🇭	Gana							// [1F1EC 1F1ED] GH
+🇬🇮	Gíbraltar						// [1F1EC 1F1EE] GI
+🇬🇱	Grænland						// [1F1EC 1F1F1] GL
+🇬🇲	Gambía							// [1F1EC 1F1F2] GM
+🇬🇳	Gínea							// [1F1EC 1F1F3] GN
+🇬🇵	Gvadelúpeyjar						// [1F1EC 1F1F5] GP
+🇬🇶	Miðbaugs-Gínea						// [1F1EC 1F1F6] GQ
+🇬🇷	Grikkland						// [1F1EC 1F1F7] GR
+🇬🇸	Suður-Georgía og Suður-Sandvíkureyjar			// [1F1EC 1F1F8] GS
+🇬🇹	Gvatemala						// [1F1EC 1F1F9] GT
+🇬🇺	Gvam							// [1F1EC 1F1FA] GU
+🇬🇼	Gínea-Bissá						// [1F1EC 1F1FC] GW
+🇬🇾	Gvæjana							// [1F1EC 1F1FE] GY
+🇭🇰	sérstjórnarsvæðið Hong Kong				// [1F1ED 1F1F0] HK
+🇭🇲	Heard og McDonaldseyjar					// [1F1ED 1F1F2] HM
+🇭🇳	Hondúras						// [1F1ED 1F1F3] HN
+🇭🇷	Króatía							// [1F1ED 1F1F7] HR
+🇭🇹	Haítí							// [1F1ED 1F1F9] HT
+🇭🇺	Ungverjaland						// [1F1ED 1F1FA] HU
+🇮🇨	Kanaríeyjar						// [1F1EE 1F1E8] IC
+🇮🇩	Indónesía						// [1F1EE 1F1E9] ID
+🇮🇪	Írland							// [1F1EE 1F1EA] IE
+🇮🇱	Ísrael							// [1F1EE 1F1F1] IL
+🇮🇲	Mön							// [1F1EE 1F1F2] IM
+🇮🇳	Indland							// [1F1EE 1F1F3] IN
+🇮🇴	Bresku Indlandshafseyjar				// [1F1EE 1F1F4] IO
+🇮🇶	Írak							// [1F1EE 1F1F6] IQ
+🇮🇷	Íran							// [1F1EE 1F1F7] IR
+🇮🇸	Ísland							// [1F1EE 1F1F8] IS
+🇮🇹	Ítalía							// [1F1EE 1F1F9] IT
+🇯🇪	Jersey							// [1F1EF 1F1EA] JE
+🇯🇲	Jamaíka							// [1F1EF 1F1F2] JM
+🇯🇴	Jórdanía						// [1F1EF 1F1F4] JO
+🇯🇵	Japan							// [1F1EF 1F1F5] JP
+🇰🇪	Kenía							// [1F1F0 1F1EA] KE
+🇰🇬	Kirgistan						// [1F1F0 1F1EC] KG
+🇰🇭	Kambódía						// [1F1F0 1F1ED] KH
+🇰🇮	Kíribatí						// [1F1F0 1F1EE] KI
+🇰🇲	Kómoreyjar						// [1F1F0 1F1F2] KM
+🇰🇳	Sankti Kitts og Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	Norður-Kórea						// [1F1F0 1F1F5] KP
+🇰🇷	Suður-Kórea						// [1F1F0 1F1F7] KR
+🇰🇼	Kúveit							// [1F1F0 1F1FC] KW
+🇰🇾	Caymaneyjar						// [1F1F0 1F1FE] KY
+🇰🇿	Kasakstan						// [1F1F0 1F1FF] KZ
+🇱🇦	Laos							// [1F1F1 1F1E6] LA
+🇱🇧	Líbanon							// [1F1F1 1F1E7] LB
+🇱🇨	Sankti Lúsía						// [1F1F1 1F1E8] LC
+🇱🇮	Liechtenstein						// [1F1F1 1F1EE] LI
+🇱🇰	Srí Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	Líbería							// [1F1F1 1F1F7] LR
+🇱🇸	Lesótó							// [1F1F1 1F1F8] LS
+🇱🇹	Litháen							// [1F1F1 1F1F9] LT
+🇱🇺	Lúxemborg						// [1F1F1 1F1FA] LU
+🇱🇻	Lettland						// [1F1F1 1F1FB] LV
+🇱🇾	Líbía							// [1F1F1 1F1FE] LY
+🇲🇦	Marokkó							// [1F1F2 1F1E6] MA
+🇲🇨	Mónakó							// [1F1F2 1F1E8] MC
+🇲🇩	Moldóva							// [1F1F2 1F1E9] MD
+🇲🇪	Svartfjallaland						// [1F1F2 1F1EA] ME
+🇲🇫	Saint-Martin						// [1F1F2 1F1EB] MF
+🇲🇬	Madagaskar						// [1F1F2 1F1EC] MG
+🇲🇭	Marshalleyjar						// [1F1F2 1F1ED] MH
+🇲🇰	Norður-Makedónía					// [1F1F2 1F1F0] MK
+🇲🇱	Malí							// [1F1F2 1F1F1] ML
+🇲🇲	Mjanmar Búrma						// [1F1F2 1F1F2] MM
+🇲🇳	Mongólía						// [1F1F2 1F1F3] MN
+🇲🇴	sérstjórnarsvæðið Makaó					// [1F1F2 1F1F4] MO
+🇲🇵	Norður-Maríanaeyjar					// [1F1F2 1F1F5] MP
+🇲🇶	Martiník						// [1F1F2 1F1F6] MQ
+🇲🇷	Máritanía						// [1F1F2 1F1F7] MR
+🇲🇸	Montserrat						// [1F1F2 1F1F8] MS
+🇲🇹	Malta							// [1F1F2 1F1F9] MT
+🇲🇺	Máritíus						// [1F1F2 1F1FA] MU
+🇲🇻	Maldíveyjar						// [1F1F2 1F1FB] MV
+🇲🇼	Malaví							// [1F1F2 1F1FC] MW
+🇲🇽	Mexíkó							// [1F1F2 1F1FD] MX
+🇲🇾	Malasía							// [1F1F2 1F1FE] MY
+🇲🇿	Mósambík						// [1F1F2 1F1FF] MZ
+🇳🇦	Namibía							// [1F1F3 1F1E6] NA
+🇳🇨	Nýja-Kaledónía						// [1F1F3 1F1E8] NC
+🇳🇪	Níger							// [1F1F3 1F1EA] NE
+🇳🇫	Norfolkeyja						// [1F1F3 1F1EB] NF
+🇳🇬	Nígería							// [1F1F3 1F1EC] NG
+🇳🇮	Níkaragva						// [1F1F3 1F1EE] NI
+🇳🇱	Holland							// [1F1F3 1F1F1] NL
+🇳🇴	Noregur							// [1F1F3 1F1F4] NO
+🇳🇵	Nepal							// [1F1F3 1F1F5] NP
+🇳🇷	Nárú							// [1F1F3 1F1F7] NR
+🇳🇺	Niue							// [1F1F3 1F1FA] NU
+🇳🇿	Nýja-Sjáland						// [1F1F3 1F1FF] NZ
+🇴🇲	Óman							// [1F1F4 1F1F2] OM
+🇵🇦	Panama							// [1F1F5 1F1E6] PA
+🇵🇪	Perú							// [1F1F5 1F1EA] PE
+🇵🇫	Franska Pólýnesía					// [1F1F5 1F1EB] PF
+🇵🇬	Papúa Nýja-Gínea					// [1F1F5 1F1EC] PG
+🇵🇭	Filippseyjar						// [1F1F5 1F1ED] PH
+🇵🇰	Pakistan						// [1F1F5 1F1F0] PK
+🇵🇱	Pólland							// [1F1F5 1F1F1] PL
+🇵🇲	Sankti Pierre og Miquelon				// [1F1F5 1F1F2] PM
+🇵🇳	Pitcairn-eyjar						// [1F1F5 1F1F3] PN
+🇵🇷	Púertó Ríkó						// [1F1F5 1F1F7] PR
+🇵🇸	Heimastjórnarsvæði Palestínumanna			// [1F1F5 1F1F8] PS
+🇵🇹	Portúgal						// [1F1F5 1F1F9] PT
+🇵🇼	Palá							// [1F1F5 1F1FC] PW
+🇵🇾	Paragvæ							// [1F1F5 1F1FE] PY
+🇶🇦	Katar							// [1F1F6 1F1E6] QA
+🇷🇪	Réunion							// [1F1F7 1F1EA] RE
+🇷🇴	Rúmenía							// [1F1F7 1F1F4] RO
+🇷🇸	Serbía							// [1F1F7 1F1F8] RS
+🇷🇺	Rússland						// [1F1F7 1F1FA] RU
+🇷🇼	Rúanda							// [1F1F7 1F1FC] RW
+🇸🇦	Sádi-Arabía						// [1F1F8 1F1E6] SA
+🇸🇧	Salómonseyjar						// [1F1F8 1F1E7] SB
+🇸🇨	Seychelles-eyjar					// [1F1F8 1F1E8] SC
+🇸🇩	Súdan							// [1F1F8 1F1E9] SD
+🇸🇪	Svíþjóð							// [1F1F8 1F1EA] SE
+🇸🇬	Singapúr						// [1F1F8 1F1EC] SG
+🇸🇭	Sankti Helena						// [1F1F8 1F1ED] SH
+🇸🇮	Slóvenía						// [1F1F8 1F1EE] SI
+🇸🇯	Svalbarði og Jan Mayen					// [1F1F8 1F1EF] SJ
+🇸🇰	Slóvakía						// [1F1F8 1F1F0] SK
+🇸🇱	Síerra Leóne						// [1F1F8 1F1F1] SL
+🇸🇲	San Marínó						// [1F1F8 1F1F2] SM
+🇸🇳	Senegal							// [1F1F8 1F1F3] SN
+🇸🇴	Sómalía							// [1F1F8 1F1F4] SO
+🇸🇷	Súrínam							// [1F1F8 1F1F7] SR
+🇸🇸	Suður-Súdan						// [1F1F8 1F1F8] SS
+🇸🇹	Saó Tóme og Prinsípe					// [1F1F8 1F1F9] ST
+🇸🇻	El Salvador						// [1F1F8 1F1FB] SV
+🇸🇽	Sint Maarten						// [1F1F8 1F1FD] SX
+🇸🇾	Sýrland							// [1F1F8 1F1FE] SY
+🇸🇿	Esvatíní						// [1F1F8 1F1FF] SZ
+🇹🇦	Tristan da Cunha					// [1F1F9 1F1E6] TA
+🇹🇨	Turks- og Caicoseyjar					// [1F1F9 1F1E8] TC
+🇹🇩	Tsjad							// [1F1F9 1F1E9] TD
+🇹🇫	Frönsku suðlægu landsvæðin				// [1F1F9 1F1EB] TF
+🇹🇬	Tógó							// [1F1F9 1F1EC] TG
+🇹🇭	Taíland							// [1F1F9 1F1ED] TH
+🇹🇯	Tadsíkistan						// [1F1F9 1F1EF] TJ
+🇹🇰	Tókelá							// [1F1F9 1F1F0] TK
+🇹🇱	Tímor-Leste						// [1F1F9 1F1F1] TL
+🇹🇲	Túrkmenistan						// [1F1F9 1F1F2] TM
+🇹🇳	Túnis							// [1F1F9 1F1F3] TN
+🇹🇴	Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	Tyrkland						// [1F1F9 1F1F7] TR
+🇹🇹	Trínidad og Tóbagó					// [1F1F9 1F1F9] TT
+🇹🇻	Túvalú							// [1F1F9 1F1FB] TV
+🇹🇼	Taívan							// [1F1F9 1F1FC] TW
+🇹🇿	Tansanía						// [1F1F9 1F1FF] TZ
+🇺🇦	Úkraína							// [1F1FA 1F1E6] UA
+🇺🇬	Úganda							// [1F1FA 1F1EC] UG
+🇺🇲	Smáeyjar Bandaríkjanna					// [1F1FA 1F1F2] UM
+🇺🇳	Sameinuðu þjóðirnar					// [1F1FA 1F1F3] UN
+🇺🇸	Bandaríkin						// [1F1FA 1F1F8] US
+🇺🇾	Úrúgvæ							// [1F1FA 1F1FE] UY
+🇺🇿	Úsbekistan						// [1F1FA 1F1FF] UZ
+🇻🇦	Vatíkanið						// [1F1FB 1F1E6] VA
+🇻🇨	Sankti Vinsent og Grenadíneyjar				// [1F1FB 1F1E8] VC
+🇻🇪	Venesúela						// [1F1FB 1F1EA] VE
+🇻🇬	Bresku Jómfrúaeyjar					// [1F1FB 1F1EC] VG
+🇻🇮	Bandarísku Jómfrúaeyjar					// [1F1FB 1F1EE] VI
+🇻🇳	Víetnam							// [1F1FB 1F1F3] VN
+🇻🇺	Vanúatú							// [1F1FB 1F1FA] VU
+🇼🇫	Wallis- og Fútúnaeyjar					// [1F1FC 1F1EB] WF
+🇼🇸	Samóa							// [1F1FC 1F1F8] WS
+🇽🇰	Kósóvó							// [1F1FD 1F1F0] XK
+🇾🇪	Jemen							// [1F1FE 1F1EA] YE
+🇾🇹	Mayotte							// [1F1FE 1F1F9] YT
+🇿🇦	Suður-Afríka						// [1F1FF 1F1E6] ZA
+🇿🇲	Sambía							// [1F1FF 1F1F2] ZM
+🇿🇼	Simbabve						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1955,18 +1957,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#️⃣	takki: #							// [0023 FE0F 20E3]
-*️⃣	takki: *							// [002A FE0F 20E3]
-0️⃣	takki: 0							// [0030 FE0F 20E3]
-1️⃣	takki: 1							// [0031 FE0F 20E3]
-2️⃣	takki: 2							// [0032 FE0F 20E3]
-3️⃣	takki: 3							// [0033 FE0F 20E3]
-4️⃣	takki: 4							// [0034 FE0F 20E3]
-5️⃣	takki: 5							// [0035 FE0F 20E3]
-6️⃣	takki: 6							// [0036 FE0F 20E3]
-7️⃣	takki: 7							// [0037 FE0F 20E3]
-8️⃣	takki: 8							// [0038 FE0F 20E3]
-9️⃣	takki: 9							// [0039 FE0F 20E3]
+#⃣	takki							// [0023 20E3]
+*⃣	takki							// [002A 20E3]
+0⃣	takki 0							// [0030 20E3]
+1⃣	takki 1							// [0031 20E3]
+2⃣	takki 2							// [0032 20E3]
+3⃣	takki 3							// [0033 20E3]
+4⃣	takki 4							// [0034 20E3]
+5⃣	takki 5							// [0035 20E3]
+6⃣	takki 6							// [0036 20E3]
+7⃣	takki 7							// [0037 20E3]
+8⃣	takki 8							// [0038 20E3]
+9⃣	takki 9							// [0039 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	balletskór						// [1FA70]
@@ -1992,6 +1994,11 @@ $textmode
 🪇	hristur							// [1FA87]
 🪈	flauta							// [1FA88]
 🪉	harpa							// [1FA89]
+🪊	básúna							// [1FA8A]
+🪋	vígahnöttur						// [1FA8B]
+🪌	strokleður						// [1FA8C]
+🪍	háfur							// [1FA8D]
+🪎	fjársjóðskista						// [1FA8E]
 🪏	skófla							// [1FA8F]
 🪐	pláneta með hringi					// [1FA90]
 🪑	stóll							// [1FA91]
@@ -2048,6 +2055,9 @@ $textmode
 🫄	barnshafandi manneskja					// [1FAC4]
 🫅	manneskja með kórónu					// [1FAC5]
 🫆	fingrafar						// [1FAC6]
+🫈	loðin skepna						// [1FAC8]
+🫌	kóngafiðrildi						// [1FACC]
+🫍	háhyrningur						// [1FACD]
 🫎	elgur							// [1FACE]
 🫏	asni							// [1FACF]
 🫐	bláber							// [1FAD0]
@@ -2063,6 +2073,7 @@ $textmode
 🫚	engiferrót						// [1FADA]
 🫛	baunabelgur						// [1FADB]
 🫜	rótargrænmeti						// [1FADC]
+🫝	súrkrás							// [1FADD]
 🫟	sletta							// [1FADF]
 🫠	andlit að bráðna					// [1FAE0]
 🫡	andlit að heilsa					// [1FAE1]
@@ -2074,6 +2085,9 @@ $textmode
 🫧	loftbólur						// [1FAE7]
 🫨	skjálfandi andlit					// [1FAE8]
 🫩	andlit með poka undir augum				// [1FAE9]
+🫪	afmyndað andlit						// [1FAEA]
+🫫	andlit með sprungur					// [1FAEB]
+🫯	rifrildisský						// [1FAEF]
 🫰	hendi með vísifingur og þumal í kross			// [1FAF0]
 🫱	hendi hægra megin					// [1FAF1]
 🫲	hendi vinstra megin					// [1FAF2]
@@ -2083,6 +2097,8 @@ $textmode
 🫶	hjartahendur						// [1FAF6]
 🫷	hönd ýtt til vinstri					// [1FAF7]
 🫸	hönd ýtt til hægri					// [1FAF8]
+🫹	þumall til vinstri					// [1FAF9]
+🫺	þumall til hægri					// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2111,38 +2127,38 @@ $textmode
 👨‍🦼‍➡	maður í vélknúnum hjólastól snýr til hægri		// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	maður í hjólastól					// [1F468 200D 1F9BD]
 👨‍🦽‍➡	maður í hjólastól snýr til hægri			// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	koss: kona og karl			// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	koss: karl og karl			// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	koss: kona og kona			// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	par: kona og karl				// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	par: karl og karl				// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	par: kona og kona				// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	fjölskylda: karl, kona og drengur		// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	fjölskylda: karl, kona og stúlka		// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	fjölskylda: karl, kona, stúlka og drengur// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	fjölskylda: karl, kona, drengur og drengur// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	fjölskylda: karl, kona, stúlka og stúlka// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	fjölskylda: karl, karl og drengur		// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	fjölskylda: karl, karl og stúlka		// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	fjölskylda: karl, karl, stúlka og drengur// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	fjölskylda: karl, karl, drengur og drengur// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	fjölskylda: karl, karl, stúlka og stúlka// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	koss kona og karl					// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	koss karl og karl					// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	koss kona og kona					// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	par kona og karl					// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	par karl og karl					// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	par kona og kona					// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	fjölskylda karl kona og drengur				// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	fjölskylda karl kona og stúlka				// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	fjölskylda karl kona stúlka og drengur			// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	fjölskylda karl kona drengur og drengur			// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	fjölskylda karl kona stúlka og stúlka			// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	fjölskylda karl karl og drengur				// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	fjölskylda karl karl og stúlka				// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	fjölskylda karl karl stúlka og drengur			// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	fjölskylda karl karl drengur og drengur			// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	fjölskylda karl karl stúlka og stúlka			// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	kona að gefa barni					// [1F469 200D 1F37C]
-👩‍👩‍👦	fjölskylda: kona, kona og drengur		// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	fjölskylda: kona, kona og stúlka		// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	fjölskylda: kona, kona, stúlka og drengur// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	fjölskylda: kona, kona, drengur og drengur// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	fjölskylda: kona, kona, stúlka og stúlka// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	fjölskylda: karl og drengur				// [1F468 200D 1F466]
-👨‍👦‍👦	fjölskylda: karl, drengur og drengur		// [1F468 200D 1F466 200D 1F466]
-👨‍👧	fjölskylda: karl og stúlka				// [1F468 200D 1F467]
-👨‍👧‍👦	fjölskylda: karl, stúlka og drengur		// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	fjölskylda: karl, stúlka og stúlka		// [1F468 200D 1F467 200D 1F467]
-👩‍👦	fjölskylda: kona og drengur				// [1F469 200D 1F466]
-👩‍👦‍👦	fjölskylda: kona, drengur og drengur		// [1F469 200D 1F466 200D 1F466]
-👩‍👧	fjölskylda: kona og stúlka				// [1F469 200D 1F467]
-👩‍👧‍👦	fjölskylda: kona, stúlka og drengur		// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	fjölskylda: kona, stúlka og stúlka		// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	fjölskylda kona kona og drengur				// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	fjölskylda kona kona og stúlka				// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	fjölskylda kona kona stúlka og drengur			// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	fjölskylda kona kona drengur og drengur			// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	fjölskylda kona kona stúlka og stúlka			// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	fjölskylda karl og drengur				// [1F468 200D 1F466]
+👨‍👦‍👦	fjölskylda karl drengur og drengur			// [1F468 200D 1F466 200D 1F466]
+👨‍👧	fjölskylda karl og stúlka				// [1F468 200D 1F467]
+👨‍👧‍👦	fjölskylda karl stúlka og drengur			// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	fjölskylda karl stúlka og stúlka			// [1F468 200D 1F467 200D 1F467]
+👩‍👦	fjölskylda kona og drengur				// [1F469 200D 1F466]
+👩‍👦‍👦	fjölskylda kona drengur og drengur			// [1F469 200D 1F466 200D 1F466]
+👩‍👧	fjölskylda kona og stúlka				// [1F469 200D 1F467]
+👩‍👧‍👦	fjölskylda kona stúlka og drengur			// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	fjölskylda kona stúlka og stúlka			// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 
@@ -2160,7 +2176,7 @@ $textmode
 👩‍🎓	kvenkyns námsmaður					// [1F469 200D 1F393]
 👨‍🎤	söngvari						// [1F468 200D 1F3A4]
 👩‍🎤	söngkona						// [1F469 200D 1F3A4]
-👨‍🎨	listamaður						// [1F468 200D 1F3A8]
+👨‍🎨	karlkyns listamaður					// [1F468 200D 1F3A8]
 👩‍🎨	listakona						// [1F469 200D 1F3A8]
 👨‍🏫	karlkyns kennari					// [1F468 200D 1F3EB]
 👩‍🏫	kvenkyns kennari					// [1F469 200D 1F3EB]
@@ -2321,7 +2337,7 @@ $textmode
 🧖‍♂	maður í gufubaði					// [1F9D6 200D 2642]
 🧗‍♀	kona í klettaklifri					// [1F9D7 200D 2640]
 🧗‍♂	karl í klettaklifri					// [1F9D7 200D 2642]
-🧘‍♀	kona í lótusp´ósu					// [1F9D8 200D 2640]
+🧘‍♀	kona í lótuspósu					// [1F9D8 200D 2640]
 🧘‍♂	karl í lótuspósu					// [1F9D8 200D 2642]
 
 // Emoji ZWJ Sequence: Gendered Gestures

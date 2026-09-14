@@ -57,13 +57,20 @@ def read_annotations(filename, annotations):
 
 
 def load_annotations(cldr_path, lang):
-    filenames = [
+    annotations = {}
+    found = False
+    filenames = []
+    if lang == "en":
+        # NVDA eSpeak methodology: load en_001 first, then en
+        filenames.extend([
+            os.path.join(cldr_path, "common", "annotations", "en_001.xml"),
+            os.path.join(cldr_path, "common", "annotationsDerived", "en_001.xml"),
+        ])
+    filenames.extend([
         os.path.join(cldr_path, "common", "annotations", "{0}.xml".format(lang)),
         os.path.join(cldr_path, "common", "annotationsDerived", "{0}.xml".format(lang)),
         os.path.join("data", "annotationsEspeak", "{0}.xml".format(lang)),
-    ]
-    annotations = {}
-    found = False
+    ])
     for filename in filenames:
         if os.path.exists(filename):
             read_annotations(filename, annotations)
@@ -87,19 +94,20 @@ def wanted(cp):
     # which CLDR annotation keys are eligible for dictionary entries
     if is_skin_tone(cp) or is_tag_sequence(cp):
         return False
-    if len(cp) == 1 and (ord(cp) < 0x2000 or unicodedata.category(cp)[0] != "S"):
-        # CLDR also annotates letters, digits, punctuation (brackets, dashes,
-        # quotation marks, ...) and ASCII or script-specific symbols ($, ฿):
-        # those are ordinary text for the synthesizer, handled by the
-        # punctuation, number and currency logic or by the *_list files, so
-        # only accept symbols (Sm, Sc, Sk, So) from U+2000 upwards as
-        # single-codepoint entries
-        return False
+    if len(cp) == 1:
+        c = ord(cp)
+        if c < 0x2000:
+            return False
+        cat = unicodedata.category(cp)
+        # Accept symbols (Sm, Sc, Sk, So) or Unicode 15/16 emojis in U+1F000+
+        # which older Python unicodedata (like Python 3.11 with Unicode 14) categorizes as 'Cn'
+        if cat[0] != "S" and not (c >= 0x1F000 and cat == "Cn"):
+            return False
     return True
 
 
 def normalize(text, cp):
-    # match the conventions used by the existing entries
+    # match the conventions used by the existing entries and NVDA
     text = text.replace("‘", "'")
     text = text.replace("| ", "")  # alternatives, e.g. af "vonkstok | skitterstokkie"
     if is_flag_sequence(cp):
@@ -108,13 +116,9 @@ def normalize(text, cp):
             if colon in text:
                 text = text.split(colon, 1)[1]
                 break
-    # replacement text is spoken word by word, so punctuation must not leak
-    # into it: localized separators (Arabic ،, Ethiopic ፣, fullwidth ，, ...)
-    # would be spoken by their dictionary names ("comma"), parentheses and
-    # dashes silently distort words.  Replace every punctuation or symbol
-    # codepoint with a space, keeping only the characters the existing
-    # entries use inside names.  Format characters (e.g. ZWNJ in Persian
-    # orthography) and combining marks are kept.
+    else:
+        # NVDA style: replace colons with space
+        text = text.replace(":", " ")
     kept = []
     for ch in text:
         if ch in "'’-&.":
@@ -135,21 +139,22 @@ def sort_key(cp):
     return tuple(ord(c) for c in cp)
 
 
-def format_entry(cp, name):
+def format_entry(cp, name, extra_comment=""):
     # align the comment column with the surrounding entries (tab stops of 8)
     text_length = 8 + len(name)  # key occupies the first tab stop
     tabs = max(1, math.ceil((64 - text_length) / 8))
-    return "{0}\t{1}{2}// [{3}]".format(cp, name, "\t" * tabs, codepoints(cp))
+    extra = (" " + extra_comment.strip()) if extra_comment.strip() else ""
+    return "{0}\t{1}{2}// [{3}]{4}".format(cp, name, "\t" * tabs, codepoints(cp), extra)
 
 
-# an entry line: key, name, "// [CODEPOINTS]" comment
-RE_ENTRY = re.compile(r"^([^ \t/$]+) ?\t[^/]*// \[([0-9A-Fa-f ]+)\]")
+# an entry line: key, name, "// [CODEPOINTS]" comment and optional trailing notes
+RE_ENTRY = re.compile(r"^([^ \t/$]+) ?\t([^/]*)\t*// \[([0-9A-Fa-f ]+)\](.*)")
 # a commented-out entry produced by tools/emoji for missing translations
 RE_UNTRANSLATED = re.compile(r"^//([^ \t/$]+) ?\t[^/]*// \[([0-9A-Fa-f ]+)\].*\(no translation\)")
 
 
-def parse_key(match):
-    return "".join(chr(int(x, 16)) for x in match.group(2).split())
+def parse_key(match, group_idx=2):
+    return "".join(chr(int(x, 16)) for x in match.group(group_idx).split())
 
 
 def block_name(cp):
@@ -223,20 +228,28 @@ def update_file(filename, lang, cldr_path, en_keys):
             print("{0}: not in the generated format, skipped".format(filename))
             return None
 
-    # find the existing entries and revive newly-translated ones
+    # find the existing entries, revive newly-translated ones, and update with richer descriptions
     present = set()
     entries = []  # (line index, key)
     revived = 0
+    updated = 0
     for ix, line in enumerate(lines):
         m = RE_ENTRY.match(line)
         if m:
-            key = parse_key(m).replace(VS16, "")
+            key = parse_key(m, 3).replace(VS16, "")
             present.add(key)
             entries.append((ix, key))
+            if key in names:
+                old_name = m.group(2).strip()
+                new_name = names[key]
+                extra_comment = m.group(4)
+                if old_name != new_name:
+                    lines[ix] = format_entry(key, new_name, extra_comment)
+                    updated += 1
             continue
         m = RE_UNTRANSLATED.match(line)
         if m:
-            key = parse_key(m).replace(VS16, "")
+            key = parse_key(m, 2).replace(VS16, "")
             present.add(key)
             entries.append((ix, key))
             if key in names:
@@ -253,7 +266,7 @@ def update_file(filename, lang, cldr_path, en_keys):
     in_list_file = list_file_keys(lang)
     missing = [k for k in universe if k not in present and k not in in_list_file]
     all_keys = present | set(missing)
-    if not missing and not revived:
+    if not missing and not revived and not updated:
         print("{0}: up to date".format(filename))
         return all_keys
 
@@ -298,7 +311,7 @@ def update_file(filename, lang, cldr_path, en_keys):
     with open(filename, "w", encoding="utf-8") as f:
         f.write("\n".join(out))
 
-    print("{0}: {1} added, {2} revived".format(filename, added, revived))
+    print("{0}: {1} added, {2} revived, {3} updated".format(filename, added, revived, updated))
     return all_keys
 
 
@@ -306,9 +319,13 @@ def read_keys(filename):
     keys = set()
     with open(filename, encoding="utf-8") as f:
         for line in f:
-            m = RE_ENTRY.match(line) or RE_UNTRANSLATED.match(line)
+            m = RE_ENTRY.match(line)
             if m:
-                keys.add(parse_key(m).replace(VS16, ""))
+                keys.add(parse_key(m, 3).replace(VS16, ""))
+                continue
+            m = RE_UNTRANSLATED.match(line)
+            if m:
+                keys.add(parse_key(m, 2).replace(VS16, ""))
     return keys
 
 

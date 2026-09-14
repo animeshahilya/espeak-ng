@@ -88,7 +88,7 @@ $textmode
 //№	numero								// [2116] other (no translation)
 ℗	hawlfraint recordio sain				// [2117]
 //℞	prescription							// [211E] other (no translation)
-™	nod masnachu							// [2122] text|emoji
+™	nod masnach						// [2122] text|emoji
 ℹ	gwybodaeth							// [2139] text|emoji
 
 // 2150..218F : Number Forms
@@ -395,12 +395,12 @@ $textmode
 
 ☀	haul								// [2600] text|emoji
 ☁	cwmwl								// [2601] text|emoji
-☂	ymbarel								// [2602] text|emoji
+☂	ymbarél							// [2602] text|emoji
 ☃	dyn eira							// [2603] text|emoji
 ☄	comed								// [2604] text|emoji
 ☎	ffôn								// [260E] text|emoji
 ☑	blwch pleidlais gyda thic					// [2611] text|emoji
-☔	ymbarel gyda glaw						// [2614]
+☔	ymbarél gyda glaw					// [2614]
 ☕	diod boeth							// [2615]
 ☘	samrog								// [2618] text|emoji
 ☝	mynegfys yn pwyntio i fyny					// [261D] text|emoji
@@ -425,7 +425,7 @@ $textmode
 ♎	y Fantol							// [264E]
 ♏	y Sgorpion							// [264F]
 ♐	y Saethydd							// [2650]
-♑	yr afr								// [2651]
+♑	yr Afr							// [2651]
 ♒	y Dyfrwr							// [2652]
 ♓	y Pysgod							// [2653]
 ♟	gwerinwr gwyddbwyll						// [265F] text|emoji
@@ -469,7 +469,7 @@ $textmode
 ⛩	cysegrfa shinto							// [26E9] text|emoji
 ⛪	eglwys								// [26EA]
 ⛰	mynydd								// [26F0] text|emoji
-⛱	ymbarel ar lawr							// [26F1] text|emoji
+⛱	ymbarél ar lawr						// [26F1] text|emoji
 ⛲	ffynnon								// [26F2]
 ⛳	baner mewn twll							// [26F3]
 ⛴	fferi								// [26F4] text|emoji
@@ -493,7 +493,7 @@ $textmode
 ✏	pensil								// [270F] text|emoji
 ✒	nib du								// [2712] text|emoji
 ✔	marc tic trwm							// [2714] text|emoji
-✖	lluosi x trwm							// [2716] text|emoji
+✖	lluosi							// [2716] text|emoji
 ✝	croes ladin							// [271D] text|emoji
 ✡	seren Dafydd							// [2721] text|emoji
 ✨	gwreichion							// [2728]
@@ -509,9 +509,9 @@ $textmode
 ❗	ebychnod							// [2757]
 ❣	ebychiad trwm galon						// [2763] text|emoji
 ❤	calon goch							// [2764] text|emoji
-➕	arwydd adio trwm						// [2795]
-➖	arwydd tynnu trwm						// [2796]
-➗	arwydd rhannu trwm						// [2797]
+➕	adio							// [2795]
+➖	tynnu							// [2796]
+➗	rhannu							// [2797]
 ➡	saeth i’r dde							// [27A1] text|emoji
 ➰	dolen gyrliog							// [27B0]
 ➿	dolen gyrliog ddwbl						// [27BF]
@@ -537,7 +537,7 @@ $textmode
 ⬛	sgwâr mawr du							// [2B1B]
 ⬜	sgwâr mawr wyn							// [2B1C]
 ⭐	seren ganolig wen						// [2B50]
-⭕	cylch mawr trwm							// [2B55]
+⭕	cylch coch gwag						// [2B55]
 
 // 3000..303F : CJK Symbols and Punctuation
 
@@ -552,11 +552,11 @@ $textmode
 
 // 1F100..1F1FF : Enclosed Alphanumeric Supplement
 
-🅰	botwm A (grwp gwaed)						// [1F170] text|emoji
-🅱	botwm B (grwp gwaed)						// [1F171] text|emoji
-🅾	botwm O (grwp gwaed)						// [1F17E] text|emoji
+🅰	botwm A grwp gwaed					// [1F170] text|emoji
+🅱	botwm B grwp gwaed					// [1F171] text|emoji
+🅾	botwm O grwp gwaed					// [1F17E] text|emoji
 🅿	botwm P								// [1F17F] text|emoji
-🆎	botwm AB (grwp gwaed)						// [1F18E]
+🆎	botwm AB grwp gwaed					// [1F18E]
 🆑	botwm CL							// [1F191]
 🆒	botwm COOL							// [1F192]
 🆓	botwm FREE							// [1F193]
@@ -565,7 +565,7 @@ $textmode
 🆖	botwm NG							// [1F196]
 🆗	botwm OK							// [1F197]
 🆘	botwm SOS							// [1F198]
-🆙	botwm UP!							// [1F199]
+🆙	botwm UP						// [1F199]
 🆚	botwm VS							// [1F19A]
 🇨🇶	Sarc							// [1F1E8 1F1F6]
 🇫🇰	Ynysoedd y Falkland Malvinas				// [1F1EB 1F1F0]
@@ -600,7 +600,7 @@ $textmode
 
 🌀	seiclon								// [1F300]
 🌁	niwlog								// [1F301]
-🌂	ymbarel ar gau							// [1F302]
+🌂	ymbarél ar gau						// [1F302]
 🌃	noson â sêr							// [1F303]
 🌄	codiad haul dros fynyddoedd					// [1F304]
 🌅	codiad haul							// [1F305]
@@ -723,7 +723,7 @@ $textmode
 🍼	botel babi							// [1F37C]
 🍽	fforc a chyllell gyda phlât					// [1F37D] text|emoji
 🍾	potel gyda chorcyn yn popian					// [1F37E]
-🍿	pop gorn							// [1F37F]
+🍿	popgorn							// [1F37F]
 🎀	rhuban								// [1F380]
 🎁	anrheg wedi’i lapio						// [1F381]
 🎂	cacen pen-blwydd						// [1F382]
@@ -736,7 +736,7 @@ $textmode
 🎉	popiwr parti							// [1F389]
 🎊	pelen gonffeti							// [1F38A]
 🎋	coeden tanabata							// [1F38B]
-🎌	baneri â chroesau						// [1F38C]
+🎌	baneri wedi croesi					// [1F38C]
 🎍	addurn pinwydden						// [1F38D]
 🎎	doliau Japaneaidd						// [1F38E]
 🎏	baner y carp							// [1F38F]
@@ -871,7 +871,7 @@ $textmode
 🐘	eliffant							// [1F418]
 🐙	octopws								// [1F419]
 🐚	cragen droellog							// [1F41A]
-🐛	chwilen								// [1F41B]
+🐛	pryf							// [1F41B]
 🐜	morgrugyn							// [1F41C]
 🐝	gwenynen							// [1F41D]
 🐞	chwilen y wraig							// [1F41E]
@@ -900,9 +900,9 @@ $textmode
 🐵	wyneb mwnci							// [1F435]
 🐶	wyneb ci							// [1F436]
 🐷	wyneb mochyn							// [1F437]
-🐸	wyneb broga							// [1F438]
+🐸	broga							// [1F438]
 🐹	wyneb bochdew							// [1F439]
-🐺	wyneb blaidd							// [1F43A]
+🐺	blaidd							// [1F43A]
 🐻	wyneb arth							// [1F43B]
 🐼	wyneb panda							// [1F43C]
 🐽	trwyn mochyn							// [1F43D]
@@ -944,8 +944,8 @@ $textmode
 👡	sandal menyw							// [1F461]
 👢	esgid fenyw							// [1F462]
 👣	olion traed							// [1F463]
-👤	bron mewn silwét						// [1F464]
-👥	bronnau mewn silwét						// [1F465]
+👤	penddelw mewn silwét					// [1F464]
+👥	penddelwau mewn silwét					// [1F465]
 👦	bachgen								// [1F466]
 👧	merch								// [1F467]
 👨	dyn								// [1F468]
@@ -956,7 +956,7 @@ $textmode
 👭	dwy fenyw yn dal dwylo						// [1F46D]
 👮	heddwas								// [1F46E]
 👯	pobl mewn parti							// [1F46F]
-👰	priodferch â fêl						// [1F470]
+👰	person yn gwisgo llen					// [1F470]
 👱	person â gwallt golau						// [1F471]
 👲	dyn â chap Tsieineaidd						// [1F472]
 👳	person yn gwisgo twrban						// [1F473]
@@ -1126,11 +1126,11 @@ $textmode
 🔘	botwm radio							// [1F518]
 🔙	saeth BACK							// [1F519]
 🔚	saeth END							// [1F51A]
-🔛	saeth ON!							// [1F51B]
+🔛	saeth ON						// [1F51B]
 🔜	saeth SOON							// [1F51C]
 🔝	saeth TOP							// [1F51D]
 🔞	neb o dan un deg wyth oed					// [1F51E]
-🔟	gorchudd bysell: 10						// [1F51F]
+🔟	gorchudd bysell 10					// [1F51F]
 🔠	mewnbwn llythrennau mawr ladin					// [1F520]
 🔡	mewnbwn llythrennau bach lladin					// [1F521]
 🔢	mewnbwn rhifedd							// [1F522]
@@ -1142,7 +1142,7 @@ $textmode
 🔨	morthwyl							// [1F528]
 🔩	nyten a bollt							// [1F529]
 🔪	cyllell cegin							// [1F52A]
-🔫	pistol								// [1F52B]
+🔫	pistol dŵr						// [1F52B]
 🔬	microsgop							// [1F52C]
 🔭	telesgop							// [1F52D]
 🔮	pêl grisial							// [1F52E]
@@ -1209,7 +1209,7 @@ $textmode
 🖐	llaw wedi ei chodi â bysedd wedi eu lledu			// [1F590] text|emoji
 🖕	bys canol							// [1F595]
 🖖	saliwt fulcanaidd						// [1F596]
-🖤	calon du							// [1F5A4]
+🖤	calon ddu						// [1F5A4]
 🖥	cyfrifiadur							// [1F5A5] text|emoji
 🖨	argraffydd							// [1F5A8] text|emoji
 🖱	llygoden gyfrifiadurol						// [1F5B1] text|emoji
@@ -1226,12 +1226,12 @@ $textmode
 🗞	papur newydd wedi’i rolio					// [1F5DE] text|emoji
 🗡	dagr								// [1F5E1] text|emoji
 🗣	pen yn siarad							// [1F5E3] text|emoji
-🗨	swigen yn siarad i’r chwith					// [1F5E8] text|emoji
+🗨	swigen siarad i’r chwith				// [1F5E8] text|emoji
 🗯	swigen ddig i’r dde						// [1F5EF] text|emoji
 🗳	blwch pleidlais gyda phleidlais					// [1F5F3] text|emoji
 🗺	map o’r byd							// [1F5FA] text|emoji
 🗻	mynydd Fuji							// [1F5FB]
-🗼	tŵr tokyo							// [1F5FC]
+🗼	tŵr Tokyo						// [1F5FC]
 🗽	Cerflun Rhyddid							// [1F5FD]
 🗾	map o Japan							// [1F5FE]
 🗿	moai								// [1F5FF]
@@ -1243,7 +1243,7 @@ $textmode
 😂	wyneb â dagrau hapusrwydd					// [1F602]
 😃	wyneb yn gwenu â cheg agored a llygaid mawr			// [1F603]
 😄	wyneb yn gwenu â cheg agored a gwên yn y llygaid		// [1F604]
-😅	wyneb yn gwenu â cheg agored a chwys o ofid			// [1F605]
+😅	wyneb yn gwenu â cheg agored a chwys			// [1F605]
 😆	wyneb yn gwenu â cheg agored a llygaid ynghau			// [1F606]
 😇	wyneb yn gwenu ag eurgylch					// [1F607]
 😈	wyneb yn gwenu â chyrn						// [1F608]
@@ -1291,13 +1291,13 @@ $textmode
 😲	wyneb wedi rhyfeddu						// [1F632]
 😳	wyneb yn gwrido							// [1F633]
 😴	wyneb yn cysgu							// [1F634]
-😵	wyneb penysgafn							// [1F635]
+😵	wyneb wedi llorio					// [1F635]
 😶	wyneb heb geg							// [1F636]
 😷	wyneb â mwgwd meddygol						// [1F637]
 😸	wyneb cath yn gwenu â cheg agored a gwên yn y llygaid		// [1F638]
 😹	wyneb cath â dagrau o hapusrwydd				// [1F639]
 😺	wyneb cath yn gwenu â cheg agored				// [1F63A]
-😻	wyneb cath yn gwenu â chalonnau yn y llygaid			// [1F63B]
+😻	cath yn gwenu â chalonnau yn y llygaid			// [1F63B]
 😼	wyneb cath â gwên ar gam					// [1F63C]
 😽	wyneb cath yn cusanu â llygaid ynghau				// [1F63D]
 😾	wyneb cath yn pwdu						// [1F63E]
@@ -1310,7 +1310,7 @@ $textmode
 🙅	person yn ystumio nad yw’n iawn					// [1F645]
 🙆	person yn ystumio iawn						// [1F646]
 🙇	person yn ymgrymu						// [1F647]
-🙈	gweld dim drwg							// [1F648]
+🙈	mwnci gweld dim drwg					// [1F648]
 🙉	clywed dim drwg							// [1F649]
 🙊	siarad dim drwg							// [1F64A]
 🙋	person yn codi llaw						// [1F64B]
@@ -1370,7 +1370,7 @@ $textmode
 🚮	arwydd sbwriel mewn bin						// [1F6AE]
 🚯	dim sbwriel							// [1F6AF]
 🚰	dŵr yfed							// [1F6B0]
-🚱	dwr na ellir ei foteli						// [1F6B1]
+🚱	dŵr na ellir ei yfed					// [1F6B1]
 🚲	beic								// [1F6B2]
 🚳	dim beiciau							// [1F6B3]
 🚴	person yn beicio						// [1F6B4]
@@ -1402,6 +1402,8 @@ $textmode
 🛕	teml hindwaidd						// [1F6D5]
 🛖	cwt							// [1F6D6]
 🛗	lifft							// [1F6D7]
+🛘	tirlithriad						// [1F6D8]
+🛙	goleudy							// [1F6D9]
 🛜	diwifr							// [1F6DC]
 🛝	sleid maes chwarae					// [1F6DD]
 🛞	olwyn							// [1F6DE]
@@ -1485,7 +1487,7 @@ $textmode
 🤲	cledrau dwylo yn yr awyr gyda’u gilydd				// [1F932]
 🤳	hunlun								// [1F933]
 🤴	tywysog								// [1F934]
-🤵	dyn mewn tycs							// [1F935]
+🤵	person mewn siaced ginio				// [1F935]
 🤶	Siân Corn							// [1F936]
 🤷	codi gwar							// [1F937]
 🤸	olwyn droi							// [1F938]
@@ -1568,7 +1570,7 @@ $textmode
 🦇	ystlum								// [1F987]
 🦈	siarc								// [1F988]
 🦉	tylluan								// [1F989]
-🦊	wyneb llwynog							// [1F98A]
+🦊	llwynog							// [1F98A]
 🦋	pili-pala							// [1F98B]
 🦌	carw								// [1F98C]
 🦍	gorila								// [1F98D]
@@ -1639,10 +1641,10 @@ $textmode
 🧎	person yn penlinio					// [1F9CE]
 🧏	person byddar						// [1F9CF]
 🧐	wyneb gyda monocl						// [1F9D0]
-🧑	oedolyn								// [1F9D1]
+🧑	person							// [1F9D1]
 🧒	plentyn								// [1F9D2]
 🧓	oedolyn oedranus						// [1F9D3]
-🧔	person barfog							// [1F9D4]
+🧔	person barf						// [1F9D4]
 🧕	menyw â phensgarff						// [1F9D5]
 🧖	person mewn ystafell llawn stêm					// [1F9D6]
 🧗	person yn dringo						// [1F9D7]
@@ -1689,264 +1691,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	baner: Ynys Ascension						// [1F1E6 1F1E8] AC
-🇦🇩	baner: Andorra							// [1F1E6 1F1E9] AD
-🇦🇪	baner: Emiradau Arabaidd Unedig					// [1F1E6 1F1EA] AE
-🇦🇫	baner: Afghanistan						// [1F1E6 1F1EB] AF
-🇦🇬	baner: Antigua a Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	baner: Anguilla							// [1F1E6 1F1EE] AI
-🇦🇱	baner: Albania							// [1F1E6 1F1F1] AL
-🇦🇲	baner: Armenia							// [1F1E6 1F1F2] AM
-🇦🇴	baner: Angola							// [1F1E6 1F1F4] AO
-🇦🇶	baner: Antarctica						// [1F1E6 1F1F6] AQ
-🇦🇷	baner: Yr Ariannin						// [1F1E6 1F1F7] AR
-🇦🇸	baner: Samoa America						// [1F1E6 1F1F8] AS
-🇦🇹	baner: Awstria							// [1F1E6 1F1F9] AT
-🇦🇺	baner: Awstralia						// [1F1E6 1F1FA] AU
-🇦🇼	baner: Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	baner: Ynysoedd Åland						// [1F1E6 1F1FD] AX
-🇦🇿	baner: Azerbaijan						// [1F1E6 1F1FF] AZ
-🇧🇦	baner: Bosnia & Herzegovina					// [1F1E7 1F1E6] BA
-🇧🇧	baner: Barbados							// [1F1E7 1F1E7] BB
-🇧🇩	baner: Bangladesh						// [1F1E7 1F1E9] BD
-🇧🇪	baner: Gwlad Belg						// [1F1E7 1F1EA] BE
-🇧🇫	baner: Burkina Faso						// [1F1E7 1F1EB] BF
-🇧🇬	baner: Bwlgaria							// [1F1E7 1F1EC] BG
-🇧🇭	baner: Bahrain							// [1F1E7 1F1ED] BH
-🇧🇮	baner: Burundi							// [1F1E7 1F1EE] BI
-🇧🇯	baner: Benin							// [1F1E7 1F1EF] BJ
-🇧🇱	baner: Saint Barthélemy						// [1F1E7 1F1F1] BL
-🇧🇲	baner: Bermuda							// [1F1E7 1F1F2] BM
-🇧🇳	baner: Brunei							// [1F1E7 1F1F3] BN
-🇧🇴	baner: Bolifia							// [1F1E7 1F1F4] BO
-🇧🇶	baner: Antilles yr Iseldiroedd					// [1F1E7 1F1F6] BQ
-🇧🇷	baner: Brasil							// [1F1E7 1F1F7] BR
-🇧🇸	baner: Y Bahamas						// [1F1E7 1F1F8] BS
-🇧🇹	baner: Bhutan							// [1F1E7 1F1F9] BT
-🇧🇻	baner: Ynys Bouvet						// [1F1E7 1F1FB] BV
-🇧🇼	baner: Botswana							// [1F1E7 1F1FC] BW
-🇧🇾	baner: Belarws							// [1F1E7 1F1FE] BY
-🇧🇿	baner: Belize							// [1F1E7 1F1FF] BZ
-🇨🇦	baner: Canada							// [1F1E8 1F1E6] CA
-🇨🇨	baner: Ynysoedd Cocos (Keeling)					// [1F1E8 1F1E8] CC
-🇨🇩	baner: Y Congo - Kinshasa					// [1F1E8 1F1E9] CD
-🇨🇫	baner: Gweriniaeth Canolbarth Affrica				// [1F1E8 1F1EB] CF
-🇨🇬	baner: Y Congo - Brazzaville					// [1F1E8 1F1EC] CG
-🇨🇭	baner: Y Swistir						// [1F1E8 1F1ED] CH
-🇨🇮	baner: Côte d’Ivoire						// [1F1E8 1F1EE] CI
-🇨🇰	baner: Ynysoedd Cook						// [1F1E8 1F1F0] CK
-🇨🇱	baner: Chile							// [1F1E8 1F1F1] CL
-🇨🇲	baner: Camerŵn							// [1F1E8 1F1F2] CM
-🇨🇳	baner: Tsieina							// [1F1E8 1F1F3] CN
-🇨🇴	baner: Colombia							// [1F1E8 1F1F4] CO
-🇨🇵	baner: Ynys Clipperton						// [1F1E8 1F1F5] CP
-🇨🇷	baner: Costa Rica						// [1F1E8 1F1F7] CR
-🇨🇺	baner: Ciwba							// [1F1E8 1F1FA] CU
-🇨🇻	baner: Cabo Verde						// [1F1E8 1F1FB] CV
-🇨🇼	baner: Curaçao							// [1F1E8 1F1FC] CW
-🇨🇽	baner: Ynys y Nadolig						// [1F1E8 1F1FD] CX
-🇨🇾	baner: Cyprus							// [1F1E8 1F1FE] CY
-🇨🇿	baner: Tsiecia							// [1F1E8 1F1FF] CZ
-🇩🇪	baner: Yr Almaen						// [1F1E9 1F1EA] DE
-🇩🇬	baner: Diego Garcia						// [1F1E9 1F1EC] DG
-🇩🇯	baner: Djibouti							// [1F1E9 1F1EF] DJ
-🇩🇰	baner: Denmarc							// [1F1E9 1F1F0] DK
-🇩🇲	baner: Dominica							// [1F1E9 1F1F2] DM
-🇩🇴	baner: Gweriniaeth Dominica					// [1F1E9 1F1F4] DO
-🇩🇿	baner: Algeria							// [1F1E9 1F1FF] DZ
-🇪🇦	baner: Ceuta a Melilla						// [1F1EA 1F1E6] EA
-🇪🇨	baner: Ecuador							// [1F1EA 1F1E8] EC
-🇪🇪	baner: Estonia							// [1F1EA 1F1EA] EE
-🇪🇬	baner: Yr Aifft							// [1F1EA 1F1EC] EG
-🇪🇭	baner: Gorllewin Sahara						// [1F1EA 1F1ED] EH
-🇪🇷	baner: Eritrea							// [1F1EA 1F1F7] ER
-🇪🇸	baner: Sbaen							// [1F1EA 1F1F8] ES
-🇪🇹	baner: Ethiopia							// [1F1EA 1F1F9] ET
-🇪🇺	baner: Yr Undeb Ewropeaidd					// [1F1EA 1F1FA] EU
-🇫🇮	baner: Y Ffindir						// [1F1EB 1F1EE] FI
-🇫🇯	baner: Fiji							// [1F1EB 1F1EF] FJ
+🇦🇨	Ynys Ascension						// [1F1E6 1F1E8] AC
+🇦🇩	Andorra							// [1F1E6 1F1E9] AD
+🇦🇪	Emiradau Arabaidd Unedig				// [1F1E6 1F1EA] AE
+🇦🇫	Afghanistan						// [1F1E6 1F1EB] AF
+🇦🇬	Antigua a Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	Anguilla						// [1F1E6 1F1EE] AI
+🇦🇱	Albania							// [1F1E6 1F1F1] AL
+🇦🇲	Armenia							// [1F1E6 1F1F2] AM
+🇦🇴	Angola							// [1F1E6 1F1F4] AO
+🇦🇶	Antarctica						// [1F1E6 1F1F6] AQ
+🇦🇷	Yr Ariannin						// [1F1E6 1F1F7] AR
+🇦🇸	Samoa America						// [1F1E6 1F1F8] AS
+🇦🇹	Awstria							// [1F1E6 1F1F9] AT
+🇦🇺	Awstralia						// [1F1E6 1F1FA] AU
+🇦🇼	Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	Ynysoedd Åland						// [1F1E6 1F1FD] AX
+🇦🇿	Aserbaijan						// [1F1E6 1F1FF] AZ
+🇧🇦	Bosnia a Herzegovina					// [1F1E7 1F1E6] BA
+🇧🇧	Barbados						// [1F1E7 1F1E7] BB
+🇧🇩	Bangladesh						// [1F1E7 1F1E9] BD
+🇧🇪	Gwlad Belg						// [1F1E7 1F1EA] BE
+🇧🇫	Burkina Faso						// [1F1E7 1F1EB] BF
+🇧🇬	Bwlgaria						// [1F1E7 1F1EC] BG
+🇧🇭	Bahrain							// [1F1E7 1F1ED] BH
+🇧🇮	Burundi							// [1F1E7 1F1EE] BI
+🇧🇯	Benin							// [1F1E7 1F1EF] BJ
+🇧🇱	Saint Barthélemy					// [1F1E7 1F1F1] BL
+🇧🇲	Bermuda							// [1F1E7 1F1F2] BM
+🇧🇳	Brunei							// [1F1E7 1F1F3] BN
+🇧🇴	Bolifia							// [1F1E7 1F1F4] BO
+🇧🇶	Antilles yr Iseldiroedd					// [1F1E7 1F1F6] BQ
+🇧🇷	Brasil							// [1F1E7 1F1F7] BR
+🇧🇸	Y Bahamas						// [1F1E7 1F1F8] BS
+🇧🇹	Bhutan							// [1F1E7 1F1F9] BT
+🇧🇻	Ynys Bouvet						// [1F1E7 1F1FB] BV
+🇧🇼	Botswana						// [1F1E7 1F1FC] BW
+🇧🇾	Belarws							// [1F1E7 1F1FE] BY
+🇧🇿	Belize							// [1F1E7 1F1FF] BZ
+🇨🇦	Canada							// [1F1E8 1F1E6] CA
+🇨🇨	Ynysoedd Cocos Keeling					// [1F1E8 1F1E8] CC
+🇨🇩	Y Congo - Kinshasa					// [1F1E8 1F1E9] CD
+🇨🇫	Gweriniaeth Canolbarth Affrica				// [1F1E8 1F1EB] CF
+🇨🇬	Y Congo - Brazzaville					// [1F1E8 1F1EC] CG
+🇨🇭	Y Swistir						// [1F1E8 1F1ED] CH
+🇨🇮	Côte d’Ivoire						// [1F1E8 1F1EE] CI
+🇨🇰	Ynysoedd Cook						// [1F1E8 1F1F0] CK
+🇨🇱	Chile							// [1F1E8 1F1F1] CL
+🇨🇲	Camerŵn							// [1F1E8 1F1F2] CM
+🇨🇳	Tsieina							// [1F1E8 1F1F3] CN
+🇨🇴	Colombia						// [1F1E8 1F1F4] CO
+🇨🇵	Ynys Clipperton						// [1F1E8 1F1F5] CP
+🇨🇷	Costa Rica						// [1F1E8 1F1F7] CR
+🇨🇺	Ciwba							// [1F1E8 1F1FA] CU
+🇨🇻	Cabo Verde						// [1F1E8 1F1FB] CV
+🇨🇼	Curaçao							// [1F1E8 1F1FC] CW
+🇨🇽	Ynys y Nadolig						// [1F1E8 1F1FD] CX
+🇨🇾	Cyprus							// [1F1E8 1F1FE] CY
+🇨🇿	Tsiecia							// [1F1E8 1F1FF] CZ
+🇩🇪	Yr Almaen						// [1F1E9 1F1EA] DE
+🇩🇬	Diego Garcia						// [1F1E9 1F1EC] DG
+🇩🇯	Djibouti						// [1F1E9 1F1EF] DJ
+🇩🇰	Denmarc							// [1F1E9 1F1F0] DK
+🇩🇲	Dominica						// [1F1E9 1F1F2] DM
+🇩🇴	Gweriniaeth Dominica					// [1F1E9 1F1F4] DO
+🇩🇿	Algeria							// [1F1E9 1F1FF] DZ
+🇪🇦	Ceuta a Melilla						// [1F1EA 1F1E6] EA
+🇪🇨	Ecuador							// [1F1EA 1F1E8] EC
+🇪🇪	Estonia							// [1F1EA 1F1EA] EE
+🇪🇬	Yr Aifft						// [1F1EA 1F1EC] EG
+🇪🇭	Gorllewin Sahara					// [1F1EA 1F1ED] EH
+🇪🇷	Eritrea							// [1F1EA 1F1F7] ER
+🇪🇸	Sbaen							// [1F1EA 1F1F8] ES
+🇪🇹	Ethiopia						// [1F1EA 1F1F9] ET
+🇪🇺	Yr Undeb Ewropeaidd					// [1F1EA 1F1FA] EU
+🇫🇮	Y Ffindir						// [1F1EB 1F1EE] FI
+🇫🇯	Fiji							// [1F1EB 1F1EF] FJ
 🇫🇰	baner: Ynysoedd y Falkland/Malvinas				// [1F1EB 1F1F0] FI
-🇫🇲	baner: Micronesia						// [1F1EB 1F1F2] FM
-🇫🇴	baner: Ynysoedd Ffaro						// [1F1EB 1F1F4] FO
-🇫🇷	baner: Ffrainc							// [1F1EB 1F1F7] FR
-🇬🇦	baner: Gabon							// [1F1EC 1F1E6] GA
-🇬🇧	baner: Y Deyrnas Unedig						// [1F1EC 1F1E7] GB
-🇬🇩	baner: Grenada							// [1F1EC 1F1E9] GD
-🇬🇪	baner: Georgia							// [1F1EC 1F1EA] GE
-🇬🇫	baner: Guyane Ffrengig						// [1F1EC 1F1EB] GF
-🇬🇬	baner: Ynys y Garn						// [1F1EC 1F1EC] GG
-🇬🇭	baner: Ghana							// [1F1EC 1F1ED] GH
-🇬🇮	baner: Gibraltar						// [1F1EC 1F1EE] GI
-🇬🇱	baner: Yr Ynys Las						// [1F1EC 1F1F1] GL
-🇬🇲	baner: Gambia							// [1F1EC 1F1F2] GM
-🇬🇳	baner: Guinée							// [1F1EC 1F1F3] GN
-🇬🇵	baner: Guadeloupe						// [1F1EC 1F1F5] GP
-🇬🇶	baner: Guinea Gyhydeddol					// [1F1EC 1F1F6] GQ
-🇬🇷	baner: Gwlad Groeg						// [1F1EC 1F1F7] GR
-🇬🇸	baner: De Georgia ac Ynysoedd Sandwich y De			// [1F1EC 1F1F8] GS
-🇬🇹	baner: Guatemala						// [1F1EC 1F1F9] GT
-🇬🇺	baner: Guam							// [1F1EC 1F1FA] GU
-🇬🇼	baner: Guiné-Bissau						// [1F1EC 1F1FC] GW
-🇬🇾	baner: Guyana							// [1F1EC 1F1FE] GY
-🇭🇰	baner: Hong Kong RhGA Tsieina					// [1F1ED 1F1F0] HK
-🇭🇲	baner: Ynys Heard ac Ynysoedd McDonald				// [1F1ED 1F1F2] HM
-🇭🇳	baner: Honduras							// [1F1ED 1F1F3] HN
-🇭🇷	baner: Croatia							// [1F1ED 1F1F7] HR
-🇭🇹	baner: Haiti							// [1F1ED 1F1F9] HT
-🇭🇺	baner: Hwngari							// [1F1ED 1F1FA] HU
-🇮🇨	baner: Yr Ynysoedd Dedwydd					// [1F1EE 1F1E8] IC
-🇮🇩	baner: Indonesia						// [1F1EE 1F1E9] ID
-🇮🇪	baner: Iwerddon							// [1F1EE 1F1EA] IE
-🇮🇱	baner: Israel							// [1F1EE 1F1F1] IL
-🇮🇲	baner: Ynys Manaw						// [1F1EE 1F1F2] IM
-🇮🇳	baner: India							// [1F1EE 1F1F3] IN
-🇮🇴	baner: Tiriogaeth Brydeinig Cefnfor India			// [1F1EE 1F1F4] IO
-🇮🇶	baner: Irac							// [1F1EE 1F1F6] IQ
-🇮🇷	baner: Iran							// [1F1EE 1F1F7] IR
-🇮🇸	baner: Gwlad yr Iâ						// [1F1EE 1F1F8] IS
-🇮🇹	baner: Yr Eidal							// [1F1EE 1F1F9] IT
-🇯🇪	baner: Jersey							// [1F1EF 1F1EA] JE
-🇯🇲	baner: Jamaica							// [1F1EF 1F1F2] JM
-🇯🇴	baner: Gwlad Iorddonen						// [1F1EF 1F1F4] JO
-🇯🇵	baner: Japan							// [1F1EF 1F1F5] JP
-🇰🇪	baner: Kenya							// [1F1F0 1F1EA] KE
-🇰🇬	baner: Kyrgyzstan						// [1F1F0 1F1EC] KG
-🇰🇭	baner: Cambodia							// [1F1F0 1F1ED] KH
-🇰🇮	baner: Kiribati							// [1F1F0 1F1EE] KI
-🇰🇲	baner: Comoros							// [1F1F0 1F1F2] KM
-🇰🇳	baner: Saint Kitts a Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	baner: Gogledd Korea						// [1F1F0 1F1F5] KP
-🇰🇷	baner: De Korea							// [1F1F0 1F1F7] KR
-🇰🇼	baner: Kuwait							// [1F1F0 1F1FC] KW
-🇰🇾	baner: Ynysoedd Cayman						// [1F1F0 1F1FE] KY
-🇰🇿	baner: Kazakstan						// [1F1F0 1F1FF] KZ
-🇱🇦	baner: Laos							// [1F1F1 1F1E6] LA
-🇱🇧	baner: Libanus							// [1F1F1 1F1E7] LB
-🇱🇨	baner: Saint Lucia						// [1F1F1 1F1E8] LC
-🇱🇮	baner: Liechtenstein						// [1F1F1 1F1EE] LI
-🇱🇰	baner: Sri Lanka						// [1F1F1 1F1F0] LK
-🇱🇷	baner: Liberia							// [1F1F1 1F1F7] LR
-🇱🇸	baner: Lesotho							// [1F1F1 1F1F8] LS
-🇱🇹	baner: Lithuania						// [1F1F1 1F1F9] LT
-🇱🇺	baner: Lwcsembwrg						// [1F1F1 1F1FA] LU
-🇱🇻	baner: Latfia							// [1F1F1 1F1FB] LV
-🇱🇾	baner: Libya							// [1F1F1 1F1FE] LY
-🇲🇦	baner: Moroco							// [1F1F2 1F1E6] MA
-🇲🇨	baner: Monaco							// [1F1F2 1F1E8] MC
-🇲🇩	baner: Moldofa							// [1F1F2 1F1E9] MD
-🇲🇪	baner: Montenegro						// [1F1F2 1F1EA] ME
-🇲🇫	baner: Saint Martin						// [1F1F2 1F1EB] MF
-🇲🇬	baner: Madagascar						// [1F1F2 1F1EC] MG
-🇲🇭	baner: Ynysoedd Marshall					// [1F1F2 1F1ED] MH
-🇲🇰	baner: Macedonia						// [1F1F2 1F1F0] MK
-🇲🇱	baner: Mali							// [1F1F2 1F1F1] ML
-🇲🇲	baner: Myanmar (Burma)						// [1F1F2 1F1F2] MM
-🇲🇳	baner: Mongolia							// [1F1F2 1F1F3] MN
-🇲🇴	baner: Macau RhGA Tsieina					// [1F1F2 1F1F4] MO
-🇲🇵	baner: Ynysoedd Gogledd Mariana					// [1F1F2 1F1F5] MP
-🇲🇶	baner: Martinique						// [1F1F2 1F1F6] MQ
-🇲🇷	baner: Mauritania						// [1F1F2 1F1F7] MR
-🇲🇸	baner: Montserrat						// [1F1F2 1F1F8] MS
-🇲🇹	baner: Malta							// [1F1F2 1F1F9] MT
-🇲🇺	baner: Mauritius						// [1F1F2 1F1FA] MU
-🇲🇻	baner: Y Maldives						// [1F1F2 1F1FB] MV
-🇲🇼	baner: Malawi							// [1F1F2 1F1FC] MW
-🇲🇽	baner: Mecsico							// [1F1F2 1F1FD] MX
-🇲🇾	baner: Malaysia							// [1F1F2 1F1FE] MY
-🇲🇿	baner: Mozambique						// [1F1F2 1F1FF] MZ
-🇳🇦	baner: Namibia							// [1F1F3 1F1E6] NA
-🇳🇨	baner: Caledonia Newydd						// [1F1F3 1F1E8] NC
-🇳🇪	baner: Niger							// [1F1F3 1F1EA] NE
-🇳🇫	baner: Ynys Norfolk						// [1F1F3 1F1EB] NF
-🇳🇬	baner: Nigeria							// [1F1F3 1F1EC] NG
-🇳🇮	baner: Nicaragua						// [1F1F3 1F1EE] NI
-🇳🇱	baner: Yr Iseldiroedd						// [1F1F3 1F1F1] NL
-🇳🇴	baner: Norwy							// [1F1F3 1F1F4] NO
-🇳🇵	baner: Nepal							// [1F1F3 1F1F5] NP
-🇳🇷	baner: Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	baner: Niue							// [1F1F3 1F1FA] NU
-🇳🇿	baner: Seland Newydd						// [1F1F3 1F1FF] NZ
-🇴🇲	baner: Oman							// [1F1F4 1F1F2] OM
-🇵🇦	baner: Panama							// [1F1F5 1F1E6] PA
-🇵🇪	baner: Periw							// [1F1F5 1F1EA] PE
-🇵🇫	baner: Polynesia Ffrengig					// [1F1F5 1F1EB] PF
-🇵🇬	baner: Papua Guinea Newydd					// [1F1F5 1F1EC] PG
-🇵🇭	baner: Y Philipinau						// [1F1F5 1F1ED] PH
-🇵🇰	baner: Pakistan							// [1F1F5 1F1F0] PK
-🇵🇱	baner: Gwlad Pwyl						// [1F1F5 1F1F1] PL
-🇵🇲	baner: Saint-Pierre-et-Miquelon					// [1F1F5 1F1F2] PM
-🇵🇳	baner: Ynysoedd Pitcairn					// [1F1F5 1F1F3] PN
-🇵🇷	baner: Puerto Rico						// [1F1F5 1F1F7] PR
-🇵🇸	baner: Tiriogaethau Palesteinaidd				// [1F1F5 1F1F8] PS
-🇵🇹	baner: Portiwgal						// [1F1F5 1F1F9] PT
-🇵🇼	baner: Palau							// [1F1F5 1F1FC] PW
-🇵🇾	baner: Paraguay							// [1F1F5 1F1FE] PY
-🇶🇦	baner: Qatar							// [1F1F6 1F1E6] QA
-🇷🇪	baner: Réunion							// [1F1F7 1F1EA] RE
-🇷🇴	baner: Rwmania							// [1F1F7 1F1F4] RO
-🇷🇸	baner: Serbia							// [1F1F7 1F1F8] RS
-🇷🇺	baner: Rwsia							// [1F1F7 1F1FA] RU
-🇷🇼	baner: Rwanda							// [1F1F7 1F1FC] RW
-🇸🇦	baner: Saudi Arabia						// [1F1F8 1F1E6] SA
-🇸🇧	baner: Ynysoedd Solomon						// [1F1F8 1F1E7] SB
-🇸🇨	baner: Seychelles						// [1F1F8 1F1E8] SC
-🇸🇩	baner: Swdan							// [1F1F8 1F1E9] SD
-🇸🇪	baner: Sweden							// [1F1F8 1F1EA] SE
-🇸🇬	baner: Singapore						// [1F1F8 1F1EC] SG
-🇸🇭	baner: Saint Helena						// [1F1F8 1F1ED] SH
-🇸🇮	baner: Slofenia							// [1F1F8 1F1EE] SI
-🇸🇯	baner: Svalbard a Jan Mayen					// [1F1F8 1F1EF] SJ
-🇸🇰	baner: Slofacia							// [1F1F8 1F1F0] SK
-🇸🇱	baner: Sierra Leone						// [1F1F8 1F1F1] SL
-🇸🇲	baner: San Marino						// [1F1F8 1F1F2] SM
-🇸🇳	baner: Senegal							// [1F1F8 1F1F3] SN
-🇸🇴	baner: Somalia							// [1F1F8 1F1F4] SO
-🇸🇷	baner: Suriname							// [1F1F8 1F1F7] SR
-🇸🇸	baner: De Swdan							// [1F1F8 1F1F8] SS
-🇸🇹	baner: São Tomé a Príncipe					// [1F1F8 1F1F9] ST
-🇸🇻	baner: El Salvador						// [1F1F8 1F1FB] SV
-🇸🇽	baner: Sint Maarten						// [1F1F8 1F1FD] SX
-🇸🇾	baner: Syria							// [1F1F8 1F1FE] SY
-🇸🇿	baner: Gwlad Swazi						// [1F1F8 1F1FF] SZ
-🇹🇦	baner: Tristan da Cunha						// [1F1F9 1F1E6] TA
-🇹🇨	baner: Ynysoedd Turks a Caicos					// [1F1F9 1F1E8] TC
-🇹🇩	baner: Tchad							// [1F1F9 1F1E9] TD
-🇹🇫	baner: Tiroedd Deheuol ac Antarctig Ffrainc			// [1F1F9 1F1EB] TF
-🇹🇬	baner: Togo							// [1F1F9 1F1EC] TG
-🇹🇭	baner: Gwlad Thai						// [1F1F9 1F1ED] TH
-🇹🇯	baner: Tajikistan						// [1F1F9 1F1EF] TJ
-🇹🇰	baner: Tokelau							// [1F1F9 1F1F0] TK
-🇹🇱	baner: Timor-Leste						// [1F1F9 1F1F1] TL
-🇹🇲	baner: Turkmenistan						// [1F1F9 1F1F2] TM
-🇹🇳	baner: Tunisia							// [1F1F9 1F1F3] TN
-🇹🇴	baner: Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	baner: Twrci							// [1F1F9 1F1F7] TR
-🇹🇹	baner: Trinidad a Tobago					// [1F1F9 1F1F9] TT
-🇹🇻	baner: Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	baner: Taiwan							// [1F1F9 1F1FC] TW
-🇹🇿	baner: Tanzania							// [1F1F9 1F1FF] TZ
-🇺🇦	baner: Wcráin							// [1F1FA 1F1E6] UA
-🇺🇬	baner: Uganda							// [1F1FA 1F1EC] UG
-🇺🇲	baner: Ynysoedd Pellennig UDA					// [1F1FA 1F1F2] UM
-🇺🇳	baner: y Cenhedloedd Unedig					// [1F1FA 1F1F3] UN
-🇺🇸	baner: Yr Unol Daleithiau					// [1F1FA 1F1F8] US
-🇺🇾	baner: Uruguay							// [1F1FA 1F1FE] UY
-🇺🇿	baner: Uzbekistan						// [1F1FA 1F1FF] UZ
-🇻🇦	baner: Y Fatican						// [1F1FB 1F1E6] VA
-🇻🇨	baner: Saint Vincent a’r Grenadines				// [1F1FB 1F1E8] VC
-🇻🇪	baner: Venezuela						// [1F1FB 1F1EA] VE
-🇻🇬	baner: Ynysoedd Gwyryf Prydain					// [1F1FB 1F1EC] VG
-🇻🇮	baner: Ynysoedd Gwyryf yr Unol Daleithiau			// [1F1FB 1F1EE] VI
-🇻🇳	baner: Fietnam							// [1F1FB 1F1F3] VN
-🇻🇺	baner: Vanuatu							// [1F1FB 1F1FA] VU
-🇼🇫	baner: Wallis a Futuna						// [1F1FC 1F1EB] WF
-🇼🇸	baner: Samoa							// [1F1FC 1F1F8] WS
-🇽🇰	baner: Kosovo							// [1F1FD 1F1F0] XK
-🇾🇪	baner: Yemen							// [1F1FE 1F1EA] YE
-🇾🇹	baner: Mayotte							// [1F1FE 1F1F9] YT
-🇿🇦	baner: De Affrica						// [1F1FF 1F1E6] ZA
-🇿🇲	baner: Zambia							// [1F1FF 1F1F2] ZM
-🇿🇼	baner: Zimbabwe							// [1F1FF 1F1FC] ZW
+🇫🇲	Micronesia						// [1F1EB 1F1F2] FM
+🇫🇴	Ynysoedd Ffaro						// [1F1EB 1F1F4] FO
+🇫🇷	Ffrainc							// [1F1EB 1F1F7] FR
+🇬🇦	Gabon							// [1F1EC 1F1E6] GA
+🇬🇧	Y Deyrnas Unedig					// [1F1EC 1F1E7] GB
+🇬🇩	Grenada							// [1F1EC 1F1E9] GD
+🇬🇪	Georgia							// [1F1EC 1F1EA] GE
+🇬🇫	Guyane Ffrengig						// [1F1EC 1F1EB] GF
+🇬🇬	Guernsey						// [1F1EC 1F1EC] GG
+🇬🇭	Ghana							// [1F1EC 1F1ED] GH
+🇬🇮	Gibraltar						// [1F1EC 1F1EE] GI
+🇬🇱	Yr Ynys Las						// [1F1EC 1F1F1] GL
+🇬🇲	Gambia							// [1F1EC 1F1F2] GM
+🇬🇳	Gini							// [1F1EC 1F1F3] GN
+🇬🇵	Guadeloupe						// [1F1EC 1F1F5] GP
+🇬🇶	Gini Gyhydeddol						// [1F1EC 1F1F6] GQ
+🇬🇷	Gwlad Groeg						// [1F1EC 1F1F7] GR
+🇬🇸	De Georgia ac Ynysoedd Sandwich y De			// [1F1EC 1F1F8] GS
+🇬🇹	Guatemala						// [1F1EC 1F1F9] GT
+🇬🇺	Guam							// [1F1EC 1F1FA] GU
+🇬🇼	Guiné-Bissau						// [1F1EC 1F1FC] GW
+🇬🇾	Guyana							// [1F1EC 1F1FE] GY
+🇭🇰	Hong Kong SAR Tsieina					// [1F1ED 1F1F0] HK
+🇭🇲	Ynys Heard ac Ynysoedd McDonald				// [1F1ED 1F1F2] HM
+🇭🇳	Honduras						// [1F1ED 1F1F3] HN
+🇭🇷	Croatia							// [1F1ED 1F1F7] HR
+🇭🇹	Haiti							// [1F1ED 1F1F9] HT
+🇭🇺	Hwngari							// [1F1ED 1F1FA] HU
+🇮🇨	Yr Ynysoedd Dedwydd					// [1F1EE 1F1E8] IC
+🇮🇩	Indonesia						// [1F1EE 1F1E9] ID
+🇮🇪	Iwerddon						// [1F1EE 1F1EA] IE
+🇮🇱	Israel							// [1F1EE 1F1F1] IL
+🇮🇲	Ynys Manaw						// [1F1EE 1F1F2] IM
+🇮🇳	India							// [1F1EE 1F1F3] IN
+🇮🇴	Tiriogaeth Brydeinig Cefnfor India			// [1F1EE 1F1F4] IO
+🇮🇶	Irac							// [1F1EE 1F1F6] IQ
+🇮🇷	Iran							// [1F1EE 1F1F7] IR
+🇮🇸	Gwlad yr Iâ						// [1F1EE 1F1F8] IS
+🇮🇹	Yr Eidal						// [1F1EE 1F1F9] IT
+🇯🇪	Jersey							// [1F1EF 1F1EA] JE
+🇯🇲	Jamaica							// [1F1EF 1F1F2] JM
+🇯🇴	Gwlad Iorddonen						// [1F1EF 1F1F4] JO
+🇯🇵	Japan							// [1F1EF 1F1F5] JP
+🇰🇪	Kenya							// [1F1F0 1F1EA] KE
+🇰🇬	Kyrgyzstan						// [1F1F0 1F1EC] KG
+🇰🇭	Cambodia						// [1F1F0 1F1ED] KH
+🇰🇮	Kiribati						// [1F1F0 1F1EE] KI
+🇰🇲	Comoros							// [1F1F0 1F1F2] KM
+🇰🇳	Saint Kitts a Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	Gogledd Corea						// [1F1F0 1F1F5] KP
+🇰🇷	De Corea						// [1F1F0 1F1F7] KR
+🇰🇼	Kuwait							// [1F1F0 1F1FC] KW
+🇰🇾	Ynysoedd Cayman						// [1F1F0 1F1FE] KY
+🇰🇿	Kazakhstan						// [1F1F0 1F1FF] KZ
+🇱🇦	Laos							// [1F1F1 1F1E6] LA
+🇱🇧	Libanus							// [1F1F1 1F1E7] LB
+🇱🇨	Saint Lucia						// [1F1F1 1F1E8] LC
+🇱🇮	Liechtenstein						// [1F1F1 1F1EE] LI
+🇱🇰	Sri Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	Liberia							// [1F1F1 1F1F7] LR
+🇱🇸	Lesotho							// [1F1F1 1F1F8] LS
+🇱🇹	Lithwania						// [1F1F1 1F1F9] LT
+🇱🇺	Lwcsembwrg						// [1F1F1 1F1FA] LU
+🇱🇻	Latfia							// [1F1F1 1F1FB] LV
+🇱🇾	Libya							// [1F1F1 1F1FE] LY
+🇲🇦	Moroco							// [1F1F2 1F1E6] MA
+🇲🇨	Monaco							// [1F1F2 1F1E8] MC
+🇲🇩	Moldofa							// [1F1F2 1F1E9] MD
+🇲🇪	Montenegro						// [1F1F2 1F1EA] ME
+🇲🇫	Saint Martin						// [1F1F2 1F1EB] MF
+🇲🇬	Madagascar						// [1F1F2 1F1EC] MG
+🇲🇭	Ynysoedd Marshall					// [1F1F2 1F1ED] MH
+🇲🇰	Gogledd Macedonia					// [1F1F2 1F1F0] MK
+🇲🇱	Mali							// [1F1F2 1F1F1] ML
+🇲🇲	Myanmar Burma						// [1F1F2 1F1F2] MM
+🇲🇳	Mongolia						// [1F1F2 1F1F3] MN
+🇲🇴	Macau SAR Tsieina					// [1F1F2 1F1F4] MO
+🇲🇵	Ynysoedd Gogledd Mariana				// [1F1F2 1F1F5] MP
+🇲🇶	Martinique						// [1F1F2 1F1F6] MQ
+🇲🇷	Mauritania						// [1F1F2 1F1F7] MR
+🇲🇸	Montserrat						// [1F1F2 1F1F8] MS
+🇲🇹	Malta							// [1F1F2 1F1F9] MT
+🇲🇺	Mauritius						// [1F1F2 1F1FA] MU
+🇲🇻	Y Maldives						// [1F1F2 1F1FB] MV
+🇲🇼	Malawi							// [1F1F2 1F1FC] MW
+🇲🇽	Mecsico							// [1F1F2 1F1FD] MX
+🇲🇾	Malaysia						// [1F1F2 1F1FE] MY
+🇲🇿	Mozambique						// [1F1F2 1F1FF] MZ
+🇳🇦	Namibia							// [1F1F3 1F1E6] NA
+🇳🇨	Caledonia Newydd					// [1F1F3 1F1E8] NC
+🇳🇪	Niger							// [1F1F3 1F1EA] NE
+🇳🇫	Ynys Norfolk						// [1F1F3 1F1EB] NF
+🇳🇬	Nigeria							// [1F1F3 1F1EC] NG
+🇳🇮	Nicaragua						// [1F1F3 1F1EE] NI
+🇳🇱	Yr Iseldiroedd						// [1F1F3 1F1F1] NL
+🇳🇴	Norwy							// [1F1F3 1F1F4] NO
+🇳🇵	Nepal							// [1F1F3 1F1F5] NP
+🇳🇷	Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	Niue							// [1F1F3 1F1FA] NU
+🇳🇿	Seland Newydd						// [1F1F3 1F1FF] NZ
+🇴🇲	Oman							// [1F1F4 1F1F2] OM
+🇵🇦	Panama							// [1F1F5 1F1E6] PA
+🇵🇪	Periw							// [1F1F5 1F1EA] PE
+🇵🇫	Polynesia Ffrengig					// [1F1F5 1F1EB] PF
+🇵🇬	Papua Guinea Newydd					// [1F1F5 1F1EC] PG
+🇵🇭	Y Philipinau						// [1F1F5 1F1ED] PH
+🇵🇰	Pacistan						// [1F1F5 1F1F0] PK
+🇵🇱	Gwlad Pwyl						// [1F1F5 1F1F1] PL
+🇵🇲	Saint-Pierre-et-Miquelon				// [1F1F5 1F1F2] PM
+🇵🇳	Ynysoedd Pitcairn					// [1F1F5 1F1F3] PN
+🇵🇷	Puerto Rico						// [1F1F5 1F1F7] PR
+🇵🇸	Tiriogaethau Palesteinaidd				// [1F1F5 1F1F8] PS
+🇵🇹	Portiwgal						// [1F1F5 1F1F9] PT
+🇵🇼	Palau							// [1F1F5 1F1FC] PW
+🇵🇾	Paraguay						// [1F1F5 1F1FE] PY
+🇶🇦	Qatar							// [1F1F6 1F1E6] QA
+🇷🇪	Réunion							// [1F1F7 1F1EA] RE
+🇷🇴	Rwmania							// [1F1F7 1F1F4] RO
+🇷🇸	Serbia							// [1F1F7 1F1F8] RS
+🇷🇺	Rwsia							// [1F1F7 1F1FA] RU
+🇷🇼	Rwanda							// [1F1F7 1F1FC] RW
+🇸🇦	Saudi Arabia						// [1F1F8 1F1E6] SA
+🇸🇧	Ynysoedd Solomon					// [1F1F8 1F1E7] SB
+🇸🇨	Seychelles						// [1F1F8 1F1E8] SC
+🇸🇩	Swdan							// [1F1F8 1F1E9] SD
+🇸🇪	Sweden							// [1F1F8 1F1EA] SE
+🇸🇬	Singapore						// [1F1F8 1F1EC] SG
+🇸🇭	Saint Helena						// [1F1F8 1F1ED] SH
+🇸🇮	Slofenia						// [1F1F8 1F1EE] SI
+🇸🇯	Svalbard a Jan Mayen					// [1F1F8 1F1EF] SJ
+🇸🇰	Slofacia						// [1F1F8 1F1F0] SK
+🇸🇱	Sierra Leone						// [1F1F8 1F1F1] SL
+🇸🇲	San Marino						// [1F1F8 1F1F2] SM
+🇸🇳	Senegal							// [1F1F8 1F1F3] SN
+🇸🇴	Somalia							// [1F1F8 1F1F4] SO
+🇸🇷	Suriname						// [1F1F8 1F1F7] SR
+🇸🇸	De Swdan						// [1F1F8 1F1F8] SS
+🇸🇹	São Tomé a Príncipe					// [1F1F8 1F1F9] ST
+🇸🇻	El Salvador						// [1F1F8 1F1FB] SV
+🇸🇽	Sint Maarten						// [1F1F8 1F1FD] SX
+🇸🇾	Syria							// [1F1F8 1F1FE] SY
+🇸🇿	Eswatini						// [1F1F8 1F1FF] SZ
+🇹🇦	Tristan da Cunha					// [1F1F9 1F1E6] TA
+🇹🇨	Ynysoedd Turks a Caicos					// [1F1F9 1F1E8] TC
+🇹🇩	Tsiad							// [1F1F9 1F1E9] TD
+🇹🇫	Tiroedd Deheuol ac Antarctig Ffrainc			// [1F1F9 1F1EB] TF
+🇹🇬	Togo							// [1F1F9 1F1EC] TG
+🇹🇭	Gwlad Thai						// [1F1F9 1F1ED] TH
+🇹🇯	Tajicistan						// [1F1F9 1F1EF] TJ
+🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
+🇹🇱	Timor-Leste						// [1F1F9 1F1F1] TL
+🇹🇲	Tyrcmenistan						// [1F1F9 1F1F2] TM
+🇹🇳	Tiwnisia						// [1F1F9 1F1F3] TN
+🇹🇴	Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	Twrci							// [1F1F9 1F1F7] TR
+🇹🇹	Trinidad a Tobago					// [1F1F9 1F1F9] TT
+🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	Taiwan							// [1F1F9 1F1FC] TW
+🇹🇿	Tanzania						// [1F1F9 1F1FF] TZ
+🇺🇦	Wcráin							// [1F1FA 1F1E6] UA
+🇺🇬	Uganda							// [1F1FA 1F1EC] UG
+🇺🇲	Ynysoedd Pellennig UDA					// [1F1FA 1F1F2] UM
+🇺🇳	Y Cenhedloedd Unedig					// [1F1FA 1F1F3] UN
+🇺🇸	Yr Unol Daleithiau					// [1F1FA 1F1F8] US
+🇺🇾	Uruguay							// [1F1FA 1F1FE] UY
+🇺🇿	Uzbekistan						// [1F1FA 1F1FF] UZ
+🇻🇦	Y Fatican						// [1F1FB 1F1E6] VA
+🇻🇨	Saint Vincent a’r Grenadines				// [1F1FB 1F1E8] VC
+🇻🇪	Venezuela						// [1F1FB 1F1EA] VE
+🇻🇬	Ynysoedd Gwyryf Prydain					// [1F1FB 1F1EC] VG
+🇻🇮	Ynysoedd Gwyryf yr Unol Daleithiau			// [1F1FB 1F1EE] VI
+🇻🇳	Fietnam							// [1F1FB 1F1F3] VN
+🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
+🇼🇫	Wallis a Futuna						// [1F1FC 1F1EB] WF
+🇼🇸	Samoa							// [1F1FC 1F1F8] WS
+🇽🇰	Kosovo							// [1F1FD 1F1F0] XK
+🇾🇪	Yemen							// [1F1FE 1F1EA] YE
+🇾🇹	Mayotte							// [1F1FE 1F1F9] YT
+🇿🇦	De Affrica						// [1F1FF 1F1E6] ZA
+🇿🇲	Zambia							// [1F1FF 1F1F2] ZM
+🇿🇼	Zimbabwe						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1956,18 +1958,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#️⃣	gorchudd bysell: #						// [0023 FE0F 20E3]
-*️⃣	gorchudd bysell: *						// [002A FE0F 20E3]
-0️⃣	gorchudd bysell: 0						// [0030 FE0F 20E3]
-1️⃣	gorchudd bysell: 1						// [0031 FE0F 20E3]
-2️⃣	gorchudd bysell: 2						// [0032 FE0F 20E3]
-3️⃣	gorchudd bysell: 3						// [0033 FE0F 20E3]
-4️⃣	gorchudd bysell: 4						// [0034 FE0F 20E3]
-5️⃣	gorchudd bysell: 5						// [0035 FE0F 20E3]
-6️⃣	gorchudd bysell: 6						// [0036 FE0F 20E3]
-7️⃣	gorchudd bysell: 7						// [0037 FE0F 20E3]
-8️⃣	gorchudd bysell: 8						// [0038 FE0F 20E3]
-9️⃣	gorchudd bysell: 9						// [0039 FE0F 20E3]
+#⃣	gorchudd bysell						// [0023 20E3]
+*⃣	gorchudd bysell						// [002A 20E3]
+0⃣	gorchudd bysell 0					// [0030 20E3]
+1⃣	gorchudd bysell 1					// [0031 20E3]
+2⃣	gorchudd bysell 2					// [0032 20E3]
+3⃣	gorchudd bysell 3					// [0033 20E3]
+4⃣	gorchudd bysell 4					// [0034 20E3]
+5⃣	gorchudd bysell 5					// [0035 20E3]
+6⃣	gorchudd bysell 6					// [0036 20E3]
+7⃣	gorchudd bysell 7					// [0037 20E3]
+8⃣	gorchudd bysell 8					// [0038 20E3]
+9⃣	gorchudd bysell 9					// [0039 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	esgidiau bale						// [1FA70]
@@ -1993,6 +1995,11 @@ $textmode
 🪇	maracas							// [1FA87]
 🪈	ffliwt							// [1FA88]
 🪉	telyn							// [1FA89]
+🪊	trombôn							// [1FA8A]
+🪋	meteor							// [1FA8B]
+🪌	rhwbiwr							// [1FA8C]
+🪍	Rhwyd gyda handlen					// [1FA8D]
+🪎	cist drysor						// [1FA8E]
 🪏	rhaw							// [1FA8F]
 🪐	planed cylchog						// [1FA90]
 🪑	cadair							// [1FA91]
@@ -2049,6 +2056,9 @@ $textmode
 🫄	person beichiog						// [1FAC4]
 🫅	person â choron						// [1FAC5]
 🫆	ôl bys							// [1FAC6]
+🫈	creadur blewog						// [1FAC8]
+🫌	glöyn y llaethlys					// [1FACC]
+🫍	orca							// [1FACD]
 🫎	elc							// [1FACE]
 🫏	asyn							// [1FACF]
 🫐	llus							// [1FAD0]
@@ -2064,6 +2074,7 @@ $textmode
 🫚	gwraidd sinsir						// [1FADA]
 🫛	pod pys							// [1FADB]
 🫜	gwreiddlysieuyn						// [1FADC]
+🫝	picl							// [1FADD]
 🫟	slempio							// [1FADF]
 🫠	wyneb toddi						// [1FAE0]
 🫡	wyneb saliwt						// [1FAE1]
@@ -2075,6 +2086,9 @@ $textmode
 🫧	swigod							// [1FAE7]
 🫨	wyneb sydd ysgwyd					// [1FAE8]
 🫩	wyneb gyda bagiau dan y llygaid				// [1FAE9]
+🫪	wyneb wedi ystumio					// [1FAEA]
+🫫	Wyneb yn cracio						// [1FAEB]
+🫯	cwmwl ymladd						// [1FAEF]
 🫰	llaw gyda bys mynegai a bawd wedi’u croesi		// [1FAF0]
 🫱	llaw i’r dde						// [1FAF1]
 🫲	llaw i’r chwith						// [1FAF2]
@@ -2084,6 +2098,8 @@ $textmode
 🫶	dwylo calon						// [1FAF6]
 🫷	llaw yn gwthio i’r chwith				// [1FAF7]
 🫸	llaw yn gwthio i’r dde					// [1FAF8]
+🫹	bawd i’r chwith						// [1FAF9]
+🫺	bawd i’r dde						// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2112,38 +2128,38 @@ $textmode
 👨‍🦼‍➡	dyn mewn cadair olwyn fodur wynebu i’r dde		// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	dyn mewn cadair olwyn					// [1F468 200D 1F9BD]
 👨‍🦽‍➡	dyn mewn cadair olwyn wynebu i’r dde			// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	cusan: menyw, dyn			// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	cusan: dyn, dyn				// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	cusan: menyw, menyw			// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	pâr a chalon: menyw, dyn			// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	pâr a chalon: dyn, dyn				// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	pâr a chalon: menyw, menyw			// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	teulu: dyn, menyw, bachgen			// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	teulu: dyn, menyw, merch			// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	teulu: dyn, menyw, merch, bachgen	// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	teulu: dyn, menyw, bachgen, bachgen	// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	teulu: dyn, menyw, merch, merch		// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	teulu: dyn, dyn, bachgen			// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	teulu: dyn, dyn, merch				// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	teulu: dyn, dyn, merch, bachgen		// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	teulu: dyn, dyn, bachgen, bachgen	// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	teulu: dyn, dyn, merch, merch		// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	cusan menyw dyn						// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	cusan dyn dyn						// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	cusan menyw menyw					// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	pâr a chalon menyw dyn					// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	pâr a chalon dyn dyn					// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	pâr a chalon menyw menyw				// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	teulu dyn menyw bachgen					// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	teulu dyn menyw merch					// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	teulu dyn menyw merch bachgen				// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	teulu dyn menyw bachgen bachgen				// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	teulu dyn menyw merch merch				// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	teulu dyn dyn bachgen					// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	teulu dyn dyn merch					// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	teulu dyn dyn merch bachgen				// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	teulu dyn dyn bachgen bachgen				// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	teulu dyn dyn merch merch				// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	menyw yn bwydo babi					// [1F469 200D 1F37C]
-👩‍👩‍👦	teulu: menyw, menyw, bachgen			// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	teulu: menyw, menyw, merch			// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	teulu: menyw, menyw, merch, bachgen	// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	teulu: menyw, menyw, bachgen, bachgen	// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	teulu: menyw, menyw, merch, merch	// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	teulu: dyn, bachgen					// [1F468 200D 1F466]
-👨‍👦‍👦	teulu: dyn, bachgen, bachgen			// [1F468 200D 1F466 200D 1F466]
-👨‍👧	teulu: dyn, merch					// [1F468 200D 1F467]
-👨‍👧‍👦	teulu: dyn, merch, bachgen			// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	teulu: dyn, merch, merch			// [1F468 200D 1F467 200D 1F467]
-👩‍👦	teulu: menyw, bachgen					// [1F469 200D 1F466]
-👩‍👦‍👦	teulu: menyw, bachgen, bachgen			// [1F469 200D 1F466 200D 1F466]
-👩‍👧	teulu: menyw, merch					// [1F469 200D 1F467]
-👩‍👧‍👦	teulu: menyw, merch, bachgen			// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	teulu: menyw, merch, merch			// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	teulu menyw menyw bachgen				// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	teulu menyw menyw merch					// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	teulu menyw menyw merch bachgen				// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	teulu menyw menyw bachgen bachgen			// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	teulu menyw menyw merch merch				// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	teulu dyn bachgen					// [1F468 200D 1F466]
+👨‍👦‍👦	teulu dyn bachgen bachgen				// [1F468 200D 1F466 200D 1F466]
+👨‍👧	teulu dyn merch						// [1F468 200D 1F467]
+👨‍👧‍👦	teulu dyn merch bachgen					// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	teulu dyn merch merch					// [1F468 200D 1F467 200D 1F467]
+👩‍👦	teulu menyw bachgen					// [1F469 200D 1F466]
+👩‍👦‍👦	teulu menyw bachgen bachgen				// [1F469 200D 1F466 200D 1F466]
+👩‍👧	teulu menyw merch					// [1F469 200D 1F467]
+👩‍👧‍👦	teulu menyw merch bachgen				// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	teulu menyw merch merch					// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 

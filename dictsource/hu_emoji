@@ -51,7 +51,7 @@ $textmode
 ⁄	törtvonás						// [2044]
 ⁉	felkiáltójel kérdőjellel					// [2049] text|emoji
 ⁻	mínuszjel felső indexben				// [207B]
-₡	Costa Rica-i colon					// [20A1]
+₡	Costa Rica-i colón					// [20A1]
 ₢	cruzeiro						// [20A2]
 ₣	francia frank						// [20A3]
 ₤	líra							// [20A4]
@@ -204,7 +204,7 @@ $textmode
 ∎	bizonyítás vége						// [220E]
 ∏	n-áris produktum					// [220F]
 ∑	n-áris szumma						// [2211]
-−	mínusz						// [2212]
+−	mínuszjel						// [2212]
 ∓	mínusz vagy plusz					// [2213]
 ∕	osztási perjel						// [2215]
 ∗	aszteriszk műveleti jel					// [2217]
@@ -291,7 +291,7 @@ $textmode
 // 2300..23FF : Miscellaneous Technical
 
 ⌚	óra								// [231A]
-⌛	homokóra							// [231B]
+⌛	lejárt homokóra						// [231B]
 ⌨	billentyűzet							// [2328] text|emoji
 ⏏	lemez kiadása gomb						// [23CF] text|emoji
 ⏩	előretekerés gomb						// [23E9]
@@ -304,7 +304,7 @@ $textmode
 ⏰	ébresztőóra							// [23F0]
 ⏱	stopperóra							// [23F1] text|emoji
 ⏲	visszaszámláló óra						// [23F2] text|emoji
-⏳	homokóra csordogáló homokkal					// [23F3]
+⏳	nem lejárt homokóra					// [23F3]
 ⏸	szüneteltetés gomb						// [23F8] text|emoji
 ⏹	leállítás gomb							// [23F9] text|emoji
 ⏺	felvétel gomb							// [23FA] text|emoji
@@ -493,7 +493,7 @@ $textmode
 ✏	ceruza								// [270F] text|emoji
 ✒	fekete tollhegy							// [2712] text|emoji
 ✔	vastag pipa							// [2714] text|emoji
-✖	vastag szorzásjel						// [2716] text|emoji
+✖	szorzás							// [2716] text|emoji
 ✝	latin kereszt							// [271D] text|emoji
 ✡	Dávid-csillag							// [2721] text|emoji
 ✨	szikrák								// [2728]
@@ -503,15 +503,15 @@ $textmode
 ❇	szikra								// [2747] text|emoji
 ❌	áthúzásjel							// [274C]
 ❎	áthúzásjel gomb							// [274E]
-❓	kérdőjel							// [2753]
+❓	piros kérdőjel						// [2753]
 ❔	fehér kérdőjel							// [2754]
 ❕	fehér felkiáltójel						// [2755]
-❗	felkiáltójel							// [2757]
+❗	piros felkiáltójel					// [2757]
 ❣	nagy szív alakú felkiáltójel					// [2763] text|emoji
 ❤	vörös szív							// [2764] text|emoji
-➕	vastag pluszjel							// [2795]
-➖	vastag mínuszjel						// [2796]
-➗	vastag osztásjel						// [2797]
+➕	plusz							// [2795]
+➖	mínusz							// [2796]
+➗	osztás							// [2797]
 ➡	jobbra mutató nyíl						// [27A1] text|emoji
 ➰	hurok								// [27B0]
 ➿	dupla hurok							// [27BF]
@@ -537,7 +537,7 @@ $textmode
 ⬛	nagy fekete négyzet						// [2B1B]
 ⬜	nagy fehér négyzet						// [2B1C]
 ⭐	csillag								// [2B50]
-⭕	nagy, vastag kör						// [2B55]
+⭕	nagy vastag kör						// [2B55]
 
 // 3000..303F : CJK Symbols and Punctuation
 
@@ -546,17 +546,17 @@ $textmode
 
 // 3200..32FF : Enclosed CJK Letters and Months
 
-㊗	japán gratuláció” gomb						// [3297] text|emoji
-㊙	japán titok” gomb						// [3299] text|emoji
+㊗	japán gratuláció gomb					// [3297] text|emoji
+㊙	japán titok gomb					// [3299] text|emoji
 ﷼	riál							// [FDFC]
 
 // 1F100..1F1FF : Enclosed Alphanumeric Supplement
 
-🅰	A gomb (vércsoport)						// [1F170] text|emoji
-🅱	B gomb (vércsoport)						// [1F171] text|emoji
-🅾	0 gomb (vércsoport)						// [1F17E] text|emoji
+🅰	A gomb vércsoport					// [1F170] text|emoji
+🅱	B gomb vércsoport					// [1F171] text|emoji
+🅾	0 gomb vércsoport					// [1F17E] text|emoji
 🅿	P gomb								// [1F17F] text|emoji
-🆎	AB gomb (vércsoport)						// [1F18E]
+🆎	AB gomb vércsoport					// [1F18E]
 🆑	CL gomb								// [1F191]
 🆒	COOL gomb							// [1F192]
 🆓	FREE gomb							// [1F193]
@@ -565,27 +565,27 @@ $textmode
 🆖	NG gomb								// [1F196]
 🆗	OK gomb								// [1F197]
 🆘	SOS gomb							// [1F198]
-🆙	UP! gomb							// [1F199]
+🆙	UP gomb							// [1F199]
 🆚	VS gomb								// [1F19A]
 🇨🇶	Sark							// [1F1E8 1F1F6]
 
 // 1F200..1F2FF : Enclosed Ideographic Supplement
 
-🈁	japán itt” gomb							// [1F201]
-🈂	japán szervizdíj” gomb						// [1F202] text|emoji
-🈚	japán ingyenes” gomb						// [1F21A]
-🈯	japán foglalt” gomb						// [1F22F]
-🈲	japán tiltott” gomb						// [1F232]
-🈳	japán megüresedés” gomb						// [1F233]
-🈴	japán minimális pontszám” gomb					// [1F234]
-🈵	japán megtelt” gomb						// [1F235]
-🈶	japán nem ingyenes” gomb					// [1F236]
-🈷	japán havi összeg” gomb						// [1F237] text|emoji
-🈸	japán alkalmazás” gomb						// [1F238]
-🈹	japán engedmény” gomb						// [1F239]
-🈺	japán működik” gomb						// [1F23A]
-🉐	japán alkalmi vétel” gomb					// [1F250]
-🉑	japán elfogadás” gomb						// [1F251]
+🈁	japán itt gomb						// [1F201]
+🈂	japán szervizdíj gomb					// [1F202] text|emoji
+🈚	japán ingyenes gomb					// [1F21A]
+🈯	japán foglalt gomb					// [1F22F]
+🈲	japán tiltott gomb					// [1F232]
+🈳	japán megüresedés gomb					// [1F233]
+🈴	japán minimális pontszám gomb				// [1F234]
+🈵	japán megtelt gomb					// [1F235]
+🈶	japán nem ingyenes gomb					// [1F236]
+🈷	japán havi összeg gomb					// [1F237] text|emoji
+🈸	japán alkalmazás gomb					// [1F238]
+🈹	japán engedmény gomb					// [1F239]
+🈺	japán működik gomb					// [1F23A]
+🉐	japán alkalmi vétel gomb				// [1F250]
+🉑	japán elfogadás gomb					// [1F251]
 
 // 1F000..1F02F : Mahjong Tiles
 
@@ -607,7 +607,7 @@ $textmode
 🌇	naplemente							// [1F307]
 🌈	szivárvány							// [1F308]
 🌉	híd éjszaka							// [1F309]
-🌊	hullám a vízen							// [1F30A]
+🌊	vízhullám						// [1F30A]
 🌋	vulkán								// [1F30B]
 🌌	tejút								// [1F30C]
 🌍	Európát és Afrikát mutató földgömb				// [1F30D]
@@ -615,14 +615,14 @@ $textmode
 🌏	Ázsiát és Ausztráliát mutató földgömb				// [1F30F]
 🌐	földgömb délkörökkel						// [1F310]
 🌑	újhold								// [1F311]
-🌒	növő, sarló alakú hold						// [1F312]
+🌒	növő sarló alakú hold					// [1F312]
 🌓	első negyedben lévő hold					// [1F313]
 🌔	növő domború hold						// [1F314]
 🌕	telihold							// [1F315]
 🌖	fogyó domború hold						// [1F316]
 🌗	utolsó negyedben lévő hold					// [1F317]
-🌘	fogyó, sarló alakú hold						// [1F318]
-🌙	sarló alakú hold						// [1F319]
+🌘	fogyó sarló alakú hold					// [1F318]
+🌙	növekvő hold						// [1F319]
 🌚	újhold arccal							// [1F31A]
 🌛	első negyedben lévő hold arccal					// [1F31B]
 🌜	utolsó negyedben lévő hold arccal				// [1F31C]
@@ -739,7 +739,7 @@ $textmode
 🎍	fenyődekoráció							// [1F38D]
 🎎	japán babák							// [1F38E]
 🎏	rizspapír pontyok						// [1F38F]
-🎐	harangjáték							// [1F390]
+🎐	szélharang						// [1F390]
 🎑	holdünnep							// [1F391]
 🎒	iskolatáska							// [1F392]
 🎓	diplomaosztón használt kalap					// [1F393]
@@ -870,7 +870,7 @@ $textmode
 🐘	elefánt								// [1F418]
 🐙	polip								// [1F419]
 🐚	tengeri csiga							// [1F41A]
-🐛	bogár								// [1F41B]
+🐛	rovar							// [1F41B]
 🐜	hangya								// [1F41C]
 🐝	méh								// [1F41D]
 🐞	katica								// [1F41E]
@@ -955,7 +955,7 @@ $textmode
 👭	kézen fogva álló nők						// [1F46D]
 👮	zsaru								// [1F46E]
 👯	bulizó emberek							// [1F46F]
-👰	menyasszony fátyollal						// [1F470]
+👰	ember fátyollal						// [1F470]
 👱	szőke hajú ember						// [1F471]
 👲	kínai sapkás ember						// [1F472]
 👳	turbános ember							// [1F473]
@@ -970,7 +970,7 @@ $textmode
 👼	babaangyal							// [1F47C]
 👽	földönkívüli							// [1F47D]
 👾	földönkívüli szörny						// [1F47E]
-👿	ördög								// [1F47F]
+👿	mérges arc szarvakkal					// [1F47F]
 💀	koponya								// [1F480]
 💁	ember az információs pultnál					// [1F481]
 💂	gárdista							// [1F482]
@@ -1129,7 +1129,7 @@ $textmode
 🔜	hamarosan nyíl							// [1F51C]
 🔝	csúcsra nyíl							// [1F51D]
 🔞	18 év alatt tilos						// [1F51E]
-🔟	gombfej: 10							// [1F51F]
+🔟	gombfej 10						// [1F51F]
 🔠	latin nagybetűs bevitel						// [1F520]
 🔡	latin kisbetűs bevitel						// [1F521]
 🔢	számbevitel							// [1F522]
@@ -1141,15 +1141,15 @@ $textmode
 🔨	kalapács							// [1F528]
 🔩	csavar és anya							// [1F529]
 🔪	konyhakés							// [1F52A]
-🔫	pisztoly							// [1F52B]
+🔫	vízipisztoly						// [1F52B]
 🔬	mikroszkóp							// [1F52C]
 🔭	távcső								// [1F52D]
 🔮	kristálygömb							// [1F52E]
 🔯	hatágú csillag ponttal						// [1F52F]
 🔰	a kezdő japán szimbóluma					// [1F530]
 🔱	háromágú szigony						// [1F531]
-🔲	fekete, négyzet alakú gomb					// [1F532]
-🔳	fehér, négyzet alakú gomb					// [1F533]
+🔲	fekete négyzet alakú gomb				// [1F532]
+🔳	fehér négyzet alakú gomb				// [1F533]
 🔴	piros kör							// [1F534]
 🔵	kék kör								// [1F535]
 🔶	nagy narancssárga rombusz					// [1F536]
@@ -1193,7 +1193,7 @@ $textmode
 🕯	gyertya								// [1F56F] text|emoji
 🕰	régies óra							// [1F570] text|emoji
 🕳	lyuk								// [1F573] text|emoji
-🕴	öltönyös, lebegő ember						// [1F574] text|emoji
+🕴	öltönyös lebegő ember					// [1F574] text|emoji
 🕵	detektív							// [1F575] text|emoji
 🕶	napszemüveg							// [1F576] text|emoji
 🕷	pók								// [1F577] text|emoji
@@ -1230,7 +1230,7 @@ $textmode
 🗳	urna szavazólappal						// [1F5F3] text|emoji
 🗺	világtérkép							// [1F5FA] text|emoji
 🗻	Fudzsi-hegy							// [1F5FB]
-🗼	tokiói torony							// [1F5FC]
+🗼	Tokiói torony						// [1F5FC]
 🗽	Szabadság-szobor						// [1F5FD]
 🗾	Japán térképe							// [1F5FE]
 🗿	moai								// [1F5FF]
@@ -1255,7 +1255,7 @@ $textmode
 😏	önelégült vigyor						// [1F60F]
 😐	semleges arc							// [1F610]
 😑	kifejezéstelen arc						// [1F611]
-😒	szomorú arc							// [1F612]
+😒	unott arc						// [1F612]
 😓	lehangolt arc verejtékkel					// [1F613]
 😔	elgondolkodó arc						// [1F614]
 😕	zavart arc							// [1F615]
@@ -1274,7 +1274,7 @@ $textmode
 😢	síró arc							// [1F622]
 😣	állhatatos arc							// [1F623]
 😤	orrából gőzt fújtató arc					// [1F624]
-😥	csalódott, de megkönnyebbült arc				// [1F625]
+😥	csalódott de megkönnyebbült arc				// [1F625]
 😦	rosszalló arc nyitott szájjal					// [1F626]
 😧	elkínzott arc							// [1F627]
 😨	félelemmel teli arc						// [1F628]
@@ -1293,18 +1293,18 @@ $textmode
 😵	szédülő arc							// [1F635]
 😶	száj nélküli arc						// [1F636]
 😷	arc egészségügyi maszkkal					// [1F637]
-😸	nevető macskaarc mosolygó szemmel				// [1F638]
-😹	macskaarc örömkönnyekkel					// [1F639]
-😺	nevető macskaarc						// [1F63A]
-😻	mosolygó macskaarc szív alakú szemmel				// [1F63B]
-😼	macskaarc fanyar mosollyal					// [1F63C]
-😽	csókoló macskaarc lehunyt szemmel				// [1F63D]
-😾	duzzogó macskaarc						// [1F63E]
-😿	síró macskaarc							// [1F63F]
-🙀	kimerült macskaarc						// [1F640]
+😸	nevető macska mosolygó szemmel				// [1F638]
+😹	macska örömkönnyekkel					// [1F639]
+😺	nevető macska						// [1F63A]
+😻	mosolygó macska szív alakú szemmel			// [1F63B]
+😼	macska fanyar mosollyal					// [1F63C]
+😽	csókoló macska						// [1F63D]
+😾	duzzogó macska						// [1F63E]
+😿	síró macska						// [1F63F]
+🙀	kimerült macska						// [1F640]
 🙁	kissé komor arc							// [1F641]
 🙂	finoman mosolygó arc						// [1F642]
-🙃	fejjel lefelé fordult arc					// [1F643]
+🙃	arc fejjel lefelé					// [1F643]
 🙄	szemét forgató arc						// [1F644]
 🙅	tiltás mutatása							// [1F645]
 🙆	beleegyezés mutatása						// [1F646]
@@ -1396,11 +1396,13 @@ $textmode
 🛎	londinerhívó csengő						// [1F6CE] text|emoji
 🛏	ágy								// [1F6CF] text|emoji
 🛐	imahely								// [1F6D0]
-🛑	nyolcszög							// [1F6D1]
+🛑	stoptábla						// [1F6D1]
 🛒	bevásárlókocsi							// [1F6D2]
 🛕	hindu templom						// [1F6D5]
 🛖	kunyhó							// [1F6D6]
 🛗	lift							// [1F6D7]
+🛘	földcsuszamlás						// [1F6D8]
+🛙	világítótorony						// [1F6D9]
 🛜	vezeték nélküli						// [1F6DC]
 🛝	játszótéri csúszda					// [1F6DD]
 🛞	kerék							// [1F6DE]
@@ -1453,10 +1455,10 @@ $textmode
 🤓	kockaarc							// [1F913]
 🤔	gondolkodó arc							// [1F914]
 🤕	arc bekötött fejjel						// [1F915]
-🤖	robotarc							// [1F916]
+🤖	robot							// [1F916]
 🤗	ölelés								// [1F917]
 🤘	metálvilla							// [1F918]
-🤙	hívj fel” kézjel						// [1F919]
+🤙	hívj fel kézjel						// [1F919]
 🤚	kézfej								// [1F91A]
 🤛	balra néző ököl							// [1F91B]
 🤜	jobbra néző ököl						// [1F91C]
@@ -1484,7 +1486,7 @@ $textmode
 🤲	felfelé fordított tenyerek					// [1F932]
 🤳	szelfi								// [1F933]
 🤴	herceg								// [1F934]
-🤵	szmokingos férfi						// [1F935]
+🤵	szmokingos ember					// [1F935]
 🤶	mikulás ruhás anyó						// [1F936]
 🤷	vállrándítás							// [1F937]
 🤸	cigánykerék							// [1F938]
@@ -1541,7 +1543,7 @@ $textmode
 🥭	mangó								// [1F96D]
 🥮	holdsütemény							// [1F96E]
 🥯	bagel								// [1F96F]
-🥰	mosolygós arc 3 szívvel						// [1F970]
+🥰	mosolygó arc szívekkel					// [1F970]
 🥱	ásító arc						// [1F971]
 🥲	mosolygó arc könnycseppel				// [1F972]
 🥳	bulizó arc							// [1F973]
@@ -1688,264 +1690,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	zászló: Ascension-sziget					// [1F1E6 1F1E8] AC
-🇦🇩	zászló: Andorra							// [1F1E6 1F1E9] AD
-🇦🇪	zászló: Egyesült Arab Emírségek					// [1F1E6 1F1EA] AE
-🇦🇫	zászló: Afganisztán						// [1F1E6 1F1EB] AF
-🇦🇬	zászló: Antigua és Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	zászló: Anguilla						// [1F1E6 1F1EE] AI
-🇦🇱	zászló: Albánia							// [1F1E6 1F1F1] AL
-🇦🇲	zászló: Örményország						// [1F1E6 1F1F2] AM
-🇦🇴	zászló: Angola							// [1F1E6 1F1F4] AO
-🇦🇶	zászló: Antarktisz						// [1F1E6 1F1F6] AQ
-🇦🇷	zászló: Argentína						// [1F1E6 1F1F7] AR
-🇦🇸	zászló: Amerikai Szamoa						// [1F1E6 1F1F8] AS
-🇦🇹	zászló: Ausztria						// [1F1E6 1F1F9] AT
-🇦🇺	zászló: Ausztrália						// [1F1E6 1F1FA] AU
-🇦🇼	zászló: Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	zászló: Åland-szigetek						// [1F1E6 1F1FD] AX
-🇦🇿	zászló: Azerbajdzsán						// [1F1E6 1F1FF] AZ
-🇧🇦	zászló: Bosznia-Hercegovina					// [1F1E7 1F1E6] BA
-🇧🇧	zászló: Barbados						// [1F1E7 1F1E7] BB
-🇧🇩	zászló: Banglades						// [1F1E7 1F1E9] BD
-🇧🇪	zászló: Belgium							// [1F1E7 1F1EA] BE
-🇧🇫	zászló: Burkina Faso						// [1F1E7 1F1EB] BF
-🇧🇬	zászló: Bulgária						// [1F1E7 1F1EC] BG
-🇧🇭	zászló: Bahrein							// [1F1E7 1F1ED] BH
-🇧🇮	zászló: Burundi							// [1F1E7 1F1EE] BI
-🇧🇯	zászló: Benin							// [1F1E7 1F1EF] BJ
-🇧🇱	zászló: Saint-Barthélemy					// [1F1E7 1F1F1] BL
-🇧🇲	zászló: Bermuda							// [1F1E7 1F1F2] BM
-🇧🇳	zászló: Brunei							// [1F1E7 1F1F3] BN
-🇧🇴	zászló: Bolívia							// [1F1E7 1F1F4] BO
-🇧🇶	zászló: Holland Karib-térség					// [1F1E7 1F1F6] BQ
-🇧🇷	zászló: Brazília						// [1F1E7 1F1F7] BR
-🇧🇸	zászló: Bahama-szigetek						// [1F1E7 1F1F8] BS
-🇧🇹	zászló: Bhután							// [1F1E7 1F1F9] BT
-🇧🇻	zászló: Bouvet-sziget						// [1F1E7 1F1FB] BV
-🇧🇼	zászló: Botswana						// [1F1E7 1F1FC] BW
-🇧🇾	zászló: Belarusz						// [1F1E7 1F1FE] BY
-🇧🇿	zászló: Belize							// [1F1E7 1F1FF] BZ
-🇨🇦	zászló: Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	zászló: Kókusz (Keeling)-szigetek				// [1F1E8 1F1E8] CC
-🇨🇩	zászló: Kongó - Kinshasa					// [1F1E8 1F1E9] CD
-🇨🇫	zászló: Közép-afrikai Köztársaság				// [1F1E8 1F1EB] CF
-🇨🇬	zászló: Kongó - Brazzaville					// [1F1E8 1F1EC] CG
-🇨🇭	zászló: Svájc							// [1F1E8 1F1ED] CH
-🇨🇮	zászló: Elefántcsontpart					// [1F1E8 1F1EE] CI
-🇨🇰	zászló: Cook-szigetek						// [1F1E8 1F1F0] CK
-🇨🇱	zászló: Chile							// [1F1E8 1F1F1] CL
-🇨🇲	zászló: Kamerun							// [1F1E8 1F1F2] CM
-🇨🇳	zászló: Kína							// [1F1E8 1F1F3] CN
-🇨🇴	zászló: Kolumbia						// [1F1E8 1F1F4] CO
-🇨🇵	zászló: Clipperton-sziget					// [1F1E8 1F1F5] CP
-🇨🇷	zászló: Costa Rica						// [1F1E8 1F1F7] CR
-🇨🇺	zászló: Kuba							// [1F1E8 1F1FA] CU
-🇨🇻	zászló: Zöld-foki Köztársaság					// [1F1E8 1F1FB] CV
-🇨🇼	zászló: Curaçao							// [1F1E8 1F1FC] CW
-🇨🇽	zászló: Karácsony-sziget					// [1F1E8 1F1FD] CX
-🇨🇾	zászló: Ciprus							// [1F1E8 1F1FE] CY
-🇨🇿	zászló: Csehország						// [1F1E8 1F1FF] CZ
-🇩🇪	zászló: Németország						// [1F1E9 1F1EA] DE
-🇩🇬	zászló: Diego Garcia						// [1F1E9 1F1EC] DG
-🇩🇯	zászló: Dzsibuti						// [1F1E9 1F1EF] DJ
-🇩🇰	zászló: Dánia							// [1F1E9 1F1F0] DK
-🇩🇲	zászló: Dominika						// [1F1E9 1F1F2] DM
-🇩🇴	zászló: Dominikai Köztársaság					// [1F1E9 1F1F4] DO
-🇩🇿	zászló: Algéria							// [1F1E9 1F1FF] DZ
-🇪🇦	zászló: Ceuta és Melilla					// [1F1EA 1F1E6] EA
-🇪🇨	zászló: Ecuador							// [1F1EA 1F1E8] EC
-🇪🇪	zászló: Észtország						// [1F1EA 1F1EA] EE
-🇪🇬	zászló: Egyiptom						// [1F1EA 1F1EC] EG
-🇪🇭	zászló: Nyugat-Szahara						// [1F1EA 1F1ED] EH
-🇪🇷	zászló: Eritrea							// [1F1EA 1F1F7] ER
-🇪🇸	zászló: Spanyolország						// [1F1EA 1F1F8] ES
-🇪🇹	zászló: Etiópia							// [1F1EA 1F1F9] ET
-🇪🇺	zászló: Európai Unió						// [1F1EA 1F1FA] EU
-🇫🇮	zászló: Finnország						// [1F1EB 1F1EE] FI
-🇫🇯	zászló: Fidzsi							// [1F1EB 1F1EF] FJ
-🇫🇰	zászló: Falkland-szigetek					// [1F1EB 1F1F0] FI
-🇫🇲	zászló: Mikronézia						// [1F1EB 1F1F2] FM
-🇫🇴	zászló: Feröer-szigetek						// [1F1EB 1F1F4] FO
-🇫🇷	zászló: Franciaország						// [1F1EB 1F1F7] FR
-🇬🇦	zászló: Gabon							// [1F1EC 1F1E6] GA
-🇬🇧	zászló: Egyesült Királyság					// [1F1EC 1F1E7] GB
-🇬🇩	zászló: Grenada							// [1F1EC 1F1E9] GD
-🇬🇪	zászló: Grúzia							// [1F1EC 1F1EA] GE
-🇬🇫	zászló: Francia Guyana						// [1F1EC 1F1EB] GF
-🇬🇬	zászló: Guernsey						// [1F1EC 1F1EC] GG
-🇬🇭	zászló: Ghána							// [1F1EC 1F1ED] GH
-🇬🇮	zászló: Gibraltár						// [1F1EC 1F1EE] GI
-🇬🇱	zászló: Grönland						// [1F1EC 1F1F1] GL
-🇬🇲	zászló: Gambia							// [1F1EC 1F1F2] GM
-🇬🇳	zászló: Guinea							// [1F1EC 1F1F3] GN
-🇬🇵	zászló: Guadeloupe						// [1F1EC 1F1F5] GP
-🇬🇶	zászló: Egyenlítői-Guinea					// [1F1EC 1F1F6] GQ
-🇬🇷	zászló: Görögország						// [1F1EC 1F1F7] GR
-🇬🇸	zászló: Déli-Georgia és Déli-Sandwich-szigetek			// [1F1EC 1F1F8] GS
-🇬🇹	zászló: Guatemala						// [1F1EC 1F1F9] GT
-🇬🇺	zászló: Guam							// [1F1EC 1F1FA] GU
-🇬🇼	zászló: Bissau-Guinea						// [1F1EC 1F1FC] GW
-🇬🇾	zászló: Guyana							// [1F1EC 1F1FE] GY
-🇭🇰	zászló: Hongkong KKT						// [1F1ED 1F1F0] HK
-🇭🇲	zászló: Heard-sziget és McDonald-szigetek			// [1F1ED 1F1F2] HM
-🇭🇳	zászló: Honduras						// [1F1ED 1F1F3] HN
-🇭🇷	zászló: Horvátország						// [1F1ED 1F1F7] HR
-🇭🇹	zászló: Haiti							// [1F1ED 1F1F9] HT
-🇭🇺	zászló: Magyarország						// [1F1ED 1F1FA] HU
-🇮🇨	zászló: Kanári-szigetek						// [1F1EE 1F1E8] IC
-🇮🇩	zászló: Indonézia						// [1F1EE 1F1E9] ID
-🇮🇪	zászló: Írország						// [1F1EE 1F1EA] IE
-🇮🇱	zászló: Izrael							// [1F1EE 1F1F1] IL
-🇮🇲	zászló: Man-sziget						// [1F1EE 1F1F2] IM
-🇮🇳	zászló: India							// [1F1EE 1F1F3] IN
-🇮🇴	zászló: Brit Indiai-óceáni Terület				// [1F1EE 1F1F4] IO
-🇮🇶	zászló: Irak							// [1F1EE 1F1F6] IQ
-🇮🇷	zászló: Irán							// [1F1EE 1F1F7] IR
-🇮🇸	zászló: Izland							// [1F1EE 1F1F8] IS
-🇮🇹	zászló: Olaszország						// [1F1EE 1F1F9] IT
-🇯🇪	zászló: Jersey							// [1F1EF 1F1EA] JE
-🇯🇲	zászló: Jamaica							// [1F1EF 1F1F2] JM
-🇯🇴	zászló: Jordánia						// [1F1EF 1F1F4] JO
-🇯🇵	zászló: Japán							// [1F1EF 1F1F5] JP
-🇰🇪	zászló: Kenya							// [1F1F0 1F1EA] KE
-🇰🇬	zászló: Kirgizisztán						// [1F1F0 1F1EC] KG
-🇰🇭	zászló: Kambodzsa						// [1F1F0 1F1ED] KH
-🇰🇮	zászló: Kiribati						// [1F1F0 1F1EE] KI
-🇰🇲	zászló: Comore-szigetek						// [1F1F0 1F1F2] KM
-🇰🇳	zászló: Saint Kitts és Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	zászló: Észak-Korea						// [1F1F0 1F1F5] KP
-🇰🇷	zászló: Dél-Korea						// [1F1F0 1F1F7] KR
-🇰🇼	zászló: Kuvait							// [1F1F0 1F1FC] KW
-🇰🇾	zászló: Kajmán-szigetek						// [1F1F0 1F1FE] KY
-🇰🇿	zászló: Kazahsztán						// [1F1F0 1F1FF] KZ
-🇱🇦	zászló: Laosz							// [1F1F1 1F1E6] LA
-🇱🇧	zászló: Libanon							// [1F1F1 1F1E7] LB
-🇱🇨	zászló: Saint Lucia						// [1F1F1 1F1E8] LC
-🇱🇮	zászló: Liechtenstein						// [1F1F1 1F1EE] LI
-🇱🇰	zászló: Srí Lanka						// [1F1F1 1F1F0] LK
-🇱🇷	zászló: Libéria							// [1F1F1 1F1F7] LR
-🇱🇸	zászló: Lesotho							// [1F1F1 1F1F8] LS
-🇱🇹	zászló: Litvánia						// [1F1F1 1F1F9] LT
-🇱🇺	zászló: Luxemburg						// [1F1F1 1F1FA] LU
-🇱🇻	zászló: Lettország						// [1F1F1 1F1FB] LV
-🇱🇾	zászló: Líbia							// [1F1F1 1F1FE] LY
-🇲🇦	zászló: Marokkó							// [1F1F2 1F1E6] MA
-🇲🇨	zászló: Monaco							// [1F1F2 1F1E8] MC
-🇲🇩	zászló: Moldova							// [1F1F2 1F1E9] MD
-🇲🇪	zászló: Montenegró						// [1F1F2 1F1EA] ME
-🇲🇫	zászló: Saint Martin						// [1F1F2 1F1EB] MF
-🇲🇬	zászló: Madagaszkár						// [1F1F2 1F1EC] MG
-🇲🇭	zászló: Marshall-szigetek					// [1F1F2 1F1ED] MH
-🇲🇰	zászló: Macedónia						// [1F1F2 1F1F0] MK
-🇲🇱	zászló: Mali							// [1F1F2 1F1F1] ML
-🇲🇲	zászló: Mianmar (Burma)						// [1F1F2 1F1F2] MM
-🇲🇳	zászló: Mongólia						// [1F1F2 1F1F3] MN
-🇲🇴	zászló: Makaó KKT						// [1F1F2 1F1F4] MO
-🇲🇵	zászló: Északi Mariana-szigetek					// [1F1F2 1F1F5] MP
-🇲🇶	zászló: Martinique						// [1F1F2 1F1F6] MQ
-🇲🇷	zászló: Mauritánia						// [1F1F2 1F1F7] MR
-🇲🇸	zászló: Montserrat						// [1F1F2 1F1F8] MS
-🇲🇹	zászló: Málta							// [1F1F2 1F1F9] MT
-🇲🇺	zászló: Mauritius						// [1F1F2 1F1FA] MU
-🇲🇻	zászló: Maldív-szigetek						// [1F1F2 1F1FB] MV
-🇲🇼	zászló: Malawi							// [1F1F2 1F1FC] MW
-🇲🇽	zászló: Mexikó							// [1F1F2 1F1FD] MX
-🇲🇾	zászló: Malajzia						// [1F1F2 1F1FE] MY
-🇲🇿	zászló: Mozambik						// [1F1F2 1F1FF] MZ
-🇳🇦	zászló: Namíbia							// [1F1F3 1F1E6] NA
-🇳🇨	zászló: Új-Kaledónia						// [1F1F3 1F1E8] NC
-🇳🇪	zászló: Niger							// [1F1F3 1F1EA] NE
-🇳🇫	zászló: Norfolk-sziget						// [1F1F3 1F1EB] NF
-🇳🇬	zászló: Nigéria							// [1F1F3 1F1EC] NG
-🇳🇮	zászló: Nicaragua						// [1F1F3 1F1EE] NI
-🇳🇱	zászló: Hollandia						// [1F1F3 1F1F1] NL
-🇳🇴	zászló: Norvégia						// [1F1F3 1F1F4] NO
-🇳🇵	zászló: Nepál							// [1F1F3 1F1F5] NP
-🇳🇷	zászló: Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	zászló: Niue							// [1F1F3 1F1FA] NU
-🇳🇿	zászló: Új-Zéland						// [1F1F3 1F1FF] NZ
-🇴🇲	zászló: Omán							// [1F1F4 1F1F2] OM
-🇵🇦	zászló: Panama							// [1F1F5 1F1E6] PA
-🇵🇪	zászló: Peru							// [1F1F5 1F1EA] PE
-🇵🇫	zászló: Francia Polinézia					// [1F1F5 1F1EB] PF
-🇵🇬	zászló: Pápua Új-Guinea						// [1F1F5 1F1EC] PG
-🇵🇭	zászló: Fülöp-szigetek						// [1F1F5 1F1ED] PH
-🇵🇰	zászló: Pakisztán						// [1F1F5 1F1F0] PK
-🇵🇱	zászló: Lengyelország						// [1F1F5 1F1F1] PL
-🇵🇲	zászló: Saint-Pierre és Miquelon				// [1F1F5 1F1F2] PM
-🇵🇳	zászló: Pitcairn-szigetek					// [1F1F5 1F1F3] PN
-🇵🇷	zászló: Puerto Rico						// [1F1F5 1F1F7] PR
-🇵🇸	zászló: Palesztin Terület					// [1F1F5 1F1F8] PS
-🇵🇹	zászló: Portugália						// [1F1F5 1F1F9] PT
-🇵🇼	zászló: Palau							// [1F1F5 1F1FC] PW
-🇵🇾	zászló: Paraguay						// [1F1F5 1F1FE] PY
-🇶🇦	zászló: Katar							// [1F1F6 1F1E6] QA
-🇷🇪	zászló: Réunion							// [1F1F7 1F1EA] RE
-🇷🇴	zászló: Románia							// [1F1F7 1F1F4] RO
-🇷🇸	zászló: Szerbia							// [1F1F7 1F1F8] RS
-🇷🇺	zászló: Oroszország						// [1F1F7 1F1FA] RU
-🇷🇼	zászló: Ruanda							// [1F1F7 1F1FC] RW
-🇸🇦	zászló: Szaúd-Arábia						// [1F1F8 1F1E6] SA
-🇸🇧	zászló: Salamon-szigetek					// [1F1F8 1F1E7] SB
-🇸🇨	zászló: Seychelle-szigetek					// [1F1F8 1F1E8] SC
-🇸🇩	zászló: Szudán							// [1F1F8 1F1E9] SD
-🇸🇪	zászló: Svédország						// [1F1F8 1F1EA] SE
-🇸🇬	zászló: Szingapúr						// [1F1F8 1F1EC] SG
-🇸🇭	zászló: Szent Ilona						// [1F1F8 1F1ED] SH
-🇸🇮	zászló: Szlovénia						// [1F1F8 1F1EE] SI
-🇸🇯	zászló: Svalbard és Jan Mayen					// [1F1F8 1F1EF] SJ
-🇸🇰	zászló: Szlovákia						// [1F1F8 1F1F0] SK
-🇸🇱	zászló: Sierra Leone						// [1F1F8 1F1F1] SL
-🇸🇲	zászló: San Marino						// [1F1F8 1F1F2] SM
-🇸🇳	zászló: Szenegál						// [1F1F8 1F1F3] SN
-🇸🇴	zászló: Szomália						// [1F1F8 1F1F4] SO
-🇸🇷	zászló: Suriname						// [1F1F8 1F1F7] SR
-🇸🇸	zászló: Dél-Szudán						// [1F1F8 1F1F8] SS
-🇸🇹	zászló: São Tomé és Príncipe					// [1F1F8 1F1F9] ST
-🇸🇻	zászló: Salvador						// [1F1F8 1F1FB] SV
-🇸🇽	zászló: Sint Maarten						// [1F1F8 1F1FD] SX
-🇸🇾	zászló: Szíria							// [1F1F8 1F1FE] SY
-🇸🇿	zászló: Szváziföld						// [1F1F8 1F1FF] SZ
-🇹🇦	zászló: Tristan da Cunha					// [1F1F9 1F1E6] TA
-🇹🇨	zászló: Turks- és Caicos-szigetek				// [1F1F9 1F1E8] TC
-🇹🇩	zászló: Csád							// [1F1F9 1F1E9] TD
-🇹🇫	zászló: Francia Déli Területek					// [1F1F9 1F1EB] TF
-🇹🇬	zászló: Togo							// [1F1F9 1F1EC] TG
-🇹🇭	zászló: Thaiföld						// [1F1F9 1F1ED] TH
-🇹🇯	zászló: Tádzsikisztán						// [1F1F9 1F1EF] TJ
-🇹🇰	zászló: Tokelau							// [1F1F9 1F1F0] TK
-🇹🇱	zászló: Kelet-Timor						// [1F1F9 1F1F1] TL
-🇹🇲	zászló: Türkmenisztán						// [1F1F9 1F1F2] TM
-🇹🇳	zászló: Tunézia							// [1F1F9 1F1F3] TN
-🇹🇴	zászló: Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	zászló: Törökország						// [1F1F9 1F1F7] TR
-🇹🇹	zászló: Trinidad és Tobago					// [1F1F9 1F1F9] TT
-🇹🇻	zászló: Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	zászló: Tajvan							// [1F1F9 1F1FC] TW
-🇹🇿	zászló: Tanzánia						// [1F1F9 1F1FF] TZ
-🇺🇦	zászló: Ukrajna							// [1F1FA 1F1E6] UA
-🇺🇬	zászló: Uganda							// [1F1FA 1F1EC] UG
-🇺🇲	zászló: Az USA lakatlan külbirtokai				// [1F1FA 1F1F2] UM
-🇺🇳	zászló: Egyesült Nemzetek Szervezete				// [1F1FA 1F1F3] UN
-🇺🇸	zászló: Egyesült Államok					// [1F1FA 1F1F8] US
-🇺🇾	zászló: Uruguay							// [1F1FA 1F1FE] UY
-🇺🇿	zászló: Üzbegisztán						// [1F1FA 1F1FF] UZ
-🇻🇦	zászló: Vatikán							// [1F1FB 1F1E6] VA
-🇻🇨	zászló: Saint Vincent és a Grenadine-szigetek			// [1F1FB 1F1E8] VC
-🇻🇪	zászló: Venezuela						// [1F1FB 1F1EA] VE
-🇻🇬	zászló: Brit Virgin-szigetek					// [1F1FB 1F1EC] VG
-🇻🇮	zászló: Amerikai Virgin-szigetek				// [1F1FB 1F1EE] VI
-🇻🇳	zászló: Vietnam							// [1F1FB 1F1F3] VN
-🇻🇺	zászló: Vanuatu							// [1F1FB 1F1FA] VU
-🇼🇫	zászló: Wallis és Futuna					// [1F1FC 1F1EB] WF
-🇼🇸	zászló: Szamoa							// [1F1FC 1F1F8] WS
-🇽🇰	zászló: Koszovó							// [1F1FD 1F1F0] XK
-🇾🇪	zászló: Jemen							// [1F1FE 1F1EA] YE
-🇾🇹	zászló: Mayotte							// [1F1FE 1F1F9] YT
-🇿🇦	zászló: Dél-afrikai Köztársaság					// [1F1FF 1F1E6] ZA
-🇿🇲	zászló: Zambia							// [1F1FF 1F1F2] ZM
-🇿🇼	zászló: Zimbabwe						// [1F1FF 1F1FC] ZW
+🇦🇨	Ascension-sziget					// [1F1E6 1F1E8] AC
+🇦🇩	Andorra							// [1F1E6 1F1E9] AD
+🇦🇪	Egyesült Arab Emírségek					// [1F1E6 1F1EA] AE
+🇦🇫	Afganisztán						// [1F1E6 1F1EB] AF
+🇦🇬	Antigua és Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	Anguilla						// [1F1E6 1F1EE] AI
+🇦🇱	Albánia							// [1F1E6 1F1F1] AL
+🇦🇲	Örményország						// [1F1E6 1F1F2] AM
+🇦🇴	Angola							// [1F1E6 1F1F4] AO
+🇦🇶	Antarktisz						// [1F1E6 1F1F6] AQ
+🇦🇷	Argentína						// [1F1E6 1F1F7] AR
+🇦🇸	Amerikai Szamoa						// [1F1E6 1F1F8] AS
+🇦🇹	Ausztria						// [1F1E6 1F1F9] AT
+🇦🇺	Ausztrália						// [1F1E6 1F1FA] AU
+🇦🇼	Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	Åland-szigetek						// [1F1E6 1F1FD] AX
+🇦🇿	Azerbajdzsán						// [1F1E6 1F1FF] AZ
+🇧🇦	Bosznia-Hercegovina					// [1F1E7 1F1E6] BA
+🇧🇧	Barbados						// [1F1E7 1F1E7] BB
+🇧🇩	Banglades						// [1F1E7 1F1E9] BD
+🇧🇪	Belgium							// [1F1E7 1F1EA] BE
+🇧🇫	Burkina Faso						// [1F1E7 1F1EB] BF
+🇧🇬	Bulgária						// [1F1E7 1F1EC] BG
+🇧🇭	Bahrein							// [1F1E7 1F1ED] BH
+🇧🇮	Burundi							// [1F1E7 1F1EE] BI
+🇧🇯	Benin							// [1F1E7 1F1EF] BJ
+🇧🇱	Saint-Barthélemy					// [1F1E7 1F1F1] BL
+🇧🇲	Bermuda							// [1F1E7 1F1F2] BM
+🇧🇳	Brunei							// [1F1E7 1F1F3] BN
+🇧🇴	Bolívia							// [1F1E7 1F1F4] BO
+🇧🇶	Holland Karib-térség					// [1F1E7 1F1F6] BQ
+🇧🇷	Brazília						// [1F1E7 1F1F7] BR
+🇧🇸	Bahama-szigetek						// [1F1E7 1F1F8] BS
+🇧🇹	Bhután							// [1F1E7 1F1F9] BT
+🇧🇻	Bouvet-sziget						// [1F1E7 1F1FB] BV
+🇧🇼	Botswana						// [1F1E7 1F1FC] BW
+🇧🇾	Belarusz						// [1F1E7 1F1FE] BY
+🇧🇿	Belize							// [1F1E7 1F1FF] BZ
+🇨🇦	Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	Kókusz Keeling -szigetek				// [1F1E8 1F1E8] CC
+🇨🇩	Kongó Kinshasa						// [1F1E8 1F1E9] CD
+🇨🇫	Közép-afrikai Köztársaság				// [1F1E8 1F1EB] CF
+🇨🇬	Kongó Brazzaville					// [1F1E8 1F1EC] CG
+🇨🇭	Svájc							// [1F1E8 1F1ED] CH
+🇨🇮	Elefántcsontpart					// [1F1E8 1F1EE] CI
+🇨🇰	Cook-szigetek						// [1F1E8 1F1F0] CK
+🇨🇱	Chile							// [1F1E8 1F1F1] CL
+🇨🇲	Kamerun							// [1F1E8 1F1F2] CM
+🇨🇳	Kína							// [1F1E8 1F1F3] CN
+🇨🇴	Kolumbia						// [1F1E8 1F1F4] CO
+🇨🇵	Clipperton-sziget					// [1F1E8 1F1F5] CP
+🇨🇷	Costa Rica						// [1F1E8 1F1F7] CR
+🇨🇺	Kuba							// [1F1E8 1F1FA] CU
+🇨🇻	Zöld-foki Köztársaság					// [1F1E8 1F1FB] CV
+🇨🇼	Curaçao							// [1F1E8 1F1FC] CW
+🇨🇽	Karácsony-sziget					// [1F1E8 1F1FD] CX
+🇨🇾	Ciprus							// [1F1E8 1F1FE] CY
+🇨🇿	Csehország						// [1F1E8 1F1FF] CZ
+🇩🇪	Németország						// [1F1E9 1F1EA] DE
+🇩🇬	Diego Garcia						// [1F1E9 1F1EC] DG
+🇩🇯	Dzsibuti						// [1F1E9 1F1EF] DJ
+🇩🇰	Dánia							// [1F1E9 1F1F0] DK
+🇩🇲	Dominika						// [1F1E9 1F1F2] DM
+🇩🇴	Dominikai Köztársaság					// [1F1E9 1F1F4] DO
+🇩🇿	Algéria							// [1F1E9 1F1FF] DZ
+🇪🇦	Ceuta és Melilla					// [1F1EA 1F1E6] EA
+🇪🇨	Ecuador							// [1F1EA 1F1E8] EC
+🇪🇪	Észtország						// [1F1EA 1F1EA] EE
+🇪🇬	Egyiptom						// [1F1EA 1F1EC] EG
+🇪🇭	Nyugat-Szahara						// [1F1EA 1F1ED] EH
+🇪🇷	Eritrea							// [1F1EA 1F1F7] ER
+🇪🇸	Spanyolország						// [1F1EA 1F1F8] ES
+🇪🇹	Etiópia							// [1F1EA 1F1F9] ET
+🇪🇺	Európai Unió						// [1F1EA 1F1FA] EU
+🇫🇮	Finnország						// [1F1EB 1F1EE] FI
+🇫🇯	Fidzsi							// [1F1EB 1F1EF] FJ
+🇫🇰	Falkland-szigetek					// [1F1EB 1F1F0] FI
+🇫🇲	Mikronézia						// [1F1EB 1F1F2] FM
+🇫🇴	Feröer szigetek						// [1F1EB 1F1F4] FO
+🇫🇷	Franciaország						// [1F1EB 1F1F7] FR
+🇬🇦	Gabon							// [1F1EC 1F1E6] GA
+🇬🇧	Egyesült Királyság					// [1F1EC 1F1E7] GB
+🇬🇩	Grenada							// [1F1EC 1F1E9] GD
+🇬🇪	Grúzia							// [1F1EC 1F1EA] GE
+🇬🇫	Francia Guyana						// [1F1EC 1F1EB] GF
+🇬🇬	Guernsey						// [1F1EC 1F1EC] GG
+🇬🇭	Ghána							// [1F1EC 1F1ED] GH
+🇬🇮	Gibraltár						// [1F1EC 1F1EE] GI
+🇬🇱	Grönland						// [1F1EC 1F1F1] GL
+🇬🇲	Gambia							// [1F1EC 1F1F2] GM
+🇬🇳	Guinea							// [1F1EC 1F1F3] GN
+🇬🇵	Guadeloupe						// [1F1EC 1F1F5] GP
+🇬🇶	Egyenlítői-Guinea					// [1F1EC 1F1F6] GQ
+🇬🇷	Görögország						// [1F1EC 1F1F7] GR
+🇬🇸	Déli-Georgia és Déli-Sandwich-szigetek			// [1F1EC 1F1F8] GS
+🇬🇹	Guatemala						// [1F1EC 1F1F9] GT
+🇬🇺	Guam							// [1F1EC 1F1FA] GU
+🇬🇼	Bissau-Guinea						// [1F1EC 1F1FC] GW
+🇬🇾	Guyana							// [1F1EC 1F1FE] GY
+🇭🇰	Hongkong KKT						// [1F1ED 1F1F0] HK
+🇭🇲	Heard-sziget és McDonald-szigetek			// [1F1ED 1F1F2] HM
+🇭🇳	Honduras						// [1F1ED 1F1F3] HN
+🇭🇷	Horvátország						// [1F1ED 1F1F7] HR
+🇭🇹	Haiti							// [1F1ED 1F1F9] HT
+🇭🇺	Magyarország						// [1F1ED 1F1FA] HU
+🇮🇨	Kanári-szigetek						// [1F1EE 1F1E8] IC
+🇮🇩	Indonézia						// [1F1EE 1F1E9] ID
+🇮🇪	Írország						// [1F1EE 1F1EA] IE
+🇮🇱	Izrael							// [1F1EE 1F1F1] IL
+🇮🇲	Man-sziget						// [1F1EE 1F1F2] IM
+🇮🇳	India							// [1F1EE 1F1F3] IN
+🇮🇴	Brit Indiai-óceáni Terület				// [1F1EE 1F1F4] IO
+🇮🇶	Irak							// [1F1EE 1F1F6] IQ
+🇮🇷	Irán							// [1F1EE 1F1F7] IR
+🇮🇸	Izland							// [1F1EE 1F1F8] IS
+🇮🇹	Olaszország						// [1F1EE 1F1F9] IT
+🇯🇪	Jersey							// [1F1EF 1F1EA] JE
+🇯🇲	Jamaica							// [1F1EF 1F1F2] JM
+🇯🇴	Jordánia						// [1F1EF 1F1F4] JO
+🇯🇵	Japán							// [1F1EF 1F1F5] JP
+🇰🇪	Kenya							// [1F1F0 1F1EA] KE
+🇰🇬	Kirgizisztán						// [1F1F0 1F1EC] KG
+🇰🇭	Kambodzsa						// [1F1F0 1F1ED] KH
+🇰🇮	Kiribati						// [1F1F0 1F1EE] KI
+🇰🇲	Comore-szigetek						// [1F1F0 1F1F2] KM
+🇰🇳	Saint Kitts és Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	Észak-Korea						// [1F1F0 1F1F5] KP
+🇰🇷	Dél-Korea						// [1F1F0 1F1F7] KR
+🇰🇼	Kuvait							// [1F1F0 1F1FC] KW
+🇰🇾	Kajmán-szigetek						// [1F1F0 1F1FE] KY
+🇰🇿	Kazahsztán						// [1F1F0 1F1FF] KZ
+🇱🇦	Laosz							// [1F1F1 1F1E6] LA
+🇱🇧	Libanon							// [1F1F1 1F1E7] LB
+🇱🇨	Saint Lucia						// [1F1F1 1F1E8] LC
+🇱🇮	Liechtenstein						// [1F1F1 1F1EE] LI
+🇱🇰	Srí Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	Libéria							// [1F1F1 1F1F7] LR
+🇱🇸	Lesotho							// [1F1F1 1F1F8] LS
+🇱🇹	Litvánia						// [1F1F1 1F1F9] LT
+🇱🇺	Luxemburg						// [1F1F1 1F1FA] LU
+🇱🇻	Lettország						// [1F1F1 1F1FB] LV
+🇱🇾	Líbia							// [1F1F1 1F1FE] LY
+🇲🇦	Marokkó							// [1F1F2 1F1E6] MA
+🇲🇨	Monaco							// [1F1F2 1F1E8] MC
+🇲🇩	Moldova							// [1F1F2 1F1E9] MD
+🇲🇪	Montenegró						// [1F1F2 1F1EA] ME
+🇲🇫	Saint Martin						// [1F1F2 1F1EB] MF
+🇲🇬	Madagaszkár						// [1F1F2 1F1EC] MG
+🇲🇭	Marshall-szigetek					// [1F1F2 1F1ED] MH
+🇲🇰	Észak-Macedónia						// [1F1F2 1F1F0] MK
+🇲🇱	Mali							// [1F1F2 1F1F1] ML
+🇲🇲	Mianmar							// [1F1F2 1F1F2] MM
+🇲🇳	Mongólia						// [1F1F2 1F1F3] MN
+🇲🇴	Makaó KKT						// [1F1F2 1F1F4] MO
+🇲🇵	Északi Mariana-szigetek					// [1F1F2 1F1F5] MP
+🇲🇶	Martinique						// [1F1F2 1F1F6] MQ
+🇲🇷	Mauritánia						// [1F1F2 1F1F7] MR
+🇲🇸	Montserrat						// [1F1F2 1F1F8] MS
+🇲🇹	Málta							// [1F1F2 1F1F9] MT
+🇲🇺	Mauritius						// [1F1F2 1F1FA] MU
+🇲🇻	Maldív-szigetek						// [1F1F2 1F1FB] MV
+🇲🇼	Malawi							// [1F1F2 1F1FC] MW
+🇲🇽	Mexikó							// [1F1F2 1F1FD] MX
+🇲🇾	Malajzia						// [1F1F2 1F1FE] MY
+🇲🇿	Mozambik						// [1F1F2 1F1FF] MZ
+🇳🇦	Namíbia							// [1F1F3 1F1E6] NA
+🇳🇨	Új-Kaledónia						// [1F1F3 1F1E8] NC
+🇳🇪	Niger							// [1F1F3 1F1EA] NE
+🇳🇫	Norfolk-sziget						// [1F1F3 1F1EB] NF
+🇳🇬	Nigéria							// [1F1F3 1F1EC] NG
+🇳🇮	Nicaragua						// [1F1F3 1F1EE] NI
+🇳🇱	Hollandia						// [1F1F3 1F1F1] NL
+🇳🇴	Norvégia						// [1F1F3 1F1F4] NO
+🇳🇵	Nepál							// [1F1F3 1F1F5] NP
+🇳🇷	Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	Niue							// [1F1F3 1F1FA] NU
+🇳🇿	Új-Zéland						// [1F1F3 1F1FF] NZ
+🇴🇲	Omán							// [1F1F4 1F1F2] OM
+🇵🇦	Panama							// [1F1F5 1F1E6] PA
+🇵🇪	Peru							// [1F1F5 1F1EA] PE
+🇵🇫	Francia Polinézia					// [1F1F5 1F1EB] PF
+🇵🇬	Pápua Új-Guinea						// [1F1F5 1F1EC] PG
+🇵🇭	Fülöp-szigetek						// [1F1F5 1F1ED] PH
+🇵🇰	Pakisztán						// [1F1F5 1F1F0] PK
+🇵🇱	Lengyelország						// [1F1F5 1F1F1] PL
+🇵🇲	Saint-Pierre és Miquelon				// [1F1F5 1F1F2] PM
+🇵🇳	Pitcairn-szigetek					// [1F1F5 1F1F3] PN
+🇵🇷	Puerto Rico						// [1F1F5 1F1F7] PR
+🇵🇸	Palesztin Autonómia					// [1F1F5 1F1F8] PS
+🇵🇹	Portugália						// [1F1F5 1F1F9] PT
+🇵🇼	Palau							// [1F1F5 1F1FC] PW
+🇵🇾	Paraguay						// [1F1F5 1F1FE] PY
+🇶🇦	Katar							// [1F1F6 1F1E6] QA
+🇷🇪	Réunion							// [1F1F7 1F1EA] RE
+🇷🇴	Románia							// [1F1F7 1F1F4] RO
+🇷🇸	Szerbia							// [1F1F7 1F1F8] RS
+🇷🇺	Oroszország						// [1F1F7 1F1FA] RU
+🇷🇼	Ruanda							// [1F1F7 1F1FC] RW
+🇸🇦	Szaúd-Arábia						// [1F1F8 1F1E6] SA
+🇸🇧	Salamon-szigetek					// [1F1F8 1F1E7] SB
+🇸🇨	Seychelle-szigetek					// [1F1F8 1F1E8] SC
+🇸🇩	Szudán							// [1F1F8 1F1E9] SD
+🇸🇪	Svédország						// [1F1F8 1F1EA] SE
+🇸🇬	Szingapúr						// [1F1F8 1F1EC] SG
+🇸🇭	Szent Ilona						// [1F1F8 1F1ED] SH
+🇸🇮	Szlovénia						// [1F1F8 1F1EE] SI
+🇸🇯	Svalbard és Jan Mayen					// [1F1F8 1F1EF] SJ
+🇸🇰	Szlovákia						// [1F1F8 1F1F0] SK
+🇸🇱	Sierra Leone						// [1F1F8 1F1F1] SL
+🇸🇲	San Marino						// [1F1F8 1F1F2] SM
+🇸🇳	Szenegál						// [1F1F8 1F1F3] SN
+🇸🇴	Szomália						// [1F1F8 1F1F4] SO
+🇸🇷	Suriname						// [1F1F8 1F1F7] SR
+🇸🇸	Dél-Szudán						// [1F1F8 1F1F8] SS
+🇸🇹	São Tomé és Príncipe					// [1F1F8 1F1F9] ST
+🇸🇻	Salvador						// [1F1F8 1F1FB] SV
+🇸🇽	Sint Maarten						// [1F1F8 1F1FD] SX
+🇸🇾	Szíria							// [1F1F8 1F1FE] SY
+🇸🇿	Szváziföld						// [1F1F8 1F1FF] SZ
+🇹🇦	Tristan da Cunha					// [1F1F9 1F1E6] TA
+🇹🇨	Turks- és Caicos-szigetek				// [1F1F9 1F1E8] TC
+🇹🇩	Csád							// [1F1F9 1F1E9] TD
+🇹🇫	Francia Déli Területek					// [1F1F9 1F1EB] TF
+🇹🇬	Togo							// [1F1F9 1F1EC] TG
+🇹🇭	Thaiföld						// [1F1F9 1F1ED] TH
+🇹🇯	Tádzsikisztán						// [1F1F9 1F1EF] TJ
+🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
+🇹🇱	Kelet-Timor						// [1F1F9 1F1F1] TL
+🇹🇲	Türkmenisztán						// [1F1F9 1F1F2] TM
+🇹🇳	Tunézia							// [1F1F9 1F1F3] TN
+🇹🇴	Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	Törökország						// [1F1F9 1F1F7] TR
+🇹🇹	Trinidad és Tobago					// [1F1F9 1F1F9] TT
+🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	Tajvan							// [1F1F9 1F1FC] TW
+🇹🇿	Tanzánia						// [1F1F9 1F1FF] TZ
+🇺🇦	Ukrajna							// [1F1FA 1F1E6] UA
+🇺🇬	Uganda							// [1F1FA 1F1EC] UG
+🇺🇲	Az USA lakatlan külbirtokai				// [1F1FA 1F1F2] UM
+🇺🇳	Egyesült Nemzetek Szervezete				// [1F1FA 1F1F3] UN
+🇺🇸	Egyesült Államok					// [1F1FA 1F1F8] US
+🇺🇾	Uruguay							// [1F1FA 1F1FE] UY
+🇺🇿	Üzbegisztán						// [1F1FA 1F1FF] UZ
+🇻🇦	Vatikán							// [1F1FB 1F1E6] VA
+🇻🇨	Saint Vincent és a Grenadine-szigetek			// [1F1FB 1F1E8] VC
+🇻🇪	Venezuela						// [1F1FB 1F1EA] VE
+🇻🇬	Brit Virgin-szigetek					// [1F1FB 1F1EC] VG
+🇻🇮	Amerikai Virgin-szigetek				// [1F1FB 1F1EE] VI
+🇻🇳	Vietnám							// [1F1FB 1F1F3] VN
+🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
+🇼🇫	Wallis és Futuna					// [1F1FC 1F1EB] WF
+🇼🇸	Szamoa							// [1F1FC 1F1F8] WS
+🇽🇰	Koszovó							// [1F1FD 1F1F0] XK
+🇾🇪	Jemen							// [1F1FE 1F1EA] YE
+🇾🇹	Mayotte							// [1F1FE 1F1F9] YT
+🇿🇦	Dél-afrikai Köztársaság					// [1F1FF 1F1E6] ZA
+🇿🇲	Zambia							// [1F1FF 1F1F2] ZM
+🇿🇼	Zimbabwe						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1955,18 +1957,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#️⃣	gombfej: #							// [0023 FE0F 20E3]
-*️⃣	gombfej: *							// [002A FE0F 20E3]
-0️⃣	gombfej: 0							// [0030 FE0F 20E3]
-1️⃣	gombfej: 1							// [0031 FE0F 20E3]
-2️⃣	gombfej: 2							// [0032 FE0F 20E3]
-3️⃣	gombfej: 3							// [0033 FE0F 20E3]
-4️⃣	gombfej: 4							// [0034 FE0F 20E3]
-5️⃣	gombfej: 5							// [0035 FE0F 20E3]
-6️⃣	gombfej: 6							// [0036 FE0F 20E3]
-7️⃣	gombfej: 7							// [0037 FE0F 20E3]
-8️⃣	gombfej: 8							// [0038 FE0F 20E3]
-9️⃣	gombfej: 9							// [0039 FE0F 20E3]
+#⃣	gombfej							// [0023 20E3]
+*⃣	gombfej							// [002A 20E3]
+0⃣	gombfej 0						// [0030 20E3]
+1⃣	gombfej 1						// [0031 20E3]
+2⃣	gombfej 2						// [0032 20E3]
+3⃣	gombfej 3						// [0033 20E3]
+4⃣	gombfej 4						// [0034 20E3]
+5⃣	gombfej 5						// [0035 20E3]
+6⃣	gombfej 6						// [0036 20E3]
+7⃣	gombfej 7						// [0037 20E3]
+8⃣	gombfej 8						// [0038 20E3]
+9⃣	gombfej 9						// [0039 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	balettcipő						// [1FA70]
@@ -1992,6 +1994,11 @@ $textmode
 🪇	rumbatök						// [1FA87]
 🪈	fuvola							// [1FA88]
 🪉	hárfa							// [1FA89]
+🪊	harsona							// [1FA8A]
+🪋	meteor							// [1FA8B]
+🪌	radír							// [1FA8C]
+🪍	nyeles háló						// [1FA8D]
+🪎	kincsesláda						// [1FA8E]
 🪏	ásó							// [1FA8F]
 🪐	gyűrűs bolygó						// [1FA90]
 🪑	szék							// [1FA91]
@@ -2048,6 +2055,9 @@ $textmode
 🫄	terhes személy						// [1FAC4]
 🫅	koronás személy						// [1FAC5]
 🫆	ujjlenyomat						// [1FAC6]
+🫈	szőrös lény						// [1FAC8]
+🫌	királylepke						// [1FACC]
+🫍	kardszárnyú delfin					// [1FACD]
 🫎	jávorszarvas						// [1FACE]
 🫏	szamár							// [1FACF]
 🫐	áfonya							// [1FAD0]
@@ -2063,6 +2073,7 @@ $textmode
 🫚	gyömbérgyökér						// [1FADA]
 🫛	borsóhüvely						// [1FADB]
 🫜	gyökérzöldség						// [1FADC]
+🫝	csemegeuborka						// [1FADD]
 🫟	fröccsenés						// [1FADF]
 🫠	elolvadó arc						// [1FAE0]
 🫡	tisztelgő arc						// [1FAE1]
@@ -2074,6 +2085,9 @@ $textmode
 🫧	buborékok						// [1FAE7]
 🫨	rázkódó arc						// [1FAE8]
 🫩	arc táskás szemekkel					// [1FAE9]
+🫪	eltorzult arc						// [1FAEA]
+🫫	repedezett arc						// [1FAEB]
+🫯	verekedésfelhő						// [1FAEF]
 🫰	keresztezett mutató- és hüvelykujjú kéz			// [1FAF0]
 🫱	jobbra néző kéz						// [1FAF1]
 🫲	balra néző kéz						// [1FAF2]
@@ -2083,6 +2097,8 @@ $textmode
 🫶	szívet formázó kezek					// [1FAF6]
 🫷	balra toló kéz						// [1FAF7]
 🫸	jobbra toló kéz						// [1FAF8]
+🫹	balra mutató hüvelykujj					// [1FAF9]
+🫺	jobbra mutató hüvelykujj				// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2111,38 +2127,38 @@ $textmode
 👨‍🦼‍➡	férfi motoros kerekesszékben jobbra néző		// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	férfi kézi hajtású kerekesszékben			// [1F468 200D 1F9BD]
 👨‍🦽‍➡	férfi kézi hajtású kerekesszékben jobbra néző		// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	csók: nő és férfi			// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	csók: férfi és férfi			// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	csók: nő és nő				// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	pár szívvel: nő és férfi			// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	pár szívvel: férfi és férfi			// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	pár szívvel: nő és nő				// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	család: férfi, nő és fiú			// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	család: férfi, nő és lány			// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	család: férfi, nő, lány és fiú		// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	család: férfi, nő, fiú és fiú		// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	család: férfi, nő, lány és lány		// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	család: férfi, férfi és fiú			// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	család: férfi, férfi és lány			// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	család: férfi, férfi, lány és fiú	// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	család: férfi, férfi, fiú és fiú	// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	család: férfi, férfi, lány és lány	// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	csók nő és férfi					// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	csók férfi és férfi					// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	csók nő és nő						// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	pár szívvel nő és férfi					// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	pár szívvel férfi és férfi				// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	pár szívvel nő és nő					// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	család férfi nő és fiú					// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	család férfi nő és lány					// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	család férfi nő lány és fiú				// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	család férfi nő fiú és fiú				// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	család férfi nő lány és lány				// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	család férfi férfi és fiú				// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	család férfi férfi és lány				// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	család férfi férfi lány és fiú				// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	család férfi férfi fiú és fiú				// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	család férfi férfi lány és lány				// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	kisbabát etető nő					// [1F469 200D 1F37C]
-👩‍👩‍👦	család: nő, nő és fiú				// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	család: nő, nő és lány				// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	család: nő, nő, lány és fiú		// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	család: nő, nő, fiú és fiú		// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	család: nő, nő, lány és lány		// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	család: férfi és fiú					// [1F468 200D 1F466]
-👨‍👦‍👦	család: férfi, fiú és fiú			// [1F468 200D 1F466 200D 1F466]
-👨‍👧	család: férfi és lány					// [1F468 200D 1F467]
-👨‍👧‍👦	család: férfi, lány és fiú			// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	család: férfi, lány és lány			// [1F468 200D 1F467 200D 1F467]
-👩‍👦	család: nő és fiú					// [1F469 200D 1F466]
-👩‍👦‍👦	család: nő, fiú és fiú				// [1F469 200D 1F466 200D 1F466]
-👩‍👧	család: nő és lány					// [1F469 200D 1F467]
-👩‍👧‍👦	család: nő, lány és fiú				// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	család: nő, lány és lány			// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	család nő nő és fiú					// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	család nő nő és lány					// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	család nő nő lány és fiú				// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	család nő nő fiú és fiú					// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	család nő nő lány és lány				// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	család férfi és fiú					// [1F468 200D 1F466]
+👨‍👦‍👦	család férfi fiú és fiú					// [1F468 200D 1F466 200D 1F466]
+👨‍👧	család férfi és lány					// [1F468 200D 1F467]
+👨‍👧‍👦	család férfi lány és fiú				// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	család férfi lány és lány				// [1F468 200D 1F467 200D 1F467]
+👩‍👦	család nő és fiú					// [1F469 200D 1F466]
+👩‍👦‍👦	család nő fiú és fiú					// [1F469 200D 1F466 200D 1F466]
+👩‍👧	család nő és lány					// [1F469 200D 1F467]
+👩‍👧‍👦	család nő lány és fiú					// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	család nő lány és lány					// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 
