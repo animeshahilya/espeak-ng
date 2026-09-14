@@ -8,7 +8,7 @@
 
   <!-- Voice Variants that are people's names. -->
   <string name="variant_klatt">Klatt</string>
-  <string name="variant_nvda">NVDA</string>
+  <string name="variant_character">Character voices</string>
   <string name="variant_adam">Adam</string>
   <string name="variant_alex">Alex</string>
   <string name="variant_ali">Ali</string>

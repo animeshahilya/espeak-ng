@@ -241,11 +241,11 @@ public class UserDictionaryManager {
     }
 
     /**
-     * Exports rules in NVDA .dic tab-delimited format.
+     * Exports rules in standard .dic tab-delimited format.
      */
     public synchronized void exportToStream(OutputStream os) {
         try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
-            writer.write("# NVDA speech dictionary file exported from eSpeak NG Android\n");
+            writer.write("# Speech dictionary file exported from eSpeak NG Android\n");
             for (UserDictionary rule : mRules) {
                 writer.write(rule.getPattern() + "\t" +
                         rule.getReplacement() + "\t" +

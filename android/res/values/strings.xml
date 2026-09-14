@@ -91,7 +91,7 @@
   <string name="setting_capitals_summary">How capital letters are announced</string>
   <string name="capitals_none">None</string>
   <string name="capitals_sound">Play sound icon (beep)</string>
-  <string name="capitals_pitch">Raise pitch (NVDA style)</string>
+  <string name="capitals_pitch">Raise pitch</string>
   <string name="capitals_say">Say \"capital\"</string>
   <string name="setting_wordgap">Word pause length</string>
   <string name="formatter_gap_ms">%s0 ms</string>
@@ -106,16 +106,12 @@
         Description: Explains the digit-by-digit reading setting.
     -->
   <string name="setting_speak_digits_summary">Speak each digit separately, for example reading \"123\" as \"one two three\" instead of \"one hundred twenty three\"</string>
-  <string name="variant_klatt_paul">Paul (Classic Male)</string>
-  <string name="variant_klatt_betty">Betty (Classic Female)</string>
-  <string name="variant_klatt_harry">Harry (Deep Male)</string>
-  <string name="variant_klatt_frank">Frank (Older / Textured)</string>
-  <string name="variant_klatt_kit">Kit (High Pitch / Child)</string>
-  <string name="variant_klatt_dennis">Dennis (Clear Alternate Male)</string>
-  <string name="variant_klatt_ursula">Ursula (Warm Alternate Female)</string>
-  <string name="variant_klatt_rita">Rita (Bright / Crisp Female)</string>
-  <string name="variant_klatt_wendy">Wendy (Soft / Breathy Female)</string>
-  <string name="variant_klatt_fast">Turbo (TalkBack High Speed)</string>
+  <string name="variant_klatt_1">Klatt 1 (Impulsive)</string>
+  <string name="variant_klatt_2">Klatt 2 (Natural)</string>
+  <string name="variant_klatt_3">Klatt 3 (Sampled pulse 1)</string>
+  <string name="variant_klatt_4">Klatt 4 (Sampled pulse 2)</string>
+  <string name="variant_klatt_5">Klatt 5 (Sawtooth)</string>
+  <string name="variant_klatt_6">Klatt 6 (SpeechPlayer)</string>
 
   <!-- Preference Categories -->
   <string name="category_voice_language">Voice and language</string>
@@ -133,7 +129,7 @@
   <string name="setting_bilingual_switching">Bilingual script switching</string>
   <string name="setting_bilingual_switching_summary">Pronounce English words in Indic sentences with authentic English phonetics</string>
   <string name="setting_user_dictionary">User dictionary</string>
-  <string name="setting_user_dictionary_summary">Add custom word pronunciation and acronym expansion rules (NVDA compatible)</string>
+  <string name="setting_user_dictionary_summary">Add custom word pronunciation and acronym expansion rules (standard .dic syntax)</string>
   <string name="setting_nato_spelling">NATO phonetic spelling</string>
   <string name="setting_nato_spelling_summary">Speak NATO phonetics (Alpha, Bravo...) during single character navigation</string>
   <string name="setting_spoken_diacritics">Devanagari matras in exploration</string>
@@ -141,7 +137,7 @@
   <string name="test_voice_title">Preview voice sample</string>
   <string name="test_voice_summary">Listen to a sample utterance testing current voice, pitch, speed, and formatting</string>
   <string name="test_voice_sample">This is a sample of eSpeak NG speech synthesis.</string>
-  <string name="setting_nvda_defaults">Apply NVDA reading style</string>
-  <string name="setting_nvda_defaults_summary" formatted="false">Configure Max variant, 40% pitch, 75% inflection, and capital pitch raise to match NVDA</string>
-  <string name="nvda_defaults_applied" formatted="false">NVDA reading style applied (Max variant, 40% pitch, 75% inflection, capital pitch raise)</string>
+  <string name="setting_recommended_defaults">Apply recommended reading style</string>
+  <string name="setting_recommended_defaults_summary" formatted="false">Configure Max variant, 40% pitch, 75% inflection, and capital pitch raise</string>
+  <string name="recommended_defaults_applied" formatted="false">Recommended reading style applied (Max variant, 40% pitch, 75% inflection, capital pitch raise)</string>
 </resources>

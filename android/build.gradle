@@ -168,7 +168,7 @@ tasks.register('splitLanguageData') {
             }
         }
 
-        // Voice variants (the NVDA-style character voices) apply to any
+        // Voice variants (character and formant voices) apply to any
         // base language voice, so they always stay in the core bundle.
         copy {
             from new File(srcDir, 'voices')

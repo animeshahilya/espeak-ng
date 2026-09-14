@@ -116,21 +116,21 @@ public class TtsSettingsActivity extends PreferenceActivity {
                     int pitchValue = Integer.parseInt(pitch) / 2;
                     editor.putString(VoiceSettings.PREF_PITCH, Integer.toString(pitchValue));
                 } catch (NumberFormatException e) {
-                    editor.putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH_NVDA));
+                    editor.putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH));
                 }
             } else {
-                editor.putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH_NVDA));
+                editor.putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH));
             }
         }
 
         String pitchRange = prefs.getString(VoiceSettings.PREF_PITCH_RANGE, null);
         if (pitchRange == null) {
-            editor.putString(VoiceSettings.PREF_PITCH_RANGE, Integer.toString(VoiceSettings.DEFAULT_PITCH_RANGE_NVDA));
+            editor.putString(VoiceSettings.PREF_PITCH_RANGE, Integer.toString(VoiceSettings.DEFAULT_PITCH_RANGE));
         }
 
         String capitals = prefs.getString(VoiceSettings.PREF_CAPITALS, null);
         if (capitals == null) {
-            editor.putString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS_NVDA));
+            editor.putString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
         }
 
         String rate = prefs.getString(VoiceSettings.PREF_RATE, null);
@@ -165,7 +165,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
             } else if ("1".equals(gender)) {
                 editor.putString(VoiceSettings.PREF_VARIANT, VoiceVariant.MALE);
             } else {
-                editor.putString(VoiceSettings.PREF_VARIANT, VoiceSettings.DEFAULT_VARIANT_NVDA);
+                editor.putString(VoiceSettings.PREF_VARIANT, VoiceSettings.DEFAULT_VARIANT);
             }
         }
 
@@ -486,9 +486,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final String value = prefs.getString(key, null);
         int defaultVal = parameter.getDefaultValue();
         if (VoiceSettings.PREF_PITCH.equals(key)) {
-            defaultVal = VoiceSettings.DEFAULT_PITCH_NVDA;
+            defaultVal = VoiceSettings.DEFAULT_PITCH;
         } else if (VoiceSettings.PREF_PITCH_RANGE.equals(key)) {
-            defaultVal = VoiceSettings.DEFAULT_PITCH_RANGE_NVDA;
+            defaultVal = VoiceSettings.DEFAULT_PITCH_RANGE;
         }
         int current = defaultVal;
         if (value != null) {
@@ -797,11 +797,11 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 context.getString(R.string.capitals_say)
         });
         pref.setEntryValues(new CharSequence[] { "3", "0", "1", "2" });
-        pref.setDefaultValue(Integer.toString(VoiceSettings.DEFAULT_CAPITALS_NVDA));
+        pref.setDefaultValue(Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
         pref.setPersistent(true);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
-        String current = prefs.getString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS_NVDA));
+        String current = prefs.getString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
         int idx = pref.findIndexOfValue(current);
         if (idx >= 0 && idx < pref.getEntries().length) {
             pref.setSummary(pref.getEntries()[idx]);
@@ -810,22 +810,22 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
-    private static Preference createNvdaDefaultsPreference(final Context context) {
+    private static Preference createRecommendedDefaultsPreference(final Context context) {
         final Preference pref = new Preference(context);
-        pref.setTitle(R.string.setting_nvda_defaults);
-        pref.setSummary(R.string.setting_nvda_defaults_summary);
+        pref.setTitle(R.string.setting_recommended_defaults);
+        pref.setSummary(R.string.setting_recommended_defaults_summary);
         pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
                 prefs.edit()
-                        .putString(VoiceSettings.PREF_VARIANT, VoiceSettings.DEFAULT_VARIANT_NVDA)
-                        .putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH_NVDA))
-                        .putString(VoiceSettings.PREF_PITCH_RANGE, Integer.toString(VoiceSettings.DEFAULT_PITCH_RANGE_NVDA))
-                        .putString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS_NVDA))
+                        .putString(VoiceSettings.PREF_VARIANT, VoiceSettings.DEFAULT_VARIANT)
+                        .putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH))
+                        .putString(VoiceSettings.PREF_PITCH_RANGE, Integer.toString(VoiceSettings.DEFAULT_PITCH_RANGE))
+                        .putString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS))
                         .commit();
 
-                Toast.makeText(context, R.string.nvda_defaults_applied, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.recommended_defaults_applied, Toast.LENGTH_SHORT).show();
                 if (context instanceof Activity) {
                     ((Activity) context).recreate();
                 }
@@ -1077,10 +1077,10 @@ public class TtsSettingsActivity extends PreferenceActivity {
         paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
         if (!isWatch) {
-            paramCategory.addPreference(createNvdaDefaultsPreference(context));
+            paramCategory.addPreference(createRecommendedDefaultsPreference(context));
         }
 
-        // 3. Text & speech processing (NVDA symbols, Indian currency/numbers, smart codes)
+        // 3. Text & speech processing (programming symbols, Indian currency/numbers, smart codes)
         PreferenceCategory processCategory = new PreferenceCategory(context);
         processCategory.setTitle(R.string.category_speech_processing);
         group.addPreference(processCategory);

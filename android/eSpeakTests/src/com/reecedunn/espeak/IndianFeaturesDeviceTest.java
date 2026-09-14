@@ -242,7 +242,7 @@ public class IndianFeaturesDeviceTest {
     }
 
     @Test
-    public void testNvdaReadingStyleAndSymbols() throws InterruptedException {
+    public void testReadingStyleAndSymbols() throws InterruptedException {
         List<Voice> availableVoices = mEngine.getAvailableVoices();
         Voice enVoice = null;
         for (Voice v : availableVoices) {
@@ -253,11 +253,11 @@ public class IndianFeaturesDeviceTest {
         }
         assertThat("English voice should be available", enVoice, is(notNullValue()));
 
-        VoiceVariant maxVariant = VoiceVariant.parseVoiceVariant(VoiceSettings.DEFAULT_VARIANT_NVDA);
+        VoiceVariant maxVariant = VoiceVariant.parseVoiceVariant(VoiceSettings.DEFAULT_VARIANT);
         mEngine.setVoice(enVoice, maxVariant);
 
         String[] testPhrases = new String[]{
-                "Testing NVDA symbols: x != y, a <= b, and A => B.",
+                "Testing symbols: x != y, a <= b, and A => B.",
                 "Moving right: go -> door, or follow the arrow →.",
                 "Math check: 5 × 10 = 50, 10 ÷ 2 = 5, ± 3 error margin.",
                 "Reading ellipsis: waiting... done…",
@@ -272,7 +272,7 @@ public class IndianFeaturesDeviceTest {
             boolean done = mLatch.await(5, TimeUnit.SECONDS);
             assertThat("Synthesis for phrase timed out: " + phrase, done, is(true));
             assertThat("Audio bytes should be > 0 for phrase: " + phrase, mAudioBytesReceived.get(), greaterThan(0));
-            Log.i(TAG, "NVDA phrase synthesized successfully: " + mAudioBytesReceived.get() + " bytes");
+            Log.i(TAG, "Phrase synthesized successfully: " + mAudioBytesReceived.get() + " bytes");
         }
     }
 }

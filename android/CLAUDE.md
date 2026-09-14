@@ -171,17 +171,17 @@ phonetic tuning over copying a whole phoneme table - an upstream attempt at
 en-IN that did the latter ([espeak-ng#1981](https://github.com/espeak-ng/espeak-ng/pull/1981))
 was closed unmerged and covers less ground than this file does.
 
-`espeak-ng-data/voices/!v/klatt_*` are custom Klatt-synthesis personas
-(`klatt_paul`, `betty`, `harry`, `frank`, `kit`, `dennis`, `ursula`, `rita`,
-`wendy`, `fast`/"Turbo") exposed in the Klatt category of
-`VoiceVariantPreference`'s picker (`android/src/.../preference/VoiceVariantPreference.java`),
-each needing a matching `variant_klatt_*` string in `res/values/strings.xml`
-and a `VariantData` entry - `VoiceVariantCatalogTest` (see Testing) catches a
-mismatch between the two. These are original parameter values in this
-project's own style (character names as homage, not copied data) - the real
-DECtalk source (`dectalk/dectalk`, `dectalk/463`) exists on GitHub but is
-licensed `Other`/`NOASSERTION` with no clear redistribution rights, so it is
-not a safe source to copy actual voice parameters from into this GPLv3 repo.
+`espeak-ng-data/voices/!v/klatt*` (`klatt`, `klatt2`-`klatt6`) are the
+upstream cascade-parallel formant models, exposed as "Klatt 1"-"Klatt 6" in
+the Klatt category of `VoiceVariantPreference`'s picker
+(`android/src/.../preference/VoiceVariantPreference.java`), each needing a
+matching `variant_klatt_N` string in `res/values/strings.xml` and a
+`VariantData` entry - `VoiceVariantCatalogTest` (see Testing) catches a
+mismatch between the two. The "NVDA" variant category was renamed to
+"Character voices" (`R.string.variant_character`); code comments crediting
+NVDA as the source of specific fixes (control-character stripping, symbol
+expansion, the Sonic-engagement rate cap) stay, since those are provenance
+notes, not user-facing branding.
 
 ## Source Layout
 
