@@ -986,14 +986,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.about_title)
                 .setMessage(context.getString(R.string.about_body, versionName))
-                .setPositiveButton(R.string.about_view_source, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        context.startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://github.com/animeshahilya/espeak-ng")));
-                    }
-                })
-                .setNegativeButton(android.R.string.ok, null)
+                .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
 

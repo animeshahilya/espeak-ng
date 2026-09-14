@@ -311,6 +311,8 @@ _) ای	e:
 	_)ایجاد	i:Ja:d
 	_)ایما	i:ma:
 	_)ایڈمنسٹر(L01	e:d.mInIst.R
+	_)ایس(L01	E:s
+	_)اینٹ	i:nt.
 
 .group آ
 	آ	a:
@@ -732,6 +734,10 @@ _) ای	e:
 	_)چڑچڑ	cIr.cIr.
 	_)چڑی	cIr.i:
 	_)چڑیل	cUr.e:l
+	_)چھڑک(L01	c#Ir.k
+	_)چغل(L01	cUQl
+	_)چقندر	cUqandaR
+	_)چھہتر	c#IhataR
 
 .group ح
 	ح	HV
@@ -952,6 +958,9 @@ _) ای	e:
 	_) زلزل	z,alz'al
 	زْ	z
 	_)زلف	zUlf
+	_)زبید	zUbe:d
+	_)زحمت	zEHmat
+	_)زعم	zO:m
 
 .group ژ
 	ژ	ZV
@@ -1170,6 +1179,12 @@ _) ای	e:
 	_)فرہنگ	faRHang
 	_)فرفر	faRfaR
 	_)فیت	fi:t
+	_)فریفت	faRe:ft
+	_)فروع	faRo:
+	_)فریبند	faRe:band
+	_)فرحت	faRHat
+	_)فرخند	faRxand
+	_)فرزند	faRzand
 
 .group ق
 	ق	qV
@@ -1510,6 +1525,12 @@ _) ای	e:
 	_)مبالغ	mUba:lIQ
 	_)مرغول	maRQu:l
 	مولود	mO:lu:d
+	_)معم(L01	mUam:
+	_)معمار	mEma:R
+	_)معمر	mUamaR
+	_)معلم	mUalIm
+	_)معلق	mUalaq
+	_)معمو	ma:mu:
 
 .group ن
 	ن	nV
@@ -1579,6 +1600,8 @@ _) ای	e:
 	_)نازیب	na:ze:b
 	_)نشاط	nISa:t
 	_)نغم	naQm
+	نحوست	naHu:sat
+	_)نرخر	naRxaR
 
 .group ں
 	ں	n    // this should nasalize the vowel
