@@ -1,0 +1,22 @@
+language variant
+name Alien
+gender male
+
+pitch 90 170
+flutter 40
+intonation 4
+echo 25 6000
+
+formant 0 115 120 140
+formant 1 80 90 130
+formant 2 130 70 130
+formant 3 70 100 130
+formant 4 140 60 120
+formant 5 75 70 120
+formant 6 120 60 110
+formant 7 90 55 110
+formant 8 130 50 110
+
+roughness 25
+voicing 55
+consonants 90 90

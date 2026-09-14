@@ -1,0 +1,21 @@
+language variant
+name Caveman
+gender male 45
+
+pitch 55 70
+flutter 5
+intonation 1
+
+formant 0 85 150 130
+formant 1 80 120 120
+formant 2 78 100 120
+formant 3 75 95 110
+formant 4 78 90 100
+formant 5 82 85 100
+formant 6 85 80 100
+formant 7 88 75 100
+formant 8 90 70 100
+
+roughness 30
+voicing 60
+consonants 130 120

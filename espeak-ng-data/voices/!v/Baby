@@ -1,0 +1,21 @@
+language variant
+name Baby
+gender female 3
+
+pitch 320 400
+flutter 25
+intonation 4
+
+formant 0 130 140 110
+formant 1 145 110 100
+formant 2 150 100 100
+formant 3 140 90 100
+formant 4 130 80 90
+formant 5 120 70 90
+formant 6 110 60 90
+formant 7 105 55 90
+formant 8 100 50 90
+
+roughness 0
+voicing 85
+consonants 70 55

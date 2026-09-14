@@ -13,6 +13,7 @@
   <string name="variant_alex">Alex</string>
   <string name="variant_ali">Ali</string>
   <string name="variant_alicia">Alicia</string>
+  <string name="variant_alien">Alien</string>
   <string name="variant_andy">Andy</string>
   <string name="variant_andrea">Andrea</string>
   <string name="variant_anika">Anika</string>
@@ -22,10 +23,13 @@
   <string name="variant_antonio">Antonio</string>
   <string name="variant_anxious_andy">Anxious Andy</string>
   <string name="variant_aunty">Aunty</string>
+  <string name="variant_baby">Baby</string>
   <string name="variant_belinda">belinda</string>
   <string name="variant_benjamin">Benjamin</string>
   <string name="variant_boris">Boris</string>
   <string name="variant_caleb">Caleb</string>
+  <string name="variant_caveman">Caveman</string>
+  <string name="variant_chipmunk">Chipmunk</string>
   <string name="variant_david">David</string>
   <string name="variant_demonic">Demonic</string>
   <string name="variant_denis">Denis</string>
@@ -36,6 +40,7 @@
   <string name="variant_fast">Fast</string>
   <string name="variant_gene">Gene</string>
   <string name="variant_gene2">Gene 2</string>
+  <string name="variant_giant_monster">Giant Monster</string>
   <string name="variant_grandma">Grandma</string>
   <string name="variant_grandpa">Grandpa</string>
   <string name="variant_gustave">Gustave</string>
