@@ -74,6 +74,7 @@ public class TtsService extends TextToSpeechService {
     private volatile SpeechSynthesis mEngine;
     private SynthesisCallback mCallback;
     private final AtomicBoolean mCallbackDone = new AtomicBoolean(false);
+    private final java.util.concurrent.atomic.AtomicInteger mSegmentsRemaining = new java.util.concurrent.atomic.AtomicInteger(1);
 
     /** Text handed to eSpeak for the current request. */
     private String mSynthText;
@@ -530,6 +531,19 @@ public class TtsService extends TextToSpeechService {
         // switch into SSML parsing because of that.
         final boolean isSsml = text.startsWith("<speak");
 
+        if (!isSsml && settings.isUserDictionaryEnabled()) {
+            text = UserDictionaryManager.getInstance(storageContext).applyRules(text);
+        }
+
+        if (!isSsml && (text.length() == 1 || text.trim().length() == 1)) {
+            if (settings.isNatoSpellingEnabled()) {
+                text = expandNatoSpelling(text);
+            }
+            if (settings.isSpokenDiacriticsEnabled()) {
+                text = expandDevanagariDiacritic(text);
+            }
+        }
+
         if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
             text = expandProgrammingSymbols(text);
         }
@@ -632,7 +646,31 @@ public class TtsService extends TextToSpeechService {
         mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
         mEngine.Capitals.setValue(settings.getCapitals());
         mEngine.WordGap.setValue(settings.getWordGap());
-        mEngine.synthesize(text, isSsml);
+
+        boolean enableBilingual = settings.isBilingualSwitchingEnabled() && !isSsml;
+        List<ScriptSpan> spans = null;
+        Voice secondaryVoice = null;
+        if (enableBilingual) {
+            synchronized (mAvailableVoices) {
+                secondaryVoice = mAvailableVoices.get(settings.getSecondaryVoice());
+            }
+            if (secondaryVoice != null && !secondaryVoice.name.equals(voice.name)) {
+                spans = splitByScriptRuns(text);
+            }
+        }
+
+        if (spans != null && spans.size() > 1 && secondaryVoice != null) {
+            mSegmentsRemaining.set(spans.size());
+            for (ScriptSpan span : spans) {
+                Voice spanVoice = span.isLatin ? secondaryVoice : voice;
+                mEngine.setVoice(spanVoice, settings.getVoiceVariant());
+                mEngine.synthesize(span.text, false);
+            }
+        } else {
+            mSegmentsRemaining.set(1);
+            mEngine.setVoice(voice, settings.getVoiceVariant());
+            mEngine.synthesize(text, isSsml);
+        }
     }
 
     private static boolean containsPotentialEmoji(String text) {
@@ -734,9 +772,141 @@ public class TtsService extends TextToSpeechService {
         return text;
     }
 
+    public static String normalizeIndicDigits(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        final int len = text.length();
+        StringBuilder sb = null;
+        for (int i = 0; i < len; i++) {
+            char c = text.charAt(i);
+            char ascii = 0;
+            if (c >= 0x0966 && c <= 0x096F) ascii = (char) ('0' + (c - 0x0966)); // Devanagari ०-९
+            else if (c >= 0x0A66 && c <= 0x0A6F) ascii = (char) ('0' + (c - 0x0A66)); // Gurmukhi ੦-੯
+            else if (c >= 0x09E6 && c <= 0x09EF) ascii = (char) ('0' + (c - 0x09E6)); // Bengali ০-৯
+            else if (c >= 0x0AE6 && c <= 0x0AEF) ascii = (char) ('0' + (c - 0x0AE6)); // Gujarati ૦-૯
+            else if (c >= 0x0B66 && c <= 0x0B6F) ascii = (char) ('0' + (c - 0x0B66)); // Odia ୦-୯
+            else if (c >= 0x0BE6 && c <= 0x0BEF) ascii = (char) ('0' + (c - 0x0BE6)); // Tamil ௦-௯
+            else if (c >= 0x0C66 && c <= 0x0C6F) ascii = (char) ('0' + (c - 0x0C66)); // Telugu ౦-౯
+            else if (c >= 0x0CE6 && c <= 0x0CEF) ascii = (char) ('0' + (c - 0x0CE6)); // Kannada ೦-೯
+            else if (c >= 0x0D66 && c <= 0x0D6F) ascii = (char) ('0' + (c - 0x0D66)); // Malayalam ൦-൯
+
+            if (ascii != 0) {
+                if (sb == null) {
+                    sb = new StringBuilder(len);
+                    sb.append(text, 0, i);
+                }
+                sb.append(ascii);
+            } else if (sb != null) {
+                sb.append(c);
+            }
+        }
+        return sb != null ? sb.toString() : text;
+    }
+
+    private static final String[] NATO_PHONETICS = {
+            "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf",
+            "Hotel", "India", "Juliett", "Kilo", "Lima", "Mike", "November",
+            "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform",
+            "Victor", "Whiskey", "X-ray", "Yankee", "Zulu"
+    };
+
+    public static String expandNatoSpelling(String text) {
+        if (text == null) return text;
+        String trimmed = text.trim();
+        if (trimmed.length() == 1) {
+            char c = trimmed.charAt(0);
+            if (c >= 'a' && c <= 'z') {
+                return c + ", " + NATO_PHONETICS[c - 'a'];
+            } else if (c >= 'A' && c <= 'Z') {
+                return c + ", " + NATO_PHONETICS[c - 'A'];
+            }
+        }
+        return text;
+    }
+
+    public static String expandDevanagariDiacritic(String text) {
+        if (text == null) return text;
+        String trimmed = text.trim();
+        if (trimmed.length() == 1) {
+            char c = trimmed.charAt(0);
+            switch (c) {
+                case '\u093E': return "आ की मात्रा"; // ा
+                case '\u093F': return "इ की मात्रा"; // ि
+                case '\u0940': return "ई की मात्रा"; // ी
+                case '\u0941': return "उ की मात्रा"; // ु
+                case '\u0942': return "ऊ की मात्रा"; // ू
+                case '\u0943': return "ऋ की मात्रा"; // ृ
+                case '\u0947': return "ए की मात्रा"; // े
+                case '\u0948': return "ऐ की मात्रा"; // ै
+                case '\u094B': return "ओ की मात्रा"; // ो
+                case '\u094C': return "औ की मात्रा"; // ौ
+                case '\u0902': return "अनुस्वार"; // ं
+                case '\u0903': return "विसर्ग"; // ः
+                case '\u0901': return "चन्द्रबिन्दु"; // ँ
+                case '\u094D': return "हलन्त"; // ्
+                case '\u093C': return "नुक्ता"; // ़
+            }
+        }
+        return text;
+    }
+
+    public static class ScriptSpan {
+        public final String text;
+        public final boolean isLatin;
+
+        public ScriptSpan(String text, boolean isLatin) {
+            this.text = text;
+            this.isLatin = isLatin;
+        }
+    }
+
+    public static List<ScriptSpan> splitByScriptRuns(String text) {
+        List<ScriptSpan> spans = new ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            return spans;
+        }
+
+        final int len = text.length();
+        int spanStart = 0;
+        Boolean currentIsLatin = null;
+
+        for (int i = 0; i < len; ) {
+            int cp = text.codePointAt(i);
+            int charCount = Character.charCount(cp);
+
+            boolean isLatinChar = (cp >= 'A' && cp <= 'Z') || (cp >= 'a' && cp <= 'z');
+            boolean isIndicChar = (cp >= 0x0900 && cp <= 0x0D7F);
+
+            if (isLatinChar || isIndicChar) {
+                boolean charIsLatin = isLatinChar;
+                if (currentIsLatin == null) {
+                    currentIsLatin = charIsLatin;
+                } else if (currentIsLatin != charIsLatin) {
+                    String spanText = text.substring(spanStart, i);
+                    if (!spanText.trim().isEmpty()) {
+                        spans.add(new ScriptSpan(spanText, currentIsLatin));
+                        spanStart = i;
+                        currentIsLatin = charIsLatin;
+                    }
+                }
+            }
+            i += charCount;
+        }
+
+        if (spanStart < len) {
+            String remaining = text.substring(spanStart);
+            if (!remaining.isEmpty()) {
+                spans.add(new ScriptSpan(remaining, currentIsLatin != null ? currentIsLatin : false));
+            }
+        }
+
+        return spans;
+    }
+
     /**
      * Preprocesses Indian-specific textual nuances and common technical syntax before synthesis:
-     * 1. Expands multi-character programming and math symbols (NVDA symbols.dic style).
+     * 1. Normalizes native Indic numerals across 9 scripts to ASCII 0-9.
      * 2. Inserts spacing after Danda (।) and Double Danda (॥) if directly adjacent to text.
      * 3. Separates slash-concatenated banking tokens (UPI/423891028341/PAYTM -> UPI / 423891028341 / PAYTM).
      * 4. Normalizes currency prefixes (₹500, Rs. 500, INR 500 -> 500 rupees), stripping commas.
@@ -747,6 +917,7 @@ public class TtsService extends TextToSpeechService {
         if (text == null || text.isEmpty()) {
             return text;
         }
+        text = normalizeIndicDigits(text);
         text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
         java.util.regex.Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
         if (txnMatcher.find()) {
@@ -1015,8 +1186,10 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthDataComplete() {
-            if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
-                mCallback.done();
+            if (mSegmentsRemaining.decrementAndGet() <= 0) {
+                if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
+                    mCallback.done();
+                }
             }
         }
 

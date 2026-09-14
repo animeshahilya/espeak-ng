@@ -47,6 +47,9 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.reecedunn.espeak.preference.ImportVoicePreference;
@@ -817,6 +820,154 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
+    private static Preference createBilingualSwitchingPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_bilingual_switching);
+        pref.setSummary(R.string.setting_bilingual_switching_summary);
+        pref.setKey(VoiceSettings.PREF_BILINGUAL_SWITCHING);
+        pref.setDefaultValue(true);
+        pref.setPersistent(true);
+        return pref;
+    }
+
+    private static Preference createNatoSpellingPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_nato_spelling);
+        pref.setSummary(R.string.setting_nato_spelling_summary);
+        pref.setKey(VoiceSettings.PREF_NATO_SPELLING);
+        pref.setDefaultValue(false);
+        pref.setPersistent(true);
+        return pref;
+    }
+
+    private static Preference createSpokenDiacriticsPreference(Context context) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(R.string.setting_spoken_diacritics);
+        pref.setSummary(R.string.setting_spoken_diacritics_summary);
+        pref.setKey(VoiceSettings.PREF_SPOKEN_DIACRITICS);
+        pref.setDefaultValue(true);
+        pref.setPersistent(true);
+        return pref;
+    }
+
+    private static Preference createUserDictionaryPreference(final Context context) {
+        final Preference pref = new Preference(context);
+        pref.setTitle(R.string.setting_user_dictionary);
+        pref.setSummary(R.string.setting_user_dictionary_summary);
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                showUserDictionaryDialog(context);
+                return true;
+            }
+        });
+        return pref;
+    }
+
+    private static void showUserDictionaryDialog(final Context context) {
+        final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
+        final List<UserDictionary> rules = mgr.getRules();
+
+        final String[] items = new String[rules.size()];
+        for (int i = 0; i < rules.size(); i++) {
+            UserDictionary r = rules.get(i);
+            items[i] = (i + 1) + ". \"" + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
+                    + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""));
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.setting_user_dictionary) + " (" + rules.size() + ")");
+        if (rules.isEmpty()) {
+            builder.setMessage("No custom rules configured. Tap Add Rule to create pronunciation replacements (e.g. AIIMS \u2192 All India Institute of Medical Sciences).");
+        } else {
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, final int which) {
+                    new AlertDialog.Builder(context)
+                            .setTitle("Delete rule?")
+                            .setMessage(items[which])
+                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface d, int w) {
+                                    mgr.removeRule(which);
+                                    showUserDictionaryDialog(context);
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .show();
+                }
+            });
+        }
+
+        builder.setPositiveButton("Add rule", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showAddRuleDialog(context);
+            }
+        });
+
+        if (!rules.isEmpty()) {
+            builder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mgr.clearRules();
+                    showUserDictionaryDialog(context);
+                }
+            });
+        }
+
+        builder.setNegativeButton("Close", null);
+        builder.show();
+    }
+
+    private static void showAddRuleDialog(final Context context) {
+        final LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(40, 20, 40, 20);
+
+        final EditText etPattern = new EditText(context);
+        etPattern.setHint("Original word / pattern (e.g. AIIMS)");
+        layout.addView(etPattern);
+
+        final EditText etReplacement = new EditText(context);
+        etReplacement.setHint("Spoken replacement (e.g. All India Institute of Medical Sciences)");
+        layout.addView(etReplacement);
+
+        final CheckBox cbWholeWord = new CheckBox(context);
+        cbWholeWord.setText("Whole word only");
+        cbWholeWord.setChecked(true);
+        layout.addView(cbWholeWord);
+
+        final CheckBox cbCaseSensitive = new CheckBox(context);
+        cbCaseSensitive.setText("Case sensitive");
+        cbCaseSensitive.setChecked(false);
+        layout.addView(cbCaseSensitive);
+
+        new AlertDialog.Builder(context)
+                .setTitle("Add pronunciation rule")
+                .setView(layout)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String pattern = etPattern.getText().toString().trim();
+                        String replacement = etReplacement.getText().toString().trim();
+                        if (!pattern.isEmpty()) {
+                            UserDictionary rule = new UserDictionary(
+                                    pattern,
+                                    replacement,
+                                    cbCaseSensitive.isChecked(),
+                                    false,
+                                    cbWholeWord.isChecked()
+                            );
+                            UserDictionaryManager.getInstance(context).addRule(rule);
+                            showUserDictionaryDialog(context);
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
     private static Preference createTestVoicePreference(final Context context) {
         final Preference pref = new Preference(context);
         pref.setTitle(R.string.test_voice_title);
@@ -863,6 +1014,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
             langCategory.addPreference(createImportVoicePreference(context));
         }
         langCategory.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
+        if (!isWatch) {
+            langCategory.addPreference(createBilingualSwitchingPreference(context));
+        }
 
         // 2. Voice parameters (OG interface: dedicated, accessible seekbars with live formatted summary)
         PreferenceCategory paramCategory = new PreferenceCategory(context);
@@ -891,6 +1045,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         processCategory.addPreference(createSpeakDigitsPreference(context));
         processCategory.addPreference(createUnicodeNormalizationPreference(context));
         if (!isWatch) {
+            processCategory.addPreference(createUserDictionaryPreference(context));
+            processCategory.addPreference(createNatoSpellingPreference(context));
+            processCategory.addPreference(createSpokenDiacriticsPreference(context));
             processCategory.addPreference(createEmojiProcessingPreference(context));
         }
 

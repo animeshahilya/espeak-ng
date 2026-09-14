@@ -130,6 +130,15 @@
   <string name="setting_programming_symbols_summary">Announce code and math symbols (!=, ==, &lt;=, &gt;=, =&gt;, -&gt;, &amp;&amp;, ||) as words</string>
   <string name="setting_smart_codes">Smart OTP and PIN code reading</string>
   <string name="setting_smart_codes_summary">Automatically read verification codes, OTPs, and security PINs digit by digit</string>
+  <string name="setting_bilingual_switching">Bilingual script switching</string>
+  <string name="setting_bilingual_switching_summary">Pronounce English words in Indic sentences with authentic English phonetics</string>
+  <string name="setting_user_dictionary">User dictionary</string>
+  <string name="setting_user_dictionary_summary">Add custom word pronunciation and acronym expansion rules (NVDA compatible)</string>
+  <string name="setting_nato_spelling">NATO phonetic spelling</string>
+  <string name="setting_nato_spelling_summary">Speak NATO phonetics (Alpha, Bravo...) during single character navigation</string>
+  <string name="setting_spoken_diacritics">Devanagari matras in exploration</string>
+  <string name="setting_spoken_diacritics_summary">Announce matra and diacritic names (Aa ki matra, Halant, Anusvara) when exploring character-by-character</string>
+  <string name="quick_settings_rate_boost">TTS 3x Boost</string>
   <string name="test_voice_title">Preview voice sample</string>
   <string name="test_voice_summary">Listen to a sample utterance testing current voice, pitch, speed, and formatting</string>
   <string name="test_voice_sample">This is a sample of eSpeak NG. ₹1,00,000 payment to UPI/423891028341/PAYTM. A != B.</string>

@@ -46,6 +46,11 @@ public class VoiceSettings {
     public static final String PREF_INDIAN_NUMBERING = "espeak_indian_numbering";
     public static final String PREF_SPEAK_PROGRAMMING_SYMBOLS = "espeak_speak_programming_symbols";
     public static final String PREF_SMART_CODES = "espeak_smart_codes";
+    public static final String PREF_USER_DICTIONARY = "espeak_user_dictionary";
+    public static final String PREF_BILINGUAL_SWITCHING = "espeak_bilingual_switching";
+    public static final String PREF_SECONDARY_VOICE = "espeak_secondary_voice";
+    public static final String PREF_NATO_SPELLING = "espeak_nato_spelling";
+    public static final String PREF_SPOKEN_DIACRITICS = "espeak_spoken_diacritics";
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
@@ -251,5 +256,25 @@ public class VoiceSettings {
 
     public boolean isSmartCodesEnabled() {
         return mPreferences.getBoolean(PREF_SMART_CODES, true);
+    }
+
+    public boolean isUserDictionaryEnabled() {
+        return mPreferences.getBoolean(PREF_USER_DICTIONARY, true);
+    }
+
+    public boolean isBilingualSwitchingEnabled() {
+        return mPreferences.getBoolean(PREF_BILINGUAL_SWITCHING, true);
+    }
+
+    public String getSecondaryVoice() {
+        return mPreferences.getString(PREF_SECONDARY_VOICE, "en-in");
+    }
+
+    public boolean isNatoSpellingEnabled() {
+        return mPreferences.getBoolean(PREF_NATO_SPELLING, false);
+    }
+
+    public boolean isSpokenDiacriticsEnabled() {
+        return mPreferences.getBoolean(PREF_SPOKEN_DIACRITICS, true);
     }
 }
