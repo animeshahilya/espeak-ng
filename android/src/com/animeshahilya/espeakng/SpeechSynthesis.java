@@ -44,10 +44,16 @@ import java.util.Set;
 public class SpeechSynthesis {
     private static final String TAG = SpeechSynthesis.class.getSimpleName();
 
-    // Obscure or redundant English variants filtered from the UI to show genuinely distinct voices only:
+    // Obscure/redundant variants, alternate-script transliteration modes (not a distinct spoken
+    // accent - the same category as English's own Shavian-alphabet entry below), and internal
+    // test-only voices, filtered from the UI to show genuinely distinct, real languages only.
+    // Both original-case and lowercased forms are listed since the native voice name's case isn't
+    // guaranteed consistent with the lang file's own filename casing.
     public static final Set<String> REDUNDANT_VOICE_NAMES = new HashSet<String>(Arrays.asList(
             "en-029", "en-GB-x-gbclan", "en-GB-x-gbcwmd", "en-GB-x-rp", "en-Shaw", "en-US-nyc",
-            "en-gb-x-gbclan", "en-gb-x-gbcwmd", "en-gb-x-rp", "en-shaw", "en-us-nyc", "en-sg"
+            "en-gb-x-gbclan", "en-gb-x-gbcwmd", "en-gb-x-rp", "en-shaw", "en-us-nyc", "en-sg",
+            "fa-Latn", "fa-latn", "cmn-Latn-pinyin", "cmn-latn-pinyin",
+            "yue-Latn-jyutping", "yue-latn-jyutping", "xex"
     ));
 
     public static final int GENDER_UNSPECIFIED = 0;

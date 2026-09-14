@@ -1,4 +1,4 @@
-name Cherokee //https://github.com/espeak-ng/espeak-ng/blob/master/docs/voices.md
+name Cherokee
 language chr-US-Qaaa-x-west 5
 
 maintainer Michael Conrad <m.conrad.202@gmail.com>

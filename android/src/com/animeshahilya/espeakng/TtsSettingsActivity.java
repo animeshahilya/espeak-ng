@@ -519,20 +519,22 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return (displayName == null || displayName.isEmpty()) ? voice.toString() : displayName;
     }
 
+    /**
+     * A clean, human-readable name only - e.g. "English (India)", "Vietnamese (Central)".
+     * Earlier this prefixed the voice's raw internal code ("en-in  2 - English (India)",
+     * "vi-vn-x-central - Vietnamese (Central)"), which is meaningless to anyone but a developer
+     * and doubly so for dialect variants using BCP-47 private-use subtags. The lang files'
+     * own `name` field already carries the useful distinction (region/dialect in parentheses),
+     * so showing it alone is both cleaner and sufficient.
+     */
     private static String getVoiceLabel(Voice voice) {
-        String name = voice.name; // eSpeak voice id (from engine data)
         LangInfo info = lookupLangInfo(voice);
-        if (info != null) {
-            return info.language + " - " + info.displayName;
-        }
-        return name + " - " + name;
+        return info != null ? info.displayName : voice.name;
     }
 
     private static class LangInfo {
-        final String language;
         final String displayName;
-        LangInfo(String language, String displayName) {
-            this.language = language;
+        LangInfo(String displayName) {
             this.displayName = displayName;
         }
     }
@@ -581,22 +583,17 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
     private static LangInfo parseLangFile(File file) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
-            String language = null;
             String name = null;
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-                if (line.startsWith("language")) {
-                    language = line.substring("language".length()).trim();
-                } else if (line.startsWith("name")) {
+                if (line.startsWith("name")) {
                     name = line.substring("name".length()).trim();
+                    break;
                 }
-                if (language != null && name != null) break;
             }
-            if (language == null && name == null) return null;
-            if (language == null) language = file.getName();
-            if (name == null) name = file.getName();
-            return new LangInfo(language, name);
+            if (name == null) return null;
+            return new LangInfo(name);
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, "Failed parsing lang file " + file.getName() + ": " + e.getMessage());
