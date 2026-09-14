@@ -782,28 +782,25 @@ public class TtsSettingsActivity extends PreferenceActivity {
             group.addPreference(createSupportedLanguagesPreference(context, voices));
             group.addPreference(createLanguagePackPreference(context));
             group.addPreference(createImportVoicePreference(context));
-            group.addPreference(createEmojiProcessingPreference(context));
-            group.addPreference(createRateBoostPreference(context));
         }
         group.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
+
+        // Voice parameters (OG interface: dedicated, accessible seekbar per parameter with live formatted summary)
+        group.addPreference(createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate));
+        if (!isWatch) {
+            group.addPreference(createRateBoostPreference(context));
+        }
+        group.addPreference(createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
+        group.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
+        group.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
+        group.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
+
         group.addPreference(createCapitalsPreference(context));
         group.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));
-        group.addPreference(createUnicodeNormalizationPreference(context));
         group.addPreference(createSpeakDigitsPreference(context));
-
-        if (isWatch) {
-            // One parameter per dialog on Wear. The rotating crown only
-            // delivers scroll events to the focused view and the watch has no
-            // way to move focus between sliders, so a combined dialog would
-            // leave every slider but one unreachable by the crown.
-            group.addPreference(createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate));
-            group.addPreference(createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
-            group.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
-            group.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
-            group.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
-        } else {
-            group.addPreference(createVoiceParamsPreference(context, engine, R.string.espeak_voice_settings));
-            group.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
+        group.addPreference(createUnicodeNormalizationPreference(context));
+        if (!isWatch) {
+            group.addPreference(createEmojiProcessingPreference(context));
         }
     }
 
