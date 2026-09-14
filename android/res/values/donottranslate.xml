@@ -4,7 +4,7 @@
         Source: App icon label.
         Description: The name of the application.
     -->
-  <string name="app_name" translatable="false">eSpeak</string>
+  <string name="app_name" translatable="false">eSpeak NG Advanced</string>
 
   <!-- Voice Variants that are people's names. -->
   <string name="variant_klatt">Klatt</string>

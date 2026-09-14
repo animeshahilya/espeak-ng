@@ -19,9 +19,11 @@ Output APKs land in `build/outputs/apk/debug/` and `build/outputs/apk/release/`.
 
 ## Build Configuration
 
-- compileSdk 37, minSdk 34 (Android 14+), targetSdk 37
+- Package/namespace `com.animeshahilya.espeakng`; app label "eSpeak NG Advanced" (`R.string.app_name`, translatable="false" - single source, no per-locale override)
+- compileSdk 37, minSdk 26 (Android 8.0+), targetSdk 37
 - NDK 29.0.14206865, CMake 3.22.1
 - JDK 17 (Temurin) in CI
+- `gradle.properties` enables Gradle's build cache and a larger daemon heap - build-time only, no effect on the shipped app; the native CMake build and the ~30MB multi-language data archive make clean builds slow enough for this to matter locally and in CI
 
 The Gradle build has custom tasks that run automatically:
 1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/` (all ~120 languages)
@@ -59,7 +61,7 @@ Debug/Release variant).
 back to an unsigned APK rather than failing. This app deliberately does **not**
 enable R8/minification on the release build type: `SpeechSynthesis`'s native
 methods are matched against exact unmangled Java method names by
-`jni/jni/eSpeakService.c` (`Java_com_reecedunn_espeak_SpeechSynthesis_*`), and
+`jni/jni/eSpeakService.c` (`Java_com_animeshahilya_espeakng_SpeechSynthesis_*`), and
 an unguarded minify pass could rename them and silently break every JNI call
 in the release build. Don't turn on `minifyEnabled` without adding a `-keep`
 rule for that class first, and verifying on a real device.
@@ -78,7 +80,7 @@ Android TTS Framework
    libespeak-ng (../../src/libespeak-ng/)
 ```
 
-### Key Classes (`src/com/reecedunn/espeak/`)
+### Key Classes (`src/com/animeshahilya/espeakng/`)
 
 - **EspeakApp** — `Application` subclass; owns the device-protected storage context, the one-time migration of pre-2022 preferences into it, and the Wear launcher alias state (see below)
 - **TtsService** — Android TTS engine service; handles `onSynthesizeText()`, voice selection, parameter setup. Also registers a receiver for `DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED` and reloads the engine's voice list on receipt, so a voice imported through `TtsSettingsActivity` becomes selectable without restarting the process. Also does text preprocessing before handing text to the native engine: `spaceSeparateDigits()` (the "Read numbers digit by digit" setting), `spaceSeparateSmartCodes()` (context-gated OTP/PIN/verification-code digit-by-digit reading plus ₹ → "rupees" expansion - gated on a nearby keyword like "otp"/"pin"/"code" so it doesn't misread ordinary numbers, e.g. a bare rupee amount), and `clarifyEmojiAnnouncements()` (sets emoji descriptions off with a light pause - "I'm happy, grinning face, today" - so they read as an aside rather than plain sentence text; only applies when the "Emoji processing" setting is Announce, not Ignore).
@@ -152,7 +154,7 @@ notes, not user-facing branding.
 
 ```
 android/
-├── src/com/reecedunn/espeak/   # Java sources (15 classes)
+├── src/com/animeshahilya/espeakng/   # Java sources (15 classes)
 │   └── preference/             # Custom preference widgets (5 classes)
 ├── jni/
 │   ├── CMakeLists.txt          # Native build (links espeak-ng + JNI, builds libsonic)
@@ -166,14 +168,14 @@ android/
 
 ## Testing
 
-Tests are in `eSpeakTests/src/com/reecedunn/espeak/test/` — 78 instrumentation tests covering voice enumeration, settings, variant parsing, variant-catalog/data consistency (`VoiceVariantCatalogTest` checks `VoiceVariantPreference`'s hardcoded picker against the actual shipped `voices/!v/` files - see upstream #2376), locale translation (`testJavaToIanaCountryCode`), and synthesis. The test suite is adapted to test the bundled core APK directly while respecting the core/extra language split. They require a connected device or emulator (`./gradlew connectedAndroidTest`).
+Tests are in `eSpeakTests/src/com/animeshahilya/espeakng/test/` — 78 instrumentation tests covering voice enumeration, settings, variant parsing, variant-catalog/data consistency (`VoiceVariantCatalogTest` checks `VoiceVariantPreference`'s hardcoded picker against the actual shipped `voices/!v/` files - see upstream #2376), locale translation (`testJavaToIanaCountryCode`), and synthesis. The test suite is adapted to test the bundled core APK directly while respecting the core/extra language split. They require a connected device or emulator (`./gradlew connectedAndroidTest`).
 
 ## Common Workflows
 
 ### Modifying JNI bindings
 
 1. Add/change native method declaration in `SpeechSynthesis.java`
-2. Implement in `jni/jni/eSpeakService.c` (function name follows JNI convention: `Java_com_reecedunn_espeak_SpeechSynthesis_<methodName>`)
+2. Implement in `jni/jni/eSpeakService.c` (function name follows JNI convention: `Java_com_animeshahilya_espeakng_SpeechSynthesis_<methodName>`)
 3. `./gradlew assembleDebug` rebuilds native libs automatically
 
 ### Updating voice data
@@ -187,7 +189,8 @@ Voice data comes from the parent project's `dictsource/` and `phsource/`. The Gr
 3. Wire it through `TtsService.onSynthesizeText()` to the appropriate `SpeechSynthesis` parameter
 
 Settings and data paths strictly live in device-protected storage so that `TtsService` can read them
-before the device is unlocked (Android 14+ Direct-Boot invariant). Key invariants:
+before the device is unlocked (Direct-Boot invariant, available since Android 7.0/API 24 - this
+app's minSdk 26 floor is comfortably above it). Key invariants:
 - `PrefsEspeakFragment` switches its `PreferenceManager` to device-protected storage.
 - All helpers (`CheckVoiceData.getDataPath()`, `TtsSettingsActivity`) consistently resolve through `EspeakApp.getStorageContext()`.
 - Never call `PreferenceManager.getDefaultSharedPreferences()` on a plain `Context`: the

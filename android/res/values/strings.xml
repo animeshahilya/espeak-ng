@@ -109,9 +109,9 @@
   <string name="category_voice_parameters">Voice parameters</string>
   <string name="category_speech_processing">Text and speech processing</string>
   <string name="category_about">About</string>
-  <string name="about_title">About eSpeak NG</string>
+  <string name="about_title">About eSpeak NG Advanced</string>
   <string name="about_summary">Version and credits</string>
-  <string name="about_body">eSpeak NG for Android\nVersion %1$s\n\nDeveloped and built by Animesh Ahilya.\n\nBased on eSpeak NG, an open-source formant speech synthesizer, with additional fixes and features drawn from NVDA\'s speech engine.\n\nLicensed under the GNU GPL v3 or later.</string>
+  <string name="about_body">eSpeak NG Advanced\nVersion %1$s\n\nDeveloped and built by Animesh Ahilya.\n\nBased on eSpeak NG, an open-source formant speech synthesizer, extended with substantially more features - Indian English and Indic language support, Direct-Boot offline reliability, and pronunciation/symbol-reading fixes drawn from NVDA\'s speech engine.\n\nLicensed under the GNU GPL v3 or later.</string>
 
   <!-- Feature Settings -->
   <string name="setting_indian_numbering">Indian number and currency formatting</string>

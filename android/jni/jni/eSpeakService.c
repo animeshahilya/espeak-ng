@@ -186,7 +186,7 @@ JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 }
 
 JNIEXPORT jboolean
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeClassInit(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeClassInit(
     JNIEnv* env, jclass clazz) {
   if (DEBUG) LOGV("%s", __FUNCTION__);
   METHOD_nativeSynthCallback = (*env)->GetMethodID(env, clazz, "nativeSynthCallback", "([B)V");
@@ -198,7 +198,7 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeClassInit(
 static int s_sampleRate = 0;
 
 JNIEXPORT jint
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeCreate(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeCreate(
     JNIEnv *env, jobject object, jstring path) {
   if (DEBUG) LOGV("%s [env=%p, object=%p]", __FUNCTION__, env, object);
 
@@ -218,7 +218,7 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeCreate(
 }
 
 JNIEXPORT jobjectArray
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeGetAvailableVoices(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeGetAvailableVoices(
     JNIEnv *env, jobject object) {
   if (DEBUG) LOGV("%s", __FUNCTION__);
 
@@ -262,7 +262,7 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeGetAvailableVoices(
 }
 
 JNIEXPORT jboolean
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSetVoiceByName(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetVoiceByName(
     JNIEnv *env, jobject object, jstring name) {
   const char *c_name = name ? (*env)->GetStringUTFChars(env, name, NULL) : NULL;
 
@@ -283,7 +283,7 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSetVoiceByName(
 }
 
 JNIEXPORT jboolean
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSetVoiceByProperties(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetVoiceByProperties(
     JNIEnv *env, jobject object, jstring language, jint gender, jint age) {
   const char *c_language = language ? (*env)->GetStringUTFChars(env, language, NULL) : NULL;
 
@@ -310,7 +310,7 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSetVoiceByProperties(
 }
 
 JNIEXPORT jboolean
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSetParameter(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetParameter(
     JNIEnv *env, jobject object, jint parameter, jint value) {
   if (DEBUG) LOGV("%s(parameter=%d, value=%d)", __FUNCTION__, parameter, value);
   const espeak_ERROR result = espeak_SetParameter((espeak_PARAMETER)parameter, (int)value, 0);
@@ -326,14 +326,14 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSetParameter(
 }
 
 JNIEXPORT jint
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeGetParameter(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeGetParameter(
     JNIEnv *env, jobject object, jint parameter, jint current) {
   if (DEBUG) LOGV("%s(parameter=%d, pitch=%d)", __FUNCTION__, parameter, current);
   return espeak_GetParameter((espeak_PARAMETER)parameter, (int)current);
 }
 
 JNIEXPORT jboolean
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSetPunctuationCharacters(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetPunctuationCharacters(
     JNIEnv *env, jobject object, jstring characters) {
   if (DEBUG) LOGV("%s)", __FUNCTION__);
 
@@ -351,7 +351,7 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSetPunctuationCharacters
 }
 
 JNIEXPORT jboolean
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSynthesize(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
     JNIEnv *env, jobject object, jstring text, jboolean isSsml) {
   if (DEBUG) LOGV("%s", __FUNCTION__);
   const char *c_text = text ? (*env)->GetStringUTFChars(env, text, NULL) : NULL;
@@ -383,7 +383,7 @@ JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeSynthesize(
 }
 
 JNIEXPORT jboolean
-JNICALL Java_com_reecedunn_espeak_SpeechSynthesis_nativeStop(
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeStop(
     JNIEnv *env, jobject object) {
   if (DEBUG) LOGV("%s", __FUNCTION__);
   atomic_store(&stop_requested, 1);

@@ -56,14 +56,14 @@ dependencies {
 android {
     compileSdk = 37
     ndkVersion = "29.0.14206865"
-    namespace = "com.reecedunn.espeak"
+    namespace = "com.animeshahilya.espeakng"
 
     buildFeatures {
         buildConfig = true
     }
 
     defaultConfig {
-        minSdk = 34
+        minSdk = 26
         targetSdk = 37
         versionCode = 24
         versionName = "1.53.1"
