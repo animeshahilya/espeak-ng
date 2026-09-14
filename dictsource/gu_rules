@@ -203,180 +203,223 @@ C)        ૣ          l-:
 
 .group ક
         ક          kV
+        ક (_       k
         ક (B       k
         ક (્ય      k:
         ક઼         qV
+        ક઼ (_      q
         ક઼ (B      q
 
         ક્ક         k:V   // kk -> k:
+        ક્ક (_      k:
         ક્ક (B      k:
         ક્ષ          kSV
+        ક્ષ (_       kS
         ક્ષ (B       kS
         
 .group ખ
         ખ          k#V
+        ખ (_       k#
         ખ (B       k#
         ખ઼         xV
+        ખ઼ (_      x
         ખ઼ (B      x
 
 .group ગ
         ગ          gV
+        ગ (_       g
         ગ (B       g
         ગ઼         QV
+        ગ઼ (_      Q
         ગ઼ (B      Q
 
         ગ્ગ         g:V   // GG -> g:
+        ગ્ગ (_      g:
         ગ્ગ (B      g:
 
 .group ઘ
         ઘ          g#V
+        ઘ (_       g#
         ઘ (B       g#
 
 .group ઙ
         ઙ          NV
+        ઙ (_       N
         ઙ (B       N
      ્) ઙ (_       N@
 
 .group ચ
         ચ          cV
+        ચ (_       c
         ચ (B       c
         ચ (્ય      c:
 
         ચ્ચ          c:V   // cc -> c:
+        ચ્ચ (_       c:
         ચ્ચ (B       c:
 
-
         ચ્છ          c#:V    // c#c# -> c#:
+        ચ્છ (_       c#:
         ચ્છ (B       c#:
 
-       
 .group છ
         છ          c#V
+        છ (_       c#
         છ (B       c#
 
 .group જ
         જ          JV
+        જ (_       J
         જ (B       J
         જ઼         zV
+        જ઼ (_      z
         જ઼ (B      z
 
         જ્જ         J:V   // JJ -> J:
+        જ્જ (_      J:
         જ્જ (B      J:
 
         જ્ઞ          gn.V
+        જ્ઞ (_       gn.
         જ્ઞ (B       gn.
 
 .group ઝ  // According to chart this is jha ( ઝ 0A9D)but it is told that it looks like za ( જ઼ 0A9C + 0ABC) 
         ઝ          zV
+        ઝ (_       z
         ઝ (B       z
 
 .group ઞ
         ઞ          n^V
+        ઞ (_       n^
         ઞ (B       n^
      ્) ઞ (_       n^
 
 .group ટ
         ટ          t.V
+        ટ (_       t.
         ટ (B       t.
         ટ (્ય      t.:
 
         ટ્ટ          t.:V    // t.t. -> t.:
+        ટ્ટ (_       t.:
         ટ્ટ (B       t.:
 
         ટ્ઠ          t.#:V    // t.t.# -> t.#:
+        ટ્ઠ (_       t.#:
         ટ્ઠ (B       t.#:
 
 .group ઠ
         ઠ          t.#V
+        ઠ (_       t.#
         ઠ (B       t.#
-
 
 .group ડ
         ડ          d.V
+        ડ (_       d.
         ડ (B       d.
 
         ડ્ડ         d.:V   // d. d. -> d.:
+        ડ્ડ (_      d.:
         ડ્ડ (B      d.:
 
         ડ્ઢ          d.#:V    // d#d# -> d#:
+        ડ્ઢ (_       d.#:
         ડ્ઢ (B       d.#:
 
         ડ઼         r.V
+        ડ઼ (_      r.
         ડ઼ (B      r.
 
 .group ઢ
         ઢ          d.#V
+        ઢ (_       d.#
         ઢ (B       d.#
 
         ઢ઼         r.hV      // nukta  (should retroflex flap)
+        ઢ઼ (_      r.h
         ઢ઼ (B      r.h       // nukta
 
 .group ણ
         ણ          n.V      
+        ણ (_       n.
         ણ (B       n.
      ્) ણ (_       n.@
 
 .group ત
         ત          tV
+        ત (_       t
         ત (B       t
-        ત (્ય      t:
+        ત (्य      t:
 
         ત્ત          t:V   // tt -> t:
+        ત્ત (_       t:
         ત્ત (B       t:
 
         ત્થ          t#:V    // t#:t#: -> t#:
+        ત્થ (_       t#:
         ત્થ (B       t#:
-
 
 .group થ
         થ          t#V
+        થ (_       t#
         થ (B       t#
-
 
 .group દ
         દ          dV
+        દ (_       d
         દ (B       d
 
         દ્દ         d:V   // dd -> d:
+        દ્દ (_      d:
         દ્દ (B      d:
 
         દ્ધ          d#:V    // d#d# -> d#:
+        દ્ધ (_       d#:
         દ્ધ (B       d#:
 
 .group ધ
         ધ          d#V
+        ધ (_       d#
         ધ (B       d#
 
 .group ન
         ન          nV
+        ન (_       n
         ન (B       n
      ્) ન (_       n@
     ર્) ન (_       n         // r +virama
 
 .group પ
         પ          pV
+        પ (_       p
         પ (B       p
         પ (્ય      p:
 
         પ્પ         p:V      // pp -> p:
+        પ્પ (_      p:
         પ્પ (B      p:
 
 .group ફ
         ફ          p#V
+        ફ (_       p#
         ફ (B       p#
         ફ઼         fV
+        ફ઼ (_      f
         ફ઼ (B      f
 
 .group બ
         બ          bV
+        બ (_       b
         બ (B       b
 
 .group ભ
         ભ          b#V
+        ભ (_       b#
         ભ (B       b#
 
 .group મ
         મ          mV
+        મ (_       m
         મ (B       m
      ્) મ (_       m@
     ર્) મ (_       m         // r +virama
@@ -384,9 +427,10 @@ C)        ૣ          l-:
 
 .group ય
         ય          j@
+        ય (_       j
         ય (B       j
      ્) ય (_       j@
-     C) ય (_       Ej     // [Ej] not [@j]
+      C) ય (_       Ej     // [Ej] not [@j]
 
 .group ર
         ર          rV
@@ -394,41 +438,45 @@ C)        ૣ          l-:
         ર (_       r
      ્) ર (_       r@
 
-
 .group લ
         લ          lV
+        લ (_       l
         લ (B       l
      ્) લ (_       l@
 
 .group ળ    // According to chart this is lla ( ળ 0AB3)but it is told that it looks like adda ( ડ઼ 0AA1 + 0ABC) 
         ળ          r.V
+        ળ (_       r.
         ળ (B       r.
      ્) ળ (_       r.@
 
 .group વ
         વ          vV
+        વ (_       v
         વ (B       v
      _) વ          wV
      _) વ (B       w
      _) વ (્       v         // +virma
 
-
 .group શ
         શ          SV
+        શ (_       S
         શ (B       S
 
 .group ષ
         ષ          s.V
+        ષ (_       s.
         ષ (B       s. 
 
 .group સ
         સ          sV
+        સ (_       s
         સ (B       s
 
 .group હ
         હ          HV
+        હ (_       H
         હ (B       H
-
 
 .group ઼
      ઼                   // nukta,  modifies a consonant
@@ -440,32 +488,50 @@ C)        ૣ          l-:
         ઁ          n         // candrabindu
 
 .group ં
-        ં          n         // anusvara
+        ં          n         // anusvara default
+
+        // Labials -> m
         ં (પ       m
         ં (ફ       m
         ં (બ       m
         ં (ભ       m
         ં (મ       m
+        ં (ફ઼      m
 
+        // Retroflex -> n.
         ં (ટ       n.
         ં (ઠ       n.
         ં (ડ       n.
         ં (ઢ       n.
         ં (ણ       n.
+        ં (ડ઼      n.
+        ં (ઢ઼      n.
 
+        // Palatals -> n^
         ં (ચ       n^
         ં (છ       n^
         ં (જ       n^
         ં (ઝ       n^
         ં (ઞ       n^
         ં (ય       n^
+        ં (જ઼      n^
 
+        // Velars -> N
         ં (ક       N
         ં (ખ       N
         ં (ગ       N
         ં (ઘ       N
         ં (ઙ       N
-       
+        ં (ક઼      N
+        ં (ખ઼      N
+        ં (ગ઼      N
+
+        // Dentals -> n
+        ં (ત       n
+        ં (થ       n
+        ં (દ       n
+        ં (ધ       n
+        ં (ન       n
 
 .group ઃ
         ઃ          H         //  visarga
@@ -474,23 +540,32 @@ C)        ૣ          l-:
 ્	k#'o:d.
 C)	્ 
 
-
 // Extra consonants
 
 .group ક઼   // qa
         ક઼          qV
+        ક઼ (_       q
+        ક઼ (B       q
 
 .group ખ઼   // khha
         ખ઼          xV
+        ખ઼ (_       x
+        ખ઼ (B       x
 
 .group ગ઼    // ghha
         ગ઼          QV
+        ગ઼ (_       Q
+        ગ઼ (B       Q
 
 .group જ઼    // za
         જ઼          zV
+        જ઼ (_       z
+        જ઼ (B       z
 
 .group ફ઼    // fa
         ફ઼          fV
+        ફ઼ (_       f
+        ફ઼ (B       f
 
 .group ૠ    // rr
         ૠ          V-rr

@@ -530,6 +530,10 @@ public class TtsService extends TextToSpeechService {
         // switch into SSML parsing because of that.
         final boolean isSsml = text.startsWith("<speak");
 
+        if (!isSsml) {
+            text = preprocessIndianText(text);
+        }
+
         final boolean speakDigits = settings.isSpeakDigitsEnabled() && !isSsml;
         if (speakDigits) {
             text = spaceSeparateDigits(text);
@@ -542,6 +546,9 @@ public class TtsService extends TextToSpeechService {
             normalization = UnicodeNormalization.normalize(text);
             if (normalization != null) {
                 text = normalization.text;
+                if (!isSsml) {
+                    text = preprocessIndianText(text);
+                }
                 if (speakDigits) {
                     text = spaceSeparateDigits(text);
                     normalization = null;
@@ -659,7 +666,45 @@ public class TtsService extends TextToSpeechService {
     }
 
     private static final java.util.regex.Pattern SMART_CODE_KEYWORD =
-            java.util.regex.Pattern.compile("(?i)\\b(otp|pin|code|passcode|password|secret|verification|security|token|login|id)\\b");
+            java.util.regex.Pattern.compile("(?i)\\b(otp|pin|code|passcode|password|secret|verification|security|token|login|id|txn|ref|vpa|cvv)\\b");
+
+    private static final java.util.regex.Pattern DANDA_BOUNDARY =
+            java.util.regex.Pattern.compile("([।॥])([^\\s])");
+
+    private static final java.util.regex.Pattern BANKING_SLASH_TXN =
+            java.util.regex.Pattern.compile("(?i)\\b(UPI|TXN|REF|IMPS|NEFT|RTGS)/([A-Za-z0-9/]+)");
+
+    private static final java.util.regex.Pattern CURRENCY_PREFIX =
+            java.util.regex.Pattern.compile("(?:₹|(?i)\\b(?:Rs\\.?|INR)\\s*)(\\d+(?:[.,]\\d+)?)");
+
+    private static final java.util.regex.Pattern SHORTHAND_THOUSAND =
+            java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*k\\b");
+
+    private static final java.util.regex.Pattern SHORTHAND_LAKH =
+            java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:l|lac|lakh|lakhs)\\b");
+
+    private static final java.util.regex.Pattern SHORTHAND_CRORE =
+            java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:cr|crore|crores)\\b");
+
+    /**
+     * Preprocesses Indian-specific textual nuances before synthesis:
+     * 1. Inserts spacing after Danda (।) and Double Danda (॥) if directly adjacent to text.
+     * 2. Separates slash-concatenated banking tokens (UPI/423891028341/PAYTM -> UPI / 423891028341 / PAYTM).
+     * 3. Normalizes currency prefixes (₹500, Rs. 500, INR 500 -> 500 rupees).
+     * 4. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
+     */
+    static String preprocessIndianText(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
+        text = BANKING_SLASH_TXN.matcher(text).replaceAll("$1 / $2");
+        text = CURRENCY_PREFIX.matcher(text).replaceAll("$1 rupees");
+        text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
+        text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");
+        text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 crore");
+        return text;
+    }
 
     private static boolean containsSmartCodeKeyword(String context) {
         if (context == null || context.isEmpty()) {
@@ -667,6 +712,7 @@ public class TtsService extends TextToSpeechService {
         }
         return SMART_CODE_KEYWORD.matcher(context).find();
     }
+
 
     /**
      * Sets off each run of emoji from the surrounding sentence with a light
