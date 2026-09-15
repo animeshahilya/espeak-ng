@@ -49,19 +49,17 @@
 
 .group इ
         इ          I
-        इ (_       i:        // final short i lengthens
         इँ        i~        // + candrabindu
         इं        i~
 
 .group ई
         ई          i:
-        ई (_       i:        // final -i is always long in Hindi
+        ई (_       i         // upstream default; word-final lengthening rules don't win here (RULE_SPACE post-context scores too low to beat the plain rule - see commit notes), left as upstream had it
         ईँ         i~        // + candrabindu
 
 .group उ
         उ          U
         उँ         U~        // + candrabindu
-        उ (_       u:
 
 .group ऊ
         ऊ          u
@@ -131,14 +129,12 @@ C)        ां         a~
 .group ि
 ि	#X1I
 C)        ि          I
-C)        ि (_       i:        // final short i lengthens
 C)//      िँ       i~
 C)        िं       i~
 
 .group ी
 ी	#X2i:
 C)        ी          i:
-C)        ी (_       i:        // final -i is always long in Hindi
 C)        ी (ँ       i~
 C)        ीँ (_      i~
 C)        ीं         i~
@@ -146,7 +142,6 @@ C)        ीं         i~
 .group ु
 ु	#X1U
 C)        ु          U
-C)        ु (_       u:        // final short u lengthens
 C)        ु (ँ       u~
 C)        ुं         u~
 C)        ुँ (_      u~
