@@ -207,6 +207,7 @@ _₠	jU@roU
 ?5 %	pVRs'Ent $max3
 =	_:i:kw@Lz_:  $max3
 ₩	w0n
+₹	r'u:pi:z	// Indian Rupee sign (used by en-in too; matches NVDA's "rupee" symbols.dic mapping)
 ¶¶	par@graafs
 
 ß	S,A@p'Es
@@ -713,6 +714,7 @@ lt	$dot
 prof	$dot
 rev	$dot
 st	$dot
+rs	r'u:pi:z	$dot	// Indian rupees abbreviation ("Rs. 500"); used by en-in too
 
 // not abbreviations when all-caps
 all	O:l	$allcaps
