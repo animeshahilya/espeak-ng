@@ -598,7 +598,12 @@ public class TtsService extends TextToSpeechService {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        if (!isSsml && (text.length() == 1 || text.trim().length() == 1)) {
+        // A single-character utterance is how TalkBack (and NVDA on desktop)
+        // signals character-by-character navigation, as opposed to normal
+        // continuous reading of words/sentences.
+        final boolean isSingleCharacterUtterance = !isSsml && (text.length() == 1 || text.trim().length() == 1);
+
+        if (isSingleCharacterUtterance) {
             if (settings.isNatoSpellingEnabled()) {
                 String before = text;
                 text = expandNatoSpelling(text);
@@ -732,7 +737,16 @@ public class TtsService extends TextToSpeechService {
 
         mEngine.Punctuation.setValue(settings.getPunctuationLevel());
         mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
-        mEngine.Capitals.setValue(settings.getCapitals());
+        // Announcing capitalization (by pitch, beep, or saying "capital") only
+        // makes sense while spelling out individual characters - NVDA's own
+        // capPitchChange/beepForCapitals/sayCapForCapitals behave the same
+        // way, scoped to its character-navigation code path only. eSpeak's
+        // own espeakCAPITALS has no such scoping built in: left as-is, it
+        // fires on every capitalized WORD during ordinary continuous reading
+        // (sentence starts, names, acronyms...), which is a much more
+        // pervasive and, per user feedback, distracting application of the
+        // same cue than any polished screen reader actually does.
+        mEngine.Capitals.setValue(isSingleCharacterUtterance ? settings.getCapitals() : 0);
         mEngine.WordGap.setValue(settings.getWordGap());
 
         boolean enableBilingual = settings.isBilingualSwitchingEnabled() && !isSsml;
