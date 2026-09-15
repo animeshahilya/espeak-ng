@@ -92,10 +92,12 @@ public class TtsService extends TextToSpeechService {
     /** Length of the original text passed by the caller for boundary clamping. */
     private int mOriginalTextLength;
     /**
-     * Offset map back to the caller's text when {@link #mSynthText} is a
-     * normalized copy of it, or null when they are the same string.
+     * Offset map from {@link #mSynthText} back to the text the caller
+     * supplied, accumulated across every preprocessing step that ran (user
+     * dictionary, NATO spelling, Indian numbering, Unicode normalization,
+     * ...); null when {@link #mSynthText} is identical to the caller's text.
      */
-    private UnicodeNormalization.Result mSynthNormalization;
+    private TextOffsetMap mSynthOffsetMap;
     /** Number of code points in {@link #mSynthText}. */
     private int mSynthTextCodePoints;
     /** Anchor for incremental code point to UTF-16 index conversion. */
@@ -476,6 +478,18 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
+    /**
+     * Folds one preprocessing step's effect into the accumulated offset map,
+     * or leaves it unchanged if the step didn't actually alter the text (the
+     * common case, and cheap to check up front rather than diffing).
+     */
+    private static TextOffsetMap chainOffset(TextOffsetMap previous, String before, String after) {
+        if (before.equals(after)) {
+            return previous;
+        }
+        return TextOffsetMap.diff(before, after).composeWith(previous);
+    }
+
     @Override
     protected synchronized void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
         if (selectVoice(request) == TextToSpeech.ERROR) {
@@ -549,84 +563,115 @@ public class TtsService extends TextToSpeechService {
         // switch into SSML parsing because of that.
         final boolean isSsml = text.startsWith("<speak");
 
+        // Accumulated map from the text as of each step back to the text the
+        // caller supplied, so word-boundary offsets survive every step below
+        // that can change the text's length. See TextOffsetMap.
+        TextOffsetMap offsetMap = null;
+
         if (!isSsml) {
             // NVDA eSpeak driver fix: Strip control character 0x01, which eSpeak reserves
             // for embedded commands and whose presence causes pronunciation corruption or aborts.
             if (text.indexOf('\u0001') != -1) {
+                String before = text;
                 text = text.replace("\u0001", "");
+                offsetMap = chainOffset(offsetMap, before, text);
             }
             // NVDA-style hardening (NVDA's _espeak.py encodes with errors="ignore" before
             // the native call): drop unpaired UTF-16 surrogates - e.g. from a clipboard paste
             // truncated mid-emoji - before they reach the JNI/native layer, which expects
             // well-formed text and can otherwise mis-decode or corrupt trailing output.
+            String beforeSurrogates = text;
             text = stripUnpairedSurrogates(text);
+            offsetMap = chainOffset(offsetMap, beforeSurrogates, text);
             // NVDA eSpeak driver fix: Prevent unintentional [[ phoneme syntax entry by
             // separating consecutive left brackets when not in phoneme mode.
             if (text.contains("[[")) {
+                String before = text;
                 text = text.replace("[[", "[ [");
+                offsetMap = chainOffset(offsetMap, before, text);
             }
         }
 
         if (!isSsml && settings.isUserDictionaryEnabled()) {
+            String before = text;
             text = UserDictionaryManager.getInstance(storageContext).applyRules(text, languageTag(voice));
+            offsetMap = chainOffset(offsetMap, before, text);
         }
 
         if (!isSsml && (text.length() == 1 || text.trim().length() == 1)) {
             if (settings.isNatoSpellingEnabled()) {
+                String before = text;
                 text = expandNatoSpelling(text);
+                offsetMap = chainOffset(offsetMap, before, text);
             }
             if (settings.isSpokenDiacriticsEnabled()) {
+                String before = text;
                 text = expandDevanagariDiacritic(text);
+                offsetMap = chainOffset(offsetMap, before, text);
             }
         }
 
         if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
+            String before = text;
             text = expandProgrammingSymbols(text);
+            offsetMap = chainOffset(offsetMap, before, text);
         }
 
         if (!isSsml && settings.isIndianNumberingEnabled()) {
+            String before = text;
             text = preprocessIndianText(text);
+            offsetMap = chainOffset(offsetMap, before, text);
         }
 
         final boolean speakDigits = settings.isSpeakDigitsEnabled() && !isSsml;
         final boolean smartCodes = settings.isSmartCodesEnabled() && !isSsml;
         if (speakDigits) {
+            String before = text;
             text = spaceSeparateDigits(text);
+            offsetMap = chainOffset(offsetMap, before, text);
         } else if (smartCodes) {
+            String before = text;
             text = spaceSeparateSmartCodes(text);
+            offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        UnicodeNormalization.Result normalization = null;
         if (settings.isUnicodeNormalizationEnabled()) {
-            normalization = UnicodeNormalization.normalize(text);
+            UnicodeNormalization.Result normalization = UnicodeNormalization.normalize(text);
             if (normalization != null) {
+                String before = text;
                 text = normalization.text;
+                offsetMap = chainOffset(offsetMap, before, text);
                 if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
+                    before = text;
                     text = expandProgrammingSymbols(text);
+                    offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (!isSsml && settings.isIndianNumberingEnabled()) {
+                    before = text;
                     text = preprocessIndianText(text);
+                    offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (speakDigits) {
+                    before = text;
                     text = spaceSeparateDigits(text);
-                    normalization = null;
+                    offsetMap = chainOffset(offsetMap, before, text);
                 } else if (smartCodes) {
-                    final String smart = spaceSeparateSmartCodes(text);
-                    if (!smart.equals(text)) {
-                        text = smart;
-                        normalization = null;
-                    }
+                    before = text;
+                    text = spaceSeparateSmartCodes(text);
+                    offsetMap = chainOffset(offsetMap, before, text);
                 }
             }
         }
 
         if (!isSsml && containsPotentialEmoji(text)) {
+            String before = text;
             text = settings.isEmojiIgnoreEnabled() ? filterEmojis(text) : clarifyEmojiAnnouncements(text);
+            offsetMap = chainOffset(offsetMap, before, text);
         }
 
         mSynthText = text;
         mSynthTextOffset = textOffset;
-        mSynthNormalization = normalization;
+        mSynthOffsetMap = offsetMap;
         mSynthTextCodePoints = text.codePointCount(0, text.length());
         mAnchorCodePoint = 0;
         mAnchorOffset = 0;
@@ -1429,11 +1474,12 @@ public class TtsService extends TextToSpeechService {
             final int wordStart = textPosition - 1;
             int start = codePointToOffset(wordStart);
             int end = codePointToOffset(wordStart + Math.max(textLength, 0));
-            if (mSynthNormalization != null) {
-                // The engine spoke normalized text; report the range against
-                // the original so highlighting tracks the caller's string.
-                start = mSynthNormalization.toOriginalOffset(start);
-                end = mSynthNormalization.toOriginalOffset(end);
+            if (mSynthOffsetMap != null) {
+                // The engine spoke text that one or more preprocessing steps
+                // changed the length of; report the range against the
+                // original so highlighting tracks the caller's string.
+                start = mSynthOffsetMap.toPrevious(start);
+                end = mSynthOffsetMap.toPrevious(end);
             }
 
             int finalStart = mSynthTextOffset + start;

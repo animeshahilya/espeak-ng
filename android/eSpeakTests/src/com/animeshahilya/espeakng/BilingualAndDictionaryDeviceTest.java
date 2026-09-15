@@ -178,6 +178,80 @@ public class BilingualAndDictionaryDeviceTest {
         mgr.clearRules();
     }
 
+    /**
+     * Regression test for a real word-boundary misalignment bug, exercised
+     * through the full public TextToSpeech path (the same one TalkBack
+     * uses). Before TextOffsetMap existed, a length-changing preprocessing
+     * step earlier in the utterance (here, a user-dictionary rule expanding
+     * "cat" to "hippopotamus") shifted every rangeStart() position reported
+     * afterward with no compensation - e.g. the word "and" was reported as
+     * the range covering "un " (part of "run") in the original text. See
+     * TextOffsetMap's class doc and TtsService.chainOffset().
+     */
+    @Test
+    public void testWordBoundaryOffsetsAfterDictionaryReplacement() throws Exception {
+        Context storageContext = EspeakApp.getStorageContext();
+        UserDictionaryManager mgr = UserDictionaryManager.getInstance(storageContext);
+        mgr.clearRules();
+        mgr.addRule(new UserDictionary("cat", "hippopotamus", false, false, true, ""));
+
+        android.content.SharedPreferences prefs =
+                android.preference.PreferenceManager.getDefaultSharedPreferences(storageContext);
+        prefs.edit().putBoolean(VoiceSettings.PREF_USER_DICTIONARY, true).commit();
+
+        final String text = "cat and dog run fast";
+        final List<int[]> ranges = java.util.Collections.synchronizedList(new java.util.ArrayList<int[]>());
+        final CountDownLatch initLatch = new CountDownLatch(1);
+        final CountDownLatch doneLatch = new CountDownLatch(1);
+        final android.speech.tts.TextToSpeech[] holder = new android.speech.tts.TextToSpeech[1];
+
+        holder[0] = new android.speech.tts.TextToSpeech(mContext.getApplicationContext(),
+                status -> initLatch.countDown(), "com.animeshahilya.espeakng");
+        assertThat("engine failed to init", initLatch.await(15, TimeUnit.SECONDS), is(true));
+        android.speech.tts.TextToSpeech tts = holder[0];
+        tts.setLanguage(java.util.Locale.US);
+        tts.setOnUtteranceProgressListener(new android.speech.tts.UtteranceProgressListener() {
+            @Override public void onStart(String utteranceId) {}
+
+            @Override
+            public void onDone(String utteranceId) {
+                doneLatch.countDown();
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+                doneLatch.countDown();
+            }
+
+            @Override
+            public void onRangeStart(String utteranceId, int start, int end, int frame) {
+                ranges.add(new int[] {start, end});
+            }
+        });
+
+        int result = tts.speak(text, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "wb_diag");
+        assertThat("speak() rejected the request", result, is(android.speech.tts.TextToSpeech.SUCCESS));
+        assertThat("synthesis did not finish", doneLatch.await(20, TimeUnit.SECONDS), is(true));
+        tts.shutdown();
+        mgr.clearRules();
+
+        Log.i(TAG, "wordBoundaryOffsets: original=\"" + text + "\" (len=" + text.length()
+                + "), " + ranges.size() + " onRangeStart events");
+        List<String> reportedWords = new java.util.ArrayList<>();
+        for (int[] r : ranges) {
+            int start = r[0], end = r[1];
+            String slice = (start >= 0 && end <= text.length() && start < end)
+                    ? text.substring(start, end) : "<out of bounds>";
+            Log.i(TAG, "  range [" + start + "," + end + ") -> \"" + slice + "\"");
+            reportedWords.add(slice);
+        }
+
+        // Every word after the replaced "cat" must still be reported as
+        // exactly itself against the ORIGINAL text, not shifted by the
+        // length "hippopotamus" added.
+        assertThat(reportedWords, hasItems("cat", "and", "dog", "run", "fast"));
+    }
+
     @Test
     public void testScriptRunSegmentation() {
         String mixedText = "नमस्ते Alex, your OTP is 4829. कृपया ध्यान दें।";
