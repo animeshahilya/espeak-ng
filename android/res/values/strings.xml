@@ -59,6 +59,37 @@
   <string name="punctuation_custom">Custom</string>
   <string name="punctuation_custom_fmt">Custom: %s</string>
   <string name="punctuation_none">None</string>
+  <string name="punctuation_some">Some</string>
+  <string name="punctuation_most">Most</string>
+  <!--
+        Source: Radio option description.
+        Description: Explains the "None" punctuation level in the Speak
+        punctuation dialog.
+    -->
+  <string name="punctuation_none_desc">Don\'t speak any punctuation or symbols.</string>
+  <!--
+        Source: Radio option description.
+        Description: Explains the "Some" punctuation level - the built-in
+        preset for basic sentence punctuation.
+    -->
+  <string name="punctuation_some_desc">Just enough to follow a sentence: periods, commas, question marks, and the like.</string>
+  <!--
+        Source: Radio option description.
+        Description: Explains the "Most" punctuation level - the built-in
+        preset for common symbols beyond basic sentence punctuation.
+    -->
+  <string name="punctuation_most_desc">Everything in Some, plus symbols you\'ll run into often, like @, #, %, and brackets.</string>
+  <!--
+        Source: Radio option description.
+        Description: Explains the "All" punctuation level.
+    -->
+  <string name="punctuation_all_desc">Every punctuation and symbol character, including ones you wouldn\'t normally hear spoken.</string>
+  <!--
+        Source: Radio option description.
+        Description: Explains the "Custom" punctuation level, where the user
+        types their own list of characters below.
+    -->
+  <string name="punctuation_custom_desc">Pick exactly which characters to speak, below.</string>
   <string name="punctuation_characters">Punctuation characters</string>
   <string name="category">Category</string>
   <string name="variant">Variant</string>

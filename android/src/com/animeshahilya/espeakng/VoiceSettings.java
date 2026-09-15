@@ -68,6 +68,27 @@ public class VoiceSettings {
     public static final String PUNCTUATION_SOME = "some";
     public static final String PUNCTUATION_ALL = "all";
 
+    /**
+     * UI-facing punctuation presets, shown as the radio choices in the "Speak
+     * punctuation" dialog. These sit on top of the engine's three-level
+     * PUNCT_NONE/PUNCT_SOME/PUNCT_ALL model (see SpeechSynthesis) the same
+     * way NVDA's None/Some/Most/All/Character symbol levels sit on top of a
+     * flat symbol dictionary - "Some" and "Most" are both PUNCT_SOME under
+     * the hood, just with different built-in character lists, so no engine
+     * or storage changes were needed to add them.
+     */
+    public static final String PUNCTUATION_PRESET_NONE = "none";
+    public static final String PUNCTUATION_PRESET_SOME = "some";
+    public static final String PUNCTUATION_PRESET_MOST = "most";
+    public static final String PUNCTUATION_PRESET_ALL = "all";
+    public static final String PUNCTUATION_PRESET_CUSTOM = "custom";
+
+    /** "Some": the punctuation needed to follow the shape of a sentence. */
+    public static final String PUNCTUATION_CHARS_SOME = ".,!?;:'\"-";
+
+    /** "Most": Some, plus symbols that commonly appear in ordinary text. */
+    public static final String PUNCTUATION_CHARS_MOST = PUNCTUATION_CHARS_SOME + "()[]{}/@#$%&*+=<>_~^|\\";
+
     public static final String DEFAULT_VARIANT = "max";
     public static final int DEFAULT_PITCH = 40;
     public static final int DEFAULT_PITCH_RANGE = 75;
