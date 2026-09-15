@@ -1,6 +1,6 @@
 # Languages
 
-Development version of eSpeak NG supports 152 languages and accents,
+Development version of eSpeak NG supports 158 languages and accents,
 which are listed in table below.
 
 To check, what languages are supported by distributed version, run `espeak-ng --voices` command.
@@ -30,6 +30,8 @@ To check, what languages are supported by distributed version, run `espeak-ng --
 | `roa`       | `ca-ba`             | Romance               | Catalan                              | Balearic               |
 | `roa`       | `ca-nw`             | Romance               | Catalan                              | North-western          |
 | `roa`       | `ca-va`             | Romance               | Catalan                              | Valencian              |
+| `roa`       | `ca-al`             | Romance               | Catalan                              | Algherese              |
+| `roa`       | `ca-ro`             | Romance               | Catalan                              | Rossellonese           |
 | `iro`       | `chr`               | Iroquoian             | Cherokee <sup>\[1,6\]</sup>          | Western/C.E.D.         |
 | `sit`       | `yue`               | Sino-Tibetan          | Chinese                              | Cantonese              |
 | `sit`       | `yue-latn-jyutping` | Sino-Tibetan          | Chinese                              | Cantonese, Jyutping    |
@@ -51,6 +53,10 @@ To check, what languages are supported by distributed version, run `espeak-ng --
 | `gmw`       | `en-gb-scotland`    | West Germanic         | English                              | Scottish               |
 | `gmw`       | `en-shaw`           | West Germanic         | English                              | Shavian alphabet       |
 | `gmw`       | `en-gb-x-gbcwmd`    | West Germanic         | English                              | West Midlands          |
+| `gmw`       | `en-au`             | West Germanic         | English                              | Australian             |
+| `gmw`       | `en-ca`             | West Germanic         | English                              | Canadian               |
+| `gmw`       | `en-in`             | West Germanic         | English                              | Indian                 |
+| `gmw`       | `en-sg`             | West Germanic         | English                              | Singaporean            |
 | `art`       | `eo`                | Constructed           | Esperanto                            |                        |
 | `urj`       | `et`                | Uralic                | Estonian                             |                        |
 | `gmq`       | `fo`                | North Germanic        | Faroese                              |                        |

@@ -1,0 +1,72 @@
+//====================================================
+//  English (India) — Indian English phoneme adjustments
+//====================================================
+// Based on ph_english_wi (syllable-timed, monophthongal) plus
+// retroflex stops from ph_hindi, adapted to the en table.
+//
+// Community-grounded features (Wells 1982; Sailaja 2009; Gargesh 2008;
+// OED World Englishes Indian English model; Sirsa & Redford 2013):
+//   - alveolar t/d -> retroflex [ʈ ɖ] (t./d.)
+//   - FACE /eI/ -> [eː], GOAT /oU/ -> [oː] (monophthongization)
+//   - clear [l] everywhere (no dark ɫ)
+//   - dental fricatives, v/w merger (-> [ʋ] v#) and rhotic colouring
+//     are handled via `replace` rules in espeak-ng-data/lang/gmw/en-in,
+//     since base1 already provides t[, d[, r. and v#.
+//
+// This file only defines phonemes that do NOT exist in base1/en:
+// retroflex stops t./d. (ʈ/ɖ). Everything else is inherited from en.
+
+// Monophthongal FACE: day -> [deː] (Sailaja 2009; OED IndE)
+phoneme eI
+  vwl  starttype #e  endtype #e
+  length 210
+  FMT(vowel/e)
+endphoneme
+
+
+// Monophthongal GOAT: go -> [goː] (Sailaja 2009; OED IndE)
+phoneme oU
+  vwl  starttype #o  endtype #o
+  length 220
+  FMT(vowel/o)
+endphoneme
+
+
+// Clear [l] everywhere — no dark-ɫ (IndE uses clear l in milk/leaf)
+phoneme l
+  import_phoneme base1/l   // use clear [l] before not-vowel
+endphoneme
+
+
+// Retroflex stops [ʈ ɖ]: time->[ʈaɪm], water->[ʋaːʈər]
+// (Gargesh 2008; Sailaja 2009; OED IndE; Sirsa & Redford 2013)
+// Formant/model data mirrors ph_hindi t./d. (WAV/FMT names exist in base data).
+phoneme t.
+  vls rfx stp
+  lengthmod 2
+  ipa ʈ
+  voicingswitch d.
+  Vowelin f1=0  f2=1800 -300 300  f3=-400 80
+  Vowelout f1=0 f2=1800 -300 250  f3=-400 80  rms=20 colr=2
+  WAV(ustop/t_short)
+endphoneme
+
+
+phoneme d.
+  vcd rfx stp
+  lengthmod 5
+  ipa ɖ
+  voicingswitch t.
+  Vowelin f1=1  f2=1800 -300 300  f3=-400 80
+  Vowelout f1=1  f2=1800 -300 300  f3=-400 80 colr=2
+
+  IF PreVoicing THEN
+    FMT(d/xdr)
+  ENDIF
+
+  IF nextPh(isPause2) THEN
+    FMT(d/d_) addWav(x/d_)
+  ENDIF
+
+  FMT(d/dr) addWav(x/d)
+endphoneme
