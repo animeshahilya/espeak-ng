@@ -62,5 +62,8 @@ These espeak-ng data files are interpreted according to the LDML specification (
 		<annotation cp="●" type="tts">black circle</annotation> <!-- U+25CF -->
 		<annotation cp="♭" type="tts">flat</annotation> <!-- U+266D -->
 		<annotation cp="♯" type="tts">sharp</annotation> <!-- U+266F -->
+		<annotation cp="⍋" type="tts">delta</annotation> <!-- U+234B -->
+		<annotation cp="⍳" type="tts">iota</annotation> <!-- U+2373 -->
+		<annotation cp="⟳" type="tts">clockwise gapped circle arrow</annotation> <!-- U+27F3 -->
 	</annotations>
 </ldml>

@@ -293,6 +293,8 @@ $textmode
 ⌚	watch								// [231A]
 ⌛	hourglass done							// [231B]
 ⌨	keyboard							// [2328] text|emoji
+⍋	delta							// [234B]
+⍳	iota							// [2373]
 ⏏	eject button							// [23CF] text|emoji
 ⏩	fast-forward button					// [23E9]
 ⏪	fast reverse button						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	right arrow							// [27A1] text|emoji
 ➰	curly loop							// [27B0]
 ➿	double curly loop						// [27BF]
+⟳	clockwise gapped circle arrow				// [27F3]
 
 // 2900..297F : Supplemental Arrows-B
 

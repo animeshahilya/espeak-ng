@@ -135,14 +135,17 @@ which is the default.
 ### Indian English (`en-in`) and voice variants
 
 `espeak-ng-data/lang/gmw/en-in` (added on this fork; upstream espeak-ng ships
-no Indian English voice at all) tunes the base English phoneme table via
-lightweight `replace` directives rather than a duplicated phoneme table:
-retroflex `r.` for `r`, dental `t[`/`d[` stops for `T`/`D`, `v` for `w`/`v`,
-plus `dictrules 1 2 8` for syllable-timed rhythm with unreduced full vowels.
-Prefer this `replace`-directive style for any further Indian-language
-phonetic tuning over copying a whole phoneme table - an upstream attempt at
-en-IN that did the latter ([espeak-ng#1981](https://github.com/espeak-ng/espeak-ng/pull/1981))
-was closed unmerged and covers less ground than this file does.
+no Indian English voice at all) uses its own `en-in` phoneme table
+(`phsource/ph_english_in`: retroflex `t.`/`d.` stops, monophthongal `eI`/`oU`,
+clear `l`) plus `replace` directives in the voice file: `w`/`v` to the
+labiodental approximant `v#`, dental `t[`/`d[` stops for `T`/`D`, retroflex
+`t.`/`d.` (including the `t2`/`t#`/`d#` allophones `en_rules` emits),
+rhotic `r.`/`r-`, `Z` to `dZ`, `eI`/`oU` to `e:`/`o:`, with `dictrules 1 2 8`
+for syllable-timed rhythm with unreduced full vowels. Keep phonetic tuning
+in these two files (table for phonemes missing from base `en`, `replace`
+rules for remapping) rather than copying a whole phoneme table - an upstream
+attempt at en-IN that did the latter ([espeak-ng#1981](https://github.com/espeak-ng/espeak-ng/pull/1981))
+was closed unmerged and covers less ground than this setup does.
 
 `espeak-ng-data/voices/!v/klatt*` (`klatt`, `klatt2`-`klatt6`) are the
 upstream cascade-parallel formant models, exposed as "Klatt 1"-"Klatt 6" in
