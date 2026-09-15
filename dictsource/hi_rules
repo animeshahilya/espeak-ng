@@ -38,29 +38,35 @@
 
 .group अ
         अ          V
+        अँ         V~        // + candrabindu
         अ (ह       E         //  (h
     अह) अ          E
 
 .group आ
         आ          a:
         आं          a~
+        आँ          a~        // + candrabindu
 
 .group इ
         इ          I
-//       इँ        i~
+        इ (_       i:        // final short i lengthens
+        इँ        i~        // + candrabindu
         इं        i~
 
 .group ई
         ई          i:
-        ई (_       i
+        ई (_       i:        // final -i is always long in Hindi
+        ईँ         i~        // + candrabindu
 
 .group उ
         उ          U
+        उँ         U~        // + candrabindu
+        उ (_       u:
 
 .group ऊ
         ऊ          u
         ऊं          u~        // + anusvara
-        ऊँ (_       u~        // + candrabinbu
+        ऊँ         u~        // + candrabindu
 
 .group ऋ
         ऋ          rI
@@ -74,7 +80,7 @@
 .group ऎ
         ऎ          e
         ऎं          e~
-        ऎँ (_       e~
+        ऎँ         e~
 
 .group ए
         ए          e:
@@ -85,7 +91,7 @@
 .group ऐ
         ऐ          E:        // ?? [aI] [E:] [&:]
         ऐं          E~
-        ऐँ (_       E~
+        ऐँ         E~
 ?2      ऐ          aI        // ?? [aI] [E:] [&:]
 
 
@@ -95,12 +101,12 @@
 .group ऒ
         ऒ          o
         ऒं          o~
-        ऒँ (_       o~
+        ऒँ         o~
 
 .group ओ
         ओ          o:
         ओं          o~        // +anusvara
-        ओँ (_       o~        // +candrabindu
+        ओँ         o~        // +candrabindu
     ा) ओं (_       w        // +anusvara
     ा) ओँ (_       w
     
@@ -108,7 +114,7 @@
 .group औ
         औ          O:        // ?? [aU] [O:]
         औं          O~        // +anusvara
-        औँ (_       O~        // +candrabindu
+        औँ         O~        // +candrabindu
 ?3      औ          aU        // ?? [aU] [O:]
 
 
@@ -125,13 +131,14 @@ C)        ां         a~
 .group ि
 ि	#X1I
 C)        ि          I
+C)        ि (_       i:        // final short i lengthens
 C)//      िँ       i~
 C)        िं       i~
 
 .group ी
 ी	#X2i:
 C)        ी          i:
-C)        ी (_       i
+C)        ी (_       i:        // final -i is always long in Hindi
 C)        ी (ँ       i~
 C)        ीँ (_      i~
 C)        ीं         i~
@@ -139,6 +146,7 @@ C)        ीं         i~
 .group ु
 ु	#X1U
 C)        ु          U
+C)        ु (_       u:        // final short u lengthens
 C)        ु (ँ       u~
 C)        ुं         u~
 C)        ुँ (_      u~
@@ -229,6 +237,7 @@ C)        ॣ          l-:
 
 .group क
         क          kV
+        कँ         kV~        // + candrabindu
         क (_       k
         क (B       k
         क (्य      k:
@@ -245,6 +254,7 @@ C)        ॣ          l-:
         
 .group ख
         ख          k#V
+        खँ         k#V~        // + candrabindu
         ख (_       k#
         ख (B       k#
         ख़         xV
@@ -253,6 +263,7 @@ C)        ॣ          l-:
 
 .group ग
         ग          gV
+        गँ         gV~        // + candrabindu
         ग (_       g
         ग (B       g
         ग़         QV
@@ -265,17 +276,20 @@ C)        ॣ          l-:
 
 .group घ
         घ          g#V
+        घँ         g#V~        // + candrabindu
         घ (_       g#
         घ (B       g#
 
 .group ङ
         ङ          NV
+        ङँ         NV~        // + candrabindu
         ङ (_       N
         ङ (B       N
      ्) ङ (_       N@
 
 .group च
         च          cV
+        चँ         cV~        // + candrabindu
         च (_       c
         च (B       c
         च (्य      c:
@@ -293,11 +307,13 @@ C)        ॣ          l-:
 
 .group छ
         छ          c#V
+        छँ         c#V~        // + candrabindu
         छ (_       c#
         छ (B       c#
 
 .group ज
         ज          JV
+        जँ         JV~        // + candrabindu
         ज (_       J
         ज (B       J
         ज़         zV
@@ -314,12 +330,17 @@ C)        ॣ          l-:
 
 .group झ
         झ          J#V
+        झँ         J#V~        // + candrabindu
         झ (_       J#
         झ (B       J#
+        झ़         ZV        // nukta, no precomposed codepoint
+        झ़ (_      Z
+        झ़ (B      Z
 
 
 .group ञ
         ञ          n^V
+        ञँ         n^V~        // + candrabindu
         ञ (_       n^
         ञ (B       n^
      ्) ञ (_       n^@
@@ -327,6 +348,7 @@ C)        ॣ          l-:
 
 .group ट
         ट          t.V
+        टँ         t.V~        // + candrabindu
         ट (_       t.
         ट (B       t.
         ट (्य      t.:
@@ -341,6 +363,7 @@ C)        ॣ          l-:
 
 .group ठ
         ठ          t.#V
+        ठँ         t.#V~        // + candrabindu
         ठ (_       t.#
         ठ (B       t.#
         
@@ -350,6 +373,7 @@ C)        ॣ          l-:
         
 .group ड
         ड          d.V
+        डँ         d.V~        // + candrabindu
         ड (_       d.
         ड (B       d.
 
@@ -368,6 +392,7 @@ C)        ॣ          l-:
 
 .group ढ
         ढ          d.#V
+        ढँ         d.#V~        // + candrabindu
         ढ (_       d.#
         ढ (B       d.#
         ढ़         r.hV      // nukta  (should retroflex flap)
@@ -376,12 +401,14 @@ C)        ॣ          l-:
 
 .group ण
         ण          n.V
+        णँ         n.V~        // + candrabindu
         ण (_       n.
         ण (B       n.
      ्) ण (_       n.@
 
 .group त
         त          tV
+        तँ         tV~        // + candrabindu
         त (_       t
         त (B       t
         त (्य      t:
@@ -397,11 +424,13 @@ C)        ॣ          l-:
        
 .group थ
         थ          t#V
+        थँ         t#V~        // + candrabindu
         थ (_       t#
         थ (B       t#
 
 .group द
         द          dV
+        दँ         dV~        // + candrabindu
         द (_       d
         द (B       d
 
@@ -417,11 +446,13 @@ C)        ॣ          l-:
 
 .group ध
         ध          d#V
+        धँ         d#V~        // + candrabindu
         ध (_       d#
         ध (B       d#
 
 .group न
         न          nV
+        नँ         nV~        // + candrabindu
         न (_       n
         न (B       n
      ्) न (_       n@
@@ -434,6 +465,7 @@ C)        ॣ          l-:
 
 .group प
         प          pV
+        पँ         pV~        // + candrabindu
         प (_       p
         प (B       p
         प (्य      p:
@@ -444,6 +476,7 @@ C)        ॣ          l-:
 
 .group फ
         फ          p#V
+        फँ         p#V~        // + candrabindu
         फ (_       p#
         फ (B       p#
         फ़         fV
@@ -452,16 +485,19 @@ C)        ॣ          l-:
 
 .group ब
         ब          bV
+        बँ         bV~        // + candrabindu
         ब (_       b
         ब (B       b
 
 .group भ
         भ          b#V
+        भँ         b#V~        // + candrabindu
         भ (_       b#
         भ (B       b#
 
 .group म
         म          mV
+        मँ         mV~        // + candrabindu
         म (_       m
         म (B       m
      ्) म (_       m@
@@ -470,6 +506,7 @@ C)        ॣ          l-:
 
 .group य
         य          jV
+        यँ         jV~        // + candrabindu
         य (_       j
         य (B       j
      C) य (_       Ej     // [Ej] not [@j]
@@ -477,6 +514,7 @@ C)        ॣ          l-:
 
 .group र
         र          rV
+        रँ         rV~        // + candrabindu
         र (B       r
         र (_       r
      ्) र (_       r@
@@ -489,6 +527,7 @@ C)        ॣ          l-:
 
 .group ल
         ल          lV
+        लँ         lV~        // + candrabindu
         ल (_       l
         ल (B       l
      ्) ल (_       l@
@@ -507,6 +546,7 @@ C)        ॣ          l-:
 
 .group व
         व          vV
+        वँ         vV~        // + candrabindu
         व (_       v
         व (B       v
 // 3     _) व          wV
@@ -517,21 +557,25 @@ C)        ॣ          l-:
 // 1 deleted
 .group श
         श          SV
+        शँ         SV~        // + candrabindu
         श (_       S
         श (B       S
 
 .group ष
         ष          s.V 
+        षँ         s.V~        // + candrabindu
         ष (_       s.
         ष (B       s.
 
 .group स
         स          sV
+        सँ         sV~        // + candrabindu
         स (_       s
         स (B       s
 
 .group ह
         ह          HV
+        हँ         HV~        // + candrabindu
         ह (_       H
         ह (B       H
 
@@ -590,6 +634,11 @@ C)        ॣ          l-:
         ं (ध       n
         ं (न       n
 
+        // Sibilants and h -> homorganic nasal
+        ं (श       n^
+        ं (ष       n.
+        ं (ह       N
+
 .group ः
         ः          H         //  visarga
 
@@ -601,41 +650,49 @@ C)	्
 
 .group क़   // qa
         क़          qV
+        क़ँ         qV~        // + candrabindu
         क़ (_       q
         क़ (B       q
 
 .group ख़   // khha
         ख़          xV
+        ख़ँ         xV~        // + candrabindu
         ख़ (_       x
         ख़ (B       x
 
 .group ग़    // ghha
         ग़          QV
+        ग़ँ         QV~        // + candrabindu
         ग़ (_       Q
         ग़ (B       Q
 
 .group ज़    // za
         ज़          zV
+        ज़ँ         zV~        // + candrabindu
         ज़ (_       z
         ज़ (B       z
 
 .group ड़    // dddha   (should retroflex flap ?)
         ड़          r.V
+        ड़ँ         r.V~        // + candrabindu
         ड़ (_       r.
         ड़ (B       r.
 
 .group ढ़    // rha  (aspirated version of dddha)
         ढ़          r.hV
+        ढ़ँ         r.hV~        // + candrabindu
         ढ़ (_       r.h
         ढ़ (B       r.h
 
 .group फ़    // fa
         फ़          fV
+        फ़ँ         fV~        // + candrabindu
         फ़ (_       f
         फ़ (B       f
 
 .group य़    // yya
         य़          jV
+        य़ँ         jV~        // + candrabindu
         य़ (_       j
         य़ (B       j
 

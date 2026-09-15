@@ -91,7 +91,8 @@ endphoneme
 phoneme i:
   vwl lng starttype #i endtype #i
   length 230
-  IF thisPh(isUnstressed) THEN
+  // word-final -i is always long in Hindi (shakti, nadi); reduce only medially
+  IF thisPh(isUnstressed) AND NOT thisPh(isWordEnd) THEN
     ChangePhoneme(i)
   ENDIF
   IfNextVowelAppend(;)
