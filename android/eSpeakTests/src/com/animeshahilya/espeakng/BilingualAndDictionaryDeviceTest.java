@@ -135,7 +135,7 @@ public class BilingualAndDictionaryDeviceTest {
         mgr.addRule(new UserDictionary("UPI", "Unified Payments Interface", false, false, true));
 
         String input = "Doctor at AIIMS confirmed UPI transaction";
-        String output = mgr.applyRules(input);
+        String output = mgr.applyRules(input, "en");
 
         assertThat(output, containsString("All India Institute of Medical Sciences"));
         assertThat(output, containsString("Unified Payments Interface"));
@@ -152,7 +152,30 @@ public class BilingualAndDictionaryDeviceTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(exported.getBytes(StandardCharsets.UTF_8));
         int imported = mgr.importFromStream(bais);
         assertThat(imported, is(2));
-        assertThat(mgr.applyRules("Visit AIIMS today"), containsString("All India Institute of Medical Sciences"));
+        assertThat(mgr.applyRules("Visit AIIMS today", "en"), containsString("All India Institute of Medical Sciences"));
+    }
+
+    @Test
+    public void testUserDictionaryLanguageScoping() {
+        UserDictionaryManager mgr = UserDictionaryManager.getInstance(mContext);
+        mgr.clearRules();
+
+        // Unscoped rule applies everywhere.
+        mgr.addRule(new UserDictionary("OTP", "one time password", false, false, true, ""));
+        // Rule scoped to the base language "en" should also match variants like "en-in".
+        mgr.addRule(new UserDictionary("read", "reed", false, false, true, "en"));
+        // Rule scoped to a specific variant should not leak into the base language or a sibling variant.
+        mgr.addRule(new UserDictionary("schedule", "shed-yool", false, false, true, "en-us"));
+
+        assertThat(mgr.applyRules("Please read the OTP", "en"), is("Please reed the one time password"));
+        assertThat(mgr.applyRules("Please read the OTP", "en-in"), is("Please reed the one time password"));
+        assertThat(mgr.applyRules("Please read the OTP", "hi"), is("Please read the one time password"));
+
+        assertThat(mgr.applyRules("Check the schedule", "en-us"), is("Check the shed-yool"));
+        assertThat(mgr.applyRules("Check the schedule", "en-in"), is("Check the schedule"));
+        assertThat(mgr.applyRules("Check the schedule", "en"), is("Check the schedule"));
+
+        mgr.clearRules();
     }
 
     @Test

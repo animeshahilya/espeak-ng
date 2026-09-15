@@ -31,15 +31,27 @@ public class UserDictionary {
     private boolean mCaseSensitive;
     private boolean mIsRegex;
     private boolean mWholeWord;
+    private String mLanguage;
 
     private Pattern mCompiledPattern = null;
 
     public UserDictionary(String pattern, String replacement, boolean caseSensitive, boolean isRegex, boolean wholeWord) {
+        this(pattern, replacement, caseSensitive, isRegex, wholeWord, "");
+    }
+
+    /**
+     * @param language BCP-47-ish language tag ("en", "en-in", "hi") the rule
+     *                 applies to, or "" to apply to every language (the
+     *                 default, and how rules saved before this field existed
+     *                 are read back).
+     */
+    public UserDictionary(String pattern, String replacement, boolean caseSensitive, boolean isRegex, boolean wholeWord, String language) {
         mPattern = pattern != null ? pattern : "";
         mReplacement = replacement != null ? replacement : "";
         mCaseSensitive = caseSensitive;
         mIsRegex = isRegex;
         mWholeWord = wholeWord;
+        mLanguage = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
         compile();
     }
 
@@ -87,6 +99,28 @@ public class UserDictionary {
         compile();
     }
 
+    /** "" means the rule applies to every language. */
+    public String getLanguage() {
+        return mLanguage;
+    }
+
+    public void setLanguage(String language) {
+        mLanguage = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
+    }
+
+    /**
+     * Whether this rule should apply when synthesizing in requestLanguage
+     * (e.g. "en-in", "hi"). A rule scoped to a base language ("en") also
+     * matches its variants ("en-in", "en-us"); an unscoped rule ("")
+     * matches every language.
+     */
+    public boolean appliesToLanguage(String requestLanguage) {
+        if (mLanguage.isEmpty()) return true;
+        if (requestLanguage == null) return false;
+        String request = requestLanguage.trim().toLowerCase(java.util.Locale.ROOT);
+        return request.equals(mLanguage) || request.startsWith(mLanguage + "-");
+    }
+
     private void compile() {
         if (mPattern.isEmpty()) {
             mCompiledPattern = null;
@@ -132,6 +166,7 @@ public class UserDictionary {
         obj.put("caseSensitive", mCaseSensitive);
         obj.put("isRegex", mIsRegex);
         obj.put("wholeWord", mWholeWord);
+        obj.put("language", mLanguage);
         return obj;
     }
 
@@ -142,6 +177,7 @@ public class UserDictionary {
         boolean caseSensitive = obj.optBoolean("caseSensitive", false);
         boolean isRegex = obj.optBoolean("isRegex", false);
         boolean wholeWord = obj.optBoolean("wholeWord", true);
-        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord);
+        String language = obj.optString("language", "");
+        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord, language);
     }
 }

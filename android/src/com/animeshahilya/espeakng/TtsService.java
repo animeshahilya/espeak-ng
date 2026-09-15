@@ -568,7 +568,7 @@ public class TtsService extends TextToSpeechService {
         }
 
         if (!isSsml && settings.isUserDictionaryEnabled()) {
-            text = UserDictionaryManager.getInstance(storageContext).applyRules(text);
+            text = UserDictionaryManager.getInstance(storageContext).applyRules(text, languageTag(voice));
         }
 
         if (!isSsml && (text.length() == 1 || text.trim().length() == 1)) {
@@ -965,6 +965,24 @@ public class TtsService extends TextToSpeechService {
             }
         }
         return sb != null ? sb.toString() : text;
+    }
+
+    /**
+     * The language/country tag (e.g. "en-in", "hi") a voice's locale
+     * corresponds to, matching the lowercase hyphenated form used for this
+     * app's own language folder names - so it's what a user would naturally
+     * type into a user-dictionary rule's language field.
+     */
+    static String languageTag(Voice voice) {
+        if (voice == null || voice.locale == null) return "";
+        String language = voice.locale.getLanguage();
+        if (language == null) return "";
+        language = language.toLowerCase(Locale.ROOT);
+        String country = voice.locale.getCountry();
+        if (country != null && !country.isEmpty()) {
+            language += "-" + country.toLowerCase(Locale.ROOT);
+        }
+        return language;
     }
 
     private static final String[] NATO_PHONETICS = {

@@ -92,14 +92,20 @@ public class UserDictionaryManager {
 
     /**
      * Lock-free rule application for high-frequency TTS synthesis pipeline.
+     *
+     * @param language the language being synthesized (e.g. "en-in", "hi");
+     *                 only rules unscoped or scoped to this language (or its
+     *                 base language) are applied.
      */
-    public String applyRules(String text) {
+    public String applyRules(String text, String language) {
         if (text == null || text.isEmpty() || mRules.isEmpty()) {
             return text;
         }
         String result = text;
         for (UserDictionary rule : mRules) {
-            result = rule.apply(result);
+            if (rule.appliesToLanguage(language)) {
+                result = rule.apply(result);
+            }
         }
         return result;
     }

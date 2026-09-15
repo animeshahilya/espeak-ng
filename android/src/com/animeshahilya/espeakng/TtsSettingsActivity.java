@@ -841,7 +841,8 @@ public class TtsSettingsActivity extends PreferenceActivity {
         for (int i = 0; i < rules.size(); i++) {
             UserDictionary r = rules.get(i);
             items[i] = (i + 1) + ". \"" + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
-                    + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""));
+                    + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""))
+                    + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]");
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -912,6 +913,10 @@ public class TtsSettingsActivity extends PreferenceActivity {
         cbCaseSensitive.setChecked(false);
         layout.addView(cbCaseSensitive);
 
+        final EditText etLanguage = new EditText(context);
+        etLanguage.setHint("Language code, e.g. en or hi - leave blank for every language");
+        layout.addView(etLanguage);
+
         new AlertDialog.Builder(context)
                 .setTitle("Add pronunciation rule")
                 .setView(layout)
@@ -920,13 +925,15 @@ public class TtsSettingsActivity extends PreferenceActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String pattern = etPattern.getText().toString().trim();
                         String replacement = etReplacement.getText().toString().trim();
+                        String language = etLanguage.getText().toString().trim();
                         if (!pattern.isEmpty()) {
                             UserDictionary rule = new UserDictionary(
                                     pattern,
                                     replacement,
                                     cbCaseSensitive.isChecked(),
                                     false,
-                                    cbWholeWord.isChecked()
+                                    cbWholeWord.isChecked(),
+                                    language
                             );
                             UserDictionaryManager.getInstance(context).addRule(rule);
                             showUserDictionaryDialog(context);
