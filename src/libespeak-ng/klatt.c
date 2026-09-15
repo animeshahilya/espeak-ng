@@ -68,7 +68,21 @@ static klatt_global_t kt_globals;
 
 #define NUMBER_OF_SAMPLES 100
 
-static const int scale_wav_tab[] = { 45, 38, 45, 45, 55, 45 }; // scale output from different voicing sources
+// Scale output from different voicing sources (amp_gain0 = gain/scale_wav, so a
+// *lower* divisor here means *louder* output), indexed by kt_globals.glsource
+// (klatt.h: IMPULSIVE=1, NATURAL=2, ...; index 0 is never reached - glsource's
+// minimum value is 1). Indices 1/2 (IMPULSIVE/NATURAL, used by the "klatt" and
+// "klatt2" voice-file variants respectively) measured ~2.7x quieter in RMS than
+// every other glsource model and than the non-Klatt synthesizer on the same
+// text - not a deliberate voicing-character difference, since indices 3-5 (the
+// remaining models, used by klatt3-klatt5) already sit at parity with normal
+// synthesis. Reduced both from 45/38 to 17 to bring them in line (checked
+// for new clipping introduced by the boost: 14 clipped a small number of
+// klatt2's peak samples, 17 doesn't); 0,3,4,5 unchanged (espeak-ng#1039).
+// ("klatt6" requests glsource 6, out of this
+// table's range, so voices.c's range check silently leaves glsource at
+// whatever it last was - a separate, pre-existing quirk this doesn't touch.)
+static const int scale_wav_tab[] = { 45, 17, 17, 45, 55, 45 }; // scale output from different voicing sources
 
 // For testing, this can be overwritten in KlattInit()
 static const short natural_samples2[256] = {
@@ -1063,9 +1077,13 @@ static void SetSynth_Klatt(int length, frame_t *fr1, frame_t *fr2, voice_t *wvoi
 			next = fr2->klatt_bp[ix] * 4;
 			peaks[ix].bp_inc =  ((next - peaks[ix].bp1) * STEPSIZE) / length;
 
-			peaks[ix].ap1 = fr1->klatt_ap[ix]; // parallal amplitude
+			// parallel amplitude, scaled by the voice's `formant <n> freq strength width`
+			// height[] the same way freq/bw above are - previously unscaled, so a voice
+			// file's formant strength value had no audible effect in Klatt mode at all
+			// (espeak-ng#1039).
+			peaks[ix].ap1 = fr1->klatt_ap[ix] * wvoice->height[ix] / 256.0;
 			peaks[ix].ap = (int)peaks[ix].ap1;
-			next = fr2->klatt_ap[ix];
+			next = fr2->klatt_ap[ix] * wvoice->height[ix] / 256.0;
 			peaks[ix].ap_inc =  ((next - peaks[ix].ap1) * STEPSIZE) / length;
 		}
 	}

@@ -18,11 +18,11 @@ package com.animeshahilya.espeakng;
 
 /**
  * "Audio Optimizer" - a speech-tailored two-band tone shaper plus a gentle loudness leveler and
- * clip guard, ported from the same DSP chain built and tuned by ear for
- * com.animeshahilya.eloquencerevived's AudioOptimizer.kt. Same math, same constants, same
- * reasoning - translated to Java for this app's plain byte[]-PCM JNI callback path rather than
- * Kotlin, since there's no other difference between the two apps' post-synthesis audio pipeline
- * that would call for different tuning.
+ * clip guard. Started as a port of com.animeshahilya.eloquencerevived's AudioOptimizer.kt (same
+ * math, same structure), but the presence/warmth balance has since been re-tuned by ear
+ * specifically for eSpeak's own formant/Klatt output rather than left at the values that suited
+ * eloquence-revived's engine (openevv, an IBM Eloquence/ViaVoice rebuild) - see the 2026-09-15
+ * re-tuning note below.
  *
  * Presence band: a real bandpass (highpass then lowpass in series), not an open-ended highpass
  * shelf. A synthetic voice's own consonant clarity - what a "presence boost" is actually for in
@@ -30,9 +30,15 @@ package com.animeshahilya.espeakng;
  * keeps the boost aimed at clarity instead of also exciting the 5-8kHz sibilance region (s/sh/ch/t).
  *
  * Warmth band: a one-pole lowpass around typical vocal fundamental/first-harmonic territory, for
- * body rather than clarity. Drive and blend match the richer, more bass-forward tuning
- * eloquence-revived's own AudioOptimizer settled on (WARMTH_DRIVE 6f, WARMTH_BLEND 0.20f) rather
- * than that class's own original, more conservative starting values.
+ * body rather than clarity.
+ *
+ * 2026-09-15 re-tuning: on a real listen, eSpeak's formant/Klatt output came across as too bright
+ * and thin at the inherited eloquence-revived settings (PRESENCE_DRIVE 6f/PRESENCE_BLEND 0.14f,
+ * WARMTH_DRIVE 6f/WARMTH_BLEND 0.20f) - eSpeak's own synthesis already has more high-frequency
+ * energy than openevv's, so the same presence boost stacks into excess brightness instead of just
+ * adding clarity. Pulled presence back (drive 6->5, blend 0.14->0.08) and pushed warmth up (drive
+ * 6->7, blend 0.20->0.28) to compensate - warmer and less bright, confirmed against eSpeak's own
+ * output, not carried over unheard from the other engine's tuning.
  *
  * Leveler: a gentle, upward-only gain rider (0.85x-1.4x) that nudges quiet passages of an
  * utterance up toward a comfortable level - prosody makes some syllables quieter than others, and
@@ -41,10 +47,7 @@ package com.animeshahilya.espeakng;
  * Clip guard: a same-sample-snap/eased-release limiter just under full scale, a safety net for
  * the two boosts above stacking on an already-loud passage, not a loudness target.
  *
- * eSpeak's own formant/Klatt synthesis has a very different spectral character from
- * eloquence-revived's engine (openevv, an IBM Eloquence/ViaVoice rebuild) - this port carries the
- * same tuning over as a starting point, not a guarantee it's equally well-suited here; see
- * VoiceSettings.PREF_AUDIO_OPTIMIZER's own toggle for why this stays switchable rather than
+ * See VoiceSettings.PREF_AUDIO_OPTIMIZER's own toggle for why this stays switchable rather than
  * unconditionally always-on.
  *
  * Stateful (each filter tracks its previous sample) - construct one instance per synthesis
@@ -57,13 +60,13 @@ final class AudioOptimizer {
     // shelf.
     private static final double PRESENCE_LOW_HZ = 2500.0;
     private static final double PRESENCE_HIGH_HZ = 5000.0;
-    private static final float PRESENCE_DRIVE = 6f;
-    private static final float PRESENCE_BLEND = 0.14f;
+    private static final float PRESENCE_DRIVE = 5f;
+    private static final float PRESENCE_BLEND = 0.08f;
 
     // Warmth band: a one-pole lowpass near the vocal fundamental, for body.
     private static final double WARMTH_HZ = 180.0;
-    private static final float WARMTH_DRIVE = 6f;
-    private static final float WARMTH_BLEND = 0.20f;
+    private static final float WARMTH_DRIVE = 7f;
+    private static final float WARMTH_BLEND = 0.28f;
 
     // Leveler: alphas tuned at a 44.1kHz reference rate, scaled to this engine's actual output
     // rate by scaledEnvelopeAlpha (a plain EMA time-constant scale, distinct from the exp()-derived
