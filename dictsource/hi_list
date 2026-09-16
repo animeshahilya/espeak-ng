@@ -293,7 +293,7 @@ $	dOl@r
 
 
 // Questions
-क्या	$u $pause	// interrogative particle
+क्या	kj'a:	$u $pause	// interrogative particle; overrides hi_rules' "क (्य" gemination rule, wrong here
 
 
 // Conjunctions
