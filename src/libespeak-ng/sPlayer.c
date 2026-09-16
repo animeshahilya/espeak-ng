@@ -100,12 +100,16 @@ static void fillSpeechPlayerFrame(WGEN_DATA *wdata, voice_t *wvoice, frame_t * e
 
 void KlattInitSP(void) {
 	speechPlayerHandle=speechPlayer_initialize(22050);
-	// NULL applies the DSP's own built-in default voicing tone (documented
-	// behaviour of speechPlayer_setVoicingTone). Some of those defaults -
-	// e.g. cascadeBwScale's formant-clarity narrowing - are only applied
-	// inside this call, not at speechPlayer_initialize() time, so without
-	// this the engine runs with a partially-unset tone.
-	speechPlayer_setVoicingTone(speechPlayerHandle, NULL);
+	// Deliberately NOT calling speechPlayer_setVoicingTone() here. It was
+	// added, then reverted: TGSpeechBox's own tone defaults (+4dB high-shelf
+	// brightness, 0.9x cascade formant bandwidth narrowing) measurably
+	// changed this voice's timbre, and on a real device that read as a wrong
+	// pitch/register to the ear even though the underlying F0 math is
+	// unaffected (traced spFrame->voicePitch/endVoicePitch end to end -
+	// neither setVoicingTone nor anything it touches feeds into that). Their
+	// defaults aren't necessarily right for every downstream context without
+	// a real listen first - see the git history/project memory before
+	// re-enabling this.
 }
 
 void KlattFiniSP(void) {
