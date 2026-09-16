@@ -1619,8 +1619,10 @@ public class TtsSettingsActivity extends PreferenceActivity {
             langCategory.addPreference(createBilingualSwitchingPreference(context));
             if (!voices.isEmpty()) {
                 Preference secondary = createSecondaryVoicePreference(context, voices);
-                secondary.setDependency(VoiceSettings.PREF_BILINGUAL_SWITCHING);
                 langCategory.addPreference(secondary);
+                // setDependency AFTER attach: the old framework throws
+                // IllegalStateException when the key cannot be resolved yet.
+                secondary.setDependency(VoiceSettings.PREF_BILINGUAL_SWITCHING);
             }
             langCategory.addPreference(createTestVoicePreference(context));
         }
@@ -1647,8 +1649,8 @@ public class TtsSettingsActivity extends PreferenceActivity {
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
         paramCategory.addPreference(createAudioOptimizerPreference(context));
         Preference audioProfile = createAudioProfilePreference(context);
-        audioProfile.setDependency(VoiceSettings.PREF_AUDIO_OPTIMIZER);
         paramCategory.addPreference(audioProfile);
+        audioProfile.setDependency(VoiceSettings.PREF_AUDIO_OPTIMIZER);
         if (!isWatch) {
             paramCategory.addPreference(createRecommendedDefaultsPreference(context));
         }
@@ -1676,11 +1678,11 @@ public class TtsSettingsActivity extends PreferenceActivity {
         processCategory.addPreference(createSmartCodesPreference(context));
         if (!isWatch) {
             Preference smartMin = createSmartMinPreference(context);
-            smartMin.setDependency(VoiceSettings.PREF_SMART_CODES);
             processCategory.addPreference(smartMin);
+            smartMin.setDependency(VoiceSettings.PREF_SMART_CODES);
             Preference smartMax = createSmartMaxPreference(context);
-            smartMax.setDependency(VoiceSettings.PREF_SMART_CODES);
             processCategory.addPreference(smartMax);
+            smartMax.setDependency(VoiceSettings.PREF_SMART_CODES);
         }
         // Single control for digit handling: the grouping list's "Single
         // digits" mode is the old digit-by-digit toggle, which was removed.
