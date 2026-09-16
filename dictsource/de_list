@@ -623,7 +623,7 @@ alarm	$2
 allein	$2
 allgemein	'alg@maIn
 andre	andr@        // andere
-aneinander	an1aIn'and3
+aneinander	anaIn'and3	// espeak-ng#1637: stray literal "1" was leaking into IPA output
 anomalie	$2
 antik	ant'i:k
 archaik	arC'A:Ik
@@ -1107,6 +1107,7 @@ tim	tIm	$only
 tom	tOm	$only
 tübingen	'ty:bIN@n'
 turkmenistan	$2
+rakete	rAk'e:t@	// espeak-ng#643: generic -ete stress rule mis-stresses the first syllable
 ukraine	UkrA'i:n@
 vatikanstadt	vA:ti:k'A:nStat
 vera	v'e:rA:
