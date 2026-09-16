@@ -569,4 +569,42 @@ phoneme r
   ipa ɾ
 endphoneme
 
+
+// ड़/ढ़ (retroflex flap, plain and aspirated) - dictsource/hi_rules, mr_rules, pa_rules
+// and gu_rules all reference "r." and "r.h" as the phoneme for these letters, but
+// neither was ever defined in this table. EncodePhonemes silently truncated both to
+// plain "r" and dropped the rest, which is why a stray "." (and ".h" for the aspirated
+// letter) was leaking straight into phoneme/IPA output for any word containing them -
+// e.g. "छत्तीसगढ़" (Chhattisgarh) came out ending in the literal text ".h", and
+// "पहाड़ी" came out with a literal "." in the middle. Pashto's own "r." (ړ) is the
+// identical sound (retroflex flap /ɽ/) already correctly defined - importing it fixes
+// the plain letter exactly, not a guess. There's no ready-made aspirated-flap phoneme
+// anywhere in the tree to import for the aspirated letter, and fabricating breathy-flap
+// acoustic data with no way to verify it by ear would be worse than not touching it -
+// so r.h reuses r.'s own (verified-correct) acoustics with just the IPA label changed to
+// note the aspiration; this loses the plain/aspirated contrast in the synthesized sound
+// but is no less complete than this fork's existing "s;" phoneme (a bare alias with no
+// dedicated palatalization data of its own), and it removes the confirmed, concrete
+// stray-text bug either way.
+// Copied inline rather than import_phoneme ps/r. - the "ps" (Pashto) phonemetable is
+// declared later in phsource/phonemes than "hi_base", and import_phoneme can only reach
+// a table that's already been compiled by that point.
+phoneme r.
+  vcd rfx flp
+  lengthmod 6
+  ipa ɽ
+  Vowelin f1=3  f2=1200 -400 -100  f3=-400 80 colr=2
+  Vowelout f1=3 f2=1200 -400 -100  f3=-400 80 colr=2
+  FMT(r3/r_) addWav(r3/rx, 80)
+endphoneme
+
+phoneme r.h
+  vcd rfx flp
+  lengthmod 6
+  ipa ɽʱ
+  Vowelin f1=3  f2=1200 -400 -100  f3=-400 80 colr=2
+  Vowelout f1=3 f2=1200 -400 -100  f3=-400 80 colr=2
+  FMT(r3/r_) addWav(r3/rx, 80)
+endphoneme
+
   
