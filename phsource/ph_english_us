@@ -204,6 +204,15 @@ phoneme 3:
   vwl  starttype #@  endtype #@
   length 210
   IfNextVowelAppend(r-)
+  // American English is rhotic - "her"/"sir"/"fur"/"stir" etc need /r/ even when
+  // nothing follows or the next sound is a consonant, not just before a vowel
+  // (IfNextVowelAppend above only covers the linking-r-before-vowel case, which is
+  // correct for non-rhotic British but leaves en-us silent on r the rest of the
+  // time). Skip if a literal r already follows in the dictionary spelling itself
+  // (e.g. "blurry"=bl3:ri, "referral"=rI#f3:r@L) to avoid doubling it up.
+  IF NOT nextPh(isVowel) AND NOT nextPh(r) THEN
+    AppendPhoneme(r/)
+  ENDIF
   ChangeIfDiminished(3)
   FMT(vwl_en_us/3_us2)
 endphoneme
