@@ -102,7 +102,7 @@ jmethodID METHOD_nativeSynthWordCallback;
 
 /* Audio frames handed to the Java layer so far for the current request.
  * Reset by nativeSynthesize before each espeak_Synth call. */
-static int frames_delivered = 0;
+static _Atomic int frames_delivered = 0;
 
 /* Set by nativeStop from the framework's control thread while espeak_Synth is
  * still running on the synthesis thread.  espeak_ng_Cancel() cannot interrupt a
@@ -145,10 +145,10 @@ static int SynthCallback(short *audioData, int numSamples,
      * past the audio actually produced.  Clamping to the current buffer keeps
      * it exact while sonic is idle and bounded by one buffer when it is not. */
     int marker = event->sample;
-    if (marker < frames_delivered)
-      marker = frames_delivered;
-    else if (marker > frames_delivered + numSamples)
-      marker = frames_delivered + numSamples;
+    if (marker < atomic_load(&frames_delivered))
+      marker = atomic_load(&frames_delivered);
+    else if (marker > atomic_load(&frames_delivered) + numSamples)
+      marker = atomic_load(&frames_delivered) + numSamples;
 
     (*env)->CallVoidMethod(env, object, METHOD_nativeSynthWordCallback,
                            (jint) event->text_position, (jint) event->length,
@@ -162,7 +162,7 @@ static int SynthCallback(short *audioData, int numSamples,
     /* The callback runs many times per request without returning to Java, so
      * the local reference has to be released here or the table overflows. */
     (*env)->DeleteLocalRef(env, arrayAudioData);
-    frames_delivered += numSamples;
+    atomic_fetch_add(&frames_delivered, numSamples);
   }
 
   return SYNTH_CONTINUE;
@@ -183,6 +183,13 @@ JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
   }
 
   return JNI_VERSION_1_6;
+}
+
+JNIEXPORT void
+JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
+  // Cleanup global references if any
+  METHOD_nativeSynthCallback = NULL;
+  METHOD_nativeSynthWordCallback = NULL;
 }
 
 JNIEXPORT jboolean
@@ -358,7 +365,7 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
   unsigned int unique_identifier;
 
   espeak_SetSynthCallback(SynthCallback);
-  frames_delivered = 0;
+  atomic_store(&frames_delivered, 0);
   atomic_store(&stop_requested, 0);
   /* c_text is NULL whenever the caller passes a null jstring; strlen(NULL)
    * is undefined behaviour (a crash on bionic), so a null text is treated

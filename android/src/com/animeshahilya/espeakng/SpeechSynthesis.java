@@ -56,6 +56,9 @@ public class SpeechSynthesis {
             "yue-Latn-jyutping", "yue-latn-jyutping", "xex"
     ));
 
+    // Cached voice list to avoid repeated native calls and Locale construction
+    private static volatile List<Voice> sCachedVoices = null;
+
     public static final int GENDER_UNSPECIFIED = 0;
     public static final int GENDER_MALE = 1;
     public static final int GENDER_FEMALE = 2;
@@ -130,6 +133,11 @@ public class SpeechSynthesis {
     }
 
     public List<Voice> getAvailableVoices() {
+        // Return cached voices if available
+        if (sCachedVoices != null) {
+            return sCachedVoices;
+        }
+
         final String[] results = nativeGetAvailableVoices();
         mVoiceCount = results.length / 4;
         final List<Voice> voices = new ArrayList<Voice>(mVoiceCount);
@@ -174,7 +182,14 @@ public class SpeechSynthesis {
             }
         }
 
+        // Cache the filtered voice list
+        sCachedVoices = voices;
         return voices;
+    }
+
+    /** Clear cached voice list (call when voice data changes, e.g., after extraction). */
+    public static void clearVoiceCache() {
+        sCachedVoices = null;
     }
 
     public void setVoice(Voice voice, VoiceVariant variant) {

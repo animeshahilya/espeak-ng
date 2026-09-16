@@ -7,6 +7,9 @@ add_link_options("-Wl,-z,max-page-size=16384")
 # Release only: an unconditional -O3 also applied to debug builds, making
 # native breakpoints/variable inspection unreliable during development.
 add_compile_options("$<$<CONFIG:Release>:-O3>")
+# Release only: enable thin LTO for smaller, faster native code
+add_compile_options("$<$<CONFIG:Release>:-flto=thin>")
+add_link_options("$<$<CONFIG:Release>:-flto=thin>")
 
 # Build libsonic from source for Android and pre-seed the find results so
 # cmake/deps.cmake in the main project detects it (the NDK sysroot has no sonic).

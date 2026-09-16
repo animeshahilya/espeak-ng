@@ -201,6 +201,9 @@ public class TtsService extends TextToSpeechService {
             mEngine = null;
         }
 
+        // Clear cached voice list since native engine is being reinitialized
+        SpeechSynthesis.clearVoiceCache();
+
         mEngine = new SpeechSynthesis(storageContext, mSynthCallback);
         mMatchingVoice = null;
         List<Voice> voices = mEngine.getAvailableVoices();
