@@ -103,9 +103,9 @@ public class BilingualAndDictionaryDeviceTest {
         // Malayalam numerals
         assertThat(TtsService.normalizeIndicDigits("൦൧൨൩൪൫൬൭൮൯"), is("0123456789"));
 
-        // Full Indian formatting on Devanagari digits: ₹१,५०,००० -> 150000 rupees
+        // Full Indian formatting on Devanagari digits: ₹१,५०,००० -> 1 lakh 50000 rupees
         String res = TtsService.preprocessIndianText("कुल राशि ₹१,५०,००० प्राप्त हुई।");
-        assertThat(res, containsString("150000 rupees"));
+        assertThat(res, containsString("1 lakh 50000 rupees"));
     }
 
     @Test

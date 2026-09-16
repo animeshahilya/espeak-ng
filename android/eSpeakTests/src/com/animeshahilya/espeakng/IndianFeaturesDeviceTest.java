@@ -110,16 +110,44 @@ public class IndianFeaturesDeviceTest {
 
     @Test
     public void testPreprocessIndianText_CurrencyAndCommas() {
-        // Indian Rupee currency normalization
+        // Indian Rupee currency normalization with lakh verbalization
         String res1 = TtsService.preprocessIndianText("Paid ₹1,50,000 for service");
-        assertThat(res1, containsString("150000 rupees"));
+        assertThat(res1, containsString("1 lakh 50000 rupees"));
 
         String res2 = TtsService.preprocessIndianText("Total is Rs. 25,000 only");
         assertThat(res2, containsString("25000 rupees"));
 
-        // Indian comma grouping normalization
+        // Indian comma grouping verbalization
         String res3 = TtsService.preprocessIndianText("Population count 12,34,567 registered");
-        assertThat(res3, containsString("1234567"));
+        assertThat(res3, containsString("12 lakh 34567"));
+
+        // Paise for decimal rupee amounts
+        assertThat(TtsService.preprocessIndianText("Paid ₹10.50 only"),
+                containsString("10 rupees 50 paise"));
+        assertThat(TtsService.preprocessIndianText("Paid ₹10.00 only"),
+                containsString("10 rupees"));
+    }
+
+    @Test
+    public void testPreprocessIndianText_HindiDevanagariUnits() {
+        // Devanagari-script voices get native units, not Latin transliterations.
+        String res1 = TtsService.preprocessIndianText("कुल राशि ₹1,50,000 प्राप्त हुई।", "hi");
+        assertThat(res1, containsString("1 लाख 50000 रुपये"));
+
+        assertThat(TtsService.preprocessIndianText("₹10.50", "hi"), is("10 रुपये 50 पैसे"));
+        assertThat(TtsService.preprocessIndianText("Population 12,34,567", "hi"),
+                containsString("12 लाख 34567"));
+        assertThat(TtsService.preprocessIndianText("Budget of 5L allocated", "hi"),
+                containsString("5 लाख"));
+        assertThat(TtsService.preprocessIndianText("Turnover 2cr expected", "hi"),
+                containsString("2 करोड़"));
+        assertThat(TtsService.preprocessIndianText("Salary is 50k", "hi"),
+                containsString("50 हज़ार"));
+
+        // Marathi shares the Devanagari units; English keeps Latin ones.
+        assertThat(TtsService.preprocessIndianText("₹1,00,000", "mr"), is("1 लाख रुपये"));
+        assertThat(TtsService.preprocessIndianText("₹1,00,000", "en-in"), is("1 lakh rupees"));
+        assertThat(TtsService.preprocessIndianText("₹1,00,000", ""), is("1 lakh rupees"));
     }
 
     @Test

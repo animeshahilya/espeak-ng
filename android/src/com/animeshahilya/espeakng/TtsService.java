@@ -624,7 +624,7 @@ public class TtsService extends TextToSpeechService {
 
         if (!isSsml && settings.isIndianNumberingEnabled()) {
             String before = text;
-            text = preprocessIndianText(text);
+            text = preprocessIndianText(text, languageTag(voice));
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -697,7 +697,7 @@ public class TtsService extends TextToSpeechService {
                 }
                 if (!isSsml && settings.isIndianNumberingEnabled()) {
                     before = text;
-                    text = preprocessIndianText(text);
+                    text = preprocessIndianText(text, languageTag(voice));
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (speakDigits) {
@@ -1361,6 +1361,21 @@ public class TtsService extends TextToSpeechService {
     }
 
     /**
+     * True for Devanagari-script languages (Hindi, Marathi, Nepali, Sanskrit,
+     * Konkani): number/currency units are emitted in Devanagari (लाख, करोड़,
+     * रुपये, पैसे) so the voice reads natively instead of stumbling through
+     * Latin transliterations. Every other language keeps Latin units.
+     */
+    public static boolean isDevanagariNumberLang(String languageTag) {
+        if (languageTag == null || languageTag.isEmpty()) return false;
+        String base = languageTag.trim().toLowerCase(java.util.Locale.ROOT);
+        int dash = base.indexOf('-');
+        if (dash >= 0) base = base.substring(0, dash);
+        return base.equals("hi") || base.equals("mr") || base.equals("ne")
+                || base.equals("sa") || base.equals("kok");
+    }
+
+    /**
      * Verbalizes an Indian-comma-grouped figure using lakh/crore units, which
      * is how Indian English actually says these numbers ("1,00,000" is "one
      * lakh", not "one hundred thousand"). Only the grouping commas carry the
@@ -1374,6 +1389,12 @@ public class TtsService extends TextToSpeechService {
      * producing an unreadable word chain.
      */
     public static String indianGroupedNumberToWords(String grouped) {
+        return indianGroupedNumberToWords(grouped, false);
+    }
+
+    public static String indianGroupedNumberToWords(String grouped, boolean devanagari) {
+        String lakhWord = devanagari ? "लाख" : "lakh";
+        String croreWord = devanagari ? "करोड़" : "crore";
         if (grouped == null || grouped.isEmpty()) return grouped;
         String digits = grouped.replace(",", "");
         long value;
@@ -1389,14 +1410,14 @@ public class TtsService extends TextToSpeechService {
         long crore = value / 10000000L;
         long rest = value % 10000000L;
         if (crore > 0) {
-            out.append(crore).append(" crore");
+            out.append(crore).append(' ').append(croreWord);
             if (rest > 0) out.append(' ');
         }
         if (rest > 0) {
             long lakh = rest / 100000L;
             long rest2 = rest % 100000L;
             if (lakh > 0) {
-                out.append(lakh).append(" lakh");
+                out.append(lakh).append(' ').append(lakhWord);
                 if (rest2 > 0) out.append(' ').append(rest2);
             } else {
                 out.append(rest2);
@@ -1412,19 +1433,25 @@ public class TtsService extends TextToSpeechService {
      * ("10.567" -&gt; "10.567 rupees" reads as "ten point five...").
      */
     public static String indianRupeeAmountToWords(String amount) {
-        if (amount == null || amount.isEmpty()) return " rupees";
+        return indianRupeeAmountToWords(amount, false);
+    }
+
+    public static String indianRupeeAmountToWords(String amount, boolean devanagari) {
+        String rupeesWord = devanagari ? "रुपये" : "rupees";
+        String paiseWord = devanagari ? "पैसे" : "paise";
+        if (amount == null || amount.isEmpty()) return " " + rupeesWord;
         int dot = amount.indexOf('.');
         String intPart = dot >= 0 ? amount.substring(0, dot) : amount;
         String fracPart = dot >= 0 ? amount.substring(dot + 1) : "";
         String intWords = intPart.contains(",")
-                ? indianGroupedNumberToWords(intPart)
+                ? indianGroupedNumberToWords(intPart, devanagari)
                 : intPart.replace(",", "");
         if (intWords.isEmpty()) intWords = "0";
-        StringBuilder out = new StringBuilder(intWords).append(" rupees");
+        StringBuilder out = new StringBuilder(intWords).append(' ').append(rupeesWord);
         if (fracPart.length() >= 1 && fracPart.length() <= 2) {
             try {
                 if (Integer.parseInt(fracPart) != 0) {
-                    out.append(' ').append(Integer.parseInt(fracPart)).append(" paise");
+                    out.append(' ').append(Integer.parseInt(fracPart)).append(' ').append(paiseWord);
                 }
             } catch (NumberFormatException ignored) {
             }
@@ -1443,9 +1470,19 @@ public class TtsService extends TextToSpeechService {
      * 6. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
      */
     public static String preprocessIndianText(String text) {
+        return preprocessIndianText(text, "");
+    }
+
+    /**
+     * @param languageTag BCP-47-ish tag of the synthesis voice ("hi", "en-in",
+     *                    ...); Devanagari-script languages get native units
+     *                    (लाख/करोड़/रुपये/पैसे), all others get Latin units.
+     */
+    public static String preprocessIndianText(String text, String languageTag) {
         if (text == null || text.isEmpty() || !containsIndianNuanceChars(text)) {
             return text;
         }
+        final boolean devanagari = isDevanagariNumberLang(languageTag);
         text = normalizeIndicDigits(text);
         text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
         java.util.regex.Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
@@ -1471,7 +1508,7 @@ public class TtsService extends TextToSpeechService {
             do {
                 String amount = currMatcher.group(1);
                 currMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(
-                        indianRupeeAmountToWords(amount)));
+                        indianRupeeAmountToWords(amount, devanagari)));
             } while (currMatcher.find());
             currMatcher.appendTail(sb);
             text = sb.toString();
@@ -1484,16 +1521,22 @@ public class TtsService extends TextToSpeechService {
             StringBuffer sb = new StringBuffer();
             do {
                 String grouped = numMatcher.group(0);
-                String words = indianGroupedNumberToWords(grouped);
+                String words = indianGroupedNumberToWords(grouped, devanagari);
                 numMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(words));
             } while (numMatcher.find());
             numMatcher.appendTail(sb);
             text = sb.toString();
         }
 
-        text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
-        text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");
-        text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 crore");
+        if (devanagari) {
+            text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 हज़ार");
+            text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 लाख");
+            text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 करोड़");
+        } else {
+            text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
+            text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");
+            text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 crore");
+        }
         return text;
     }
 
