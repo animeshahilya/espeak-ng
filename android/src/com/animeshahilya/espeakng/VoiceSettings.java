@@ -37,6 +37,8 @@ public class VoiceSettings {
     public static final String PREF_PUNCTUATION_CHARACTERS = "espeak_punctuation_characters";
     public static final String PREF_RATE_BOOST = "espeak_rate_boost";
     public static final String PREF_UNICODE_NORMALIZATION = "espeak_unicode_normalization";
+    /** @deprecated Legacy eyes-free-era digit toggle; see {@link #isSpeakDigitsEnabled}. */
+    @Deprecated
     public static final String PREF_SPEAK_DIGITS = "espeak_speak_digits";
     public static final int RATE_BOOST_MULTIPLIER = 3;
     public static final String PREF_NORMALIZE_UNICODE = "espeak_normalize_unicode";
@@ -57,8 +59,14 @@ public class VoiceSettings {
     public static final String PREF_DIGIT_GROUP_THRESHOLD = "espeak_digit_group_threshold";
     public static final String PREF_TIME_DATE = "espeak_time_date";
     public static final String PREF_CURRENCY = "espeak_currency";
+    /** @deprecated Legacy single-mode booleans; migrated by {@link #getReadingMode}. Keys kept. */
+    @Deprecated
     public static final String PREF_SPELLING_MODE = "espeak_spelling_mode";
+    /** @deprecated See {@link #PREF_SPELLING_MODE}. */
+    @Deprecated
     public static final String PREF_PHONETIC_MODE = "espeak_phonetic_mode";
+    /** @deprecated See {@link #PREF_SPELLING_MODE}. */
+    @Deprecated
     public static final String PREF_CODE_READING_MODE = "espeak_code_reading";
     // Deep-tuning: force overrides, optimizer intensity, smart-code window, unified reading mode.
     public static final String PREF_FORCE_RATE = "espeak_force_rate";
@@ -308,11 +316,13 @@ public class VoiceSettings {
 
     /**
      * Whether to read numbers digit-by-digit instead of as whole numbers.
-     * When enabled, "123" is spoken as "one two three" (or equivalent in
-     * the active language) by inserting spaces between digits. Off by
-     * default so that numbers like "123" are read as "one hundred twenty
-     * three".
+     *
+     * @deprecated Superseded by {@link #getDigitGroupingMode()} ("single" is
+     *             identical behavior). Kept only as the migration source for
+     *             installs that set this boolean before grouping existed, and
+     *             as the persisted key - do not remove the key.
      */
+    @Deprecated
     public boolean isSpeakDigitsEnabled() {
         return mPreferences.getBoolean(PREF_SPEAK_DIGITS, false);
     }

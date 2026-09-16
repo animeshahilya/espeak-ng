@@ -482,16 +482,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
-    private static Preference createSpeakDigitsPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_speak_digits);
-        pref.setSummary(R.string.setting_speak_digits_summary);
-        pref.setKey(VoiceSettings.PREF_SPEAK_DIGITS);
-        pref.setDefaultValue(false);
-        pref.setPersistent(true);
-        return pref;
-    }
-
     /**
      * Describes one voice parameter to {@link SeekBarPreference}: where its
      * value lives, what it is called and how it reads.
@@ -1628,7 +1618,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         if (!isWatch) {
             langCategory.addPreference(createBilingualSwitchingPreference(context));
             if (!voices.isEmpty()) {
-                langCategory.addPreference(createSecondaryVoicePreference(context, voices));
+                Preference secondary = createSecondaryVoicePreference(context, voices);
+                secondary.setDependency(VoiceSettings.PREF_BILINGUAL_SWITCHING);
+                langCategory.addPreference(secondary);
             }
             langCategory.addPreference(createTestVoicePreference(context));
         }
@@ -1638,7 +1630,14 @@ public class TtsSettingsActivity extends PreferenceActivity {
         paramCategory.setTitle(R.string.category_voice_parameters);
         group.addPreference(paramCategory);
 
-        paramCategory.addPreference(createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate));
+        // The rate dialog's embedded boost toggle is hidden wherever the
+        // standalone Rate boost checkbox exists (phones): one control per
+        // setting. Watches keep the embedded toggle as their only control.
+        Preference ratePref = createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate);
+        if (!isWatch && ratePref instanceof SeekBarPreference) {
+            ((SeekBarPreference) ratePref).setRateBoostToggleVisible(false);
+        }
+        paramCategory.addPreference(ratePref);
         if (!isWatch) {
             paramCategory.addPreference(createRateBoostPreference(context));
         }
@@ -1647,7 +1646,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
         paramCategory.addPreference(createAudioOptimizerPreference(context));
-        paramCategory.addPreference(createAudioProfilePreference(context));
+        Preference audioProfile = createAudioProfilePreference(context);
+        audioProfile.setDependency(VoiceSettings.PREF_AUDIO_OPTIMIZER);
+        paramCategory.addPreference(audioProfile);
         if (!isWatch) {
             paramCategory.addPreference(createRecommendedDefaultsPreference(context));
         }
@@ -1674,10 +1675,15 @@ public class TtsSettingsActivity extends PreferenceActivity {
         processCategory.addPreference(createIndianNumberingPreference(context));
         processCategory.addPreference(createSmartCodesPreference(context));
         if (!isWatch) {
-            processCategory.addPreference(createSmartMinPreference(context));
-            processCategory.addPreference(createSmartMaxPreference(context));
+            Preference smartMin = createSmartMinPreference(context);
+            smartMin.setDependency(VoiceSettings.PREF_SMART_CODES);
+            processCategory.addPreference(smartMin);
+            Preference smartMax = createSmartMaxPreference(context);
+            smartMax.setDependency(VoiceSettings.PREF_SMART_CODES);
+            processCategory.addPreference(smartMax);
         }
-        processCategory.addPreference(createSpeakDigitsPreference(context));
+        // Single control for digit handling: the grouping list's "Single
+        // digits" mode is the old digit-by-digit toggle, which was removed.
         processCategory.addPreference(createDigitGroupingPreference(context));
         if (!isWatch) {
             processCategory.addPreference(createDigitGroupThresholdPreference(context));

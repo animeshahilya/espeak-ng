@@ -648,18 +648,16 @@ public class TtsService extends TextToSpeechService {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        final boolean speakDigits = settings.isSpeakDigitsEnabled() && !isSsml;
+        // Digit handling lives in one place: the grouping mode. "Single" is
+        // exactly the old digit-by-digit behavior; the legacy boolean only
+        // survives as a migration default inside getDigitGroupingMode().
         final boolean smartCodes = settings.isSmartCodesEnabled() && !isSsml;
         final int smartMin = settings.getSmartMinLen();
         final int smartMax = settings.getSmartMaxLen();
         final String digitGrouping = settings.getDigitGroupingMode();
         final boolean useGrouping = !isSsml && digitGrouping != null
                 && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
-        if (speakDigits) {
-            String before = text;
-            text = spaceSeparateDigits(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        } else if (useGrouping) {
+        if (useGrouping) {
             String before = text;
             text = formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold());
             offsetMap = chainOffset(offsetMap, before, text);
@@ -708,11 +706,7 @@ public class TtsService extends TextToSpeechService {
                     text = preprocessIndianText(text, languageTag(voice));
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
-                if (speakDigits) {
-                    before = text;
-                    text = spaceSeparateDigits(text);
-                    offsetMap = chainOffset(offsetMap, before, text);
-                } else if (smartCodes) {
+                if (smartCodes) {
                     before = text;
                     text = spaceSeparateSmartCodes(text, smartMin, smartMax);
                     offsetMap = chainOffset(offsetMap, before, text);

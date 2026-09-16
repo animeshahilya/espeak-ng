@@ -110,6 +110,19 @@ public class SeekBarPreference extends DialogPreference
 
     private final List<Parameter> mParameters = new ArrayList<Parameter>();
 
+    /**
+     * Whether the rate-boost checkbox shows inside the rate dialog. Phones
+     * have a standalone Rate boost preference, so the embedded toggle is
+     * hidden there to leave exactly one control per setting; watches keep it
+     * as their only control. The stored boost value still drives the
+     * displayed (multiplied) value either way.
+     */
+    private boolean mRateBoostToggleVisible = true;
+
+    public void setRateBoostToggleVisible(boolean visible) {
+        mRateBoostToggleVisible = visible;
+    }
+
     public SeekBarPreference(Context context, AttributeSet attrs, int defStyle)
     {
         super(context, attrs, defStyle);
@@ -202,7 +215,7 @@ public class SeekBarPreference extends DialogPreference
             }
         });
 
-        if (parameter.hasRateBoost) {
+        if (parameter.hasRateBoost && mRateBoostToggleVisible) {
             // Checked before the listener is attached, so restoring the stored
             // state does not count as toggling it and write it straight back.
             parameter.mRateBoost.setChecked(parameter.boost);

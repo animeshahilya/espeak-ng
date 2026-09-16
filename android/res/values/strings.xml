@@ -119,17 +119,6 @@
   <string name="capitals_say">Say \"capital\" (character by character)</string>
   <string name="setting_wordgap">Word pause length</string>
   <string name="formatter_gap_ms">%s0 ms</string>
-  <!--
-        Source: Checkbox label.
-        Description: When enabled, numbers are read digit by digit instead of
-        as whole numbers (e.g. "123" becomes "one two three").
-    -->
-  <string name="setting_speak_digits">Read numbers digit by digit</string>
-  <!--
-        Source: Checkbox summary.
-        Description: Explains the digit-by-digit reading setting.
-    -->
-  <string name="setting_speak_digits_summary">Speak each digit separately, for example reading \"123\" as \"one two three\" instead of \"one hundred twenty three\"</string>
   <string name="variant_klatt_1">Klatt 1 (Impulsive)</string>
   <string name="variant_klatt_2">Klatt 2 (Natural)</string>
   <string name="variant_klatt_3">Klatt 3 (Sampled pulse 1)</string>
