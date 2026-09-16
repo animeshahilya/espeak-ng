@@ -95,6 +95,12 @@ static void fillSpeechPlayerFrame(WGEN_DATA *wdata, voice_t *wvoice, frame_t * e
 
 void KlattInitSP(void) {
 	speechPlayerHandle=speechPlayer_initialize(22050);
+	// NULL applies the DSP's own built-in default voicing tone (documented
+	// behaviour of speechPlayer_setVoicingTone). Some of those defaults -
+	// e.g. cascadeBwScale's formant-clarity narrowing - are only applied
+	// inside this call, not at speechPlayer_initialize() time, so without
+	// this the engine runs with a partially-unset tone.
+	speechPlayer_setVoicingTone(speechPlayerHandle, NULL);
 }
 
 void KlattFiniSP(void) {
