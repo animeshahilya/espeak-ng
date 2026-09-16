@@ -1028,6 +1028,9 @@ public class TtsService extends TextToSpeechService {
     static final int MAX_REQUEST_CHARS = 16000;
     /** Max chunks per request — bounds worst-case synthesis time on rapid swipes. */
     static final int MAX_CHUNKS = 20;
+    private static final java.util.regex.Pattern CHUNK_BOUNDARY =
+            java.util.regex.Pattern.compile(".{1," + MAX_CHUNK_CHARS + "}(?:[.!?;\\n]+\\s*|\\s+|$)",
+                    java.util.regex.Pattern.DOTALL);
 
     // NVDA-inspired programming, mathematical, and syntax symbol patterns (from NVDA symbols.dic):
     private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=|≠");
@@ -1833,10 +1836,7 @@ public class TtsService extends TextToSpeechService {
             }
             return chunks;
         }
-        java.util.regex.Pattern boundary =
-                java.util.regex.Pattern.compile(".{1," + MAX_CHUNK_CHARS + "}(?:[.!?;\\n]+\\s*|\\s+|$)",
-                        java.util.regex.Pattern.DOTALL);
-        java.util.regex.Matcher m = boundary.matcher(capped);
+        java.util.regex.Matcher m = CHUNK_BOUNDARY.matcher(capped);
         while (m.find() && chunks.size() < MAX_CHUNKS) {
             String c = m.group();
             if (!c.isEmpty()) chunks.add(c);
