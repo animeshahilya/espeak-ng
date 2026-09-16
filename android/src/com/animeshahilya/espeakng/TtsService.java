@@ -830,12 +830,35 @@ public class TtsService extends TextToSpeechService {
 
         boolean enableBilingual = settings.isBilingualSwitchingEnabled() && !isSsml;
         List<ScriptSpan> spans = null;
-        Voice secondaryVoice = null;
+        Voice latinVoice = null;
+        Voice indicVoice = null;
         if (enableBilingual && hasMixedLatinAndIndic(text)) {
             synchronized (mAvailableVoices) {
-                secondaryVoice = mAvailableVoices.get(settings.getSecondaryVoice());
+                Voice secondary = mAvailableVoices.get(settings.getSecondaryVoice());
+                // Route each script to a voice that can actually read it. The
+                // old code always read Indic spans with the primary voice, so
+                // en-in + Hindi mixes mumbled the Hindi through an English
+                // phoneme table. Now Indic spans prefer an Indic voice
+                // (primary if Indic, else the secondary if Indic, else Hindi
+                // as a last resort) and Latin spans prefer a Latin voice.
+                boolean primaryIndic = isIndicVoice(voice);
+                boolean secondaryIndic = isIndicVoice(secondary);
+                if (primaryIndic) {
+                    indicVoice = voice;
+                    latinVoice = (secondary != null && !secondary.name.equals(voice.name))
+                            ? secondary : mAvailableVoices.get("en-in");
+                } else {
+                    latinVoice = voice;
+                    if (secondaryIndic) {
+                        indicVoice = secondary;
+                    } else {
+                        indicVoice = mAvailableVoices.get("hi");
+                    }
+                }
+                if (latinVoice == null) latinVoice = voice;
+                if (indicVoice == null) indicVoice = voice;
             }
-            if (secondaryVoice != null && !secondaryVoice.name.equals(voice.name)) {
+            if (!latinVoice.name.equals(indicVoice.name)) {
                 spans = splitByScriptRuns(text);
             }
         }
@@ -846,9 +869,9 @@ public class TtsService extends TextToSpeechService {
         // short bounded units instead of one unbounded synth call.
         List<String> units = new ArrayList<>();
         List<Voice> unitVoices = new ArrayList<>();
-        if (spans != null && spans.size() > 1 && secondaryVoice != null) {
+        if (spans != null && spans.size() > 1 && latinVoice != null && indicVoice != null) {
             for (ScriptSpan span : spans) {
-                Voice spanVoice = span.isLatin ? secondaryVoice : voice;
+                Voice spanVoice = span.isLatin ? latinVoice : indicVoice;
                 for (String chunk : chunkForWatchdog(span.text)) {
                     units.add(chunk);
                     unitVoices.add(spanVoice);
@@ -1245,8 +1268,23 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
-    public static boolean hasMixedLatinAndIndic(String text) {
-        if (text == null || text.length() < 2) {
+    /** True when the voice's language is an Indic language (Devanagari/Bengali/Dravidian/...). */
+    static boolean isIndicVoice(Voice voice) {
+        if (voice == null || voice.locale == null) return false;
+        String lang = voice.locale.getLanguage();
+        if (lang == null) return false;
+        lang = lang.toLowerCase(java.util.Locale.ROOT);
+        // ISO 639-1 codes of the Indic languages eSpeak NG ships.
+        return lang.equals("hi") || lang.equals("bn") || lang.equals("pa")
+                || lang.equals("gu") || lang.equals("or") || lang.equals("mr")
+                || lang.equals("ta") || lang.equals("te") || lang.equals("kn")
+                || lang.equals("ml") || lang.equals("as") || lang.equals("ne")
+                || lang.equals("ur") || lang.equals("sa") || lang.equals("sd")
+                || lang.equals("ks") || lang.equals("kok") || lang.equals("mni")
+                || lang.equals("sat");
+    }
+
+    public static boolean hasMixedLatinAndIndic(String text) {        if (text == null || text.length() < 2) {
             return false;
         }
         boolean hasLatin = false;
@@ -1323,12 +1361,85 @@ public class TtsService extends TextToSpeechService {
     }
 
     /**
+     * Verbalizes an Indian-comma-grouped figure using lakh/crore units, which
+     * is how Indian English actually says these numbers ("1,00,000" is "one
+     * lakh", not "one hundred thousand"). Only the grouping commas carry the
+     * signal, so plain digit runs are never touched here.
+     *
+     * Decomposition leaves remainders below one lakh as digits for the engine
+     * ("1,23,45,678" -&gt; "1 crore 23 lakh 45678"), since eSpeak verbalizes
+     * small numbers naturally. Figures below one lakh strip to digits
+     * ("10,000" -&gt; "10000": Western and Indian readings agree there).
+     * Absurdly large figures (&gt; 999 crore) also strip, rather than
+     * producing an unreadable word chain.
+     */
+    public static String indianGroupedNumberToWords(String grouped) {
+        if (grouped == null || grouped.isEmpty()) return grouped;
+        String digits = grouped.replace(",", "");
+        long value;
+        try {
+            value = Long.parseLong(digits);
+        } catch (NumberFormatException e) {
+            return digits;
+        }
+        if (value < 100000 || value > 9999999999L) {
+            return digits;
+        }
+        StringBuilder out = new StringBuilder();
+        long crore = value / 10000000L;
+        long rest = value % 10000000L;
+        if (crore > 0) {
+            out.append(crore).append(" crore");
+            if (rest > 0) out.append(' ');
+        }
+        if (rest > 0) {
+            long lakh = rest / 100000L;
+            long rest2 = rest % 100000L;
+            if (lakh > 0) {
+                out.append(lakh).append(" lakh");
+                if (rest2 > 0) out.append(' ').append(rest2);
+            } else {
+                out.append(rest2);
+            }
+        }
+        return out.toString();
+    }
+
+    /**
+     * "₹1,00,000" -&gt; "1 lakh rupees", "₹10.50" -&gt; "10 rupees 50 paise",
+     * "₹500" -&gt; "500 rupees". The fractional part becomes paise only for a
+     * 1-2 digit nonzero fraction; anything else stays with the engine
+     * ("10.567" -&gt; "10.567 rupees" reads as "ten point five...").
+     */
+    public static String indianRupeeAmountToWords(String amount) {
+        if (amount == null || amount.isEmpty()) return " rupees";
+        int dot = amount.indexOf('.');
+        String intPart = dot >= 0 ? amount.substring(0, dot) : amount;
+        String fracPart = dot >= 0 ? amount.substring(dot + 1) : "";
+        String intWords = intPart.contains(",")
+                ? indianGroupedNumberToWords(intPart)
+                : intPart.replace(",", "");
+        if (intWords.isEmpty()) intWords = "0";
+        StringBuilder out = new StringBuilder(intWords).append(" rupees");
+        if (fracPart.length() >= 1 && fracPart.length() <= 2) {
+            try {
+                if (Integer.parseInt(fracPart) != 0) {
+                    out.append(' ').append(Integer.parseInt(fracPart)).append(" paise");
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return out.toString();
+    }
+
+    /**
      * Preprocesses Indian-specific textual nuances and common technical syntax before synthesis:
      * 1. Normalizes native Indic numerals across 9 scripts to ASCII 0-9.
      * 2. Inserts spacing after Danda (।) and Double Danda (॥) if directly adjacent to text.
      * 3. Separates slash-concatenated banking tokens (UPI/423891028341/PAYTM -> UPI / 423891028341 / PAYTM).
-     * 4. Normalizes currency prefixes (₹500, Rs. 500, INR 500 -> 500 rupees), stripping commas.
-     * 5. Normalizes Indian comma grouping (1,00,000 -> 100000).
+     * 4. Normalizes currency prefixes (₹500 -> 500 rupees, ₹10.50 -> 10 rupees 50 paise,
+     *    ₹1,00,000 -> 1 lakh rupees), stripping commas via lakh/crore verbalization.
+     * 5. Verbalizes Indian comma grouping (1,00,000 -> 1 lakh, 1,00,00,000 -> 1 crore).
      * 6. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
      */
     public static String preprocessIndianText(String text) {
@@ -1351,25 +1462,30 @@ public class TtsService extends TextToSpeechService {
             text = sb.toString();
         }
 
-        // Normalize Indian currency prefixes, stripping grouping commas from the figure
+        // Normalize Indian currency prefixes. Indian-grouped figures verbalize
+        // to lakh/crore ("₹1,00,000" -> "1 lakh rupees"); decimals become
+        // paise ("₹10.50" -> "10 rupees 50 paise").
         java.util.regex.Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
         if (currMatcher.find()) {
             StringBuffer sb = new StringBuffer();
             do {
-                String amount = currMatcher.group(1).replace(",", "");
-                currMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(amount + " rupees"));
+                String amount = currMatcher.group(1);
+                currMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(
+                        indianRupeeAmountToWords(amount)));
             } while (currMatcher.find());
             currMatcher.appendTail(sb);
             text = sb.toString();
         }
 
-        // Normalize Indian number comma groupings (e.g. 1,00,000 -> 100000)
+        // Verbalize Indian number comma groupings (e.g. 1,00,000 -> 1 lakh);
+        // plain thousands ("10,000") still strip to digits for natural reading.
         java.util.regex.Matcher numMatcher = INDIAN_NUMBER_COMMAS.matcher(text);
         if (numMatcher.find()) {
             StringBuffer sb = new StringBuffer();
             do {
-                String normalizedNum = numMatcher.group(0).replace(",", "");
-                numMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(normalizedNum));
+                String grouped = numMatcher.group(0);
+                String words = indianGroupedNumberToWords(grouped);
+                numMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(words));
             } while (numMatcher.find());
             numMatcher.appendTail(sb);
             text = sb.toString();
