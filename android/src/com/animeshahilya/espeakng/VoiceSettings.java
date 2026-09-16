@@ -44,6 +44,7 @@ public class VoiceSettings {
     public static final String PREF_NORMALIZE_UNICODE = "espeak_normalize_unicode";
     public static final String PREF_EMOJI_PROCESSING = "espeak_emoji_processing";
     public static final String PREF_CAPITALS = "espeak_capitals";
+    public static final String PREF_EMPHASIZE_QUESTIONS = "espeak_emphasize_questions";
     public static final String PREF_WORD_GAP = "espeak_wordgap";
     public static final String PREF_INDIAN_NUMBERING = "espeak_indian_numbering";
     public static final String PREF_SPEAK_PROGRAMMING_SYMBOLS = "espeak_speak_programming_symbols";
@@ -435,6 +436,16 @@ public class VoiceSettings {
 
     public boolean isForcePitchEnabled() {
         return mPreferences.getBoolean(PREF_FORCE_PITCH, false);
+    }
+
+    /**
+     * espeak-ng community issue #1658: widen the pitch rise on questions and
+     * exclamations for listeners with hearing difficulty. Off by default -
+     * changes the character of the intonation, so it's opt-in like the other
+     * perceptible-audio toggles here.
+     */
+    public boolean isEmphasizeQuestionsEnabled() {
+        return mPreferences.getBoolean(PREF_EMPHASIZE_QUESTIONS, false);
     }
 
     public boolean isForceVolumeEnabled() {

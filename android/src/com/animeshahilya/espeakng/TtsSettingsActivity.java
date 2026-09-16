@@ -1672,6 +1672,8 @@ public class TtsSettingsActivity extends PreferenceActivity {
         group.addPreference(processCategory);
 
         processCategory.addPreference(createCapitalsPreference(context));
+        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_EMPHASIZE_QUESTIONS,
+                R.string.setting_emphasize_questions, R.string.setting_emphasize_questions_summary, false));
         processCategory.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));
         processCategory.addPreference(createProgrammingSymbolsPreference(context));
         processCategory.addPreference(createIndianNumberingPreference(context));

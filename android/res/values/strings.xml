@@ -117,6 +117,8 @@
   <string name="capitals_sound">Play a beep (character by character)</string>
   <string name="capitals_pitch">Raise pitch (character by character)</string>
   <string name="capitals_say">Say \"capital\" (character by character)</string>
+  <string name="setting_emphasize_questions">Emphasize questions and exclamations</string>
+  <string name="setting_emphasize_questions_summary">Widens the pitch rise on sentences ending in ? or ! so they stand out more clearly. Off by default - changes how sentences sound, try it and see if you prefer it.</string>
   <string name="setting_wordgap">Word pause length</string>
   <string name="formatter_gap_ms">%s0 ms</string>
   <string name="variant_klatt_1">Klatt 1 (Impulsive)</string>

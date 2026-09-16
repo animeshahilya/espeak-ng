@@ -789,7 +789,21 @@ public class TtsService extends TextToSpeechService {
         }
         mEngine.Pitch.setValue(settings.getPitch(), pitchScale);
 
-        mEngine.PitchRange.setValue(settings.getPitchRange());
+        // Optional accessibility aid (espeak-ng community issue #1658): widen
+        // the pitch rise on questions/exclamations for hard-of-hearing
+        // listeners. Boosts PitchRange (inflection magnitude) rather than
+        // Pitch (which would shift the whole register) - this amplifies
+        // whatever rise the engine's own intonation model already produces
+        // for the sentence instead of adding a separate mechanism. Scoped
+        // per full utterance, same as Capitals-pitch below: a screen reader
+        // normally calls onSynthesizeText once per sentence already, so a
+        // mixed multi-sentence request only sees this if it ends in ?/!.
+        int pitchRange = settings.getPitchRange();
+        if (!isSsml && settings.isEmphasizeQuestionsEnabled() && endsWithQuestionOrExclamation(text)) {
+            int max = mEngine.PitchRange.getMaxValue();
+            pitchRange = Math.min(max, pitchRange + Math.max(1, pitchRange / 5));
+        }
+        mEngine.PitchRange.setValue(pitchRange);
 
         // Accessibility volume ducking support (KEY_PARAM_VOLUME)
         float volumeScale = 1.0f;
@@ -1780,6 +1794,30 @@ public class TtsService extends TextToSpeechService {
             i += Character.charCount(cp);
         }
         return out.toString();
+    }
+
+    /**
+     * True if the last non-trailing-whitespace/quote/bracket character of
+     * {@code text} is '?' or '!' (plain or fullwidth). Used to scope the
+     * question/exclamation pitch-range boost (espeak-ng community issue
+     * #1658) to the whole utterance, the same per-call scope the existing
+     * Capitals-pitch handling above uses.
+     */
+    public static boolean endsWithQuestionOrExclamation(String text) {
+        if (text == null) return false;
+        int end = text.length();
+        while (end > 0) {
+            char c = text.charAt(end - 1);
+            if (Character.isWhitespace(c) || c == '"' || c == '\'' || c == ')' || c == ']'
+                    || c == '”' || c == '’') {
+                end--;
+                continue;
+            }
+            break;
+        }
+        if (end == 0) return false;
+        char last = text.charAt(end - 1);
+        return last == '?' || last == '!' || last == '？' || last == '！';
     }
 
     /**
