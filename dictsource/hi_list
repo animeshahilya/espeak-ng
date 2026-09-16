@@ -460,12 +460,8 @@ $	dOl@r
 शांति	Sa:nti:
 कि	kI
 
-// Sanskrit tatsama words that keep their word-final inherent vowel in standard Hindi,
-// unlike native words where it's regularly deleted - found by comparing against the
-// labeled dataset from aryamanarora/schwa-deletion (ACL 2020, github.com/aryamanarora/
-// schwa-deletion), which documents this exact category as the classic hard case for
-// rule-based Hindi schwa deletion. Only the words verified as a clean "missing exactly
-// the final vowel, nothing else different" case were added here.
+// Sanskrit tatsama words that keep their word-final inherent vowel (unlike native
+// words, where it's regularly deleted). Source: aryamanarora/schwa-deletion dataset.
 क्षत्रिय	kS'VtrIj@
 अल्प	'Vlp@
 प्रतिबद्ध	pr'VtIb,@d#:@

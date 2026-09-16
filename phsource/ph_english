@@ -332,12 +332,9 @@ phoneme 0#    // [@] in unstressed syllables
 endphoneme
 
 
-phoneme 02   // 'one'=[wVn], 'of'=[Vv] etc - always V, not accent-conditional despite
-             // the historical "becomes V in en-us" comment; en-us's own ph_english_us
-             // override already does this, but the shared base table (used directly by
-             // en-GB/en-AU/en-SC/...) never did, so those accents said e.g. "one" as
-             // [wQn] instead of [wVn] - not a real dialect difference, just a stale gap
-             // (see espeak-ng/espeak-ng#2186).
+phoneme 02   // 'one'=[wVn] etc - always V, not accent-conditional; en-us already
+             // overrode this but the shared base table (en-GB/en-AU/...) didn't,
+             // so those accents said [wQn] instead (espeak-ng/espeak-ng#2186).
   vwl  starttype #o  endtype #o
   length 140
   ChangePhoneme(V)
