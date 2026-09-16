@@ -65,6 +65,11 @@ static void fillSpeechPlayerFrame(WGEN_DATA *wdata, voice_t *wvoice, frame_t * e
 	// speechPlayer uses floating point value of 1 as 100%.
 	spFrame->voiceAmplitude=(wvoice->voicing)/64.0;
 	spFrame->aspirationAmplitude=(wvoice->breath[1])/64.0;
+	// Never set otherwise (spFrame starts zeroed), which the DSP treats as a
+	// fully-closed glottis rather than a neutral one. 0.40 is speechPlayer's
+	// own documented "neutral" value (see frame.h's field comment and
+	// TGSpeechBox's speechPlayer_voicingTone defaults commentary).
+	spFrame->glottalOpenQuotient=0.40;
 	// All of eSpeak's relative formant frequency ratio values are stored with 256 representing 100% according to comments in voice.h. 
 	spFrame->cf1=(eFrame->ffreq[1]*wvoice->freq[1]/256.0)+wvoice->freqadd[1];
 	spFrame->cf2=(eFrame->ffreq[2]*wvoice->freq[2]/256.0)+wvoice->freqadd[2];
