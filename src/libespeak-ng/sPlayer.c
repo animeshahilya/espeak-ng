@@ -128,22 +128,34 @@ int Wavegen_KlattSP(WGEN_DATA *wdata, voice_t *wvoice, int length, int resume, f
 			spFrame1.outputGain/=5;
 			spFrame2.outputGain/=5;
 		}
+		// frameEx carries TGSpeechBox's DSP-v8 extras (F7/F8 spectral
+		// formants above F6, transition-timing refinements). Passed as
+		// its documented all-defaults value throughout: Fujisaki pitch
+		// contour, jitter/shimmer/creakiness and formant-end ramping all
+		// stay at their explicit "off" defaults deliberately - eSpeak
+		// already computes its own complete pitch contour into
+		// spFrame->voicePitch/endVoicePitch above, and layering a second,
+		// untuned pitch model on top risks fighting it rather than
+		// improving it. Only the sample-rate-gated F7/F8 formants (this
+		// engine runs at 22050 Hz, the documented threshold) and the
+		// other structural defaults are actually new here.
+		const unsigned int frameExSize=(unsigned int)sizeof(speechPlayer_frameEx_defaults);
 		int mainLength=length;
-		speechPlayer_queueFrame(speechPlayerHandle,&spFrame1,minFadeLength,minFadeLength,-1,false);
+		speechPlayer_queueFrameEx(speechPlayerHandle,&spFrame1,&speechPlayer_frameEx_defaults,frameExSize,minFadeLength,minFadeLength,-1,false);
 		mainLength-=minFadeLength;
 		bool fadeOut=!isKlattFrameFollowing();
 		if(fadeOut) {
 			mainLength-=minFadeLength;
 		}
 		if(mainLength>=1) {
-			speechPlayer_queueFrame(speechPlayerHandle,&spFrame2,mainLength,mainLength,-1,false);
+			speechPlayer_queueFrameEx(speechPlayerHandle,&spFrame2,&speechPlayer_frameEx_defaults,frameExSize,mainLength,mainLength,-1,false);
 		}
 		if(fadeOut) {
 			spFrame2.voicePitch=spFrame2.endVoicePitch;
 			spFrame2.preFormantGain=0;
-			speechPlayer_queueFrame(speechPlayerHandle,&spFrame2,minFadeLength/2,minFadeLength/2,-1,false);
+			speechPlayer_queueFrameEx(speechPlayerHandle,&spFrame2,&speechPlayer_frameEx_defaults,frameExSize,minFadeLength/2,minFadeLength/2,-1,false);
 			spFrame2.outputGain=0;
-			speechPlayer_queueFrame(speechPlayerHandle,&spFrame2,minFadeLength/2,minFadeLength/2,-1,false);
+			speechPlayer_queueFrameEx(speechPlayerHandle,&spFrame2,&speechPlayer_frameEx_defaults,frameExSize,minFadeLength/2,minFadeLength/2,-1,false);
 		}
 	}
 	unsigned int maxLength=(out_end-out_ptr)/sizeof(sample);
