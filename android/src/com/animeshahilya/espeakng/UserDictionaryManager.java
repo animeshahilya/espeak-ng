@@ -196,7 +196,6 @@ public class UserDictionaryManager {
     public synchronized int importFromStream(InputStream is, ImportProgress progress) {
         int added = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8), 32768)) {
-            reader.mark(4096);
             String firstLine = reader.readLine();
             if (firstLine == null) return 0;
             String firstTrim = firstLine.trim();

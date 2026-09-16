@@ -103,6 +103,14 @@ public class TtsService extends TextToSpeechService {
     /** Anchor for incremental code point to UTF-16 index conversion. */
     private int mAnchorCodePoint;
     private int mAnchorOffset;
+    /**
+     * Code-point offset of the chunk currently being synthesized within
+     * {@link #mSynthText}. Synthesis is synchronous, so every word callback
+     * belongs to the chunk whose base is set here; 0 for single-chunk
+     * requests. Without this, word boundaries for chunks after the first
+     * would be reported against the wrong part of the text.
+     */
+    private int mChunkBase;
 
     private List<Voice> mAllVoices = new ArrayList<Voice>();
     private final Map<String, Voice> mAvailableVoices = new HashMap<String, Voice>();
@@ -727,12 +735,13 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
-        if (!isSsml) {
-            // Zero-hang watchdog: always sanitize edge-case sequences, even when
-            // every other option is off, so a pasted bidi/zero-width run or a
-            // mixed-script [[ sequence can never stall the engine.
+        // Zero-hang watchdog: always strip hang-inducing controls, even when
+        // every other option is off, so a pasted bidi/zero-width run can never
+        // stall the engine. SSML keeps its markup (controls only); plain text
+        // additionally gets [[-run collapsing.
+        {
             String before = text;
-            text = sanitizeForWatchdog(text);
+            text = sanitizeForWatchdog(text, isSsml);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -748,6 +757,7 @@ public class TtsService extends TextToSpeechService {
         mSynthTextCodePoints = text.codePointCount(0, text.length());
         mAnchorCodePoint = 0;
         mAnchorOffset = 0;
+        mChunkBase = 0;
 
         mCallback = callback;
         mCallbackDone.set(false);
@@ -866,23 +876,37 @@ public class TtsService extends TextToSpeechService {
         // Zero-hang watchdog: never hand the native engine one giant buffer.
         // Bilingual spans already split by script; anything else over the
         // chunk limit is split at clause boundaries. Rapid swipes just queue
-        // short bounded units instead of one unbounded synth call.
+        // short bounded units instead of one unbounded synth call. SSML is
+        // never chunked: splitting markup across units would corrupt it.
         List<String> units = new ArrayList<>();
         List<Voice> unitVoices = new ArrayList<>();
-        if (spans != null && spans.size() > 1 && latinVoice != null && indicVoice != null) {
+        List<Integer> unitBases = new ArrayList<>();
+        if (isSsml) {
+            units.add(text);
+            unitVoices.add(voice);
+            unitBases.add(0);
+        } else if (spans != null && spans.size() > 1 && latinVoice != null && indicVoice != null) {
+            int base = 0;
             for (ScriptSpan span : spans) {
                 Voice spanVoice = span.isLatin ? latinVoice : indicVoice;
+                int spanBase = base;
+                base += span.text.codePointCount(0, span.text.length());
                 for (String chunk : chunkForWatchdog(span.text)) {
                     units.add(chunk);
                     unitVoices.add(spanVoice);
+                    unitBases.add(spanBase);
+                    spanBase += chunk.codePointCount(0, chunk.length());
                 }
                 if (units.size() >= MAX_CHUNKS) break;
             }
         } else {
             mEngine.setVoice(voice, settings.getVoiceVariant());
+            int base = 0;
             for (String chunk : chunkForWatchdog(text)) {
                 units.add(chunk);
                 unitVoices.add(voice);
+                unitBases.add(base);
+                base += chunk.codePointCount(0, chunk.length());
             }
         }
 
@@ -893,6 +917,7 @@ public class TtsService extends TextToSpeechService {
                     break;
                 }
                 try {
+                    mChunkBase = unitBases.get(ui);
                     mEngine.setVoice(unitVoices.get(ui), settings.getVoiceVariant());
                     mEngine.synthesize(units.get(ui), false);
                 } catch (Throwable t) {
@@ -903,6 +928,7 @@ public class TtsService extends TextToSpeechService {
             }
         } else {
             mSegmentsRemaining.set(1);
+            mChunkBase = unitBases.isEmpty() ? 0 : unitBases.get(0);
             mEngine.setVoice(voice, settings.getVoiceVariant());
             try {
                 mEngine.synthesize(text, isSsml);
@@ -996,7 +1022,7 @@ public class TtsService extends TextToSpeechService {
             java.util.regex.Pattern.compile("\\b([01]?\\d|2[0-3]):([0-5]\\d)(?:\\s*([AP])\\.?M\\.?)?",
             java.util.regex.Pattern.CASE_INSENSITIVE);
     private static final java.util.regex.Pattern DATE_NUMERIC =
-            java.util.regex.Pattern.compile("\\b(\\d{1,4})[/\\-.](\\d{1,2})[/\\-.](\\d{1,4})\\b");
+            java.util.regex.Pattern.compile("\\b(\\d{1,4})[/\\-](\\d{1,2})[/\\-](\\d{1,4})\\b");
     // Edge-case controls that hang or corrupt synthesis on rapid swipes / mixed-script pastes.
     private static final java.util.regex.Pattern HANG_CONTROLS =
             java.util.regex.Pattern.compile("[\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u2064\\uFEFF\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]");
@@ -1449,12 +1475,20 @@ public class TtsService extends TextToSpeechService {
         if (intWords.isEmpty()) intWords = "0";
         StringBuilder out = new StringBuilder(intWords).append(' ').append(rupeesWord);
         if (fracPart.length() >= 1 && fracPart.length() <= 2) {
+            int paise = -1;
             try {
-                if (Integer.parseInt(fracPart) != 0) {
-                    out.append(' ').append(Integer.parseInt(fracPart)).append(' ').append(paiseWord);
-                }
+                paise = Integer.parseInt(fracPart);
             } catch (NumberFormatException ignored) {
             }
+            if (paise > 0) {
+                out.append(' ').append(paise).append(' ').append(paiseWord);
+            } else if (paise < 0) {
+                // Unparseable fraction: keep it verbatim instead of dropping value.
+                out.append('.').append(fracPart);
+            }
+        } else if (!fracPart.isEmpty()) {
+            // Long fractions ("10.567") stay decimal for the engine.
+            return intWords + "." + fracPart + " " + rupeesWord;
         }
         return out.toString();
     }
@@ -1671,6 +1705,9 @@ public class TtsService extends TextToSpeechService {
     public static String expandCurrencySymbols(String text) {
         if (text == null || text.isEmpty()) return text;
         text = CURRENCY_DOLLAR_PREFIX.matcher(text).replaceAll("$1 dollars");
+        // Suffix form ("5 USD", "5 dollars"): normalizes to "5 dollars".
+        // Idempotent on already-expanded text, so pipeline re-runs are safe.
+        text = CURRENCY_DOLLAR_SUFFIX.matcher(text).replaceAll("$1 dollars");
         text = CURRENCY_EURO.matcher(text).replaceAll("$1$2 euros");
         text = CURRENCY_POUND.matcher(text).replaceAll("$1$2 pounds");
         text = CURRENCY_YEN.matcher(text).replaceAll("$1$2 yen");
@@ -1679,8 +1716,9 @@ public class TtsService extends TextToSpeechService {
 
     /**
      * Natural time/date pronunciation: "10:30" -&gt; "10 30", "10:30 PM" keeps
-     * the meridiem, numeric dates get separators spaced so they read as number
-     * groups instead of one long integer.
+     * the meridiem, numeric slash/dash dates ("15/01/2024", "2024-01-15") get
+     * separators spaced so they read as number groups. Dots are deliberately
+     * excluded: "1.2.3" is a version number, not a date.
      */
     public static String expandTimeDate(String text) {
         if (text == null || text.isEmpty()) return text;
@@ -1753,9 +1791,18 @@ public class TtsService extends TextToSpeechService {
      * mixed-script synthesis. Idempotent and safe to run on every request.
      */
     public static String sanitizeForWatchdog(String text) {
+        return sanitizeForWatchdog(text, false);
+    }
+
+    /**
+     * @param isSsml when true, only C0/bidi controls are stripped (XML forbids
+     *               them anyway) while bracket runs are left intact, so SSML
+     *               markup is never mangled.
+     */
+    public static String sanitizeForWatchdog(String text, boolean isSsml) {
         if (text == null || text.isEmpty()) return text;
         text = HANG_CONTROLS.matcher(text).replaceAll("");
-        if (text.contains("[[") || text.contains("]]")) {
+        if (!isSsml && (text.contains("[[") || text.contains("]]"))) {
             text = EDGE_BRACKET_RUN.matcher(text).replaceAll(" ");
         }
         return text;
@@ -1766,6 +1813,10 @@ public class TtsService extends TextToSpeechService {
      * boundaries so one rapid swipe or pasted document can never hang the
      * engine on a single giant espeak_Synth call. Always returns at least
      * one chunk; total capped by MAX_CHUNKS.
+     *
+     * The returned chunks are an exact sequential partition of the (possibly
+     * capped) input - including whitespace-only pieces - so callers can map
+     * per-chunk word positions back to full-text offsets by accumulation.
      */
     public static List<String> chunkForWatchdog(String text) {
         List<String> chunks = new ArrayList<>();
@@ -1779,12 +1830,21 @@ public class TtsService extends TextToSpeechService {
             chunks.add(capped);
             return chunks;
         }
+        if (!hasChunkBoundary(capped)) {
+            // No whitespace or sentence ends at all (e.g. one giant URL):
+            // skip the boundary regex, whose greedy backtracking degrades on
+            // boundary-less input, and hard-split directly.
+            for (int i = 0; i < capped.length() && chunks.size() < MAX_CHUNKS; i += MAX_CHUNK_CHARS) {
+                chunks.add(capped.substring(i, Math.min(capped.length(), i + MAX_CHUNK_CHARS)));
+            }
+            return chunks;
+        }
         java.util.regex.Pattern boundary =
                 java.util.regex.Pattern.compile(".{1," + MAX_CHUNK_CHARS + "}(?:[.!?;\\n]+\\s*|\\s+|$)",
                         java.util.regex.Pattern.DOTALL);
         java.util.regex.Matcher m = boundary.matcher(capped);
         while (m.find() && chunks.size() < MAX_CHUNKS) {
-            String c = m.group().trim();
+            String c = m.group();
             if (!c.isEmpty()) chunks.add(c);
         }
         if (chunks.isEmpty()) {
@@ -1793,6 +1853,17 @@ public class TtsService extends TextToSpeechService {
             }
         }
         return chunks;
+    }
+
+    private static boolean hasChunkBoundary(String text) {
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            char c = text.charAt(i);
+            if (c <= ' ' || c == '.' || c == '!' || c == '?' || c == ';') {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1970,8 +2041,10 @@ public class TtsService extends TextToSpeechService {
             }
 
             // eSpeak counts code points from 1, rangeStart() wants 0-based UTF-16
-            // indices into the text the caller supplied.
-            final int wordStart = textPosition - 1;
+            // indices into the text the caller supplied. The engine's position
+            // is relative to the current chunk; mChunkBase re-bases it into
+            // the full request text (0 for single-chunk requests).
+            final int wordStart = textPosition - 1 + mChunkBase;
             int start = codePointToOffset(wordStart);
             int end = codePointToOffset(wordStart + Math.max(textLength, 0));
             if (mSynthOffsetMap != null) {
