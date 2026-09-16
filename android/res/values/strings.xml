@@ -167,4 +167,34 @@
   <string name="setting_recommended_defaults">Apply recommended reading style</string>
   <string name="setting_recommended_defaults_summary" formatted="false">Configure Max variant, 40% pitch, 75% inflection, and capital pitch raise</string>
   <string name="recommended_defaults_applied" formatted="false">Recommended reading style applied (Max variant, 40% pitch, 75% inflection, capital pitch raise)</string>
+  <string name="setting_digit_grouping">Number grouping</string>
+  <string name="setting_digit_grouping_summary">How long numbers are grouped when spoken</string>
+  <string name="digit_group_off">Off (natural numbers)</string>
+  <string name="digit_group_single">Single digits (1 2 3)</string>
+  <string name="digit_group_double">Double / pairs (12 34 56)</string>
+  <string name="digit_group_triple">Triple digits, long numbers only (123 456)</string>
+  <string name="setting_time_date">Natural time and date</string>
+  <string name="setting_time_date_summary">Read times like 10:30 and numeric dates as natural groups</string>
+  <string name="setting_currency">Currency amounts ($/€/£/¥)</string>
+  <string name="setting_currency_summary">Expand dollar, euro, pound, and yen amounts to words</string>
+  <string name="setting_spelling_mode">Spelling mode</string>
+  <string name="setting_spelling_mode_summary">Spell every word letter by letter</string>
+  <string name="setting_phonetic_mode">Phonetic mode</string>
+  <string name="setting_phonetic_mode_summary">Read letters using NATO phonetics (Alpha, Bravo...)</string>
+  <string name="setting_code_reading">Code-reading mode</string>
+  <string name="setting_code_reading_summary">Force programming symbols and full punctuation for source code</string>
+  <string name="category_backup">Backup and troubleshooting</string>
+  <string name="setting_backup">Backup settings and dictionary</string>
+  <string name="setting_backup_summary">Export voice tunings, preferences, and dictionaries into a single file</string>
+  <string name="setting_restore">Restore from backup</string>
+  <string name="setting_restore_summary">Restore voice tunings, preferences, and dictionaries from a backup file</string>
+  <string name="setting_export_log">Export activity log</string>
+  <string name="setting_export_log_summary">1-tap log collection for troubleshooting and sharing</string>
+  <string name="export_log_collecting">Collecting log…</string>
+  <string name="dict_import_started">Importing dictionary…</string>
+  <string name="dict_import_done">Dictionary import finished: %1$d rules added.</string>
+  <string name="dict_export_done">Dictionary exported.</string>
+  <string name="backup_done">Backup exported.</string>
+  <string name="restore_started">Restoring backup…</string>
+  <string name="restore_done">Restore finished: %1$d dictionary rules restored.</string>
 </resources>

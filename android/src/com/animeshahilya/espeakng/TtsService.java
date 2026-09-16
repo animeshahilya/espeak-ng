@@ -628,15 +628,57 @@ public class TtsService extends TextToSpeechService {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
+        if (!isSsml && settings.isCurrencyEnabled()) {
+            String before = text;
+            text = expandCurrencySymbols(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
+        if (!isSsml && settings.isTimeDateEnabled()) {
+            String before = text;
+            text = expandTimeDate(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
         final boolean speakDigits = settings.isSpeakDigitsEnabled() && !isSsml;
         final boolean smartCodes = settings.isSmartCodesEnabled() && !isSsml;
+        final String digitGrouping = settings.getDigitGroupingMode();
+        final boolean useGrouping = !isSsml && digitGrouping != null
+                && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
         if (speakDigits) {
             String before = text;
             text = spaceSeparateDigits(text);
             offsetMap = chainOffset(offsetMap, before, text);
+        } else if (useGrouping) {
+            String before = text;
+            text = formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold());
+            offsetMap = chainOffset(offsetMap, before, text);
+            if (smartCodes && !VoiceSettings.DIGIT_GROUP_SINGLE.equals(digitGrouping)) {
+                before = text;
+                text = spaceSeparateSmartCodes(text);
+                offsetMap = chainOffset(offsetMap, before, text);
+            }
         } else if (smartCodes) {
             String before = text;
             text = spaceSeparateSmartCodes(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
+        // Specialized modes: spelling / phonetic / code-reading. Explicit user
+        // modes run after number handling so "A1B2" spells letters but keeps
+        // the digit grouping already applied above.
+        if (!isSsml && settings.isCodeReadingModeEnabled()) {
+            String before = text;
+            text = expandProgrammingSymbols(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+        if (!isSsml && settings.isSpellingModeEnabled()) {
+            String before = text;
+            text = expandSpellingMode(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        } else if (!isSsml && settings.isPhoneticModeEnabled()) {
+            String before = text;
+            text = expandPhoneticMode(text);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -665,7 +707,31 @@ public class TtsService extends TextToSpeechService {
                     text = spaceSeparateSmartCodes(text);
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
+                if (!isSsml && settings.isCurrencyEnabled()) {
+                    before = text;
+                    text = expandCurrencySymbols(text);
+                    offsetMap = chainOffset(offsetMap, before, text);
+                }
+                if (!isSsml && settings.isTimeDateEnabled()) {
+                    before = text;
+                    text = expandTimeDate(text);
+                    offsetMap = chainOffset(offsetMap, before, text);
+                }
+                if (useGrouping) {
+                    before = text;
+                    text = formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold());
+                    offsetMap = chainOffset(offsetMap, before, text);
+                }
             }
+        }
+
+        if (!isSsml) {
+            // Zero-hang watchdog: always sanitize edge-case sequences, even when
+            // every other option is off, so a pasted bidi/zero-width run or a
+            // mixed-script [[ sequence can never stall the engine.
+            String before = text;
+            text = sanitizeForWatchdog(text);
+            offsetMap = chainOffset(offsetMap, before, text);
         }
 
         if (!isSsml && containsPotentialEmoji(text)) {
@@ -736,6 +802,11 @@ public class TtsService extends TextToSpeechService {
         mEngine.Volume.setValue(targetVolume);
 
         mEngine.Punctuation.setValue(settings.getPunctuationLevel());
+        // Code-reading mode forces full punctuation announcement regardless of
+        // the global preset, so symbols in source code are never swallowed.
+        if (!isSsml && settings.isCodeReadingModeEnabled()) {
+            mEngine.Punctuation.setValue(SpeechSynthesis.PUNCT_ALL);
+        }
         mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
         // Announcing capitalization (by pitch, beep, or saying "capital") only
         // makes sense while spelling out individual characters - NVDA's own
@@ -761,20 +832,53 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
+        // Zero-hang watchdog: never hand the native engine one giant buffer.
+        // Bilingual spans already split by script; anything else over the
+        // chunk limit is split at clause boundaries. Rapid swipes just queue
+        // short bounded units instead of one unbounded synth call.
+        List<String> units = new ArrayList<>();
+        List<Voice> unitVoices = new ArrayList<>();
         if (spans != null && spans.size() > 1 && secondaryVoice != null) {
-            mSegmentsRemaining.set(spans.size());
             for (ScriptSpan span : spans) {
+                Voice spanVoice = span.isLatin ? secondaryVoice : voice;
+                for (String chunk : chunkForWatchdog(span.text)) {
+                    units.add(chunk);
+                    unitVoices.add(spanVoice);
+                }
+                if (units.size() >= MAX_CHUNKS) break;
+            }
+        } else {
+            mEngine.setVoice(voice, settings.getVoiceVariant());
+            for (String chunk : chunkForWatchdog(text)) {
+                units.add(chunk);
+                unitVoices.add(voice);
+            }
+        }
+
+        if (units.size() > 1) {
+            mSegmentsRemaining.set(units.size());
+            for (int ui = 0; ui < units.size(); ui++) {
                 if (mIsStopped.get()) {
                     break;
                 }
-                Voice spanVoice = span.isLatin ? secondaryVoice : voice;
-                mEngine.setVoice(spanVoice, settings.getVoiceVariant());
-                mEngine.synthesize(span.text, false);
+                try {
+                    mEngine.setVoice(unitVoices.get(ui), settings.getVoiceVariant());
+                    mEngine.synthesize(units.get(ui), false);
+                } catch (Throwable t) {
+                    // One bad chunk (mixed-script edge case) must never kill
+                    // the whole request or hang the service — skip and continue.
+                    if (DEBUG) Log.w(TAG, "Chunk synth failed, skipping", t);
+                }
             }
         } else {
             mSegmentsRemaining.set(1);
             mEngine.setVoice(voice, settings.getVoiceVariant());
-            mEngine.synthesize(text, isSsml);
+            try {
+                mEngine.synthesize(text, isSsml);
+            } catch (Throwable t) {
+                if (DEBUG) Log.w(TAG, "Synth failed", t);
+                reportError(callback, TextToSpeech.ERROR_SERVICE);
+            }
         }
     }
 
@@ -841,6 +945,38 @@ public class TtsService extends TextToSpeechService {
             java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:cr|crore|crores)\\b");
     private static final java.util.regex.Pattern SLASH_RUN =
             java.util.regex.Pattern.compile("/+");
+
+    // Smart text: currency symbols ($/€/£/¥ beyond the ₹ handled above), time, and dates.
+    private static final java.util.regex.Pattern CURRENCY_DOLLAR_PREFIX =
+            java.util.regex.Pattern.compile("\\$\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)");
+    private static final java.util.regex.Pattern CURRENCY_DOLLAR_SUFFIX =
+            java.util.regex.Pattern.compile("([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:dollars?|USD)\\b",
+            java.util.regex.Pattern.CASE_INSENSITIVE);
+    private static final java.util.regex.Pattern CURRENCY_EURO =
+            java.util.regex.Pattern.compile("(?:€\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:€|euros?|EUR\\b))",
+            java.util.regex.Pattern.CASE_INSENSITIVE);
+    private static final java.util.regex.Pattern CURRENCY_POUND =
+            java.util.regex.Pattern.compile("(?:£\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:£|pounds?|GBP\\b))",
+            java.util.regex.Pattern.CASE_INSENSITIVE);
+    private static final java.util.regex.Pattern CURRENCY_YEN =
+            java.util.regex.Pattern.compile("(?:¥\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:¥|yen|JPY\\b))",
+            java.util.regex.Pattern.CASE_INSENSITIVE);
+    private static final java.util.regex.Pattern TIME_HM =
+            java.util.regex.Pattern.compile("\\b([01]?\\d|2[0-3]):([0-5]\\d)(?:\\s*([AP])\\.?M\\.?)?",
+            java.util.regex.Pattern.CASE_INSENSITIVE);
+    private static final java.util.regex.Pattern DATE_NUMERIC =
+            java.util.regex.Pattern.compile("\\b(\\d{1,4})[/\\-.](\\d{1,2})[/\\-.](\\d{1,4})\\b");
+    // Edge-case controls that hang or corrupt synthesis on rapid swipes / mixed-script pastes.
+    private static final java.util.regex.Pattern HANG_CONTROLS =
+            java.util.regex.Pattern.compile("[\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u2064\\uFEFF\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]");
+    private static final java.util.regex.Pattern EDGE_BRACKET_RUN =
+            java.util.regex.Pattern.compile("\\[{2,}|\\]{2,}");
+    /** Longest single native synth call; longer input is chunked (watchdog). */
+    static final int MAX_CHUNK_CHARS = 800;
+    /** Absolute cap per request; beyond this the tail is dropped, never hung on. */
+    static final int MAX_REQUEST_CHARS = 16000;
+    /** Max chunks per request — bounds worst-case synthesis time on rapid swipes. */
+    static final int MAX_CHUNKS = 20;
 
     // NVDA-inspired programming, mathematical, and syntax symbol patterns (from NVDA symbols.dic):
     private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=|≠");
@@ -1311,6 +1447,185 @@ public class TtsService extends TextToSpeechService {
             }
         }
         return out.toString();
+    }
+
+    /**
+     * Groups long digit runs for natural announcement.
+     * single: "123" -&gt; "1 2 3". double/pairs: "123456" -&gt; "12 34 56".
+     * triple: groups of three, but only when the run length reaches
+     * {@code threshold} (e.g. a 10-digit mobile number grouped, a 4-digit
+     * year left natural). Runs shorter than 4 digits are never regrouped.
+     */
+    public static String formatDigitGrouping(String text, String mode, int threshold) {
+        if (text == null || text.isEmpty() || mode == null
+                || VoiceSettings.DIGIT_GROUP_OFF.equals(mode)) {
+            return text;
+        }
+        if (VoiceSettings.DIGIT_GROUP_SINGLE.equals(mode)) {
+            return spaceSeparateDigits(text);
+        }
+        final int groupSize = VoiceSettings.DIGIT_GROUP_DOUBLE.equals(mode) ? 2 : 3;
+        final int len = text.length();
+        StringBuilder out = new StringBuilder(len + 16);
+        int i = 0;
+        while (i < len) {
+            int cp = text.codePointAt(i);
+            if (Character.isDigit(cp)) {
+                int runStart = i;
+                int digitCount = 0;
+                while (i < len) {
+                    int c = text.codePointAt(i);
+                    if (!Character.isDigit(c)) break;
+                    digitCount++;
+                    i += Character.charCount(c);
+                }
+                int runEnd = i;
+                boolean regroup = digitCount >= 4
+                        && (groupSize == 2 || digitCount >= Math.max(4, threshold));
+                if (!regroup) {
+                    out.append(text, runStart, runEnd);
+                } else {
+                    String run = text.substring(runStart, runEnd);
+                    int[] cps = run.codePoints().toArray();
+                    for (int k = 0; k < cps.length; k++) {
+                        if (k > 0 && k % groupSize == 0) out.append(' ');
+                        out.appendCodePoint(cps[k]);
+                    }
+                }
+            } else {
+                out.appendCodePoint(cp);
+                i += Character.charCount(cp);
+            }
+        }
+        return out.toString();
+    }
+
+    /** Expands $/€/£/¥ amounts to words ("$5" -&gt; "5 dollars"). Commas stripped. */
+    public static String expandCurrencySymbols(String text) {
+        if (text == null || text.isEmpty()) return text;
+        text = CURRENCY_DOLLAR_PREFIX.matcher(text).replaceAll("$1 dollars");
+        text = CURRENCY_EURO.matcher(text).replaceAll("$1$2 euros");
+        text = CURRENCY_POUND.matcher(text).replaceAll("$1$2 pounds");
+        text = CURRENCY_YEN.matcher(text).replaceAll("$1$2 yen");
+        return text;
+    }
+
+    /**
+     * Natural time/date pronunciation: "10:30" -&gt; "10 30", "10:30 PM" keeps
+     * the meridiem, numeric dates get separators spaced so they read as number
+     * groups instead of one long integer.
+     */
+    public static String expandTimeDate(String text) {
+        if (text == null || text.isEmpty()) return text;
+        java.util.regex.Matcher tm = TIME_HM.matcher(text);
+        if (tm.find()) {
+            StringBuffer sb = new StringBuffer();
+            do {
+                String mer = tm.group(3);
+                String rep = tm.group(1) + " " + tm.group(2)
+                        + (mer != null ? " " + mer + " M" : "");
+                tm.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(rep));
+            } while (tm.find());
+            tm.appendTail(sb);
+            text = sb.toString();
+        }
+        java.util.regex.Matcher dm = DATE_NUMERIC.matcher(text);
+        if (dm.find()) {
+            StringBuffer sb = new StringBuffer();
+            do {
+                String rep = dm.group(1) + " " + dm.group(2) + " " + dm.group(3);
+                dm.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(rep));
+            } while (dm.find());
+            dm.appendTail(sb);
+            text = sb.toString();
+        }
+        return text;
+    }
+
+    /** Spelling mode: "hi" -&gt; "h i" so each letter is announced. */
+    public static String expandSpellingMode(String text) {
+        if (text == null || text.isEmpty()) return text;
+        StringBuilder out = new StringBuilder(text.length() * 2);
+        for (int i = 0; i < text.length(); ) {
+            int cp = text.codePointAt(i);
+            if (Character.isLetter(cp)) {
+                if (out.length() > 0) {
+                    int last = out.length() - 1;
+                    if (out.charAt(last) != ' ') out.append(' ');
+                }
+                out.appendCodePoint(cp);
+            } else {
+                out.appendCodePoint(cp);
+            }
+            i += Character.charCount(cp);
+        }
+        return out.toString().replaceAll("  +", " ");
+    }
+
+    /** Phonetic mode: each letter -&gt; NATO word ("AB" -&gt; "Alpha Bravo"). */
+    public static String expandPhoneticMode(String text) {
+        if (text == null || text.isEmpty()) return text;
+        StringBuilder out = new StringBuilder(text.length() * 6);
+        for (int i = 0; i < text.length(); ) {
+            int cp = text.codePointAt(i);
+            if ((cp >= 'A' && cp <= 'Z') || (cp >= 'a' && cp <= 'z')) {
+                int idx = Character.toUpperCase(cp) - 'A';
+                if (out.length() > 0 && out.charAt(out.length() - 1) != ' ') out.append(' ');
+                out.append(NATO_PHONETICS[idx]);
+            } else {
+                out.appendCodePoint(cp);
+            }
+            i += Character.charCount(cp);
+        }
+        return out.toString();
+    }
+
+    /**
+     * Zero-hang sanitize: strips bidi/zero-width/C0 controls and collapses
+     * edge-case bracket runs that corrupt eSpeak's [[ phoneme parser or stall
+     * mixed-script synthesis. Idempotent and safe to run on every request.
+     */
+    public static String sanitizeForWatchdog(String text) {
+        if (text == null || text.isEmpty()) return text;
+        text = HANG_CONTROLS.matcher(text).replaceAll("");
+        if (text.contains("[[") || text.contains("]]")) {
+            text = EDGE_BRACKET_RUN.matcher(text).replaceAll(" ");
+        }
+        return text;
+    }
+
+    /**
+     * Splits over-long input into speakable chunks at sentence/clause
+     * boundaries so one rapid swipe or pasted document can never hang the
+     * engine on a single giant espeak_Synth call. Always returns at least
+     * one chunk; total capped by MAX_CHUNKS.
+     */
+    public static List<String> chunkForWatchdog(String text) {
+        List<String> chunks = new ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            chunks.add("");
+            return chunks;
+        }
+        String capped = text.length() > MAX_REQUEST_CHARS
+                ? text.substring(0, MAX_REQUEST_CHARS) : text;
+        if (capped.length() <= MAX_CHUNK_CHARS) {
+            chunks.add(capped);
+            return chunks;
+        }
+        java.util.regex.Pattern boundary =
+                java.util.regex.Pattern.compile(".{1," + MAX_CHUNK_CHARS + "}(?:[.!?;\\n]+\\s*|\\s+|$)",
+                        java.util.regex.Pattern.DOTALL);
+        java.util.regex.Matcher m = boundary.matcher(capped);
+        while (m.find() && chunks.size() < MAX_CHUNKS) {
+            String c = m.group().trim();
+            if (!c.isEmpty()) chunks.add(c);
+        }
+        if (chunks.isEmpty()) {
+            for (int i = 0; i < capped.length() && chunks.size() < MAX_CHUNKS; i += MAX_CHUNK_CHARS) {
+                chunks.add(capped.substring(i, Math.min(capped.length(), i + MAX_CHUNK_CHARS)));
+            }
+        }
+        return chunks;
     }
 
     /**

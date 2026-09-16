@@ -52,9 +52,23 @@ public class VoiceSettings {
     public static final String PREF_NATO_SPELLING = "espeak_nato_spelling";
     public static final String PREF_SPOKEN_DIACRITICS = "espeak_spoken_diacritics";
     public static final String PREF_AUDIO_OPTIMIZER = "espeak_audio_optimizer";
+    // Smart text processing (digit grouping, time/date, currency, specialized modes).
+    public static final String PREF_DIGIT_GROUPING = "espeak_digit_grouping";
+    public static final String PREF_DIGIT_GROUP_THRESHOLD = "espeak_digit_group_threshold";
+    public static final String PREF_TIME_DATE = "espeak_time_date";
+    public static final String PREF_CURRENCY = "espeak_currency";
+    public static final String PREF_SPELLING_MODE = "espeak_spelling_mode";
+    public static final String PREF_PHONETIC_MODE = "espeak_phonetic_mode";
+    public static final String PREF_CODE_READING_MODE = "espeak_code_reading";
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
+
+    /** Digit grouping modes for long numbers. */
+    public static final String DIGIT_GROUP_OFF = "off";
+    public static final String DIGIT_GROUP_SINGLE = "single";
+    public static final String DIGIT_GROUP_DOUBLE = "double";
+    public static final String DIGIT_GROUP_TRIPLE = "triple";
 
     public static final String PRESET_VARIANT = "variant";
     public static final String PRESET_RATE = "rate";
@@ -323,5 +337,48 @@ public class VoiceSettings {
 
     public boolean isSpokenDiacriticsEnabled() {
         return mPreferences.getBoolean(PREF_SPOKEN_DIACRITICS, true);
+    }
+
+    public String getDigitGroupingMode() {
+        String mode = mPreferences.getString(PREF_DIGIT_GROUPING, null);
+        if (mode == null) {
+            // Migrate legacy boolean: digit-by-digit ON means single-digit grouping.
+            return mPreferences.getBoolean(PREF_SPEAK_DIGITS, false)
+                    ? DIGIT_GROUP_SINGLE : DIGIT_GROUP_OFF;
+        }
+        return mode;
+    }
+
+    public int getDigitGroupThreshold() {
+        try {
+            String raw = mPreferences.getString(PREF_DIGIT_GROUP_THRESHOLD, "7");
+            if (raw == null) return 7;
+            int v = Integer.parseInt(raw);
+            if (v < 4) return 4;
+            if (v > 12) return 12;
+            return v;
+        } catch (NumberFormatException e) {
+            return 7;
+        }
+    }
+
+    public boolean isTimeDateEnabled() {
+        return mPreferences.getBoolean(PREF_TIME_DATE, true);
+    }
+
+    public boolean isCurrencyEnabled() {
+        return mPreferences.getBoolean(PREF_CURRENCY, true);
+    }
+
+    public boolean isSpellingModeEnabled() {
+        return mPreferences.getBoolean(PREF_SPELLING_MODE, false);
+    }
+
+    public boolean isPhoneticModeEnabled() {
+        return mPreferences.getBoolean(PREF_PHONETIC_MODE, false);
+    }
+
+    public boolean isCodeReadingModeEnabled() {
+        return mPreferences.getBoolean(PREF_CODE_READING_MODE, false);
     }
 }

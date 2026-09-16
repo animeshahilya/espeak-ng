@@ -189,13 +189,128 @@ public class TtsSettingsActivity extends PreferenceActivity {
     }
 
     public static final int REQUEST_CODE_IMPORT_VOICE = 1001;
+    public static final int REQUEST_CODE_IMPORT_DICT = 1002;
+    public static final int REQUEST_CODE_EXPORT_DICT = 1003;
+    public static final int REQUEST_CODE_EXPORT_BACKUP = 1004;
+    public static final int REQUEST_CODE_IMPORT_BACKUP = 1005;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_IMPORT_VOICE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             importVoiceUri(this, data.getData());
+        } else if (requestCode == REQUEST_CODE_IMPORT_DICT && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            importDictionaryUri(this, data.getData());
+        } else if (requestCode == REQUEST_CODE_EXPORT_DICT && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            exportDictionaryUri(this, data.getData());
+        } else if (requestCode == REQUEST_CODE_EXPORT_BACKUP && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            exportBackupUri(this, data.getData());
+        } else if (requestCode == REQUEST_CODE_IMPORT_BACKUP && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            importBackupUri(this, data.getData());
         }
+    }
+
+    private static void importDictionaryUri(final Activity activity, final Uri uri) {
+        Toast.makeText(activity, R.string.dict_import_started, Toast.LENGTH_SHORT).show();
+        new Thread(new Runnable() {
+            @Override public void run() {
+                int added = 0;
+                try (InputStream is = activity.getContentResolver().openInputStream(uri)) {
+                    if (is != null) {
+                        added = UserDictionaryManager.getInstance(activity).importFromStream(is);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Dictionary import failed", e);
+                }
+                final int count = added;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override public void run() {
+                        Toast.makeText(activity,
+                                activity.getString(R.string.dict_import_done, count),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }, "dict-import").start();
+    }
+
+    private static void exportDictionaryUri(final Activity activity, final Uri uri) {
+        new Thread(new Runnable() {
+            @Override public void run() {
+                boolean ok = false;
+                try (OutputStream os = activity.getContentResolver().openOutputStream(uri)) {
+                    if (os != null) {
+                        UserDictionaryManager.getInstance(activity).exportToStream(os);
+                        ok = true;
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Dictionary export failed", e);
+                }
+                final boolean done = ok;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override public void run() {
+                        Toast.makeText(activity,
+                                done ? R.string.dict_export_done : R.string.import_voice_error,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }, "dict-export").start();
+    }
+
+    private static void exportBackupUri(final Activity activity, final Uri uri) {
+        new Thread(new Runnable() {
+            @Override public void run() {
+                boolean ok = false;
+                try (OutputStream os = activity.getContentResolver().openOutputStream(uri)) {
+                    if (os != null) {
+                        BackupRestoreHelper.exportToStream(activity, os);
+                        ok = true;
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Backup export failed", e);
+                }
+                final boolean done = ok;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override public void run() {
+                        Toast.makeText(activity,
+                                done ? R.string.backup_done : R.string.import_voice_error,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }, "backup-export").start();
+    }
+
+    private static void importBackupUri(final Activity activity, final Uri uri) {
+        Toast.makeText(activity, R.string.restore_started, Toast.LENGTH_SHORT).show();
+        new Thread(new Runnable() {
+            @Override public void run() {
+                int rules = 0;
+                boolean ok = false;
+                try (InputStream is = activity.getContentResolver().openInputStream(uri)) {
+                    if (is != null) {
+                        rules = BackupRestoreHelper.importFromStream(activity, is);
+                        ok = true;
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Backup import failed", e);
+                }
+                final boolean done = ok;
+                final int count = rules;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override public void run() {
+                        Toast.makeText(activity,
+                                done ? activity.getString(R.string.restore_done, count)
+                                        : activity.getString(R.string.import_voice_error),
+                                Toast.LENGTH_LONG).show();
+                        if (done && activity instanceof Activity) {
+                            ((Activity) activity).recreate();
+                        }
+                    }
+                });
+            }
+        }, "backup-import").start();
     }
 
     private static String getFileNameFromUri(Context context, Uri uri) {
@@ -819,6 +934,117 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
+    private static Preference createDigitGroupingPreference(Context context) {
+        final ListPreference pref = new ListPreference(context);
+        pref.setTitle(R.string.setting_digit_grouping);
+        pref.setDialogTitle(R.string.setting_digit_grouping);
+        pref.setKey(VoiceSettings.PREF_DIGIT_GROUPING);
+        pref.setEntries(new CharSequence[] {
+                context.getString(R.string.digit_group_off),
+                context.getString(R.string.digit_group_single),
+                context.getString(R.string.digit_group_double),
+                context.getString(R.string.digit_group_triple)
+        });
+        pref.setEntryValues(new CharSequence[] {
+                VoiceSettings.DIGIT_GROUP_OFF,
+                VoiceSettings.DIGIT_GROUP_SINGLE,
+                VoiceSettings.DIGIT_GROUP_DOUBLE,
+                VoiceSettings.DIGIT_GROUP_TRIPLE
+        });
+        pref.setDefaultValue(VoiceSettings.DIGIT_GROUP_OFF);
+        pref.setPersistent(true);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        String current = prefs.getString(VoiceSettings.PREF_DIGIT_GROUPING, null);
+        if (current == null) {
+            current = prefs.getBoolean(VoiceSettings.PREF_SPEAK_DIGITS, false)
+                    ? VoiceSettings.DIGIT_GROUP_SINGLE : VoiceSettings.DIGIT_GROUP_OFF;
+        }
+        int idx = pref.findIndexOfValue(current);
+        if (idx >= 0) pref.setSummary(pref.getEntries()[idx]);
+        else pref.setSummary(context.getString(R.string.setting_digit_grouping_summary));
+        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
+        return pref;
+    }
+
+    private static Preference createCheckPref(Context context, String key, int titleRes, int summaryRes, boolean def) {
+        final CheckBoxPreference pref = new CheckBoxPreference(context);
+        pref.setTitle(titleRes);
+        pref.setSummary(summaryRes);
+        pref.setKey(key);
+        pref.setDefaultValue(def);
+        pref.setPersistent(true);
+        return pref;
+    }
+
+    private static Preference createBackupPreference(final Context context) {
+        final Preference pref = new Preference(context);
+        pref.setTitle(R.string.setting_backup);
+        pref.setSummary(R.string.setting_backup_summary);
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (context instanceof Activity) {
+                    Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("application/json");
+                    i.putExtra(Intent.EXTRA_TITLE, "espeak_backup.json");
+                    ((Activity) context).startActivityForResult(i, REQUEST_CODE_EXPORT_BACKUP);
+                }
+                return true;
+            }
+        });
+        return pref;
+    }
+
+    private static Preference createRestorePreference(final Context context) {
+        final Preference pref = new Preference(context);
+        pref.setTitle(R.string.setting_restore);
+        pref.setSummary(R.string.setting_restore_summary);
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (context instanceof Activity) {
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    ((Activity) context).startActivityForResult(i, REQUEST_CODE_IMPORT_BACKUP);
+                }
+                return true;
+            }
+        });
+        return pref;
+    }
+
+    private static Preference createLogExportPreference(final Context context) {
+        final Preference pref = new Preference(context);
+        pref.setTitle(R.string.setting_export_log);
+        pref.setSummary(R.string.setting_export_log_summary);
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                final Handler handler = new Handler(Looper.getMainLooper());
+                Toast.makeText(context, R.string.export_log_collecting, Toast.LENGTH_SHORT).show();
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        final String log = LogExporter.collect(context);
+                        handler.post(new Runnable() {
+                            @Override public void run() {
+                                Intent share = new Intent(Intent.ACTION_SEND);
+                                share.setType("text/plain");
+                                share.putExtra(Intent.EXTRA_SUBJECT, "eSpeak NG activity log");
+                                share.putExtra(Intent.EXTRA_TEXT, log);
+                                context.startActivity(Intent.createChooser(share,
+                                        context.getString(R.string.setting_export_log)));
+                            }
+                        });
+                    }
+                }, "log-export").start();
+                return true;
+            }
+        });
+        return pref;
+    }
+
     private static Preference createUserDictionaryPreference(final Context context) {
         final Preference pref = new Preference(context);
         pref.setTitle(R.string.setting_user_dictionary);
@@ -834,36 +1060,80 @@ public class TtsSettingsActivity extends PreferenceActivity {
     }
 
     private static void showUserDictionaryDialog(final Context context) {
+        showUserDictionaryDialog(context, "", UserDictionary.CATEGORY_MAIN);
+    }
+
+    private static void showUserDictionaryDialog(final Context context, final String searchQuery, final String categoryFilter) {
         final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
         final List<UserDictionary> rules = mgr.getRules();
 
-        final String[] items = new String[rules.size()];
+        // Filtered view (search + category), but deletions map back to real indices.
+        final List<Integer> viewToReal = new ArrayList<>();
+        final List<String> labels = new ArrayList<>();
+        String q = searchQuery != null ? searchQuery.trim().toLowerCase(java.util.Locale.ROOT) : "";
         for (int i = 0; i < rules.size(); i++) {
             UserDictionary r = rules.get(i);
-            items[i] = (i + 1) + ". \"" + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
+            if (categoryFilter != null && !"all".equals(categoryFilter)
+                    && !r.getCategory().equals(categoryFilter)) continue;
+            if (!q.isEmpty() && !r.getPattern().toLowerCase(java.util.Locale.ROOT).contains(q)
+                    && !r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) continue;
+            viewToReal.add(i);
+            labels.add((viewToReal.size()) + ". [" + UserDictionary.categoryLabel(r.getCategory()) + "] \""
+                    + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
                     + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""))
-                    + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]");
+                    + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
         }
+        final String[] items = labels.toArray(new String[0]);
+
+        final LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(40, 20, 40, 20);
+        final EditText etSearch = new EditText(context);
+        etSearch.setHint("Search words...");
+        if (searchQuery != null && !searchQuery.isEmpty()) etSearch.setText(searchQuery);
+        layout.addView(etSearch);
+        final CheckBox cbMain = new CheckBox(context);
+        cbMain.setText("Show Main / Root / Abbrev: tap a header to filter");
+        cbMain.setEnabled(false);
+        layout.addView(cbMain);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.setting_user_dictionary) + " (" + rules.size() + ")");
-        if (rules.isEmpty()) {
-            builder.setMessage("No custom rules configured. Tap Add Rule to create pronunciation replacements (e.g. AIIMS \u2192 All India Institute of Medical Sciences).");
+        builder.setView(layout);
+        if (items.length == 0) {
+            builder.setMessage(rules.isEmpty()
+                    ? "No custom rules configured. Tap Add Rule to create pronunciation replacements (e.g. AIIMS \u2192 All India Institute of Medical Sciences). Use Import for massive word lists."
+                    : "No rules match this search/filter.");
         } else {
             builder.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, final int which) {
+                    final int realIdx = viewToReal.get(which);
+                    final UserDictionary r = mgr.getRules().get(realIdx);
                     new AlertDialog.Builder(context)
-                            .setTitle("Delete rule?")
-                            .setMessage(items[which])
-                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            .setTitle("Rule: " + r.getPattern())
+                            .setMessage(items[which] + "\n\nTap Preview to hear it, Delete to remove.")
+                            .setPositiveButton("Preview", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface d, int w) {
-                                    mgr.removeRule(which);
-                                    showUserDictionaryDialog(context);
+                                    previewText(context, r.getReplacement().isEmpty()
+                                            ? r.getPattern() : r.getReplacement());
+                                    showUserDictionaryDialog(context, searchQuery, categoryFilter);
                                 }
                             })
-                            .setNegativeButton(android.R.string.cancel, null)
+                            .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface d, int w) {
+                                    mgr.removeRule(realIdx);
+                                    showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface d, int w) {
+                                    showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                                }
+                            })
                             .show();
                 }
             });
@@ -872,25 +1142,78 @@ public class TtsSettingsActivity extends PreferenceActivity {
         builder.setPositiveButton("Add rule", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                showAddRuleDialog(context);
+                showAddRuleDialog(context, searchQuery, categoryFilter);
             }
         });
-
-        if (!rules.isEmpty()) {
-            builder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mgr.clearRules();
-                    showUserDictionaryDialog(context);
-                }
-            });
-        }
-
+        builder.setNeutralButton("Import / Export", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showDictionaryImportExportDialog(context, searchQuery, categoryFilter);
+            }
+        });
         builder.setNegativeButton("Close", null);
-        builder.show();
+        final AlertDialog dlg = builder.show();
+        // Live search: re-open filtered as the user types (debounced by dialog lifecycle).
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void afterTextChanged(android.text.Editable s) { }
+        });
+    }
+
+    private static void showDictionaryImportExportDialog(final Context context, final String searchQuery, final String categoryFilter) {
+        new AlertDialog.Builder(context)
+                .setTitle("Dictionary import / export")
+                .setMessage("Import massive word lists (.dic tab-delimited, word=replacement lists, or JSON) without crashing — runs in the background. Export shares the full list.")
+                .setPositiveButton("Import file", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface d, int w) {
+                        if (context instanceof Activity) {
+                            Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            i.addCategory(Intent.CATEGORY_OPENABLE);
+                            i.setType("*/*");
+                            ((Activity) context).startActivityForResult(i, REQUEST_CODE_IMPORT_DICT);
+                        }
+                    }
+                })
+                .setNeutralButton("Export file", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface d, int w) {
+                        if (context instanceof Activity) {
+                            Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                            i.addCategory(Intent.CATEGORY_OPENABLE);
+                            i.setType("text/plain");
+                            i.putExtra(Intent.EXTRA_TITLE, "espeak_dictionary.dic");
+                            ((Activity) context).startActivityForResult(i, REQUEST_CODE_EXPORT_DICT);
+                        }
+                    }
+                })
+                .setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface d, int w) {
+                        showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                    }
+                })
+                .show();
+    }
+
+    private static void previewText(final Context context, final String text) {
+        if (sTts == null) {
+            sTts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status == TextToSpeech.SUCCESS && sTts != null) {
+                        sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "dict_preview");
+                    }
+                }
+            }, context.getPackageName());
+        } else {
+            sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "dict_preview");
+        }
     }
 
     private static void showAddRuleDialog(final Context context) {
+        showAddRuleDialog(context, "", UserDictionary.CATEGORY_MAIN);
+    }
+
+    private static void showAddRuleDialog(final Context context, final String searchQuery, final String categoryFilter) {
         final LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(40, 20, 40, 20);
@@ -902,6 +1225,14 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final EditText etReplacement = new EditText(context);
         etReplacement.setHint("Spoken replacement (e.g. All India Institute of Medical Sciences)");
         layout.addView(etReplacement);
+
+        final android.widget.Spinner spCategory = new android.widget.Spinner(context);
+        android.widget.ArrayAdapter<String> catAdapter = new android.widget.ArrayAdapter<>(context,
+                android.R.layout.simple_spinner_item,
+                new String[]{"Main dictionary", "Root dictionary", "Abbreviation dictionary"});
+        catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCategory.setAdapter(catAdapter);
+        layout.addView(spCategory);
 
         final CheckBox cbWholeWord = new CheckBox(context);
         cbWholeWord.setText("Whole word only");
@@ -916,6 +1247,16 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final EditText etLanguage = new EditText(context);
         etLanguage.setHint("Language code, e.g. en or hi - leave blank for every language");
         layout.addView(etLanguage);
+
+        final String[] chosenCategory = new String[]{UserDictionary.CATEGORY_MAIN};
+        spCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
+                chosenCategory[0] = pos == 1 ? UserDictionary.CATEGORY_ROOT
+                        : pos == 2 ? UserDictionary.CATEGORY_ABBREV : UserDictionary.CATEGORY_MAIN;
+                if (pos == 1) cbWholeWord.setChecked(false);
+            }
+            @Override public void onNothingSelected(android.widget.AdapterView<?> p) { }
+        });
 
         new AlertDialog.Builder(context)
                 .setTitle("Add pronunciation rule")
@@ -933,14 +1274,31 @@ public class TtsSettingsActivity extends PreferenceActivity {
                                     cbCaseSensitive.isChecked(),
                                     false,
                                     cbWholeWord.isChecked(),
-                                    language
+                                    language,
+                                    chosenCategory[0]
                             );
                             UserDictionaryManager.getInstance(context).addRule(rule);
-                            showUserDictionaryDialog(context);
+                            // Live audio preview: hear the new pronunciation immediately.
+                            previewText(context, replacement.isEmpty() ? pattern : replacement);
+                            showUserDictionaryDialog(context, searchQuery, categoryFilter);
                         }
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, null)
+                .setNeutralButton("Preview", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String replacement = etReplacement.getText().toString().trim();
+                        String pattern = etPattern.getText().toString().trim();
+                        previewText(context, replacement.isEmpty() ? pattern : replacement);
+                        showAddRuleDialog(context, searchQuery, categoryFilter);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                    }
+                })
                 .show();
     }
 
@@ -1053,6 +1411,17 @@ public class TtsSettingsActivity extends PreferenceActivity {
         processCategory.addPreference(createIndianNumberingPreference(context));
         processCategory.addPreference(createSmartCodesPreference(context));
         processCategory.addPreference(createSpeakDigitsPreference(context));
+        processCategory.addPreference(createDigitGroupingPreference(context));
+        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_TIME_DATE,
+                R.string.setting_time_date, R.string.setting_time_date_summary, true));
+        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_CURRENCY,
+                R.string.setting_currency, R.string.setting_currency_summary, true));
+        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_SPELLING_MODE,
+                R.string.setting_spelling_mode, R.string.setting_spelling_mode_summary, false));
+        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_PHONETIC_MODE,
+                R.string.setting_phonetic_mode, R.string.setting_phonetic_mode_summary, false));
+        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_CODE_READING_MODE,
+                R.string.setting_code_reading, R.string.setting_code_reading_summary, false));
         processCategory.addPreference(createUnicodeNormalizationPreference(context));
         if (!isWatch) {
             processCategory.addPreference(createUserDictionaryPreference(context));
@@ -1061,7 +1430,17 @@ public class TtsSettingsActivity extends PreferenceActivity {
             processCategory.addPreference(createEmojiProcessingPreference(context));
         }
 
-        // 4. About
+        // 4. Backup, troubleshooting, about
+        PreferenceCategory backupCategory = new PreferenceCategory(context);
+        backupCategory.setTitle(R.string.category_backup);
+        group.addPreference(backupCategory);
+        if (!isWatch) {
+            backupCategory.addPreference(createBackupPreference(context));
+            backupCategory.addPreference(createRestorePreference(context));
+            backupCategory.addPreference(createLogExportPreference(context));
+        }
+
+        // 5. About
         PreferenceCategory aboutCategory = new PreferenceCategory(context);
         aboutCategory.setTitle(R.string.category_about);
         group.addPreference(aboutCategory);

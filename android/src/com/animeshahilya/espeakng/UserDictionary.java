@@ -26,12 +26,18 @@ import java.util.regex.PatternSyntaxException;
  * Represents a single pronunciation replacement rule (matching NVDA speech dictionary semantics).
  */
 public class UserDictionary {
+    /** Dictionary buckets ("My Words"): Main, Root, Abbreviation. */
+    public static final String CATEGORY_MAIN = "main";
+    public static final String CATEGORY_ROOT = "root";
+    public static final String CATEGORY_ABBREV = "abbrev";
+
     private String mPattern;
     private String mReplacement;
     private boolean mCaseSensitive;
     private boolean mIsRegex;
     private boolean mWholeWord;
     private String mLanguage;
+    private String mCategory;
 
     private Pattern mCompiledPattern = null;
 
@@ -46,12 +52,17 @@ public class UserDictionary {
      *                 are read back).
      */
     public UserDictionary(String pattern, String replacement, boolean caseSensitive, boolean isRegex, boolean wholeWord, String language) {
+        this(pattern, replacement, caseSensitive, isRegex, wholeWord, language, CATEGORY_MAIN);
+    }
+
+    public UserDictionary(String pattern, String replacement, boolean caseSensitive, boolean isRegex, boolean wholeWord, String language, String category) {
         mPattern = pattern != null ? pattern : "";
         mReplacement = replacement != null ? replacement : "";
         mCaseSensitive = caseSensitive;
         mIsRegex = isRegex;
         mWholeWord = wholeWord;
         mLanguage = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
+        mCategory = normalizeCategory(category);
         compile();
     }
 
@@ -102,6 +113,29 @@ public class UserDictionary {
     /** "" means the rule applies to every language. */
     public String getLanguage() {
         return mLanguage;
+    }
+
+    public String getCategory() {
+        return mCategory;
+    }
+
+    public void setCategory(String category) {
+        mCategory = normalizeCategory(category);
+    }
+
+    public static String normalizeCategory(String category) {
+        if (category == null) return CATEGORY_MAIN;
+        String c = category.trim().toLowerCase(java.util.Locale.ROOT);
+        if (CATEGORY_ROOT.equals(c) || CATEGORY_ABBREV.equals(c) || "abbreviation".equals(c)) {
+            return CATEGORY_ABBREV.equals(c) || "abbreviation".equals(c) ? CATEGORY_ABBREV : c;
+        }
+        return CATEGORY_MAIN;
+    }
+
+    public static String categoryLabel(String category) {
+        if (CATEGORY_ROOT.equals(category)) return "Root";
+        if (CATEGORY_ABBREV.equals(category)) return "Abbrev";
+        return "Main";
     }
 
     public void setLanguage(String language) {
@@ -167,6 +201,7 @@ public class UserDictionary {
         obj.put("isRegex", mIsRegex);
         obj.put("wholeWord", mWholeWord);
         obj.put("language", mLanguage);
+        obj.put("category", mCategory);
         return obj;
     }
 
@@ -178,6 +213,7 @@ public class UserDictionary {
         boolean isRegex = obj.optBoolean("isRegex", false);
         boolean wholeWord = obj.optBoolean("wholeWord", true);
         String language = obj.optString("language", "");
-        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord, language);
+        String category = obj.optString("category", CATEGORY_MAIN);
+        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord, language, category);
     }
 }
