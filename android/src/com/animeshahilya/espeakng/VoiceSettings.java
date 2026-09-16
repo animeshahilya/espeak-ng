@@ -60,6 +60,14 @@ public class VoiceSettings {
     public static final String PREF_SPELLING_MODE = "espeak_spelling_mode";
     public static final String PREF_PHONETIC_MODE = "espeak_phonetic_mode";
     public static final String PREF_CODE_READING_MODE = "espeak_code_reading";
+    // Deep-tuning: force overrides, optimizer intensity, smart-code window, unified reading mode.
+    public static final String PREF_FORCE_RATE = "espeak_force_rate";
+    public static final String PREF_FORCE_PITCH = "espeak_force_pitch";
+    public static final String PREF_FORCE_VOLUME = "espeak_force_volume";
+    public static final String PREF_AUDIO_PROFILE = "espeak_audio_profile";
+    public static final String PREF_SMART_MIN_LEN = "espeak_smart_min_len";
+    public static final String PREF_SMART_MAX_LEN = "espeak_smart_max_len";
+    public static final String PREF_READING_MODE = "espeak_reading_mode";
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
@@ -69,6 +77,17 @@ public class VoiceSettings {
     public static final String DIGIT_GROUP_SINGLE = "single";
     public static final String DIGIT_GROUP_DOUBLE = "double";
     public static final String DIGIT_GROUP_TRIPLE = "triple";
+
+    /** Unified reading modes (single-select; migrates legacy booleans). */
+    public static final String READING_NORMAL = "normal";
+    public static final String READING_SPELLING = "spelling";
+    public static final String READING_PHONETIC = "phonetic";
+    public static final String READING_CODE = "code";
+
+    /** Audio optimizer intensity profiles. */
+    public static final String AUDIO_PROFILE_GENTLE = "gentle";
+    public static final String AUDIO_PROFILE_BALANCED = "balanced";
+    public static final String AUDIO_PROFILE_FULL = "full";
 
     public static final String PRESET_VARIANT = "variant";
     public static final String PRESET_RATE = "rate";
@@ -371,14 +390,76 @@ public class VoiceSettings {
     }
 
     public boolean isSpellingModeEnabled() {
-        return mPreferences.getBoolean(PREF_SPELLING_MODE, false);
+        return READING_SPELLING.equals(getReadingMode());
     }
 
     public boolean isPhoneticModeEnabled() {
-        return mPreferences.getBoolean(PREF_PHONETIC_MODE, false);
+        return READING_PHONETIC.equals(getReadingMode());
     }
 
     public boolean isCodeReadingModeEnabled() {
-        return mPreferences.getBoolean(PREF_CODE_READING_MODE, false);
+        return READING_CODE.equals(getReadingMode());
+    }
+
+    /**
+     * Unified reading mode. Migrates the three legacy booleans on first read:
+     * spelling wins over phonetic, code combines independently (mapped to code
+     * when alone, else spelling &gt; phonetic &gt; code &gt; normal).
+     */
+    public String getReadingMode() {
+        String mode = mPreferences.getString(PREF_READING_MODE, null);
+        if (mode != null) return mode;
+        boolean spelling = mPreferences.getBoolean(PREF_SPELLING_MODE, false);
+        boolean phonetic = mPreferences.getBoolean(PREF_PHONETIC_MODE, false);
+        boolean code = mPreferences.getBoolean(PREF_CODE_READING_MODE, false);
+        if (spelling) return READING_SPELLING;
+        if (phonetic) return READING_PHONETIC;
+        if (code) return READING_CODE;
+        return READING_NORMAL;
+    }
+
+    /** Lock speech rate/pitch/volume to the saved values, ignoring caller apps. */
+    public boolean isForceRateEnabled() {
+        return mPreferences.getBoolean(PREF_FORCE_RATE, false);
+    }
+
+    public boolean isForcePitchEnabled() {
+        return mPreferences.getBoolean(PREF_FORCE_PITCH, false);
+    }
+
+    public boolean isForceVolumeEnabled() {
+        return mPreferences.getBoolean(PREF_FORCE_VOLUME, false);
+    }
+
+    public String getAudioProfile() {
+        String p = mPreferences.getString(PREF_AUDIO_PROFILE, AUDIO_PROFILE_BALANCED);
+        if (AUDIO_PROFILE_GENTLE.equals(p) || AUDIO_PROFILE_FULL.equals(p)) return p;
+        return AUDIO_PROFILE_BALANCED;
+    }
+
+    public int getSmartMinLen() {
+        try {
+            String raw = mPreferences.getString(PREF_SMART_MIN_LEN, "4");
+            if (raw == null) return 4;
+            int v = Integer.parseInt(raw);
+            if (v < 2) return 2;
+            if (v > 8) return 8;
+            return v;
+        } catch (NumberFormatException e) {
+            return 4;
+        }
+    }
+
+    public int getSmartMaxLen() {
+        try {
+            String raw = mPreferences.getString(PREF_SMART_MAX_LEN, "8");
+            if (raw == null) return 8;
+            int v = Integer.parseInt(raw);
+            if (v < getSmartMinLen()) return getSmartMinLen();
+            if (v > 12) return 12;
+            return v;
+        } catch (NumberFormatException e) {
+            return 8;
+        }
     }
 }

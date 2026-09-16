@@ -44,9 +44,11 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.animeshahilya.espeakng.preference.ImportVoicePreference;
@@ -976,6 +978,131 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
+    private static Preference createListPref(Context context, String key,
+                                             int titleRes, int summaryRes,
+                                             CharSequence[] entries, CharSequence[] values,
+                                             String defValue) {
+        final ListPreference pref = new ListPreference(context);
+        pref.setTitle(titleRes);
+        pref.setDialogTitle(titleRes);
+        pref.setKey(key);
+        pref.setEntries(entries);
+        pref.setEntryValues(values);
+        pref.setDefaultValue(defValue);
+        pref.setPersistent(true);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        String current = prefs.getString(key, defValue);
+        int idx = pref.findIndexOfValue(current);
+        if (idx >= 0 && idx < entries.length) pref.setSummary(entries[idx]);
+        else pref.setSummary(summaryRes);
+        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
+        return pref;
+    }
+
+    private static Preference createReadingModePreference(Context context) {
+        return createListPref(context, VoiceSettings.PREF_READING_MODE,
+                R.string.setting_reading_mode, R.string.setting_reading_mode_summary,
+                new CharSequence[] {
+                        context.getString(R.string.reading_normal),
+                        context.getString(R.string.reading_spelling),
+                        context.getString(R.string.reading_phonetic),
+                        context.getString(R.string.reading_code)
+                },
+                new CharSequence[] {
+                        VoiceSettings.READING_NORMAL,
+                        VoiceSettings.READING_SPELLING,
+                        VoiceSettings.READING_PHONETIC,
+                        VoiceSettings.READING_CODE
+                },
+                new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext),
+                        null).getReadingMode());
+    }
+
+    private static Preference createDigitGroupThresholdPreference(Context context) {
+        CharSequence[] entries = new CharSequence[9];
+        CharSequence[] values = new CharSequence[9];
+        for (int i = 0; i < 9; i++) {
+            int n = i + 4;
+            entries[i] = n + " " + context.getString(R.string.digits_suffix);
+            values[i] = String.valueOf(n);
+        }
+        return createListPref(context, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
+                R.string.setting_digit_threshold, R.string.setting_digit_threshold_summary,
+                entries, values, "7");
+    }
+
+    private static Preference createAudioProfilePreference(Context context) {
+        return createListPref(context, VoiceSettings.PREF_AUDIO_PROFILE,
+                R.string.setting_audio_profile, R.string.setting_audio_profile_summary,
+                new CharSequence[] {
+                        context.getString(R.string.audio_profile_gentle),
+                        context.getString(R.string.audio_profile_balanced),
+                        context.getString(R.string.audio_profile_full)
+                },
+                new CharSequence[] {
+                        VoiceSettings.AUDIO_PROFILE_GENTLE,
+                        VoiceSettings.AUDIO_PROFILE_BALANCED,
+                        VoiceSettings.AUDIO_PROFILE_FULL
+                },
+                VoiceSettings.AUDIO_PROFILE_BALANCED);
+    }
+
+    private static Preference createSmartMinPreference(Context context) {
+        CharSequence[] entries = new CharSequence[7];
+        CharSequence[] values = new CharSequence[7];
+        for (int i = 0; i < 7; i++) {
+            int n = i + 2;
+            entries[i] = n + " " + context.getString(R.string.digits_suffix);
+            values[i] = String.valueOf(n);
+        }
+        return createListPref(context, VoiceSettings.PREF_SMART_MIN_LEN,
+                R.string.setting_smart_min, R.string.setting_smart_min_summary,
+                entries, values, "4");
+    }
+
+    private static Preference createSmartMaxPreference(Context context) {
+        CharSequence[] entries = new CharSequence[9];
+        CharSequence[] values = new CharSequence[9];
+        for (int i = 0; i < 9; i++) {
+            int n = i + 4;
+            entries[i] = n + " " + context.getString(R.string.digits_suffix);
+            values[i] = String.valueOf(n);
+        }
+        return createListPref(context, VoiceSettings.PREF_SMART_MAX_LEN,
+                R.string.setting_smart_max, R.string.setting_smart_max_summary,
+                entries, values, "8");
+    }
+
+    private static Preference createSecondaryVoicePreference(Context context, List<Voice> voices) {
+        final List<Voice> sorted = new ArrayList<Voice>(voices);
+        Collections.sort(sorted, new Comparator<Voice>() {
+            @Override public int compare(Voice a, Voice b) {
+                return a.name.compareToIgnoreCase(b.name);
+            }
+        });
+        CharSequence[] entries = new CharSequence[sorted.size()];
+        CharSequence[] values = new CharSequence[sorted.size()];
+        for (int i = 0; i < sorted.size(); i++) {
+            entries[i] = getVoiceLabel(sorted.get(i));
+            values[i] = sorted.get(i).name;
+        }
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        String current = prefs.getString(VoiceSettings.PREF_SECONDARY_VOICE, "en-in");
+        final ListPreference pref = new ListPreference(context);
+        pref.setTitle(R.string.setting_secondary_voice);
+        pref.setDialogTitle(R.string.setting_secondary_voice);
+        pref.setKey(VoiceSettings.PREF_SECONDARY_VOICE);
+        pref.setEntries(entries);
+        pref.setEntryValues(values);
+        pref.setDefaultValue("en-in");
+        pref.setPersistent(true);
+        int idx = pref.findIndexOfValue(current);
+        if (idx >= 0) pref.setSummary(entries[idx]);
+        else pref.setSummary(R.string.setting_secondary_voice_summary);
+        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
+        return pref;
+    }
+
     private static Preference createBackupPreference(final Context context) {
         final Preference pref = new Preference(context);
         pref.setTitle(R.string.setting_backup);
@@ -1060,14 +1187,34 @@ public class TtsSettingsActivity extends PreferenceActivity {
     }
 
     private static void showUserDictionaryDialog(final Context context) {
-        showUserDictionaryDialog(context, "", UserDictionary.CATEGORY_MAIN);
+        showUserDictionaryDialog(context, "", "all");
+    }
+
+    /** Adds a visible TextView label bound to an input for TalkBack (hint alone is not enough). */
+    private static EditText labeledInput(Context context, LinearLayout layout,
+                                         String labelText, String hintText, String initial,
+                                         int inputType) {
+        final TextView label = new TextView(context);
+        label.setText(labelText);
+        label.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        layout.addView(label);
+        final EditText et = new EditText(context);
+        et.setHint(hintText);
+        et.setContentDescription(labelText + ". " + hintText);
+        if (initial != null && !initial.isEmpty()) et.setText(initial);
+        if (inputType != 0) et.setInputType(inputType);
+        et.setMinimumHeight(48);
+        et.setId(View.generateViewId());
+        label.setLabelFor(et.getId());
+        layout.addView(et);
+        return et;
     }
 
     private static void showUserDictionaryDialog(final Context context, final String searchQuery, final String categoryFilter) {
         final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
         final List<UserDictionary> rules = mgr.getRules();
 
-        // Filtered view (search + category), but deletions map back to real indices.
+        // Filtered view (search + category), but edits map back to real indices.
         final List<Integer> viewToReal = new ArrayList<>();
         final List<String> labels = new ArrayList<>();
         String q = searchQuery != null ? searchQuery.trim().toLowerCase(java.util.Locale.ROOT) : "";
@@ -1088,53 +1235,52 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(40, 20, 40, 20);
-        final EditText etSearch = new EditText(context);
-        etSearch.setHint("Search words...");
-        if (searchQuery != null && !searchQuery.isEmpty()) etSearch.setText(searchQuery);
-        layout.addView(etSearch);
-        final CheckBox cbMain = new CheckBox(context);
-        cbMain.setText("Show Main / Root / Abbrev: tap a header to filter");
-        cbMain.setEnabled(false);
-        layout.addView(cbMain);
+        final EditText etSearch = labeledInput(context, layout,
+                context.getString(R.string.dict_search_label),
+                context.getString(R.string.dict_search_hint),
+                searchQuery, android.text.InputType.TYPE_CLASS_TEXT);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final TextView filterLabel = new TextView(context);
+        filterLabel.setText(R.string.dict_filter_label);
+        filterLabel.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        layout.addView(filterLabel);
+        final android.widget.Spinner spFilter = new android.widget.Spinner(context);
+        final String[] filterNames = new String[] {
+                context.getString(R.string.dict_filter_all),
+                context.getString(R.string.dict_filter_main),
+                context.getString(R.string.dict_filter_root),
+                context.getString(R.string.dict_filter_abbrev) };
+        final String[] filterValues = new String[] {
+                "all", UserDictionary.CATEGORY_MAIN,
+                UserDictionary.CATEGORY_ROOT, UserDictionary.CATEGORY_ABBREV };
+        android.widget.ArrayAdapter<String> filterAdapter = new android.widget.ArrayAdapter<>(context,
+                android.R.layout.simple_spinner_item, filterNames);
+        filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spFilter.setAdapter(filterAdapter);
+        spFilter.setContentDescription(context.getString(R.string.dict_filter_label));
+        int sel = 0;
+        for (int i = 0; i < filterValues.length; i++) {
+            if (filterValues[i].equals(categoryFilter)) { sel = i; break; }
+        }
+        spFilter.setSelection(sel);
+        spFilter.setMinimumHeight(48);
+        spFilter.setId(View.generateViewId());
+        filterLabel.setLabelFor(spFilter.getId());
+        layout.addView(spFilter);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.setting_user_dictionary) + " (" + rules.size() + ")");
         builder.setView(layout);
         if (items.length == 0) {
             builder.setMessage(rules.isEmpty()
-                    ? "No custom rules configured. Tap Add Rule to create pronunciation replacements (e.g. AIIMS \u2192 All India Institute of Medical Sciences). Use Import for massive word lists."
-                    : "No rules match this search/filter.");
+                    ? context.getString(R.string.dict_empty)
+                    : context.getString(R.string.dict_no_match));
         } else {
             builder.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, final int which) {
-                    final int realIdx = viewToReal.get(which);
-                    final UserDictionary r = mgr.getRules().get(realIdx);
-                    new AlertDialog.Builder(context)
-                            .setTitle("Rule: " + r.getPattern())
-                            .setMessage(items[which] + "\n\nTap Preview to hear it, Delete to remove.")
-                            .setPositiveButton("Preview", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface d, int w) {
-                                    previewText(context, r.getReplacement().isEmpty()
-                                            ? r.getPattern() : r.getReplacement());
-                                    showUserDictionaryDialog(context, searchQuery, categoryFilter);
-                                }
-                            })
-                            .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface d, int w) {
-                                    mgr.removeRule(realIdx);
-                                    showUserDictionaryDialog(context, searchQuery, categoryFilter);
-                                }
-                            })
-                            .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface d, int w) {
-                                    showUserDictionaryDialog(context, searchQuery, categoryFilter);
-                                }
-                            })
-                            .show();
+                    showRuleActionsDialog(context, searchQuery, categoryFilter,
+                            viewToReal.get(which), items[which]);
                 }
             });
         }
@@ -1142,23 +1288,75 @@ public class TtsSettingsActivity extends PreferenceActivity {
         builder.setPositiveButton("Add rule", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                showAddRuleDialog(context, searchQuery, categoryFilter);
+                showAddRuleDialog(context,
+                        etSearch.getText().toString(),
+                        filterValues[spFilter.getSelectedItemPosition()]);
             }
         });
         builder.setNeutralButton("Import / Export", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                showDictionaryImportExportDialog(context, searchQuery, categoryFilter);
+                showDictionaryImportExportDialog(context,
+                        etSearch.getText().toString(),
+                        filterValues[spFilter.getSelectedItemPosition()]);
             }
         });
-        builder.setNegativeButton("Close", null);
-        final AlertDialog dlg = builder.show();
-        // Live search: re-open filtered as the user types (debounced by dialog lifecycle).
-        etSearch.addTextChangedListener(new android.text.TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
-            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
-            @Override public void afterTextChanged(android.text.Editable s) { }
+        // Explicit filter action: TalkBack announces the result count, and
+        // focus stays predictable (no live re-open loop stealing focus).
+        builder.setNegativeButton(R.string.dict_apply_filter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String nq = etSearch.getText().toString();
+                String nf = filterValues[spFilter.getSelectedItemPosition()];
+                showUserDictionaryDialog(context, nq, nf);
+                Toast.makeText(context,
+                        context.getString(R.string.dict_filter_applied, labels.size()),
+                        Toast.LENGTH_SHORT).show();
+            }
         });
+        builder.show();
+    }
+
+    /** TalkBack-friendly rule actions as a list (Preview / Edit / Delete) + Cancel. */
+    private static void showRuleActionsDialog(final Context context, final String searchQuery,
+                                              final String categoryFilter, final int realIdx,
+                                              final String label) {
+        final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
+        final List<UserDictionary> current = mgr.getRules();
+        if (realIdx < 0 || realIdx >= current.size()) {
+            showUserDictionaryDialog(context, searchQuery, categoryFilter);
+            return;
+        }
+        final UserDictionary r = current.get(realIdx);
+        final String[] actions = new String[] {
+                context.getString(R.string.dict_action_preview),
+                context.getString(R.string.dict_action_edit),
+                context.getString(R.string.dict_action_delete) };
+        new AlertDialog.Builder(context)
+                .setTitle(context.getString(R.string.dict_rule_title, r.getPattern()))
+                .setMessage(label)
+                .setItems(actions, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface d, int which) {
+                        if (which == 0) {
+                            previewText(context, r.getReplacement().isEmpty()
+                                    ? r.getPattern() : r.getReplacement());
+                            showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                        } else if (which == 1) {
+                            showEditRuleDialog(context, searchQuery, categoryFilter, realIdx);
+                        } else {
+                            mgr.removeRule(realIdx);
+                            Toast.makeText(context, R.string.dict_rule_deleted,
+                                    Toast.LENGTH_SHORT).show();
+                            showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface d, int w) {
+                        showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                    }
+                })
+                .show();
     }
 
     private static void showDictionaryImportExportDialog(final Context context, final String searchQuery, final String categoryFilter) {
@@ -1210,45 +1408,85 @@ public class TtsSettingsActivity extends PreferenceActivity {
     }
 
     private static void showAddRuleDialog(final Context context) {
-        showAddRuleDialog(context, "", UserDictionary.CATEGORY_MAIN);
+        showAddRuleDialog(context, "", "all");
     }
 
     private static void showAddRuleDialog(final Context context, final String searchQuery, final String categoryFilter) {
+        showEditRuleDialog(context, searchQuery, categoryFilter, -1);
+    }
+
+    private static void showEditRuleDialog(final Context context, final String searchQuery,
+                                           final String categoryFilter, final int editIndex) {
+        final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
+        final UserDictionary existing = (editIndex >= 0 && editIndex < mgr.getRules().size())
+                ? mgr.getRules().get(editIndex) : null;
+
         final LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(40, 20, 40, 20);
 
-        final EditText etPattern = new EditText(context);
-        etPattern.setHint("Original word / pattern (e.g. AIIMS)");
-        layout.addView(etPattern);
+        final EditText etPattern = labeledInput(context, layout,
+                context.getString(R.string.dict_label_pattern),
+                context.getString(R.string.dict_hint_pattern),
+                existing != null ? existing.getPattern() : null,
+                android.text.InputType.TYPE_CLASS_TEXT);
+        final EditText etReplacement = labeledInput(context, layout,
+                context.getString(R.string.dict_label_replacement),
+                context.getString(R.string.dict_hint_replacement),
+                existing != null ? existing.getReplacement() : null,
+                android.text.InputType.TYPE_CLASS_TEXT);
 
-        final EditText etReplacement = new EditText(context);
-        etReplacement.setHint("Spoken replacement (e.g. All India Institute of Medical Sciences)");
-        layout.addView(etReplacement);
-
+        final TextView catLabel = new TextView(context);
+        catLabel.setText(R.string.dict_label_category);
+        catLabel.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        layout.addView(catLabel);
         final android.widget.Spinner spCategory = new android.widget.Spinner(context);
         android.widget.ArrayAdapter<String> catAdapter = new android.widget.ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_item,
-                new String[]{"Main dictionary", "Root dictionary", "Abbreviation dictionary"});
+                new String[]{context.getString(R.string.dict_filter_main),
+                        context.getString(R.string.dict_filter_root),
+                        context.getString(R.string.dict_filter_abbrev)});
         catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCategory.setAdapter(catAdapter);
+        spCategory.setContentDescription(context.getString(R.string.dict_label_category));
+        spCategory.setMinimumHeight(48);
+        spCategory.setId(View.generateViewId());
+        catLabel.setLabelFor(spCategory.getId());
+        String preCat = existing != null ? existing.getCategory() : categoryFilter;
+        spCategory.setSelection(UserDictionary.CATEGORY_ROOT.equals(preCat) ? 1
+                : UserDictionary.CATEGORY_ABBREV.equals(preCat) ? 2 : 0);
         layout.addView(spCategory);
 
         final CheckBox cbWholeWord = new CheckBox(context);
-        cbWholeWord.setText("Whole word only");
-        cbWholeWord.setChecked(true);
+        cbWholeWord.setText(R.string.dict_whole_word);
+        cbWholeWord.setContentDescription(context.getString(R.string.dict_whole_word_summary));
+        cbWholeWord.setChecked(existing != null ? existing.isWholeWord() : true);
+        cbWholeWord.setMinimumHeight(48);
         layout.addView(cbWholeWord);
 
         final CheckBox cbCaseSensitive = new CheckBox(context);
-        cbCaseSensitive.setText("Case sensitive");
-        cbCaseSensitive.setChecked(false);
+        cbCaseSensitive.setText(R.string.dict_case_sensitive);
+        cbCaseSensitive.setChecked(existing != null && existing.isCaseSensitive());
+        cbCaseSensitive.setMinimumHeight(48);
         layout.addView(cbCaseSensitive);
 
-        final EditText etLanguage = new EditText(context);
-        etLanguage.setHint("Language code, e.g. en or hi - leave blank for every language");
-        layout.addView(etLanguage);
+        final CheckBox cbRegex = new CheckBox(context);
+        cbRegex.setText(R.string.dict_regex);
+        cbRegex.setContentDescription(context.getString(R.string.dict_regex_summary));
+        cbRegex.setChecked(existing != null && existing.isRegex());
+        cbRegex.setMinimumHeight(48);
+        layout.addView(cbRegex);
 
-        final String[] chosenCategory = new String[]{UserDictionary.CATEGORY_MAIN};
+        final EditText etLanguage = labeledInput(context, layout,
+                context.getString(R.string.dict_label_language),
+                context.getString(R.string.dict_hint_language),
+                existing != null ? existing.getLanguage() : null,
+                android.text.InputType.TYPE_CLASS_TEXT);
+
+        final String[] chosenCategory = new String[]{
+                UserDictionary.CATEGORY_ROOT.equals(preCat) ? UserDictionary.CATEGORY_ROOT
+                        : UserDictionary.CATEGORY_ABBREV.equals(preCat) ? UserDictionary.CATEGORY_ABBREV
+                        : UserDictionary.CATEGORY_MAIN};
         spCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
                 chosenCategory[0] = pos == 1 ? UserDictionary.CATEGORY_ROOT
@@ -1259,9 +1497,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         });
 
         new AlertDialog.Builder(context)
-                .setTitle("Add pronunciation rule")
+                .setTitle(existing != null ? R.string.dict_edit_title : R.string.dict_add_title)
                 .setView(layout)
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.dict_save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String pattern = etPattern.getText().toString().trim();
@@ -1272,25 +1510,35 @@ public class TtsSettingsActivity extends PreferenceActivity {
                                     pattern,
                                     replacement,
                                     cbCaseSensitive.isChecked(),
-                                    false,
+                                    cbRegex.isChecked(),
                                     cbWholeWord.isChecked(),
                                     language,
                                     chosenCategory[0]
                             );
-                            UserDictionaryManager.getInstance(context).addRule(rule);
+                            if (existing != null) {
+                                UserDictionaryManager.getInstance(context).setRule(editIndex, rule);
+                                Toast.makeText(context, R.string.dict_rule_saved,
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                UserDictionaryManager.getInstance(context).addRule(rule);
+                            }
                             // Live audio preview: hear the new pronunciation immediately.
                             previewText(context, replacement.isEmpty() ? pattern : replacement);
                             showUserDictionaryDialog(context, searchQuery, categoryFilter);
                         }
                     }
                 })
-                .setNeutralButton("Preview", new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.dict_preview, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String replacement = etReplacement.getText().toString().trim();
                         String pattern = etPattern.getText().toString().trim();
                         previewText(context, replacement.isEmpty() ? pattern : replacement);
-                        showAddRuleDialog(context, searchQuery, categoryFilter);
+                        if (existing != null) {
+                            showEditRuleDialog(context, searchQuery, categoryFilter, editIndex);
+                        } else {
+                            showAddRuleDialog(context, searchQuery, categoryFilter);
+                        }
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -1379,6 +1627,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         langCategory.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
         if (!isWatch) {
             langCategory.addPreference(createBilingualSwitchingPreference(context));
+            if (!voices.isEmpty()) {
+                langCategory.addPreference(createSecondaryVoicePreference(context, voices));
+            }
             langCategory.addPreference(createTestVoicePreference(context));
         }
 
@@ -1396,9 +1647,21 @@ public class TtsSettingsActivity extends PreferenceActivity {
         paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
         paramCategory.addPreference(createAudioOptimizerPreference(context));
+        paramCategory.addPreference(createAudioProfilePreference(context));
         if (!isWatch) {
             paramCategory.addPreference(createRecommendedDefaultsPreference(context));
         }
+
+        // 2b. Caller-proof consistency locks (force overrides).
+        PreferenceCategory lockCategory = new PreferenceCategory(context);
+        lockCategory.setTitle(R.string.category_locks);
+        group.addPreference(lockCategory);
+        lockCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_RATE,
+                R.string.setting_force_rate, R.string.setting_force_rate_summary, false));
+        lockCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_PITCH,
+                R.string.setting_force_pitch, R.string.setting_force_pitch_summary, false));
+        lockCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_VOLUME,
+                R.string.setting_force_volume, R.string.setting_force_volume_summary, false));
 
         // 3. Text & speech processing (programming symbols, Indian currency/numbers, smart codes)
         PreferenceCategory processCategory = new PreferenceCategory(context);
@@ -1410,18 +1673,20 @@ public class TtsSettingsActivity extends PreferenceActivity {
         processCategory.addPreference(createProgrammingSymbolsPreference(context));
         processCategory.addPreference(createIndianNumberingPreference(context));
         processCategory.addPreference(createSmartCodesPreference(context));
+        if (!isWatch) {
+            processCategory.addPreference(createSmartMinPreference(context));
+            processCategory.addPreference(createSmartMaxPreference(context));
+        }
         processCategory.addPreference(createSpeakDigitsPreference(context));
         processCategory.addPreference(createDigitGroupingPreference(context));
+        if (!isWatch) {
+            processCategory.addPreference(createDigitGroupThresholdPreference(context));
+        }
         processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_TIME_DATE,
                 R.string.setting_time_date, R.string.setting_time_date_summary, true));
         processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_CURRENCY,
                 R.string.setting_currency, R.string.setting_currency_summary, true));
-        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_SPELLING_MODE,
-                R.string.setting_spelling_mode, R.string.setting_spelling_mode_summary, false));
-        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_PHONETIC_MODE,
-                R.string.setting_phonetic_mode, R.string.setting_phonetic_mode_summary, false));
-        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_CODE_READING_MODE,
-                R.string.setting_code_reading, R.string.setting_code_reading_summary, false));
+        processCategory.addPreference(createReadingModePreference(context));
         processCategory.addPreference(createUnicodeNormalizationPreference(context));
         if (!isWatch) {
             processCategory.addPreference(createUserDictionaryPreference(context));

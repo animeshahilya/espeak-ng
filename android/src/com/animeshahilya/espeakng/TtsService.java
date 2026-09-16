@@ -642,6 +642,8 @@ public class TtsService extends TextToSpeechService {
 
         final boolean speakDigits = settings.isSpeakDigitsEnabled() && !isSsml;
         final boolean smartCodes = settings.isSmartCodesEnabled() && !isSsml;
+        final int smartMin = settings.getSmartMinLen();
+        final int smartMax = settings.getSmartMaxLen();
         final String digitGrouping = settings.getDigitGroupingMode();
         final boolean useGrouping = !isSsml && digitGrouping != null
                 && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
@@ -655,12 +657,12 @@ public class TtsService extends TextToSpeechService {
             offsetMap = chainOffset(offsetMap, before, text);
             if (smartCodes && !VoiceSettings.DIGIT_GROUP_SINGLE.equals(digitGrouping)) {
                 before = text;
-                text = spaceSeparateSmartCodes(text);
+                text = spaceSeparateSmartCodes(text, smartMin, smartMax);
                 offsetMap = chainOffset(offsetMap, before, text);
             }
         } else if (smartCodes) {
             String before = text;
-            text = spaceSeparateSmartCodes(text);
+            text = spaceSeparateSmartCodes(text, smartMin, smartMax);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -704,7 +706,7 @@ public class TtsService extends TextToSpeechService {
                     offsetMap = chainOffset(offsetMap, before, text);
                 } else if (smartCodes) {
                     before = text;
-                    text = spaceSeparateSmartCodes(text);
+                    text = spaceSeparateSmartCodes(text, smartMin, smartMax);
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (!isSsml && settings.isCurrencyEnabled()) {
@@ -756,7 +758,7 @@ public class TtsService extends TextToSpeechService {
             return;
         }
         mAudioOptimizer = settings.isAudioOptimizerEnabled()
-                ? new AudioOptimizer(mEngine.getSampleRate())
+                ? new AudioOptimizer(mEngine.getSampleRate(), settings.getAudioProfile())
                 : null;
         mEngine.setVoice(voice, settings.getVoiceVariant());
 
@@ -765,7 +767,10 @@ public class TtsService extends TextToSpeechService {
         if (rateScale <= 0) {
             rateScale = 100;
         }
-        rate = (int)(((long)rate * rateScale) / 100);
+        // Force override: lock to the saved rate regardless of caller requests.
+        if (!settings.isForceRateEnabled()) {
+            rate = (int)(((long)rate * rateScale) / 100);
+        }
         if (!settings.isRateBoostEnabled() && rate > 449) {
             rate = 449; // NVDA issue #131: avoid unintended Sonic engagement at 450 WPM
         }
@@ -775,6 +780,9 @@ public class TtsService extends TextToSpeechService {
         if (pitchScale <= 0) {
             pitchScale = 100;
         }
+        if (settings.isForcePitchEnabled()) {
+            pitchScale = 100;
+        }
         mEngine.Pitch.setValue(settings.getPitch(), pitchScale);
 
         mEngine.PitchRange.setValue(settings.getPitchRange());
@@ -782,7 +790,7 @@ public class TtsService extends TextToSpeechService {
         // Accessibility volume ducking support (KEY_PARAM_VOLUME)
         float volumeScale = 1.0f;
         final Bundle params = request.getParams();
-        if (params != null) {
+        if (!settings.isForceVolumeEnabled() && params != null) {
             Object volObj = params.get(TextToSpeech.Engine.KEY_PARAM_VOLUME);
             if (volObj instanceof Number) {
                 volumeScale = ((Number) volObj).floatValue();
@@ -1658,7 +1666,7 @@ public class TtsService extends TextToSpeechService {
     }
 
     /**
-     * Intelligently detects verification codes, OTPs, and PINs (4-to-8 digit runs
+     * Intelligently detects verification codes, OTPs, and PINs (min-to-max digit runs
      * surrounded by a keyword like "OTP", "PIN", "code", "verification") and
      * space-separates only those numbers so they are read digit-by-digit, while
      * preserving natural reading for normal quantities ("25 items", "year 2024",
@@ -1666,6 +1674,10 @@ public class TtsService extends TextToSpeechService {
      * such keyword nearby. Also expands the Indian Rupee symbol (₹) to "rupees".
      */
     public static String spaceSeparateSmartCodes(String text) {
+        return spaceSeparateSmartCodes(text, 4, 8);
+    }
+
+    public static String spaceSeparateSmartCodes(String text, int minLen, int maxLen) {
         if (text == null || text.isEmpty()) {
             return text;
         }
@@ -1686,7 +1698,7 @@ public class TtsService extends TextToSpeechService {
                 int runEnd = i;
 
                 boolean separate = false;
-                if (digitCount >= 4 && digitCount <= 8) {
+                if (digitCount >= Math.max(2, minLen) && digitCount <= Math.max(minLen, maxLen)) {
                     int contextStart = Math.max(0, runStart - 25);
                     String prefix = text.substring(contextStart, runStart);
                     int contextEnd = Math.min(len, runEnd + 25);

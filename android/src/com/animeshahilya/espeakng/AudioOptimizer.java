@@ -180,6 +180,9 @@ final class AudioOptimizer {
     private final float warmthAlpha;
     private final float levelEnvelopeAlpha;
     private final float gainSmoothAlpha;
+    private final float presenceBlend;
+    private final float warmthBlend;
+    private final float levelerMaxGain;
 
     private float prevInput = 0f;
     private float prevHighPass = 0f;
@@ -196,9 +199,33 @@ final class AudioOptimizer {
     private float prevWarmthLowPass = 0f;
 
     AudioOptimizer(int sampleRateHz) {
+        this(sampleRateHz, VoiceSettings.AUDIO_PROFILE_BALANCED);
+    }
+
+    /**
+     * Intensity profiles so the optimizer is tunable instead of on/off only:
+     * gentle (subtle warmth), balanced (default tuning), full (stronger
+     * presence + wider leveler). All share the same filter topology.
+     */
+    AudioOptimizer(int sampleRateHz, String profile) {
         if (sampleRateHz <= 0) {
             throw new IllegalArgumentException("sampleRateHz must be resolved before constructing AudioOptimizer");
         }
+        float pBlend = PRESENCE_BLEND;
+        float wBlend = WARMTH_BLEND;
+        float maxGain = LEVELER_MAX_GAIN;
+        if (VoiceSettings.AUDIO_PROFILE_GENTLE.equals(profile)) {
+            pBlend = 0.04f;
+            wBlend = 0.16f;
+            maxGain = 1.2f;
+        } else if (VoiceSettings.AUDIO_PROFILE_FULL.equals(profile)) {
+            pBlend = 0.12f;
+            wBlend = 0.36f;
+            maxGain = 1.6f;
+        }
+        presenceBlend = pBlend;
+        warmthBlend = wBlend;
+        levelerMaxGain = maxGain;
         presenceHighpassAlpha = onePoleHighpassPole(PRESENCE_LOW_HZ, sampleRateHz);
         presenceLowpassAlpha = onePoleAlpha(PRESENCE_HIGH_HZ, sampleRateHz);
         warmthAlpha = onePoleAlpha(WARMTH_HZ, sampleRateHz);
@@ -223,7 +250,7 @@ final class AudioOptimizer {
             // consistently-leveled input rather than reacting to whatever level happened to come
             // out of a particular syllable.
             levelEnvelope = updateLevelEnvelope(levelEnvelope, Math.abs(sample), levelEnvelopeAlpha);
-            float levelerTarget = levelerGain(levelEnvelope, LEVELER_TARGET_LEVEL, LEVELER_MIN_GAIN, LEVELER_MAX_GAIN);
+            float levelerTarget = levelerGain(levelEnvelope, LEVELER_TARGET_LEVEL, LEVELER_MIN_GAIN, levelerMaxGain);
             levelerSmoothedGain += gainSmoothAlpha * (levelerTarget - levelerSmoothedGain);
             sample *= levelerSmoothedGain;
 
@@ -233,12 +260,12 @@ final class AudioOptimizer {
             prevInput = sample;
             prevHighPass = highPass;
             presenceBand += presenceLowpassAlpha * (highPass - presenceBand);
-            sample += oversampledHarmonicSaturate(prevPresenceBand * INV_32768, presenceBand * INV_32768, PRESENCE_DRIVE) * 32768f * PRESENCE_BLEND;
+            sample += oversampledHarmonicSaturate(prevPresenceBand * INV_32768, presenceBand * INV_32768, PRESENCE_DRIVE) * 32768f * presenceBlend;
             prevPresenceBand = presenceBand;
 
             // Warmth: a plain lowpass near the vocal fundamental, for body.
             warmthLowPass += warmthAlpha * (sample - warmthLowPass);
-            sample += oversampledHarmonicSaturate(prevWarmthLowPass * INV_32768, warmthLowPass * INV_32768, WARMTH_DRIVE) * 32768f * WARMTH_BLEND;
+            sample += oversampledHarmonicSaturate(prevWarmthLowPass * INV_32768, warmthLowPass * INV_32768, WARMTH_DRIVE) * 32768f * warmthBlend;
             prevWarmthLowPass = warmthLowPass;
 
             float targetGain = limiterGainForSample(Math.abs(sample), CLIP_GUARD_THRESHOLD);

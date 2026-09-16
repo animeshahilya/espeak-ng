@@ -63,6 +63,11 @@ public class SpeakPunctuationPreference extends DialogPreference {
                 mSettings.getPunctuationCharacters());
     }
 
+    private String textOf(int resId) {
+        CharSequence cs = getContext() != null ? getContext().getText(resId) : null;
+        return cs != null ? cs.toString() : "";
+    }
+
     /**
      * Works out which of the five UI presets a stored (level, characters)
      * pair corresponds to. "Some" and "Most" are recognised by their
@@ -123,6 +128,21 @@ public class SpeakPunctuationPreference extends DialogPreference {
         mAll = (RadioButton)root.findViewById(R.id.all);
         mCustom = (RadioButton)root.findViewById(R.id.custom);
         mPunctuationCharacters = (EditText)root.findViewById(R.id.punctuation_characters);
+
+        // TalkBack: descriptions are importantForAccessibility=no in layout to
+        // avoid 10 stops for 5 options. Fold each description into its
+        // RadioButton's content description so one swipe announces the full
+        // context ("Most. Everything in Some, plus...").
+        mNone.setContentDescription(textOf(R.string.punctuation_none)
+                + ". " + textOf(R.string.punctuation_none_desc));
+        mSome.setContentDescription(textOf(R.string.punctuation_some)
+                + ". " + textOf(R.string.punctuation_some_desc));
+        mMost.setContentDescription(textOf(R.string.punctuation_most)
+                + ". " + textOf(R.string.punctuation_most_desc));
+        mAll.setContentDescription(textOf(R.string.punctuation_all)
+                + ". " + textOf(R.string.punctuation_all_desc));
+        mCustom.setContentDescription(textOf(R.string.punctuation_custom)
+                + ". " + textOf(R.string.punctuation_custom_desc));
 
         // The five options aren't a real RadioGroup (each row carries its own
         // description text below it, so the RadioButtons aren't direct

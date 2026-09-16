@@ -16,7 +16,8 @@
             android:text="@string/category"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:labelFor="@+id/category" />
 
         <Spinner
             android:layout_width="0dp"
@@ -24,7 +25,8 @@
             android:id="@+id/category"
             android:layout_weight="0.5"
             android:gravity="bottom"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/category" />
     </LinearLayout>
 
     <LinearLayout
@@ -38,7 +40,8 @@
             android:text="@string/variant"
             android:layout_weight="0.5"
             android:gravity="center_vertical"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:labelFor="@+id/variant" />
 
         <Spinner
             android:layout_width="0dp"
@@ -46,7 +49,8 @@
             android:id="@+id/variant"
             android:layout_weight="0.5"
             android:gravity="bottom"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/variant" />
     </LinearLayout>
 
 </LinearLayout>
