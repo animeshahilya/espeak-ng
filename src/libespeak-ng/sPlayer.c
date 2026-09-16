@@ -65,11 +65,6 @@ static void fillSpeechPlayerFrame(WGEN_DATA *wdata, voice_t *wvoice, frame_t * e
 	// speechPlayer uses floating point value of 1 as 100%.
 	spFrame->voiceAmplitude=(wvoice->voicing)/64.0;
 	spFrame->aspirationAmplitude=(wvoice->breath[1])/64.0;
-	// Never set otherwise (spFrame starts zeroed), which the DSP treats as a
-	// fully-closed glottis rather than a neutral one. 0.40 is speechPlayer's
-	// own documented "neutral" value (see frame.h's field comment and
-	// TGSpeechBox's speechPlayer_voicingTone defaults commentary).
-	spFrame->glottalOpenQuotient=0.40;
 	// All of eSpeak's relative formant frequency ratio values are stored with 256 representing 100% according to comments in voice.h. 
 	spFrame->cf1=(eFrame->ffreq[1]*wvoice->freq[1]/256.0)+wvoice->freqadd[1];
 	spFrame->cf2=(eFrame->ffreq[2]*wvoice->freq[2]/256.0)+wvoice->freqadd[2];
@@ -100,16 +95,6 @@ static void fillSpeechPlayerFrame(WGEN_DATA *wdata, voice_t *wvoice, frame_t * e
 
 void KlattInitSP(void) {
 	speechPlayerHandle=speechPlayer_initialize(22050);
-	// Deliberately NOT calling speechPlayer_setVoicingTone() here. It was
-	// added, then reverted: TGSpeechBox's own tone defaults (+4dB high-shelf
-	// brightness, 0.9x cascade formant bandwidth narrowing) measurably
-	// changed this voice's timbre, and on a real device that read as a wrong
-	// pitch/register to the ear even though the underlying F0 math is
-	// unaffected (traced spFrame->voicePitch/endVoicePitch end to end -
-	// neither setVoicingTone nor anything it touches feeds into that). Their
-	// defaults aren't necessarily right for every downstream context without
-	// a real listen first - see the git history/project memory before
-	// re-enabling this.
 }
 
 void KlattFiniSP(void) {
@@ -137,34 +122,22 @@ int Wavegen_KlattSP(WGEN_DATA *wdata, voice_t *wvoice, int length, int resume, f
 			spFrame1.outputGain/=5;
 			spFrame2.outputGain/=5;
 		}
-		// frameEx carries TGSpeechBox's DSP-v8 extras (F7/F8 spectral
-		// formants above F6, transition-timing refinements). Passed as
-		// its documented all-defaults value throughout: Fujisaki pitch
-		// contour, jitter/shimmer/creakiness and formant-end ramping all
-		// stay at their explicit "off" defaults deliberately - eSpeak
-		// already computes its own complete pitch contour into
-		// spFrame->voicePitch/endVoicePitch above, and layering a second,
-		// untuned pitch model on top risks fighting it rather than
-		// improving it. Only the sample-rate-gated F7/F8 formants (this
-		// engine runs at 22050 Hz, the documented threshold) and the
-		// other structural defaults are actually new here.
-		const unsigned int frameExSize=(unsigned int)sizeof(speechPlayer_frameEx_defaults);
 		int mainLength=length;
-		speechPlayer_queueFrameEx(speechPlayerHandle,&spFrame1,&speechPlayer_frameEx_defaults,frameExSize,minFadeLength,minFadeLength,-1,false);
+		speechPlayer_queueFrame(speechPlayerHandle,&spFrame1,minFadeLength,minFadeLength,-1,false);
 		mainLength-=minFadeLength;
 		bool fadeOut=!isKlattFrameFollowing();
 		if(fadeOut) {
 			mainLength-=minFadeLength;
 		}
 		if(mainLength>=1) {
-			speechPlayer_queueFrameEx(speechPlayerHandle,&spFrame2,&speechPlayer_frameEx_defaults,frameExSize,mainLength,mainLength,-1,false);
+			speechPlayer_queueFrame(speechPlayerHandle,&spFrame2,mainLength,mainLength,-1,false);
 		}
 		if(fadeOut) {
 			spFrame2.voicePitch=spFrame2.endVoicePitch;
 			spFrame2.preFormantGain=0;
-			speechPlayer_queueFrameEx(speechPlayerHandle,&spFrame2,&speechPlayer_frameEx_defaults,frameExSize,minFadeLength/2,minFadeLength/2,-1,false);
+			speechPlayer_queueFrame(speechPlayerHandle,&spFrame2,minFadeLength/2,minFadeLength/2,-1,false);
 			spFrame2.outputGain=0;
-			speechPlayer_queueFrameEx(speechPlayerHandle,&spFrame2,&speechPlayer_frameEx_defaults,frameExSize,minFadeLength/2,minFadeLength/2,-1,false);
+			speechPlayer_queueFrame(speechPlayerHandle,&spFrame2,minFadeLength/2,minFadeLength/2,-1,false);
 		}
 	}
 	unsigned int maxLength=(out_end-out_ptr)/sizeof(sample);

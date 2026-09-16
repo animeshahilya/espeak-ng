@@ -1,97 +1,65 @@
 /*
-TGSpeechBox — Public C API header for the DSP engine.
+This file is a part of the NV Speech Player project. 
+URL: https://bitbucket.org/nvaccess/speechplayer
 Copyright 2014 NV Access Limited.
-Copyright 2025-2026 Tamas Geczy.
-Licensed under the MIT License. See LICENSE for details.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License, as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+This license can be found at:
+http://www.gnu.org/licenses/gpl.html
 */
 
-#ifndef TGSPEECHBOX_SPEECHPLAYER_H
-#define TGSPEECHBOX_SPEECHPLAYER_H
+#ifndef SPEECHPLAYER_H
+#define SPEECHPLAYER_H
 
-#include "frame.h"
-#include "sample.h"
-#include "voicingTone.h"
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef void* speechPlayer_handle_t;
+typedef double speechPlayer_frameParam_t;
 
-/* ============================================================================
- * Core API (unchanged for ABI compatibility)
- * ============================================================================ */
+typedef struct {
+	// voicing and cascaide
+	speechPlayer_frameParam_t voicePitch; //  fundermental frequency of voice (phonation) in hz
+	speechPlayer_frameParam_t vibratoPitchOffset; // pitch is offset up or down in fraction of a semitone
+	speechPlayer_frameParam_t vibratoSpeed; // Speed of vibrato in hz
+	speechPlayer_frameParam_t voiceTurbulenceAmplitude; // amplitude of voice breathiness from 0 to 1 
+	speechPlayer_frameParam_t glottalOpenQuotient; // fraction between 0 and 1 of a voice cycle that the glottis is open (allows voice turbulance, alters f1...)
+	speechPlayer_frameParam_t voiceAmplitude; // amplitude of voice (phonation) source between 0 and 1.
+	speechPlayer_frameParam_t aspirationAmplitude; // amplitude of aspiration (voiceless h, whisper) source between 0 and 1.
+	speechPlayer_frameParam_t cf1, cf2, cf3, cf4, cf5, cf6, cfN0, cfNP; // frequencies of standard cascaide formants, nasal (anti) 0 and nasal pole in hz
+	speechPlayer_frameParam_t cb1, cb2, cb3, cb4, cb5, cb6, cbN0, cbNP; // bandwidths of standard cascaide formants, nasal (anti) 0 and nasal pole in hz
+	speechPlayer_frameParam_t caNP; // amplitude from 0 to 1 of cascade nasal pole formant
+	// fricatives and parallel
+	speechPlayer_frameParam_t fricationAmplitude; // amplitude of frication noise from 0 to 1.
+	speechPlayer_frameParam_t pf1, pf2, pf3, pf4, pf5, pf6; // parallel formants in hz
+	speechPlayer_frameParam_t pb1, pb2, pb3, pb4, pb5, pb6; // parallel formant bandwidths in hz
+	speechPlayer_frameParam_t pa1, pa2, pa3, pa4, pa5, pa6; // amplitude of parallel formants between 0 and 1
+	speechPlayer_frameParam_t parallelBypass; // amount of signal which should bypass parallel resonators from 0 to 1
+	speechPlayer_frameParam_t preFormantGain; // amplitude from 0 to 1 of all vocal tract sound (voicing, frication) before entering formant resonators. Useful for stopping/starting speech
+	speechPlayer_frameParam_t outputGain; // amplitude from 0 to 1 of final output (master volume) 
+	speechPlayer_frameParam_t endVoicePitch; //  pitch of voice at the end of the frame length 
+} speechPlayer_frame_t;
+
+typedef short sampleVal;
+
+typedef struct {
+	sampleVal value;
+} sample;
+
+typedef void* speechPlayer_handle_t;
 
 speechPlayer_handle_t speechPlayer_initialize(int sampleRate);
 void speechPlayer_queueFrame(speechPlayer_handle_t playerHandle, speechPlayer_frame_t* framePtr, unsigned int minFrameDuration, unsigned int fadeDuration, int userIndex, bool purgeQueue);
-void speechPlayer_queueFrameEx(speechPlayer_handle_t playerHandle, speechPlayer_frame_t* framePtr, const speechPlayer_frameEx_t* frameExPtr, unsigned int frameExSize, unsigned int minFrameDuration, unsigned int fadeDuration, int userIndex, bool purgeQueue);
 int speechPlayer_synthesize(speechPlayer_handle_t playerHandle, unsigned int sampleCount, sample* sampleBuf); 
 int speechPlayer_getLastIndex(speechPlayer_handle_t playerHandle);
 void speechPlayer_terminate(speechPlayer_handle_t playerHandle);
-
-/* ============================================================================
- * Extended API (safe ABI extension - old drivers won't call these)
- * ============================================================================ */
-
-/**
- * Set voicing tone parameters for DSP-level voice quality adjustments.
- * 
- * This is an optional API extension. Old drivers that never call this function
- * will get identical behavior to before (defaults are used).
- * 
- * New frontends/tools can call this to adjust:
- *   - Glottal pulse shape (crispness)
- *   - Voiced pre-emphasis (clarity)
- *   - High-shelf EQ (brightness)
- * 
- * @param playerHandle  Handle returned by speechPlayer_initialize()
- * @param tone          Pointer to voicing tone parameters, or NULL to reset to defaults
- */
-void speechPlayer_setVoicingTone(speechPlayer_handle_t playerHandle, const speechPlayer_voicingTone_t* tone);
-
-/**
- * Get current voicing tone parameters.
- * 
- * @param playerHandle  Handle returned by speechPlayer_initialize()
- * @param tone          Output pointer to receive current parameters
- */
-void speechPlayer_getVoicingTone(speechPlayer_handle_t playerHandle, speechPlayer_voicingTone_t* tone);
-
-/**
- * Set output gain applied before the limiter.
- *
- * Each platform's audio output chain has different amplification levels.
- * By applying gain inside the DSP (before the limiter), all platforms
- * get identical clipping and limiting behavior for the same phoneme data.
- * Default is 1.0 (no gain).  Typical values: NVDA=1.0, iOS=1.7, Android=3.0.
- *
- * @param playerHandle  Handle returned by speechPlayer_initialize()
- * @param gain          Output gain multiplier (clamped to 0.0–10.0)
- */
-void speechPlayer_setOutputGain(speechPlayer_handle_t playerHandle, double gain);
-
-/**
- * Get the DSP version implemented by this DLL.
- *
- * This is intended for frontends/drivers that want to detect whether a newer
- * DSP feature-set is available (or avoid calling APIs that would misbehave on
- * an older build).
- */
-unsigned int speechPlayer_getDspVersion(void);
-
-/**
- * Set time-stretch factor for DSP-level rate boost.
- *
- * 1.0 = normal (no stretching). 2.0 = skip every other glottal cycle
- * for 2x speedup without formant compression.  Uses pitch-synchronous
- * cycle skipping with linear crossfade at boundaries.  Inspired by
- * Sonic (Bill Cox) but implemented natively — the DSP knows exact
- * glottal cycle timing.
- *
- * @param playerHandle  Handle returned by speechPlayer_initialize()
- * @param factor        Time-stretch factor (clamped to 1.0–8.0)
- */
-void speechPlayer_setTimeStretch(speechPlayer_handle_t playerHandle, double factor);
 
 #ifdef __cplusplus
 }

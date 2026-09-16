@@ -1,15 +1,21 @@
 /*
-TGSpeechBox — Public C API for the DSP engine.
+This file is a part of the NV Speech Player project. 
+URL: https://bitbucket.org/nvaccess/speechplayer
 Copyright 2014 NV Access Limited.
-Copyright 2025-2026 Tamas Geczy.
-Licensed under the MIT License. See LICENSE for details.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License, as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+This license can be found at:
+http://www.gnu.org/licenses/gpl.html
 */
 
 #include "frame.h"
 #include "speechWaveGenerator.h"
 #include "speechPlayer.h"
-
-#include <algorithm>
 
 typedef struct {
 	int sampleRate;
@@ -28,12 +34,8 @@ speechPlayer_handle_t speechPlayer_initialize(int sampleRate) {
 
 void speechPlayer_queueFrame(speechPlayer_handle_t playerHandle, speechPlayer_frame_t* framePtr, unsigned int minFrameDuration, unsigned int fadeDuration, int userIndex, bool purgeQueue) { 
 	speechPlayer_handleInfo_t* playerHandleInfo=(speechPlayer_handleInfo_t*)playerHandle;
-	playerHandleInfo->frameManager->queueFrameEx(framePtr, NULL, 0, minFrameDuration, std::max(fadeDuration, 1u), userIndex, purgeQueue);
-}
-
-void speechPlayer_queueFrameEx(speechPlayer_handle_t playerHandle, speechPlayer_frame_t* framePtr, const speechPlayer_frameEx_t* frameExPtr, unsigned int frameExSize, unsigned int minFrameDuration, unsigned int fadeDuration, int userIndex, bool purgeQueue) { 
-	speechPlayer_handleInfo_t* playerHandleInfo=(speechPlayer_handleInfo_t*)playerHandle;
-	playerHandleInfo->frameManager->queueFrameEx(framePtr, frameExPtr, frameExSize, minFrameDuration, std::max(fadeDuration, 1u), userIndex, purgeQueue);
+	if (fadeDuration < 1) fadeDuration = 1;
+	playerHandleInfo->frameManager->queueFrame(framePtr,minFrameDuration,fadeDuration,userIndex,purgeQueue);
 }
 
 int speechPlayer_synthesize(speechPlayer_handle_t playerHandle, unsigned int sampleCount, sample* sampleBuf) {
@@ -51,39 +53,4 @@ void speechPlayer_terminate(speechPlayer_handle_t playerHandle) {
 	delete playerHandleInfo->frameManager;
 	delete playerHandleInfo;
 }
-
-/* ============================================================================
- * Extended API implementations
- * ============================================================================ */
-
-void speechPlayer_setVoicingTone(speechPlayer_handle_t playerHandle, const speechPlayer_voicingTone_t* tone) {
-	speechPlayer_handleInfo_t* playerHandleInfo=(speechPlayer_handleInfo_t*)playerHandle;
-	if (playerHandleInfo && playerHandleInfo->waveGenerator) {
-		playerHandleInfo->waveGenerator->setVoicingTone(tone);
-	}
-}
-
-void speechPlayer_getVoicingTone(speechPlayer_handle_t playerHandle, speechPlayer_voicingTone_t* tone) {
-	speechPlayer_handleInfo_t* playerHandleInfo=(speechPlayer_handleInfo_t*)playerHandle;
-	if (playerHandleInfo && playerHandleInfo->waveGenerator) {
-		playerHandleInfo->waveGenerator->getVoicingTone(tone);
-	}
-}
-
-void speechPlayer_setOutputGain(speechPlayer_handle_t playerHandle, double gain) {
-	speechPlayer_handleInfo_t* playerHandleInfo=(speechPlayer_handleInfo_t*)playerHandle;
-	if (playerHandleInfo && playerHandleInfo->waveGenerator) {
-		playerHandleInfo->waveGenerator->setOutputGain(gain);
-	}
-}
-
-unsigned int speechPlayer_getDspVersion(void) {
-	return SPEECHPLAYER_DSP_VERSION;
-}
-
-void speechPlayer_setTimeStretch(speechPlayer_handle_t playerHandle, double factor) {
-	speechPlayer_handleInfo_t* playerHandleInfo=(speechPlayer_handleInfo_t*)playerHandle;
-	if (playerHandleInfo && playerHandleInfo->waveGenerator) {
-		playerHandleInfo->waveGenerator->setTimeStretch(factor);
-	}
-}
+  
