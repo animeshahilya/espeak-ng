@@ -599,12 +599,8 @@ phoneme r.
 endphoneme
 
 phoneme r.h
-  vcd rfx flp
-  lengthmod 6
+  import_phoneme hi_base/r.
   ipa ɽʱ
-  Vowelin f1=3  f2=1200 -400 -100  f3=-400 80 colr=2
-  Vowelout f1=3 f2=1200 -400 -100  f3=-400 80 colr=2
-  FMT(r3/r_) addWav(r3/rx, 80)
 endphoneme
 
   
