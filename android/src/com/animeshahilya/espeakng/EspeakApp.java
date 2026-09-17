@@ -173,4 +173,24 @@ public class EspeakApp extends Application {
     public static Context getStorageContext() {
         return EspeakApp.storageContext;
     }
+
+    /**
+     * Non-null device-protected storage context, falling back to a plain
+     * context when the Application hasn't run onCreate() yet (e.g. a test
+     * or a provider started before it). Centralizes the fallback that used
+     * to be re-implemented at every call site.
+     */
+    public static Context requireStorageContext(Context fallback) {
+        if (EspeakApp.storageContext != null) {
+            return EspeakApp.storageContext;
+        }
+        if (fallback != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                    && !fallback.isDeviceProtectedStorage()) {
+                return fallback.createDeviceProtectedStorageContext();
+            }
+            return fallback;
+        }
+        return null;
+    }
 }

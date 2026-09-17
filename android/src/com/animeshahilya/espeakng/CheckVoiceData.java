@@ -55,12 +55,7 @@ public class CheckVoiceData extends Activity {
     };
 
     public static File getDataPath(Context context) {
-        Context storage = EspeakApp.getStorageContext();
-        if (storage == null && context != null) {
-            storage = context.isDeviceProtectedStorage()
-                    ? context
-                    : context.createDeviceProtectedStorageContext();
-        }
+        Context storage = EspeakApp.requireStorageContext(context);
         if (storage == null) {
             storage = context;
         }
@@ -74,7 +69,8 @@ public class CheckVoiceData extends Activity {
             final File resourceFile = new File(dataPath, resource);
 
             if (!resourceFile.exists()) {
-                Log.e(TAG, "Missing base resource: " + resourceFile.getPath());
+                // Expected on first run before extraction; info, not an error.
+                Log.i(TAG, "Missing base resource: " + resourceFile.getPath());
                 return false;
             }
         }
@@ -98,6 +94,14 @@ public class CheckVoiceData extends Activity {
 
         try (java.io.InputStream dataStream = context.getResources().openRawResource(R.raw.espeakdata)) {
             FileUtils.extractZip(dataStream, dataPath.getParentFile());
+
+            // A crash or full disk mid-extract used to leave a half-written
+            // data dir behind; refuse to stamp the version unless the base
+            // resources actually landed, so the next launch retries.
+            if (!hasBaseResources(context)) {
+                Log.e(TAG, "Voice data extraction incomplete, will retry");
+                return false;
+            }
 
             final String version;
             try (java.io.InputStream versionStream = context.getResources().openRawResource(R.raw.espeakdata_version)) {

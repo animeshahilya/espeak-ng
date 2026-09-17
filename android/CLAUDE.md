@@ -47,8 +47,9 @@ source (pinned to a specific commit, bumped occasionally for upstream fixes
 in `sonic.c` itself - that's the only file of the library actually compiled
 here) and pre-seeds `SONIC_LIB`/`SONIC_INC` for `cmake/deps.cmake`.
 
-`jni/CMakeLists.txt` also sets `-O3` gated to Release only (`$<$<CONFIG:Release>:-O3>`).
-Don't make it unconditional again - it was for a while, and made native
+`jni/CMakeLists.txt` also sets `-O3` gated to Release only (`$<$<CONFIG:Release>:-O3>`),
+plus Release-only thin LTO (`-flto=thin`, compile and link). Don't make either
+unconditional again - `-O3` was for a while, and made native
 breakpoints/variable inspection unreliable on debug builds since Gradle
 never passes `-DCMAKE_BUILD_TYPE` explicitly here (AGP infers it from the
 Debug/Release variant).
@@ -117,7 +118,7 @@ against a configuration with no UI mode, so it always resolves to the default.
 
 ### JNI Layer (`jni/jni/eSpeakService.c`)
 
-10 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (plus `JNI_OnLoad`, which isn't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
+10 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (plus `JNI_OnLoad`/`JNI_OnUnload`, which aren't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
 
 ### Voice Data Lifecycle
 

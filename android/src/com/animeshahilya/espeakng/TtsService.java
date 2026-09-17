@@ -114,6 +114,8 @@ public class TtsService extends TextToSpeechService {
 
     private List<Voice> mAllVoices = new ArrayList<Voice>();
     private final Map<String, Voice> mAvailableVoices = new HashMap<String, Voice>();
+    // Protected (not private) as a test hook: eSpeakTests subclasses read and
+    // drive voice selection through these members.
     protected Voice mMatchingVoice = null;
 
     private SharedPreferences mPreferences;
@@ -144,6 +146,10 @@ public class TtsService extends TextToSpeechService {
     private final BroadcastReceiver mLanguagesUpdatedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (intent == null
+                    || !DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED.equals(intent.getAction())) {
+                return;
+            }
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -157,7 +163,7 @@ public class TtsService extends TextToSpeechService {
 
     @Override
     public void onCreate() {
-        storageContext = EspeakApp.getStorageContext();
+        storageContext = EspeakApp.requireStorageContext(this);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(storageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
@@ -524,10 +530,19 @@ public class TtsService extends TextToSpeechService {
             return;
         }
 
+        // Snapshot: initializeTtsEngine() can swap mEngine on the voices-reload
+        // thread while a synthesis is in flight; a null read here used to NPE
+        // instead of reporting an error.
+        final SpeechSynthesis engine = mEngine;
+        if (engine == null) {
+            reportError(callback, TextToSpeech.ERROR_SERVICE);
+            return;
+        }
+
         // Fast-path empty or whitespace-only utterances: avoid full voice/param setup
         // and JNI overhead for TalkBack spacers, empty lines, and blank elements.
         if (text.trim().isEmpty()) {
-            callback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
+            callback.start(engine.getSampleRate(), engine.getAudioFormat(), engine.getChannelCount());
             callback.done();
             return;
         }
@@ -566,7 +581,10 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
-        final VoiceSettings settings = new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext), mEngine);
+        final SharedPreferences prefs = mPreferences != null
+                ? mPreferences
+                : PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final VoiceSettings settings = new VoiceSettings(prefs, engine);
 
         // Detect SSML before normalizing. Real markup is ASCII, which NFKC
         // leaves untouched, but normalization can turn lookalikes such as a
@@ -696,36 +714,38 @@ public class TtsService extends TextToSpeechService {
         if (settings.isUnicodeNormalizationEnabled()) {
             UnicodeNormalization.Result normalization = UnicodeNormalization.normalize(text);
             if (normalization != null) {
-                String before = text;
                 text = normalization.text;
-                offsetMap = chainOffset(offsetMap, before, text);
+                // Compose the normalizer's own boundary map directly: it is
+                // exact, and avoids re-diffing two strings it already aligned.
+                offsetMap = TextOffsetMap.fromBoundaryMap(normalization.boundaryMap())
+                        .composeWith(offsetMap);
                 if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
-                    before = text;
+                    String before = text;
                     text = expandProgrammingSymbols(text);
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (!isSsml && settings.isIndianNumberingEnabled()) {
-                    before = text;
+                    String before = text;
                     text = preprocessIndianText(text, languageTag(voice));
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (smartCodes) {
-                    before = text;
+                    String before = text;
                     text = spaceSeparateSmartCodes(text, smartMin, smartMax);
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (!isSsml && settings.isCurrencyEnabled()) {
-                    before = text;
+                    String before = text;
                     text = expandCurrencySymbols(text);
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (!isSsml && settings.isTimeDateEnabled()) {
-                    before = text;
+                    String before = text;
                     text = expandTimeDate(text);
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
                 if (useGrouping) {
-                    before = text;
+                    String before = text;
                     text = formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold());
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
@@ -759,15 +779,16 @@ public class TtsService extends TextToSpeechService {
         mCallback = callback;
         mCallbackDone.set(false);
         mIsStopped.set(false);
-        int startStatus = mCallback.start(mEngine.getSampleRate(), mEngine.getAudioFormat(), mEngine.getChannelCount());
+        int sampleRate = engine.getSampleRate();
+        int startStatus = mCallback.start(sampleRate, engine.getAudioFormat(), engine.getChannelCount());
         if (startStatus != TextToSpeech.SUCCESS) {
             mCallback = null;
             return;
         }
-        mAudioOptimizer = settings.isAudioOptimizerEnabled()
-                ? new AudioOptimizer(mEngine.getSampleRate(), settings.getAudioProfile())
+        mAudioOptimizer = settings.isAudioOptimizerEnabled() && sampleRate > 0
+                ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
                 : null;
-        mEngine.setVoice(voice, settings.getVoiceVariant());
+        engine.setVoice(voice, settings.getVoiceVariant());
 
         int rate = settings.getRate();
         int rateScale = request.getSpeechRate();
@@ -781,7 +802,7 @@ public class TtsService extends TextToSpeechService {
         if (!settings.isRateBoostEnabled() && rate > 449) {
             rate = 449; // NVDA issue #131: avoid unintended Sonic engagement at 450 WPM
         }
-        mEngine.Rate.setValue(rate);
+        engine.Rate.setValue(rate);
 
         int pitchScale = request.getPitch();
         if (pitchScale <= 0) {
@@ -790,7 +811,7 @@ public class TtsService extends TextToSpeechService {
         if (settings.isForcePitchEnabled()) {
             pitchScale = 100;
         }
-        mEngine.Pitch.setValue(settings.getPitch(), pitchScale);
+        engine.Pitch.setValue(settings.getPitch(), pitchScale);
 
         // Optional accessibility aid (espeak-ng community issue #1658): widen
         // the pitch rise on questions/exclamations for hard-of-hearing
@@ -803,10 +824,10 @@ public class TtsService extends TextToSpeechService {
         // mixed multi-sentence request only sees this if it ends in ?/!.
         int pitchRange = settings.getPitchRange();
         if (!isSsml && settings.isEmphasizeQuestionsEnabled() && endsWithQuestionOrExclamation(text)) {
-            int max = mEngine.PitchRange.getMaxValue();
+            int max = engine.PitchRange.getMaxValue();
             pitchRange = Math.min(max, pitchRange + Math.max(1, pitchRange / 5));
         }
-        mEngine.PitchRange.setValue(pitchRange);
+        engine.PitchRange.setValue(pitchRange);
 
         // Accessibility volume ducking support (KEY_PARAM_VOLUME)
         float volumeScale = 1.0f;
@@ -828,15 +849,15 @@ public class TtsService extends TextToSpeechService {
             volumeScale = 1.0f;
         }
         int targetVolume = Math.round(settings.getVolume() * volumeScale);
-        mEngine.Volume.setValue(targetVolume);
+        engine.Volume.setValue(targetVolume);
 
-        mEngine.Punctuation.setValue(settings.getPunctuationLevel());
+        engine.Punctuation.setValue(settings.getPunctuationLevel());
         // Code-reading mode forces full punctuation announcement regardless of
         // the global preset, so symbols in source code are never swallowed.
         if (!isSsml && settings.isCodeReadingModeEnabled()) {
-            mEngine.Punctuation.setValue(SpeechSynthesis.PUNCT_ALL);
+            engine.Punctuation.setValue(SpeechSynthesis.PUNCT_ALL);
         }
-        mEngine.setPunctuationCharacters(settings.getPunctuationCharacters());
+        engine.setPunctuationCharacters(settings.getPunctuationCharacters());
         // Announcing capitalization (by pitch, beep, or saying "capital") only
         // makes sense while spelling out individual characters - NVDA's own
         // capPitchChange/beepForCapitals/sayCapForCapitals behave the same
@@ -846,8 +867,8 @@ public class TtsService extends TextToSpeechService {
         // (sentence starts, names, acronyms...), which is a much more
         // pervasive and, per user feedback, distracting application of the
         // same cue than any polished screen reader actually does.
-        mEngine.Capitals.setValue(isSingleCharacterUtterance ? settings.getCapitals() : 0);
-        mEngine.WordGap.setValue(settings.getWordGap());
+        engine.Capitals.setValue(isSingleCharacterUtterance ? settings.getCapitals() : 0);
+        engine.WordGap.setValue(settings.getWordGap());
 
         boolean enableBilingual = settings.isBilingualSwitchingEnabled() && !isSsml;
         List<ScriptSpan> spans = null;
@@ -911,7 +932,7 @@ public class TtsService extends TextToSpeechService {
                 if (units.size() >= MAX_CHUNKS) break;
             }
         } else {
-            mEngine.setVoice(voice, settings.getVoiceVariant());
+            engine.setVoice(voice, settings.getVoiceVariant());
             int base = 0;
             for (String chunk : chunkForWatchdog(text)) {
                 units.add(chunk);
@@ -929,8 +950,8 @@ public class TtsService extends TextToSpeechService {
                 }
                 try {
                     mChunkBase = unitBases.get(ui);
-                    mEngine.setVoice(unitVoices.get(ui), settings.getVoiceVariant());
-                    mEngine.synthesize(units.get(ui), false);
+                    engine.setVoice(unitVoices.get(ui), settings.getVoiceVariant());
+                    engine.synthesize(units.get(ui), false);
                 } catch (Throwable t) {
                     // One bad chunk (mixed-script edge case) must never kill
                     // the whole request or hang the service — skip and continue.
@@ -940,9 +961,9 @@ public class TtsService extends TextToSpeechService {
         } else {
             mSegmentsRemaining.set(1);
             mChunkBase = unitBases.isEmpty() ? 0 : unitBases.get(0);
-            mEngine.setVoice(voice, settings.getVoiceVariant());
+            engine.setVoice(voice, settings.getVoiceVariant());
             try {
-                mEngine.synthesize(text, isSsml);
+                engine.synthesize(text, isSsml);
             } catch (Throwable t) {
                 if (DEBUG) Log.w(TAG, "Synth failed", t);
                 reportError(callback, TextToSpeech.ERROR_SERVICE);
@@ -1715,9 +1736,26 @@ public class TtsService extends TextToSpeechService {
         return out.toString();
     }
 
+    /**
+     * Cheap pre-scan shared by the currency/time/date expanders: every amount,
+     * time, and numeric date contains a digit, so digit-free utterances (the
+     * common TalkBack-navigation case) skip all of those regexes outright.
+     */
+    private static boolean containsDigit(String text) {
+        final int len = text.length();
+        for (int i = 0; i < len; ) {
+            final int cp = text.codePointAt(i);
+            if (Character.isDigit(cp)) {
+                return true;
+            }
+            i += Character.charCount(cp);
+        }
+        return false;
+    }
+
     /** Expands $/€/£/¥ amounts to words ("$5" -&gt; "5 dollars"). Commas stripped. */
     public static String expandCurrencySymbols(String text) {
-        if (text == null || text.isEmpty()) return text;
+        if (text == null || text.isEmpty() || !containsDigit(text)) return text;
         text = CURRENCY_DOLLAR_PREFIX.matcher(text).replaceAll("$1 dollars");
         // Suffix form ("5 USD", "5 dollars"): normalizes to "5 dollars".
         // Idempotent on already-expanded text, so pipeline re-runs are safe.
@@ -1735,7 +1773,17 @@ public class TtsService extends TextToSpeechService {
      * excluded: "1.2.3" is a version number, not a date.
      */
     public static String expandTimeDate(String text) {
-        if (text == null || text.isEmpty()) return text;
+        if (text == null || text.isEmpty() || !containsDigit(text)) return text;
+        // Times need ':', dates need '/' or '-'; without one there is nothing to expand.
+        boolean hasSeparator = false;
+        for (int i = 0, len = text.length(); i < len; i++) {
+            char c = text.charAt(i);
+            if (c == ':' || c == '/' || c == '-') {
+                hasSeparator = true;
+                break;
+            }
+        }
+        if (!hasSeparator) return text;
         java.util.regex.Matcher tm = TIME_HM.matcher(text);
         if (tm.find()) {
             StringBuffer sb = new StringBuffer();
@@ -1761,6 +1809,9 @@ public class TtsService extends TextToSpeechService {
         return text;
     }
 
+    private static final java.util.regex.Pattern SPACE_RUNS =
+            java.util.regex.Pattern.compile(" {2,}");
+
     /** Spelling mode: "hi" -&gt; "h i" so each letter is announced. */
     public static String expandSpellingMode(String text) {
         if (text == null || text.isEmpty()) return text;
@@ -1778,7 +1829,7 @@ public class TtsService extends TextToSpeechService {
             }
             i += Character.charCount(cp);
         }
-        return out.toString().replaceAll("  +", " ");
+        return SPACE_RUNS.matcher(out.toString()).replaceAll(" ");
     }
 
     /** Phonetic mode: each letter -&gt; NATO word ("AB" -&gt; "Alpha Bravo"). */
@@ -1997,6 +2048,8 @@ public class TtsService extends TextToSpeechService {
         return out.toString();
     }
 
+    // Protected (not private) as a test hook: eSpeakTests subclasses call
+    // this to refresh the voice list without a full engine re-init.
     protected void rebuildAvailableVoices() {
         synchronized (mAvailableVoices) {
             mAvailableVoices.clear();

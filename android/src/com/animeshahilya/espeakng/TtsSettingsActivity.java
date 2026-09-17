@@ -360,11 +360,19 @@ public class TtsSettingsActivity extends PreferenceActivity {
                             try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(inputStream))) {
                                 ZipEntry entry;
                                 byte[] buffer = new byte[8192];
+                                final String canonicalTargetDir =
+                                        targetDir.getCanonicalPath() + File.separator;
                                 while ((entry = zis.getNextEntry()) != null) {
                                     String entryName = entry.getName();
-                                    // Prevent zip path traversal
+                                    // Prevent zip path traversal (same guarantee as
+                                    // FileUtils.extractZip, kept inline so one bad
+                                    // entry is skipped instead of failing the
+                                    // whole import): reject "..", absolute
+                                    // paths, and anything resolving outside
+                                    // the voice data dir.
                                     if (entryName.contains("..")) continue;
                                     File outFile = new File(targetDir, entryName);
+                                    if (!outFile.getCanonicalPath().startsWith(canonicalTargetDir)) continue;
                                     if (entry.isDirectory()) {
                                         outFile.mkdirs();
                                     } else {
@@ -408,7 +416,12 @@ public class TtsSettingsActivity extends PreferenceActivity {
                             synchronized (TtsSettingsActivity.class) {
                                 sLangInfo.clear();
                             }
-                            activity.sendBroadcast(new Intent(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED));
+                            final Intent updated =
+                                    new Intent(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
+                            // Same scoping as DownloadVoiceData: only this
+                            // app's TtsService should act on it.
+                            updated.setPackage(activity.getPackageName());
+                            activity.sendBroadcast(updated);
                             Toast.makeText(activity, R.string.import_voice_success, Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(activity, R.string.import_voice_error, Toast.LENGTH_SHORT).show();

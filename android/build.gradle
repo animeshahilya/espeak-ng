@@ -75,7 +75,9 @@ android {
 
         externalNativeBuild {
             cmake {
-                arguments.addAll(["-DUSE_ASYNC:BOOL=OFF", "-DUSE_MBROLA:BOOL=OFF", "-DUSE_LIBSONIC:BOOL=ON"])
+                // USE_KLATT is upstream's default, but spelled out: the
+                // Klatt 1-6 voice variants ship in this app and need it.
+                arguments.addAll(["-DUSE_ASYNC:BOOL=OFF", "-DUSE_MBROLA:BOOL=OFF", "-DUSE_LIBSONIC:BOOL=ON", "-DUSE_KLATT:BOOL=ON"])
                 abiFilters.addAll(["arm64-v8a"])
                 targets.addAll(["ttsespeak", "espeak-data"])
             }
@@ -149,6 +151,9 @@ tasks.register('checkData') {
         assert file("../espeak-ng-data/phondata-manifest").exists()
         assert file("../espeak-ng-data/phonindex").exists()
         assert file("../espeak-ng-data/phontab").exists()
+        // The archive is zipped from the generated tree, not the source
+        // tree above: fail fast when the generator produced nothing.
+        assert file("build/generated/espeak-ng-data/en_dict").exists()
     }
 }
 

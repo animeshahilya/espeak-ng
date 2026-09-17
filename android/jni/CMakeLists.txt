@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 3.14)
 
 project(espeak-android)
 
-# Ensure 16 KB page-size alignment for Android 14/15 ARM64 kernels
-add_link_options("-Wl,-z,max-page-size=16384")
+# Ensure 16 KB page-size alignment for Android 14/15 ARM64 kernels.
+# Scoped to Android so host helper targets never inherit it.
+if(ANDROID)
+  add_link_options("-Wl,-z,max-page-size=16384")
+endif()
 # Release only: an unconditional -O3 also applied to debug builds, making
 # native breakpoints/variable inspection unreliable during development.
 add_compile_options("$<$<CONFIG:Release>:-O3>")
@@ -21,7 +24,10 @@ include(FetchContent)
 FetchContent_Declare(sonic-git
         GIT_REPOSITORY https://github.com/waywardgeek/sonic.git
         GIT_TAG b93885dcb70aae50c6f76b0fe4e0868f029a077e
+        GIT_SHALLOW TRUE
 )
+# Override the pinned source without editing (e.g. a local checkout):
+# cmake -DFETCHCONTENT_SOURCE_DIR_SONIC-GIT=/path/to/sonic
 FetchContent_MakeAvailable(sonic-git)
 add_library(sonic OBJECT ${sonic-git_SOURCE_DIR}/sonic.c)
 # enable PIC in order to embed libsonic in libttsespeak.so

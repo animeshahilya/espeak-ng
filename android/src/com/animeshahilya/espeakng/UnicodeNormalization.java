@@ -68,6 +68,14 @@ public final class UnicodeNormalization {
             }
             return mOffsets[offset];
         }
+
+        /**
+         * Returns the full boundary map (size {@code text.length() + 1}) for
+         * chaining into a {@link TextOffsetMap} without re-diffing.
+         */
+        int[] boundaryMap() {
+            return mOffsets.clone();
+        }
     }
 
     /**

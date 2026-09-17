@@ -26,13 +26,12 @@ package com.animeshahilya.espeakng;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,7 +55,8 @@ public class SpeechSynthesis {
             "yue-Latn-jyutping", "yue-latn-jyutping", "xex"
     ));
 
-    // Cached voice list to avoid repeated native calls and Locale construction
+    // Cached voice list to avoid repeated native calls and Locale construction.
+    // Immutable snapshot; callers get a defensive copy so nobody can mutate it.
     private static volatile List<Voice> sCachedVoices = null;
 
     public static final int GENDER_UNSPECIFIED = 0;
@@ -81,7 +81,7 @@ public class SpeechSynthesis {
     private final String mDatapath;
 
     private boolean mInitialized = false;
-    private static int mVoiceCount = 0;
+    private int mVoiceCount = 0;
     private static volatile int sSampleRate = 0;
     private int mSampleRate = 0;
 
@@ -117,74 +117,116 @@ public class SpeechSynthesis {
         if (mLocaleFixes.containsKey(name)) {
             return mLocaleFixes.get(name);
         }
-        String[] parts = name.split("-");
-        switch (parts.length) {
-            case 1: // language
-                return new Locale(parts[0]);
-            case 2: // language-country
-                return new Locale(parts[0], parts[1]);
-            case 3: // language-country-variant
-                return new Locale(parts[0], parts[1], parts[2]);
-            case 4: // language-country-x-privateuse
-                return new Locale(parts[0], parts[1], parts[3]);
-            default:
-                return null;
+        // Manual split: String.split compiles a regex on every call, and this
+        // runs once per voice (~120x) on each engine init.
+        final int first = name.indexOf('-');
+        if (first < 0) {
+            return new Locale(name); // language
         }
+        final int second = name.indexOf('-', first + 1);
+        if (second < 0) {
+            return new Locale(name.substring(0, first), name.substring(first + 1)); // language-country
+        }
+        final int third = name.indexOf('-', second + 1);
+        if (third < 0) {
+            return new Locale(name.substring(0, first), name.substring(first + 1, second),
+                    name.substring(second + 1)); // language-country-variant
+        }
+        // language-country-x-privateuse: skip the "x", keep the private-use tag.
+        // Anything longer (a fifth dash part) is rejected, matching the old
+        // split("-") switch which only accepted up to 4 parts.
+        final int fourth = name.indexOf('-', third + 1);
+        if (fourth >= 0 && name.indexOf('-', fourth + 1) < 0) {
+            return new Locale(name.substring(0, first), name.substring(first + 1, second),
+                    name.substring(fourth + 1));
+        }
+        return null;
+    }
+
+    /** Case-insensitive redundant-voice check (native name casing is inconsistent). */
+    private static boolean isRedundantVoice(String name) {
+        if (name == null) {
+            return true;
+        }
+        if (REDUNDANT_VOICE_NAMES.contains(name)) {
+            return true;
+        }
+        return REDUNDANT_VOICE_NAMES.contains(name.toLowerCase(Locale.ROOT));
     }
 
     public List<Voice> getAvailableVoices() {
-        // Return cached voices if available
-        if (sCachedVoices != null) {
-            return sCachedVoices;
+        // Return a copy of the cached voices if available.
+        List<Voice> cached = sCachedVoices;
+        if (cached != null) {
+            return new ArrayList<Voice>(cached);
         }
 
-        final String[] results = nativeGetAvailableVoices();
-        mVoiceCount = results.length / 4;
-        final List<Voice> voices = new ArrayList<Voice>(mVoiceCount);
-
-        for (int i = 0; i < results.length; i += 4) {
-            final String name = results[i];
-            final String identifier = results[i + 1];
-            final int gender = Integer.parseInt(results[i + 2]);
-            final int age = Integer.parseInt(results[i + 3]);
-
-            if (REDUNDANT_VOICE_NAMES.contains(name)) {
-                continue;
+        synchronized (SpeechSynthesis.class) {
+            cached = sCachedVoices;
+            if (cached != null) {
+                return new ArrayList<Voice>(cached);
             }
 
-            try {
-                final Locale locale;
-                if (identifier.equals("asia/fa-en-us")) {
-                    throw new IllegalArgumentException("Voice '" + identifier + "' is a duplicate voice.");
-                } else {
-                    locale = getLocaleFromLanguageName(name);
-                    if (locale == null) {
-                        throw new IllegalArgumentException("Locale not supported.");
+            final String[] results = nativeGetAvailableVoices();
+            final List<Voice> voices = new ArrayList<Voice>();
+            if (results != null) {
+                mVoiceCount = results.length / 4;
+                for (int i = 0; i + 3 < results.length; i += 4) {
+                    final String name = results[i];
+                    final String identifier = results[i + 1];
+                    if (name == null || identifier == null || results[i + 2] == null
+                            || results[i + 3] == null) {
+                        continue;
+                    }
+                    final int gender;
+                    final int age;
+                    try {
+                        gender = Integer.parseInt(results[i + 2]);
+                        age = Integer.parseInt(results[i + 3]);
+                    } catch (NumberFormatException e) {
+                        Log.d(TAG, "getAvailableResources: skipping " + name + " => bad number");
+                        continue;
+                    }
+
+                    if (isRedundantVoice(name)) {
+                        continue;
+                    }
+
+                    try {
+                        final Locale locale;
+                        if (identifier.equals("asia/fa-en-us")) {
+                            throw new IllegalArgumentException("Voice '" + identifier + "' is a duplicate voice.");
+                        } else {
+                            locale = getLocaleFromLanguageName(name);
+                            if (locale == null) {
+                                throw new IllegalArgumentException("Locale not supported.");
+                            }
+                        }
+
+                        String language = locale.getISO3Language();
+                        if (language.equals("")) {
+                            throw new IllegalArgumentException("Language '" + locale.getLanguage() + "' not supported.");
+                        }
+
+                        String country  = locale.getISO3Country();
+                        if (country.equals("") && !locale.getCountry().equals("")) {
+                            throw new IllegalArgumentException("Country '" + locale.getCountry() + "' not supported.");
+                        }
+
+                        final Voice voice = new Voice(name, identifier, gender, age, locale);
+                        voices.add(voice);
+                    } catch (MissingResourceException | IllegalArgumentException e) {
+                        Log.d(TAG, "getAvailableResources: skipping " + name + " => " + e.getMessage());
+                    } catch (Exception e) {
+                        Log.w(TAG, "getAvailableResources: unexpected error loading " + name + ": " + e.getMessage());
                     }
                 }
-
-                String language = locale.getISO3Language();
-                if (language.equals("")) {
-                    throw new IllegalArgumentException("Language '" + locale.getLanguage() + "' not supported.");
-                }
-
-                String country  = locale.getISO3Country();
-                if (country.equals("") && !locale.getCountry().equals("")) {
-                    throw new IllegalArgumentException("Country '" + locale.getCountry() + "' not supported.");
-                }
-
-                final Voice voice = new Voice(name, identifier, gender, age, locale);
-                voices.add(voice);
-            } catch (MissingResourceException | IllegalArgumentException e) {
-                Log.d(TAG, "getAvailableResources: skipping " + name + " => " + e.getMessage());
-            } catch (Exception e) {
-                Log.w(TAG, "getAvailableResources: unexpected error loading " + name + ": " + e.getMessage());
             }
-        }
 
-        // Cache the filtered voice list
-        sCachedVoices = voices;
-        return voices;
+            // Cache the filtered voice list as an immutable snapshot.
+            sCachedVoices = Collections.unmodifiableList(voices);
+            return new ArrayList<Voice>(voices);
+        }
     }
 
     /** Clear cached voice list (call when voice data changes, e.g., after extraction). */
@@ -341,15 +383,17 @@ public class SpeechSynthesis {
     }
 
     public static String getSampleText(Context context, Locale locale) {
-        final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        final Configuration config = context.getResources().getConfiguration();
-
         final String language = getIanaLanguageCode(locale.getLanguage());
         final String country = getIanaCountryCode(locale.getCountry());
-        config.locale = new Locale(language, country, locale.getVariant());
+        final Locale target = new Locale(language, country, locale.getVariant());
 
-        Resources res = new Resources(context.getAssets(), metrics, config);
-        return res.getString(R.string.sample_text, config.locale.getDisplayName(config.locale));
+        // Don't mutate the shared Configuration (deprecated config.locale path
+        // also raced with concurrent callers); resolve resources against a copy.
+        final Configuration config = new Configuration(context.getResources().getConfiguration());
+        config.setLocale(target);
+        final Context localized = context.createConfigurationContext(config);
+        return localized.getResources().getString(
+                R.string.sample_text, target.getDisplayName(target));
     }
 
     private static native final boolean nativeClassInit();

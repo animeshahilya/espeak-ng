@@ -43,6 +43,9 @@ public class DownloadVoiceData extends Activity {
                 switch (result) {
                     case RESULT_OK:
                         final Intent intent = new Intent(BROADCAST_LANGUAGES_UPDATED);
+                        // Explicit package: TtsService reloads its engine on
+                        // this broadcast, so don't let other apps spoof it.
+                        intent.setPackage(getPackageName());
                         sendBroadcast(intent);
                         break;
                     case RESULT_CANCELED:
@@ -58,6 +61,14 @@ public class DownloadVoiceData extends Activity {
 
         findViewById(R.id.installing_voice_data)
                 .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mAsyncExtract != null) {
+            mAsyncExtract.cancel(true);
+        }
+        super.onDestroy();
     }
 
     private static class AsyncExtract extends AsyncTask<Void, Void, Integer> {

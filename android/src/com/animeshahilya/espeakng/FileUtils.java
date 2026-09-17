@@ -111,16 +111,22 @@ public class FileUtils {
     }
 
     public static void rmdir(File directory) {
-        if (!directory.exists() || !directory.isDirectory()) {
+        if (directory == null || !directory.exists() || !directory.isDirectory()) {
             return;
         }
 
-        for (File child : directory.listFiles()) {
+        final File[] children = directory.listFiles();
+        if (children == null) {
+            return;
+        }
+        for (File child : children) {
             if (child.isDirectory()) {
                 rmdir(child);
             }
 
-            child.delete();
+            if (!child.delete()) {
+                // Best effort: a stale file here is retried on next launch.
+            }
         }
     }
 }
