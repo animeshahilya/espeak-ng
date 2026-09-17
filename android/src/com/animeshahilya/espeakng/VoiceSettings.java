@@ -471,10 +471,11 @@ public class VoiceSettings {
 
     public int getSmartMaxLen() {
         try {
+            final int minLen = getSmartMinLen();
             String raw = mPreferences.getString(PREF_SMART_MAX_LEN, "8");
             if (raw == null) return 8;
             int v = Integer.parseInt(raw);
-            if (v < getSmartMinLen()) return getSmartMinLen();
+            if (v < minLen) return minLen;
             if (v > 12) return 12;
             return v;
         } catch (NumberFormatException e) {

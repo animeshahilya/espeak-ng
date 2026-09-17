@@ -116,8 +116,8 @@ enum synthesis_result {
 };
 
 static JavaVM *jvm = NULL;
-jmethodID METHOD_nativeSynthCallback;
-jmethodID METHOD_nativeSynthWordCallback;
+static jmethodID METHOD_nativeSynthCallback;
+static jmethodID METHOD_nativeSynthWordCallback;
 
 /* Audio frames handed to the Java layer so far for the current request.
  * Reset by nativeSynthesize before each espeak_Synth call. */

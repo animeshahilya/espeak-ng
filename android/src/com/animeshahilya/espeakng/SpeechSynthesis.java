@@ -400,25 +400,25 @@ public class SpeechSynthesis {
                 R.string.sample_text, target.getDisplayName(target));
     }
 
-    private static native final boolean nativeClassInit();
+    private static native boolean nativeClassInit();
 
-    private native final int nativeCreate(String path);
+    private native int nativeCreate(String path);
 
-    private native final String[] nativeGetAvailableVoices();
+    private native String[] nativeGetAvailableVoices();
 
-    private native final boolean nativeSetVoiceByName(String name);
+    private native boolean nativeSetVoiceByName(String name);
 
-    private native final boolean nativeSetVoiceByProperties(String language, int gender, int age);
+    private native boolean nativeSetVoiceByProperties(String language, int gender, int age);
 
-    private native final boolean nativeSetParameter(int parameter, int value);
+    private native boolean nativeSetParameter(int parameter, int value);
 
-    private native final int nativeGetParameter(int parameter, int current);
+    private native int nativeGetParameter(int parameter, int current);
 
-    private native final boolean nativeSetPunctuationCharacters(String characters);
+    private native boolean nativeSetPunctuationCharacters(String characters);
 
-    private native final boolean nativeSynthesize(String text, boolean isSsml);
+    private native boolean nativeSynthesize(String text, boolean isSsml);
 
-    private native final boolean nativeStop();
+    private native boolean nativeStop();
 
     public interface SynthReadyCallback {
         void onSynthDataReady(byte[] audioData);

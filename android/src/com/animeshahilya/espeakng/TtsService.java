@@ -46,7 +46,6 @@ import com.animeshahilya.espeakng.SpeechSynthesis.SynthReadyCallback;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -345,9 +344,7 @@ public class TtsService extends TextToSpeechService {
         // the features of the voices built in onGetVoices() -- to decide whether a
         // language can be spoken offline; leaving it empty makes eSpeak look like an
         // engine that cannot answer the question.
-        final Set<String> features = new HashSet<String>();
-        features.add(TextToSpeech.Engine.KEY_FEATURE_EMBEDDED_SYNTHESIS);
-        return features;
+        return Collections.singleton(TextToSpeech.Engine.KEY_FEATURE_EMBEDDED_SYNTHESIS);
     }
 
     @Override
@@ -1363,7 +1360,8 @@ public class TtsService extends TextToSpeechService {
                 || lang.equals("sat");
     }
 
-    public static boolean hasMixedLatinAndIndic(String text) {        if (text == null || text.length() < 2) {
+    public static boolean hasMixedLatinAndIndic(String text) {
+        if (text == null || text.length() < 2) {
             return false;
         }
         boolean hasLatin = false;

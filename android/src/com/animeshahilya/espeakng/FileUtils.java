@@ -29,11 +29,8 @@ import java.util.zip.ZipInputStream;
 
 public class FileUtils {
     public static String read(File file) throws IOException {
-        final FileInputStream stream = new FileInputStream(file);
-        try {
+        try (final FileInputStream stream = new FileInputStream(file)) {
             return readByteArray(stream, (int) file.length()).toString();
-        } finally {
-            stream.close();
         }
     }
 
@@ -61,11 +58,8 @@ public class FileUtils {
     }
 
     public static void write(File outputFile, byte[] contents) throws IOException {
-        FileOutputStream outputStream = new FileOutputStream(outputFile);
-        try {
+        try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
             outputStream.write(contents, 0, contents.length);
-        } finally {
-            outputStream.close();
         }
     }
 
