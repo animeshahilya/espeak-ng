@@ -71,6 +71,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
@@ -667,9 +668,31 @@ public class TtsSettingsActivity extends PreferenceActivity {
      * own `name` field already carries the useful distinction (region/dialect in parentheses),
      * so showing it alone is both cleaner and sufficient.
      */
+    /**
+     * Localized voice label: the name in the system's own language first
+     * (e.g. "हिन्दी" on a Hindi system), followed by the English name from
+     * the voice data in parentheses. That is the Android-native answer to
+     * upstream #2515's self-designation registry proposal - Locale already
+     * localizes every language for free, with no registry to maintain.
+     * Falls back to the plain English name when both agree (the common
+     * English-system case, where output is byte-identical to before), and to
+     * the raw voice name when neither is available. Keeping the English name
+     * always present also keeps regional variants that share a localized
+     * name ("English (India)" vs "English (Singapore)") distinguishable.
+     */
     private static String getVoiceLabel(Voice voice) {
         LangInfo info = lookupLangInfo(voice);
-        return info != null ? info.displayName : voice.name;
+        final String english = info != null ? info.displayName : voice.name;
+        final String localized;
+        try {
+            localized = voice.locale.getDisplayName(Locale.getDefault());
+        } catch (Exception e) {
+            return english;
+        }
+        if (localized == null || localized.isEmpty() || localized.equalsIgnoreCase(english)) {
+            return english;
+        }
+        return localized + " (" + english + ")";
     }
 
     private static class LangInfo {
