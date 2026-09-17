@@ -176,10 +176,7 @@ public class TtsService extends TextToSpeechService {
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(storageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
-        if (!CheckVoiceData.hasBaseResources(storageContext)
-                || CheckVoiceData.canUpgradeResources(storageContext)) {
-            CheckVoiceData.extractVoiceData(storageContext);
-        }
+        CheckVoiceData.ensureVoiceData(storageContext);
         initializeTtsEngine();
         final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
         // The 3-arg registerReceiver(..., flags) overload requires API 33 (Tiramisu);

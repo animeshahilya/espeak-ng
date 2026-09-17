@@ -104,10 +104,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         // Migrate old eyes-free settings to the new settings:
 
         storageContext = EspeakApp.requireStorageContext(this);
-        if (!CheckVoiceData.hasBaseResources(storageContext)
-                || CheckVoiceData.canUpgradeResources(storageContext)) {
-            CheckVoiceData.extractVoiceData(storageContext);
-        }
+        CheckVoiceData.ensureVoiceData(storageContext);
         final SharedPreferences prefs = getPrefs();
         final SharedPreferences.Editor editor = prefs.edit();
 
@@ -217,10 +214,39 @@ public class TtsSettingsActivity extends PreferenceActivity {
         }
     }
 
-    private static void importDictionaryUri(final Activity activity, final Uri uri) {
-        Toast.makeText(activity, R.string.dict_import_started, Toast.LENGTH_SHORT).show();
+    /** Unit of background work for {@link #runInBackground}. */
+    private interface BackgroundWork<T> {
+        T run();
+    }
+
+    /** Main-thread continuation for {@link #runInBackground}. */
+    private interface BackgroundDone<T> {
+        void done(T result);
+    }
+
+    /**
+     * Runs {@code work} on a named worker thread, then posts {@code done} to
+     * the main thread. Unifies the thread + Handler shape every
+     * import/export block used to hand-roll.
+     */
+    private static <T> void runInBackground(String threadName,
+            final BackgroundWork<T> work, final BackgroundDone<T> done) {
         new Thread(new Runnable() {
             @Override public void run() {
+                final T result = work.run();
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override public void run() {
+                        done.done(result);
+                    }
+                });
+            }
+        }, threadName).start();
+    }
+
+    private static void importDictionaryUri(final Activity activity, final Uri uri) {
+        Toast.makeText(activity, R.string.dict_import_started, Toast.LENGTH_SHORT).show();
+        runInBackground("dict-import", new BackgroundWork<Integer>() {
+            @Override public Integer run() {
                 int added = 0;
                 try (InputStream is = activity.getContentResolver().openInputStream(uri)) {
                     if (is != null) {
@@ -229,21 +255,20 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 } catch (Exception e) {
                     Log.e(TAG, "Dictionary import failed", e);
                 }
-                final int count = added;
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override public void run() {
-                        Toast.makeText(activity,
-                                activity.getString(R.string.dict_import_done, count),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+                return added;
             }
-        }, "dict-import").start();
+        }, new BackgroundDone<Integer>() {
+            @Override public void done(Integer count) {
+                Toast.makeText(activity,
+                        activity.getString(R.string.dict_import_done, count),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private static void exportDictionaryUri(final Activity activity, final Uri uri) {
-        new Thread(new Runnable() {
-            @Override public void run() {
+        runInBackground("dict-export", new BackgroundWork<Boolean>() {
+            @Override public Boolean run() {
                 boolean ok = false;
                 try (OutputStream os = activity.getContentResolver().openOutputStream(uri)) {
                     if (os != null) {
@@ -253,21 +278,20 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 } catch (Exception e) {
                     Log.e(TAG, "Dictionary export failed", e);
                 }
-                final boolean done = ok;
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override public void run() {
-                        Toast.makeText(activity,
-                                done ? R.string.dict_export_done : R.string.import_voice_error,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                return ok;
             }
-        }, "dict-export").start();
+        }, new BackgroundDone<Boolean>() {
+            @Override public void done(Boolean done) {
+                Toast.makeText(activity,
+                        done ? R.string.dict_export_done : R.string.import_voice_error,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private static void exportBackupUri(final Activity activity, final Uri uri) {
-        new Thread(new Runnable() {
-            @Override public void run() {
+        runInBackground("backup-export", new BackgroundWork<Boolean>() {
+            @Override public Boolean run() {
                 boolean ok = false;
                 try (OutputStream os = activity.getContentResolver().openOutputStream(uri)) {
                     if (os != null) {
@@ -277,47 +301,43 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 } catch (Exception e) {
                     Log.e(TAG, "Backup export failed", e);
                 }
-                final boolean done = ok;
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override public void run() {
-                        Toast.makeText(activity,
-                                done ? R.string.backup_done : R.string.import_voice_error,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                return ok;
             }
-        }, "backup-export").start();
+        }, new BackgroundDone<Boolean>() {
+            @Override public void done(Boolean done) {
+                Toast.makeText(activity,
+                        done ? R.string.backup_done : R.string.import_voice_error,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private static void importBackupUri(final Activity activity, final Uri uri) {
         Toast.makeText(activity, R.string.restore_started, Toast.LENGTH_SHORT).show();
-        new Thread(new Runnable() {
-            @Override public void run() {
-                int rules = 0;
-                boolean ok = false;
+        runInBackground("backup-import", new BackgroundWork<Integer>() {
+            @Override public Integer run() {
                 try (InputStream is = activity.getContentResolver().openInputStream(uri)) {
                     if (is != null) {
-                        rules = BackupRestoreHelper.importFromStream(activity, is);
-                        ok = true;
+                        // Rule counts are never negative, so -1 marks failure.
+                        return BackupRestoreHelper.importFromStream(activity, is);
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "Backup import failed", e);
                 }
-                final boolean done = ok;
-                final int count = rules;
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override public void run() {
-                        Toast.makeText(activity,
-                                done ? activity.getString(R.string.restore_done, count)
-                                        : activity.getString(R.string.import_voice_error),
-                                Toast.LENGTH_LONG).show();
-                        if (done && activity instanceof Activity) {
-                            ((Activity) activity).recreate();
-                        }
-                    }
-                });
+                return -1;
             }
-        }, "backup-import").start();
+        }, new BackgroundDone<Integer>() {
+            @Override public void done(Integer count) {
+                final boolean done = count >= 0;
+                Toast.makeText(activity,
+                        done ? activity.getString(R.string.restore_done, count)
+                                : activity.getString(R.string.import_voice_error),
+                        Toast.LENGTH_LONG).show();
+                if (done && activity instanceof Activity) {
+                    ((Activity) activity).recreate();
+                }
+            }
+        });
     }
 
     private static String getFileNameFromUri(Context context, Uri uri) {
@@ -348,10 +368,8 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
     private static void importVoiceUri(final Activity activity, final Uri uri) {
         final Context storage = EspeakApp.requireStorageContext(activity);
-        final Handler handler = new Handler(Looper.getMainLooper());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        runInBackground("voice-import-thread", new BackgroundWork<Boolean>() {
+            @Override public Boolean run() {
                 boolean success = false;
                 String fileName = getFileNameFromUri(activity, uri);
                 File targetDir = CheckVoiceData.getDataPath(storage);
@@ -412,29 +430,26 @@ public class TtsSettingsActivity extends PreferenceActivity {
                     Log.e(TAG, "Error importing voice data from URI", e);
                     success = false;
                 }
-
-                final boolean finalSuccess = success;
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (finalSuccess) {
-                            synchronized (TtsSettingsActivity.class) {
-                                sLangInfo.clear();
-                            }
-                            final Intent updated =
-                                    new Intent(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
-                            // Same scoping as DownloadVoiceData: only this
-                            // app's TtsService should act on it.
-                            updated.setPackage(activity.getPackageName());
-                            activity.sendBroadcast(updated);
-                            Toast.makeText(activity, R.string.import_voice_success, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(activity, R.string.import_voice_error, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                return success;
             }
-        }, "voice-import-thread").start();
+        }, new BackgroundDone<Boolean>() {
+            @Override public void done(Boolean finalSuccess) {
+                if (finalSuccess) {
+                    synchronized (TtsSettingsActivity.class) {
+                        sLangInfo.clear();
+                    }
+                    final Intent updated =
+                            new Intent(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
+                    // Same scoping as DownloadVoiceData: only this
+                    // app's TtsService should act on it.
+                    updated.setPackage(activity.getPackageName());
+                    activity.sendBroadcast(updated);
+                    Toast.makeText(activity, R.string.import_voice_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity, R.string.import_voice_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public static class PrefsEspeakFragment extends PreferenceFragment {
@@ -968,12 +983,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         });
         pref.setDefaultValue(VoiceSettings.DIGIT_GROUP_OFF);
         pref.setPersistent(true);
-        final SharedPreferences prefs = getPrefs();
-        String current = prefs.getString(VoiceSettings.PREF_DIGIT_GROUPING, null);
-        if (current == null) {
-            current = prefs.getBoolean(VoiceSettings.PREF_SPEAK_DIGITS, false)
-                    ? VoiceSettings.DIGIT_GROUP_SINGLE : VoiceSettings.DIGIT_GROUP_OFF;
-        }
+        // Same legacy-boolean migration as VoiceSettings.getDigitGroupingMode()
+        // (which reads prefs only, so a null engine is fine here).
+        String current = new VoiceSettings(getPrefs(), null).getDigitGroupingMode();
         int idx = pref.findIndexOfValue(current);
         if (idx >= 0) pref.setSummary(pref.getEntries()[idx]);
         else pref.setSummary(context.getString(R.string.setting_digit_grouping_summary));
@@ -1406,19 +1418,29 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 .show();
     }
 
-    private static void previewText(final Context context, final String text) {
+    /**
+     * Speaks {@code text} through the lazily-initialized preview engine.
+     * Unifies the TTS init/speak shape previewText() and playTestVoice()
+     * used to duplicate; only the text and utterance id differ.
+     */
+    private static void speakPreview(final Context context, final String text,
+            final String utteranceId) {
         if (sTts == null) {
             sTts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
                 @Override
                 public void onInit(int status) {
                     if (status == TextToSpeech.SUCCESS && sTts != null) {
-                        sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "dict_preview");
+                        sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
                     }
                 }
             }, context.getPackageName());
         } else {
-            sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "dict_preview");
+            sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
         }
+    }
+
+    private static void previewText(final Context context, final String text) {
+        speakPreview(context, text, "dict_preview");
     }
 
     private static void showAddRuleDialog(final Context context) {
@@ -1579,19 +1601,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
     }
 
     private static void playTestVoice(final Context context) {
-        final String sampleText = context.getString(R.string.test_voice_sample);
-        if (sTts == null) {
-            sTts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    if (status == TextToSpeech.SUCCESS && sTts != null) {
-                        sTts.speak(sampleText, TextToSpeech.QUEUE_FLUSH, null, "sample_utterance");
-                    }
-                }
-            }, context.getPackageName());
-        } else {
-            sTts.speak(sampleText, TextToSpeech.QUEUE_FLUSH, null, "sample_utterance");
-        }
+        speakPreview(context, context.getString(R.string.test_voice_sample), "sample_utterance");
     }
 
     private static Preference createAboutPreference(final Context context) {

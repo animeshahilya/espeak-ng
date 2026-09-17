@@ -88,6 +88,19 @@ public class CheckVoiceData extends Activity {
         }
     }
 
+    /**
+     * Extracts or refreshes voice data when missing or stale. Unifies the
+     * check-then-extract sequence every entry point used to repeat.
+     *
+     * @return true when usable voice data is present afterwards.
+     */
+    public static boolean ensureVoiceData(Context context) {
+        if (!hasBaseResources(context) || canUpgradeResources(context)) {
+            return extractVoiceData(context);
+        }
+        return true;
+    }
+
     public static boolean extractVoiceData(Context context) {
         final File dataPath = getDataPath(context);
         FileUtils.rmdir(dataPath);
