@@ -21,14 +21,21 @@ package com.animeshahilya.espeakng;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.accessibility.AccessibilityEvent;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class DownloadVoiceData extends Activity {
     public static final String BROADCAST_LANGUAGES_UPDATED = "com.animeshahilya.espeakng.LANGUAGES_UPDATED";
 
-    private AsyncExtract mAsyncExtract;
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+    private Future<?> mExtractTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,27 +44,35 @@ public class DownloadVoiceData extends Activity {
         setContentView(R.layout.download_voice_data);
         final Context storageContext = EspeakApp.requireStorageContext(this);
 
-        mAsyncExtract = new AsyncExtract(storageContext) {
+        mExtractTask = mExecutor.submit(new Runnable() {
             @Override
-            protected void onPostExecute(Integer result) {
-                switch (result) {
-                    case RESULT_OK:
-                        final Intent intent = new Intent(BROADCAST_LANGUAGES_UPDATED);
-                        // Explicit package: TtsService reloads its engine on
-                        // this broadcast, so don't let other apps spoof it.
-                        intent.setPackage(getPackageName());
-                        sendBroadcast(intent);
-                        break;
-                    case RESULT_CANCELED:
-                        break;
-                }
+            public void run() {
+                final int result = CheckVoiceData.extractVoiceData(storageContext)
+                        ? RESULT_OK : RESULT_CANCELED;
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Gone (e.g. rotated away) while extracting: nothing
+                        // left to report to, and the engine reload broadcast
+                        // belongs to a live UI flow - skip it rather than
+                        // broadcasting from a dead context.
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
+                        if (result == RESULT_OK) {
+                            final Intent intent = new Intent(BROADCAST_LANGUAGES_UPDATED);
+                            // Explicit package: TtsService reloads its engine on
+                            // this broadcast, so don't let other apps spoof it.
+                            intent.setPackage(getPackageName());
+                            sendBroadcast(intent);
+                        }
 
-                setResult(result);
-                finish();
+                        setResult(result);
+                        finish();
+                    }
+                });
             }
-        };
-
-        mAsyncExtract.execute();
+        });
 
         findViewById(R.id.installing_voice_data)
                 .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
@@ -65,25 +80,10 @@ public class DownloadVoiceData extends Activity {
 
     @Override
     protected void onDestroy() {
-        if (mAsyncExtract != null) {
-            mAsyncExtract.cancel(true);
+        if (mExtractTask != null) {
+            mExtractTask.cancel(true);
         }
+        mExecutor.shutdownNow();
         super.onDestroy();
-    }
-
-    private static class AsyncExtract extends AsyncTask<Void, Void, Integer> {
-        private final Context mContext;
-
-        public AsyncExtract(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            if (CheckVoiceData.extractVoiceData(mContext)) {
-                return RESULT_OK;
-            }
-            return RESULT_CANCELED;
-        }
     }
 }

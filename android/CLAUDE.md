@@ -96,8 +96,8 @@ Android TTS Framework
 - **VoiceSettings** — SharedPreferences wrapper for rate, pitch, volume, punctuation, variant
 - **LanguageSettings** — Filters available voices by user-selected languages
 - **CheckVoiceData** — Intent handler that verifies voice data files exist on device
-- **DownloadVoiceData** — Extracts `espeakdata.zip` (every bundled language) to device-protected storage
-- **TtsSettingsActivity** — Preferences UI (voice variant, rate, pitch, etc.); also the `CONFIGURE_ENGINE` target and, on Wear, the launcher entry point
+- **DownloadVoiceData** — Extracts `espeakdata.zip` (every bundled language) to device-protected storage on a single-thread executor (~1 s on a Pixel 8 for the ~14 MB archive; runs on the caller's behalf via `CheckVoiceData.ensureVoiceData()`, which also re-verifies the tree before reporting success)
+- **TtsSettingsActivity** — Preferences UI (voice variant, rate, pitch, etc.); also the `CONFIGURE_ENGINE` target and, on Wear, the launcher entry point. Voice-picker labels are localized via `getVoiceLabel()`: the system-language name first (`Locale.getDisplayName()`), English name in parentheses for disambiguation
 - **Voice / VoiceVariant** — Data models for voice metadata and variant parsing
 
 ### Launcher icon and Wear
@@ -178,7 +178,7 @@ android/
 
 ## Testing
 
-Tests are in `eSpeakTests/src/com/animeshahilya/espeakng/test/` — 78 instrumentation tests covering voice enumeration, settings, variant parsing, variant-catalog/data consistency (`VoiceVariantCatalogTest` checks `VoiceVariantPreference`'s hardcoded picker against the actual shipped `voices/!v/` files - see upstream #2376), locale translation (`testJavaToIanaCountryCode`), and synthesis. The test suite is adapted to test the bundled core APK directly while respecting the core/extra language split. They require a connected device or emulator (`./gradlew connectedAndroidTest`).
+Tests are in `eSpeakTests/src/com/animeshahilya/espeakng/` — 100 instrumentation tests covering voice enumeration, settings, variant parsing, variant-catalog/data consistency (`VoiceVariantCatalogTest` checks `VoiceVariantPreference`'s hardcoded picker against the actual shipped `voices/!v/` files - see upstream #2376), locale translation (`testJavaToIanaCountryCode`), synthesis, bilingual/dictionary behavior, and the text pipeline (`TextPipelineDeviceTest` asserts paragraph breaks survive preprocessing, so the engine's longer paragraph pauses keep working). They require a connected device or emulator (`./gradlew connectedAndroidTest`). Note the suite reinstalls the app (wiping extracted data), so data-dependent tests must ensure extraction first - see `CheckVoiceDataTest.ensureVoiceData()` and the `ensureVoiceData()` calls in the direct-engine test setups. CI runs API 34; also run on API 35+ when possible (Locale canonicalizes legacy codes like `in`&#8594;`id` there - see `VoiceData.expectedEngineLanguage()`).
 
 ## Common Workflows
 
