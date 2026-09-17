@@ -310,7 +310,11 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeGetAvailableVoices
   char age_buf[12];
 
   // Finally, populate the array. A NULL entry is legal (Java skips it), so
-  // OOM on one string doesn't poison the whole voice list.
+  // OOM on one string doesn't poison the whole voice list. Each NewStringUTF
+  // is checked for a pending exception right away, before any further JNI
+  // call touches it - calling SetObjectArrayElement (or another
+  // NewStringUTF) while an exception is pending is undefined behavior per
+  // the JNI spec, even though the value being stored would be NULL.
   for (int i = 0, voicesIndex = 0; (v = voices[i]) != NULL; i++) {
     const char *lang_name = (v->languages != NULL) ? v->languages + 1 : "";
     const char *identifier = (v->identifier != NULL) ? v->identifier : "";
@@ -318,20 +322,24 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeGetAvailableVoices
     snprintf(age_buf, sizeof(age_buf), "%d", v->age);
 
     jstring lang = (*env)->NewStringUTF(env, lang_name);
+    if (check_jni_exception(env)) return NULL;
     (*env)->SetObjectArrayElement(env, voicesArray, voicesIndex++, lang);
     if (lang != NULL) (*env)->DeleteLocalRef(env, lang);
+
     jstring ident = (*env)->NewStringUTF(env, identifier);
+    if (check_jni_exception(env)) return NULL;
     (*env)->SetObjectArrayElement(env, voicesArray, voicesIndex++, ident);
     if (ident != NULL) (*env)->DeleteLocalRef(env, ident);
+
     jstring gender = (*env)->NewStringUTF(env, gender_buf);
+    if (check_jni_exception(env)) return NULL;
     (*env)->SetObjectArrayElement(env, voicesArray, voicesIndex++, gender);
     if (gender != NULL) (*env)->DeleteLocalRef(env, gender);
+
     jstring age = (*env)->NewStringUTF(env, age_buf);
+    if (check_jni_exception(env)) return NULL;
     (*env)->SetObjectArrayElement(env, voicesArray, voicesIndex++, age);
     if (age != NULL) (*env)->DeleteLocalRef(env, age);
-    if (check_jni_exception(env)) {
-      return NULL;
-    }
   }
 
   return voicesArray;

@@ -180,6 +180,11 @@ public class IndianFeaturesDeviceTest {
 
         // Non-security numbers should NOT be split digit-by-digit
         assertThat(TtsService.spaceSeparateSmartCodes("The year 2024 is great"), is("The year 2024 is great"));
+        // "code" alone is not a keyword: too common an English word to gate
+        // on (dress code, zip code, area code...) and every real OTP/
+        // verification message already matches via a more specific word.
+        assertThat(TtsService.spaceSeparateSmartCodes("The dress code for 1990 was strict"),
+                is("The dress code for 1990 was strict"));
     }
 
     @Test

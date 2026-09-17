@@ -973,6 +973,14 @@ public class TtsService extends TextToSpeechService {
                     if (DEBUG) Log.w(TAG, "Chunk synth failed, skipping", t);
                 }
             }
+            // If we broke out before synthesizing a single chunk (already
+            // stopped when this request reached the loop), no engine call
+            // ever happened to drive onSynthDataComplete() -> the framework
+            // would never get a terminal callback for this request. CAS
+            // makes this a no-op when a real chunk already delivered done().
+            if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
+                mCallback.done();
+            }
         } else {
             mSegmentsRemaining.set(1);
             mChunkBase = unitBases.isEmpty() ? 0 : unitBases.get(0);
@@ -1024,8 +1032,14 @@ public class TtsService extends TextToSpeechService {
         return sb.toString();
     }
 
+    // "code" is deliberately not a keyword on its own: it's an ordinary
+    // English word ("dress code", "zip code", "area code") common enough
+    // to false-positive on plain sentences with a nearby number (e.g. a
+    // year), and every real OTP/verification-code message already matches
+    // via a more specific word below (verification, security, pin,
+    // passcode), so dropping it loses no real detections.
     private static final java.util.regex.Pattern SMART_CODE_KEYWORD =
-            java.util.regex.Pattern.compile("(?i)\\b(otp|pin|code|passcode|password|secret|verification|security|token|login|id|txn|ref|vpa|cvv)\\b");
+            java.util.regex.Pattern.compile("(?i)\\b(otp|pin|passcode|password|secret|verification|security|token|login|id|txn|ref|vpa|cvv)\\b");
 
     private static final java.util.regex.Pattern DANDA_BOUNDARY =
             java.util.regex.Pattern.compile("([।॥])([^\\s])");

@@ -101,33 +101,53 @@ public class CheckVoiceData extends Activity {
         return true;
     }
 
+    /**
+     * Guards extraction against concurrent callers. TtsService.onCreate(),
+     * TtsSettingsActivity.onCreate() and DownloadVoiceData's executor can
+     * each independently decide extraction is needed and call this around
+     * the same time (e.g. the TTS framework binds the service while the
+     * user has the reinstall screen open); without a lock they would race
+     * rmdir() against each other's writes into the same directory.
+     */
+    private static final Object EXTRACT_LOCK = new Object();
+
     public static boolean extractVoiceData(Context context) {
-        final File dataPath = getDataPath(context);
-        FileUtils.rmdir(dataPath);
-
-        try (java.io.InputStream dataStream = context.getResources().openRawResource(R.raw.espeakdata)) {
-            FileUtils.extractZip(dataStream, dataPath.getParentFile());
-
-            final String version;
-            try (java.io.InputStream versionStream = context.getResources().openRawResource(R.raw.espeakdata_version)) {
-                version = FileUtils.read(versionStream);
+        synchronized (EXTRACT_LOCK) {
+            // A concurrent caller may have already extracted a fresh, valid
+            // tree while this thread was waiting on the lock - skip the
+            // redundant rmdir()+re-extract (and the UI hiccup it causes)
+            // rather than doing the same ~1s of work twice.
+            if (hasBaseResources(context) && !canUpgradeResources(context)) {
+                return true;
             }
-            FileUtils.write(new File(getDataPath(context), "version"), version);
 
-            // A crash or full disk mid-extract used to leave a half-written
-            // data dir behind: only report success when the base resources
-            // (now including the freshly stamped version) actually landed,
-            // so the next launch retries instead of serving broken voices.
-            // Note the version must be written *before* this check - it is
-            // itself one of the base resources.
-            if (!hasBaseResources(context)) {
-                Log.e(TAG, "Voice data extraction incomplete, will retry");
+            final File dataPath = getDataPath(context);
+            FileUtils.rmdir(dataPath);
+
+            try (java.io.InputStream dataStream = context.getResources().openRawResource(R.raw.espeakdata)) {
+                FileUtils.extractZip(dataStream, dataPath.getParentFile());
+
+                final String version;
+                try (java.io.InputStream versionStream = context.getResources().openRawResource(R.raw.espeakdata_version)) {
+                    version = FileUtils.read(versionStream);
+                }
+                FileUtils.write(new File(getDataPath(context), "version"), version);
+
+                // A crash or full disk mid-extract used to leave a half-written
+                // data dir behind: only report success when the base resources
+                // (now including the freshly stamped version) actually landed,
+                // so the next launch retries instead of serving broken voices.
+                // Note the version must be written *before* this check - it is
+                // itself one of the base resources.
+                if (!hasBaseResources(context)) {
+                    Log.e(TAG, "Voice data extraction incomplete, will retry");
+                    return false;
+                }
+                return true;
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to extract voice data", e);
                 return false;
             }
-            return true;
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to extract voice data", e);
-            return false;
         }
     }
 

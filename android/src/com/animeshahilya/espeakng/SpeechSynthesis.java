@@ -358,7 +358,7 @@ public class SpeechSynthesis {
         mCallback.onSynthWordBoundary(textPosition, textLength, markerInFrames);
     }
 
-    private synchronized void attemptInit() {
+    private void attemptInit() {
         if (mInitialized) {
             return;
         }
@@ -368,22 +368,31 @@ public class SpeechSynthesis {
             return;
         }
 
-        if (sSampleRate > 0) {
-            mSampleRate = sSampleRate;
+        // sSampleRate is a static field shared by every SpeechSynthesis
+        // instance (e.g. TtsService's long-lived engine and a short-lived
+        // one CheckVoiceData/DownloadVoiceData construct to probe voices),
+        // so this must lock on the class, not `this` - locking per-instance
+        // let two instances both see sSampleRate == 0 and both reach
+        // nativeCreate() concurrently, racing on the native library's own
+        // one-time espeak_Initialize().
+        synchronized (SpeechSynthesis.class) {
+            if (sSampleRate > 0) {
+                mSampleRate = sSampleRate;
+                mInitialized = true;
+                return;
+            }
+
+            mSampleRate = nativeCreate(mDatapath);
+            if (mSampleRate == 0) {
+                Log.e(TAG, "Failed to initialize speech synthesis library");
+                return;
+            }
+
+            sSampleRate = mSampleRate;
+            Log.i(TAG, "Initialized synthesis library with sample rate = " + getSampleRate());
+
             mInitialized = true;
-            return;
         }
-
-        mSampleRate = nativeCreate(mDatapath);
-        if (mSampleRate == 0) {
-            Log.e(TAG, "Failed to initialize speech synthesis library");
-            return;
-        }
-
-        sSampleRate = mSampleRate;
-        Log.i(TAG, "Initialized synthesis library with sample rate = " + getSampleRate());
-
-        mInitialized = true;
     }
 
     public static String getSampleText(Context context, Locale locale) {
