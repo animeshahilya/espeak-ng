@@ -809,8 +809,16 @@ public class TtsService extends TextToSpeechService {
         if (!settings.isForceRateEnabled()) {
             rate = (int)(((long)rate * rateScale) / 100);
         }
-        if (!settings.isRateBoostEnabled() && rate > 449) {
-            rate = 449; // NVDA issue #131: avoid unintended Sonic engagement at 450 WPM
+        // Cap at the engine max (espeakRATE_MAXIMUM) unless rate boost is on.
+        // This used to cap at 449 per NVDA issue #131, to avoid unintended
+        // Sonic engagement at 450 WPM - but upstream #2165 moved Sonic
+        // engagement strictly above 450, and #2355 made 450 the engine max,
+        // so exactly 450 never engages Sonic (no shipped voice lowers
+        // fast_settings below the 450 default either). NVDA still caps at
+        // 449 out of caution for engines predating #2165; this app always
+        // ships its own engine, so it follows the engine it ships.
+        if (!settings.isRateBoostEnabled() && rate > 450) {
+            rate = 450;
         }
         engine.Rate.setValue(rate);
 
