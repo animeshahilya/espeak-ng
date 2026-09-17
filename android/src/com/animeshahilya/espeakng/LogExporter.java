@@ -61,8 +61,7 @@ public final class LogExporter {
         sb.append("Time: ").append(new java.util.Date()).append("\n\n");
 
         try {
-            Context storage = EspeakApp.getStorageContext() != null
-                    ? EspeakApp.getStorageContext() : context;
+            Context storage = EspeakApp.requireStorageContext(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
             sb.append("--- Preferences ---\n");
             for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {

@@ -136,10 +136,8 @@ public class VoiceSettings {
     public static final int DEFAULT_PITCH_RANGE = 75;
     public static final int DEFAULT_CAPITALS = 3;
 
-    @Deprecated public static final String DEFAULT_VARIANT_NVDA = DEFAULT_VARIANT;
-    @Deprecated public static final int DEFAULT_PITCH_NVDA = DEFAULT_PITCH;
-    @Deprecated public static final int DEFAULT_PITCH_RANGE_NVDA = DEFAULT_PITCH_RANGE;
-    @Deprecated public static final int DEFAULT_CAPITALS_NVDA = DEFAULT_CAPITALS;
+    /** Default bilingual secondary voice (Indian English). */
+    public static final String DEFAULT_SECONDARY_VOICE = "en-in";
 
     public VoiceSettings(SharedPreferences preferences, SpeechSynthesis engine) {
         mPreferences = preferences;
@@ -358,7 +356,7 @@ public class VoiceSettings {
     }
 
     public String getSecondaryVoice() {
-        return mPreferences.getString(PREF_SECONDARY_VOICE, "en-in");
+        return mPreferences.getString(PREF_SECONDARY_VOICE, DEFAULT_SECONDARY_VOICE);
     }
 
     public boolean isNatoSpellingEnabled() {

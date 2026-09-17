@@ -49,8 +49,7 @@ public final class BackupRestoreHelper {
     }
 
     public static void exportToStream(Context context, OutputStream os) throws Exception {
-        Context storage = EspeakApp.getStorageContext() != null
-                ? EspeakApp.getStorageContext() : context;
+        Context storage = EspeakApp.requireStorageContext(context);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
         JSONObject root = new JSONObject();
         root.put("version", BACKUP_VERSION);
@@ -117,8 +116,7 @@ public final class BackupRestoreHelper {
 
         JSONObject prefsJson = root.optJSONObject("prefs");
         if (prefsJson != null) {
-            Context storage = EspeakApp.getStorageContext() != null
-                    ? EspeakApp.getStorageContext() : context;
+            Context storage = EspeakApp.requireStorageContext(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
             SharedPreferences.Editor ed = prefs.edit();
             java.util.Iterator<String> keys = prefsJson.keys();

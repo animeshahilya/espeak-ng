@@ -119,7 +119,7 @@ public class CheckVoiceData extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Context storageContext = EspeakApp.getStorageContext();
+        Context storageContext = EspeakApp.requireStorageContext(this);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
         ArrayList<String> availableLanguages = new ArrayList<String>();
         ArrayList<String> unavailableLanguages = new ArrayList<String>();

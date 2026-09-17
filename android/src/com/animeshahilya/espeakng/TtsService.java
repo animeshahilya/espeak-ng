@@ -44,6 +44,7 @@ import android.util.Pair;
 import com.animeshahilya.espeakng.SpeechSynthesis.SynthReadyCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -114,6 +115,14 @@ public class TtsService extends TextToSpeechService {
 
     private List<Voice> mAllVoices = new ArrayList<Voice>();
     private final Map<String, Voice> mAvailableVoices = new HashMap<String, Voice>();
+    /**
+     * Cached framework voice list built by {@link #onGetVoices}. The
+     * framework polls voices often; rebuilding ~120 Locale/HashSet/Voice
+     * objects per call is wasteful. Invalidated in
+     * {@link #rebuildAvailableVoices}, the only mutator of mAvailableVoices.
+     * Guarded by the mAvailableVoices monitor.
+     */
+    private List<android.speech.tts.Voice> mCachedFrameworkVoices = null;
     // Protected (not private) as a test hook: eSpeakTests subclasses read and
     // drive voice selection through these members.
     protected Voice mMatchingVoice = null;
@@ -353,8 +362,11 @@ public class TtsService extends TextToSpeechService {
     @Override
     public List<android.speech.tts.Voice> onGetVoices() {
         rebuildAvailableVoices();
-        List<android.speech.tts.Voice> voices = new ArrayList<android.speech.tts.Voice>();
         synchronized (mAvailableVoices) {
+            if (mCachedFrameworkVoices != null) {
+                return new ArrayList<android.speech.tts.Voice>(mCachedFrameworkVoices);
+            }
+            List<android.speech.tts.Voice> voices = new ArrayList<android.speech.tts.Voice>(mAvailableVoices.size());
             for (Voice voice : mAvailableVoices.values()) {
                 int quality = android.speech.tts.Voice.QUALITY_NORMAL;
                 int latency = android.speech.tts.Voice.LATENCY_VERY_LOW;
@@ -362,8 +374,9 @@ public class TtsService extends TextToSpeechService {
                 Set<String> features = onGetFeaturesForLanguage(locale.getLanguage(), locale.getCountry(), locale.getVariant());
                 voices.add(new android.speech.tts.Voice(voice.name, voice.locale, quality, latency, false, features));
             }
+            mCachedFrameworkVoices = Collections.unmodifiableList(voices);
+            return new ArrayList<android.speech.tts.Voice>(voices);
         }
-        return voices;
     }
 
     @Override
@@ -2053,6 +2066,7 @@ public class TtsService extends TextToSpeechService {
     protected void rebuildAvailableVoices() {
         synchronized (mAvailableVoices) {
             mAvailableVoices.clear();
+            mCachedFrameworkVoices = null;
             List<Voice> voices = mAllVoices;
             if (mPreferences != null) {
                 voices = LanguageSettings.filterVoices(mAllVoices, mPreferences);

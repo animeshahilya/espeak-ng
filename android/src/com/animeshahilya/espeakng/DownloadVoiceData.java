@@ -35,7 +35,7 @@ public class DownloadVoiceData extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.download_voice_data);
-        final Context storageContext = EspeakApp.getStorageContext();
+        final Context storageContext = EspeakApp.requireStorageContext(this);
 
         mAsyncExtract = new AsyncExtract(storageContext) {
             @Override

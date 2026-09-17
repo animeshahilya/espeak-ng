@@ -81,6 +81,11 @@ public class TtsSettingsActivity extends PreferenceActivity {
     private static Context storageContext;
     private static final String TAG = TtsSettingsActivity.class.getSimpleName();
 
+    /** Single accessor for the device-protected default prefs (see EspeakApp). */
+    private static SharedPreferences getPrefs() {
+        return PreferenceManager.getDefaultSharedPreferences(storageContext);
+    }
+
     /**
      * Identifies the combined voice-parameters preference. Nothing is stored
      * under it -- the preference writes the individual VoiceSettings keys --
@@ -98,12 +103,12 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         // Migrate old eyes-free settings to the new settings:
 
-        storageContext = EspeakApp.getStorageContext();
+        storageContext = EspeakApp.requireStorageContext(this);
         if (!CheckVoiceData.hasBaseResources(storageContext)
                 || CheckVoiceData.canUpgradeResources(storageContext)) {
             CheckVoiceData.extractVoiceData(storageContext);
         }
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final SharedPreferences prefs = getPrefs();
         final SharedPreferences.Editor editor = prefs.edit();
 
         String pitch = prefs.getString(VoiceSettings.PREF_PITCH, null);
@@ -342,7 +347,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
     }
 
     private static void importVoiceUri(final Activity activity, final Uri uri) {
-        final Context storage = storageContext != null ? storageContext : activity;
+        final Context storage = EspeakApp.requireStorageContext(activity);
         final Handler handler = new Handler(Looper.getMainLooper());
         new Thread(new Runnable() {
             @Override
@@ -519,7 +524,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
             }
         }
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final SharedPreferences prefs = getPrefs();
         final String value = prefs.getString(key, null);
         int defaultVal = parameter.getDefaultValue();
         if (VoiceSettings.PREF_PITCH.equals(key)) {
@@ -612,7 +617,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         pref.setEntries(entries);
         pref.setEntryValues(entryValues);
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final SharedPreferences prefs = getPrefs();
         Set<String> selected = LanguageSettings.getSelectedLanguages(prefs);
         if (selected == null) {
             selected = new HashSet<String>();
@@ -667,11 +672,16 @@ public class TtsSettingsActivity extends PreferenceActivity {
             int slash = voice.identifier.lastIndexOf('/');
             key2 = (slash >= 0 && slash < voice.identifier.length() - 1) ? voice.identifier.substring(slash + 1) : voice.identifier;
         }
-        LangInfo info = sLangInfo.get(key1);
-        if (info == null && key2 != null) {
-            info = sLangInfo.get(key2);
+        // Same monitor as ensureLangInfoLoaded() and the import-thread clear():
+        // HashMap is not thread-safe, so unsynchronized reads could observe
+        // a half-updated map.
+        synchronized (TtsSettingsActivity.class) {
+            LangInfo info = sLangInfo.get(key1);
+            if (info == null && key2 != null) {
+                info = sLangInfo.get(key2);
+            }
+            return info;
         }
-        return info;
     }
 
     // Synchronized because createPreferences() warms this from a worker thread
@@ -801,7 +811,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         pref.setDefaultValue(VoiceSettings.EMOJI_ANNOUNCE);
         pref.setPersistent(true);
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final SharedPreferences prefs = getPrefs();
         String current = prefs.getString(VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.EMOJI_ANNOUNCE);
         pref.setSummary(VoiceSettings.EMOJI_IGNORE.equals(current) ?
                 context.getString(R.string.emoji_ignore) : context.getString(R.string.emoji_announce));
@@ -844,7 +854,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         pref.setDefaultValue(Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
         pref.setPersistent(true);
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final SharedPreferences prefs = getPrefs();
         String current = prefs.getString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
         int idx = pref.findIndexOfValue(current);
         if (idx >= 0 && idx < pref.getEntries().length) {
@@ -861,7 +871,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+                final SharedPreferences prefs = getPrefs();
                 prefs.edit()
                         .putString(VoiceSettings.PREF_VARIANT, VoiceSettings.DEFAULT_VARIANT)
                         .putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH))
@@ -958,7 +968,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         });
         pref.setDefaultValue(VoiceSettings.DIGIT_GROUP_OFF);
         pref.setPersistent(true);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final SharedPreferences prefs = getPrefs();
         String current = prefs.getString(VoiceSettings.PREF_DIGIT_GROUPING, null);
         if (current == null) {
             current = prefs.getBoolean(VoiceSettings.PREF_SPEAK_DIGITS, false)
@@ -993,7 +1003,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         pref.setEntryValues(values);
         pref.setDefaultValue(defValue);
         pref.setPersistent(true);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final SharedPreferences prefs = getPrefs();
         String current = prefs.getString(key, defValue);
         int idx = pref.findIndexOfValue(current);
         if (idx >= 0 && idx < entries.length) pref.setSummary(entries[idx]);
@@ -1017,7 +1027,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
                         VoiceSettings.READING_PHONETIC,
                         VoiceSettings.READING_CODE
                 },
-                new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext),
+                new VoiceSettings(getPrefs(),
                         null).getReadingMode());
     }
 
@@ -1089,15 +1099,16 @@ public class TtsSettingsActivity extends PreferenceActivity {
             entries[i] = getVoiceLabel(sorted.get(i));
             values[i] = sorted.get(i).name;
         }
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
-        String current = prefs.getString(VoiceSettings.PREF_SECONDARY_VOICE, "en-in");
+        final SharedPreferences prefs = getPrefs();
+        String current = prefs.getString(VoiceSettings.PREF_SECONDARY_VOICE,
+                VoiceSettings.DEFAULT_SECONDARY_VOICE);
         final ListPreference pref = new ListPreference(context);
         pref.setTitle(R.string.setting_secondary_voice);
         pref.setDialogTitle(R.string.setting_secondary_voice);
         pref.setKey(VoiceSettings.PREF_SECONDARY_VOICE);
         pref.setEntries(entries);
         pref.setEntryValues(values);
-        pref.setDefaultValue("en-in");
+        pref.setDefaultValue(VoiceSettings.DEFAULT_SECONDARY_VOICE);
         pref.setPersistent(true);
         int idx = pref.findIndexOfValue(current);
         if (idx >= 0) pref.setSummary(entries[idx]);
@@ -1616,7 +1627,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
     private static void addPreferences(Context context, PreferenceGroup group,
                                        SpeechSynthesis engine, List<Voice> voices,
                                        boolean isWatch) {
-        VoiceSettings settings = new VoiceSettings(PreferenceManager.getDefaultSharedPreferences(storageContext), engine);
+        VoiceSettings settings = new VoiceSettings(getPrefs(), engine);
 
         // 1. Voice and language
         PreferenceCategory langCategory = new PreferenceCategory(context);
