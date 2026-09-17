@@ -10,3 +10,9 @@
 -keep class com.animeshahilya.espeakng.SpeechSynthesis {
     *;
 }
+
+# Release-variant instrumentation tests minify the test APK too; these are
+# compile-time-only annotations on androidx.test classes, safe to ignore.
+# (AGP-generated suggestion from minifyReleaseAndroidTestWithR8.)
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.MustBeClosed
