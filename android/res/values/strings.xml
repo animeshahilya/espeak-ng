@@ -232,6 +232,13 @@
   <string name="dict_action_delete">Delete rule</string>
   <string name="dict_rule_deleted">Rule deleted.</string>
   <string name="dict_rule_saved">Rule saved.</string>
+  <string name="dict_add_rule">Add rule</string>
+  <string name="dict_import_export">Import / Export</string>
+  <string name="dict_import_export_title">Dictionary import / export</string>
+  <string name="dict_import_export_message">Import massive word lists (.dic tab-delimited, word=replacement lists, or JSON) without crashing — runs in the background. Export shares the full list.</string>
+  <string name="dict_import_file">Import file</string>
+  <string name="dict_export_file">Export file</string>
+  <string name="dict_back">Back</string>
   <string name="dict_add_title">Add pronunciation rule</string>
   <string name="dict_edit_title">Edit pronunciation rule</string>
   <string name="dict_save">Save</string>

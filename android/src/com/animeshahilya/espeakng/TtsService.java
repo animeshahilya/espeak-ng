@@ -984,7 +984,6 @@ public class TtsService extends TextToSpeechService {
         } else {
             mSegmentsRemaining.set(1);
             mChunkBase = unitBases.isEmpty() ? 0 : unitBases.get(0);
-            engine.setVoice(voice, settings.getVoiceVariant());
             try {
                 engine.synthesize(text, isSsml);
             } catch (Throwable t) {
@@ -2082,8 +2081,13 @@ public class TtsService extends TextToSpeechService {
     // this to refresh the voice list without a full engine re-init.
     protected void rebuildAvailableVoices() {
         synchronized (mAvailableVoices) {
-            mAvailableVoices.clear();
+            // Invalidate the framework voice list BEFORE the (user-preference)
+            // filter runs: mAvailableVoices must not keep serving the previous
+            // selection if filterVoices() were to throw, and the field's
+            // documented invariant is that a rebuild always produces a fresh
+            // list.
             mCachedFrameworkVoices = null;
+            mAvailableVoices.clear();
             List<Voice> voices = mAllVoices;
             if (mPreferences != null) {
                 voices = LanguageSettings.filterVoices(mAllVoices, mPreferences);
@@ -2121,7 +2125,12 @@ public class TtsService extends TextToSpeechService {
                 mAudioOptimizer.process(audioData, audioData.length);
             }
 
-            final int maxBytesToCopy = Math.max(mCallback.getMaxBufferSize(), 512);
+            final SynthesisCallback callback = mCallback;
+            if (callback == null) {
+                return;
+            }
+
+            final int maxBytesToCopy = Math.max(callback.getMaxBufferSize(), 512);
 
             int offset = 0;
 
@@ -2130,14 +2139,18 @@ public class TtsService extends TextToSpeechService {
                     return;
                 }
                 final int bytesToWrite = Math.min(maxBytesToCopy, (audioData.length - offset));
-                if (mCallback.audioAvailable(audioData, offset, bytesToWrite)
+                if (callback.audioAvailable(audioData, offset, bytesToWrite)
                         != TextToSpeech.SUCCESS) {
                     // The framework has stopped accepting audio for this
                     // request, so the rest of the buffer has nowhere to go.
                     // A stop normally reaches the engine through onStop();
                     // stopping here as well covers a failure that arrives
-                    // without one.
-                    mEngine.stop();
+                    // without one. Local snapshot: the same brief
+                    // initializeTtsEngine() null window documented in onStop().
+                    final SpeechSynthesis engine = mEngine;
+                    if (engine != null) {
+                        engine.stop();
+                    }
                     return;
                 }
                 offset += bytesToWrite;
@@ -2155,7 +2168,12 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthWordBoundary(int textPosition, int textLength, int markerInFrames) {
-            if (mSynthText == null || mCallback == null || mCallbackDone.get() || mIsStopped.get()) {
+            // Local snapshot: the fields can be swapped by a fresh request on
+            // the synth thread while this callback is in flight, and the
+            // guard-then-use pattern below must observe one consistent pair.
+            final String synthText = mSynthText;
+            final SynthesisCallback callback = mCallback;
+            if (synthText == null || callback == null || mCallbackDone.get() || mIsStopped.get()) {
                 return;
             }
 
@@ -2166,12 +2184,13 @@ public class TtsService extends TextToSpeechService {
             final int wordStart = textPosition - 1 + mChunkBase;
             int start = codePointToOffset(wordStart);
             int end = codePointToOffset(wordStart + Math.max(textLength, 0));
-            if (mSynthOffsetMap != null) {
+            final TextOffsetMap offsetMap = mSynthOffsetMap;
+            if (offsetMap != null) {
                 // The engine spoke text that one or more preprocessing steps
                 // changed the length of; report the range against the
                 // original so highlighting tracks the caller's string.
-                start = mSynthOffsetMap.toPrevious(start);
-                end = mSynthOffsetMap.toPrevious(end);
+                start = offsetMap.toPrevious(start);
+                end = offsetMap.toPrevious(end);
             }
 
             int finalStart = mSynthTextOffset + start;
@@ -2185,7 +2204,7 @@ public class TtsService extends TextToSpeechService {
             }
 
             try {
-                mCallback.rangeStart(markerInFrames, finalStart, finalEnd);
+                callback.rangeStart(markerInFrames, finalStart, finalEnd);
             } catch (Throwable ignored) {
             }
         }

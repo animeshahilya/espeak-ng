@@ -380,7 +380,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
                 try (InputStream inputStream = activity.getContentResolver().openInputStream(uri)) {
                     if (inputStream != null) {
-                        if (fileName.toLowerCase().endsWith(".zip")) {
+                        // Locale.ROOT: Turkish-locale devices would map a
+                        // capital I in ".ZIP" to a dotless ı and fail the check.
+                        if (fileName.toLowerCase(java.util.Locale.ROOT).endsWith(".zip")) {
                             try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(inputStream))) {
                                 ZipEntry entry;
                                 byte[] buffer = new byte[8192];
@@ -417,13 +419,20 @@ public class TtsSettingsActivity extends PreferenceActivity {
                             }
                         } else {
                             File outFile = new File(targetDir, fileName);
-                            try (OutputStream fos = new FileOutputStream(outFile)) {
-                                byte[] buffer = new byte[8192];
-                                int len;
-                                while ((len = inputStream.read(buffer)) > 0) {
-                                    fos.write(buffer, 0, len);
+                            // Same containment guarantee the zip path below
+                            // enforces per entry: a crafted display name (or
+                            // one reported by a content provider) must not be
+                            // able to write outside the voice data directory.
+                            if (outFile.getCanonicalPath()
+                                    .startsWith(targetDir.getCanonicalPath() + File.separator)) {
+                                try (OutputStream fos = new FileOutputStream(outFile)) {
+                                    byte[] buffer = new byte[8192];
+                                    int len;
+                                    while ((len = inputStream.read(buffer)) > 0) {
+                                        fos.write(buffer, 0, len);
+                                    }
+                                    success = true;
                                 }
-                                success = true;
                             }
                         }
                     }
@@ -660,14 +669,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return (displayName == null || displayName.isEmpty()) ? voice.toString() : displayName;
     }
 
-    /**
-     * A clean, human-readable name only - e.g. "English (India)", "Vietnamese (Central)".
-     * Earlier this prefixed the voice's raw internal code ("en-in  2 - English (India)",
-     * "vi-vn-x-central - Vietnamese (Central)"), which is meaningless to anyone but a developer
-     * and doubly so for dialect variants using BCP-47 private-use subtags. The lang files'
-     * own `name` field already carries the useful distinction (region/dialect in parentheses),
-     * so showing it alone is both cleaner and sufficient.
-     */
     /**
      * Localized voice label: the name in the system's own language first
      * (e.g. "हिन्दी" on a Hindi system), followed by the English name from
@@ -1334,7 +1335,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
             });
         }
 
-        builder.setPositiveButton("Add rule", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.dict_add_rule, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 showAddRuleDialog(context,
@@ -1342,7 +1343,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
                         filterValues[spFilter.getSelectedItemPosition()]);
             }
         });
-        builder.setNeutralButton("Import / Export", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton(R.string.dict_import_export, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 showDictionaryImportExportDialog(context,
@@ -1410,9 +1411,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
     private static void showDictionaryImportExportDialog(final Context context, final String searchQuery, final String categoryFilter) {
         new AlertDialog.Builder(context)
-                .setTitle("Dictionary import / export")
-                .setMessage("Import massive word lists (.dic tab-delimited, word=replacement lists, or JSON) without crashing — runs in the background. Export shares the full list.")
-                .setPositiveButton("Import file", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.dict_import_export_title)
+                .setMessage(R.string.dict_import_export_message)
+                .setPositiveButton(R.string.dict_import_file, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int w) {
                         if (context instanceof Activity) {
                             Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -1422,7 +1423,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
                         }
                     }
                 })
-                .setNeutralButton("Export file", new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.dict_export_file, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int w) {
                         if (context instanceof Activity) {
                             Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
@@ -1433,7 +1434,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
                         }
                     }
                 })
-                .setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dict_back, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int w) {
                         showUserDictionaryDialog(context, searchQuery, categoryFilter);
                     }

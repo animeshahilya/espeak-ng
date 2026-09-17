@@ -126,9 +126,9 @@ public class UserDictionary {
     public static String normalizeCategory(String category) {
         if (category == null) return CATEGORY_MAIN;
         String c = category.trim().toLowerCase(java.util.Locale.ROOT);
-        if (CATEGORY_ROOT.equals(c) || CATEGORY_ABBREV.equals(c) || "abbreviation".equals(c)) {
-            return CATEGORY_ABBREV.equals(c) || "abbreviation".equals(c) ? CATEGORY_ABBREV : c;
-        }
+        if (CATEGORY_ROOT.equals(c)) return CATEGORY_ROOT;
+        // "abbreviation" is accepted as a legacy alias of "abbrev".
+        if (CATEGORY_ABBREV.equals(c) || "abbreviation".equals(c)) return CATEGORY_ABBREV;
         return CATEGORY_MAIN;
     }
 

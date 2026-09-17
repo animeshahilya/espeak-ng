@@ -137,8 +137,13 @@ public final class BackupRestoreHelper {
             }
             ed.commit();
         }
+        // Explicit package scoping, matching DownloadVoiceData and the
+        // voice-import sender: only this app's TtsService should act on the
+        // reload broadcast, and targetSdk 34+ blocks implicit sends to
+        // registered receivers anyway.
         context.sendBroadcast(new android.content.Intent(
-                DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED));
+                DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED)
+                .setPackage(context.getPackageName()));
         return restoredRules;
     }
 }
