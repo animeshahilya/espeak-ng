@@ -145,9 +145,12 @@ static JNIEnv *getJniEnv() {
 }
 
 /* A pending Java exception plus further JNI calls is undefined behaviour, so
- * every upcall site bails out through here instead of pressing on. */
+ * every upcall site bails out through here instead of pressing on. The error
+ * log keeps the abort visible in logcat; synthesis failures from it surface
+ * on the Java side as a truncated/completed request, never a crash. */
 static int check_jni_exception(JNIEnv *env) {
   if ((*env)->ExceptionCheck(env)) {
+    if (DEBUG) LOGE("Clearing pending Java exception in synth callback");
     (*env)->ExceptionClear(env);
     return 1;
   }

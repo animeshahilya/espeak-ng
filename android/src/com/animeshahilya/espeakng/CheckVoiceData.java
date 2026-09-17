@@ -108,19 +108,22 @@ public class CheckVoiceData extends Activity {
         try (java.io.InputStream dataStream = context.getResources().openRawResource(R.raw.espeakdata)) {
             FileUtils.extractZip(dataStream, dataPath.getParentFile());
 
-            // A crash or full disk mid-extract used to leave a half-written
-            // data dir behind; refuse to stamp the version unless the base
-            // resources actually landed, so the next launch retries.
-            if (!hasBaseResources(context)) {
-                Log.e(TAG, "Voice data extraction incomplete, will retry");
-                return false;
-            }
-
             final String version;
             try (java.io.InputStream versionStream = context.getResources().openRawResource(R.raw.espeakdata_version)) {
                 version = FileUtils.read(versionStream);
             }
             FileUtils.write(new File(getDataPath(context), "version"), version);
+
+            // A crash or full disk mid-extract used to leave a half-written
+            // data dir behind: only report success when the base resources
+            // (now including the freshly stamped version) actually landed,
+            // so the next launch retries instead of serving broken voices.
+            // Note the version must be written *before* this check - it is
+            // itself one of the base resources.
+            if (!hasBaseResources(context)) {
+                Log.e(TAG, "Voice data extraction incomplete, will retry");
+                return false;
+            }
             return true;
         } catch (Exception e) {
             Log.e(TAG, "Failed to extract voice data", e);

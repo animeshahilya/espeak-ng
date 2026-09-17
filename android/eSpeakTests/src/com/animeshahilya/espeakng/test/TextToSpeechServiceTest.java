@@ -129,10 +129,11 @@ public class TextToSpeechServiceTest
     @Test
     public void testOnLoadLanguage() {
         // When loading language-only ("eng"), the selected voice depends on
-        // HashMap iteration order among matching en-gb voices.
+        // HashMap iteration order among matching English voices (en-gb, but
+        // also en-au/en-ca/en-sg since those voices were added).
         assertThat(mService.onLoadLanguage("eng", "", ""), isTtsLangCode(TextToSpeech.LANG_AVAILABLE));
         assertThat(mService.getActiveVoice(), is(notNullValue()));
-        assertThat(mService.getActiveVoice().name, startsWith("en-gb"));
+        assertThat(mService.getActiveVoice().name, startsWith("en-"));
         String defaultEnName = mService.getActiveVoice().name;
 
         assertThat(mService.onLoadLanguage("eng", "USA", ""), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
@@ -221,9 +222,10 @@ public class TextToSpeechServiceTest
     public void testOnGetDefaultVoiceNameFor() {
         assertThat(mService.onLoadLanguage("hin", "", ""), isTtsLangCode(TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE));
 
-        // The default voice for language-only depends on HashMap iteration order.
+        // The default voice for language-only depends on HashMap iteration
+        // order among all matching English voices (not just en-gb*).
         String defaultEn = mService.onGetDefaultVoiceNameFor("eng", "", "");
-        assertThat(defaultEn, startsWith("en-gb"));
+        assertThat(defaultEn, startsWith("en-"));
         checkLanguage(mService.onGetLanguage(), "hin", "", "");
         assertThat(mService.getActiveVoice(), is(notNullValue()));
         assertThat(mService.getActiveVoice().name, is("hi"));
@@ -362,10 +364,11 @@ public class TextToSpeechServiceTest
 
     @Test
     public void testSelectLanguageWithFallback_supportedLanguageStillWorks() {
-        // With all languages available, requesting English should work normally.
+        // With all languages available, requesting English should work normally
+        // (any English voice may win by HashMap order, not necessarily en-gb).
         int result = mService.selectLanguageWithFallback("eng", "", "");
         assertThat(result, is(TextToSpeech.SUCCESS));
         assertThat(mService.getActiveVoice(), is(notNullValue()));
-        assertThat(mService.getActiveVoice().name, startsWith("en-gb"));
+        assertThat(mService.getActiveVoice().name, startsWith("en-"));
     }
 }

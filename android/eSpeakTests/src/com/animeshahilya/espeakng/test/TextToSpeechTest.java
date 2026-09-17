@@ -130,7 +130,7 @@ getVoices(); // Ensure that the voice data has been populated.
 
             if (data == null) continue; // Skip voices not yet in VoiceData
             assertThat(voice.getName(), is(data.name));
-            assertThat(voice.getLocale().getLanguage(), is(data.ianaLanguage));
+            assertThat(voice.getLocale().getLanguage(), is(VoiceData.expectedEngineLanguage(data)));
             assertThat(voice.getLocale().getCountry(), is(data.ianaCountry));
             assertThat(voice.getLocale().getVariant(), is(data.variant));
             assertThat(voice.getFeatures(), is(notNullValue()));
@@ -147,7 +147,7 @@ getVoices(); // Ensure that the voice data has been populated.
             android.speech.tts.Voice voice2 = getEngine().getVoice();
             assertThat(voice2, is(notNullValue()));
             assertThat(voice2.getName(), is(data.name));
-            assertThat(voice2.getLocale().getLanguage(), is(data.ianaLanguage));
+            assertThat(voice2.getLocale().getLanguage(), is(VoiceData.expectedEngineLanguage(data)));
             assertThat(voice2.getLocale().getCountry(), is(data.ianaCountry));
             assertThat(voice2.getLocale().getVariant(), is(data.variant));
             assertThat(voice2.getFeatures(), is(notNullValue()));

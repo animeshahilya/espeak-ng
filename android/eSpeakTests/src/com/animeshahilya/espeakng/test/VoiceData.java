@@ -16,13 +16,46 @@
 
 package com.animeshahilya.espeakng.test;
 
+import android.os.Build;
+
 import com.animeshahilya.espeakng.SpeechSynthesis;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VoiceData
 {
+    /**
+     * Legacy ISO 639 codes java.util.Locale used to report, mapped to the
+     * modern codes Android V and later canonicalize to in Locale's
+     * constructors (in&#8594;id, iw&#8594;he, ji&#8594;yi). The table below
+     * records the legacy code the engine side requests; use
+     * {@link #expectedEngineLanguage} when asserting what the engine reports.
+     */
+    private static final Map<String, String> LEGACY_TO_MODERN_LANGUAGE = new HashMap<String, String>();
+    static {
+        LEGACY_TO_MODERN_LANGUAGE.put("in", "id");
+        LEGACY_TO_MODERN_LANGUAGE.put("iw", "he");
+        LEGACY_TO_MODERN_LANGUAGE.put("ji", "yi");
+    }
+
+    /**
+     * The language code the engine is expected to report for {@code voice}
+     * on this device: the table's code below Android V, the canonicalized
+     * modern code on V and later.
+     */
+    public static String expectedEngineLanguage(Voice voice) {
+        if (Build.VERSION.SDK_INT >= 35) {
+            final String modern = LEGACY_TO_MODERN_LANGUAGE.get(voice.ianaLanguage);
+            if (modern != null) {
+                return modern;
+            }
+        }
+        return voice.ianaLanguage;
+    }
+
     public static class Voice
     {
         public final String name;
@@ -122,7 +155,8 @@ public class VoiceData
         new Voice("hy",              "ine/hy",              "hy",  "hye", "",    "",    "",         SpeechSynthesis.GENDER_MALE, "Armenian",                         "hye",              "This is a sample of text spoken in Armenian", "This is a sample of text spoken in հայերեն"),
         new Voice("hyw",             "ine/hyw",             "hyw", "hyw", "",    "",    "",         SpeechSynthesis.GENDER_MALE, "Armenian (West Armenia)",          "hyw",              "This is a sample of text spoken in Western Armenian", "This is a sample of text spoken in հայերէն", "This is a sample of text spoken in hyw"),
         new Voice("ia",              "art/ia",              "ia",  "ina", "",    "",    "",         SpeechSynthesis.GENDER_MALE, "Interlingua",                      "ina",              "This is a sample of text spoken in Interlingua", "This is a sample of text spoken in interlingua"),
-        new Voice("id",              "poz/id",              "in",  "ind", "",    "",    "",         SpeechSynthesis.GENDER_MALE, "Indonesia",                        "ind",              "Ini adalah sebuah contoh teks yang diucapkan di Bahasa Indonesia", "Ini adalah sebuah contoh teks yang diucapkan di Indonesia"), // NOTE: 'id' is the correct ISO 639-1 code, but Android/Java uses 'in'.
+        new Voice("id",              "poz/id",              "in",  "ind", "",    "",    "",         SpeechSynthesis.GENDER_MALE, "Indonesia",                        "ind",              "Ini adalah sebuah contoh teks yang diucapkan di Bahasa Indonesia", "Ini adalah sebuah contoh teks yang diucapkan di Indonesia"), // NOTE: 'id' is the correct ISO 639-1 code; pre-V Android reports 'in',
+// V+ reports 'id' - assertions use expectedEngineLanguage().
         new Voice("is",              "gmq/is",              "is",  "isl", "",    "",    "",         SpeechSynthesis.GENDER_MALE, "Icelandic",                        "isl",              "This is a sample of text spoken in íslenska", "This is a sample of text spoken in Icelandic"),
         new Voice("it",              "roa/it",              "it",  "ita", "",    "",    "",         SpeechSynthesis.GENDER_MALE, "Italian",                          "ita",              "Questo è un esempio di testo parlato in italiano"),
         new Voice("ja",              "jpx/ja",              "ja",  "jpn", "",    "",    "",         SpeechSynthesis.GENDER_MALE, "Japanese",                         "jpn",              "日本語で話すテキストサンプルです。"),

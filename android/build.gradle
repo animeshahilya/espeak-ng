@@ -145,15 +145,16 @@ android {
 
 tasks.register('checkData') {
     doFirst {
-        assert file("../espeak-ng-data/en_dict").exists()
-        assert file("../espeak-ng-data/intonations").exists()
-        assert file("../espeak-ng-data/phondata").exists()
-        assert file("../espeak-ng-data/phondata-manifest").exists()
-        assert file("../espeak-ng-data/phonindex").exists()
-        assert file("../espeak-ng-data/phontab").exists()
-        // The archive is zipped from the generated tree, not the source
-        // tree above: fail fast when the generator produced nothing.
+        // Assert on the generated tree, not the source tree: createDataArchive
+        // zips build/generated/espeak-ng-data/, and the ../espeak-ng-data
+        // sources only ever hold lang/ and voices/ (asserting on them failed
+        // every fresh-clone build).
         assert file("build/generated/espeak-ng-data/en_dict").exists()
+        assert file("build/generated/espeak-ng-data/intonations").exists()
+        assert file("build/generated/espeak-ng-data/phondata").exists()
+        assert file("build/generated/espeak-ng-data/phondata-manifest").exists()
+        assert file("build/generated/espeak-ng-data/phonindex").exists()
+        assert file("build/generated/espeak-ng-data/phontab").exists()
     }
 }
 

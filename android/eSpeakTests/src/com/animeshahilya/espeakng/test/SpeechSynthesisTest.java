@@ -268,7 +268,7 @@ public class SpeechSynthesisTest extends TextToSpeechTestCase
                 context = "[gender]";
                 assertThat(voice.gender, is(data.gender));
                 context = "[locale:language]";
-                assertThat(voice.locale.getLanguage(), is(data.ianaLanguage));
+                assertThat(voice.locale.getLanguage(), is(VoiceData.expectedEngineLanguage(data)));
                 context = "[locale:iso3language]";
                 assertThat(voice.locale.getISO3Language(), is(data.javaLanguage));
                 context = "[locale:country]";

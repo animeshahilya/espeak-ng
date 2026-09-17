@@ -2079,7 +2079,7 @@ public class TtsService extends TextToSpeechService {
             for (Voice voice : voices) {
                 mAvailableVoices.put(voice.name, voice);
             }
-            if (DEBUG) {
+            if (DEBUG && mPreferences != null) {
                 Set<String> selected = LanguageSettings.getSelectedLanguages(mPreferences);
                 Log.i(TAG, "Rebuilt voices: selected=" + (selected == null ? "ALL" : selected.size()) +
                         ", exposed=" + mAvailableVoices.size());

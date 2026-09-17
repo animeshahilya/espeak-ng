@@ -71,6 +71,10 @@ public class BilingualAndDictionaryDeviceTest {
     @Before
     public void setUp() {
         mContext = ApplicationProvider.getApplicationContext();
+        // This class drives SpeechSynthesis directly (no TTS bind), so make
+        // sure the voice data is extracted first regardless of test order -
+        // otherwise enumeration/synthesis see an empty data dir.
+        CheckVoiceData.ensureVoiceData(mContext);
         mEngine = new SpeechSynthesis(mContext, mCallback);
     }
 

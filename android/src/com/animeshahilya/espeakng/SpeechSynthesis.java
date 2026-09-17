@@ -223,8 +223,12 @@ public class SpeechSynthesis {
                 }
             }
 
-            // Cache the filtered voice list as an immutable snapshot.
-            sCachedVoices = Collections.unmodifiableList(voices);
+            // Cache the filtered voice list as an immutable snapshot - but
+            // never an empty one: empty means the voice data isn't extracted
+            // yet, and caching it would stick until the next engine reload.
+            if (!voices.isEmpty()) {
+                sCachedVoices = Collections.unmodifiableList(voices);
+            }
             return new ArrayList<Voice>(voices);
         }
     }
