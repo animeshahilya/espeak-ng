@@ -1128,3 +1128,30 @@ $	dOl@r
 सेहरा	s'e:H*,a:
 हलवाई	Hlv'a:i
 हवाई	Hv'a:i
+
+
+// Medial schwa under-retention fixes (Category D - espeak was missing a
+// vowel entirely, forming an unattested consonant cluster). Found by an
+// empirical cluster-legality check: the resulting cluster wasn't attested
+// anywhere in the rest of this fork's correctly-matching output against the
+// aryamanarora/schwa-deletion ground truth, and had exactly one valid split
+// point into two attested clusters - see project memory for the algorithm
+// (informed by Narasimhan/Sproat/Kiraz 2004's published Hindi schwa-deletion
+// rule and its consonant-cluster-legality filter).
+अलंकार	,Vl@Nk'a:r
+असहाय	,Vs@H'a:j
+इत्तफाक	,It:@p#'a:k
+ऊबड़-खाबड़	'ubr.@k#'a:b@r.
+औषधालय	,O:s.@d#'a:l,Ej
+चिरंजीव	c,Ir@n^J'i:v
+जीवन-वृत्तांत	J'i:vn@vrIt:'a~t
+तितर-बितर	t'Itr@b'It@r
+दृढ़तापूर्वक	dr,Ir.h@ta:p'u:rv@k
+नामंज़ूर	n,a:m@n^z'u:r
+नौकर-चाकर	n'O:kr@c'a:k@r
+फ़ायर-ब्रिगेड	f'a:jr@brIg'e:d.
+बेवक़ूफ़	b,e:v@q'u:f
+मद्दगार	m,@d:@g'a:r
+शब्दभंडार	S,@bd@b#@n.d.'a:r
+सुगठित	s'Ug@t.#,It
+हवाई-जहाज़	Hv'a:iJ@H'a:z
