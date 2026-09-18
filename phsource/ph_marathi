@@ -60,8 +60,61 @@ phoneme tS
   WAV(ustop/tsh_unasp)
 endphoneme
 
-phoneme v 
+phoneme v
   import_phoneme base1/v
   voicingswitch f
+endphoneme
+
+
+// Marathi retains the word-final inherent vowel far more than Hindi does
+// (confirmed via a 4,872-word WikiPron ground-truth check: 408/670
+// mismatches were exactly this pattern - espeak wrongly deleting a
+// word-final schwa that real Marathi keeps, e.g. "ank" -> should stay
+// "anka"). hi_base's V phoneme unconditionally deletes word-final
+// schwa - deliberately NOT carried over here. Medial schwa-deletion
+// logic (prev2PhW/nextVowel) is kept unchanged since it isn't what the
+// ground-truth check flagged as broken.
+phoneme V
+  vwl flag1 starttype #@  endtype #@
+  length 140
+
+  IF thisPh(isWordStart) THEN
+    FMT(vowel/V_3)
+    RETURN
+  ENDIF
+
+  IF thisPh(isNotStressed) THEN
+    length 130
+
+    IF prevPh(H) THEN
+      ChangePhoneme(@)
+    ENDIF
+
+    IF prev2PhW(isVowel) AND NOT nextVowel(isFlag1) THEN
+      IF thisPh(isFinalVowel) AND nextPhW(isNotVowel) THEN
+        // don't delete schwa before a word-final consonant
+      ELSE
+        ChangePhoneme(NULL)
+      ENDIF
+    ENDIF
+
+    IF prevPh(isPalatal) AND NOT nextPh(H) THEN
+      ChangePhoneme(@3)
+    ELSEIF prevPh(r) THEN
+      ChangePhoneme(@2)
+    ELSE
+      ChangePhoneme(@)
+    ENDIF
+  ENDIF
+
+  IF nextPh(H) OR prevPh(H) THEN
+    FMT(vowel/@_low)
+  ENDIF
+
+  IF prevPh(w) THEN
+    FMT(vowel/V_4)
+  ENDIF
+
+  FMT(vowel/V_3)
 endphoneme
 

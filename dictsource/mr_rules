@@ -228,200 +228,158 @@ C)        ॣ          l-:
 
 .group क
         क          kV
-        क (_       k
         क (B       k
         क (्य      k:
         क़         qV
-        क़ (_      q
         क़ (B      q
 
         क्क         k:V   // kk -> k:
-        क्क (_      k:
         क्क (B      k:
         क्ष          kSV
-        क्ष (_       kS
         क्ष (B       kS
         
 .group ख
         ख          k#V
-        ख (_       k#
         ख (B       k#
         ख़         xV
-        ख़ (_      x
         ख़ (B      x
 
 .group ग
         ग          gV
-        ग (_       g
         ग (B       g
         ग़         QV
-        ग़ (_      Q
         ग़ (B      Q
 
 //new
         ग्ग         g:V   // GG -> g:
-        ग्ग (_      g:
         ग्ग (B      g:
 
 .group घ
         घ          g#V
-        घ (_       g#
         घ (B       g#
 
 .group ङ
         ङ          NV
-        ङ (_       N
         ङ (B       N
      ्) ङ (_       N@
 
 .group च
         च          cV
-        च (_       c
         च (B       c
         च (्य      c:
 
 //New
         च्च          c:V   // cc -> c:
-        च्च (_      c:
         च्च (B      c:
 
 //new
         च्छ          c#:V    // c#c# -> c#:
-        च्छ (_       c#:
         च्छ (B       c#:
       
 .group छ
         छ          c#V
-        छ (_       c#
         छ (B       c#
 
 .group ज
         ज          JV
-        ज (_       J
         ज (B       J
         ज़         zV
-        ज़ (_      z
         ज़ (B      z
 //new
         ज्ज         J:V   // JJ -> J:
-        ज्ज (_      J:
         ज्ज (B      J:
         
          ज्ञ           gjV
-        ज्ञ (_       gj
         ज्ञ (B       gj
 
 .group झ
         झ          J#V
-        झ (_       J#
         झ (B       J#
 
 
 .group ञ
         ञ          n^V
-        ञ (_       n^
         ञ (B       n^
      ्) ञ (_       n^@
 
 
 .group ट
         ट          t.V
-        ट (_       t.
         ट (B       t.
         ट (्य      t.:
 
         ट्ट          t.:V    // t.t. -> t.:
-        ट्ट (_       t.:
         ट्ट (B       t.:
 
         ट्ठ          t.#:V    // t.t.# -> t.#:
-        ट्ठ (_       t.#:
         ट्ठ (B       t.#:
 
 .group ठ
         ठ          t.#V
-        ठ (_       t.#
         ठ (B       t.#
         
         ठ्ठ          t.#:V   // t.#t.# -> t.#:
-        ठ्ठ (_       t.#:
         ठ्ठ (B       t.#:
         
 .group ड
         ड          d.V
-        ड (_       d.
         ड (B       d.
 
         ड्ड          d.:V   // d. d. -> d.:
-        ड्ड (_       d.:
         ड्ड (B      d.:
 
         ड्ढ          d.#:V    // d#d# -> d#:
-        ड्ढ (_       d.#:
         ड्ढ (B       d.#:
 
 
         ड़         r.V
-        ड़ (_       r.
         ड़ (B      r.
 
 .group ढ
         ढ          d.#V
-        ढ (_       d.#
         ढ (B       d.#
         ढ़         r.hV      // nukta  (should retroflex flap)
-        ढ़ (_       r.h
         ढ़ (B      r.h       // nukta
 
 .group ण
         ण          n.V
-        ण (_       n.
         ण (B       n.
      ्) ण (_       n.@
 
 .group त
         त          tV
-        त (_       t
         त (B       t
         त (्य      t:
 
         त्त          t:V   // tt -> t:
-        त्त (_       t:
         त्त (B       t:
 //new
         त्थ          t#:V    // t#:t#: -> t#:
-        त्थ (_       t#:
         त्थ (B       t#:
 
        
 .group थ
         थ          t#V
-        थ (_       t#
         थ (B       t#
 
 .group द
         द          dV
-        द (_       d
         द (B       d
 
 //new
         द्द         d:V   // dd -> d:
-        द्द (_      d:
         द्द (B      d:
 
         द्ध          d#:V    // d#d# -> d#:
-        द्ध (_       d#:
         द्ध (B       d#:
 
 
 .group ध
         ध          d#V
-        ध (_       d#
         ध (B       d#
 
 .group न
         न          nV
-        न (_       n
         न (B       n
      ्) न (_       n@
     र्) न (_       n         // r +virama
@@ -433,35 +391,28 @@ C)        ॣ          l-:
 
 .group प
         प          pV
-        प (_       p
         प (B       p
         प (्य      p:
         
         प्प         p:V      // pp -> p:
-        प्प (_      p:
         प्प (B      p:
 
 .group फ
         फ          p#V
-        फ (_       p#
         फ (B       p#
         फ़         fV
-        फ़ (_      f
         फ़ (B      f
 
 .group ब
         ब          bV
-        ब (_       b
         ब (B       b
 
 .group भ
         भ          b#V
-        भ (_       b#
         भ (B       b#
 
 .group म
         म          mV
-        म (_       m
         म (B       m
      ्) म (_       m@
     र्) म (_       m         // r +virama
@@ -469,7 +420,6 @@ C)        ॣ          l-:
 
 .group य
         य          jV
-        य (_       j
         य (B       j
      C) य (_       Ej     // [Ej] not [@j]
      ्) य (_       j@
@@ -477,36 +427,30 @@ C)        ॣ          l-:
 .group र
         र          rV
         र (B       r
-        र (_       r
      ्) र (_       r@
 
 .group ऱ             // rra
         ऱ          rV        // (temporary) same as [r]  should this be [r.] or perhaps [z.] ?
-        ऱ (_       r
         ऱ (B       r
      ्) ऱ (_       r@
 
 .group ल
         ल          lV
-        ल (_       l
         ल (B       l
      ्) ल (_       l@
 
 .group ळ
         ळ          l.V
-        ळ (_       l.
         ळ (B       l.
      ्) ळ (_       l.@
 
 .group ऴ
         ऴ          l.V       // (temporary) same as [l.]
-        ऴ (_       l.
         ऴ (B       l.
      ्) ऴ (_       l.@
 
 .group व
         व          vV
-        व (_       v
         व (B       v
 //     _) व          wV
 //     _) व (B       w
@@ -516,22 +460,18 @@ C)        ॣ          l-:
 
 .group श
         श          SV
-        श (_       S
         श (B       S
 
 .group ष
         ष          s.V 
-        ष (_       s.
         ष (B       s.
 
 .group स
         स          sV
-        स (_       s
         स (B       s
 
 .group ह
         ह          HV
-        ह (_       H
         ह (B       H
 
 
@@ -600,42 +540,34 @@ C)	्
 
 .group क़   // qa
         क़          qV
-        क़ (_       q
         क़ (B       q
 
 .group ख़   // khha
         ख़          xV
-        ख़ (_       x
         ख़ (B       x
 
 .group ग़    // ghha
         ग़          QV
-        ग़ (_       Q
         ग़ (B       Q
 
 .group ज़    // za
         ज़          zV
-        ज़ (_       z
         ज़ (B       z
 
 .group ड़    // dddha   (should retroflex flap ?)
         ड़          r.V
-        ड़ (_       r.
         ड़ (B       r.
 
 .group ढ़    // rha  (aspirated version of dddha)
         ढ़          r.hV
-        ढ़ (_       r.h
         ढ़ (B       r.h
 
 .group फ़    // fa
         फ़          fV
-        फ़ (_       f
         फ़ (B       f
 
 .group य़    // yya
         य़          jV
-        य़ (_       j
         य़ (B       j
 
 .group ॠ    // rr
