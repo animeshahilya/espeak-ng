@@ -1263,3 +1263,32 @@ $	dOl@r
 पहचाना	pH@c'a:na:
 स्व	sv@
 आत्म	'a:tm
+
+
+// Category A medial schwa under-retention fixes, same cluster-legality
+// technique as the Category D block above, applied to words whose missing
+// vowel is medial rather than word-final. Landing rate to be confirmed via
+// full-corpus verification (this batch's whitelist coverage is thinner
+// than Category D's - some insertion points may be wrong if the true
+// legal split wasn't in the empirical whitelist yet).
+अनुभवी	'VnUb#@vi;
+औषधि	'O:s.@d#,I
+कार्यकर्ता	k'a:rj@3kr@ta:
+चढ़ता	c'Vr.h@t,a:
+ज़्यादती	zj'a:d@t,i:
+टिप्पणी	t.'Ip:@n.,i:
+टीका-टिप्पणी	t.'i:ka:t.'Ip:@n.,i:
+दृढ़ता	dr'Ir.h@t,a:
+पुनःस्थापना	p,UnH@st#'a:pn,a:
+पूर्ववर्ती	p'u:rv@vr@ti
+फ़िलासफ़ी	fIl'a:s@f,i:
+बढ़ता	b'Vr.h@t,a:
+बेवक़ूफ़ी	b,e:v@q'u:fi
+मुक़द्दमा	mUq'Vd:@m,a:
+शौक़या	S'O:q@j,a:
+स्वेच्छया	sv'e:c#:@j,a:
+
+कबूतर	k@b'u:tr@
+खाना	k#'a:na:
+टेढ़	t.'e:r.h@
+मेढ़ा	m'e:r.ha:
