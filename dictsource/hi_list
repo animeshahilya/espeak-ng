@@ -1155,3 +1155,87 @@ $	dOl@r
 शब्दभंडार	S,@bd@b#@n.d.'a:r
 सुगठित	s'Ug@t.#,It
 हवाई-जहाज़	Hv'a:iJ@H'a:z
+
+
+// Previously-ambiguous medial schwa over-retention fixes (Category B/C
+// words with 2-3 candidate schwas), disambiguated via the same empirical
+// cluster-legality check as the Category D block above: try removing each
+// non-word-final candidate, keep the word only if exactly one removal
+// leaves no unattested consonant cluster. Word-final candidates are
+// deliberately excluded from this check (removing something from the very
+// end trivially never creates an illegal medial cluster, so it looks
+// spuriously "clean" regardless of whether word-final retention is
+// actually correct - a real bug caught via spot-check before shipping).
+अक्लमंद	'Vklm,@nd
+अड़सठ	'Vr.s,@t.#
+अनगढ़	'Vng,@r.h
+असहयोग	,Vs@Hj'o:g
+इकसठ	'Iks,@t.#
+इजारबंद	IJ'a:*b,@nd
+उनसठ	'Uns,@t.#
+उपसर्ग	'Ups,@*g
+कमरबंद	k'Vm@*b@nd
+गवर्नमेंट	gv@rn@m'e~:t.
+गुनहगार	g,UnH@g'a:r
+चखचख	c'Vk#@ck#
+जंगलात	J,@3Ngl'a:t
+जल्दबाज़	J,@3ldb'a:z
+टिनबंद	t.'Inb,@nd
+तनख़ाहदार	t,@nx,a:Hd'a:r
+तहक़ीक़ात	tH@qiq'a:t
+तिरसठ	t'Irs,@t.#
+दिल-बहलाव	d'Ilb,@Hl'a:v
+नज़रबंद	n'Vz@*b@nd
+पहचान	pH@c'a:n
+फलस्वरूप	p#l@sv@*'u:p
+बिस्तरबंद	b'Ist@*b@nd
+मनगढ़ंत	m'Vng,@r.h@nt
+राजपथ	r'a:Jp,@t#
+राजवंश	r'a:Jv,@n^S
+लथपथ	l'Vt#p,@t#
+शतरंज	S'Vtr,@2n^J
+सड़सठ	s'Vr.s,@t.#
+सतसंग	s'Vts,@Ng
+सरसठ	s'Vrs,@t.#
+सराहनीय	s,@*a:Hn'i:j
+सहयोग	s,@Hj'o:g
+सिरदर्द	s'I*d,@*d
+हथियारबंद	H,@t#Ij'a:*b,@nd
+अर्धसरकारी	,V*d#s,@*k'a:*i;
+असपष्टता	,Vsp'Vs.t.@t,a:
+आत्मनिर्भरता	'a:tmn,I*b#@*ta:
+इकतरफा	'Ikt,@*p#,a:
+उपलक्ष्य	,Upl'VkSj@-
+एकतरफा	'e:kt,@*p#,a:
+कचहरी	k'Vc@H*i
+कराहना	k@*'a:Hn,a:
+क्रमसंख्या	kr,@2ms'VNk#ja:
+गोरखधंधा	g,o:*k#@d#'Vnd#a:
+चितकबरा	c'Itk,@br,a:
+जल्दबाजी	J,@3ldb'a:Ji
+ज़हरीला	z,@H*'i:la:
+जाना-पहचाना	J'a:na:pH@c'a:na:
+टहलाना	t.,@Hl'a:na:
+ठहराना	t.#,@H*'a:na:
+तलहटी	t'VlH,@t.i
+त्यागपत्र	t:j,a:gp'Vtr@-
+नवरत्न	nv@*'Vtn@-
+पगडंडी	p,@gd.'Vn.d.i
+परतंत्र	p,@*t'Vntr@-
+परतंत्रता	p,@*t'Vntr@2t,a:
+पहचानना	pH@c'a:nn,a:
+पहुँचना	pH'u~nc@n,a:
+फहराना	p#,@H*'a:na:
+बदहज़मी	b'VdH,@zm,i:
+बहक़ाना	bH@q'a:na:
+मज़हबी	m'Vz@Hbi
+मसहरी	m'Vs@H*i
+मानपत्र	m,a:np'Vtr@-
+राजपत्र	r,a:Jp'Vtr@-
+लोकतंत्र	l,o:kt'Vntr@-
+शराबबंदी	S,@*a:bb'Vndi
+सराहना	s@*'a:Hn,a:
+सहकारिता	s,@Hk'a:*It,a:
+सहकारी	s,@Hk'a:*i
+सहयोगी	s,@Hj'o:gi
+सहलाना	s,@Hl'a:na:
