@@ -5,21 +5,50 @@ phoneme +   // high tone, use after a vowel
 endphoneme
 
 phoneme @
-  vwl  starttype #@  endtype #@
+  vwl flag1 starttype #@  endtype #@
   length 130
   IF nextPh(H) THEN
     FMT(vowel/@_low)
   ENDIF
   FMT(vowel/@_bck)
 endphoneme
- 
+
+// Schwa deletion, adapted from hi_base's V phoneme (same Ohala-derived rule
+// applies to Punjabi - see aryamanarora/schwa-deletion's own ACL 2020 paper
+// title, "Schwa Deletion in Hindi and Punjabi"). The original version of
+// this phoneme had NO deletion logic at all - every consonant's inherent
+// vowel was unconditionally retained, which is what actually explained
+// Punjabi's poor (60.97%) baseline match rate against real Punjabi
+// pronunciation data, not scattered per-word bugs.
 phoneme V
-  vwl  starttype #@  endtype #@
+  vwl flag1 starttype #@  endtype #@
   length 130
-  ChangeIfNotStressed(@)
+
+  IF thisPh(isWordStart) THEN
+    FMT(vowel/V_3)
+    RETURN
+  ENDIF
+
+  IF thisPh(isNotStressed) THEN
+    IF thisPh(isWordEnd) AND NOT thisPh(isFirstVowel) THEN
+      ChangePhoneme(NULL)
+    ENDIF
+
+    IF prev2PhW(isVowel) AND NOT nextVowel(isFlag1) THEN
+      IF thisPh(isFinalVowel) AND nextPhW(isNotVowel) THEN
+        // don't delete schwa before a word-final consonant
+      ELSE
+        ChangePhoneme(NULL)
+      ENDIF
+    ENDIF
+
+    ChangePhoneme(@)
+  ENDIF
+
   IF nextPh(H) THEN
     FMT(vowel/@_low)
   ENDIF
+
   FMT(vowel/V_3)
 endphoneme
 
