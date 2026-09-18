@@ -509,7 +509,6 @@ $	dOl@r
 अहितकर	'EHIt,@kr
 आग्रहपूर्वक	,a:gr@2H@p'u:rvk
 आजकल	'a:J@3kl
-आत्म-	'a:tm
 आत्मत्याग	'a:tmt:j,a:g
 आत्मनिर्भर	'a:tm@n,I*b#r
 आत्मबोध	'a:tmb,o:d#
@@ -752,7 +751,6 @@ $	dOl@r
 क्रुद्ध	kr'Ud#:@
 क्षुब्ध	kS'Ubd#@
 खड्ड	k#'Vd.:@
-गड्ड-मड्ड	g'Vd.:m'Vd.:@
 गर्भ	g'V*b#@
 गर्व	g'Vrv@
 गिद्ध	g'Id#:@
@@ -807,7 +805,6 @@ $	dOl@r
 ध्वस्त	d#v'Vst@
 नब्ज़	n'Vbz@
 नष्ट	n'Vs.t.@
-नाम-पट्ट	n'a:mp'Vt.:@
 नामर्द	n'a:m@*d@
 निंदनीय	n,i~dn'i:j@
 निःशुल्क	n'IHSUlk@
@@ -842,7 +839,6 @@ $	dOl@r
 पुष्प	p'Us.p@
 पुस्तकाध्यक्ष	p,Ust@k'a:d#j@3kS@
 पूर्व	p'u:rv@
-पूर्व-	p'u:rv@
 पृष्ठ	pr'Is.t.#@
 प्रतिद्वंद्व	pr@2t'Idv@ndv@
 प्रतिनिधित्व	pr'VtIn,Id#Itv@
@@ -898,7 +894,6 @@ $	dOl@r
 रिक्त	r'Ikt@
 रुष्ट	r'Us.t.@
 लट्ठ	l'Vt.#:@
-लाठी-चार्ज	l'a:t.#ic'a:*J@
 लिपिबद्ध	l'IpIb,@d#:@
 लिप्त	l'Ipt@
 लुप्त	l'Upt@
@@ -968,7 +963,6 @@ $	dOl@r
 स्तब्ध	st'Vbd#@
 स्पर्श	sp'VrS@
 स्पष्ट	sp'Vs.t.@
-स्व-	sv@
 स्वच्छ	sv'Vc#:@
 स्वर्ग	sv'V*g@
 स्वर्गीय	sv@*g'i:j@
@@ -1144,11 +1138,8 @@ $	dOl@r
 ऊबड़-खाबड़	'ubr.@k#'a:b@r.
 औषधालय	,O:s.@d#'a:l,Ej
 चिरंजीव	c,Ir@n^J'i:v
-जीवन-वृत्तांत	J'i:vn@vrIt:'a~t
-तितर-बितर	t'Itr@b'It@r
 दृढ़तापूर्वक	dr,Ir.h@ta:p'u:rv@k
 नामंज़ूर	n,a:m@n^z'u:r
-नौकर-चाकर	n'O:kr@c'a:k@r
 फ़ायर-ब्रिगेड	f'a:jr@brIg'e:d.
 बेवक़ूफ़	b,e:v@q'u:f
 मद्दगार	m,@d:@g'a:r
@@ -1184,7 +1175,6 @@ $	dOl@r
 तनख़ाहदार	t,@nx,a:Hd'a:r
 तहक़ीक़ात	tH@qiq'a:t
 तिरसठ	t'Irs,@t.#
-दिल-बहलाव	d'Ilb,@Hl'a:v
 नज़रबंद	n'Vz@*b@nd
 पहचान	pH@c'a:n
 फलस्वरूप	p#l@sv@*'u:p
@@ -1214,7 +1204,6 @@ $	dOl@r
 चितकबरा	c'Itk,@br,a:
 जल्दबाजी	J,@3ldb'a:Ji
 ज़हरीला	z,@H*'i:la:
-जाना-पहचाना	J'a:na:pH@c'a:na:
 टहलाना	t.,@Hl'a:na:
 ठहराना	t.#,@H*'a:na:
 तलहटी	t'VlH,@t.i
@@ -1239,3 +1228,38 @@ $	dOl@r
 सहकारी	s,@Hk'a:*i
 सहयोगी	s,@Hj'o:gi
 सहलाना	s,@Hl'a:na:
+
+
+// Fixed hyphenated-compound entries: the engine treats "-" as a word
+// separator during tokenization, so a compound key spanning the hyphen is
+// never reached at lookup time - confirmed via direct -X trace (e.g.
+// "तितर-बितर" resolves as two independently-looked-up words "तितर" and
+// "बितर", never the compound key). Split into per-word entries instead.
+// Trailing-hyphen "prefix" forms (स्व-, आत्म-, पूर्व-) had the same problem
+// from the other direction - the trailing "-" is stripped as punctuation
+// before lookup, so only the bare form without it is ever looked up.
+गड्ड	g'Vd.:
+मड्ड	m'Vd.:@
+चढ़ावा	c@r.h'a:va:
+बढ़ावा	br.h'a:va:@
+नाम	n'a:m
+पट्ट	p'Vt.:@
+लाठी	l'a:t.#i
+चार्ज	c'a:*J@
+ऊबड़	'ubr.@
+खाबड़	k#'a:b@r.
+जीवन	J'i:vn@
+वृत्तांत	vrIt:'a~t
+तितर	t'Itr@
+बितर	b'It@r
+नौकर	n'O:kr@
+चाकर	c'a:k@r
+फ़ायर	f'a:jr@
+ब्रिगेड	brIg'e:d.
+जहाज़	J@H'a:z
+दिल	d'Il
+बहलाव	b,@Hl'a:v
+जाना	J'a:na:
+पहचाना	pH@c'a:na:
+स्व	sv@
+आत्म	'a:tm
