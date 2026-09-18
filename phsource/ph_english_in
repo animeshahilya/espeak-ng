@@ -55,7 +55,13 @@ phoneme 3
   vwl  starttype #@  endtype #@
   unstressed
   length 140
-  IF NOT nextPh(r) AND NOT nextPh(r.) THEN
+  // nextPhW (word-scoped), not nextPh: the guard exists only to avoid a
+  // redundant double-r when the word's OWN spelling already places an r
+  // right after (within the same word) - it must not suppress this word's
+  // own trailing r just because the NEXT WORD happens to start with one
+  // (e.g. "teacher river" was losing teacher's own r entirely - a real,
+  // audible bug, not cosmetic - found via direct --ipa testing).
+  IF NOT nextPhW(r) AND NOT nextPhW(r.) THEN
     AppendPhoneme(r.)
   ENDIF
   FMT(vowel/@)
@@ -67,7 +73,7 @@ endphoneme
 phoneme 3:
   vwl  starttype #@  endtype #@
   length 210
-  IF NOT nextPh(r) AND NOT nextPh(r.) THEN
+  IF NOT nextPhW(r) AND NOT nextPhW(r.) THEN
     AppendPhoneme(r.)
   ENDIF
   FMT(vowel/3_en)
