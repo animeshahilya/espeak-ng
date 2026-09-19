@@ -293,6 +293,8 @@ $textmode
 ⌚	腕時計								// [231A]
 ⌛	砂時計								// [231B]
 ⌨	キーボード								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	取り出しボタン								// [23CF] text|emoji
 ⏩	早送りボタン								// [23E9]
 ⏪	早戻しボタン								// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	右矢印								// [27A1] text|emoji
 ➰	ループ								// [27B0]
 ➿	ダブルループ								// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

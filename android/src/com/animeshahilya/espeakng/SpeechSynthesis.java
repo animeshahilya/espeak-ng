@@ -337,8 +337,14 @@ public class SpeechSynthesis {
     /** Which punctuation characters to announce. */
     public final Parameter Punctuation = new Parameter(5, 0, 2, UnitType.Punctuation);
 
-    /** Capital letters indicator (0=none, 1=sound icon, 2=pitch raise, 3=speak 'capital'). */
-    public final Parameter Capitals = new Parameter(6, 0, 3, UnitType.Percentage);
+    /**
+     * Capital letters indicator: 0=none, 1=sound icon, 2=spell out ("capital"),
+     * 3 or higher=raise the word's pitch by that many Hz. The engine has no
+     * fixed ceiling on the Hz amount; 60 is a generous but sane UI limit -
+     * well past where a raise stops reading as emphasis and starts sounding
+     * like a glitch.
+     */
+    public final Parameter Capitals = new Parameter(6, 0, 60, UnitType.Percentage);
 
     /** Word gap (pause between words in 10mS units, 0=normal). */
     public final Parameter WordGap = new Parameter(7, 0, 50, UnitType.Percentage);

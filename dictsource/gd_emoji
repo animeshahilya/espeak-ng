@@ -293,6 +293,8 @@ $textmode
 ⌚	uaireadair							// [231A]
 ⌛	glainne-uarach dheiseil						// [231B]
 ⌨	meur-chlàr							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	putan Gluais a-mach					// [23CF] text|emoji
 ⏩	putan Toinn air adhart					// [23E9]
 ⏪	putan Air ais gu luath					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	saighead dhan taobh deas				// [27A1] text|emoji
 ➰	lùb dhualach							// [27B0]
 ➿	lùb dhualach dhùbailte						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

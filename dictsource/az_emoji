@@ -293,6 +293,8 @@ $textmode
 ⌚	qol saatı							// [231A]
 ⌛	qum saatı							// [231B]
 ⌨	klaviatura							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	çıxart düyməsi							// [23CF] text|emoji
 ⏩	sürətli irəliyə çək düyməsi					// [23E9]
 ⏪	sürətlə geriyə çək düyməsi					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	sağa ox								// [27A1] text|emoji
 ➰	spiral ilmə							// [27B0]
 ➿	ikiqat spiral ilmə						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

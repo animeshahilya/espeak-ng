@@ -293,6 +293,8 @@ $textmode
 ⌚	saa								// [231A]
 ⌛	shisha								// [231B]
 ⌨	kibodi								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	kitufe cha kutoa						// [23CF] text|emoji
 ⏩	kitufe cha kupeleka mbele kwa kasi				// [23E9]
 ⏪	kitufe cha kurudisha nyuma kwa kasi				// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	mshale unaoelekeza kulia					// [27A1] text|emoji
 ➰	kitanzi kilichopinda						// [27B0]
 ➿	kitanzi kilichopinda mara mbili					// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

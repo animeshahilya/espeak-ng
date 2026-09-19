@@ -293,6 +293,8 @@ $textmode
 ⌚	erlojua								// [231A]
 ⌛	harea-erloju							// [231B]
 ⌨	teklatua							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	ateratzeko botoia						// [23CF] text|emoji
 ⏩	aurrera egiteko botoia						// [23E9]
 ⏪	atzera egiteko botoia						// [23EA]
@@ -517,6 +519,7 @@ $textmode
 ➡	eskuinera gezia							// [27A1] text|emoji
 ➰	malgukia							// [27B0]
 ➿	malguki bikoitza						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

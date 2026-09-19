@@ -232,7 +232,7 @@ void print_dictionary_flags(unsigned int *flags, char *buf, int buf_len)
 	}
 }
 
-char *DecodeRule(const char *group_chars, int group_length, char *rule, int control, char *output)
+char *DecodeRule(const char *group_chars, int group_length, char *rule, int control, char *output, int output_size)
 {
 	// Convert compiled match template to ascii
 
@@ -362,7 +362,7 @@ char *DecodeRule(const char *group_chars, int group_length, char *rule, int cont
 	*p = 0;
 
 	p = output;
-	p_end = p + sizeof(output) - 1;
+	p_end = p + output_size - 1;
 
 	if (linenum > 0) {
 		sprintf(p, "%5d:\t", linenum);
@@ -382,7 +382,18 @@ char *DecodeRule(const char *group_chars, int group_length, char *rule, int cont
 	}
 	*p = 0;
 
-	buf[p_end - p] = 0; // prevent overflow in output[]
+	// prevent overflow in output[]: p_end-p can't go negative in practice now
+	// that p_end is derived from the caller's real buffer size (output_size)
+	// rather than sizeof(output), which on a pointer parameter was always
+	// sizeof(char*) regardless of the buffer the caller actually passed -
+	// this used to make p_end land a few bytes into the buffer, so the
+	// negative index here corrupted stack memory ahead of buf[], and the
+	// unbounded strcat() below then overran output[] itself. Still clamp
+	// defensively in case the fixed-length prefixes above ever grow.
+	ix = p_end - p;
+	if (ix < 0)
+		ix = 0;
+	buf[ix] = 0;
 	strcat(p, buf);
 	ix = strlen(output);
 	while (ix < 8)

@@ -293,6 +293,8 @@ $textmode
 ⌚	手錶								// [231A]
 ⌛	沙漏完成								// [231B]
 ⌨	鍵盤								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	退出按鈕								// [23CF] text|emoji
 ⏩	快進按鈕								// [23E9]
 ⏪	快速回帶按鈕								// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	向右箭咀								// [27A1] text|emoji
 ➰	捲曲圈								// [27B0]
 ➿	雙捲曲圈								// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

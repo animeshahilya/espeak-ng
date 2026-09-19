@@ -293,6 +293,8 @@ $textmode
 ⌚	jam tangan							// [231A]
 ⌛	jam pasir							// [231B]
 ⌨	keyboard							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	tombol keluarkan						// [23CF] text|emoji
 ⏩	tombol maju cepat						// [23E9]
 ⏪	tombol mundur cepat						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	tanda panah kanan						// [27A1] text|emoji
 ➰	untaian bergelombang						// [27B0]
 ➿	untaian bergelombang ganda					// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

@@ -293,6 +293,8 @@ $textmode
 ⌚	montre								// [231A]
 ⌛	sablier								// [231B]
 ⌨	clavier								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	bouton éjecter							// [23CF] text|emoji
 ⏩	bouton avance rapide						// [23E9]
 ⏪	bouton retour rapide						// [23EA]
@@ -516,6 +518,7 @@ $textmode
 ➡	flèche droite							// [27A1] text|emoji
 ➰	boucle								// [27B0]
 ➿	double boucle							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

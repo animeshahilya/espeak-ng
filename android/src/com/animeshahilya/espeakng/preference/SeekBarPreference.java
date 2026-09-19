@@ -76,6 +76,8 @@ public class SeekBarPreference extends DialogPreference
         private boolean hasRateBoost;
         private boolean boost;
         private boolean savedBoost;
+        /** How far boost multiplies the rate; see VoiceSettings#getRateBoostMultiplier(). */
+        private int boostMultiplier = VoiceSettings.RATE_BOOST_MULTIPLIER;
 
         private SeekBar mSeekBar;
         private TextView mValueText;
@@ -100,11 +102,12 @@ public class SeekBarPreference extends DialogPreference
             this.formatter = formatter;
         }
 
-        public void enableRateBoost(boolean enabled)
+        public void enableRateBoost(boolean enabled, int multiplier)
         {
             hasRateBoost = true;
             boost = enabled;
             savedBoost = enabled;
+            boostMultiplier = multiplier;
         }
     }
 
@@ -325,8 +328,8 @@ public class SeekBarPreference extends DialogPreference
     {
         int value = parameter.current;
         if (parameter.hasRateBoost && parameter.boost) {
-            value = value * VoiceSettings.RATE_BOOST_MULTIPLIER;
-            int boostedMax = parameter.max * VoiceSettings.RATE_BOOST_MULTIPLIER;
+            value = value * parameter.boostMultiplier;
+            int boostedMax = parameter.max * parameter.boostMultiplier;
             if (value > boostedMax) {
                 value = boostedMax;
             }
@@ -363,7 +366,15 @@ public class SeekBarPreference extends DialogPreference
 
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.putString(parameter.key, Integer.toString(parameter.current));
-        if (parameter.hasRateBoost) {
+        if (parameter.hasRateBoost && mRateBoostToggleVisible) {
+            // Only write PREF_RATE_BOOST when this dialog's own checkbox is the
+            // control the user can see and touch (Wear). On phones the checkbox
+            // is hidden - parameter.boost there is just a snapshot taken when
+            // this dialog was built, and the real value lives in the standalone
+            // Rate boost preference. Without this guard, opening this dialog and
+            // hitting Cancel would silently overwrite that preference back to
+            // whatever it was when the screen was constructed, discarding any
+            // change made via the standalone checkbox in the meantime.
             editor.putBoolean(VoiceSettings.PREF_RATE_BOOST, parameter.boost);
         }
         editor.apply();

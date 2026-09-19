@@ -336,6 +336,8 @@ $textmode
 ⌚	наручные часы							// [231A]
 ⌛	песочные часы							// [231B]
 ⌨	клавиатура							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	выброс								// [23CF] text|emoji
 ⏩	перемотка вперед					// [23E9]
 ⏪	перемотка назад							// [23EA]
@@ -562,6 +564,7 @@ $textmode
 ➡	стрелка вправо							// [27A1] text|emoji
 ➰	петля								// [27B0]
 ➿	двойная петля							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

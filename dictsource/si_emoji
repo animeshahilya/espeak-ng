@@ -293,6 +293,8 @@ $textmode
 ⌚	ඔරලෝසුව								// [231A]
 ⌛	පෑතැටිය								// [231B]
 ⌨	යතුරු පුවරුව							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	පිටතට ගැනීමේ බොත්තම						// [23CF] text|emoji
 ⏩	වේග-ධාවන බොත්තම							// [23E9]
 ⏪	වේගයෙන් ආපස්සට බොත්තම						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	දකුණු ඊතලය							// [27A1] text|emoji
 ➰	රැළි ලූපය							// [27B0]
 ➿	ද්වි රැළි ලූපය							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

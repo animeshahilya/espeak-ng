@@ -293,6 +293,8 @@ $textmode
 ⌚	የእጅ ሰዓት								// [231A]
 ⌛	የሰዓት ቆጣሪ ብርጭቆ							// [231B]
 ⌨	የቁልፍ ሰሌዳ							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	አስወጣ አዝራር							// [23CF] text|emoji
 ⏩	ወደፊት አሳልፍ አዝራር							// [23E9]
 ⏪	ወደኋላ በፍጥነት መልስ አዝራር						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	ወደ ቀኝ ጠቋሚ ቀስት							// [27A1] text|emoji
 ➰	ጥቅልል ሸምቀቆ							// [27B0]
 ➿	ድርብ ጥቅልል ሸምቀቆ							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

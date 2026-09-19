@@ -266,6 +266,8 @@ $textmode
 ⌚	ur							// [231A]
 ⌛	runnið tímaglas						// [231B]
 ⌨	knappaborð						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	varpa út knappur					// [23CF]
 ⏩	spola skjótt fram knappur				// [23E9]
 ⏪	spola skjótt aftur knappur				// [23EA]
@@ -481,6 +483,7 @@ $textmode
 ➡	pílur sum peikar til høgru				// [27A1]
 ➰	bukt							// [27B0]
 ➿	dupult bukt						// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	bogin pílur sum peikar uppeftir				// [2934]
 ⤵	bogin pílur sum peikar niðureftir			// [2935]
 //⨧								// [2A27] (no translation)

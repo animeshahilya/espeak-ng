@@ -603,7 +603,15 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 formatter);
 
         if (VoiceSettings.PREF_RATE.equals(key)) {
-            voiceParam.enableRateBoost(prefs.getBoolean(VoiceSettings.PREF_RATE_BOOST, false));
+            int multiplier = VoiceSettings.RATE_BOOST_MULTIPLIER;
+            try {
+                multiplier = Integer.parseInt(prefs.getString(
+                        VoiceSettings.PREF_RATE_BOOST_MULTIPLIER,
+                        Integer.toString(VoiceSettings.RATE_BOOST_MULTIPLIER)));
+            } catch (NumberFormatException e) {
+                // Malformed value - fall back to the default multiplier
+            }
+            voiceParam.enableRateBoost(prefs.getBoolean(VoiceSettings.PREF_RATE_BOOST, false), multiplier);
         }
 
         return voiceParam;
@@ -912,11 +920,17 @@ public class TtsSettingsActivity extends PreferenceActivity {
         pref.setKey(VoiceSettings.PREF_CAPITALS);
         pref.setEntries(new CharSequence[] {
                 context.getString(R.string.capitals_pitch),
+                context.getString(R.string.capitals_pitch_moderate),
+                context.getString(R.string.capitals_pitch_strong),
                 context.getString(R.string.capitals_none),
                 context.getString(R.string.capitals_sound),
                 context.getString(R.string.capitals_say)
         });
-        pref.setEntryValues(new CharSequence[] { "3", "0", "1", "2" });
+        // The engine treats any value 3+ as "raise pitch by this many Hz" (see
+        // SpeechSynthesis.Capitals), not just a single fixed amount - these three
+        // presets give real, audibly different strengths instead of only ever
+        // being able to pick the minimum (3Hz, barely audible) raise.
+        pref.setEntryValues(new CharSequence[] { "3", "20", "40", "0", "1", "2" });
         pref.setDefaultValue(Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
         pref.setPersistent(true);
 
@@ -1129,6 +1143,36 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 context.getResources().getTextArray(R.array.intonation_style_entries),
                 context.getResources().getTextArray(R.array.intonation_style_values),
                 VoiceSettings.INTONATION_NATURAL);
+    }
+
+    /** Raw espeakINTONATION group (0-7); only meaningful when the style above is Custom. */
+    private static Preference createIntonationGroupPreference(Context context) {
+        return createListPref(context, VoiceSettings.PREF_INTONATION_GROUP,
+                R.string.setting_intonation_group, R.string.setting_intonation_group_summary,
+                context.getResources().getTextArray(R.array.intonation_group_entries),
+                context.getResources().getTextArray(R.array.intonation_group_values),
+                "0");
+    }
+
+    /**
+     * Only used while Rate boost is on; see createRateBoostPreference(). The
+     * entries are generated from VoiceSettings' own MIN/MAX constants rather
+     * than a separate hardcoded list, so this can't silently drift out of
+     * sync with what getRateBoostMultiplier() actually allows.
+     */
+    private static Preference createRateBoostMultiplierPreference(Context context) {
+        int min = VoiceSettings.RATE_BOOST_MULTIPLIER_MIN;
+        int max = VoiceSettings.RATE_BOOST_MULTIPLIER_MAX;
+        CharSequence[] entries = new CharSequence[max - min + 1];
+        CharSequence[] values = new CharSequence[max - min + 1];
+        for (int multiplier = min; multiplier <= max; multiplier++) {
+            entries[multiplier - min] = multiplier + "×";
+            values[multiplier - min] = Integer.toString(multiplier);
+        }
+        return createListPref(context, VoiceSettings.PREF_RATE_BOOST_MULTIPLIER,
+                R.string.setting_rate_boost_multiplier, R.string.setting_rate_boost_multiplier_summary,
+                entries, values,
+                Integer.toString(VoiceSettings.RATE_BOOST_MULTIPLIER));
     }
 
     private static Preference createCapitalsScopePreference(Context context) {
@@ -1927,11 +1971,36 @@ public class TtsSettingsActivity extends PreferenceActivity {
         }
         paramCategory.addPreference(ratePref);
         if (!isWatch) {
-            paramCategory.addPreference(createRateBoostPreference(context));
+            final CheckBoxPreference rateBoostPref = (CheckBoxPreference) createRateBoostPreference(context);
+            paramCategory.addPreference(rateBoostPref);
+            final Preference rateBoostMultiplierPref = createRateBoostMultiplierPreference(context);
+            rateBoostMultiplierPref.setEnabled(rateBoostPref.isChecked());
+            rateBoostPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    rateBoostMultiplierPref.setEnabled((Boolean) newValue);
+                    return true;
+                }
+            });
+            paramCategory.addPreference(rateBoostMultiplierPref);
         }
         paramCategory.addPreference(createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
         paramCategory.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
-        paramCategory.addPreference(createIntonationStylePreference(context));
+        final Preference intonationStylePref = createIntonationStylePreference(context);
+        paramCategory.addPreference(intonationStylePref);
+        final Preference intonationGroupPref = createIntonationGroupPreference(context);
+        intonationGroupPref.setEnabled(VoiceSettings.INTONATION_CUSTOM.equals(
+                getPrefs().getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL)));
+        intonationStylePref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                // Keep the usual summary-updating behavior for this list preference.
+                mOnPreferenceChanged.onPreferenceChange(preference, newValue);
+                intonationGroupPref.setEnabled(VoiceSettings.INTONATION_CUSTOM.equals(newValue));
+                return true;
+            }
+        });
+        paramCategory.addPreference(intonationGroupPref);
         paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
         CheckBoxPreference audioOptPref = createAudioOptimizerPreference(context);

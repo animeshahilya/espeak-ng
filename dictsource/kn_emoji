@@ -293,6 +293,8 @@ $textmode
 ⌚	ಗಡಿಯಾರ								// [231A]
 ⌛	ಮರಳು ಗಡಿಯಾರ							// [231B]
 ⌨	ಕೀಬೋರ್ಡ್							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	ಎಜೆಕ್ಟ್ ಬಟನ್						// [23CF] text|emoji
 ⏩	ಫಾಸ್ಟ್ ಫಾರ್ವಡ್ ಬಟನ್						// [23E9]
 ⏪	ಫಾಸ್ಟ್ ರಿವರ್ಸ್ ಬಟನ್						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	ಬಲಭಾಗದ ಬಾಣ						// [27A1] text|emoji
 ➰	ಆರಂಭಿಕ ಸುರುಳಿ							// [27B0]
 ➿	ಎರಡು ಆರಂಭಿಕ ಸುರುಳಿ						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

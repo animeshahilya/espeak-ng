@@ -293,6 +293,8 @@ $textmode
 ⌚	đồng hồ đeo tay						// [231A]
 ⌛	đồng hồ cát đã chảy hết						// [231B]
 ⌨	bàn phím							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	nút tháo							// [23CF] text|emoji
 ⏩	nút tua đi nhanh						// [23E9]
 ⏪	nút tua lại nhanh						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	mũi tên phải							// [27A1] text|emoji
 ➰	vòng lặp							// [27B0]
 ➿	vòng lặp đôi							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

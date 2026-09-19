@@ -293,6 +293,8 @@ $textmode
 ⌚	گھڑی								// [231A]
 ⌛	ریت گھڑی							// [231B]
 ⌨	کی بورڈ								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	نکالنے کا بٹن							// [23CF] text|emoji
 ⏩	تیز فارورڈ بٹن							// [23E9]
 ⏪	تیزی سے پیچھے جانے کا بٹن					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	دائیں تیر							// [27A1] text|emoji
 ➰	کرل ہوئی رسی							// [27B0]
 ➿	دوہری کرل ہوئی رسی						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

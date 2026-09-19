@@ -727,4 +727,42 @@ public class VoiceSettingsTest extends TextToSpeechTestCase
         assertThat(settings.getPitchRange(), is(VoiceSettings.DEFAULT_PITCH_RANGE));
         assertThat(settings.getCapitals(), is(VoiceSettings.DEFAULT_CAPITALS));
     }
+
+    @Test
+    public void testRateBoostMultiplier() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SpeechSynthesis synth = new SpeechSynthesis(getContext(), mCallback);
+        VoiceSettings settings = new VoiceSettings(prefs, synth);
+
+        prefs.edit().clear().commit();
+        assertThat(settings.getRateBoostMultiplier(), is(VoiceSettings.RATE_BOOST_MULTIPLIER)); // no preference set
+
+        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, "8").commit();
+        assertThat(settings.getRateBoostMultiplier(), is(VoiceSettings.RATE_BOOST_MULTIPLIER_MAX)); // clamped to maximum
+
+        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, "1").commit();
+        assertThat(settings.getRateBoostMultiplier(), is(VoiceSettings.RATE_BOOST_MULTIPLIER_MIN)); // clamped to minimum
+
+        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, "4").commit();
+        assertThat(settings.getRateBoostMultiplier(), is(4));
+    }
+
+    @Test
+    public void testIntonationGroup() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SpeechSynthesis synth = new SpeechSynthesis(getContext(), mCallback);
+        VoiceSettings settings = new VoiceSettings(prefs, synth);
+
+        prefs.edit().clear().commit();
+        assertThat(settings.getIntonationGroup(), is(0)); // no preference set
+
+        prefs.edit().putString(VoiceSettings.PREF_INTONATION_GROUP, "12").commit();
+        assertThat(settings.getIntonationGroup(), is(7)); // clamped to maximum
+
+        prefs.edit().putString(VoiceSettings.PREF_INTONATION_GROUP, "-3").commit();
+        assertThat(settings.getIntonationGroup(), is(0)); // clamped to minimum
+
+        prefs.edit().putString(VoiceSettings.PREF_INTONATION_GROUP, "5").commit();
+        assertThat(settings.getIntonationGroup(), is(5));
+    }
 }

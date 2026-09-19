@@ -266,6 +266,8 @@ $textmode
 ⌚	inti watana						// [231A]
 ⌛	tukusqa arenawan intiwatana				// [231B]
 ⌨	ñitina							// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	qarpuy ñitina						// [23CF]
 ⏩	utqhay qatiq ñitina					// [23E9]
 ⏪	utqhay tikrana ñitina					// [23EA]
@@ -481,6 +483,7 @@ $textmode
 ➡	paña wachi						// [27A1]
 ➰	bucle							// [27B0]
 ➿	iskay bucle						// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	paña wachi llinkuwan hanaqman				// [2934]
 ⤵	paña wachi llinkuwan uranman				// [2935]
 ⨧	yapana sullkapi iskay qillqasqa				// [2A27]

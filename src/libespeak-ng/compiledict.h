@@ -26,11 +26,12 @@ extern "C"
 {
 #endif
 
-char *DecodeRule(const char *group_chars, 
+char *DecodeRule(const char *group_chars,
 		int group_length,
 		char *rule,
 		int control,
-		char *output);
+		char *output,
+		int output_size);
 
 void print_dictionary_flags(unsigned int *flags,
 		char *buf,

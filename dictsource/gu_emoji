@@ -293,6 +293,8 @@ $textmode
 ⌚	ઘડિયાળ								// [231A]
 ⌛	રેતઘડી								// [231B]
 ⌨	કીબોર્ડ								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	કાઢી નાંખો બટન							// [23CF] text|emoji
 ⏩	ફાસ્ટ ફોરવર્ડ કરો બટન						// [23E9]
 ⏪	ફાસ્ટ રિવર્સ કરો બટન						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	જમણું તીર							// [27A1] text|emoji
 ➰	વાંકડિયુ લૂપ							// [27B0]
 ➿	ડબલ વાંકડિયું લૂપ						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

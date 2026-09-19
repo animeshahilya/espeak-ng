@@ -293,6 +293,8 @@ $textmode
 ⌚	rokaspulkstenis							// [231A]
 ⌛	iztecējis smilšu pulstenis				// [231B]
 ⌨	tastatūra							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	poga Izstumt							// [23CF] text|emoji
 ⏩	poga Pārtīt uz priekšu						// [23E9]
 ⏪	poga Attīt atpakaļ						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	labā bultiņa						// [27A1] text|emoji
 ➰	cilpiņa								// [27B0]
 ➿	dubulta cilpa							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

@@ -835,6 +835,13 @@ public class TtsService extends TextToSpeechService {
             int maxRange = engine.PitchRange.getMaxValue();
             pitchRange = Math.min(maxRange, pitchRange + Math.max(5, pitchRange / 4));
             engine.Intonation.setValue(1);
+        } else if (VoiceSettings.INTONATION_CUSTOM.equals(intonationStyle)) {
+            // No pitchRange adjustment here: the +/- scaling above is tuned
+            // specifically to how Flat/Expressive map to groups 3/1, and this
+            // is an untuned raw group (see getIntonationGroup()), so leave
+            // pitchRange at the user's own configured value instead of
+            // guessing at a scaling that fits an unverified tone mapping.
+            engine.Intonation.setValue(settings.getIntonationGroup());
         } else {
             engine.Intonation.setValue(0);
         }
@@ -1208,8 +1215,15 @@ public class TtsService extends TextToSpeechService {
         return text;
     }
 
+    // Two branches: structural titles ("Chapter IV") where the numeral follows the
+    // keyword directly, and person titles ("King Henry VIII", "Pope John XXIII")
+    // where a name sits in between. The person-title numeral and optional name are
+    // matched case-sensitively (via (?-i:...), overriding the pattern's overall
+    // CASE_INSENSITIVE) so a stray lowercase word that happens to be spelled only
+    // with roman letters (e.g. "king david mix") can't be mistaken for a numeral.
     private static final Pattern PATTERN_ROMAN_CONTEXT = Pattern.compile(
-            "\\b(Chapter|Part|Section|Volume|Book|Act|Scene|Title|Grade|Level|Phase|King|Queen|Pope|Emperor|World War|War|Super Bowl)\\s+([IVXLCDMivxlcdm]+)\\b",
+            "\\b(Chapter|Part|Section|Volume|Book|Act|Scene|Title|Grade|Level|Phase|World War|War|Super Bowl)\\s+([IVXLCDMivxlcdm]+)\\b" +
+            "|\\b(King|Queen|Pope|Emperor)\\s+(?:(?-i:([A-Z][a-zA-Z'-]*))\\s+)?(?-i:([IVXLCDM]+))\\b",
             Pattern.CASE_INSENSITIVE);
 
     public static String expandRomanNumerals(String text) {
@@ -1222,8 +1236,16 @@ public class TtsService extends TextToSpeechService {
         }
         StringBuffer sb = new StringBuffer(text.length());
         do {
-            String prefix = matcher.group(1);
-            String roman = matcher.group(2).toUpperCase(Locale.ROOT);
+            String prefix;
+            String roman;
+            if (matcher.group(1) != null) {
+                prefix = matcher.group(1);
+                roman = matcher.group(2).toUpperCase(Locale.ROOT);
+            } else {
+                String name = matcher.group(4);
+                prefix = name != null ? matcher.group(3) + " " + name : matcher.group(3);
+                roman = matcher.group(5);
+            }
             int val = parseRomanNumeral(roman);
             if (val > 0) {
                 matcher.appendReplacement(sb, Matcher.quoteReplacement(prefix + " " + val));
@@ -1307,14 +1329,22 @@ public class TtsService extends TextToSpeechService {
         return " link " + s.trim() + " ";
     }
 
-    private static final Pattern PATTERN_REPEATED_CHARS = Pattern.compile("([^\\s])\\1{2,}");
+    // Count mode reads out "N dashes"/"N asterisks" etc., which only makes sense for
+    // punctuation/symbol dividers - saying "5 fives" for a repeated digit or "4 esses"
+    // for an elongated word ("yesss") would be nonsensical, so digits and letters are
+    // excluded here entirely.
+    private static final Pattern PATTERN_REPEATED_CHARS = Pattern.compile("([^\\s\\p{L}\\p{N}])\\1{2,}");
+    // Truncate mode just shortens a run in place, which still works for elongated
+    // words ("soooo" -> "sooo"), but digits must stay untouched since shortening a
+    // run of them (a PIN, phone number, serial) would silently change its value.
+    private static final Pattern PATTERN_REPEATED_CHARS_TRUNCATE = Pattern.compile("([^\\s\\p{N}])\\1{3,}");
 
     public static String condenseRepeatedCharacters(String text, String mode) {
         if (text == null || text.isEmpty()) {
             return text;
         }
         if (VoiceSettings.REPEATED_CHARS_TRUNCATE.equals(mode)) {
-            return Pattern.compile("([^\\s])\\1{3,}").matcher(text).replaceAll("$1$1$1");
+            return PATTERN_REPEATED_CHARS_TRUNCATE.matcher(text).replaceAll("$1$1$1");
         }
         if (!VoiceSettings.REPEATED_CHARS_COUNT.equals(mode)) {
             return text;
@@ -1358,9 +1388,6 @@ public class TtsService extends TextToSpeechService {
             case '"': return "quotes";
             case '\'': return "apostrophes";
             default:
-                if (Character.isLetterOrDigit(c)) {
-                    return c + "s";
-                }
                 return String.valueOf(c);
         }
     }

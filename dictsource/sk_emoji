@@ -293,6 +293,8 @@ $textmode
 ⌚	hodinky								// [231A]
 ⌛	presýpacie hodiny						// [231B]
 ⌨	klávesnica							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	tlačidlo vysunutia						// [23CF] text|emoji
 ⏩	tlačidlo pretáčania dopredu					// [23E9]
 ⏪	tlačidlo pretáčania späť					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	šípka doprava							// [27A1] text|emoji
 ➰	slučka								// [27B0]
 ➿	dvojitá slučka							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

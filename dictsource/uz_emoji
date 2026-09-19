@@ -266,6 +266,8 @@ $textmode
 ⌚	qo'l soati						// [231A]
 ⌛	toʻlgan qumsoat						// [231B]
 ⌨	klaviatura						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	chiqarish tugmasi					// [23CF]
 ⏩	oldinga o'tkazish tugmasi				// [23E9]
 ⏪	tez orqaga o'tkazish tugmasi				// [23EA]
@@ -481,6 +483,7 @@ $textmode
 ➡	oʻngga strelka						// [27A1]
 ➰	jingalak halqa						// [27B0]
 ➿	qo'sh jingalak halqa					// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	o'ngdan yuqoriga qayrilish				// [2934]
 ⤵	o'ngdan pastga qayrilish				// [2935]
 ⨧	plyus ikki indeks					// [2A27]

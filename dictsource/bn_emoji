@@ -293,6 +293,8 @@ $textmode
 ⌚	ঘড়ি								// [231A]
 ⌛	বালিঘড়ি							// [231B]
 ⌨	কিবোর্ড								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	ইজেক্ট বোতাম							// [23CF] text|emoji
 ⏩	ফাস্ট-ফরোয়ার্ড বোতাম						// [23E9]
 ⏪	দ্রুত রিভার্স বোতাম						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	ডানদিকের তীর							// [27A1] text|emoji
 ➰	কার্লি লুপ							// [27B0]
 ➿	দুটি কার্লি লুপ							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

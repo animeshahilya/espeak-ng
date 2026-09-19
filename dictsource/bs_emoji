@@ -293,6 +293,8 @@ $textmode
 ⌚	ručni sat							// [231A]
 ⌛	pješčani sat							// [231B]
 ⌨	tastatura							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	dugme izbaci							// [23CF] text|emoji
 ⏩	dugme za ubrzavanje						// [23E9]
 ⏪	dugme za brzo premotavanje					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	strelica nadesno					// [27A1] text|emoji
 ➰	uvrnuta petlja							// [27B0]
 ➿	dupla uvrnuta petlja						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

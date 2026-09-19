@@ -2379,3 +2379,11 @@ $textmode
 //   1.  emoji-test.txt (Emoji)
 //   2.  common/annotations/en.xml (CLDR)
 //   3.  emoji-zwj-sequences.txt (Emoji)
+//
+// Despite the versions above (from this file's original generation), entries
+// have been kept in sync with newer CLDR annotation data since via
+// tools/update-emoji, most recently against unicode-org/cldr main branch
+// commit 7b1090ada749eb29d85d64bfb6c1952671d4b1f5 (2026-09-18) - this already
+// covers emoji through Unicode 16.0 (e.g. U+1FAE9 "face with bags under
+// eyes"). Only the version numbers above (never updated by that tool) were
+// stale; the entries themselves were not.

@@ -293,6 +293,8 @@ $textmode
 ⌚	relógio de pulso						// [231A]
 ⌛	ampulheta							// [231B]
 ⌨	teclado								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	botão ejetar							// [23CF] text|emoji
 ⏩	botão avançar							// [23E9]
 ⏪	botão de retroceder						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	seta para a direita						// [27A1] text|emoji
 ➰	laço encaracolado						// [27B0]
 ➿	loop encaracolado duas vezes					// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

@@ -263,6 +263,8 @@ $textmode
 ⌚	arloġġ							// [231A]
 ⌛	klessidra						// [231B]
 ⌨	tastiera						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	il-buttuna oħroġ					// [23CF]
 ⏩	buttuna fast-forward					// [23E9]
 ⏪	buttuna fast reverse					// [23EA]
@@ -478,6 +480,7 @@ $textmode
 ➡	vleġġa leminija						// [27A1]
 ➰	loop innukklata						// [27B0]
 ➿	loop innukklata doppja					// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	vleġġa leminija mgħawġa ’l fuq				// [2934]
 ⤵	vleġġa leminija mgħawġa ’l isfel			// [2935]
 //⨧								// [2A27] (no translation)

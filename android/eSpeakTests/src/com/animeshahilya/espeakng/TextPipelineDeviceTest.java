@@ -147,4 +147,21 @@ public class TextPipelineDeviceTest {
         String off = TtsService.condenseRepeatedCharacters("-------", VoiceSettings.REPEATED_CHARS_OFF);
         assertThat(off, is("-------"));
     }
+
+    @Test
+    public void testCondenseRepeatedCharactersIgnoresDigits() {
+        // A repeated digit run (PIN, serial, phone number) must be read as-is in
+        // every mode - "count" must not say "4 fives" and "truncate" must not
+        // shorten "5555" to "555" and silently change the value.
+        String counted = TtsService.condenseRepeatedCharacters("Your PIN is 5555.", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(counted, is("Your PIN is 5555."));
+
+        String truncated = TtsService.condenseRepeatedCharacters("Call 1112223333 now.", VoiceSettings.REPEATED_CHARS_TRUNCATE);
+        assertThat(truncated, is("Call 1112223333 now."));
+
+        // Count mode also leaves plain letter runs alone (only symbols get counted).
+        String lettersUntouched = TtsService.condenseRepeatedCharacters("yessss!!!", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(lettersUntouched, containsString("yessss"));
+        assertThat(lettersUntouched, containsString("3 exclamations"));
+    }
 }

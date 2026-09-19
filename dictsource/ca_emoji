@@ -294,6 +294,8 @@ $textmode
 ⌚	rellotge							// [231A]
 ⌛	rellotge de sorra						// [231B]
 ⌨	teclat								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	botó d’expulsar							// [23CF] text|emoji
 ⏩	botó d’avançar ràpidament					// [23E9]
 ⏪	botó de retrocedir ràpidament					// [23EA]
@@ -516,6 +518,7 @@ $textmode
 ➡	fletxa cap a la dreta						// [27A1] text|emoji
 ➰	llaç arrissat							// [27B0]
 ➿	bucle doble							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

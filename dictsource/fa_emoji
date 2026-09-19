@@ -293,6 +293,8 @@ $textmode
 ⌚	ساعت مچی						// [231A]
 ⌛	ساعت شنی						// [231B]
 ⌨	صفحه‌کلید						// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	دکمهٔ خروج							// [23CF] text|emoji
 ⏩	دکمهٔ سریع به جلو						// [23E9]
 ⏪	دکمهٔ سریع به عقب						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	پیکان راست						// [27A1] text|emoji
 ➰	حلقه مجعد						// [27B0]
 ➿	حلقه مجعد دوتایی					// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

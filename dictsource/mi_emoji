@@ -266,6 +266,8 @@ $textmode
 ⌚	matawā							// [231A]
 ⌛	karāhe-hāora						// [231B]
 ⌨	papapātuhi						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	pātene tuwha						// [23CF]
 ⏩	pātene tere whakamua					// [23E9]
 ⏪	pātene tere whakamuri					// [23EA]
@@ -481,6 +483,7 @@ $textmode
 ➡	pere matau						// [27A1]
 ➰	koromeke hūmenge					// [27B0]
 ➿	koromeke hūmenge taurua					// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	pere matau piko ake					// [2934]
 ⤵	pere matau piko iho					// [2935]
 //⨧								// [2A27] (no translation)

@@ -293,6 +293,8 @@ $textmode
 ⌚	kol saati							// [231A]
 ⌛	kum saati							// [231B]
 ⌨	klavye								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	çıkarma düğmesi							// [23CF] text|emoji
 ⏩	ileri sarma düğmesi						// [23E9]
 ⏪	hızlı geri düğmesi						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	sağ ok								// [27A1] text|emoji
 ➰	kıvrık döngü							// [27B0]
 ➿	çift kıvrık döngü						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

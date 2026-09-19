@@ -293,6 +293,8 @@ $textmode
 ⌚	horloge								// [231A]
 ⌛	zandloper							// [231B]
 ⌨	toetsenbord							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	knop voor uitwerpen						// [23CF] text|emoji
 ⏩	knop voor snel vooruitspoelen					// [23E9]
 ⏪	knop voor versneld terugspoelen					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	pijl naar rechts						// [27A1] text|emoji
 ➰	gekrulde lus							// [27B0]
 ➿	dubbele gekrulde lus						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

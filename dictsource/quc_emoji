@@ -266,6 +266,8 @@ $textmode
 ⌚	Retab’al q’ij						// [231A]
 ⌛	Jalajoj lame’t						// [231B]
 ⌨	pitz’b’al						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	pitz’b’al rech relesaxik				// [23CF]
 ⏩	Aninaq Pitz’b’al chi Uwach				// [23E9]
 ⏪	Aninaq Tzalijisab’al Pitz’b’al				// [23EA]
@@ -481,6 +483,7 @@ $textmode
 ➡	wikiq’ab’ ch’ab’					// [27A1]
 ➰	Kotokik k’a’am						// [27B0]
 ➿	Kab’ichal kotokik b’atz’				// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	wikiq’ab’ ch’ab’ kotol b’i pa uwi’			// [2934]
 ⤵	wikiq’ab’ ch’ab’ kotol b’i chi uxe’			// [2935]
 //⨧								// [2A27] (no translation)

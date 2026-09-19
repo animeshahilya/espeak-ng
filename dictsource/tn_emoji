@@ -266,6 +266,8 @@ $textmode
 ⌚	lebelela						// [231A]
 ⌛	galase ya sesupaura					// [231B]
 ⌨	khiiboto						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	konopo ya ntsha						// [23CF]
 ⏩	konopo ya isa pele ka bonako				// [23E9]
 ⏪	konopo ya boela morago ka bonako			// [23EA]
@@ -481,6 +483,7 @@ $textmode
 ➡	motsu wa moja						// [27A1]
 ➰	sediko se se motshopo					// [27B0]
 ➿	sediko se se motshopo se se gabedi			// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	motsu wa moja o o kobegelang godimo			// [2934]
 ⤵	motsu wa moja o o kobegelang tlase			// [2935]
 //⨧								// [2A27] (no translation)

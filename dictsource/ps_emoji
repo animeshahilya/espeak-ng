@@ -298,6 +298,8 @@ $textmode
 ⌚	ګړۍ							// [231A]
 ⌛	ګړۍ لوښې ترسره						// [231B]
 ⌨	کیبورډ								// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	د ويستلو بټن						// [23CF] text|emoji
 ⏩	چټک مخکی بټن						// [23E9]
 ⏪	د چټک بيرته تلو بټن					// [23EA]
@@ -520,6 +522,7 @@ $textmode
 ➡	ښي غشی							// [27A1] text|emoji
 ➰	تاو کړۍ							// [27B0]
 ➿	دوه ځل تاو کړۍ						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

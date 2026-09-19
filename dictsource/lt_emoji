@@ -293,6 +293,8 @@ $textmode
 ⌚	laikrodis							// [231A]
 ⌛	smėlio laikrodis						// [231B]
 ⌨	klaviatūra							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	išmetimo mygtukas						// [23CF] text|emoji
 ⏩	sukti pirmyn							// [23E9]
 ⏪	atsukti atgal							// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	rodyklė į dešinę						// [27A1] text|emoji
 ➰	kilpelė								// [27B0]
 ➿	dviguba kilpelė							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

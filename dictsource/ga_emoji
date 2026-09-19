@@ -293,6 +293,8 @@ $textmode
 ⌚	uaireadóir							// [231A]
 ⌛	orláiste críochnaithe						// [231B]
 ⌨	méarchlár							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	cnaipe díchuir							// [23CF] text|emoji
 ⏩	cnaipe mearchasaidh						// [23E9]
 ⏪	cnaipe siar ar luas						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	saighead ar dheis						// [27A1] text|emoji
 ➰	lúb chatach							// [27B0]
 ➿	lúb dhúbailte chatach						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

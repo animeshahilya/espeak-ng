@@ -293,6 +293,8 @@ $textmode
 ⌚	óra								// [231A]
 ⌛	lejárt homokóra						// [231B]
 ⌨	billentyűzet							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	lemez kiadása gomb						// [23CF] text|emoji
 ⏩	előretekerés gomb						// [23E9]
 ⏪	visszatekerés gomb						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	jobbra mutató nyíl						// [27A1] text|emoji
 ➰	hurok								// [27B0]
 ➿	dupla hurok							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

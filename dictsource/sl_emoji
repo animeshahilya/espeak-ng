@@ -293,6 +293,8 @@ $textmode
 ⌚	ročna ura							// [231A]
 ⌛	peščena ura							// [231B]
 ⌨	tipkovnica							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	gumb za izvrženje						// [23CF] text|emoji
 ⏩	gumb za hitro previjanje naprej					// [23E9]
 ⏪	gumb za hitro previjanje nazaj					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	puščica desno							// [27A1] text|emoji
 ➰	zavita pentlja							// [27B0]
 ➿	dvojna zavita pentlja						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

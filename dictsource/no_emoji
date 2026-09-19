@@ -265,6 +265,8 @@ $textmode
 ⌚	armbåndsur						// [231A]
 ⌛	ferdig timeglass					// [231B]
 ⌨	tastatur						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	mat ut-knapp						// [23CF]
 ⏩	spol framover-knapp					// [23E9]
 ⏪	spol tilbake-knapp					// [23EA]
@@ -480,6 +482,7 @@ $textmode
 ➡	pil høyre						// [27A1]
 ➰	løkke							// [27B0]
 ➿	dobbel løkke						// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	pil som bøyer opp					// [2934]
 ⤵	pil som bøyer ned					// [2935]
 ⨧	plusstegn med senket totall				// [2A27]

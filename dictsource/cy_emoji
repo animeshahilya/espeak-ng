@@ -293,6 +293,8 @@ $textmode
 ⌚	oriawr								// [231A]
 ⌛	awrwydr								// [231B]
 ⌨	bysellfwrdd							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	botwm allfwrw							// [23CF] text|emoji
 ⏩	botwm blaenyrru cyflym						// [23E9]
 ⏪	botwm cildroi cyflym						// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	saeth i’r dde							// [27A1] text|emoji
 ➰	dolen gyrliog							// [27B0]
 ➿	dolen gyrliog ddwbl						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

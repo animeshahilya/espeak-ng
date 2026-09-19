@@ -262,6 +262,8 @@ $textmode
 ⌚	sa’aatii						// [231A]
 ⌛	sa’aatiifuullee xumurame				// [231B]
 ⌨	Kiiboordii						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	qabduu buqqisuu						// [23CF]
 ⏩	qabduu saffisaan-fuulduratti				// [23E9]
 ⏪	qabduu saffisaan duubatti				// [23EA]
@@ -477,6 +479,7 @@ $textmode
 ➡	xiyya mirgaa						// [27A1]
 ➰	marsaa qaxxaamuraa					// [27B0]
 ➿	marsaa yeroo lama qaxxaamuru				// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	xiyya mirgaa ol jallatu					// [2934]
 ⤵	xiyya mirgaa gadi jallatu				// [2935]
 ⨧	ida’uu sabiskiriiptii lama				// [2A27]

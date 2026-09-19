@@ -292,6 +292,8 @@ $textmode
 ⌚	orologio							// [231A]
 ⌛	clessidra							// [231B]
 ⌨	tastiera							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	pulsante di espulsione					// [23CF] text|emoji
 ⏩	pulsante di avanzamento rapido				// [23E9]
 ⏪	pulsante di riavvolgimento rapido			// [23EA]
@@ -513,6 +515,7 @@ $textmode
 ➡	freccia rivolta verso destra				// [27A1] text|emoji
 ➰	occhiello							// [27B0]
 ➿	doppio occhiello						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

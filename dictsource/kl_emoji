@@ -266,6 +266,8 @@ $textmode
 ⌚	ur							// [231A]
 ⌛	timeglas						// [231B]
 ⌨	tastatur						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	udskubningsknap						// [23CF]
 ⏩	spole frem						// [23E9]
 ⏪	spole tilbage						// [23EA]
@@ -481,6 +483,7 @@ $textmode
 ➡	pil mod højre						// [27A1]
 ➰	krølle							// [27B0]
 ➿	dobbelt krølle						// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	pil mod højre med sving opad				// [2934]
 ⤵	pil mod højre med sving nedad				// [2935]
 //⨧								// [2A27] (no translation)

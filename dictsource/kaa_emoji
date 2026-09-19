@@ -266,6 +266,8 @@ $textmode
 ⌚	саат							// [231A]
 //⌛								// [231B] (no translation)
 //⌨								// [2328] (no translation)
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 //⏏								// [23CF] (no translation)
 //⏩								// [23E9] (no translation)
 //⏪								// [23EA] (no translation)
@@ -481,6 +483,7 @@ $textmode
 //➡								// [27A1] (no translation)
 //➰								// [27B0] (no translation)
 //➿								// [27BF] (no translation)
+//⟳								// [27F3] (no translation)
 //⤴								// [2934] (no translation)
 //⤵								// [2935] (no translation)
 //⨧								// [2A27] (no translation)

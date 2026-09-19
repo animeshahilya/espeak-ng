@@ -266,6 +266,8 @@ $textmode
 ⌚	goşar sagady						// [231A]
 ⌛	çägeli sagat doldy					// [231B]
 ⌨	klawiatura						// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	çykar düwmesi						// [23CF]
 ⏩	öňe sara düwmesi					// [23E9]
 ⏪	yza sara düwmesi					// [23EA]
@@ -481,6 +483,7 @@ $textmode
 ➡	saga ok							// [27A1]
 ➰	buýra halka						// [27B0]
 ➿	goşa buýra halka					// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	saga ok ýokary egrelýän					// [2934]
 ⤵	saga ok aşak egrelýän					// [2935]
 ⨧	setirasty ikilikli goşmak belgisi			// [2A27]

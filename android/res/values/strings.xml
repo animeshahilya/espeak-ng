@@ -19,7 +19,9 @@
         Source: Checkbox label.
         Description: When enabled, triples the selected speech rate.
     -->
-  <string name="setting_rate_boost">Rate boost (3x)</string>
+  <string name="setting_rate_boost">Rate boost</string>
+  <string name="setting_rate_boost_multiplier">Rate boost amount</string>
+  <string name="setting_rate_boost_multiplier_summary">Only used when Rate boost is on. How far the rate is multiplied past the normal maximum.</string>
   <!--
         Source: Dialog text.
         Description: Status message shown when installing voice data.
@@ -115,7 +117,9 @@
   <string name="setting_capitals_summary">How a capital letter is called out while exploring text one character at a time - not during normal reading</string>
   <string name="capitals_none">None</string>
   <string name="capitals_sound">Play a beep (character by character)</string>
-  <string name="capitals_pitch">Raise pitch (character by character)</string>
+  <string name="capitals_pitch">Raise pitch, subtle (character by character)</string>
+  <string name="capitals_pitch_moderate">Raise pitch, moderate (character by character)</string>
+  <string name="capitals_pitch_strong">Raise pitch, strong (character by character)</string>
   <string name="capitals_say">Say \"capital\" (character by character)</string>
   <string name="setting_emphasize_questions">Emphasize questions and exclamations</string>
   <string name="setting_emphasize_questions_summary">Widens the pitch rise on sentences ending in ? or ! so they stand out more clearly. Off by default - changes how sentences sound, try it and see if you prefer it.</string>
@@ -298,11 +302,37 @@
     <item>Natural (standard language melody)</item>
     <item>Flat / High-speed (monotone, clearer at fast rates)</item>
     <item>Expressive (enhanced pitch inflection)</item>
+    <item>Custom (advanced - pick a raw intonation group)</item>
   </string-array>
   <string-array name="intonation_style_values">
     <item>natural</item>
     <item>flat</item>
     <item>expressive</item>
+    <item>custom</item>
+  </string-array>
+
+  <!-- Customization: Intonation style - Custom group (advanced) -->
+  <string name="setting_intonation_group">Custom intonation group</string>
+  <string name="setting_intonation_group_summary">Only used when Intonation style is set to Custom. Raw engine tone-mapping groups 0-7; only 1 (Expressive) and 3 (Flat) have a named preset above - the others are internal variants this app has not tuned or verified, offered here for advanced experimentation.</string>
+  <string-array name="intonation_group_entries">
+    <item>0 (engine default)</item>
+    <item>1 (same as Expressive)</item>
+    <item>2</item>
+    <item>3 (same as Flat)</item>
+    <item>4</item>
+    <item>5</item>
+    <item>6</item>
+    <item>7</item>
+  </string-array>
+  <string-array name="intonation_group_values">
+    <item>0</item>
+    <item>1</item>
+    <item>2</item>
+    <item>3</item>
+    <item>4</item>
+    <item>5</item>
+    <item>6</item>
+    <item>7</item>
   </string-array>
 
   <!-- Customization: Capital letter announcement scope -->

@@ -293,6 +293,8 @@ $textmode
 ⌚	ceas de mână							// [231A]
 ⌛	clepsidră cu nisipul scurs					// [231B]
 ⌨	tastatură							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	buton de ejectare						// [23CF] text|emoji
 ⏩	buton de derulare rapidă înainte				// [23E9]
 ⏪	buton de derulare rapidă înapoi					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	săgeată orientată în dreapta					// [27A1] text|emoji
 ➰	buclă ondulată							// [27B0]
 ➿	buclă ondulată dublă						// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

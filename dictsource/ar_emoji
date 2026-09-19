@@ -293,6 +293,8 @@ $textmode
 ⌚	ساعة								// [231A]
 ⌛	مؤقت رملي مكتمل							// [231B]
 ⌨	لوحة مفاتيح							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	زر إخراج							// [23CF] text|emoji
 ⏩	زر تقديم سريع							// [23E9]
 ⏪	زر ترجيع سريع							// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	سهم لليمين							// [27A1] text|emoji
 ➰	عقدة								// [27B0]
 ➿	عقدة مزدوجة							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

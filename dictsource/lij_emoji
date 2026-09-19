@@ -261,6 +261,8 @@ $textmode
 ⌚	releuio							// [231A]
 ⌛	releuio d’æña fermo					// [231B]
 ⌨	tastea							// [2328]
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	pommello manda feua					// [23CF]
 ⏩	pommello avanti lesto					// [23E9]
 ⏪	pommello retorno lesto					// [23EA]
@@ -476,6 +478,7 @@ $textmode
 ➡	freccia a-a drita					// [27A1]
 ➰	gassetta						// [27B0]
 ➿	gassetta doggia						// [27BF]
+//⟳								// [27F3] (no translation)
 ⤴	freccia curva in sciù					// [2934]
 ⤵	freccia curva in zu					// [2935]
 //⨧								// [2A27] (no translation)

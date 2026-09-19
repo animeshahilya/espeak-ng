@@ -36,11 +36,14 @@ public class VoiceSettings {
     public static final String PREF_PUNCTUATION_LEVEL = "espeak_punctuation_level";
     public static final String PREF_PUNCTUATION_CHARACTERS = "espeak_punctuation_characters";
     public static final String PREF_RATE_BOOST = "espeak_rate_boost";
+    public static final String PREF_RATE_BOOST_MULTIPLIER = "espeak_rate_boost_multiplier";
     public static final String PREF_UNICODE_NORMALIZATION = "espeak_unicode_normalization";
     /** @deprecated Legacy eyes-free-era digit toggle; see {@link #isSpeakDigitsEnabled}. */
     @Deprecated
     public static final String PREF_SPEAK_DIGITS = "espeak_speak_digits";
     public static final int RATE_BOOST_MULTIPLIER = 3;
+    public static final int RATE_BOOST_MULTIPLIER_MIN = 2;
+    public static final int RATE_BOOST_MULTIPLIER_MAX = 5;
     public static final String PREF_NORMALIZE_UNICODE = "espeak_normalize_unicode";
     public static final String PREF_EMOJI_PROCESSING = "espeak_emoji_processing";
     public static final String PREF_CAPITALS = "espeak_capitals";
@@ -82,6 +85,7 @@ public class VoiceSettings {
     public static final String PREF_CAPITALS_SCOPE = "espeak_capitals_scope";
     public static final String PREF_SIMPLIFY_URLS = "espeak_simplify_urls";
     public static final String PREF_ROMAN_NUMERALS = "espeak_roman_numerals";
+    public static final String PREF_INTONATION_GROUP = "espeak_intonation_group";
 
     /** Repeated character handling modes. */
     public static final String REPEATED_CHARS_OFF = "off";
@@ -92,6 +96,7 @@ public class VoiceSettings {
     public static final String INTONATION_NATURAL = "natural";
     public static final String INTONATION_FLAT = "flat";
     public static final String INTONATION_EXPRESSIVE = "expressive";
+    public static final String INTONATION_CUSTOM = "custom";
 
     /** Capital letter announcement scope. */
     public static final String CAPITALS_SCOPE_CHAR = "char_only";
@@ -189,8 +194,9 @@ public class VoiceSettings {
         if (isRateBoostEnabled()) {
             // Allow values beyond the normal espeakRATE_MAXIMUM so the native
             // engine can engage its Sonic fast path for very high rates.
-            rate = rate * RATE_BOOST_MULTIPLIER;
-            int boostedMax = max * RATE_BOOST_MULTIPLIER; // keep within a sensible upper bound
+            int multiplier = getRateBoostMultiplier();
+            rate = rate * multiplier;
+            int boostedMax = max * multiplier; // keep within a sensible upper bound
             if (rate > boostedMax) rate = boostedMax;
         } else if (rate > max) {
             rate = max;
@@ -291,6 +297,22 @@ public class VoiceSettings {
 
     public boolean isRateBoostEnabled() {
         return mPreferences.getBoolean(PREF_RATE_BOOST, false);
+    }
+
+    /**
+     * How far {@link #isRateBoostEnabled()} multiplies the rate past the
+     * engine's normal ceiling, once boost is on. Defaults to the historical
+     * fixed amount ({@link #RATE_BOOST_MULTIPLIER}) so existing installs keep
+     * the exact rate they had; user-adjustable from 2x-5x so "boost" isn't a
+     * single fixed jump. 5x is not an engine limit, just a conservative UI
+     * ceiling - well past it, Sonic's resampling would be expected to start
+     * costing intelligibility rather than just speed.
+     */
+    public int getRateBoostMultiplier() {
+        int value = getPreferenceValue(PREF_RATE_BOOST_MULTIPLIER, RATE_BOOST_MULTIPLIER);
+        if (value < RATE_BOOST_MULTIPLIER_MIN) value = RATE_BOOST_MULTIPLIER_MIN;
+        if (value > RATE_BOOST_MULTIPLIER_MAX) value = RATE_BOOST_MULTIPLIER_MAX;
+        return value;
     }
 
     /**
@@ -516,10 +538,28 @@ public class VoiceSettings {
 
     public String getIntonationStyle() {
         String style = mPreferences.getString(PREF_INTONATION_STYLE, INTONATION_NATURAL);
-        if (INTONATION_FLAT.equals(style) || INTONATION_EXPRESSIVE.equals(style)) {
+        if (INTONATION_FLAT.equals(style) || INTONATION_EXPRESSIVE.equals(style)
+                || INTONATION_CUSTOM.equals(style)) {
             return style;
         }
         return INTONATION_NATURAL;
+    }
+
+    /**
+     * Raw espeakINTONATION group (0-7), used only when {@link #getIntonationStyle()}
+     * is {@link #INTONATION_CUSTOM}. Groups 0, 1 and 3 are the ones this app
+     * already exposes by name (Natural/Expressive/Flat); the remaining groups
+     * (2, 4-7) are tone-mapping variants the engine ships internally but that
+     * this app has never listened through and named - one of them (group 6)
+     * is even labelled "test" in upstream's own default tone table - so they
+     * are exposed as a raw number for advanced users to try rather than
+     * guessing at descriptive names for behavior nobody here has verified.
+     */
+    public int getIntonationGroup() {
+        int value = getPreferenceValue(PREF_INTONATION_GROUP, 0);
+        if (value < 0) value = 0;
+        if (value > 7) value = 7;
+        return value;
     }
 
     public String getCapitalsScope() {

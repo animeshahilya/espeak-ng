@@ -293,6 +293,8 @@ $textmode
 ⌚	Armbanduhr							// [231A]
 ⌛	Sanduhr								// [231B]
 ⌨	Tastatur							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	Auswerfen							// [23CF] text|emoji
 ⏩	Doppelpfeile nach rechts					// [23E9]
 ⏪	Zurückspulen							// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	Pfeil nach rechts						// [27A1] text|emoji
 ➰	Schleife							// [27B0]
 ➿	Doppelschleife							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 

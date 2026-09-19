@@ -293,6 +293,8 @@ $textmode
 ⌚	armbandsur							// [231A]
 ⌛	utrunnet timglas						// [231B]
 ⌨	tangentbord							// [2328] text|emoji
+//⍋								// [234B] (no translation)
+//⍳								// [2373] (no translation)
 ⏏	utmatningsknapp							// [23CF] text|emoji
 ⏩	framåtspolningsknapp						// [23E9]
 ⏪	knapp för snabbspola tillbaka					// [23EA]
@@ -515,6 +517,7 @@ $textmode
 ➡	högerpil							// [27A1] text|emoji
 ➰	ögla							// [27B0]
 ➿	dubbel ögla							// [27BF]
+//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 
