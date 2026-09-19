@@ -7,6 +7,7 @@ project(espeak-ng
 )
 
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+option(BUILD_ESPEAK_NG_EXE "Whether to build espeak-ng-bin" ON)
 option(COMPILE_INTONATIONS "Intonation compilation" ON)
 option(ENABLE_TESTS "Enable tests" ON)
 option(WITH_COVERAGE "Enable clang source-based coverage instrumentation" OFF)
