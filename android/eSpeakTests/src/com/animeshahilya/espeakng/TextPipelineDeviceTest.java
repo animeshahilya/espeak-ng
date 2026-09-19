@@ -71,4 +71,40 @@ public class TextPipelineDeviceTest {
         assertThat(joined.toString(), is(text));
         assertThat(joined.toString(), containsString("\n\n"));
     }
+
+    @Test
+    public void testScriptSplittingEdgeCasesPreserveLength() {
+        final String[] testCases = {
+            "123 numbers only",
+            "   leading space Latin नमस्ते Indic",
+            "Hello नमस्ते world दुनिया",
+            "A\n\nB\n\nनमस्ते",
+            "Mix 456 बीच 789 end"
+        };
+        for (String testCase : testCases) {
+            final List<TtsService.ScriptSpan> spans = TtsService.splitByScriptRuns(testCase);
+            final StringBuilder joined = new StringBuilder();
+            for (TtsService.ScriptSpan span : spans) {
+                joined.append(span.text);
+            }
+            assertThat("Failed for: " + testCase, joined.toString(), is(testCase));
+        }
+    }
+
+    @Test
+    public void testUserDictionaryFastPathBypass() {
+        UserDictionary rule = new UserDictionary("quick", "slow", true, false, false);
+        assertThat(rule.apply("The fast brown fox"), is("The fast brown fox"));
+        assertThat(rule.apply("The quick brown fox"), is("The slow brown fox"));
+        assertThat(rule.apply("hi"), is("hi")); // Shorter than pattern
+    }
+
+    @Test
+    public void testFastTanhAccuracy() {
+        for (float x = -4.0f; x <= 4.0f; x += 0.1f) {
+            float expected = (float) Math.tanh(x);
+            float actual = AudioOptimizer.fastTanh(x);
+            assertThat("x=" + x, Math.abs(actual - expected), lessThan(0.002f));
+        }
+    }
 }

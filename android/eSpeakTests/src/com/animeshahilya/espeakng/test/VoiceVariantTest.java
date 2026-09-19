@@ -119,4 +119,20 @@ public class VoiceVariantTest
         assertThat(variant.age, is(SpeechSynthesis.AGE_OLD));
         assertThat(variant.toString(), is("klatt3-old"));
     }
+
+    @Test
+    public void testNullAndMalformedVoiceVariant()
+    {
+        VoiceVariant nullVariant = VoiceVariant.parseVoiceVariant(null);
+        assertThat(nullVariant, notNullValue());
+        assertThat(nullVariant.gender, is(SpeechSynthesis.GENDER_MALE));
+
+        VoiceVariant emptyVariant = VoiceVariant.parseVoiceVariant("   ");
+        assertThat(emptyVariant, notNullValue());
+        assertThat(emptyVariant.gender, is(SpeechSynthesis.GENDER_MALE));
+
+        VoiceVariant malformedVariant = VoiceVariant.parseVoiceVariant("male-young-extra");
+        assertThat(malformedVariant, notNullValue());
+        assertThat(malformedVariant.gender, is(SpeechSynthesis.GENDER_MALE));
+    }
 }

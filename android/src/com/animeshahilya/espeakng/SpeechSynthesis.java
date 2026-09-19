@@ -59,6 +59,11 @@ public class SpeechSynthesis {
     // Immutable snapshot; callers get a defensive copy so nobody can mutate it.
     private static volatile List<Voice> sCachedVoices = null;
 
+    // Process-wide lock protecting native synthesis calls. The underlying C engine
+    // maintains process-global state and is not re-entrant. stop() intentionally does
+    // not acquire this lock so it can immediately signal native abort without waiting.
+    private static final Object sSynthLock = new Object();
+
     public static final int GENDER_UNSPECIFIED = 0;
     public static final int GENDER_MALE = 1;
     public static final int GENDER_FEMALE = 2;
@@ -239,12 +244,19 @@ public class SpeechSynthesis {
     }
 
     public void setVoice(Voice voice, VoiceVariant variant) {
-        // NOTE: espeak_SetVoiceByProperties does not support specifying the
-        // voice variant (e.g. klatt), but espeak_SetVoiceByName does.
-        if (variant.variant == null) {
-            nativeSetVoiceByProperties(voice.name, variant.gender, variant.age);
-        } else {
-            nativeSetVoiceByName(voice.identifier + "+" + variant.variant);
+        if (voice == null) {
+            return;
+        }
+        synchronized (sSynthLock) {
+            // NOTE: espeak_SetVoiceByProperties does not support specifying the
+            // voice variant (e.g. klatt), but espeak_SetVoiceByName does.
+            if (variant == null || variant.variant == null) {
+                final int gender = (variant != null) ? variant.gender : GENDER_UNSPECIFIED;
+                final int age = (variant != null) ? variant.age : AGE_ANY;
+                nativeSetVoiceByProperties(voice.name, gender, age);
+            } else {
+                nativeSetVoiceByName(voice.identifier + "+" + variant.variant);
+            }
         }
     }
 
@@ -332,7 +344,12 @@ public class SpeechSynthesis {
     public final Parameter WordGap = new Parameter(7, 0, 50, UnitType.Percentage);
 
     public void synthesize(String text, boolean isSsml) {
-        nativeSynthesize(text, isSsml);
+        if (text == null) {
+            return;
+        }
+        synchronized (sSynthLock) {
+            nativeSynthesize(text, isSsml);
+        }
     }
 
     public void stop() {

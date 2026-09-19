@@ -638,6 +638,15 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
+        // Zero-hang watchdog: sanitize hang-inducing controls (bidi, zero-width,
+        // C0 controls) early so all downstream modules (UserDictionary, numbers,
+        // currency, grouping) operate on clean text without corrupted matching.
+        {
+            String before = text;
+            text = sanitizeForWatchdog(text, isSsml);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
         if (!isSsml && settings.isUserDictionaryEnabled()) {
             String before = text;
             text = UserDictionaryManager.getInstance(storageContext).applyRules(text, languageTag(voice));
@@ -725,16 +734,6 @@ public class TtsService extends TextToSpeechService {
         } else if (!isSsml && settings.isPhoneticModeEnabled()) {
             String before = text;
             text = expandPhoneticMode(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        // Zero-hang watchdog: always strip hang-inducing controls, even when
-        // every other option is off, so a pasted bidi/zero-width run can never
-        // stall the engine. SSML keeps its markup (controls only); plain text
-        // additionally gets [[-run collapsing.
-        {
-            String before = text;
-            text = sanitizeForWatchdog(text, isSsml);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -1382,12 +1381,14 @@ public class TtsService extends TextToSpeechService {
                 if (currentIsLatin == null) {
                     currentIsLatin = charIsLatin;
                 } else if (currentIsLatin != charIsLatin) {
-                    String spanText = text.substring(spanStart, i);
-                    if (!spanText.trim().isEmpty()) {
-                        spans.add(new ScriptSpan(spanText, currentIsLatin));
-                        spanStart = i;
-                        currentIsLatin = charIsLatin;
+                    if (i > spanStart) {
+                        String spanText = text.substring(spanStart, i);
+                        if (!spanText.isEmpty()) {
+                            spans.add(new ScriptSpan(spanText, currentIsLatin));
+                        }
                     }
+                    spanStart = i;
+                    currentIsLatin = charIsLatin;
                 }
             }
             i += charCount;

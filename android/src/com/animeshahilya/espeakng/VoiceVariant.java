@@ -29,7 +29,10 @@ public class VoiceVariant {
     public final int age;
 
     protected VoiceVariant(String variant, int age) {
-        if (variant.equals(MALE)) {
+        if (variant == null) {
+            this.variant = null;
+            this.gender = SpeechSynthesis.GENDER_UNSPECIFIED;
+        } else if (variant.equals(MALE)) {
             this.variant = null;
             this.gender = SpeechSynthesis.GENDER_MALE;
         } else if (variant.equals(FEMALE)) {
@@ -80,16 +83,23 @@ public class VoiceVariant {
     }
 
     public static VoiceVariant parseVoiceVariant(String value) {
-        String[] parts = mVariantPattern.split(value);
+        if (value == null || value.trim().isEmpty()) {
+            return new VoiceVariant(MALE, SpeechSynthesis.AGE_ANY);
+        }
+        String[] parts = mVariantPattern.split(value.trim());
         int age = SpeechSynthesis.AGE_ANY;
         switch (parts.length) {
         case 1: // variant
             break;
         case 2: // variant-age
-            age = parts[1].equals("young") ? SpeechSynthesis.AGE_YOUNG : SpeechSynthesis.AGE_OLD;
+            if ("young".equalsIgnoreCase(parts[1])) {
+                age = SpeechSynthesis.AGE_YOUNG;
+            } else if ("old".equalsIgnoreCase(parts[1])) {
+                age = SpeechSynthesis.AGE_OLD;
+            }
             break;
         default:
-            return null;
+            return new VoiceVariant(MALE, SpeechSynthesis.AGE_ANY);
         }
         return new VoiceVariant(parts[0], age);
     }

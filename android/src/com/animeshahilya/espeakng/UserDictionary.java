@@ -191,6 +191,16 @@ public class UserDictionary {
         if (text == null || text.isEmpty() || mCompiledPattern == null) {
             return text;
         }
+        // Fast-path bypass for literal (non-regex) rules: avoid matcher allocation
+        // and regex engine state machine if text cannot possibly match.
+        if (!mIsRegex) {
+            if (text.length() < mPattern.length()) {
+                return text;
+            }
+            if (mCaseSensitive && !text.contains(mPattern)) {
+                return text;
+            }
+        }
         try {
             return mCompiledPattern.matcher(text).replaceAll(mPreparedReplacement);
         } catch (Throwable t) {
