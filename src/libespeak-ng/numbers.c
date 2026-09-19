@@ -1645,7 +1645,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, char *ph_
 	char ph_buf2[50];
 	char ph_zeros[50];
 	char suffix[30]; // string[] must be long enough for sizeof(suffix)+2
-	char buf_digit_lookup[50];
+	static char buf_digit_lookup[50];
 	char *ph_cur;
 
 	static const char str_pause[2] = { phonPAUSE_NOLINK, 0 };
@@ -1882,7 +1882,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, char *ph_
 		{
 		case NUM_DFRACTION_4:
 			max_decimal_count = 5;
-			// fallthrough:
+			ESPEAK_FALLTHROUGH;
 		case NUM_DFRACTION_2:
 			// French/Polish decimal fraction
 			while (word[n_digits] == '0') {

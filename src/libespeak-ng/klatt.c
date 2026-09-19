@@ -675,7 +675,7 @@ static void pitch_synch_par_reset(klatt_frame_ptr frame)
 
 		kt_globals.nopen = 4 * frame->Kopen;
 
-		if ((kt_globals.glsource == IMPULSIVE) && (kt_globals.nopen > 263))
+		if (kt_globals.nopen > 263)
 			kt_globals.nopen = 263;
 
 		if (kt_globals.nopen >= (kt_globals.T0-1))

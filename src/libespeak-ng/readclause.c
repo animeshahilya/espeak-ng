@@ -337,8 +337,13 @@ static int AnnouncePunctuation(Translator *tr, int c1, int *c2_ptr, char *output
 
 	bufix1 = *bufix;
 	len = strlen(buf);
-	strcpy(&output[*bufix], buf);
+	if (bufix1 + len >= N_TR_SOURCE - 1) {
+		len = (N_TR_SOURCE - 1) - bufix1;
+		if (len < 0) len = 0;
+	}
+	memcpy(&output[*bufix], buf, len);
 	*bufix += len;
+	output[*bufix] = 0;
 
 	if (end_clause == 0)
 		return -1;
@@ -403,7 +408,7 @@ void SetVoiceStack(espeak_VOICE *v, const char *variant_name)
 		return;
 	}
 	if (v->languages != NULL)
-		strcpy(sp->language, v->languages);
+		strncpy0(sp->language, v->languages, sizeof(sp->language));
 	if (v->name != NULL)
 		strncpy0(sp->voice_name, v->name, sizeof(sp->voice_name));
 	sp->voice_variant_number = v->variant;
@@ -610,14 +615,14 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 					c2 = ' ';
 
 					if (base_voice.identifier)
-						strcpy(current_voice_id, base_voice.identifier);
+						strncpy0(current_voice_id, base_voice.identifier, sizeof(current_voice_id));
 					terminator = ProcessSsmlTag(xml_buf, buf, &ix, n_buf, xmlbase, &audio_text, current_voice_id, &base_voice, base_voice_variant_name, &ignore_text, &clear_skipping_text, &sayas_mode, &sayas_start, ssml_stack, &n_ssml_stack, &n_param_stack, (int *)speech_parameters);
 
 					if (terminator != 0) {
 						TerminateBufWithSpaceAndZero(buf, ix, NULL);
 
 						if (terminator & CLAUSE_TYPE_VOICE_CHANGE)
-							strcpy(voice_change, current_voice_id);
+							strncpy0(voice_change, current_voice_id, 40);
 						return terminator;
 					}
 					c1 = ' ';

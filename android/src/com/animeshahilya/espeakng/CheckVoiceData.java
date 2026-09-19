@@ -82,7 +82,7 @@ public class CheckVoiceData extends Activity {
         try (java.io.InputStream stream = context.getResources().openRawResource(R.raw.espeakdata_version)) {
             final String version = FileUtils.read(stream);
             final String installedVersion = FileUtils.read(new File(getDataPath(context), "version"));
-            return !version.equals(installedVersion);
+            return !version.trim().equals(installedVersion.trim());
         } catch (Exception e) {
             return false;
         }

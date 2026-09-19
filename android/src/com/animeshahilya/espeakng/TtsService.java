@@ -466,10 +466,9 @@ public class TtsService extends TextToSpeechService {
      * utterance, which hides failures from screen readers.
      */
     private void reportError(SynthesisCallback callback, int errorCode) {
-        // error(int) has been available since API 21, which is minSdk here, so
-        // the code always reaches the caller.
-        callback.error(errorCode);
-        callback.done();
+        if (callback != null && mCallbackDone.compareAndSet(false, true)) {
+            callback.error(errorCode);
+        }
     }
 
     /**
@@ -943,14 +942,6 @@ public class TtsService extends TextToSpeechService {
                     if (DEBUG) Log.w(TAG, "Chunk synth failed, skipping", t);
                 }
             }
-            // If we broke out before synthesizing a single chunk (already
-            // stopped when this request reached the loop), no engine call
-            // ever happened to drive onSynthDataComplete() -> the framework
-            // would never get a terminal callback for this request. CAS
-            // makes this a no-op when a real chunk already delivered done().
-            if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
-                mCallback.done();
-            }
         } else {
             mSegmentsRemaining.set(1);
             mChunkBase = unitBases.isEmpty() ? 0 : unitBases.get(0);
@@ -960,6 +951,14 @@ public class TtsService extends TextToSpeechService {
                 if (DEBUG) Log.w(TAG, "Synth failed", t);
                 reportError(callback, TextToSpeech.ERROR_SERVICE);
             }
+        }
+
+        // Guaranteed terminal callback: if neither onSynthDataComplete() nor
+        // reportError() has signaled completion yet (e.g. native synthesis
+        // error, empty string, or early stop), finalize here so the framework
+        // is never hung waiting for the request to end.
+        if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
+            mCallback.done();
         }
     }
 

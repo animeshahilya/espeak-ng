@@ -454,7 +454,7 @@ voice_t *LoadVoice(const char *vname, int control)
 
 	strncpy0(voicename, vname, sizeof(voicename));
 	if (control & 0x10) {
-		strcpy(buf, vname);
+		snprintf(buf, sizeof(buf), "%s", vname);
 		if (GetFileLength(buf) <= 0)
 			return NULL;
 	} else {
@@ -491,8 +491,8 @@ voice_t *LoadVoice(const char *vname, int control)
 		translator = NULL;
 	}
 
-	strcpy(translator_name, language_type);
-	strcpy(new_dictionary, language_type);
+	snprintf(translator_name, sizeof(translator_name), "%s", language_type ? language_type : ESPEAKNG_DEFAULT_VOICE);
+	snprintf(new_dictionary, sizeof(new_dictionary), "%s", language_type ? language_type : ESPEAKNG_DEFAULT_VOICE);
 
 	if (!tone_only) {
 		voice = &voicedata;
@@ -555,10 +555,12 @@ voice_t *LoadVoice(const char *vname, int control)
                 // only act on the first language line
                 if (language_set == false) {
                     language_type = strtok(language_name, "-");
+                    if (language_type == NULL)
+                        language_type = ESPEAKNG_DEFAULT_VOICE;
                     language_set = true;
-                    strcpy(translator_name, language_type);
-                    strcpy(new_dictionary, language_type);
-                    strcpy(phonemes_name, language_type);
+                    snprintf(translator_name, sizeof(translator_name), "%s", language_type);
+                    snprintf(new_dictionary, sizeof(new_dictionary), "%s", language_type);
+                    snprintf(phonemes_name, sizeof(phonemes_name), "%s", language_type);
                     SelectPhonemeTableName(phonemes_name);
 
                     translator = SelectTranslator(translator_name);

@@ -24,22 +24,23 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class FileUtils {
     public static String read(File file) throws IOException {
         try (final FileInputStream stream = new FileInputStream(file)) {
-            return readByteArray(stream, (int) file.length()).toString();
+            return readByteArray(stream, (int) file.length()).toString(StandardCharsets.UTF_8.name());
         }
     }
 
     public static String read(InputStream stream) throws IOException {
-        return readByteArray(stream, stream.available()).toString();
+        return readByteArray(stream, stream.available()).toString(StandardCharsets.UTF_8.name());
     }
 
     public static String read(InputStream stream, int length) throws IOException {
-        return readByteArray(stream, length).toString();
+        return readByteArray(stream, length).toString(StandardCharsets.UTF_8.name());
     }
 
     private static ByteArrayOutputStream readByteArray(InputStream stream, int length) throws IOException {
@@ -54,7 +55,7 @@ public class FileUtils {
     }
 
     public static void write(File outputFile, String contents) throws IOException {
-        write(outputFile, contents.getBytes());
+        write(outputFile, contents.getBytes(StandardCharsets.UTF_8));
     }
 
     public static void write(File outputFile, byte[] contents) throws IOException {
