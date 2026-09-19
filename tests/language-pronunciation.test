@@ -83,6 +83,7 @@ test_phon en "m@kb'VgIN" "mcbugging" "a prefix and suffix without spelled letter
 test_phon en "m'Iskri@nts" "miscreants" "a dictionary match including the prefix without spelled letters"
 test_phon en-in "d[@ kv#'Ik br.'aUn f'0ks dZ'Vmps ,o:v#3r. d[@ l'e:zi d.'0g" "The quick brown fox jumps over the lazy dog" "Latn"
 test_phon en-in "t.'aIm v#'O:t.3r. t['In d[Is v#'Et. v#'Et. d.'e: g,o: l'EdZ3r." "time water thin this wet vet day go leisure" "Latn"
+test_phon en-in "k'A@r. d.'o@r. pr.i:p'o:n n,Vm'Vst.e: b,Ir.j'A:ni:" "car door prepone namaste biryani" "Latn"
 test_phon en "kl'0kwaIz g'apt s'3:k@L 'aroU d'Elt@r- aI'oUt@" "⟳ ⍋ ⍳" "clockwise gapped circle arrow, delta, iota (NVDA #17433)"
 test_phon en "b,i:dZ,eIp'i: (ml)jum'a:jul.l.a(en)" "BJPയുമായുള്ള" "script change splits a glued token"
 test_phon en "h'i@3rIN m'i: b'oU

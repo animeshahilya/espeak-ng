@@ -151,6 +151,19 @@ public class IndianFeaturesDeviceTest {
         assertThat(TtsService.preprocessIndianText("₹1,00,000", "mr"), is("1 लाख रुपये"));
         assertThat(TtsService.preprocessIndianText("₹1,00,000", "en-in"), is("1 lakh rupees"));
         assertThat(TtsService.preprocessIndianText("₹1,00,000", ""), is("1 lakh rupees"));
+
+        // Space after rupee symbol, trailing /- marks, and Re. abbreviation
+        assertThat(TtsService.preprocessIndianText("₹ 500", "en-in"), is("500 rupees"));
+        assertThat(TtsService.preprocessIndianText("Rs. 500/-", "en-in"), is("500 rupees"));
+        assertThat(TtsService.preprocessIndianText("Rs 500/=", "en-in"), is("500 rupees"));
+        assertThat(TtsService.preprocessIndianText("Re. 1", "en-in"), is("1 rupee"));
+        assertThat(TtsService.preprocessIndianText("Re. 1/-", "en-in"), is("1 rupee"));
+        assertThat(TtsService.preprocessIndianText("₹1", "en-in"), is("1 rupee"));
+        assertThat(TtsService.preprocessIndianText("₹1", "hi"), is("1 रुपया"));
+        assertThat(TtsService.preprocessIndianText("₹0.50", "en-in"), is("50 paise"));
+        assertThat(TtsService.preprocessIndianText("₹0.01", "en-in"), is("1 paisa"));
+        assertThat(TtsService.preprocessIndianText("₹0.01", "hi"), is("1 पैसा"));
+        assertThat(TtsService.preprocessIndianText("₹10.5", "en-in"), is("10 rupees 50 paise"));
     }
 
     @Test
@@ -177,6 +190,9 @@ public class IndianFeaturesDeviceTest {
         assertThat(TtsService.spaceSeparateSmartCodes("Your OTP is 4829"), is("Your OTP is 4 8 2 9"));
         assertThat(TtsService.spaceSeparateSmartCodes("Verification code: 940218"), containsString("9 4 0 2 1 8"));
         assertThat(TtsService.spaceSeparateSmartCodes("Security PIN 1234"), containsString("1 2 3 4"));
+        assertThat(TtsService.spaceSeparateSmartCodes("Train PNR: 2415829182"), containsString("2 4 1 5 8 2 9 1 8 2"));
+        assertThat(TtsService.spaceSeparateSmartCodes("Delivery pincode 110001"), containsString("1 1 0 0 0 1"));
+        assertThat(TtsService.spaceSeparateSmartCodes("Challan 849201 paid"), containsString("8 4 9 2 0 1"));
 
         // Non-security numbers should NOT be split digit-by-digit
         assertThat(TtsService.spaceSeparateSmartCodes("The year 2024 is great"), is("The year 2024 is great"));

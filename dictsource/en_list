@@ -714,6 +714,8 @@ prof	$dot
 rev	$dot
 st	$dot
 rs	r'u:pi:z	$dot	// Indian rupees abbreviation ("Rs. 500"); used by en-in too
+re	r'u:pi:	$dot	// Indian rupee singular ("Re. 1")
+pnr	p,i:En'A@	$allcaps	// Indian Railways PNR
 
 // not abbreviations when all-caps
 all	O:l	$allcaps
@@ -722,6 +724,51 @@ no	noU	$allcaps
 
 // MAIN WORD DICTIONARY
 //*********************
+
+aadhaar		A:d'A@
+aadhar		A:d'A@
+lakh		l'A:k
+lakhs		l'A:ks
+lac		l'A:k
+lacs		l'A:ks
+crore		kr'o@
+crores		kr'o@z
+crorepati	kr,o@p'A:ti
+lakhpati	l,A:kp'A:ti
+prepone		pri:p'oUn
+preponed	pri:p'oUnd
+preponing	pri:p'oUnIN
+preponement	pri:p'oUnm@nt
+namaste		n,amast'eI
+namaskar	n,amask'A@
+pranam		pr,an'A:m
+dhanyawad	d[anjav'A:d
+shukriya	S,Ukr'i:j@
+challan		tS,al'A:n
+chalan		tS,al'A:n
+jugaad		dZ,Ug'A:d
+paisa		p'aIsa
+paise		p'aIseI
+bhai		baI
+bhaiya		b'aIj@
+didi		d['i:d[i
+desi		d['e:si
+videsi		v,id['e:si
+sabzi		s'abzi
+biryani		b,Iri;'A:ni
+samosa		s,am'o:s@
+paneer		pan'i@
+roti		r'o:ti
+chai		tS'aI
+masala		m,as'A:l@
+dosa		d['o:s@
+idli		'Idli
+yojana		j'o:dZanA:
+panchayat	pantS'A:jat
+sarpanch	s,A@p'antS
+swachh		sv'atS
+bharat		b'A:rat
+hindustan	h,IndUst'A:n
 
 (a &)		eIa#nd
 à		%a

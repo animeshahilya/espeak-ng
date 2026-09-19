@@ -1006,7 +1006,7 @@ public class TtsService extends TextToSpeechService {
     // via a more specific word below (verification, security, pin,
     // passcode), so dropping it loses no real detections.
     private static final java.util.regex.Pattern SMART_CODE_KEYWORD =
-            java.util.regex.Pattern.compile("(?i)\\b(otp|pin|passcode|password|secret|verification|security|token|login|id|txn|ref|vpa|cvv)\\b");
+            java.util.regex.Pattern.compile("(?i)\\b(otp|pin|pincode|passcode|password|secret|verification|security|token|login|id|txn|ref|vpa|cvv|pnr|aadhaar|aadhar|challan|account|acct|acc)\\b");
 
     private static final java.util.regex.Pattern DANDA_BOUNDARY =
             java.util.regex.Pattern.compile("([।॥])([^\\s])");
@@ -1015,7 +1015,7 @@ public class TtsService extends TextToSpeechService {
             java.util.regex.Pattern.compile("(?i)\\b(UPI|TXN|REF|IMPS|NEFT|RTGS)/([A-Za-z0-9/]+)");
 
     private static final java.util.regex.Pattern CURRENCY_PREFIX =
-            java.util.regex.Pattern.compile("(?i)(?:₹|\\b(?:Rs\\.?|INR)\\s*)([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)");
+            java.util.regex.Pattern.compile("(?i)(?:₹\\s*|\\b(?:Rs\\.?|Re\\.?|INR)\\s*)([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)(?:\\s*(?:/-|/=|--))?");
 
     private static final java.util.regex.Pattern INDIAN_NUMBER_COMMAS =
             java.util.regex.Pattern.compile("\\b(\\d{1,2}(?:,\\d{2})+),(\\d{3})\\b");
@@ -1410,7 +1410,8 @@ public class TtsService extends TextToSpeechService {
             char c = text.charAt(i);
             if ((c >= 0x0900 && c <= 0x0D7F) || c == 0x20B9 || c == '/' || c == ',' ||
                 c == 'k' || c == 'K' || c == 'l' || c == 'L' || c == 'c' || c == 'C' ||
-                c == 'r' || c == 'R' || c == 's' || c == 'S' || c == 'i' || c == 'I') {
+                c == 'r' || c == 'R' || c == 's' || c == 'S' || c == 'i' || c == 'I' ||
+                c == 'e' || c == 'E') {
                 return true;
             }
         }
@@ -1494,9 +1495,7 @@ public class TtsService extends TextToSpeechService {
     }
 
     public static String indianRupeeAmountToWords(String amount, boolean devanagari) {
-        String rupeesWord = devanagari ? "रुपये" : "rupees";
-        String paiseWord = devanagari ? "पैसे" : "paise";
-        if (amount == null || amount.isEmpty()) return " " + rupeesWord;
+        if (amount == null || amount.isEmpty()) return devanagari ? " रुपये" : " rupees";
         int dot = amount.indexOf('.');
         String intPart = dot >= 0 ? amount.substring(0, dot) : amount;
         String fracPart = dot >= 0 ? amount.substring(dot + 1) : "";
@@ -1504,20 +1503,40 @@ public class TtsService extends TextToSpeechService {
                 ? indianGroupedNumberToWords(intPart, devanagari)
                 : intPart.replace(",", "");
         if (intWords.isEmpty()) intWords = "0";
-        StringBuilder out = new StringBuilder(intWords).append(' ').append(rupeesWord);
+
+        int paise = -1;
         if (fracPart.length() >= 1 && fracPart.length() <= 2) {
-            int paise = -1;
             try {
                 paise = Integer.parseInt(fracPart);
+                if (fracPart.length() == 1) {
+                    paise *= 10; // e.g. .5 is 50 paise, not 5 paise
+                }
             } catch (NumberFormatException ignored) {
             }
-            if (paise > 0) {
-                out.append(' ').append(paise).append(' ').append(paiseWord);
-            } else if (paise < 0) {
-                // Unparseable fraction: keep it verbatim instead of dropping value.
-                out.append('.').append(fracPart);
-            }
-        } else if (!fracPart.isEmpty()) {
+        }
+
+        // Fractional-only amount, e.g. "₹0.50" -> "50 paise"
+        if ("0".equals(intWords) && paise > 0) {
+            String paiseWord = (paise == 1)
+                    ? (devanagari ? "पैसा" : "paisa")
+                    : (devanagari ? "पैसे" : "paise");
+            return paise + " " + paiseWord;
+        }
+
+        boolean isSingularRupee = "1".equals(intWords);
+        String rupeesWord = isSingularRupee
+                ? (devanagari ? "रुपया" : "rupee")
+                : (devanagari ? "रुपये" : "rupees");
+
+        StringBuilder out = new StringBuilder(intWords).append(' ').append(rupeesWord);
+        if (paise > 0) {
+            String paiseWord = (paise == 1)
+                    ? (devanagari ? "पैसा" : "paisa")
+                    : (devanagari ? "पैसे" : "paise");
+            out.append(' ').append(paise).append(' ').append(paiseWord);
+        } else if (paise < 0 && !fracPart.isEmpty()) {
+            out.append('.').append(fracPart);
+        } else if (fracPart.length() > 2) {
             // Long fractions ("10.567") stay decimal for the engine.
             return intWords + "." + fracPart + " " + rupeesWord;
         }
