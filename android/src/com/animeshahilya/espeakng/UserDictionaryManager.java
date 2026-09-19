@@ -49,8 +49,28 @@ public class UserDictionaryManager {
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     private UserDictionaryManager(Context context) {
-        mContext = context.getApplicationContext();
+        mContext = EspeakApp.requireStorageContext(context);
+        migrateLegacyIfPresent(context);
         load();
+    }
+
+    private void migrateLegacyIfPresent(Context context) {
+        try {
+            File deFile = new File(mContext.getFilesDir(), FILE_NAME);
+            if (!deFile.exists()) {
+                Context plainContext = context.getApplicationContext();
+                File ceFile = new File(plainContext.getFilesDir(), FILE_NAME);
+                if (ceFile.exists() && ceFile.canRead()) {
+                    if (!ceFile.renameTo(deFile)) {
+                        FileUtils.write(deFile, FileUtils.read(ceFile));
+                        ceFile.delete();
+                    }
+                    Log.i(TAG, "Migrated user dictionary to device-protected storage");
+                }
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "Could not check/migrate legacy user dictionary", t);
+        }
     }
 
     public static synchronized UserDictionaryManager getInstance(Context context) {

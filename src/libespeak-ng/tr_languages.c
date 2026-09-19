@@ -485,7 +485,7 @@ Translator *SelectTranslator(const char *name)
 	static const unsigned char stress_amps_ta[8] = { 18, 18, 18, 18, 20, 20, 22, 22 };
 
 	tr = NewTranslator();
-	strcpy(tr->dictionary_name, name);
+	snprintf(tr->dictionary_name, sizeof(tr->dictionary_name), "%s", name);
 
 	// convert name string into a word of up to 4 characters, for the switch()
 	while (*name != 0)

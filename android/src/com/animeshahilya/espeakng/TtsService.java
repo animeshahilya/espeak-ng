@@ -628,6 +628,17 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
+        if (settings.isUnicodeNormalizationEnabled()) {
+            UnicodeNormalization.Result normalization = UnicodeNormalization.normalize(text);
+            if (normalization != null) {
+                text = normalization.text;
+                // Compose the normalizer's own boundary map directly: it is
+                // exact, and avoids re-diffing two strings it already aligned.
+                offsetMap = TextOffsetMap.fromBoundaryMap(normalization.boundaryMap())
+                        .composeWith(offsetMap);
+            }
+        }
+
         if (!isSsml && settings.isUserDictionaryEnabled()) {
             String before = text;
             text = UserDictionaryManager.getInstance(storageContext).applyRules(text, languageTag(voice));
@@ -716,47 +727,6 @@ public class TtsService extends TextToSpeechService {
             String before = text;
             text = expandPhoneticMode(text);
             offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (settings.isUnicodeNormalizationEnabled()) {
-            UnicodeNormalization.Result normalization = UnicodeNormalization.normalize(text);
-            if (normalization != null) {
-                text = normalization.text;
-                // Compose the normalizer's own boundary map directly: it is
-                // exact, and avoids re-diffing two strings it already aligned.
-                offsetMap = TextOffsetMap.fromBoundaryMap(normalization.boundaryMap())
-                        .composeWith(offsetMap);
-                if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
-                    String before = text;
-                    text = expandProgrammingSymbols(text);
-                    offsetMap = chainOffset(offsetMap, before, text);
-                }
-                if (!isSsml && settings.isIndianNumberingEnabled()) {
-                    String before = text;
-                    text = preprocessIndianText(text, languageTag(voice));
-                    offsetMap = chainOffset(offsetMap, before, text);
-                }
-                if (smartCodes) {
-                    String before = text;
-                    text = spaceSeparateSmartCodes(text, smartMin, smartMax);
-                    offsetMap = chainOffset(offsetMap, before, text);
-                }
-                if (!isSsml && settings.isCurrencyEnabled()) {
-                    String before = text;
-                    text = expandCurrencySymbols(text);
-                    offsetMap = chainOffset(offsetMap, before, text);
-                }
-                if (!isSsml && settings.isTimeDateEnabled()) {
-                    String before = text;
-                    text = expandTimeDate(text);
-                    offsetMap = chainOffset(offsetMap, before, text);
-                }
-                if (useGrouping) {
-                    String before = text;
-                    text = formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold());
-                    offsetMap = chainOffset(offsetMap, before, text);
-                }
-            }
         }
 
         // Zero-hang watchdog: always strip hang-inducing controls, even when
@@ -1094,9 +1064,6 @@ public class TtsService extends TextToSpeechService {
     static final int MAX_REQUEST_CHARS = 16000;
     /** Max chunks per request — bounds worst-case synthesis time on rapid swipes. */
     static final int MAX_CHUNKS = 20;
-    private static final java.util.regex.Pattern CHUNK_BOUNDARY =
-            java.util.regex.Pattern.compile(".{1," + MAX_CHUNK_CHARS + "}(?:[.!?;\\n]+\\s*|\\s+|$)",
-                    java.util.regex.Pattern.DOTALL);
 
     // NVDA-inspired programming, mathematical, and syntax symbol patterns (from NVDA symbols.dic):
     private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=|≠");
@@ -1750,11 +1717,15 @@ public class TtsService extends TextToSpeechService {
                 if (!regroup) {
                     out.append(text, runStart, runEnd);
                 } else {
-                    String run = text.substring(runStart, runEnd);
-                    int[] cps = run.codePoints().toArray();
-                    for (int k = 0; k < cps.length; k++) {
-                        if (k > 0 && k % groupSize == 0) out.append(' ');
-                        out.appendCodePoint(cps[k]);
+                    int groupCount = 0;
+                    for (int j = runStart; j < runEnd; ) {
+                        int c = text.codePointAt(j);
+                        if (groupCount > 0 && groupCount % groupSize == 0) {
+                            out.append(' ');
+                        }
+                        out.appendCodePoint(c);
+                        groupCount++;
+                        j += Character.charCount(c);
                     }
                 }
             } else {
@@ -1948,37 +1919,65 @@ public class TtsService extends TextToSpeechService {
             chunks.add(capped);
             return chunks;
         }
-        if (!hasChunkBoundary(capped)) {
-            // No whitespace or sentence ends at all (e.g. one giant URL):
-            // skip the boundary regex, whose greedy backtracking degrades on
-            // boundary-less input, and hard-split directly.
-            for (int i = 0; i < capped.length() && chunks.size() < MAX_CHUNKS; i += MAX_CHUNK_CHARS) {
-                chunks.add(capped.substring(i, Math.min(capped.length(), i + MAX_CHUNK_CHARS)));
+
+        final int len = capped.length();
+        int start = 0;
+        while (start < len && chunks.size() < MAX_CHUNKS) {
+            if (len - start <= MAX_CHUNK_CHARS) {
+                chunks.add(capped.substring(start));
+                break;
             }
-            return chunks;
-        }
-        java.util.regex.Matcher m = CHUNK_BOUNDARY.matcher(capped);
-        while (m.find() && chunks.size() < MAX_CHUNKS) {
-            String c = m.group();
-            if (!c.isEmpty()) chunks.add(c);
-        }
-        if (chunks.isEmpty()) {
-            for (int i = 0; i < capped.length() && chunks.size() < MAX_CHUNKS; i += MAX_CHUNK_CHARS) {
-                chunks.add(capped.substring(i, Math.min(capped.length(), i + MAX_CHUNK_CHARS)));
+
+            int targetEnd = start + MAX_CHUNK_CHARS;
+            int cutPoint = -1;
+
+            // 1. Scan backwards from targetEnd for sentence-ending punctuation or newlines
+            for (int i = targetEnd - 1; i > start; i--) {
+                char c = capped.charAt(i);
+                if (c == '.' || c == '!' || c == '?' || c == ';' || c == '\n') {
+                    int p = i + 1;
+                    while (p < len && isPunctOrNewline(capped.charAt(p))) {
+                        p++;
+                    }
+                    while (p < len && (capped.charAt(p) == ' ' || capped.charAt(p) == '\t')) {
+                        p++;
+                    }
+                    if (p <= targetEnd) {
+                        cutPoint = p;
+                        break;
+                    }
+                }
             }
+
+            // 2. Fall back to whitespace boundary if no punctuation boundary was found
+            if (cutPoint <= start) {
+                for (int i = targetEnd - 1; i > start; i--) {
+                    if (capped.charAt(i) <= ' ') {
+                        int p = i + 1;
+                        while (p < len && capped.charAt(p) <= ' ') {
+                            p++;
+                        }
+                        if (p <= targetEnd) {
+                            cutPoint = p;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 3. Fall back to hard split at targetEnd
+            if (cutPoint <= start) {
+                cutPoint = targetEnd;
+            }
+
+            chunks.add(capped.substring(start, cutPoint));
+            start = cutPoint;
         }
         return chunks;
     }
 
-    private static boolean hasChunkBoundary(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            if (c <= ' ' || c == '.' || c == '!' || c == '?' || c == ';') {
-                return true;
-            }
-        }
-        return false;
+    private static boolean isPunctOrNewline(char c) {
+        return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n';
     }
 
     /**

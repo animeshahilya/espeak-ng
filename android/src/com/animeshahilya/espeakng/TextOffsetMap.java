@@ -105,54 +105,71 @@ final class TextOffsetMap {
         final int n = before.length();
         final int m = after.length();
 
-        if ((long) n * (long) m > MAX_DP_CELLS) {
-            return diffByPrefixSuffix(before, after);
+        int prefix = 0;
+        final int maxPrefix = Math.min(n, m);
+        while (prefix < maxPrefix && before.charAt(prefix) == after.charAt(prefix)) {
+            prefix++;
         }
 
-        // Suffix-based LCS length table: dp[i][j] = LCS length of
-        // before[i..n) and after[j..m). Computed suffix-first (rather than
-        // the more common prefix table) so the alignment below can walk
-        // forward and take the *earliest* valid match on a tie, instead of
-        // the latest - e.g. for "a" -> "a, Alpha", the leading "a" should
-        // align with itself rather than with the "a" that happens to end
-        // "Alpha".
-        final int[][] dp = new int[n + 1][m + 1];
-        for (int i = n - 1; i >= 0; i--) {
-            final char bi = before.charAt(i);
-            final int[] dpRow = dp[i];
-            final int[] nextRow = dp[i + 1];
-            for (int j = m - 1; j >= 0; j--) {
-                if (bi == after.charAt(j)) {
-                    dpRow[j] = nextRow[j + 1] + 1;
-                } else {
-                    dpRow[j] = Math.max(nextRow[j], dpRow[j + 1]);
-                }
-            }
+        int suffix = 0;
+        final int maxSuffix = Math.min(n, m) - prefix;
+        while (suffix < maxSuffix
+                && before.charAt(n - 1 - suffix) == after.charAt(m - 1 - suffix)) {
+            suffix++;
         }
 
         final int[] offsets = new int[m + 1];
-        int i = 0, j = 0;
-        int prevOldEnd = 0;
-        int prevNewEnd = 0;
-        while (i < n && j < m) {
-            if (before.charAt(i) == after.charAt(j)) {
-                // Matching the moment characters agree is always on an
-                // optimal path here, since the recurrence above sets
-                // dp[i][j] = dp[i+1][j+1] + 1 whenever they're equal.
-                fillUnmatchedRun(offsets, prevNewEnd, j, prevOldEnd, i);
-                offsets[j] = i;
-                prevOldEnd = i + 1;
-                prevNewEnd = j + 1;
-                i++;
-                j++;
-            } else if (dp[i + 1][j] >= dp[i][j + 1]) {
-                i++;
-            } else {
-                j++;
-            }
+        for (int k = 0; k <= prefix; k++) {
+            offsets[k] = k;
         }
-        fillUnmatchedRun(offsets, prevNewEnd, m, prevOldEnd, n);
-        offsets[m] = n;
+
+        final int nSlice = n - suffix - prefix;
+        final int mSlice = m - suffix - prefix;
+
+        if ((long) nSlice * (long) mSlice > MAX_DP_CELLS) {
+            fillUnmatchedRun(offsets, prefix, m - suffix, prefix, n - suffix);
+        } else if (nSlice > 0 && mSlice > 0) {
+            // Suffix-based LCS length table for the changed middle slice only.
+            // Suffix-first so alignment takes the earliest valid match on ties.
+            final int[][] dp = new int[nSlice + 1][mSlice + 1];
+            for (int i = nSlice - 1; i >= 0; i--) {
+                final char bi = before.charAt(prefix + i);
+                final int[] dpRow = dp[i];
+                final int[] nextRow = dp[i + 1];
+                for (int j = mSlice - 1; j >= 0; j--) {
+                    if (bi == after.charAt(prefix + j)) {
+                        dpRow[j] = nextRow[j + 1] + 1;
+                    } else {
+                        dpRow[j] = Math.max(nextRow[j], dpRow[j + 1]);
+                    }
+                }
+            }
+
+            int i = 0, j = 0;
+            int prevOldEnd = prefix;
+            int prevNewEnd = prefix;
+            while (i < nSlice && j < mSlice) {
+                if (before.charAt(prefix + i) == after.charAt(prefix + j)) {
+                    fillUnmatchedRun(offsets, prevNewEnd, prefix + j, prevOldEnd, prefix + i);
+                    offsets[prefix + j] = prefix + i;
+                    prevOldEnd = prefix + i + 1;
+                    prevNewEnd = prefix + j + 1;
+                    i++;
+                    j++;
+                } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+                    i++;
+                } else {
+                    j++;
+                }
+            }
+            fillUnmatchedRun(offsets, prevNewEnd, m - suffix, prevOldEnd, n - suffix);
+        } else {
+            fillUnmatchedRun(offsets, prefix, m - suffix, prefix, n - suffix);
+        }
+
+        for (int k = m - suffix; k <= m; k++) {
+            offsets[k] = n - (m - k);
+        }
 
         return new TextOffsetMap(offsets);
     }

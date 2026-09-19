@@ -374,7 +374,7 @@ int AddNameData(const char *name, int wide)
 
 	if (wide) {
 		len = (wcslen((const wchar_t *)name)+1)*sizeof(wchar_t);
-		n_namedata = (n_namedata + sizeof(wchar_t) - 1) % sizeof(wchar_t);  // round to wchar_t boundary
+		namedata_ix = (namedata_ix + sizeof(wchar_t) - 1) & ~(sizeof(wchar_t) - 1);  // round to wchar_t boundary
 	} else
 		len = strlen(name)+1;
 

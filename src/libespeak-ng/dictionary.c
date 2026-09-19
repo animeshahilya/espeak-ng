@@ -235,17 +235,21 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	size = fread(tr->data_dictlist, 1, size, f);
 	fclose(f);
 
-	pw = (int *)(tr->data_dictlist);
-	length = Reverse4Bytes(pw[1]);
-
 	if (size <= (N_HASH_DICT + sizeof(int)*2)) {
-		fprintf(stderr, "Empty _dict file: '%s\n", fname);
+		fprintf(stderr, "Empty _dict file: '%s'\n", fname);
+		free(tr->data_dictlist);
+		tr->data_dictlist = NULL;
 		return 2;
 	}
 
+	pw = (int *)(tr->data_dictlist);
+	length = Reverse4Bytes(pw[1]);
+
 	if ((Reverse4Bytes(pw[0]) != N_HASH_DICT) ||
-	    (length <= 0) || (length > 0x8000000)) {
+	    (length <= 0) || (length >= size)) {
 		fprintf(stderr, "Bad data: '%s' (%x length=%x)\n", fname, Reverse4Bytes(pw[0]), length);
+		free(tr->data_dictlist);
+		tr->data_dictlist = NULL;
 		return 2;
 	}
 	tr->data_dictrules = &(tr->data_dictlist[length]);
@@ -2750,7 +2754,7 @@ int LookupDictList(Translator *tr, char **wordptr, char *ph_out, unsigned int *f
 	length = 0;
 	word2 = word1 = *wordptr;
 
-	while ((word2[nbytes = utf8_nbytes(word2)] == ' ') && (word2[nbytes+1] == '.')) {
+	while ((word2[nbytes = utf8_nbytes(word2)] == ' ') && (word2[nbytes+1] == '.') && (word2[nbytes+2] == ' ')) {
 		// look for an abbreviation of the form a.b.c
 		// try removing the spaces between the dots and looking for a match
 		if ((nbytes <= 0) || ((size_t)nbytes + 1 > sizeof(word) - (size_t)length)) {

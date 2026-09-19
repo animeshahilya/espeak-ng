@@ -532,7 +532,7 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int wtab_r
 
 		if (p[0] == phonSWITCH) {
 			int switch_attempt;
-			strcpy(old_dictionary_name, dictionary_name);
+			snprintf(old_dictionary_name, sizeof(old_dictionary_name), "%s", dictionary_name);
 			for (switch_attempt = 0; switch_attempt < 2; switch_attempt++) {
 				// this word uses a different language
 				memcpy(word, word_copy, word_copy_len);
@@ -570,7 +570,7 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int wtab_r
 			}
 
 			if (switch_phonemes == -1) {
-				strcpy(dictionary_name, old_dictionary_name);
+				snprintf(dictionary_name, sizeof(dictionary_name), "%s", old_dictionary_name);
 				SelectPhonemeTable(voice->phoneme_tab_ix);
 
 				// leave switch_phonemes set, but use the original phoneme table number.
@@ -772,7 +772,7 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int wtab_r
 	// This may require up to 1 phoneme
 	if (switch_phonemes >= 0) {
 		// this word uses a different phoneme table, now switch back
-		strcpy(dictionary_name, old_dictionary_name);
+		snprintf(dictionary_name, sizeof(dictionary_name), "%s", old_dictionary_name);
 		SelectPhonemeTable(voice->phoneme_tab_ix);
 		SetPlist2(&ph_list2[n_ph_list2], phonSWITCH);
 		ph_list2[n_ph_list2++].tone_ph = voice->phoneme_tab_ix; // original phoneme table number

@@ -40,61 +40,45 @@
 
 #define BUFFER_SIZE_IN_MILLISECONDS 80
 
-/* These are helpers for converting a jstring to wchar_t*.
+/* Converts a Java jstring (UTF-16) to wchar_t* (UTF-32).
  *
- * This assumes that wchar_t is a 32-bit (UTF-32) value.
+ * Direct UTF-16 decoding handles surrogate pairs properly and avoids
+ * double-conversion via Modified UTF-8 or out-of-bounds pointer reads
+ * on malformed or truncated byte sequences.
  */
 //@{
-
-static const char *utf8_read(const char *in, wchar_t *c)
-{
-	if (((uint8_t)*in) < 0x80)
-		*c = *in++;
-	else switch (((uint8_t)*in) & 0xF0)
-	{
-	default:
-		*c = ((uint8_t)*in++) & 0x1F;
-		*c = (*c << 6) + (((uint8_t)*in++) & 0x3F);
-		break;
-	case 0xE0:
-		*c = ((uint8_t)*in++) & 0x0F;
-		*c = (*c << 6) + (((uint8_t)*in++) & 0x3F);
-		*c = (*c << 6) + (((uint8_t)*in++) & 0x3F);
-		break;
-	case 0xF0:
-		*c = ((uint8_t)*in++) & 0x07;
-		*c = (*c << 6) + (((uint8_t)*in++) & 0x3F);
-		*c = (*c << 6) + (((uint8_t)*in++) & 0x3F);
-		*c = (*c << 6) + (((uint8_t)*in++) & 0x3F);
-		break;
-	}
-	return in;
-}
 
 static wchar_t *unicode_string(JNIEnv *env, jstring str)
 {
   if (str == NULL) return NULL;
 
-  const char *utf8 = (*env)->GetStringUTFChars(env, str, NULL);
-  if (utf8 == NULL) return NULL;
-  /* Modified UTF-8: size by byte length, not strlen, so an embedded
-   * logical NUL (encoded 0xC0 0x80) can't truncate the allocation. */
-  wchar_t *utf32 = (wchar_t *)malloc(((*env)->GetStringUTFLength(env, str) + 1) * sizeof(wchar_t));
+  const jsize len = (*env)->GetStringLength(env, str);
+  const jchar *chars = (*env)->GetStringChars(env, str, NULL);
+  if (chars == NULL) return NULL;
+
+  wchar_t *utf32 = (wchar_t *)malloc(((size_t)len + 1) * sizeof(wchar_t));
   if (utf32 == NULL) {
-    (*env)->ReleaseStringUTFChars(env, str, utf8);
+    (*env)->ReleaseStringChars(env, str, chars);
     return NULL;
   }
 
-  const char *utf8_current = utf8;
-  wchar_t *utf32_current = utf32;
-  while (*utf8_current)
-  {
-    utf8_current = utf8_read(utf8_current, utf32_current);
-    ++utf32_current;
+  jsize src = 0;
+  size_t dst = 0;
+  while (src < len) {
+    jchar c = chars[src++];
+    if (c >= 0xD800 && c <= 0xDBFF && src < len) {
+      jchar low = chars[src];
+      if (low >= 0xDC00 && low <= 0xDFFF) {
+        src++;
+        utf32[dst++] = (wchar_t)(((c - 0xD800) << 10) + (low - 0xDC00) + 0x10000);
+        continue;
+      }
+    }
+    utf32[dst++] = (wchar_t)c;
   }
-  *utf32_current = 0;
+  utf32[dst] = 0;
 
-  (*env)->ReleaseStringUTFChars(env, str, utf8);
+  (*env)->ReleaseStringChars(env, str, chars);
   return utf32;
 }
 
@@ -173,6 +157,9 @@ static int SynthCallback(short *audioData, int numSamples,
      * a final NULL-buffer callback when aborted, so this is the only place the
      * Java side hears that the request is over and can call done(). */
     (*env)->CallVoidMethod(env, object, METHOD_nativeSynthCallback, NULL);
+    if (check_jni_exception(env)) {
+      return SYNTH_ABORT;
+    }
     return SYNTH_ABORT;
   }
 
@@ -316,7 +303,7 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeGetAvailableVoices
   // NewStringUTF) while an exception is pending is undefined behavior per
   // the JNI spec, even though the value being stored would be NULL.
   for (int i = 0, voicesIndex = 0; (v = voices[i]) != NULL; i++) {
-    const char *lang_name = (v->languages != NULL) ? v->languages + 1 : "";
+    const char *lang_name = (v->languages != NULL && v->languages[0] != '\0') ? v->languages + 1 : "";
     const char *identifier = (v->identifier != NULL) ? v->identifier : "";
     snprintf(gender_buf, sizeof(gender_buf), "%d", v->gender);
     snprintf(age_buf, sizeof(age_buf), "%d", v->age);
@@ -466,7 +453,8 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
   espeak_SetSynthCallback(SynthCallback);
   atomic_store(&frames_delivered, 0);
   atomic_store(&stop_requested, 0);
-  const espeak_ERROR result = espeak_Synth(c_text, (size_t)c_length, 0,  // position
+  const char *synth_input = c_text ? c_text : "";
+  const espeak_ERROR result = espeak_Synth(synth_input, (size_t)c_length, 0,  // position
                POS_CHARACTER, 0, // end position (0 means no end position)
                isSsml ? espeakCHARS_UTF8 | espeakSSML // UTF-8 encoded SSML
                       : espeakCHARS_UTF8,             // UTF-8 encoded text

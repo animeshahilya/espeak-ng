@@ -40,6 +40,7 @@ public class UserDictionary {
     private String mCategory;
 
     private Pattern mCompiledPattern = null;
+    private String mPreparedReplacement = "";
 
     public UserDictionary(String pattern, String replacement, boolean caseSensitive, boolean isRegex, boolean wholeWord) {
         this(pattern, replacement, caseSensitive, isRegex, wholeWord, "");
@@ -81,6 +82,7 @@ public class UserDictionary {
 
     public void setReplacement(String replacement) {
         mReplacement = replacement != null ? replacement : "";
+        compile();
     }
 
     public boolean isCaseSensitive() {
@@ -180,6 +182,9 @@ public class UserDictionary {
         } catch (PatternSyntaxException e) {
             mCompiledPattern = null;
         }
+        mPreparedReplacement = mIsRegex
+                ? mReplacement
+                : java.util.regex.Matcher.quoteReplacement(mReplacement != null ? mReplacement : "");
     }
 
     public String apply(String text) {
@@ -187,7 +192,7 @@ public class UserDictionary {
             return text;
         }
         try {
-            return mCompiledPattern.matcher(text).replaceAll(mReplacement);
+            return mCompiledPattern.matcher(text).replaceAll(mPreparedReplacement);
         } catch (Throwable t) {
             return text;
         }
