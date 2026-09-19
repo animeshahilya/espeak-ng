@@ -895,7 +895,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
-    private static Preference createAudioOptimizerPreference(Context context) {
+    private static CheckBoxPreference createAudioOptimizerPreference(Context context) {
         final CheckBoxPreference pref = new CheckBoxPreference(context);
         pref.setTitle(R.string.setting_audio_optimizer);
         pref.setSummary(R.string.setting_audio_optimizer_summary);
@@ -975,7 +975,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
-    private static Preference createSmartCodesPreference(Context context) {
+    private static CheckBoxPreference createSmartCodesPreference(Context context) {
         final CheckBoxPreference pref = new CheckBoxPreference(context);
         pref.setTitle(R.string.setting_smart_codes);
         pref.setSummary(R.string.setting_smart_codes_summary);
@@ -985,7 +985,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
-    private static Preference createBilingualSwitchingPreference(Context context) {
+    private static CheckBoxPreference createBilingualSwitchingPreference(Context context) {
         final CheckBoxPreference pref = new CheckBoxPreference(context);
         pref.setTitle(R.string.setting_bilingual_switching);
         pref.setSummary(R.string.setting_bilingual_switching_summary);
@@ -1767,14 +1767,25 @@ public class TtsSettingsActivity extends PreferenceActivity {
         secDigitsCat.setTitle(R.string.category_security_digits);
         numberScreen.addPreference(secDigitsCat);
 
-        secDigitsCat.addPreference(createSmartCodesPreference(context));
+        CheckBoxPreference smartCodesPref = createSmartCodesPreference(context);
+        secDigitsCat.addPreference(smartCodesPref);
         if (!isWatch) {
-            Preference smartMin = createSmartMinPreference(context);
+            final Preference smartMin = createSmartMinPreference(context);
+            final Preference smartMax = createSmartMaxPreference(context);
+            boolean smartEnabled = smartCodesPref.isChecked();
+            smartMin.setEnabled(smartEnabled);
+            smartMax.setEnabled(smartEnabled);
+            smartCodesPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean enabled = (Boolean) newValue;
+                    smartMin.setEnabled(enabled);
+                    smartMax.setEnabled(enabled);
+                    return true;
+                }
+            });
             secDigitsCat.addPreference(smartMin);
-            smartMin.setDependency(VoiceSettings.PREF_SMART_CODES);
-            Preference smartMax = createSmartMaxPreference(context);
             secDigitsCat.addPreference(smartMax);
-            smartMax.setDependency(VoiceSettings.PREF_SMART_CODES);
         }
         secDigitsCat.addPreference(createDigitGroupingPreference(context));
         if (!isWatch) {
@@ -1830,11 +1841,20 @@ public class TtsSettingsActivity extends PreferenceActivity {
             multiCat.setTitle(R.string.category_multilingual);
             textProcessingScreen.addPreference(multiCat);
 
-            multiCat.addPreference(createBilingualSwitchingPreference(context));
+            CheckBoxPreference bilingualPref = createBilingualSwitchingPreference(context);
+            multiCat.addPreference(bilingualPref);
             if (!voices.isEmpty()) {
-                Preference secondary = createSecondaryVoicePreference(context, voices);
+                final Preference secondary = createSecondaryVoicePreference(context, voices);
+                secondary.setEnabled(bilingualPref.isChecked());
+                bilingualPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        boolean enabled = (Boolean) newValue;
+                        secondary.setEnabled(enabled);
+                        return true;
+                    }
+                });
                 multiCat.addPreference(secondary);
-                secondary.setDependency(VoiceSettings.PREF_BILINGUAL_SWITCHING);
             }
         }
 
@@ -1914,10 +1934,19 @@ public class TtsSettingsActivity extends PreferenceActivity {
         paramCategory.addPreference(createIntonationStylePreference(context));
         paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
-        paramCategory.addPreference(createAudioOptimizerPreference(context));
-        Preference audioProfile = createAudioProfilePreference(context);
+        CheckBoxPreference audioOptPref = createAudioOptimizerPreference(context);
+        paramCategory.addPreference(audioOptPref);
+        final Preference audioProfile = createAudioProfilePreference(context);
+        audioProfile.setEnabled(audioOptPref.isChecked());
+        audioOptPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean enabled = (Boolean) newValue;
+                audioProfile.setEnabled(enabled);
+                return true;
+            }
+        });
         paramCategory.addPreference(audioProfile);
-        audioProfile.setDependency(VoiceSettings.PREF_AUDIO_OPTIMIZER);
 
         // 3. Advanced & specialized settings
         PreferenceCategory advancedCategory = new AccessiblePreferenceCategory(context);
