@@ -54,7 +54,12 @@ package com.animeshahilya.espeakng;
  * request, not a shared/reused one: reusing an instance across utterances would carry stale
  * filter state (and a stale limiter/leveler gain) into the next one.
  */
-final class AudioOptimizer {
+// Package-private would be enough for production code, but the androidTest APK loads its
+// classes through a separate ClassLoader from the same-named app package: ART's access check
+// is per-ClassLoader, not per-package-string, so a package-private type/member is an
+// IllegalAccessError from that side even though `package` matches textually (see
+// TextPipelineDeviceTest.testFastTanhAccuracy, which needs fastTanh() below).
+public final class AudioOptimizer {
 
     // Presence band: see this class's own doc comment for why 2.5-5kHz rather than an open-ended
     // shelf.
@@ -111,15 +116,30 @@ final class AudioOptimizer {
     }
 
     /**
-     * Fast Padé [3/4] rational approximation of tanh(x).
-     * Error is under 0.06% across all audio ranges and uses simple floating point operations,
-     * avoiding costly transcendental Math.tanh() calls inside the per-sample loop.
+     * Fast Padé [7/6] rational approximation of tanh(x). Avoids the costly transcendental
+     * Math.tanh() call inside the per-sample loop while staying accurate across this class's
+     * actual operating range: harmonicSaturate() feeds it normalizedInput * drive, and
+     * PRESENCE_DRIVE alone is 5f against samples that can slightly exceed +-1.0 after
+     * filtering, so inputs regularly land at or past +-5 - not the +-1..2 range most tanh
+     * approximations are tuned for.
+     *
+     * The previous Padé [3/4] approximant (x*(105+10x^2)/(105+45x^2+x^4), clamped at +-3.5)
+     * measured under 0.06% error near zero, but that error grows to ~0.94% by x=3.4 - right at
+     * the edge of this saturator's real operating range - because a [3/4] approximant simply
+     * isn't a good fit that far out; the doc comment's "across all audio ranges" claim didn't
+     * hold; see git history for the corresponding fix to the max error test. This [7/6]
+     * approximant stays under 0.01% out to x=5, so the hard clamp can move out to +-6 as a
+     * pure safety bound rather than a precision cutoff.
      */
-    static float fastTanh(float x) {
-        if (x <= -3.5f) return -1.0f;
-        if (x >= 3.5f) return 1.0f;
+    public static float fastTanh(float x) {
+        if (x <= -6.0f) return -1.0f;
+        if (x >= 6.0f) return 1.0f;
         float x2 = x * x;
-        return x * (105.0f + 10.0f * x2) / (105.0f + 45.0f * x2 + x2 * x2);
+        float x4 = x2 * x2;
+        float x6 = x4 * x2;
+        float num = x * (135135.0f + 17325.0f * x2 + 378.0f * x4 + x6);
+        float den = 135135.0f + 62370.0f * x2 + 3150.0f * x4 + 28.0f * x6;
+        return num / den;
     }
 
     /**
@@ -238,8 +258,12 @@ final class AudioOptimizer {
         presenceBlend = pBlend;
         warmthBlend = wBlend;
         levelerMaxGain = maxGain;
-        presenceHighpassAlpha = onePoleHighpassPole(PRESENCE_LOW_HZ, sampleRateHz);
-        presenceLowpassAlpha = onePoleAlpha(PRESENCE_HIGH_HZ, sampleRateHz);
+        // Dynamic Nyquist safety clamping: ensure filter corner frequencies stay strictly
+        // below the Nyquist limit (sampleRateHz / 2) even on low-rate voices (e.g. 8kHz or 11.025kHz).
+        double presenceLowHz = Math.min(PRESENCE_LOW_HZ, sampleRateHz * 0.35);
+        double presenceHighHz = Math.min(PRESENCE_HIGH_HZ, sampleRateHz * 0.45);
+        presenceHighpassAlpha = onePoleHighpassPole(presenceLowHz, sampleRateHz);
+        presenceLowpassAlpha = onePoleAlpha(presenceHighHz, sampleRateHz);
         warmthAlpha = onePoleAlpha(WARMTH_HZ, sampleRateHz);
         levelEnvelopeAlpha = scaledEnvelopeAlpha(LEVEL_ENVELOPE_ALPHA_AT_REFERENCE_RATE, sampleRateHz, LEVELER_REFERENCE_RATE_HZ);
         gainSmoothAlpha = scaledEnvelopeAlpha(GAIN_SMOOTH_ALPHA_AT_REFERENCE_RATE, sampleRateHz, LEVELER_REFERENCE_RATE_HZ);

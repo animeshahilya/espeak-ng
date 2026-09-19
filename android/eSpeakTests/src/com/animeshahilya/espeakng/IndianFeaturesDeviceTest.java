@@ -164,6 +164,18 @@ public class IndianFeaturesDeviceTest {
         assertThat(TtsService.preprocessIndianText("₹0.01", "en-in"), is("1 paisa"));
         assertThat(TtsService.preprocessIndianText("₹0.01", "hi"), is("1 पैसा"));
         assertThat(TtsService.preprocessIndianText("₹10.5", "en-in"), is("10 rupees 50 paise"));
+
+        // Currency-prefixed lakh/crore/thousand shorthand ("₹5L") previously ran the
+        // "L"/"Cr" suffix straight into "rupees" as a stray letter ("5 rupeesL") since the
+        // currency regex only captured the digits; it must verbalize as a unit instead.
+        assertThat(TtsService.preprocessIndianText("₹5L", "en-in"), is("5 lakh rupees"));
+        assertThat(TtsService.preprocessIndianText("Rs 2.5Cr", "en-in"), is("2.5 crore rupees"));
+        assertThat(TtsService.preprocessIndianText("₹10k", "en-in"), is("10 thousand rupees"));
+        assertThat(TtsService.preprocessIndianText("₹5L", "hi"), is("5 लाख रुपये"));
+
+        // A plain amount followed by unrelated text must not have its separating space
+        // swallowed by the optional shorthand-unit lookahead ("₹500 dollars" is not "500L").
+        assertThat(TtsService.preprocessIndianText("₹500 dollars", "en-in"), is("500 rupees dollars"));
     }
 
     @Test

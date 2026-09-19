@@ -82,6 +82,76 @@ static wchar_t *unicode_string(JNIEnv *env, jstring str)
   return utf32;
 }
 
+/* Converts a Java jstring (UTF-16) to standard RFC 3629 UTF-8 char*.
+ *
+ * Unlike JNI's GetStringUTFChars, which produces Modified UTF-8 (encoding
+ * supplementary code points U+10000+ as pairs of 3-byte surrogate sequences,
+ * and \0 as 0xC0 0x80), this produces standard UTF-8 with true 4-byte
+ * sequences for astral plane code points, exactly as expected by eSpeak's utf8_in.
+ * Releases the pinned jchar buffer immediately upon transcoding.
+ */
+static char *utf16_to_utf8(JNIEnv *env, jstring str, size_t *out_len)
+{
+  if (out_len) *out_len = 0;
+  if (str == NULL) return NULL;
+
+  const jsize len = (*env)->GetStringLength(env, str);
+  const jchar *chars = (*env)->GetStringChars(env, str, NULL);
+  if (chars == NULL) return NULL;
+
+  // First pass: compute exact standard UTF-8 byte count
+  size_t utf8_len = 0;
+  for (jsize i = 0; i < len; i++) {
+    jchar c = chars[i];
+    if (c < 0x80) {
+      utf8_len += 1;
+    } else if (c < 0x800) {
+      utf8_len += 2;
+    } else if (c >= 0xD800 && c <= 0xDBFF && (i + 1) < len &&
+               chars[i + 1] >= 0xDC00 && chars[i + 1] <= 0xDFFF) {
+      utf8_len += 4;
+      i++;
+    } else {
+      utf8_len += 3;
+    }
+  }
+
+  char *utf8 = (char *)malloc(utf8_len + 1);
+  if (utf8 == NULL) {
+    (*env)->ReleaseStringChars(env, str, chars);
+    return NULL;
+  }
+
+  // Second pass: encode standard UTF-8
+  size_t dst = 0;
+  for (jsize i = 0; i < len; i++) {
+    jchar c = chars[i];
+    if (c < 0x80) {
+      utf8[dst++] = (char)c;
+    } else if (c < 0x800) {
+      utf8[dst++] = (char)(0xC0 | (c >> 6));
+      utf8[dst++] = (char)(0x80 | (c & 0x3F));
+    } else if (c >= 0xD800 && c <= 0xDBFF && (i + 1) < len &&
+               chars[i + 1] >= 0xDC00 && chars[i + 1] <= 0xDFFF) {
+      uint32_t cp = (((uint32_t)(c - 0xD800) << 10) | (chars[i + 1] - 0xDC00)) + 0x10000;
+      i++;
+      utf8[dst++] = (char)(0xF0 | (cp >> 18));
+      utf8[dst++] = (char)(0x80 | ((cp >> 12) & 0x3F));
+      utf8[dst++] = (char)(0x80 | ((cp >> 6) & 0x3F));
+      utf8[dst++] = (char)(0x80 | (cp & 0x3F));
+    } else {
+      utf8[dst++] = (char)(0xE0 | (c >> 12));
+      utf8[dst++] = (char)(0x80 | ((c >> 6) & 0x3F));
+      utf8[dst++] = (char)(0x80 | (c & 0x3F));
+    }
+  }
+  utf8[dst] = '\0';
+
+  (*env)->ReleaseStringChars(env, str, chars);
+  if (out_len) *out_len = dst;
+  return utf8;
+}
+
 //@}
 
 #define LOG_TAG "eSpeakService"
@@ -146,6 +216,9 @@ static int SynthCallback(short *audioData, int numSamples,
                          espeak_EVENT *events) {
   JNIEnv *env = getJniEnv();
   if (env == NULL || events == NULL || events->user_data == NULL) {
+    return SYNTH_ABORT;
+  }
+  if ((*env)->EnsureLocalCapacity(env, 16) != 0) {
     return SYNTH_ABORT;
   }
   jobject object = (jobject)events->user_data;
@@ -428,25 +501,18 @@ JNIEXPORT jboolean
 JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
     JNIEnv *env, jobject object, jstring text, jboolean isSsml) {
   if (DEBUG) LOGV("%s", __FUNCTION__);
-  /* Copy the text off the Java string first: holding GetStringUTFChars
-   * across the whole espeak_Synth + Synchronize pins the string and blocks
-   * GC for the entire utterance. A null jstring synthesizes as empty. */
+  /* Transcode Java UTF-16 directly into standard UTF-8. Unlike GetStringUTFChars
+   * (which returns Modified UTF-8, splitting astral plane characters U+10000+
+   * into surrogate pairs), utf16_to_utf8 encodes true 4-byte UTF-8 sequences
+   * and unpins the Java string characters immediately before the synchronous
+   * espeak_Synth call runs. A null jstring synthesizes as empty. */
   char *c_text = NULL;
-  jsize c_length = 0;
+  size_t c_length = 0;
   if (text != NULL) {
-    const char *pinned = (*env)->GetStringUTFChars(env, text, NULL);
-    if (pinned == NULL) {
-      return JNI_FALSE;
-    }
-    c_length = (*env)->GetStringUTFLength(env, text);
-    c_text = (char *)malloc((size_t)c_length + 1);
+    c_text = utf16_to_utf8(env, text, &c_length);
     if (c_text == NULL) {
-      (*env)->ReleaseStringUTFChars(env, text, pinned);
       return JNI_FALSE;
     }
-    memcpy(c_text, pinned, (size_t)c_length);
-    c_text[c_length] = '\0';
-    (*env)->ReleaseStringUTFChars(env, text, pinned);
   }
   unsigned int unique_identifier;
 

@@ -197,7 +197,11 @@ public class UserDictionary {
             if (text.length() < mPattern.length()) {
                 return text;
             }
-            if (mCaseSensitive && !text.contains(mPattern)) {
+            if (mCaseSensitive) {
+                if (!text.contains(mPattern)) {
+                    return text;
+                }
+            } else if (!containsIgnoreCase(text, mPattern)) {
                 return text;
             }
         }
@@ -206,6 +210,18 @@ public class UserDictionary {
         } catch (Throwable t) {
             return text;
         }
+    }
+
+    private static boolean containsIgnoreCase(String source, String target) {
+        final int targetLen = target.length();
+        if (targetLen == 0) return true;
+        final int max = source.length() - targetLen;
+        for (int i = 0; i <= max; i++) {
+            if (source.regionMatches(true, i, target, 0, targetLen)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public JSONObject toJson() throws JSONException {

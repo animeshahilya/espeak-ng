@@ -1014,8 +1014,12 @@ public class TtsService extends TextToSpeechService {
     private static final java.util.regex.Pattern BANKING_SLASH_TXN =
             java.util.regex.Pattern.compile("(?i)\\b(UPI|TXN|REF|IMPS|NEFT|RTGS)/([A-Za-z0-9/]+)");
 
+    // Group 2 optionally captures a trailing lakh/crore/thousand shorthand unit
+    // (e.g. "₹5L", "Rs 2.5Cr") so it verbalizes as "5 lakh rupees" / "2.5 crore rupees"
+    // instead of running the shorthand suffix straight into "rupees" as a stray letter
+    // ("5 rupeesL") - the currency check runs before the standalone shorthand expansion below.
     private static final java.util.regex.Pattern CURRENCY_PREFIX =
-            java.util.regex.Pattern.compile("(?i)(?:₹\\s*|\\b(?:Rs\\.?|Re\\.?|INR)\\s*)([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)(?:\\s*(?:/-|/=|--))?");
+            java.util.regex.Pattern.compile("(?i)(?:₹\\s*|\\b(?:Rs\\.?|Re\\.?|INR)\\s*)([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)(?:\\s*(k|l|lac|lakhs?|cr|crores?))?\\b(?:\\s*(?:/-|/=|--))?");
 
     private static final java.util.regex.Pattern INDIAN_NUMBER_COMMAS =
             java.util.regex.Pattern.compile("\\b(\\d{1,2}(?:,\\d{2})+),(\\d{3})\\b");
@@ -1544,6 +1548,27 @@ public class TtsService extends TextToSpeechService {
     }
 
     /**
+     * "₹5L" -&gt; "5 lakh rupees", "Rs 2.5Cr" -&gt; "2.5 crore rupees", "₹10k" -&gt;
+     * "10 thousand rupees" - a currency-prefixed amount carrying a lakh/crore/thousand
+     * shorthand unit. These are always approximate figures, never rupees-and-paise, so
+     * the amount is read as-is (eSpeak already verbalizes plain decimals like "2.5"
+     * correctly) rather than routed through the paise-splitting logic above.
+     */
+    private static String indianRupeeShorthandToWords(String amount, String unit, boolean devanagari) {
+        String unitWord;
+        char u = Character.toLowerCase(unit.charAt(0));
+        if (u == 'k') {
+            unitWord = devanagari ? "हज़ार" : "thousand";
+        } else if (u == 'l') {
+            unitWord = devanagari ? "लाख" : "lakh";
+        } else {
+            unitWord = devanagari ? "करोड़" : "crore";
+        }
+        String rupeesWord = devanagari ? "रुपये" : "rupees";
+        return amount + " " + unitWord + " " + rupeesWord;
+    }
+
+    /**
      * Preprocesses Indian-specific textual nuances and common technical syntax before synthesis:
      * 1. Normalizes native Indic numerals across 9 scripts to ASCII 0-9.
      * 2. Inserts spacing after Danda (।) and Double Danda (॥) if directly adjacent to text.
@@ -1591,8 +1616,11 @@ public class TtsService extends TextToSpeechService {
             StringBuffer sb = new StringBuffer();
             do {
                 String amount = currMatcher.group(1);
-                currMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(
-                        indianRupeeAmountToWords(amount, devanagari)));
+                String unit = currMatcher.group(2);
+                String words = (unit != null && !unit.isEmpty())
+                        ? indianRupeeShorthandToWords(amount, unit, devanagari)
+                        : indianRupeeAmountToWords(amount, devanagari);
+                currMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(words));
             } while (currMatcher.find());
             currMatcher.appendTail(sb);
             text = sb.toString();
@@ -1902,6 +1930,19 @@ public class TtsService extends TextToSpeechService {
         return sanitizeForWatchdog(text, false);
     }
 
+    private static boolean containsHangControls(String text) {
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            char c = text.charAt(i);
+            if ((c < 0x20 && c != '\t' && c != '\n' && c != '\r') || c == 0x7F
+                    || (c >= 0x200B && c <= 0x200F) || (c >= 0x202A && c <= 0x202E)
+                    || (c >= 0x2060 && c <= 0x2064) || c == 0xFEFF) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * @param isSsml when true, only C0/bidi controls are stripped (XML forbids
      *               them anyway) while bracket runs are left intact, so SSML
@@ -1909,7 +1950,9 @@ public class TtsService extends TextToSpeechService {
      */
     public static String sanitizeForWatchdog(String text, boolean isSsml) {
         if (text == null || text.isEmpty()) return text;
-        text = HANG_CONTROLS.matcher(text).replaceAll("");
+        if (containsHangControls(text)) {
+            text = HANG_CONTROLS.matcher(text).replaceAll("");
+        }
         if (!isSsml && (text.contains("[[") || text.contains("]]"))) {
             text = EDGE_BRACKET_RUN.matcher(text).replaceAll(" ");
         }
@@ -1953,7 +1996,17 @@ public class TtsService extends TextToSpeechService {
             // 1. Scan backwards from targetEnd for sentence-ending punctuation or newlines
             for (int i = targetEnd - 1; i > start; i--) {
                 char c = capped.charAt(i);
-                if (c == '.' || c == '!' || c == '?' || c == ';' || c == '\n') {
+                if (isPunctOrNewline(c)) {
+                    // Avoid splitting in the middle of a decimal number (e.g. 3.14)
+                    if (c == '.' && i > start && Character.isDigit(capped.charAt(i - 1))
+                            && i + 1 < len && Character.isDigit(capped.charAt(i + 1))) {
+                        continue;
+                    }
+                    // Avoid splitting after common honorifics/abbreviations or initials
+                    if (c == '.' && isAbbreviationOrInitial(capped, start, i)) {
+                        continue;
+                    }
+
                     int p = i + 1;
                     while (p < len && isPunctOrNewline(capped.charAt(p))) {
                         p++;
@@ -1961,7 +2014,9 @@ public class TtsService extends TextToSpeechService {
                     while (p < len && (capped.charAt(p) == ' ' || capped.charAt(p) == '\t')) {
                         p++;
                     }
-                    if (p <= targetEnd) {
+                    // Allow the cut point slightly beyond targetEnd (within 16 chars) to
+                    // cleanly include sentence-trailing whitespace/dandas.
+                    if (p <= targetEnd + 16) {
                         cutPoint = p;
                         break;
                     }
@@ -1995,8 +2050,32 @@ public class TtsService extends TextToSpeechService {
         return chunks;
     }
 
+    private static boolean isAbbreviationOrInitial(String s, int start, int dotIndex) {
+        int wordStart = dotIndex - 1;
+        while (wordStart >= start && Character.isLetter(s.charAt(wordStart))) {
+            wordStart--;
+        }
+        wordStart++;
+        int wordLen = dotIndex - wordStart;
+        if (wordLen == 1) {
+            // Single-letter initial: "J. K. Rowling", "A. Smith"
+            return true;
+        }
+        if (wordLen >= 2 && wordLen <= 4) {
+            String word = s.substring(wordStart, dotIndex).toLowerCase(Locale.ROOT);
+            if ("dr".equals(word) || "mr".equals(word) || "mrs".equals(word) || "ms".equals(word)
+                    || "prof".equals(word) || "sr".equals(word) || "jr".equals(word) || "vs".equals(word)
+                    || "eg".equals(word) || "ie".equals(word) || "etc".equals(word) || "rs".equals(word)
+                    || "re".equals(word) || "al".equals(word) || "no".equals(word) || "st".equals(word)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static boolean isPunctOrNewline(char c) {
-        return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n';
+        return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n'
+                || c == '\u0964' || c == '\u0965' || c == '\u3002' || c == '\uFF01' || c == '\uFF1F';
     }
 
     /**
@@ -2037,7 +2116,9 @@ public class TtsService extends TextToSpeechService {
      * such keyword nearby. Also expands the Indian Rupee symbol (₹) to "rupees".
      */
     public static String spaceSeparateSmartCodes(String text) {
-        return spaceSeparateSmartCodes(text, 4, 8);
+        // Max of 10, not 8: an Indian PNR (already a recognized keyword below) is
+        // always exactly 10 digits - matches VoiceSettings.getSmartMaxLen()'s default.
+        return spaceSeparateSmartCodes(text, 4, 10);
     }
 
     public static String spaceSeparateSmartCodes(String text, int minLen, int maxLen) {

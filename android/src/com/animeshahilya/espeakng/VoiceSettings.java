@@ -472,14 +472,18 @@ public class VoiceSettings {
     public int getSmartMaxLen() {
         try {
             final int minLen = getSmartMinLen();
-            String raw = mPreferences.getString(PREF_SMART_MAX_LEN, "8");
-            if (raw == null) return 8;
+            // Default of 10, not 8: an Indian PNR (a keyword this feature already
+            // recognizes, see TtsService.containsSmartCodeKeyword) is always exactly
+            // 10 digits, and a cap of 8 silently excluded it from the digit-by-digit
+            // reading this whole feature exists to provide.
+            String raw = mPreferences.getString(PREF_SMART_MAX_LEN, "10");
+            if (raw == null) return 10;
             int v = Integer.parseInt(raw);
             if (v < minLen) return minLen;
             if (v > 12) return 12;
             return v;
         } catch (NumberFormatException e) {
-            return 8;
+            return 10;
         }
     }
 }

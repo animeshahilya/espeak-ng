@@ -63,6 +63,10 @@ static int ungot_char2 = 0;
 espeak_ng_TEXT_DECODER *p_decoder = NULL;
 static int ungot_char;
 
+#define N_XML_BUF2 20
+static char ungot_string[N_XML_BUF2+4];
+static int ungot_string_ix = -1;
+
 static bool ignore_text = false; // set during <sub> ... </sub>  to ignore text which has been replaced by an alias
 static bool audio_text = false; // set during <audio> ... </audio>
 static bool clear_skipping_text = false; // next clause should clear the skipping_text flag
@@ -503,10 +507,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 	int end_clause_index = 0;
 	wchar_t xml_buf[N_XML_BUF+1];
 
-	#define N_XML_BUF2 20
 	char xml_buf2[N_XML_BUF2+2]; // for &<name> and &<number> sequences
-	static char ungot_string[N_XML_BUF2+4];
-	static int ungot_string_ix = -1;
 
 	if (clear_skipping_text) {
 		skipping_text = false;
@@ -989,6 +990,8 @@ void InitText2(void)
 
 	ungot_char = 0;
 	ungot_char2 = 0;
+	ungot_string_ix = -1;
+	ungot_string[0] = 0;
 
 	n_ssml_stack = 1;
 	MAKE_MEM_UNDEFINED(&ssml_stack[1], sizeof(ssml_stack) - sizeof(ssml_stack[0]));
