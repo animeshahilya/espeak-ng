@@ -343,6 +343,9 @@ public class SpeechSynthesis {
     /** Word gap (pause between words in 10mS units, 0=normal). */
     public final Parameter WordGap = new Parameter(7, 0, 50, UnitType.Percentage);
 
+    /** Intonation style (0=default, 1-7=intonation groups, e.g. 3=less intonation / flat). */
+    public final Parameter Intonation = new Parameter(9, 0, 7, UnitType.Percentage);
+
     public void synthesize(String text, boolean isSsml) {
         if (text == null) {
             return;

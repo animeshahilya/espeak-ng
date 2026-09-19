@@ -9,16 +9,18 @@
         android:orientation="vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="8dp" >
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp" >
 
         <RadioButton
+            android:id="@+id/none"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="@string/punctuation_none"
-            android:id="@+id/none" />
+            android:text="@string/punctuation_none" />
 
         <TextView
+            android:id="@+id/none_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
@@ -29,13 +31,14 @@
             android:text="@string/punctuation_none_desc" />
 
         <RadioButton
+            android:id="@+id/some"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="@string/punctuation_some"
-            android:id="@+id/some" />
+            android:text="@string/punctuation_some" />
 
         <TextView
+            android:id="@+id/some_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
@@ -46,13 +49,14 @@
             android:text="@string/punctuation_some_desc" />
 
         <RadioButton
+            android:id="@+id/most"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="@string/punctuation_most"
-            android:id="@+id/most" />
+            android:text="@string/punctuation_most" />
 
         <TextView
+            android:id="@+id/most_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
@@ -63,13 +67,14 @@
             android:text="@string/punctuation_most_desc" />
 
         <RadioButton
+            android:id="@+id/all"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="@string/punctuation_all"
-            android:id="@+id/all" />
+            android:text="@string/punctuation_all" />
 
         <TextView
+            android:id="@+id/all_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
@@ -80,13 +85,14 @@
             android:text="@string/punctuation_all_desc" />
 
         <RadioButton
+            android:id="@+id/custom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="@string/punctuation_custom"
-            android:id="@+id/custom" />
+            android:text="@string/punctuation_custom" />
 
         <TextView
+            android:id="@+id/custom_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
@@ -98,12 +104,12 @@
             android:text="@string/punctuation_custom_desc" />
 
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginStart="36dp"
             android:id="@+id/punctuation_characters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_marginStart="36dp"
             android:hint="@string/punctuation_characters"
-            android:contentDescription="@string/punctuation_characters"
             android:inputType="text"
             android:imeOptions="actionDone" />
 

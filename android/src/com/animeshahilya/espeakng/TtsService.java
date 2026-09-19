@@ -51,6 +51,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Implements the eSpeak engine as a {@link TextToSpeechService}.
@@ -677,6 +679,12 @@ public class TtsService extends TextToSpeechService {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
+        if (!isSsml && settings.isRomanNumeralsEnabled()) {
+            String before = text;
+            text = expandRomanNumerals(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
         if (!isSsml && settings.isIndianNumberingEnabled()) {
             String before = text;
             text = preprocessIndianText(text, languageTag(voice));
@@ -719,6 +727,12 @@ public class TtsService extends TextToSpeechService {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
+        if (!isSsml && settings.isSimplifyUrlsEnabled()) {
+            String before = text;
+            text = simplifyUrls(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
         // Specialized modes: spelling / phonetic / code-reading. Explicit user
         // modes run after number handling so "A1B2" spells letters but keeps
         // the digit grouping already applied above.
@@ -734,6 +748,13 @@ public class TtsService extends TextToSpeechService {
         } else if (!isSsml && settings.isPhoneticModeEnabled()) {
             String before = text;
             text = expandPhoneticMode(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
+        final String repeatedMode = settings.getRepeatedCharactersMode();
+        if (!isSsml && !VoiceSettings.REPEATED_CHARS_OFF.equals(repeatedMode)) {
+            String before = text;
+            text = condenseRepeatedCharacters(text, repeatedMode);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -806,6 +827,17 @@ public class TtsService extends TextToSpeechService {
         // normally calls onSynthesizeText once per sentence already, so a
         // mixed multi-sentence request only sees this if it ends in ?/!.
         int pitchRange = settings.getPitchRange();
+        final String intonationStyle = settings.getIntonationStyle();
+        if (VoiceSettings.INTONATION_FLAT.equals(intonationStyle)) {
+            pitchRange = Math.min(15, pitchRange / 3);
+            engine.Intonation.setValue(3);
+        } else if (VoiceSettings.INTONATION_EXPRESSIVE.equals(intonationStyle)) {
+            int maxRange = engine.PitchRange.getMaxValue();
+            pitchRange = Math.min(maxRange, pitchRange + Math.max(5, pitchRange / 4));
+            engine.Intonation.setValue(1);
+        } else {
+            engine.Intonation.setValue(0);
+        }
         if (!isSsml && settings.isEmphasizeQuestionsEnabled() && endsWithQuestionOrExclamation(text)) {
             int max = engine.PitchRange.getMaxValue();
             pitchRange = Math.min(max, pitchRange + Math.max(1, pitchRange / 5));
@@ -841,16 +873,9 @@ public class TtsService extends TextToSpeechService {
             engine.Punctuation.setValue(SpeechSynthesis.PUNCT_ALL);
         }
         engine.setPunctuationCharacters(settings.getPunctuationCharacters());
-        // Announcing capitalization (by pitch, beep, or saying "capital") only
-        // makes sense while spelling out individual characters - NVDA's own
-        // capPitchChange/beepForCapitals/sayCapForCapitals behave the same
-        // way, scoped to its character-navigation code path only. eSpeak's
-        // own espeakCAPITALS has no such scoping built in: left as-is, it
-        // fires on every capitalized WORD during ordinary continuous reading
-        // (sentence starts, names, acronyms...), which is a much more
-        // pervasive and, per user feedback, distracting application of the
-        // same cue than any polished screen reader actually does.
-        engine.Capitals.setValue(isSingleCharacterUtterance ? settings.getCapitals() : 0);
+        // Announcing capitalization: character navigation only by default, or all reading if enabled.
+        boolean applyCapitals = isSingleCharacterUtterance || settings.isCapitalsScopeAll();
+        engine.Capitals.setValue(applyCapitals ? settings.getCapitals() : 0);
         engine.WordGap.setValue(settings.getWordGap());
 
         boolean enableBilingual = settings.isBilingualSwitchingEnabled() && !isSsml;
@@ -1181,6 +1206,163 @@ public class TtsService extends TextToSpeechService {
         text = SYM_YEN.matcher(text).replaceAll(" yen ");
         text = SYM_FLORIN.matcher(text).replaceAll(" florin ");
         return text;
+    }
+
+    private static final Pattern PATTERN_ROMAN_CONTEXT = Pattern.compile(
+            "\\b(Chapter|Part|Section|Volume|Book|Act|Scene|Title|Grade|Level|Phase|King|Queen|Pope|Emperor|World War|War|Super Bowl)\\s+([IVXLCDMivxlcdm]+)\\b",
+            Pattern.CASE_INSENSITIVE);
+
+    public static String expandRomanNumerals(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        Matcher matcher = PATTERN_ROMAN_CONTEXT.matcher(text);
+        if (!matcher.find()) {
+            return text;
+        }
+        StringBuffer sb = new StringBuffer(text.length());
+        do {
+            String prefix = matcher.group(1);
+            String roman = matcher.group(2).toUpperCase(Locale.ROOT);
+            int val = parseRomanNumeral(roman);
+            if (val > 0) {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(prefix + " " + val));
+            } else {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(0)));
+            }
+        } while (matcher.find());
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static int parseRomanNumeral(String s) {
+        if (s == null || s.isEmpty() || s.length() > 15) return -1;
+        if (!s.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")) {
+            return -1;
+        }
+        int total = 0;
+        int prevValue = 0;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            int curValue;
+            switch (s.charAt(i)) {
+                case 'I': curValue = 1; break;
+                case 'V': curValue = 5; break;
+                case 'X': curValue = 10; break;
+                case 'L': curValue = 50; break;
+                case 'C': curValue = 100; break;
+                case 'D': curValue = 500; break;
+                case 'M': curValue = 1000; break;
+                default: return -1;
+            }
+            if (curValue < prevValue) {
+                total -= curValue;
+            } else {
+                total += curValue;
+                prevValue = curValue;
+            }
+        }
+        return total > 0 ? total : -1;
+    }
+
+    private static final Pattern PATTERN_URL = Pattern.compile(
+            "\\b(?:https?://|www\\.)[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(?:/[^\\s]*)?",
+            Pattern.CASE_INSENSITIVE);
+
+    public static String simplifyUrls(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        Matcher matcher = PATTERN_URL.matcher(text);
+        if (!matcher.find()) {
+            return text;
+        }
+        StringBuffer sb = new StringBuffer(text.length());
+        do {
+            String url = matcher.group(0);
+            String simplified = formatSimplifiedUrl(url);
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(simplified));
+        } while (matcher.find());
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static String formatSimplifiedUrl(String url) {
+        String s = url;
+        if (s.startsWith("https://") || s.startsWith("HTTPS://")) {
+            s = s.substring(8);
+        } else if (s.startsWith("http://") || s.startsWith("HTTP://")) {
+            s = s.substring(7);
+        }
+        if (s.startsWith("www.") || s.startsWith("WWW.")) {
+            s = s.substring(4);
+        }
+        int qIdx = s.indexOf('?');
+        if (qIdx != -1) {
+            String query = s.substring(qIdx);
+            if (query.length() > 10) {
+                s = s.substring(0, qIdx) + " with parameters";
+            }
+        }
+        s = s.replace("/", " slash ");
+        return " link " + s.trim() + " ";
+    }
+
+    private static final Pattern PATTERN_REPEATED_CHARS = Pattern.compile("([^\\s])\\1{2,}");
+
+    public static String condenseRepeatedCharacters(String text, String mode) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        if (VoiceSettings.REPEATED_CHARS_TRUNCATE.equals(mode)) {
+            return Pattern.compile("([^\\s])\\1{3,}").matcher(text).replaceAll("$1$1$1");
+        }
+        if (!VoiceSettings.REPEATED_CHARS_COUNT.equals(mode)) {
+            return text;
+        }
+        Matcher matcher = PATTERN_REPEATED_CHARS.matcher(text);
+        if (!matcher.find()) {
+            return text;
+        }
+        StringBuffer sb = new StringBuffer(text.length());
+        do {
+            String match = matcher.group(0);
+            char c = match.charAt(0);
+            int count = match.length();
+            String name = getSpokenCharName(c);
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(" " + count + " " + name + " "));
+        } while (matcher.find());
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static String getSpokenCharName(char c) {
+        switch (c) {
+            case '-': return "dashes";
+            case '*': return "asterisks";
+            case '=': return "equals";
+            case '_': return "underscores";
+            case '.': return "dots";
+            case '~': return "tildes";
+            case '!': return "exclamations";
+            case '?': return "question marks";
+            case '#': return "hashes";
+            case '/': return "slashes";
+            case '\\': return "backslashes";
+            case '+': return "pluses";
+            case '<': return "less thans";
+            case '>': return "greater thans";
+            case ':': return "colons";
+            case ';': return "semicolons";
+            case '|': return "pipes";
+            case '^': return "carets";
+            case '"': return "quotes";
+            case '\'': return "apostrophes";
+            default:
+                if (Character.isLetterOrDigit(c)) {
+                    return c + "s";
+                }
+                return String.valueOf(c);
+        }
     }
 
     public static String normalizeIndicDigits(String text) {

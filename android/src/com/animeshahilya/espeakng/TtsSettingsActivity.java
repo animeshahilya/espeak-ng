@@ -41,16 +41,24 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.speech.tts.TextToSpeech;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory;
 import com.animeshahilya.espeakng.preference.ImportVoicePreference;
 import com.animeshahilya.espeakng.preference.SeekBarPreference;
 import com.animeshahilya.espeakng.preference.SpeakPunctuationPreference;
@@ -173,9 +181,28 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         editor.commit();
 
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActionBar().setTitle(R.string.app_name);
+        }
+
+        View contentView = findViewById(android.R.id.content);
+        if (contentView != null) {
+            contentView.setFitsSystemWindows(true);
+        }
+
         getFragmentManager().beginTransaction().replace(
                 android.R.id.content,
                 new PrefsEspeakFragment()).commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private static TextToSpeech sTts;
@@ -1096,6 +1123,30 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 VoiceSettings.AUDIO_PROFILE_BALANCED);
     }
 
+    private static Preference createIntonationStylePreference(Context context) {
+        return createListPref(context, VoiceSettings.PREF_INTONATION_STYLE,
+                R.string.setting_intonation_style, R.string.setting_intonation_style_summary,
+                context.getResources().getTextArray(R.array.intonation_style_entries),
+                context.getResources().getTextArray(R.array.intonation_style_values),
+                VoiceSettings.INTONATION_NATURAL);
+    }
+
+    private static Preference createCapitalsScopePreference(Context context) {
+        return createListPref(context, VoiceSettings.PREF_CAPITALS_SCOPE,
+                R.string.setting_capitals_scope, R.string.setting_capitals_scope_summary,
+                context.getResources().getTextArray(R.array.capitals_scope_entries),
+                context.getResources().getTextArray(R.array.capitals_scope_values),
+                VoiceSettings.CAPITALS_SCOPE_CHAR);
+    }
+
+    private static Preference createRepeatedCharsPreference(Context context) {
+        return createListPref(context, VoiceSettings.PREF_REPEATED_CHARS,
+                R.string.setting_repeated_chars, R.string.setting_repeated_chars_summary,
+                context.getResources().getTextArray(R.array.repeated_chars_entries),
+                context.getResources().getTextArray(R.array.repeated_chars_values),
+                VoiceSettings.REPEATED_CHARS_OFF);
+    }
+
     private static Preference createSmartMinPreference(Context context) {
         CharSequence[] entries = new CharSequence[7];
         CharSequence[] values = new CharSequence[7];
@@ -1240,22 +1291,29 @@ public class TtsSettingsActivity extends PreferenceActivity {
         showUserDictionaryDialog(context, "", "all");
     }
 
-    /** Adds a visible TextView label bound to an input for TalkBack (hint alone is not enough). */
+    /** Adds a visible TextView label bound to an input for TalkBack. */
     private static EditText labeledInput(Context context, LinearLayout layout,
                                          String labelText, String hintText, String initial,
                                          int inputType) {
+        float density = context.getResources().getDisplayMetrics().density;
+        int minTouch = (int) (48 * density + 0.5f);
+
         final TextView label = new TextView(context);
         label.setText(labelText);
         label.setTextAppearance(context, android.R.style.TextAppearance_Small);
         layout.addView(label);
         final EditText et = new EditText(context);
         et.setHint(hintText);
-        et.setContentDescription(labelText + ". " + hintText);
+        // Never set contentDescription on EditText: TalkBack needs to read user-typed text!
         if (initial != null && !initial.isEmpty()) et.setText(initial);
         if (inputType != 0) et.setInputType(inputType);
-        et.setMinimumHeight(48);
+        et.setMinimumHeight(minTouch);
         et.setId(View.generateViewId());
         label.setLabelFor(et.getId());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.bottomMargin = (int) (8 * density + 0.5f);
+        et.setLayoutParams(lp);
         layout.addView(et);
         return et;
     }
@@ -1264,37 +1322,12 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
         final List<UserDictionary> rules = mgr.getRules();
 
-        // Filtered view (search + category), but edits map back to real indices.
-        final List<Integer> viewToReal = new ArrayList<>();
-        final List<String> labels = new ArrayList<>();
-        String q = searchQuery != null ? searchQuery.trim().toLowerCase(java.util.Locale.ROOT) : "";
-        for (int i = 0; i < rules.size(); i++) {
-            UserDictionary r = rules.get(i);
-            if (categoryFilter != null && !"all".equals(categoryFilter)
-                    && !r.getCategory().equals(categoryFilter)) continue;
-            if (!q.isEmpty() && !r.getPattern().toLowerCase(java.util.Locale.ROOT).contains(q)
-                    && !r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) continue;
-            viewToReal.add(i);
-            labels.add((viewToReal.size()) + ". [" + UserDictionary.categoryLabel(r.getCategory()) + "] \""
-                    + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
-                    + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""))
-                    + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
-        }
-        final String[] items = labels.toArray(new String[0]);
+        final View dialogView = View.inflate(context, R.layout.user_dictionary_dialog, null);
+        final EditText etSearch = dialogView.findViewById(R.id.dict_search);
+        final android.widget.Spinner spFilter = dialogView.findViewById(R.id.dict_filter_spinner);
+        final ListView lvRules = dialogView.findViewById(R.id.dict_rules_list);
+        final TextView tvEmpty = dialogView.findViewById(R.id.dict_empty_view);
 
-        final LinearLayout layout = new LinearLayout(context);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(40, 20, 40, 20);
-        final EditText etSearch = labeledInput(context, layout,
-                context.getString(R.string.dict_search_label),
-                context.getString(R.string.dict_search_hint),
-                searchQuery, android.text.InputType.TYPE_CLASS_TEXT);
-
-        final TextView filterLabel = new TextView(context);
-        filterLabel.setText(R.string.dict_filter_label);
-        filterLabel.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        layout.addView(filterLabel);
-        final android.widget.Spinner spFilter = new android.widget.Spinner(context);
         final String[] filterNames = new String[] {
                 context.getString(R.string.dict_filter_all),
                 context.getString(R.string.dict_filter_main),
@@ -1303,68 +1336,114 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final String[] filterValues = new String[] {
                 "all", UserDictionary.CATEGORY_MAIN,
                 UserDictionary.CATEGORY_ROOT, UserDictionary.CATEGORY_ABBREV };
+
         android.widget.ArrayAdapter<String> filterAdapter = new android.widget.ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_item, filterNames);
         filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spFilter.setAdapter(filterAdapter);
-        spFilter.setContentDescription(context.getString(R.string.dict_filter_label));
+
         int sel = 0;
         for (int i = 0; i < filterValues.length; i++) {
             if (filterValues[i].equals(categoryFilter)) { sel = i; break; }
         }
         spFilter.setSelection(sel);
-        spFilter.setMinimumHeight(48);
-        spFilter.setId(View.generateViewId());
-        filterLabel.setLabelFor(spFilter.getId());
-        layout.addView(spFilter);
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(context.getString(R.string.setting_user_dictionary) + " (" + rules.size() + ")");
-        builder.setView(layout);
-        if (items.length == 0) {
-            builder.setMessage(rules.isEmpty()
-                    ? context.getString(R.string.dict_empty)
-                    : context.getString(R.string.dict_no_match));
-        } else {
-            builder.setItems(items, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, final int which) {
-                    showRuleActionsDialog(context, searchQuery, categoryFilter,
-                            viewToReal.get(which), items[which]);
+        final List<Integer> viewToReal = new ArrayList<>();
+        final List<String> labels = new ArrayList<>();
+        final android.widget.ArrayAdapter<String> listAdapter = new android.widget.ArrayAdapter<>(context,
+                android.R.layout.simple_list_item_1, labels);
+        lvRules.setAdapter(listAdapter);
+
+        final Runnable updateList = new Runnable() {
+            @Override
+            public void run() {
+                String q = etSearch.getText() != null ? etSearch.getText().toString().trim().toLowerCase(java.util.Locale.ROOT) : "";
+                int filterPos = spFilter.getSelectedItemPosition();
+                String filter = (filterPos >= 0 && filterPos < filterValues.length) ? filterValues[filterPos] : "all";
+
+                viewToReal.clear();
+                labels.clear();
+                for (int i = 0; i < rules.size(); i++) {
+                    UserDictionary r = rules.get(i);
+                    if (!"all".equals(filter) && !r.getCategory().equals(filter)) continue;
+                    if (!q.isEmpty() && !r.getPattern().toLowerCase(java.util.Locale.ROOT).contains(q)
+                            && !r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) continue;
+                    viewToReal.add(i);
+                    labels.add((viewToReal.size()) + ". [" + UserDictionary.categoryLabel(r.getCategory()) + "] \""
+                            + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
+                            + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""))
+                            + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
                 }
-            });
-        }
+                listAdapter.notifyDataSetChanged();
+                if (labels.isEmpty()) {
+                    tvEmpty.setVisibility(View.VISIBLE);
+                    tvEmpty.setText(rules.isEmpty()
+                            ? context.getString(R.string.dict_empty)
+                            : context.getString(R.string.dict_no_match));
+                } else {
+                    tvEmpty.setVisibility(View.GONE);
+                }
+            }
+        };
 
-        builder.setPositiveButton(R.string.dict_add_rule, new DialogInterface.OnClickListener() {
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            etSearch.setText(searchQuery);
+        }
+        updateList.run();
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateList.run();
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        spFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showAddRuleDialog(context,
-                        etSearch.getText().toString(),
-                        filterValues[spFilter.getSelectedItemPosition()]);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateList.run();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        final AlertDialog dialog = new AlertDialog.Builder(context)
+                .setTitle(context.getString(R.string.setting_user_dictionary) + " (" + rules.size() + ")")
+                .setView(dialogView)
+                .setPositiveButton(R.string.dict_add_rule, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        int pos = spFilter.getSelectedItemPosition();
+                        String f = (pos >= 0 && pos < filterValues.length) ? filterValues[pos] : "all";
+                        showAddRuleDialog(context, etSearch.getText().toString(), f);
+                    }
+                })
+                .setNeutralButton(R.string.dict_import_export, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        int pos = spFilter.getSelectedItemPosition();
+                        String f = (pos >= 0 && pos < filterValues.length) ? filterValues[pos] : "all";
+                        showDictionaryImportExportDialog(context, etSearch.getText().toString(), f);
+                    }
+                })
+                .setNegativeButton(R.string.dict_back, null)
+                .create();
+
+        lvRules.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0 && position < viewToReal.size()) {
+                    dialog.dismiss();
+                    int pos = spFilter.getSelectedItemPosition();
+                    String f = (pos >= 0 && pos < filterValues.length) ? filterValues[pos] : "all";
+                    showRuleActionsDialog(context, etSearch.getText().toString(), f,
+                            viewToReal.get(position), labels.get(position));
+                }
             }
         });
-        builder.setNeutralButton(R.string.dict_import_export, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showDictionaryImportExportDialog(context,
-                        etSearch.getText().toString(),
-                        filterValues[spFilter.getSelectedItemPosition()]);
-            }
-        });
-        // Explicit filter action: TalkBack announces the result count, and
-        // focus stays predictable (no live re-open loop stealing focus).
-        builder.setNegativeButton(R.string.dict_apply_filter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String nq = etSearch.getText().toString();
-                String nf = filterValues[spFilter.getSelectedItemPosition()];
-                showUserDictionaryDialog(context, nq, nf);
-                Toast.makeText(context,
-                        context.getString(R.string.dict_filter_applied, labels.size()),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.show();
+
+        dialog.show();
     }
 
     /** TalkBack-friendly rule actions as a list (Preview / Edit / Delete) + Cancel. */
@@ -1383,8 +1462,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 context.getString(R.string.dict_action_edit),
                 context.getString(R.string.dict_action_delete) };
         new AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.dict_rule_title, r.getPattern()))
-                .setMessage(label)
+                .setTitle(context.getString(R.string.dict_rule_title, r.getPattern()) + "\n" + label)
                 .setItems(actions, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int which) {
                         if (which == 0) {
@@ -1481,9 +1559,14 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final UserDictionary existing = (editIndex >= 0 && editIndex < mgr.getRules().size())
                 ? mgr.getRules().get(editIndex) : null;
 
+        float density = context.getResources().getDisplayMetrics().density;
+        int minTouch = (int) (48 * density + 0.5f);
+        int padH = (int) (20 * density + 0.5f);
+        int padV = (int) (12 * density + 0.5f);
+
         final LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(40, 20, 40, 20);
+        layout.setPadding(padH, padV, padH, padV);
 
         final EditText etPattern = labeledInput(context, layout,
                 context.getString(R.string.dict_label_pattern),
@@ -1509,32 +1592,39 @@ public class TtsSettingsActivity extends PreferenceActivity {
         catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCategory.setAdapter(catAdapter);
         spCategory.setContentDescription(context.getString(R.string.dict_label_category));
-        spCategory.setMinimumHeight(48);
+        spCategory.setMinimumHeight(minTouch);
         spCategory.setId(View.generateViewId());
         catLabel.setLabelFor(spCategory.getId());
         String preCat = existing != null ? existing.getCategory() : categoryFilter;
         spCategory.setSelection(UserDictionary.CATEGORY_ROOT.equals(preCat) ? 1
                 : UserDictionary.CATEGORY_ABBREV.equals(preCat) ? 2 : 0);
+        LinearLayout.LayoutParams spLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        spLp.bottomMargin = (int) (8 * density + 0.5f);
+        spCategory.setLayoutParams(spLp);
         layout.addView(spCategory);
 
         final CheckBox cbWholeWord = new CheckBox(context);
         cbWholeWord.setText(R.string.dict_whole_word);
-        cbWholeWord.setContentDescription(context.getString(R.string.dict_whole_word_summary));
+        cbWholeWord.setContentDescription(context.getString(R.string.dict_whole_word) + ". "
+                + context.getString(R.string.dict_whole_word_summary));
         cbWholeWord.setChecked(existing != null ? existing.isWholeWord() : true);
-        cbWholeWord.setMinimumHeight(48);
+        cbWholeWord.setMinimumHeight(minTouch);
         layout.addView(cbWholeWord);
 
         final CheckBox cbCaseSensitive = new CheckBox(context);
         cbCaseSensitive.setText(R.string.dict_case_sensitive);
+        cbCaseSensitive.setContentDescription(context.getString(R.string.dict_case_sensitive));
         cbCaseSensitive.setChecked(existing != null && existing.isCaseSensitive());
-        cbCaseSensitive.setMinimumHeight(48);
+        cbCaseSensitive.setMinimumHeight(minTouch);
         layout.addView(cbCaseSensitive);
 
         final CheckBox cbRegex = new CheckBox(context);
         cbRegex.setText(R.string.dict_regex);
-        cbRegex.setContentDescription(context.getString(R.string.dict_regex_summary));
+        cbRegex.setContentDescription(context.getString(R.string.dict_regex) + ". "
+                + context.getString(R.string.dict_regex_summary));
         cbRegex.setChecked(existing != null && existing.isRegex());
-        cbRegex.setMinimumHeight(48);
+        cbRegex.setMinimumHeight(minTouch);
         layout.addView(cbRegex);
 
         final EditText etLanguage = labeledInput(context, layout,
@@ -1556,9 +1646,12 @@ public class TtsSettingsActivity extends PreferenceActivity {
             @Override public void onNothingSelected(android.widget.AdapterView<?> p) { }
         });
 
+        final ScrollView scrollView = new ScrollView(context);
+        scrollView.addView(layout);
+
         new AlertDialog.Builder(context)
                 .setTitle(existing != null ? R.string.dict_edit_title : R.string.dict_add_title)
-                .setView(layout)
+                .setView(scrollView)
                 .setPositiveButton(R.string.dict_save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -1662,37 +1755,152 @@ public class TtsSettingsActivity extends PreferenceActivity {
                                        SpeechSynthesis engine, List<Voice> voices,
                                        boolean isWatch) {
         VoiceSettings settings = new VoiceSettings(getPrefs(), engine);
+        PreferenceManager pm = group.getPreferenceManager();
+
+        // 1. Number & Code Reading Sub-Screen
+        PreferenceScreen numberScreen = pm.createPreferenceScreen(context);
+        numberScreen.setKey("sub_number_reading");
+        numberScreen.setTitle(R.string.screen_numbers_title);
+        numberScreen.setSummary(R.string.screen_numbers_summary);
+
+        PreferenceCategory secDigitsCat = new AccessiblePreferenceCategory(context);
+        secDigitsCat.setTitle(R.string.category_security_digits);
+        numberScreen.addPreference(secDigitsCat);
+
+        secDigitsCat.addPreference(createSmartCodesPreference(context));
+        if (!isWatch) {
+            Preference smartMin = createSmartMinPreference(context);
+            secDigitsCat.addPreference(smartMin);
+            smartMin.setDependency(VoiceSettings.PREF_SMART_CODES);
+            Preference smartMax = createSmartMaxPreference(context);
+            secDigitsCat.addPreference(smartMax);
+            smartMax.setDependency(VoiceSettings.PREF_SMART_CODES);
+        }
+        secDigitsCat.addPreference(createDigitGroupingPreference(context));
+        if (!isWatch) {
+            secDigitsCat.addPreference(createDigitGroupThresholdPreference(context));
+        }
+
+        PreferenceCategory formatsCat = new AccessiblePreferenceCategory(context);
+        formatsCat.setTitle(R.string.category_number_formats);
+        numberScreen.addPreference(formatsCat);
+
+        formatsCat.addPreference(createCheckPref(context, VoiceSettings.PREF_ROMAN_NUMERALS,
+                R.string.setting_roman_numerals, R.string.setting_roman_numerals_summary, true));
+        formatsCat.addPreference(createIndianNumberingPreference(context));
+        formatsCat.addPreference(createCheckPref(context, VoiceSettings.PREF_TIME_DATE,
+                R.string.setting_time_date, R.string.setting_time_date_summary, true));
+        formatsCat.addPreference(createCheckPref(context, VoiceSettings.PREF_CURRENCY,
+                R.string.setting_currency, R.string.setting_currency_summary, true));
+
+        // 2. Pronunciation & Text Processing Sub-Screen
+        PreferenceScreen textProcessingScreen = pm.createPreferenceScreen(context);
+        textProcessingScreen.setKey("sub_text_processing");
+        textProcessingScreen.setTitle(R.string.screen_text_processing_title);
+        textProcessingScreen.setSummary(R.string.screen_text_processing_summary);
+
+        PreferenceCategory punctCat = new AccessiblePreferenceCategory(context);
+        punctCat.setTitle(R.string.category_punctuation_symbols);
+        textProcessingScreen.addPreference(punctCat);
+
+        punctCat.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));
+        punctCat.addPreference(createCapitalsPreference(context));
+        punctCat.addPreference(createCapitalsScopePreference(context));
+        punctCat.addPreference(createRepeatedCharsPreference(context));
+        punctCat.addPreference(createProgrammingSymbolsPreference(context));
+        punctCat.addPreference(createUnicodeNormalizationPreference(context));
+
+        PreferenceCategory readingCat = new AccessiblePreferenceCategory(context);
+        readingCat.setTitle(R.string.category_reading_modes);
+        textProcessingScreen.addPreference(readingCat);
+
+        readingCat.addPreference(createReadingModePreference(context));
+        if (!isWatch) {
+            readingCat.addPreference(createNatoSpellingPreference(context));
+            readingCat.addPreference(createSpokenDiacriticsPreference(context));
+            readingCat.addPreference(createEmojiProcessingPreference(context));
+            readingCat.addPreference(createCheckPref(context, VoiceSettings.PREF_SIMPLIFY_URLS,
+                    R.string.setting_simplify_urls, R.string.setting_simplify_urls_summary, false));
+        }
+        readingCat.addPreference(createCheckPref(context, VoiceSettings.PREF_EMPHASIZE_QUESTIONS,
+                R.string.setting_emphasize_questions, R.string.setting_emphasize_questions_summary, false));
+
+        if (!isWatch) {
+            PreferenceCategory multiCat = new AccessiblePreferenceCategory(context);
+            multiCat.setTitle(R.string.category_multilingual);
+            textProcessingScreen.addPreference(multiCat);
+
+            multiCat.addPreference(createBilingualSwitchingPreference(context));
+            if (!voices.isEmpty()) {
+                Preference secondary = createSecondaryVoicePreference(context, voices);
+                multiCat.addPreference(secondary);
+                secondary.setDependency(VoiceSettings.PREF_BILINGUAL_SWITCHING);
+            }
+        }
+
+        // 3. Caller-Proof Locks Sub-Screen
+        PreferenceScreen locksScreen = pm.createPreferenceScreen(context);
+        locksScreen.setKey("sub_caller_locks");
+        locksScreen.setTitle(R.string.screen_locks_title);
+        locksScreen.setSummary(R.string.screen_locks_summary);
+
+        PreferenceCategory lockCat = new AccessiblePreferenceCategory(context);
+        lockCat.setTitle(R.string.category_locks);
+        locksScreen.addPreference(lockCat);
+
+        lockCat.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_RATE,
+                R.string.setting_force_rate, R.string.setting_force_rate_summary, false));
+        lockCat.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_PITCH,
+                R.string.setting_force_pitch, R.string.setting_force_pitch_summary, false));
+        lockCat.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_VOLUME,
+                R.string.setting_force_volume, R.string.setting_force_volume_summary, false));
+
+        // 4. Tools, Backup & About Sub-Screen
+        PreferenceScreen toolsScreen = pm.createPreferenceScreen(context);
+        toolsScreen.setKey("sub_tools_backup");
+        toolsScreen.setTitle(R.string.screen_tools_title);
+        toolsScreen.setSummary(R.string.screen_tools_summary);
+
+        if (!isWatch) {
+            PreferenceCategory presetCat = new AccessiblePreferenceCategory(context);
+            presetCat.setTitle(R.string.category_presets);
+            toolsScreen.addPreference(presetCat);
+            presetCat.addPreference(createRecommendedDefaultsPreference(context));
+
+            PreferenceCategory dataCat = new AccessiblePreferenceCategory(context);
+            dataCat.setTitle(R.string.category_data_management);
+            toolsScreen.addPreference(dataCat);
+            dataCat.addPreference(createBackupPreference(context));
+            dataCat.addPreference(createRestorePreference(context));
+            dataCat.addPreference(createLogExportPreference(context));
+            dataCat.addPreference(createImportVoicePreference(context));
+        }
+
+        PreferenceCategory aboutCat = new AccessiblePreferenceCategory(context);
+        aboutCat.setTitle(R.string.category_about);
+        toolsScreen.addPreference(aboutCat);
+        aboutCat.addPreference(createAboutPreference(context));
+
+        // --- ROOT SCREEN PREFERENCES (Optimized for minimal scrolling) ---
 
         // 1. Voice and language
-        PreferenceCategory langCategory = new PreferenceCategory(context);
+        PreferenceCategory langCategory = new AccessiblePreferenceCategory(context);
         langCategory.setTitle(R.string.category_voice_language);
         group.addPreference(langCategory);
 
         if (!isWatch) {
             langCategory.addPreference(createSupportedLanguagesPreference(context, voices));
-            langCategory.addPreference(createImportVoicePreference(context));
         }
         langCategory.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
         if (!isWatch) {
-            langCategory.addPreference(createBilingualSwitchingPreference(context));
-            if (!voices.isEmpty()) {
-                Preference secondary = createSecondaryVoicePreference(context, voices);
-                langCategory.addPreference(secondary);
-                // setDependency AFTER attach: the old framework throws
-                // IllegalStateException when the key cannot be resolved yet.
-                secondary.setDependency(VoiceSettings.PREF_BILINGUAL_SWITCHING);
-            }
             langCategory.addPreference(createTestVoicePreference(context));
         }
 
-        // 2. Voice parameters (OG interface: dedicated, accessible seekbars with live formatted summary)
-        PreferenceCategory paramCategory = new PreferenceCategory(context);
+        // 2. Voice parameters
+        PreferenceCategory paramCategory = new AccessiblePreferenceCategory(context);
         paramCategory.setTitle(R.string.category_voice_parameters);
         group.addPreference(paramCategory);
 
-        // The rate dialog's embedded boost toggle is hidden wherever the
-        // standalone Rate boost checkbox exists (phones): one control per
-        // setting. Watches keep the embedded toggle as their only control.
         Preference ratePref = createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate);
         if (!isWatch && ratePref instanceof SeekBarPreference) {
             ((SeekBarPreference) ratePref).setRateBoostToggleVisible(false);
@@ -1703,81 +1911,26 @@ public class TtsSettingsActivity extends PreferenceActivity {
         }
         paramCategory.addPreference(createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
         paramCategory.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
+        paramCategory.addPreference(createIntonationStylePreference(context));
         paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
         paramCategory.addPreference(createAudioOptimizerPreference(context));
         Preference audioProfile = createAudioProfilePreference(context);
         paramCategory.addPreference(audioProfile);
         audioProfile.setDependency(VoiceSettings.PREF_AUDIO_OPTIMIZER);
-        if (!isWatch) {
-            paramCategory.addPreference(createRecommendedDefaultsPreference(context));
-        }
 
-        // 2b. Caller-proof consistency locks (force overrides).
-        PreferenceCategory lockCategory = new PreferenceCategory(context);
-        lockCategory.setTitle(R.string.category_locks);
-        group.addPreference(lockCategory);
-        lockCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_RATE,
-                R.string.setting_force_rate, R.string.setting_force_rate_summary, false));
-        lockCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_PITCH,
-                R.string.setting_force_pitch, R.string.setting_force_pitch_summary, false));
-        lockCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_VOLUME,
-                R.string.setting_force_volume, R.string.setting_force_volume_summary, false));
+        // 3. Advanced & specialized settings
+        PreferenceCategory advancedCategory = new AccessiblePreferenceCategory(context);
+        advancedCategory.setTitle(R.string.category_advanced_settings);
+        group.addPreference(advancedCategory);
 
-        // 3. Text & speech processing (programming symbols, Indian currency/numbers, smart codes)
-        PreferenceCategory processCategory = new PreferenceCategory(context);
-        processCategory.setTitle(R.string.category_speech_processing);
-        group.addPreference(processCategory);
-
-        processCategory.addPreference(createCapitalsPreference(context));
-        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_EMPHASIZE_QUESTIONS,
-                R.string.setting_emphasize_questions, R.string.setting_emphasize_questions_summary, false));
-        processCategory.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));
-        processCategory.addPreference(createProgrammingSymbolsPreference(context));
-        processCategory.addPreference(createIndianNumberingPreference(context));
-        processCategory.addPreference(createSmartCodesPreference(context));
         if (!isWatch) {
-            Preference smartMin = createSmartMinPreference(context);
-            processCategory.addPreference(smartMin);
-            smartMin.setDependency(VoiceSettings.PREF_SMART_CODES);
-            Preference smartMax = createSmartMaxPreference(context);
-            processCategory.addPreference(smartMax);
-            smartMax.setDependency(VoiceSettings.PREF_SMART_CODES);
+            advancedCategory.addPreference(createUserDictionaryPreference(context));
         }
-        // Single control for digit handling: the grouping list's "Single
-        // digits" mode is the old digit-by-digit toggle, which was removed.
-        processCategory.addPreference(createDigitGroupingPreference(context));
-        if (!isWatch) {
-            processCategory.addPreference(createDigitGroupThresholdPreference(context));
-        }
-        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_TIME_DATE,
-                R.string.setting_time_date, R.string.setting_time_date_summary, true));
-        processCategory.addPreference(createCheckPref(context, VoiceSettings.PREF_CURRENCY,
-                R.string.setting_currency, R.string.setting_currency_summary, true));
-        processCategory.addPreference(createReadingModePreference(context));
-        processCategory.addPreference(createUnicodeNormalizationPreference(context));
-        if (!isWatch) {
-            processCategory.addPreference(createUserDictionaryPreference(context));
-            processCategory.addPreference(createNatoSpellingPreference(context));
-            processCategory.addPreference(createSpokenDiacriticsPreference(context));
-            processCategory.addPreference(createEmojiProcessingPreference(context));
-        }
-
-        // 4. Backup, troubleshooting, about
-        PreferenceCategory backupCategory = new PreferenceCategory(context);
-        backupCategory.setTitle(R.string.category_backup);
-        group.addPreference(backupCategory);
-        if (!isWatch) {
-            backupCategory.addPreference(createBackupPreference(context));
-            backupCategory.addPreference(createRestorePreference(context));
-            backupCategory.addPreference(createLogExportPreference(context));
-        }
-
-        // 5. About
-        PreferenceCategory aboutCategory = new PreferenceCategory(context);
-        aboutCategory.setTitle(R.string.category_about);
-        group.addPreference(aboutCategory);
-        aboutCategory.addPreference(createAboutPreference(context));
+        advancedCategory.addPreference(numberScreen);
+        advancedCategory.addPreference(textProcessingScreen);
+        advancedCategory.addPreference(locksScreen);
+        advancedCategory.addPreference(toolsScreen);
     }
 
     private static final OnPreferenceChangeListener mOnPreferenceChanged =

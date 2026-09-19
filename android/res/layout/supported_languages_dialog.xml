@@ -3,7 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
+
+    <EditText
+        android:id="@+id/languages_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:layout_marginBottom="8dp"
+        android:hint="@string/languages_search_hint"
+        android:inputType="textFilter"
+        android:imeOptions="actionDone" />
 
     <ListView
         android:id="@+id/supported_languages_list"
@@ -11,7 +24,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:choiceMode="multipleChoice"
-        android:divider="@android:color/darker_gray"
+        android:divider="?android:attr/listDivider"
         android:dividerHeight="1dp" />
 
     <LinearLayout
@@ -24,6 +37,7 @@
             android:id="@+id/button_select_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:layout_weight="1"
             android:text="@string/espeak_select_all_languages" />
 
@@ -35,6 +49,7 @@
             android:id="@+id/button_deselect_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:layout_weight="1"
             android:text="@string/espeak_deselect_all_languages" />
     </LinearLayout>

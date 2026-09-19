@@ -255,4 +255,73 @@
   <string name="dict_regex_summary">Treat the pattern as a regular expression</string>
   <string name="dict_label_language">Language code (optional)</string>
   <string name="dict_hint_language">For example: en or hi. Empty means every language.</string>
+  <string name="languages_search_hint">Search languages</string>
+  <string name="languages_all_selected">All languages selected</string>
+  <string name="languages_all_deselected">All languages deselected</string>
+
+  <!-- Sub-screens and reorganized categories -->
+  <string name="category_advanced_settings">Advanced &amp; specialized settings</string>
+  <string name="screen_numbers_title">Number &amp; code reading</string>
+  <string name="screen_numbers_summary">Smart OTP verification, number grouping, currency, time and date</string>
+  <string name="category_security_digits">Security &amp; digit grouping</string>
+  <string name="category_number_formats">Localized number formats</string>
+  <string name="screen_text_processing_title">Pronunciation &amp; text processing</string>
+  <string name="screen_text_processing_summary">Punctuation, capitals, reading modes, symbols, emojis, NATO</string>
+  <string name="category_punctuation_symbols">Punctuation &amp; symbols</string>
+  <string name="category_reading_modes">Reading modes &amp; exploration</string>
+  <string name="category_multilingual">Multilingual speech</string>
+  <string name="screen_locks_title">Caller-proof locks</string>
+  <string name="screen_locks_summary">Lock speech rate, pitch, and volume against overriding caller apps</string>
+  <string name="screen_tools_title">Tools, backup &amp; about</string>
+  <string name="screen_tools_summary">Backup &amp; restore, activity log, reading presets, about</string>
+  <string name="category_presets">Reading style presets</string>
+  <string name="category_data_management">Data management</string>
+
+  <!-- Customization: Repeated characters -->
+  <string name="setting_repeated_chars">Condense repeated characters</string>
+  <string name="setting_repeated_chars_summary">How consecutive repeated characters and divider lines are handled</string>
+  <string-array name="repeated_chars_entries">
+    <item>Off (speak all repetitions)</item>
+    <item>Count repetitions (e.g. 5 dashes)</item>
+    <item>Truncate (speak at most 3)</item>
+  </string-array>
+  <string-array name="repeated_chars_values">
+    <item>off</item>
+    <item>count</item>
+    <item>truncate</item>
+  </string-array>
+
+  <!-- Customization: Intonation style -->
+  <string name="setting_intonation_style">Intonation style</string>
+  <string name="setting_intonation_style_summary">Voice melody contour and pitch variation</string>
+  <string-array name="intonation_style_entries">
+    <item>Natural (standard language melody)</item>
+    <item>Flat / High-speed (monotone, clearer at fast rates)</item>
+    <item>Expressive (enhanced pitch inflection)</item>
+  </string-array>
+  <string-array name="intonation_style_values">
+    <item>natural</item>
+    <item>flat</item>
+    <item>expressive</item>
+  </string-array>
+
+  <!-- Customization: Capital letter announcement scope -->
+  <string name="setting_capitals_scope">Capital announcement scope</string>
+  <string name="setting_capitals_scope_summary">When capital letter indications should be spoken or sounded</string>
+  <string-array name="capitals_scope_entries">
+    <item>Character navigation only (default)</item>
+    <item>All reading (words and sentences)</item>
+  </string-array>
+  <string-array name="capitals_scope_values">
+    <item>char_only</item>
+    <item>all</item>
+  </string-array>
+
+  <!-- Customization: Web address simplification -->
+  <string name="setting_simplify_urls">Simplify web addresses</string>
+  <string name="setting_simplify_urls_summary">Shorten web links and strip tracking query parameters</string>
+
+  <!-- Customization: Roman numerals -->
+  <string name="setting_roman_numerals">Recognize Roman numerals</string>
+  <string name="setting_roman_numerals_summary">Read \"Chapter IV\" as \"Chapter 4\", \"Henry VIII\" as \"Henry 8\", etc.</string>
 </resources>

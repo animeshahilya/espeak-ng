@@ -2,6 +2,7 @@
 
 - [What this fork is](#what-this-fork-is)
 - [What's different from upstream](#whats-different-from-upstream)
+- [Features & Customization Options](#features--customization-options)
 - [Building the Android app](#building-the-android-app)
 - [Supported languages](docs/languages.md)
 - [Relationship to upstream eSpeak NG](#relationship-to-upstream-espeak-ng)
@@ -53,101 +54,107 @@ English model:
   Sailaja 2009 describes IndE rhoticity as consonantal rather than a single
   r-colored vowel phone the way US English does it.
 
-### Indian-locale text intelligence
+## Features & Customization Options
 
-A preprocessing pipeline (`TtsService.preprocessIndianText`) runs before
-text reaches the synthesizer, specifically for the kinds of text Indian
-users actually get read to them (bank SMS, UPI notifications, prices):
+The app is built specifically for TalkBack and screen reader power users. The settings interface is organized into a clean, compact hierarchy (~15 root items) with dedicated sub-screens to eliminate scroll fatigue while keeping every parameter accessible.
 
-* **Indian number grouping**: `1,00,000` → "1 lakh", `1,23,45,678` → "1
-  crore 23 lakh 45678" (remainders under 1 lakh are left as digits, which
-  eSpeak already verbalizes correctly on its own).
-* **Shorthand quantities**: `50k` → "50 thousand", `5L` → "5 lakh", `2cr` →
-  "2 crore".
-* **Rupee amounts**: `₹1,00,000` → "1 lakh rupees", `₹10.50` → "10 rupees 50
-  paise" (only a 1-2 digit nonzero fraction becomes paise; anything longer
-  is left for the engine to read as a decimal).
-* **9 Indic numeral scripts** (Devanagari, Bengali, Gurmukhi, Gujarati,
-  Oriya, Tamil, Telugu, Kannada, Malayalam) normalized to ASCII digits
-  before any of the above runs.
-* **Danda punctuation** (। and ॥) gets a space inserted when directly
-  adjacent to text, so the engine's clause-break logic actually sees it as
-  a boundary instead of a glued-on character.
-* **Banking token splitting**: `UPI/423891028341/PAYTM` → `UPI /
-  423891028341 / PAYTM`, so slash-concatenated reference strings read as
-  separate tokens instead of one run-on word.
+### 1. Voice & Language
 
-### Context-aware digit and code reading
+* **Supported Languages**: Choose which of the ~120 bundled languages appear in your system TTS list. Features a fast search bar and select-all/clear-all toggles.
+* **Voice Variants**: Select gender, age, or formant tone styles. Organized into clear categories:
+  * *Standard Voices*: Default, Male (1–6), Female (1–6), Child, Aged.
+  * *Klatt Formant Voices*: Cascade-parallel formant models (Klatt 1–6) for distinctive hardware-style synthesized timbre.
+* **Preview Voice Sample**: Immediate one-tap speech test to evaluate voice, speed, pitch, and effect changes.
 
-* An opt-in "read numbers digit by digit" mode for general use.
-* An always-on, keyword-gated heuristic reads likely OTPs/PINs/verification
-  codes digit-by-digit (`Your OTP is 4829` → "4 8 2 9") while leaving
-  ordinary numbers alone (`The year 2024 is great` stays "2024"): a 4-8
-  digit run gets split only when a keyword (`otp`, `pin`, `passcode`,
-  `verification`, `security`, `token`, `login`, `id`, `txn`, `ref`, `vpa`,
-  `cvv`) appears within 25 characters either side, with `\b` word-boundary
-  matching so it doesn't fire on substrings inside unrelated words. `code`
-  is deliberately excluded from that list — it's too common an ordinary
-  English word ("dress code", "zip code") and every real OTP message
-  already matches via a more specific word.
-* `$`/`€`/`£`/`¥` and `₹` amounts expand to words (`$5` → "5 dollars").
+### 2. Voice Parameters & Prosody Tuning
 
-### Accessibility-specific text handling
+* **Speech Rate & Rate Boost**: Precise seekbar control with live WPM announcements. Default range 80–450 WPM; enabling **Rate Boost** unlocks up to 3× multiplier (up to 750+ WPM) for high-speed screen reader scanning.
+* **Pitch & Pitch Range (Inflection)**: Independently tune base vocal pitch and intonation range (inflection magnitude, 0 = monotone).
+* **Intonation Style**:
+  * *Natural (Standard)*: Preserves natural language pitch melodies and clause contours.
+  * *Flat / High-Speed*: Flattens inflection (`espeakINTONATION=3`) for maximum phoneme clarity and intelligibility at extreme speech rates (350–500+ WPM).
+  * *Expressive*: Heightened pitch dynamics and phrase modulation.
+* **Emphasize Questions**: Automatically amplifies the pitch rise on interrogative (`?`) and exclamatory (`!`) sentences as an accessibility aid for hard-of-hearing listeners.
+* **Volume**: 0% to 200% with extra headroom for low-volume device speakers.
+* **Word Gap**: Custom pause duration between words (0–500 ms in 10 ms steps).
+* **Audio Optimizer**: Multi-band tone-shaping equalizer and dynamics leveler tuned specifically for eSpeak formant synthesis:
+  * *Gentle warmth*: Softens harsh sibilants and adds low-end body.
+  * *Balanced (Recommended)*: Optimized 2.5–5 kHz presence boost for consonant intelligibility.
+  * *Full richness*: Deep voice profile with expanded dynamic presence.
 
-* **Bilingual mixed-script reading**: text mixing Latin and an Indic script
-  (e.g. an English sentence with a Hindi phrase in it) is split into spans
-  by script, each span synthesized with the appropriate voice (Latin text
-  with the requested Latin voice, Indic text with the matching Indic voice)
-  instead of forcing one voice to mangle the other script.
-* **Single-character spelling on cursor navigation**: when TalkBack lands
-  on exactly one character (arrow-key/swipe navigation through text), it's
-  disambiguated rather than just spoken bare:
-  - Latin letters use NATO phonetic spelling (`a` → "a, Alpha").
-  - Devanagari vowel signs and other combining marks, which are silent or
-    meaningless in isolation, are named instead (ा → "आ की मात्रा", ् →
-    "हलन्त", ं → "अनुस्वार", and so on for all the standard matras,
-    anusvara, visarga, chandrabindu, halant, and nukta).
-* **Unicode NFKC normalization**: stylized Unicode (Mathematical
-  Alphanumeric Symbols popular on social media, fullwidth forms, enclosed/
-  circled/squared letters) is normalized to plain text so it's read as the
-  words it spells rather than character-by-character garbage — mirroring
-  what NVDA and speech-dispatcher do before their own synthesis step. Word-
-  boundary events are remapped back through every preprocessing step
-  (dictionary replacement, NATO/programming-symbol expansion, Indian-number
-  formatting, digit separation, normalization, emoji handling) so TalkBack
-  still highlights the right span of the *original* text even though the
-  text actually spoken has a different length.
-* **Programming/math symbol expansion**: symbols like `∀ ∃ ∈ ∉ ∪ ∩ ¬ ∧ ∨`
-  read as their names instead of being silently dropped or read as garbage
-  (symbol set borrowed from NVDA's `symbols.dic`).
-* **Clearer emoji announcements**: eSpeak NG's own CLDR-quality emoji
-  dictionary ("😂" → "face with tears of joy") is set off from the
-  surrounding sentence with a light pause and comma formatting, so it reads
-  as an aside rather than running into the sentence as literal text.
-  Consecutive emoji are cleanly separated.
+### 3. Number & Code Reading (`sub_number_reading`)
 
-### User pronunciation dictionary
+* **Smart OTP & PIN Verification**: Automatically detects verification codes (SMS OTPs, PINs, transaction references, PNRs) and reads them digit-by-digit (`"Your OTP is 4829"` &rarr; `"4 8 2 9"`) while leaving ordinary numbers intact.
+* **OTP Length Window**: Configurable minimum length (2–8 digits) and maximum length (min to 12 digits, default 10 for Indian PNRs).
+* **Digit Grouping**: Configurable cadence for long numbers:
+  * *Off*: Standard whole numbers.
+  * *Single*: Speaks numbers digit-by-digit.
+  * *Double*: Reads numbers in pairs (e.g. `12 34 56`).
+  * *Triple*: Reads numbers in triplets.
+* **Triple-Grouping Threshold**: Configurable threshold (4–12 digits) before triplet grouping engages.
+* **Recognize Roman Numerals**: Automatically identifies contextual Roman numerals (*"Chapter IV"* &rarr; *"Chapter 4"*, *"King Henry VIII"* &rarr; *"King Henry 8"*, *"World War II"* &rarr; *"World War 2"*, *"Section IX"* &rarr; *"Section 9"*).
+* **Indian Numbering System**: Natural Indian grouping (`1,00,000` &rarr; *"1 lakh"*, `1,23,45,678` &rarr; *"1 crore 23 lakh 45678"*), shorthand quantities (`50k` &rarr; *"50 thousand"*, `5L` &rarr; *"5 lakh"*, `2cr` &rarr; *"2 crore"*), and rupee formatting (`₹1,00,000` &rarr; *"1 lakh rupees"*).
+* **Natural Time & Date**: Intelligently reads clock times and formatted calendar dates without raw punctuation.
+* **Currency Amounts**: Verbalizes currency symbols (`$`, `€`, `£`, `¥`, `₹`) into spoken currency units.
 
-Per-language custom pronunciation rules ("My Words"), NVDA speech-dictionary
-compatible in semantics: pattern → replacement, with case sensitivity,
-whole-word matching, and optional regex, organized into Main/Root/
-Abbreviation buckets.
+### 4. Pronunciation & Text Processing (`sub_text_processing`)
 
-### Audio Optimizer
+* **Speak Punctuation**: Granular symbol reading presets:
+  * *None*: Clean reading without punctuation announcements.
+  * *Some*: Essential sentence-shaping punctuation (`.,!?;:'"-`).
+  * *Most*: Standard punctuation plus common inline symbols (`()[]{}/@#$%&*+=<>_~^|\`).
+  * *All*: Every punctuation and symbol character.
+  * *Custom*: User-defined string of exact punctuation characters to speak.
+* **Capital Letter Indication**: How capital letters are flagged:
+  * *None*: No cue.
+  * *Sound icon*: Plays a subtle audio chime.
+  * *Pitch rise*: Raises vocal pitch on capital letters.
+  * *Speak 'capital'*: Verbalizes the word "capital".
+* **Capital Announcement Scope**:
+  * *Character navigation only (Default)*: Capital cues sound strictly when stepping through text character-by-character.
+  * *All reading*: Capital cues apply across continuous reading, words, and sentences (indispensable for proofreading, editing, and code reading).
+* **Condense Repeated Characters**:
+  * *Off*: Reads every repeated character individually.
+  * *Count repetitions*: Eliminates divider fatigue by announcing count and character name (`--------------------` &rarr; `"20 dashes"`, `********` &rarr; `"8 asterisks"`).
+  * *Truncate*: Limits consecutive identical characters to at most 3 (`soooooooo` &rarr; `sooo`).
+* **Simplify Web Addresses**: Cleans up URLs in chat and web browsing by dropping protocol (`http://`, `https://`) and `www.`, spacing slashes for natural pauses, and condensing lengthy tracking query parameters into `"with parameters"`.
+* **Programming & Math Symbols**: Direct expansion for technical symbols (`!=`, `==`, `<=`, `>=`, `=>`, `->`, `&&`, `||`, `//`, `...`, `+-`, `*`, `/`, `~=`, `V`, `bullet`, `deg`, `sqrt`, `inf`, `integral`, `for all`, `exists`, `element of`, `union`, `intersection`).
+* **Unicode Normalization (NFKC)**: Converts stylized social media Unicode (bold, italic, circled, fullwidth, math alphanumeric fonts) into readable plain text, preserving word-boundary highlighting for TalkBack.
+* **Unified Reading Modes**:
+  * *Normal*: Standard reading.
+  * *Spelling*: Letter-by-letter reading.
+  * *Phonetic*: Spells words using NATO phonetics (Alpha, Bravo, Charlie...).
+  * *Code reading*: Announces programming symbols with full punctuation.
+* **NATO Phonetic Spelling**: Spells isolated letters with NATO phonetics during single-character cursor navigation.
+* **Devanagari Matras in Exploration**: Names silent combining vowel signs and marks (matras, halant, anusvara, visarga, nukta) when navigating by character.
+* **Emoji Processing**:
+  * *Announce*: Speaks emojis set off with clean pauses and commas using eSpeak's CLDR dictionary.
+  * *Ignore*: Completely silences emojis to prevent conversational clutter.
+* **Bilingual Script Switching**: Automatically splits mixed Latin and Indic text, synthesizing each run with its dedicated native voice (e.g., Hindi voice for Devanagari, English voice for Latin).
+* **Second Language Voice**: Choose the exact voice used for English words inside Indic sentences.
 
-A speech-tailored two-band tone shaper (a real bandpass presence boost
-around 2.5-5kHz for consonant clarity, plus a lowpass warmth band) with a
-gentle loudness leveler and clip guard, re-tuned by ear specifically for
-eSpeak's own formant/Klatt output.
+### 5. Caller-Proof Locks (`sub_caller_locks`)
 
-### Backup, restore, and diagnostics
+Prevents third-party apps (e.g. navigation, browsers, or social media apps) from altering your accessibility settings:
+* **Lock Speech Rate**: Ignores caller app rate requests, maintaining your configured reading speed.
+* **Lock Pitch**: Ignores caller app pitch requests.
+* **Lock Volume**: Ignores caller app volume ducking, keeping speech consistently audible.
 
-* **Backup & Restore**: exports voice tunings, preferences, and the user
-  dictionary into a single JSON file, restorable via Android's standard
-  backup/share flow.
-* **Log Exporter**: one-tap collection of device info, app version,
-  preference snapshot, and recent logcat output into a single shareable
-  text blob — no storage permission needed (shared via `ACTION_SEND`).
+### 6. User Pronunciation Dictionary ("My Words")
+
+Full NVDA-compatible custom pronunciation dictionary:
+* **Rule Syntax**: Pattern &rarr; Replacement.
+* **Filters & Matching**: Whole-word matching, case sensitivity, and full regular expression (regex) support.
+* **Buckets**: Organizable into Main, Root, and Abbreviation sections.
+* **Language Targeting**: Scope rules to a specific language code (`en`, `hi`, `en-in`) or apply globally.
+* **Background Import/Export**: Import massive `.dic` word lists or JSON files without UI freezes; export anytime.
+
+### 7. Tools, Backup & Diagnostics (`sub_tools_backup`)
+
+* **Reading Style Presets**: Quick-apply curated default profiles (e.g. Recommended High-Speed Screen Reader style).
+* **Backup & Restore**: Single JSON export/import of all voice parameters, locks, preferences, and dictionary rules.
+* **Log Exporter**: One-tap diagnostic report gathering Android version, device model, app preferences snapshot, and recent logs for troubleshooting without requiring storage permissions.
+* **Custom Voice Import**: Install external voice and phoneme files directly into your personal voice library.
 
 ### Every language bundled, nothing to download
 

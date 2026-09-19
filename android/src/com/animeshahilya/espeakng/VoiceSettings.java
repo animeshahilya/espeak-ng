@@ -77,6 +77,25 @@ public class VoiceSettings {
     public static final String PREF_SMART_MIN_LEN = "espeak_smart_min_len";
     public static final String PREF_SMART_MAX_LEN = "espeak_smart_max_len";
     public static final String PREF_READING_MODE = "espeak_reading_mode";
+    public static final String PREF_REPEATED_CHARS = "espeak_repeated_chars";
+    public static final String PREF_INTONATION_STYLE = "espeak_intonation_style";
+    public static final String PREF_CAPITALS_SCOPE = "espeak_capitals_scope";
+    public static final String PREF_SIMPLIFY_URLS = "espeak_simplify_urls";
+    public static final String PREF_ROMAN_NUMERALS = "espeak_roman_numerals";
+
+    /** Repeated character handling modes. */
+    public static final String REPEATED_CHARS_OFF = "off";
+    public static final String REPEATED_CHARS_COUNT = "count";
+    public static final String REPEATED_CHARS_TRUNCATE = "truncate";
+
+    /** Intonation styles. */
+    public static final String INTONATION_NATURAL = "natural";
+    public static final String INTONATION_FLAT = "flat";
+    public static final String INTONATION_EXPRESSIVE = "expressive";
+
+    /** Capital letter announcement scope. */
+    public static final String CAPITALS_SCOPE_CHAR = "char_only";
+    public static final String CAPITALS_SCOPE_ALL = "all";
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
@@ -485,5 +504,41 @@ public class VoiceSettings {
         } catch (NumberFormatException e) {
             return 10;
         }
+    }
+
+    public String getRepeatedCharactersMode() {
+        String mode = mPreferences.getString(PREF_REPEATED_CHARS, REPEATED_CHARS_OFF);
+        if (REPEATED_CHARS_COUNT.equals(mode) || REPEATED_CHARS_TRUNCATE.equals(mode)) {
+            return mode;
+        }
+        return REPEATED_CHARS_OFF;
+    }
+
+    public String getIntonationStyle() {
+        String style = mPreferences.getString(PREF_INTONATION_STYLE, INTONATION_NATURAL);
+        if (INTONATION_FLAT.equals(style) || INTONATION_EXPRESSIVE.equals(style)) {
+            return style;
+        }
+        return INTONATION_NATURAL;
+    }
+
+    public String getCapitalsScope() {
+        String scope = mPreferences.getString(PREF_CAPITALS_SCOPE, CAPITALS_SCOPE_CHAR);
+        if (CAPITALS_SCOPE_ALL.equals(scope)) {
+            return scope;
+        }
+        return CAPITALS_SCOPE_CHAR;
+    }
+
+    public boolean isCapitalsScopeAll() {
+        return CAPITALS_SCOPE_ALL.equals(getCapitalsScope());
+    }
+
+    public boolean isSimplifyUrlsEnabled() {
+        return mPreferences.getBoolean(PREF_SIMPLIFY_URLS, false);
+    }
+
+    public boolean isRomanNumeralsEnabled() {
+        return mPreferences.getBoolean(PREF_ROMAN_NUMERALS, true);
     }
 }

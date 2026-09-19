@@ -107,4 +107,44 @@ public class TextPipelineDeviceTest {
             assertThat("x=" + x, Math.abs(actual - expected), lessThan(0.002f));
         }
     }
+
+    @Test
+    public void testExpandRomanNumerals() {
+        assertThat(TtsService.expandRomanNumerals("Read Chapter IV carefully."), is("Read Chapter 4 carefully."));
+        assertThat(TtsService.expandRomanNumerals("World War II ended in 1945."), is("World War 2 ended in 1945."));
+        assertThat(TtsService.expandRomanNumerals("King Henry VIII of England"), is("King Henry 8 of England"));
+        assertThat(TtsService.expandRomanNumerals("Section IX"), is("Section 9"));
+        // Unmatched words without prefix should not be falsely converted
+        assertThat(TtsService.expandRomanNumerals("This is plain IV text."), is("This is plain IV text."));
+    }
+
+    @Test
+    public void testSimplifyUrls() {
+        String simplified = TtsService.simplifyUrls("Check https://www.example.com/docs/guide?ref=twitter&utm_source=test");
+        assertThat(simplified, containsString("example.com"));
+        assertThat(simplified, containsString("docs"));
+        assertThat(simplified, containsString("with parameters"));
+        assertThat(simplified, not(containsString("https://")));
+        assertThat(simplified, not(containsString("www.")));
+    }
+
+    @Test
+    public void testCondenseRepeatedCharacters() {
+        // Count mode
+        String counted = TtsService.condenseRepeatedCharacters("Divider: -------------------- end", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(counted, containsString("20"));
+        assertThat(counted, containsString("dashes"));
+
+        String asterisks = TtsService.condenseRepeatedCharacters("Password: ********", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(asterisks, containsString("8"));
+        assertThat(asterisks, containsString("asterisks"));
+
+        // Truncate mode
+        String truncated = TtsService.condenseRepeatedCharacters("soooooooo long", VoiceSettings.REPEATED_CHARS_TRUNCATE);
+        assertThat(truncated, is("sooo long"));
+
+        // Off mode
+        String off = TtsService.condenseRepeatedCharacters("-------", VoiceSettings.REPEATED_CHARS_OFF);
+        assertThat(off, is("-------"));
+    }
 }

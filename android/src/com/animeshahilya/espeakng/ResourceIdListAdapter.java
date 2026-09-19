@@ -44,7 +44,7 @@ public class ResourceIdListAdapter extends ArrayAdapter<Integer>
         ViewHolder holder;
         if (convertView == null)
         {
-            convertView = mInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            convertView = mInflater.inflate(android.R.layout.simple_spinner_item, parent, false);
             holder = new ViewHolder();
             holder.text = (TextView)convertView.findViewById(android.R.id.text1);
             convertView.setTag(holder);
@@ -61,6 +61,20 @@ public class ResourceIdListAdapter extends ArrayAdapter<Integer>
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent)
     {
-        return getView(position, convertView, parent);
+        ViewHolder holder;
+        if (convertView == null)
+        {
+            convertView = mInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+            holder = new ViewHolder();
+            holder.text = (TextView)convertView.findViewById(android.R.id.text1);
+            convertView.setTag(holder);
+        }
+        else
+        {
+            holder = (ViewHolder)convertView.getTag();
+        }
+
+        holder.text.setText(getItem(position));
+        return convertView;
     }
 }

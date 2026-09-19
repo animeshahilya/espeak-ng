@@ -92,7 +92,7 @@ public class VoiceVariantPreference extends DialogPreference {
             ViewHolder holder;
             if (convertView == null)
             {
-                convertView = mInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+                convertView = mInflater.inflate(android.R.layout.simple_spinner_item, parent, false);
                 holder = new ViewHolder();
                 holder.text = (TextView)convertView.findViewById(android.R.id.text1);
                 convertView.setTag(holder);
@@ -109,7 +109,21 @@ public class VoiceVariantPreference extends DialogPreference {
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent)
         {
-            return getView(position, convertView, parent);
+            ViewHolder holder;
+            if (convertView == null)
+            {
+                convertView = mInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+                holder = new ViewHolder();
+                holder.text = (TextView)convertView.findViewById(android.R.id.text1);
+                convertView.setTag(holder);
+            }
+            else
+            {
+                holder = (ViewHolder)convertView.getTag();
+            }
+
+            holder.text.setText(getItem(position).getDisplayName(getContext()));
+            return convertView;
         }
     }
 
@@ -329,12 +343,17 @@ public class VoiceVariantPreference extends DialogPreference {
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                mCategoryIndex = position;
                 mVariant.setAdapter(new VariantDataListAdapter((Activity) getContext(), variants[position]));
                 if (mInitializing) {
-                    mVariant.setSelection(variant);
+                    int safeVariant = Math.max(0, Math.min(variant, variants[position].length - 1));
+                    mVariantIndex = safeVariant;
+                    mVariant.setSelection(safeVariant);
                     mInitializing = false;
+                } else {
+                    mVariantIndex = 0;
+                    mVariant.setSelection(0);
                 }
-                mCategoryIndex = position;
             }
 
             @Override
@@ -359,9 +378,14 @@ public class VoiceVariantPreference extends DialogPreference {
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
+                if (mCategoryIndex < 0 || mCategoryIndex >= categories.length) {
+                    mCategoryIndex = 0;
+                }
+                if (mVariantIndex < 0 || mVariantIndex >= variants[mCategoryIndex].length) {
+                    mVariantIndex = 0;
+                }
                 onDataChanged();
                 if (shouldCommit()) {
-
                     SharedPreferences.Editor editor = getEditor();
                     if (editor != null) {
                         VoiceVariant variant = variants[mCategoryIndex][mVariantIndex].getVariant();
@@ -376,6 +400,12 @@ public class VoiceVariantPreference extends DialogPreference {
 
     private void onDataChanged() {
         Context context = getContext();
+        if (mCategoryIndex < 0 || mCategoryIndex >= categories.length) {
+            mCategoryIndex = 0;
+        }
+        if (mVariantIndex < 0 || mVariantIndex >= variants[mCategoryIndex].length) {
+            mVariantIndex = 0;
+        }
         CharSequence category = context.getText(categories[mCategoryIndex]);
         CharSequence variant  = variants[mCategoryIndex][mVariantIndex].getDisplayName(context);
         String label = String.format("%s (%s)", category, variant);

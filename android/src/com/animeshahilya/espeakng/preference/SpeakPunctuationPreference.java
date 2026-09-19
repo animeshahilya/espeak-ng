@@ -144,27 +144,57 @@ public class SpeakPunctuationPreference extends DialogPreference {
         mCustom.setContentDescription(textOf(R.string.punctuation_custom)
                 + ". " + textOf(R.string.punctuation_custom_desc));
 
-        // The five options aren't a real RadioGroup (each row carries its own
-        // description text below it, so the RadioButtons aren't direct
-        // children of one), so exclusivity is handled by hand here. The
-        // custom character field is only meaningful - and only enabled -
-        // when "Custom" is selected.
-        View.OnClickListener selectOption = new View.OnClickListener() {
+        final RadioButton[] buttons = new RadioButton[] { mNone, mSome, mMost, mAll, mCustom };
+        final View.OnClickListener selectOption = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mNone.setChecked(v == mNone);
-                mSome.setChecked(v == mSome);
-                mMost.setChecked(v == mMost);
-                mAll.setChecked(v == mAll);
-                mCustom.setChecked(v == mCustom);
-                mPunctuationCharacters.setEnabled(v == mCustom);
+                boolean selectCustom = (v == mCustom || v.getId() == R.id.custom_desc);
+                mNone.setChecked(v == mNone || v.getId() == R.id.none_desc);
+                mSome.setChecked(v == mSome || v.getId() == R.id.some_desc);
+                mMost.setChecked(v == mMost || v.getId() == R.id.most_desc);
+                mAll.setChecked(v == mAll || v.getId() == R.id.all_desc);
+                mCustom.setChecked(selectCustom);
+                mPunctuationCharacters.setEnabled(selectCustom);
+                if (selectCustom && v != mPunctuationCharacters) {
+                    mPunctuationCharacters.requestFocus();
+                }
             }
         };
-        mNone.setOnClickListener(selectOption);
-        mSome.setOnClickListener(selectOption);
-        mMost.setOnClickListener(selectOption);
-        mAll.setOnClickListener(selectOption);
-        mCustom.setOnClickListener(selectOption);
+
+        for (int i = 0; i < buttons.length; i++) {
+            final int index = i;
+            final RadioButton rb = buttons[i];
+            rb.setOnClickListener(selectOption);
+            rb.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(View host, android.view.accessibility.AccessibilityNodeInfo info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setCollectionItemInfo(
+                            android.view.accessibility.AccessibilityNodeInfo.CollectionItemInfo.obtain(
+                                    index, 1, 0, 1, false, rb.isChecked()));
+                }
+            });
+        }
+
+        View descNone = root.findViewById(R.id.none_desc);
+        if (descNone != null) descNone.setOnClickListener(selectOption);
+        View descSome = root.findViewById(R.id.some_desc);
+        if (descSome != null) descSome.setOnClickListener(selectOption);
+        View descMost = root.findViewById(R.id.most_desc);
+        if (descMost != null) descMost.setOnClickListener(selectOption);
+        View descAll = root.findViewById(R.id.all_desc);
+        if (descAll != null) descAll.setOnClickListener(selectOption);
+        View descCustom = root.findViewById(R.id.custom_desc);
+        if (descCustom != null) descCustom.setOnClickListener(selectOption);
+
+        mPunctuationCharacters.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && !mCustom.isChecked()) {
+                    selectOption.onClick(mCustom);
+                }
+            }
+        });
 
         return root;
     }

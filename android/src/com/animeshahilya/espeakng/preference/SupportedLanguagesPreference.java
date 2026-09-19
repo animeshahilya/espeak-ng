@@ -20,33 +20,57 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.MultiSelectListPreference;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.animeshahilya.espeakng.LanguageSettings;
 import com.animeshahilya.espeakng.R;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
- * Multi-select preference with a custom dialog that includes explicit
- * Select All / Deselect All buttons alongside OK/Cancel.
+ * Multi-select preference with a custom dialog that includes real-time
+ * search filtering and explicit Select All / Deselect All buttons with TalkBack announcements.
  */
 public class SupportedLanguagesPreference extends MultiSelectListPreference {
     private CharSequence[] mDialogEntryValues;
-    private final Set<String> mNewValues = new HashSet<String>();
+    private final Set<String> mCurrentSelected = new HashSet<String>();
 
     private View mDialogView;
     private ListView mListView;
+    private EditText mSearchInput;
     private Button mButtonSelectAll;
     private Button mButtonDeselectAll;
+    private ArrayAdapter<LangEntry> mAdapter;
+    private final List<LangEntry> mAllEntries = new ArrayList<>();
     private int mEntryCount = 0;
+
+    public static class LangEntry {
+        public final CharSequence label;
+        public final String value;
+
+        public LangEntry(CharSequence label, String value) {
+            this.label = label;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return label != null ? label.toString() : "";
+        }
+    }
 
     public SupportedLanguagesPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -70,28 +94,80 @@ public class SupportedLanguagesPreference extends MultiSelectListPreference {
         mDialogEntryValues = getEntryValues();
         mEntryCount = mDialogEntryValues.length;
 
+        mCurrentSelected.clear();
         final Set<String> values = getValues();
+        if (values != null) {
+            mCurrentSelected.addAll(values);
+        }
+
+        mAllEntries.clear();
+        CharSequence[] entries = getEntries();
+        for (int i = 0; i < entries.length && i < mDialogEntryValues.length; i++) {
+            mAllEntries.add(new LangEntry(entries[i], mDialogEntryValues[i].toString()));
+        }
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         mDialogView = inflater.inflate(R.layout.supported_languages_dialog, null);
 
+        mSearchInput = mDialogView.findViewById(R.id.languages_search);
         mListView = mDialogView.findViewById(R.id.supported_languages_list);
         mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
+
+        mAdapter = new ArrayAdapter<LangEntry>(
                 getContext(),
                 android.R.layout.simple_list_item_multiple_choice,
-                getEntries());
-        mListView.setAdapter(adapter);
+                new ArrayList<>(mAllEntries)) {
+            @Override
+            public View getView(int position, View convertView, android.view.ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                LangEntry item = getItem(position);
+                if (item != null) {
+                    mListView.setItemChecked(position, mCurrentSelected.contains(item.value));
+                }
+                return view;
+            }
+        };
+        mListView.setAdapter(mAdapter);
 
-        for (int i = 0; i < mDialogEntryValues.length; i++) {
-            mListView.setItemChecked(i, values.contains(mDialogEntryValues[i].toString()));
+        mListView.setOnItemClickListener((parent, view, position, id) -> {
+            LangEntry item = mAdapter.getItem(position);
+            if (item != null) {
+                if (mListView.isItemChecked(position)) {
+                    mCurrentSelected.add(item.value);
+                } else {
+                    mCurrentSelected.remove(item.value);
+                }
+            }
+        });
+
+        syncListViewCheckedState();
+
+        if (mSearchInput != null) {
+            mSearchInput.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mAdapter.getFilter().filter(s, new Filter.FilterListener() {
+                        @Override
+                        public void onFilterComplete(int count) {
+                            syncListViewCheckedState();
+                        }
+                    });
+                }
+                @Override public void afterTextChanged(Editable s) {}
+            });
         }
 
         mButtonSelectAll = mDialogView.findViewById(R.id.button_select_all);
         mButtonDeselectAll = mDialogView.findViewById(R.id.button_deselect_all);
 
-        mButtonSelectAll.setOnClickListener(v -> setAll(true));
-        mButtonDeselectAll.setOnClickListener(v -> setAll(false));
+        mButtonSelectAll.setOnClickListener(v -> {
+            setAll(true);
+            v.announceForAccessibility(getContext().getString(R.string.languages_all_selected));
+        });
+        mButtonDeselectAll.setOnClickListener(v -> {
+            setAll(false);
+            v.announceForAccessibility(getContext().getString(R.string.languages_all_deselected));
+        });
 
         builder.setView(mDialogView);
         builder.setTitle(getDialogTitle());
@@ -99,29 +175,29 @@ public class SupportedLanguagesPreference extends MultiSelectListPreference {
         builder.setCancelable(true);
     }
 
-    private void setAll(boolean checked) {
-        for (int i = 0; i < mDialogEntryValues.length; i++) {
-            mListView.setItemChecked(i, checked);
-        }
-        mNewValues.clear();
-        if (checked) {
-            for (CharSequence value : mDialogEntryValues) {
-                mNewValues.add(value.toString());
+    private void syncListViewCheckedState() {
+        if (mListView == null || mAdapter == null) return;
+        for (int i = 0; i < mAdapter.getCount(); i++) {
+            LangEntry item = mAdapter.getItem(i);
+            if (item != null) {
+                mListView.setItemChecked(i, mCurrentSelected.contains(item.value));
             }
         }
     }
 
-    private Set<String> collectSelections() {
-        Set<String> selections = new HashSet<String>();
-        if (mListView == null || mDialogEntryValues == null) {
-            return selections;
-        }
-        for (int i = 0; i < mDialogEntryValues.length; i++) {
-            if (mListView.isItemChecked(i)) {
-                selections.add(mDialogEntryValues[i].toString());
+    private void setAll(boolean checked) {
+        if (checked) {
+            for (LangEntry entry : mAllEntries) {
+                mCurrentSelected.add(entry.value);
             }
+        } else {
+            mCurrentSelected.clear();
         }
-        return selections;
+        syncListViewCheckedState();
+    }
+
+    private Set<String> collectSelections() {
+        return new HashSet<>(mCurrentSelected);
     }
 
     @Override

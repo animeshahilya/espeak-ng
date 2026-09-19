@@ -27,6 +27,9 @@
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginStart="@dimen/parameter_bezel_inset"
         android:layout_marginEnd="@dimen/parameter_bezel_inset" />
 
@@ -43,6 +46,7 @@
             android:id="@+id/rateBoost"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:layout_weight="1"
             android:text="@string/setting_rate_boost" />
 
@@ -50,6 +54,8 @@
             android:id="@+id/resetToDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:minWidth="64dp"
             android:text="@string/resetToDefault" />
 
     </LinearLayout>

@@ -181,6 +181,8 @@ public class SeekBarPreference extends DialogPreference
                 // setProgress() reports fromUser == false, so persist here
                 // rather than leaving it to the progress listener.
                 persist(parameter);
+                String text = String.format(parameter.formatter, Integer.toString(getDisplayValue(parameter)));
+                v.announceForAccessibility(parameter.title + ": " + text);
             }
         });
 
@@ -338,6 +340,9 @@ public class SeekBarPreference extends DialogPreference
         String label = (mParameters.size() > 1) ? (parameter.title + ", " + text) : text;
         parameter.mValueText.setText(label);
         parameter.mSeekBar.setContentDescription(parameter.title + ", " + text);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            parameter.mSeekBar.setStateDescription(text);
+        }
     }
 
     /**
