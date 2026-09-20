@@ -113,7 +113,7 @@ android {
     externalNativeBuild {
         cmake {
             path = "jni/CMakeLists.txt"
-            version = "3.22.1"
+            version = "3.30.0"
         }
     }
 
@@ -130,8 +130,8 @@ android {
     }
 
     // espeakdata.zip is already compressed; don't double-compress in APK
-    aaptOptions {
-        noCompress "espeakdata.zip"
+    androidResources {
+        noCompress += "espeakdata.zip"
     }
 
     lint {

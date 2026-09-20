@@ -2230,7 +2230,7 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 							// not a Latin alphabet, switch to the default Latin alphabet language
 							if ((letter <= 0x241) && iswalpha(letter)) {
 								extern char espeakng_fallback_language[20];
-								sprintf(phonemes, "%c%s", phonSWITCH, espeakng_fallback_language);
+								snprintf(phonemes, ph_size, "%c%s", phonSWITCH, espeakng_fallback_language);
 								return 0;
 							}
 						}
@@ -2271,12 +2271,12 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 
 						if (((alphabet = AlphabetFromChar(letter)) != NULL)  && (alphabet->offset != tr->letter_bits_offset)) {
 							if (tr->langopts.alt_alphabet == alphabet->offset) {
-								sprintf(phonemes, "%c%s", phonSWITCH, WordToString2(word_buf, tr->langopts.alt_alphabet_lang));
+								snprintf(phonemes, ph_size, "%c%s", phonSWITCH, WordToString2(word_buf, tr->langopts.alt_alphabet_lang));
 								return 0;
 							}
 							if (alphabet->flags & AL_WORDS) {
 								// switch to the nominated language for this alphabet
-								sprintf(phonemes, "%c%s", phonSWITCH, WordToString2(word_buf, alphabet->language));
+								snprintf(phonemes, ph_size, "%c%s", phonSWITCH, WordToString2(word_buf, alphabet->language));
 								return 0;
 							}
 						}

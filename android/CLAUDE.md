@@ -102,11 +102,11 @@ Android TTS Framework
 
 ### Launcher icon and Wear
 
-There is no standalone launcher activity. The only `MAIN`/`LAUNCHER` entry is
-the `.WearLauncher` `<activity-alias>` targeting `TtsSettingsActivity`, and it
-ships `android:enabled="false"`. `EspeakApp.syncWearLauncherState()` enables it
-at runtime on watches only; phones reach the settings UI through the gear in
-the system Text-to-speech settings (`CONFIGURE_ENGINE`).
+`TtsSettingsActivity` carries a `MAIN`/`LAUNCHER` intent-filter (phone
+launcher icon) plus the `CONFIGURE_ENGINE` entry used from the system
+Text-to-speech settings. The `.WearLauncher` `<activity-alias>` targeting
+the same activity ships `android:enabled="false"`.
+`EspeakApp.syncWearLauncherState()` enables it at runtime on watches only.
 
 **Never disable that alias at runtime.** Disabling a launcher alias closes the
 activity that was started through it — silently, with no exception, and

@@ -472,7 +472,7 @@ static int CheckPhonemeMode(int option_phoneme_input, int phoneme_mode, int c1, 
     return phoneme_mode;
 }
 
-int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_buf, int *tone_type, char *voice_change)
+int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_buf, int *tone_type, char *voice_change, int voice_change_size)
 {
 	/* Find the end of the current clause.
 	    Write the clause into  buf
@@ -623,7 +623,7 @@ int ReadClause(Translator *tr, char *buf, short *charix, int *charix_top, int n_
 						TerminateBufWithSpaceAndZero(buf, ix, NULL);
 
 						if (terminator & CLAUSE_TYPE_VOICE_CHANGE)
-							strncpy0(voice_change, current_voice_id, 40);
+							strncpy0(voice_change, current_voice_id, voice_change_size);
 						return terminator;
 					}
 					c1 = ' ';

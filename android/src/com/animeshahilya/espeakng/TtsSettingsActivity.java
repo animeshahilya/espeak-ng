@@ -112,7 +112,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         // Migrate old eyes-free settings to the new settings:
 
-        storageContext = EspeakApp.requireStorageContext(this);
+        storageContext = EspeakApp.requireStorageContext(getApplicationContext());
         CheckVoiceData.ensureVoiceData(storageContext);
         final SharedPreferences prefs = getPrefs();
         final SharedPreferences.Editor editor = prefs.edit();
@@ -157,7 +157,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
             rate = prefs.getString(VoiceSettings.PREF_DEFAULT_RATE, "100");
             try {
-                int rateValue = (Integer.parseInt(rate) / 100) * defaultValue;
+                int rateValue = (int) ((Integer.parseInt(rate) / 100.0f) * defaultValue);
                 if (rateValue < defaultValue) rateValue = defaultValue;
                 if (rateValue > maxValue) rateValue = maxValue;
                 editor.putString(VoiceSettings.PREF_RATE, Integer.toString(rateValue));
@@ -1214,7 +1214,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         }
         return createListPref(context, VoiceSettings.PREF_SMART_MAX_LEN,
                 R.string.setting_smart_max, R.string.setting_smart_max_summary,
-                entries, values, "8");
+                entries, values, "10");
     }
 
     private static Preference createSecondaryVoicePreference(Context context, List<Voice> voices) {

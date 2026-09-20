@@ -60,7 +60,7 @@ The app is built specifically for TalkBack and screen reader power users. The se
 
 ### 1. Voice & Language
 
-* **Supported Languages**: Choose which of the ~120 bundled languages appear in your system TTS list. Features a fast search bar and select-all/clear-all toggles.
+* **Supported Languages**: Choose which of the 159 bundled languages appear in your system TTS list. Features a fast search bar and select-all/clear-all toggles.
 * **Voice Variants**: Select gender, age, or formant tone styles. Organized into clear categories:
   * *Standard Voices*: Default, Male (1–6), Female (1–6), Child, Aged.
   * *Klatt Formant Voices*: Cascade-parallel formant models (Klatt 1–6) for distinctive hardware-style synthesized timbre.
@@ -158,7 +158,7 @@ Full NVDA-compatible custom pronunciation dictionary:
 
 ### Every language bundled, nothing to download
 
-All ~120 languages eSpeak NG data ships with are packed directly into the
+All 159 languages eSpeak NG data ships with are packed directly into the
 APK, selectable from first launch with no network step (the app requests
 no `INTERNET` permission and makes no network calls at all).
 
@@ -193,7 +193,8 @@ cd android
 ```
 
 Output APKs land in `android/build/outputs/apk/{debug,release}/`.
-Requires NDK 29.0.14206865 and CMake 3.22.1 (pinned in `android/build.gradle`).
+Requires JDK 17, Android SDK with compileSdk/targetSdk 37, NDK 29.0.14206865
+and CMake 3.30.0 (pinned in `android/build.gradle`).
 
 ## Relationship to upstream eSpeak NG
 

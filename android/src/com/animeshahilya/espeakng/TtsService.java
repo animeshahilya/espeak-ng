@@ -173,7 +173,7 @@ public class TtsService extends TextToSpeechService {
 
     @Override
     public void onCreate() {
-        storageContext = EspeakApp.requireStorageContext(this);
+        storageContext = EspeakApp.requireStorageContext(getApplicationContext());
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(storageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
@@ -546,12 +546,20 @@ public class TtsService extends TextToSpeechService {
             reportError(callback, TextToSpeech.ERROR_SERVICE);
             return;
         }
+        if (engine.getSampleRate() <= 0) {
+            reportError(callback, TextToSpeech.ERROR_SERVICE);
+            return;
+        }
 
         // Fast-path empty or whitespace-only utterances: avoid full voice/param setup
         // and JNI overhead for TalkBack spacers, empty lines, and blank elements.
         if (text.trim().isEmpty()) {
-            callback.start(engine.getSampleRate(), engine.getAudioFormat(), engine.getChannelCount());
-            callback.done();
+            if (callback.start(engine.getSampleRate(), engine.getAudioFormat(), engine.getChannelCount())
+                    != TextToSpeech.SUCCESS) {
+                reportError(callback, TextToSpeech.ERROR_SERVICE);
+            } else {
+                callback.done();
+            }
             return;
         }
 
@@ -776,9 +784,14 @@ public class TtsService extends TextToSpeechService {
         mCallbackDone.set(false);
         mIsStopped.set(false);
         int sampleRate = engine.getSampleRate();
+        if (sampleRate <= 0) {
+            reportError(callback, TextToSpeech.ERROR_SERVICE);
+            return;
+        }
         int startStatus = mCallback.start(sampleRate, engine.getAudioFormat(), engine.getChannelCount());
         if (startStatus != TextToSpeech.SUCCESS) {
             mCallback = null;
+            reportError(callback, TextToSpeech.ERROR_SERVICE);
             return;
         }
         mAudioOptimizer = settings.isAudioOptimizerEnabled() && sampleRate > 0

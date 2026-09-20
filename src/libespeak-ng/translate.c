@@ -391,7 +391,7 @@ static int SetAlternateTranslator(const char *new_language, Translator **transla
 
 		if (*translator == NULL) {
 			*translator = SelectTranslator(new_language);
-			strcpy(translator_language, new_language);
+			snprintf(translator_language, 20, "%s", new_language);
 
 			if (LoadDictionary(*translator, (*translator)->dictionary_name, 0) != 0) {
 				SelectPhonemeTable(voice->phoneme_tab_ix); // revert to original phoneme table
@@ -1124,7 +1124,7 @@ void TranslateClauseWithTerminator(Translator *tr, int *tone_out, char **voice_c
 
 	short charix[N_TR_SOURCE+4];
 	WORD_TAB words[N_CLAUSE_WORDS];
-	static char voice_change_name[40];
+	static char voice_change_name[VOICE_CHANGE_NAME_LEN];
 	int word_count = 0; // index into words
 
 	char sbuf[N_TR_SOURCE];
@@ -1149,7 +1149,7 @@ void TranslateClauseWithTerminator(Translator *tr, int *tone_out, char **voice_c
 	for (ix = 0; ix < N_TR_SOURCE; ix++)
 		charix[ix] = 0;
 	MAKE_MEM_UNDEFINED(&source, sizeof(source));
-	terminator = ReadClause(tr, source, charix, &charix_top, N_TR_SOURCE, &tone, voice_change_name);
+	terminator = ReadClause(tr, source, charix, &charix_top, N_TR_SOURCE, &tone, voice_change_name, sizeof(voice_change_name));
 
 	if (terminator_out != NULL) {
 		*terminator_out = terminator;

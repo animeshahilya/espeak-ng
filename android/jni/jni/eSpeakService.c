@@ -314,6 +314,10 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeClassInit(
   if (DEBUG) LOGV("%s", __FUNCTION__);
   METHOD_nativeSynthCallback = (*env)->GetMethodID(env, clazz, "nativeSynthCallback", "([B)V");
   METHOD_nativeSynthWordCallback = (*env)->GetMethodID(env, clazz, "nativeSynthWordCallback", "(III)V");
+  if (METHOD_nativeSynthCallback == NULL || METHOD_nativeSynthWordCallback == NULL) {
+    LOGE("nativeClassInit: GetMethodID failed (callback methods not found)");
+    return JNI_FALSE;
+  }
 
   return JNI_TRUE;
 }
@@ -332,6 +336,7 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeCreate(
   }
 
   const char *c_path = path ? (*env)->GetStringUTFChars(env, path, NULL) : NULL;
+  if (path != NULL && c_path == NULL) return 0; // JNI OOM: exception pending
 
   if (DEBUG) LOGV("Initializing with path %s", c_path ? c_path : "(null)");
   const int rate = espeak_Initialize(AUDIO_OUTPUT_SYNCHRONOUS, BUFFER_SIZE_IN_MILLISECONDS, c_path, 0);
@@ -480,6 +485,7 @@ JNIEXPORT jboolean
 JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetPunctuationCharacters(
     JNIEnv *env, jobject object, jstring characters) {
   if (DEBUG) LOGV("%s)", __FUNCTION__);
+  if (characters == NULL) return JNI_FALSE;
 
   wchar_t *list = unicode_string(env, characters);
   if (list == NULL && characters != NULL) {

@@ -39,13 +39,16 @@ int Eof(void);
 const char *WordToString2(char buf[5], unsigned int word);
 int AddNameData(const char *name,
                 int wide);
+#define VOICE_CHANGE_NAME_LEN 40
+
 int ReadClause(Translator *tr,
 		char *buf,
 		short *charix,
 		int *charix_top,
 		int n_buf,
 		int *tone_type,
-		char *voice_change);
+		char *voice_change,
+		int voice_change_size);
 
 
 

@@ -7,14 +7,17 @@ list(APPEND CPACK_SOURCE_IGNORE_FILES
   /_layouts/
   /android/
   /build/
-  /chromium_extension/
-  /data/
+  /build-asan/
   /docs/
   /emscripten/
   /fastlane/
   /tools/
   /vim/
 )
+
+# dist.yml unpacks build/espeak-ng-*-Source.tar.bz2, so the source
+# generator must actually produce .tar.bz2 (CMake default is .tar.gz).
+set(CPACK_SOURCE_GENERATOR "TBZ2")
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(VERSION ${PROJECT_VERSION})

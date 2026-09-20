@@ -42,7 +42,7 @@ static char source[N_TR_SOURCE+40]; // extra space for embedded command & voice 
 static short charix[N_TR_SOURCE+4];
 static int charix_top = 0;
 static int tone2;
-static char voice_change_name[40];
+static char voice_change_name[VOICE_CHANGE_NAME_LEN];
 
 static espeak_ng_STATUS
 set_text(const char *text, const char *voicename)
@@ -96,7 +96,7 @@ test_latin_sentence()
 	TEST_ASSERT(set_text("Janet finished #1 in the race.", "en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == (CLAUSE_PERIOD | CLAUSE_DOT_AFTER_LAST_WORD));
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == (CLAUSE_PERIOD | CLAUSE_DOT_AFTER_LAST_WORD));
 	TEST_ASSERT(!strcmp(source, "Janet finished #1 in the race "));
 	TEST_ASSERT(charix_top == (sizeof(retix)/sizeof(retix[0])) - 1);
 	TEST_ASSERT(!memcmp(charix, retix, sizeof(retix)));
@@ -104,7 +104,7 @@ test_latin_sentence()
 	TEST_ASSERT(voice_change_name[0] == 0);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source, " "));
 	TEST_ASSERT(charix_top == 0);
 }
@@ -232,7 +232,7 @@ test_uts51_emoji_character()
 		"en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source,
 		"\xE2\x86\x94"     // [2194]  left right arrow
 		"\xE2\x86\x95"     // [2195]  up down arrow
@@ -266,7 +266,7 @@ test_uts51_text_presentation_sequence()
 		"en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source,
 		"#\xEF\xB8\x8E"                // [0023 FE0E]  number sign (text style)
 		"4\xEF\xB8\x8E"                // [0034 FE0E]  digit four (text style)
@@ -299,7 +299,7 @@ test_uts51_emoji_presentation_sequence()
 		"en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source,
 		"#\xEF\xB8\x8F"                // [0023 FE0F]  number sign (emoji style)
 		"4\xEF\xB8\x8F"                // [0034 FE0F]  digit four (emoji style)
@@ -330,7 +330,7 @@ test_uts51_emoji_modifier_sequence()
 		"en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source,
 		"\xE2\x98\x9D\xF0\x9F\x8F\xBB"     // [261D 1F3FB]  index pointing up; light skin tone
 		"\xF0\x9F\x91\xB0\xF0\x9F\x8F\xBD" // [1F5D2 1F3FD] bride with veil; medium skin tone
@@ -362,7 +362,7 @@ test_uts51_emoji_flag_sequence()
 		"en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source,
 		"\xF0\x9F\x87\xA6\xF0\x9F\x87\xB7" // [1F1E6 1F1F7] AR (argentina)
 		"\xF0\x9F\x87\xA7\xF0\x9F\x87\xAC" // [1F1E7 1F1EC] BG (bulgaria)
@@ -419,7 +419,7 @@ test_uts51_emoji_tag_sequence_emoji_character()
 		"en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source,
 		// tag_base = emoji_character (RGI sequence)
 		"\xF0\x9F\x8F\xB4" // [1F3F4] flag
@@ -469,7 +469,7 @@ test_uts51_emoji_combining_sequence()
 		"en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source,
 		"\xE2\x86\x95\xE2\x83\x9E"             // [2195 20DE]      up down arrow; Me (enclosing square)
 		"\xE2\x86\x95\xEF\xB8\x8E\xE2\x83\x9E" // [2195 FE0E 20DE] up down arrow; Me (enclosing square)
@@ -499,7 +499,7 @@ test_uts51_emoji_keycap_sequence()
 		"en") == ENS_OK);
 
 	charix_top = 0;
-	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name) == CLAUSE_EOF);
+	TEST_ASSERT(ReadClause(translator, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name, sizeof(voice_change_name)) == CLAUSE_EOF);
 	TEST_ASSERT(!strcmp(source,
 		"5\xEF\xB8\x8E\xE2\x83\xA3" // [0035 FE0E 20E3] keycap 5
 		"#\xEF\xB8\x8E\xE2\x83\xA3" // [0023 FE0E 20E3] keycap #

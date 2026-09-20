@@ -68,7 +68,7 @@ jobs:
             config_env: "LSAN_OPTIONS=fast_unwind_on_malloc=0"
 
           - config: "msan"
-            configenv: "CC=clang CXX=clang++"
+            config_env: "CC=clang CXX=clang++"
             config_cflags: "-fsanitize=memory -fsanitize-memory-track-origins=2"
             settings: "-DUSE_LIBPCAUDIO:BOOL=OFF -DUSE_LIBSONIC:BOOL=OFF"
             config_env: "MSAN_OPTIONS=exitcode=42"

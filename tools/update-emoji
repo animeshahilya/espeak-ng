@@ -8,9 +8,11 @@ common/annotations and common/annotationsDerived are needed). With no LANG
 arguments, every dictsource/*_emoji file is updated.
 
 Unlike tools/emoji, which regenerates a language file from an English
-template, this tool is additive and preserves hand-curated content:
+template, this tool is additive and preserves hand-curated structure:
 
- 1. existing entries are kept untouched (names are not re-synchronized);
+ 1. existing entries are re-synchronized to current CLDR names in place
+    (hand edits to an entry's name are overwritten; only commented-out
+    "(no translation)" lines and entry ordering/comments are preserved);
  2. entries previously commented out as "(no translation)" are revived
     when the language's CLDR data now provides a name;
  3. emoji missing from the file are inserted in codepoint order, using

@@ -34,36 +34,36 @@ To check, what languages are supported by distributed version, run `espeak-ng --
 | `roa`       | `ca-ro`             | Romance               | Catalan                              | Rossellonese           |
 | `iro`       | `chr`               | Iroquoian             | Cherokee <sup>\[1,6\]</sup>          | Western/C.E.D.         |
 | `sit`       | `yue`               | Sino-Tibetan          | Chinese                              | Cantonese              |
-| `sit`       | `yue-latn-jyutping` | Sino-Tibetan          | Chinese                              | Cantonese, Jyutping    |
+| `sit`       | `yue-Latn-jyutping` | Sino-Tibetan          | Chinese                              | Cantonese, Jyutping    |
 | `sit`       | `hak`               | Sino-Tibetan          | Chinese                              | Hakka                  |
 | `sit`       | `cmn`               | Sino-Tibetan          | Chinese                              | Mandarin               |
-| `sit`       | `cmn-latn-pinyin`   | Sino-Tibetan          | Chinese                              | Mandarin, Pinyin       |
+| `sit`       | `cmn-Latn-pinyin`   | Sino-Tibetan          | Chinese                              | Mandarin, Pinyin       |
 | `trk`       | `cv`                | Turkic                | Chuvash                              |                        |
 | `trk`       | `crh`               | Turkic                | Crimean Tatar                        |                        |
 | `zls`       | `hr`                | South Slavic          | Croatian<sup>\[1,2\]</sup>           |                        |
 | `zlw`       | `cs`                | West Slavic           | Czech                                |                        |
 | `gmq`       | `da`                | North Germanic        | Danish                               |                        |
 | `gmw`       | `nl`                | West Germanic         | Dutch                                |                        |
-| `gmw`       | `en-us`             | West Germanic         | English                              | American               |
+| `gmw`       | `en-US`             | West Germanic         | English                              | American               |
 | `gmw`       | `en`                | West Germanic         | English                              | British                |
 | `gmw`       | `en-029`            | West Germanic         | English                              | Caribbean              |
-| `gmw`       | `en-gb-x-gbclan`    | West Germanic         | English                              | Lancastrian            |
-| `gmw`       | `en-us-nyc`         | West Germanic         | English                              | New York City          |
-| `gmw`       | `en-gb-x-rp`        | West Germanic         | English                              | Received Pronunciation |
-| `gmw`       | `en-gb-scotland`    | West Germanic         | English                              | Scottish               |
-| `gmw`       | `en-shaw`           | West Germanic         | English                              | Shavian alphabet       |
-| `gmw`       | `en-gb-x-gbcwmd`    | West Germanic         | English                              | West Midlands          |
-| `gmw`       | `en-au`             | West Germanic         | English                              | Australian             |
-| `gmw`       | `en-ca`             | West Germanic         | English                              | Canadian               |
+| `gmw`       | `en-GB-x-gbclan`    | West Germanic         | English                              | Lancastrian            |
+| `gmw`       | `en-US-nyc`         | West Germanic         | English                              | New York City          |
+| `gmw`       | `en-GB-x-rp`        | West Germanic         | English                              | Received Pronunciation |
+| `gmw`       | `en-GB-scotland`    | West Germanic         | English                              | Scottish               |
+| `gmw`       | `en-Shaw`           | West Germanic         | English                              | Shavian alphabet       |
+| `gmw`       | `en-GB-x-gbcwmd`    | West Germanic         | English                              | West Midlands          |
+| `gmw`       | `en-AU`             | West Germanic         | English                              | Australian             |
+| `gmw`       | `en-CA`             | West Germanic         | English                              | Canadian               |
 | `gmw`       | `en-in`             | West Germanic         | English                              | Indian                 |
-| `gmw`       | `en-sg`             | West Germanic         | English                              | Singaporean            |
+| `gmw`       | `en-SG`             | West Germanic         | English                              | Singaporean            |
 | `art`       | `eo`                | Constructed           | Esperanto                            |                        |
 | `urj`       | `et`                | Uralic                | Estonian                             |                        |
 | `gmq`       | `fo`                | North Germanic        | Faroese                              |                        |
 | `urj`       | `fi`                | Uralic                | Finnish                              |                        |
-| `roa`       | `fr-be`             | Romance               | French                               | Belgium                |
+| `roa`       | `fr-BE`             | Romance               | French                               | Belgium                |
 | `roa`       | `fr`                | Romance               | French                               | France                 |
-| `roa`       | `fr-ch`             | Romance               | French                               | Switzerland            |
+| `roa`       | `fr-CH`             | Romance               | French                               | Switzerland            |
 | `cel`       | `ga`                | Celtic                | Gaelic                               | Irish                  |
 | `cel`       | `gd`                | Celtic                | Gaelic                               | Scottish               |
 | `ccs`       | `ka`                | South Caucasian       | Georgian                             |                        |
@@ -123,9 +123,9 @@ To check, what languages are supported by distributed version, run `espeak-ng --
 | `ira`       | `ps-x-southeast`    | Iranian               | Pashto                               | Southeastern           |
 | `ira`       | `ps-x-yusufzai`     | Iranian               | Pashto                               | Yusufzai               |
 | `ira`       | `fa`                | Iranian               | Persian                              |                        |
-| `ira`       | `fa-latn`           | Iranian               | Persian<sup>\[1,5\]</sup>            |                        |
+| `ira`       | `fa-Latn`           | Iranian               | Persian<sup>\[1,5\]</sup>            |                        |
 | `zlw`       | `pl`                | West Slavic           | Polish                               |                        |
-| `roa`       | `pt-br`             | Romance               | Portuguese                           | Brazil                 |
+| `roa`       | `pt-BR`             | Romance               | Portuguese                           | Brazil                 |
 | `roa`       | `pt`                | Romance               | Portuguese                           | Portugal               |
 | `inc`       | `pa`                | Indic                 | Punjabi                              |                        |
 | `art`       | `py`                | Constructed           | Pyash                                |                        |
@@ -134,7 +134,7 @@ To check, what languages are supported by distributed version, run `espeak-ng --
 | `roa`       | `ro`                | Romance               | Romanian                             |                        |
 | `zle`       | `ru`                | East Slavic           | Russian                              |                        |
 | `zle`       | `ru-cl`             | East Slavic           | Russian                              | Classic                |
-| `zle`       | `ru-lv`             | East Slavic           | Russian                              | Latvia                 |
+| `zle`       | `ru-LV`             | East Slavic           | Russian                              | Latvia                 |
 | `zls`       | `sr`                | South Slavic          | Serbian<sup>\[1,2\]</sup>            |                        |
 | `bnt`       | `tn`                | Bantu                 | Setswana                             |                        |
 | `tai`       | `shn`               | Tai                   | Shan (Tai Yai)                       |                        |
@@ -161,9 +161,9 @@ To check, what languages are supported by distributed version, run `espeak-ng --
 | `inc`       | `ur`                | Indic                 | Urdu                                 |                        |
 | `trk`       | `ug`                | Turkic                | Uyghur<sup>\[1,3\]</sup>             |                        |
 | `trk`       | `uz`                | Turkic                | Uzbek<sup>\[1,2\]</sup>              |                        |
-| `aav`       | `vi-vn-x-central`   | Austroasiatic         | Vietnamese                           | Central Vietnam        |
+| `aav`       | `vi-VN-x-central`   | Austroasiatic         | Vietnamese                           | Central Vietnam        |
 | `aav`       | `vi`                | Austroasiatic         | Vietnamese                           | Northern Vietnam       |
-| `aav`       | `vi-vn-x-south`     | Austroasiatic         | Vietnamese                           | Southern Vietnam       |
+| `aav`       | `vi-VN-x-south`     | Austroasiatic         | Vietnamese                           | Southern Vietnam       |
 | `cel`       | `cy`                | Celtic                | Welsh                                |                        |
 | `art`       | `xex`               | Constructed           | Xextan                               |                        |
 

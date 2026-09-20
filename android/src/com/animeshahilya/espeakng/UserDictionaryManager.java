@@ -49,8 +49,8 @@ public class UserDictionaryManager {
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     private UserDictionaryManager(Context context) {
-        mContext = EspeakApp.requireStorageContext(context);
-        migrateLegacyIfPresent(context);
+        mContext = EspeakApp.requireStorageContext(context.getApplicationContext());
+        migrateLegacyIfPresent(context.getApplicationContext());
         load();
     }
 

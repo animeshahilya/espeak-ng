@@ -731,8 +731,8 @@ lakh		l'A:k
 lakhs		l'A:ks
 lac		l'A:k
 lacs		l'A:ks
-crore		kr'o@
-crores		kr'o@z
+crore		kr'o:r
+crores		kr'o:rz
 crorepati	kr,o@p'A:ti
 lakhpati	l,A:kp'A:ti
 prepone		pri:p'oUn
@@ -5842,37 +5842,13 @@ _𐑿	j'u:l
 𐑢𐑦𐑗	,wItS	$pause $strend2 $only $verbf
 shit	SIt
 
-// Indian English terms
-lakh	l'A:k
-lakhs	l'A:ks
-lac	l'ak
-lacs	l'aks
-crore	kr'o:r
-crores	kr'o:rz
-lakhpati	l,A:kp'VtI
-crorepati	kr,o:rp'VtI
-aadhaar	'A:d,A:r
-aadhar	'A:d,A:r
-namaste	n,Vm'VsteI
-namaskar	n,Vm'VskA:r
-pranam	pr.'VnA:m
-dhanyawad	d,VnjVv'A:d
+// Indian English terms unique to this block (overlapping headwords live in the
+// main dictionary above; duplicating them here shadowed one transcription).
 dhanyavad	d,VnjVv'A:d
-shukriya	S,Ukr'IjA:
-paise	p'aIseI
-paisa	p'aIsA:
 chappal	tS'Vpp@l
 chappals	tS'Vpp@lz
 rickshaw	r'IkSO:
 rickshaws	r'IkSO:z
-masala	mVs'A:lA:
-chai	tS'aI
-roti	r'o:ti:
 dal	d'A:l
-biryani	b,Irj'A:ni:
 thali	t['A:li:
-desi	d'e:si:
-jugaad	dZ,Ug'A:d
-swachh	sw'VtStS
-yojana	j'o:dZ@nA:
 

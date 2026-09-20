@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.8...3.10)
+cmake_minimum_required(VERSION 3.16...3.30)
 
 project(espeak-ng
-  VERSION 1.53.0
+  VERSION 1.53.1
   DESCRIPTION "open source speech synthesizer that supports more than hundred languages and accents"
   HOMEPAGE_URL "https://github.com/espeak-ng/espeak-ng"
 )
