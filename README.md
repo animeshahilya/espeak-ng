@@ -194,7 +194,7 @@ cd android
 
 Output APKs land in `android/build/outputs/apk/{debug,release}/`.
 Requires JDK 17, Android SDK with compileSdk/targetSdk 37, NDK 29.0.14206865
-and CMake 3.30.0 (pinned in `android/build.gradle`).
+and CMake 3.22.1 (pinned in `android/build.gradle`).
 
 ## Relationship to upstream eSpeak NG
 

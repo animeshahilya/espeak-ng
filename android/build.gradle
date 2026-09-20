@@ -113,7 +113,10 @@ android {
     externalNativeBuild {
         cmake {
             path = "jni/CMakeLists.txt"
-            version = "3.30.0"
+            // Pinned to the version shipped in the SDK on dev machines and CI
+            // (3.22.1): AGP requires an exact installed match, so "newer"
+            // pins break the build wherever that version isn't installed.
+            version = "3.22.1"
         }
     }
 
