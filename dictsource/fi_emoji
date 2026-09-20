@@ -303,7 +303,6 @@ $textmode
 ⏭	seuraava kappale						// [23ED] text|emoji
 ⏮	edellinen kappale						// [23EE] text|emoji
 ⏯	toista pysäytä						// [23EF]
-⏯	toista/pysäytä							// [23EF] text|emoji
 ⏰	herätyskello							// [23F0]
 ⏱	sekuntikello							// [23F1] text|emoji
 ⏲	ajastin								// [23F2] text|emoji
@@ -1008,7 +1007,6 @@ $textmode
 💞	toisiaan kiertävät sydämet					// [1F49E]
 💟	sydänkoriste							// [1F49F]
 💠	vinoneliö kukka						// [1F4A0]
-💠	vinoneliö/kukka							// [1F4A0]
 💡	hehkulamppu							// [1F4A1]
 💢	viha								// [1F4A2]
 💣	pommi								// [1F4A3]

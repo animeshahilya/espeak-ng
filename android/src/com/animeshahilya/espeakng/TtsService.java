@@ -1019,11 +1019,33 @@ public class TtsService extends TextToSpeechService {
 
     private static boolean isEmojiCodePoint(int codePoint) {
         final int type = Character.getType(codePoint);
-        return (type == Character.OTHER_SYMBOL || type == Character.SURROGATE)
+        // Note: Character.SURROGATE intentionally absent — codePointAt() never
+        // returns a lone surrogate, so testing for it here was dead code.
+        return (type == Character.OTHER_SYMBOL)
                 || (codePoint >= 0x1F000 && codePoint <= 0x1FAFF)
                 || (codePoint >= 0x2600 && codePoint <= 0x27BF)
                 || (codePoint >= 0xFE00 && codePoint <= 0xFE0F)
-                || (codePoint >= 0x1F900 && codePoint <= 0x1F9FF);
+                || (codePoint >= 0x1F900 && codePoint <= 0x1F9FF)
+                || (codePoint >= 0x1F000 && codePoint <= 0x1FFFF);
+    }
+
+    /**
+     * Codepoints that glue to their neighbours inside one visible emoji and
+     * must never be separated by spaces: ZWJ, variation selectors,
+     * skin-tone modifiers, tag characters, regional indicators, and the
+     * keycap combiner (U+20E3).
+     */
+    private static boolean isRegionalIndicator(int codePoint) {
+        return codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF;
+    }
+
+    private static boolean isEmojiJoiner(int codePoint) {
+        // Regional indicators handled separately (they pair up into flags).
+        return (codePoint == 0x200D)
+                || (codePoint >= 0xFE00 && codePoint <= 0xFE0F)
+                || (codePoint >= 0x1F3FB && codePoint <= 0x1F3FF)
+                || (codePoint >= 0xE0020 && codePoint <= 0xE007F)
+                || (codePoint == 0x20E3);
     }
 
     private static String filterEmojis(String text) {
@@ -1034,7 +1056,8 @@ public class TtsService extends TextToSpeechService {
         final int len = text.length();
         for (int i = 0; i < len; ) {
             final int codePoint = text.codePointAt(i);
-            if (!isEmojiCodePoint(codePoint)) {
+            if (!isEmojiCodePoint(codePoint) && !isEmojiJoiner(codePoint)
+                    && !isRegionalIndicator(codePoint)) {
                 sb.appendCodePoint(codePoint);
             } else {
                 sb.append(' ');
@@ -1908,7 +1931,10 @@ public class TtsService extends TextToSpeechService {
             final int runStart = i;
             while (i < len) {
                 final int c = text.codePointAt(i);
-                if (!isEmojiCodePoint(c)) break;
+                // ZWJ / VS / skin-tone / tag / keycap joiners continue the run
+                // so multi-codepoint emojis (family, keycaps, toned hands)
+                // stay in one aside instead of being split into several.
+                if (!isEmojiCodePoint(c) && !isEmojiJoiner(c)) break;
                 i += Character.charCount(c);
             }
 
@@ -1925,13 +1951,27 @@ public class TtsService extends TextToSpeechService {
                 }
             }
 
-            // Separate adjacent emojis in the run with spaces so eSpeak announces each one distinctly
+            // Separate adjacent emojis in the run with spaces so eSpeak announces each one distinctly,
+            // but keep single visible emojis glued: ZWJ sequences (family),
+            // skin-tone modifiers, VS16 selectors, tag sequences, regional-
+            // indicator flag pairs, and keycaps must not be split apart.
+            int prevCp = -1;
+            int riRun = 0; // consecutive regional indicators (pair up into flags)
             for (int j = runStart; j < i; ) {
                 int cp = text.codePointAt(j);
-                if (j > runStart) {
+                boolean joiner = isEmojiJoiner(cp) || isEmojiJoiner(prevCp);
+                if (isRegionalIndicator(cp)) {
+                    riRun++;
+                    // Glue pairs (1st-2nd, 3rd-4th = one flag each); split between flags.
+                    joiner = (riRun % 2 == 0);
+                } else {
+                    riRun = 0;
+                }
+                if (j > runStart && !joiner) {
                     out.append(' ');
                 }
                 out.appendCodePoint(cp);
+                prevCp = cp;
                 j += Character.charCount(cp);
             }
 

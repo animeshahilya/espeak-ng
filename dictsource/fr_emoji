@@ -303,7 +303,6 @@ $textmode
 ⏭	bouton piste suivante						// [23ED] text|emoji
 ⏮	bouton piste précédente						// [23EE] text|emoji
 ⏯	bouton lecture pause					// [23EF]
-⏯	bouton lecture/pause						// [23EF] text|emoji
 ⏰	réveil								// [23F0]
 ⏱	chronomètre							// [23F1] text|emoji
 ⏲	horloge								// [23F2] text|emoji
@@ -1182,7 +1181,6 @@ $textmode
 🕙	dix heures							// [1F559]
 🕚	onze heures							// [1F55A]
 🕛	midi minuit						// [1F55B]
-🕛	midi/minuit							// [1F55B]
 🕜	une heure et demie						// [1F55C]
 🕝	deux heures et demie						// [1F55D]
 🕞	trois heures et demie						// [1F55E]
@@ -1195,7 +1193,6 @@ $textmode
 🕥	dix heures et demie						// [1F565]
 🕦	onze heures et demie						// [1F566]
 🕧	midi minuit et demie					// [1F567]
-🕧	midi/minuit et demie						// [1F567]
 🕯	bougie								// [1F56F] text|emoji
 🕰	pendule								// [1F570] text|emoji
 🕳	trou								// [1F573] text|emoji

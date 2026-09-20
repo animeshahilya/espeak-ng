@@ -12,7 +12,9 @@ template, this tool is additive and preserves hand-curated structure:
 
  1. existing entries are re-synchronized to current CLDR names in place
     (hand edits to an entry's name are overwritten; only commented-out
-    "(no translation)" lines and entry ordering/comments are preserved);
+    "(no translation)" lines and entry ordering/comments are preserved)
+    and exact-duplicate entries for the same codepoint are removed
+    (later duplicates shadow earlier ones in the compiled dict);
  2. entries previously commented out as "(no translation)" are revived
     when the language's CLDR data now provides a name;
  3. emoji missing from the file are inserted in codepoint order, using
@@ -101,8 +103,11 @@ def wanted(cp):
         if c < 0x2000:
             return False
         cat = unicodedata.category(cp)
-        # Accept symbols (Sm, Sc, Sk, So) or Unicode 15/16 emojis in U+1F000+
-        # which older Python unicodedata (like Python 3.11 with Unicode 14) categorizes as 'Cn'
+        # Accept symbols (Sm, Sc, Sk, So) or recent emojis in U+1F000+ which
+        # older Python unicodedata tables (e.g. Python 3.11 = Unicode 14.0,
+        # verified in-repo) categorize as 'Cn'. Re-check when the floor
+        # Python ships Unicode 16+; the >= 0x1F000 bound keeps this from
+        # admitting genuinely unassigned BMP codepoints.
         if cat[0] != "S" and not (c >= 0x1F000 and cat == "Cn"):
             return False
     return True
@@ -149,10 +154,13 @@ def format_entry(cp, name, extra_comment=""):
     return "{0}\t{1}{2}// [{3}]{4}".format(cp, name, "\t" * tabs, codepoints(cp), extra)
 
 
-# an entry line: key, name, "// [CODEPOINTS]" comment and optional trailing notes
-RE_ENTRY = re.compile(r"^([^ \t/$]+) ?\t([^/]*)\t*// \[([0-9A-Fa-f ]+)\](.*)")
+# an entry line: key, name, "// [CODEPOINTS]" comment and optional trailing notes.
+# The name group is anchored on the "// [" marker (non-greedy) so names
+# containing "/" (e.g. hand-edited "and/or") still parse; without this the
+# name truncated at "/" and the entry churned as "updated" on every run.
+RE_ENTRY = re.compile(r"^([^\s/$]+) ?\t(.*?)\t*// \[([0-9A-Fa-f ]+)\](.*)")
 # a commented-out entry produced by tools/emoji for missing translations
-RE_UNTRANSLATED = re.compile(r"^//([^ \t/$]+) ?\t[^/]*// \[([0-9A-Fa-f ]+)\].*\(no translation\)")
+RE_UNTRANSLATED = re.compile(r"^//([^\s/$]+) ?\t.*?// \[([0-9A-Fa-f ]+)\].*\(no translation\)")
 
 
 def parse_key(match, group_idx=2):
@@ -235,10 +243,17 @@ def update_file(filename, lang, cldr_path, en_keys):
     entries = []  # (line index, key)
     revived = 0
     updated = 0
+    dupes = 0
     for ix, line in enumerate(lines):
         m = RE_ENTRY.match(line)
         if m:
             key = parse_key(m, 3).replace(VS16, "")
+            if key in present:
+                # duplicate entry (later shadows earlier in the compiled
+                # dict, cf. the en_list Indian-terms dedup): drop it.
+                lines[ix] = None
+                dupes += 1
+                continue
             present.add(key)
             entries.append((ix, key))
             if key in names:
@@ -252,11 +267,27 @@ def update_file(filename, lang, cldr_path, en_keys):
         m = RE_UNTRANSLATED.match(line)
         if m:
             key = parse_key(m, 2).replace(VS16, "")
+            if key in present:
+                lines[ix] = None
+                dupes += 1
+                continue
             present.add(key)
             entries.append((ix, key))
             if key in names:
                 lines[ix] = format_entry(key, names[key])
                 revived += 1
+    if dupes:
+        lines = [l for l in lines if l is not None]
+        # re-index entries after deletion
+        entries = []
+        for ix, line in enumerate(lines):
+            m = RE_ENTRY.match(line)
+            if m:
+                entries.append((ix, parse_key(m, 3).replace(VS16, "")))
+                continue
+            m = RE_UNTRANSLATED.match(line)
+            if m:
+                entries.append((ix, parse_key(m, 2).replace(VS16, "")))
 
     # for English, the file defines the entry universe; for other languages,
     # follow the English file so every language covers the same emoji
@@ -268,7 +299,7 @@ def update_file(filename, lang, cldr_path, en_keys):
     in_list_file = list_file_keys(lang)
     missing = [k for k in universe if k not in present and k not in in_list_file]
     all_keys = present | set(missing)
-    if not missing and not revived and not updated:
+    if not missing and not revived and not updated and not dupes:
         print("{0}: up to date".format(filename))
         return all_keys
 
@@ -313,7 +344,7 @@ def update_file(filename, lang, cldr_path, en_keys):
     with open(filename, "w", encoding="utf-8") as f:
         f.write("\n".join(out))
 
-    print("{0}: {1} added, {2} revived, {3} updated".format(filename, added, revived, updated))
+    print("{0}: {1} added, {2} revived, {3} updated, {4} duplicates removed".format(filename, added, revived, updated, dupes))
     return all_keys
 
 
