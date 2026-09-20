@@ -16,10 +16,12 @@
 
 package com.animeshahilya.espeakng.test;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.VoiceSettings;
@@ -33,8 +35,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(AndroidJUnit4.class)
-public class VoiceSettingsTest extends TextToSpeechTestCase
+public class VoiceSettingsTest
 {
+    private Context getContext() {
+        return InstrumentationRegistry.getInstrumentation().getTargetContext()
+                .createDeviceProtectedStorageContext();
+    }
+
     private SpeechSynthesis.SynthReadyCallback mCallback = new SpeechSynthesis.SynthReadyCallback()
     {
         @Override

@@ -354,4 +354,8 @@
   <!-- Customization: Roman numerals -->
   <string name="setting_roman_numerals">Recognize Roman numerals</string>
   <string name="setting_roman_numerals_summary">Read \"Chapter IV\" as \"Chapter 4\", \"Henry VIII\" as \"Henry 8\", etc.</string>
+
+  <!-- User Dictionary dialog -->
+  <string name="user_dictionary_title">User Dictionary</string>
+  <string name="user_dictionary_empty">No custom pronunciations yet. Add one to get started.</string>
 </resources>

@@ -22,6 +22,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import android.content.Context;
+
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.Voice;
 
@@ -30,6 +32,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,8 +43,13 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.AnyOf.anyOf;
 
 @RunWith(AndroidJUnit4.class)
-public class SpeechSynthesisTest extends TextToSpeechTestCase
+public class SpeechSynthesisTest
 {
+    private Context getContext() {
+        return InstrumentationRegistry.getInstrumentation().getTargetContext()
+                .createDeviceProtectedStorageContext();
+    }
+
     public static final Locale af = new Locale("af"); // Afrikaans
     public static final Locale afr = new Locale("afr"); // Afrikaans
 

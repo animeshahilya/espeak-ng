@@ -18,6 +18,8 @@ package com.animeshahilya.espeakng.test;
 
 import java.util.Locale;
 
+import android.content.Context;
+
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.Voice;
 import com.animeshahilya.espeakng.VoiceVariant;
@@ -25,6 +27,7 @@ import com.animeshahilya.espeakng.VoiceVariant;
 import android.speech.tts.TextToSpeech;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +45,13 @@ import static org.hamcrest.Matchers.*;
  * as long as the text the user just moved away from.
  */
 @RunWith(AndroidJUnit4.class)
-public class SynthesisStopTest extends TextToSpeechTestCase
+public class SynthesisStopTest
 {
+    private Context getContext() {
+        return InstrumentationRegistry.getInstrumentation().getTargetContext()
+                .createDeviceProtectedStorageContext();
+    }
+
     private static final Locale ENGLISH = new Locale("en");
 
     /** Long enough that a run to completion takes many buffers, not one or two. */

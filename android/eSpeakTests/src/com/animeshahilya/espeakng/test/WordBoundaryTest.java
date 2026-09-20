@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.content.Context;
+
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.Voice;
 import com.animeshahilya.espeakng.VoiceVariant;
@@ -27,6 +29,7 @@ import com.animeshahilya.espeakng.VoiceVariant;
 import android.speech.tts.TextToSpeech;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +45,13 @@ import static org.hamcrest.Matchers.*;
  * text outside the Basic Multilingual Plane and text with multi-byte characters.
  */
 @RunWith(AndroidJUnit4.class)
-public class WordBoundaryTest extends TextToSpeechTestCase
+public class WordBoundaryTest
 {
+    private Context getContext() {
+        return InstrumentationRegistry.getInstrumentation().getTargetContext()
+                .createDeviceProtectedStorageContext();
+    }
+
     private static final Locale ENGLISH = new Locale("en");
 
     private static class Word

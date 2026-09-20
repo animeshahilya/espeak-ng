@@ -49,7 +49,7 @@ import static org.junit.Assume.assumeTrue;
  * screen reader restarted the engine.
  */
 @RunWith(AndroidJUnit4.class)
-public class PreferenceStorageTest extends TextToSpeechTestCase
+public class PreferenceStorageTest
 {
     private Context mAppContext;
     private Context mStorageContext;
