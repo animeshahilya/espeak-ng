@@ -4,7 +4,7 @@ name venezuala-mbrola-1
 gender male
 pitch 82 117
 
-mbrola vz1 vz_phtrans
+mbrola vz vz
 
 dictrules 3
 replace 00 T s

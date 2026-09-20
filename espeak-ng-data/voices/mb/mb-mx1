@@ -4,7 +4,7 @@ name mexican-mbrola-1
 gender male
 pitch 82 117
 
-mbrola mx1 mx1_phtrans
+mbrola mx1 mx1
 
 replace 00 T s
 

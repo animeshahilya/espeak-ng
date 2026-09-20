@@ -4,6 +4,6 @@ gender female
 
 pitch 140 220
 voicing 60
-mbrola it4 it3_phtrans
+mbrola it3 it3
 
 replace 03 i I       // final unstressed "i"

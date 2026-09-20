@@ -4,7 +4,7 @@ name mexican-mbrola-2
 gender male
 pitch 82 117
 
-mbrola mx2 mx2_phtrans
+mbrola mx2 mx2
 
 replace 00 T s
 

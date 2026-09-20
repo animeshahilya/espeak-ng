@@ -2,7 +2,7 @@ name persian-mb-ir1
 language fa
 gender male
 phonemes fa
-mbrola ir1 ir1_phtrans
+mbrola ir1 ir1
 
 // "speed 82" adjust default speed of "mb-ir1" with eSpeak "fa". 
 speed 82

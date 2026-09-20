@@ -5,6 +5,6 @@ gender female
 pitch 160 230
 voicing 170
 
-mbrola tr2 tr1_phtrans
+mbrola tr1 tr1
 dictrules 1
 
