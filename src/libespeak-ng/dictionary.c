@@ -676,7 +676,7 @@ const char *GetTranslatedPhonemeString(int phoneme_mode)
 		len = buf - phon_buf;
 		if ((phon_out_ix + len) >= phon_out_size) {
 			// enlarge the phoneme buffer
-			if (phon_out_ix + len >= SIZE_MAX - N_PHON_OUT) return "";
+			if (phon_out_ix + len >= UINT_MAX - N_PHON_OUT) return "";
 			phon_out_size = phon_out_ix + len + N_PHON_OUT;
 			char *new_phon_out_buf = (char *)realloc(phon_out_buf, phon_out_size);
 			if (new_phon_out_buf == NULL) {

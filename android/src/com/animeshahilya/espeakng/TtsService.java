@@ -195,6 +195,10 @@ public class TtsService extends TextToSpeechService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mEngine != null) {
+            mEngine.terminate();
+            mEngine = null;
+        }
         if (mPreferences != null) {
             mPreferences.unregisterOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         }
