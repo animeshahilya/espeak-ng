@@ -1139,10 +1139,22 @@ public class TtsService extends TextToSpeechService {
             java.util.regex.Pattern.compile("\\[{2,}|\\]{2,}");
     /** Longest single native synth call; longer input is chunked (watchdog). */
     static final int MAX_CHUNK_CHARS = 800;
-    /** Absolute cap per request; beyond this the tail is dropped, never hung on. */
-    static final int MAX_REQUEST_CHARS = 16000;
-    /** Max chunks per request — bounds worst-case synthesis time on rapid swipes. */
-    static final int MAX_CHUNKS = 20;
+    /**
+     * Absolute cap per request; beyond this the tail is dropped rather than
+     * hung on. Was 16,000 (20 chunks x 800), which silently truncated real
+     * long-form content (long messages/emails, "read screen" on an article)
+     * with no error reported to the caller -- confirmed the reported
+     * "stops reading midway" bug for any single request past this length.
+     * The per-chunk loop already checks mIsStopped before every chunk, so a
+     * genuine cancel (rapid swipe, user stop) is caught within one
+     * MAX_CHUNK_CHARS-sized step regardless of this ceiling; it only needs
+     * to be large enough to never truncate legitimate content. 300,000 chars
+     * covers any realistic message/article/document (a full novel chapter
+     * is typically under 20,000) while still bounding a pathological paste.
+     */
+    static final int MAX_REQUEST_CHARS = 300000;
+    /** Max chunks per request; sized so MAX_REQUEST_CHARS is always the binding limit. */
+    static final int MAX_CHUNKS = MAX_REQUEST_CHARS / MAX_CHUNK_CHARS + 1;
 
     // NVDA-inspired programming, mathematical, and syntax symbol patterns (from NVDA symbols.dic):
     private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=|≠");
@@ -2525,6 +2537,18 @@ public class TtsService extends TextToSpeechService {
                     // stopping here as well covers a failure that arrives
                     // without one. Local snapshot: the same brief
                     // initializeTtsEngine() null window documented in onStop().
+                    //
+                    // Also mark the whole request stopped, not just this
+                    // chunk's native synth: for a multi-chunk request the
+                    // outer loop in onSynthesizeText() only checks
+                    // mIsStopped between chunks, so without this it would
+                    // plow ahead into the next chunk against an audio pipe
+                    // that just rejected data -- silently dropping the rest
+                    // of the request while still reporting done() as if it
+                    // had read everything (the exact "stops reading midway"
+                    // symptom, for the same request that made the pipe fail
+                    // once and then kept trying).
+                    mIsStopped.set(true);
                     final SpeechSynthesis engine = mEngine;
                     if (engine != null) {
                         engine.stop();
