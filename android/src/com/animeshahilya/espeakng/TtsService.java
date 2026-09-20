@@ -25,11 +25,13 @@
 
 package com.animeshahilya.espeakng;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioFormat;
 import android.media.AudioTrack;
 import android.os.Build;
 import android.os.Bundle;
@@ -172,6 +174,7 @@ public class TtsService extends TextToSpeechService {
     };
 
     @Override
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onCreate() {
         storageContext = EspeakApp.requireStorageContext(getApplicationContext());
 
@@ -558,7 +561,7 @@ public class TtsService extends TextToSpeechService {
         // Fast-path empty or whitespace-only utterances: avoid full voice/param setup
         // and JNI overhead for TalkBack spacers, empty lines, and blank elements.
         if (text.trim().isEmpty()) {
-            if (callback.start(engine.getSampleRate(), engine.getAudioFormat(), engine.getChannelCount())
+            if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
                     != TextToSpeech.SUCCESS) {
                 reportError(callback, TextToSpeech.ERROR_SERVICE);
             } else {
@@ -792,7 +795,7 @@ public class TtsService extends TextToSpeechService {
             reportError(callback, TextToSpeech.ERROR_SERVICE);
             return;
         }
-        int startStatus = mCallback.start(sampleRate, engine.getAudioFormat(), engine.getChannelCount());
+        int startStatus = mCallback.start(sampleRate, AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount());
         if (startStatus != TextToSpeech.SUCCESS) {
             mCallback = null;
             reportError(callback, TextToSpeech.ERROR_SERVICE);

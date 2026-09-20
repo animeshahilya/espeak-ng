@@ -80,7 +80,7 @@
         Description: Explains the "Most" punctuation level - the built-in
         preset for common symbols beyond basic sentence punctuation.
     -->
-  <string name="punctuation_most_desc">Everything in Some, plus symbols you\'ll run into often, like @, #, %, and brackets.</string>
+  <string name="punctuation_most_desc" formatted="false">Everything in Some, plus symbols you\'ll run into often, like @, #, %, and brackets.</string>
   <!--
         Source: Radio option description.
         Description: Explains the "All" punctuation level.

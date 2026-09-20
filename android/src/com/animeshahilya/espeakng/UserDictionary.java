@@ -238,15 +238,21 @@ public class UserDictionary {
         return false;
     }
 
+    private static boolean isQuantifierChar(char c) {
+        return c == '*' || c == '+' || c == '?' || c == '{';
+    }
+
     /**
      * Detects nested quantifiers that cause catastrophic backtracking.
-     * Looks for patterns like (a+)+, (a*)*, (a?)*, etc.
-     * This is a conservative check - it may reject some valid patterns
-     * but avoids the catastrophic cases.
+     * Looks for patterns like (a+)+, (a*)*, (a?)*, ((a)+)+, etc.
+     * Accurately distinguishes between a quantified group like (\d+) or ([a-z]+)
+     * (valid, safe) and a quantified group that is ITSELF quantified like (\d+)+ (unsafe).
      */
     private static boolean hasNestedQuantifier(String pattern) {
         int depth = 0;
         boolean inCharClass = false;
+        boolean[] groupHasQuantifier = new boolean[64];
+
         for (int i = 0; i < pattern.length(); i++) {
             char c = pattern.charAt(i);
             if (c == '\\' && i + 1 < pattern.length()) {
@@ -260,11 +266,28 @@ public class UserDictionary {
             } else if (!inCharClass) {
                 if (c == '(') {
                     depth++;
+                    if (depth < groupHasQuantifier.length) {
+                        groupHasQuantifier[depth] = false;
+                    }
                 } else if (c == ')') {
-                    depth--;
-                } else if (depth > 0 && (c == '*' || c == '+' || c == '?')) {
-                    // quantifier inside a group
-                    return true;
+                    boolean innerQuantified = (depth < groupHasQuantifier.length) && groupHasQuantifier[depth];
+                    if (depth > 0) {
+                        depth--;
+                    }
+                    if (i + 1 < pattern.length() && isQuantifierChar(pattern.charAt(i + 1))) {
+                        if (innerQuantified) {
+                            return true;
+                        }
+                        if (depth > 0 && depth < groupHasQuantifier.length) {
+                            groupHasQuantifier[depth] = true;
+                        }
+                    } else if (innerQuantified && depth > 0 && depth < groupHasQuantifier.length) {
+                        groupHasQuantifier[depth] = true;
+                    }
+                } else if (isQuantifierChar(c)) {
+                    if (depth > 0 && depth < groupHasQuantifier.length) {
+                        groupHasQuantifier[depth] = true;
+                    }
                 }
             }
         }

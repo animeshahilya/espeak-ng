@@ -232,17 +232,26 @@ static int SynthCallback(short *audioData, int numSamples,
   }
   jobject object = (jobject)events->user_data;
 
-  /* espeak marks the end of the request with a NULL buffer, not with a zero
-   * sample count -- an empty buffer can legitimately occur mid-stream. */
-  if (audioData == NULL || atomic_load(&stop_generation) != atomic_load(&current_synthesis_generation)) {
-    /* Report completion either way: espeak returns ENS_SPEECH_STOPPED without
-     * a final NULL-buffer callback when aborted, so this is the only place the
-     * Java side hears that the request is over and can call done(). */
+  /* If an abort was requested (stop_generation bumped), notify Java and return SYNTH_ABORT
+   * to immediately halt synthesis in libespeak-ng. */
+  if (atomic_load(&stop_generation) != atomic_load(&current_synthesis_generation)) {
     (*env)->CallVoidMethod(env, object, METHOD_nativeSynthCallback, NULL);
     if (check_jni_exception(env)) {
       return SYNTH_ABORT;
     }
     return SYNTH_ABORT;
+  }
+
+  /* espeak marks the end of the request with a NULL buffer, not with a zero
+   * sample count -- an empty buffer can legitimately occur mid-stream.
+   * Notify Java of completion and return SYNTH_CONTINUE (0) so espeak_Synth
+   * completes cleanly with EE_OK. */
+  if (audioData == NULL) {
+    (*env)->CallVoidMethod(env, object, METHOD_nativeSynthCallback, NULL);
+    if (check_jni_exception(env)) {
+      return SYNTH_ABORT;
+    }
+    return SYNTH_CONTINUE;
   }
 
   for (espeak_EVENT *event = events;
@@ -545,11 +554,20 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
 
   free(c_text);
 
+  if (result == EE_OK) {
+    return JNI_TRUE;
+  }
+
+  if (atomic_load(&stop_generation) != atomic_load(&current_synthesis_generation)) {
+    if (DEBUG) LOGV("espeak_Synth: stopped early");
+    return JNI_TRUE;
+  }
+
   switch (result) {
-    case EE_OK:             return JNI_TRUE;
     case EE_INTERNAL_ERROR: LOGE("espeak_Synth: internal error."); break;
     case EE_BUFFER_FULL:    LOGE("espeak_Synth: buffer full."); break;
     case EE_NOT_FOUND:      LOGE("espeak_Synth: not found."); break;
+    default: break;
   }
 
   return JNI_FALSE;

@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import android.content.Context;
 
+import com.animeshahilya.espeakng.CheckVoiceData;
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.Voice;
 import com.animeshahilya.espeakng.VoiceVariant;
@@ -31,6 +32,7 @@ import android.speech.tts.TextToSpeech;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,6 +52,11 @@ public class WordBoundaryTest
     private Context getContext() {
         return InstrumentationRegistry.getInstrumentation().getTargetContext()
                 .createDeviceProtectedStorageContext();
+    }
+
+    @Before
+    public void ensureVoiceData() {
+        CheckVoiceData.ensureVoiceData(getContext());
     }
 
     private static final Locale ENGLISH = new Locale("en");

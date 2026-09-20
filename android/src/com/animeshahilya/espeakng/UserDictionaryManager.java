@@ -175,6 +175,7 @@ public class UserDictionaryManager {
     private synchronized void saveAtomic(List<UserDictionary> rules) {
         File file = new File(mContext.getFilesDir(), FILE_NAME);
         File tempFile = new File(mContext.getFilesDir(), FILE_NAME + ".tmp");
+        boolean writeSucceeded = false;
         try (FileOutputStream fos = new FileOutputStream(tempFile);
              Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
             JSONArray arr = new JSONArray();
@@ -184,6 +185,12 @@ public class UserDictionaryManager {
             writer.write(arr.toString(2));
             writer.flush();
             fos.getFD().sync();
+            writeSucceeded = true;
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to save user dictionary", e);
+        }
+
+        if (writeSucceeded) {
             if (!tempFile.renameTo(file)) {
                 if (file.delete() && tempFile.renameTo(file)) {
                     // Succeeded on delete + rename
@@ -191,8 +198,6 @@ public class UserDictionaryManager {
                     Log.w(TAG, "Could not atomic rename temp user dictionary");
                 }
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to save user dictionary", e);
         }
     }
 

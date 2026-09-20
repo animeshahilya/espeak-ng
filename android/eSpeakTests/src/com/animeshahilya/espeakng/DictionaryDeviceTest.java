@@ -254,4 +254,39 @@ public class DictionaryDeviceTest {
         assertThat(reportedWords, hasItems("cat", "and", "dog", "run", "fast"));
     }
 
+    @Test
+    public void testRegexCapturingGroupsSupported() {
+        UserDictionary rule = new UserDictionary("item-(\\d+)", "number-$1", false, true, false);
+        String result = rule.apply("item-42");
+        assertThat(result, is("number-42"));
+
+        UserDictionary wordRule = new UserDictionary("([a-z]+)", "word", false, true, false);
+        assertThat(wordRule.apply("hello"), is("word"));
+    }
+
+    @Test
+    public void testNestedQuantifierReDoSBlocked() {
+        // Catastrophic nested quantifiers must be rejected
+        UserDictionary redosRule = new UserDictionary("(a+)+", "b", false, true, false);
+        assertThat(redosRule.apply("aaaaaaaaaaaaaaaa"), is("aaaaaaaaaaaaaaaa"));
+
+        UserDictionary redosRule2 = new UserDictionary("(a*)*", "b", false, true, false);
+        assertThat(redosRule2.apply("aaaaaaaaaaaaaaaa"), is("aaaaaaaaaaaaaaaa"));
+    }
+
+    @Test
+    public void testAtomicSaveAndReload() {
+        UserDictionaryManager mgr = UserDictionaryManager.getInstance(mContext);
+        mgr.clearRules();
+        UserDictionary rule = new UserDictionary("testPattern", "testReplacement", true, false, true);
+        mgr.addRule(rule);
+
+        List<UserDictionary> rules = mgr.getRules();
+        assertThat(rules.size(), is(1));
+        assertThat(rules.get(0).getPattern(), is("testPattern"));
+        assertThat(rules.get(0).getReplacement(), is("testReplacement"));
+
+        mgr.clearRules();
+    }
+
 }

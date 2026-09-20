@@ -143,6 +143,7 @@ public class CheckVoiceData extends Activity {
                     Log.e(TAG, "Voice data extraction incomplete, will retry");
                     return false;
                 }
+                SpeechSynthesis.clearVoiceCache();
                 return true;
             } catch (Exception e) {
                 Log.e(TAG, "Failed to extract voice data", e);

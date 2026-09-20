@@ -26,6 +26,7 @@ package com.animeshahilya.espeakng;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.media.AudioFormat;
 import android.util.Log;
 
 import java.io.File;
@@ -73,7 +74,7 @@ public class SpeechSynthesis {
     public static final int AGE_OLD = 60;
 
     public static final int CHANNEL_COUNT_MONO = 1;
-    public static final int FORMAT_PCM_S16 = 2;
+    public static final int FORMAT_PCM_S16 = AudioFormat.ENCODING_PCM_16BIT;
 
     static {
         System.loadLibrary("ttsespeak");
@@ -91,6 +92,7 @@ public class SpeechSynthesis {
     private int mSampleRate = 0;
 
     public SpeechSynthesis(Context context, SynthReadyCallback callback) {
+        CheckVoiceData.ensureVoiceData(context);
         // First, ensure the data directory exists, otherwise init will crash.
         final File dataPath = CheckVoiceData.getDataPath(context);
 
@@ -378,7 +380,13 @@ public class SpeechSynthesis {
     }
 
     public void terminate() {
-        nativeTerminate();
+        synchronized (SpeechSynthesis.class) {
+            nativeTerminate();
+            sSampleRate = 0;
+            mSampleRate = 0;
+            mInitialized = false;
+            clearVoiceCache();
+        }
     }
 
     private void nativeSynthCallback(byte[] audioData) {

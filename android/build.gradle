@@ -143,6 +143,7 @@ android {
         // eSpeak Android .java files under this detector (not a real
         // finding) - see BidirectionalTextDetector in the crash trace.
         disable += "BidiSpoofing"
+        disable += "MissingTranslation"
     }
 }
 

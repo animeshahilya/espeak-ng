@@ -118,21 +118,40 @@ public final class BackupRestoreHelper {
         if (prefsJson != null) {
             Context storage = EspeakApp.requireStorageContext(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
+            Map<String, ?> existingPrefs = prefs.getAll();
             SharedPreferences.Editor ed = prefs.edit();
             java.util.Iterator<String> keys = prefsJson.keys();
             while (keys.hasNext()) {
                 String k = keys.next();
                 Object v = prefsJson.opt(k);
-                if (v instanceof String) ed.putString(k, (String) v);
-                else if (v instanceof Boolean) ed.putBoolean(k, (Boolean) v);
-                else if (v instanceof Integer) ed.putString(k, String.valueOf(v));
-                else if (v instanceof Long) ed.putString(k, String.valueOf(v));
-                else if (v instanceof Double || v instanceof Float) ed.putString(k, String.valueOf(v));
-                else if (v instanceof JSONArray) {
+                Object cur = existingPrefs.get(k);
+                if (cur instanceof Boolean || (cur == null && v instanceof Boolean)) {
+                    ed.putBoolean(k, v instanceof Boolean ? (Boolean) v : Boolean.parseBoolean(String.valueOf(v)));
+                } else if (cur instanceof Integer || (cur == null && v instanceof Integer)) {
+                    try {
+                        ed.putInt(k, v instanceof Number ? ((Number) v).intValue() : Integer.parseInt(String.valueOf(v)));
+                    } catch (NumberFormatException nfe) {
+                        ed.putString(k, String.valueOf(v));
+                    }
+                } else if (cur instanceof Long || (cur == null && v instanceof Long)) {
+                    try {
+                        ed.putLong(k, v instanceof Number ? ((Number) v).longValue() : Long.parseLong(String.valueOf(v)));
+                    } catch (NumberFormatException nfe) {
+                        ed.putString(k, String.valueOf(v));
+                    }
+                } else if (cur instanceof Float || (cur == null && (v instanceof Double || v instanceof Float))) {
+                    try {
+                        ed.putFloat(k, v instanceof Number ? ((Number) v).floatValue() : Float.parseFloat(String.valueOf(v)));
+                    } catch (NumberFormatException nfe) {
+                        ed.putString(k, String.valueOf(v));
+                    }
+                } else if (v instanceof JSONArray) {
                     JSONArray arr = (JSONArray) v;
                     java.util.Set<String> set = new java.util.HashSet<>();
                     for (int i = 0; i < arr.length(); i++) set.add(arr.optString(i));
                     ed.putStringSet(k, set);
+                } else {
+                    ed.putString(k, String.valueOf(v));
                 }
             }
             ed.commit();
