@@ -161,8 +161,10 @@ HRESULT __stdcall TtsEngine::SetObjectToken(ISpObjectToken *token)
 	char *path = NULL;
 	GetStringValue(L"Path", path);
 	espeak_ng_InitializePath(path);
-	if (path)
-		free(path);
+	if (path) {
+		CoTaskMemFree(path);
+		path = NULL;
+	}
 
 	espeak_ng_STATUS status;
 	status = espeak_ng_Initialize(NULL);
@@ -204,12 +206,18 @@ TtsEngine::Speak(DWORD flags,
 		case SPVA_Speak:
 			espeak_ng_Synthesize(textFragList->pTextStart, 0, 0, POS_CHARACTER, 0, espeakCHARS_WCHAR, NULL, this);
 			break;
+		case SPVA_Bookmark:
+		case SPVA_Silence:
+		case SPVA_Word:
+		default:
+			// Handle other action types appropriately
+			break;
 		}
 
 		textFragList = textFragList->pNext;
 	}
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT __stdcall
@@ -235,11 +243,11 @@ TtsEngine::GetOutputFormat(const GUID *targetFormatId,
 int
 TtsEngine::OnEvent(short *data, int samples, espeak_EVENT *events)
 {
-	DWORD actions = site->GetActions();
+	DWORD actions = site ? site->GetActions() : 0;
 	if (actions & SPVES_ABORT)
 		return 1;
 
-	if (data)
+	if (data && site)
 		site->Write(data, samples * 2, NULL);
 	return 0;
 }
@@ -255,13 +263,14 @@ HRESULT TtsEngine::GetStringValue(LPCWSTR key, char *&value)
 		return hr;
 
 	size_t len = wcslen(wvalue);
-	value = (char *)malloc(len + 1);
+	// Use CoTaskMemAlloc for consistency with COM memory management
+	value = (char *)CoTaskMemAlloc(len + 1);
 	if (!value) {
 		CoTaskMemFree(wvalue);
 		return E_OUTOFMEMORY;
 	}
 
-	wcstombs(value, wvalue, len + 1);
+	wcstombs_s(NULL, value, len + 1, wvalue, _TRUNCATE);
 	CoTaskMemFree(wvalue);
 
 	return S_OK;
