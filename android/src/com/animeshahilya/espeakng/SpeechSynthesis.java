@@ -366,6 +366,10 @@ public class SpeechSynthesis {
         nativeStop();
     }
 
+    public void terminate() {
+        nativeTerminate();
+    }
+
     private void nativeSynthCallback(byte[] audioData) {
         if (mCallback == null)
             return;
@@ -455,6 +459,8 @@ public class SpeechSynthesis {
     private native boolean nativeSynthesize(String text, boolean isSsml);
 
     private native boolean nativeStop();
+
+    private native void nativeTerminate();
 
     public interface SynthReadyCallback {
         void onSynthDataReady(byte[] audioData);

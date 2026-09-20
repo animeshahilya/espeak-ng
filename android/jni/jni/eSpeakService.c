@@ -185,6 +185,15 @@ static _Atomic int frames_delivered = 0;
  * synthesized, which is silence for as long as the text the user just left. */
 static atomic_int stop_requested;
 
+/* Generation counter: each nativeSynthesize call increments this.
+ * The callback checks the generation it was started with; if nativeStop()
+ * is called, it increments the generation, invalidating the running synthesis.
+ * This avoids the race where nativeStop() sets the old boolean flag, then
+ * a new nativeSynthesize() immediately clears it, leaving the old callback
+ * still running without seeing the stop. */
+static atomic_int stop_generation;
+static atomic_int current_synthesis_generation;
+
 static JNIEnv *getJniEnv() {
   JNIEnv *env = NULL;
   if ((*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_6) == JNI_OK) {
@@ -225,7 +234,7 @@ static int SynthCallback(short *audioData, int numSamples,
 
   /* espeak marks the end of the request with a NULL buffer, not with a zero
    * sample count -- an empty buffer can legitimately occur mid-stream. */
-  if (audioData == NULL || atomic_load(&stop_requested)) {
+  if (audioData == NULL || atomic_load(&stop_generation) != atomic_load(&current_synthesis_generation)) {
     /* Report completion either way: espeak returns ENS_SPEECH_STOPPED without
      * a final NULL-buffer callback when aborted, so this is the only place the
      * Java side hears that the request is over and can call done(). */
@@ -524,7 +533,8 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
 
   espeak_SetSynthCallback(SynthCallback);
   atomic_store(&frames_delivered, 0);
-  atomic_store(&stop_requested, 0);
+  int current_generation = atomic_fetch_add(&stop_generation, 1) + 1;
+  atomic_store(&current_synthesis_generation, current_generation);
   const char *synth_input = c_text ? c_text : "";
   const espeak_ERROR result = espeak_Synth(synth_input, (size_t)c_length, 0,  // position
                POS_CHARACTER, 0, // end position (0 means no end position)
@@ -549,10 +559,18 @@ JNIEXPORT jboolean
 JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeStop(
     JNIEnv *env, jobject object) {
   if (DEBUG) LOGV("%s", __FUNCTION__);
-  atomic_store(&stop_requested, 1);
+  atomic_fetch_add(&stop_generation, 1);
   espeak_Cancel();
 
   return JNI_TRUE;
+}
+
+JNIEXPORT void
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeTerminate(
+    JNIEnv *env, jobject object) {
+  if (DEBUG) LOGV("%s", __FUNCTION__);
+  espeak_Terminate();
+  atomic_store(&s_sampleRate, 0);
 }
 
 #ifdef __cplusplus

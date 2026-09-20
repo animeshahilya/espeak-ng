@@ -26,15 +26,15 @@
 
 To build eSpeak NG on Windows, you will need:
 
-1. a copy of [Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145) or later, such as the Community Edition;
-2. the Windows 8.1 SDK;
-3. the [WiX installer](http://wixtoolset.org) plugin;
+1. [Visual Studio 2022](https://visualstudio.microsoft.com/) (Community Edition or later) with the "Desktop development with C++" workload;
+2. the [Windows 10/11 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-sdk/);
+3. the [WiX Toolset](https://wixtoolset.org/) (install via `dotnet tool install --global wix`);
 4. the [pcaudiolib](https://github.com/espeak-ng/pcaudiolib) project checked out to
    `src` (as `src/pcaudiolib`).
 
 Optionally, you need:
 
-1. sox (http://sox.sourceforge.net/) to enable audio output for SSML <audio> tag
+1. [SoX](http://sox.sourceforge.net/) to enable audio output for SSML <audio> tag
 
 __NOTE:__ SAPI 5 voices are not currently available in this release of eSpeak NG.
 There is an [issue](https://github.com/espeak-ng/espeak-ng/issues/7) to track
@@ -52,15 +52,15 @@ the `src/windows` directory:
 
 To build with a specific version of Visual Studio, you need to use:
 
-	msbuild /p:PlatformToolset=v120 espeak-ng.sln
+	msbuild /p:PlatformToolset=v143 espeak-ng.sln
 
-replacing `v120` with the appropriate value for the target Visual Studio version:
+replacing `v143` with the appropriate value for the target Visual Studio version:
 
 | PlatformToolset | Visual Studio |
 |-----------------|---------------|
-| v120            | 2013          |
-| v140            | 2015          |
-| v141 (default)  | 2017          |
+| v143 (default)  | 2022          |
+| v142            | 2019          |
+| v141            | 2017          |
 
 ## Linux, Mac, BSD
 
@@ -68,16 +68,17 @@ replacing `v120` with the appropriate value for the target Visual Studio version
 
 In order to build eSpeak NG, you need:
 
-1.  [CMake](https://cmake.org/) 3.10 or later;
-2.  a functional c compiler that supports C99 (e.g. gcc or clang). Note: if building with speechPlayer, a C++ compiler is required.
+1. [CMake](https://cmake.org/) 3.16 or later;
+2. a functional C compiler that supports C99 (e.g. gcc or clang). Note: if building with speechPlayer, a C++ compiler is required.
 
 Optionally, you need:
 
-1.  the [pcaudiolib](https://github.com/espeak-ng/pcaudiolib) development library
-    to enable audio output;
-2.  the speechPlayer development library to
-    enable the speechPlayer Klatt implementation;
-3.  the [sonic](https://github.com/espeak-ng/sonic) development library to
+1. the [pcaudiolib](https://github.com/espeak-ng/pcaudiolib) development library
+   to enable audio output;
+2. the speechPlayer development library to
+   enable the speechPlayer Klatt implementation;
+3. the [sonic](https://github.com/waywardgeek/sonic) development library to
+   enable speed changes above espeakRATE_MAXIMUM.
     enable sonic audio speed up support;
 4.  the `ronn` man-page markdown processor to build the man pages.
 5. sox (http://sox.sourceforge.net/) to enable audio output for SSML <audio> tag
@@ -236,75 +237,44 @@ already have an espeak-ng install by running:
 
 ## Android
 
-<div align="right"><a href="https://play.google.com/store/apps/details?id=com.reecedunn.espeak" title="eSpeak for Android on Google Play"><img src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png"/></a></div>
-
-The espeak-ng sources contain the code for the Android™ port of the application.
-This is published as the [eSpeak for Android](http://reecedunn.co.uk/espeak-for-android)
-program on the Google Play store. It is based on the eyes-free port of eSpeak
-to the Android platform. This code was originally maintained in a separate
-branch when the repository tracked eSpeak releases.
+The Android port is maintained as a separate app in this repository (`android/` directory).
+It is a `TextToSpeechService` engine for Android 8.0+ (API 26+) with no network dependency,
+shipping all 159 languages in the APK.
 
 ### Dependencies
 
-In order to build the Android APK file, you need:
-
-1.  the [Android Studio](https://developer.android.com/studio/) with API 34 support;
-2.  the [Android NDK](http://developer.android.com/tools/sdk/ndk/index.html);
-3.  Gradle 8.13+
-4.  JDK 17
+1. [Android Studio](https://developer.android.com/studio/) with SDK 37 (compileSdk/targetSdk) and NDK 29.0.14206865;
+2. Gradle 9.6.1 (via wrapper);
+3. JDK 17 (Temurin recommended);
+4. CMake 3.22.1 (installed via SDK Manager).
 
 ### Building with Gradle
 
-1.  Set the location of the Android SDK:
+1. Set the Android SDK location (or use `local.properties`):
 
-        $ export ANDROID_HOME=<path-to-the-android-sdk>
-(where `<path-to-the-android-sdk>` is your actual path of SDK folder e.g. `/home/user/Android/Sdk`)
+        $ export ANDROID_HOME=<path-to-android-sdk>
 
-2. Build the project from the `android` directory:
+2. Build from the `android` directory:
 
         $ cd android
-        $ ./gradlew assembleRelease
+        $ ./gradlew assembleDebug     # debug APK
+        $ ./gradlew assembleRelease   # release APK (signed if keystore.properties exists)
 
-This will create an `android/build/outputs/apk/release/espeak-release-unsigned.apk` file.
+Output APKs land in `android/build/outputs/apk/{debug,release}/`.
+The release build requires `android/keystore.properties` (git-ignored) for signing;
+without it, an unsigned APK is produced.
 
-### Signing the APK
+### Opening in Android Studio
 
-In order to install the built APK you need to self-sign the package. You can do
-this by:
+Import the `android` folder as a Gradle project. Set the NDK path in
+**File → Project Structure → SDK Location**.
 
-1.  Creating a certificate, if you do not already have one:
+### Running
 
-        $ keytool -genkey -keystore [YOUR_CERTIFICATE] -alias [ALIAS] -keyalg RSA -storetype PKCS12
-2. Align the apk using the zipalign tool.
+Install via `adb`:
 
-        $ zipalign 4 android/build/outputs/apk/release/espeak-release-unsigned.apk \
-          android/build/outputs/apk/release/espeak-release-zipalign.apk
-3. Sign the package using your certificate:
+    $ adb install -r android/build/outputs/apk/debug/espeak-debug.apk
 
-        $ apksigner sign --ks [YOUR_CERTIFICATE] --ks-key-alias [ALIAS] \
-          --out android/build/outputs/apk/release/espeak-release-signed.apk \
-          android/build/outputs/apk/release/espeak-release-zipalign.apk
-
-
-### Opening project in Android Studio
-
-To open project in **Android Studio** select **Import project (Gradle, Eclipse ADT, etc)**
-and  select `android` folder of the `espeak-ng` project.
-
-Then select menu **File — Project Structure...**, tab **SDK Location**, field **Android NDK location**
-and set your location of NDK, e.g. `/home/user/Android/Ndk`.
-
-### Installing
-
-Now, you can install the APK using the `adb` tool:
-
-    $ adb install -r android/build/outputs/apk/release/espeak-release-signed.apk
-
-After running, `eSpeakActivity` will extract the `espeakdata.zip` file into its
-own data directory to set up the available voices.
-
-To enable eSpeak, you need to:
-
-1.  go into the Android `Text-to-Speech settings` UI;
-2.  select `eSpeak TTS` as the default engine;
-3.  use the `Listen to an example` option to check if everything is working.
+On first launch, `DownloadVoiceData` extracts the voice archive to
+device-protected storage. Select "eSpeak NG Advanced" as the TTS engine
+in system settings.

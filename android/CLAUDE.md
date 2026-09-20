@@ -25,6 +25,8 @@ Output APKs land in `build/outputs/apk/debug/` and `build/outputs/apk/release/`.
 - JDK 17 (Temurin) in CI
 - `gradle.properties` enables Gradle's build cache and a larger daemon heap - build-time only, no effect on the shipped app; the native CMake build and the ~30MB multi-language data archive make clean builds slow enough for this to matter locally and in CI
 
+Note: The app ships 159 languages (updated from ~120).
+
 The Gradle build has custom tasks that run automatically:
 1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/` (all ~120 languages)
 2. `createDataArchive` zips the whole tree into `res/raw/espeakdata.zip` -

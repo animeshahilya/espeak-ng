@@ -126,7 +126,14 @@ final class TextOffsetMap {
         final int nSlice = n - suffix - prefix;
         final int mSlice = m - suffix - prefix;
 
-        if ((long) nSlice * (long) mSlice > MAX_DP_CELLS) {
+        // Bound both the DP table area and the individual dimensions.
+        // A slice like 1 x 400000 would pass the product check but allocate
+        // 400000 arrays. Cap each dimension at 2000 (2000^2 = 4M > MAX_DP_CELLS,
+        // but the product check will catch the extreme cases).
+        final int MAX_DIM = 2000;
+        if ((long) nSlice * (long) mSlice > MAX_DP_CELLS
+                || nSlice > MAX_DIM
+                || mSlice > MAX_DIM) {
             fillUnmatchedRun(offsets, prefix, m - suffix, prefix, n - suffix);
         } else if (nSlice > 0 && mSlice > 0) {
             // Suffix-based LCS length table for the changed middle slice only.

@@ -193,10 +193,10 @@ jobs:
         sudo apt-get install ronn kramdown python3
     - name: apt-arch-deps
       if: matrix.os == 'ubuntu' && matrix.cross == 'no'
-      run: "sudo apt-get install cmake valgrind g++-12-multilib linux-libc-dev:${{ matrix.arch }} libpcaudio-dev:${{ matrix.arch }} libsonic-dev:${{ matrix.arch }} libc6-dbg:${{ matrix.arch }} libgcc-s1:${{ matrix.arch }}"
+      run: "sudo apt-get install cmake valgrind g++-multilib linux-libc-dev:${{ matrix.arch }} libpcaudio-dev:${{ matrix.arch }} libsonic-dev:${{ matrix.arch }} libc6-dbg:${{ matrix.arch }} libgcc-s1:${{ matrix.arch }}"
     - name: apt-cross-deps
       if: matrix.cross == 'yes'
-      run: sudo apt-get install qemu-user g++-12-${{ matrix.arch }}-${{ matrix.sys }}
+      run: sudo apt-get install qemu-user g++-${{ matrix.arch }}-${{ matrix.sys }}
     - name: apt-compile-clang
       if: matrix.os == 'ubuntu' && matrix.compiler == 'clang'
       run: sudo apt-get install clang
@@ -204,7 +204,7 @@ jobs:
     # MacOS - dependencies
     - name: brew-deps
       if: matrix.os == 'macos'
-      run: brew install cmake ronn OJFord/homebrew-formulae/kramdown
+      run: brew install cmake ronn kramdown
     - name: brew-compile-deps
       if: matrix.os == 'macos' && matrix.compiler == 'gcc'
       run: brew install gcc@12
@@ -215,14 +215,14 @@ jobs:
     # Configure
     - name: configure
       run: |
-        [ 'x${{ matrix.compiler }}' = 'xgcc' ] && export CC="${{ matrix.ccarch }}-${{ matrix.sys }}-gcc-12"
-        [ 'x${{ matrix.compiler }}' = 'xgcc' ] && export CXX="${{ matrix.ccarch }}-${{ matrix.sys }}-g++-12"
+        [ 'x${{ matrix.compiler }}' = 'xgcc' ] && export CC="${{ matrix.ccarch }}-${{ matrix.sys }}-gcc"
+        [ 'x${{ matrix.compiler }}' = 'xgcc' ] && export CXX="${{ matrix.ccarch }}-${{ matrix.sys }}-g++"
         [ 'x${{ matrix.compiler }}' = 'xclang' ] && export CC="clang --target=${{ matrix.ccarch }}-${{ matrix.sys }}"
         [ 'x${{ matrix.compiler }}' = 'xclang' ] && export CXX="clang++ --target=${{ matrix.ccarch }}-${{ matrix.sys }}"
         [ 'x${{ matrix.cross }}' = 'xyes' ] && export LD="${{ matrix.ccarch }}-${{ matrix.sys }}-ld"
         export CFLAGS="-g -Og -fno-omit-frame-pointer ${{ matrix.compiler_flags }} ${{ matrix.config_cflags }} ${{ matrix.archcflags }}"
         export CXXFLAGS="-g -Og -fno-omit-frame-pointer ${{ matrix.compiler_flags }} ${{ matrix.config_cflags }} ${{ matrix.archcflags }}"
-        cmake -Bbuild ${{ matrix.settings }} -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.arch }} -DUSE_ASYNC:BOOL=OFF
+        cmake -Bbuild ${{ matrix.settings }} -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.arch }}
 
     - name: config-failed-upload
       if: ${{ failure() }}
@@ -233,7 +233,7 @@ jobs:
 
     # Build and test
     - name: make-binary
-      run: cmake --build build --target espeak-ng
+      run: cmake --build build --target espeak-ng-bin
     - name: make-data
       run: ${{ matrix.config_env }} ${{ matrix.runenv }} cmake --build build --target data
     - name: test

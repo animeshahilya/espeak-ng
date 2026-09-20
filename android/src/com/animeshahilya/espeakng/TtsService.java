@@ -210,7 +210,7 @@ public class TtsService extends TextToSpeechService {
      */
     private void initializeTtsEngine() {
         if (mEngine != null) {
-            mEngine.stop();
+            mEngine.terminate();
             mEngine = null;
         }
 

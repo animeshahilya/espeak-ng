@@ -163,6 +163,20 @@ public class UserDictionary {
             return;
         }
 
+        // Reject patterns that could cause catastrophic backtracking (ReDoS).
+        // Nested quantifiers like (a+)+ or (a*)* cause exponential backtracking.
+        // Also enforce a reasonable length limit.
+        if (mIsRegex) {
+            if (mPattern.length() > 200) {
+                mCompiledPattern = null;
+                return;
+            }
+            if (hasNestedQuantifier(mPattern)) {
+                mCompiledPattern = null;
+                return;
+            }
+        }
+
         try {
             int flags = 0;
             if (!mCaseSensitive) {
@@ -219,6 +233,39 @@ public class UserDictionary {
         for (int i = 0; i <= max; i++) {
             if (source.regionMatches(true, i, target, 0, targetLen)) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Detects nested quantifiers that cause catastrophic backtracking.
+     * Looks for patterns like (a+)+, (a*)*, (a?)*, etc.
+     * This is a conservative check - it may reject some valid patterns
+     * but avoids the catastrophic cases.
+     */
+    private static boolean hasNestedQuantifier(String pattern) {
+        int depth = 0;
+        boolean inCharClass = false;
+        for (int i = 0; i < pattern.length(); i++) {
+            char c = pattern.charAt(i);
+            if (c == '\\' && i + 1 < pattern.length()) {
+                i++; // skip escaped char
+                continue;
+            }
+            if (c == '[') {
+                inCharClass = true;
+            } else if (c == ']' && inCharClass) {
+                inCharClass = false;
+            } else if (!inCharClass) {
+                if (c == '(') {
+                    depth++;
+                } else if (c == ')') {
+                    depth--;
+                } else if (depth > 0 && (c == '*' || c == '+' || c == '?')) {
+                    // quantifier inside a group
+                    return true;
+                }
             }
         }
         return false;
