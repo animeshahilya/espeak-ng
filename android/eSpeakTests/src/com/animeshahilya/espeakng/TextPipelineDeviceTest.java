@@ -149,6 +149,37 @@ public class TextPipelineDeviceTest {
     }
 
     @Test
+    public void testClarifyEmojiKeepsFlagPairsGlued() {
+        // Regression: the run splitter once separated every codepoint, so the
+        // Indian flag (RI I + RI N) reached the engine as two lone regional
+        // indicators ("symbol one ef one eye...") instead of "India".
+        // Flag pairs use \u escapes (raw RI chars have been mangled by
+        // tooling before); other emoji are literals with codepoints noted.
+        String flag = "\uD83C\uDDEE\uD83C\uDDF3"; // U+1F1EE U+1F1F3
+        assertThat(TtsService.clarifyEmojiAnnouncements(flag), is(flag));
+        assertThat(TtsService.clarifyEmojiAnnouncements("Go " + flag + "!"), is("Go " + flag + "!"));
+
+        // Two flags split *between* pairs, never within one.
+        String fr = "\uD83C\uDDEB\uD83C\uDDF7"; // U+1F1EB U+1F1F7
+        String de = "\uD83C\uDDE9\uD83C\uDDEA"; // U+1F1E9 U+1F1EA
+        assertThat(TtsService.clarifyEmojiAnnouncements(fr + de), is(fr + " " + de));
+
+        // Adjacent plain emoji still separate; ZWJ families, skin tones and
+        // VS16 sequences stay glued to their base.
+        String tears = "😂"; // U+1F602
+        assertThat(TtsService.clarifyEmojiAnnouncements(tears + tears), is(tears + " " + tears));
+        String family = "👨‍👩‍👧"; // U+1F468 U+200D U+1F469 U+200D U+1F467
+        assertThat(TtsService.clarifyEmojiAnnouncements(family), is(family));
+        String toned = "👍🏽"; // U+1F44D U+1F3FD
+        assertThat(TtsService.clarifyEmojiAnnouncements(toned), is(toned));
+        String heart = "❤️"; // U+2764 U+FE0F
+        assertThat(TtsService.clarifyEmojiAnnouncements(heart), is(heart));
+
+        // Abutting text still gets its aside-pause on both sides.
+        assertThat(TtsService.clarifyEmojiAnnouncements("a⏯b"), is("a, ⏯, b"));
+    }
+
+    @Test
     public void testCondenseRepeatedCharactersIgnoresDigits() {
         // A repeated digit run (PIN, serial, phone number) must be read as-is in
         // every mode - "count" must not say "4 fives" and "truncate" must not
