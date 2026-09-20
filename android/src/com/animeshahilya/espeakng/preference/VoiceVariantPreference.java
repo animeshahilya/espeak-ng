@@ -408,7 +408,14 @@ public class VoiceVariantPreference extends DialogPreference {
         }
         CharSequence category = context.getText(categories[mCategoryIndex]);
         CharSequence variant  = variants[mCategoryIndex][mVariantIndex].getDisplayName(context);
-        String label = String.format("%s (%s)", category, variant);
+        String catStr = category.toString().trim();
+        String varStr = variant.toString().trim();
+        String label;
+        if (varStr.toLowerCase(java.util.Locale.ROOT).startsWith(catStr.toLowerCase(java.util.Locale.ROOT))) {
+            label = varStr;
+        } else {
+            label = String.format("%s (%s)", catStr, varStr);
+        }
         setSummary(label);
         callChangeListener(label);
     }

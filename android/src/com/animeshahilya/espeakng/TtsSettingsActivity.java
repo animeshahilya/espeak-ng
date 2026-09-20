@@ -47,16 +47,25 @@ import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory;
 import com.animeshahilya.espeakng.preference.ImportVoicePreference;
@@ -181,6 +190,8 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         editor.commit();
 
+        applySystemBarAppearance(getWindow(), this);
+
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
             getActionBar().setTitle(R.string.app_name);
@@ -188,12 +199,49 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         View contentView = findViewById(android.R.id.content);
         if (contentView != null) {
-            contentView.setFitsSystemWindows(true);
+            contentView.setFitsSystemWindows(false);
         }
 
         getFragmentManager().beginTransaction().replace(
                 android.R.id.content,
                 new PrefsEspeakFragment()).commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        applySystemBarAppearance(getWindow(), this);
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    public static void applySystemBarAppearance(Window window, Context context) {
+        if (window == null || context == null) return;
+        boolean isNight = (context.getResources().getConfiguration().uiMode
+                & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
+                == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsetsController controller = window.getInsetsController();
+            if (controller != null) {
+                int appearance = isNight ? 0 : (WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+                controller.setSystemBarsAppearance(appearance,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            View decorView = window.getDecorView();
+            int flags = decorView.getSystemUiVisibility();
+            if (!isNight) {
+                flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            } else {
+                flags &= ~(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+            }
+            decorView.setSystemUiVisibility(flags);
+        }
     }
 
     @Override
@@ -506,6 +554,192 @@ public class TtsSettingsActivity extends PreferenceActivity {
             addPreferencesFromResource(R.xml.preferences);
             createPreferences(getActivity(), getPreferenceScreen());
         }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            final ListView listView = (ListView) view.findViewById(android.R.id.list);
+            if (listView != null) {
+                listView.setClipToPadding(false);
+            }
+            final Context context = getActivity();
+            final View.OnApplyWindowInsetsListener insetsListener = new View.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    int bottomInset = 0;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        bottomInset = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
+                    } else {
+                        bottomInset = insets.getSystemWindowInsetBottom();
+                    }
+                    if (listView != null && context != null) {
+                        listView.setPadding(
+                                listView.getPaddingLeft(),
+                                listView.getPaddingTop(),
+                                listView.getPaddingRight(),
+                                bottomInset + dpToPx(context, 16)
+                        );
+                    }
+                    return insets;
+                }
+            };
+            view.setOnApplyWindowInsetsListener(insetsListener);
+            if (listView != null) {
+                listView.setOnApplyWindowInsetsListener(insetsListener);
+            }
+            view.requestApplyInsets();
+        }
+
+        @Override
+        public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+            boolean handled = super.onPreferenceTreeClick(preferenceScreen, preference);
+            if (preference instanceof PreferenceScreen) {
+                setupSubScreenDialog((PreferenceScreen) preference);
+            }
+            return handled;
+        }
+
+        private void setupSubScreenDialog(final PreferenceScreen subScreen) {
+            final android.app.Dialog dialog = subScreen.getDialog();
+            if (dialog == null || dialog.getWindow() == null) {
+                return;
+            }
+
+            final Window window = dialog.getWindow();
+            final Context context = getActivity();
+            if (context == null) return;
+            applySystemBarAppearance(window, context);
+
+            final View decorView = window.getDecorView();
+            decorView.setFitsSystemWindows(false);
+
+            final ListView listView = (ListView) dialog.findViewById(android.R.id.list);
+            if (listView != null) {
+                listView.setClipToPadding(false);
+            }
+
+            final Runnable configureActionBar = new Runnable() {
+                @Override
+                public void run() {
+                    final android.app.ActionBar ab = dialog.getActionBar();
+                    if (ab != null) {
+                        ab.setDisplayHomeAsUpEnabled(true);
+                        ab.setHomeButtonEnabled(true);
+                    }
+
+                    int abId = context.getResources().getIdentifier("action_bar", "id", "android");
+                    View abView = abId != 0 ? dialog.findViewById(abId) : null;
+                    if (abView instanceof Toolbar) {
+                        Toolbar toolbar = (Toolbar) abView;
+                        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+                        toolbar.setNavigationContentDescription(context.getString(R.string.tts_settings_label));
+                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                    } else if (abView instanceof ViewGroup) {
+                        ViewGroup abGroup = (ViewGroup) abView;
+                        View homeBtn = dialog.findViewById(android.R.id.home);
+                        if (homeBtn != null) {
+                            homeBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+                        } else if (abGroup.findViewById(R.id.subscreen_up_button) == null) {
+                            ImageButton upButton = new ImageButton(context);
+                            upButton.setId(R.id.subscreen_up_button);
+                            upButton.setImageResource(R.drawable.ic_arrow_back);
+                            TypedValue outValue = new TypedValue();
+                            context.getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true);
+                            upButton.setBackgroundResource(outValue.resourceId);
+                            upButton.setContentDescription(context.getString(R.string.tts_settings_label));
+                            int btnSize = dpToPx(context, 48);
+                            ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(btnSize, btnSize);
+                            lp.rightMargin = dpToPx(context, 8);
+                            upButton.setLayoutParams(lp);
+                            upButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                            upButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            abGroup.addView(upButton, 0);
+                        }
+                    }
+                }
+            };
+            configureActionBar.run();
+            decorView.post(configureActionBar);
+
+            final View.OnApplyWindowInsetsListener insetsListener = new View.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    int topInset = 0;
+                    int bottomInset = 0;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        topInset = insets.getInsets(WindowInsets.Type.statusBars()).top;
+                        bottomInset = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
+                    } else {
+                        topInset = insets.getSystemWindowInsetTop();
+                        bottomInset = insets.getSystemWindowInsetBottom();
+                    }
+
+                    int containerId = context.getResources().getIdentifier("action_bar_container", "id", "android");
+                    View container = containerId != 0 ? dialog.findViewById(containerId) : null;
+                    int topBarHeight = 0;
+                    if (container != null && container.getHeight() > 0) {
+                        topBarHeight = container.getHeight();
+                    } else {
+                        TypedValue tv = new TypedValue();
+                        int abHeight = dpToPx(context, 56);
+                        if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+                            abHeight = TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
+                        }
+                        topBarHeight = topInset + abHeight;
+                    }
+
+                    if (listView != null) {
+                        listView.setPadding(
+                                listView.getPaddingLeft(),
+                                topBarHeight + dpToPx(context, 8),
+                                listView.getPaddingRight(),
+                                bottomInset + dpToPx(context, 16)
+                        );
+                    }
+                    return insets;
+                }
+            };
+            decorView.setOnApplyWindowInsetsListener(insetsListener);
+
+            int containerId = context.getResources().getIdentifier("action_bar_container", "id", "android");
+            final View container = containerId != 0 ? dialog.findViewById(containerId) : null;
+            if (container != null && listView != null) {
+                container.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                    @Override
+                    public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                               int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                        int h = bottom - top;
+                        if (h > 0) {
+                            int desiredTop = h + dpToPx(context, 8);
+                            if (listView.getPaddingTop() != desiredTop) {
+                                listView.setPadding(
+                                        listView.getPaddingLeft(),
+                                        desiredTop,
+                                        listView.getPaddingRight(),
+                                        listView.getPaddingBottom()
+                                );
+                            }
+                        }
+                    }
+                });
+            }
+            decorView.requestApplyInsets();
+        }
     }
 
     private static Preference createImportVoicePreference(Context context) {
@@ -601,6 +835,10 @@ public class TtsSettingsActivity extends PreferenceActivity {
                 defaultVal,
                 current,
                 formatter);
+
+        if (VoiceSettings.PREF_WORD_GAP.equals(key)) {
+            voiceParam.setValueMultiplier(10);
+        }
 
         if (VoiceSettings.PREF_RATE.equals(key)) {
             int multiplier = VoiceSettings.RATE_BOOST_MULTIPLIER;

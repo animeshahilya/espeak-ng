@@ -78,6 +78,7 @@ public class SeekBarPreference extends DialogPreference
         private boolean savedBoost;
         /** How far boost multiplies the rate; see VoiceSettings#getRateBoostMultiplier(). */
         private int boostMultiplier = VoiceSettings.RATE_BOOST_MULTIPLIER;
+        private int valueMultiplier = 1;
 
         private SeekBar mSeekBar;
         private TextView mValueText;
@@ -100,6 +101,16 @@ public class SeekBarPreference extends DialogPreference
             this.current = current;
             this.saved = current;
             this.formatter = formatter;
+        }
+
+        public void setValueMultiplier(int multiplier)
+        {
+            this.valueMultiplier = multiplier;
+        }
+
+        public int getValueMultiplier()
+        {
+            return this.valueMultiplier;
         }
 
         public void enableRateBoost(boolean enabled, int multiplier)
@@ -326,10 +337,10 @@ public class SeekBarPreference extends DialogPreference
      */
     private int getDisplayValue(Parameter parameter)
     {
-        int value = parameter.current;
+        int value = parameter.current * parameter.valueMultiplier;
         if (parameter.hasRateBoost && parameter.boost) {
             value = value * parameter.boostMultiplier;
-            int boostedMax = parameter.max * parameter.boostMultiplier;
+            int boostedMax = parameter.max * parameter.boostMultiplier * parameter.valueMultiplier;
             if (value > boostedMax) {
                 value = boostedMax;
             }
