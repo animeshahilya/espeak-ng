@@ -1032,8 +1032,8 @@ public class TtsService extends TextToSpeechService {
     /**
      * Codepoints that glue to their neighbours inside one visible emoji and
      * must never be separated by spaces: ZWJ, variation selectors,
-     * skin-tone modifiers, tag characters, regional indicators, and the
-     * keycap combiner (U+20E3).
+     * skin-tone modifiers, tag characters, and the keycap combiner (U+20E3).
+     * Regional indicators are handled separately (they pair up into flags).
      */
     private static boolean isRegionalIndicator(int codePoint) {
         return codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF;
@@ -1054,14 +1054,23 @@ public class TtsService extends TextToSpeechService {
         }
         final StringBuilder sb = new StringBuilder(text.length());
         final int len = text.length();
+        int prevRaw = -1;
         for (int i = 0; i < len; ) {
             final int codePoint = text.codePointAt(i);
+            // A codepoint right after a ZWJ belongs to the same visible emoji
+            // even when it is not emoji on its own (e.g. U+2194 in the "head
+            // shaking horizontally" sequence); leaving it behind would leak a
+            // fragment ("left right arrow") after the rest was blanked.
+            // Plain BMP text symbols (currency, math, fractions) are
+            // deliberately kept: they read as words ("rupees", "plus"), not
+            // pictographic clutter, so Ignore must not silence them.
             if (!isEmojiCodePoint(codePoint) && !isEmojiJoiner(codePoint)
-                    && !isRegionalIndicator(codePoint)) {
+                    && !isRegionalIndicator(codePoint) && prevRaw != 0x200D) {
                 sb.appendCodePoint(codePoint);
             } else {
                 sb.append(' ');
             }
+            prevRaw = codePoint;
             i += Character.charCount(codePoint);
         }
         return sb.toString();
@@ -1929,12 +1938,19 @@ public class TtsService extends TextToSpeechService {
             }
 
             final int runStart = i;
+            boolean prevWasZwj = false;
             while (i < len) {
                 final int c = text.codePointAt(i);
                 // ZWJ / VS / skin-tone / tag / keycap joiners continue the run
                 // so multi-codepoint emojis (family, keycaps, toned hands)
                 // stay in one aside instead of being split into several.
-                if (!isEmojiCodePoint(c) && !isEmojiJoiner(c)) break;
+                // A ZWJ also pulls in whatever follows it even when that
+                // codepoint is not emoji on its own (e.g. U+2194 in the "head
+                // shaking horizontally" sequence U+1F642 U+200D U+2194);
+                // without this the tail is cut off and announced as a
+                // separate symbol, the same failure mode as split flags.
+                if (!isEmojiCodePoint(c) && !isEmojiJoiner(c) && !prevWasZwj) break;
+                prevWasZwj = (c == 0x200D);
                 i += Character.charCount(c);
             }
 

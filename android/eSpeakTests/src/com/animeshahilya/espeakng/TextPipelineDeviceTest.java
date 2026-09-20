@@ -177,6 +177,14 @@ public class TextPipelineDeviceTest {
 
         // Abutting text still gets its aside-pause on both sides.
         assertThat(TtsService.clarifyEmojiAnnouncements("a⏯b"), is("a, ⏯, b"));
+
+        // A ZWJ pulls in whatever follows it even when that codepoint is not
+        // emoji on its own: U+1F642 U+200D U+2194 is the single "head shaking
+        // horizontally" emoji, and cutting the arrow off would announce two
+        // wrong symbols instead (same failure mode as split flags).
+        String shaking = "🙂‍↔";
+        assertThat(TtsService.clarifyEmojiAnnouncements("a" + shaking + "b"),
+                is("a, " + shaking + ", b"));
     }
 
     @Test
