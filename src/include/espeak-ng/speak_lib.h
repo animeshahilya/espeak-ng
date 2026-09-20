@@ -418,7 +418,13 @@ typedef enum {
   espeakINTONATION=9,
   espeakSSML_BREAK_MUL=10,
 
-  espeakRESERVED2=11,
+  /* eSpeak NG Advanced (Android fork) extension: percent multiplier applied
+   * to clause/sentence/paragraph pause lengths (not word-internal timing),
+   * independent of espeakRATE. 100=normal, 50=half the pause length, etc.
+   * Was espeakRESERVED2, an unused upstream slot never handled by
+   * SetParameter() (fell through to EINVAL) - repurposing it keeps
+   * N_SPEECH_PARAM/param_defaults sizing untouched. */
+  espeakPAUSESCALE=11,
   espeakEMPHASIS,   /* internal use */
   espeakLINELENGTH, /* internal use */
   espeakVOICETYPE,  // internal
@@ -461,6 +467,10 @@ ESPEAK_API espeak_ERROR espeak_SetParameter(espeak_PARAMETER parameter, int valu
             of a word raised to indicate it has a capital letter.
 
       espeakWORDGAP:  pause between words, units of 10mS (at the default speed)
+
+      espeakPAUSESCALE: (eSpeak NG Advanced extension) percent multiplier
+                     applied to clause/sentence/paragraph pauses, 100=normal.
+                     Clamped to 25-400.
 
    Return: EE_OK: operation achieved
            EE_BUFFER_FULL: the command can not be buffered;

@@ -353,6 +353,17 @@ public class SpeechSynthesis {
     /** Intonation style (0=default, 1-7=intonation groups, e.g. 3=less intonation / flat). */
     public final Parameter Intonation = new Parameter(9, 0, 7, UnitType.Percentage);
 
+    /**
+     * Reading pace: percent multiplier on clause/sentence/paragraph pause
+     * lengths, independent of speaking rate (espeakRATE already scales
+     * pauses down as a side effect of speed, but only as speed rises past
+     * fast thresholds - this lets pauses be tightened at any rate,
+     * including normal speed). 100=normal length pauses, 50=half. The UI
+     * only offers reduction (down to 50%); the engine itself accepts up to
+     * 400 for flexibility, clamped in espeak's SetParameter.
+     */
+    public final Parameter PauseScale = new Parameter(11, 50, 100, UnitType.Percentage);
+
     public void synthesize(String text, boolean isSsml) {
         if (text == null) {
             return;

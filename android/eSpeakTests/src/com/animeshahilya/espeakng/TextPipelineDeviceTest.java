@@ -60,38 +60,6 @@ public class TextPipelineDeviceTest {
     }
 
     @Test
-    public void testScriptSplittingKeepsParagraphBreaks() {
-        final String text = "Hello world.\n\nनमस्ते दुनिया।\n\nBack to English.";
-        final List<TtsService.ScriptSpan> spans = TtsService.splitByScriptRuns(text);
-        assertThat(spans.size(), greaterThanOrEqualTo(2));
-        final StringBuilder joined = new StringBuilder();
-        for (TtsService.ScriptSpan span : spans) {
-            joined.append(span.text);
-        }
-        assertThat(joined.toString(), is(text));
-        assertThat(joined.toString(), containsString("\n\n"));
-    }
-
-    @Test
-    public void testScriptSplittingEdgeCasesPreserveLength() {
-        final String[] testCases = {
-            "123 numbers only",
-            "   leading space Latin नमस्ते Indic",
-            "Hello नमस्ते world दुनिया",
-            "A\n\nB\n\nनमस्ते",
-            "Mix 456 बीच 789 end"
-        };
-        for (String testCase : testCases) {
-            final List<TtsService.ScriptSpan> spans = TtsService.splitByScriptRuns(testCase);
-            final StringBuilder joined = new StringBuilder();
-            for (TtsService.ScriptSpan span : spans) {
-                joined.append(span.text);
-            }
-            assertThat("Failed for: " + testCase, joined.toString(), is(testCase));
-        }
-    }
-
-    @Test
     public void testUserDictionaryFastPathBypass() {
         UserDictionary rule = new UserDictionary("quick", "slow", true, false, false);
         assertThat(rule.apply("The fast brown fox"), is("The fast brown fox"));

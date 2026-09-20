@@ -331,6 +331,11 @@ espeak_ng_STATUS SetParameter(int parameter, int value, int relative)
 	case espeakWORDGAP:
 		option_wordgap = new_value;
 		break;
+	case espeakPAUSESCALE:
+		if (new_value < 25) new_value = 25;
+		if (new_value > 400) new_value = 400;
+		option_pause_scale = new_value;
+		break;
 	case espeakINTONATION:
 		if ((new_value & 0xff) != 0)
 			translator->langopts.intonation_group = new_value & 0xff;

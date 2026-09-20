@@ -67,8 +67,8 @@ public class IndianFeaturesDeviceTest {
     @Before
     public void setUp() {
         Context context = ApplicationProvider.getApplicationContext();
-        // Same data-ordering guarantee as BilingualAndDictionaryDeviceTest:
-        // this class also drives SpeechSynthesis directly.
+        // Same data-ordering guarantee as DictionaryDeviceTest: this class
+        // also drives SpeechSynthesis directly.
         CheckVoiceData.ensureVoiceData(context);
         mEngine = new SpeechSynthesis(context, mCallback);
     }

@@ -177,6 +177,13 @@ int PauseLength(int pause, int control)
 			len = (pause * speed.clause_pause_factor)/256;
 		else
 			len = (pause * speed.pause_factor)/256;
+		// eSpeak NG Advanced (Android fork) extension: user-controlled
+		// pause-reduction setting, independent of speaking rate. Only
+		// applied to clause/sentence pauses (control==0), not the
+		// wav_factor-scaled prepause before certain sounds (control==1),
+		// which is segmental timing rather than resting silence.
+		if (option_pause_scale != 100)
+			len = (len * (unsigned int)option_pause_scale)/100;
 	} else
 		len = (pause * speed.wav_factor)/256;
 

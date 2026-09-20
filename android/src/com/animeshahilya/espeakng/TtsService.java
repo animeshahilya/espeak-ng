@@ -897,47 +897,13 @@ public class TtsService extends TextToSpeechService {
         boolean applyCapitals = isSingleCharacterUtterance || settings.isCapitalsScopeAll();
         engine.Capitals.setValue(applyCapitals ? settings.getCapitals() : 0);
         engine.WordGap.setValue(settings.getWordGap());
-
-        boolean enableBilingual = settings.isBilingualSwitchingEnabled() && !isSsml;
-        List<ScriptSpan> spans = null;
-        Voice latinVoice = null;
-        Voice indicVoice = null;
-        if (enableBilingual && hasMixedLatinAndIndic(text)) {
-            synchronized (mAvailableVoices) {
-                Voice secondary = mAvailableVoices.get(settings.getSecondaryVoice());
-                // Route each script to a voice that can actually read it. The
-                // old code always read Indic spans with the primary voice, so
-                // en-in + Hindi mixes mumbled the Hindi through an English
-                // phoneme table. Now Indic spans prefer an Indic voice
-                // (primary if Indic, else the secondary if Indic, else Hindi
-                // as a last resort) and Latin spans prefer a Latin voice.
-                boolean primaryIndic = isIndicVoice(voice);
-                boolean secondaryIndic = isIndicVoice(secondary);
-                if (primaryIndic) {
-                    indicVoice = voice;
-                    latinVoice = (secondary != null && !secondary.name.equals(voice.name))
-                            ? secondary : mAvailableVoices.get("en-in");
-                } else {
-                    latinVoice = voice;
-                    if (secondaryIndic) {
-                        indicVoice = secondary;
-                    } else {
-                        indicVoice = mAvailableVoices.get("hi");
-                    }
-                }
-                if (latinVoice == null) latinVoice = voice;
-                if (indicVoice == null) indicVoice = voice;
-            }
-            if (!latinVoice.name.equals(indicVoice.name)) {
-                spans = splitByScriptRuns(text);
-            }
-        }
+        engine.PauseScale.setValue(settings.getPauseScale());
 
         // Zero-hang watchdog: never hand the native engine one giant buffer.
-        // Bilingual spans already split by script; anything else over the
-        // chunk limit is split at clause boundaries. Rapid swipes just queue
-        // short bounded units instead of one unbounded synth call. SSML is
-        // never chunked: splitting markup across units would corrupt it.
+        // Anything over the chunk limit is split at clause boundaries. Rapid
+        // swipes just queue short bounded units instead of one unbounded
+        // synth call. SSML is never chunked: splitting markup across units
+        // would corrupt it.
         List<String> units = new ArrayList<>();
         List<Voice> unitVoices = new ArrayList<>();
         List<Integer> unitBases = new ArrayList<>();
@@ -945,20 +911,6 @@ public class TtsService extends TextToSpeechService {
             units.add(text);
             unitVoices.add(voice);
             unitBases.add(0);
-        } else if (spans != null && spans.size() > 1 && latinVoice != null && indicVoice != null) {
-            int base = 0;
-            for (ScriptSpan span : spans) {
-                Voice spanVoice = span.isLatin ? latinVoice : indicVoice;
-                int spanBase = base;
-                base += span.text.codePointCount(0, span.text.length());
-                for (String chunk : chunkForWatchdog(span.text)) {
-                    units.add(chunk);
-                    unitVoices.add(spanVoice);
-                    unitBases.add(spanBase);
-                    spanBase += chunk.codePointCount(0, chunk.length());
-                }
-                if (units.size() >= MAX_CHUNKS) break;
-            }
         } else {
             engine.setVoice(voice, settings.getVoiceVariant());
             int base = 0;
@@ -1580,98 +1532,6 @@ public class TtsService extends TextToSpeechService {
             }
         }
         return text;
-    }
-
-    public static class ScriptSpan {
-        public final String text;
-        public final boolean isLatin;
-
-        public ScriptSpan(String text, boolean isLatin) {
-            this.text = text;
-            this.isLatin = isLatin;
-        }
-    }
-
-    /** True when the voice's language is an Indic language (Devanagari/Bengali/Dravidian/...). */
-    static boolean isIndicVoice(Voice voice) {
-        if (voice == null || voice.locale == null) return false;
-        String lang = voice.locale.getLanguage();
-        if (lang == null) return false;
-        lang = lang.toLowerCase(java.util.Locale.ROOT);
-        // ISO 639-1 codes of the Indic languages eSpeak NG ships.
-        return lang.equals("hi") || lang.equals("bn") || lang.equals("pa")
-                || lang.equals("gu") || lang.equals("or") || lang.equals("mr")
-                || lang.equals("ta") || lang.equals("te") || lang.equals("kn")
-                || lang.equals("ml") || lang.equals("as") || lang.equals("ne")
-                || lang.equals("ur") || lang.equals("sa") || lang.equals("sd")
-                || lang.equals("ks") || lang.equals("kok") || lang.equals("mni")
-                || lang.equals("sat");
-    }
-
-    public static boolean hasMixedLatinAndIndic(String text) {
-        if (text == null || text.length() < 2) {
-            return false;
-        }
-        boolean hasLatin = false;
-        boolean hasIndic = false;
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-                hasLatin = true;
-            } else if (c >= 0x0900 && c <= 0x0D7F) {
-                hasIndic = true;
-            }
-            if (hasLatin && hasIndic) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static List<ScriptSpan> splitByScriptRuns(String text) {
-        List<ScriptSpan> spans = new ArrayList<>();
-        if (text == null || text.isEmpty()) {
-            return spans;
-        }
-
-        final int len = text.length();
-        int spanStart = 0;
-        Boolean currentIsLatin = null;
-
-        for (int i = 0; i < len; ) {
-            int cp = text.codePointAt(i);
-            int charCount = Character.charCount(cp);
-
-            boolean isLatinChar = (cp >= 'A' && cp <= 'Z') || (cp >= 'a' && cp <= 'z');
-            boolean isIndicChar = (cp >= 0x0900 && cp <= 0x0D7F);
-
-            if (isLatinChar || isIndicChar) {
-                boolean charIsLatin = isLatinChar;
-                if (currentIsLatin == null) {
-                    currentIsLatin = charIsLatin;
-                } else if (currentIsLatin != charIsLatin) {
-                    if (i > spanStart) {
-                        String spanText = text.substring(spanStart, i);
-                        if (!spanText.isEmpty()) {
-                            spans.add(new ScriptSpan(spanText, currentIsLatin));
-                        }
-                    }
-                    spanStart = i;
-                    currentIsLatin = charIsLatin;
-                }
-            }
-            i += charCount;
-        }
-
-        if (spanStart < len) {
-            String remaining = text.substring(spanStart);
-            if (!remaining.isEmpty()) {
-                spans.add(new ScriptSpan(remaining, currentIsLatin != null ? currentIsLatin : false));
-            }
-        }
-
-        return spans;
     }
 
     public static boolean containsIndianNuanceChars(String text) {

@@ -125,6 +125,7 @@
   <string name="setting_emphasize_questions_summary">Widens the pitch rise on sentences ending in ? or ! so they stand out more clearly. Off by default - changes how sentences sound, try it and see if you prefer it.</string>
   <string name="setting_wordgap">Word pause length</string>
   <string name="formatter_gap_ms">%s0 ms</string>
+  <string name="setting_pause_scale">Reading pace (pause length)</string>
   <string name="variant_klatt_1">Klatt 1 (Impulsive)</string>
   <string name="variant_klatt_2">Klatt 2 (Natural)</string>
   <string name="variant_klatt_3">Klatt 3 (Sampled pulse 1)</string>
@@ -148,8 +149,6 @@
   <string name="setting_programming_symbols_summary">Announce code and math symbols (!=, ==, &lt;=, &gt;=, =&gt;, -&gt;, &amp;&amp;, ||) as words</string>
   <string name="setting_smart_codes">Smart OTP and PIN code reading</string>
   <string name="setting_smart_codes_summary">Automatically read verification codes, OTPs, and security PINs digit by digit</string>
-  <string name="setting_bilingual_switching">Bilingual script switching</string>
-  <string name="setting_bilingual_switching_summary">Pronounce English words in Indic sentences with authentic English phonetics</string>
   <string name="setting_user_dictionary">User dictionary</string>
   <string name="setting_user_dictionary_summary">Add custom word pronunciation and acronym expansion rules (standard .dic syntax)</string>
   <string name="setting_nato_spelling">NATO phonetic spelling</string>
@@ -210,8 +209,6 @@
   <string name="setting_smart_min_summary">Shortest digit run treated as a verification code</string>
   <string name="setting_smart_max">OTP maximum length</string>
   <string name="setting_smart_max_summary">Longest digit run treated as a verification code</string>
-  <string name="setting_secondary_voice">Second language voice</string>
-  <string name="setting_secondary_voice_summary">Voice used for English words inside Indic sentences</string>
   <string name="category_locks">Caller-proof locks</string>
   <string name="setting_force_rate">Lock speech rate</string>
   <string name="setting_force_rate_summary">Ignore caller app rate requests, always use your saved rate</string>
@@ -273,7 +270,6 @@
   <string name="screen_text_processing_summary">Punctuation, capitals, reading modes, symbols, emojis, NATO</string>
   <string name="category_punctuation_symbols">Punctuation &amp; symbols</string>
   <string name="category_reading_modes">Reading modes &amp; exploration</string>
-  <string name="category_multilingual">Multilingual speech</string>
   <string name="screen_locks_title">Caller-proof locks</string>
   <string name="screen_locks_summary">Lock speech rate, pitch, and volume against overriding caller apps</string>
   <string name="screen_tools_title">Tools, backup &amp; about</string>

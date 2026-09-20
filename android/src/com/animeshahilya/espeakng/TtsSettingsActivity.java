@@ -999,16 +999,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return pref;
     }
 
-    private static CheckBoxPreference createBilingualSwitchingPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_bilingual_switching);
-        pref.setSummary(R.string.setting_bilingual_switching_summary);
-        pref.setKey(VoiceSettings.PREF_BILINGUAL_SWITCHING);
-        pref.setDefaultValue(true);
-        pref.setPersistent(true);
-        return pref;
-    }
-
     private static Preference createNatoSpellingPreference(Context context) {
         final CheckBoxPreference pref = new CheckBoxPreference(context);
         pref.setTitle(R.string.setting_nato_spelling);
@@ -1215,37 +1205,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return createListPref(context, VoiceSettings.PREF_SMART_MAX_LEN,
                 R.string.setting_smart_max, R.string.setting_smart_max_summary,
                 entries, values, "10");
-    }
-
-    private static Preference createSecondaryVoicePreference(Context context, List<Voice> voices) {
-        final List<Voice> sorted = new ArrayList<Voice>(voices);
-        Collections.sort(sorted, new Comparator<Voice>() {
-            @Override public int compare(Voice a, Voice b) {
-                return a.name.compareToIgnoreCase(b.name);
-            }
-        });
-        CharSequence[] entries = new CharSequence[sorted.size()];
-        CharSequence[] values = new CharSequence[sorted.size()];
-        for (int i = 0; i < sorted.size(); i++) {
-            entries[i] = getVoiceLabel(sorted.get(i));
-            values[i] = sorted.get(i).name;
-        }
-        final SharedPreferences prefs = getPrefs();
-        String current = prefs.getString(VoiceSettings.PREF_SECONDARY_VOICE,
-                VoiceSettings.DEFAULT_SECONDARY_VOICE);
-        final ListPreference pref = new ListPreference(context);
-        pref.setTitle(R.string.setting_secondary_voice);
-        pref.setDialogTitle(R.string.setting_secondary_voice);
-        pref.setKey(VoiceSettings.PREF_SECONDARY_VOICE);
-        pref.setEntries(entries);
-        pref.setEntryValues(values);
-        pref.setDefaultValue(VoiceSettings.DEFAULT_SECONDARY_VOICE);
-        pref.setPersistent(true);
-        int idx = pref.findIndexOfValue(current);
-        if (idx >= 0) pref.setSummary(entries[idx]);
-        else pref.setSummary(R.string.setting_secondary_voice_summary);
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        return pref;
     }
 
     private static Preference createBackupPreference(final Context context) {
@@ -1880,28 +1839,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
         readingCat.addPreference(createCheckPref(context, VoiceSettings.PREF_EMPHASIZE_QUESTIONS,
                 R.string.setting_emphasize_questions, R.string.setting_emphasize_questions_summary, false));
 
-        if (!isWatch) {
-            PreferenceCategory multiCat = new AccessiblePreferenceCategory(context);
-            multiCat.setTitle(R.string.category_multilingual);
-            textProcessingScreen.addPreference(multiCat);
-
-            CheckBoxPreference bilingualPref = createBilingualSwitchingPreference(context);
-            multiCat.addPreference(bilingualPref);
-            if (!voices.isEmpty()) {
-                final Preference secondary = createSecondaryVoicePreference(context, voices);
-                secondary.setEnabled(bilingualPref.isChecked());
-                bilingualPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        boolean enabled = (Boolean) newValue;
-                        secondary.setEnabled(enabled);
-                        return true;
-                    }
-                });
-                multiCat.addPreference(secondary);
-            }
-        }
-
         // 3. Caller-Proof Locks Sub-Screen
         PreferenceScreen locksScreen = pm.createPreferenceScreen(context);
         locksScreen.setKey("sub_caller_locks");
@@ -2003,6 +1940,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
         paramCategory.addPreference(intonationGroupPref);
         paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
+        paramCategory.addPreference(createSeekBarPreference(context, engine.PauseScale, VoiceSettings.PREF_PAUSE_SCALE, R.string.setting_pause_scale));
         CheckBoxPreference audioOptPref = createAudioOptimizerPreference(context);
         paramCategory.addPreference(audioOptPref);
         final Preference audioProfile = createAudioProfilePreference(context);

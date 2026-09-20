@@ -71,6 +71,10 @@ static int option_emphasis = 0; // 0=normal, 1=normal, 2=weak, 3=moderate, 4=str
 int option_ssml = 0;
 int option_phoneme_input = 0; // allow [[phonemes]] in input
 int option_wordgap = 0;
+// eSpeak NG Advanced (Android fork) extension: percent multiplier for
+// clause/sentence/paragraph pause lengths, applied in PauseLength()
+// (synthesize.c). 100=normal; see espeakPAUSESCALE.
+int option_pause_scale = 100;
 
 static int count_sayas_digits;
 int skip_sentences;

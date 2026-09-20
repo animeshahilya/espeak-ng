@@ -30,9 +30,7 @@ import org.junit.runner.RunWith;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,8 +39,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(AndroidJUnit4.class)
-public class BilingualAndDictionaryDeviceTest {
-    private static final String TAG = "BilingualAndDictTest";
+public class DictionaryDeviceTest {
+    private static final String TAG = "DictionaryDeviceTest";
     private Context mContext;
     private SpeechSynthesis mEngine;
     private final AtomicInteger mAudioBytesReceived = new AtomicInteger(0);
@@ -256,58 +254,4 @@ public class BilingualAndDictionaryDeviceTest {
         assertThat(reportedWords, hasItems("cat", "and", "dog", "run", "fast"));
     }
 
-    @Test
-    public void testScriptRunSegmentation() {
-        String mixedText = "नमस्ते Alex, your OTP is 4829. कृपया ध्यान दें।";
-        List<TtsService.ScriptSpan> spans = TtsService.splitByScriptRuns(mixedText);
-
-        assertThat(spans.size(), greaterThanOrEqualTo(2));
-        Log.i(TAG, "Spans generated: " + spans.size());
-        for (TtsService.ScriptSpan span : spans) {
-            Log.i(TAG, "Span [isLatin=" + span.isLatin + "]: '" + span.text + "'");
-        }
-
-        // First span should be Indic (Devanagari)
-        assertThat(spans.get(0).isLatin, is(false));
-        assertThat(spans.get(0).text, containsString("नमस्ते"));
-
-        // Second span should be Latin
-        assertThat(spans.get(1).isLatin, is(true));
-        assertThat(spans.get(1).text, containsString("Alex"));
-    }
-
-    @Test
-    public void testLiveBilingualDualVoiceSynthesisOnDevice() throws InterruptedException {
-        List<Voice> voices = mEngine.getAvailableVoices();
-        Map<String, Voice> map = new HashMap<>();
-        for (Voice v : voices) {
-            map.put(v.name, v);
-        }
-
-        Voice hindiVoice = map.get("hi");
-        Voice englishVoice = map.get("en-in");
-
-        assertThat("Hindi voice must be available in core", hindiVoice, is(notNullValue()));
-        assertThat("Indian English voice must be available in core", englishVoice, is(notNullValue()));
-
-        VoiceVariant defaultVariant = VoiceVariant.parseVoiceVariant(VoiceVariant.MALE);
-
-        String mixedText = "नमस्ते Alex, your OTP is 4829. कृपया ध्यान दें।";
-        List<TtsService.ScriptSpan> spans = TtsService.splitByScriptRuns(mixedText);
-
-        mAudioBytesReceived.set(0);
-
-        for (TtsService.ScriptSpan span : spans) {
-            Voice chosenVoice = span.isLatin ? englishVoice : hindiVoice;
-            mEngine.setVoice(chosenVoice, defaultVariant);
-
-            mLatch = new CountDownLatch(1);
-            mEngine.synthesize(span.text, false);
-            boolean completed = mLatch.await(4, TimeUnit.SECONDS);
-            assertThat("Segment synthesis timed out for: " + span.text, completed, is(true));
-        }
-
-        assertThat("Dual-voice synthesis generated audio bytes on device", mAudioBytesReceived.get(), greaterThan(0));
-        Log.i(TAG, "Total dual-voice audio bytes generated on device: " + mAudioBytesReceived.get());
-    }
 }

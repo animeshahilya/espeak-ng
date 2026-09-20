@@ -49,12 +49,11 @@ public class VoiceSettings {
     public static final String PREF_CAPITALS = "espeak_capitals";
     public static final String PREF_EMPHASIZE_QUESTIONS = "espeak_emphasize_questions";
     public static final String PREF_WORD_GAP = "espeak_wordgap";
+    public static final String PREF_PAUSE_SCALE = "espeak_pause_scale";
     public static final String PREF_INDIAN_NUMBERING = "espeak_indian_numbering";
     public static final String PREF_SPEAK_PROGRAMMING_SYMBOLS = "espeak_speak_programming_symbols";
     public static final String PREF_SMART_CODES = "espeak_smart_codes";
     public static final String PREF_USER_DICTIONARY = "espeak_user_dictionary";
-    public static final String PREF_BILINGUAL_SWITCHING = "espeak_bilingual_switching";
-    public static final String PREF_SECONDARY_VOICE = "espeak_secondary_voice";
     public static final String PREF_NATO_SPELLING = "espeak_nato_spelling";
     public static final String PREF_SPOKEN_DIACRITICS = "espeak_spoken_diacritics";
     public static final String PREF_AUDIO_OPTIMIZER = "espeak_audio_optimizer";
@@ -159,9 +158,6 @@ public class VoiceSettings {
     public static final int DEFAULT_PITCH = 40;
     public static final int DEFAULT_PITCH_RANGE = 75;
     public static final int DEFAULT_CAPITALS = 3;
-
-    /** Default bilingual secondary voice (Indian English). */
-    public static final String DEFAULT_SECONDARY_VOICE = "en-in";
 
     public VoiceSettings(SharedPreferences preferences, SpeechSynthesis engine) {
         mPreferences = preferences;
@@ -354,6 +350,16 @@ public class VoiceSettings {
         return value;
     }
 
+    /** Reading pace: percent multiplier on clause/sentence/paragraph pauses. 100=normal. */
+    public int getPauseScale() {
+        int min = mEngine.PauseScale.getMinValue();
+        int max = mEngine.PauseScale.getMaxValue();
+        int value = getPreferenceValue(PREF_PAUSE_SCALE, mEngine.PauseScale.getDefaultValue());
+        if (value > max) value = max;
+        if (value < min) value = min;
+        return value;
+    }
+
     /**
      * Whether to read numbers digit-by-digit instead of as whole numbers.
      *
@@ -390,14 +396,6 @@ public class VoiceSettings {
 
     public boolean isUserDictionaryEnabled() {
         return mPreferences.getBoolean(PREF_USER_DICTIONARY, true);
-    }
-
-    public boolean isBilingualSwitchingEnabled() {
-        return mPreferences.getBoolean(PREF_BILINGUAL_SWITCHING, true);
-    }
-
-    public String getSecondaryVoice() {
-        return mPreferences.getString(PREF_SECONDARY_VOICE, DEFAULT_SECONDARY_VOICE);
     }
 
     public boolean isNatoSpellingEnabled() {

@@ -625,6 +625,7 @@ extern int option_ssml;
 extern int option_phoneme_input;   // allow [[phonemes]] in input text
 extern int option_sayas;
 extern int option_wordgap;
+extern int option_pause_scale;
 
 extern int count_characters;
 extern int count_sentences;
