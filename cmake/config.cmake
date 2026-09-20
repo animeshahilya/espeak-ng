@@ -7,7 +7,6 @@ check_symbol_exists(optreset "getopt.h;unistd.h" HAVE_DECL_OPTRESET)
 check_include_file("sys/endian.h" HAVE_SYS_ENDIAN_H)
 check_symbol_exists(iswblank "wctype.h" HAVE_ISWBLANK)
 
-option(USE_MBROLA "Use mbrola for speech synthesis" ${HAVE_MBROLA})
 option(USE_LIBSONIC "Use libsonic for faster speech rates" ${HAVE_LIBSONIC})
 option(USE_LIBPCAUDIO "Use libPcAudio for sound output" ${HAVE_LIBPCAUDIO})
 

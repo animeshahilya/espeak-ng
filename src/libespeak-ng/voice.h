@@ -119,9 +119,8 @@ typedef enum {
 	V_STRESSOPT,
 	V_NUMBERS,
 
-	V_MBROLA,
 	V_KLATT,
-	V_FAST,
+V_FAST,
 	V_SPEED,
 	V_DICTMIN,
 
@@ -174,7 +173,6 @@ static const MNEM_TAB keyword_tab[] = {
 	{ "voicing",      V_VOICING },
 	{ "breath",       V_BREATH },
 	{ "breathw",      V_BREATHW },
-	{ "mbrola",       V_MBROLA },
 	{ "consonants",   V_CONSONANTS },
 	{ "klatt",        V_KLATT },
 	{ "fast_test2",   V_FAST },

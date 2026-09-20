@@ -46,7 +46,6 @@
 #include "mnemonics.h"               // for LookupMnemName, MNEM_TAB
 #include "phoneme.h"                  // for REPLACE_PHONEMES, n_replace_pho...
 #include "speech.h"                   // for PATHSEP
-#include "mbrola.h"                   // for LoadMbrolaTable
 #include "synthdata.h"                // for SelectPhonemeTableName, LookupP...
 #include "synthesize.h"               // for SetSpeed, SPEED_FACTORS, speed
 #include "translate.h"                // for LANGUAGE_OPTIONS, DeleteTranslator
@@ -311,9 +310,6 @@ void VoiceReset(int tone_only)
 
 	if (tone_only == 0) {
 		n_replace_phonemes = 0;
-#if USE_MBROLA
-		LoadMbrolaTable(NULL, NULL, 0);
-#endif
 	}
 
 // probably unnecessary, but removing this would break tests
@@ -430,10 +426,6 @@ voice_t *LoadVoice(const char *vname, int control)
 	char phonemes_name[40] = "";
 	const char *language_type;
 	char buf[N_PATH_BUF];
-#if USE_MBROLA
-	char name1[40];
-	char name2[80];
-#endif
 
 	int pitch1;
 	int pitch2;
@@ -665,29 +657,7 @@ voice_t *LoadVoice(const char *vname, int control)
             case V_SPEED:
                 sscanf(p, "%d", &voice->speed_percent);
                 SetSpeed(3);
-                break;
-#if USE_MBROLA
-            case V_MBROLA:
-            {
-                int srate = 16000;
-
-                name2[0] = 0;
-                sscanf(p, "%s %s %d", name1, name2, &srate);
-                espeak_ng_STATUS status = LoadMbrolaTable(name1, name2, &srate);
-                if (status != ENS_OK) {
-                    espeak_ng_PrintStatusCodeMessage(status, stderr, NULL);
-                    fclose(f_voice);
-                    return NULL;
-                }
-                else
-                    voice->samplerate = srate;
-            }
-                break;
-#else
-            case V_MBROLA:
-                fprintf(stderr, "espeak-ng was built without mbrola support\n");
-                break;
-#endif
+break;
 #if USE_KLATT
             case V_KLATT:
                 voice->klattv[0] = 1; // default source: IMPULSIVE

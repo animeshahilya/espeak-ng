@@ -36,7 +36,6 @@
 #include "error.h"                    // for create_file_error_context, crea...
 #include "phoneme.h"                  // for PHONEME_TAB, PHONEME_TAB_LIST
 #include "speech.h"                   // for path_home, PATHSEP
-#include "mbrola.h"                   // for mbrola_name
 #include "soundicon.h"               // for soundicon_tab
 #include "synthesize.h"               // for PHONEME_LIST, frameref_t, PHONE...
 #include "translate.h"                // for Translator, LANGUAGE_OPTIONS
@@ -682,16 +681,12 @@ static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist,
 		switch (data)
 		{
 		case 1: // PreVoicing
-			return control & 1;
+return control & 1;
 #if USE_KLATT
-		case 2: // KlattSynth
-			return voice->klattv[0] != 0;
+	case 2: // KlattSynth
+		return voice->klattv[0] != 0;
 #endif
-#if USE_MBROLA
-		case 3: // MbrolaSynth
-			return mbrola_name[0] != 0;
-#endif
-		}
+	}
 	}
 	return false;
 }

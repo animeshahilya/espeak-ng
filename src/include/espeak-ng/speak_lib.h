@@ -421,7 +421,7 @@ typedef enum {
   espeakRESERVED2=11,
   espeakEMPHASIS,   /* internal use */
   espeakLINELENGTH, /* internal use */
-  espeakVOICETYPE,  // internal, 1=mbrola
+  espeakVOICETYPE,  // internal
   N_SPEECH_PARAM    /* last enum */
 } espeak_PARAMETER;
 
@@ -494,7 +494,6 @@ ESPEAK_API espeak_ERROR espeak_SetPunctuationList(const wchar_t *punctlist);
 #define espeakPHONEMES_SHOW    0x01
 #define espeakPHONEMES_IPA     0x02
 #define espeakPHONEMES_TRACE   0x08
-#define espeakPHONEMES_MBROLA  0x10
 #define espeakPHONEMES_TIE     0x80
 
 #ifdef __cplusplus

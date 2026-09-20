@@ -25,27 +25,6 @@ list(APPEND _dict_compile_list
   yue
 )
 
-list(APPEND _mbrola_lang_list
-  af1 ar1 ar2
-  ca cmn cr1 cs
-  de2 de4 de6 de8
-  ee1 en1 es es3 es4
-  fr
-  gr1 gr2 grc-de6
-  he hn1 hu1
-  ic1 id1 in ir1 it1 it3
-  jp
-  la1 lt
-  ma1 mx1 mx2
-  nl nz1
-  pl1 pt1 ptbr ptbr4
-  ro1
-  sv sv2
-  tl1 tr1
-  us us3
-  vz
-)
-
 set(DATA_DIST_ROOT ${CMAKE_CURRENT_BINARY_DIR})
 set(DATA_DIST_DIR ${DATA_DIST_ROOT}/espeak-ng-data)
 set(PHONEME_TMP_DIR ${DATA_DIST_ROOT}/phsource)
@@ -151,27 +130,11 @@ foreach(_dict_name ${_dict_compile_list})
   )
 endforeach()
 
-if (USE_MBROLA)
-  file(COPY "${DATA_SRC_DIR}/voices/mb" DESTINATION "${DATA_DIST_DIR}/voices")
-  file(MAKE_DIRECTORY "${DATA_DIST_DIR}/mbrola_ph")
-  foreach(_mbl ${_mbrola_lang_list})
-    set(_mbl_src "${PHONEME_SRC_DIR}/mbrola/${_mbl}")
-    set(_mbl_out "${DATA_DIST_DIR}/mbrola_ph/${_mbl}_phtrans")
-    list(APPEND _mbr_targets ${_mbl_out})
-    add_custom_command(
-      OUTPUT "${_mbl_out}"
-      COMMAND ${ESPEAK_RUN_CMD} --compile-mbrola="${_mbl_src}"
-      DEPENDS ${ESPEAK_BIN_DEP} "${_mbl_src}"
-    )
-  endforeach(_mbl)
-endif()
-
 add_custom_target(
   data ALL
   DEPENDS
     "${DATA_DIST_DIR}/intonations"
     "${DATA_DIST_DIR}/phondata"
     ${_dict_targets}
-    ${_mbr_targets}
 )
 install(DIRECTORY ${DATA_DIST_DIR} DESTINATION share)

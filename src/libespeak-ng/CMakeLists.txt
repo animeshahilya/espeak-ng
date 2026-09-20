@@ -87,14 +87,6 @@ if (USE_ASYNC)
   )
 endif(USE_ASYNC)
 
-if (USE_MBROLA)
-  target_sources(espeak-ng PRIVATE
-    mbrowrap.c
-    compilembrola.c
-    synth_mbrola.c
-  )
-endif(USE_MBROLA)
-
 if (USE_KLATT)
   target_sources(espeak-ng PRIVATE klatt.c)
 endif(USE_KLATT)

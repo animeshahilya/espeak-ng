@@ -63,7 +63,6 @@ endif()
 
 message(STATUS "Configuration:")
 message(STATUS "  shared: ${BUILD_SHARED_LIBS}")
-message(STATUS "  mbrola: ${USE_MBROLA} (${MBROLA_BIN})")
 message(STATUS "  libsonic: ${USE_LIBSONIC} (${SONIC_LIB} ${SONIC_INC})")
 message(STATUS "  libpcaudio: ${USE_LIBPCAUDIO} (${PCAUDIO_LIB} ${PCAUDIO_INC})")
 message(STATUS "  klatt: ${USE_KLATT}")

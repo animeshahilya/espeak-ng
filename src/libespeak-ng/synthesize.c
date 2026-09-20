@@ -35,7 +35,6 @@
 #include "synthesize.h"
 #include "dictionary.h"           // for WritePhMnemonic, GetTranslatedPhone...
 #include "intonation.h"           // for CalcPitches
-#include "mbrola.h"               // for MbrolaGenerate, mbrola_name
 #include "phoneme.h"              // for PHONEME_TAB, phVOWEL, phLIQUID, phN...
 #include "setlengths.h"           // for CalcLengths
 #include "soundicon.h"               // for soundicon_tab, n_soundicon
@@ -1148,12 +1147,7 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume)
 	if (option_phoneme_events & espeakINITIALIZE_PHONEME_IPA)
 		use_ipa = 1;
 
-#if USE_MBROLA
-	if (mbrola_name[0] != 0)
-		return MbrolaGenerate(phoneme_list, n_ph, resume);
-#endif
-
-	if (resume == false) {
+if (resume == false) {
 		ix = 1;
 		embedded_ix = 0;
 		word_count = 0;

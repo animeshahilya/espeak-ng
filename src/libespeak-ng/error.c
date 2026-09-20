@@ -109,12 +109,6 @@ espeak_ng_GetStatusCodeMessage(espeak_ng_STATUS status,
 	case ENS_VOICE_NOT_FOUND:
 		strncpy0(buffer, "The specified espeak-ng voice does not exist", length);
 		break;
-	case ENS_MBROLA_NOT_FOUND:
-		strncpy0(buffer, "Could not load the mbrola.dll file", length);
-		break;
-	case ENS_MBROLA_VOICE_NOT_FOUND:
-		strncpy0(buffer, "Could not load the specified mbrola voice file", length);
-		break;
 	case ENS_EVENT_BUFFER_FULL:
 		strncpy0(buffer, "The event buffer is full", length);
 		break;

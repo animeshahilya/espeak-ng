@@ -55,7 +55,6 @@
 #include "event.h"                // for event_declare, event_clear_all, eve...
 #include "fifo.h"                 // for fifo_add_command, fifo_add_commands
 #include "langopts.h"             // for LoadConfig
-#include "mbrola.h"               // for mbrola_delay
 #include "readclause.h"           // for PARAM_STACK, param_stack
 #include "synthdata.h"            // for FreePhData, LoadPhData
 #include "synthesize.h"           // for SpeakNextClause, Generate, Synthesi...
@@ -520,9 +519,7 @@ void MarkerEvent(int type, unsigned int char_position, int value, int value2, un
 	ep->text_position = char_position & 0xffffff;
 	ep->length = char_position >> 24;
 
-#if !USE_MBROLA
-	static const int mbrola_delay = 0;
-#endif
+static const int mbrola_delay = 0;
 
 	time = ((double)(count_samples + mbrola_delay + (out_ptr - out_start)/2)*1000.0)/samplerate;
 	ep->audio_position = (int)time;
@@ -552,9 +549,7 @@ void RescaleEventSamples(int length_pre, int length_post)
 	// linear mapping is an approximation; what it guarantees is that an event
 	// never points past the audio its buffer produced.
 
-#if !USE_MBROLA
 	static const int mbrola_delay = 0;
-#endif
 	int base;
 
 	if ((event_list == NULL) || (length_pre <= 0) || (length_pre == length_post))

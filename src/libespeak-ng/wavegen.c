@@ -35,7 +35,6 @@
 #include "wavegen.h"
 #include "common.h"                   // for espeak_rand
 #include "synthesize.h"               // for WGEN_DATA, RESONATOR, frame_t
-#include "mbrola.h"                  // for MbrolaFill, MbrolaReset, mbrola...
 
 #if USE_KLATT
 #include "klatt.h"
@@ -244,11 +243,6 @@ void WcmdqStop(void)
 		sonicDestroyStream(sonicSpeedupStream);
 		sonicSpeedupStream = NULL;
 	}
-#endif
-
-#if USE_MBROLA
-	if (mbrola_name[0] != 0)
-		MbrolaReset();
 #endif
 }
 
@@ -1358,13 +1352,7 @@ static int WavegenFill2(void)
 		case WCMD_EMBEDDED:
 			SetEmbedded(q[1], q[2]);
 			break;
-#if USE_MBROLA
-		case WCMD_MBROLA_DATA:
-			if (wvoice != NULL)
-				result = MbrolaFill(length, resume, (general_amplitude * wvoice->voicing)/64);
-			break;
-#endif
-		case WCMD_FMT_AMPLITUDE:
+case WCMD_FMT_AMPLITUDE:
 			if ((wdata.amplitude_fmt = q[1]) == 0)
 				wdata.amplitude_fmt = 100; // percentage, but value=0 means 100%
 			break;

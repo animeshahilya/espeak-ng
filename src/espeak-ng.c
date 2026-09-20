@@ -91,10 +91,6 @@ static const char *help_text =
     "\t   Compile pronunciation rules and dictionary from the current\n"
     "\t   directory, including line numbers for use with -X.\n"
     "\t   <voice name> specifies the language\n"
-#if USE_MBROLA
-    "--compile-mbrola=<voice name>\n"
-    "\t   Compile an MBROLA voice\n"
-#endif
     "--compile-intonations\n"
     "\t   Compile the intonation data\n"
     "--compile-phonemes=<phsource-dir>\n"
@@ -327,9 +323,6 @@ int main(int argc, char **argv)
 		{ "version", no_argument,       0, 0x10b },
 		{ "sep",     optional_argument, 0, 0x10c },
 		{ "tie",     optional_argument, 0, 0x10d },
-#if USE_MBROLA
-		{ "compile-mbrola", optional_argument, 0, 0x10e },
-#endif
 		{ "compile-intonations", no_argument, 0, 0x10f },
 		{ "compile-phonemes", optional_argument, 0, 0x110 },
 		{ "load",    no_argument,       0, 0x111 },
@@ -500,7 +493,7 @@ int main(int argc, char **argv)
 				fprintf(stderr, "Can't write to: %s\n", optarg2);
 			break;
 		case 0x109: // --pho
-			phoneme_options |= espeakPHONEMES_MBROLA;
+			
 			break;
 		case 0x10a: // --ipa
 			phoneme_options |= espeakPHONEMES_IPA;
@@ -544,20 +537,6 @@ int main(int argc, char **argv)
 			if (phonemes_separator == 'z')
 				phonemes_separator = 0x200d; // ZWJ
 			break;
-#if USE_MBROLA
-		case 0x10e: // --compile-mbrola
-		{
-			espeak_ng_InitializePath(data_path);
-			espeak_ng_ERROR_CONTEXT context = NULL;
-			espeak_ng_STATUS result = espeak_ng_CompileMbrolaVoice(optarg2, stdout, &context);
-			if (result != ENS_OK) {
-				espeak_ng_PrintStatusCodeMessage(result, stderr, context);
-				espeak_ng_ClearErrorContext(&context);
-				return EXIT_FAILURE;
-			}
-			return EXIT_SUCCESS;
-		}
-#endif
 		case 0x10f: // --compile-intonations
 		{
 			espeak_ng_InitializePath(data_path);
