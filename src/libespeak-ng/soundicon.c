@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include <espeak-ng/espeak_ng.h>
@@ -94,9 +95,9 @@ static espeak_ng_STATUS LoadSoundFile(const char *fname, int index, espeak_ng_ER
 			if ((fd_temp = mkstemp(fname_temp)) >= 0)
 				close(fd_temp);
 #else
-			strcpy(fname_temp, tmpnam(NULL));
+			// Use a secure random name instead of deprecated tmpnam
+			snprintf(fname_temp, sizeof(fname_temp), "/tmp/espeak_%d_%d", (int)getpid(), (int)time(NULL));
 #endif
-
 //			sprintf(command, "sox \"%s\" -r %d -c1 -b 16 -t wav %s\n", fname, samplerate, fname_temp);
 //			if (system(command) == 0)
 				fname = fname_temp;

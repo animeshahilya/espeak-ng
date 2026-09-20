@@ -1277,6 +1277,7 @@ static void* output_rule_group(int n_rules, char **rules, char *name, size_t *ou
 
 		outpos = outlen;
 		if ((common[0] != 0) && (strcmp(p, common) == 0)) {
+			if (outlen > SIZE_MAX - len2 - 1) return NULL;
 			outlen += len2 + 1;
 			outptr = realloc(outptr, outlen);
 			memmove(outptr + outpos, p2, len2);
@@ -1289,6 +1290,7 @@ static void* output_rule_group(int n_rules, char **rules, char *name, size_t *ou
 				outptr[outpos++] = RULE_PH_COMMON;
 			}
 
+			if (outlen > SIZE_MAX - len2 - 1 - len1) return NULL;
 			outlen += len2 + 1 + len1;
 			outptr = realloc(outptr, outlen);
 			memmove(outptr + outpos, p2, len2);

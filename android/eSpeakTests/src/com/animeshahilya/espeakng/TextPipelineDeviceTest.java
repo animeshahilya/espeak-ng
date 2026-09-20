@@ -153,7 +153,7 @@ public class TextPipelineDeviceTest {
         // Regression: the run splitter once separated every codepoint, so the
         // Indian flag (RI I + RI N) reached the engine as two lone regional
         // indicators ("symbol one ef one eye...") instead of "India".
-        // Flag pairs use \u escapes (raw RI chars have been mangled by
+        // Flag pairs use \\u escapes (raw RI chars have been mangled by
         // tooling before); other emoji are literals with codepoints noted.
         String flag = "\uD83C\uDDEE\uD83C\uDDF3"; // U+1F1EE U+1F1F3
         assertThat(TtsService.clarifyEmojiAnnouncements(flag), is(flag));

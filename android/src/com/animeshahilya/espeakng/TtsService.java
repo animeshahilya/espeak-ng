@@ -1995,10 +1995,11 @@ public class TtsService extends TextToSpeechService {
             // already punctuation (avoids ",." or ",," doubling up).
             if (i < len) {
                 char next = text.charAt(i);
-                if (next != ' ' && next != ',' && next != '.' && next != '!' && next != '?' && next != ':' && next != ';') {
+                boolean isPunct = next == ',' || next == '.' || next == '!' || next == '?' || next == ':' || next == ';';
+                if (next != ' ' && !isPunct) {
                     out.append(',');
                 }
-                if (next != ' ') {
+                if (next != ' ' && !isPunct) {
                     out.append(' ');
                 }
             }

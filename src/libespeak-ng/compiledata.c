@@ -475,6 +475,11 @@ static espeak_ng_STATUS ReadPhondataManifest(CompileContext *ctx, espeak_ng_ERRO
 		return ENS_EMPTY_PHONEME_MANIFEST;
 	}
 
+	if (n_lines > SIZE_MAX / sizeof(NAMETAB)) {
+		fclose(f);
+		free(ctx->manifest);
+		return ENOMEM;
+	}
 	NAMETAB *new_manifest = (NAMETAB *)realloc(ctx->manifest, n_lines * sizeof(NAMETAB));
 	if (new_manifest == NULL) {
 		fclose(f);
@@ -489,7 +494,9 @@ static espeak_ng_STATUS ReadPhondataManifest(CompileContext *ctx, espeak_ng_ERRO
 			continue;
 
 		if (sscanf(&buf[2], "%x %s", &value, name) == 2) {
-			if ((p = (char *)malloc(strlen(name)+1)) != NULL) {
+			size_t name_len = strlen(name);
+			if (name_len >= SIZE_MAX - 1) continue;
+			if ((p = (char *)malloc(name_len + 1)) != NULL) {
 				strcpy(p, name);
 				ctx->manifest[ctx->n_manifest].value = value;
 				ctx->manifest[ctx->n_manifest].name = p;

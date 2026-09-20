@@ -676,6 +676,7 @@ const char *GetTranslatedPhonemeString(int phoneme_mode)
 		len = buf - phon_buf;
 		if ((phon_out_ix + len) >= phon_out_size) {
 			// enlarge the phoneme buffer
+			if (phon_out_ix + len >= SIZE_MAX - N_PHON_OUT) return "";
 			phon_out_size = phon_out_ix + len + N_PHON_OUT;
 			char *new_phon_out_buf = (char *)realloc(phon_out_buf, phon_out_size);
 			if (new_phon_out_buf == NULL) {
@@ -1496,8 +1497,9 @@ void AppendPhonemes(Translator *tr, char *string, int size, const char *ph)
 		}
 	}
 
-	if (string != NULL)
-		strcat(string, ph);
+	if (string != NULL) {
+		strncat(string, ph, N_WORD_BYTES - 1 - strlen(string));
+	}
 }
 
 static void MatchRule(Translator *tr, char *word[], char *word_start, int group_length, char *rule, MatchRecord *match_out, int word_flags, int dict_flags)
@@ -2171,7 +2173,11 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 			string[1+wc_bytes] = 0;
 			Lookup(tr, string, buf);
 			if (++digit_count >= 2) {
-				strcat(buf, str_pause);
+				size_t buf_len = strlen(buf);
+				size_t pause_len = strlen(str_pause);
+				if (buf_len + pause_len < sizeof(buf) - 1) {
+					strcat(buf, str_pause);
+				}
 				digit_count = 0;
 			}
 			AppendPhonemes(tr, phonemes, ph_size, buf);
@@ -2316,7 +2322,8 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 
 			if ((match1.phonemes[0] == phonSWITCH) && ((word_flags & FLAG_DONT_SWITCH_TRANSLATOR) == 0)) {
 				// an instruction to switch language, return immediately so we can re-translate
-				strcpy(phonemes, match1.phonemes);
+				strncpy(phonemes, match1.phonemes, ph_size - 1);
+				phonemes[ph_size - 1] = 0;
 				return 0;
 			}
 
@@ -2334,7 +2341,8 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 						// no prefix length specified
 						match1.end_type |= p - p_start;
 					}
-					strcpy(end_phonemes, match1.phonemes);
+					strncpy(end_phonemes, match1.phonemes, ph_size - 1);
+					end_phonemes[ph_size - 1] = 0;
 					memcpy(p_start, word_copy, strlen(word_copy));
 					return match1.end_type;
 				}
@@ -2847,7 +2855,7 @@ int LookupDictList(Translator *tr, char **wordptr, char *ph_out, unsigned int *f
 				// only use replacement text if this is the original word, not if a prefix or suffix has been removed
 				word_replacement[0] = 0;
 				word_replacement[1] = ' ';
-				sprintf(&word_replacement[2], "%s ", ph_out); // replacement word, preceded by zerochar and space
+				snprintf(&word_replacement[2], sizeof(word_replacement) - 2, "%s ", ph_out); // replacement word, preceded by zerochar and space
 
 				word1 = *wordptr;
 				*wordptr = &word_replacement[2];
