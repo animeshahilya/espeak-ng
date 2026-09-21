@@ -760,18 +760,20 @@ public class TtsService extends TextToSpeechService {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
-            String before = text;
-            text = expandProgrammingSymbols(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isRomanNumeralsEnabled()) {
-            String before = text;
-            text = expandRomanNumerals(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
+        // preprocessIndianText and expandCurrencySymbols both run before
+        // expandProgrammingSymbols for the same reason simplifyUrls does:
+        // expandProgrammingSymbols's SYM_YEN does a blind ¥ -> " yen " symbol
+        // swap with no amount awareness, while CURRENCY_YEN (inside
+        // expandCurrencySymbols) extracts the adjacent number too ("¥500" ->
+        // "500 yen"). Both default to enabled, so with the old order every
+        // default-settings user hit this on any prefix-style yen amount:
+        // SYM_YEN fired first and left "yen 500" (word before number, and
+        // with the ¥ character already gone, CURRENCY_YEN's own prefix/
+        // suffix patterns - neither is "yen" followed by a number - can't
+        // recover the right phrasing afterward). Running the amount-aware
+        // passes first lets them claim "¥500" correctly; whatever ¥/¢/ƒ is
+        // left over (not adjacent to a number) still falls through to
+        // expandProgrammingSymbols's plain symbol-name reading, unchanged.
         if (!isSsml && settings.isIndianNumberingEnabled()) {
             String before = text;
             text = preprocessIndianText(text, languageTag(voice));
@@ -781,6 +783,18 @@ public class TtsService extends TextToSpeechService {
         if (!isSsml && settings.isCurrencyEnabled()) {
             String before = text;
             text = expandCurrencySymbols(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
+        if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
+            String before = text;
+            text = expandProgrammingSymbols(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
+        if (!isSsml && settings.isRomanNumeralsEnabled()) {
+            String before = text;
+            text = expandRomanNumerals(text);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 

@@ -129,6 +129,34 @@ public class TextPipelineDeviceTest {
         assertThat(wrongOrder, not(containsString("2024-01-15-my-post")));
     }
 
+    /**
+     * Regression test for a second pipeline-ordering bug of the same shape:
+     * expandCurrencySymbols must run before expandProgrammingSymbols.
+     * expandProgrammingSymbols's SYM_YEN does a blind "¥" -&gt; " yen " symbol
+     * swap with no amount awareness; expandCurrencySymbols's CURRENCY_YEN
+     * extracts the adjacent number too ("¥500" -&gt; "500 yen"). If the plain
+     * symbol swap ran first, the "¥" character would already be gone by the
+     * time CURRENCY_YEN ran, and "yen 500" (word before number) matches
+     * neither of CURRENCY_YEN's prefix ("¥" + number) or suffix (number +
+     * "yen") forms - the amount is left unformatted.
+     */
+    @Test
+    public void testCurrencyYenSurvivesBeforeProgrammingSymbols() {
+        String text = "It costs ¥500 today.";
+
+        // Correct pipeline order (currency first, as TtsService now does):
+        // the amount is properly extracted and reordered to "500 yen".
+        String correctOrder = TtsService.expandCurrencySymbols(text);
+        assertThat(correctOrder, containsString("500 yen"));
+        assertThat(correctOrder, not(containsString("¥")));
+
+        // Demonstrates why the order matters: running the plain symbol swap
+        // first consumes the "¥" character before expandCurrencySymbols ever
+        // sees it, so the proper "500 yen" phrasing is never produced.
+        String wrongOrder = TtsService.expandCurrencySymbols(TtsService.expandProgrammingSymbols(text));
+        assertThat(wrongOrder, not(containsString("500 yen")));
+    }
+
     @Test
     public void testCondenseRepeatedCharacters() {
         // Count mode
