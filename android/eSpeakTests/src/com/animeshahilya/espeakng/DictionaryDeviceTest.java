@@ -220,7 +220,11 @@ public class DictionaryDeviceTest {
                 doneLatch.countDown();
             }
 
+            // onError(String) is abstract in UtteranceProgressListener, so it must
+            // be implemented even though it is deprecated; the two-arg overload
+            // (added in API 23) delegates to it by default.
             @Override
+            @SuppressWarnings("deprecation")
             public void onError(String utteranceId) {
                 doneLatch.countDown();
             }

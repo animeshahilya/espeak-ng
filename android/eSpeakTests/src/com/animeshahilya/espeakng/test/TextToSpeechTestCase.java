@@ -73,7 +73,7 @@ public class TextToSpeechTestCase
 
             // Ensure that the voice data is installed (max: 20 seconds):
 
-            Locale en = new Locale("en");
+            Locale en = Locale.forLanguageTag("en");
             int available = mEngine.isLanguageAvailable(en);
             for (int count = 0; available < TextToSpeech.LANG_AVAILABLE && count < (4 * 20); ++count)
             {

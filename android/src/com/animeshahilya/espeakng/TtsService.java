@@ -251,12 +251,24 @@ public class TtsService extends TextToSpeechService {
         };
     }
 
+    /**
+     * Build a query Locale from raw framework/engine codes (ISO 639-2/T like
+     * "eng", ISO 3166 3-letter regions like "USA"). The deprecated constructor
+     * is used deliberately: Locale.forLanguageTag would canonicalize legacy
+     * codes or drop non-BCP47 parts, and Locale.Builder rejects 3-letter
+     * regions - either would silently change voice matching.
+     */
+    @SuppressWarnings("deprecation")
+    private static Locale legacyLocale(String language, String country, String variant) {
+        return new Locale(language, country, variant);
+    }
+
     private Pair<Voice, Integer> findVoice(String language, String country, String variant) {
         if (!CheckVoiceData.hasBaseResources(storageContext)) {
             return new Pair<>(null, TextToSpeech.LANG_MISSING_DATA);
         }
 
-        final Locale query = new Locale(language, country, variant);
+        final Locale query = legacyLocale(language, country, variant);
 
         Voice languageVoice = null;
         Voice countryVoice = null;
@@ -373,7 +385,7 @@ public class TtsService extends TextToSpeechService {
             for (Voice voice : mAvailableVoices.values()) {
                 int quality = android.speech.tts.Voice.QUALITY_NORMAL;
                 int latency = android.speech.tts.Voice.LATENCY_VERY_LOW;
-                Locale locale = new Locale(voice.locale.getISO3Language(), voice.locale.getISO3Country(), voice.locale.getVariant());
+                Locale locale = legacyLocale(voice.locale.getISO3Language(), voice.locale.getISO3Country(), voice.locale.getVariant());
                 Set<String> features = onGetFeaturesForLanguage(locale.getLanguage(), locale.getCountry(), locale.getVariant());
                 voices.add(new android.speech.tts.Voice(voice.name, voice.locale, quality, latency, false, features));
             }

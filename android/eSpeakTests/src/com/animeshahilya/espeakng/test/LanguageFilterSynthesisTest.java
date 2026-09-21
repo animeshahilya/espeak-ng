@@ -58,8 +58,12 @@ import static org.hamcrest.Matchers.notNullValue;
  * opened my telegram which I have set it to english, reading the content was
  * stopping".
  */
-@RunWith(AndroidJUnit4.class)
-public class LanguageFilterSynthesisTest {
+    // Legacy Locale constructors are used deliberately: these tests exercise
+    // Java<->IANA code mapping with legacy/3-letter codes ("GBR", "afr") that
+    // Locale.Builder rejects and forLanguageTag would canonicalize.
+    @SuppressWarnings("deprecation")
+    @RunWith(AndroidJUnit4.class)
+    public class LanguageFilterSynthesisTest {
     private static final String TAG = "LangFilterTest";
     private static final String ENGINE = "com.animeshahilya.espeakng";
 
@@ -173,7 +177,10 @@ public class LanguageFilterSynthesisTest {
                 finished.countDown();
             }
 
+            // onError(String) is abstract in UtteranceProgressListener, so it must
+            // be implemented even though it is deprecated.
             @Override
+            @SuppressWarnings("deprecation")
             public void onError(String id) {
                 outcome.set("ERROR");
                 finished.countDown();

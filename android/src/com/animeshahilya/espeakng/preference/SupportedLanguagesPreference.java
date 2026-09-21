@@ -82,7 +82,11 @@ public class SupportedLanguagesPreference extends MultiSelectListPreference {
         this(context, null);
     }
 
+    // See SeekBarPreference.onClick: announceForAccessibility was deprecated in
+    // Android 16, but these one-shot polite announcements for explicit user
+    // actions are the non-disruptive case the deprecation still permits.
     @Override
+    @SuppressWarnings("deprecation")
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         builder.setPositiveButton(android.R.string.ok, null);
         builder.setNegativeButton(android.R.string.cancel, null);

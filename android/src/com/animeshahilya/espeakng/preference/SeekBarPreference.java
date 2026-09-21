@@ -189,6 +189,12 @@ public class SeekBarPreference extends DialogPreference
         reset.setContentDescription(parameter.title + ", " + reset.getText());
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
+            // announceForAccessibility was deprecated in Android 16 (use live regions
+            // for dynamic content instead). These one-shot polite announcements for
+            // explicit user actions are the non-disruptive case; the live-region
+            // alternative would change the announced content and needs TalkBack
+            // verification before it can replace this.
+            @SuppressWarnings("deprecation")
             public void onClick(View v)
             {
                 parameter.mSeekBar.setProgress(parameter.defaultValue - parameter.min);

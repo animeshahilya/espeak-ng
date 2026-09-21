@@ -120,6 +120,11 @@ public class SpeechSynthesis {
         return FORMAT_PCM_S16;
     }
 
+    // Legacy Locale constructors are used deliberately here: engine voice names
+    // carry legacy/non-BCP47 codes that Locale.forLanguageTag would canonicalize
+    // ("in" -> "id") and Locale.Builder rejects outright - either would silently
+    // change voice matching.
+    @SuppressWarnings("deprecation")
     private Locale getLocaleFromLanguageName(String name) {
         if (mLocaleFixes.containsKey(name)) {
             return mLocaleFixes.get(name);
@@ -446,6 +451,9 @@ public class SpeechSynthesis {
         }
     }
 
+    // The rebuilt target keeps a raw variant passthrough, so the legacy
+    // constructor is kept (see getLocaleFromLanguageName).
+    @SuppressWarnings("deprecation")
     public static String getSampleText(Context context, Locale locale) {
         final String language = getIanaLanguageCode(locale.getLanguage());
         final String country = getIanaCountryCode(locale.getCountry());
@@ -618,11 +626,13 @@ public class SpeechSynthesis {
         mJavaToIanaCountryCode.put("USA", "US");
         mJavaToIanaCountryCode.put("VNM", "VN");
 
-        // Fix up BCP47 locales not handled correctly by Android:
-        mLocaleFixes.put("cmn", new Locale("zh"));
-        mLocaleFixes.put("en-029", new Locale("en", "JM"));
-        mLocaleFixes.put("es-419", new Locale("es", "MX"));
-        mLocaleFixes.put("hy-arevmda", new Locale("hy", "AM", "arevmda")); // hy-arevmda crashes on Android 5.0
-        mLocaleFixes.put("yue", new Locale("zh", "HK"));
+        // Fix up BCP47 locales not handled correctly by Android. These are fixed
+        // valid-BCP47 tags, so forLanguageTag builds exactly the same Locale
+        // objects the constructors did (keep any new entries BCP47-valid).
+        mLocaleFixes.put("cmn", Locale.forLanguageTag("zh"));
+        mLocaleFixes.put("en-029", Locale.forLanguageTag("en-JM"));
+        mLocaleFixes.put("es-419", Locale.forLanguageTag("es-MX"));
+        mLocaleFixes.put("hy-arevmda", Locale.forLanguageTag("hy-AM-arevmda")); // hy-arevmda crashes on Android 5.0
+        mLocaleFixes.put("yue", Locale.forLanguageTag("zh-HK"));
     }
 }

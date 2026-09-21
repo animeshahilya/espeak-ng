@@ -42,8 +42,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.AnyOf.anyOf;
 
-@RunWith(AndroidJUnit4.class)
-public class SpeechSynthesisTest
+    // Legacy Locale constructors are used deliberately: these tests exercise
+    // Java<->IANA code mapping with legacy/3-letter codes ("GBR", "afr") that
+    // Locale.Builder rejects and forLanguageTag would canonicalize.
+    @SuppressWarnings("deprecation")
+    @RunWith(AndroidJUnit4.class)
+    public class SpeechSynthesisTest
 {
     private Context getContext() {
         return InstrumentationRegistry.getInstrumentation().getTargetContext()

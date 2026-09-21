@@ -46,8 +46,10 @@ import static org.hamcrest.Matchers.*;
  * the Android API expects 0-based UTF-16 indices, so the interesting cases are
  * text outside the Basic Multilingual Plane and text with multi-byte characters.
  */
-@RunWith(AndroidJUnit4.class)
-public class WordBoundaryTest
+    // Legacy Locale constructor used deliberately (see SpeechSynthesisTest).
+    @SuppressWarnings("deprecation")
+    @RunWith(AndroidJUnit4.class)
+    public class WordBoundaryTest
 {
     private Context getContext() {
         return InstrumentationRegistry.getInstrumentation().getTargetContext()

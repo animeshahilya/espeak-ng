@@ -289,7 +289,10 @@ public class TextToSpeechServiceTest
 
             Set<String> features = mService.onGetFeaturesForLanguage(data.javaLanguage, data.javaCountry, data.variant);
             assertThat(features, is(notNullValue()));
-            assertThat(features, hasItem(TextToSpeech.Engine.KEY_FEATURE_EMBEDDED_SYNTHESIS));
+            // Assert the literal contract string clients see, not the (deprecated)
+            // constant the engine returns - mirroring the constant would make this
+            // assertion tautological.
+            assertThat(features, hasItem("embeddedTts"));
             assertThat(features.size(), is(1));
         }
     }

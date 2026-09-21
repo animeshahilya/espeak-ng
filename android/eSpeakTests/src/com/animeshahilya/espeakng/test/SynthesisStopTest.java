@@ -46,8 +46,10 @@ import static org.hamcrest.Matchers.*;
  * a stop waits for the whole utterance to be synthesized, which is silence for
  * as long as the text the user just moved away from.
  */
-@RunWith(AndroidJUnit4.class)
-public class SynthesisStopTest
+    // Legacy Locale constructor used deliberately (see SpeechSynthesisTest).
+    @SuppressWarnings("deprecation")
+    @RunWith(AndroidJUnit4.class)
+    public class SynthesisStopTest
 {
     private Context getContext() {
         return InstrumentationRegistry.getInstrumentation().getTargetContext()

@@ -41,6 +41,15 @@ public final class LogExporter {
     private LogExporter() {
     }
 
+    // versionCode was deprecated in API 28 in favor of getLongVersionCode().
+    @SuppressWarnings("deprecation")
+    private static long versionCodeOf(PackageInfo pi) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return pi.getLongVersionCode();
+        }
+        return pi.versionCode;
+    }
+
     public static String collect(Context context) {
         StringBuilder sb = new StringBuilder(32768);
         sb.append("=== eSpeak NG Advanced — activity log ===\n");
@@ -49,7 +58,7 @@ public final class LogExporter {
                     .getPackageInfo(context.getPackageName(), 0);
             sb.append("App: ").append(pi.packageName)
                     .append(" v").append(pi.versionName)
-                    .append(" (").append(pi.versionCode).append(")\n");
+                    .append(" (").append(versionCodeOf(pi)).append(")\n");
         } catch (PackageManager.NameNotFoundException e) {
             sb.append("App: unknown\n");
         }

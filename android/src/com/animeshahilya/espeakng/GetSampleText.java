@@ -42,6 +42,9 @@ public class GetSampleText extends Activity {
         finish();
     }
 
+    // The framework "language" extra may carry a legacy code; it must not be
+    // canonicalized (see SpeechSynthesis.getLocaleFromLanguageName).
+    @SuppressWarnings("deprecation")
     private static Locale getLocaleFromIntent(Intent intent) {
         if (intent != null) {
             final String language = intent.getStringExtra("language");

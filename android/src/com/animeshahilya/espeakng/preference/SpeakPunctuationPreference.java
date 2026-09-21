@@ -20,6 +20,7 @@ package com.animeshahilya.espeakng.preference;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.DialogPreference;
 import android.text.Editable;
 import android.util.AttributeSet;
@@ -119,6 +120,24 @@ public class SpeakPunctuationPreference extends DialogPreference {
         }
     }
 
+    private static android.view.accessibility.AccessibilityNodeInfo.CollectionItemInfo createCollectionItemInfo(
+            int index, boolean selected) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return new android.view.accessibility.AccessibilityNodeInfo.CollectionItemInfo(
+                    index, 1, 0, 1, false, selected);
+        }
+        return createLegacyCollectionItemInfo(index, selected);
+    }
+
+    // obtain() was deprecated in API 33 when pooling was discontinued, but the
+    // public constructor only exists from API 33, so pre-33 still needs this.
+    @SuppressWarnings("deprecation")
+    private static android.view.accessibility.AccessibilityNodeInfo.CollectionItemInfo createLegacyCollectionItemInfo(
+            int index, boolean selected) {
+        return android.view.accessibility.AccessibilityNodeInfo.CollectionItemInfo.obtain(
+                index, 1, 0, 1, false, selected);
+    }
+
     @Override
     protected View onCreateDialogView() {
         View root = super.onCreateDialogView();
@@ -169,9 +188,7 @@ public class SpeakPunctuationPreference extends DialogPreference {
                 @Override
                 public void onInitializeAccessibilityNodeInfo(View host, android.view.accessibility.AccessibilityNodeInfo info) {
                     super.onInitializeAccessibilityNodeInfo(host, info);
-                    info.setCollectionItemInfo(
-                            android.view.accessibility.AccessibilityNodeInfo.CollectionItemInfo.obtain(
-                                    index, 1, 0, 1, false, rb.isChecked()));
+                    info.setCollectionItemInfo(createCollectionItemInfo(index, rb.isChecked()));
                 }
             });
         }
