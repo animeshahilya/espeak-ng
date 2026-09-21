@@ -1566,6 +1566,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     labels.add((viewToReal.size()) + ". [" + UserDictionary.categoryLabel(r.getCategory()) + "] \""
                             + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
                             + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""))
+                            + (r.hasPhonemeOverride() ? " [Phoneme]" : "")
                             + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
                 }
                 listAdapter.notifyDataSetChanged();

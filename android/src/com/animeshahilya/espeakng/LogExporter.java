@@ -90,8 +90,9 @@ public final class LogExporter {
 
         sb.append("--- logcat (last ~500 lines, eSpeak + AndroidRuntime) ---\n");
         BufferedReader br = null;
+        Process p = null;
         try {
-            Process p = Runtime.getRuntime().exec(
+            p = Runtime.getRuntime().exec(
                     new String[]{"logcat", "-d", "-v", "brief", "*:W"});
             br = new BufferedReader(new InputStreamReader(p.getInputStream()), 8192);
             // Keep only the tail to bound size.
@@ -113,6 +114,24 @@ public final class LogExporter {
             if (br != null) {
                 try {
                     br.close();
+                } catch (Exception ignored) {
+                }
+            }
+            // A Process has three streams regardless of whether the caller uses
+            // them - stdin (getOutputStream()) is never written to here, but it's
+            // still an open file descriptor until explicitly closed or the
+            // Process object is finalized by the GC, which isn't bounded. Same
+            // for stderr: not draining it risks the child process blocking on a
+            // full pipe if logcat ever writes enough there (unlikely for "-d"
+            // but cheap to close either way). Every export call otherwise leaks
+            // two native fds until GC gets around to it.
+            if (p != null) {
+                try {
+                    p.getOutputStream().close();
+                } catch (Exception ignored) {
+                }
+                try {
+                    p.getErrorStream().close();
                 } catch (Exception ignored) {
                 }
             }
