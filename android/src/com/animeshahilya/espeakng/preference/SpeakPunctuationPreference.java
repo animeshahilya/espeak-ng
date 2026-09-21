@@ -21,13 +21,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
 
-import androidx.preference.DialogPreference;
-
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.VoiceSettings;
 
-public class SpeakPunctuationPreference extends DialogPreference {
+public class SpeakPunctuationPreference extends PersistingDialogPreference {
     private VoiceSettings mSettings;
 
     public SpeakPunctuationPreference(Context context, AttributeSet attrs, int defStyle) {
@@ -106,14 +104,10 @@ public class SpeakPunctuationPreference extends DialogPreference {
 
     /** Persist a confirmed dialog selection, mirroring the old dialog-OK path. */
     void persistPunctuation(int level, String characters) {
-        if (!shouldPersist()) {
+        SharedPreferences.Editor editor = beginEdit();
+        if (editor == null) {
             return;
         }
-        SharedPreferences prefs = getSharedPreferences();
-        if (prefs == null) {
-            return;
-        }
-        SharedPreferences.Editor editor = prefs.edit();
         editor.putString(VoiceSettings.PREF_PUNCTUATION_CHARACTERS, characters);
         editor.putString(VoiceSettings.PREF_PUNCTUATION_LEVEL, Integer.toString(level));
         // apply(), not commit(): this runs on the main thread right as the dialog

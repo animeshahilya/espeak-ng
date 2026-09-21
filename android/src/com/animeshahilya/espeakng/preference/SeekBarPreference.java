@@ -24,8 +24,6 @@ import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.preference.DialogPreference;
-
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.VoiceSettings;
 
@@ -48,7 +46,7 @@ import java.util.List;
  * parameter model, persistence, and summary. Fields are package-visible for
  * the fragment in the same package.
  */
-public class SeekBarPreference extends DialogPreference
+public class SeekBarPreference extends PersistingDialogPreference
 {
     /**
      * One editable parameter: where its value is stored, how it is presented,
@@ -198,15 +196,10 @@ public class SeekBarPreference extends DialogPreference
      */
     void persist(Parameter parameter)
     {
-        if (!shouldPersist()) {
+        SharedPreferences.Editor editor = beginEdit();
+        if (editor == null) {
             return;
         }
-
-        SharedPreferences prefs = getSharedPreferences();
-        if (prefs == null) {
-            return;
-        }
-        SharedPreferences.Editor editor = prefs.edit();
         editor.putString(parameter.key, Integer.toString(parameter.current));
         if (parameter.hasRateBoost && mRateBoostToggleVisible) {
             // Only write PREF_RATE_BOOST when this dialog's own checkbox is the

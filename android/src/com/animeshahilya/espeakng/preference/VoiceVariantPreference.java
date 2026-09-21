@@ -29,14 +29,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.preference.DialogPreference;
-
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.ResourceIdListAdapter;
 import com.animeshahilya.espeakng.VoiceSettings;
 import com.animeshahilya.espeakng.VoiceVariant;
 
-public class VoiceVariantPreference extends DialogPreference {
+public class VoiceVariantPreference extends PersistingDialogPreference {
     private int mCategoryIndex = 0;
     private int mVariantIndex = 0;
 
@@ -354,17 +352,14 @@ public class VoiceVariantPreference extends DialogPreference {
 
     /** Persist the current selection, mirroring the old dialog-OK path. */
     void persistVariant() {
-        if (!shouldPersist()) {
-            return;
-        }
-        SharedPreferences prefs = getSharedPreferences();
-        if (prefs == null) {
+        SharedPreferences.Editor editor = beginEdit();
+        if (editor == null) {
             return;
         }
         VoiceVariant variant = variants[mCategoryIndex][mVariantIndex].getVariant();
         // apply(), not commit(): same dialog-OK main-thread callback as
         // SpeakPunctuationPreference.persistPunctuation() - see its comment.
-        prefs.edit().putString(VoiceSettings.PREF_VARIANT, variant.toString()).apply();
+        editor.putString(VoiceSettings.PREF_VARIANT, variant.toString()).apply();
     }
 
     private void onDataChanged() {
