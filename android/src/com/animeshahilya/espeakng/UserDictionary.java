@@ -252,7 +252,16 @@ public class UserDictionary {
             // this flag, matched correctly with it. This app is fundamentally
             // about non-English text, so this is strictly more correct always,
             // not just for wholeWord.
-            int flags = Pattern.UNICODE_CHARACTER_CLASS;
+            // No UNICODE_CHARACTER_CLASS here: Android's regex engine (ICU-backed,
+            // not OpenJDK's) throws IllegalArgumentException("UNICODE_CHARACTER_CLASS
+            // flag not supported") for it at runtime, unconditionally - it compiles
+            // fine on a desktop JVM (this bit us: javac/java-based verification
+            // during development couldn't have caught it), but crashes every single
+            // synthesis request on-device. \p{L}/\p{N} Unicode property escapes below
+            // need no such flag on either engine, so they're used directly instead of
+            // \b/\w, which is what UNICODE_CHARACTER_CLASS would otherwise have been
+            // for.
+            int flags = 0;
             if (!mCaseSensitive) {
                 flags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
             }
@@ -271,7 +280,7 @@ public class UserDictionary {
                 // honoring wholeWord for this category would silently turn every
                 // symbol-only Character rule into a no-op - the checkbox default
                 // (true) has no safe meaning for this category, so it's ignored.
-                regexStr = "\\b" + Pattern.quote(mPattern) + "\\b";
+                regexStr = "(?<![\\p{L}\\p{N}])" + Pattern.quote(mPattern) + "(?![\\p{L}\\p{N}])";
             } else {
                 regexStr = Pattern.quote(mPattern);
             }
