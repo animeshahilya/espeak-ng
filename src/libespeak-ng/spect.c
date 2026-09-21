@@ -239,7 +239,9 @@ double GetFrameRms(SpectFrame *frame, int seq_amplitude)
 	return frame->rms;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 SpectSeq *SpectSeqCreate(void)
 {
 	SpectSeq *spect = malloc(sizeof(SpectSeq));
@@ -276,7 +278,9 @@ void SpectSeqDestroy(SpectSeq *spect)
 	free(spect->name);
 	free(spect);
 }
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 static float GetFrameLength(SpectSeq *spect, int frame)
 {
@@ -309,7 +313,9 @@ static float GetFrameLength(SpectSeq *spect, int frame)
 		(dest) = le16toh(dest); \
 	} while (0)
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 espeak_ng_STATUS LoadSpectSeq(SpectSeq *spect, const char *filename)
 {
 	short n, temp;
@@ -422,7 +428,9 @@ eof_error:
 	fclose(stream);
 	return ENS_UNEXPECTED_EOF;
 }
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 #undef READ_U32
 #undef READ_S16

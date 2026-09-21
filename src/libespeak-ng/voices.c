@@ -1228,7 +1228,9 @@ static void GetVoices(const char *path, int len_path_voices, int is_language_fil
 #endif
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 ESPEAK_NG_API espeak_ng_STATUS espeak_ng_SetVoiceByFile(const char *filename)
 {
@@ -1332,7 +1334,9 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_SetVoiceByProperties(espeak_VOICE *voic
 	return ENS_OK;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 void FreeVoiceList(void)
 {
@@ -1346,7 +1350,9 @@ void FreeVoiceList(void)
 	n_voices_list = 0;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 ESPEAK_API const espeak_VOICE **espeak_ListVoices(espeak_VOICE *voice_spec)
 {
@@ -1398,7 +1404,9 @@ ESPEAK_API espeak_VOICE *espeak_GetCurrentVoice(void)
 	return &current_voice_selected;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 static int AddToVoicesList(const char *fname, int len_path_voices, int is_language_file) {
 	int ftype = GetFileLength(fname);

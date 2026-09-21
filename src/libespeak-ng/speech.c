@@ -258,7 +258,9 @@ static int check_data_path(const char *path, int allow_directory)
 	return GetFileLength(path_home) == -EISDIR;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 ESPEAK_NG_API espeak_ng_STATUS espeak_ng_InitializeOutput(espeak_ng_OUTPUT_MODE output_mode, int buffer_length, const char *device)
 {
@@ -420,7 +422,9 @@ ESPEAK_NG_API int espeak_ng_GetSampleRate(void)
 	return samplerate;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 static espeak_ng_STATUS Synthesize(unsigned int unique_identifier, const void *text, int flags)
 {
@@ -682,7 +686,9 @@ void sync_espeak_SetPunctuationList(const wchar_t *punctlist)
 	}
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 ESPEAK_API void espeak_SetSynthCallback(t_espeak_callback *SynthCallback)
 {
@@ -996,6 +1002,17 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Terminate(void)
 }
 
 static const char version_string[] = PACKAGE_VERSION;
+
+ESPEAK_NG_API const char *espeak_ng_GetVersion(void)
+{
+	return version_string;
+}
+
+ESPEAK_NG_API unsigned int espeak_ng_GetVersionNumber(void)
+{
+	return ESPEAK_NG_VERSION;
+}
+
 ESPEAK_API const char *espeak_Info(const char **ptr)
 {
 	if (ptr != NULL)
@@ -1003,4 +1020,6 @@ ESPEAK_API const char *espeak_Info(const char **ptr)
 	return version_string;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif

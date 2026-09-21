@@ -38,7 +38,9 @@
 #include "common.h"
 #include "translate.h"
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 int GetFileLength(const char *filename)
 {
@@ -86,7 +88,9 @@ int utf8_in(int *c, const char *buf)
 	 */
 	return utf8_in2(c, buf, 0);
 }
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 int utf8_out(unsigned int c, char *buf)
 {
@@ -397,10 +401,14 @@ void espeak_srand(long seed) {
 	(void)espeak_rand(0, 1); // Dummy flush a generator
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_SetRandSeed(long seed) {
 	espeak_srand(seed);
 	return ENS_OK;
 }
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif

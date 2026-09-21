@@ -51,6 +51,15 @@ extern "C"
 
 #define ESPEAKNG_DEFAULT_VOICE "en"
 
+/* Version information */
+#define ESPEAK_NG_VERSION_MAJOR 1
+#define ESPEAK_NG_VERSION_MINOR 53
+#define ESPEAK_NG_VERSION_PATCH 1
+#define ESPEAK_NG_VERSION ((ESPEAK_NG_VERSION_MAJOR << 16) | (ESPEAK_NG_VERSION_MINOR << 8) | ESPEAK_NG_VERSION_PATCH)
+
+ESPEAK_NG_API const char *espeak_ng_GetVersion(void);
+ESPEAK_NG_API unsigned int espeak_ng_GetVersionNumber(void);
+
 typedef enum {
 	ENS_GROUP_MASK               = 0x70000000,
 	ENS_GROUP_ERRNO              = 0x00000000, /* Values 0-255 map to errno error codes. */

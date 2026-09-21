@@ -413,7 +413,8 @@ extern const unsigned char env_fall[128];
 #define WCMD_MARKER 10
 #define WCMD_VOICE   11
 #define WCMD_EMBEDDED 12
-#define WCMD_MBROLA_DATA 13
+/* Opcode 13 was WCMD_MBROLA_DATA; MBROLA support was removed (Android-only
+ * fork). The value stays reserved so persisted/derived data never collides. */
 #define WCMD_FMT_AMPLITUDE 14
 #define WCMD_SONIC_SPEED 15
 #define WCMD_PHONEME_ALIGNMENT 16

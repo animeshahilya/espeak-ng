@@ -1570,7 +1570,9 @@ static espeak_ng_STATUS compile_dictrules(CompileContext *ctx, FILE *f_in, FILE 
 	return ENS_OK;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 ESPEAK_NG_API espeak_ng_STATUS espeak_ng_CompileDictionary(const char *dsource, const char *dict_name, FILE *log, int flags, espeak_ng_ERROR_CONTEXT *context)
 {
 	if (!log) log = stderr;
@@ -1663,4 +1665,6 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_CompileDictionary(const char *dsource, 
 	clean_context(ctx);
 	return status;
 }
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif

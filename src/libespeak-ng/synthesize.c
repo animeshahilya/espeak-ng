@@ -1600,9 +1600,13 @@ int SpeakNextClause(int control)
 	return 1;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 ESPEAK_API void espeak_SetPhonemeCallback(int (*PhonemeCallback)(const char *))
 {
 	phoneme_callback = PhonemeCallback;
 }
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif

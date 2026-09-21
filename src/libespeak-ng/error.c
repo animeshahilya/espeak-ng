@@ -72,7 +72,9 @@ create_version_mismatch_error_context(espeak_ng_ERROR_CONTEXT *context,
 	return ENS_VERSION_MISMATCH;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 ESPEAK_NG_API void
 espeak_ng_ClearErrorContext(espeak_ng_ERROR_CONTEXT *context)
@@ -164,4 +166,6 @@ espeak_ng_PrintStatusCodeMessage(espeak_ng_STATUS status,
 		fprintf(out, "Error: %s.\n", error);
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif

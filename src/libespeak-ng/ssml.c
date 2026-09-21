@@ -986,12 +986,16 @@ int ProcessSsmlTag(wchar_t *xml_buf, char *outbuf, int *outix, int n_outbuf, con
 	return 0;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 ESPEAK_API void espeak_SetUriCallback(int (*UriCallback)(int, const char *, const char *))
 {
 	uri_callback = UriCallback;
 }
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 static const MNEM_TAB xml_entity_mnemonics[] = {
 	{ "gt",   '>' },

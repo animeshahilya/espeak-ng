@@ -42,8 +42,10 @@ touching a C/C++ source still re-zips correctly - no manual input declaration
 needed here (unlike the old `splitLanguageData` task this replaced, which did
 need one; see git history if resurrecting that split).
 
-Native build disables `USE_ASYNC` and `USE_MBROLA` (not needed on Android) and
-enables `USE_LIBSONIC` for speech rates above `espeakRATE_MAXIMUM`. libsonic has
+Native build disables `USE_ASYNC` (not needed on Android) and
+enables `USE_LIBSONIC` for speech rates above `espeakRATE_MAXIMUM`.
+MBROLA support was removed entirely from this fork (proprietary binary,
+not viable/redistributable on Android); Klatt voices are the alternative. libsonic has
 no NDK sysroot package, so `jni/CMakeLists.txt` fetches and builds it from
 source (pinned to a specific commit, bumped occasionally for upstream fixes
 in `sonic.c` itself - that's the only file of the library actually compiled

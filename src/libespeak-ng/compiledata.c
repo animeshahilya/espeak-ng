@@ -2320,7 +2320,9 @@ static void CompilePhonemeFiles(CompileContext *ctx)
 	ctx->phoneme_tab2[ctx->n_phcodes+1].mnemonic = 0; // terminator
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 espeak_ng_STATUS
 espeak_ng_CompilePhonemeData(long rate,
@@ -2479,7 +2481,9 @@ espeak_ng_CompilePhonemeDataPath(long rate,
 	return (status != ENS_OK) ? status : res;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 static const char *preset_tune_names[] = {
 	"s1", "c1", "q1", "e1", NULL
@@ -2520,7 +2524,9 @@ static int LookupEnvelopeName(const char *name)
 	return LookupMnem(envelope_names, name);
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 espeak_ng_STATUS espeak_ng_CompileIntonation(FILE *log, espeak_ng_ERROR_CONTEXT *context)
 {
@@ -2791,7 +2797,9 @@ espeak_ng_CompileIntonationPath(const char *source_path,
 	return res;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 static int CalculateSample(unsigned char c3, int c1) {
 	int c2 = c3 << 24;

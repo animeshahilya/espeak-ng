@@ -433,8 +433,9 @@ public class SpeechSynthesis {
             }
 
             mSampleRate = nativeCreate(mDatapath);
-            if (mSampleRate == 0) {
+            if (mSampleRate <= 0) {
                 Log.e(TAG, "Failed to initialize speech synthesis library");
+                mSampleRate = 0;
                 return;
             }
 

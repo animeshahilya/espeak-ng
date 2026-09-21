@@ -36,6 +36,15 @@ target_include_directories(sonic PUBLIC ${sonic-git_SOURCE_DIR})
 set(SONIC_LIB sonic)
 set(SONIC_INC ${sonic-git_SOURCE_DIR})
 
+# Android-only fork: the NDK build needs just libttsespeak.so. Skip the
+# host CLI binary, the intonation/data configure step, and install rules -
+# voice data is compiled by the separate host configure in the espeak-data
+# target below, which gets its own defaults (this scope only affects the
+# NDK configure because option() never overrides an existing variable).
+set(BUILD_ESPEAK_NG_EXE OFF)
+set(COMPILE_INTONATIONS OFF)
+set(ESPEAK_COMPAT OFF)
+
 add_subdirectory(../../ espeakng)
 
 add_custom_target(

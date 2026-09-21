@@ -1464,7 +1464,9 @@ int WavegenFill(void)
 	return finished;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_SetOutputHooks(espeak_ng_OUTPUT_HOOKS* hooks)
@@ -1480,4 +1482,6 @@ espeak_ng_SetConstF0(int f0)
 	return ENS_OK;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif

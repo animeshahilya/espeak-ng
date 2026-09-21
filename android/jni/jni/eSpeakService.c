@@ -82,6 +82,12 @@ static wchar_t *unicode_string(JNIEnv *env, jstring str)
   return utf32;
 }
 
+/* Helper to free unicode_string result */
+static void free_unicode_string(wchar_t *str)
+{
+  if (str) free(str);
+}
+
 /* Converts a Java jstring (UTF-16) to standard RFC 3629 UTF-8 char*.
  *
  * Unlike JNI's GetStringUTFChars, which produces Modified UTF-8 (encoding
@@ -362,9 +368,14 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeCreate(
   if (c_path) (*env)->ReleaseStringUTFChars(env, path, c_path);
   if (rate > 0) {
     atomic_store(&s_sampleRate, rate);
+    return rate;
   }
 
-  return rate;
+  /* JNI contract: strictly positive sample rate on success, 0 on failure.
+   * espeak_Initialize reports failure as -1 (EE_INTERNAL_ERROR); never leak
+   * that through, Java treats any value <= 0 as "not initialized". */
+  if (DEBUG) LOGV("espeak_Initialize failed with rate %d", rate);
+  return 0;
 }
 
 JNIEXPORT jobjectArray
@@ -510,7 +521,7 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetPunctuationChar
     return JNI_FALSE;
   }
   const espeak_ERROR result = espeak_SetPunctuationList(list);
-  free(list);
+  free_unicode_string(list);
   switch (result) {
     case EE_OK:             return JNI_TRUE;
     case EE_INTERNAL_ERROR: LOGE("espeak_SetPunctuationList: internal error."); break;

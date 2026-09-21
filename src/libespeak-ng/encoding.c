@@ -149,7 +149,9 @@ static const MNEM_TAB mnem_encoding[] = {
 	{ NULL,               ESPEAKNG_ENCODING_UNKNOWN }
 };
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 espeak_ng_ENCODING
 espeak_ng_EncodingFromName(const char *encoding)
@@ -157,7 +159,9 @@ espeak_ng_EncodingFromName(const char *encoding)
 	return LookupMnem(mnem_encoding, encoding);
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
 
 struct espeak_ng_TEXT_DECODER_
 {
@@ -657,7 +661,9 @@ static const encoding_t string_decoders[] = {
 	{ string_decoder_getc_iso_10646_ucs_2, NULL },
 };
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 espeak_ng_TEXT_DECODER *
 create_text_decoder(void)
@@ -790,4 +796,6 @@ text_decoder_get_buffer(espeak_ng_TEXT_DECODER *decoder)
 	return decoder->current;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif

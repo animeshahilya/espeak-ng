@@ -77,7 +77,9 @@ android {
             cmake {
                 // USE_KLATT is upstream's default, but spelled out: the
                 // Klatt 1-6 voice variants ship in this app and need it.
-                arguments.addAll(["-DUSE_ASYNC:BOOL=OFF", "-DUSE_MBROLA:BOOL=OFF", "-DUSE_LIBSONIC:BOOL=ON", "-DUSE_KLATT:BOOL=ON"])
+                // (No USE_MBROLA flag: MBROLA support was removed entirely,
+                // there is no such CMake option anymore.)
+                arguments.addAll(["-DUSE_ASYNC:BOOL=OFF", "-DUSE_LIBSONIC:BOOL=ON", "-DUSE_KLATT:BOOL=ON"])
                 abiFilters.addAll(["arm64-v8a"])
                 targets.addAll(["ttsespeak", "espeak-data"])
             }

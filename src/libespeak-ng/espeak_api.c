@@ -44,7 +44,9 @@ static espeak_ERROR status_to_espeak_error(espeak_ng_STATUS status)
 	}
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility push(default)
+#endif
 
 ESPEAK_API int espeak_Initialize(espeak_AUDIO_OUTPUT output_type, int buf_length, const char *path, int options)
 {
@@ -55,7 +57,7 @@ ESPEAK_API int espeak_Initialize(espeak_AUDIO_OUTPUT output_type, int buf_length
 		espeak_ng_PrintStatusCodeMessage(result, stderr, context);
 		espeak_ng_ClearErrorContext(&context);
 		if ((options & espeakINITIALIZE_DONT_EXIT) == 0)
-			exit(1);
+			return -1; // EE_INTERNAL_ERROR
 	}
 
 	switch (output_type)
@@ -158,4 +160,6 @@ ESPEAK_API void espeak_CompileDictionary(const char *path, FILE *log, int flags)
 	}
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 4
 #pragma GCC visibility pop
+#endif
