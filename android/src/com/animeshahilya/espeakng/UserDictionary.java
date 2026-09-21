@@ -242,25 +242,18 @@ public class UserDictionary {
         }
 
         try {
-            // UNICODE_CHARACTER_CLASS: without it, \b (used below for wholeWord,
-            // and available to a user's own \b in a regex rule) only recognizes
-            // ASCII [a-zA-Z0-9_] as "word" characters - Devanagari, Gujarati, or
-            // any other non-Latin script text never triggers a boundary at all,
-            // so a wholeWord rule for a Hindi/Gujarati/etc. word silently never
-            // matched anywhere in the text. Confirmed with a standalone test:
-            // "\\b<shakti>\\b" against "... shakti ..." found nothing without
-            // this flag, matched correctly with it. This app is fundamentally
-            // about non-English text, so this is strictly more correct always,
-            // not just for wholeWord.
-            // No UNICODE_CHARACTER_CLASS here: Android's regex engine (ICU-backed,
-            // not OpenJDK's) throws IllegalArgumentException("UNICODE_CHARACTER_CLASS
-            // flag not supported") for it at runtime, unconditionally - it compiles
-            // fine on a desktop JVM (this bit us: javac/java-based verification
-            // during development couldn't have caught it), but crashes every single
-            // synthesis request on-device. \p{L}/\p{N} Unicode property escapes below
-            // need no such flag on either engine, so they're used directly instead of
-            // \b/\w, which is what UNICODE_CHARACTER_CLASS would otherwise have been
-            // for.
+            // Plain \b only recognizes ASCII [a-zA-Z0-9_] as "word" characters -
+            // Devanagari, Gujarati, or any other non-Latin script text never
+            // triggers a boundary at all, so a wholeWord rule for a Hindi/
+            // Gujarati/etc. word would silently never match anywhere in the
+            // text. java.util.regex.Pattern.UNICODE_CHARACTER_CLASS fixes that
+            // on a desktop JVM, but Android's regex engine (ICU-backed, not
+            // OpenJDK's) throws IllegalArgumentException("UNICODE_CHARACTER_CLASS
+            // flag not supported") for it unconditionally at runtime - it compiles
+            // fine, so javac/java-based verification during development couldn't
+            // have caught it, but it crashed every synthesis request on-device.
+            // \p{L}/\p{N} Unicode property escapes below need no such flag on
+            // either engine, so they're used directly instead of \b/\w.
             int flags = 0;
             if (!mCaseSensitive) {
                 flags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
