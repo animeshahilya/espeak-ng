@@ -867,6 +867,10 @@ public class TtsService extends TextToSpeechService {
         return TextPreprocessor.condenseRepeatedCharacters(text, mode);
     }
 
+    public static String condenseRepeatedEmojis(String text, String mode) {
+        return TextPreprocessor.condenseRepeatedEmojis(text, mode);
+    }
+
     public static String normalizeIndicDigits(String text) {
         return TextPreprocessor.normalizeIndicDigits(text);
     }

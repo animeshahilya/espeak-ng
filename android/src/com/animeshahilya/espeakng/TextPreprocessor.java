@@ -250,9 +250,11 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
+        boolean symbolsExpanded = false;
         if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
             String before = text;
             text = expandProgrammingSymbols(text);
+            symbolsExpanded = true;
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -289,13 +291,7 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        if (!isSsml && settings.isSimplifyUrlsEnabled()) {
-            String before = text;
-            text = simplifyUrls(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isCodeReadingModeEnabled()) {
+        if (!isSsml && !symbolsExpanded && settings.isCodeReadingModeEnabled()) {
             String before = text;
             text = expandProgrammingSymbols(text);
             offsetMap = chainOffset(offsetMap, before, text);
@@ -445,6 +441,98 @@ public final class TextPreprocessor {
                 || (codePoint >= 0x1F3FB && codePoint <= 0x1F3FF)
                 || (codePoint >= 0xE0020 && codePoint <= 0xE007F)
                 || (codePoint == 0x20E3);
+    }
+
+    public static int getEmojiClusterLength(String text, int start) {
+        if (text == null || start < 0 || start >= text.length()) {
+            return 0;
+        }
+        final int len = text.length();
+        final int firstCp = text.codePointAt(start);
+        if (isRegionalIndicator(firstCp)) {
+            int step = Character.charCount(firstCp);
+            if (start + step < len) {
+                int secondCp = text.codePointAt(start + step);
+                if (isRegionalIndicator(secondCp)) {
+                    return step + Character.charCount(secondCp);
+                }
+            }
+            return step;
+        }
+        if (!isEmojiCodePoint(firstCp)) {
+            return 0;
+        }
+
+        int i = start + Character.charCount(firstCp);
+        boolean prevWasZwj = false;
+        while (i < len) {
+            int cp = text.codePointAt(i);
+            if (isRegionalIndicator(cp)) {
+                break;
+            }
+            if (prevWasZwj) {
+                prevWasZwj = (cp == 0x200D);
+                i += Character.charCount(cp);
+                continue;
+            }
+            if (isEmojiJoiner(cp)) {
+                prevWasZwj = (cp == 0x200D);
+                i += Character.charCount(cp);
+                continue;
+            }
+            break;
+        }
+        return i - start;
+    }
+
+    public static String condenseRepeatedEmojis(String text, String mode) {
+        if (text == null || text.isEmpty() || VoiceSettings.REPEATED_CHARS_OFF.equals(mode)) {
+            return text;
+        }
+        final int len = text.length();
+        StringBuilder sb = new StringBuilder(len);
+        int i = 0;
+        while (i < len) {
+            int clusterLen = getEmojiClusterLength(text, i);
+            if (clusterLen == 0) {
+                sb.append(text.charAt(i));
+                i++;
+                continue;
+            }
+
+            String cluster = text.substring(i, i + clusterLen);
+            int count = 1;
+            int nextPos = i + clusterLen;
+
+            while (nextPos < len) {
+                int peek = nextPos;
+                while (peek < len && (text.charAt(peek) == ' ' || text.charAt(peek) == ',')) {
+                    peek++;
+                }
+                int nextClusterLen = getEmojiClusterLength(text, peek);
+                if (nextClusterLen > 0 && text.regionMatches(peek, cluster, 0, cluster.length())) {
+                    count++;
+                    nextPos = peek + nextClusterLen;
+                } else {
+                    break;
+                }
+            }
+
+            if (count >= 3) {
+                if (VoiceSettings.REPEATED_CHARS_COUNT.equals(mode)) {
+                    sb.append(cluster).append(", ").append(count).append(" times ");
+                } else if (VoiceSettings.REPEATED_CHARS_TRUNCATE.equals(mode)) {
+                    sb.append(cluster).append(' ').append(cluster).append(' ').append(cluster).append(' ');
+                } else {
+                    sb.append(text, i, nextPos);
+                }
+                i = nextPos;
+            } else {
+                sb.append(text, i, nextPos);
+                i = nextPos;
+            }
+        }
+        return sb.toString();
     }
 
     // ==========================================
@@ -617,12 +705,12 @@ public final class TextPreprocessor {
 
     private static String formatSimplifiedUrl(String url) {
         String s = url;
-        if (s.startsWith("https://") || s.startsWith("HTTPS://")) {
+        if (s.regionMatches(true, 0, "https://", 0, 8)) {
             s = s.substring(8);
-        } else if (s.startsWith("http://") || s.startsWith("HTTP://")) {
+        } else if (s.regionMatches(true, 0, "http://", 0, 7)) {
             s = s.substring(7);
         }
-        if (s.startsWith("www.") || s.startsWith("WWW.")) {
+        if (s.regionMatches(true, 0, "www.", 0, 4)) {
             s = s.substring(4);
         }
         int qIdx = s.indexOf('?');
@@ -640,17 +728,21 @@ public final class TextPreprocessor {
         if (text == null || text.isEmpty()) {
             return text;
         }
+        String processed = text;
+        if (containsPotentialEmoji(processed)) {
+            processed = condenseRepeatedEmojis(processed, mode);
+        }
         if (VoiceSettings.REPEATED_CHARS_TRUNCATE.equals(mode)) {
-            return PATTERN_REPEATED_CHARS_TRUNCATE.matcher(text).replaceAll("$1$1$1");
+            return PATTERN_REPEATED_CHARS_TRUNCATE.matcher(processed).replaceAll("$1$1$1");
         }
         if (!VoiceSettings.REPEATED_CHARS_COUNT.equals(mode)) {
-            return text;
+            return processed;
         }
-        Matcher matcher = PATTERN_REPEATED_CHARS.matcher(text);
+        Matcher matcher = PATTERN_REPEATED_CHARS.matcher(processed);
         if (!matcher.find()) {
-            return text;
+            return processed;
         }
-        StringBuffer sb = new StringBuffer(text.length());
+        StringBuffer sb = new StringBuffer(processed.length());
         do {
             String match = matcher.group(0);
             char c = match.charAt(0);

@@ -221,6 +221,15 @@ public class UserDictionary {
         return request.equals(mLanguage) || request.startsWith(mLanguage + "-");
     }
 
+    /**
+     * True when this rule has a valid, compiled pattern ready to match.
+     * False if the pattern was empty, exceeded limits, failed regex syntax,
+     * or triggered catastrophic backtracking guards.
+     */
+    public boolean isValid() {
+        return mCompiledPattern != null;
+    }
+
     private void compile() {
         if (mPattern.isEmpty()) {
             mCompiledPattern = null;

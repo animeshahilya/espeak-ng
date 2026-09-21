@@ -293,4 +293,43 @@ public class DictionaryDeviceTest {
         mgr.clearRules();
     }
 
+    @Test
+    public void testUserDictionaryIsValid() {
+        UserDictionary validPlain = new UserDictionary("cat", "dog", false, false, true);
+        assertThat(validPlain.isValid(), is(true));
+
+        UserDictionary validRegex = new UserDictionary("item-(\\d+)", "num-$1", false, true, false);
+        assertThat(validRegex.isValid(), is(true));
+
+        UserDictionary emptyPattern = new UserDictionary("", "something", false, false, true);
+        assertThat(emptyPattern.isValid(), is(false));
+
+        UserDictionary invalidRegex = new UserDictionary("[unclosed-bracket", "replace", false, true, false);
+        assertThat(invalidRegex.isValid(), is(false));
+
+        UserDictionary redos = new UserDictionary("(a+)+", "b", false, true, false);
+        assertThat(redos.isValid(), is(false));
+    }
+
+    @Test
+    public void testJsonImportInvalidatesCacheImmediately() {
+        UserDictionaryManager mgr = UserDictionaryManager.getInstance(mContext);
+        mgr.clearRules();
+
+        // Prime cache with initial empty state
+        String before = mgr.applyRules("hello alpha world", "en");
+        assertThat(before, is("hello alpha world"));
+
+        // Import JSON dictionary rule
+        String json = "[{\"pattern\":\"alpha\",\"replacement\":\"omega\",\"caseSensitive\":false,\"isRegex\":false,\"wholeWord\":true,\"language\":\"en\",\"category\":\"main\"}]";
+        ByteArrayInputStream bais = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+        int added = mgr.importFromStream(bais);
+        assertThat(added, is(1));
+
+        // Must take effect immediately because cache was invalidated
+        String after = mgr.applyRules("hello alpha world", "en");
+        assertThat(after, is("hello omega world"));
+
+        mgr.clearRules();
+    }
 }

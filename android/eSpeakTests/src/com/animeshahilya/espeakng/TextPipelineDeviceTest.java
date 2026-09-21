@@ -232,4 +232,55 @@ public class TextPipelineDeviceTest {
         assertThat(lettersUntouched, containsString("yessss"));
         assertThat(lettersUntouched, containsString("3 exclamations"));
     }
+
+    @Test
+    public void testCondenseRepeatedEmojisCountMode() {
+        // Simple repeating emoji run
+        String counted = TtsService.condenseRepeatedCharacters("So funny 😂😂😂😂😂!", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(counted, containsString("😂, 5 times"));
+        assertThat(counted, not(containsString("😂😂")));
+
+        // Whitespace-separated repeating emoji run
+        String spaced = TtsService.condenseRepeatedCharacters("Fire 🔥 🔥 🔥 🔥 🔥 here", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(spaced, containsString("🔥, 5 times"));
+
+        // Repeating emoji with skin tones
+        String toned = TtsService.condenseRepeatedCharacters("Nice 👍🏽👍🏽👍🏽👍🏽", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(toned, containsString("👍🏽, 4 times"));
+
+        // 3 emojis trigger repeat collapsing
+        String three = TtsService.condenseRepeatedCharacters("Three 😂😂😂 end", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(three, containsString("😂, 3 times"));
+
+        // 2 emojis are below the repeat threshold (threshold is 3)
+        String justTwo = TtsService.condenseRepeatedCharacters("Pair 😂 😂 ok", VoiceSettings.REPEATED_CHARS_COUNT);
+        assertThat(justTwo, containsString("Pair 😂 😂 ok"));
+    }
+
+    @Test
+    public void testCondenseRepeatedEmojisTruncateMode() {
+        // Truncate mode caps repeated emoji runs at 3 instances
+        String truncated = TtsService.condenseRepeatedCharacters("Love ❤️❤️❤️❤️❤️❤️ so much", VoiceSettings.REPEATED_CHARS_TRUNCATE);
+        assertThat(truncated, containsString("❤️ ❤️ ❤️ "));
+        assertThat(truncated, not(containsString("❤️❤️❤️❤️")));
+    }
+
+    @Test
+    public void testCondenseRepeatedEmojisOffMode() {
+        // Off mode preserves all repetitions untouched
+        String off = TtsService.condenseRepeatedCharacters("Laugh 😂😂😂😂😂", VoiceSettings.REPEATED_CHARS_OFF);
+        assertThat(off, is("Laugh 😂😂😂😂😂"));
+    }
+
+    @Test
+    public void testSimplifyUrlsMixedCaseProtocols() {
+        String simplified1 = TtsService.simplifyUrls("Visit Https://Example.com/page");
+        assertThat(simplified1, containsString("Example.com"));
+        assertThat(simplified1, not(containsString("Https://")));
+
+        String simplified2 = TtsService.simplifyUrls("Go to HTTP://WWW.GITHUB.COM/test");
+        assertThat(simplified2, containsString("GITHUB.COM"));
+        assertThat(simplified2, not(containsString("HTTP://")));
+        assertThat(simplified2, not(containsString("WWW.")));
+    }
 }

@@ -259,7 +259,7 @@ public class UserDictionaryManager {
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
                 UserDictionary rule = UserDictionary.fromJson(obj);
-                if (rule != null && !rule.getPattern().isEmpty()) {
+                if (rule != null && rule.isValid()) {
                     mRules.add(rule);
                 }
             }
@@ -354,7 +354,7 @@ public class UserDictionaryManager {
                     sb = null; // release raw text before allocating rules
                     for (int i = 0; i < arr.length(); i++) {
                         UserDictionary rule = UserDictionary.fromJson(arr.optJSONObject(i));
-                        if (rule != null && !rule.getPattern().isEmpty()) {
+                        if (rule != null && rule.isValid()) {
                             mRules.add(rule);
                             added++;
                             if (progress != null && (added % 1000) == 0) {
@@ -365,6 +365,7 @@ public class UserDictionaryManager {
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to parse JSON dictionary", e);
                 }
+                invalidateCache();
                 save();
                 return added;
             }
@@ -392,12 +393,15 @@ public class UserDictionaryManager {
                         }
 
                         if (!pattern.isEmpty()) {
-                            batch.add(new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord));
-                            if (batch.size() >= 2000) {
-                                mRules.addAll(batch);
-                                added += batch.size();
-                                batch.clear();
-                                if (progress != null) progress.onProgress(added);
+                            UserDictionary rule = new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord);
+                            if (rule.isValid()) {
+                                batch.add(rule);
+                                if (batch.size() >= 2000) {
+                                    mRules.addAll(batch);
+                                    added += batch.size();
+                                    batch.clear();
+                                    if (progress != null) progress.onProgress(added);
+                                }
                             }
                         }
                     } else if (parts.length == 1 && raw.contains("=")) {
@@ -406,12 +410,15 @@ public class UserDictionaryManager {
                         String pattern = raw.substring(0, eq).trim();
                         String replacement = raw.substring(eq + 1).trim();
                         if (!pattern.isEmpty()) {
-                            batch.add(new UserDictionary(pattern, replacement, false, false, true));
-                            if (batch.size() >= 2000) {
-                                mRules.addAll(batch);
-                                added += batch.size();
-                                batch.clear();
-                                if (progress != null) progress.onProgress(added);
+                            UserDictionary rule = new UserDictionary(pattern, replacement, false, false, true);
+                            if (rule.isValid()) {
+                                batch.add(rule);
+                                if (batch.size() >= 2000) {
+                                    mRules.addAll(batch);
+                                    added += batch.size();
+                                    batch.clear();
+                                    if (progress != null) progress.onProgress(added);
+                                }
                             }
                         }
                     }
@@ -461,7 +468,7 @@ public class UserDictionaryManager {
         invalidateCache();
         if (rules != null) {
             for (UserDictionary r : rules) {
-                if (r != null && !r.getPattern().isEmpty()) mRules.add(r);
+                if (r != null && r.isValid()) mRules.add(r);
             }
         }
         save();

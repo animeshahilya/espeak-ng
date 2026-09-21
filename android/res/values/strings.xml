@@ -228,6 +228,10 @@
   <string name="dict_import_export_message">Import massive word lists (.dic tab-delimited, word=replacement lists, or JSON) without crashing — runs in the background. Export shares the full list.</string>
   <string name="dict_import_file">Import file</string>
   <string name="dict_export_file">Export file</string>
+  <string name="dict_share">Share dictionary (Sharesheet)</string>
+  <string name="dict_share_subject">eSpeak NG User Dictionary</string>
+  <string name="dict_share_empty">No dictionary rules to share</string>
+  <string name="dict_share_preparing">Preparing dictionary to share…</string>
   <string name="dict_back">Back</string>
   <string name="dict_add_title">Add pronunciation rule</string>
   <string name="dict_edit_title">Edit pronunciation rule</string>
@@ -247,6 +251,11 @@
   <string name="dict_hint_language">For example: en or hi. Empty means every language.</string>
   <string name="dict_label_phonemes">Exact phonemes (optional, advanced)</string>
   <string name="dict_hint_phonemes">Space-separated espeak phoneme codes, e.g.: k V n \'i:v @ l. Overrides the spoken replacement above - used exactly as typed instead of being re-pronounced by the engine.</string>
+  <string name="dict_error_empty_pattern">Original word or pattern cannot be empty</string>
+  <string name="dict_error_invalid_regex">Invalid regular expression</string>
+  <string name="dict_error_invalid_phonemes">Phonemes cannot contain [[ or ]]</string>
+  <string name="dict_delete_confirm_title">Delete rule?</string>
+  <string name="dict_delete_confirm_message">Are you sure you want to delete the rule \"%1$s\"?</string>
   <string name="languages_search_hint">Search languages</string>
   <string name="languages_all_selected">All languages selected</string>
   <string name="languages_all_deselected">All languages deselected</string>

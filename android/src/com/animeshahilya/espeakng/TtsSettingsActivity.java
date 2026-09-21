@@ -88,6 +88,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import org.json.JSONArray;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -365,6 +368,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
         }, new BackgroundDone<Integer>() {
             @Override public void done(Integer count) {
+                if (isGone(activity)) return;
                 Toast.makeText(activity,
                         activity.getString(R.string.dict_import_done, count),
                         Toast.LENGTH_LONG).show();
@@ -388,6 +392,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
         }, new BackgroundDone<Boolean>() {
             @Override public void done(Boolean done) {
+                if (isGone(activity)) return;
                 Toast.makeText(activity,
                         done ? R.string.dict_export_done : R.string.import_voice_error,
                         Toast.LENGTH_SHORT).show();
@@ -411,6 +416,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
         }, new BackgroundDone<Boolean>() {
             @Override public void done(Boolean done) {
+                if (isGone(activity)) return;
                 Toast.makeText(activity,
                         done ? R.string.backup_done : R.string.import_voice_error,
                         Toast.LENGTH_SHORT).show();
@@ -434,13 +440,14 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
         }, new BackgroundDone<Integer>() {
             @Override public void done(Integer count) {
+                if (isGone(activity)) return;
                 final boolean done = count >= 0;
                 Toast.makeText(activity,
                         done ? activity.getString(R.string.restore_done, count)
                                 : activity.getString(R.string.import_voice_error),
                         Toast.LENGTH_LONG).show();
-                if (done && activity instanceof Activity) {
-                    ((Activity) activity).recreate();
+                if (done) {
+                    activity.recreate();
                 }
             }
         });
@@ -488,43 +495,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         // Locale.ROOT: Turkish-locale devices would map a
                         // capital I in ".ZIP" to a dotless ı and fail the check.
                         if (fileName.toLowerCase(java.util.Locale.ROOT).endsWith(".zip")) {
-                            try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(inputStream))) {
-                                ZipEntry entry;
-                                byte[] buffer = new byte[8192];
-                                final String canonicalTargetDir =
-                                        targetDir.getCanonicalPath() + File.separator;
-                                while ((entry = zis.getNextEntry()) != null) {
-                                    String entryName = entry.getName();
-                                    // Prevent zip path traversal (same guarantee as
-                                    // FileUtils.extractZip, kept inline so one bad
-                                    // entry is skipped instead of failing the
-                                    // whole import): reject "..", absolute
-                                    // paths, and anything resolving outside
-                                    // the voice data dir.
-                                    if (entryName.contains("..")) continue;
-                                    File outFile = new File(targetDir, entryName);
-                                    if (!outFile.getCanonicalPath().startsWith(canonicalTargetDir)) continue;
-                                    if (entry.isDirectory()) {
-                                        outFile.mkdirs();
-                                    } else {
-                                        File parent = outFile.getParentFile();
-                                        if (parent != null && !parent.exists()) {
-                                            parent.mkdirs();
-                                        }
-                                        try (OutputStream fos = new FileOutputStream(outFile)) {
-                                            int len;
-                                            while ((len = zis.read(buffer)) > 0) {
-                                                fos.write(buffer, 0, len);
-                                            }
-                                        }
-                                    }
-                                    zis.closeEntry();
-                                }
-                                success = true;
-                            }
+                            FileUtils.extractZip(inputStream, targetDir);
+                            success = true;
                         } else {
                             File outFile = new File(targetDir, fileName);
-                            // Same containment guarantee the zip path below
+                            // Same containment guarantee FileUtils.extractZip
                             // enforces per entry: a crafted display name (or
                             // one reported by a content provider) must not be
                             // able to write outside the voice data directory.
@@ -549,6 +524,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
         }, new BackgroundDone<Boolean>() {
             @Override public void done(Boolean finalSuccess) {
+                if (isGone(activity)) return;
                 if (finalSuccess) {
                     synchronized (TtsSettingsActivity.class) {
                         sLangInfo.clear();
@@ -1453,6 +1429,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         final String log = LogExporter.collect(context);
                         handler.post(new Runnable() {
                             @Override public void run() {
+                                if (isGone(context)) return;
                                 Intent share = new Intent(Intent.ACTION_SEND);
                                 share.setType("text/plain");
                                 share.putExtra(Intent.EXTRA_SUBJECT, "eSpeak NG activity log");
@@ -1671,10 +1648,25 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         } else if (which == 1) {
                             showEditRuleDialog(context, searchQuery, categoryFilter, realIdx);
                         } else {
-                            mgr.removeRule(realIdx);
-                            Toast.makeText(context, R.string.dict_rule_deleted,
-                                    Toast.LENGTH_SHORT).show();
-                            showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                            new AlertDialog.Builder(context)
+                                    .setTitle(R.string.dict_delete_confirm_title)
+                                    .setMessage(context.getString(R.string.dict_delete_confirm_message, r.getPattern()))
+                                    .setPositiveButton(R.string.dict_action_delete, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int w) {
+                                            mgr.removeRule(realIdx);
+                                            Toast.makeText(context, R.string.dict_rule_deleted,
+                                                    Toast.LENGTH_SHORT).show();
+                                            showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int w) {
+                                            showUserDictionaryDialog(context, searchQuery, categoryFilter);
+                                        }
+                                    })
+                                    .show();
                         }
                     }
                 })
@@ -1687,27 +1679,32 @@ public class TtsSettingsActivity extends AppCompatActivity {
     }
 
     private static void showDictionaryImportExportDialog(final Context context, final String searchQuery, final String categoryFilter) {
+        final CharSequence[] options = new CharSequence[] {
+                context.getString(R.string.dict_share),
+                context.getString(R.string.dict_export_file),
+                context.getString(R.string.dict_import_file)
+        };
         new AlertDialog.Builder(context)
                 .setTitle(R.string.dict_import_export_title)
-                .setMessage(R.string.dict_import_export_message)
-                .setPositiveButton(R.string.dict_import_file, new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface d, int w) {
-                        if (context instanceof Activity) {
-                            Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                            i.addCategory(Intent.CATEGORY_OPENABLE);
-                            i.setType("*/*");
-                            ((Activity) context).startActivityForResult(i, REQUEST_CODE_IMPORT_DICT);
-                        }
-                    }
-                })
-                .setNeutralButton(R.string.dict_export_file, new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface d, int w) {
-                        if (context instanceof Activity) {
-                            Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                            i.addCategory(Intent.CATEGORY_OPENABLE);
-                            i.setType("text/plain");
-                            i.putExtra(Intent.EXTRA_TITLE, "espeak_dictionary.dic");
-                            ((Activity) context).startActivityForResult(i, REQUEST_CODE_EXPORT_DICT);
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface d, int which) {
+                        if (which == 0) {
+                            shareDictionary(context);
+                        } else if (which == 1) {
+                            if (context instanceof Activity) {
+                                Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                                i.addCategory(Intent.CATEGORY_OPENABLE);
+                                i.setType("text/plain");
+                                i.putExtra(Intent.EXTRA_TITLE, "espeak_dictionary.dic");
+                                ((Activity) context).startActivityForResult(i, REQUEST_CODE_EXPORT_DICT);
+                            }
+                        } else if (which == 2) {
+                            if (context instanceof Activity) {
+                                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                                i.addCategory(Intent.CATEGORY_OPENABLE);
+                                i.setType("*/*");
+                                ((Activity) context).startActivityForResult(i, REQUEST_CODE_IMPORT_DICT);
+                            }
                         }
                     }
                 })
@@ -1717,6 +1714,65 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+    }
+
+    private static void shareDictionary(final Context context) {
+        final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
+        final List<UserDictionary> rules = mgr.getRules();
+        if (rules == null || rules.isEmpty()) {
+            Toast.makeText(context, R.string.dict_share_empty, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(context, R.string.dict_share_preparing, Toast.LENGTH_SHORT).show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File dir = new File(context.getCacheDir(), "shared_dictionaries");
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    File shareFile = new File(dir, "espeak_user_dictionary.json");
+                    try (FileOutputStream fos = new FileOutputStream(shareFile);
+                         OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+                        JSONArray arr = new JSONArray();
+                        for (UserDictionary r : rules) {
+                            arr.put(r.toJson());
+                        }
+                        osw.write(arr.toString(2));
+                        osw.flush();
+                        fos.getFD().sync();
+                    }
+
+                    final Uri contentUri = androidx.core.content.FileProvider.getUriForFile(
+                            context, context.getPackageName() + ".fileprovider", shareFile);
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isGone(context)) return;
+                            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                            shareIntent.setType("application/json");
+                            shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.dict_share_subject));
+                            shareIntent.putExtra(Intent.EXTRA_TEXT, "eSpeak NG User Dictionary (" + rules.size() + " rules)");
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            context.startActivity(Intent.createChooser(shareIntent,
+                                    context.getString(R.string.dict_share)));
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to share user dictionary", e);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isGone(context)) return;
+                            Toast.makeText(context, "Failed to share dictionary: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }, "dict-share").start();
     }
 
     /**
@@ -1858,60 +1914,91 @@ public class TtsSettingsActivity extends AppCompatActivity {
         final ScrollView scrollView = new ScrollView(context);
         scrollView.addView(layout);
 
-        new AlertDialog.Builder(context)
+        final AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(existing != null ? R.string.dict_edit_title : R.string.dict_add_title)
                 .setView(scrollView)
-                .setPositiveButton(R.string.dict_save, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String pattern = etPattern.getText().toString().trim();
-                        String replacement = etReplacement.getText().toString().trim();
-                        String language = etLanguage.getText().toString().trim();
-                        String phonemes = etPhonemes.getText().toString().trim();
-                        if (!pattern.isEmpty()) {
-                            UserDictionary rule = new UserDictionary(
-                                    pattern,
-                                    replacement,
-                                    cbCaseSensitive.isChecked(),
-                                    cbRegex.isChecked(),
-                                    cbWholeWord.isChecked(),
-                                    language,
-                                    chosenCategory[0],
-                                    phonemes
-                            );
-                            if (existing != null) {
-                                UserDictionaryManager.getInstance(context).setRule(editIndex, rule);
-                                Toast.makeText(context, R.string.dict_rule_saved,
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                UserDictionaryManager.getInstance(context).addRule(rule);
-                            }
-                            // Live audio preview: hear the new pronunciation immediately.
-                            previewText(context, replacement.isEmpty() ? pattern : replacement);
-                            showUserDictionaryDialog(context, searchQuery, categoryFilter);
-                        }
-                    }
-                })
-                .setNeutralButton(R.string.dict_preview, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String replacement = etReplacement.getText().toString().trim();
-                        String pattern = etPattern.getText().toString().trim();
-                        previewText(context, replacement.isEmpty() ? pattern : replacement);
-                        if (existing != null) {
-                            showEditRuleDialog(context, searchQuery, categoryFilter, editIndex);
-                        } else {
-                            showAddRuleDialog(context, searchQuery, categoryFilter);
-                        }
-                    }
-                })
+                .setPositiveButton(R.string.dict_save, null)
+                .setNeutralButton(R.string.dict_preview, null)
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface d, int which) {
                         showUserDictionaryDialog(context, searchQuery, categoryFilter);
                     }
                 })
-                .show();
+                .create();
+
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pattern = etPattern.getText().toString().trim();
+                String replacement = etReplacement.getText().toString().trim();
+                String language = etLanguage.getText().toString().trim();
+                String phonemes = etPhonemes.getText().toString().trim();
+
+                if (pattern.isEmpty()) {
+                    etPattern.setError(context.getString(R.string.dict_error_empty_pattern));
+                    etPattern.requestFocus();
+                    return;
+                }
+
+                if (cbRegex.isChecked()) {
+                    try {
+                        java.util.regex.Pattern.compile(pattern);
+                    } catch (java.util.regex.PatternSyntaxException e) {
+                        etPattern.setError(context.getString(R.string.dict_error_invalid_regex));
+                        etPattern.requestFocus();
+                        return;
+                    }
+                }
+
+                if (phonemes.contains("[[") || phonemes.contains("]]")) {
+                    etPhonemes.setError(context.getString(R.string.dict_error_invalid_phonemes));
+                    etPhonemes.requestFocus();
+                    return;
+                }
+
+                UserDictionary rule = new UserDictionary(
+                        pattern,
+                        replacement,
+                        cbCaseSensitive.isChecked(),
+                        cbRegex.isChecked(),
+                        cbWholeWord.isChecked(),
+                        language,
+                        chosenCategory[0],
+                        phonemes
+                );
+
+                if (!rule.isValid()) {
+                    etPattern.setError(context.getString(R.string.dict_error_invalid_regex));
+                    etPattern.requestFocus();
+                    return;
+                }
+
+                dialog.dismiss();
+
+                if (existing != null) {
+                    UserDictionaryManager.getInstance(context).setRule(editIndex, rule);
+                    Toast.makeText(context, R.string.dict_rule_saved, Toast.LENGTH_SHORT).show();
+                } else {
+                    UserDictionaryManager.getInstance(context).addRule(rule);
+                }
+
+                // Live audio preview: hear the new pronunciation immediately.
+                previewText(context, replacement.isEmpty() ? pattern : replacement);
+                showUserDictionaryDialog(context, searchQuery, categoryFilter);
+            }
+        });
+
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String replacement = etReplacement.getText().toString().trim();
+                String pattern = etPattern.getText().toString().trim();
+                previewText(context, replacement.isEmpty() ? pattern : replacement);
+            }
+        });
     }
 
     private static Preference createTestVoicePreference(final Context context) {
