@@ -148,7 +148,8 @@ C)        िं       i~
 .group ी
 ी	#X2i:
 C)        ी          i:
-C)        ी (_       ,i:      // EXPERIMENT: word-final - escape phoneme self-demotion
+C)        ी (_       ,i:      // final -i is always long in Hindi; secondary stress
+                             // needed - see .group इ above for why
 C)        ी (ँ       i~
 C)        ीँ (_      i~
 C)        ीं         i~
