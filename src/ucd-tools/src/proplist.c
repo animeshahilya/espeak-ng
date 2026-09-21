@@ -1743,6 +1743,7 @@ static ucd_property properties_Sm(codepoint_t c)
 		return UCD_PROPERTY_PATTERN_SYNTAX;
 	case 0x2600:
 		if (c == 0x266F)                return UCD_PROPERTY_PATTERN_SYNTAX | UCD_PROPERTY_EXTENDED_PICTOGRAPHIC;
+		return UCD_PROPERTY_PATTERN_SYNTAX;
 	case 0x2700:
 		return UCD_PROPERTY_PATTERN_SYNTAX;
 	case 0x2900:
