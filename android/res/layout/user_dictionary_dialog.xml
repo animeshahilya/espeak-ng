@@ -16,16 +16,34 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:labelFor="@+id/dict_search" />
 
-    <EditText
-        android:id="@+id/dict_search"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:layout_marginBottom="8dp"
-        android:hint="@string/dict_search_hint"
-        android:inputType="text"
-        android:imeOptions="actionDone"
-        android:importantForAutofill="no" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:id="@+id/dict_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="48dp"
+            android:hint="@string/dict_search_hint"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no" />
+
+        <ImageButton
+            android:id="@+id/dict_search_clear"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_clear"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/clear_search"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/dict_filter_label"
@@ -40,8 +58,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="6dp"
         android:contentDescription="@string/dict_filter_label" />
+
+    <!-- Live match count status -->
+    <TextView
+        android:id="@+id/dict_rules_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?android:attr/textColorSecondary"
+        android:accessibilityLiveRegion="polite" />
 
     <FrameLayout
         android:layout_width="match_parent"

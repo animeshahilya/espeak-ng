@@ -38,6 +38,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -587,6 +590,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     mScreenStack.push(current);
                 }
                 setPreferenceScreen((PreferenceScreen) preference);
+                updateTitle();
                 return true;
             }
             return super.onPreferenceTreeClick(preference);
@@ -603,7 +607,24 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 return false;
             }
             setPreferenceScreen(parent);
+            updateTitle();
             return true;
+        }
+
+        private void updateTitle() {
+            Activity activity = getActivity();
+            if (activity instanceof AppCompatActivity) {
+                androidx.appcompat.app.ActionBar actionBar =
+                        ((AppCompatActivity) activity).getSupportActionBar();
+                if (actionBar != null) {
+                    PreferenceScreen screen = getPreferenceScreen();
+                    if (mScreenStack.isEmpty() || screen == null || screen.getTitle() == null) {
+                        actionBar.setTitle(R.string.app_name);
+                    } else {
+                        actionBar.setTitle(screen.getTitle());
+                    }
+                }
+            }
         }
 
         @Override
@@ -1491,6 +1512,17 @@ public class TtsSettingsActivity extends AppCompatActivity {
         return et;
     }
 
+    private static class RuleViewHolder {
+        TextView index;
+        TextView pattern;
+        TextView arrow;
+        TextView replacement;
+        TextView chipCategory;
+        TextView chipMode;
+        TextView chipLang;
+        TextView chipPhoneme;
+    }
+
     private static void showUserDictionaryDialog(final Context context, final String searchQuery, final String categoryFilter) {
         final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
         final List<UserDictionary> rules = mgr.getRules();
@@ -1523,10 +1555,97 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
         spFilter.setSelection(sel);
 
+        final ImageButton btnClear = dialogView.findViewById(R.id.dict_search_clear);
+        final TextView tvCount = dialogView.findViewById(R.id.dict_rules_count);
+
+        if (btnClear != null) {
+            btnClear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    etSearch.setText("");
+                    etSearch.requestFocus();
+                }
+            });
+        }
+
         final List<Integer> viewToReal = new ArrayList<>();
+        final List<UserDictionary> displayedRules = new ArrayList<>();
         final List<String> labels = new ArrayList<>();
-        final android.widget.ArrayAdapter<String> listAdapter = new android.widget.ArrayAdapter<>(context,
-                android.R.layout.simple_list_item_1, labels);
+
+        final BaseAdapter listAdapter = new BaseAdapter() {
+            @Override
+            public int getCount() {
+                return displayedRules.size();
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return displayedRules.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                RuleViewHolder holder;
+                if (convertView == null) {
+                    convertView = LayoutInflater.from(context).inflate(R.layout.item_user_dictionary_rule, parent, false);
+                    holder = new RuleViewHolder();
+                    holder.index = convertView.findViewById(R.id.rule_index);
+                    holder.pattern = convertView.findViewById(R.id.rule_pattern);
+                    holder.arrow = convertView.findViewById(R.id.rule_arrow);
+                    holder.replacement = convertView.findViewById(R.id.rule_replacement);
+                    holder.chipCategory = convertView.findViewById(R.id.chip_category);
+                    holder.chipMode = convertView.findViewById(R.id.chip_mode);
+                    holder.chipLang = convertView.findViewById(R.id.chip_lang);
+                    holder.chipPhoneme = convertView.findViewById(R.id.chip_phoneme);
+                    convertView.setTag(holder);
+                } else {
+                    holder = (RuleViewHolder) convertView.getTag();
+                }
+
+                UserDictionary r = displayedRules.get(position);
+                holder.index.setText((position + 1) + ".");
+                holder.pattern.setText(r.getPattern());
+                holder.replacement.setText(r.getReplacement());
+                holder.chipCategory.setText(UserDictionary.categoryLabel(r.getCategory()));
+                holder.chipMode.setText(r.isRegex() ? "Regex" : (r.isWholeWord() ? "Word" : "Substring"));
+
+                if (!r.getLanguage().isEmpty()) {
+                    holder.chipLang.setVisibility(View.VISIBLE);
+                    holder.chipLang.setText(r.getLanguage());
+                } else {
+                    holder.chipLang.setVisibility(View.GONE);
+                }
+
+                if (r.hasPhonemeOverride()) {
+                    holder.chipPhoneme.setVisibility(View.VISIBLE);
+                    holder.chipPhoneme.setText("[[" + r.getPhonemes() + "]]");
+                } else {
+                    holder.chipPhoneme.setVisibility(View.GONE);
+                }
+
+                StringBuilder a11y = new StringBuilder();
+                a11y.append("Rule ").append(position + 1).append(": ")
+                        .append(r.getPattern()).append(" replaced with ")
+                        .append(r.getReplacement()).append(". Section: ")
+                        .append(UserDictionary.categoryLabel(r.getCategory()))
+                        .append(", ")
+                        .append(r.isRegex() ? "regex" : (r.isWholeWord() ? "whole word" : "substring"));
+                if (!r.getLanguage().isEmpty()) {
+                    a11y.append(", language ").append(r.getLanguage());
+                }
+                if (r.hasPhonemeOverride()) {
+                    a11y.append(", phonemes ").append(r.getPhonemes());
+                }
+                convertView.setContentDescription(a11y.toString());
+
+                return convertView;
+            }
+        };
         lvRules.setAdapter(listAdapter);
 
         final Runnable updateList = new Runnable() {
@@ -1537,6 +1656,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 String filter = (filterPos >= 0 && filterPos < filterValues.length) ? filterValues[filterPos] : "all";
 
                 viewToReal.clear();
+                displayedRules.clear();
                 labels.clear();
                 for (int i = 0; i < rules.size(); i++) {
                     UserDictionary r = rules.get(i);
@@ -1544,6 +1664,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     if (!q.isEmpty() && !r.getPattern().toLowerCase(java.util.Locale.ROOT).contains(q)
                             && !r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) continue;
                     viewToReal.add(i);
+                    displayedRules.add(r);
                     labels.add((viewToReal.size()) + ". [" + UserDictionary.categoryLabel(r.getCategory()) + "] \""
                             + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
                             + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""))
@@ -1551,7 +1672,14 @@ public class TtsSettingsActivity extends AppCompatActivity {
                             + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
                 }
                 listAdapter.notifyDataSetChanged();
-                if (labels.isEmpty()) {
+                if (tvCount != null) {
+                    if (viewToReal.size() == rules.size()) {
+                        tvCount.setText(context.getString(R.string.dict_rules_count_all, rules.size()));
+                    } else {
+                        tvCount.setText(context.getString(R.string.dict_rules_count, viewToReal.size(), rules.size()));
+                    }
+                }
+                if (displayedRules.isEmpty()) {
                     tvEmpty.setVisibility(View.VISIBLE);
                     tvEmpty.setText(rules.isEmpty()
                             ? context.getString(R.string.dict_empty)
@@ -1564,12 +1692,18 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
         if (searchQuery != null && !searchQuery.isEmpty()) {
             etSearch.setText(searchQuery);
+            if (btnClear != null) {
+                btnClear.setVisibility(View.VISIBLE);
+            }
         }
         updateList.run();
 
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (btnClear != null) {
+                    btnClear.setVisibility(s != null && s.length() > 0 ? View.VISIBLE : View.GONE);
+                }
                 updateList.run();
             }
             @Override public void afterTextChanged(Editable s) {}
@@ -2039,14 +2173,36 @@ public class TtsSettingsActivity extends AppCompatActivity {
             versionName = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            versionName = "";
+            versionName = "1.52.0";
         }
 
-        new AlertDialog.Builder(context)
-                .setTitle(R.string.about_title)
-                .setMessage(context.getString(R.string.about_body, versionName))
+        View aboutView = LayoutInflater.from(context).inflate(R.layout.dialog_about, null);
+        TextView tvVersion = aboutView.findViewById(R.id.about_version);
+        if (tvVersion != null) {
+            tvVersion.setText(context.getString(R.string.about_version_format, versionName));
+        }
+
+        final AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(aboutView)
                 .setPositiveButton(android.R.string.ok, null)
-                .show();
+                .create();
+
+        Button btnGithub = aboutView.findViewById(R.id.btn_about_github);
+        if (btnGithub != null) {
+            btnGithub.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://github.com/animeshahilya/espeak-ng"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    if (intent.resolveActivity(context.getPackageManager()) != null) {
+                        context.startActivity(intent);
+                    }
+                }
+            });
+        }
+
+        dialog.show();
     }
 
     private static void addPreferences(Context context, PreferenceGroup group,
@@ -2060,6 +2216,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         numberScreen.setKey("sub_number_reading");
         numberScreen.setTitle(R.string.screen_numbers_title);
         numberScreen.setSummary(R.string.screen_numbers_summary);
+        numberScreen.setIcon(R.drawable.ic_pin);
 
         PreferenceCategory secDigitsCat = new AccessiblePreferenceCategory(context);
         secDigitsCat.setTitle(R.string.category_security_digits);
@@ -2107,6 +2264,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         textProcessingScreen.setKey("sub_text_processing");
         textProcessingScreen.setTitle(R.string.screen_text_processing_title);
         textProcessingScreen.setSummary(R.string.screen_text_processing_summary);
+        textProcessingScreen.setIcon(R.drawable.ic_spellcheck);
 
         PreferenceCategory punctCat = new AccessiblePreferenceCategory(context);
         punctCat.setTitle(R.string.category_punctuation_symbols);
@@ -2139,6 +2297,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         locksScreen.setKey("sub_caller_locks");
         locksScreen.setTitle(R.string.screen_locks_title);
         locksScreen.setSummary(R.string.screen_locks_summary);
+        locksScreen.setIcon(R.drawable.ic_lock);
 
         PreferenceCategory lockCat = new AccessiblePreferenceCategory(context);
         lockCat.setTitle(R.string.category_locks);
@@ -2156,26 +2315,39 @@ public class TtsSettingsActivity extends AppCompatActivity {
         toolsScreen.setKey("sub_tools_backup");
         toolsScreen.setTitle(R.string.screen_tools_title);
         toolsScreen.setSummary(R.string.screen_tools_summary);
+        toolsScreen.setIcon(R.drawable.ic_build);
 
         if (!isWatch) {
             PreferenceCategory presetCat = new AccessiblePreferenceCategory(context);
             presetCat.setTitle(R.string.category_presets);
             toolsScreen.addPreference(presetCat);
-            presetCat.addPreference(createRecommendedDefaultsPreference(context));
+            Preference prefDefaults = createRecommendedDefaultsPreference(context);
+            prefDefaults.setIcon(R.drawable.ic_restart_alt);
+            presetCat.addPreference(prefDefaults);
 
             PreferenceCategory dataCat = new AccessiblePreferenceCategory(context);
             dataCat.setTitle(R.string.category_data_management);
             toolsScreen.addPreference(dataCat);
-            dataCat.addPreference(createBackupPreference(context));
-            dataCat.addPreference(createRestorePreference(context));
-            dataCat.addPreference(createLogExportPreference(context));
-            dataCat.addPreference(createImportVoicePreference(context));
+            Preference prefBackup = createBackupPreference(context);
+            prefBackup.setIcon(R.drawable.ic_backup);
+            dataCat.addPreference(prefBackup);
+            Preference prefRestore = createRestorePreference(context);
+            prefRestore.setIcon(R.drawable.ic_restore);
+            dataCat.addPreference(prefRestore);
+            Preference prefLogExport = createLogExportPreference(context);
+            prefLogExport.setIcon(R.drawable.ic_share);
+            dataCat.addPreference(prefLogExport);
+            Preference prefImportVoice = createImportVoicePreference(context);
+            prefImportVoice.setIcon(R.drawable.ic_unarchive);
+            dataCat.addPreference(prefImportVoice);
         }
 
         PreferenceCategory aboutCat = new AccessiblePreferenceCategory(context);
         aboutCat.setTitle(R.string.category_about);
         toolsScreen.addPreference(aboutCat);
-        aboutCat.addPreference(createAboutPreference(context));
+        Preference prefAbout = createAboutPreference(context);
+        prefAbout.setIcon(R.drawable.ic_info);
+        aboutCat.addPreference(prefAbout);
 
         // --- ROOT SCREEN PREFERENCES (Optimized for minimal scrolling) ---
 
@@ -2185,11 +2357,17 @@ public class TtsSettingsActivity extends AppCompatActivity {
         group.addPreference(langCategory);
 
         if (!isWatch) {
-            langCategory.addPreference(createSupportedLanguagesPreference(context, voices));
+            Preference prefLangs = createSupportedLanguagesPreference(context, voices);
+            prefLangs.setIcon(R.drawable.ic_language);
+            langCategory.addPreference(prefLangs);
         }
-        langCategory.addPreference(createVoiceVariantPreference(context, settings, R.string.espeak_variant));
+        Preference prefVariant = createVoiceVariantPreference(context, settings, R.string.espeak_variant);
+        prefVariant.setIcon(R.drawable.ic_record_voice_over);
+        langCategory.addPreference(prefVariant);
         if (!isWatch) {
-            langCategory.addPreference(createTestVoicePreference(context));
+            Preference prefTest = createTestVoicePreference(context);
+            prefTest.setIcon(R.drawable.ic_play_circle);
+            langCategory.addPreference(prefTest);
         }
 
         // 2. Voice parameters
@@ -2201,9 +2379,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
         if (!isWatch && ratePref instanceof SeekBarPreference) {
             ((SeekBarPreference) ratePref).setRateBoostToggleVisible(false);
         }
+        ratePref.setIcon(R.drawable.ic_speed);
         paramCategory.addPreference(ratePref);
         if (!isWatch) {
             final CheckBoxPreference rateBoostPref = (CheckBoxPreference) createRateBoostPreference(context);
+            rateBoostPref.setIcon(R.drawable.ic_flash_on);
             paramCategory.addPreference(rateBoostPref);
             final Preference rateBoostMultiplierPref = createRateBoostMultiplierPreference(context);
             rateBoostMultiplierPref.setEnabled(rateBoostPref.isChecked());
@@ -2216,7 +2396,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
             });
             paramCategory.addPreference(rateBoostMultiplierPref);
         }
-        paramCategory.addPreference(createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
+        Preference pitchPref = createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch);
+        pitchPref.setIcon(R.drawable.ic_tune);
+        paramCategory.addPreference(pitchPref);
         paramCategory.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
         final Preference intonationStylePref = createIntonationStylePreference(context);
         paramCategory.addPreference(intonationStylePref);
@@ -2233,10 +2415,13 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
         });
         paramCategory.addPreference(intonationGroupPref);
-        paramCategory.addPreference(createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
+        Preference volumePref = createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume);
+        volumePref.setIcon(R.drawable.ic_volume_up);
+        paramCategory.addPreference(volumePref);
         paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
         paramCategory.addPreference(createSeekBarPreference(context, engine.PauseScale, VoiceSettings.PREF_PAUSE_SCALE, R.string.setting_pause_scale));
         CheckBoxPreference audioOptPref = createAudioOptimizerPreference(context);
+        audioOptPref.setIcon(R.drawable.ic_equalizer);
         paramCategory.addPreference(audioOptPref);
         final Preference audioProfile = createAudioProfilePreference(context);
         audioProfile.setEnabled(audioOptPref.isChecked());
@@ -2256,7 +2441,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
         group.addPreference(advancedCategory);
 
         if (!isWatch) {
-            advancedCategory.addPreference(createUserDictionaryPreference(context));
+            Preference prefDict = createUserDictionaryPreference(context);
+            prefDict.setIcon(R.drawable.ic_dictionary);
+            advancedCategory.addPreference(prefDict);
         }
         advancedCategory.addPreference(numberScreen);
         advancedCategory.addPreference(textProcessingScreen);

@@ -350,4 +350,22 @@
   <!-- Customization: Roman numerals -->
   <string name="setting_roman_numerals">Recognize Roman numerals</string>
   <string name="setting_roman_numerals_summary">Read \"Chapter IV\" as \"Chapter 4\", \"Henry VIII\" as \"Henry 8\", etc.</string>
+
+  <!-- UI/UX Polish: Search and Dialog Enhancements -->
+  <string name="clear_search">Clear search query</string>
+  <string name="dict_rules_count">Showing %1$d of %2$d rules</string>
+  <string name="dict_rules_count_all">%1$d rules</string>
+  <string name="languages_count">Showing %1$d of %2$d languages</string>
+  <string name="languages_count_all">%1$d languages</string>
+  <string name="about_developer">Developed and built by Animesh Ahilya</string>
+  <string name="about_version_format">Version %1$s • 100%% Offline</string>
+  <string name="about_view_github">View on GitHub</string>
+  <string name="about_features_header">Core Highlights</string>
+  <string name="about_feature_offline">100% Offline with zero network permissions and Direct-Boot readiness</string>
+  <string name="about_feature_languages">159 bundled languages, regional dialects, and voice variants</string>
+  <string name="about_feature_indian">Enhanced Indian English (en-in) and Indic language phonetics</string>
+  <string name="about_feature_dsp">Formant DSP tone shaping and audio optimizer</string>
+  <string name="about_feature_dict">Custom user dictionary with regex, whole-word, and phoneme rules</string>
+  <string name="about_feature_locks">Caller-proof locks to prevent apps from overriding rate, pitch, or volume</string>
+  <string name="about_license">Licensed under GNU General Public License v3.0 or later</string>
 </resources>

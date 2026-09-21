@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Theme Colors (Dark Mode) -->
+    <color name="colorPrimary">#8AB4F8</color>
+    <color name="colorPrimaryDark">#121212</color>
+    <color name="colorAccent">#8AB4F8</color>
+
+    <!-- Surfaces & Dividers -->
+    <color name="colorSurface">#1E1E1E</color>
+    <color name="colorDivider">#3C4043</color>
+
+    <!-- Semantic Badge & Chip Colors (Dark Mode) -->
+    <color name="chip_bg_section">#28354A</color>
+    <color name="chip_text_section">#A8C7FA</color>
+
+    <color name="chip_bg_match">#1C3829</color>
+    <color name="chip_text_match">#81C995</color>
+
+    <color name="chip_bg_lang">#3D321D</color>
+    <color name="chip_text_lang">#FDD663</color>
+
+    <color name="chip_bg_phoneme">#342446</color>
+    <color name="chip_text_phoneme">#D7AEFB</color>
+</resources>
