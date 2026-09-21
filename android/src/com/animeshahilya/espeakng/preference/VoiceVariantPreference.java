@@ -362,7 +362,9 @@ public class VoiceVariantPreference extends DialogPreference {
             return;
         }
         VoiceVariant variant = variants[mCategoryIndex][mVariantIndex].getVariant();
-        prefs.edit().putString(VoiceSettings.PREF_VARIANT, variant.toString()).commit();
+        // apply(), not commit(): same dialog-OK main-thread callback as
+        // SpeakPunctuationPreference.persistPunctuation() - see its comment.
+        prefs.edit().putString(VoiceSettings.PREF_VARIANT, variant.toString()).apply();
     }
 
     private void onDataChanged() {

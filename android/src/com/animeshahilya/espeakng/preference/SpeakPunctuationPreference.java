@@ -116,6 +116,10 @@ public class SpeakPunctuationPreference extends DialogPreference {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(VoiceSettings.PREF_PUNCTUATION_CHARACTERS, characters);
         editor.putString(VoiceSettings.PREF_PUNCTUATION_LEVEL, Integer.toString(level));
-        editor.commit();
+        // apply(), not commit(): this runs on the main thread right as the dialog
+        // dismisses, and nothing here needs the synchronous disk-write confirmation
+        // commit() blocks for - apply()'s in-memory update is visible to every other
+        // getString() call immediately, only the disk flush is deferred.
+        editor.apply();
     }
 }
