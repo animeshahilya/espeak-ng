@@ -26,10 +26,24 @@ import java.util.regex.PatternSyntaxException;
  * Represents a single pronunciation replacement rule (matching NVDA speech dictionary semantics).
  */
 public class UserDictionary {
-    /** Dictionary buckets ("My Words"): Main, Root, Abbreviation. */
+    /** Dictionary buckets ("My Words"): Main, Root, Abbreviation, Character. */
     public static final String CATEGORY_MAIN = "main";
     public static final String CATEGORY_ROOT = "root";
     public static final String CATEGORY_ABBREV = "abbrev";
+    /**
+     * Matched only when the entire spoken utterance is exactly this rule's
+     * pattern (spelling mode / character-by-character navigation, the same
+     * signal TtsService.isSingleCharacterUtterance already detects) - never
+     * as a substring or whole word inside running text. See
+     * UserDictionaryManager#applyCharacterRule. Unlike the other three
+     * categories, this one changes matching semantics, not just grouping:
+     * a Main-category rule for "s" would corrupt every word containing an
+     * s, but a Character-category rule for "s" only fires when "s" is
+     * being read on its own - the exact gap the other categories can't
+     * safely fill for single-character overrides (e.g. a screen reader
+     * mispronouncing an individual letter or symbol).
+     */
+    public static final String CATEGORY_CHARACTER = "character";
 
     private String mPattern;
     private String mReplacement;
@@ -38,6 +52,7 @@ public class UserDictionary {
     private boolean mWholeWord;
     private String mLanguage;
     private String mCategory;
+    private String mPhonemes;
 
     private Pattern mCompiledPattern = null;
     private String mPreparedReplacement = "";
@@ -57,6 +72,20 @@ public class UserDictionary {
     }
 
     public UserDictionary(String pattern, String replacement, boolean caseSensitive, boolean isRegex, boolean wholeWord, String language, String category) {
+        this(pattern, replacement, caseSensitive, isRegex, wholeWord, language, category, "");
+    }
+
+    /**
+     * @param phonemes Optional espeak Kirshenbaum phoneme string (e.g.
+     *                 {@code "k V n 'i:v @ l"}) that, when non-empty, is
+     *                 spoken instead of respelling {@code replacement}
+     *                 through the normal text pipeline - bypasses espeak's
+     *                 own grapheme-to-phoneme conversion entirely for this
+     *                 match. "" (the default, and how rules saved before
+     *                 this field existed are read back) means no override:
+     *                 fall back to plain {@code replacement} text.
+     */
+    public UserDictionary(String pattern, String replacement, boolean caseSensitive, boolean isRegex, boolean wholeWord, String language, String category, String phonemes) {
         mPattern = pattern != null ? pattern : "";
         mReplacement = replacement != null ? replacement : "";
         mCaseSensitive = caseSensitive;
@@ -64,6 +93,7 @@ public class UserDictionary {
         mWholeWord = wholeWord;
         mLanguage = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
         mCategory = normalizeCategory(category);
+        mPhonemes = phonemes != null ? phonemes.trim() : "";
         compile();
     }
 
@@ -131,17 +161,45 @@ public class UserDictionary {
         if (CATEGORY_ROOT.equals(c)) return CATEGORY_ROOT;
         // "abbreviation" is accepted as a legacy alias of "abbrev".
         if (CATEGORY_ABBREV.equals(c) || "abbreviation".equals(c)) return CATEGORY_ABBREV;
+        if (CATEGORY_CHARACTER.equals(c)) return CATEGORY_CHARACTER;
         return CATEGORY_MAIN;
     }
 
     public static String categoryLabel(String category) {
         if (CATEGORY_ROOT.equals(category)) return "Root";
         if (CATEGORY_ABBREV.equals(category)) return "Abbrev";
+        if (CATEGORY_CHARACTER.equals(category)) return "Character";
         return "Main";
     }
 
     public void setLanguage(String language) {
         mLanguage = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
+    }
+
+    /** "" means this rule has no phoneme override and speaks {@link #getReplacement()} normally. */
+    public String getPhonemes() {
+        return mPhonemes;
+    }
+
+    public void setPhonemes(String phonemes) {
+        mPhonemes = phonemes != null ? phonemes.trim() : "";
+        compile();
+    }
+
+    public boolean hasPhonemeOverride() {
+        return isPhonemeStringUsable(mPhonemes);
+    }
+
+    /**
+     * "]]" inside the phoneme string would end phoneme mode early and leak
+     * the rest of it into ordinary text parsing - reject rather than silently
+     * truncate or mis-speak. "[[" is harmless (a literal second phoneme-mode
+     * entry nested inside one that's already open is a no-op to espeak) but
+     * excluded too, since a user pasting one clearly didn't mean to include it.
+     */
+    private static boolean isPhonemeStringUsable(String phonemes) {
+        return phonemes != null && !phonemes.isEmpty()
+                && !phonemes.contains("]]") && !phonemes.contains("[[");
     }
 
     /**
@@ -196,9 +254,16 @@ public class UserDictionary {
         } catch (PatternSyntaxException e) {
             mCompiledPattern = null;
         }
-        mPreparedReplacement = mIsRegex
-                ? mReplacement
-                : java.util.regex.Matcher.quoteReplacement(mReplacement != null ? mReplacement : "");
+        if (isPhonemeStringUsable(mPhonemes)) {
+            // Always literal/quoted, even for a regex pattern: unlike plain-text
+            // replacement, a phoneme override is one fixed pronunciation for
+            // whatever matched, not a template with regex backreferences.
+            mPreparedReplacement = "[[" + java.util.regex.Matcher.quoteReplacement(mPhonemes) + "]]";
+        } else {
+            mPreparedReplacement = mIsRegex
+                    ? mReplacement
+                    : java.util.regex.Matcher.quoteReplacement(mReplacement != null ? mReplacement : "");
+        }
     }
 
     public String apply(String text) {
@@ -303,6 +368,11 @@ public class UserDictionary {
         obj.put("wholeWord", mWholeWord);
         obj.put("language", mLanguage);
         obj.put("category", mCategory);
+        // Omitted entirely rather than written as "" when unused, so a dictionary
+        // exported before this field existed round-trips byte-for-byte identical.
+        if (!mPhonemes.isEmpty()) {
+            obj.put("phonemes", mPhonemes);
+        }
         return obj;
     }
 
@@ -315,6 +385,7 @@ public class UserDictionary {
         boolean wholeWord = obj.optBoolean("wholeWord", true);
         String language = obj.optString("language", "");
         String category = obj.optString("category", CATEGORY_MAIN);
-        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord, language, category);
+        String phonemes = obj.optString("phonemes", "");
+        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord, language, category, phonemes);
     }
 }

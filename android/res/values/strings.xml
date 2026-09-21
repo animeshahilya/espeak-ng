@@ -223,6 +223,7 @@
   <string name="dict_filter_main">Main only</string>
   <string name="dict_filter_root">Root only</string>
   <string name="dict_filter_abbrev">Abbreviations only</string>
+  <string name="dict_filter_character">Character only</string>
   <string name="dict_apply_filter">Apply filter</string>
   <string name="dict_filter_applied">Showing %1$d matching rules.</string>
   <string name="dict_empty">No custom rules configured. Use Add rule for single entries or Import for massive word lists.</string>
@@ -256,6 +257,8 @@
   <string name="dict_regex_summary">Treat the pattern as a regular expression</string>
   <string name="dict_label_language">Language code (optional)</string>
   <string name="dict_hint_language">For example: en or hi. Empty means every language.</string>
+  <string name="dict_label_phonemes">Exact phonemes (optional, advanced)</string>
+  <string name="dict_hint_phonemes">Space-separated espeak phoneme codes, e.g.: k V n \'i:v @ l. Overrides the spoken replacement above - used exactly as typed instead of being re-pronounced by the engine.</string>
   <string name="languages_search_hint">Search languages</string>
   <string name="languages_all_selected">All languages selected</string>
   <string name="languages_all_deselected">All languages deselected</string>

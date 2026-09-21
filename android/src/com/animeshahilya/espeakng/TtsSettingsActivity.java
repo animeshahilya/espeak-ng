@@ -1524,10 +1524,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 context.getString(R.string.dict_filter_all),
                 context.getString(R.string.dict_filter_main),
                 context.getString(R.string.dict_filter_root),
-                context.getString(R.string.dict_filter_abbrev) };
+                context.getString(R.string.dict_filter_abbrev),
+                context.getString(R.string.dict_filter_character) };
         final String[] filterValues = new String[] {
                 "all", UserDictionary.CATEGORY_MAIN,
-                UserDictionary.CATEGORY_ROOT, UserDictionary.CATEGORY_ABBREV };
+                UserDictionary.CATEGORY_ROOT, UserDictionary.CATEGORY_ABBREV,
+                UserDictionary.CATEGORY_CHARACTER };
 
         android.widget.ArrayAdapter<String> filterAdapter = new android.widget.ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_item, filterNames);
@@ -1770,6 +1772,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 context.getString(R.string.dict_hint_replacement),
                 existing != null ? existing.getReplacement() : null,
                 android.text.InputType.TYPE_CLASS_TEXT);
+        final EditText etPhonemes = labeledInput(context, layout,
+                context.getString(R.string.dict_label_phonemes),
+                context.getString(R.string.dict_hint_phonemes),
+                existing != null ? existing.getPhonemes() : null,
+                android.text.InputType.TYPE_CLASS_TEXT);
 
         final TextView catLabel = new TextView(context);
         catLabel.setText(R.string.dict_label_category);
@@ -1780,7 +1787,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item,
                 new String[]{context.getString(R.string.dict_filter_main),
                         context.getString(R.string.dict_filter_root),
-                        context.getString(R.string.dict_filter_abbrev)});
+                        context.getString(R.string.dict_filter_abbrev),
+                        context.getString(R.string.dict_filter_character)});
         catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCategory.setAdapter(catAdapter);
         spCategory.setContentDescription(context.getString(R.string.dict_label_category));
@@ -1789,7 +1797,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
         catLabel.setLabelFor(spCategory.getId());
         String preCat = existing != null ? existing.getCategory() : categoryFilter;
         spCategory.setSelection(UserDictionary.CATEGORY_ROOT.equals(preCat) ? 1
-                : UserDictionary.CATEGORY_ABBREV.equals(preCat) ? 2 : 0);
+                : UserDictionary.CATEGORY_ABBREV.equals(preCat) ? 2
+                : UserDictionary.CATEGORY_CHARACTER.equals(preCat) ? 3 : 0);
         LinearLayout.LayoutParams spLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         spLp.bottomMargin = (int) (8 * density + 0.5f);
@@ -1828,11 +1837,13 @@ public class TtsSettingsActivity extends AppCompatActivity {
         final String[] chosenCategory = new String[]{
                 UserDictionary.CATEGORY_ROOT.equals(preCat) ? UserDictionary.CATEGORY_ROOT
                         : UserDictionary.CATEGORY_ABBREV.equals(preCat) ? UserDictionary.CATEGORY_ABBREV
+                        : UserDictionary.CATEGORY_CHARACTER.equals(preCat) ? UserDictionary.CATEGORY_CHARACTER
                         : UserDictionary.CATEGORY_MAIN};
         spCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
                 chosenCategory[0] = pos == 1 ? UserDictionary.CATEGORY_ROOT
-                        : pos == 2 ? UserDictionary.CATEGORY_ABBREV : UserDictionary.CATEGORY_MAIN;
+                        : pos == 2 ? UserDictionary.CATEGORY_ABBREV
+                        : pos == 3 ? UserDictionary.CATEGORY_CHARACTER : UserDictionary.CATEGORY_MAIN;
                 if (pos == 1) cbWholeWord.setChecked(false);
             }
             @Override public void onNothingSelected(android.widget.AdapterView<?> p) { }
@@ -1850,6 +1861,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         String pattern = etPattern.getText().toString().trim();
                         String replacement = etReplacement.getText().toString().trim();
                         String language = etLanguage.getText().toString().trim();
+                        String phonemes = etPhonemes.getText().toString().trim();
                         if (!pattern.isEmpty()) {
                             UserDictionary rule = new UserDictionary(
                                     pattern,
@@ -1858,7 +1870,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
                                     cbRegex.isChecked(),
                                     cbWholeWord.isChecked(),
                                     language,
-                                    chosenCategory[0]
+                                    chosenCategory[0],
+                                    phonemes
                             );
                             if (existing != null) {
                                 UserDictionaryManager.getInstance(context).setRule(editIndex, rule);

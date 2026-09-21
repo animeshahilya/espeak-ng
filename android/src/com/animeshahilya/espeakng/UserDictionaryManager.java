@@ -112,6 +112,12 @@ public class UserDictionaryManager {
 
     /**
      * Lock-free rule application for high-frequency TTS synthesis pipeline.
+     * Skips CATEGORY_CHARACTER rules - those are exact-whole-utterance-only
+     * (see {@link #applyCharacterRule}) and would otherwise fire as an
+     * ordinary substring/whole-word match here too, silently corrupting any
+     * running text that happens to contain the character (e.g. a
+     * Character-category rule fixing how "s" is spoken in isolation would
+     * also rewrite every "s" inside every other word).
      *
      * @param language the language being synthesized (e.g. "en-in", "hi");
      *                 only rules unscoped or scoped to this language (or its
@@ -123,11 +129,52 @@ public class UserDictionaryManager {
         }
         String result = text;
         for (UserDictionary rule : mRules) {
-            if (rule.appliesToLanguage(language)) {
+            if (!UserDictionary.CATEGORY_CHARACTER.equals(rule.getCategory()) && rule.appliesToLanguage(language)) {
                 result = rule.apply(result);
             }
         }
         return result;
+    }
+
+    /**
+     * Looks up a CATEGORY_CHARACTER rule whose pattern is exactly {@code text}
+     * (not a substring or word-boundary match) for TtsService's single-
+     * character-utterance path (spelling mode / TalkBack character-by-
+     * character navigation - see isSingleCharacterUtterance). Returns the
+     * rule's spoken form (respecting a phoneme override, same as any other
+     * rule) via {@link UserDictionary#apply}, or {@code text} unchanged if no
+     * Character rule matches. Matching is always literal string equality
+     * here regardless of the rule's own isRegex() flag - a "match the exact
+     * character being read" rule has no use for regex syntax, so a Character
+     * rule with isRegex() set simply won't match via this exact-equality
+     * check (its pattern string has to equal the character literally).
+     */
+    public String applyCharacterRule(String text, String language) {
+        if (text == null || text.isEmpty() || mRules.isEmpty()) {
+            return text;
+        }
+        // Trimmed, matching TtsService.isSingleCharacterUtterance's own check
+        // (text.trim().length() == 1) and expandNatoSpelling/
+        // expandDevanagariDiacritic's existing behavior for this same
+        // single-character path - surrounding whitespace is incidental to
+        // the character being spoken, not part of what a rule should match.
+        String trimmed = text.trim();
+        if (trimmed.isEmpty()) {
+            return text;
+        }
+        for (UserDictionary rule : mRules) {
+            if (UserDictionary.CATEGORY_CHARACTER.equals(rule.getCategory())
+                    && rule.appliesToLanguage(language)
+                    && patternEqualsText(rule, trimmed)) {
+                return rule.apply(trimmed);
+            }
+        }
+        return text;
+    }
+
+    private static boolean patternEqualsText(UserDictionary rule, String text) {
+        String pattern = rule.getPattern();
+        return rule.isCaseSensitive() ? pattern.equals(text) : pattern.equalsIgnoreCase(text);
     }
 
     public synchronized void load() {

@@ -556,10 +556,20 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
   int current_generation = atomic_fetch_add(&stop_generation, 1) + 1;
   atomic_store(&current_synthesis_generation, current_generation);
   const char *synth_input = c_text ? c_text : "";
+  /* espeakPHONEMES is safe to set unconditionally: it only makes espeak
+   * recognize the [[ ]] Kirshenbaum-phoneme escape when that literal
+   * sequence appears in the text, which is exactly why the Java layer
+   * (TtsService.sanitizeText's "NVDA eSpeak driver fix") already splits any
+   * incidental "[[" in ordinary text into "[ [" before this ever runs -
+   * that escaping only has a reason to exist if phoneme mode is on, so the
+   * two are a matched pair. Needed so UserDictionary phoneme-override
+   * entries (built as "[[ ... ]]") actually take effect instead of being
+   * read as literal bracket characters. */
   const espeak_ERROR result = espeak_Synth(synth_input, (size_t)c_length, 0,  // position
                POS_CHARACTER, 0, // end position (0 means no end position)
-               isSsml ? espeakCHARS_UTF8 | espeakSSML // UTF-8 encoded SSML
-                      : espeakCHARS_UTF8,             // UTF-8 encoded text
+               (isSsml ? espeakCHARS_UTF8 | espeakSSML // UTF-8 encoded SSML
+                       : espeakCHARS_UTF8)             // UTF-8 encoded text
+                   | espeakPHONEMES,
                &unique_identifier, object);
   espeak_Synchronize();
 

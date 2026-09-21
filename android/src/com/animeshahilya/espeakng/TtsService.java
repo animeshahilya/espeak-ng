@@ -715,15 +715,28 @@ public class TtsService extends TextToSpeechService {
         final boolean isSingleCharacterUtterance = !isSsml && (text.length() == 1 || text.trim().length() == 1);
 
         if (isSingleCharacterUtterance) {
-            if (settings.isNatoSpellingEnabled()) {
+            boolean characterRuleApplied = false;
+            if (!isSsml && settings.isUserDictionaryEnabled()) {
                 String before = text;
-                text = expandNatoSpelling(text);
+                text = UserDictionaryManager.getInstance(storageContext)
+                        .applyCharacterRule(text, languageTag(voice));
+                characterRuleApplied = !text.equals(before);
                 offsetMap = chainOffset(offsetMap, before, text);
             }
-            if (settings.isSpokenDiacriticsEnabled()) {
-                String before = text;
-                text = expandDevanagariDiacritic(text);
-                offsetMap = chainOffset(offsetMap, before, text);
+            // A user's explicit per-character override wins outright: skip the
+            // built-in NATO/diacritic expansions below rather than layering them
+            // on top of (and likely garbling) what the user asked to hear instead.
+            if (!characterRuleApplied) {
+                if (settings.isNatoSpellingEnabled()) {
+                    String before = text;
+                    text = expandNatoSpelling(text);
+                    offsetMap = chainOffset(offsetMap, before, text);
+                }
+                if (settings.isSpokenDiacriticsEnabled()) {
+                    String before = text;
+                    text = expandDevanagariDiacritic(text);
+                    offsetMap = chainOffset(offsetMap, before, text);
+                }
             }
         }
 
