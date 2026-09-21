@@ -156,6 +156,12 @@ android {
         noCompress += "espeakdata.zip"
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     lint {
         abortOnError = false
         // AGP's lint tool crashes parsing JavaDoc in the upstream-copied

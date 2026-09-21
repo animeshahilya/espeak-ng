@@ -44,19 +44,26 @@ public class UserDictionaryManager {
     private static final String FILE_NAME = "user_dictionary.json";
 
     private static UserDictionaryManager sInstance;
-    private final Context mContext;
+    private final File mFilesDir;
     private final List<UserDictionary> mRules = new CopyOnWriteArrayList<>();
+    private final java.util.concurrent.ConcurrentHashMap<String, List<UserDictionary>> mLanguageCache =
+            new java.util.concurrent.ConcurrentHashMap<>();
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
+    private void invalidateCache() {
+        mLanguageCache.clear();
+    }
+
     private UserDictionaryManager(Context context) {
-        mContext = EspeakApp.requireStorageContext(context.getApplicationContext());
+        Context storage = EspeakApp.requireStorageContext(context.getApplicationContext());
+        mFilesDir = storage.getFilesDir();
         migrateLegacyIfPresent(context.getApplicationContext());
         load();
     }
 
     private void migrateLegacyIfPresent(Context context) {
         try {
-            File deFile = new File(mContext.getFilesDir(), FILE_NAME);
+            File deFile = new File(mFilesDir, FILE_NAME);
             if (!deFile.exists()) {
                 Context plainContext = context.getApplicationContext();
                 File ceFile = new File(plainContext.getFilesDir(), FILE_NAME);
@@ -87,6 +94,7 @@ public class UserDictionaryManager {
     public void addRule(UserDictionary rule) {
         if (rule != null) {
             mRules.add(rule);
+            invalidateCache();
             save();
         }
     }
@@ -94,6 +102,7 @@ public class UserDictionaryManager {
     public void setRule(int index, UserDictionary rule) {
         if (index >= 0 && index < mRules.size() && rule != null) {
             mRules.set(index, rule);
+            invalidateCache();
             save();
         }
     }
@@ -101,12 +110,14 @@ public class UserDictionaryManager {
     public void removeRule(int index) {
         if (index >= 0 && index < mRules.size()) {
             mRules.remove(index);
+            invalidateCache();
             save();
         }
     }
 
     public void clearRules() {
         mRules.clear();
+        invalidateCache();
         save();
     }
 
@@ -118,6 +129,7 @@ public class UserDictionaryManager {
      * running text that happens to contain the character (e.g. a
      * Character-category rule fixing how "s" is spoken in isolation would
      * also rewrite every "s" inside every other word).
+     * Caches partitioned rules per language tag to avoid full-list scanning on every call.
      *
      * @param language the language being synthesized (e.g. "en-in", "hi");
      *                 only rules unscoped or scoped to this language (or its
@@ -127,11 +139,24 @@ public class UserDictionaryManager {
         if (text == null || text.isEmpty() || mRules.isEmpty()) {
             return text;
         }
-        String result = text;
-        for (UserDictionary rule : mRules) {
-            if (!UserDictionary.CATEGORY_CHARACTER.equals(rule.getCategory()) && rule.appliesToLanguage(language)) {
-                result = rule.apply(result);
+        final String langKey = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
+        List<UserDictionary> matching = mLanguageCache.get(langKey);
+        if (matching == null) {
+            final List<UserDictionary> filtered = new ArrayList<>();
+            for (UserDictionary rule : mRules) {
+                if (!UserDictionary.CATEGORY_CHARACTER.equals(rule.getCategory()) && rule.appliesToLanguage(langKey)) {
+                    filtered.add(rule);
+                }
             }
+            matching = filtered;
+            mLanguageCache.put(langKey, matching);
+        }
+        if (matching.isEmpty()) {
+            return text;
+        }
+        String result = text;
+        for (UserDictionary rule : matching) {
+            result = rule.apply(result);
         }
         return result;
     }
@@ -209,7 +234,8 @@ public class UserDictionaryManager {
 
     public synchronized void load() {
         mRules.clear();
-        File file = new File(mContext.getFilesDir(), FILE_NAME);
+        invalidateCache();
+        File file = new File(mFilesDir, FILE_NAME);
         if (!file.exists()) {
             // True first run for this install (save() always writes the file,
             // even an empty rule list, so this is never true again after the
@@ -257,8 +283,8 @@ public class UserDictionaryManager {
     }
 
     private synchronized void saveAtomic(List<UserDictionary> rules) {
-        File file = new File(mContext.getFilesDir(), FILE_NAME);
-        File tempFile = new File(mContext.getFilesDir(), FILE_NAME + ".tmp");
+        File file = new File(mFilesDir, FILE_NAME);
+        File tempFile = new File(mFilesDir, FILE_NAME + ".tmp");
         boolean writeSucceeded = false;
         try (FileOutputStream fos = new FileOutputStream(tempFile);
              Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
@@ -395,6 +421,7 @@ public class UserDictionaryManager {
                 mRules.addAll(batch);
                 added += batch.size();
             }
+            invalidateCache();
             save();
         } catch (Exception e) {
             Log.e(TAG, "Failed to import dictionary", e);
@@ -431,6 +458,7 @@ public class UserDictionaryManager {
     /** Bulk replace, used by restore-from-backup. */
     public synchronized void replaceAll(List<UserDictionary> rules) {
         mRules.clear();
+        invalidateCache();
         if (rules != null) {
             for (UserDictionary r : rules) {
                 if (r != null && !r.getPattern().isEmpty()) mRules.add(r);

@@ -103,12 +103,12 @@ import java.util.zip.ZipInputStream;
 
 public class TtsSettingsActivity extends AppCompatActivity {
 
-    private static Context storageContext;
     private static final String TAG = TtsSettingsActivity.class.getSimpleName();
 
     /** Single accessor for the device-protected default prefs (see EspeakApp). */
     private static SharedPreferences getPrefs() {
-        return PreferenceManager.getDefaultSharedPreferences(storageContext);
+        Context storage = EspeakApp.getStorageContext();
+        return PreferenceManager.getDefaultSharedPreferences(storage != null ? storage : EspeakApp.requireStorageContext(null));
     }
 
     private static final java.util.HashMap<String, LangInfo> sLangInfo = new java.util.HashMap<String, LangInfo>();
@@ -120,13 +120,14 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
         // Migrate old eyes-free settings to the new settings:
 
-        storageContext = EspeakApp.requireStorageContext(getApplicationContext());
-        CheckVoiceData.ensureVoiceData(storageContext);
+        final Context storage = EspeakApp.requireStorageContext(getApplicationContext());
+        CheckVoiceData.ensureVoiceData(storage);
         final SharedPreferences prefs = getPrefs();
-        final SharedPreferences.Editor editor = prefs.edit();
+        SharedPreferences.Editor editor = null;
 
         String pitch = prefs.getString(VoiceSettings.PREF_PITCH, null);
         if (pitch == null) {
+            if (editor == null) editor = prefs.edit();
             // Try the old eyes-free setting:
             if (prefs.contains(VoiceSettings.PREF_DEFAULT_PITCH)) {
                 pitch = prefs.getString(VoiceSettings.PREF_DEFAULT_PITCH, "100");
@@ -143,11 +144,13 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
         String pitchRange = prefs.getString(VoiceSettings.PREF_PITCH_RANGE, null);
         if (pitchRange == null) {
+            if (editor == null) editor = prefs.edit();
             editor.putString(VoiceSettings.PREF_PITCH_RANGE, Integer.toString(VoiceSettings.DEFAULT_PITCH_RANGE));
         }
 
         String capitals = prefs.getString(VoiceSettings.PREF_CAPITALS, null);
         if (capitals == null) {
+            if (editor == null) editor = prefs.edit();
             editor.putString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
         }
 
@@ -159,7 +162,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         // thread (the same ANR risk fixed for createPreferences() below),
         // so skip it unless there is actually something to migrate.
         if (rate == null && prefs.contains(VoiceSettings.PREF_DEFAULT_RATE)) {
-            SpeechSynthesis engine = new SpeechSynthesis(storageContext, null);
+            SpeechSynthesis engine = new SpeechSynthesis(storage, null);
             int defaultValue = engine.Rate.getDefaultValue();
             int maxValue = engine.Rate.getMaxValue();
 
@@ -168,6 +171,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 int rateValue = (int) ((Integer.parseInt(rate) / 100.0f) * defaultValue);
                 if (rateValue < defaultValue) rateValue = defaultValue;
                 if (rateValue > maxValue) rateValue = maxValue;
+                if (editor == null) editor = prefs.edit();
                 editor.putString(VoiceSettings.PREF_RATE, Integer.toString(rateValue));
             } catch (NumberFormatException e) {
                 // Malformed legacy value - leave PREF_RATE unset so
@@ -177,6 +181,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
         String variant = prefs.getString(VoiceSettings.PREF_VARIANT, null);
         if (variant == null) {
+            if (editor == null) editor = prefs.edit();
             String gender = prefs.getString(VoiceSettings.PREF_DEFAULT_GENDER, null);
             if ("2".equals(gender)) {
                 editor.putString(VoiceSettings.PREF_VARIANT, VoiceVariant.FEMALE);
@@ -187,7 +192,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
         }
 
-        editor.commit();
+        if (editor != null) {
+            editor.apply();
+        }
 
         // No applySystemBarAppearance() here: the window has no decor until
         // content is installed, and onResume() below applies it with a valid
@@ -206,6 +213,18 @@ public class TtsSettingsActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(
                 android.R.id.content,
                 new PrefsEspeakFragment()).commit();
+
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Fragment current = getSupportFragmentManager().findFragmentById(android.R.id.content);
+                if (current instanceof PrefsEspeakFragment
+                        && ((PrefsEspeakFragment) current).popToParent()) {
+                    return;
+                }
+                finish();
+            }
+        });
     }
 
     @Override
@@ -214,25 +233,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
         applySystemBarAppearance(getWindow(), this);
     }
 
-    // onBackPressed is deprecated in API 33+, but it remains the terminal
-    // back-press entry point and is the only mechanism verified to fire here:
-    // OnBackPressedDispatcher callbacks (lifecycle-owned and unconditional)
-    // never reached the fragment on-device. This pops sub-screens first and
-    // otherwise falls through to the normal finish behavior.
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onBackPressed() {
-        android.util.Log.i("NAVPROBE", "activity onBackPressed");
-        Fragment current = getSupportFragmentManager().findFragmentById(android.R.id.content);
-        android.util.Log.i("NAVPROBE", "current fragment=" + current);
-        if (current instanceof PrefsEspeakFragment
-                && ((PrefsEspeakFragment) current).popToParent()) {
-            android.util.Log.i("NAVPROBE", "popped to parent");
-            return;
-        }
-        android.util.Log.i("NAVPROBE", "falling through to super");
-        super.onBackPressed();
-    }
 
     public static int dpToPx(Context context, int dp) {
         return (int) TypedValue.applyDimension(
@@ -257,7 +257,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
                         | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        } else {
             View decorView = window.getDecorView();
             int flags = decorView.getSystemUiVisibility();
             if (!isNight) {
@@ -272,6 +272,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            Fragment current = getSupportFragmentManager().findFragmentById(android.R.id.content);
+            if (current instanceof PrefsEspeakFragment
+                    && ((PrefsEspeakFragment) current).popToParent()) {
+                return true;
+            }
             finish();
             return true;
         }
@@ -574,9 +579,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             // Preference left on the default credential-encrypted storage has
             // no effect on speech, and its stray file is what #2536 copied
             // over the real settings on every screen reader restart.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                getPreferenceManager().setStorageDeviceProtected();
-            }
+            getPreferenceManager().setStorageDeviceProtected();
             setPreferencesFromResource(R.xml.preferences, rootKey);
             createPreferences(getActivity(), getPreferenceScreen());
         }
@@ -952,8 +955,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
     // come through here first, so they block until a build in progress
     // finishes rather than observing a half-populated map.
     private static synchronized void ensureLangInfoLoaded() {
-        if (!sLangInfo.isEmpty() || storageContext == null) return;
-        File root = new File(CheckVoiceData.getDataPath(storageContext), "lang");
+        Context storage = EspeakApp.getStorageContext();
+        if (!sLangInfo.isEmpty() || storage == null) return;
+        File root = new File(CheckVoiceData.getDataPath(storage), "lang");
         if (!root.exists()) return;
         Stack<File> stack = new Stack<File>();
         stack.push(root);
@@ -1011,7 +1015,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
      * thread, which is required: they bind to the hosting PreferenceGroup.
      */
     private static void createPreferences(final Context context, final PreferenceGroup group) {
-        final Context storage = storageContext;
+        final Context storage = EspeakApp.requireStorageContext(context);
         final Handler handler = new Handler(Looper.getMainLooper());
 
         new Thread(new Runnable() {
@@ -1146,7 +1150,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         .putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH))
                         .putString(VoiceSettings.PREF_PITCH_RANGE, Integer.toString(VoiceSettings.DEFAULT_PITCH_RANGE))
                         .putString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS))
-                        .commit();
+                        .apply();
 
                 Toast.makeText(context, R.string.recommended_defaults_applied, Toast.LENGTH_SHORT).show();
                 if (context instanceof Activity) {

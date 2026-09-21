@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/dict_search_label"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:labelFor="@+id/dict_search" />
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <EditText
         android:id="@+id/dict_search"
@@ -24,7 +23,8 @@
         android:layout_marginBottom="8dp"
         android:hint="@string/dict_search_hint"
         android:inputType="text"
-        android:imeOptions="actionDone" />
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/dict_filter_label"

@@ -64,7 +64,7 @@ import java.util.regex.Pattern;
  */
 public class TtsService extends TextToSpeechService {
     private static final String TAG = TtsService.class.getSimpleName();
-    private static Context storageContext;
+    private Context mStorageContext;
     private static final boolean DEBUG = BuildConfig.DEBUG;
 
     /**
@@ -176,11 +176,11 @@ public class TtsService extends TextToSpeechService {
     @Override
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onCreate() {
-        storageContext = EspeakApp.requireStorageContext(getApplicationContext());
+        mStorageContext = EspeakApp.requireStorageContext(getApplicationContext());
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(mStorageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
-        CheckVoiceData.ensureVoiceData(storageContext);
+        CheckVoiceData.ensureVoiceData(mStorageContext);
         initializeTtsEngine();
         final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
         // The 3-arg registerReceiver(..., flags) overload requires API 33 (Tiramisu);
@@ -224,7 +224,7 @@ public class TtsService extends TextToSpeechService {
         // Clear cached voice list since native engine is being reinitialized
         SpeechSynthesis.clearVoiceCache();
 
-        mEngine = new SpeechSynthesis(storageContext, mSynthCallback);
+        mEngine = new SpeechSynthesis(mStorageContext, mSynthCallback);
         mMatchingVoice = null;
         List<Voice> voices = mEngine.getAvailableVoices();
         synchronized (mAvailableVoices) {
@@ -264,7 +264,7 @@ public class TtsService extends TextToSpeechService {
     }
 
     private Pair<Voice, Integer> findVoice(String language, String country, String variant) {
-        if (!CheckVoiceData.hasBaseResources(storageContext)) {
+        if (!CheckVoiceData.hasBaseResources(mStorageContext)) {
             return new Pair<>(null, TextToSpeech.LANG_MISSING_DATA);
         }
 
@@ -524,17 +524,6 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
-    /**
-     * Folds one preprocessing step's effect into the accumulated offset map,
-     * or leaves it unchanged if the step didn't actually alter the text (the
-     * common case, and cheap to check up front rather than diffing).
-     */
-    private static TextOffsetMap chainOffset(TextOffsetMap previous, String before, String after) {
-        if (before.equals(after)) {
-            return previous;
-        }
-        return TextOffsetMap.diff(before, after).composeWith(previous);
-    }
 
     // BaseBundle.get(String) was deprecated in API 33, but no typed getter
     // preserves these reads: the debug dump takes arbitrary keys, and volume
@@ -568,7 +557,7 @@ public class TtsService extends TextToSpeechService {
     @Override
     protected synchronized void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
         if (selectVoice(request) == TextToSpeech.ERROR) {
-            reportError(callback, CheckVoiceData.hasBaseResources(storageContext)
+            reportError(callback, CheckVoiceData.hasBaseResources(mStorageContext)
                     ? TextToSpeech.ERROR_SERVICE : TextToSpeech.ERROR_NOT_INSTALLED_YET);
             return;
         }
@@ -645,7 +634,7 @@ public class TtsService extends TextToSpeechService {
 
         final SharedPreferences prefs = mPreferences != null
                 ? mPreferences
-                : PreferenceManager.getDefaultSharedPreferences(storageContext);
+                : PreferenceManager.getDefaultSharedPreferences(mStorageContext);
         final VoiceSettings settings = new VoiceSettings(prefs, engine);
 
         // Detect SSML before normalizing. Real markup is ASCII, which NFKC
@@ -659,206 +648,11 @@ public class TtsService extends TextToSpeechService {
         // that can change the text's length. See TextOffsetMap.
         TextOffsetMap offsetMap = null;
 
-        if (!isSsml) {
-            // NVDA eSpeak driver fix: Strip control character 0x01, which eSpeak reserves
-            // for embedded commands and whose presence causes pronunciation corruption or aborts.
-            if (text.indexOf('\u0001') != -1) {
-                String before = text;
-                text = text.replace("\u0001", "");
-                offsetMap = chainOffset(offsetMap, before, text);
-            }
-            // NVDA-style hardening (NVDA's _espeak.py encodes with errors="ignore" before
-            // the native call): drop unpaired UTF-16 surrogates - e.g. from a clipboard paste
-            // truncated mid-emoji - before they reach the JNI/native layer, which expects
-            // well-formed text and can otherwise mis-decode or corrupt trailing output.
-            String beforeSurrogates = text;
-            text = stripUnpairedSurrogates(text);
-            offsetMap = chainOffset(offsetMap, beforeSurrogates, text);
-            // NVDA eSpeak driver fix: Prevent unintentional [[ phoneme syntax entry by
-            // separating consecutive left brackets when not in phoneme mode.
-            if (text.contains("[[")) {
-                String before = text;
-                text = text.replace("[[", "[ [");
-                offsetMap = chainOffset(offsetMap, before, text);
-            }
-        }
-
-        if (settings.isUnicodeNormalizationEnabled()) {
-            UnicodeNormalization.Result normalization = UnicodeNormalization.normalize(text);
-            if (normalization != null) {
-                text = normalization.text;
-                // Compose the normalizer's own boundary map directly: it is
-                // exact, and avoids re-diffing two strings it already aligned.
-                offsetMap = TextOffsetMap.fromBoundaryMap(normalization.boundaryMap())
-                        .composeWith(offsetMap);
-            }
-        }
-
-        // Zero-hang watchdog: sanitize hang-inducing controls (bidi, zero-width,
-        // C0 controls) early so all downstream modules (UserDictionary, numbers,
-        // currency, grouping) operate on clean text without corrupted matching.
-        {
-            String before = text;
-            text = sanitizeForWatchdog(text, isSsml);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isUserDictionaryEnabled()) {
-            String before = text;
-            text = UserDictionaryManager.getInstance(storageContext).applyRules(text, languageTag(voice));
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        // A single-character utterance is how TalkBack (and NVDA on desktop)
-        // signals character-by-character navigation, as opposed to normal
-        // continuous reading of words/sentences.
-        final boolean isSingleCharacterUtterance = !isSsml && (text.length() == 1 || text.trim().length() == 1);
-
-        if (isSingleCharacterUtterance) {
-            boolean characterRuleApplied = false;
-            // isSingleCharacterUtterance above already required !isSsml.
-            if (settings.isUserDictionaryEnabled()) {
-                String before = text;
-                text = UserDictionaryManager.getInstance(storageContext)
-                        .applyCharacterRule(text, languageTag(voice));
-                characterRuleApplied = !text.equals(before);
-                offsetMap = chainOffset(offsetMap, before, text);
-            }
-            // A user's explicit per-character override wins outright: skip the
-            // built-in NATO/diacritic expansions below rather than layering them
-            // on top of (and likely garbling) what the user asked to hear instead.
-            if (!characterRuleApplied) {
-                if (settings.isNatoSpellingEnabled()) {
-                    String before = text;
-                    text = expandNatoSpelling(text);
-                    offsetMap = chainOffset(offsetMap, before, text);
-                }
-                if (settings.isSpokenDiacriticsEnabled()) {
-                    String before = text;
-                    text = expandDevanagariDiacritic(text);
-                    offsetMap = chainOffset(offsetMap, before, text);
-                }
-            }
-        }
-
-        // Runs before every digit/symbol expander below (Roman numerals, Indian
-        // numbering, currency, time/date, digit grouping, programming symbols):
-        // all of those match on raw digit/punctuation runs, and a URL commonly
-        // contains both (a numeric ID, a date-stamped blog path like
-        // ".../2024-01-15-my-post"). If any of them ran first, they'd insert
-        // spaces into the URL's interior - simplifyUrls's own PATTERN_URL
-        // requires an unbroken (\S) path, so it would then only match the
-        // fragment before the inserted space, truncating "link example.com
-        // slash blog slash 2024" and leaving "01 15-my-post" as unprocessed
-        // trailing text. Running this first means the URL is fully recognized
-        // and turned into its spoken form (slashes -> " slash ", protocol/www
-        // stripped) before anything else can fragment it; any digits left
-        // over in that spoken form (e.g. the date slug) are still free to be
-        // grouped/expanded normally afterward, which is harmless/useful.
-        if (!isSsml && settings.isSimplifyUrlsEnabled()) {
-            String before = text;
-            text = simplifyUrls(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        // preprocessIndianText and expandCurrencySymbols both run before
-        // expandProgrammingSymbols for the same reason simplifyUrls does:
-        // expandProgrammingSymbols's SYM_YEN does a blind ¥ -> " yen " symbol
-        // swap with no amount awareness, while CURRENCY_YEN (inside
-        // expandCurrencySymbols) extracts the adjacent number too ("¥500" ->
-        // "500 yen"). Both default to enabled, so with the old order every
-        // default-settings user hit this on any prefix-style yen amount:
-        // SYM_YEN fired first and left "yen 500" (word before number, and
-        // with the ¥ character already gone, CURRENCY_YEN's own prefix/
-        // suffix patterns - neither is "yen" followed by a number - can't
-        // recover the right phrasing afterward). Running the amount-aware
-        // passes first lets them claim "¥500" correctly; whatever ¥/¢/ƒ is
-        // left over (not adjacent to a number) still falls through to
-        // expandProgrammingSymbols's plain symbol-name reading, unchanged.
-        if (!isSsml && settings.isIndianNumberingEnabled()) {
-            String before = text;
-            text = preprocessIndianText(text, languageTag(voice));
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isCurrencyEnabled()) {
-            String before = text;
-            text = expandCurrencySymbols(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
-            String before = text;
-            text = expandProgrammingSymbols(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isRomanNumeralsEnabled()) {
-            String before = text;
-            text = expandRomanNumerals(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isTimeDateEnabled()) {
-            String before = text;
-            text = expandTimeDate(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        // Digit handling lives in one place: the grouping mode. "Single" is
-        // exactly the old digit-by-digit behavior; the legacy boolean only
-        // survives as a migration default inside getDigitGroupingMode().
-        final boolean smartCodes = settings.isSmartCodesEnabled() && !isSsml;
-        final int smartMin = settings.getSmartMinLen();
-        final int smartMax = settings.getSmartMaxLen();
-        final String digitGrouping = settings.getDigitGroupingMode();
-        final boolean useGrouping = !isSsml && digitGrouping != null
-                && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
-        if (useGrouping) {
-            String before = text;
-            text = formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold());
-            offsetMap = chainOffset(offsetMap, before, text);
-            if (smartCodes && !VoiceSettings.DIGIT_GROUP_SINGLE.equals(digitGrouping)) {
-                before = text;
-                text = spaceSeparateSmartCodes(text, smartMin, smartMax);
-                offsetMap = chainOffset(offsetMap, before, text);
-            }
-        } else if (smartCodes) {
-            String before = text;
-            text = spaceSeparateSmartCodes(text, smartMin, smartMax);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        // Specialized modes: spelling / phonetic / code-reading. Explicit user
-        // modes run after number handling so "A1B2" spells letters but keeps
-        // the digit grouping already applied above.
-        if (!isSsml && settings.isCodeReadingModeEnabled()) {
-            String before = text;
-            text = expandProgrammingSymbols(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-        if (!isSsml && settings.isSpellingModeEnabled()) {
-            String before = text;
-            text = expandSpellingMode(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        } else if (!isSsml && settings.isPhoneticModeEnabled()) {
-            String before = text;
-            text = expandPhoneticMode(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        final String repeatedMode = settings.getRepeatedCharactersMode();
-        if (!isSsml && !VoiceSettings.REPEATED_CHARS_OFF.equals(repeatedMode)) {
-            String before = text;
-            text = condenseRepeatedCharacters(text, repeatedMode);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && containsPotentialEmoji(text)) {
-            String before = text;
-            text = settings.isEmojiIgnoreEnabled() ? filterEmojis(text) : clarifyEmojiAnnouncements(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
+        TextPreprocessor.Result prep = TextPreprocessor.process(
+                text, voice, settings, isSsml, offsetMap, mStorageContext);
+        text = prep.text;
+        offsetMap = prep.offsetMap;
+        final boolean isSingleCharacterUtterance = prep.isSingleCharacterUtterance;
 
         mSynthText = text;
         mSynthTextOffset = textOffset;
@@ -1016,6 +810,11 @@ public class TtsService extends TextToSpeechService {
                     // One bad chunk (mixed-script edge case) must never kill
                     // the whole request or hang the service — skip and continue.
                     if (DEBUG) Log.w(TAG, "Chunk synth failed, skipping", t);
+                    if (mSegmentsRemaining.decrementAndGet() <= 0 || mIsStopped.get()) {
+                        if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
+                            mCallback.done();
+                        }
+                    }
                 }
             }
         } else {
@@ -1038,1373 +837,162 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
-    private static boolean containsPotentialEmoji(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            if (Character.isHighSurrogate(c) || c >= 0x2600) {
-                return true;
-            }
-        }
-        return false;
+    // =========================================================================
+    // Text Preprocessing Delegation Stubs
+    // The implementation lives in TextPreprocessor.java. These forwarding
+    // methods preserve 100% binary & source compatibility for tests and hooks.
+    // =========================================================================
+
+    public static final int MAX_CHUNK_CHARS = TextPreprocessor.MAX_CHUNK_CHARS;
+    public static final int MAX_REQUEST_CHARS = TextPreprocessor.MAX_REQUEST_CHARS;
+    public static final int MAX_CHUNKS = TextPreprocessor.MAX_CHUNKS;
+
+    public static boolean containsProgrammingSymbolChars(String text) {
+        return TextPreprocessor.containsProgrammingSymbolChars(text);
     }
 
-    private static boolean isEmojiCodePoint(int codePoint) {
-        final int type = Character.getType(codePoint);
-        // Note: Character.SURROGATE intentionally absent — codePointAt() never
-        // returns a lone surrogate, so testing for it here was dead code.
-        return (type == Character.OTHER_SYMBOL)
-                || (codePoint >= 0x1F000 && codePoint <= 0x1FAFF)
-                || (codePoint >= 0x2600 && codePoint <= 0x27BF)
-                || (codePoint >= 0xFE00 && codePoint <= 0xFE0F)
-                || (codePoint >= 0x1F900 && codePoint <= 0x1F9FF)
-                || (codePoint >= 0x1F000 && codePoint <= 0x1FFFF);
-    }
-
-    /**
-     * Codepoints that glue to their neighbours inside one visible emoji and
-     * must never be separated by spaces: ZWJ, variation selectors,
-     * skin-tone modifiers, tag characters, and the keycap combiner (U+20E3).
-     * Regional indicators are handled separately (they pair up into flags).
-     */
-    private static boolean isRegionalIndicator(int codePoint) {
-        return codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF;
-    }
-
-    private static boolean isEmojiJoiner(int codePoint) {
-        // Regional indicators handled separately (they pair up into flags).
-        return (codePoint == 0x200D)
-                || (codePoint >= 0xFE00 && codePoint <= 0xFE0F)
-                || (codePoint >= 0x1F3FB && codePoint <= 0x1F3FF)
-                || (codePoint >= 0xE0020 && codePoint <= 0xE007F)
-                || (codePoint == 0x20E3);
-    }
-
-    private static String filterEmojis(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        final StringBuilder sb = new StringBuilder(text.length());
-        final int len = text.length();
-        int prevRaw = -1;
-        for (int i = 0; i < len; ) {
-            final int codePoint = text.codePointAt(i);
-            // A codepoint right after a ZWJ belongs to the same visible emoji
-            // even when it is not emoji on its own (e.g. U+2194 in the "head
-            // shaking horizontally" sequence); leaving it behind would leak a
-            // fragment ("left right arrow") after the rest was blanked.
-            // Plain BMP text symbols (currency, math, fractions) are
-            // deliberately kept: they read as words ("rupees", "plus"), not
-            // pictographic clutter, so Ignore must not silence them.
-            if (!isEmojiCodePoint(codePoint) && !isEmojiJoiner(codePoint)
-                    && !isRegionalIndicator(codePoint) && prevRaw != 0x200D) {
-                sb.appendCodePoint(codePoint);
-            } else {
-                sb.append(' ');
-            }
-            prevRaw = codePoint;
-            i += Character.charCount(codePoint);
-        }
-        return sb.toString();
-    }
-
-    // "code" is deliberately not a keyword on its own: it's an ordinary
-    // English word ("dress code", "zip code", "area code") common enough
-    // to false-positive on plain sentences with a nearby number (e.g. a
-    // year), and every real OTP/verification-code message already matches
-    // via a more specific word below (verification, security, pin,
-    // passcode), so dropping it loses no real detections.
-    private static final java.util.regex.Pattern SMART_CODE_KEYWORD =
-            java.util.regex.Pattern.compile("(?i)\\b(otp|pin|pincode|passcode|password|secret|verification|security|token|login|id|txn|ref|vpa|cvv|pnr|aadhaar|aadhar|challan|account|acct|acc)\\b");
-
-    private static final java.util.regex.Pattern DANDA_BOUNDARY =
-            java.util.regex.Pattern.compile("([।॥])([^\\s])");
-
-    private static final java.util.regex.Pattern BANKING_SLASH_TXN =
-            java.util.regex.Pattern.compile("(?i)\\b(UPI|TXN|REF|IMPS|NEFT|RTGS)/([A-Za-z0-9/]+)");
-
-    // Group 2 optionally captures a trailing lakh/crore/thousand shorthand unit
-    // (e.g. "₹5L", "Rs 2.5Cr") so it verbalizes as "5 lakh rupees" / "2.5 crore rupees"
-    // instead of running the shorthand suffix straight into "rupees" as a stray letter
-    // ("5 rupeesL") - the currency check runs before the standalone shorthand expansion below.
-    private static final java.util.regex.Pattern CURRENCY_PREFIX =
-            java.util.regex.Pattern.compile("(?i)(?:₹\\s*|\\b(?:Rs\\.?|Re\\.?|INR)\\s*)([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)(?:\\s*(k|l|lac|lakhs?|cr|crores?))?\\b(?:\\s*(?:/-|/=|--))?");
-
-    private static final java.util.regex.Pattern INDIAN_NUMBER_COMMAS =
-            java.util.regex.Pattern.compile("\\b(\\d{1,2}(?:,\\d{2})+),(\\d{3})\\b");
-
-    private static final java.util.regex.Pattern SHORTHAND_THOUSAND =
-            java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*k\\b");
-
-    private static final java.util.regex.Pattern SHORTHAND_LAKH =
-            java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:l|lac|lakh|lakhs)\\b");
-
-    private static final java.util.regex.Pattern SHORTHAND_CRORE =
-            java.util.regex.Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:cr|crore|crores)\\b");
-    private static final java.util.regex.Pattern SLASH_RUN =
-            java.util.regex.Pattern.compile("/+");
-
-    // Smart text: currency symbols ($/€/£/¥ beyond the ₹ handled above), time, and dates.
-    private static final java.util.regex.Pattern CURRENCY_DOLLAR_PREFIX =
-            java.util.regex.Pattern.compile("\\$\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)");
-    private static final java.util.regex.Pattern CURRENCY_DOLLAR_SUFFIX =
-            java.util.regex.Pattern.compile("([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:dollars?|USD)\\b",
-            java.util.regex.Pattern.CASE_INSENSITIVE);
-    private static final java.util.regex.Pattern CURRENCY_EURO =
-            java.util.regex.Pattern.compile("(?:€\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:€|euros?|EUR\\b))",
-            java.util.regex.Pattern.CASE_INSENSITIVE);
-    private static final java.util.regex.Pattern CURRENCY_POUND =
-            java.util.regex.Pattern.compile("(?:£\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:£|pounds?|GBP\\b))",
-            java.util.regex.Pattern.CASE_INSENSITIVE);
-    private static final java.util.regex.Pattern CURRENCY_YEN =
-            java.util.regex.Pattern.compile("(?:¥\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:¥|yen|JPY\\b))",
-            java.util.regex.Pattern.CASE_INSENSITIVE);
-    private static final java.util.regex.Pattern TIME_HM =
-            java.util.regex.Pattern.compile("\\b([01]?\\d|2[0-3]):([0-5]\\d)(?:\\s*([AP])\\.?M\\.?)?",
-            java.util.regex.Pattern.CASE_INSENSITIVE);
-    private static final java.util.regex.Pattern DATE_NUMERIC =
-            java.util.regex.Pattern.compile("\\b(\\d{1,4})[/\\-](\\d{1,2})[/\\-](\\d{1,4})\\b");
-    // Edge-case controls that hang or corrupt synthesis on rapid swipes / mixed-script pastes.
-    private static final java.util.regex.Pattern HANG_CONTROLS =
-            java.util.regex.Pattern.compile("[\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u2064\\uFEFF\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]");
-    private static final java.util.regex.Pattern EDGE_BRACKET_RUN =
-            java.util.regex.Pattern.compile("\\[{2,}|\\]{2,}");
-    /** Longest single native synth call; longer input is chunked (watchdog). */
-    static final int MAX_CHUNK_CHARS = 800;
-    /**
-     * Absolute cap per request; beyond this the tail is dropped rather than
-     * hung on. Was 16,000 (20 chunks x 800), which silently truncated real
-     * long-form content (long messages/emails, "read screen" on an article)
-     * with no error reported to the caller -- confirmed the reported
-     * "stops reading midway" bug for any single request past this length.
-     * The per-chunk loop already checks mIsStopped before every chunk, so a
-     * genuine cancel (rapid swipe, user stop) is caught within one
-     * MAX_CHUNK_CHARS-sized step regardless of this ceiling; it only needs
-     * to be large enough to never truncate legitimate content. 300,000 chars
-     * covers any realistic message/article/document (a full novel chapter
-     * is typically under 20,000) while still bounding a pathological paste.
-     */
-    static final int MAX_REQUEST_CHARS = 300000;
-    /** Max chunks per request; sized so MAX_REQUEST_CHARS is always the binding limit. */
-    static final int MAX_CHUNKS = MAX_REQUEST_CHARS / MAX_CHUNK_CHARS + 1;
-
-    // NVDA-inspired programming, mathematical, and syntax symbol patterns (from NVDA symbols.dic):
-    private static final java.util.regex.Pattern SYM_NOT_EQUAL = java.util.regex.Pattern.compile("!=|≠");
-    private static final java.util.regex.Pattern SYM_DOUBLE_EQUALS = java.util.regex.Pattern.compile("==");
-    private static final java.util.regex.Pattern SYM_LESS_EQUAL = java.util.regex.Pattern.compile("<=|≤");
-    private static final java.util.regex.Pattern SYM_GREATER_EQUAL = java.util.regex.Pattern.compile(">=|≥");
-    private static final java.util.regex.Pattern SYM_FAT_ARROW = java.util.regex.Pattern.compile("=>|⇒");
-    private static final java.util.regex.Pattern SYM_THIN_ARROW = java.util.regex.Pattern.compile("->|→");
-    private static final java.util.regex.Pattern SYM_LEFT_ARROW = java.util.regex.Pattern.compile("<-|←");
-    private static final java.util.regex.Pattern SYM_UP_ARROW = java.util.regex.Pattern.compile("↑");
-    private static final java.util.regex.Pattern SYM_DOWN_ARROW = java.util.regex.Pattern.compile("↓");
-    private static final java.util.regex.Pattern SYM_LOGICAL_AND = java.util.regex.Pattern.compile("&&");
-    private static final java.util.regex.Pattern SYM_LOGICAL_OR = java.util.regex.Pattern.compile("\\|\\|");
-    private static final java.util.regex.Pattern SYM_COMMENT_START = java.util.regex.Pattern.compile("/\\*");
-    private static final java.util.regex.Pattern SYM_COMMENT_END = java.util.regex.Pattern.compile("\\*/");
-    private static final java.util.regex.Pattern SYM_DOUBLE_SLASH = java.util.regex.Pattern.compile("(?<!https?:)//");
-    private static final java.util.regex.Pattern SYM_ELLIPSIS = java.util.regex.Pattern.compile("\\.{3,}|…");
-    private static final java.util.regex.Pattern SYM_PLUS_MINUS = java.util.regex.Pattern.compile("±|\\+/-");
-    private static final java.util.regex.Pattern SYM_TIMES = java.util.regex.Pattern.compile("(?<=\\d)\\s*[×*]\\s*(?=\\d)");
-    private static final java.util.regex.Pattern SYM_DIVIDE = java.util.regex.Pattern.compile("(?<=\\d)\\s*÷\\s*(?=\\d)|÷");
-    private static final java.util.regex.Pattern SYM_ALMOST_EQUAL = java.util.regex.Pattern.compile("≈");
-    private static final java.util.regex.Pattern SYM_CHECKMARK = java.util.regex.Pattern.compile("[✓✔]");
-    private static final java.util.regex.Pattern SYM_BULLET = java.util.regex.Pattern.compile("[•⁃◦]");
-    private static final java.util.regex.Pattern SYM_DEGREES = java.util.regex.Pattern.compile("(?<=\\d)°");
-    // Extended math, set-theory, and currency symbols from NVDA's symbols.dic
-    // (source/locale/en/symbols.dic) not already covered above. Deliberately
-    // excludes common punctuation like ~ ^ _ | ` that NVDA only reads at
-    // certain verbosity levels - this app has no such tiering, and those
-    // characters are frequent enough in ordinary prose/code (snake_case,
-    // markdown, etc.) that always expanding them would be noisy rather than
-    // helpful. These symbols are rare outside genuinely symbolic text.
-    private static final java.util.regex.Pattern SYM_SQRT = java.util.regex.Pattern.compile("√");
-    private static final java.util.regex.Pattern SYM_INFINITY = java.util.regex.Pattern.compile("∞");
-    private static final java.util.regex.Pattern SYM_INTEGRAL = java.util.regex.Pattern.compile("∫");
-    private static final java.util.regex.Pattern SYM_FOR_ALL = java.util.regex.Pattern.compile("∀");
-    private static final java.util.regex.Pattern SYM_EXISTS = java.util.regex.Pattern.compile("∃");
-    private static final java.util.regex.Pattern SYM_NOT_ELEMENT_OF = java.util.regex.Pattern.compile("∉");
-    private static final java.util.regex.Pattern SYM_ELEMENT_OF = java.util.regex.Pattern.compile("∈");
-    private static final java.util.regex.Pattern SYM_UNION = java.util.regex.Pattern.compile("∪");
-    private static final java.util.regex.Pattern SYM_INTERSECTION = java.util.regex.Pattern.compile("∩");
-    private static final java.util.regex.Pattern SYM_LOGICAL_NOT = java.util.regex.Pattern.compile("¬");
-    private static final java.util.regex.Pattern SYM_SET_AND = java.util.regex.Pattern.compile("∧");
-    private static final java.util.regex.Pattern SYM_SET_OR = java.util.regex.Pattern.compile("∨");
-    private static final java.util.regex.Pattern SYM_CENT = java.util.regex.Pattern.compile("¢");
-    private static final java.util.regex.Pattern SYM_YEN = java.util.regex.Pattern.compile("¥");
-    private static final java.util.regex.Pattern SYM_FLORIN = java.util.regex.Pattern.compile("ƒ");
-
-    private static boolean containsProgrammingSymbolChars(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            switch (c) {
-                case '!': case '=': case '<': case '>':
-                case '-': case '&': case '|': case '/':
-                case '*': case '.': case '≠': case '≤':
-                case '≥': case '⇒': case '→': case '←':
-                case '↑': case '↓': case '…': case '±':
-                case '×': case '÷': case '≈': case '✓':
-                case '✔': case '•': case '⁃': case '◦':
-                case '°': case '√': case '∞': case '∫':
-                case '∀': case '∃': case '∉': case '∈':
-                case '∪': case '∩': case '¬': case '∧':
-                case '∨': case '¢': case '¥': case 'ƒ':
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Expands multi-character programming, logical, and mathematical symbols
-     * (borrowed from NVDA symbols.dic) so they read naturally instead of literal character lists.
-     */
     public static String expandProgrammingSymbols(String text) {
-        if (text == null || text.isEmpty() || !containsProgrammingSymbolChars(text)) {
-            return text;
-        }
-        text = SYM_NOT_EQUAL.matcher(text).replaceAll(" not equal ");
-        text = SYM_DOUBLE_EQUALS.matcher(text).replaceAll(" double equals ");
-        text = SYM_LESS_EQUAL.matcher(text).replaceAll(" less than or equal to ");
-        text = SYM_GREATER_EQUAL.matcher(text).replaceAll(" greater than or equal to ");
-        text = SYM_FAT_ARROW.matcher(text).replaceAll(" implies ");
-        text = SYM_THIN_ARROW.matcher(text).replaceAll(" arrow ");
-        text = SYM_LEFT_ARROW.matcher(text).replaceAll(" left arrow ");
-        text = SYM_UP_ARROW.matcher(text).replaceAll(" up arrow ");
-        text = SYM_DOWN_ARROW.matcher(text).replaceAll(" down arrow ");
-        text = SYM_LOGICAL_AND.matcher(text).replaceAll(" double ampersand ");
-        text = SYM_LOGICAL_OR.matcher(text).replaceAll(" double pipe ");
-        text = SYM_COMMENT_START.matcher(text).replaceAll(" comment start ");
-        text = SYM_COMMENT_END.matcher(text).replaceAll(" comment end ");
-        text = SYM_DOUBLE_SLASH.matcher(text).replaceAll(" double slash ");
-        text = SYM_ELLIPSIS.matcher(text).replaceAll(" dot dot dot ");
-        text = SYM_PLUS_MINUS.matcher(text).replaceAll(" plus or minus ");
-        text = SYM_TIMES.matcher(text).replaceAll(" times ");
-        text = SYM_DIVIDE.matcher(text).replaceAll(" divided by ");
-        text = SYM_ALMOST_EQUAL.matcher(text).replaceAll(" almost equal to ");
-        text = SYM_CHECKMARK.matcher(text).replaceAll(" check ");
-        text = SYM_BULLET.matcher(text).replaceAll(" bullet ");
-        text = SYM_DEGREES.matcher(text).replaceAll(" degrees ");
-        text = SYM_SQRT.matcher(text).replaceAll(" square root ");
-        text = SYM_INFINITY.matcher(text).replaceAll(" infinity ");
-        text = SYM_INTEGRAL.matcher(text).replaceAll(" integral ");
-        text = SYM_FOR_ALL.matcher(text).replaceAll(" for all ");
-        text = SYM_EXISTS.matcher(text).replaceAll(" there exists ");
-        text = SYM_NOT_ELEMENT_OF.matcher(text).replaceAll(" not an element of ");
-        text = SYM_ELEMENT_OF.matcher(text).replaceAll(" element of ");
-        text = SYM_UNION.matcher(text).replaceAll(" union ");
-        text = SYM_INTERSECTION.matcher(text).replaceAll(" intersection ");
-        text = SYM_LOGICAL_NOT.matcher(text).replaceAll(" not ");
-        text = SYM_SET_AND.matcher(text).replaceAll(" and ");
-        text = SYM_SET_OR.matcher(text).replaceAll(" or ");
-        text = SYM_CENT.matcher(text).replaceAll(" cents ");
-        text = SYM_YEN.matcher(text).replaceAll(" yen ");
-        text = SYM_FLORIN.matcher(text).replaceAll(" florin ");
-        return text;
+        return TextPreprocessor.expandProgrammingSymbols(text);
     }
-
-    // Two branches: structural titles ("Chapter IV") where the numeral follows the
-    // keyword directly, and person titles ("King Henry VIII", "Pope John XXIII")
-    // where a name sits in between. The person-title numeral and optional name are
-    // matched case-sensitively (via (?-i:...), overriding the pattern's overall
-    // CASE_INSENSITIVE) so a stray lowercase word that happens to be spelled only
-    // with roman letters (e.g. "king david mix") can't be mistaken for a numeral.
-    private static final Pattern PATTERN_ROMAN_CONTEXT = Pattern.compile(
-            "\\b(Chapter|Part|Section|Volume|Book|Act|Scene|Title|Grade|Level|Phase|World War|War|Super Bowl)\\s+([IVXLCDMivxlcdm]+)\\b" +
-            "|\\b(King|Queen|Pope|Emperor)\\s+(?:(?-i:([A-Z][a-zA-Z'-]*))\\s+)?(?-i:([IVXLCDM]+))\\b",
-            Pattern.CASE_INSENSITIVE);
 
     public static String expandRomanNumerals(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        Matcher matcher = PATTERN_ROMAN_CONTEXT.matcher(text);
-        if (!matcher.find()) {
-            return text;
-        }
-        StringBuffer sb = new StringBuffer(text.length());
-        do {
-            String prefix;
-            String roman;
-            if (matcher.group(1) != null) {
-                prefix = matcher.group(1);
-                roman = matcher.group(2).toUpperCase(Locale.ROOT);
-            } else {
-                String name = matcher.group(4);
-                prefix = name != null ? matcher.group(3) + " " + name : matcher.group(3);
-                roman = matcher.group(5);
-            }
-            int val = parseRomanNumeral(roman);
-            if (val > 0) {
-                matcher.appendReplacement(sb, Matcher.quoteReplacement(prefix + " " + val));
-            } else {
-                matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(0)));
-            }
-        } while (matcher.find());
-        matcher.appendTail(sb);
-        return sb.toString();
+        return TextPreprocessor.expandRomanNumerals(text);
     }
-
-    private static int parseRomanNumeral(String s) {
-        if (s == null || s.isEmpty() || s.length() > 15) return -1;
-        if (!s.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")) {
-            return -1;
-        }
-        int total = 0;
-        int prevValue = 0;
-        for (int i = s.length() - 1; i >= 0; i--) {
-            int curValue;
-            switch (s.charAt(i)) {
-                case 'I': curValue = 1; break;
-                case 'V': curValue = 5; break;
-                case 'X': curValue = 10; break;
-                case 'L': curValue = 50; break;
-                case 'C': curValue = 100; break;
-                case 'D': curValue = 500; break;
-                case 'M': curValue = 1000; break;
-                default: return -1;
-            }
-            if (curValue < prevValue) {
-                total -= curValue;
-            } else {
-                total += curValue;
-                prevValue = curValue;
-            }
-        }
-        return total > 0 ? total : -1;
-    }
-
-    private static final Pattern PATTERN_URL = Pattern.compile(
-            "\\b(?:https?://|www\\.)[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(?:/[^\\s]*)?",
-            Pattern.CASE_INSENSITIVE);
 
     public static String simplifyUrls(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        Matcher matcher = PATTERN_URL.matcher(text);
-        if (!matcher.find()) {
-            return text;
-        }
-        StringBuffer sb = new StringBuffer(text.length());
-        do {
-            String url = matcher.group(0);
-            String simplified = formatSimplifiedUrl(url);
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(simplified));
-        } while (matcher.find());
-        matcher.appendTail(sb);
-        return sb.toString();
+        return TextPreprocessor.simplifyUrls(text);
     }
-
-    private static String formatSimplifiedUrl(String url) {
-        String s = url;
-        if (s.startsWith("https://") || s.startsWith("HTTPS://")) {
-            s = s.substring(8);
-        } else if (s.startsWith("http://") || s.startsWith("HTTP://")) {
-            s = s.substring(7);
-        }
-        if (s.startsWith("www.") || s.startsWith("WWW.")) {
-            s = s.substring(4);
-        }
-        int qIdx = s.indexOf('?');
-        if (qIdx != -1) {
-            String query = s.substring(qIdx);
-            if (query.length() > 10) {
-                s = s.substring(0, qIdx) + " with parameters";
-            }
-        }
-        s = s.replace("/", " slash ");
-        return " link " + s.trim() + " ";
-    }
-
-    // Count mode reads out "N dashes"/"N asterisks" etc., which only makes sense for
-    // punctuation/symbol dividers - saying "5 fives" for a repeated digit or "4 esses"
-    // for an elongated word ("yesss") would be nonsensical, so digits and letters are
-    // excluded here entirely.
-    private static final Pattern PATTERN_REPEATED_CHARS = Pattern.compile("([^\\s\\p{L}\\p{N}])\\1{2,}");
-    // Truncate mode just shortens a run in place, which still works for elongated
-    // words ("soooo" -> "sooo"), but digits must stay untouched since shortening a
-    // run of them (a PIN, phone number, serial) would silently change its value.
-    private static final Pattern PATTERN_REPEATED_CHARS_TRUNCATE = Pattern.compile("([^\\s\\p{N}])\\1{3,}");
 
     public static String condenseRepeatedCharacters(String text, String mode) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        if (VoiceSettings.REPEATED_CHARS_TRUNCATE.equals(mode)) {
-            return PATTERN_REPEATED_CHARS_TRUNCATE.matcher(text).replaceAll("$1$1$1");
-        }
-        if (!VoiceSettings.REPEATED_CHARS_COUNT.equals(mode)) {
-            return text;
-        }
-        Matcher matcher = PATTERN_REPEATED_CHARS.matcher(text);
-        if (!matcher.find()) {
-            return text;
-        }
-        StringBuffer sb = new StringBuffer(text.length());
-        do {
-            String match = matcher.group(0);
-            char c = match.charAt(0);
-            int count = match.length();
-            String name = getSpokenCharName(c);
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(" " + count + " " + name + " "));
-        } while (matcher.find());
-        matcher.appendTail(sb);
-        return sb.toString();
-    }
-
-    private static String getSpokenCharName(char c) {
-        switch (c) {
-            case '-': return "dashes";
-            case '*': return "asterisks";
-            case '=': return "equals";
-            case '_': return "underscores";
-            case '.': return "dots";
-            case '~': return "tildes";
-            case '!': return "exclamations";
-            case '?': return "question marks";
-            case '#': return "hashes";
-            case '/': return "slashes";
-            case '\\': return "backslashes";
-            case '+': return "pluses";
-            case '<': return "less thans";
-            case '>': return "greater thans";
-            case ':': return "colons";
-            case ';': return "semicolons";
-            case '|': return "pipes";
-            case '^': return "carets";
-            case '"': return "quotes";
-            case '\'': return "apostrophes";
-            default:
-                return String.valueOf(c);
-        }
+        return TextPreprocessor.condenseRepeatedCharacters(text, mode);
     }
 
     public static String normalizeIndicDigits(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        final int len = text.length();
-        StringBuilder sb = null;
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            char ascii = 0;
-            if (c >= 0x0966 && c <= 0x0D6F) {
-                if (c <= 0x096F) ascii = (char) ('0' + (c - 0x0966)); // Devanagari ०-९
-                else if (c >= 0x09E6 && c <= 0x09EF) ascii = (char) ('0' + (c - 0x09E6)); // Bengali ০-৯
-                else if (c >= 0x0A66 && c <= 0x0A6F) ascii = (char) ('0' + (c - 0x0A66)); // Gurmukhi ੦-੯
-                else if (c >= 0x0AE6 && c <= 0x0AEF) ascii = (char) ('0' + (c - 0x0AE6)); // Gujarati ૦-૯
-                else if (c >= 0x0B66 && c <= 0x0B6F) ascii = (char) ('0' + (c - 0x0B66)); // Odia ୦-୯
-                else if (c >= 0x0BE6 && c <= 0x0BEF) ascii = (char) ('0' + (c - 0x0BE6)); // Tamil ௦-௯
-                else if (c >= 0x0C66 && c <= 0x0C6F) ascii = (char) ('0' + (c - 0x0C66)); // Telugu ౦-౯
-                else if (c >= 0x0CE6 && c <= 0x0CEF) ascii = (char) ('0' + (c - 0x0CE6)); // Kannada ೦-೯
-                else if (c >= 0x0D66 && c <= 0x0D6F) ascii = (char) ('0' + (c - 0x0D66)); // Malayalam ൦-൯
-            }
-
-            if (ascii != 0) {
-                if (sb == null) {
-                    sb = new StringBuilder(len);
-                    sb.append(text, 0, i);
-                }
-                sb.append(ascii);
-            } else if (sb != null) {
-                sb.append(c);
-            }
-        }
-        return sb != null ? sb.toString() : text;
+        return TextPreprocessor.normalizeIndicDigits(text);
     }
 
-    /**
-     * Drops any UTF-16 surrogate code unit that isn't part of a valid
-     * high/low surrogate pair, leaving well-formed text otherwise untouched.
-     * A trailing high surrogate with no low surrogate after it (or vice
-     * versa) most often comes from a clipboard paste or IME composition
-     * truncated mid-codepoint.
-     */
     static String stripUnpairedSurrogates(String text) {
-        if (text == null) return null;
-        StringBuilder sb = null;
-        int length = text.length();
-        for (int i = 0; i < length; i++) {
-            char c = text.charAt(i);
-            boolean drop = false;
-            if (Character.isHighSurrogate(c)) {
-                if (i + 1 >= length || !Character.isLowSurrogate(text.charAt(i + 1))) {
-                    drop = true;
-                }
-            } else if (Character.isLowSurrogate(c)) {
-                if (i == 0 || !Character.isHighSurrogate(text.charAt(i - 1))) {
-                    drop = true;
-                }
-            }
-            if (drop && sb == null) {
-                sb = new StringBuilder(length);
-                sb.append(text, 0, i);
-            }
-            if (sb != null && !drop) {
-                sb.append(c);
-            }
-        }
-        return sb != null ? sb.toString() : text;
+        return TextPreprocessor.stripUnpairedSurrogates(text);
     }
 
-    /**
-     * The language/country tag (e.g. "en-in", "hi") a voice's locale
-     * corresponds to, matching the lowercase hyphenated form used for this
-     * app's own language folder names - so it's what a user would naturally
-     * type into a user-dictionary rule's language field.
-     */
     static String languageTag(Voice voice) {
-        if (voice == null || voice.locale == null) return "";
-        String language = voice.locale.getLanguage();
-        if (language == null) return "";
-        language = language.toLowerCase(Locale.ROOT);
-        String country = voice.locale.getCountry();
-        if (country != null && !country.isEmpty()) {
-            language += "-" + country.toLowerCase(Locale.ROOT);
-        }
-        return language;
+        return TextPreprocessor.languageTag(voice);
     }
-
-    private static final String[] NATO_PHONETICS = {
-            "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf",
-            "Hotel", "India", "Juliett", "Kilo", "Lima", "Mike", "November",
-            "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform",
-            "Victor", "Whiskey", "X-ray", "Yankee", "Zulu"
-    };
 
     public static String expandNatoSpelling(String text) {
-        if (text == null) return text;
-        String trimmed = text.trim();
-        if (trimmed.length() == 1) {
-            char c = trimmed.charAt(0);
-            if (c >= 'a' && c <= 'z') {
-                return c + ", " + NATO_PHONETICS[c - 'a'];
-            } else if (c >= 'A' && c <= 'Z') {
-                return c + ", " + NATO_PHONETICS[c - 'A'];
-            }
-        }
-        return text;
+        return TextPreprocessor.expandNatoSpelling(text);
     }
 
     public static String expandDevanagariDiacritic(String text) {
-        if (text == null) return text;
-        String trimmed = text.trim();
-        if (trimmed.length() == 1) {
-            char c = trimmed.charAt(0);
-            switch (c) {
-                case '\u093E': return "आ की मात्रा"; // ा
-                case '\u093F': return "इ की मात्रा"; // ि
-                case '\u0940': return "ई की मात्रा"; // ी
-                case '\u0941': return "उ की मात्रा"; // ु
-                case '\u0942': return "ऊ की मात्रा"; // ू
-                case '\u0943': return "ऋ की मात्रा"; // ृ
-                case '\u0947': return "ए की मात्रा"; // े
-                case '\u0948': return "ऐ की मात्रा"; // ै
-                case '\u094B': return "ओ की मात्रा"; // ो
-                case '\u094C': return "औ की मात्रा"; // ौ
-                case '\u0902': return "अनुस्वार"; // ं
-                case '\u0903': return "विसर्ग"; // ः
-                case '\u0901': return "चन्द्रबिन्दु"; // ँ
-                case '\u094D': return "हलन्त"; // ्
-                case '\u093C': return "नुक्ता"; // ़
-            }
-        }
-        return text;
+        return TextPreprocessor.expandDevanagariDiacritic(text);
     }
 
     public static boolean containsIndianNuanceChars(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            if ((c >= 0x0900 && c <= 0x0D7F) || c == 0x20B9 || c == '/' || c == ',' ||
-                c == 'k' || c == 'K' || c == 'l' || c == 'L' || c == 'c' || c == 'C' ||
-                c == 'r' || c == 'R' || c == 's' || c == 'S' || c == 'i' || c == 'I' ||
-                c == 'e' || c == 'E') {
-                return true;
-            }
-        }
-        return false;
+        return TextPreprocessor.containsIndianNuanceChars(text);
     }
 
-    /**
-     * True for Devanagari-script languages (Hindi, Marathi, Nepali, Sanskrit,
-     * Konkani): number/currency units are emitted in Devanagari (लाख, करोड़,
-     * रुपये, पैसे) so the voice reads natively instead of stumbling through
-     * Latin transliterations. Every other language keeps Latin units.
-     */
     public static boolean isDevanagariNumberLang(String languageTag) {
-        if (languageTag == null || languageTag.isEmpty()) return false;
-        String base = languageTag.trim().toLowerCase(java.util.Locale.ROOT);
-        int dash = base.indexOf('-');
-        if (dash >= 0) base = base.substring(0, dash);
-        return base.equals("hi") || base.equals("mr") || base.equals("ne")
-                || base.equals("sa") || base.equals("kok");
+        return TextPreprocessor.isDevanagariNumberLang(languageTag);
     }
 
-    /**
-     * Verbalizes an Indian-comma-grouped figure using lakh/crore units, which
-     * is how Indian English actually says these numbers ("1,00,000" is "one
-     * lakh", not "one hundred thousand"). Only the grouping commas carry the
-     * signal, so plain digit runs are never touched here.
-     *
-     * Decomposition leaves remainders below one lakh as digits for the engine
-     * ("1,23,45,678" -&gt; "1 crore 23 lakh 45678"), since eSpeak verbalizes
-     * small numbers naturally. Figures below one lakh strip to digits
-     * ("10,000" -&gt; "10000": Western and Indian readings agree there).
-     * Absurdly large figures (&gt; 999 crore) also strip, rather than
-     * producing an unreadable word chain.
-     */
     public static String indianGroupedNumberToWords(String grouped) {
-        return indianGroupedNumberToWords(grouped, false);
+        return TextPreprocessor.indianGroupedNumberToWords(grouped);
     }
 
     public static String indianGroupedNumberToWords(String grouped, boolean devanagari) {
-        String lakhWord = devanagari ? "लाख" : "lakh";
-        String croreWord = devanagari ? "करोड़" : "crore";
-        if (grouped == null || grouped.isEmpty()) return grouped;
-        String digits = grouped.replace(",", "");
-        long value;
-        try {
-            value = Long.parseLong(digits);
-        } catch (NumberFormatException e) {
-            return digits;
-        }
-        if (value < 100000 || value > 9999999999L) {
-            return digits;
-        }
-        StringBuilder out = new StringBuilder();
-        long crore = value / 10000000L;
-        long rest = value % 10000000L;
-        if (crore > 0) {
-            out.append(crore).append(' ').append(croreWord);
-            if (rest > 0) out.append(' ');
-        }
-        if (rest > 0) {
-            long lakh = rest / 100000L;
-            long rest2 = rest % 100000L;
-            if (lakh > 0) {
-                out.append(lakh).append(' ').append(lakhWord);
-                if (rest2 > 0) out.append(' ').append(rest2);
-            } else {
-                out.append(rest2);
-            }
-        }
-        return out.toString();
+        return TextPreprocessor.indianGroupedNumberToWords(grouped, devanagari);
     }
 
-    /**
-     * "₹1,00,000" -&gt; "1 lakh rupees", "₹10.50" -&gt; "10 rupees 50 paise",
-     * "₹500" -&gt; "500 rupees". The fractional part becomes paise only for a
-     * 1-2 digit nonzero fraction; anything else stays with the engine
-     * ("10.567" -&gt; "10.567 rupees" reads as "ten point five...").
-     */
     public static String indianRupeeAmountToWords(String amount) {
-        return indianRupeeAmountToWords(amount, false);
+        return TextPreprocessor.indianRupeeAmountToWords(amount);
     }
 
     public static String indianRupeeAmountToWords(String amount, boolean devanagari) {
-        if (amount == null || amount.isEmpty()) return devanagari ? " रुपये" : " rupees";
-        int dot = amount.indexOf('.');
-        String intPart = dot >= 0 ? amount.substring(0, dot) : amount;
-        String fracPart = dot >= 0 ? amount.substring(dot + 1) : "";
-        String intWords = intPart.contains(",")
-                ? indianGroupedNumberToWords(intPart, devanagari)
-                : intPart.replace(",", "");
-        if (intWords.isEmpty()) intWords = "0";
-
-        int paise = -1;
-        if (fracPart.length() >= 1 && fracPart.length() <= 2) {
-            try {
-                paise = Integer.parseInt(fracPart);
-                if (fracPart.length() == 1) {
-                    paise *= 10; // e.g. .5 is 50 paise, not 5 paise
-                }
-            } catch (NumberFormatException ignored) {
-            }
-        }
-
-        // Fractional-only amount, e.g. "₹0.50" -> "50 paise"
-        if ("0".equals(intWords) && paise > 0) {
-            String paiseWord = (paise == 1)
-                    ? (devanagari ? "पैसा" : "paisa")
-                    : (devanagari ? "पैसे" : "paise");
-            return paise + " " + paiseWord;
-        }
-
-        boolean isSingularRupee = "1".equals(intWords);
-        String rupeesWord = isSingularRupee
-                ? (devanagari ? "रुपया" : "rupee")
-                : (devanagari ? "रुपये" : "rupees");
-
-        StringBuilder out = new StringBuilder(intWords).append(' ').append(rupeesWord);
-        if (paise > 0) {
-            String paiseWord = (paise == 1)
-                    ? (devanagari ? "पैसा" : "paisa")
-                    : (devanagari ? "पैसे" : "paise");
-            out.append(' ').append(paise).append(' ').append(paiseWord);
-        } else if (paise < 0 && !fracPart.isEmpty()) {
-            out.append('.').append(fracPart);
-        } else if (fracPart.length() > 2) {
-            // Long fractions ("10.567") stay decimal for the engine.
-            return intWords + "." + fracPart + " " + rupeesWord;
-        }
-        return out.toString();
+        return TextPreprocessor.indianRupeeAmountToWords(amount, devanagari);
     }
 
-    /**
-     * "₹5L" -&gt; "5 lakh rupees", "Rs 2.5Cr" -&gt; "2.5 crore rupees", "₹10k" -&gt;
-     * "10 thousand rupees" - a currency-prefixed amount carrying a lakh/crore/thousand
-     * shorthand unit. These are always approximate figures, never rupees-and-paise, so
-     * the amount is read as-is (eSpeak already verbalizes plain decimals like "2.5"
-     * correctly) rather than routed through the paise-splitting logic above.
-     */
-    private static String indianRupeeShorthandToWords(String amount, String unit, boolean devanagari) {
-        String unitWord;
-        char u = Character.toLowerCase(unit.charAt(0));
-        if (u == 'k') {
-            unitWord = devanagari ? "हज़ार" : "thousand";
-        } else if (u == 'l') {
-            unitWord = devanagari ? "लाख" : "lakh";
-        } else {
-            unitWord = devanagari ? "करोड़" : "crore";
-        }
-        String rupeesWord = devanagari ? "रुपये" : "rupees";
-        return amount + " " + unitWord + " " + rupeesWord;
-    }
-
-    /**
-     * Preprocesses Indian-specific textual nuances and common technical syntax before synthesis:
-     * 1. Normalizes native Indic numerals across 9 scripts to ASCII 0-9.
-     * 2. Inserts spacing after Danda (।) and Double Danda (॥) if directly adjacent to text.
-     * 3. Separates slash-concatenated banking tokens (UPI/423891028341/PAYTM -> UPI / 423891028341 / PAYTM).
-     * 4. Normalizes currency prefixes (₹500 -> 500 rupees, ₹10.50 -> 10 rupees 50 paise,
-     *    ₹1,00,000 -> 1 lakh rupees), stripping commas via lakh/crore verbalization.
-     * 5. Verbalizes Indian comma grouping (1,00,000 -> 1 lakh, 1,00,00,000 -> 1 crore).
-     * 6. Expands common Indian shorthand quantities (10k -> 10 thousand, 5L -> 5 lakh, 2cr -> 2 crore).
-     */
     public static String preprocessIndianText(String text) {
-        return preprocessIndianText(text, "");
+        return TextPreprocessor.preprocessIndianText(text);
     }
 
-    /**
-     * @param languageTag BCP-47-ish tag of the synthesis voice ("hi", "en-in",
-     *                    ...); Devanagari-script languages get native units
-     *                    (लाख/करोड़/रुपये/पैसे), all others get Latin units.
-     */
     public static String preprocessIndianText(String text, String languageTag) {
-        if (text == null || text.isEmpty() || !containsIndianNuanceChars(text)) {
-            return text;
-        }
-        final boolean devanagari = isDevanagariNumberLang(languageTag);
-        text = normalizeIndicDigits(text);
-        text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
-        java.util.regex.Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
-        if (txnMatcher.find()) {
-            // StringBuffer, not StringBuilder: Matcher.appendReplacement/appendTail only
-            // gained StringBuilder overloads in API 34; the StringBuffer ones work on any
-            // API level and this loop is never multi-threaded, so there's no downside.
-            StringBuffer sb = new StringBuffer();
-            do {
-                String expanded = SLASH_RUN.matcher(txnMatcher.group(0)).replaceAll(" / ");
-                txnMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(expanded));
-            } while (txnMatcher.find());
-            txnMatcher.appendTail(sb);
-            text = sb.toString();
-        }
-
-        // Normalize Indian currency prefixes. Indian-grouped figures verbalize
-        // to lakh/crore ("₹1,00,000" -> "1 lakh rupees"); decimals become
-        // paise ("₹10.50" -> "10 rupees 50 paise").
-        java.util.regex.Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
-        if (currMatcher.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String amount = currMatcher.group(1);
-                String unit = currMatcher.group(2);
-                String words = (unit != null && !unit.isEmpty())
-                        ? indianRupeeShorthandToWords(amount, unit, devanagari)
-                        : indianRupeeAmountToWords(amount, devanagari);
-                currMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(words));
-            } while (currMatcher.find());
-            currMatcher.appendTail(sb);
-            text = sb.toString();
-        }
-
-        // Verbalize Indian number comma groupings (e.g. 1,00,000 -> 1 lakh);
-        // plain thousands ("10,000") still strip to digits for natural reading.
-        java.util.regex.Matcher numMatcher = INDIAN_NUMBER_COMMAS.matcher(text);
-        if (numMatcher.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String grouped = numMatcher.group(0);
-                String words = indianGroupedNumberToWords(grouped, devanagari);
-                numMatcher.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(words));
-            } while (numMatcher.find());
-            numMatcher.appendTail(sb);
-            text = sb.toString();
-        }
-
-        if (devanagari) {
-            text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 हज़ार");
-            text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 लाख");
-            text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 करोड़");
-        } else {
-            text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
-            text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");
-            text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 crore");
-        }
-        return text;
+        return TextPreprocessor.preprocessIndianText(text, languageTag);
     }
 
-    private static boolean containsSmartCodeKeyword(String context) {
-        if (context == null || context.isEmpty()) {
-            return false;
-        }
-        return SMART_CODE_KEYWORD.matcher(context).find();
+    public static boolean containsSmartCodeKeyword(String context) {
+        return TextPreprocessor.containsSmartCodeKeyword(context);
     }
 
-
-    /**
-     * Sets off each run of emoji from the surrounding sentence with a light
-     * pause (", "), so eSpeak's own emoji dictionary description (e.g. "😂"
-     * -&gt; "face with tears of joy") reads as an aside rather than plain
-     * sentence text. Without this, "I'm happy 😀 today" is indistinguishable
-     * by ear from someone literally describing a face - "I'm happy, grinning
-     * face, today" makes clear to a blind listener that a symbol was there.
-     */
     public static String clarifyEmojiAnnouncements(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        final int len = text.length();
-        final StringBuilder out = new StringBuilder(len + 16);
-        int i = 0;
-        while (i < len) {
-            final int codePoint = text.codePointAt(i);
-            if (!isEmojiCodePoint(codePoint)) {
-                out.appendCodePoint(codePoint);
-                i += Character.charCount(codePoint);
-                continue;
-            }
-
-            final int runStart = i;
-            boolean prevWasZwj = false;
-            while (i < len) {
-                final int c = text.codePointAt(i);
-                // ZWJ / VS / skin-tone / tag / keycap joiners continue the run
-                // so multi-codepoint emojis (family, keycaps, toned hands)
-                // stay in one aside instead of being split into several.
-                // A ZWJ also pulls in whatever follows it even when that
-                // codepoint is not emoji on its own (e.g. U+2194 in the "head
-                // shaking horizontally" sequence U+1F642 U+200D U+2194);
-                // without this the tail is cut off and announced as a
-                // separate symbol, the same failure mode as split flags.
-                if (!isEmojiCodePoint(c) && !isEmojiJoiner(c) && !prevWasZwj) break;
-                prevWasZwj = (c == 0x200D);
-                i += Character.charCount(c);
-            }
-
-            // Only add a leading pause if the emoji isn't already at the very
-            // start of the text or right after existing punctuation/space.
-            final int lastOut = out.length() - 1;
-            if (lastOut >= 0) {
-                char prev = out.charAt(lastOut);
-                if (prev != ' ' && prev != ',' && prev != '.' && prev != '!' && prev != '?' && prev != ':' && prev != ';') {
-                    out.append(',');
-                }
-                if (prev != ' ') {
-                    out.append(' ');
-                }
-            }
-
-            // Separate adjacent emojis in the run with spaces so eSpeak announces each one distinctly,
-            // but keep single visible emojis glued: ZWJ sequences (family),
-            // skin-tone modifiers, VS16 selectors, tag sequences, regional-
-            // indicator flag pairs, and keycaps must not be split apart.
-            int prevCp = -1;
-            int riRun = 0; // consecutive regional indicators (pair up into flags)
-            for (int j = runStart; j < i; ) {
-                int cp = text.codePointAt(j);
-                boolean joiner = isEmojiJoiner(cp) || isEmojiJoiner(prevCp);
-                if (isRegionalIndicator(cp)) {
-                    riRun++;
-                    // Glue pairs (1st-2nd, 3rd-4th = one flag each); split between flags.
-                    joiner = (riRun % 2 == 0);
-                } else {
-                    riRun = 0;
-                }
-                if (j > runStart && !joiner) {
-                    out.append(' ');
-                }
-                out.appendCodePoint(cp);
-                prevCp = cp;
-                j += Character.charCount(cp);
-            }
-
-            // Only add a trailing pause if more text follows and it isn't
-            // already punctuation (avoids ",." or ",," doubling up).
-            if (i < len) {
-                char next = text.charAt(i);
-                boolean isPunct = next == ',' || next == '.' || next == '!' || next == '?' || next == ':' || next == ';';
-                if (next != ' ' && !isPunct) {
-                    out.append(',');
-                }
-                if (next != ' ' && !isPunct) {
-                    out.append(' ');
-                }
-            }
-        }
-        return out.toString();
+        return TextPreprocessor.clarifyEmojiAnnouncements(text);
     }
 
-    /**
-     * Groups long digit runs for natural announcement.
-     * single: "123" -&gt; "1 2 3". double/pairs: "123456" -&gt; "12 34 56".
-     * triple: groups of three, but only when the run length reaches
-     * {@code threshold} (e.g. a 10-digit mobile number grouped, a 4-digit
-     * year left natural). Runs shorter than 4 digits are never regrouped.
-     */
+    public static String filterEmojis(String text) {
+        return TextPreprocessor.filterEmojis(text);
+    }
+
+    public static boolean containsPotentialEmoji(String text) {
+        return TextPreprocessor.containsPotentialEmoji(text);
+    }
+
+    public static boolean isEmojiCodePoint(int codePoint) {
+        return TextPreprocessor.isEmojiCodePoint(codePoint);
+    }
+
+    public static boolean isRegionalIndicator(int codePoint) {
+        return TextPreprocessor.isRegionalIndicator(codePoint);
+    }
+
+    public static boolean isEmojiJoiner(int codePoint) {
+        return TextPreprocessor.isEmojiJoiner(codePoint);
+    }
+
     public static String formatDigitGrouping(String text, String mode, int threshold) {
-        if (text == null || text.isEmpty() || mode == null
-                || VoiceSettings.DIGIT_GROUP_OFF.equals(mode)) {
-            return text;
-        }
-        if (VoiceSettings.DIGIT_GROUP_SINGLE.equals(mode)) {
-            return spaceSeparateDigits(text);
-        }
-        final int groupSize = VoiceSettings.DIGIT_GROUP_DOUBLE.equals(mode) ? 2 : 3;
-        final int len = text.length();
-        StringBuilder out = new StringBuilder(len + 16);
-        int i = 0;
-        while (i < len) {
-            int cp = text.codePointAt(i);
-            if (Character.isDigit(cp)) {
-                int runStart = i;
-                int digitCount = 0;
-                while (i < len) {
-                    int c = text.codePointAt(i);
-                    if (!Character.isDigit(c)) break;
-                    digitCount++;
-                    i += Character.charCount(c);
-                }
-                int runEnd = i;
-                boolean regroup = digitCount >= 4
-                        && (groupSize == 2 || digitCount >= Math.max(4, threshold));
-                if (!regroup) {
-                    out.append(text, runStart, runEnd);
-                } else {
-                    int groupCount = 0;
-                    for (int j = runStart; j < runEnd; ) {
-                        int c = text.codePointAt(j);
-                        if (groupCount > 0 && groupCount % groupSize == 0) {
-                            out.append(' ');
-                        }
-                        out.appendCodePoint(c);
-                        groupCount++;
-                        j += Character.charCount(c);
-                    }
-                }
-            } else {
-                out.appendCodePoint(cp);
-                i += Character.charCount(cp);
-            }
-        }
-        return out.toString();
+        return TextPreprocessor.formatDigitGrouping(text, mode, threshold);
     }
 
-    /**
-     * Cheap pre-scan shared by the currency/time/date expanders: every amount,
-     * time, and numeric date contains a digit, so digit-free utterances (the
-     * common TalkBack-navigation case) skip all of those regexes outright.
-     */
-    private static boolean containsDigit(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; ) {
-            final int cp = text.codePointAt(i);
-            if (Character.isDigit(cp)) {
-                return true;
-            }
-            i += Character.charCount(cp);
-        }
-        return false;
-    }
-
-    /** Expands $/€/£/¥ amounts to words ("$5" -&gt; "5 dollars"). Commas stripped. */
     public static String expandCurrencySymbols(String text) {
-        if (text == null || text.isEmpty() || !containsDigit(text)) return text;
-        text = CURRENCY_DOLLAR_PREFIX.matcher(text).replaceAll("$1 dollars");
-        // Suffix form ("5 USD", "5 dollars"): normalizes to "5 dollars".
-        // Idempotent on already-expanded text, so pipeline re-runs are safe.
-        text = CURRENCY_DOLLAR_SUFFIX.matcher(text).replaceAll("$1 dollars");
-        text = CURRENCY_EURO.matcher(text).replaceAll("$1$2 euros");
-        text = CURRENCY_POUND.matcher(text).replaceAll("$1$2 pounds");
-        text = CURRENCY_YEN.matcher(text).replaceAll("$1$2 yen");
-        return text;
+        return TextPreprocessor.expandCurrencySymbols(text);
     }
 
-    /**
-     * Natural time/date pronunciation: "10:30" -&gt; "10 30", "10:30 PM" keeps
-     * the meridiem, numeric slash/dash dates ("15/01/2024", "2024-01-15") get
-     * separators spaced so they read as number groups. Dots are deliberately
-     * excluded: "1.2.3" is a version number, not a date.
-     */
     public static String expandTimeDate(String text) {
-        if (text == null || text.isEmpty() || !containsDigit(text)) return text;
-        // Times need ':', dates need '/' or '-'; without one there is nothing to expand.
-        boolean hasSeparator = false;
-        for (int i = 0, len = text.length(); i < len; i++) {
-            char c = text.charAt(i);
-            if (c == ':' || c == '/' || c == '-') {
-                hasSeparator = true;
-                break;
-            }
-        }
-        if (!hasSeparator) return text;
-        java.util.regex.Matcher tm = TIME_HM.matcher(text);
-        if (tm.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String mer = tm.group(3);
-                String rep = tm.group(1) + " " + tm.group(2)
-                        + (mer != null ? " " + mer + " M" : "");
-                tm.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(rep));
-            } while (tm.find());
-            tm.appendTail(sb);
-            text = sb.toString();
-        }
-        java.util.regex.Matcher dm = DATE_NUMERIC.matcher(text);
-        if (dm.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String rep = dm.group(1) + " " + dm.group(2) + " " + dm.group(3);
-                dm.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(rep));
-            } while (dm.find());
-            dm.appendTail(sb);
-            text = sb.toString();
-        }
-        return text;
+        return TextPreprocessor.expandTimeDate(text);
     }
 
-    private static final java.util.regex.Pattern SPACE_RUNS =
-            java.util.regex.Pattern.compile(" {2,}");
-
-    /** Spelling mode: "hi" -&gt; "h i" so each letter is announced. */
     public static String expandSpellingMode(String text) {
-        if (text == null || text.isEmpty()) return text;
-        StringBuilder out = new StringBuilder(text.length() * 2);
-        for (int i = 0; i < text.length(); ) {
-            int cp = text.codePointAt(i);
-            if (Character.isLetter(cp)) {
-                if (out.length() > 0) {
-                    int last = out.length() - 1;
-                    if (out.charAt(last) != ' ') out.append(' ');
-                }
-                out.appendCodePoint(cp);
-            } else {
-                out.appendCodePoint(cp);
-            }
-            i += Character.charCount(cp);
-        }
-        return SPACE_RUNS.matcher(out.toString()).replaceAll(" ");
+        return TextPreprocessor.expandSpellingMode(text);
     }
 
-    /** Phonetic mode: each letter -&gt; NATO word ("AB" -&gt; "Alpha Bravo"). */
     public static String expandPhoneticMode(String text) {
-        if (text == null || text.isEmpty()) return text;
-        StringBuilder out = new StringBuilder(text.length() * 6);
-        for (int i = 0; i < text.length(); ) {
-            int cp = text.codePointAt(i);
-            if ((cp >= 'A' && cp <= 'Z') || (cp >= 'a' && cp <= 'z')) {
-                int idx = Character.toUpperCase(cp) - 'A';
-                if (out.length() > 0 && out.charAt(out.length() - 1) != ' ') out.append(' ');
-                out.append(NATO_PHONETICS[idx]);
-            } else {
-                out.appendCodePoint(cp);
-            }
-            i += Character.charCount(cp);
-        }
-        return out.toString();
+        return TextPreprocessor.expandPhoneticMode(text);
     }
 
-    /**
-     * True if the last non-trailing-whitespace/quote/bracket character of
-     * {@code text} is '?' or '!' (plain or fullwidth). Used to scope the
-     * question/exclamation pitch-range boost (espeak-ng community issue
-     * #1658) to the whole utterance, the same per-call scope the existing
-     * Capitals-pitch handling above uses.
-     */
     public static boolean endsWithQuestionOrExclamation(String text) {
-        if (text == null) return false;
-        int end = text.length();
-        while (end > 0) {
-            char c = text.charAt(end - 1);
-            if (Character.isWhitespace(c) || c == '"' || c == '\'' || c == ')' || c == ']'
-                    || c == '”' || c == '’') {
-                end--;
-                continue;
-            }
-            break;
-        }
-        if (end == 0) return false;
-        char last = text.charAt(end - 1);
-        return last == '?' || last == '!' || last == '？' || last == '！';
+        return TextPreprocessor.endsWithQuestionOrExclamation(text);
     }
 
-    /**
-     * Zero-hang sanitize: strips bidi/zero-width/C0 controls and collapses
-     * edge-case bracket runs that corrupt eSpeak's [[ phoneme parser or stall
-     * mixed-script synthesis. Idempotent and safe to run on every request.
-     */
     public static String sanitizeForWatchdog(String text) {
-        return sanitizeForWatchdog(text, false);
+        return TextPreprocessor.sanitizeForWatchdog(text);
     }
 
-    private static boolean containsHangControls(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            if ((c < 0x20 && c != '\t' && c != '\n' && c != '\r') || c == 0x7F
-                    || (c >= 0x200B && c <= 0x200F) || (c >= 0x202A && c <= 0x202E)
-                    || (c >= 0x2060 && c <= 0x2064) || c == 0xFEFF) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param isSsml when true, only C0/bidi controls are stripped (XML forbids
-     *               them anyway) while bracket runs are left intact, so SSML
-     *               markup is never mangled.
-     */
     public static String sanitizeForWatchdog(String text, boolean isSsml) {
-        if (text == null || text.isEmpty()) return text;
-        if (containsHangControls(text)) {
-            text = HANG_CONTROLS.matcher(text).replaceAll("");
-        }
-        if (!isSsml && (text.contains("[[") || text.contains("]]"))) {
-            text = EDGE_BRACKET_RUN.matcher(text).replaceAll(" ");
-        }
-        return text;
+        return TextPreprocessor.sanitizeForWatchdog(text, isSsml);
     }
 
-    /**
-     * Splits over-long input into speakable chunks at sentence/clause
-     * boundaries so one rapid swipe or pasted document can never hang the
-     * engine on a single giant espeak_Synth call. Always returns at least
-     * one chunk; total capped by MAX_CHUNKS.
-     *
-     * The returned chunks are an exact sequential partition of the (possibly
-     * capped) input - including whitespace-only pieces - so callers can map
-     * per-chunk word positions back to full-text offsets by accumulation.
-     */
     public static List<String> chunkForWatchdog(String text) {
-        List<String> chunks = new ArrayList<>();
-        if (text == null || text.isEmpty()) {
-            chunks.add("");
-            return chunks;
-        }
-        String capped = text.length() > MAX_REQUEST_CHARS
-                ? text.substring(0, MAX_REQUEST_CHARS) : text;
-        if (capped.length() <= MAX_CHUNK_CHARS) {
-            chunks.add(capped);
-            return chunks;
-        }
-
-        final int len = capped.length();
-        int start = 0;
-        while (start < len && chunks.size() < MAX_CHUNKS) {
-            if (len - start <= MAX_CHUNK_CHARS) {
-                chunks.add(capped.substring(start));
-                break;
-            }
-
-            int targetEnd = start + MAX_CHUNK_CHARS;
-            int cutPoint = -1;
-
-            // 1. Scan backwards from targetEnd for sentence-ending punctuation or newlines
-            for (int i = targetEnd - 1; i > start; i--) {
-                char c = capped.charAt(i);
-                if (isPunctOrNewline(c)) {
-                    // Avoid splitting in the middle of a decimal number (e.g. 3.14)
-                    if (c == '.' && i > start && Character.isDigit(capped.charAt(i - 1))
-                            && i + 1 < len && Character.isDigit(capped.charAt(i + 1))) {
-                        continue;
-                    }
-                    // Avoid splitting after common honorifics/abbreviations or initials
-                    if (c == '.' && isAbbreviationOrInitial(capped, start, i)) {
-                        continue;
-                    }
-
-                    int p = i + 1;
-                    while (p < len && isPunctOrNewline(capped.charAt(p))) {
-                        p++;
-                    }
-                    while (p < len && (capped.charAt(p) == ' ' || capped.charAt(p) == '\t')) {
-                        p++;
-                    }
-                    // Allow the cut point slightly beyond targetEnd (within 16 chars) to
-                    // cleanly include sentence-trailing whitespace/dandas.
-                    if (p <= targetEnd + 16) {
-                        cutPoint = p;
-                        break;
-                    }
-                }
-            }
-
-            // 2. Fall back to whitespace boundary if no punctuation boundary was found
-            if (cutPoint <= start) {
-                for (int i = targetEnd - 1; i > start; i--) {
-                    if (capped.charAt(i) <= ' ') {
-                        int p = i + 1;
-                        while (p < len && capped.charAt(p) <= ' ') {
-                            p++;
-                        }
-                        if (p <= targetEnd) {
-                            cutPoint = p;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // 3. Fall back to hard split at targetEnd
-            if (cutPoint <= start) {
-                cutPoint = targetEnd;
-            }
-
-            chunks.add(capped.substring(start, cutPoint));
-            start = cutPoint;
-        }
-        return chunks;
+        return TextPreprocessor.chunkForWatchdog(text);
     }
 
-    private static boolean isAbbreviationOrInitial(String s, int start, int dotIndex) {
-        int wordStart = dotIndex - 1;
-        while (wordStart >= start && Character.isLetter(s.charAt(wordStart))) {
-            wordStart--;
-        }
-        wordStart++;
-        int wordLen = dotIndex - wordStart;
-        if (wordLen == 1) {
-            // Single-letter initial: "J. K. Rowling", "A. Smith"
-            return true;
-        }
-        if (wordLen >= 2 && wordLen <= 4) {
-            String word = s.substring(wordStart, dotIndex).toLowerCase(Locale.ROOT);
-            if ("dr".equals(word) || "mr".equals(word) || "mrs".equals(word) || "ms".equals(word)
-                    || "prof".equals(word) || "sr".equals(word) || "jr".equals(word) || "vs".equals(word)
-                    || "eg".equals(word) || "ie".equals(word) || "etc".equals(word) || "rs".equals(word)
-                    || "re".equals(word) || "al".equals(word) || "no".equals(word) || "st".equals(word)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isPunctOrNewline(char c) {
-        return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n'
-                || c == '\u0964' || c == '\u0965' || c == '\u3002' || c == '\uFF01' || c == '\uFF1F';
-    }
-
-    /**
-     * Inserts spaces between adjacent digits so that eSpeak reads each digit
-     * individually (e.g. "123" becomes "1 2 3").
-     *
-     * <p>Supports all Unicode decimal digit ranges (ASCII 0-9, Arabic-Indic
-     * ٠-٩, Extended Arabic-Indic ۰-۹, Devanagari ०-९, etc.) as classified by
-     * {@link Character#isDigit(int)}.
-     */
     public static String spaceSeparateDigits(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        final int len = text.length();
-        StringBuilder out = new StringBuilder(len * 2);
-        boolean prevWasDigit = false;
-        for (int i = 0; i < len; ) {
-            final int c = text.codePointAt(i);
-            final int charCount = Character.charCount(c);
-            final boolean isDigit = Character.isDigit(c);
-            if (isDigit && prevWasDigit) {
-                out.append(' ');
-            }
-            out.appendCodePoint(c);
-            prevWasDigit = isDigit;
-            i += charCount;
-        }
-        return out.toString();
+        return TextPreprocessor.spaceSeparateDigits(text);
     }
 
-    /**
-     * Intelligently detects verification codes, OTPs, and PINs (min-to-max digit runs
-     * surrounded by a keyword like "OTP", "PIN", "code", "verification") and
-     * space-separates only those numbers so they are read digit-by-digit, while
-     * preserving natural reading for normal quantities ("25 items", "year 2024",
-     * "₹150000 credited") that happen to have the same digit count but no
-     * such keyword nearby. Also expands the Indian Rupee symbol (₹) to "rupees".
-     */
     public static String spaceSeparateSmartCodes(String text) {
-        // Max of 10, not 8: an Indian PNR (already a recognized keyword below) is
-        // always exactly 10 digits - matches VoiceSettings.getSmartMaxLen()'s default.
-        return spaceSeparateSmartCodes(text, 4, 10);
+        return TextPreprocessor.spaceSeparateSmartCodes(text);
     }
 
     public static String spaceSeparateSmartCodes(String text, int minLen, int maxLen) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        final int len = text.length();
-        StringBuilder out = new StringBuilder(len + 16);
-        int i = 0;
-        while (i < len) {
-            int cp = text.codePointAt(i);
-            if (Character.isDigit(cp)) {
-                int runStart = i;
-                int digitCount = 0;
-                while (i < len) {
-                    int c = text.codePointAt(i);
-                    if (!Character.isDigit(c)) break;
-                    digitCount++;
-                    i += Character.charCount(c);
-                }
-                int runEnd = i;
-
-                boolean separate = false;
-                if (digitCount >= Math.max(2, minLen) && digitCount <= Math.max(minLen, maxLen)) {
-                    int contextStart = Math.max(0, runStart - 25);
-                    String prefix = text.substring(contextStart, runStart);
-                    int contextEnd = Math.min(len, runEnd + 25);
-                    String suffix = text.substring(runEnd, contextEnd);
-                    if (containsSmartCodeKeyword(prefix) || containsSmartCodeKeyword(suffix)) {
-                        separate = true;
-                    }
-                }
-
-                if (separate) {
-                    for (int j = runStart; j < runEnd; ) {
-                        int c = text.codePointAt(j);
-                        if (j > runStart) {
-                            out.append(' ');
-                        }
-                        out.appendCodePoint(c);
-                        j += Character.charCount(c);
-                    }
-                } else {
-                    out.append(text, runStart, runEnd);
-                }
-            } else {
-                if (cp == 0x20B9) { // '₹' Indian Rupee symbol
-                    out.append(" rupees ");
-                } else {
-                    out.appendCodePoint(cp);
-                }
-                i += Character.charCount(cp);
-            }
-        }
-        return out.toString();
+        return TextPreprocessor.spaceSeparateSmartCodes(text, minLen, maxLen);
     }
 
     // Protected (not private) as a test hook: eSpeakTests subclasses call

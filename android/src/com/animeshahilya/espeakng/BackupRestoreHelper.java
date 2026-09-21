@@ -154,7 +154,7 @@ public final class BackupRestoreHelper {
                     ed.putString(k, String.valueOf(v));
                 }
             }
-            ed.commit();
+            ed.apply();
         }
         // Explicit package scoping, matching DownloadVoiceData and the
         // voice-import sender: only this app's TtsService should act on the

@@ -24,6 +24,7 @@
 
 package com.animeshahilya.espeakng;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.media.AudioFormat;
@@ -454,6 +455,7 @@ public class SpeechSynthesis {
     // The rebuilt target keeps a raw variant passthrough, so the legacy
     // constructor is kept (see getLocaleFromLanguageName).
     @SuppressWarnings("deprecation")
+    @SuppressLint("AppBundleLocaleChanges")
     public static String getSampleText(Context context, Locale locale) {
         final String language = getIanaLanguageCode(locale.getLanguage());
         final String country = getIanaCountryCode(locale.getCountry());

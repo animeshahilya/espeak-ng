@@ -16,6 +16,7 @@
 
 package com.animeshahilya.espeakng.preference;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -87,6 +88,7 @@ public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCo
     // case (see SeekBarPreference.onClick).
     @Override
     @SuppressWarnings("deprecation")
+    @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         SupportedLanguagesPreference preference = getSupportedPreference();
 

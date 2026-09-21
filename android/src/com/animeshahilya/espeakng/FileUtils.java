@@ -18,13 +18,17 @@
 package com.animeshahilya.espeakng;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -73,10 +77,11 @@ public class FileUtils {
      * independently-maintained copies of it.
      */
     public static void extractZip(InputStream stream, File outputDir) throws IOException {
-        final ZipInputStream zipStream = new ZipInputStream(new BufferedInputStream(stream));
+        final ZipInputStream zipStream = new ZipInputStream(new BufferedInputStream(stream, 65536));
         try {
             final String canonicalOutputDirPath = outputDir.getCanonicalPath() + File.separator;
-            final byte[] buffer = new byte[10240];
+            final byte[] buffer = new byte[65536];
+            final Set<File> createdDirs = new HashSet<>();
             int bytesRead;
             ZipEntry entry;
 
@@ -86,17 +91,19 @@ public class FileUtils {
                     throw new SecurityException("Zip entry outside target dir: " + entry.getName());
                 }
                 if (entry.isDirectory()) {
-                    file.mkdirs();
+                    if (createdDirs.add(file)) {
+                        file.mkdirs();
+                    }
                     continue;
                 }
-                file.getParentFile().mkdirs();
-                final FileOutputStream outputStream = new FileOutputStream(file);
-                try {
+                final File parent = file.getParentFile();
+                if (parent != null && createdDirs.add(parent)) {
+                    parent.mkdirs();
+                }
+                try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file), 65536)) {
                     while ((bytesRead = zipStream.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, bytesRead);
                     }
-                } finally {
-                    outputStream.close();
                 }
                 zipStream.closeEntry();
             }

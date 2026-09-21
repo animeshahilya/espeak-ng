@@ -16,7 +16,8 @@
         android:layout_marginBottom="8dp"
         android:hint="@string/languages_search_hint"
         android:inputType="textFilter"
-        android:imeOptions="actionDone" />
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no" />
 
     <ListView
         android:id="@+id/supported_languages_list"

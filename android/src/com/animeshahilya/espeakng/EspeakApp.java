@@ -16,7 +16,7 @@
 
 package com.animeshahilya.espeakng;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -40,32 +40,28 @@ public class EspeakApp extends Application {
      */
     public static final String PREF_PREFERENCES_MIGRATED = "espeak_preferences_migrated";
 
+    @SuppressLint("StaticFieldLeak")
     private static Context storageContext;
 
     public void onCreate() {
         super.onCreate();
         final Context appContext = getApplicationContext();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            EspeakApp.storageContext = appContext.createDeviceProtectedStorageContext();
-            migrateLegacyPreferences(appContext, EspeakApp.storageContext);
-            if (!appContext.getSystemService(UserManager.class).isUserUnlocked()) {
-                // Started at boot, for a direct-boot-aware screen reader. The
-                // credential-encrypted file cannot be read yet, so run the
-                // migration again when the user unlocks instead of leaving it
-                // to the next process restart, which may be days away.
-                // ACTION_USER_UNLOCKED is a protected system broadcast, exempt
-                // from the exported flag that targetSdk 34 requires otherwise.
-                appContext.registerReceiver(new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        appContext.unregisterReceiver(this);
-                        migrateLegacyPreferences(appContext, EspeakApp.storageContext);
-                    }
-                }, new IntentFilter(Intent.ACTION_USER_UNLOCKED));
-            }
-        }
-        else {
-            EspeakApp.storageContext = appContext;
+        EspeakApp.storageContext = appContext.createDeviceProtectedStorageContext();
+        migrateLegacyPreferences(appContext, EspeakApp.storageContext);
+        if (!appContext.getSystemService(UserManager.class).isUserUnlocked()) {
+            // Started at boot, for a direct-boot-aware screen reader. The
+            // credential-encrypted file cannot be read yet, so run the
+            // migration again when the user unlocks instead of leaving it
+            // to the next process restart, which may be days away.
+            // ACTION_USER_UNLOCKED is a protected system broadcast, exempt
+            // from the exported flag that targetSdk 34 requires otherwise.
+            appContext.registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    appContext.unregisterReceiver(this);
+                    migrateLegacyPreferences(appContext, EspeakApp.storageContext);
+                }
+            }, new IntentFilter(Intent.ACTION_USER_UNLOCKED));
         }
         syncWearLauncherState();
     }
@@ -87,7 +83,6 @@ public class EspeakApp extends Application {
      * file is discarded instead, which turns that class of bug into a setting
      * that does not take effect -- visible, and harmless.
      */
-    @TargetApi(Build.VERSION_CODES.N)
     public static void migrateLegacyPreferences(Context appContext, Context storageContext) {
         // AndroidX made getDefaultSharedPreferencesName() private; both
         // frameworks compute it as packageName + "_preferences", so spell it
@@ -187,8 +182,7 @@ public class EspeakApp extends Application {
             return EspeakApp.storageContext;
         }
         if (fallback != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                    && !fallback.isDeviceProtectedStorage()) {
+            if (!fallback.isDeviceProtectedStorage()) {
                 return fallback.createDeviceProtectedStorageContext();
             }
             return fallback;
