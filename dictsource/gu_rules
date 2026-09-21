@@ -203,12 +203,12 @@ C)        ૣ          l-:
 
 .group ક
         ક          kV
-        કઁ          kV~        // + candrabindu
+        કઁ         kV~        // + candrabindu
         ક (_       k
         ક (B       k
         ક (્ય      k:
         ક઼         qV
-        ક઼ઁ         qV~        // + candrabindu
+        ક઼ઁ        qV~        // + candrabindu
         ક઼ (_      q
         ક઼ (B      q
 
@@ -221,21 +221,21 @@ C)        ૣ          l-:
         
 .group ખ
         ખ          k#V
-        ખઁ          k#V~        // + candrabindu
+        ખઁ         k#V~        // + candrabindu
         ખ (_       k#
         ખ (B       k#
         ખ઼         xV
-        ખ઼ઁ         xV~        // + candrabindu
+        ખ઼ઁ        xV~        // + candrabindu
         ખ઼ (_      x
         ખ઼ (B      x
 
 .group ગ
         ગ          gV
-        ગઁ          gV~        // + candrabindu
+        ગઁ         gV~        // + candrabindu
         ગ (_       g
         ગ (B       g
         ગ઼         QV
-        ગ઼ઁ         QV~        // + candrabindu
+        ગ઼ઁ        QV~        // + candrabindu
         ગ઼ (_      Q
         ગ઼ (B      Q
 
@@ -245,20 +245,20 @@ C)        ૣ          l-:
 
 .group ઘ
         ઘ          g#V
-        ઘઁ          g#V~        // + candrabindu
+        ઘઁ         g#V~        // + candrabindu
         ઘ (_       g#
         ઘ (B       g#
 
 .group ઙ
         ઙ          NV
-        ઙઁ          NV~        // + candrabindu
+        ઙઁ         NV~        // + candrabindu
         ઙ (_       N
         ઙ (B       N
      ્) ઙ (_       N@
 
 .group ચ
         ચ          cV
-        ચઁ          cV~        // + candrabindu
+        ચઁ         cV~        // + candrabindu
         ચ (_       c
         ચ (B       c
         ચ (્ય      c:
@@ -273,17 +273,17 @@ C)        ૣ          l-:
 
 .group છ
         છ          c#V
-        છઁ          c#V~        // + candrabindu
+        છઁ         c#V~        // + candrabindu
         છ (_       c#
         છ (B       c#
 
 .group જ
         જ          JV
-        જઁ          JV~        // + candrabindu
+        જઁ         JV~        // + candrabindu
         જ (_       J
         જ (B       J
         જ઼         zV
-        જ઼ઁ         zV~        // + candrabindu
+        જ઼ઁ        zV~        // + candrabindu
         જ઼ (_      z
         જ઼ (B      z
 
@@ -297,20 +297,20 @@ C)        ૣ          l-:
 
 .group ઝ  // According to chart this is jha ( ઝ 0A9D)but it is told that it looks like za ( જ઼ 0A9C + 0ABC) 
         ઝ          zV
-        ઝઁ          zV~        // + candrabindu
+        ઝઁ         zV~        // + candrabindu
         ઝ (_       z
         ઝ (B       z
 
 .group ઞ
         ઞ          n^V
-        ઞઁ          n^V~        // + candrabindu
+        ઞઁ         n^V~        // + candrabindu
         ઞ (_       n^
         ઞ (B       n^
      ્) ઞ (_       n^
 
 .group ટ
         ટ          t.V
-        ટઁ          t.V~        // + candrabindu
+        ટઁ         t.V~        // + candrabindu
         ટ (_       t.
         ટ (B       t.
         ટ (્ય      t.:
@@ -325,13 +325,13 @@ C)        ૣ          l-:
 
 .group ઠ
         ઠ          t.#V
-        ઠઁ          t.#V~        // + candrabindu
+        ઠઁ         t.#V~        // + candrabindu
         ઠ (_       t.#
         ઠ (B       t.#
 
 .group ડ
         ડ          d.V
-        ડઁ          d.V~        // + candrabindu
+        ડઁ         d.V~        // + candrabindu
         ડ (_       d.
         ડ (B       d.
 
@@ -344,31 +344,31 @@ C)        ૣ          l-:
         ડ્ઢ (B       d.#:
 
         ડ઼         r.V
-        ડ઼ઁ         r.V~        // + candrabindu
+        ડ઼ઁ        r.V~        // + candrabindu
         ડ઼ (_      r.
         ડ઼ (B      r.
 
 .group ઢ
         ઢ          d.#V
-        ઢઁ          d.#V~        // + candrabindu
+        ઢઁ         d.#V~        // + candrabindu
         ઢ (_       d.#
         ઢ (B       d.#
 
         ઢ઼         r.hV      // nukta  (should retroflex flap)
-        ઢ઼ઁ         r.hV~        // + candrabindu
+        ઢ઼ઁ        r.hV~        // + candrabindu
         ઢ઼ (_      r.h
         ઢ઼ (B      r.h       // nukta
 
 .group ણ
         ણ          n.V      
-        ણઁ          n.V~        // + candrabindu
+        ણઁ         n.V~        // + candrabindu
         ણ (_       n.
         ણ (B       n.
      ્) ણ (_       n.@
 
 .group ત
         ત          tV
-        તઁ          tV~        // + candrabindu
+        તઁ         tV~        // + candrabindu
         ત (_       t
         ત (B       t
         ત (્ય      t:
@@ -383,13 +383,13 @@ C)        ૣ          l-:
 
 .group થ
         થ          t#V
-        થઁ          t#V~        // + candrabindu
+        થઁ         t#V~        // + candrabindu
         થ (_       t#
         થ (B       t#
 
 .group દ
         દ          dV
-        દઁ          dV~        // + candrabindu
+        દઁ         dV~        // + candrabindu
         દ (_       d
         દ (B       d
 
@@ -403,13 +403,13 @@ C)        ૣ          l-:
 
 .group ધ
         ધ          d#V
-        ધઁ          d#V~        // + candrabindu
+        ધઁ         d#V~        // + candrabindu
         ધ (_       d#
         ધ (B       d#
 
 .group ન
         ન          nV
-        નઁ          nV~        // + candrabindu
+        નઁ         nV~        // + candrabindu
         ન (_       n
         ન (B       n
      ્) ન (_       n@
@@ -417,7 +417,7 @@ C)        ૣ          l-:
 
 .group પ
         પ          pV
-        પઁ          pV~        // + candrabindu
+        પઁ         pV~        // + candrabindu
         પ (_       p
         પ (B       p
         પ (્ય      p:
@@ -428,29 +428,29 @@ C)        ૣ          l-:
 
 .group ફ
         ફ          p#V
-        ફઁ          p#V~        // + candrabindu
+        ફઁ         p#V~        // + candrabindu
         ફ (_       p#
         ફ (B       p#
         ફ઼         fV
-        ફ઼ઁ         fV~        // + candrabindu
+        ફ઼ઁ        fV~        // + candrabindu
         ફ઼ (_      f
         ફ઼ (B      f
 
 .group બ
         બ          bV
-        બઁ          bV~        // + candrabindu
+        બઁ         bV~        // + candrabindu
         બ (_       b
         બ (B       b
 
 .group ભ
         ભ          b#V
-        ભઁ          b#V~        // + candrabindu
+        ભઁ         b#V~        // + candrabindu
         ભ (_       b#
         ભ (B       b#
 
 .group મ
         મ          mV
-        મઁ          mV~        // + candrabindu
+        મઁ         mV~        // + candrabindu
         મ (_       m
         મ (B       m
      ્) મ (_       m@
@@ -459,7 +459,7 @@ C)        ૣ          l-:
 
 .group ય
         ય          j@
-        યઁ          jV~        // + candrabindu
+        યઁ         jV~        // + candrabindu
         ય (_       j
         ય (B       j
      ્) ય (_       j@
@@ -467,28 +467,28 @@ C)        ૣ          l-:
 
 .group ર
         ર          rV
-        રઁ          rV~        // + candrabindu
+        રઁ         rV~        // + candrabindu
         ર (B       r
         ર (_       r
      ્) ર (_       r@
 
 .group લ
         લ          lV
-        લઁ          lV~        // + candrabindu
+        લઁ         lV~        // + candrabindu
         લ (_       l
         લ (B       l
      ્) લ (_       l@
 
 .group ળ    // According to chart this is lla ( ળ 0AB3)but it is told that it looks like adda ( ડ઼ 0AA1 + 0ABC) 
         ળ          r.V
-        ળઁ          r.V~        // + candrabindu
+        ળઁ         r.V~        // + candrabindu
         ળ (_       r.
         ળ (B       r.
      ્) ળ (_       r.@
 
 .group વ
         વ          vV
-        વઁ          vV~        // + candrabindu
+        વઁ         vV~        // + candrabindu
         વ (_       v
         વ (B       v
      _) વ          wV
@@ -497,25 +497,25 @@ C)        ૣ          l-:
 
 .group શ
         શ          SV
-        શઁ          SV~        // + candrabindu
+        શઁ         SV~        // + candrabindu
         શ (_       S
         શ (B       S
 
 .group ષ
         ષ          s.V
-        ષઁ          s.V~        // + candrabindu
+        ષઁ         s.V~        // + candrabindu
         ષ (_       s.
         ષ (B       s. 
 
 .group સ
         સ          sV
-        સઁ          sV~        // + candrabindu
+        સઁ         sV~        // + candrabindu
         સ (_       s
         સ (B       s
 
 .group હ
         હ          HV
-        હઁ          HV~        // + candrabindu
+        હઁ         HV~        // + candrabindu
         હ (_       H
         હ (B       H
 
