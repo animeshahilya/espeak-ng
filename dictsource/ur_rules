@@ -406,9 +406,15 @@ _) ای	e:
 .group ی
 	ی	e:
 	ی (L01	j
-	ی (_	i:
+	ی (_	,i:	// final -i is always long; secondary stress (not primary)
+			// needed so ph_hindi_base's i: phoneme doesn't self-demote
+			// back to plain i when this syllable isn't the word's own
+			// stressed one - see hi_rules for the same fix. Only the
+			// two explicitly word-final ("(_") rules get this - @) ی
+			// below has no word-end context, so forcing stress there
+			// would be wrong for its medial occurrences too.
 	_) ی	jV
-	L03L02)یع(_	i:
+	L03L02)یع(_	,i:
 	@) ی	i:
 	@) یں (_	e~:
 	یّ	j:

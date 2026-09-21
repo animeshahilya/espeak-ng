@@ -411,7 +411,10 @@
 
 .group ई
 	ई	I:
-	ई (_	i:
+	ई (_	,i:	// final -i is always long; secondary stress (not primary)
+			// needed so ph_hindi_base's i: phoneme doesn't self-demote
+			// back to plain i when this syllable isn't the word's own
+			// stressed one - see hi_rules for the same fix
 	ईँ	i~''
 
 .group उ
@@ -487,7 +490,7 @@
 
 .group ी
 	ी	i:,=k'a::r@ // If not followed to a Consonant.
-	C) ी (_	i:
+	C) ी (_	,i:	// see .group ई above for why the stress mark matters
 	C) ी	I:
 	C) ीँ	i~'
 

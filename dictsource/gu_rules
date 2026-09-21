@@ -46,15 +46,25 @@
 
 .group ઇ
         ઇ          I
+        ઇ (_       ,i:      // final short i lengthens in Gujarati; secondary
+                             // stress (not primary) needed so ph_hindi_base's
+                             // i: phoneme doesn't self-demote back to plain i
+                             // when this syllable isn't the word's own
+                             // stressed one - see hi_rules for the same fix
 //       ઇઁ        In
        ઇં        In
 
 .group ઈ
         ઈ          i:
-        ઈ (_       i
+        ઈ (_       ,i:      // final -i is always long; was plain "i"
+                             // (word-final SHORTENING, backwards) before this
+                             // - see .group ઇ above for why the stress mark
+                             // matters
 
 .group ઉ
         ઉ          U
+        ઉ (_       u:       // final short u lengthens; no stress mark needed
+                             // here - u: has no self-demotion guard
 
 .group ઊ
         ઊ          u
@@ -112,6 +122,7 @@ C)        ાં         V~
 .group િ
 િ	#X1I
 C)        િ          I
+C)        િ (_       ,i:      // final short i lengthens; see .group ઇ above
 C)//      િઁ       In
 C)      િં        In
 C)      િં (_     I~
@@ -119,7 +130,7 @@ C)      િં (_     I~
 .group ી
 ી	#X2i:
 C)        ી          i:
-C)        ી (_       i
+C)        ી (_       ,i:      // final -i is always long; see .group ઇ above
 C)        ી (ઁ       in
 C)        ીઁ (_      in
 C)        ીં         in
@@ -128,6 +139,7 @@ C)        ીં (_      i~
 .group ુ
 ુ	#X1U
 C)        ુ          u
+C)        ુ (_       u:       // final short u lengthens; see .group ઉ above
 C)        ુ (ઁ       un
 C)        ુઁ (_      un
 C)        ું         un

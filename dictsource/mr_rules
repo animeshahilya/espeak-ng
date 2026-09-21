@@ -49,15 +49,26 @@
 
 .group इ
         इ          I
+        इ (_       ,i:      // final short i lengthens in Marathi; secondary
+                             // stress (not primary) needed so ph_hindi_base's
+                             // i: phoneme doesn't self-demote back to plain i
+                             // when this syllable isn't the word's own
+                             // stressed one - see hi_rules for the same fix
 //       इँ        i~
         इं        i~
 
 .group ई
         ई          i:
-        ई (_       i
+        ई (_       ,i:      // final -i is always long in Marathi; was plain
+                             // "i" (word-final SHORTENING, backwards) before
+                             // this - see .group इ above for why the stress
+                             // mark matters
 
 .group उ
         उ          U
+        उ (_       u:       // final short u lengthens; no stress mark needed
+                             // here - u: has no self-demotion guard (see
+                             // hi_rules)
 
 .group ऊ
         ऊ          u
@@ -127,13 +138,14 @@ C)        ां         a~
 .group ि
 ि	#X1I
 C)        ि          I
+C)        ि (_       ,i:      // final short i lengthens; see .group इ above
 C)//      िँ       i~
 C)        िं       i~
 
 .group ी
 ी	#X2i:
 C)        ी          i:
-C)        ी (_       i
+C)        ी (_       ,i:      // final -i is always long; see .group इ above
 C)        ी (ँ       i~
 C)        ीँ (_      i~
 C)        ीं         i~
@@ -141,6 +153,7 @@ C)        ीं         i~
 .group ु
 ु	#X1U
 C)        ु          U
+C)        ु (_       u:       // final short u lengthens; see .group उ above
 C)        ु (ँ       u~
 C)        ुं         u~
 C)        ुँ (_      u~
