@@ -192,29 +192,4 @@ final class TextOffsetMap {
         }
     }
 
-    private static TextOffsetMap diffByPrefixSuffix(String before, String after) {
-        final int n = before.length();
-        final int m = after.length();
-        int prefix = 0;
-        final int maxPrefix = Math.min(n, m);
-        while (prefix < maxPrefix && before.charAt(prefix) == after.charAt(prefix)) {
-            prefix++;
-        }
-        int suffix = 0;
-        final int maxSuffix = Math.min(n, m) - prefix;
-        while (suffix < maxSuffix
-                && before.charAt(n - 1 - suffix) == after.charAt(m - 1 - suffix)) {
-            suffix++;
-        }
-
-        final int[] offsets = new int[m + 1];
-        for (int k = 0; k <= prefix; k++) {
-            offsets[k] = k;
-        }
-        fillUnmatchedRun(offsets, prefix, m - suffix, prefix, n - suffix);
-        for (int k = m - suffix; k <= m; k++) {
-            offsets[k] = n - (m - k);
-        }
-        return new TextOffsetMap(offsets);
-    }
 }

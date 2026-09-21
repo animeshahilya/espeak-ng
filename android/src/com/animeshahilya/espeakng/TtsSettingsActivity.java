@@ -104,14 +104,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
         return PreferenceManager.getDefaultSharedPreferences(storageContext);
     }
 
-    /**
-     * Identifies the combined voice-parameters preference. Nothing is stored
-     * under it -- the preference writes the individual VoiceSettings keys --
-     * but a Preference without a key cannot save its instance state, so its
-     * dialog would not survive a rotation.
-     */
-    private static final String PREF_VOICE_PARAMETERS = "espeak_voice_parameters";
-
     private static final java.util.HashMap<String, LangInfo> sLangInfo = new java.util.HashMap<String, LangInfo>();
 
     @Override
@@ -873,20 +865,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
                                                       String key, int titleRes) {
         final SeekBarPreference pref = newSeekBarPreference(context, key, context.getString(titleRes));
         pref.addParameter(voiceParameter(context, parameter, key, titleRes));
-        pref.setSummary(pref.buildSummary());
-        return pref;
-    }
-
-    /** All four voice parameters, edited together in one dialog. */
-    private static Preference createVoiceParamsPreference(Context context,
-                                                          SpeechSynthesis engine,
-                                                          int titleRes) {
-        final SeekBarPreference pref = newSeekBarPreference(context, PREF_VOICE_PARAMETERS,
-                context.getString(titleRes));
-        pref.addParameter(voiceParameter(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate));
-        pref.addParameter(voiceParameter(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch));
-        pref.addParameter(voiceParameter(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
-        pref.addParameter(voiceParameter(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume));
         pref.setSummary(pref.buildSummary());
         return pref;
     }
