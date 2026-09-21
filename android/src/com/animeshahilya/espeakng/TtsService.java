@@ -716,7 +716,8 @@ public class TtsService extends TextToSpeechService {
 
         if (isSingleCharacterUtterance) {
             boolean characterRuleApplied = false;
-            if (!isSsml && settings.isUserDictionaryEnabled()) {
+            // isSingleCharacterUtterance above already required !isSsml.
+            if (settings.isUserDictionaryEnabled()) {
                 String before = text;
                 text = UserDictionaryManager.getInstance(storageContext)
                         .applyCharacterRule(text, languageTag(voice));

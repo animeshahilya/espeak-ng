@@ -1796,10 +1796,16 @@ public class TtsSettingsActivity extends AppCompatActivity {
         spCategory.setMinimumHeight(minTouch);
         spCategory.setId(View.generateViewId());
         catLabel.setLabelFor(spCategory.getId());
+        // Position <-> category string, in the same order as the spinner's own
+        // entries above (Main, Root, Abbrev, Character) - one array driving both
+        // directions instead of two hand-written ternary chains that have to be
+        // kept in sync with each other and with the entries list.
+        final String[] editCategoryValues = {UserDictionary.CATEGORY_MAIN, UserDictionary.CATEGORY_ROOT,
+                UserDictionary.CATEGORY_ABBREV, UserDictionary.CATEGORY_CHARACTER};
         String preCat = existing != null ? existing.getCategory() : categoryFilter;
-        spCategory.setSelection(UserDictionary.CATEGORY_ROOT.equals(preCat) ? 1
-                : UserDictionary.CATEGORY_ABBREV.equals(preCat) ? 2
-                : UserDictionary.CATEGORY_CHARACTER.equals(preCat) ? 3 : 0);
+        int preCatIndex = java.util.Arrays.asList(editCategoryValues).indexOf(preCat);
+        if (preCatIndex < 0) preCatIndex = 0;
+        spCategory.setSelection(preCatIndex);
         LinearLayout.LayoutParams spLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         spLp.bottomMargin = (int) (8 * density + 0.5f);
@@ -1835,16 +1841,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 existing != null ? existing.getLanguage() : null,
                 android.text.InputType.TYPE_CLASS_TEXT);
 
-        final String[] chosenCategory = new String[]{
-                UserDictionary.CATEGORY_ROOT.equals(preCat) ? UserDictionary.CATEGORY_ROOT
-                        : UserDictionary.CATEGORY_ABBREV.equals(preCat) ? UserDictionary.CATEGORY_ABBREV
-                        : UserDictionary.CATEGORY_CHARACTER.equals(preCat) ? UserDictionary.CATEGORY_CHARACTER
-                        : UserDictionary.CATEGORY_MAIN};
+        final String[] chosenCategory = new String[]{editCategoryValues[preCatIndex]};
         spCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
-                chosenCategory[0] = pos == 1 ? UserDictionary.CATEGORY_ROOT
-                        : pos == 2 ? UserDictionary.CATEGORY_ABBREV
-                        : pos == 3 ? UserDictionary.CATEGORY_CHARACTER : UserDictionary.CATEGORY_MAIN;
+                chosenCategory[0] = (pos >= 0 && pos < editCategoryValues.length)
+                        ? editCategoryValues[pos] : UserDictionary.CATEGORY_MAIN;
                 if (pos == 1) cbWholeWord.setChecked(false);
             }
             @Override public void onNothingSelected(android.widget.AdapterView<?> p) { }

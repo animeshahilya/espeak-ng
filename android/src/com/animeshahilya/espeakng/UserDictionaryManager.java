@@ -162,10 +162,8 @@ public class UserDictionaryManager {
         if (trimmed.isEmpty()) {
             return text;
         }
-        for (UserDictionary rule : mRules) {
-            if (UserDictionary.CATEGORY_CHARACTER.equals(rule.getCategory())
-                    && rule.appliesToLanguage(language)
-                    && patternEqualsText(rule, trimmed)) {
+        for (UserDictionary rule : getRulesByCategory(UserDictionary.CATEGORY_CHARACTER)) {
+            if (rule.appliesToLanguage(language) && patternEqualsText(rule, trimmed)) {
                 return rule.apply(trimmed);
             }
         }

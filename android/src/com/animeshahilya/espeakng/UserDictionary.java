@@ -153,6 +153,12 @@ public class UserDictionary {
 
     public void setCategory(String category) {
         mCategory = normalizeCategory(category);
+        // compile()'s wholeWord handling now depends on the category (see
+        // there for why) - unused today (every category change in the app
+        // goes through the constructor, building a fresh instance), but this
+        // setter exists alongside the others that all recompile, and leaving
+        // it stale would be a trap for whenever something does call it.
+        compile();
     }
 
     public static String normalizeCategory(String category) {
@@ -254,7 +260,17 @@ public class UserDictionary {
             String regexStr;
             if (mIsRegex) {
                 regexStr = mPattern;
-            } else if (mWholeWord) {
+            } else if (mWholeWord && !CATEGORY_CHARACTER.equals(mCategory)) {
+                // \b is only ever exercised through applyRules() (continuous-text
+                // substring matching), which already excludes CATEGORY_CHARACTER
+                // rules entirely - they're only reached via
+                // UserDictionaryManager#applyCharacterRule, which confirms an
+                // exact whole-string match itself before calling apply() here.
+                // \b around a symbol/punctuation pattern (no \w character
+                // anywhere, e.g. "#") never finds a boundary to match at all, so
+                // honoring wholeWord for this category would silently turn every
+                // symbol-only Character rule into a no-op - the checkbox default
+                // (true) has no safe meaning for this category, so it's ignored.
                 regexStr = "\\b" + Pattern.quote(mPattern) + "\\b";
             } else {
                 regexStr = Pattern.quote(mPattern);
