@@ -118,6 +118,13 @@ android {
             // reverting this, and always verify a release build's TTS synthesis on a
             // real device after touching either.
             minifyEnabled true
+            // shrinkResources requires minifyEnabled (satisfied above) and is safe here:
+            // the app has no Resources.getIdentifier() dynamic lookups (checked - none),
+            // which is the usual way resource shrinking silently breaks an app. The bulk
+            // of the app's size (res/raw/espeakdata.zip, the 159-language data archive)
+            // is a single generated binary asset this doesn't touch either way - this
+            // only prunes genuinely unreferenced drawables/layouts/values.
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
