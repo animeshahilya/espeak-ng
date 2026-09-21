@@ -150,13 +150,37 @@ frameworks there is churn that cannot be cleanly reverted.
   constructor calls only; keep listeners, summaries, and dialog content.
 - Delete (do not port): `setupSubScreenDialog` and manual sub-screen
   dialog handling - AndroidX handles nested-screen navigation.
-- Dialog widgets: verify `onCreateDialogView`/`onBindDialogView` against
-  the added preference-library version before porting; if the signatures
-  moved to `PreferenceDialogFragmentCompat`, follow the library, not this
-  plan.
 - Listener/suppression hygiene: every remaining `@SuppressWarnings`
   carries a rationale comment; suppressions stay method- (never
   file-) scoped outside tests.
+
+## 4b. API mapping table (compiler-verified against preference 1.2.1)
+
+A throwaway probe subclassing every widget base and calling every member
+the real code uses showed the AndroidX API is NOT a 1:1 rename. Verified
+identical (safe to retype): all `(Context[, AttributeSet[, int[, int]]])`
+constructors; `get/setKey`, `setPersistent`, `get/setSummary`,
+`setLayoutResource`, `getContext`, `callChangeListener`, `shouldPersist`,
+`getSharedPreferences`, all `MultiSelectListPreference` data APIs
+(`set/getEntries`, `set/getEntryValues`, `set/getValues`,
+`persist/getPersistedStringSet`), `getFragmentManager`-free fragment APIs
+(`getPreferenceManager`, `getPreferenceScreen`, `findPreference`,
+`setPreferencesFromResource`).
+Verified GONE or signature-changed (must be redesigned, not retyped):
+`Preference.onBindView(View)` -> `onBindViewHolder(PreferenceViewHolder)`
+(`AccessiblePreferenceCategory` title-heading logic moves there, resolved
+via `holder.itemView`); `DialogPreference.onCreateDialogView()` /
+`onBindDialogView(View)` / `onClick(DialogInterface,int)` (AndroidX
+`onClick()` takes no arguments) / `onDismiss(DialogInterface)` all gone;
+`MultiSelectListPreference.showDialog(Bundle)` / `getDialog()` gone;
+`Preference.getEditor()` / `shouldCommit()` gone.
+Consequence: the three custom dialogs (`SeekBar` incl. its rotary-encoder
+handling, `SpeakPunctuation` radio groups, `VoiceVariant` spinners) and
+the `SupportedLanguagesPreference` button wiring must move to
+`PreferenceDialogFragmentCompat` subclasses (one per dialog) plus an
+`onDisplayPreferenceDialog()` override in the hosting fragment. That is a
+per-dialog re-architecture, not a type swap - budget the cutover
+accordingly and verify each dialog on device with TalkBack.
 
 ## 5. Slices (each lands green or it does not land)
 
@@ -186,8 +210,10 @@ non-UI call sites go first, the visible tree cuts over atomically last.
 4. ATOMIC CUTOVER (single commit): `TtsSettingsActivity` host (activity,
    `PrefsEspeakFragment`, 4 programmatic sub-screens,
    `onPreferenceTreeClick`/sub-screen dialogs get deleted, not ported -
-   AndroidX navigates nested screens itself), all 6 custom widgets,
-   remaining call sites and the 4 test files. Nothing lands half-migrated.
+   AndroidX handles nested-screen navigation), all 6 custom widgets
+   rebuilt per the section 4b table (dialog-fragment subclasses +
+   `onDisplayPreferenceDialog`, NOT retyped overrides), remaining call
+   sites and the 4 test files. Nothing lands half-migrated.
 5. Upgrade test from the current release build proving prefs survive,
    plus the manual TalkBack pass over every settings screen.
 
