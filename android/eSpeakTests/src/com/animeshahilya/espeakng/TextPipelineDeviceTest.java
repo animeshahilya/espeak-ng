@@ -96,6 +96,39 @@ public class TextPipelineDeviceTest {
         assertThat(simplified, not(containsString("www.")));
     }
 
+    /**
+     * Regression test for a pipeline-ordering bug: simplifyUrls must run
+     * before expandTimeDate (and the other digit/symbol expanders) in
+     * TtsService's synthesis pipeline. A URL with a date-stamped path
+     * segment (a common blog/news URL shape) has both a colon-free date
+     * pattern and a recognizable URL prefix; if expandTimeDate ran first,
+     * it would insert spaces into "2024-01-15", and simplifyUrls's
+     * PATTERN_URL - whose path match is \S-only, can't cross a space -
+     * would then only match the URL fragment up to that inserted space,
+     * silently truncating the recognized URL and leaving the rest as raw
+     * unprocessed text.
+     */
+    @Test
+    public void testSimplifyUrlsSurvivesBeforeDateExpansion() {
+        String url = "https://example.com/blog/2024-01-15-my-post";
+
+        // Correct pipeline order (simplifyUrls first, as TtsService now
+        // does): the whole path, including the date-shaped slug, is
+        // recognized as part of the URL and survives as one contiguous
+        // "slash"-joined unit - simplifyUrls only ever touches "/", so the
+        // "2024-01-15-my-post" segment passes through with its hyphens intact.
+        String correctOrder = TtsService.simplifyUrls(url);
+        assertThat(correctOrder, containsString("2024-01-15-my-post"));
+        assertThat(correctOrder, not(containsString("https://")));
+
+        // Demonstrates why the order matters: running date expansion on the
+        // *raw* URL first breaks the date slug apart with spaces before
+        // simplifyUrls ever sees it, so the previously-intact
+        // "2024-01-15-my-post" substring no longer survives.
+        String wrongOrder = TtsService.simplifyUrls(TtsService.expandTimeDate(url));
+        assertThat(wrongOrder, not(containsString("2024-01-15-my-post")));
+    }
+
     @Test
     public void testCondenseRepeatedCharacters() {
         // Count mode

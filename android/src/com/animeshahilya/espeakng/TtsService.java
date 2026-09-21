@@ -740,6 +740,26 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
+        // Runs before every digit/symbol expander below (Roman numerals, Indian
+        // numbering, currency, time/date, digit grouping, programming symbols):
+        // all of those match on raw digit/punctuation runs, and a URL commonly
+        // contains both (a numeric ID, a date-stamped blog path like
+        // ".../2024-01-15-my-post"). If any of them ran first, they'd insert
+        // spaces into the URL's interior - simplifyUrls's own PATTERN_URL
+        // requires an unbroken (\S) path, so it would then only match the
+        // fragment before the inserted space, truncating "link example.com
+        // slash blog slash 2024" and leaving "01 15-my-post" as unprocessed
+        // trailing text. Running this first means the URL is fully recognized
+        // and turned into its spoken form (slashes -> " slash ", protocol/www
+        // stripped) before anything else can fragment it; any digits left
+        // over in that spoken form (e.g. the date slug) are still free to be
+        // grouped/expanded normally afterward, which is harmless/useful.
+        if (!isSsml && settings.isSimplifyUrlsEnabled()) {
+            String before = text;
+            text = simplifyUrls(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
         if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
             String before = text;
             text = expandProgrammingSymbols(text);
@@ -791,12 +811,6 @@ public class TtsService extends TextToSpeechService {
         } else if (smartCodes) {
             String before = text;
             text = spaceSeparateSmartCodes(text, smartMin, smartMax);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isSimplifyUrlsEnabled()) {
-            String before = text;
-            text = simplifyUrls(text);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
