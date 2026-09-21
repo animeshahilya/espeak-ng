@@ -177,10 +177,49 @@ public class UserDictionaryManager {
         return rule.isCaseSensitive() ? pattern.equals(text) : pattern.equalsIgnoreCase(text);
     }
 
+    /**
+     * Curated phoneme-override fixes seeded once on first run (see load()).
+     * These are the words named in this fork's own commit history
+     * (7b9d5749, reverted by 41bad413) as motivating examples of a Hindi
+     * word-final long-vowel bug: dictionary-rule-based lengthening of a
+     * word-final short i/u could never work because ph_hindi_base's "i:"
+     * phoneme self-demotes to "i" whenever it is not the stressed syllable
+     * (IF thisPh(isUnstressed) THEN ChangePhoneme(i) ENDIF), and Hindi's
+     * automatic word-stress assignment does not mark word-final syllables
+     * as stressed - so no dictionary rule, however it scored the match,
+     * could stop the phoneme undoing it afterward. A phoneme-override entry
+     * sidesteps that entirely by giving the final vowel an explicit
+     * secondary stress mark (",", not the primary "'" - the word's real
+     * stress stays on its first syllable; this is only enough to keep the
+     * vowel out of the self-demotion guard, confirmed by trace: unstressed
+     * "i:" collapses to plain "i" in Hindi's phoneme table, "'i:"/",i:" both
+     * stay "i:"). Fixing this properly in ph_hindi_base itself would change
+     * every word using [i:], a much larger blast radius than could be
+     * verified by trace alone in this environment - see that phoneme's own
+     * definition for the guard this works around, if attempting it later.
+     */
+    private static List<UserDictionary> defaultRules() {
+        List<UserDictionary> defaults = new ArrayList<>();
+        defaults.add(new UserDictionary(
+                "शक्ति", "shakti", false, false, true, "hi",
+                UserDictionary.CATEGORY_MAIN, "S 'V k t ,i:"));
+        defaults.add(new UserDictionary(
+                "नदी", "nadi", false, false, true, "hi",
+                UserDictionary.CATEGORY_MAIN, "n 'V d ,i:"));
+        return defaults;
+    }
+
     public synchronized void load() {
         mRules.clear();
         File file = new File(mContext.getFilesDir(), FILE_NAME);
         if (!file.exists()) {
+            // True first run for this install (save() always writes the file,
+            // even an empty rule list, so this is never true again after the
+            // user clears their dictionary - only before it exists at all).
+            // Seed the curated built-in phoneme-override fixes once; they then
+            // behave like any other rule the user can edit or delete.
+            mRules.addAll(defaultRules());
+            save();
             return;
         }
 

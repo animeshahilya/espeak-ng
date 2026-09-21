@@ -236,7 +236,17 @@ public class UserDictionary {
         }
 
         try {
-            int flags = 0;
+            // UNICODE_CHARACTER_CLASS: without it, \b (used below for wholeWord,
+            // and available to a user's own \b in a regex rule) only recognizes
+            // ASCII [a-zA-Z0-9_] as "word" characters - Devanagari, Gujarati, or
+            // any other non-Latin script text never triggers a boundary at all,
+            // so a wholeWord rule for a Hindi/Gujarati/etc. word silently never
+            // matched anywhere in the text. Confirmed with a standalone test:
+            // "\\b<shakti>\\b" against "... shakti ..." found nothing without
+            // this flag, matched correctly with it. This app is fundamentally
+            // about non-English text, so this is strictly more correct always,
+            // not just for wholeWord.
+            int flags = Pattern.UNICODE_CHARACTER_CLASS;
             if (!mCaseSensitive) {
                 flags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
             }
