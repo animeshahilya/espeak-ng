@@ -49,16 +49,27 @@
 
 .group इ
         इ          I
+        इ (_       ,i:      // final short i lengthens in Hindi; secondary stress
+                             // (not primary) needed so ph_hindi_base's i: phoneme
+                             // doesn't self-demote back to plain i when this
+                             // syllable isn't the word's own stressed one - see
+                             // that phoneme's own isUnstressed guard
         इँ        i~        // + candrabindu
         इं        i~
 
 .group ई
         ई          i:
-        ई (_       i         // upstream default; word-final lengthening rules don't win here (RULE_SPACE post-context scores too low to beat the plain rule - see commit notes), left as upstream had it
+        ई (_       ,i:      // final -i is always long in Hindi; was plain "i"
+                             // (word-final SHORTENING, backwards) before this -
+                             // see .group इ above for why the stress mark matters
         ईँ         i~        // + candrabindu
 
 .group उ
         उ          U
+        उ (_       u:       // final short u lengthens; no stress mark needed here -
+                             // unlike i:, ph_hindi_base's u: has no isUnstressed
+                             // self-demotion guard (confirmed by trace: injecting
+                             // unstressed u: keeps its own distinct duration)
         उँ         U~        // + candrabindu
 
 .group ऊ
@@ -129,12 +140,15 @@ C)        ां         a~
 .group ि
 ि	#X1I
 C)        ि          I
+C)        ि (_       ,i:      // final short i lengthens (shakti, vidhi); see
+                              // .group इ above for why the stress mark matters
 C)//      िँ       i~
 C)        िं       i~
 
 .group ी
 ी	#X2i:
 C)        ी          i:
+C)        ी (_       ,i:      // EXPERIMENT: word-final - escape phoneme self-demotion
 C)        ी (ँ       i~
 C)        ीँ (_      i~
 C)        ीं         i~
@@ -142,6 +156,8 @@ C)        ीं         i~
 .group ु
 ु	#X1U
 C)        ु          U
+C)        ु (_       u:       // final short u lengthens; see .group उ for why no
+                              // stress mark is needed (u: has no self-demotion)
 C)        ु (ँ       u~
 C)        ुं         u~
 C)        ुँ (_      u~

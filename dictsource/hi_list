@@ -314,7 +314,16 @@ $	dOl@r
 
 था 	$u	// thā: past aux
 थे 	$u	// the
-थी 	$u	// thī
+// thī: unlike every other $u-flagged word, this one syllable's own stress
+// mark from .group ी's rule (see hi_rules) doesn't survive whatever
+// stress-reassigns a single-syllable $u word - traced directly: था/थे/
+// meri/uski/hamari/etc. all keep their word-final long vowel correctly,
+// थी alone still collapsed i: to plain i. Root cause not chased further
+// (narrow, one-word case); explicit phonemes sidestep it the same way
+// हिंदी/चांदी/गांधी/शांति were fixed a few commits back. Dropping the $u
+// flag here in exchange - whatever else $u does, this is the one word it
+// was demonstrably breaking.
+थी	t#,i:
 थीं 	$u	// thīh
 
 रहा 	$u	// rahā: continuous
