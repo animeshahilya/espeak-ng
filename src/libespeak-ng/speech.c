@@ -523,11 +523,9 @@ void MarkerEvent(int type, unsigned int char_position, int value, int value2, un
 	ep->text_position = char_position & 0xffffff;
 	ep->length = char_position >> 24;
 
-static const int mbrola_delay = 0;
-
-	time = ((double)(count_samples + mbrola_delay + (out_ptr - out_start)/2)*1000.0)/samplerate;
+	time = ((double)(count_samples + (out_ptr - out_start)/2)*1000.0)/samplerate;
 	ep->audio_position = (int)time;
-	ep->sample = (count_samples + mbrola_delay + (out_ptr - out_start)/2);
+	ep->sample = (count_samples + (out_ptr - out_start)/2);
 
 	if ((type == espeakEVENT_MARK) || (type == espeakEVENT_PLAY))
 		ep->id.name = &namedata[value];
@@ -553,7 +551,6 @@ void RescaleEventSamples(int length_pre, int length_post)
 	// linear mapping is an approximation; what it guarantees is that an event
 	// never points past the audio its buffer produced.
 
-	static const int mbrola_delay = 0;
 	int base;
 
 	if ((event_list == NULL) || (length_pre <= 0) || (length_pre == length_post))
@@ -562,7 +559,7 @@ void RescaleEventSamples(int length_pre, int length_post)
 	// count_samples is not advanced for this buffer until WavegenFill() has
 	// returned, so it still holds the total emitted by preceding buffers --
 	// the same base MarkerEvent() used.
-	base = count_samples + mbrola_delay;
+	base = count_samples;
 
 	for (int ix = 0; ix < event_list_ix; ix++) {
 		espeak_EVENT *ep = &event_list[ix];

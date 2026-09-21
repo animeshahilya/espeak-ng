@@ -202,11 +202,6 @@ espeak_ng_CompileDictionary(const char *dsource,
                             espeak_ng_ERROR_CONTEXT *context);
 
 ESPEAK_NG_API espeak_ng_STATUS
-espeak_ng_CompileMbrolaVoice(const char *path,
-                             FILE *log,
-                             espeak_ng_ERROR_CONTEXT *context);
-
-ESPEAK_NG_API espeak_ng_STATUS
 espeak_ng_CompilePhonemeData(long rate,
                              FILE *log,
                              espeak_ng_ERROR_CONTEXT *context);
