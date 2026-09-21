@@ -40,11 +40,21 @@ if (keystorePropertiesFile.exists()) {
 // kotlin/enums/EnumEntriesKt NoClassDefFoundError) - so this only targets
 // the app variants' own runtime classpaths by exact name, not every
 // configuration in the project.
-configurations.matching { it.name ==~ /(debug|release)RuntimeClasspath/ }.all {
-    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
-}
+//
+// GATE 0 NOTE (AndroidX migration spike): androidx.appcompat is partially
+// Kotlin - AppCompatActivity crashes at class-load without stdlib
+// (ClassNotFoundException: kotlin.jvm.internal.Intrinsics, verified
+// on-device). The exclusion is lifted while the spike lives; if the
+// migration goes ahead it stays lifted, and the APK delta below must be
+// re-measured with stdlib included.
+//configurations.matching { it.name ==~ /(debug|release)RuntimeClasspath/ }.all {
+//    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+//}
 
 dependencies {
+    // Gate 0 spike for the AndroidX preference migration (see
+    // ANDROIDX_MIGRATION_PLAN.md). Pinned 1.2.1: latest stable 1.x line.
+    implementation 'androidx.preference:preference:1.2.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'org.hamcrest:hamcrest:2.2'
     androidTestImplementation 'org.hamcrest:hamcrest-core:2.2'

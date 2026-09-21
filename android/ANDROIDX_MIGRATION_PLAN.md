@@ -76,20 +76,68 @@ Do not start Phase 2+ until the Gate 0 go/no-go decision is recorded here.
 
 ## 3. Gate 0 - decision spike (one session, must end go/no-go)
 
-1. Add `implementation 'androidx.preference:preference:<latest 1.x>'` to
-   `android/build.gradle` (check for version catalog first; there is none -
-   add the literal with a comment).
-2. Migrate ONLY the host shell (`AppCompatActivity` +
-   `PreferenceFragmentCompat` showing the empty screen) plus
-   `ImportVoicePreference` (simplest leaf).
-3. Measure and record: APK size delta (fresh `packageDebug` before/after),
-   dialog styling state (AppCompat theme requirements vs current
-   `DeviceDefault` themes incl. `values-watch`), `PreferenceStorageTest`.
-4. Go criteria: dialogs acceptable without a full theme rewrite, size
-   delta tolerable, storage test green. Otherwise STOP and keep the
+The spike stays ISOLATED: throwaway files only, deleted afterwards. Do NOT
+migrate the real host shell in place - `TtsSettingsActivity` mixes ~60
+framework-typed factories in one file, and mixing both preference
+frameworks there is churn that cannot be cleanly reverted.
+
+1. Record the no-androidx baseline first: fresh `cleanPackageDebug
+   packageDebug`, note exact APK bytes. (Baseline: 16117590 bytes /
+   15.37 MB, debug, arm64-v8a.)
+2. Add `implementation 'androidx.preference:preference:1.2.1'` to
+   `android/build.gradle` (no version catalog exists - add the literal
+   with a comment). Assemble and record the APK delta.
+3. Throwaway proof screen (all deleted after the decision):
+   `SpikeSettingsActivity` (`AppCompatActivity`, manifest
+   `android:theme="@style/SpikeTheme"`, `exported=false`, private action
+   string so no launcher icon appears) hosting `SpikeFragment`
+   (`PreferenceFragmentCompat`) with one `EditTextPreference` and one
+   dialog interaction, wired with
+   `getPreferenceManager().setStorageDeviceProtected()` plus the
+   `EspeakApp` storage-context pattern. `SpikeTheme` lives ONLY in
+   `res/values/` (parent `Theme.AppCompat.DayNight`) so the app's real
+   `DeviceDefault` themes are untouched.
+4. Verify on device via adb (no manual tapping): launch by action,
+   `uiautomator dump` confirms the screen renders, click the preference,
+   dump again to confirm the AppCompat dialog renders under the current
+   theme setup, then `run-as` the debug package and confirm the prefs
+   XML landed under device-protected storage (`/data/user_de/0/...`),
+   and `PreferenceStorageTest` stays green.
+5. Go criteria: dialogs acceptable without a full theme rewrite, size
+   delta tolerable, storage path proven. Otherwise STOP: revert the
+   dependency, delete the spike, and keep the
    documented-`@SuppressWarnings` status quo (framework prefs keep working
    on all supported APIs - say so explicitly in the commit/plan instead of
    migrating).
+
+## 3b. Gate 0 results (measured on Pixel 8, 2026-09-21)
+
+- Baseline debug APK (no androidx): **16117590 bytes / 15.37 MB**.
+- With `androidx.preference:1.2.1` (+appcompat/recyclerview/kotlin-stdlib
+  transitives): debug **22113852 bytes (+6096262, +37.8%)** - worst case,
+  unshrunk; release/R8 with dep: **16721691 bytes / 15.95 MB**
+  (without-dep release baseline not re-measured; R8 keeps strictly less
+  than debug, so the true release tax is well under the debug number).
+- **kotlin-stdlib exclusion must be lifted**: `AppCompatActivity`
+  crashes at class-load without it (`ClassNotFoundException:
+  kotlin.jvm.internal.Intrinsics`, reproduced on device). The exclusion
+  in `build.gradle` stays commented while any migration work is live.
+- Theme: an `EditTextPreference` dialog renders correctly under a bare
+  `Theme.AppCompat.DayNight` spike theme - no crash, no extra styling;
+  the app's `DeviceDefault` themes were untouched. Visual polish remains
+  a human check during the dialog slice.
+- Storage: `setStorageDeviceProtected()` proven end-to-end - values land
+  in `/data/user_de/0/<pkg>/shared_prefs/<pkg>_preferences.xml`, the same
+  file the migration flag already lives in.
+- Environment lessons: spike activity needs `exported=true` for
+  adb-shell launches (private action string keeps it undiscoverable, no
+  launcher icon); shell `input tap` did not dispatch on this
+  device/ROM, so proof used programmatic `performClick()` plus
+  `uiautomator dump` assertions instead.
+- Verdict: **mechanics GO** (build, theme, storage all proven). Whether
+  to fund slices 1-6 at the measured size cost is an owner decision -
+  the documented-`@SuppressWarnings` status quo remains valid since
+  framework prefs function on all supported APIs.
 
 ## 4. Unified migration pattern (apply identically everywhere)
 
