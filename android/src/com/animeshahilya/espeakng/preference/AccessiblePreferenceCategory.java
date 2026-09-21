@@ -2,9 +2,11 @@ package com.animeshahilya.espeakng.preference;
 
 import android.content.Context;
 import android.os.Build;
-import android.preference.PreferenceCategory;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceViewHolder;
 
 /**
  * A PreferenceCategory that marks itself and its title view as accessibility headings
@@ -29,11 +31,12 @@ public class AccessiblePreferenceCategory extends PreferenceCategory {
     }
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            view.setAccessibilityHeading(true);
-            View titleView = view.findViewById(android.R.id.title);
+            View itemView = holder.itemView;
+            itemView.setAccessibilityHeading(true);
+            View titleView = itemView.findViewById(android.R.id.title);
             if (titleView != null) {
                 titleView.setAccessibilityHeading(true);
             }

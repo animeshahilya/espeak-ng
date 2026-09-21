@@ -19,9 +19,7 @@ package com.animeshahilya.espeakng.preference;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,15 +29,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.preference.DialogPreference;
+
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.ResourceIdListAdapter;
 import com.animeshahilya.espeakng.VoiceSettings;
 import com.animeshahilya.espeakng.VoiceVariant;
 
 public class VoiceVariantPreference extends DialogPreference {
-    private Spinner mCategory;
-    private Spinner mVariant;
-
     private int mCategoryIndex = 0;
     private int mVariantIndex = 0;
 
@@ -48,7 +45,9 @@ public class VoiceVariantPreference extends DialogPreference {
         public TextView text;
     }
 
-    private static class VariantData {
+    // Package-visible for the dialog fragment in the same package; the table
+    // contents stay private to this file.
+    static class VariantData {
         private final int name;
         private final Object arg;
         private final VoiceVariant variant;
@@ -292,10 +291,7 @@ public class VoiceVariantPreference extends DialogPreference {
 
     public VoiceVariantPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setDialogLayoutResource(R.layout.voice_variant_preference);
         setLayoutResource(R.layout.information_view);
-        setPositiveButtonText(android.R.string.ok);
-        setNegativeButtonText(android.R.string.cancel);
     }
 
     public VoiceVariantPreference(Context context, AttributeSet attrs) {
@@ -321,81 +317,52 @@ public class VoiceVariantPreference extends DialogPreference {
         onDataChanged();
     }
 
-    @Override
-    protected View onCreateDialogView() {
-        View root = super.onCreateDialogView();
-        mCategory = (Spinner)root.findViewById(R.id.category);
-        mVariant = (Spinner)root.findViewById(R.id.variant);
-        return root;
-    }
-
-    @Override
-    protected void onBindDialogView(View view) {
-        super.onBindDialogView(view);
-
-        // Cache the indices so they don't get overwritten by the OnItemSelectedListener handlers.
-        final int category = mCategoryIndex;
-        final int variant  = mVariantIndex;
-
-        mCategory.setAdapter(new ResourceIdListAdapter((Activity)getContext(), categories));
-        mCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            private boolean mInitializing = true;
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                mCategoryIndex = position;
-                mVariant.setAdapter(new VariantDataListAdapter((Activity) getContext(), variants[position]));
-                if (mInitializing) {
-                    int safeVariant = Math.max(0, Math.min(variant, variants[position].length - 1));
-                    mVariantIndex = safeVariant;
-                    mVariant.setSelection(safeVariant);
-                    mInitializing = false;
-                } else {
-                    mVariantIndex = 0;
-                    mVariant.setSelection(0);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-        mVariant.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                mVariantIndex = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
-        mCategory.setSelection(category);
-    }
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-            case DialogInterface.BUTTON_POSITIVE:
-                if (mCategoryIndex < 0 || mCategoryIndex >= categories.length) {
-                    mCategoryIndex = 0;
-                }
-                if (mVariantIndex < 0 || mVariantIndex >= variants[mCategoryIndex].length) {
-                    mVariantIndex = 0;
-                }
-                onDataChanged();
-                if (shouldCommit()) {
-                    SharedPreferences.Editor editor = getEditor();
-                    if (editor != null) {
-                        VoiceVariant variant = variants[mCategoryIndex][mVariantIndex].getVariant();
-                        editor.putString(VoiceSettings.PREF_VARIANT, variant.toString());
-                        editor.commit();
-                    }
-                }
-                break;
+    /**
+     * Current selection for a dialog to start from. Indices are clamped,
+     * with no listener or summary side effects (unlike onDataChanged).
+     */
+    int[] getSelectedIndices() {
+        int category = mCategoryIndex;
+        if (category < 0 || category >= categories.length) {
+            category = 0;
         }
-        super.onClick(dialog, which);
+        int variant = mVariantIndex;
+        if (variant < 0 || variant >= variants[category].length) {
+            variant = 0;
+        }
+        return new int[] { category, variant };
+    }
+
+    static int getCategoryCount() {
+        return categories.length;
+    }
+
+    static VariantData[] getVariants(int category) {
+        return variants[category];
+    }
+
+    static Integer[] getCategories() {
+        return categories;
+    }
+
+    /** Apply a dialog's confirmed selection: update indices, label, listeners. */
+    void applySelection(int category, int variant) {
+        mCategoryIndex = category;
+        mVariantIndex = variant;
+        onDataChanged();
+    }
+
+    /** Persist the current selection, mirroring the old dialog-OK path. */
+    void persistVariant() {
+        if (!shouldPersist()) {
+            return;
+        }
+        SharedPreferences prefs = getSharedPreferences();
+        if (prefs == null) {
+            return;
+        }
+        VoiceVariant variant = variants[mCategoryIndex][mVariantIndex].getVariant();
+        prefs.edit().putString(VoiceSettings.PREF_VARIANT, variant.toString()).commit();
     }
 
     private void onDataChanged() {

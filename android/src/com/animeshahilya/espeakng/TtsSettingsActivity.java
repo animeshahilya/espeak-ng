@@ -31,17 +31,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.MultiSelectListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.speech.tts.TextToSpeech;
 import android.provider.OpenableColumns;
 import android.text.Editable;
@@ -65,13 +54,29 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.MultiSelectListPreference;
+import androidx.preference.Preference;
+import androidx.preference.Preference.OnPreferenceChangeListener;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
+import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
 
 import com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory;
 import com.animeshahilya.espeakng.preference.ImportVoicePreference;
+import com.animeshahilya.espeakng.preference.SeekBarDialogFragment;
 import com.animeshahilya.espeakng.preference.SeekBarPreference;
+import com.animeshahilya.espeakng.preference.SpeakPunctuationDialogFragment;
 import com.animeshahilya.espeakng.preference.SpeakPunctuationPreference;
+import com.animeshahilya.espeakng.preference.SupportedLanguagesDialogFragment;
 import com.animeshahilya.espeakng.preference.SupportedLanguagesPreference;
+import com.animeshahilya.espeakng.preference.VoiceVariantDialogFragment;
 import com.animeshahilya.espeakng.preference.VoiceVariantPreference;
 
 import java.io.BufferedInputStream;
@@ -83,9 +88,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -94,18 +101,14 @@ import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class TtsSettingsActivity extends PreferenceActivity {
+public class TtsSettingsActivity extends AppCompatActivity {
 
     private static Context storageContext;
     private static final String TAG = TtsSettingsActivity.class.getSimpleName();
 
     /** Single accessor for the device-protected default prefs (see EspeakApp). */
     private static SharedPreferences getPrefs() {
-        // Fully qualified: this file still builds the framework preference UI
-        // (cutover slice); only the manager accessor moves to AndroidX here.
-        // Both resolve the same file for the same context - PreferenceStorageTest
-        // proves it on device.
-        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(storageContext);
+        return PreferenceManager.getDefaultSharedPreferences(storageContext);
     }
 
     private static final java.util.HashMap<String, LangInfo> sLangInfo = new java.util.HashMap<String, LangInfo>();
@@ -186,11 +189,13 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         editor.commit();
 
-        applySystemBarAppearance(getWindow(), this);
-
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActionBar().setTitle(R.string.app_name);
+        // No applySystemBarAppearance() here: the window has no decor until
+        // content is installed, and onResume() below applies it with a valid
+        // window on every start (AppCompat getInsetsController() throws on a
+        // decor-less window where the framework one happened to survive).
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(R.string.app_name);
         }
 
         View contentView = findViewById(android.R.id.content);
@@ -198,7 +203,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
             contentView.setFitsSystemWindows(false);
         }
 
-        getFragmentManager().beginTransaction().replace(
+        getSupportFragmentManager().beginTransaction().replace(
                 android.R.id.content,
                 new PrefsEspeakFragment()).commit();
     }
@@ -209,11 +214,35 @@ public class TtsSettingsActivity extends PreferenceActivity {
         applySystemBarAppearance(getWindow(), this);
     }
 
+    // onBackPressed is deprecated in API 33+, but it remains the terminal
+    // back-press entry point and is the only mechanism verified to fire here:
+    // OnBackPressedDispatcher callbacks (lifecycle-owned and unconditional)
+    // never reached the fragment on-device. This pops sub-screens first and
+    // otherwise falls through to the normal finish behavior.
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onBackPressed() {
+        android.util.Log.i("NAVPROBE", "activity onBackPressed");
+        Fragment current = getSupportFragmentManager().findFragmentById(android.R.id.content);
+        android.util.Log.i("NAVPROBE", "current fragment=" + current);
+        if (current instanceof PrefsEspeakFragment
+                && ((PrefsEspeakFragment) current).popToParent()) {
+            android.util.Log.i("NAVPROBE", "popped to parent");
+            return;
+        }
+        android.util.Log.i("NAVPROBE", "falling through to super");
+        super.onBackPressed();
+    }
+
     public static int dpToPx(Context context, int dp) {
         return (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
+    // System-UI flags were deprecated in API 30, but this whole branch is the
+    // pre-R fallback (the R+ branch above uses WindowInsetsController): on
+    // API 26-29 these calls are the only way to tint the system bars.
+    @SuppressWarnings("deprecation")
     public static void applySystemBarAppearance(Window window, Context context) {
         if (window == null || context == null) return;
         boolean isNight = (context.getResources().getConfiguration().uiMode
@@ -533,11 +562,12 @@ public class TtsSettingsActivity extends PreferenceActivity {
         });
     }
 
-    public static class PrefsEspeakFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+    public static class PrefsEspeakFragment extends PreferenceFragmentCompat {
+        private static final String DIALOG_FRAGMENT_TAG =
+                "androidx.preference.PreferenceFragment.DIALOG";
 
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             // The fragment has its own PreferenceManager, separate from the
             // activity's. Everything on this screen persists through it, so it
             // must use the device-protected file that TtsService reads. A
@@ -547,20 +577,104 @@ public class TtsSettingsActivity extends PreferenceActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 getPreferenceManager().setStorageDeviceProtected();
             }
-            addPreferencesFromResource(R.xml.preferences);
+            setPreferencesFromResource(R.xml.preferences, rootKey);
             createPreferences(getActivity(), getPreferenceScreen());
+        }
+
+        // setTargetFragment is deprecated in general, but it is the documented
+        // mechanism here: PreferenceDialogFragmentCompat.onCreate() requires a
+        // target implementing DialogPreference.TargetFragment (which
+        // PreferenceFragmentCompat does) and resolves the preference through
+        // it - without this every custom dialog crashes on open.
+        // Framework auto-showed nested PreferenceScreens in dialogs. AndroidX
+        // does neither: base onPreferenceTreeClick only handles the deprecated
+        // android:fragment path, and onNavigateToScreen merely delegates to an
+        // OnPreferenceStartScreenCallback nobody implements (verified against
+        // the 1.2.1 source - calling it is a silent no-op). So this fragment
+        // re-roots itself instead: same manager, no tree rebuild. Back
+        // returns via the activity's onBackPressed() below - the
+        // OnBackPressedDispatcher callbacks (both lifecycle-owned and
+        // unconditional) were verified on-device to never fire here, so the
+        // terminal onBackPressed entry point is used instead. Rotation drops
+        // back to the root, matching the old dialogs, which never survived
+        // rotation either.
+        private final Deque<PreferenceScreen> mScreenStack = new ArrayDeque<>();
+
+        @Override
+        public boolean onPreferenceTreeClick(Preference preference) {
+            if (preference instanceof PreferenceScreen) {
+                PreferenceScreen current = getPreferenceScreen();
+                if (current != null) {
+                    mScreenStack.push(current);
+                }
+                setPreferenceScreen((PreferenceScreen) preference);
+                return true;
+            }
+            return super.onPreferenceTreeClick(preference);
+        }
+
+        /**
+         * Returns to the parent screen if navigated into a sub-screen.
+         *
+         * @return true if a sub-screen was showing and the parent restored.
+         */
+        boolean popToParent() {
+            PreferenceScreen parent = mScreenStack.poll();
+            if (parent == null) {
+                return false;
+            }
+            setPreferenceScreen(parent);
+            return true;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public void onDisplayPreferenceDialog(Preference preference) {
+            if (preference instanceof VoiceVariantPreference) {
+                VoiceVariantDialogFragment fragment =
+                        VoiceVariantDialogFragment.newInstance(preference.getKey());
+                fragment.setTargetFragment(this, 0);
+                fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
+                return;
+            }
+            if (preference instanceof SpeakPunctuationPreference) {
+                SpeakPunctuationDialogFragment fragment =
+                        SpeakPunctuationDialogFragment.newInstance(preference.getKey());
+                fragment.setTargetFragment(this, 0);
+                fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
+                return;
+            }
+            if (preference instanceof SeekBarPreference) {
+                SeekBarDialogFragment fragment =
+                        SeekBarDialogFragment.newInstance(preference.getKey());
+                fragment.setTargetFragment(this, 0);
+                fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
+                return;
+            }
+            if (preference instanceof SupportedLanguagesPreference) {
+                SupportedLanguagesDialogFragment fragment =
+                        SupportedLanguagesDialogFragment.newInstance(preference.getKey());
+                fragment.setTargetFragment(this, 0);
+                fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
+                return;
+            }
+            super.onDisplayPreferenceDialog(preference);
         }
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-            final ListView listView = (ListView) view.findViewById(android.R.id.list);
-            if (listView != null) {
-                listView.setClipToPadding(false);
+            // AndroidX hosts the list in a RecyclerView, not a ListView.
+            final View listView = view.findViewById(androidx.preference.R.id.recycler_view);
+            if (listView instanceof ViewGroup) {
+                ((ViewGroup) listView).setClipToPadding(false);
             }
             final Context context = getActivity();
             final View.OnApplyWindowInsetsListener insetsListener = new View.OnApplyWindowInsetsListener() {
+                // getSystemWindowInsetBottom() was deprecated in API 30; kept
+                // for the pre-R branch, which has no WindowInsets.Type API.
                 @Override
+                @SuppressWarnings("deprecation")
                 public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                     int bottomInset = 0;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -585,157 +699,6 @@ public class TtsSettingsActivity extends PreferenceActivity {
             }
             view.requestApplyInsets();
         }
-
-        @Override
-        public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-            boolean handled = super.onPreferenceTreeClick(preferenceScreen, preference);
-            if (preference instanceof PreferenceScreen) {
-                setupSubScreenDialog((PreferenceScreen) preference);
-            }
-            return handled;
-        }
-
-        private void setupSubScreenDialog(final PreferenceScreen subScreen) {
-            final android.app.Dialog dialog = subScreen.getDialog();
-            if (dialog == null || dialog.getWindow() == null) {
-                return;
-            }
-
-            final Window window = dialog.getWindow();
-            final Context context = getActivity();
-            if (context == null) return;
-            applySystemBarAppearance(window, context);
-
-            final View decorView = window.getDecorView();
-            decorView.setFitsSystemWindows(false);
-
-            final ListView listView = (ListView) dialog.findViewById(android.R.id.list);
-            if (listView != null) {
-                listView.setClipToPadding(false);
-            }
-
-            final Runnable configureActionBar = new Runnable() {
-                @Override
-                public void run() {
-                    final android.app.ActionBar ab = dialog.getActionBar();
-                    if (ab != null) {
-                        ab.setDisplayHomeAsUpEnabled(true);
-                        ab.setHomeButtonEnabled(true);
-                    }
-
-                    int abId = context.getResources().getIdentifier("action_bar", "id", "android");
-                    View abView = abId != 0 ? dialog.findViewById(abId) : null;
-                    if (abView instanceof Toolbar) {
-                        Toolbar toolbar = (Toolbar) abView;
-                        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-                        toolbar.setNavigationContentDescription(context.getString(R.string.tts_settings_label));
-                        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                    } else if (abView instanceof ViewGroup) {
-                        ViewGroup abGroup = (ViewGroup) abView;
-                        View homeBtn = dialog.findViewById(android.R.id.home);
-                        if (homeBtn != null) {
-                            homeBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                }
-                            });
-                        } else if (abGroup.findViewById(R.id.subscreen_up_button) == null) {
-                            ImageButton upButton = new ImageButton(context);
-                            upButton.setId(R.id.subscreen_up_button);
-                            upButton.setImageResource(R.drawable.ic_arrow_back);
-                            TypedValue outValue = new TypedValue();
-                            context.getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true);
-                            upButton.setBackgroundResource(outValue.resourceId);
-                            upButton.setContentDescription(context.getString(R.string.tts_settings_label));
-                            int btnSize = dpToPx(context, 48);
-                            ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(btnSize, btnSize);
-                            lp.rightMargin = dpToPx(context, 8);
-                            upButton.setLayoutParams(lp);
-                            upButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                            upButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            abGroup.addView(upButton, 0);
-                        }
-                    }
-                }
-            };
-            configureActionBar.run();
-            decorView.post(configureActionBar);
-
-            final View.OnApplyWindowInsetsListener insetsListener = new View.OnApplyWindowInsetsListener() {
-                @Override
-                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                    int topInset = 0;
-                    int bottomInset = 0;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        topInset = insets.getInsets(WindowInsets.Type.statusBars()).top;
-                        bottomInset = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
-                    } else {
-                        topInset = insets.getSystemWindowInsetTop();
-                        bottomInset = insets.getSystemWindowInsetBottom();
-                    }
-
-                    int containerId = context.getResources().getIdentifier("action_bar_container", "id", "android");
-                    View container = containerId != 0 ? dialog.findViewById(containerId) : null;
-                    int topBarHeight = 0;
-                    if (container != null && container.getHeight() > 0) {
-                        topBarHeight = container.getHeight();
-                    } else {
-                        TypedValue tv = new TypedValue();
-                        int abHeight = dpToPx(context, 56);
-                        if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-                            abHeight = TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
-                        }
-                        topBarHeight = topInset + abHeight;
-                    }
-
-                    if (listView != null) {
-                        listView.setPadding(
-                                listView.getPaddingLeft(),
-                                topBarHeight + dpToPx(context, 8),
-                                listView.getPaddingRight(),
-                                bottomInset + dpToPx(context, 16)
-                        );
-                    }
-                    return insets;
-                }
-            };
-            decorView.setOnApplyWindowInsetsListener(insetsListener);
-
-            int containerId = context.getResources().getIdentifier("action_bar_container", "id", "android");
-            final View container = containerId != 0 ? dialog.findViewById(containerId) : null;
-            if (container != null && listView != null) {
-                container.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                    @Override
-                    public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                               int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                        int h = bottom - top;
-                        if (h > 0) {
-                            int desiredTop = h + dpToPx(context, 8);
-                            if (listView.getPaddingTop() != desiredTop) {
-                                listView.setPadding(
-                                        listView.getPaddingLeft(),
-                                        desiredTop,
-                                        listView.getPaddingRight(),
-                                        listView.getPaddingBottom()
-                                );
-                            }
-                        }
-                    }
-                });
-            }
-            decorView.requestApplyInsets();
-        }
     }
 
     private static Preference createImportVoicePreference(Context context) {
@@ -754,6 +717,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final VoiceVariantPreference pref = new VoiceVariantPreference(context);
         pref.setTitle(title);
         pref.setDialogTitle(title);
+        // Key required: AndroidX resolves dialog preferences by key, and the
+        // custom persist path already writes this same key - no new storage.
+        pref.setKey(VoiceSettings.PREF_VARIANT);
         pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
         pref.setPersistent(true);
         pref.setVoiceVariant(settings.getVoiceVariant());
@@ -766,6 +732,9 @@ public class TtsSettingsActivity extends PreferenceActivity {
         final SpeakPunctuationPreference pref = new SpeakPunctuationPreference(context);
         pref.setTitle(title);
         pref.setDialogTitle(title);
+        // Key required: AndroidX resolves dialog preferences by key, and the
+        // custom persist path already writes this same key - no new storage.
+        pref.setKey(VoiceSettings.PREF_PUNCTUATION_LEVEL);
         pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
         pref.setPersistent(true);
         pref.setVoiceSettings(settings);
@@ -1523,7 +1492,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         final TextView label = new TextView(context);
         label.setText(labelText);
-        label.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        label.setTextAppearance(android.R.style.TextAppearance_Small);
         layout.addView(label);
         final EditText et = new EditText(context);
         et.setHint(hintText);
@@ -1804,7 +1773,7 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
         final TextView catLabel = new TextView(context);
         catLabel.setText(R.string.dict_label_category);
-        catLabel.setTextAppearance(context, android.R.style.TextAppearance_Small);
+        catLabel.setTextAppearance(android.R.style.TextAppearance_Small);
         layout.addView(catLabel);
         final android.widget.Spinner spCategory = new android.widget.Spinner(context);
         android.widget.ArrayAdapter<String> catAdapter = new android.widget.ArrayAdapter<>(context,

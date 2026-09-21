@@ -19,7 +19,7 @@ package com.animeshahilya.espeakng.test;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceFragment;
+import androidx.preference.PreferenceFragmentCompat;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -102,8 +102,8 @@ public class PreferenceStorageTest
         final AtomicBoolean attached = new AtomicBoolean();
         for (int i = 0; i < 100 && !attached.get(); ++i) {
             scenario.onActivity(activity -> {
-                final PreferenceFragment fragment = (PreferenceFragment)
-                        activity.getFragmentManager().findFragmentById(android.R.id.content);
+                final PreferenceFragmentCompat fragment = (PreferenceFragmentCompat)
+                        activity.getSupportFragmentManager().findFragmentById(android.R.id.content);
                 attached.set(fragment != null && fragment.findPreference(key) != null);
             });
             if (!attached.get()) {

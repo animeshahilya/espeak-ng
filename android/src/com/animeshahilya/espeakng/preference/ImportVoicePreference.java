@@ -19,8 +19,9 @@ package com.animeshahilya.espeakng.preference;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.preference.Preference;
 import android.util.AttributeSet;
+
+import androidx.preference.Preference;
 
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.TtsSettingsActivity;

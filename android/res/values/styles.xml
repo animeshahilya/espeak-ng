@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.DeviceDefault">
+    <!-- AppCompat parent is required by AppCompatActivity (settings host since
+         the AndroidX preference migration); DayNight keeps the -v29 night
+         story consistent back to minSdk. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
     </style>
 </resources>

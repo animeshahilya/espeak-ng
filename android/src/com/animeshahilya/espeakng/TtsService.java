@@ -364,8 +364,10 @@ public class TtsService extends TextToSpeechService {
         // needs a network connection. Clients read this set -- directly, or through
         // the features of the voices built in onGetVoices() -- to decide whether a
         // language can be spoken offline; leaving it empty makes eSpeak look like an
-        // engine that cannot answer the question.
-        return Collections.singleton(TextToSpeech.Engine.KEY_FEATURE_EMBEDDED_SYNTHESIS);
+        // engine that cannot answer the question. The literal wire value is asserted
+        // (not the deprecated constant) so a platform rename can never silently
+        // change what clients see.
+        return Collections.singleton("embeddedTts");
     }
 
     @Override
@@ -534,6 +536,35 @@ public class TtsService extends TextToSpeechService {
         return TextOffsetMap.diff(before, after).composeWith(previous);
     }
 
+    // BaseBundle.get(String) was deprecated in API 33, but no typed getter
+    // preserves these reads: the debug dump takes arbitrary keys, and volume
+    // defensively accepts Number or String. Both callers keep exact behavior.
+    @SuppressWarnings("deprecation")
+    private static void logSynthesisParams(Bundle params) {
+        if (params == null) {
+            return;
+        }
+        for (String key : params.keySet()) {
+            Log.v(TAG,
+                    "Synthesis request contained param {" + key + ", " + params.get(key) + "}");
+        }
+    }
+
+    // See logSynthesisParams for why Bundle.get() stays here.
+    @SuppressWarnings("deprecation")
+    private static float getVolumeScale(Bundle params) {
+        Object volObj = params.get(TextToSpeech.Engine.KEY_PARAM_VOLUME);
+        if (volObj instanceof Number) {
+            return ((Number) volObj).floatValue();
+        } else if (volObj instanceof String) {
+            try {
+                return Float.parseFloat((String) volObj);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return 1.0f;
+    }
+
     @Override
     protected synchronized void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
         if (selectVoice(request) == TextToSpeech.ERROR) {
@@ -587,11 +618,7 @@ public class TtsService extends TextToSpeechService {
         if (DEBUG) {
             Log.i(TAG, "Received synthesis request: {language=\"" + voice.name + "\"}");
 
-            final Bundle params = request.getParams();
-            for (String key : params.keySet()) {
-                Log.v(TAG,
-                        "Synthesis request contained param {" + key + ", " + params.get(key) + "}");
-            }
+            logSynthesisParams(request.getParams());
         }
 
         int textOffset = 0;
@@ -887,15 +914,7 @@ public class TtsService extends TextToSpeechService {
         float volumeScale = 1.0f;
         final Bundle params = request.getParams();
         if (!settings.isForceVolumeEnabled() && params != null) {
-            Object volObj = params.get(TextToSpeech.Engine.KEY_PARAM_VOLUME);
-            if (volObj instanceof Number) {
-                volumeScale = ((Number) volObj).floatValue();
-            } else if (volObj instanceof String) {
-                try {
-                    volumeScale = Float.parseFloat((String) volObj);
-                } catch (NumberFormatException ignored) {
-                }
-            }
+            volumeScale = getVolumeScale(params);
         }
         if (volumeScale < 0.0f) {
             volumeScale = 0.0f;
