@@ -2,7 +2,7 @@
 <resources>
   <!--Source: Activity title.
         Description: Title for the Settings activity.-->
-  <string name="tts_settings_label">eSpeak -- A szövegfelismerő beállításai</string>
+  <string name="tts_settings_label">eSpeak &#8212; A szövegfelismerő beállításai</string>
   <!--Source: Preference title.
         Description: Title for the preference that controls default voice pitch.-->
   <string name="setting_default_pitch">Alapértelmezett hangszín</string>
@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Beszédsebesség gyorsítása</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Hangadatok telepítése...</string>
+  <string name="installing_voice_data">Hangadatok telepítése&#8230;</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Ez egy %s nyelven felolvasott szöveg mintája.</string>

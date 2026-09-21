@@ -164,6 +164,10 @@ public final class TextPreprocessor {
             TextOffsetMap initialOffsetMap,
             Context storageContext) {
 
+        if (text == null || text.isEmpty()) {
+            return new Result(text != null ? text : "", initialOffsetMap, false);
+        }
+
         TextOffsetMap offsetMap = initialOffsetMap;
 
         if (!isSsml) {
