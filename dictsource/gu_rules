@@ -42,7 +42,12 @@
 
 .group આ
         આ          a:
-        આં          V~
+        આં          a~        // + anusvara; was V~ (nasalized schwa - wrong
+                               // vowel quality, not just wrong length) -
+                               // hi_rules/mr_rules both nasalize the same a:
+                               // vowel here (a~), not switch to a different
+                               // one; found by cross-checking Gujarati's
+                               // handling against its sibling languages
 
 .group ઇ
         ઇ          I
@@ -51,8 +56,11 @@
                              // i: phoneme doesn't self-demote back to plain i
                              // when this syllable isn't the word's own
                              // stressed one - see hi_rules for the same fix
-//       ઇઁ        In
-       ઇં        In
+//       ઇઁ        I~
+       ઇં        I~        // was "In" (vowel + separate n consonant) -
+                            // this group's own િં (_ rule already correctly
+                            // used I~; matches hi_rules' nasalized-vowel
+                            // convention throughout
 
 .group ઈ
         ઈ          i:
@@ -68,8 +76,11 @@
 
 .group ઊ
         ઊ          u
-        ઊં         un        // + anusvara
-        ઊઁ (_       un        // + candrabinbu
+        ઊં         u~        // + anusvara; was "un" (vowel + a separate n
+                              // consonant) - hi_rules nasalizes the same u
+                              // vowel instead (u~), a single nasalized-vowel
+                              // phoneme rather than an added consonant
+        ઊઁ (_       u~        // + candrabindu
 
 .group ઋ
         ઋ          ru
@@ -98,8 +109,9 @@
 
 .group ઓ
         ઓ          o:
-        ઓં         on        // +anusvara
-        ઓઁ (_       on        // +candrabindu
+        ઓં         o~        // +anusvara; was "on" (vowel + separate n
+                              // consonant) - see .group ઊ above for why
+        ઓઁ (_       o~        // +candrabindu
     ા) ઓં (_       w        // +anusvara
     ા) ઓઁ (_       w
  
@@ -123,34 +135,38 @@ C)        ાં         V~
 િ	#X1I
 C)        િ          I
 C)        િ (_       ,i:      // final short i lengthens; see .group ઇ above
-C)//      િઁ       In
-C)      િં        In
+C)//      િઁ       I~
+C)      િં        I~        // was "In"; see .group ઇ above
 C)      િં (_     I~
 
 .group ી
 ી	#X2i:
 C)        ી          i:
 C)        ી (_       ,i:      // final -i is always long; see .group ઇ above
-C)        ી (ઁ       in
-C)        ીઁ (_      in
-C)        ીં         in
+C)        ી (ઁ       i~        // was "in"; see .group ઇ above
+C)        ીઁ (_      i~
+C)        ીં         i~
 C)        ીં (_      i~
 
 .group ુ
 ુ	#X1U
 C)        ુ          u
 C)        ુ (_       u:       // final short u lengthens; see .group ઉ above
-C)        ુ (ઁ       un
-C)        ુઁ (_      un
-C)        ું         un
+C)        ુ (ઁ       u~        // was "un"; see .group ઇ above
+C)        ુઁ (_      u~
+C)        ું         u~
 C)        ું (_      u~
 
 .group ૂ
 ૂ	#X2u:
 C)        ૂ          u:
-C)        ૂ (ઁ       un
-C)        ૂઁ (_      un
-C)        ૂં         un
+C)        ૂ (ઁ       u~        // was "un" (vowel + separate n consonant) -
+                              // hi_rules' ू group uses u~ consistently for
+                              // every candrabindu/anusvara variant; this one
+                              // and the two below it were the odd ones out
+                              // (ૂં (_ already correctly used u~)
+C)        ૂઁ (_      u~
+C)        ૂં         u~
 C)        ૂં (_      u~        // or O~   ??
 
 .group ૃ
@@ -187,10 +203,10 @@ C)        ૉ          O
 .group ો
 ો	#X2o:
 C)        ો          o:
-C)        ોં         on
+C)        ોં         o~        // was "on"; see .group ઇ above
 C)        ોં (_      o~
-C)        ો (ઁ       on
-C)        ોઁ (_      on
+C)        ો (ઁ       o~
+C)        ોઁ (_      o~
 
 .group ૌ
 ૌ	#X2aU
@@ -303,9 +319,14 @@ C)        ૣ          l-:
         જ્જ (_      J:
         જ્જ (B      J:
 
-        જ્ઞ          gn.V
-        જ્ઞ (_       gn.
-        જ્ઞ (B       gn.
+        જ્ઞ          gjV       // was gn.V (g + RETROFLEX n) - no sibling
+                              // language uses a retroflex here (hi/mr use
+                              // gj, kok uses n'j, bn uses gg - dialectal
+                              // variation across all of them, but none
+                              // retroflex); found via a real-world Gujarati
+                              // sample containing જ્ઞાનકોષોને
+        જ્ઞ (_       gj
+        જ્ઞ (B       gj
 
 .group ઝ  // According to chart this is jha ( ઝ 0A9D)but it is told that it looks like za ( જ઼ 0A9C + 0ABC) 
         ઝ          zV
