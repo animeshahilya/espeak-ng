@@ -101,7 +101,11 @@ public class TtsSettingsActivity extends PreferenceActivity {
 
     /** Single accessor for the device-protected default prefs (see EspeakApp). */
     private static SharedPreferences getPrefs() {
-        return PreferenceManager.getDefaultSharedPreferences(storageContext);
+        // Fully qualified: this file still builds the framework preference UI
+        // (cutover slice); only the manager accessor moves to AndroidX here.
+        // Both resolve the same file for the same context - PreferenceStorageTest
+        // proves it on device.
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(storageContext);
     }
 
     private static final java.util.HashMap<String, LangInfo> sLangInfo = new java.util.HashMap<String, LangInfo>();

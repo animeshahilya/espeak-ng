@@ -198,7 +198,7 @@ public class DictionaryDeviceTest {
         mgr.addRule(new UserDictionary("cat", "hippopotamus", false, false, true, ""));
 
         android.content.SharedPreferences prefs =
-                android.preference.PreferenceManager.getDefaultSharedPreferences(storageContext);
+                androidx.preference.PreferenceManager.getDefaultSharedPreferences(storageContext);
         prefs.edit().putBoolean(VoiceSettings.PREF_USER_DICTIONARY, true).commit();
 
         final String text = "cat and dog run fast";

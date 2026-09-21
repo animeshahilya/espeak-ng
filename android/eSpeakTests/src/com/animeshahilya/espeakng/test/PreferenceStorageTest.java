@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -61,7 +60,10 @@ public class PreferenceStorageTest
         assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
         mAppContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mStorageContext = mAppContext.createDeviceProtectedStorageContext();
-        mName = PreferenceManager.getDefaultSharedPreferencesName(mAppContext);
+        // getDefaultSharedPreferencesName() is private in AndroidX; both
+        // frameworks compute it as packageName + "_preferences". The test's
+        // real assertion is the storage *location*, not the name formula.
+        mName = mAppContext.getPackageName() + "_preferences";
     }
 
     @After

@@ -160,19 +160,36 @@ frameworks there is churn that cannot be cleanly reverted.
 
 ## 5. Slices (each lands green or it does not land)
 
-1. `AccessiblePreferenceCategory`, `ImportVoicePreference` (finish Gate 0
-   leftovers).
-2. `SupportedLanguagesPreference` (`MultiSelectListPreference` maps 1:1).
+Slice order follows a hard constraint discovered in Slice 1: leaf widgets
+cannot migrate before the host tree (an androidx widget cannot be added
+to a framework group - unrelated types, ~13 host sites break). So
+non-UI call sites go first, the visible tree cuts over atomically last.
+
+1. DONE - non-UI `PreferenceManager` call sites (both return plain
+   `SharedPreferences`, so no UI entanglement): `TtsService`,
+   `CheckVoiceData`, `EspeakApp`, `BackupRestoreHelper`, `LogExporter`,
+   plus `LanguageFilterSynthesisTest`, `TextToSpeechServiceTest`,
+   `VoiceSettingsTest`, `DictionaryDeviceTest` (fully qualified),
+   and fully-qualified one-liners in mixed files (`TtsSettingsActivity`
+   `getPrefs`, `PreferenceStorageTest` name lookup). Warning count went
+   149 -> 105 with 103/103 device tests green, `PreferenceStorageTest`
+   proving both frameworks resolve the same file. Two discoveries, keep
+   them: AndroidX `getDefaultSharedPreferencesName()` is **private** -
+   both frameworks compute `packageName + "_preferences"`, so spell it
+   out with a comment; `EspeakApp`'s now-unused import was removed.
+2. `SupportedLanguagesPreference` prep only (no UI change yet): extract
+   whatever is framework-agnostic; the widget itself moves in slice 4.
 3. The three `DialogPreference`s (`SeekBar`, `SpeakPunctuation`,
-   `VoiceVariant`) - dialog lifecycle differs most; do last when the
-   pattern is proven. Re-verify the `CollectionItemInfo` guard and
-   announcement suppressions still compile in place.
-4. `TtsSettingsActivity` host: activity, `PrefsEspeakFragment`,
-   4 programmatic sub-screens, `onPreferenceTreeClick`, Wear entry.
-5. Call sites: `TtsService`, `CheckVoiceData`, `EspeakApp`,
-   `BackupRestoreHelper`, `LogExporter` (import swaps honoring invariant 2).
-6. Tests: the 4 test files above (import swaps; storage assertions must
-   still assert device-protected location).
+   `VoiceVariant`) - same prep treatment; dialog lifecycle differs most.
+   Re-verify the `CollectionItemInfo` guard and announcement
+   suppressions still compile in place.
+4. ATOMIC CUTOVER (single commit): `TtsSettingsActivity` host (activity,
+   `PrefsEspeakFragment`, 4 programmatic sub-screens,
+   `onPreferenceTreeClick`/sub-screen dialogs get deleted, not ported -
+   AndroidX navigates nested screens itself), all 6 custom widgets,
+   remaining call sites and the 4 test files. Nothing lands half-migrated.
+5. Upgrade test from the current release build proving prefs survive,
+   plus the manual TalkBack pass over every settings screen.
 
 ## 6. Verification protocol (every slice)
 

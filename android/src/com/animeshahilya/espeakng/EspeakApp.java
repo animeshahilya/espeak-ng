@@ -26,7 +26,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.UserManager;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class EspeakApp extends Application {
@@ -90,7 +89,10 @@ public class EspeakApp extends Application {
      */
     @TargetApi(Build.VERSION_CODES.N)
     public static void migrateLegacyPreferences(Context appContext, Context storageContext) {
-        final String name = PreferenceManager.getDefaultSharedPreferencesName(appContext);
+        // AndroidX made getDefaultSharedPreferencesName() private; both
+        // frameworks compute it as packageName + "_preferences", so spell it
+        // out (the migration must find the exact legacy file).
+        final String name = appContext.getPackageName() + "_preferences";
         if (!storageContext.getSharedPreferences(name, Context.MODE_PRIVATE).getAll().isEmpty()) {
             appContext.deleteSharedPreferences(name);
             return;
