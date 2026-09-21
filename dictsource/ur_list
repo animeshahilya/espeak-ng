@@ -51,7 +51,7 @@ _و	va:O
 ۃ	go:l||te:
 ٌ	do||pe:S
 ۓ	Hamza||bar.i:||je:
-٘	QUn:a||arbi:
+٘	QUn:a||arb,i:
 ؐ	salal:a:HU||ale:HI||va||a:lIHi||va||salam
 ﷲ	al:a:H
 ﷺ	dURu:d||salal:a:HU||ale:HI||va||a:lIHi||va||salam
@@ -209,9 +209,9 @@ _dpt	_ISaRI'Ia_
 جس	J'Is	$u
 جسے	J'Ise:	$u
 کس	k'Is	$u
-کسی	k'Isi:
+کسی	k'Is,i:
 کسے	k'Ise:	$u
-اسی	'Isi:
+اسی	'Is,i:
 اسے	'Ise:	$u
 مجھ	mUJ#	$u
 مجھے	mUJ#e:	$u
@@ -280,7 +280,7 @@ _dpt	_ISaRI'Ia_
 شکست	SIk'ast
 شعر	S'e:R
 فعل	f'e:l
-خصوصی	xUs.'u:s.i:
+خصوصی	xUs.'u:s.,i:
 خصوصیت	 x,Us.u:s.i:;'at
 دنیا	dUn'i:;a:
 مختلف	m,Uxt'alIf
@@ -308,16 +308,16 @@ _dpt	_ISaRI'Ia_
 شدت	SId'at
 بالخصوص	b,IlxUs.'u:s.
 اردو	'URd,u:
-احتجاجی	 'e:Hte:J,a:Ji:
+احتجاجی	'e:Hte:J,a:J,i:
 احتجاج	'e:HtIJ,a:J
 بدھ	b'Ud#
 دوست	 d'o:st
-زندگی	z,Ind'agi:
+زندگی	z,Ind'ag,i:
 دل	d'Il
-شعری	S'e:Ri:
+شعری	S'e:R,i:
 شہر	S'EHER
 صرف	s.'IRf
-طبی	t'Ibi:
+طبی	t'Ib,i:
 طب	t'Ib
 مقرر	m,UqaR'aR
 مناسب	mUn'a:sIb
@@ -329,7 +329,7 @@ _dpt	_ISaRI'Ia_
 مکمل	mUkam:al
 مل	m'Il
 ملے	m'Ile:
-ملی	m'Ili:
+ملی	m'Il,i:
 گزشتہ	gUz'aSta
 رشتہ	R'ISta
 اخر	'a:xIR
@@ -371,9 +371,9 @@ _dpt	_ISaRI'Ia_
 حصوں	HIs.'o:n
 حساب	HIs'a:b
 ہوئیں	Hu:'i:n
-ہوئی	H'u:i:
+ہوئی	H'u:,i:
 ہوئے	H'u:e:
-اندسٹری	,Ind.'ast.Ri:
+اندسٹری	,Ind.'ast.R,i:
 بخود	b'axUd
 تعین	t'a:jUn
 باعث	b'a:Is
@@ -391,7 +391,7 @@ _dpt	_ISaRI'Ia_
 نامزد	n,a:mz'ad
 نامزدگی	n,a:mz'adg,i:
 معطل	m,Oat'al
-معطلی	m,Oat'ali:
+معطلی	m,Oat'al,i:
 تین	t'i:n
 تینوں	ti:n'o:n
 ڈاکٹر	d.,a:kt.'aR
@@ -399,21 +399,21 @@ _dpt	_ISaRI'Ia_
 جرم	J'URm
 عشرت	,ISR'at
 نگران	n,IgR'a:n
-نگرانی	n,IgR'a:ni:
+نگرانی	n,IgR'a:n,i:
 مستقل	m,Ust'aqIl
 مستقبل	m,Ust'aqb,Il
 میر	m'i:R
 چھ	c#'eh_!
 خفیہ	xUf'i:;a
 اٹھانا	Ut.#'a:na:
-اٹھانی	Ut.#'a:ni:
+اٹھانی	Ut.#'a:n,i:
 اٹھانے	Ut.#'a:ne:
 اٹھا	'Ut.#a:
-اٹھی	'Ut.#i:
+اٹھی	'Ut.#,i:
 اٹھے	'Ut.#e:
 قوت	qu:v'at
 اٹھایا	Ut.#'a:ja:
-اٹھائی	Ut.#'a:ji:
+اٹھائی	Ut.#'a:j,i:
 اٹھائے	Ut.#'a:je:
 مدافعت	m,Uda:fI;'at
 خطرہ	x'atRa
@@ -505,7 +505,7 @@ _dpt	_ISaRI'Ia_
 گھریلو	g#aR'e:lu:
 ٹھیک	t.#'i:k
 مشتمل	m,USt'amIl
-متلاشی	m,Utal'a:Si:
+متلاشی	m,Utal'a:S,i:
 ذکر	zIkR
 محسوس	m,EHs'u:s
 برعکس	b,aR'aks
@@ -519,7 +519,7 @@ _dpt	_ISaRI'Ia_
 خطوط	xUt'u:t
 ہفتہ	H'afta
 مکرر	m,UkaR'aR
-چینی	c'i:ni:
+چینی	c'i:n,i:
 خیرمقدم	xE:Rmaqdam
 محترمہ	m,UHt'aRma
 محترم	m,UHtaR'am
@@ -540,7 +540,7 @@ _dpt	_ISaRI'Ia_
 ریاست	Rja:s'at
 منسلک	mUns'alIk
 داخل	d'a:xIl
-نجی	n'IJi:
+نجی	n'IJ,i:
 منہدم	m,UnH'adIm
 گم	g'Um
 محدود	m,EHd'u:d
@@ -570,7 +570,7 @@ _dpt	_ISaRI'Ia_
 کیں	k'i:n	$u
 فرصت	f,URs.'at
 مہم	m'UHIm
-ملتوی	m,Ult'avi:
+ملتوی	m,Ult'av,i:
 ٹیکس	t.'e:ks
 توجہ	tav'aJo:
 حراست	H,IRa:s'at
@@ -594,7 +594,7 @@ _dpt	_ISaRI'Ia_
 مماثلت	m,Uma:sIl'at
 مماثل	mUm'a:sIl
 مثلث	m,Usal'as
-روی	R'avi:
+روی	R'av,i:
 عہدہ	'o:Hda
 عہدے	'o:Hd,e:
 عہدوں	,o:Hd'o:n
@@ -609,7 +609,7 @@ _dpt	_ISaRI'Ia_
 منعقد	mUn'a:qId
 بالکل	b'Ilk,Ul
 (فی الحال)	f,IlH'a:l
-المدتی	,UlmUd'ati:
+المدتی	,UlmUd'at,i:
 طویل	tav'i:l
 مرکز	m,aRk'az
 سفارش	sIf'a:RIS
@@ -632,7 +632,7 @@ _dpt	_ISaRI'Ia_
 تحریک	t,e:HR'i:k
 بھرپور	b#,aRp'u:R
 انفرادیت	,Inf,IRa:di:;'at
-انفرادی	,InfIR'a:di:
+انفرادی	,InfIR'a:d,i:
 اطلاق	,Itl'a:q
 فطری	f'ItR,i:
 روایت	R,Iva:j'at
@@ -739,7 +739,7 @@ _dpt	_ISaRI'Ia_
 طیبہ	tai;aba
 طہور	taHOvUR
 کمسنی	kamsIni:	$1
-ای	i:
+ای	,i:
 نیو	nju:
 نیوز	nju:z
 مہلت	mUHlat
@@ -813,7 +813,7 @@ _dpt	_ISaRI'Ia_
 کنول	kV~val	$2
 ابل	Ubal
 ابلا	Ubla:
-ابلی	Ubli:
+ابلی	Ubl,i:
 ابلیس	Ibli:s
 الوقت	Ulvaqt
 دہر	dEHER
@@ -835,7 +835,7 @@ _dpt	_ISaRI'Ia_
 اجرا	IJRa:
 اجگر	aJgaR
 اجلا	UJla:
-اجلی	UJli:
+اجلی	UJl,i:
 اجلے	UJle:
 اجماع	IJma:
 اجمل	aJmal
@@ -848,7 +848,7 @@ _dpt	_ISaRI'Ia_
 اچھوتا	ac#u:ta:
 اچھوتی	ac#u:ti
 اچھوتے	ac#u:te:
-پرسی	pURsi:
+پرسی	pURs,i:
 نگار	nIga:R
 کاغذ	ka:Qaz
 اخذ	axaz
@@ -894,7 +894,7 @@ _dpt	_ISaRI'Ia_
 جبلت	JIbIl:at	$2
 شعاع	SUa:
 حصار	HIs.a:R
-شدگی	SUdgi:
+شدگی	SUdg,i:
 حکمت	HIkmat
 باوجودیکہ	ba:vUJu:de:ke:
 کتا	kUt:a:	$2
@@ -912,7 +912,7 @@ _dpt	_ISaRI'Ia_
 بخش	baxS
 بخشش	baxSIS
 جدت	JId:at
-بخوشی	baxUSi:
+بخوشی	baxUS,i:
 بخیر	baxE:R
 بچپن	bacpan
 بچپنا	bacpana:
@@ -921,7 +921,7 @@ _dpt	_ISaRI'Ia_
 سلوک	sUlu:k
 انڈین	Ind.i;an
 متنبہ	mUtanabe:
-قیمتی	qi:mti:
+قیمتی	qi:mt,i:
 بدک	bIdak
 بذریعہ	baDaRi:;a:
 برا	bURa:
@@ -1036,9 +1036,9 @@ _dpt	_ISaRI'Ia_
 مضر	mUz'IR
 سنہ	san
 برابر	baRa:baR
-کارکردگی	ka:RkaRd@gi:
+کارکردگی	ka:RkaRd@g,i:
 زینت	zinat
-فروری	faRvaRi:
+فروری	faRvaR,i:
 رضوی	RIzvi
 اطلاع	Itla:
 نرگس	naRgIs
@@ -1063,7 +1063,7 @@ _dpt	_ISaRI'Ia_
 مہوش	mEHvIS
 دیجیے	diJi:;e:
 وڈ	vUd.
-سکیورٹی	sIke:o:RIt.i:
+سکیورٹی	sIke:o:RIt.,i:
 ذریعے	zaRi:;e:
 درپیش	daRpe:S
 رقص	Raqs.
@@ -1132,7 +1132,7 @@ _dpt	_ISaRI'Ia_
 بھگو	b#Igo:
 مشن	mISan
 روبوٹک	Ro:bo:t.Ik
-جنوری	JanvaRi:
+جنوری	JanvaR,i:
 پیرس	pERIs
 ہیرو	Hi:Ro:
 برٹش	bRIt.IS
@@ -1140,7 +1140,7 @@ _dpt	_ISaRI'Ia_
 ہلچل	Halcal
 معیشت	maiSat
 قتل	qatl
-ترکی	tURki:
+ترکی	tURk,i:
 میلز	me:lz
 (ہیرا پھیری)	He:Ra||p#e:Ri
 بدبخت	badbaxt
@@ -1202,7 +1202,7 @@ _dpt	_ISaRI'Ia_
 مصنوعات	mas.nu:a:t
 مندر	mandIR
 مطلب	matlab
-مطلبی	matlabi:
+مطلبی	matlab,i:
 فورسز	fo:RsIz
 سرگزشتوں	saRgUzaSto:n
 سرگم	saRgam
@@ -1212,7 +1212,7 @@ _dpt	_ISaRI'Ia_
 حشر	HaSR
 فرش	faRS
 ضمن	zImn
-ضمنی	zImni:
+ضمنی	zImn,i:
 پولیس	pUli:s
 (خیر مقدم)	xER||maqdam
 پرفضا	pURfaza:
@@ -1241,16 +1241,16 @@ _dpt	_ISaRI'Ia_
 شہد	SEHEd
 مذمت	mazam:at
 اطمینان	Itmina:n
-اطمینانی	Itmina:ni:
+اطمینانی	Itmina:n,i:
 اطہر	atHaR
 وغیرہ	vaQE:Ra
 کرن	kIRan
 ممتحن	mUmtaHIn
 گیر	gi:R
 گیروں	gi:Ro:n
-گیری	gi:Ri:
+گیری	gi:R,i:
 چیرہ	ci:Ra
-بلی	bIl:i:
+بلی	bIl:,i:
 آسٹریلیا	a:st.Re:li:;a:
 (چکی ہے)	cUki:||HE
 غصہ	QUs.:a
@@ -1273,14 +1273,14 @@ _dpt	_ISaRI'Ia_
 (فرد جرم)	farde:||JURm
 منعقدہ	mUnaqIda
 دیدار	di:da:R
-رخشندگی	RaxSIndagi:
+رخشندگی	RaxSIndag,i:
 رخشندہ	RaxSInda
 مارکیٹنگ	maRkit.Ing
 پلیٹ	ple:t.
 پلیٹوں	ple:t.o:n
 پلیٹیں	ple:t.e~
 ارتعاش	IRtIa:S
-ارتعاشی	IRtIa:Si:
+ارتعاشی	IRtIa:S,i:
 نقش	naqS
 نقشہ	naqSa
 (فی اللہ)	fIl:a:H
@@ -1288,7 +1288,7 @@ _dpt	_ISaRI'Ia_
 (فی الفور)	fIlfO:R
 (فی کس)	fi:||kas
 منشیات	mUnaSi:;a:t
-یونیورسٹی	ju:ni:vaRsIt.i:
+یونیورسٹی	ju:ni:vaRsIt.,i:
 موقعے	mo:qe:
 (قابل ذکر)	qa:bIle:||zIkR
 روپ	Ru:p
@@ -1296,17 +1296,17 @@ _dpt	_ISaRI'Ia_
 (بلا مقابلہ)	bIla:||mUqa:bIla
 سہیل	sUHe:l
 الیون	Ile:van
-خنکی	xUnki:
+خنکی	xUnk,i:
 یونین	ju:ni:an
 تبصم	tabas.:Um
 جزو	JUzv
-جزوی	JUzvi:
+جزوی	JUzv,i:
 طلوع	tUlu:
 لمحہ	lamHa
 طور	tO:R
 ٹرانسپورٹ	t.Ra:nspo:Rt.
 امور	Umu:R
-دلی	dIli:
+دلی	dIl,i:
 پہلو	pEHlu:
 کرنل	kaRnal
 کرنٹ	kaRant.
@@ -1321,7 +1321,7 @@ _dpt	_ISaRI'Ia_
 کشکول	kaSko:l
 طلوعِ	tUlu:e:
 کینہ	ki:na
-پروری	paRvaRi:
+پروری	paRvaR,i:
 پروروں	paRvaRo:n
 چرخہ	caRxa
 کھد	k#Ud
@@ -1333,18 +1333,18 @@ _dpt	_ISaRI'Ia_
 دلیں	dIle~
 وصل	vas.l
 دماغ	dIma:Q
-دماغی	dIma:Qi:
+دماغی	dIma:Q,i:
 دلہن	dUlHan
-چاندنی	ca:ndni:
+چاندنی	ca:ndn,i:
 ٹکٹ	t.IkIt.
-قطبی	qUtbi:
+قطبی	qUtb,i:
 دانت	da:nt
 (دور دورہ)	dO:R||dO:Ra
 (دوران خون)	dORa:ne:||xu:n
 موومنٹ	mu:vmant.
 دمشق	damISq
 اسرائیل	IsRa:i:l
-اسرائیلی	IsRa:i:li:
+اسرائیلی	IsRa:i:l,i:
 اسلحہ	aslaHa
 اسلحے	aslaHe:
 آتشیں	a:tISi~
@@ -1354,13 +1354,13 @@ _dpt	_ISaRI'Ia_
 تحفہ	tO:fa
 گدھ	gId#
 شطرنج	SatRanJ
-شطرنجی	SatRanJi:
+شطرنجی	SatRanJ,i:
 بابر	ba:baR
 توازن	tava:zUn
 متوازن	mUtava:zIn
 پہ	pe:
 محیط	mUHi:t
-محیطی	mUHi:ti:
+محیطی	mUHi:t,i:
 کینو	ki:nu:
 جادو	Ja:du:
 عدت	Id:at
@@ -1374,19 +1374,19 @@ _dpt	_ISaRI'Ia_
 دفعہ	dafa:
 عاطف	a:tIf
 جنون	JUnu:n
-جنونی	JUnu:ni:
+جنونی	JUnu:n,i:
 ذمے	zIme:
 ذو	zu:
 فنون	fUnu:n
-فنونی	fUnu:ni:
+فنونی	fUnu:n,i:
 (فنون لطیفہ)	fUnu:ne:||lati:fa
 فوقتاً	favaqtan
 عظمت	az.mat
 (ذمہ دار)	zIme:||da:R
 (ذمہ دارانہ)	zIme:||da:Ra:na
-(ذمہ داری)	zIme:||da:Ri:
+(ذمہ داری)	zIme:||da:R,i:
 اجر	aJR
-ذمی	zImi:
+ذمی	zIm,i:
 بدقسمت	badqIsmat
 بدگمان	badgUma:n
 (حسن اتفاق)	HUsne:||It:Ifa:q
@@ -1409,13 +1409,13 @@ _dpt	_ISaRI'Ia_
 رابطہ	Ra:bta
 لمحات	lamHa:t
 ہوتیں	Ho:ti~:
-انڈسٹری	Ind.ast.Ri:
+انڈسٹری	Ind.ast.R,i:
 کفایت	kIfa:jat
 شعار	SIa:R
 ورکر	vaRkaR
 واشنگٹن	va:SIngt.an
 مرض	maRz
-سٹی	sIt.i:
+سٹی	sIt.,i:
 قرض	qaRz
 نفرت	nafRat
 (ہوا کہ)	Hu:a:||ke:
@@ -1423,7 +1423,7 @@ _dpt	_ISaRI'Ia_
 پلوٹو	plu:t.o:
 پسندیدہ	pasandi:da
 سیکس	se:ks
-برتری	baRtaRi:
+برتری	baRtaR,i:
 اہل	EHEl
 (پریشان کن)	paRe:Sa:n||kUn
 کسان	kIsa:n
@@ -1460,7 +1460,7 @@ _dpt	_ISaRI'Ia_
 مسخر	mUsax:aR
 مسدس	mUsadas
 آفریں	a:fRi~:
-(کٹ پتلی)	kat.||pUtli:
+(کٹ پتلی)	kat.||pUtl,i:
 ورک	vaRk
 رستم	RUstam
 ستم	sItam
@@ -1468,8 +1468,8 @@ _dpt	_ISaRI'Ia_
 (ستم گر)	sItam||gaR
 درشن	daRSan
 پشت	pUSt
-پشتی	pUSti:
-پشتینی	pUStE:ni:
+پشتی	pUSt,i:
+پشتینی	pUStE:n,i:
 اذیتوں	azi;ato~:
 اذیتیں	azi;ate~:
 گزیں	gUzi~:
@@ -1479,17 +1479,17 @@ _dpt	_ISaRI'Ia_
 ازبر	azbaR
 ازخود	azxUd
 ازہد	azHad
-سری	sRi:
+سری	sR,i:
 غدود	QUdu:d
 کپور	kapu:R
 نہرو	nEHRu:
-موذی	mu:zi:
+موذی	mu:z,i:
 اگل	Ugal
 ملیریا	male:Ri:a:
 ڈبوں	d.abo~:
 ڈبیٹ	d.Ibe:t.
 ڈپلومیٹک	d.Iplo:me:t.Ik
-سٹریٹجی	st.Re:t.IJi:
+سٹریٹجی	st.Re:t.IJ,i:
 فروٹ	fRu:t.
 ڈرائیونگ	d.Ra:ivIng
 برق	baRq
@@ -1516,7 +1516,7 @@ _dpt	_ISaRI'Ia_
 افضل	afzal
 اقدس	aqdas
 اقرار	IqRa:R
-اقراری	IqRa:Ri:
+اقراری	IqRa:R,i:
 سرنج	sIRInJ
 سرنجز	sIRInJIz
 سرنجوں	sIRInJo~:
@@ -1531,7 +1531,7 @@ _dpt	_ISaRI'Ia_
 عرش	aRS
 نشیں	naSi~:
 دستبردار	dastbaRda:R
-دستبرداری	dastbaRda:Ri:
+دستبرداری	dastbaRda:R,i:
 نفس	nafs
 رسالت	RIsa:lat
 درپردہ	daRpaRda
@@ -1543,14 +1543,14 @@ _dpt	_ISaRI'Ia_
 ہفتم	HaftUm
 خطۂ	xItae:
 خطے	xIte:
-خفتگی	xaftgi:
+خفتگی	xaftg,i:
 گرا	gIRa:
 گرے	gIRe:
 خون	xu:n
 خو	xu:
 شیریں	Si:i~:
 سیماب	si:ma:b
-سیمابی	si:ma:bi:
+سیمابی	si:ma:b,i:
 شیرہ	Si:Ra
 شیرۂ	Si:Rae:
 بافت	ba:ft
@@ -1567,25 +1567,25 @@ _dpt	_ISaRI'Ia_
 بلاول	bIla:val
 میرٹھ	me:Rat.#
 زبوں	zabu~:
-ہماہمی	Hama:Hami:
+ہماہمی	Hama:Ham,i:
 (کھلم کھلا)	k#Ulam||kUla:
-بدتمیزی	badtami:zi:
+بدتمیزی	badtami:z,i:
 فقط	faqat
-پدرسری	pIdaRsaRi:
+پدرسری	pIdaRsaR,i:
 شوہر	So:HaR
 (دم چھلا)	dUm||c#al:a:
 ظفر	z.afaR
 نامزدگیاں	na:mzadgi:a~:
 لاتعلق	la:ta:lUq
-لاتعلقی	la:ta:lUqi:
+لاتعلقی	la:ta:lUq,i:
 اندر	andaR
 بلوغت	balu:Qat
-بخوبی	baxu:bi:
+بخوبی	baxu:b,i:
 مسلک	maslak
 تصوف	tas.av:Uf
 زخم	zaxm
-ملٹری	mIlIt.Ri:
-ذہنی	zEHni:
+ملٹری	mIlIt.R,i:
+ذہنی	zEHn,i:
 مترادف	mUtara:dIf
 متروک	matRu:k
 متروکہ	matRu:ka
@@ -1606,18 +1606,18 @@ _dpt	_ISaRI'Ia_
 دوں	du~:
 دربدر	daRbadaR
 (کمر کس)	kamaR||kas
-جہتی	JEHti:
+جہتی	JEHt,i:
 یونٹ	ju:nIt.
-ڈپٹی	d.Ipt.i:
+ڈپٹی	d.Ipt.,i:
 لیگ	li:g
 ردعمل	rade:||amal
 تعرض	ta:RUz
 تعرف	ta:RUf
-تعرفی	ta:RUfi:
+تعرفی	ta:RUf,i:
 معترف	mOtaRIf
 معترفین	mOtaRIfi:n
 فقہ	fIqa
-فقہی	fIqaHi:
+فقہی	fIqaH,i:
 تعاون	ta:vUn
 (براہ کرم)	baRa:He:||kaRam
 ہرگز	HargIz
@@ -1628,7 +1628,7 @@ _dpt	_ISaRI'Ia_
 نوڈلز	nu:d.Ulz
 ترش	tURS	$only
 (بیچ میں)	bi:c||me~:
-یہی	jEHi:
+یہی	jEH,i:
 کیوں	kju~:
 بہتات	bOHta:t
 بہتان	bOHta:n
@@ -1638,10 +1638,10 @@ _dpt	_ISaRI'Ia_
 بہرہ	bEHRa
 مارک	ma:Rk
 لکھنؤ	lak#nau:
-لکھنؤی	lak#navi:
+لکھنؤی	lak#nav,i:
 لکھنؤیت	lak#navi;at
-لکھنوی	lak#navi:
-(لکھ پتی)	lak#||pati:
+لکھنوی	lak#nav,i:
+(لکھ پتی)	lak#||pat,i:
 لکھت	lIk#at
 لکھتیں	lIk#ti~:
 لکھوں	lIk#u~:
@@ -1649,12 +1649,12 @@ _dpt	_ISaRI'Ia_
 لہولہان	laHu:lIHa:n
 کروں	kaRu~:
 روس	Ru:s
-روسی	Ru:si:
+روسی	Ru:s,i:
 ملاؤ	mIla:o:
 سکوپ	sko:p
 مستحق	mUstaHIq
 مستحقین	mUstEHqi:n
-مستری	mIstIRi:
+مستری	mIstIR,i:
 مستریوں	mIstIRjo~:
 ظہور	z.aHu:R
 مطابقت	mUta:bIqat
@@ -1663,7 +1663,7 @@ _dpt	_ISaRI'Ia_
 (خرد بین)	xURd||bi:n
 نذر	nazR
 دامن	da:man
-خشکی	xUSki:
+خشکی	xUSk,i:
 خصوصیتوں	xUs.u:s.i;ato~:
 لرزہ	laRza
 حفظ	HIfz
@@ -1673,13 +1673,13 @@ _dpt	_ISaRI'Ia_
 تکلف	takal:Uf
 گلو	gUlu:
 تمسک	tamas:Uk
-تمسکی	tamas:Uki:
+تمسکی	tamas:Uk,i:
 تمسخر	tamasxUR
 تمغہ	tamQa
 تمکنت	tamkInat
 تمہیل	tamHi:l
 تمہیم	tamHi:m
-بافتگی	baftgi:
+بافتگی	baftg,i:
 تناسل	tana:sUl
 تمبو	tambu:
 ندارد	nada:Rad
@@ -1687,10 +1687,10 @@ _dpt	_ISaRI'Ia_
 یکسر	jaksaR
 یکایک	jaka:jak
 یکسو	jaksu:
-یکسوئی	jaksu:i:
+یکسوئی	jaksu:,i:
 یکم	jakUm
 خودکش	xUdkUS
-خودکشی	xUdkUSi:
+خودکشی	xUdkUS,i:
 جبیں	Jabi~:
 شکل	Sakl
 دلا	dIla:
@@ -1713,18 +1713,18 @@ _dpt	_ISaRI'Ia_
 منافع	mUna:fa
 معتدل	mOtadIl
 غسل	QUsl
-غسلی	QUsli:
+غسلی	QUsl,i:
 بتکلف	batakal:Uf
 چیں	ci~:
-تکلفی	takal:Ufi:
+تکلفی	takal:Uf,i:
 رہن	REHEn
 سربستہ	saRbasta
 سربسجدہ	saRbasaJda
 سربلند	saRbUland
-سربلندی	saRbUlandi:
+سربلندی	saRbUland,i:
 سربمہر	saRbamUHaR
 مجنوں	maJnu~:
-معاونتی	mUa:vInati:
+معاونتی	mUa:vInat,i:
 معجب	mOJIb
 روش	RavIS	$only
 (معدود چند)	m'a:du:de:||cand
@@ -1745,24 +1745,24 @@ _dpt	_ISaRI'Ia_
 نرخ	nIRx
 نرس	naRs
 نرسنگ	naRsIng
-نرگسی	naRgIsi:
+نرگسی	naRgIs,i:
 تند	tUnd
 تندرست	tandURUst
-تندرستی	tandURUsti:
+تندرستی	tandURUst,i:
 تنزل	tanaz:Ul
-تنزلی	tanazUli:
+تنزلی	tanazUl,i:
 متمکن	mUtamakIn
 مرعوب	maRu:b
 مزاح	mIza:H
 مزاحم	mUza:HIm
 مزاحمت	mUza:HImat
-مزاحمتی	mUza:HImati:
+مزاحمتی	mUza:HImat,i:
 مزاحیہ	mIz'a:Hi:;a
 مگرمچھ	magarmac#
 نت	nIt
 نیچ	ni:c
 بالانشین	ba:la:naSi:n
-بالانشینی	ba:la:naSi:ni:
+بالانشینی	ba:la:naSi:n,i:
 گرم	gaRm
 گروپنگ	gRu:pIng
 شبیہ	Sabi:H
@@ -1802,9 +1802,9 @@ _dpt	_ISaRI'Ia_
 اسامہ	Usa:ma
 شہ	SEH
 الحاق	IlHa:q
-الحاقی	IlHa:qi:
+الحاقی	IlHa:q,i:
 نوجوان	nO:Java:n
-نوجوانی	nO:Java:ni:
+نوجوانی	nO:Java:n,i:
 تیس	ti:s
 تنازع	tana:za
 محب	mUHIb
@@ -1813,7 +1813,7 @@ _dpt	_ISaRI'Ia_
 گلدستہ	gUldasta
 گلدستے	gUldaste:
 جنوب	JUnu:b
-جنوبی	JUnu:bi:
+جنوبی	JUnu:b,i:
 بھونک	b#o:nk
 نکھر	nIk#aR
 ہوبہو	Hu:baHu:
@@ -1842,7 +1842,7 @@ _dpt	_ISaRI'Ia_
 پرامید	pUR||Umi:d
 (بے کس)	be:||kas
 شرط	SaRt
-محمدی	mUHam:adi:
+محمدی	mUHam:ad,i:
 ورثا	vURasa:
 (دور میں)	dO:R||me~:
 سود	su:d
@@ -1874,10 +1874,10 @@ _dpt	_ISaRI'Ia_
 گھونٹ	g#u:nt.
 گھٹن	g#Ut.an
 افلاس	Ifla:s
-افلاسی	Ifla:si:
+افلاسی	Ifla:s,i:
 اقدام	Iqda:m
-اقدامی	Iqda:mi:
-اگربتی	agaRbati:
+اقدامی	Iqda:m,i:
+اگربتی	agaRbat,i:
 البم	albam
 عہدیدار	OHde:da:R
 کرتیں	kaRti~:
@@ -1900,7 +1900,7 @@ _dpt	_ISaRI'Ia_
 (پر سوز)	pUR||so:z
 (پر سکون)	pUR||sUku:n
 شکم	SIkam
-شکمی	SIkmi:
+شکمی	SIkm,i:
 (پر شکم)	pUR||SIkam
 (پر شکوہ)	pUR||SIko:H
 (پر فریب)	pUR||faRe:b
@@ -1921,12 +1921,12 @@ _dpt	_ISaRI'Ia_
 شکریہ	SUkRi:a
 شکریے	SUkRi:;e:
 بوجہ	bavaJa
-مووی	mu:vi:
+مووی	mu:v,i:
 ہفت	Haft
 (نذر آتش)	nazRe:||a:tIS
 ضلع	zIla
 ضلعوں	zIlo~:
-ضلعی	zIlai:
+ضلعی	zIla,i:
 نروس	naRvas
 پرجوش	pURJo:S
 مادر	ma:daR
@@ -1948,11 +1948,11 @@ _dpt	_ISaRI'Ia_
 تشبیہ	taSbi:H
 (کے دور)	ke:||dO:R
 سکندر	sIkandaR
-سکندری	sIkandaRi:
+سکندری	sIkandaR,i:
 سکوت	sUku:t
 مجسم	mUJas:am
 مشاورت	mUSa:vIRat
-مشاورتی	mUSa:vIRati:
+مشاورتی	mUSa:vIRat,i:
 سینیئر	si:ni;aR
 مرتبے	maRtabe:
 کنبوں	kUnbo~:
@@ -1960,11 +1960,11 @@ _dpt	_ISaRI'Ia_
 کنبے	kUnbe:
 میچز	me:cIz
 نامکمل	na:mUkam:al
-ناگفتنی	na:gUftni:
+ناگفتنی	na:gUftn,i:
 ناگفتہ	na:gUfta
 (ناگفتہ بہ)	na:gUfta||bE
 ناگزیر	na:gUzi:R
-ناگزیری	na:gUzi:Ri:
+ناگزیری	na:gUzi:R,i:
 شنید	SUni:d
 شنیدہ	SUni:da
 چہارم	caHa:Rum
@@ -1976,7 +1976,7 @@ _dpt	_ISaRI'Ia_
 نامناسبت	na:mUna:sIbat
 ناموافق	na:mava:fIq
 ناموافقت	na:mava:fIqat
-ناموافقتی	na:mava:fIqati:
+ناموافقتی	na:mava:fIqat,i:
 ناموس	na:mu:s
 ملت	mIlat
 (نہ ہوں)	na||Ho~:
@@ -1993,7 +1993,7 @@ _dpt	_ISaRI'Ia_
 تکمل	takam:Ul
 تقویت	taqvi:at
 (چکنا چور)	cakna||cu:R
-تقویتی	taqvi:ati:
+تقویتی	taqvi:at,i:
 غربا	QURaba:
 صفات	s.Ifa:t
 صفدر	s.afdaR
@@ -2003,11 +2003,11 @@ _dpt	_ISaRI'Ia_
 حسب	Hasb
 (حسن اتفاق)	HUsne:||ItIfa:q
 ہراساں	HIRa:sa~:
-عروجی	URu:Ji:
+عروجی	URu:J,i:
 (کان کن)	ka:n||kUn
 شق	SIq
 شقدار	SIqda:R
-شقداری	SIqda:Ri:
+شقداری	SIqda:R,i:
 شقیں	SIqe~:
 کینوس	kEnvas
 بروقت	baRvaqt
@@ -2017,7 +2017,7 @@ _dpt	_ISaRI'Ia_
 جرنلزم	JaRnalIzam
 جرنلسٹ	JaRnalIst.
 جز	JUz
-جگری	JIgRi:
+جگری	JIgR,i:
 (مد نظر)	made:||naz.aR
 فیسٹیول	fEst.i:val
 کنویں	ku~:e~:
@@ -2031,10 +2031,10 @@ _dpt	_ISaRI'Ia_
 کھاؤں	k#a:u~:
 کھاتیں	k#a:ti~:
 کھسک	k#Isak
-کھمبی	k#Umbi:
+کھمبی	k#Umb,i:
 سکہ	sIka
 فصل	fas.l
-کھیتی	k#e:ti:
+کھیتی	k#e:t,i:
 (کہیں سے)	kaHi~:||se:
 (کہیں سے کہیں)	kaHi~:||se:||kaHi~:
 کیونکر	kju~:kaR
@@ -2049,12 +2049,12 @@ _dpt	_ISaRI'Ia_
 محشر	mEHSaR
 ہنس	HV~s
 ہلاتیں	HIla:ti~:
-ہنسی	HV~si:
+ہنسی	HV~s,i:
 ہنٹر	Hant.aR
 منسٹر	mInIst.aR
 دہم	daHUm
 یاور	ja:vaR
-یاوری	ja:vRi:
+یاوری	ja:vR,i:
 یثرب	jasRab
 یعقوب	ja:qU:b
 یگانگت	jaga:nIgat
@@ -2063,7 +2063,7 @@ _dpt	_ISaRI'Ia_
 (یک بیک)	jak||bajak
 جہتی	JEHEt
 (یک سو)	jak||su:
-(ہم سری)	Ham||saRi:
+(ہم سری)	Ham||saR,i:
 (ہو کا عالم)	Hu:||ka:||a:lam
 ہیرپھیر	He:Rp#e:R
 طرفہ	taRfa
@@ -2074,26 +2074,26 @@ _dpt	_ISaRI'Ia_
 (ملا جلا)	mIla:||JUla:
 جاتیں	Ja:ti~:
 جادوگر	Ja:du:gaR
-جادوگری	Ja:du:gaRi:
+جادوگری	Ja:du:gaR,i:
 جاذب	Ja:zIb
 جارج	Ja:RJ
 ازیں	azi~:
 بریں	baRi~:
 عبور	Ubu:R
-عبوری	Ubu:Ri:
+عبوری	Ubu:R,i:
 منزلت	manzIlat
 انتر	antaR
-مشنری	mISnaRi:
+مشنری	mISnaR,i:
 خاکستر	xa:kastaR
-خاکستری	xa:kastaRi:
+خاکستری	xa:kastaR,i:
 ریچھ	Ri:c#
 خبط	xabt
 سسک	sIsak
 بیٹھتیں	be:t.#ti~:
-مستوی	mUstavi:
+مستوی	mUstav,i:
 سگرٹ	sIgRIt.
 سل	sIl
-سلی	sIli:
+سلی	sIl,i:
 سلاست	sala:sat
 سلب	salb
 چغت	cUQat
@@ -2104,7 +2104,7 @@ _dpt	_ISaRI'Ia_
 ایکٹ	E:kt.
 مضمحل	mUzmaHIl
 مضمر	mUzmIR
-مضمری	mUzmIRi:
+مضمری	mUzmIR,i:
 پیکٹ	pEkIt.
 پیکٹس	pEkIt.s
 چہل	cEHEl
@@ -2118,12 +2118,12 @@ _dpt	_ISaRI'Ia_
 تذلل	tazal:ul
 تمدد	tamad:Ud
 تمدن	tamad:Un
-تمدنی	tamad:uni:
+تمدنی	tamad:un,i:
 رک	RUk
 رکا	RUka:
 رکارڈ	RIka:Rd.
 رکارڈز	RIka:Rd.z
-رکی	RUki:
+رکی	RUk,i:
 رکے	RUke:
 رکتیں	RUkti~:
 رکوا	RUkva:
@@ -2148,7 +2148,7 @@ _dpt	_ISaRI'Ia_
 ڈپو	d.Ipu:
 کرپٹ	kaRapt.
 کاپٹر	ka:pt.aR
-شری	SRi:
+شری	SR,i:
 حسنِ	HUsne:
 (حسن و)	HUsno:
 لاپرواہ	la:paRva:H
@@ -2188,7 +2188,7 @@ _dpt	_ISaRI'Ia_
 معاندت	mUa:nIdat
 جتاتیں	Jata:ti~:
 سول	sIvIl
-فری	fRi:
+فری	fR,i:
 (فٹ بال)	fUt.||ba:l
 (فٹ پاتھ)	fUt.||pa:t#
 (فٹا فٹ)	fat.a:||fat.
@@ -2196,7 +2196,7 @@ _dpt	_ISaRI'Ia_
 انچارج	Inca:RJ
 فٹنگ	fIt.Ing
 گندم	gandUm
-گندمی	gandUmi:
+گندمی	gandUm,i:
 ڈیل	d.i:l
 فکسڈ	fIksd.
 فکشن	fIkSan
@@ -2222,8 +2222,8 @@ _dpt	_ISaRI'Ia_
 نسا	nIsa:
 تنفر	tanaf:UR
 خلفشار	xalfISa:R
-روئی	Ru:i:
-خوئی	xu:i:
+روئی	Ru:,i:
+خوئی	xu:,i:
 زریں	zaRi~:
 ممانعت	mUm'a:nIat
 ممتاز	mUmta:z
@@ -2243,10 +2243,10 @@ _dpt	_ISaRI'Ia_
 نور	nu:R
 نورا	nu:Ra:
 نورانیت	nu:Ra:ni;at
-نوری	nu:Ri:
+نوری	nu:R,i:
 زمیں	zami~:
 فربہ	faRba
-فربہی	faRbaHi:
+فربہی	faRbaH,i:
 ترنم	taRan:Um
 (زیر لب)	ze:Re:||lab
 (صاحب فراست)	s.a:HIbe:||faRa:sat
@@ -2258,7 +2258,7 @@ _dpt	_ISaRI'Ia_
 سمٹتیں	sImat.ti~:
 مٹ	mIt.
 مٹتیں	mIt.ti~:
-مٹی	mIt.i:
+مٹی	mIt.,i:
 مٹے	mIt.e:
 متجسس	mUtaJasIs
 متذبذب	mUtazabzIb
@@ -2274,12 +2274,12 @@ _dpt	_ISaRI'Ia_
 متشکر	mUtaSak:IR
 متشکرانہ	mUtaSak:IRa:na
 تشنج	taSan:UJ
-تشنجی	taSan:UJi:
-تشنگی	taSnagi:
+تشنجی	taSan:UJ,i:
+تشنگی	taSnag,i:
 تشنگیاں	taSnagia~:
 تشکر	taSak:UR
 تصدق	tas.ad:Uq
-تصوفی	tas.av:Ufi:
+تصوفی	tas.av:Uf,i:
 تفخر	tafax:UR
 قرطاس	qIRta:s
 (قرطاس ابیض)	qIRta:se:||abjaz
@@ -2313,8 +2313,8 @@ _dpt	_ISaRI'Ia_
 کند	kUnd
 کندن	kUndan
 الحاد	IlHa:d
-الحادی	IlHa:di:
-الیکٹرسٹی	Ile:kt.RIsIt.i:
+الحادی	IlHa:d,i:
+الیکٹرسٹی	Ile:kt.RIsIt.,i:
 دھوے	d#U:e:
 دھوم	d#u:m
 دھومیں	d#u:me~:
@@ -2322,24 +2322,24 @@ _dpt	_ISaRI'Ia_
 مستنصر	mUstans.aR
 مستیاں	masti:a~:
 مسجع	mUsaJ:a:
-الٰہی	Ila:Hi:
+الٰہی	Ila:H,i:
 سنت	sUn:at
 سنجیدگیاں	sanJi:dgi:a~:
 سندور	sIndu:R
-سندوری	sIndu:Ri:
+سندوری	sIndu:R,i:
 سنسکرت	sanskRIt
 اسود	asvad
-اسودی	asvadi:
+اسودی	asvad,i:
 اسودیتیں	asvadi:ate~:
 برحق	baRHaq
 جسہ	JUs:a
 پونم	pu:nam
 جمشید	JamSe:d
-جمشیدی	JamSe:di:
+جمشیدی	JamSe:d,i:
 مروج	mURav:IJ
 خلقت	xalqat
 نگہت	nIgHat
-نگہی	nIgaHi:
+نگہی	nIgaH,i:
 نگہے	nIgaHe:
 معراج	me:Ra:J
 معراجیں	me:Ra:Je~:
@@ -2351,7 +2351,7 @@ _dpt	_ISaRI'Ia_
 تقدم	taqad:Um
 متمول	mUtamav:Il
 مونسون	mo:nsu:n
-مونسونی	mo:nsu:ni:
+مونسونی	mo:nsu:n,i:
 نخوت	naxvat
 تشکل	taSak:Ul
 تشکک	taSak:Uk
@@ -2378,16 +2378,16 @@ _dpt	_ISaRI'Ia_
 موعود	mO:u:d
 موعودہ	mO:u:da
 موقوف	mO:qu:f
-موقوفی	mO:qu:fi:
+موقوفی	mO:qu:f,i:
 تنتر	tantR
 تنترک	tantRIk
 تنظم	tanaz.:Um
-تنفسی	tanaf:Usi:
+تنفسی	tanaf:Us,i:
 تنفض	tanaf:Uz
 ظرف	z.aRf
 ظروف	z.URu:f
 مورت	mu:Rat
-بوٹنی	bO:t.ni:
+بوٹنی	bO:t.n,i:
 بوتھ	bu:t#
 بوتھوں	bu:t#o~:
 بکثرت	bakasRat
@@ -2400,7 +2400,7 @@ _dpt	_ISaRI'Ia_
 پٹھو	pIt.#:u:
 شعیب	SUe:b
 پوٹاشیم	po:t.a:Siam
-پولٹری	po:lt.Ri:
+پولٹری	po:lt.R,i:
 منعکس	mUnakIs
 منعکسہ	mUnakIsa
 کشف	kaSf
@@ -2431,7 +2431,7 @@ _dpt	_ISaRI'Ia_
 بدنصیب	badnas.i:b
 بدنظر	badnaz.aR
 بدنظرا	badnaz.Ra
-بدنظمی	badnaz.mi:
+بدنظمی	badnaz.m,i:
 بدنسلا	badnasla
 بدنما	badnUma:
 بدنفس	badnafs
@@ -2441,33 +2441,33 @@ _dpt	_ISaRI'Ia_
 موجد	mu:JId
 بدنہاد	badnIHa:d
 بدنیت	badni:at
-بدنیتی	badni:ati:
+بدنیتی	badni:at,i:
 (چپکے چپکے)	cUpke:||cUpke:
 (چپکے سے)	cUpke:||se:
 چپک	cIpak
 چت	cIt
 چترال	cItRa:l
-چترالی	cItRa:li:
+چترالی	cItRa:l,i:
 اطلس	atlas
-اطلسی	atlasi:
+اطلسی	atlas,i:
 اعتنا	e:tIna:
 اطہرہ	atHara
 چبھن	cUb#an
 چپ	cUp	$only
 (چتر گپت)	cItR||gUpt
-(چتر کاری)	cItR||ka:Ri:
-چترکاری	cItRka:Ri:
+(چتر کاری)	cItR||ka:R,i:
+چترکاری	cItRka:R,i:
 نیت	ni:at
 نیتیں	ni:ate~:
 نیتوں	ni:ato~:
 بداحتیاط	badEHti:a:t
 بداختر	badaxtaR
 بداخلاق	badaxla:q
-بداخلاقی	badaxla:qi:
+بداخلاقی	badaxla:q,i:
 بداستخوان	badIstaxva:n
 بداصل	badas.l
 بداطوار	badatva:R
-بداعتمادی	bade:tima:di:
+بداعتمادی	bade:tima:d,i:
 بداعمال	bada:ma:l
 بدافعال	badafa:l
 بداقبال	badIqba:l
@@ -2485,15 +2485,15 @@ _dpt	_ISaRI'Ia_
 جانوراں	Ja:nvaRa~:
 بدچشم	badcaSm
 بدچلن	badcalan
-بدچلنی	badcalni:
+بدچلنی	badcaln,i:
 بدحواس	badHava:s
-بدحواسی	badHava:si:
+بدحواسی	badHava:s,i:
 بدخصال	badxIs.a:l
 بدخط	badxat
 بدخفت	badxIf:at
 بدخو	badxu:
-بدخوئی	badxu:i:
-بدرسمی	badRasmi:
+بدخوئی	badxu:,i:
+بدرسمی	badRasm,i:
 بدرنگ	badRang
 بدروپ	badRu:p
 بدروح	badRu:H
@@ -2512,14 +2512,14 @@ _dpt	_ISaRI'Ia_
 بدفعل	badfe:l
 بدفن	badfan
 بدقرینہ	badqaRi:na
-بدہضمی	badHazmi:
+بدہضمی	badHazm,i:
 بدہمت	badHIm:at
 بدہیئت	badHe:at
 بدیس	bIde:s
-بدیسی	bIde:si:
+بدیسی	bIde:s,i:
 (بذات خود)	baza:te:||xUd
 (بر سر پیکار)	baR||saRe:||pE:ka:R
-براتی	baRa:ti:
+براتی	baRa:t,i:
 پرخم	pURxam
 ففتھس	fIft#s
 فقر	faqR
@@ -2527,7 +2527,7 @@ _dpt	_ISaRI'Ia_
 فل	fUl	$only
 بودار	bu:da:R
 خوشدل	xUSdIl
-خوشدلی	xUSdIli:
+خوشدلی	xUSdIl,i:
 مصالحہ	mUs.a:lIHa
 مصالحے	mUs.a:lIHe:
 سنٹرل	sInt.Ral
@@ -2538,13 +2538,13 @@ _dpt	_ISaRI'Ia_
 (ان بیاہا)	an||bja:Ha:
 (ان تھک)	an||t#ak
 (ان داتا)	an||da:ta:
-(ان سنی)	an||sUni:
+(ان سنی)	an||sUn,i:
 (ان فٹ)	an||fIt.
 (ان گنا)	an||gIna:
 (ان مٹ)	an||mIt.
 (ان کہا)	an||kaHa:
-(ان کہی)	an||kaHi:
-(ان ہونی)	an||Ho:ni:
+(ان کہی)	an||kaH,i:
+(ان ہونی)	an||Ho:n,i:
 اولین	av:ali:n
 آشرم	a:SRam
 نگہ	nIgEh
@@ -2559,7 +2559,7 @@ _dpt	_ISaRI'Ia_
 لہک	lEHEk
 مہک	mEHEk
 توسط	tavas:Ut
-توسیعی	to:si:i:
+توسیعی	to:si:,i:
 جگل	JUgal
 متوسطین	mUtavas:iti:n
 جگنو	JUgnu:
@@ -2567,7 +2567,7 @@ _dpt	_ISaRI'Ia_
 متوسل	mUtavas:Il
 متوسلین	mUtavas:Ili:n
 متوصل	mUtavas.:Il
-متوفی	mUtavaf:i:
+متوفی	mUtavaf:,i:
 متوفیاں	mUtavaf:ia~:
 متوقف	mUtavaq:If
 متولد	mUtaval:Id
@@ -2579,7 +2579,7 @@ _dpt	_ISaRI'Ia_
 گدازندہ	gUda:zInda
 (پر عزم)	pUR||azm
 زکام	zUka:m
-زکامی	zUka:mi:
+زکامی	zUka:m,i:
 آگیں	a:gi~:
 شرم	SaRm
 ہانک	Ha:nk
@@ -2591,7 +2591,7 @@ _dpt	_ISaRI'Ia_
 (پر ارماں)	pUR||aRma~:
 مکروہ	makRu:H
 مکعب	mUka:b
-مکعبی	mUka:bi:
+مکعبی	mUka:b,i:
 مکلف	mUkal:af
 مکلفہ	mUkal:afa
 کمرہ	kamRa
@@ -2599,26 +2599,26 @@ _dpt	_ISaRI'Ia_
 چولہا	cu:lha:
 چولہے	cu:lhe:
 سرج	saRJ
-سرجری	saRJaRi:
+سرجری	saRJaR,i:
 محکم	mOHkam	$only
 (نقش قدم)	naqSe:||qadam
 دستبرد	dastbURd
-دستبردی	dastbURdi:
+دستبردی	dastbURd,i:
 عملدرآمد	amaldaRa:mad
 دستق	dastaq
 دستک	dastak
 موضوعات	mo:zu:a:t
-موضوعاتی	mo:zu:a:ti:
+موضوعاتی	mo:zu:a:t,i:
 موہ	mo:H
 بمشکل	bamUSkIl
-موضوعی	mo:zu:i:
+موضوعی	mo:zu:,i:
 موضوعہ	mo:zu:a
 کشا	kUSa:
 دلکشا	dIlkUSa:
-دلکشائی	dIlkUSa:i:
-کشاکشی	kaSa:kaSi:
+دلکشائی	dIlkUSa:,i:
+کشاکشی	kaSa:kaS,i:
 کشاکشیں	kaSa:kaSe~:
-کشوری	kISo:Ri:
+کشوری	kISo:R,i:
 نفوس	nUfu:s
 نون	nu:n
 غنہ	QUn:a
@@ -2626,7 +2626,7 @@ _dpt	_ISaRI'Ia_
 عقد	aqd
 (عقل کل)	akle:||kUl
 عقلمند	aqlmand
-عقلمندی	aqlmandi:
+عقلمندی	aqlmand,i:
 عکس	aks
 عکسہ	aksa
 (عہد جاہلیت)	EHde:||Ja:HIliat
@@ -2640,7 +2640,7 @@ _dpt	_ISaRI'Ia_
 (عہد نو)	EHde:||nO:
 (عہد وفا)	EHde:||vafa:
 معمار	mE:ma:R
-معماری	mE:ma:Ri:
+معماری	mE:ma:R,i:
 حقے	HUq:e:
 نشونما	naSo:nUma:
 سرمست	saRmast
@@ -2660,7 +2660,7 @@ _dpt	_ISaRI'Ia_
 (پر الم)	pUR||alam
 فشاں	fISa~:
 سرہ	sIRa
-ہجری	HIJRi:
+ہجری	HIJR,i:
 حصص	HIs.Is.
 (سرورافزا)	sURu:R||afza:
 سروسوں	saRvIso~:
@@ -2676,31 +2676,31 @@ _dpt	_ISaRI'Ia_
 سرمے	sURme:
 نگوں	nIgu~:
 (حسن خیال)	HUsne:||xaja:l
-(خود سری)	xUd||saRi:
+(خود سری)	xUd||saR,i:
 تبدل	tabad:Ul
-تبدلی	tabad:Uli:
+تبدلی	tabad:Ul,i:
 تشخص	taSax:Us.
 مختص	mUxtas.
-مخروتی	maxRu:ti:
+مخروتی	maxRu:t,i:
 مخیر	mUxaiaR
-تسلی	tasal:i:
+تسلی	tasal:,i:
 متمدن	mUtamad:In
 متمدنہ	mUtamad:Ina
 نمٹتیں	nImat.ti~:
-اجنبی	aJnabi:
+اجنبی	aJnab,i:
 اجنبیوں	aJnabio~:
-(ملی جلی)	mIli:||JUli:
+(ملی جلی)	mIli:||JUl,i:
 (طرز تعلیم)	taRze:||ta:li:m
 اجڑتیں	UJar.ti~:
 ماسک	ma:sk
 ماسکس	ma:sks
 ماموں	ma:mu~:
 ایوب	aiu:b
-ایوبی	aiu:bi:
+ایوبی	aiu:b,i:
 ایورسٹ	e:vRIst.
 ایوننگ	i:vnIng
 تجبر	taJab:UR
-تجبری	taJab:URi:
+تجبری	taJab:UR,i:
 سطور	sUtu:R
 سعیوں	sai:o~:
 چٹیل	cat.ial
@@ -2743,7 +2743,7 @@ _dpt	_ISaRI'Ia_
 ریڑھ	Ri:r.h
 شگن	SagUn
 شلجم	SalJam
-شلجمی	SalJami:
+شلجمی	SalJam,i:
 شلغم	SalQam
 شلنگ	SIlIng
 رزرو	RIzaRv
@@ -2765,7 +2765,7 @@ _dpt	_ISaRI'Ia_
 بقبلہ	baqIbla
 روایات	RIva:ja:t
 روپوش	Ru:po:S
-روپوشی	Ru:po:Si:
+روپوشی	Ru:po:S,i:
 روپیہ	RUpIa
 روپے	RUpe:
 روتیں	Ro:ti~:
@@ -2799,7 +2799,7 @@ _dpt	_ISaRI'Ia_
 وٹامن	vIt.a:mIn
 کیپر	ki:paR
 وہم	vEHEm
-وہمی	vEHmi:
+وہمی	vEHm,i:
 وہموں	vEHmo~:
 وصف	vas.f
 وصیتوں	vas.i:ato~:
@@ -2818,7 +2818,7 @@ _dpt	_ISaRI'Ia_
 انجن	InJIn
 ڈیو	d.ju:
 ڈیوز	d.ju:z
-تشفی	taSaf:i:
+تشفی	taSaf:,i:
 تشطط	taSat:Ut
 تاسلیوں	tasal:i:o~:
 بحیات	baHaja:t
@@ -2827,31 +2827,31 @@ _dpt	_ISaRI'Ia_
 نفقہ	nafqa
 مسٹرز	mIst.aRz
 مسٹرس	mIst.RIs
-مسٹری	mIst.Ri:
+مسٹری	mIst.R,i:
 مسٹسزم	mIst.IsIzam
-خسروی	xUsRavi:
+خسروی	xUsRav,i:
 مکمکا	mUkmUka:
-مسمی	mUsam:i:
+مسمی	mUsam:,i:
 مسما	mUsam:a:
 برزخ	baRzax
 لڑکپن	lar.akpan
 بالحق	bIlHaq
 بادبہار	ba:de:baHa:R
 بردبار	bURdba:R
-بردباری	bURdba:Ri:
+بردباری	bURdba:R,i:
 بودباش	bu:dba:S
 دبدبہ	dabdaba
 دبدبے	dabdabe:
 درافشاں	daRafSa~:
-دربدری	daRbadaRi:
+دربدری	daRbadaR,i:
 دربست	daRbast
 دربستہ	daRbasta
 دربند	daRband
-دربندی	daRbandi:
+دربندی	daRband,i:
 ابہام	IbHa:m
-ابہامی	IbHa:mi:
+ابہامی	IbHa:m,i:
 افہام	IfHa:m
-افہامی	IfHa:mi:
+افہامی	IfHa:m,i:
 مطمئن	mUtmaIn
 مطمئنہ	mUtmaIna
 کارگر	ka:RgaR
@@ -2861,11 +2861,11 @@ _dpt	_ISaRI'Ia_
 متوحش	mUtavaH:IS
 متورق	mUtavaR:Iq
 متورم	mUtavaR:Im	
-متولی	mUtaval:i:
+متولی	mUtaval:,i:
 ولن	vIlan
 بادل	ba:dal
 ولندیز	valande:z
-ولندیزی	valande:zi:
+ولندیزی	valande:z,i:
 ولولہ	valvala
 ولولے	valvale:
 گرہ	gIR'aH
@@ -2891,13 +2891,13 @@ _dpt	_ISaRI'Ia_
 ایگزیکٹو	e:gze:kIt.Iv
 ایلومینیم	e:lu:mi:niam
 ایمہ	i:ma
-اینورسری	e:nIvaRsaRi:
+اینورسری	e:nIvaRsaR,i:
 ایٹمز	e:t.amz
 ایڈریس	e:d.Re:s
 سنیں	sUne~:
 سنیے	sUnie:
 گھنگرو	g#UngRu:
-(گھسی پٹی)	g#Isi:||pIt.i:
+(گھسی پٹی)	g#Isi:||pIt.,i:
 گھونگھٹ	g#u~:g#at.
 گھونٹوں	g#u~:t.o~:
 سہراب	sOHRa:b
@@ -2937,8 +2937,8 @@ _dpt	_ISaRI'Ia_
 کلوواٹس	kIlo:va:t.s
 (کم سن)	kam||sIn
 (کم سنی)	kam||sIni
-کمایگی	kama:Igi:
-فرصتی	fURs.ati:
+کمایگی	kama:Ig,i:
+فرصتی	fURs.at,i:
 فرصتیں	fURs.ate~:
 فرط	faRt
 فرطیاں	faRtia~:
@@ -2948,16 +2948,16 @@ _dpt	_ISaRI'Ia_
 پیسز	pi:sIz
 (فرط جذبات)	faRte:||Jazba:t
 فرقان	fURqa:n
-فرقانی	fURqa:ni:
+فرقانی	fURqa:n,i:
 حادثہ	Ha:dsa
-راولپنڈی	Ra:valpInd.i:
+راولپنڈی	Ra:valpInd.,i:
 ہمکنار	HamkIna:R
 رعیت	Raiat
 رعیتی	Raiati
 رفاقتوں	Rafa:qato~:
 رفاقتیں	Rafa:qate~:
 برفتہ	baRafta
-رفری	RIfRi:
+رفری	RIfR,i:
 رفوچکر	Rafu:cak:aR
 رفیعہ	Rafia
 رفیعیت	Rafiat
@@ -3005,19 +3005,19 @@ _dpt	_ISaRI'Ia_
 سردفتر	saRdaftaR
 سرزنش	saRzanIS
 سرسبز	saRsabz
-سرسوتی	saRasvati:
+سرسوتی	saRasvat,i:
 سرورق	saRe:vaRq
 سرٹیفکٹ	saRt.i:fIkIt.
 دوجہاں	do:JaHa~:
 سرکوب	saRko:b
-سرکوبی	saRko:bi:
+سرکوبی	saRko:b,i:
 سرکہ	saRka
 سریتا	saRi:ta:
 سرینام	sURi:na:m
 (سست رو)	sUst||raU
 سسٹر	sIst.aR
 سطحہ	satHa
-سعئی	sai:
+سعئی	sa,i:
 سفوف	sUfu:f
 سفوفوں	sUfu:fo~:
 اسپرنگ	IspRIng
@@ -3042,26 +3042,26 @@ _dpt	_ISaRI'Ia_
 سیٹلمنٹس	se:t.IlmInt.s
 سیکرٹ	si:kRIt.
 سیکرٹس	si:kRIt.s
-سیکرٹری	se:kRIt.Ri:
-شائستگی	Sa:Istgi:
+سیکرٹری	se:kRIt.R,i:
+شائستگی	Sa:Istg,i:
 (گپ شپ)	gap||Sap
 گپت	gUpt
-(گد گدائی)	gUd||gUda:i:
+(گد گدائی)	gUd||gUda:,i:
 (گد گدانا)	gUd||gUda:na:
 گدگداہٹ	gUdgUda:Hat.
 مغفرت	maQfIRat
-مغفرتی	maQfIRati:
+مغفرتی	maQfIRat,i:
 مغل	mUQal
 بالاتر	ba:la:taR
 بالاخانہ	ba:la:xa:na
 بالادست	ba:la:dast
-بالادستی	ba:la:dasti:
+بالادستی	ba:la:dast,i:
 بالاسر	ba:la:saR
 بالک	ba:lak
 ہوس	havas
 چھڑک	c#Ir.ak
 زبیر	zUbe:R
-زبیری	zUbe:Ri:
+زبیری	zUbe:R,i:
 اسٹیبلشمنٹ	Ist.e:blISmInt.
 فروگزاشت	faRo:gUza:St
 فریز	fRi:z
@@ -3070,6 +3070,6 @@ _dpt	_ISaRI'Ia_
 ندویت	nadviat
 ارسطو	aRastu:
 ارمغان	aRmaQa:n
-ارمغانی	aRmaQa:ni:
+ارمغانی	aRmaQa:n,i:
 فرزیت	faRziat
 جنگل	Jangal
