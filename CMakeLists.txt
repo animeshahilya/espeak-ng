@@ -8,6 +8,7 @@ project(espeak-ng
 
 option(BUILD_ESPEAK_NG_EXE "Whether to build espeak-ng-bin" ON)
 option(COMPILE_INTONATIONS "Intonation compilation" ON)
+option(ENABLE_TESTS "Enable engine regression tests" ON)
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wimplicit-fallthrough)
@@ -33,6 +34,13 @@ if (COMPILE_INTONATIONS)
   else()
     include(cmake/data.cmake)
   endif()
+endif()
+
+# Engine/dictionary regression tests. Host-only: skipped for the Android
+# cross-compile, but the only safety net for dictsource/phsource/klatt edits.
+if(ENABLE_TESTS AND NOT CMAKE_CROSSCOMPILING)
+  include(CTest)
+  add_subdirectory(tests)
 endif()
 
 message(STATUS "Configuration:")
