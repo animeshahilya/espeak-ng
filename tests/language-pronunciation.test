@@ -15,8 +15,8 @@ d'eBen ,apatS'as'en 'unos kon 'at**os D'una man'e**a f**,etern'al" "Toz os ombre
 test_phon ar "?'us[buR A'ala: H'ifZi. X'udHa.R,in wa:'istaS,iR fat[,u.nna:
 w'azudZ: h'ammka fi: baQd'a:d mnTml'a:" "اُصْبُرْ عَلَى حِفْظِ خُضَرٍ وَاِسْتَشِرْ فَطُنًّا، وَزُجَّ هَمِّكَ فِي بغداد منثملَا" "Arab"
 test_phon ar "?'iDa: (cmn)z.u35k'uo214 n'i35n j'i55n w'ei51 f'a55n j'i51(ar) ?ann'as[s[" "إذا 如果您因为翻译 النص" "Arabic switches Han ideographs to Mandarin"
-test_phon as "X'@kOl,o m'anuh,e S'ad#in,Ob#aw,Oe X'@man m'O*&d,a 'a*u 'od#ik,a*e J'OnmOgr,OhOn k'O*e
-X'ihO~t,Or b'ibek 'a*u b'udd#i 'atS#e 'a*u X'ihO~t,e p'OrOXp,Or b#atr'itbO*,e 'atSOr,On k'o*ib l'age" "সকলো মানুহে স্বাধীনভাৱে সমান মৰ্যদা আৰু অধিকাৰে জন্মগ্ৰহণ কৰে । সিহঁতৰ বিবেক আৰু বুদ্ধি আছে আৰু সিহঁতে পৰস্পৰ ভাতৃত্বৰে আচৰণ কৰিব লাগে ।" "Beng"
+test_phon as "X'OkOl,U m'anuh,e s'ad#in,Ob#aw,e X'Oman m'O*&d,a 'a*u 'od#ik,a*e z'OnmOgr,OhOn k'O*e
+X'ihO~t,Or b'ibek 'a*u b'udd#i 'ase 'a*u X'ihO~t,e p'OrOXp,Or b#atr'itbO*,e 'asOr,On k'o*ib l'age" "সকলো মানুহে স্বাধীনভাৱে সমান মৰ্যদা আৰু অধিকাৰে জন্মগ্ৰহণ কৰে । সিহঁতৰ বিবেক আৰু বুদ্ধি আছে আৰু সিহঁতে পৰস্পৰ ভাতৃত্বৰে আচৰণ কৰিব লাগে ।" "Beng"
 test_phon az "byts'yn insanL'aR l&jag'&t v& hygugLa*@n'a J'W*& az'ad b&*ab'&R do:uLuRL'aR
 ona*'@n Syu*aLR'@ v& vidZdanLa*'@ v'aR v& b'iRbiRl&*'in& mynasib'&td& gaRdaSL'@x Runhund'a davRanmaL@d@RL'aR" "Bütün insanlar ləyaqət və hüquqlarına görə azad bərabər doğulurlar. Onarın şüuralrı və vicdanları var və bir-birlərinə münasibətdə qardaşlıq runhunda davranmalıdırlar." "Latn"
 test_phon ba "m'in h'in 'uL b'eD h'eD 'uLAr b'VL t'eQe" "мин һин ул беҙ һеҙ улар был теге." "Cyrl"
@@ -52,8 +52,8 @@ s'upras;l;sk;i s;m;'Es.na z;m;'ilavats:a s;n;'Edats; z;n;'uxani\" 'as;p;Ekt r'as
 супрасльскі смешна змілавацца снедаць знюханы аспект расселіна вусце змёрзціся" "Cyrl"
 test_phon bg "'ax tS'udna b@Lg'arska z'em;o
 pol'uSvaj ts@ft;'aSti: Z'ita" "Ах чудна българска земьо, полюшвай цъфтящи жита." "Cyrl"
-test_phon bn "m'alOS,ij 'Obojd#,O Sr'omik,Oder b'i*udd#,e tS'OlOm,an_:_: m'egat#r'i_:_: 'ob#idZ,ane Se d'eSe S'Oto S'Oto 'ob#ib,aSik,e 'at.Ok k'O*etS#,e Se d'eSer 'imigr,eSOn p'uliS
-dZ'ader 'at.Ok k'O*a h'OtS#e
+test_phon bn "m'alO,eSi,aj 'Obojd#,O Sr'omik,Oder b'i*udd#,e tS'OlOm,an_:_: m'egat#r'i_:_: 'ob#idZ,ane Se d'eSe S'Oto S'Oto 'ob#ib,aSik,e 'at.Ok k'O*etS#,e Se d'eSer 'imigr,eSOn p'uliS
+dZ'ader 'at.Ok k'O*a h'OetS#,e
 t,ader pr'aj 'O*d#ek,Oi b'aNlad,eSi n'agO*,ik" "মালয়েশিয়ায় অবৈধ শ্রমিকদের বিরুদ্ধে চলমান 'মেগা-থ্রি' অভিযানে সে দেশে শত শত অভিবাসীকে আটক করেছে সে দেশের ইমিগ্রেশন পুলিশ। যাদের আটক করা হয়েছে, তাদের প্রায় অর্ধেকই বাংলাদেশী নাগরিক।" "Beng"
 test_phon bs "l^'ub&znI f'En^eRdZ,Ij& tS'adZ;&vog l'its& x'otS;E d'a m'i p'ok&ZE St'os" "Љубазни фењерџија чађавог лица хоће да ми покаже штос." "Cyrl"
 test_phon bs "l^'ub&znI f'En^eRdZ,Ij& tS'adZ;&vog l'its& x'otS;E d'a m'i p'ok&ZE St'os" "Ljubazni fenjerdžija čađavog lica hoće da mi pokaže štos." "Latn"
@@ -347,7 +347,7 @@ test_phon tt "b0rL'Vq keSel'&r d'& 0z'0t h'&m 'yz 0brujLAr'V h'&m xoquqLAr'V jAG
 0L0rG'A 0q'VL h'&m wWZ;d'An birelQ'&n h'&m b'&rb&rsen'& q0r0t'A tuGAnnArS;'A mWnAs&b&tt'& buLVrG'A tieSl'&r" "Барлык кешеләр дә азат һәм үз абруйлары һәм хокуклары ягыннан тиң бупып туапар. Аларга акыл һәм вөҗдан бирелгән һәм бәр-бәрсенә карата туганнарча мөнасәбәттә булырга тиешләр." "Cyrl"
 test_phon ur "t.#'Vnd. m'e~
 'e:k q'VH@t z'Vda ga:'o:n se: g'Vz@Rte: v'aqt 'e:k c'Ir.cIr.,e:
-b'a:s@R 'o: f'a:RIQ S'axs. k'o: b'a:z J'Vl p'VR,i: n'Uma: 'aZ@dHe: naz.'aR 'a:e:" "ٹھنڈ میں، ایک قحط زدہ گاؤں سے گذرتے وقت ایک چڑچڑے، باأثر و فارغ شخص کو بعض جل پری نما اژدہے نظر آئے۔" "Arab"
+b'a:s@R 'o: f'a:RIQ S'axs k'o: b'a:z J'Vl p'VR,i: n'Uma: 'aZ@dHe: naz.'aR 'a:e:" "ٹھنڈ میں، ایک قحط زدہ گاؤں سے گذرتے وقت ایک چڑچڑے، باأثر و فارغ شخص کو بعض جل پری نما اژدہے نظر آئے۔" "Arab"
 test_phon uz "ozb'ektS&
 'ozbek t'yLy" "O‘zbekcha, o‘zbek tili" "Latn"
 test_phon uz "o:zb'ektS&
