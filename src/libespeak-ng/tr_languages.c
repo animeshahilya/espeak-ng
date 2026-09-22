@@ -606,7 +606,10 @@ Translator *SelectTranslator(const char *name)
 	{
 		static const short stress_lengths_bn[8] = { 180, 180,  210, 210,  0, 0,  230, 240 };
 		static const unsigned char stress_amps_bn[8] = { 18, 18, 18, 18, 20, 20, 22, 22 };
-		static const char bn_consonants2[3] = { 0x70, 0x71, 0 };
+		// 0x3c = nukta: ড় ঢ় য় are stored decomposed (letter + nukta) after Unicode
+		// normalization, so the nukta must count as part of the consonant or a
+		// following vowel sign fails its C) context and is dropped.
+		static const char bn_consonants2[4] = { 0x3c, 0x70, 0x71, 0 };
 
 		SetupTranslator(tr, stress_lengths_bn, stress_amps_bn);
 		tr->langopts.length_mods0 = tr->langopts.length_mods; // don't lengthen vowels in the last syllable

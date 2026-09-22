@@ -66,16 +66,12 @@
         এ্যা		&    // e,ja  [ækademi]
 
 .group ও
-        ও		o
-        ওঁ		o~
+        ও		U        // Assamese ও/ো spell [ʊ], not [o] (WikiPron: 217/240)
+        ওঁ		U~
         
 .group ঔ
         ঔ		ow
         ঔঁ		o~w
-
-.group ও //??
-         ও		o:
-       
 
 // Vowel Signs
 
@@ -112,8 +108,8 @@
      C) ৈঁ	o~j
 
 .group ো
-     C) ো	o
-     C) োঁ	o~
+     C) ো	U
+     C) োঁ	U~
 
 .group ৌ
      C) ৌ	ow
@@ -124,9 +120,11 @@
 
 .group ক
         ক		kV
-        ক (B	k       
-
-
+        ক (B	k
+     _) ক্ষ		k#V      // WikiPron: initial [kʰ], medial [kkʰ]
+     _) ক্ষ (B	k#
+        ক্ষ		kk#V
+        ক্ষ (B	kk#
 .group খ
         খ		k#V
         খ (B	k#
@@ -148,53 +146,57 @@
 
 
 .group চ
-        চ		tSV
-        চ (B	tS
+        চ		sV
+        চ (B	s
 
 
 .group ছ
-        ছ 		tS#V
-        ছ  (B	tS#
+        ছ		sV
+        ছ (B	s
 
-        
+
 .group জ
-        জ		JV
-        জ (B	J
-        
-        জ্ব		JV
-        জ্ব (B	J
+        জ		zV
+        জ (B	z
+
+        জ্ব		zV
+        জ্ব (B	z
         জ্ঞ		ggo~
         জ্ঞ (B	gg
 
 
 .group ঝ
-        ঝ		J#V
-        ঝ (B	J#
+        ঝ		zV
+        ঝ (B	z
 
-        
+
 .group ঞ
         ঞ		nV
         ঞ (B	n
  
 
 .group ট
-        ট		t.V
-        ট (B	t.
+        ট		tV
+        ট (B	t
 
 
 .group ঠ
-        ঠ		t.#V
-        ঠ (B	t.#       
+        ঠ		t#V
+        ঠ (B	t#
 
 .group ড
-        ড		d.V
-        ড (B	d.
+        ড		dV
+        ড (B	d
+        ড়		rV
+        ড় (B	r
 
 .group ঢ
-        ঢ		d.#V
-        ঢ (B	d.#
+        ঢ		d#V
+        ঢ (B	d#
+        ঢ়		rV
+        ঢ় (B	r
 
-      
+
 .group ণ
         ণ		nV   // should be [n.] if adjacent to t. or d. ?
         ণ (B	n
@@ -203,9 +205,6 @@
 .group ত
         ত		tV
         ত (B	t
-        ত (_	to
-
-        
 .group থ
         থ		t#V
         থ (B	t#
@@ -232,9 +231,9 @@
 
   
 .group ফ
-        ফ		fV    // or [p#] ?
-        ফ (B	f
-  
+        ফ		p#V
+        ফ (B	p#
+
 
 .group ব
         ব		bV
@@ -252,8 +251,12 @@
 
         
 .group য
-        য		dZV
-        য (B	dZ
+        য		zV       // Assamese has no [dʒ]: WikiPron 33/37 initial য = z
+        য (B	z
+        // য় = য + nukta once Unicode-normalized, so it has to live here
+        য়		jV
+    _) য় (B	j
+        য় (B        // used to separate 2 vowels
      ্) য (_	:O   // double the previous consonant
      ্) য (B_	:        
      ্) য (C	&   //  ব্যস্ত  [bæsto]
@@ -270,56 +273,38 @@
         ল  (B	l
 
 .group ৱ
-        ৱ		waV
-        ৱ (B	wO
+        ৱ		wV
+        ৱ (B	w
 
 
 .group শ
-        শ		SV  // or [s] ?
-        শ (B	S
-        
-        
+        শ		XV
+        শ (B	X
         শ (্ল	s
-
-        
+     _) শ্ব		sV       // WikiPron: শ্ব/স্ব are [s] initially, [ss] medially
+     _) শ্ব (B	s
+        শ্ব		ssV
+        শ্ব (B	ss
 .group ষ
-        ষ		SV   
-        ষ (B	S
+        ষ		XV
+        ষ (B	X
 
-     
+
 .group স
-        স		X@  // or [s] ??
+        স		XV
         স (B	X        
         স (্থ	s
         স (্ত	s        
         স (্য	s  // সমস্যা        
-     _) স্ব	SV   // shb
-     _) স্ব (B     S
-
-        
+     _) স্ব		sV
+     _) স্ব (B	s
+        স্ব		ssV
+        স্ব (B	ss
+     ্) স		sV       // second member of a conjunct (নক্সা) is [s]
+     ্) স (B	s
 .group হ
         হ		hV  
         হ (B	h
-        হ (_	ho
-
-.group ক্ষ
-        ক্ষ		k#k#V   // or [k#:] ?
-        ক্ষ (B	k#k#
-
-.group ড়
-       ড়		r.V     //  can be ড plus nukta
-       ড় (B	r.
-
-.group ঢ়
-        ঢ়		hr.V	// can be ঢ plus nukta
-        ঢ় (B	hr.
-
-.group য়
-        য়		jV
-    _) য় (B	j    
-        য় (B        // used to separate 2 vowels
-
-        
 .group হ্ব
         হ্ব		vV
         হ্ব (B	v
