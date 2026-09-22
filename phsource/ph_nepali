@@ -6,6 +6,11 @@
 phoneme V
   vwl  starttype #@  endtype #@
   length 160
+  // Word-final inherent vowel: dropped after a single consonant (हरेक [ʌɾek],
+  // WikiPron 567/665) but kept after a conjunct (चित्त [tsittʌ], 96/134).
+  IF thisPh(isWordEnd) AND prevPhW(isNotVowel) AND prev2PhW(isVowel) THEN
+    ChangePhoneme(NULL)
+  ENDIF
   ChangeIfNotStressed(@)
   IF nextPh(H) THEN
     FMT(vowel/@_low)
@@ -131,3 +136,47 @@ phoneme uI
   FMT(vdiph/ui)
 endphoneme
 
+
+
+// Nepali च छ ज झ are dental/alveolar affricates [ts tsʰ dz dzʱ], not the
+// palatal [tʃ dʒ] inherited from hi_base (WikiPron nep: ~95% ts/dz). The rules
+// keep writing c/c#/J/J#; only the sound changes here.
+phoneme c
+  import_phoneme consonants/ts
+  voicingswitch J
+  ipa ts
+endphoneme
+
+
+phoneme c#
+  import_phoneme consonants/ts
+  voicingswitch J#
+  ipa tsU+02B0
+endphoneme
+
+
+phoneme J
+  import_phoneme consonants/dz
+  voicingswitch c
+  ipa dz
+endphoneme
+
+
+phoneme J#
+  import_phoneme consonants/dz
+  voicingswitch c#
+  ipa dzU+02B1
+endphoneme
+
+
+// श and ष are both [s] in Nepali (WikiPron nep: 29/30 initial श = s).
+phoneme S
+  vls alv frc sib
+  ChangePhoneme(s)
+endphoneme
+
+
+phoneme s.
+  vls alv frc sib
+  ChangePhoneme(s)
+endphoneme

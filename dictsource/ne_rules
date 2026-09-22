@@ -747,7 +747,7 @@
 	Cै) न (_	n@
 	CBदि) न (_	n@
 	ए) न (_	n@
-	CB) न (ु_	nu;
+	CB) न (ु_	n	// the following ु already supplies [u]; nu; here doubled it (बस्नु -> bVsnu;u)
 
 .group ऩ
 	ऩ	n'a	// Phoneme adjustment suggested
@@ -815,7 +815,7 @@
 	्) र (c	r'v:
 	र्‍	r':
 	Cे) र (_	r@
-	र (्C	r:
+	र (्C	r	// pre-consonant r is single: WikiPron 111/114 (गर्नु [gʌrnu])
 	Cे) र (_	r@
 	रर (_	r@3r@2
 
