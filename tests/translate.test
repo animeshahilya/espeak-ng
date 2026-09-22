@@ -36,6 +36,13 @@ test_phon ka "s'ami Sv'idi" "3 7"
 
 # bug: https://github.com/nvaccess/nvda/issues/7805
 test_phon hi "r'Uc,i:" "रुचि"
+# candrabindu after a vowel sign only nasalizes; it used to add an [n] too
+test_phon hi "b'a~t.e: g'a~v p'a~c" "बाँटे गाँव पाँच"
+# a leading minus, slash and डॉ. used to be dropped or read in English
+test_phon hi "m'a:In,@s p'a~c" "-5"
+test_phon hi "d.'Okt@r
+S'Vrma:" "डॉ. शर्मा"
+test_phon hi "p'a~c sl'ES t'i:n" "5/3"
 # kok needs the Devanagari letter setup, or vowel signs read as letter names
 test_phon kok "pa:n.'i::0" "पाणी"
 test_phon hi "dUk'a:n" "दुकान"
