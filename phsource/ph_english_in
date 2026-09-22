@@ -201,3 +201,18 @@ phoneme d.
 
   FMT(d/dr) addWav(x/d)
 endphoneme
+
+
+// Plain schwa without the RP linking/intrusive r: the base @ appends r-
+// before a following vowel, so "samosa idli" and "Priya Arjun" came out
+// with an r that Indian English doesn't have. Words spelled with r get
+// their r from 3/A@/O@ above, so nothing real is lost.
+phoneme @
+  vwl   starttype #@  endtype #@
+  unstressed
+  length 140
+  IF thisPh(isWordEnd) THEN
+    FMT(vowel/@_6, 90)
+  ENDIF
+  FMT(vowel/@)
+endphoneme

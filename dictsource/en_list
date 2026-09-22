@@ -725,24 +725,24 @@ no	noU	$allcaps
 // MAIN WORD DICTIONARY
 //*********************
 
-aadhaar		'A:d,A:r
-aadhar		'A:d,A:r
+aadhaar		'A:d[,A:r
+aadhar		'A:d[,A:r
 lakh		l'A:k
 lakhs		l'A:ks
 lac		l'ak
 lacs		l'aks
 crore		kr'o:r
 crores		kr'o:rz
-crorepati	kr,o:rp'VtI
-lakhpati	l,A:kp'VtI
+crorepati		kr,o:rp'Vt[I
+lakhpati		l,A:kp'Vt[I
 prepone		pri:p'oUn
 preponed	pri:p'oUnd
 preponing	pri:p'oUnIN
 preponement	pri:p'oUnm@nt
-namaste		n,Vm'VsteI
+namaste		n,Vm'Vst[eI
 namaskar	n,Vm'VskA:r
 pranam		pr.'VnA:m
-dhanyawad	d,VnjVv'A:d
+dhanyawad		d[,VnjVv'A:d[
 shukriya	S,Ukr'IjA:
 challan		tS,al'A:n
 chalan		tS,al'A:n
@@ -752,7 +752,7 @@ paise		p'aIseI
 bhai		baI
 bhaiya		b'aIj@
 didi		d['i:d[i
-desi		d'e:si:
+desi		d['e:si:
 videsi		v,id['e:si
 sabzi		s'abzi
 biryani		b,Irj'A:ni:
@@ -760,15 +760,15 @@ samosa		s,am'o:s@
 paneer		pan'i@
 roti		r'o:ti:
 chai		tS'aI
-masala		mVs'A:lA:
+masala		m@s'A:l@
 dosa		d['o:s@
 idli		'Idli
 yojana		j'o:dZ@nA:
-panchayat	pantS'A:jat
+panchayat		pVntS'A:j@t[
 sarpanch	s,A@p'antS
 swachh		sw'VtStS
-bharat		b'A:rat
-hindustan	h,IndUst'A:n
+bharat		b'A:r@t[
+hindustan		h,Ind[Ust['A:n
 
 (a &)		eIa#nd
 à		%a
@@ -1697,7 +1697,7 @@ descry		dI#skreI
 desert		dI#z3:t
 desert		dEz3t		$onlys
 desert		dI#z3:t		$verb
-desi		deIsi
+desi		d['e:si:
 desolate	dEs@l@t		$only
 desperate	$alt2
 ?3 detail	$2
@@ -2574,7 +2574,7 @@ marquis		mA@rk'i:
 marshal		mA@S@L	// -ing
 marshall	mA@S@L
 martinet	$3
-masala		$alt3
+masala		m@s'A:l@ $alt3
 massage		masA:Z
 ?3 massage	ma#sA:Z
 mastodon	mast@d0n
@@ -2886,7 +2886,7 @@ paltry		pO:ltri
 panacea		pana#s'i:@
 panache		$alt3
 panchakarma	$alt3 $3
-panchayat	pa#ntSaI@t
+panchayat		pVntS'A:j@t[
 pancreas	pankri@s
 palpate		$2
 papaya		pa#paI;@
@@ -5844,11 +5844,26 @@ shit	SIt
 
 // Indian English terms unique to this block (overlapping headwords live in the
 // main dictionary above; duplicating them here shadowed one transcription).
-dhanyavad	d,VnjVv'A:d
+// Indian acronyms said letter by letter (they were read as words: UPI "yoopi", OTP "otp")
+upi	$abbrev $allcaps
+otp	$abbrev $allcaps
+ifsc	$abbrev $allcaps
+kyc	$abbrev $allcaps
+emi	$abbrev $allcaps
+neft	$abbrev $allcaps
+imps	$abbrev $allcaps
+irctc	$abbrev $allcaps
+lic	$abbrev $allcaps
+upsc	$abbrev $allcaps
+iit	$abbrev $allcaps
+icici	$abbrev $allcaps
+ncert	$abbrev $allcaps
+pan	p'an	$allcaps	// PAN card is said as a word, not spelled
+dhanyavad		d[,VnjVv'A:d[
 chappal	tS'Vpp@l
 chappals	tS'Vpp@lz
 rickshaw	r'IkSO:
 rickshaws	r'IkSO:z
-dal	d'A:l
+dal		d['A:l
 thali	t['A:li:
 
