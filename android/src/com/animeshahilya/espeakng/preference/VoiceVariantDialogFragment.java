@@ -61,6 +61,14 @@ public class VoiceVariantDialogFragment extends PreferenceDialogFragmentCompat {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (!(getPreference() instanceof VoiceVariantPreference)) {
+            // Restored after the screen tree was rebuilt under it (rotation
+            // or process restore): getPreference() no longer resolves, and
+            // getVariantPreference() would ClassCastException. Drop this
+            // restored instance instead of crashing the settings screen.
+            dismissAllowingStateLoss();
+            return new AlertDialog.Builder(getContext()).create();
+        }
         VoiceVariantPreference preference = getVariantPreference();
         int[] selected = preference.getSelectedIndices();
         mCategoryIndex = selected[0];

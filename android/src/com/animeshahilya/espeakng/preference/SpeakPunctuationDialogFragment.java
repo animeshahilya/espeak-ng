@@ -86,6 +86,14 @@ public class SpeakPunctuationDialogFragment extends PreferenceDialogFragmentComp
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (!(getPreference() instanceof SpeakPunctuationPreference)) {
+            // Restored after the screen tree was rebuilt under it (rotation
+            // or process restore): getPreference() no longer resolves, and
+            // getPunctuationPreference() would ClassCastException. Drop this
+            // restored instance instead of crashing the settings screen.
+            dismissAllowingStateLoss();
+            return new AlertDialog.Builder(getContext()).create();
+        }
         View root = LayoutInflater.from(getContext())
                 .inflate(R.layout.speak_punctuation_preference, null);
         mNone = (RadioButton) root.findViewById(R.id.none);

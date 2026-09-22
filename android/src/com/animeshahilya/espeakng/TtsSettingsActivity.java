@@ -115,20 +115,34 @@ public class TtsSettingsActivity extends AppCompatActivity {
     /** Single accessor for the device-protected default prefs (see EspeakApp). */
     private static SharedPreferences getPrefs() {
         Context storage = EspeakApp.getStorageContext();
-        return PreferenceManager.getDefaultSharedPreferences(storage != null ? storage : EspeakApp.requireStorageContext(null));
+        if (storage == null) {
+            storage = EspeakApp.requireStorageContext(null);
+        }
+        if (storage == null) {
+            // requireStorageContext(null) returns null before Application.onCreate
+            // has run (a static helper reachable from tests/providers). Passing
+            // that null into getDefaultSharedPreferences() NPEs with no clue;
+            // fail with the actual reason instead.
+            throw new IllegalStateException("EspeakApp storage context not initialized");
+        }
+        return PreferenceManager.getDefaultSharedPreferences(storage);
     }
 
     private static final java.util.HashMap<String, LangInfo> sLangInfo = new java.util.HashMap<String, LangInfo>();
 
     @Override
-    @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Migrate old eyes-free settings to the new settings:
 
         final Context storage = EspeakApp.requireStorageContext(getApplicationContext());
-        CheckVoiceData.ensureVoiceData(storage);
+        // No CheckVoiceData.ensureVoiceData() here: extracting the ~30MB
+        // archive synchronously in onCreate() is the same main-thread ANR
+        // class that was already fixed for createPreferences() (#2430). The
+        // createPreferences worker below now runs extraction before its
+        // engine probe, which is the first thing on this screen that needs
+        // the tree on disk.
         final SharedPreferences prefs = getPrefs();
         SharedPreferences.Editor editor = null;
 
@@ -169,20 +183,28 @@ public class TtsSettingsActivity extends AppCompatActivity {
         // thread (the same ANR risk fixed for createPreferences() below),
         // so skip it unless there is actually something to migrate.
         if (rate == null && prefs.contains(VoiceSettings.PREF_DEFAULT_RATE)) {
-            SpeechSynthesis engine = new SpeechSynthesis(storage, null);
-            int defaultValue = engine.Rate.getDefaultValue();
-            int maxValue = engine.Rate.getMaxValue();
-
-            rate = prefs.getString(VoiceSettings.PREF_DEFAULT_RATE, "100");
             try {
-                int rateValue = (int) ((Integer.parseInt(rate) / 100.0f) * defaultValue);
-                if (rateValue < defaultValue) rateValue = defaultValue;
-                if (rateValue > maxValue) rateValue = maxValue;
-                if (editor == null) editor = prefs.edit();
-                editor.putString(VoiceSettings.PREF_RATE, Integer.toString(rateValue));
-            } catch (NumberFormatException e) {
-                // Malformed legacy value - leave PREF_RATE unset so
-                // VoiceSettings.getRate() falls back to the engine default.
+                SpeechSynthesis engine = new SpeechSynthesis(storage, null);
+                int defaultValue = engine.Rate.getDefaultValue();
+                int maxValue = engine.Rate.getMaxValue();
+
+                rate = prefs.getString(VoiceSettings.PREF_DEFAULT_RATE, "100");
+                try {
+                    int rateValue = (int) ((Integer.parseInt(rate) / 100.0f) * defaultValue);
+                    if (rateValue < defaultValue) rateValue = defaultValue;
+                    if (rateValue > maxValue) rateValue = maxValue;
+                    if (editor == null) editor = prefs.edit();
+                    editor.putString(VoiceSettings.PREF_RATE, Integer.toString(rateValue));
+                } catch (NumberFormatException e) {
+                    // Malformed legacy value - leave PREF_RATE unset so
+                    // VoiceSettings.getRate() falls back to the engine default.
+                }
+            } catch (Throwable t) {
+                // Corrupt/missing voice data (or a JNI failure) must not crash
+                // settings startup: leaving PREF_RATE unset just means
+                // getRate() falls back to the engine default, same as the
+                // NumberFormatException path above.
+                Log.w(TAG, "Legacy rate migration skipped", t);
             }
         }
 
@@ -217,9 +239,17 @@ public class TtsSettingsActivity extends AppCompatActivity {
             contentView.setFitsSystemWindows(false);
         }
 
-        getSupportFragmentManager().beginTransaction().replace(
-                android.R.id.content,
-                new PrefsEspeakFragment()).commit();
+        // Only replace on first creation: on recreation the FragmentManager
+        // has already restored PrefsEspeakFragment (and any dialog fragment
+        // targeting it - setTargetFragment's mTargetWho survives in
+        // FragmentState). Blindly replacing here destroyed the restored
+        // instance and left restored dialogs pointing at a dead fragment,
+        // which then NPE'd resolving their Preference against an empty tree.
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(
+                    android.R.id.content,
+                    new PrefsEspeakFragment()).commit();
+        }
 
         getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
             @Override
@@ -398,7 +428,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             @Override public void done(Boolean done) {
                 if (isGone(activity)) return;
                 Toast.makeText(activity,
-                        done ? R.string.dict_export_done : R.string.import_voice_error,
+                        done ? R.string.dict_export_done : R.string.dict_export_failed,
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -422,7 +452,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             @Override public void done(Boolean done) {
                 if (isGone(activity)) return;
                 Toast.makeText(activity,
-                        done ? R.string.backup_done : R.string.import_voice_error,
+                        done ? R.string.backup_done : R.string.backup_export_failed,
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -448,7 +478,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 final boolean done = count >= 0;
                 Toast.makeText(activity,
                         done ? activity.getResources().getQuantityString(R.plurals.restore_done, count, count)
-                                : activity.getString(R.string.import_voice_error),
+                                : activity.getString(R.string.backup_restore_failed),
                         Toast.LENGTH_LONG).show();
                 if (done) {
                     activity.recreate();
@@ -574,13 +604,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
         // android:fragment path, and onNavigateToScreen merely delegates to an
         // OnPreferenceStartScreenCallback nobody implements (verified against
         // the 1.2.1 source - calling it is a silent no-op). So this fragment
-        // re-roots itself instead: same manager, no tree rebuild. Back
-        // returns via the activity's onBackPressed() below - the
-        // OnBackPressedDispatcher callbacks (both lifecycle-owned and
-        // unconditional) were verified on-device to never fire here, so the
-        // terminal onBackPressed entry point is used instead. Rotation drops
-        // back to the root, matching the old dialogs, which never survived
-        // rotation either.
+        // re-roots itself instead: same manager, no tree rebuild. Back pops
+        // through the activity's OnBackPressedCallback (registered in
+        // TtsSettingsActivity.onCreate), which calls popToParent() before
+        // finishing. Rotation does not save this stack (no onSaveInstanceState
+        // override), dropping back to the root screen - matching the old
+        // framework dialogs, which never survived rotation either.
         private final Deque<PreferenceScreen> mScreenStack = new ArrayDeque<>();
 
         @Override
@@ -772,7 +801,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     formatter = context.getString(R.string.formatter_wpm);
                     break;
                 default:
-                    throw new IllegalStateException("Unsupported unit type for the parameter.");
+                    // A future engine parameter whose UnitType this formatter
+                    // doesn't know must not crash the settings screen while
+                    // it builds - format it as a percentage and move on.
+                    formatter = context.getString(R.string.formatter_percentage);
+                    break;
             }
         }
 
@@ -1019,29 +1052,54 @@ public class TtsSettingsActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final boolean isWatch = context.getPackageManager()
-                        .hasSystemFeature(PackageManager.FEATURE_WATCH);
+                try {
+                    final boolean isWatch = context.getPackageManager()
+                            .hasSystemFeature(PackageManager.FEATURE_WATCH);
 
-                final SpeechSynthesis engine = new SpeechSynthesis(storage, null);
-                final List<Voice> voices = engine.getAvailableVoices();
+                    // Extract/refresh voice data off the main thread (moved out
+                    // of onCreate; see the comment there). Runs under
+                    // CheckVoiceData's extraction lock, so a concurrent
+                    // TtsService.onCreate() doing the same work serializes
+                    // instead of racing.
+                    CheckVoiceData.ensureVoiceData(storage);
 
-                // Warm the lang/ metadata cache here rather than leaving it to
-                // the first getVoiceLabel() call, which would drag the whole
-                // scan back onto the main thread. Skipped on Wear, where the
-                // supported-languages list is not built at all.
-                if (!isWatch) {
-                    ensureLangInfoLoaded();
-                }
+                    final SpeechSynthesis engine = new SpeechSynthesis(storage, null);
+                    final List<Voice> voices = engine.getAvailableVoices();
 
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isGone(context)) {
-                            return;
-                        }
-                        addPreferences(context, group, engine, voices, isWatch);
+                    // Warm the lang/ metadata cache here rather than leaving it to
+                    // the first getVoiceLabel() call, which would drag the whole
+                    // scan back onto the main thread. Skipped on Wear, where the
+                    // supported-languages list is not built at all.
+                    if (!isWatch) {
+                        ensureLangInfoLoaded();
                     }
-                });
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isGone(context)) {
+                                return;
+                            }
+                            addPreferences(context, group, engine, voices, isWatch);
+                        }
+                    });
+                } catch (Throwable t) {
+                    // The engine probe (native lib load, phondata, JNI voice
+                    // enumeration) used to run unguarded on this worker: any
+                    // failure became an uncaught exception that killed the
+                    // whole process with zero UI feedback.
+                    Log.e(TAG, "Failed to build settings preferences", t);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isGone(context)) {
+                                return;
+                            }
+                            Toast.makeText(context, R.string.settings_load_failed,
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         }, "espeak-settings-load").start();
     }
@@ -1454,7 +1512,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
                                 if (isGone(context)) return;
                                 Intent share = new Intent(Intent.ACTION_SEND);
                                 share.setType("text/plain");
-                                share.putExtra(Intent.EXTRA_SUBJECT, "eSpeak NG activity log");
+                                share.putExtra(Intent.EXTRA_SUBJECT,
+                                        context.getString(R.string.log_share_subject));
                                 share.putExtra(Intent.EXTRA_TEXT, log);
                                 context.startActivity(Intent.createChooser(share,
                                         context.getString(R.string.setting_export_log)));
@@ -1470,6 +1529,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
     private static Preference createUserDictionaryPreference(final Context context) {
         final Preference pref = new Preference(context);
+        // Keys the row to PREF_USER_DICTIONARY: VoiceSettings reads that key
+        // (default true) to gate the whole user-dictionary pipeline, but
+        // before this the key existed on no preference at all, so
+        // findPreference(PREF_USER_DICTIONARY) could never find anything.
+        // This row opens the rule editor; it does not toggle the boolean.
+        pref.setKey(VoiceSettings.PREF_USER_DICTIONARY);
         pref.setTitle(R.string.setting_user_dictionary);
         pref.setSummary(R.string.setting_user_dictionary_summary);
         pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -1889,7 +1954,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
                             Intent shareIntent = new Intent(Intent.ACTION_SEND);
                             shareIntent.setType("application/json");
                             shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.dict_share_subject));
-                            shareIntent.putExtra(Intent.EXTRA_TEXT, "eSpeak NG User Dictionary (" + rules.size() + " rules)");
+                            shareIntent.putExtra(Intent.EXTRA_TEXT,
+                                    context.getString(R.string.dict_share_text, rules.size()));
                             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             context.startActivity(Intent.createChooser(shareIntent,
@@ -1902,7 +1968,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             if (isGone(context)) return;
-                            Toast.makeText(context, "Failed to share dictionary: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.dict_share_failed,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -2174,7 +2241,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             versionName = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            versionName = "1.52.0";
+            versionName = BuildConfig.VERSION_NAME;
         }
 
         View aboutView = LayoutInflater.from(context).inflate(R.layout.dialog_about, null);
@@ -2184,6 +2251,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
 
         final AlertDialog dialog = new AlertDialog.Builder(context)
+                .setTitle(R.string.about_title)
                 .setView(aboutView)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();

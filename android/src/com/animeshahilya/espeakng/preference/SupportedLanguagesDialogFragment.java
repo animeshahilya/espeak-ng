@@ -92,6 +92,14 @@ public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCo
     @SuppressWarnings("deprecation")
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (!(getPreference() instanceof SupportedLanguagesPreference)) {
+            // Restored after the screen tree was rebuilt under it (rotation
+            // or process restore): getPreference() no longer resolves, and
+            // getSupportedPreference() would ClassCastException. Drop this
+            // restored instance instead of crashing the settings screen.
+            dismissAllowingStateLoss();
+            return new AlertDialog.Builder(getContext()).create();
+        }
         SupportedLanguagesPreference preference = getSupportedPreference();
 
         if (preference.getEntries() == null || preference.getEntryValues() == null) {
@@ -185,14 +193,18 @@ public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCo
         Button buttonSelectAll = mDialogView.findViewById(R.id.button_select_all);
         Button buttonDeselectAll = mDialogView.findViewById(R.id.button_deselect_all);
 
-        buttonSelectAll.setOnClickListener(v -> {
-            setAll(true);
-            v.announceForAccessibility(getContext().getString(R.string.languages_all_selected));
-        });
-        buttonDeselectAll.setOnClickListener(v -> {
-            setAll(false);
-            v.announceForAccessibility(getContext().getString(R.string.languages_all_deselected));
-        });
+        if (buttonSelectAll != null) {
+            buttonSelectAll.setOnClickListener(v -> {
+                setAll(true);
+                v.announceForAccessibility(getContext().getString(R.string.languages_all_selected));
+            });
+        }
+        if (buttonDeselectAll != null) {
+            buttonDeselectAll.setOnClickListener(v -> {
+                setAll(false);
+                v.announceForAccessibility(getContext().getString(R.string.languages_all_deselected));
+            });
+        }
 
         // Null listeners: the real handlers are wired in onStart() so the
         // empty-selection guard can keep the dialog open (an AlertDialog

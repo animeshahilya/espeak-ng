@@ -20,7 +20,7 @@
             android:layout_height="64dp"
             android:layout_gravity="center_horizontal"
             android:src="@mipmap/icon"
-            android:contentDescription="@string/app_name" />
+            android:importantForAccessibility="no" />
 
         <!-- App Title -->
         <TextView

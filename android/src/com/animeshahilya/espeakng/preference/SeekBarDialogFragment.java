@@ -59,6 +59,14 @@ public class SeekBarDialogFragment extends PreferenceDialogFragmentCompat {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (!(getPreference() instanceof SeekBarPreference)) {
+            // Restored after the screen tree was rebuilt under it (rotation
+            // or process restore): getPreference() no longer resolves, and
+            // every getter below would NPE/ClassCastException. Drop this
+            // restored instance instead of crashing the settings screen.
+            dismissAllowingStateLoss();
+            return new AlertDialog.Builder(getContext()).create();
+        }
         SeekBarPreference preference = getSeekBarPreference();
         View root = LayoutInflater.from(getContext()).inflate(R.layout.seekbar_preference, null);
         ViewGroup container = (ViewGroup) root.findViewById(R.id.parameters);
@@ -293,6 +301,15 @@ public class SeekBarDialogFragment extends PreferenceDialogFragmentCompat {
         String summary = preference.buildSummary();
         preference.callChangeListener(summary);
         preference.setSummary(summary);
+
+        // Release the dialog's views; the preference would otherwise keep
+        // them (and their Activity context) alive until the tree is rebuilt.
+        // A reopened dialog rebinds them in onCreateDialog().
+        for (Parameter parameter : preference.mParameters) {
+            parameter.mSeekBar = null;
+            parameter.mValueText = null;
+            parameter.mRateBoost = null;
+        }
 
         super.onDismiss(dialog);
     }

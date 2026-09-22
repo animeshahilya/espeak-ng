@@ -22,8 +22,7 @@
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/category" />
+        android:layout_marginBottom="16dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -38,7 +37,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
-        android:layout_marginTop="4dp"
-        android:contentDescription="@string/variant" />
+        android:layout_marginTop="4dp" />
 
 </LinearLayout>

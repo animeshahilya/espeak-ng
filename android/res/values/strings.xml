@@ -390,4 +390,13 @@
   <string name="about_feature_dict">• Custom user dictionary with regex, whole-word, and phoneme rules</string>
   <string name="about_feature_locks">• Caller-proof locks to prevent apps from overriding rate, pitch, or volume</string>
   <string name="about_license">Licensed under GNU General Public License v3.0 or later</string>
+
+  <!-- Settings load / export failure feedback (uncaught worker used to crash silently) -->
+  <string name="settings_load_failed">Failed to load settings. Close and reopen the screen.</string>
+  <string name="dict_export_failed">Failed to export dictionary file.</string>
+  <string name="backup_export_failed">Failed to export backup file.</string>
+  <string name="backup_restore_failed">Failed to restore backup file.</string>
+  <string name="log_share_subject">eSpeak NG activity log</string>
+  <string name="dict_share_text">eSpeak NG User Dictionary (%1$d rules)</string>
+  <string name="dict_share_failed">Failed to share dictionary.</string>
 </resources>
