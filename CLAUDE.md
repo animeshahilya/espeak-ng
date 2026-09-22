@@ -27,7 +27,7 @@ cd android
 # Build release APK
 ./gradlew assembleRelease
 
-# Run on-device Android instrumentation tests (100 tests)
+# Run on-device Android instrumentation tests (111 tests)
 ./gradlew connectedAndroidTest
 ```
 
