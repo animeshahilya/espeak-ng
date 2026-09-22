@@ -43,3 +43,31 @@ endphoneme
 
 //====================================================
 // The rest Phonemes are inherted from Hindi.
+
+
+// Urdu has no short [a]: the short partner of aa (zabar) is [ə]. ur_list/ur_rules
+// write it as "a" throughout, so give "a" the schwa sound here rather than
+// rewriting thousands of entries (WikiPron urd: 312 of 1500 words had [ə] -> [a]).
+phoneme a
+  vwl starttype #@  endtype #@
+  length 140
+  ipa ə
+  FMT(vowel/@_bck)
+endphoneme
+
+
+// ص (and ث via the rules) is plain [s] in Urdu, never retroflex (WikiPron urd: 76/76).
+phoneme s.
+  vls alv frc sib
+  ChangePhoneme(s)
+endphoneme
+
+
+// Word-final ہ is an open [ɑ] (WikiPron urd: چودہ [tʃɔːdɑ], تیرہ [teːɾɑ]) - the
+// real open vowel "a" had before it became schwa above.
+phoneme a#
+  vwl starttype #a  endtype #a
+  length 140
+  ipa ɑ
+  FMT(vowel/a#_3)
+endphoneme
