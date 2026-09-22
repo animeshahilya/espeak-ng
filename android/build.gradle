@@ -173,17 +173,19 @@ android {
 }
 
 tasks.register('checkData') {
+    // Resolve once at configuration time: checkData's doFirst must not call
+    // Project.file() at execution time (unsupported with the configuration
+    // cache), and File values are serializable into the cache entry.
+    def generatedDataDir = file('build/generated/espeak-ng-data')
     doFirst {
         // Assert on the generated tree, not the source tree: createDataArchive
         // zips build/generated/espeak-ng-data/, and the ../espeak-ng-data
         // sources only ever hold lang/ and voices/ (asserting on them failed
         // every fresh-clone build).
-        assert file("build/generated/espeak-ng-data/en_dict").exists()
-        assert file("build/generated/espeak-ng-data/intonations").exists()
-        assert file("build/generated/espeak-ng-data/phondata").exists()
-        assert file("build/generated/espeak-ng-data/phondata-manifest").exists()
-        assert file("build/generated/espeak-ng-data/phonindex").exists()
-        assert file("build/generated/espeak-ng-data/phontab").exists()
+        ['en_dict', 'intonations', 'phondata', 'phondata-manifest',
+         'phonindex', 'phontab'].each { name ->
+            assert new File(generatedDataDir, name).exists(): "missing ${name} in ${generatedDataDir}"
+        }
     }
 }
 

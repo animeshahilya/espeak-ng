@@ -4,13 +4,26 @@ on:
   workflow_dispatch:
   push:
     branches: [ master, android ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
   pull_request:
     branches: [ master, android ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+
+# Newer pushes to the same ref supersede in-flight runs - each run pays for a
+# cold native build, so cancelling stale ones is a full job's worth of savings.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-debug:
     runs-on: ubuntu-latest
     name: Build debug APK
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - name: Set up JDK 17
@@ -19,8 +32,14 @@ jobs:
           distribution: 'temurin'
           java-version: 17
           cache: gradle
+      - name: Cache native build (CMake/.cxx)
+        uses: actions/cache@v4
+        with:
+          path: android/.cxx
+          key: cxx-debug-${{ runner.os }}-${{ hashFiles('android/jni/**', 'cmake/**', 'src/**', 'dictsource/**', 'phsource/**') }}
+          restore-keys: cxx-debug-${{ runner.os }}-
       - name: make
-        run: cd android && ./gradlew assembleDebug --no-daemon
+        run: cd android && ./gradlew assembleDebug
       - name: upload
         uses: actions/upload-artifact@v7
         with:
@@ -31,6 +50,7 @@ jobs:
   build-release:
     runs-on: ubuntu-latest
     name: Build release APK
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - name: Set up JDK 17
@@ -39,8 +59,14 @@ jobs:
           distribution: 'temurin'
           java-version: 17
           cache: gradle
+      - name: Cache native build (CMake/.cxx)
+        uses: actions/cache@v4
+        with:
+          path: android/.cxx
+          key: cxx-release-${{ runner.os }}-${{ hashFiles('android/jni/**', 'cmake/**', 'src/**', 'dictsource/**', 'phsource/**') }}
+          restore-keys: cxx-release-${{ runner.os }}-
       - name: make
-        run: cd android && ./gradlew assembleRelease --no-daemon
+        run: cd android && ./gradlew assembleRelease
       - name: upload
         uses: actions/upload-artifact@v7
         with:
@@ -51,6 +77,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Instrumented tests
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
       - name: Set up JDK 17
@@ -64,12 +91,38 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Cache native build (CMake/.cxx)
+        uses: actions/cache@v4
+        with:
+          path: android/.cxx
+          key: cxx-test-${{ runner.os }}-${{ hashFiles('android/jni/**', 'cmake/**', 'src/**', 'dictsource/**', 'phsource/**') }}
+          restore-keys: cxx-test-${{ runner.os }}-
+      - name: Cache AVD
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/avd/*.ini
+          key: avd-api34-${{ runner.os }}
+      - name: Create AVD (cache miss)
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: echo "AVD created and cached"
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
+          force-avd-creation: false
           disable-animations: true
           script: bash android/ci-test.sh
       - name: Upload test reports

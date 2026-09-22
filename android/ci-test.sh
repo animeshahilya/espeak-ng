@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
-# Build and install the app (must use the same debug key as connectedAndroidTest)
-cd android && ./gradlew assembleDebug --no-daemon && cd ..
+# Build and install the app (must use the same debug key as connectedAndroidTest).
+# No --no-daemon: the default daemon is reused by connectedAndroidTest below,
+# which shares the same configuration phase and build cache in one job.
+cd android && ./gradlew assembleDebug && cd ..
 adb install -r android/build/outputs/apk/debug/espeak-debug.apk
 
 # Extract voice data — the activity finishes when extraction is done
@@ -20,4 +22,4 @@ adb shell "ls -la /data/user/0/com.animeshahilya.espeakng/app_voices/espeak-ng-d
 echo "========================"
 
 # Run instrumented tests
-cd android && ./gradlew connectedAndroidTest --no-daemon --stacktrace
+cd android && ./gradlew connectedAndroidTest --stacktrace
