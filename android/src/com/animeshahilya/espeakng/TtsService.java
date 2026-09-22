@@ -45,6 +45,7 @@ import android.util.Pair;
 
 import com.animeshahilya.espeakng.SpeechSynthesis.SynthReadyCallback;
 
+import java.util.MissingResourceException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -290,14 +291,22 @@ public class TtsService extends TextToSpeechService {
         synchronized (mAvailableVoices) {
             voice = mMatchingVoice;
         }
-        if (voice == null) {
+        if (voice == null || voice.locale == null) {
             return new String[] { "eng", "GBR", "" };
         }
-        return new String[] {
-            voice.locale.getISO3Language(),
-            voice.locale.getISO3Country(),
-            voice.locale.getVariant()
-        };
+        String language, country, variant;
+        try {
+            language = voice.locale.getISO3Language();
+        } catch (MissingResourceException e) {
+            language = "eng";
+        }
+        try {
+            country = voice.locale.getISO3Country();
+        } catch (MissingResourceException e) {
+            country = "GBR";
+        }
+        variant = voice.locale.getVariant() != null ? voice.locale.getVariant() : "";
+        return new String[] { language, country, variant };
     }
 
     /**
@@ -317,7 +326,11 @@ public class TtsService extends TextToSpeechService {
             return new Pair<>(null, TextToSpeech.LANG_MISSING_DATA);
         }
 
-        final Locale query = legacyLocale(language, country, variant);
+        // Null/empty codes from the framework must not crash the matcher.
+        final Locale query = legacyLocale(
+                language != null ? language : "",
+                country != null ? country : "",
+                variant != null ? variant : "");
 
         Voice languageVoice = null;
         Voice countryVoice = null;
@@ -931,18 +944,9 @@ public class TtsService extends TextToSpeechService {
     public static final int MAX_REQUEST_CHARS = TextPreprocessor.MAX_REQUEST_CHARS;
     public static final int MAX_CHUNKS = TextPreprocessor.MAX_CHUNKS;
 
-    /**
-     * True when text has no char above ' ' - exactly {@code trim().isEmpty()}
-     * semantics without copying the string (requests can be up to 300k chars,
-     * and this runs before any other setup on every one of them).
-     */
+    // Delegated to VoiceSettings.isBlank to keep the definition in one place.
     private static boolean isBlank(String text) {
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) > ' ') {
-                return false;
-            }
-        }
-        return true;
+        return VoiceSettings.isBlank(text);
     }
 
     public static boolean containsProgrammingSymbolChars(String text) {

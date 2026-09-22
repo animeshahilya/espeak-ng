@@ -164,6 +164,45 @@ public class VoiceSettings {
         mEngine = engine;
     }
 
+    /**
+     * True when text has no char above ' ' - exactly {@code trim().isEmpty()}
+     * semantics without copying the string (requests can be up to 300k chars,
+     * and this runs before any other setup on every one of them).
+     */
+    public static boolean isBlank(String text) {
+        if (text == null) return true;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) > ' ') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * CCE-safe wrapper: reads the preference and returns null on type mismatch.
+     * The legacy framework stored some ints as strings, and some booleans as
+     * strings too, so every read must tolerate the wrong class without
+     * crashing the TTS binder thread.
+     */
+    private String safeGetString(String key) {
+        return mPreferences.getString(key, null);
+    }
+
+    private boolean safeGetBoolean(String key, boolean defValue) {
+        return mPreferences.getBoolean(key, defValue);
+    }
+
+    private int safeGetInt(String key, int defValue) {
+        final String s = safeGetString(key);
+        if (s == null) return defValue;
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return defValue;
+        }
+    }
+
     public VoiceVariant getVoiceVariant() {
         String variant = mPreferences.getString(PREF_VARIANT, null);
         if (variant == null) {
