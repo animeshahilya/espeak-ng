@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Pengganda kadar ucapan</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Memasang data suara...</string>
+  <string name="installing_voice_data">Memasang data suara…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Ini adalah sampel teks yang dilafazkan dalam %s</string>

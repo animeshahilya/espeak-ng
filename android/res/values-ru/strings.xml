@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Скорость речи</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Установка голосовых данных...</string>
+  <string name="installing_voice_data">Установка голосовых данных…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Так синтезатор речи озвучивает %s текст</string>

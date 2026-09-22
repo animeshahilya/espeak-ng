@@ -30,11 +30,10 @@ public class SpeakPunctuationPreference extends PersistingDialogPreference {
 
     public SpeakPunctuationPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setLayoutResource(R.layout.information_view);
     }
 
     public SpeakPunctuationPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        this(context, attrs, androidx.preference.R.attr.dialogPreferenceStyle);
     }
 
     public SpeakPunctuationPreference(Context context) {

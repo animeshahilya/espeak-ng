@@ -20,6 +20,7 @@ package com.animeshahilya.espeakng;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -373,7 +374,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             @Override public void done(Integer count) {
                 if (isGone(activity)) return;
                 Toast.makeText(activity,
-                        activity.getString(R.string.dict_import_done, count),
+                        activity.getResources().getQuantityString(R.plurals.dict_import_done, count, count),
                         Toast.LENGTH_LONG).show();
             }
         });
@@ -446,7 +447,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 if (isGone(activity)) return;
                 final boolean done = count >= 0;
                 Toast.makeText(activity,
-                        done ? activity.getString(R.string.restore_done, count)
+                        done ? activity.getResources().getQuantityString(R.plurals.restore_done, count, count)
                                 : activity.getString(R.string.import_voice_error),
                         Toast.LENGTH_LONG).show();
                 if (done) {
@@ -885,7 +886,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         if (enabled >= total) {
             return context.getString(R.string.espeak_supported_languages_all);
         }
-        return context.getString(R.string.espeak_supported_languages_summary, enabled, total);
+        return context.getResources().getQuantityString(R.plurals.espeak_supported_languages_summary, total, enabled, total);
     }
 
     private static String getDisplayName(Voice voice) {
@@ -1608,7 +1609,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 }
 
                 UserDictionary r = displayedRules.get(position);
-                holder.index.setText((position + 1) + ".");
+                holder.index.setText(context.getString(R.string.dict_rule_index, position + 1));
                 holder.pattern.setText(r.getPattern());
                 holder.replacement.setText(r.getReplacement());
                 holder.chipCategory.setText(UserDictionary.categoryLabel(r.getCategory()));
@@ -1623,7 +1624,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
                 if (r.hasPhonemeOverride()) {
                     holder.chipPhoneme.setVisibility(View.VISIBLE);
-                    holder.chipPhoneme.setText("[[" + r.getPhonemes() + "]]");
+                    holder.chipPhoneme.setText(context.getString(R.string.dict_rule_phonemes, r.getPhonemes()));
                 } else {
                     holder.chipPhoneme.setVisibility(View.GONE);
                 }
@@ -1674,9 +1675,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 listAdapter.notifyDataSetChanged();
                 if (tvCount != null) {
                     if (viewToReal.size() == rules.size()) {
-                        tvCount.setText(context.getString(R.string.dict_rules_count_all, rules.size()));
+                        tvCount.setText(context.getResources().getQuantityString(R.plurals.dict_rules_count_all, rules.size(), rules.size()));
                     } else {
-                        tvCount.setText(context.getString(R.string.dict_rules_count, viewToReal.size(), rules.size()));
+                        tvCount.setText(context.getResources().getQuantityString(R.plurals.dict_rules_count, rules.size(), viewToReal.size(), rules.size()));
                     }
                 }
                 if (displayedRules.isEmpty()) {
@@ -2195,8 +2196,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     Intent intent = new Intent(Intent.ACTION_VIEW,
                             Uri.parse("https://github.com/animeshahilya/espeak-ng"));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    if (intent.resolveActivity(context.getPackageManager()) != null) {
+                    // resolveActivity() returns null on API 30+ without a <queries>
+                    // manifest entry, which made this button silently do nothing.
+                    try {
                         context.startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        // no browser installed; nothing to open
                     }
                 }
             });

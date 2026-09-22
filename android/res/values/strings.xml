@@ -40,7 +40,10 @@
   <string name="espeak_variant">Voice variant</string>
   <string name="espeak_supported_languages">Supported languages</string>
   <string name="espeak_supported_languages_all">Every language you have installed is available to pick from.</string>
-  <string name="espeak_supported_languages_summary">%1$d of %2$d languages selected.</string>
+  <plurals name="espeak_supported_languages_summary">
+    <item quantity="one">%1$d of %2$d language selected.</item>
+    <item quantity="other">%1$d of %2$d languages selected.</item>
+  </plurals>
   <string name="espeak_select_all_languages">Select all languages</string>
   <string name="espeak_deselect_all_languages">Deselect all languages</string>
   <string name="espeak_supported_languages_guard">Select at least one language.</string>
@@ -137,7 +140,6 @@
   <string name="category_about">About</string>
   <string name="about_title">About eSpeak NG Advanced</string>
   <string name="about_summary">Version and credits</string>
-  <string name="about_body">eSpeak NG Advanced\nVersion %1$s\n\nDeveloped and built by Animesh Ahilya.\n\nBased on eSpeak NG, an open-source formant speech synthesizer, extended with substantially more features - Indian English and Indic language support, Direct-Boot offline reliability, and pronunciation/symbol-reading fixes drawn from NVDA\'s speech engine.\n\nLicensed under the GNU GPL v3 or later.</string>
 
   <!-- Feature Settings -->
   <string name="setting_indian_numbering">Indian number and currency formatting</string>
@@ -149,7 +151,7 @@
   <string name="setting_user_dictionary">User dictionary</string>
   <string name="setting_user_dictionary_summary">Add custom word pronunciation and acronym expansion rules (standard .dic syntax)</string>
   <string name="setting_nato_spelling">NATO phonetic spelling</string>
-  <string name="setting_nato_spelling_summary">Speak NATO phonetics (Alpha, Bravo...) during single character navigation</string>
+  <string name="setting_nato_spelling_summary">Speak NATO phonetics (Alpha, Bravo…) during single character navigation</string>
   <string name="setting_spoken_diacritics">Devanagari matras in exploration</string>
   <string name="setting_spoken_diacritics_summary">Announce matra and diacritic names (Aa ki matra, Halant, Anusvara) when exploring character-by-character</string>
   <string name="test_voice_title">Preview voice sample</string>
@@ -176,11 +178,17 @@
   <string name="setting_export_log_summary">1-tap log collection for troubleshooting and sharing</string>
   <string name="export_log_collecting">Collecting log…</string>
   <string name="dict_import_started">Importing dictionary…</string>
-  <string name="dict_import_done">Dictionary import finished: %1$d rules added.</string>
+  <plurals name="dict_import_done">
+    <item quantity="one">Dictionary import finished: %1$d rule added.</item>
+    <item quantity="other">Dictionary import finished: %1$d rules added.</item>
+  </plurals>
   <string name="dict_export_done">Dictionary exported.</string>
   <string name="backup_done">Backup exported.</string>
   <string name="restore_started">Restoring backup…</string>
-  <string name="restore_done">Restore finished: %1$d dictionary rules restored.</string>
+  <plurals name="restore_done">
+    <item quantity="one">Restore finished: %1$d dictionary rule restored.</item>
+    <item quantity="other">Restore finished: %1$d dictionary rules restored.</item>
+  </plurals>
   <string name="setting_reading_mode">Reading mode</string>
   <string name="setting_reading_mode_summary">One mode at a time: normal, spelling, phonetic, or code reading</string>
   <string name="reading_normal">Normal reading</string>
@@ -206,6 +214,9 @@
   <string name="setting_force_pitch_summary">Ignore caller app pitch requests, always use your saved pitch</string>
   <string name="setting_force_volume">Lock volume</string>
   <string name="setting_force_volume_summary">Ignore caller app volume ducking, always use your saved volume</string>
+  <string name="dict_rule_index" translatable="false">%1$d.</string>
+  <string name="dict_rule_phonemes" translatable="false">[[%1$s]]</string>
+  <string name="dict_rule_arrow" translatable="false">" → "</string>
   <string name="dict_search_label">Search words</string>
   <string name="dict_search_hint">Type to filter, then Apply filter</string>
   <string name="dict_filter_label">Dictionary section filter</string>
@@ -225,7 +236,6 @@
   <string name="dict_add_rule">Add rule</string>
   <string name="dict_import_export">Import / Export</string>
   <string name="dict_import_export_title">Dictionary import / export</string>
-  <string name="dict_import_export_message">Import massive word lists (.dic tab-delimited, word=replacement lists, or JSON) without crashing — runs in the background. Export shares the full list.</string>
   <string name="dict_import_file">Import file</string>
   <string name="dict_export_file">Export file</string>
   <string name="dict_share">Share dictionary (Sharesheet)</string>
@@ -353,19 +363,31 @@
 
   <!-- UI/UX Polish: Search and Dialog Enhancements -->
   <string name="clear_search">Clear search query</string>
-  <string name="dict_rules_count">Showing %1$d of %2$d rules</string>
-  <string name="dict_rules_count_all">%1$d rules</string>
-  <string name="languages_count">Showing %1$d of %2$d languages</string>
-  <string name="languages_count_all">%1$d languages</string>
+  <plurals name="dict_rules_count">
+    <item quantity="one">Showing %1$d of %2$d rule</item>
+    <item quantity="other">Showing %1$d of %2$d rules</item>
+  </plurals>
+  <plurals name="dict_rules_count_all">
+    <item quantity="one">%1$d rule</item>
+    <item quantity="other">%1$d rules</item>
+  </plurals>
+  <plurals name="languages_count">
+    <item quantity="one">Showing %1$d of %2$d language</item>
+    <item quantity="other">Showing %1$d of %2$d languages</item>
+  </plurals>
+  <plurals name="languages_count_all">
+    <item quantity="one">%1$d language</item>
+    <item quantity="other">%1$d languages</item>
+  </plurals>
   <string name="about_developer">Developed and built by Animesh Ahilya</string>
   <string name="about_version_format">Version %1$s • 100%% Offline</string>
   <string name="about_view_github">View on GitHub</string>
   <string name="about_features_header">Core Highlights</string>
-  <string name="about_feature_offline">100% Offline with zero network permissions and Direct-Boot readiness</string>
-  <string name="about_feature_languages">159 bundled languages, regional dialects, and voice variants</string>
-  <string name="about_feature_indian">Enhanced Indian English (en-in) and Indic language phonetics</string>
-  <string name="about_feature_dsp">Formant DSP tone shaping and audio optimizer</string>
-  <string name="about_feature_dict">Custom user dictionary with regex, whole-word, and phoneme rules</string>
-  <string name="about_feature_locks">Caller-proof locks to prevent apps from overriding rate, pitch, or volume</string>
+  <string name="about_feature_offline">• 100% Offline with zero network permissions and Direct-Boot readiness</string>
+  <string name="about_feature_languages">• Every eSpeak NG language bundled, with regional dialects and voice variants</string>
+  <string name="about_feature_indian">• Enhanced Indian English (en-in) and Indic language phonetics</string>
+  <string name="about_feature_dsp">• Formant DSP tone shaping and audio optimizer</string>
+  <string name="about_feature_dict">• Custom user dictionary with regex, whole-word, and phoneme rules</string>
+  <string name="about_feature_locks">• Caller-proof locks to prevent apps from overriding rate, pitch, or volume</string>
   <string name="about_license">Licensed under GNU General Public License v3.0 or later</string>
 </resources>

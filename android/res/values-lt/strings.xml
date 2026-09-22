@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Kalbos rodiklio koeficientas</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Diegiami balso duomenys...</string>
+  <string name="installing_voice_data">Diegiami balso duomenys…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Tai teksto, sakomo %s, pavyzdys</string>

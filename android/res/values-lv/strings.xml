@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Runas ātruma reizinātājs</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Notiek balss datu instalēšana...</string>
+  <string name="installing_voice_data">Notiek balss datu instalēšana…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Šis ir izrunāta teksta paraugs šādā valodā: %s.</string>

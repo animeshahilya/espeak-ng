@@ -11,7 +11,7 @@
   <string name="setting_default_rate">语速倍数</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">正在安装语音数据...</string>
+  <string name="installing_voice_data">正在安装语音数据…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">正在朗读的是%s的语音示例</string>

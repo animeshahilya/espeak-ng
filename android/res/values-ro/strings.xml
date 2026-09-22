@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Multiplicator al ritmului vorbirii</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Se instalează datele vocale...</string>
+  <string name="installing_voice_data">Se instalează datele vocale…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Aceasta este o mostră de text vorbit în %s</string>

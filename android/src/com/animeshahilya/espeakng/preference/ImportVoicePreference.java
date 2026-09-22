@@ -30,11 +30,10 @@ public class ImportVoicePreference extends Preference {
 
     public ImportVoicePreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setLayoutResource(R.layout.information_view);
     }
 
     public ImportVoicePreference(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        this(context, attrs, androidx.preference.R.attr.preferenceStyle);
     }
 
     public ImportVoicePreference(Context context) {

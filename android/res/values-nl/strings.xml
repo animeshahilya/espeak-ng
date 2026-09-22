@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Multiplier voor spreeksnelheid</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Spraakgegevens installeren...</string>
+  <string name="installing_voice_data">Spraakgegevens installeren…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Dit is een voorbeeld van tekst die is uitgesproken in het %s</string>

@@ -11,7 +11,7 @@
   <string name="setting_default_rate">語音速率調節係數</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">正在安裝語音資料...</string>
+  <string name="installing_voice_data">正在安裝語音資料…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">這是「%s」的語音測試範例</string>

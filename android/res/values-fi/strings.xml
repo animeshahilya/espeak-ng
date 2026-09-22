@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Puhenopeus</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Asennetaan äänitietoja...</string>
+  <string name="installing_voice_data">Asennetaan äänitietoja…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Tämä on näyte puhutusta tekstistä kielellä %s</string>

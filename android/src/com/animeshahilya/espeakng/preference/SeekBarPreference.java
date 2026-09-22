@@ -138,12 +138,11 @@ public class SeekBarPreference extends PersistingDialogPreference
     public SeekBarPreference(Context context, AttributeSet attrs, int defStyle)
     {
         super(context, attrs, defStyle);
-        setLayoutResource(R.layout.information_view);
     }
 
     public SeekBarPreference(Context context, AttributeSet attrs)
     {
-        this(context, attrs, 0);
+        this(context, attrs, androidx.preference.R.attr.dialogPreferenceStyle);
     }
 
     public SeekBarPreference(Context context)

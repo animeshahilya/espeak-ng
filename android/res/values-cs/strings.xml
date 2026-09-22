@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Multiplikátor rychlosti řeči</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Instalace hlasových dat...</string>
+  <string name="installing_voice_data">Instalace hlasových dat…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Toto je ukázkový text namluvený v jazyce %s</string>

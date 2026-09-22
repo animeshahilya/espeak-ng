@@ -38,7 +38,7 @@ abstract class PersistingDialogPreference extends DialogPreference {
     }
 
     PersistingDialogPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        this(context, attrs, androidx.preference.R.attr.dialogPreferenceStyle);
     }
 
     PersistingDialogPreference(Context context) {

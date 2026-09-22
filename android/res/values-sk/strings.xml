@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Tempo reči</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Prebieha inštalácia hlasových údajov...</string>
+  <string name="installing_voice_data">Prebieha inštalácia hlasových údajov…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Toto je ukážkový text nahovorený v jazyku %s</string>

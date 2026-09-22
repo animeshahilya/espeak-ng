@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Multiplikator för talhastighet</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Installerar röstdata ...</string>
+  <string name="installing_voice_data">Installerar röstdata …</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Detta är ett textexempel som läses på %s</string>

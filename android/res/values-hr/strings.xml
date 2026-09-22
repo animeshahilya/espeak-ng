@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Multiplikator brzine govora</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Instaliranje glasovnih podataka...</string>
+  <string name="installing_voice_data">Instaliranje glasovnih podataka…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Ovo je primjer teksta izgovorenog na %s</string>

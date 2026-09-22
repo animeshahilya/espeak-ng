@@ -151,7 +151,7 @@ public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCo
         final ImageButton searchClear = mDialogView.findViewById(R.id.languages_search_clear);
         final TextView countView = mDialogView.findViewById(R.id.languages_count);
         if (countView != null && getContext() != null) {
-            countView.setText(getContext().getString(R.string.languages_count_all, mAllEntries.size()));
+            countView.setText(getContext().getResources().getQuantityString(R.plurals.languages_count_all, mAllEntries.size(), mAllEntries.size()));
         }
 
         if (searchClear != null && searchInput != null) {
@@ -173,7 +173,7 @@ public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCo
                         public void onFilterComplete(int count) {
                             syncListViewCheckedState();
                             if (countView != null && getContext() != null) {
-                                countView.setText(getContext().getString(R.string.languages_count, count, mAllEntries.size()));
+                                countView.setText(getContext().getResources().getQuantityString(R.plurals.languages_count, mAllEntries.size(), count, mAllEntries.size()));
                             }
                         }
                     });

@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Spraaktempo-vermenigvuldiger</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">Installeer tans stemdata...</string>
+  <string name="installing_voice_data">Installeer tans stemdata…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Hierdie is \'n voorbeeld van gesproke teks in %s</string>

@@ -11,7 +11,7 @@
   <string name="setting_default_rate">تقویت‌کننده سرعت گفتگو</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">در حال نصب داده‌های صوتی...</string>
+  <string name="installing_voice_data">در حال نصب داده‌های صوتی…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">این یک نمونه از نوشتار گفته شده در %s است</string>

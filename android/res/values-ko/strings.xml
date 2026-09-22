@@ -11,7 +11,7 @@
   <string name="setting_default_rate">음성 배속 비율</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">음성 데이터 설치 중...</string>
+  <string name="installing_voice_data">음성 데이터 설치 중…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">%s로 읽은 텍스트 샘플입니다.</string>

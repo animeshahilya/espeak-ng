@@ -23,7 +23,6 @@
             android:layout_weight="1"
             android:minHeight="48dp"
             android:hint="@string/languages_search_hint"
-            android:contentDescription="@string/languages_search_hint"
             android:inputType="textFilter"
             android:imeOptions="actionDone"
             android:importantForAutofill="no" />

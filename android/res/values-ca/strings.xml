@@ -11,7 +11,7 @@
   <string name="setting_default_rate">Multiplicador de velocitat de la veu</string>
   <!--Source: Dialog text.
         Description: Status message shown when installing voice data.-->
-  <string name="installing_voice_data">S\'estan instal·lant les dades de veu...</string>
+  <string name="installing_voice_data">S\'estan instal·lant les dades de veu…</string>
   <!--Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.-->
   <string name="sample_text">Aquesta és una mostra de text llegit en veu alta en %s</string>
