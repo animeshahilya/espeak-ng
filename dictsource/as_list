@@ -136,15 +136,15 @@ _dpt	_d'OX'omik_
 গ	gO
 ঘ	g#O
 ঙ	'uNgO~
-চ	tSO
-ছ	tShO    // [h] to distinguish from [tS]
-জ	JO
-ঝ	J#O
+চ	sO
+ছ	sHO     // [h] to distinguish it from চ, both [s] in Assamese
+জ	zO
+ঝ	zHO
 ঞ	'iNO~
-ট	t.O
-ঠ	t.#O
-ড	d.O
-ঢ	d.#O
+ট	tO
+ঠ	t#O
+ড	dO
+ঢ	d#O
 ণ	m,odd#en.n.'O
 ত	tO
 থ	t#O
@@ -166,7 +166,7 @@ _dpt	_d'OX'omik_
 হ	hO
 ক্ষ	k,ojmud#en:oS:'O
 ড়	dOerO     // (d. + nukta)
-ঢ়	d#e hr.O    // (d#. + nukta)
+ঢ়	d#e rO    // (d#. + nukta)
 য়	,ontosteOj
 ৎ	kh,Ond.ot'O
 

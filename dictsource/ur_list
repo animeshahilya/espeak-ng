@@ -219,11 +219,11 @@ _dpt	_ISaRI'Ia_
 تجھی	tUJ#i:	$u
 تجھے	t'UJ#e:	$u
 جن	J'In	$u
-جنھیں	J,InH'e:n	$u
-انہوں	,UnH'o:n	$u
-انھوں	UnHo:n	$u
-انہیں	,UnH'e:n	$u
-انھیں	,UnH'e:n	$u
+جنھیں	J,InH'e~	$u
+انہوں	,UnH'o~	$u
+انھوں	UnHo~	$u
+انہیں	,UnH'e~	$u
+انھیں	,UnH'e~	$u
 انھی	UnHi	$u
 انہی	UnHi:	$u
 کن	kIn
@@ -249,7 +249,7 @@ _dpt	_ISaRI'Ia_
 گی	gi:	$u
 گے	ge:	$u
 کر	kaR	$u
-ہوں	Hu:n	$atend	$u
+ہوں	Hu~	$atend	$u
 
 // Pronunciation exceptions
 پبلک	p'abl,Ik
@@ -259,9 +259,9 @@ _dpt	_ISaRI'Ia_
 آئیسنگ	,a:is'Ing
 آئدیلسٹ	'a:Id.,i:;al,Ist.
 آئڈیلزم	'a:Id.,i:;al,Izam
-چوں	c'u:n
+چوں	c'u~
 (آئینہ بین)	a:'i:n,a||b'i:n
-بیں	b'i:n
+بیں	b'i~
 دکھائی	dIk#'a:i
 کچھ	k'Uc#	$u
 لنکس	l'Ink,s
@@ -290,7 +290,7 @@ _dpt	_ISaRI'Ia_
 شمولیت	S,Umu:li:;'at
 بہت	b'aHUt
 دن	d'In
-دنوں	dIn'o:n
+دنوں	dIn'o~
 مصر	m'Is.R
 مصری	m'Is.R,i:
 مختصر	m,Uxtas.'aR
@@ -368,9 +368,9 @@ _dpt	_ISaRI'Ia_
 بلکہ	b,alk'e:H
 حصہ	H'Is.,a#
 حصے	H'Is.e:
-حصوں	HIs.'o:n
+حصوں	HIs.'o~
 حساب	HIs'a:b
-ہوئیں	Hu:'i:n
+ہوئیں	Hu:'i~
 ہوئی	H'u:,i:
 ہوئے	H'u:e:
 اندسٹری	,Ind.'ast.R,i:
@@ -393,7 +393,7 @@ _dpt	_ISaRI'Ia_
 معطل	m,Oat'al
 معطلی	m,Oat'al,i:
 تین	t'i:n
-تینوں	ti:n'o:n
+تینوں	ti:n'o~
 ڈاکٹر	d.,a:kt.'aR
 اقبال	,Iqb'a:l
 جرم	J'URm
@@ -422,7 +422,7 @@ _dpt	_ISaRI'Ia_
 انگلینڈ	,Ingl'e:nd.
 رنز	R'anz
 انسداد	,InsId'a:d
-نہیں	naH'i:n
+نہیں	naH'i~
 صحتِ	s.e:H'ate:
 متفقہ	mUt'afIqa#
 تعلق	t'a:lUq
@@ -447,7 +447,7 @@ _dpt	_ISaRI'Ia_
 جمعرات	J,Ume:R'a:t
 جمعہ	J'Uma:
 برسرِ	b,aRs'aRe:
-درجنوں	d,aRJan'o:n
+درجنوں	d,aRJan'o~
 درجن	d,aRJ'an
 خلاف	xIl'a:f
 برخلاف	b,aRxIl'a:f
@@ -480,7 +480,7 @@ _dpt	_ISaRI'Ia_
 پرور	p'aRvaR
 قصے	q'Is.e:
 قصہ	q'Is.,a#
-قصوں	qIs.'o:n
+قصوں	qIs.'o~
 محفوظ	m,e:Hf'u:z.
 مقدس	m,Uqad'as
 و	o:
@@ -490,7 +490,7 @@ _dpt	_ISaRI'Ia_
 گنا	g'Una:
 ملک	m'Ulk
 ملکی	m'Ulk,i:
-ملکوں	m,Ulk'o:n
+ملکوں	m,Ulk'o~
 ممالک	mUm'a:lIk
 سنیچر	s,ani:c'aR
 اختر	,axt'aR
@@ -510,7 +510,7 @@ _dpt	_ISaRI'Ia_
 محسوس	m,EHs'u:s
 برعکس	b,aR'aks
 بت	b'Ut
-بتوں	bUt'o:n
+بتوں	bUt'o~
 سسٹم	sIst.'am
 معمر	m,Oam'aR
 حلیے	H'Ulje:
@@ -530,7 +530,7 @@ _dpt	_ISaRI'Ia_
 سروسز	s'aRvIs,Iz
 لطف	l'Utf
 سامع	s'a:me:
-ہوائیں	H,ava:j'e:n
+ہوائیں	H,ava:j'e~
 سرے	s'IRe:
 طبیعت	t,abi:;'at
 سخن	sUx'an
@@ -567,7 +567,7 @@ _dpt	_ISaRI'Ia_
 بطور	bat'O:R	$2
 پشاور	p,ISa:v'aR
 سہ	s'EH
-کیں	k'i:n	$u
+کیں	k'i~	$u
 فرصت	f,URs.'at
 مہم	m'UHIm
 ملتوی	m,Ult'av,i:
@@ -597,7 +597,7 @@ _dpt	_ISaRI'Ia_
 روی	R'av,i:
 عہدہ	'o:Hda#
 عہدے	'o:Hd,e:
-عہدوں	,o:Hd'o:n
+عہدوں	,o:Hd'o~
 موئثر	m,o:as'aR
 مشتبہ	mUSt'ab,a#
 بالعموم	b,IlUm'u:m
@@ -659,7 +659,7 @@ _dpt	_ISaRI'Ia_
 ذوالفقار	zUlfIqa:R
 منقلب	m,Unq'alIb
 بجز	b'aJUz
-تعیں	ta:'i:n
+تعیں	ta:'i~
 بہ	b'a#
 مسمار	m,Ism'a:R
 شکنی	S'Ikn,i:
@@ -688,7 +688,7 @@ _dpt	_ISaRI'Ia_
 تناظر	tan'a:z.UR
 بینائی	bin'a:i
 قابل	q'a:bIl
-سکتیں	s,akt'i:n
+سکتیں	s,akt'i~
 مجموعہ	m,aJm'u:a
 پراسرار	p,UR,asR'a:R
 مجموعے	m,aJm'u:e:
@@ -730,7 +730,7 @@ _dpt	_ISaRI'Ia_
 حضرت	HazRat
 تاکہ	ta:ke:H	$1
 یعنی	ja:ni:	$1
-والوں	va:lo:n	$1
+والوں	va:lo~	$1
 ناظم	na:z.Im
 طرف	taRaf
 گھنٹہ	g#ant.a:
@@ -873,7 +873,7 @@ _dpt	_ISaRI'Ia_
 ارتھ	aRt#
 معلیٰ	mUal:a:
 ارسال	IRsa:l
-ملیں	mIle:n
+ملیں	mIle~
 ارشاد	IRSa:d
 ارض	aRz
 سلطنت	saltanat
@@ -886,7 +886,7 @@ _dpt	_ISaRI'Ia_
 خرشید	xURSi:d
 تبرک	tabaRUk
 خرم	xURRam
-خزاں	xIza:n
+خزاں	xIza~
 پروردہ	paRvaRda#
 خشک	xUSk
 خصوص	xUs.u:s.
@@ -900,7 +900,7 @@ _dpt	_ISaRI'Ia_
 کتا	kUt:a:	$2
 دکھاؤ	dIk#a:o:
 کتے	kUt:e:	$2
-کتوں	kUt:o:n
+کتوں	kUt:o~
 بپھر	bIp#aR
 شکن	SIkan
 بتکرار	batakRa:R
@@ -1002,13 +1002,13 @@ _dpt	_ISaRI'Ia_
 افق	Ufaq
 افقی	Ufaqi
 الجھنیں	UlJ#ane~
-الجھنوں	UlJ#ano:n
+الجھنوں	UlJ#ano~
 ابتر	abtaR
 فراق	fIRa:q
 مبلغ	mUbal:IQ
 مقدم	mUqad:am
 اندوہ	ando:H	$2
-گیں	gi:n
+گیں	gi~
 زیست	zi:st
 تاثر	ta:sUR
 مقننہ	mUqan:Ina#
@@ -1051,7 +1051,7 @@ _dpt	_ISaRI'Ia_
 تربیت	taRbi;at
 تربیتی	taRbi;ati
 لباس	lIba:s
-جنھوں	JInHo:n	$u
+جنھوں	JInHo~	$u
 کانفرنس	ka:nfRans
 سرکردہ	saRkaRda#
 نازک	na:zUk
@@ -1144,7 +1144,7 @@ _dpt	_ISaRI'Ia_
 میلز	me:lz
 (ہیرا پھیری)	He:Ra||p#e:Ri
 بدبخت	badbaxt
-بدبختوں	badbaxto:n
+بدبختوں	badbaxto~
 سکواش	skva:S
 شہرۂ	SOHRae:
 ٹائٹلز	t.a:It.alz
@@ -1191,20 +1191,20 @@ _dpt	_ISaRI'Ia_
 سکول	sku:l
 نسل	nasl
 فریقین	faRi:q'E:n
-سکولوں	sk'u:lo:n
+سکولوں	sk'u:lo~
 (حزب اختلاف)	Hizbe:||IxtIla:f
 خدشات	xadSa:t
 (اقوام متحدہ)	aqva:me:||mUtaHIda
 پولیو	p'o:li:;o:
 شمس	Sams
 قبضہ	qabza#
-وہیں	vaHi:n
+وہیں	vaHi~
 مصنوعات	mas.nu:a:t
 مندر	mandIR
 مطلب	matlab
 مطلبی	matlab,i:
 فورسز	fo:RsIz
-سرگزشتوں	saRgUzaSto:n
+سرگزشتوں	saRgUzaSto~
 سرگم	saRgam
 مہیا	mUHai:;a:
 چرخ	caRx
@@ -1247,7 +1247,7 @@ _dpt	_ISaRI'Ia_
 کرن	kIRan
 ممتحن	mUmtaHIn
 گیر	gi:R
-گیروں	gi:Ro:n
+گیروں	gi:Ro~
 گیری	gi:R,i:
 چیرہ	ci:Ra#
 بلی	bIl:,i:
@@ -1277,7 +1277,7 @@ _dpt	_ISaRI'Ia_
 رخشندہ	RaxSInda#
 مارکیٹنگ	maRkit.Ing
 پلیٹ	ple:t.
-پلیٹوں	ple:t.o:n
+پلیٹوں	ple:t.o~
 پلیٹیں	ple:t.e~
 ارتعاش	IRtIa:S
 ارتعاشی	IRtIa:S,i:
@@ -1322,14 +1322,14 @@ _dpt	_ISaRI'Ia_
 طلوعِ	tUlu:e:
 کینہ	ki:na#
 پروری	paRvaR,i:
-پروروں	paRvaRo:n
+پروروں	paRvaRo~
 چرخہ	caRxa#
 کھد	k#Ud
 بازو	b'a:zu:
 (بازی گر)	ba:zi:||gaR
 مردہ	mURda#
 تکلم	takal:Um
-دلوں	dIlo:n
+دلوں	dIlo~
 دلیں	dIle~
 وصل	vas.l
 دماغ	dIma:Q
