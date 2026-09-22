@@ -33,11 +33,20 @@ public final class LanguageSettings {
         if (!preferences.contains(PREF_SUPPORTED_LANGUAGES)) {
             return null; // treat as "all"
         }
-        final Set<String> selected = preferences.getStringSet(PREF_SUPPORTED_LANGUAGES, null);
-        if (selected == null || selected.isEmpty()) {
+        final Set<String> stringSet = preferences.getStringSet(PREF_SUPPORTED_LANGUAGES, null);
+        if (stringSet == null || stringSet.isEmpty()) {
             return null; // missing or empty means all
         }
-        return new HashSet<String>(selected);
+        final Set<String> selected = new HashSet<String>();
+        for (String s : stringSet) {
+            if (s != null) {
+                selected.add(s);
+            }
+        }
+        if (selected.isEmpty()) {
+            return null;
+        }
+        return selected;
     }
 
     public static List<Voice> filterVoices(List<Voice> voices, SharedPreferences preferences) {

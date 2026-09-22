@@ -50,17 +50,47 @@ public class Voice {
      *         </ul>
      */
     public int match(Locale query) {
-        if (!locale.getISO3Language().equals(query.getISO3Language())) {
+        if (query == null) {
+            return TextToSpeech.LANG_NOT_SUPPORTED;
+        }
+        if (locale == null) {
+            return TextToSpeech.LANG_NOT_SUPPORTED;
+        }
+        String thisLang;
+        String queryLang;
+        try {
+            thisLang = locale.getISO3Language();
+        } catch (MissingResourceException e) {
             return TextToSpeech.LANG_NOT_SUPPORTED;
         }
         try {
-            if (!locale.getISO3Country().equals(query.getISO3Country())) {
-                return TextToSpeech.LANG_AVAILABLE;
-            }
+            queryLang = query.getISO3Language();
         } catch (MissingResourceException e) {
+            return TextToSpeech.LANG_NOT_SUPPORTED;
+        }
+        if (!thisLang.equals(queryLang)) {
+            return TextToSpeech.LANG_NOT_SUPPORTED;
+        }
+
+        String thisCountry;
+        String queryCountry;
+        try {
+            thisCountry = locale.getISO3Country();
+        } catch (MissingResourceException e) {
+            thisCountry = "";
+        }
+        try {
+            queryCountry = query.getISO3Country();
+        } catch (MissingResourceException e) {
+            queryCountry = "";
+        }
+        if (!thisCountry.equals(queryCountry)) {
             return TextToSpeech.LANG_AVAILABLE;
         }
-        if (!locale.getVariant().equals(query.getVariant())) {
+
+        String thisVariant = locale.getVariant();
+        String queryVariant = query.getVariant();
+        if (!thisVariant.equals(queryVariant)) {
             return TextToSpeech.LANG_COUNTRY_AVAILABLE;
         }
         return TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE;
