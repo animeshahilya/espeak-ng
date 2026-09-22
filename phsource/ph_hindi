@@ -43,6 +43,12 @@ phoneme V
       ChangePhoneme(@)
     ENDIF
 
+    // Right-to-left schwa deletion: the schwa of a final C@C# syllable always
+    // survives (see below), so a schwa just before it can go: मलहम [məlɦəm],
+    // बकतर [bəktər]. Only when that next schwa is not itself word-final.
+    IF prev2PhW(isVowel) AND nextVowel(isFlag1) AND nextVowel(isFinalVowel) AND NOT nextVowel(isWordEnd) THEN
+      ChangePhoneme(NULL)
+    ENDIF
     IF prev2PhW(isVowel) AND NOT nextVowel(isFlag1) THEN
       IF thisPh(isFinalVowel) AND nextPhW(isNotVowel) THEN
         // don't delete schwa before a word-final consonant

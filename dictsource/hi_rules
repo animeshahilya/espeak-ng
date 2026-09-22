@@ -142,7 +142,7 @@ C)        ां         a~
 C)        ि          I
 C)        ि (_       ,i:      // final short i lengthens (shakti, vidhi); see
                               // .group इ above for why the stress mark matters
-C)//      िँ       i~
+C)        ि (ँ       I~        // like the other vowel signs: nasalize here, ँ adds nothing
 C)        िं       i~
 
 .group ी
@@ -252,6 +252,9 @@ C)        ॣ          l-:
         कँ         kV~        // + candrabindu
         क (_       k
         क (B       k
+     @) कर (_S2    k@2r       // -kar suffix (उठकर "having got up"): strip it and
+                              // translate the stem alone, so schwa deletion sees the
+                              // boundary - otherwise उठकर came out [ʊʈʰəkər]
         क (्य      k:
         क़         qV
         क़ (_      q
@@ -598,7 +601,9 @@ C)        ॣ          l-:
         ऽ          :
 
 .group ँ
-        ँ          n         // candrabindu
+        ँ          n         // candrabindu, fallback only
+     B) ँ                    // after a vowel sign: the sign's own (ँ rule already
+                              // nasalized the vowel; an extra n made बाँटे [bãnʈe]
 
 .group ं
         ं          n         // anusvara default
@@ -724,5 +729,6 @@ C)	्
    D__) of (__D    me
 
 
-
-
+// symbols
+.group
+    __) - (_D      m'a:In@s     // "-5" is minus five; the sign was silently dropped
