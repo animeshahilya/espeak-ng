@@ -48,10 +48,17 @@ public class UserDictionaryManager {
     private final List<UserDictionary> mRules = new CopyOnWriteArrayList<>();
     private final java.util.concurrent.ConcurrentHashMap<String, List<UserDictionary>> mLanguageCache =
             new java.util.concurrent.ConcurrentHashMap<>();
+    // Cached getRulesByCategory() partitions: applyCharacterRule() runs on
+    // every single-character utterance (TalkBack character navigation - the
+    // highest-frequency synthesis type) and used to rescan all rules and
+    // allocate two new lists per keystroke-read.
+    private final java.util.concurrent.ConcurrentHashMap<String, List<UserDictionary>> mCategoryCache =
+            new java.util.concurrent.ConcurrentHashMap<>();
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     private void invalidateCache() {
         mLanguageCache.clear();
+        mCategoryCache.clear();
     }
 
     private UserDictionaryManager(Context context) {
@@ -417,11 +424,20 @@ public class UserDictionaryManager {
     }
 
     public List<UserDictionary> getRulesByCategory(String category) {
+        if (category == null) {
+            return Collections.emptyList();
+        }
+        List<UserDictionary> cached = mCategoryCache.get(category);
+        if (cached != null) {
+            return cached;
+        }
         List<UserDictionary> out = new ArrayList<>();
         for (UserDictionary r : mRules) {
             if (r.getCategory().equals(category)) out.add(r);
         }
-        return Collections.unmodifiableList(out);
+        List<UserDictionary> result = Collections.unmodifiableList(out);
+        mCategoryCache.put(category, result);
+        return result;
     }
 
     /** Bulk replace, used by restore-from-backup. */

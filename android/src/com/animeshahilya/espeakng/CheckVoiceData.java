@@ -62,7 +62,20 @@ public class CheckVoiceData extends Activity {
         return new File(storage.getDir("voices", MODE_PRIVATE), "espeak-ng-data");
     }
 
+    /**
+     * Memo of the last {@link #hasBaseResources} scan: six {@code File.exists()}
+     * stats that findVoice() can hit up to 4x per synthesis request (and
+     * getDefaultVoiceFor up to 4 findVoice calls). The data tree only changes
+     * inside {@link #extractVoiceData}, which clears this before rmdir().
+     * Nullable Boolean: null = not yet computed this process.
+     */
+    private static volatile Boolean sHasBaseResources = null;
+
     public static boolean hasBaseResources(Context context) {
+        final Boolean cached = sHasBaseResources;
+        if (cached != null) {
+            return cached;
+        }
         final File dataPath = getDataPath(context);
 
         for (String resource : BASE_RESOURCES) {
@@ -71,10 +84,12 @@ public class CheckVoiceData extends Activity {
             if (!resourceFile.exists()) {
                 // Expected on first run before extraction; info, not an error.
                 Log.i(TAG, "Missing base resource: " + resourceFile.getPath());
+                sHasBaseResources = false;
                 return false;
             }
         }
 
+        sHasBaseResources = true;
         return true;
     }
 
@@ -122,6 +137,9 @@ public class CheckVoiceData extends Activity {
             }
 
             final File dataPath = getDataPath(context);
+            // Invalidate the hasBaseResources() memo before the tree
+            // disappears, so concurrent readers don't trust stale stats.
+            sHasBaseResources = null;
             FileUtils.rmdir(dataPath);
 
             try (java.io.InputStream dataStream = context.getResources().openRawResource(R.raw.espeakdata)) {

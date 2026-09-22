@@ -182,6 +182,22 @@ public class TtsService extends TextToSpeechService {
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         CheckVoiceData.ensureVoiceData(mStorageContext);
         initializeTtsEngine();
+        // Warm the user-dictionary singleton off the main/synth threads: its
+        // first getInstance() reads and compiles every rule from disk, and
+        // without this the first synthesis request after each process start
+        // pays that cost (seconds for large imported dictionaries) on the
+        // latency-critical path. Failure is non-fatal - the lazy path will
+        // retry (and surface the error) if a synthesis actually needs it.
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    UserDictionaryManager.getInstance(mStorageContext);
+                } catch (Throwable t) {
+                    Log.w(TAG, "User dictionary warmup failed", t);
+                }
+            }
+        }, "espeak-dict-warmup").start();
         final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
         // The 3-arg registerReceiver(..., flags) overload requires API 33 (Tiramisu);
         // this app's minSdk is 26, so it must fall back to the unflagged overload below
@@ -592,7 +608,7 @@ public class TtsService extends TextToSpeechService {
 
         // Fast-path empty or whitespace-only utterances: avoid full voice/param setup
         // and JNI overhead for TalkBack spacers, empty lines, and blank elements.
-        if (text.trim().isEmpty()) {
+        if (isBlank(text)) {
             if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
                     != TextToSpeech.SUCCESS) {
                 reportError(callback, TextToSpeech.ERROR_SERVICE);
@@ -679,7 +695,11 @@ public class TtsService extends TextToSpeechService {
         mAudioOptimizer = settings.isAudioOptimizerEnabled() && sampleRate > 0
                 ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
                 : null;
-        engine.setVoice(voice, settings.getVoiceVariant());
+        // Parsed once: getVoiceVariant() re-reads SharedPreferences and
+        // re-splits the stored string, and it was previously called at every
+        // setVoice() site below (up to 3x per request, more when chunked).
+        final VoiceVariant voiceVariant = settings.getVoiceVariant();
+        engine.setVoice(voice, voiceVariant);
 
         int rate = settings.getRate();
         int rateScale = request.getSpeechRate();
@@ -786,7 +806,9 @@ public class TtsService extends TextToSpeechService {
             unitVoices.add(voice);
             unitBases.add(0);
         } else {
-            engine.setVoice(voice, settings.getVoiceVariant());
+            // No setVoice() here: the call at the top of setup already
+            // applied this exact voice+variant (SpeechSynthesis memoizes it),
+            // and re-applying cost a full native dictionary reload per call.
             int base = 0;
             for (String chunk : chunkForWatchdog(text)) {
                 units.add(chunk);
@@ -804,7 +826,7 @@ public class TtsService extends TextToSpeechService {
                 }
                 try {
                     mChunkBase = unitBases.get(ui);
-                    engine.setVoice(unitVoices.get(ui), settings.getVoiceVariant());
+                    engine.setVoice(unitVoices.get(ui), voiceVariant);
                     engine.synthesize(units.get(ui), false);
                 } catch (Throwable t) {
                     // One bad chunk (mixed-script edge case) must never kill
@@ -846,6 +868,20 @@ public class TtsService extends TextToSpeechService {
     public static final int MAX_CHUNK_CHARS = TextPreprocessor.MAX_CHUNK_CHARS;
     public static final int MAX_REQUEST_CHARS = TextPreprocessor.MAX_REQUEST_CHARS;
     public static final int MAX_CHUNKS = TextPreprocessor.MAX_CHUNKS;
+
+    /**
+     * True when text has no char above ' ' - exactly {@code trim().isEmpty()}
+     * semantics without copying the string (requests can be up to 300k chars,
+     * and this runs before any other setup on every one of them).
+     */
+    private static boolean isBlank(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) > ' ') {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static boolean containsProgrammingSymbolChars(String text) {
         return TextPreprocessor.containsProgrammingSymbolChars(text);

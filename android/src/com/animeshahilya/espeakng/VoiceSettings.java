@@ -234,7 +234,7 @@ public class VoiceSettings {
         int min = mEngine.Volume.getMinValue();
         int max = mEngine.Volume.getMaxValue();
 
-        int range = getPreferenceValue(PREF_VOLUME, mEngine.Volume.getDefaultValue());
+        int range = getPreferenceValue(PREF_VOLUME, mEngine.Volume);
         if (range > max) range = max;
         if (range < min) range = min;
         return range;
@@ -244,7 +244,7 @@ public class VoiceSettings {
         int min = mEngine.Punctuation.getMinValue();
         int max = mEngine.Punctuation.getMaxValue();
 
-        int level = getPreferenceValue(PREF_PUNCTUATION_LEVEL, mEngine.Punctuation.getDefaultValue());
+        int level = getPreferenceValue(PREF_PUNCTUATION_LEVEL, mEngine.Punctuation);
         if (level > max) level = max;
         if (level < min) level = min;
         return level;
@@ -266,6 +266,25 @@ public class VoiceSettings {
             // crash every synthesis request through this method, since
             // getRate()/getPitch()/etc. all route through it.
             return defaultValue;
+        }
+    }
+
+    /**
+     * As {@link #getPreferenceValue(String, int)}, but defers
+     * {@link SpeechSynthesis.Parameter#getDefaultValue()} - which is a JNI
+     * call - to the missing/malformed paths only. The int overload cannot do
+     * this: Java evaluates the default argument eagerly, so every request was
+     * paying four pointless JNI round-trips even with the preference set.
+     */
+    private int getPreferenceValue(String preference, SpeechSynthesis.Parameter parameter) {
+        String prefString = mPreferences.getString(preference, null);
+        if (prefString == null) {
+            return parameter.getDefaultValue();
+        }
+        try {
+            return Integer.parseInt(prefString);
+        } catch (NumberFormatException e) {
+            return parameter.getDefaultValue();
         }
     }
 
@@ -344,7 +363,7 @@ public class VoiceSettings {
     public int getWordGap() {
         int min = mEngine.WordGap.getMinValue();
         int max = mEngine.WordGap.getMaxValue();
-        int value = getPreferenceValue(PREF_WORD_GAP, mEngine.WordGap.getDefaultValue());
+        int value = getPreferenceValue(PREF_WORD_GAP, mEngine.WordGap);
         if (value > max) value = max;
         if (value < min) value = min;
         return value;
@@ -354,7 +373,7 @@ public class VoiceSettings {
     public int getPauseScale() {
         int min = mEngine.PauseScale.getMinValue();
         int max = mEngine.PauseScale.getMaxValue();
-        int value = getPreferenceValue(PREF_PAUSE_SCALE, mEngine.PauseScale.getDefaultValue());
+        int value = getPreferenceValue(PREF_PAUSE_SCALE, mEngine.PauseScale);
         if (value > max) value = max;
         if (value < min) value = min;
         return value;

@@ -137,6 +137,11 @@ public final class TextPreprocessor {
             "|\\b(King|Queen|Pope|Emperor)\\s+(?:(?-i:([A-Z][a-zA-Z'-]*))\\s+)?(?-i:([IVXLCDM]+))\\b",
             Pattern.CASE_INSENSITIVE);
 
+    // Precompiled: String.matches() recompiles its pattern on every call, and
+    // parseRomanNumeral() runs once per PATTERN_ROMAN_CONTEXT match.
+    private static final Pattern PATTERN_ROMAN_VALID = Pattern.compile(
+            "^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
+
     private static final Pattern PATTERN_URL = Pattern.compile(
             "\\b(?:https?://|www\\.)[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(?:/[^\\s]*)?",
             Pattern.CASE_INSENSITIVE);
@@ -201,20 +206,24 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
+        UserDictionaryManager dictManager = null;
         if (!isSsml && settings.isUserDictionaryEnabled() && storageContext != null) {
+            // Resolved once: getInstance() is static synchronized, and the
+            // single-character path below needs the same instance.
+            dictManager = UserDictionaryManager.getInstance(storageContext);
             String before = text;
-            text = UserDictionaryManager.getInstance(storageContext).applyRules(text, languageTag(voice));
+            text = dictManager.applyRules(text, languageTag(voice));
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        final boolean isSingleCharacterUtterance = !isSsml && (text.length() == 1 || text.trim().length() == 1);
+        final boolean isSingleCharacterUtterance = !isSsml
+                && (text.length() == 1 || trimmedLength(text) == 1);
 
         if (isSingleCharacterUtterance) {
             boolean characterRuleApplied = false;
-            if (settings.isUserDictionaryEnabled() && storageContext != null) {
+            if (dictManager != null) {
                 String before = text;
-                text = UserDictionaryManager.getInstance(storageContext)
-                        .applyCharacterRule(text, languageTag(voice));
+                text = dictManager.applyCharacterRule(text, languageTag(voice));
                 characterRuleApplied = !text.equals(before);
                 offsetMap = chainOffset(offsetMap, before, text);
             }
@@ -291,16 +300,20 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        if (!isSsml && !symbolsExpanded && settings.isCodeReadingModeEnabled()) {
+        // Read once: isCodeReadingModeEnabled/isSpellingModeEnabled/
+        // isPhoneticModeEnabled each re-read up to four prefs via
+        // getReadingMode(), and all three were consulted below.
+        final String readingMode = settings.getReadingMode();
+        if (!isSsml && !symbolsExpanded && VoiceSettings.READING_CODE.equals(readingMode)) {
             String before = text;
             text = expandProgrammingSymbols(text);
             offsetMap = chainOffset(offsetMap, before, text);
         }
-        if (!isSsml && settings.isSpellingModeEnabled()) {
+        if (!isSsml && VoiceSettings.READING_SPELLING.equals(readingMode)) {
             String before = text;
             text = expandSpellingMode(text);
             offsetMap = chainOffset(offsetMap, before, text);
-        } else if (!isSsml && settings.isPhoneticModeEnabled()) {
+        } else if (!isSsml && VoiceSettings.READING_PHONETIC.equals(readingMode)) {
             String before = text;
             text = expandPhoneticMode(text);
             offsetMap = chainOffset(offsetMap, before, text);
@@ -353,6 +366,93 @@ public final class TextPreprocessor {
             }
         }
         return false;
+    }
+
+    /**
+     * True only when {@code text} can actually match one of the SYM_* patterns
+     * used by {@link #expandProgrammingSymbols}. The public
+     * {@link #containsProgrammingSymbolChars} gate matches any lone '.',
+     * '-' or '/', so ordinary prose passed it and paid all 37 full-text regex
+     * scans on every synthesis request (the setting defaults to on). This
+     * over-approximates the patterns precisely: every ASCII match needs an
+     * adjacent symbol pair (or "..." / "+/-"), every other match is one of
+     * the standalone Unicode symbols, and the digit-context operators need a
+     * digit on both sides. Running the full chain when this says maybe is
+     * always safe; skipping when it says no is safe because the replacements
+     * only ever produce plain words that cannot satisfy a later pattern.
+     */
+    private static boolean mayMatchProgrammingSymbols(String text) {
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            final char c = text.charAt(i);
+            if (i + 1 < len) {
+                final char n = text.charAt(i + 1);
+                if ((c == '!' && n == '=')
+                        || (c == '=' && (n == '=' || n == '>'))
+                        || (c == '<' && (n == '=' || n == '-'))
+                        || (c == '>' && n == '=')
+                        || (c == '-' && n == '>')
+                        || (c == '&' && n == '&')
+                        || (c == '|' && n == '|')
+                        || (c == '/' && (n == '/' || n == '*'))
+                        || (c == '*' && n == '/')) {
+                    return true;
+                }
+            }
+            if (c == '.' && i + 2 < len
+                    && text.charAt(i + 1) == '.' && text.charAt(i + 2) == '.') {
+                return true; // \.{3,}
+            }
+            if (c == '+' && i + 2 < len
+                    && text.charAt(i + 1) == '/' && text.charAt(i + 2) == '-') {
+                return true; // +/-
+            }
+            if (c == '*') {
+                // (?<=\d)\s*\*\s*(?=\d) - SYM_TIMES' ASCII branch
+                int b = i - 1;
+                while (b >= 0 && isRegexSpace(text.charAt(b))) b--;
+                int a = i + 1;
+                while (a < len && isRegexSpace(text.charAt(a))) a++;
+                if (b >= 0 && isAsciiDigit(text.charAt(b))
+                        && a < len && isAsciiDigit(text.charAt(a))) {
+                    return true;
+                }
+            }
+            switch (c) {
+                case '≠': case '≤': case '≥': case '⇒': case '→': case '←':
+                case '↑': case '↓': case '…': case '±': case '×': case '÷':
+                case '≈': case '✓': case '✔': case '•': case '⁃': case '◦':
+                case '°': case '√': case '∞': case '∫': case '∀': case '∃':
+                case '∉': case '∈': case '∪': case '∩': case '¬': case '∧':
+                case '∨': case '¢': case '¥': case 'ƒ':
+                    return true;
+                default:
+                    break;
+            }
+        }
+        return false;
+    }
+
+    /** Java regex \s: space, tab, line feed, vertical tab, form feed, CR. */
+    private static boolean isRegexSpace(char c) {
+        return c == ' ' || c == '\t' || c == '\n' || c == 0x0B || c == '\f' || c == '\r';
+    }
+
+    private static boolean isAsciiDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    /**
+     * Length of {@code text} after trimming leading/trailing chars
+     * {@code <= ' '} (exactly {@code String.trim()} semantics) without
+     * copying the string.
+     */
+    private static int trimmedLength(String text) {
+        int start = 0;
+        int end = text.length();
+        while (start < end && text.charAt(start) <= ' ') start++;
+        while (end > start && text.charAt(end - 1) <= ' ') end--;
+        return end - start;
     }
 
     public static boolean containsIndianNuanceChars(String text) {
@@ -582,7 +682,7 @@ public final class TextPreprocessor {
     }
 
     public static String expandProgrammingSymbols(String text) {
-        if (text == null || text.isEmpty() || !containsProgrammingSymbolChars(text)) {
+        if (text == null || text.isEmpty() || !mayMatchProgrammingSymbols(text)) {
             return text;
         }
         text = SYM_NOT_EQUAL.matcher(text).replaceAll(" not equal ");
@@ -658,7 +758,7 @@ public final class TextPreprocessor {
 
     private static int parseRomanNumeral(String s) {
         if (s == null || s.isEmpty() || s.length() > 15) return -1;
-        if (!s.matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")) {
+        if (!PATTERN_ROMAN_VALID.matcher(s).matches()) {
             return -1;
         }
         int total = 0;

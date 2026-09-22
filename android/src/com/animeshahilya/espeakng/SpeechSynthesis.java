@@ -61,6 +61,17 @@ public class SpeechSynthesis {
     // Immutable snapshot; callers get a defensive copy so nobody can mutate it.
     private static volatile List<Voice> sCachedVoices = null;
 
+    // Last voice selection applied to the native engine (static: the native
+    // engine is process-global, so any SpeechSynthesis instance's setVoice()
+    // affects what the next instance would see). espeak_SetVoiceByName
+    // re-reads the voice file and re-loads its entire dictionary from disk on
+    // every call, and TtsService requests the same voice up to 3x per
+    // synthesis request (once up front, once after chunk prep, once per
+    // chunk) - skip the native round-trip when nothing changed. Guarded by
+    // sSynthLock; invalidated by clearVoiceCache() (data extraction, engine
+    // re-init, terminate).
+    private static volatile String sLastVoiceKey = null;
+
     // Process-wide lock protecting native synthesis calls. The underlying C engine
     // maintains process-global state and is not re-entrant. stop() intentionally does
     // not acquire this lock so it can immediately signal native abort without waiting.
@@ -249,22 +260,41 @@ public class SpeechSynthesis {
     /** Clear cached voice list (call when voice data changes, e.g., after extraction). */
     public static void clearVoiceCache() {
         sCachedVoices = null;
+        // Voice data or the native engine was reset, so the previous
+        // setVoice() no longer describes native state - next setVoice()
+        // must re-apply even if it matches the old selection.
+        sLastVoiceKey = null;
     }
 
     public void setVoice(Voice voice, VoiceVariant variant) {
         if (voice == null) {
             return;
         }
+        // NOTE: espeak_SetVoiceByProperties does not support specifying the
+        // voice variant (e.g. klatt), but espeak_SetVoiceByName does.
+        final boolean byName = variant != null && variant.variant != null;
+        final String key;
+        if (byName) {
+            key = voice.identifier + "+" + variant.variant;
+        } else {
+            final int gender = (variant != null) ? variant.gender : GENDER_UNSPECIFIED;
+            final int age = (variant != null) ? variant.age : AGE_ANY;
+            key = voice.name + "#" + gender + "." + age;
+        }
         synchronized (sSynthLock) {
-            // NOTE: espeak_SetVoiceByProperties does not support specifying the
-            // voice variant (e.g. klatt), but espeak_SetVoiceByName does.
-            if (variant == null || variant.variant == null) {
-                final int gender = (variant != null) ? variant.gender : GENDER_UNSPECIFIED;
-                final int age = (variant != null) ? variant.age : AGE_ANY;
-                nativeSetVoiceByProperties(voice.name, gender, age);
+            if (key.equals(sLastVoiceKey)) {
+                return;
+            }
+            if (!byName) {
+                nativeSetVoiceByProperties(voice.name,
+                        (variant != null) ? variant.gender : GENDER_UNSPECIFIED,
+                        (variant != null) ? variant.age : AGE_ANY);
             } else {
                 nativeSetVoiceByName(voice.identifier + "+" + variant.variant);
             }
+            // Set only after the native call: if it throws, the next request
+            // must retry rather than believing the voice was applied.
+            sLastVoiceKey = key;
         }
     }
 
