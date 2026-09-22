@@ -130,6 +130,39 @@ public class TtsService extends TextToSpeechService {
     // drive voice selection through these members.
     protected Voice mMatchingVoice = null;
 
+    /**
+     * Last voice selection, keyed by the request that produced it. Screen
+     * readers issue the same voice+language on every utterance, and without
+     * this each request re-ran the full voice scan in getDefaultVoiceFor()
+     * (plus its fr/pt/vi second passes). Invalidated wherever the selection
+     * can change outside selectVoice(): rebuildAvailableVoices() (voice set
+     * changed), onLoadLanguage() and onLoadVoice() (the framework retargets
+     * the selection directly). Volatile holder, so a concurrent invalidation
+     * degrades to one redundant scan, never a torn read.
+     */
+    private static final class VoiceSelection {
+        final String key;
+        final Voice voice;
+        final int result;
+
+        VoiceSelection(String key, Voice voice, int result) {
+            this.key = key;
+            this.voice = voice;
+            this.result = result;
+        }
+    }
+
+    private volatile VoiceSelection mLastSelection = null;
+
+    private static String voiceRequestKey(SynthesisRequest request) {
+        // '\u0001' separators: engine voice names never contain it, so two
+        // different requests cannot fold into the same key.
+        return String.valueOf(request.getVoiceName()) + '\u0001'
+                + String.valueOf(request.getLanguage()) + '\u0001'
+                + String.valueOf(request.getCountry()) + '\u0001'
+                + String.valueOf(request.getVariant());
+    }
+
     private SharedPreferences mPreferences;
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnPreferencesChanged =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -351,6 +384,8 @@ public class TtsService extends TextToSpeechService {
 
     @Override
     protected int onLoadLanguage(String language, String country, String variant) {
+        // Retargets the selection outside selectVoice(): drop its memo.
+        mLastSelection = null;
         final Pair<Voice, Integer> match = getDefaultVoiceFor(language, country, variant);
         if (match.first != null) {
             synchronized (mAvailableVoices) {
@@ -394,11 +429,18 @@ public class TtsService extends TextToSpeechService {
 
     @Override
     public List<android.speech.tts.Voice> onGetVoices() {
-        rebuildAvailableVoices();
+        // The cache below never hit: every call rebuilt (and invalidated)
+        // first, so the framework's frequent polling re-ran the whole
+        // Locale/HashSet/Voice construction each time. The set only changes
+        // inside rebuildAvailableVoices(), which already invalidates, so a
+        // cached list is exactly what a rebuild would produce.
         synchronized (mAvailableVoices) {
             if (mCachedFrameworkVoices != null) {
                 return new ArrayList<android.speech.tts.Voice>(mCachedFrameworkVoices);
             }
+        }
+        rebuildAvailableVoices();
+        synchronized (mAvailableVoices) {
             List<android.speech.tts.Voice> voices = new ArrayList<android.speech.tts.Voice>(mAvailableVoices.size());
             for (Voice voice : mAvailableVoices.values()) {
                 int quality = android.speech.tts.Voice.QUALITY_NORMAL;
@@ -422,6 +464,8 @@ public class TtsService extends TextToSpeechService {
 
     @Override
     public int onLoadVoice(String name) {
+        // Retargets the selection outside selectVoice(): drop its memo.
+        mLastSelection = null;
         synchronized (mAvailableVoices) {
             Voice voice = mAvailableVoices.get(name);
             if (voice == null) {
@@ -482,6 +526,24 @@ public class TtsService extends TextToSpeechService {
     }
 
     private int selectVoice(SynthesisRequest request) {
+        final String key = voiceRequestKey(request);
+        final VoiceSelection memo = mLastSelection;
+        if (memo != null && memo.key.equals(key)) {
+            synchronized (mAvailableVoices) {
+                mMatchingVoice = memo.voice;
+            }
+            return memo.result;
+        }
+        final int result = selectVoiceUncached(request);
+        final Voice selected;
+        synchronized (mAvailableVoices) {
+            selected = mMatchingVoice;
+        }
+        mLastSelection = new VoiceSelection(key, selected, result);
+        return result;
+    }
+
+    private int selectVoiceUncached(SynthesisRequest request) {
         final String name = request.getVoiceName();
         if (name != null && !name.isEmpty()
                 && onLoadVoice(name) == TextToSpeech.SUCCESS) {
@@ -1043,8 +1105,10 @@ public class TtsService extends TextToSpeechService {
             // filter runs: mAvailableVoices must not keep serving the previous
             // selection if filterVoices() were to throw, and the field's
             // documented invariant is that a rebuild always produces a fresh
-            // list.
+            // list. The voice-selection memo goes with it: it keys a voice
+            // object from the previous set.
             mCachedFrameworkVoices = null;
+            mLastSelection = null;
             mAvailableVoices.clear();
             List<Voice> voices = mAllVoices;
             if (mPreferences != null) {

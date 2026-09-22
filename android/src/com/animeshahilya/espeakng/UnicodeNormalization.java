@@ -86,6 +86,14 @@ public final class UnicodeNormalization {
      * where exact identity of offsets is guaranteed).
      */
     public static Result normalize(String text) {
+        // ASCII is NFKC-stable (no ASCII character has a compatibility
+        // decomposition) and every supplementary mapping lives above
+        // U+1F150, so pure-ASCII text - the overwhelmingly common case -
+        // skips both the code-point scan below and Normalizer's own full
+        // pass with a single tight char loop.
+        if (isAscii(text)) {
+            return null;
+        }
         if (!hasSupplementaryMappings(text)
                 && Normalizer.isNormalized(text, Normalizer.Form.NFKC)) {
             return null;
@@ -163,6 +171,15 @@ public final class UnicodeNormalization {
             return 'A' + (codePoint - 0x1F170);
         }
         return codePoint;
+    }
+
+    private static boolean isAscii(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) >= 0x80) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean hasSupplementaryMappings(String text) {

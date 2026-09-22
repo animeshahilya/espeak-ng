@@ -19,6 +19,8 @@ package com.animeshahilya.espeakng;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -94,43 +96,60 @@ public final class TextPreprocessor {
     private static final Pattern DATE_NUMERIC =
             Pattern.compile("\\b(\\d{1,4})[/\\-](\\d{1,2})[/\\-](\\d{1,4})\\b");
 
-    private static final Pattern SYM_NOT_EQUAL = Pattern.compile("!=|≠");
-    private static final Pattern SYM_DOUBLE_EQUALS = Pattern.compile("==");
-    private static final Pattern SYM_LESS_EQUAL = Pattern.compile("<=|≤");
-    private static final Pattern SYM_GREATER_EQUAL = Pattern.compile(">=|≥");
-    private static final Pattern SYM_FAT_ARROW = Pattern.compile("=>|⇒");
-    private static final Pattern SYM_THIN_ARROW = Pattern.compile("->|→");
-    private static final Pattern SYM_LEFT_ARROW = Pattern.compile("<-|←");
-    private static final Pattern SYM_UP_ARROW = Pattern.compile("↑");
-    private static final Pattern SYM_DOWN_ARROW = Pattern.compile("↓");
-    private static final Pattern SYM_LOGICAL_AND = Pattern.compile("&&");
-    private static final Pattern SYM_LOGICAL_OR = Pattern.compile("\\|\\|");
-    private static final Pattern SYM_COMMENT_START = Pattern.compile("/\\*");
-    private static final Pattern SYM_COMMENT_END = Pattern.compile("\\*/");
-    private static final Pattern SYM_DOUBLE_SLASH = Pattern.compile("(?<!https?:)//");
-    private static final Pattern SYM_ELLIPSIS = Pattern.compile("\\.{3,}|…");
-    private static final Pattern SYM_PLUS_MINUS = Pattern.compile("±|\\+/-");
-    private static final Pattern SYM_TIMES = Pattern.compile("(?<=\\d)\\s*[×*]\\s*(?=\\d)");
-    private static final Pattern SYM_DIVIDE = Pattern.compile("(?<=\\d)\\s*÷\\s*(?=\\d)|÷");
-    private static final Pattern SYM_ALMOST_EQUAL = Pattern.compile("≈");
-    private static final Pattern SYM_CHECKMARK = Pattern.compile("[✓✔]");
-    private static final Pattern SYM_BULLET = Pattern.compile("[•⁃◦]");
-    private static final Pattern SYM_DEGREES = Pattern.compile("(?<=\\d)°");
-    private static final Pattern SYM_SQRT = Pattern.compile("√");
-    private static final Pattern SYM_INFINITY = Pattern.compile("∞");
-    private static final Pattern SYM_INTEGRAL = Pattern.compile("∫");
-    private static final Pattern SYM_FOR_ALL = Pattern.compile("∀");
-    private static final Pattern SYM_EXISTS = Pattern.compile("∃");
-    private static final Pattern SYM_NOT_ELEMENT_OF = Pattern.compile("∉");
-    private static final Pattern SYM_ELEMENT_OF = Pattern.compile("∈");
-    private static final Pattern SYM_UNION = Pattern.compile("∪");
-    private static final Pattern SYM_INTERSECTION = Pattern.compile("∩");
-    private static final Pattern SYM_LOGICAL_NOT = Pattern.compile("¬");
-    private static final Pattern SYM_SET_AND = Pattern.compile("∧");
-    private static final Pattern SYM_SET_OR = Pattern.compile("∨");
-    private static final Pattern SYM_CENT = Pattern.compile("¢");
-    private static final Pattern SYM_YEN = Pattern.compile("¥");
-    private static final Pattern SYM_FLORIN = Pattern.compile("ƒ");
+    // The 37 symbol patterns, in chain order, with a trigger literal each:
+    // a pattern is only scanned when one of its literals occurs in the text
+    // (indexOf, not regex). Every trigger list is an exact superset of its
+    // pattern's matches - each pattern's every match contains one of its
+    // literals (lookarounds are zero-width, so "//" always contains "//"
+    // even when the https? lookbehind rejects it) - so skipping a pattern
+    // whose triggers are absent skips nothing, and the Matcher still
+    // decides whenever a trigger is present.
+    private static final Pattern[] SYM_PATTERNS = {
+            Pattern.compile("!=|≠"), Pattern.compile("=="),
+            Pattern.compile("<=|≤"), Pattern.compile(">=|≥"),
+            Pattern.compile("=>|⇒"), Pattern.compile("->|→"),
+            Pattern.compile("<-|←"), Pattern.compile("↑"),
+            Pattern.compile("↓"), Pattern.compile("&&"),
+            Pattern.compile("\\|\\|"), Pattern.compile("/\\*"),
+            Pattern.compile("\\*/"), Pattern.compile("(?<!https?:)//"),
+            Pattern.compile("\\.{3,}|…"), Pattern.compile("±|\\+/-"),
+            Pattern.compile("(?<=\\d)\\s*[×*]\\s*(?=\\d)"),
+            Pattern.compile("(?<=\\d)\\s*÷\\s*(?=\\d)|÷"),
+            Pattern.compile("≈"), Pattern.compile("[✓✔]"),
+            Pattern.compile("[•⁃◦]"), Pattern.compile("(?<=\\d)°"),
+            Pattern.compile("√"), Pattern.compile("∞"),
+            Pattern.compile("∫"), Pattern.compile("∀"),
+            Pattern.compile("∃"), Pattern.compile("∉"),
+            Pattern.compile("∈"), Pattern.compile("∪"),
+            Pattern.compile("∩"), Pattern.compile("¬"),
+            Pattern.compile("∧"), Pattern.compile("∨"),
+            Pattern.compile("¢"), Pattern.compile("¥"),
+            Pattern.compile("ƒ"),
+    };
+    private static final String[][] SYM_TRIGGERS = {
+            {"!=", "≠"}, {"=="}, {"<=", "≤"}, {">=", "≥"},
+            {"=>", "⇒"}, {"->", "→"}, {"<-", "←"}, {"↑"},
+            {"↓"}, {"&&"}, {"||"}, {"/*"},
+            {"*/"}, {"//"}, {"...", "…"}, {"±", "+/-"},
+            {"*", "×"}, {"÷"}, {"≈"}, {"✓", "✔"},
+            {"•", "⁃", "◦"}, {"°"}, {"√"}, {"∞"},
+            {"∫"}, {"∀"}, {"∃"}, {"∉"},
+            {"∈"}, {"∪"}, {"∩"}, {"¬"},
+            {"∧"}, {"∨"}, {"¢"}, {"¥"}, {"ƒ"},
+    };
+    private static final String[] SYM_REPLACEMENTS = {
+            " not equal ", " double equals ", " less than or equal to ",
+            " greater than or equal to ", " implies ", " arrow ",
+            " left arrow ", " up arrow ", " down arrow ",
+            " double ampersand ", " double pipe ", " comment start ",
+            " comment end ", " double slash ", " dot dot dot ",
+            " plus or minus ", " times ", " divided by ",
+            " almost equal to ", " check ", " bullet ", " degrees ",
+            " square root ", " infinity ", " integral ", " for all ",
+            " there exists ", " not an element of ", " element of ",
+            " union ", " intersection ", " not ", " and ", " or ",
+            " cents ", " yen ", " florin ",
+    };
 
     private static final Pattern PATTERN_ROMAN_CONTEXT = Pattern.compile(
             "\\b(Chapter|Part|Section|Volume|Book|Act|Scene|Title|Grade|Level|Phase|World War|War|Super Bowl)\\s+([IVXLCDMivxlcdm]+)\\b" +
@@ -438,6 +457,28 @@ public final class TextPreprocessor {
         return c == ' ' || c == '\t' || c == '\n' || c == 0x0B || c == '\f' || c == '\r';
     }
 
+    /**
+     * True when {@code text} holds {@code minRun} identical adjacent chars
+     * outside Java regex {@code \s}. Over-approximates both repeat patterns
+     * (which additionally exclude letters/digits): a run the pattern could
+     * match always satisfies this, so skipping the regex on false is exact
+     * and the pattern still decides on true.
+     */
+    private static boolean hasRepeatRun(String text, int minRun) {
+        int run = 1;
+        for (int i = 1; i < text.length(); i++) {
+            final char c = text.charAt(i);
+            if (c == text.charAt(i - 1) && !isRegexSpace(c)) {
+                if (++run >= minRun) {
+                    return true;
+                }
+            } else {
+                run = 1;
+            }
+        }
+        return false;
+    }
+
     private static boolean isAsciiDigit(char c) {
         return c >= '0' && c <= '9';
     }
@@ -685,44 +726,70 @@ public final class TextPreprocessor {
         if (text == null || text.isEmpty() || !mayMatchProgrammingSymbols(text)) {
             return text;
         }
-        text = SYM_NOT_EQUAL.matcher(text).replaceAll(" not equal ");
-        text = SYM_DOUBLE_EQUALS.matcher(text).replaceAll(" double equals ");
-        text = SYM_LESS_EQUAL.matcher(text).replaceAll(" less than or equal to ");
-        text = SYM_GREATER_EQUAL.matcher(text).replaceAll(" greater than or equal to ");
-        text = SYM_FAT_ARROW.matcher(text).replaceAll(" implies ");
-        text = SYM_THIN_ARROW.matcher(text).replaceAll(" arrow ");
-        text = SYM_LEFT_ARROW.matcher(text).replaceAll(" left arrow ");
-        text = SYM_UP_ARROW.matcher(text).replaceAll(" up arrow ");
-        text = SYM_DOWN_ARROW.matcher(text).replaceAll(" down arrow ");
-        text = SYM_LOGICAL_AND.matcher(text).replaceAll(" double ampersand ");
-        text = SYM_LOGICAL_OR.matcher(text).replaceAll(" double pipe ");
-        text = SYM_COMMENT_START.matcher(text).replaceAll(" comment start ");
-        text = SYM_COMMENT_END.matcher(text).replaceAll(" comment end ");
-        text = SYM_DOUBLE_SLASH.matcher(text).replaceAll(" double slash ");
-        text = SYM_ELLIPSIS.matcher(text).replaceAll(" dot dot dot ");
-        text = SYM_PLUS_MINUS.matcher(text).replaceAll(" plus or minus ");
-        text = SYM_TIMES.matcher(text).replaceAll(" times ");
-        text = SYM_DIVIDE.matcher(text).replaceAll(" divided by ");
-        text = SYM_ALMOST_EQUAL.matcher(text).replaceAll(" almost equal to ");
-        text = SYM_CHECKMARK.matcher(text).replaceAll(" check ");
-        text = SYM_BULLET.matcher(text).replaceAll(" bullet ");
-        text = SYM_DEGREES.matcher(text).replaceAll(" degrees ");
-        text = SYM_SQRT.matcher(text).replaceAll(" square root ");
-        text = SYM_INFINITY.matcher(text).replaceAll(" infinity ");
-        text = SYM_INTEGRAL.matcher(text).replaceAll(" integral ");
-        text = SYM_FOR_ALL.matcher(text).replaceAll(" for all ");
-        text = SYM_EXISTS.matcher(text).replaceAll(" there exists ");
-        text = SYM_NOT_ELEMENT_OF.matcher(text).replaceAll(" not an element of ");
-        text = SYM_ELEMENT_OF.matcher(text).replaceAll(" element of ");
-        text = SYM_UNION.matcher(text).replaceAll(" union ");
-        text = SYM_INTERSECTION.matcher(text).replaceAll(" intersection ");
-        text = SYM_LOGICAL_NOT.matcher(text).replaceAll(" not ");
-        text = SYM_SET_AND.matcher(text).replaceAll(" and ");
-        text = SYM_SET_OR.matcher(text).replaceAll(" or ");
-        text = SYM_CENT.matcher(text).replaceAll(" cents ");
-        text = SYM_YEN.matcher(text).replaceAll(" yen ");
-        text = SYM_FLORIN.matcher(text).replaceAll(" florin ");
-        return text;
+        // Collect-then-apply, equivalent to running the 37 replaceAll()s in
+        // chain order. Each pattern's Matcher.find() yields exactly the match
+        // set its replaceAll() would rewrite; a match is kept unless it
+        // overlaps a kept match of an earlier-chain pattern (the chain lets
+        // the earlier pattern own shared characters, e.g. "/*" in "//*" or
+        // "==" in "<==" - verified by differential fuzzing against the old
+        // chain). Kept spans are pairwise disjoint, and applying them to the
+        // original text equals sequential application because no replacement
+        // inserts a character any pattern could match (all 37 replacements
+        // are plain lowercase words and spaces: no symbol chars, no digits,
+        // no '$' or '\', so they also append literally), which means no
+        // later pattern can match inside, across, or because of an applied
+        // replacement - including its lookarounds, whose outcomes only
+        // depend on digits, spaces, and the "http:" prefix, none of which
+        // any replacement contains or destroys. One StringBuilder pass
+        // replaces up to 37 full-text copies.
+        final ArrayList<int[]> kept = new ArrayList<int[]>();
+        for (int p = 0; p < SYM_PATTERNS.length; p++) {
+            boolean present = false;
+            for (String trigger : SYM_TRIGGERS[p]) {
+                if (text.indexOf(trigger) >= 0) {
+                    present = true;
+                    break;
+                }
+            }
+            if (!present) {
+                continue;
+            }
+            final Matcher matcher = SYM_PATTERNS[p].matcher(text);
+            while (matcher.find()) {
+                final int s = matcher.start();
+                final int e = matcher.end();
+                boolean clash = false;
+                for (int k = 0; k < kept.size(); k++) {
+                    final int[] o = kept.get(k);
+                    if (s < o[1] && o[0] < e) {
+                        clash = true;
+                        break;
+                    }
+                }
+                if (!clash) {
+                    kept.add(new int[] {s, e, p});
+                }
+            }
+        }
+        if (kept.isEmpty()) {
+            return text;
+        }
+        Collections.sort(kept, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] a, int[] b) {
+                return a[0] - b[0];
+            }
+        });
+        final StringBuilder sb = new StringBuilder(text.length() + 32);
+        int pos = 0;
+        for (int k = 0; k < kept.size(); k++) {
+            final int[] span = kept.get(k);
+            sb.append(text, pos, span[0]);
+            sb.append(SYM_REPLACEMENTS[span[2]]);
+            pos = span[1];
+        }
+        sb.append(text, pos, text.length());
+        return sb.toString();
     }
 
     public static String expandRomanNumerals(String text) {
@@ -833,9 +900,15 @@ public final class TextPreprocessor {
             processed = condenseRepeatedEmojis(processed, mode);
         }
         if (VoiceSettings.REPEATED_CHARS_TRUNCATE.equals(mode)) {
+            if (!hasRepeatRun(processed, 4)) {
+                return processed;
+            }
             return PATTERN_REPEATED_CHARS_TRUNCATE.matcher(processed).replaceAll("$1$1$1");
         }
         if (!VoiceSettings.REPEATED_CHARS_COUNT.equals(mode)) {
+            return processed;
+        }
+        if (!hasRepeatRun(processed, 3)) {
             return processed;
         }
         Matcher matcher = PATTERN_REPEATED_CHARS.matcher(processed);
@@ -1067,54 +1140,74 @@ public final class TextPreprocessor {
             return text;
         }
         final boolean devanagari = isDevanagariNumberLang(languageTag);
+        // normalizeIndicDigits is already a single allocation-free char scan;
+        // every regex below is additionally gated on a trigger its own
+        // pattern provably requires (danda chars, '/', ',', ASCII digits),
+        // so ordinary prose without such triggers skips all of them. Each
+        // gate is exact, not an approximation: a pattern cannot match when
+        // its trigger is absent, and the full pattern still decides whenever
+        // the trigger is present.
         text = normalizeIndicDigits(text);
-        text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
-        Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
-        if (txnMatcher.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String expanded = SLASH_RUN.matcher(txnMatcher.group(0)).replaceAll(" / ");
-                txnMatcher.appendReplacement(sb, Matcher.quoteReplacement(expanded));
-            } while (txnMatcher.find());
-            txnMatcher.appendTail(sb);
-            text = sb.toString();
+        if (text.indexOf('।') >= 0 || text.indexOf('॥') >= 0) {
+            text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
+        }
+        if (text.indexOf('/') >= 0) {
+            Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
+            if (txnMatcher.find()) {
+                StringBuffer sb = new StringBuffer();
+                do {
+                    String expanded = SLASH_RUN.matcher(txnMatcher.group(0)).replaceAll(" / ");
+                    txnMatcher.appendReplacement(sb, Matcher.quoteReplacement(expanded));
+                } while (txnMatcher.find());
+                txnMatcher.appendTail(sb);
+                text = sb.toString();
+            }
         }
 
-        Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
-        if (currMatcher.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String amount = currMatcher.group(1);
-                String unit = currMatcher.group(2);
-                String words = (unit != null && !unit.isEmpty())
-                        ? indianRupeeShorthandToWords(amount, unit, devanagari)
-                        : indianRupeeAmountToWords(amount, devanagari);
-                currMatcher.appendReplacement(sb, Matcher.quoteReplacement(words));
-            } while (currMatcher.find());
-            currMatcher.appendTail(sb);
-            text = sb.toString();
+        // CURRENCY_PREFIX, INDIAN_NUMBER_COMMAS and every SHORTHAND_*
+        // pattern all require ASCII digits; computed once for all of them.
+        final boolean hasDigit = containsDigit(text);
+        if (hasDigit) {
+            Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
+            if (currMatcher.find()) {
+                StringBuffer sb = new StringBuffer();
+                do {
+                    String amount = currMatcher.group(1);
+                    String unit = currMatcher.group(2);
+                    String words = (unit != null && !unit.isEmpty())
+                            ? indianRupeeShorthandToWords(amount, unit, devanagari)
+                            : indianRupeeAmountToWords(amount, devanagari);
+                    currMatcher.appendReplacement(sb, Matcher.quoteReplacement(words));
+                } while (currMatcher.find());
+                currMatcher.appendTail(sb);
+                text = sb.toString();
+            }
         }
 
-        Matcher numMatcher = INDIAN_NUMBER_COMMAS.matcher(text);
-        if (numMatcher.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String grouped = numMatcher.group(0);
-                String words = indianGroupedNumberToWords(grouped, devanagari);
-                numMatcher.appendReplacement(sb, Matcher.quoteReplacement(words));
-            } while (numMatcher.find());
-            numMatcher.appendTail(sb);
-            text = sb.toString();
+        if (text.indexOf(',') >= 0) {
+            Matcher numMatcher = INDIAN_NUMBER_COMMAS.matcher(text);
+            if (numMatcher.find()) {
+                StringBuffer sb = new StringBuffer();
+                do {
+                    String grouped = numMatcher.group(0);
+                    String words = indianGroupedNumberToWords(grouped, devanagari);
+                    numMatcher.appendReplacement(sb, Matcher.quoteReplacement(words));
+                } while (numMatcher.find());
+                numMatcher.appendTail(sb);
+                text = sb.toString();
+            }
         }
 
-        if (devanagari) {
-            text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 हज़ार");
-            text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 लाख");
-            text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 करोड़");
-        } else {
-            text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
-            text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");
-            text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 crore");
+        if (hasDigit) {
+            if (devanagari) {
+                text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 हज़ार");
+                text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 लाख");
+                text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 करोड़");
+            } else {
+                text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
+                text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");
+                text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 crore");
+            }
         }
         return text;
     }
@@ -1367,6 +1460,12 @@ public final class TextPreprocessor {
         if (text == null || text.isEmpty()) {
             return text;
         }
+        // Decided once: the per-run checks below each run the keyword regex
+        // over a ~50-char window, so a text with many digit runs but no
+        // keyword anywhere paid a regex find per run for nothing. When the
+        // whole text has no keyword no per-run check can hit; when it does,
+        // the per-run checks below still decide precisely.
+        final boolean anyKeyword = containsSmartCodeKeyword(text);
         final int len = text.length();
         StringBuilder out = new StringBuilder(len + 16);
         int i = 0;
@@ -1384,7 +1483,8 @@ public final class TextPreprocessor {
                 int runEnd = i;
 
                 boolean separate = false;
-                if (digitCount >= Math.max(2, minLen) && digitCount <= Math.max(minLen, maxLen)) {
+                if (anyKeyword && digitCount >= Math.max(2, minLen)
+                        && digitCount <= Math.max(minLen, maxLen)) {
                     int contextStart = Math.max(0, runStart - 25);
                     String prefix = text.substring(contextStart, runStart);
                     int contextEnd = Math.min(len, runEnd + 25);
