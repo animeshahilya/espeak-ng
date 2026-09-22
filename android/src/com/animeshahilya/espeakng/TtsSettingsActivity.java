@@ -1955,7 +1955,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
                             shareIntent.setType("application/json");
                             shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.dict_share_subject));
                             shareIntent.putExtra(Intent.EXTRA_TEXT,
-                                    context.getString(R.string.dict_share_text, rules.size()));
+                                    context.getResources().getQuantityString(
+                                            R.plurals.dict_share_text,
+                                            rules.size(), rules.size()));
                             shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             context.startActivity(Intent.createChooser(shareIntent,

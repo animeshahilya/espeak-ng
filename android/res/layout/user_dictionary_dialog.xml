@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -23,6 +24,10 @@
         android:gravity="center_vertical"
         android:layout_marginBottom="8dp">
 
+        <!-- LabelFor + hint together: the label names the field ("Search
+             words") while the hint describes the action ("Type to filter,
+             then Apply filter") - complementary, not a duplicate label, so
+             the LabelFor "either/or" warning is a false positive here. -->
         <EditText
             android:id="@+id/dict_search"
             android:layout_width="0dp"
@@ -32,7 +37,8 @@
             android:hint="@string/dict_search_hint"
             android:inputType="text"
             android:imeOptions="actionDone"
-            android:importantForAutofill="no" />
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
 
         <ImageButton
             android:id="@+id/dict_search_clear"

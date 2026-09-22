@@ -397,6 +397,9 @@
   <string name="backup_export_failed">Failed to export backup file.</string>
   <string name="backup_restore_failed">Failed to restore backup file.</string>
   <string name="log_share_subject">eSpeak NG activity log</string>
-  <string name="dict_share_text">eSpeak NG User Dictionary (%1$d rules)</string>
+  <plurals name="dict_share_text">
+    <item quantity="one">eSpeak NG User Dictionary (%1$d rule)</item>
+    <item quantity="other">eSpeak NG User Dictionary (%1$d rules)</item>
+  </plurals>
   <string name="dict_share_failed">Failed to share dictionary.</string>
 </resources>
