@@ -2260,21 +2260,20 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
         Button btnGithub = aboutView.findViewById(R.id.btn_about_github);
         if (btnGithub != null) {
-            btnGithub.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://github.com/animeshahilya/espeak-ng"));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    // resolveActivity() returns null on API 30+ without a <queries>
-                    // manifest entry, which made this button silently do nothing.
-                    try {
-                        context.startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        // no browser installed; nothing to open
-                    }
-                }
-            });
+btnGithub.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse("https://github.com/animeshahilya/espeak-ng"));
+                            // resolveActivity() returns null on API 30+ without a <queries>
+                            // manifest entry, which made this button silently do nothing.
+                            try {
+                                context.startActivity(intent);
+                            } catch (ActivityNotFoundException e) {
+                                // no browser installed; nothing to open
+                            }
+                        }
+                    });
         }
 
         dialog.show();
