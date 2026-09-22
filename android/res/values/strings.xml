@@ -58,7 +58,7 @@
         Source: Checkbox summary.
         Description: Explains the Unicode normalization setting.
     -->
-  <string name="setting_unicode_normalization_summary">Read stylized Unicode text, such as fancy fonts used on social media, as normal words</string>
+  <string name="setting_unicode_normalization_summary">Read stylized Unicode (fancy fonts) as normal words</string>
   <string name="punctuation_all">All</string>
   <string name="punctuation_custom">Custom</string>
   <string name="punctuation_custom_fmt">Custom: %s</string>
