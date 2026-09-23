@@ -132,7 +132,7 @@ public class TextPipelineDeviceTest {
     /**
      * Regression test for a second pipeline-ordering bug of the same shape:
      * expandCurrencySymbols must run before expandProgrammingSymbols.
-     * expandProgrammingSymbols's SYM_YEN does a blind "¥" -&gt; " yen " symbol
+     * The NVDA table's "¥" entry does a blind "¥" -&gt; " yen " symbol
      * swap with no amount awareness; expandCurrencySymbols's CURRENCY_YEN
      * extracts the adjacent number too ("¥500" -&gt; "500 yen"). If the plain
      * symbol swap ran first, the "¥" character would already be gone by the
@@ -159,18 +159,21 @@ public class TextPipelineDeviceTest {
 
     @Test
     public void testCondenseRepeatedCharacters() {
-        // Count mode
+        // NVDA repeat rule: 4+ identical symbols collapse to "N name" with
+        // the table's singular names ("dash", not "dashes").
         String counted = TtsService.condenseRepeatedCharacters("Divider: -------------------- end", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(counted, containsString("20"));
-        assertThat(counted, containsString("dashes"));
+        assertThat(counted, containsString("dash"));
 
         String asterisks = TtsService.condenseRepeatedCharacters("Password: ********", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(asterisks, containsString("8"));
-        assertThat(asterisks, containsString("asterisks"));
+        assertThat(asterisks, containsString("star"));
 
-        // Truncate mode
-        String truncated = TtsService.condenseRepeatedCharacters("soooooooo long", VoiceSettings.REPEATED_CHARS_TRUNCATE);
-        assertThat(truncated, is("sooo long"));
+        // NVDA has no letter collapsing and no truncate mode: a letter run
+        // passes through untouched (both count and truncate map to the NVDA
+        // rule now).
+        String letters = TtsService.condenseRepeatedCharacters("soooooooo long", VoiceSettings.REPEATED_CHARS_TRUNCATE);
+        assertThat(letters, is("soooooooo long"));
 
         // Off mode
         String off = TtsService.condenseRepeatedCharacters("-------", VoiceSettings.REPEATED_CHARS_OFF);
@@ -227,10 +230,15 @@ public class TextPipelineDeviceTest {
         String truncated = TtsService.condenseRepeatedCharacters("Call 1112223333 now.", VoiceSettings.REPEATED_CHARS_TRUNCATE);
         assertThat(truncated, is("Call 1112223333 now."));
 
-        // Count mode also leaves plain letter runs alone (only symbols get counted).
-        String lettersUntouched = TtsService.condenseRepeatedCharacters("yessss!!!", VoiceSettings.REPEATED_CHARS_COUNT);
+        // Count mode also leaves plain letter runs alone (only runs get
+        // counted) and never touches the surrounding sentence punctuation.
+        String lettersUntouched = TtsService.condenseRepeatedCharacters("yessss!!!!", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(lettersUntouched, containsString("yessss"));
-        assertThat(lettersUntouched, containsString("3 exclamations"));
+        assertThat(lettersUntouched, containsString("4 bang"));
+
+        // Three repeats are below NVDA's 4+ threshold: untouched.
+        assertThat(TtsService.condenseRepeatedCharacters("hey!!!", VoiceSettings.REPEATED_CHARS_COUNT),
+                is("hey!!!"));
     }
 
     @Test

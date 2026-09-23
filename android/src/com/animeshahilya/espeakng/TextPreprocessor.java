@@ -19,8 +19,6 @@ package com.animeshahilya.espeakng;
 import android.content.Context;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -96,61 +94,6 @@ public final class TextPreprocessor {
     private static final Pattern DATE_NUMERIC =
             Pattern.compile("\\b(\\d{1,4})[/\\-](\\d{1,2})[/\\-](\\d{1,4})\\b");
 
-    // The 37 symbol patterns, in chain order, with a trigger literal each:
-    // a pattern is only scanned when one of its literals occurs in the text
-    // (indexOf, not regex). Every trigger list is an exact superset of its
-    // pattern's matches - each pattern's every match contains one of its
-    // literals (lookarounds are zero-width, so "//" always contains "//"
-    // even when the https? lookbehind rejects it) - so skipping a pattern
-    // whose triggers are absent skips nothing, and the Matcher still
-    // decides whenever a trigger is present.
-    private static final Pattern[] SYM_PATTERNS = {
-            Pattern.compile("!=|≠"), Pattern.compile("=="),
-            Pattern.compile("<=|≤"), Pattern.compile(">=|≥"),
-            Pattern.compile("=>|⇒"), Pattern.compile("->|→"),
-            Pattern.compile("<-|←"), Pattern.compile("↑"),
-            Pattern.compile("↓"), Pattern.compile("&&"),
-            Pattern.compile("\\|\\|"), Pattern.compile("/\\*"),
-            Pattern.compile("\\*/"), Pattern.compile("(?<!https?:)//"),
-            Pattern.compile("\\.{3,}|…"), Pattern.compile("±|\\+/-"),
-            Pattern.compile("(?<=\\d)\\s*[×*]\\s*(?=\\d)"),
-            Pattern.compile("(?<=\\d)\\s*÷\\s*(?=\\d)|÷"),
-            Pattern.compile("≈"), Pattern.compile("[✓✔]"),
-            Pattern.compile("[•⁃◦]"), Pattern.compile("(?<=\\d)°"),
-            Pattern.compile("√"), Pattern.compile("∞"),
-            Pattern.compile("∫"), Pattern.compile("∀"),
-            Pattern.compile("∃"), Pattern.compile("∉"),
-            Pattern.compile("∈"), Pattern.compile("∪"),
-            Pattern.compile("∩"), Pattern.compile("¬"),
-            Pattern.compile("∧"), Pattern.compile("∨"),
-            Pattern.compile("¢"), Pattern.compile("¥"),
-            Pattern.compile("ƒ"),
-    };
-    private static final String[][] SYM_TRIGGERS = {
-            {"!=", "≠"}, {"=="}, {"<=", "≤"}, {">=", "≥"},
-            {"=>", "⇒"}, {"->", "→"}, {"<-", "←"}, {"↑"},
-            {"↓"}, {"&&"}, {"||"}, {"/*"},
-            {"*/"}, {"//"}, {"...", "…"}, {"±", "+/-"},
-            {"*", "×"}, {"÷"}, {"≈"}, {"✓", "✔"},
-            {"•", "⁃", "◦"}, {"°"}, {"√"}, {"∞"},
-            {"∫"}, {"∀"}, {"∃"}, {"∉"},
-            {"∈"}, {"∪"}, {"∩"}, {"¬"},
-            {"∧"}, {"∨"}, {"¢"}, {"¥"}, {"ƒ"},
-    };
-    private static final String[] SYM_REPLACEMENTS = {
-            " not equal ", " double equals ", " less than or equal to ",
-            " greater than or equal to ", " implies ", " arrow ",
-            " left arrow ", " up arrow ", " down arrow ",
-            " double ampersand ", " double pipe ", " comment start ",
-            " comment end ", " double slash ", " dot dot dot ",
-            " plus or minus ", " times ", " divided by ",
-            " almost equal to ", " check ", " bullet ", " degrees ",
-            " square root ", " infinity ", " integral ", " for all ",
-            " there exists ", " not an element of ", " element of ",
-            " union ", " intersection ", " not ", " and ", " or ",
-            " cents ", " yen ", " florin ",
-    };
-
     private static final Pattern PATTERN_ROMAN_CONTEXT = Pattern.compile(
             "\\b(Chapter|Part|Section|Volume|Book|Act|Scene|Title|Grade|Level|Phase|World War|War|Super Bowl)\\s+([IVXLCDMivxlcdm]+)\\b" +
             "|\\b(King|Queen|Pope|Emperor)\\s+(?:(?-i:([A-Z][a-zA-Z'-]*))\\s+)?(?-i:([IVXLCDM]+))\\b",
@@ -165,8 +108,6 @@ public final class TextPreprocessor {
             "\\b(?:https?://|www\\.)[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(?:/[^\\s]*)?",
             Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern PATTERN_REPEATED_CHARS = Pattern.compile("([^\\s\\p{L}\\p{N}])\\1{2,}");
-    private static final Pattern PATTERN_REPEATED_CHARS_TRUNCATE = Pattern.compile("([^\\s\\p{N}])\\1{3,}");
     private static final Pattern SPACE_RUNS = Pattern.compile(" {2,}");
 
     private static final String[] NATO_PHONETICS = {
@@ -257,6 +198,12 @@ public final class TextPreprocessor {
                     text = expandDevanagariDiacritic(text);
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
+                // NVDA processSpeechSymbol: character navigation always names
+                // the character, independent of the symbol level. No-op for
+                // letters and whitespace (the lookup trims first).
+                String before = text;
+                text = NvdaSymbolProcessor.processSingleSymbol(text);
+                offsetMap = chainOffset(offsetMap, before, text);
             }
         }
 
@@ -278,13 +225,10 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        boolean symbolsExpanded = false;
-        if (!isSsml && settings.isSpeakProgrammingSymbolsEnabled()) {
-            String before = text;
-            text = expandProgrammingSymbols(text);
-            symbolsExpanded = true;
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
+        // The NVDA symbol pass runs later (after time/date, so "12:30"
+        // keeps its colon until expandTimeDate has seen it). It replaces
+        // both the old programming-symbols expansion and the old repeat
+        // condensing; code-reading mode just selects level ALL there.
 
         if (!isSsml && settings.isRomanNumeralsEnabled()) {
             String before = text;
@@ -323,11 +267,6 @@ public final class TextPreprocessor {
         // isPhoneticModeEnabled each re-read up to four prefs via
         // getReadingMode(), and all three were consulted below.
         final String readingMode = settings.getReadingMode();
-        if (!isSsml && !symbolsExpanded && VoiceSettings.READING_CODE.equals(readingMode)) {
-            String before = text;
-            text = expandProgrammingSymbols(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
         if (!isSsml && VoiceSettings.READING_SPELLING.equals(readingMode)) {
             String before = text;
             text = expandSpellingMode(text);
@@ -338,10 +277,21 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        final String repeatedMode = settings.getRepeatedCharactersMode();
-        if (!isSsml && !VoiceSettings.REPEATED_CHARS_OFF.equals(repeatedMode)) {
+        // NVDA architecture: one symbol pass owns announcement, levels and
+        // repeat collapsing. It runs before emoji condensing so the ", "
+        // separators the condensing inserts are never mistaken for content
+        // punctuation. Single-character utterances skip this pass - the
+        // single-char branch above already named the character.
+        if (!isSsml && !isSingleCharacterUtterance && settings.isSpeakProgrammingSymbolsEnabled()) {
             String before = text;
-            text = condenseRepeatedCharacters(text, repeatedMode);
+            text = processNvdaSymbols(text, settings, readingMode);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
+        if (!isSsml && containsPotentialEmoji(text)
+                && !VoiceSettings.REPEATED_CHARS_OFF.equals(settings.getRepeatedCharactersMode())) {
+            String before = text;
+            text = condenseRepeatedEmojis(text, settings.getRepeatedCharactersMode());
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -352,6 +302,38 @@ public final class TextPreprocessor {
         }
 
         return new Result(text, offsetMap, isSingleCharacterUtterance);
+    }
+
+    /**
+     * Maps the punctuation preset onto an NVDA symbol level. Code-reading
+     * mode forces ALL; a custom character list announces exactly those
+     * characters (NVDA has no custom mode - its users edit symbols
+     * individually, which is what the list approximates here).
+     */
+    private static String processNvdaSymbols(String text, VoiceSettings settings, String readingMode) {
+        final boolean collapse =
+                !VoiceSettings.REPEATED_CHARS_OFF.equals(settings.getRepeatedCharactersMode());
+        if (VoiceSettings.READING_CODE.equals(readingMode)) {
+            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_ALL, collapse);
+        }
+        final int preset = settings.getPunctuationLevel();
+        final String chars = settings.getPunctuationCharacters();
+        if (preset == SpeechSynthesis.PUNCT_ALL) {
+            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_ALL, collapse);
+        }
+        if (preset == SpeechSynthesis.PUNCT_NONE) {
+            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_NONE, collapse);
+        }
+        if (chars == null || chars.isEmpty()) {
+            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_NONE, collapse);
+        }
+        if (chars.equals(VoiceSettings.PUNCTUATION_CHARS_SOME)) {
+            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_SOME, collapse);
+        }
+        if (chars.equals(VoiceSettings.PUNCTUATION_CHARS_MOST)) {
+            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_MOST, collapse);
+        }
+        return NvdaSymbolProcessor.processCustom(text, chars, collapse);
     }
 
     public static TextOffsetMap chainOffset(TextOffsetMap previous, String before, String after) {
@@ -365,122 +347,14 @@ public final class TextPreprocessor {
     // Fast-path Predicates & Char Scanners
     // ==========================================
 
+    /**
+     * True when the text holds anything the NVDA symbol pass would rewrite.
+     * The old 37-pattern chain needed an elaborate trigger index because it
+     * ran 37 full-text scans; the NVDA pass is a single scan, so no gate is
+     * needed in the pipeline - this stays only as a cheap predicate.
+     */
     public static boolean containsProgrammingSymbolChars(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            switch (c) {
-                case '!': case '=': case '<': case '>':
-                case '-': case '&': case '|': case '/':
-                case '*': case '.': case '≠': case '≤':
-                case '≥': case '⇒': case '→': case '←':
-                case '↑': case '↓': case '…': case '±':
-                case '×': case '÷': case '≈': case '✓':
-                case '✔': case '•': case '⁃': case '◦':
-                case '°': case '√': case '∞': case '∫':
-                case '∀': case '∃': case '∉': case '∈':
-                case '∪': case '∩': case '¬': case '∧':
-                case '∨': case '¢': case '¥': case 'ƒ':
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * True only when {@code text} can actually match one of the SYM_* patterns
-     * used by {@link #expandProgrammingSymbols}. The public
-     * {@link #containsProgrammingSymbolChars} gate matches any lone '.',
-     * '-' or '/', so ordinary prose passed it and paid all 37 full-text regex
-     * scans on every synthesis request (the setting defaults to on). This
-     * over-approximates the patterns precisely: every ASCII match needs an
-     * adjacent symbol pair (or "..." / "+/-"), every other match is one of
-     * the standalone Unicode symbols, and the digit-context operators need a
-     * digit on both sides. Running the full chain when this says maybe is
-     * always safe; skipping when it says no is safe because the replacements
-     * only ever produce plain words that cannot satisfy a later pattern.
-     */
-    private static boolean mayMatchProgrammingSymbols(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            final char c = text.charAt(i);
-            if (i + 1 < len) {
-                final char n = text.charAt(i + 1);
-                if ((c == '!' && n == '=')
-                        || (c == '=' && (n == '=' || n == '>'))
-                        || (c == '<' && (n == '=' || n == '-'))
-                        || (c == '>' && n == '=')
-                        || (c == '-' && n == '>')
-                        || (c == '&' && n == '&')
-                        || (c == '|' && n == '|')
-                        || (c == '/' && (n == '/' || n == '*'))
-                        || (c == '*' && n == '/')) {
-                    return true;
-                }
-            }
-            if (c == '.' && i + 2 < len
-                    && text.charAt(i + 1) == '.' && text.charAt(i + 2) == '.') {
-                return true; // \.{3,}
-            }
-            if (c == '+' && i + 2 < len
-                    && text.charAt(i + 1) == '/' && text.charAt(i + 2) == '-') {
-                return true; // +/-
-            }
-            if (c == '*') {
-                // (?<=\d)\s*\*\s*(?=\d) - SYM_TIMES' ASCII branch
-                int b = i - 1;
-                while (b >= 0 && isRegexSpace(text.charAt(b))) b--;
-                int a = i + 1;
-                while (a < len && isRegexSpace(text.charAt(a))) a++;
-                if (b >= 0 && isAsciiDigit(text.charAt(b))
-                        && a < len && isAsciiDigit(text.charAt(a))) {
-                    return true;
-                }
-            }
-            switch (c) {
-                case '≠': case '≤': case '≥': case '⇒': case '→': case '←':
-                case '↑': case '↓': case '…': case '±': case '×': case '÷':
-                case '≈': case '✓': case '✔': case '•': case '⁃': case '◦':
-                case '°': case '√': case '∞': case '∫': case '∀': case '∃':
-                case '∉': case '∈': case '∪': case '∩': case '¬': case '∧':
-                case '∨': case '¢': case '¥': case 'ƒ':
-                    return true;
-                default:
-                    break;
-            }
-        }
-        return false;
-    }
-
-    /** Java regex \s: space, tab, line feed, vertical tab, form feed, CR. */
-    private static boolean isRegexSpace(char c) {
-        return c == ' ' || c == '\t' || c == '\n' || c == 0x0B || c == '\f' || c == '\r';
-    }
-
-    /**
-     * True when {@code text} holds {@code minRun} identical adjacent chars
-     * outside Java regex {@code \s}. Over-approximates both repeat patterns
-     * (which additionally exclude letters/digits): a run the pattern could
-     * match always satisfies this, so skipping the regex on false is exact
-     * and the pattern still decides on true.
-     */
-    private static boolean hasRepeatRun(String text, int minRun) {
-        int run = 1;
-        for (int i = 1; i < text.length(); i++) {
-            final char c = text.charAt(i);
-            if (c == text.charAt(i - 1) && !isRegexSpace(c)) {
-                if (++run >= minRun) {
-                    return true;
-                }
-            } else {
-                run = 1;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isAsciiDigit(char c) {
-        return c >= '0' && c <= '9';
+        return NvdaSymbolProcessor.containsKnownSymbol(text);
     }
 
     /**
@@ -723,73 +597,11 @@ public final class TextPreprocessor {
     }
 
     public static String expandProgrammingSymbols(String text) {
-        if (text == null || text.isEmpty() || !mayMatchProgrammingSymbols(text)) {
-            return text;
-        }
-        // Collect-then-apply, equivalent to running the 37 replaceAll()s in
-        // chain order. Each pattern's Matcher.find() yields exactly the match
-        // set its replaceAll() would rewrite; a match is kept unless it
-        // overlaps a kept match of an earlier-chain pattern (the chain lets
-        // the earlier pattern own shared characters, e.g. "/*" in "//*" or
-        // "==" in "<==" - verified by differential fuzzing against the old
-        // chain). Kept spans are pairwise disjoint, and applying them to the
-        // original text equals sequential application because no replacement
-        // inserts a character any pattern could match (all 37 replacements
-        // are plain lowercase words and spaces: no symbol chars, no digits,
-        // no '$' or '\', so they also append literally), which means no
-        // later pattern can match inside, across, or because of an applied
-        // replacement - including its lookarounds, whose outcomes only
-        // depend on digits, spaces, and the "http:" prefix, none of which
-        // any replacement contains or destroys. One StringBuilder pass
-        // replaces up to 37 full-text copies.
-        final ArrayList<int[]> kept = new ArrayList<int[]>();
-        for (int p = 0; p < SYM_PATTERNS.length; p++) {
-            boolean present = false;
-            for (String trigger : SYM_TRIGGERS[p]) {
-                if (text.indexOf(trigger) >= 0) {
-                    present = true;
-                    break;
-                }
-            }
-            if (!present) {
-                continue;
-            }
-            final Matcher matcher = SYM_PATTERNS[p].matcher(text);
-            while (matcher.find()) {
-                final int s = matcher.start();
-                final int e = matcher.end();
-                boolean clash = false;
-                for (int k = 0; k < kept.size(); k++) {
-                    final int[] o = kept.get(k);
-                    if (s < o[1] && o[0] < e) {
-                        clash = true;
-                        break;
-                    }
-                }
-                if (!clash) {
-                    kept.add(new int[] {s, e, p});
-                }
-            }
-        }
-        if (kept.isEmpty()) {
-            return text;
-        }
-        Collections.sort(kept, new Comparator<int[]>() {
-            @Override
-            public int compare(int[] a, int[] b) {
-                return a[0] - b[0];
-            }
-        });
-        final StringBuilder sb = new StringBuilder(text.length() + 32);
-        int pos = 0;
-        for (int k = 0; k < kept.size(); k++) {
-            final int[] span = kept.get(k);
-            sb.append(text, pos, span[0]);
-            sb.append(SYM_REPLACEMENTS[span[2]]);
-            pos = span[1];
-        }
-        sb.append(text, pos, text.length());
-        return sb.toString();
+        // Now an NVDA symbol pass at ALL (announce everything known). The
+        // old 37-pattern chain, its trigger index and its collect-then-apply
+        // machinery are gone; the differential fuzz harness that verified
+        // that machinery is retired with them.
+        return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_ALL, true);
     }
 
     public static String expandRomanNumerals(String text) {
@@ -892,66 +704,21 @@ public final class TextPreprocessor {
     }
 
     public static String condenseRepeatedCharacters(String text, String mode) {
-        if (text == null || text.isEmpty()) {
+        if (text == null || text.isEmpty() || VoiceSettings.REPEATED_CHARS_OFF.equals(mode)) {
             return text;
         }
+        // NVDA owns repeat collapsing now (" 20 dash ", 4+ runs, singular
+        // table names): the old count/truncate split, the pluralized names
+        // and the letter-run truncation are gone. Only runs are touched -
+        // the rest of the text (sentence punctuation included) passes
+        // through, exactly like the old contract. Emoji runs still condense
+        // first - the symbol table has no emoji names (CLDR data, not
+        // algorithm), so emoji never reach the repeat rule as named symbols.
         String processed = text;
         if (containsPotentialEmoji(processed)) {
             processed = condenseRepeatedEmojis(processed, mode);
         }
-        if (VoiceSettings.REPEATED_CHARS_TRUNCATE.equals(mode)) {
-            if (!hasRepeatRun(processed, 4)) {
-                return processed;
-            }
-            return PATTERN_REPEATED_CHARS_TRUNCATE.matcher(processed).replaceAll("$1$1$1");
-        }
-        if (!VoiceSettings.REPEATED_CHARS_COUNT.equals(mode)) {
-            return processed;
-        }
-        if (!hasRepeatRun(processed, 3)) {
-            return processed;
-        }
-        Matcher matcher = PATTERN_REPEATED_CHARS.matcher(processed);
-        if (!matcher.find()) {
-            return processed;
-        }
-        StringBuffer sb = new StringBuffer(processed.length());
-        do {
-            String match = matcher.group(0);
-            char c = match.charAt(0);
-            int count = match.length();
-            String name = getSpokenCharName(c);
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(" " + count + " " + name + " "));
-        } while (matcher.find());
-        matcher.appendTail(sb);
-        return sb.toString();
-    }
-
-    private static String getSpokenCharName(char c) {
-        switch (c) {
-            case '-': return "dashes";
-            case '*': return "asterisks";
-            case '=': return "equals";
-            case '_': return "underscores";
-            case '.': return "dots";
-            case '~': return "tildes";
-            case '!': return "exclamations";
-            case '?': return "question marks";
-            case '#': return "hashes";
-            case '/': return "slashes";
-            case '\\': return "backslashes";
-            case '+': return "pluses";
-            case '<': return "less thans";
-            case '>': return "greater thans";
-            case ':': return "colons";
-            case ';': return "semicolons";
-            case '|': return "pipes";
-            case '^': return "carets";
-            case '"': return "quotes";
-            case '\'': return "apostrophes";
-            default:
-                return String.valueOf(c);
-        }
+        return NvdaSymbolProcessor.collapseRepeatRuns(processed);
     }
 
     public static String normalizeIndicDigits(String text) {

@@ -855,13 +855,18 @@ public class TtsService extends TextToSpeechService {
         int targetVolume = Math.round(settings.getVolume() * volumeScale);
         engine.Volume.setValue(targetVolume);
 
-        engine.Punctuation.setValue(settings.getPunctuationLevel());
-        // Code-reading mode forces full punctuation announcement regardless of
-        // the global preset, so symbols in source code are never swallowed.
-        if (!isSsml && settings.isCodeReadingModeEnabled()) {
-            engine.Punctuation.setValue(SpeechSynthesis.PUNCT_ALL);
+        if (isSsml) {
+            engine.Punctuation.setValue(settings.getPunctuationLevel());
+            engine.setPunctuationCharacters(settings.getPunctuationCharacters());
+        } else {
+            // NVDA architecture: the Java layer (NvdaSymbolProcessor, driven
+            // by the same preset) owns symbol pronunciation, so the engine
+            // must stay silent on punctuation or every symbol would announce
+            // twice. Code-reading mode needs no engine override either: the
+            // Java pass simply runs at ALL.
+            engine.Punctuation.setValue(SpeechSynthesis.PUNCT_NONE);
+            engine.setPunctuationCharacters(null);
         }
-        engine.setPunctuationCharacters(settings.getPunctuationCharacters());
         // Announcing capitalization: character navigation only by default, or all reading if enabled.
         boolean applyCapitals = isSingleCharacterUtterance || settings.isCapitalsScopeAll();
         engine.Capitals.setValue(applyCapitals ? settings.getCapitals() : 0);
