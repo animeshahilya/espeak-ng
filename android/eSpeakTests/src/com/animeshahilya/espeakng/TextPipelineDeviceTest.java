@@ -126,7 +126,7 @@ public class TextPipelineDeviceTest {
         // tooling before); other emoji are literals with codepoints noted.
         String flag = "\uD83C\uDDEE\uD83C\uDDF3"; // U+1F1EE U+1F1F3
         assertThat(TtsService.clarifyEmojiAnnouncements(flag), is("flag India"));
-        assertThat(TtsService.clarifyEmojiAnnouncements("Go " + flag + "!"), is("Go flag India!"));
+        assertThat(TtsService.clarifyEmojiAnnouncements("Go " + flag + "!"), is("Go flag India !"));
 
         // Two flags name *between* pairs, never within one.
         String fr = "\uD83C\uDDEB\uD83C\uDDF7"; // U+1F1EB U+1F1F7
@@ -145,8 +145,8 @@ public class TextPipelineDeviceTest {
         String heart = "❤️"; // U+2764 U+FE0F
         assertThat(TtsService.clarifyEmojiAnnouncements(heart), is("red heart"));
 
-        // Abutting text still gets its aside-pause on both sides.
-        assertThat(TtsService.clarifyEmojiAnnouncements("a⏯b"), is("a, play or pause button, b"));
+        // Abutting text is padded with spaces, as NVDA pads a replacement.
+        assertThat(TtsService.clarifyEmojiAnnouncements("a⏯b"), is("a play or pause button b"));
 
         // A ZWJ pulls in whatever follows it even when that codepoint is not
         // emoji on its own: U+1F642 U+200D U+2194 is the single "head shaking
@@ -154,7 +154,7 @@ public class TextPipelineDeviceTest {
         // wrong symbols instead (same failure mode as split flags).
         String shaking = "🙂‍↔";
         assertThat(TtsService.clarifyEmojiAnnouncements("a" + shaking + "b"),
-                is("a, head shaking horizontally, b"));
+                is("a head shaking horizontally b"));
     }
 
     @Test
@@ -292,5 +292,16 @@ public class TextPipelineDeviceTest {
     public void testNvdaEmojiNames() {
         assertThat(NvdaEmoji.substitute("🇮🇳"), is("flag India"));
         assertThat(NvdaEmoji.substitute("👍🏽"), is("thumbs up medium skin tone"));
+    }
+
+    @Test
+    public void testNvdaEmojiNamesFollowVoiceLanguage() {
+        // NVDA's lookup: full locale, then base language, then English.
+        assertThat(NvdaEmoji.substitute("🇮🇳", "hi"), is("झंडा भारत"));
+        assertThat(NvdaEmoji.substitute("🇮🇳", "en-in"), is("flag India"));
+        assertThat(NvdaEmoji.substitute("😀", "de"), is("grinsendes Gesicht"));
+        assertThat(NvdaEmoji.substitute("😀", "pt-br"), is(NvdaEmoji.substitute("😀", "pt_BR")));
+        // No NVDA dictionary for Marathi: English, as NVDA does.
+        assertThat(NvdaEmoji.substitute("😀", "mr"), is("grinning face"));
     }
 }

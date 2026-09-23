@@ -243,7 +243,8 @@ public final class TextPreprocessor {
 
         if (!isSsml && containsPotentialEmoji(text)) {
             String before = text;
-            text = settings.isEmojiIgnoreEnabled() ? filterEmojis(text) : clarifyEmojiAnnouncements(text);
+            text = settings.isEmojiIgnoreEnabled()
+                    ? filterEmojis(text) : clarifyEmojiAnnouncements(text, languageTag(voice));
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -901,13 +902,18 @@ public final class TextPreprocessor {
         return out.toString();
     }
 
+    /** {@link #clarifyEmojiAnnouncements(String, String)} with English names. */
+    public static String clarifyEmojiAnnouncements(String text) {
+        return clarifyEmojiAnnouncements(text, "en");
+    }
+
     /**
      * NVDA-style emoji announcement: each emoji run is replaced by its CLDR
-     * name ({@link NvdaEmoji}, longest match first, so flags, ZWJ families
-     * and skin tones resolve to one name) and set off with a light pause,
-     * so emoji read as an aside rather than plain sentence text.
+     * name in the voice's language ({@link NvdaEmoji}, longest match first,
+     * so flags, ZWJ families and skin tones resolve to one name), padded
+     * with spaces the way NVDA's symbol processor pads a replacement.
      */
-    public static String clarifyEmojiAnnouncements(String text) {
+    public static String clarifyEmojiAnnouncements(String text, String languageTag) {
         if (text == null || text.isEmpty()) {
             return text;
         }
@@ -931,28 +937,12 @@ public final class TextPreprocessor {
                 i += Character.charCount(c);
             }
 
-            final int lastOut = out.length() - 1;
-            if (lastOut >= 0) {
-                char prev = out.charAt(lastOut);
-                if (prev != ' ' && prev != ',' && prev != '.' && prev != '!' && prev != '?' && prev != ':' && prev != ';') {
-                    out.append(',');
-                }
-                if (prev != ' ') {
-                    out.append(' ');
-                }
+            if (out.length() > 0 && out.charAt(out.length() - 1) != ' ') {
+                out.append(' ');
             }
-
-            out.append(NvdaEmoji.substitute(text.substring(runStart, i)));
-
-            if (i < len) {
-                char next = text.charAt(i);
-                boolean isPunct = next == ',' || next == '.' || next == '!' || next == '?' || next == ':' || next == ';';
-                if (next != ' ' && !isPunct) {
-                    out.append(',');
-                }
-                if (next != ' ' && !isPunct) {
-                    out.append(' ');
-                }
+            out.append(NvdaEmoji.substitute(text.substring(runStart, i), languageTag));
+            if (i < len && text.charAt(i) != ' ') {
+                out.append(' ');
             }
         }
         return out.toString();
