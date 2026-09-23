@@ -1,1 +1,1 @@
-Text-to-speech engine for Android. Based on the eSpeak engine.
+Offline eSpeak TTS for screen readers, tuned to match NVDA.

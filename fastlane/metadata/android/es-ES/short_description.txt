@@ -1,1 +1,1 @@
-Motor de síntesis de voz para Android. Basado en el motor eSpeak.
+Voz eSpeak sin conexión para lectores de pantalla, igual que en NVDA.

@@ -1,33 +1,16 @@
-<p>The eSpeak NG is a compact open source software text-to-speech synthesizer for Linux, Windows, Android and other operating systems. It supports <a href="https://github.com/espeak-ng/espeak-ng/blob/master/docs/languages.md">more than 100 languages and accents</a>. It is based on the eSpeak engine created by Jonathan Duddington.</p>
-
-<p>eSpeak NG uses a "formant synthesis" method. This allows many languages to be provided in a small size. The speech is clear, and can be used at high speeds, but is not as natural or smooth as larger synthesizers which are based on human speech recordings. It also supports Klatt formant synthesis, and the ability to use MBROLA as backend speech synthesizer.</p>
+<p>eSpeak NG as an Android text-to-speech engine, built for screen reader users. It speaks the way eSpeak speaks in NVDA on Windows. Indian languages get extra pronunciation fixes, and those fixes only affect Indian voices.</p>
 
 <p>Features:</p>
 
-<ol>
-<li>Includes different Voices, whose characteristics can be altered.</li>
-<li>Can produce speech output as a WAV file.</li>
-<li>SSML (Speech Synthesis Markup Language) is supported (not complete),
-   and also HTML.</li>
-<li>Compact size.  The program and its data, including many languages,
-   totals about few Mbytes.</li>
-<li>Can be used as a front-end to <a href="https://github.com/espeak-ng/espeak-ng/blob/master/docs/mbrola.md">MBROLA diphone voices</a>.
-   eSpeak NG converts text to phonemes with pitch and length information.</li>
-<li>Can translate text into phoneme codes, so it could be adapted as a
-   front end for another speech synthesis engine.</li>
-<li>Potential for other languages. Several are included in varying stages
-   of progress. Help from native speakers for these or other languages is
-   welcome.</li>
-<li>Small download: English and Indian languages are built in, and every
-   other language is a one-tap optional download from Settings, so you
-   only pay for what you actually use.</li>
-<li>Choose which languages appear in the system Text-to-speech voice list,
-   and import additional voice or dictionary data from a file.</li>
-<li>Optional speech rate boost beyond the normal maximum, for users who
-   listen at very high speeds.</li>
-<li>Optional Unicode text normalization and configurable emoji handling
-   (announced or silently skipped).</li>
-<li>Reports word boundaries to the system for screen readers such as
-   TalkBack, and supports Android's Direct Boot mode.</li>
-<li>Runs standalone on Wear OS.</li>
-</ol>
+<ul>
+<li>152 languages are built in. The app works fully offline and has no internet permission.</li>
+<li>Speaks before the phone is unlocked (Direct Boot).</li>
+<li>Symbols, punctuation and emoji are read the way NVDA reads them.</li>
+<li>Voice variants, pitch, volume up to 200%, and a rate boost for very fast listening.</li>
+<li>An audio optimizer for a warmer, fuller sound.</li>
+<li>Indian number reading in lakh and crore for Indian voices.</li>
+<li>My Words: your own pronunciation dictionary, which can import and export NVDA dictionaries.</li>
+<li>Locks that stop other apps from changing your rate, pitch or volume.</li>
+<li>Backup and restore for all settings.</li>
+<li>Runs on phones and on Wear OS.</li>
+</ul>
