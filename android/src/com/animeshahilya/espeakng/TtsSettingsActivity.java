@@ -38,7 +38,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +51,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -62,18 +60,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
-import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
-import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
-import com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory;
 import com.animeshahilya.espeakng.preference.ImportVoicePreference;
 import com.animeshahilya.espeakng.preference.SeekBarDialogFragment;
 import com.animeshahilya.espeakng.preference.SeekBarPreference;
@@ -84,7 +77,6 @@ import com.animeshahilya.espeakng.preference.SupportedLanguagesPreference;
 import com.animeshahilya.espeakng.preference.VoiceVariantDialogFragment;
 import com.animeshahilya.espeakng.preference.VoiceVariantPreference;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -106,8 +98,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class TtsSettingsActivity extends AppCompatActivity {
 
@@ -591,8 +581,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
             // no effect on speech, and its stray file is what #2536 copied
             // over the real settings on every screen reader restart.
             getPreferenceManager().setStorageDeviceProtected();
-            setPreferencesFromResource(R.xml.preferences, rootKey);
-            createPreferences(getActivity(), getPreferenceScreen());
+            // Empty until the engine has loaded; see createPreferences().
+            setPreferenceScreen(getPreferenceManager().createPreferenceScreen(requireContext()));
+            createPreferences(this);
         }
 
         // setTargetFragment is deprecated in general, but it is the documented
@@ -729,56 +720,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
     }
 
-    private static Preference createImportVoicePreference(Context context) {
-        final String title = context.getString(R.string.import_voice_title);
-
-        final ImportVoicePreference pref = new ImportVoicePreference(context);
-        pref.setTitle(title);
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        pref.setDescription(R.string.import_voice_description);
-        return pref;
-    }
-
-    private static Preference createVoiceVariantPreference(Context context, VoiceSettings settings, int titleRes) {
-        final String title = context.getString(titleRes);
-
-        final VoiceVariantPreference pref = new VoiceVariantPreference(context);
-        pref.setTitle(title);
-        pref.setDialogTitle(title);
-        // Key required: AndroidX resolves dialog preferences by key, and the
-        // custom persist path already writes this same key - no new storage.
-        pref.setKey(VoiceSettings.PREF_VARIANT);
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        pref.setPersistent(true);
-        pref.setVoiceVariant(settings.getVoiceVariant());
-        return pref;
-    }
-
-    private static Preference createSpeakPunctuationPreference(Context context, VoiceSettings settings, int titleRes) {
-        final String title = context.getString(titleRes);
-
-        final SpeakPunctuationPreference pref = new SpeakPunctuationPreference(context);
-        pref.setTitle(title);
-        pref.setDialogTitle(title);
-        // Key required: AndroidX resolves dialog preferences by key, and the
-        // custom persist path already writes this same key - no new storage.
-        pref.setKey(VoiceSettings.PREF_PUNCTUATION_LEVEL);
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        pref.setPersistent(true);
-        pref.setVoiceSettings(settings);
-        return pref;
-    }
-
-    private static Preference createUnicodeNormalizationPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_unicode_normalization);
-        pref.setSummary(R.string.setting_unicode_normalization_summary);
-        pref.setKey(VoiceSettings.PREF_UNICODE_NORMALIZATION);
-        pref.setDefaultValue(true);
-        pref.setPersistent(true);
-        return pref;
-    }
-
     /**
      * Describes one voice parameter to {@link SeekBarPreference}: where its
      * value lives, what it is called and how it reads.
@@ -850,66 +791,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
 
         return voiceParam;
-    }
-
-    private static SeekBarPreference newSeekBarPreference(Context context, String key, String title) {
-        final SeekBarPreference pref = new SeekBarPreference(context);
-        pref.setTitle(title);
-        pref.setDialogTitle(title);
-        // Without a key, Preference.dispatchSaveInstanceState() skips the
-        // preference and an open dialog does not survive a rotation.
-        pref.setKey(key);
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        pref.setPersistent(true);
-        return pref;
-    }
-
-    /** A single voice parameter, edited in a dialog of its own. */
-    private static Preference createSeekBarPreference(Context context,
-                                                      SpeechSynthesis.Parameter parameter,
-                                                      String key, int titleRes) {
-        final SeekBarPreference pref = newSeekBarPreference(context, key, context.getString(titleRes));
-        pref.addParameter(voiceParameter(context, parameter, key, titleRes));
-        pref.setSummary(pref.buildSummary());
-        return pref;
-    }
-
-    private static Preference createSupportedLanguagesPreference(Context context, List<Voice> voices) {
-        final List<Voice> sortedVoices = new ArrayList<Voice>(voices);
-        Collections.sort(sortedVoices, new Comparator<Voice>() {
-            @Override
-            public int compare(Voice lhs, Voice rhs) {
-                return getDisplayName(lhs).compareToIgnoreCase(getDisplayName(rhs));
-            }
-        });
-
-        final SupportedLanguagesPreference pref = new SupportedLanguagesPreference(context);
-        pref.setTitle(R.string.espeak_supported_languages);
-        pref.setDialogTitle(R.string.espeak_supported_languages);
-
-        final CharSequence[] entries = new CharSequence[sortedVoices.size()];
-        final CharSequence[] entryValues = new CharSequence[sortedVoices.size()];
-        int index = 0;
-        for (Voice voice : sortedVoices) {
-            entries[index] = getVoiceLabel(voice);
-            entryValues[index] = voice.toString();
-            ++index;
-        }
-        pref.setEntries(entries);
-        pref.setEntryValues(entryValues);
-
-        final SharedPreferences prefs = getPrefs();
-        Set<String> selected = LanguageSettings.getSelectedLanguages(prefs);
-        if (selected == null) {
-            selected = new HashSet<String>();
-            for (Voice voice : sortedVoices) {
-                selected.add(voice.toString());
-            }
-        }
-        pref.setValues(selected);
-        pref.setSummary(getSupportedLanguagesSummary(context, selected, entries.length));
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        return pref;
     }
 
     private static String getSupportedLanguagesSummary(Context context, Set<String> selected, int total) {
@@ -1039,11 +920,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
      * disk and JNI work on a cold start with a slow filesystem, on the thread
      * that has to stay responsive -- the ANR risk reported in #2430.
      *
-     * So it is gathered on a worker thread and the preferences are added when
-     * it lands. The Preference objects themselves are still built on the main
-     * thread, which is required: they bind to the hosting PreferenceGroup.
+     * So it is gathered on a worker thread, and the screen is inflated from
+     * res/xml/preferences.xml on the main thread when it lands.
      */
-    private static void createPreferences(final Context context, final PreferenceGroup group) {
+    private static void createPreferences(final PreferenceFragmentCompat fragment) {
+        final Context context = fragment.requireActivity();
         final Context storage = EspeakApp.requireStorageContext(context);
         final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -1075,10 +956,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (isGone(context)) {
+                            if (isGone(context) || !fragment.isAdded()) {
                                 return;
                             }
-                            addPreferences(context, group, engine, voices, isWatch);
+                            fragment.setPreferenceScreen(buildPreferences(context,
+                                    fragment.getPreferenceManager(), engine, voices, isWatch));
                         }
                     });
                 } catch (Throwable t) {
@@ -1115,399 +997,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
         return activity.isFinishing() || activity.isDestroyed();
     }
 
-
-    private static Preference createEmojiProcessingPreference(Context context) {
-        final ListPreference pref = new ListPreference(context);
-        pref.setTitle(R.string.setting_emoji_processing);
-        pref.setDialogTitle(R.string.setting_emoji_processing);
-        pref.setKey(VoiceSettings.PREF_EMOJI_PROCESSING);
-        pref.setEntries(new CharSequence[] {
-                context.getString(R.string.emoji_announce),
-                context.getString(R.string.emoji_ignore)
-        });
-        pref.setEntryValues(new CharSequence[] {
-                VoiceSettings.EMOJI_ANNOUNCE,
-                VoiceSettings.EMOJI_IGNORE
-        });
-        pref.setDefaultValue(VoiceSettings.EMOJI_ANNOUNCE);
-        pref.setPersistent(true);
-
-        final SharedPreferences prefs = getPrefs();
-        String current = prefs.getString(VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.EMOJI_ANNOUNCE);
-        pref.setSummary(VoiceSettings.EMOJI_IGNORE.equals(current) ?
-                context.getString(R.string.emoji_ignore) : context.getString(R.string.emoji_announce));
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        return pref;
-    }
-
-    private static Preference createRateBoostPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_rate_boost);
-        pref.setSummary(R.string.setting_rate_boost_summary);
-        pref.setKey(VoiceSettings.PREF_RATE_BOOST);
-        pref.setDefaultValue(false);
-        pref.setPersistent(true);
-        return pref;
-    }
-
-    private static CheckBoxPreference createAudioOptimizerPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_audio_optimizer);
-        pref.setSummary(R.string.setting_audio_optimizer_summary);
-        pref.setKey(VoiceSettings.PREF_AUDIO_OPTIMIZER);
-        pref.setDefaultValue(false);
-        pref.setPersistent(true);
-        return pref;
-    }
-
-    private static Preference createCapitalsPreference(Context context) {
-        final ListPreference pref = new ListPreference(context);
-        pref.setTitle(R.string.setting_capitals);
-        pref.setDialogTitle(R.string.setting_capitals);
-        pref.setKey(VoiceSettings.PREF_CAPITALS);
-        pref.setEntries(new CharSequence[] {
-                context.getString(R.string.capitals_pitch),
-                context.getString(R.string.capitals_pitch_moderate),
-                context.getString(R.string.capitals_pitch_strong),
-                context.getString(R.string.capitals_none),
-                context.getString(R.string.capitals_sound),
-                context.getString(R.string.capitals_say)
-        });
-        // The engine treats any value 3+ as "raise pitch by this many Hz" (see
-        // SpeechSynthesis.Capitals), not just a single fixed amount - these three
-        // presets give real, audibly different strengths instead of only ever
-        // being able to pick the minimum (3Hz, barely audible) raise.
-        pref.setEntryValues(new CharSequence[] { "3", "20", "40", "0", "1", "2" });
-        pref.setDefaultValue(Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
-        pref.setPersistent(true);
-
-        final SharedPreferences prefs = getPrefs();
-        String current = prefs.getString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS));
-        int idx = pref.findIndexOfValue(current);
-        if (idx >= 0 && idx < pref.getEntries().length) {
-            pref.setSummary(pref.getEntries()[idx]);
-        }
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        return pref;
-    }
-
-    private static Preference createRecommendedDefaultsPreference(final Context context) {
-        final Preference pref = new Preference(context);
-        pref.setTitle(R.string.setting_recommended_defaults);
-        pref.setSummary(R.string.setting_recommended_defaults_summary);
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                final SharedPreferences prefs = getPrefs();
-                prefs.edit()
-                        .putString(VoiceSettings.PREF_VARIANT, VoiceSettings.DEFAULT_VARIANT)
-                        .putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH))
-                        .putString(VoiceSettings.PREF_PITCH_RANGE, Integer.toString(VoiceSettings.DEFAULT_PITCH_RANGE))
-                        .putString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS))
-                        .apply();
-
-                Toast.makeText(context, R.string.recommended_defaults_applied, Toast.LENGTH_SHORT).show();
-                if (context instanceof Activity) {
-                    ((Activity) context).recreate();
-                }
-                return true;
-            }
-        });
-        return pref;
-    }
-
-    private static Preference createIndianNumberingPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_indian_numbering);
-        pref.setSummary(R.string.setting_indian_numbering_summary);
-        pref.setKey(VoiceSettings.PREF_INDIAN_NUMBERING);
-        pref.setDefaultValue(true);
-        pref.setPersistent(true);
-        return pref;
-    }
-
-    private static Preference createProgrammingSymbolsPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_programming_symbols);
-        pref.setSummary(R.string.setting_programming_symbols_summary);
-        pref.setKey(VoiceSettings.PREF_SPEAK_PROGRAMMING_SYMBOLS);
-        pref.setDefaultValue(true);
-        pref.setPersistent(true);
-        return pref;
-    }
-
-    private static Preference createNatoSpellingPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_nato_spelling);
-        pref.setSummary(R.string.setting_nato_spelling_summary);
-        pref.setKey(VoiceSettings.PREF_NATO_SPELLING);
-        pref.setDefaultValue(false);
-        pref.setPersistent(true);
-        return pref;
-    }
-
-    private static Preference createSpokenDiacriticsPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_spoken_diacritics);
-        pref.setSummary(R.string.setting_spoken_diacritics_summary);
-        pref.setKey(VoiceSettings.PREF_SPOKEN_DIACRITICS);
-        pref.setDefaultValue(true);
-        pref.setPersistent(true);
-        return pref;
-    }
-
-    private static Preference createDigitGroupingPreference(Context context) {
-        final ListPreference pref = new ListPreference(context);
-        pref.setTitle(R.string.setting_digit_grouping);
-        pref.setDialogTitle(R.string.setting_digit_grouping);
-        pref.setKey(VoiceSettings.PREF_DIGIT_GROUPING);
-        pref.setEntries(new CharSequence[] {
-                context.getString(R.string.digit_group_off),
-                context.getString(R.string.digit_group_single),
-                context.getString(R.string.digit_group_double),
-                context.getString(R.string.digit_group_triple)
-        });
-        pref.setEntryValues(new CharSequence[] {
-                VoiceSettings.DIGIT_GROUP_OFF,
-                VoiceSettings.DIGIT_GROUP_SINGLE,
-                VoiceSettings.DIGIT_GROUP_DOUBLE,
-                VoiceSettings.DIGIT_GROUP_TRIPLE
-        });
-        pref.setDefaultValue(VoiceSettings.DIGIT_GROUP_OFF);
-        pref.setPersistent(true);
-        // Same legacy-boolean migration as VoiceSettings.getDigitGroupingMode()
-        // (which reads prefs only, so a null engine is fine here).
-        String current = new VoiceSettings(getPrefs(), null).getDigitGroupingMode();
-        int idx = pref.findIndexOfValue(current);
-        if (idx >= 0) pref.setSummary(pref.getEntries()[idx]);
-        else pref.setSummary(context.getString(R.string.setting_digit_grouping_summary));
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        return pref;
-    }
-
-    private static Preference createCheckPref(Context context, String key, int titleRes, int summaryRes, boolean def) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(titleRes);
-        pref.setSummary(summaryRes);
-        pref.setKey(key);
-        pref.setDefaultValue(def);
-        pref.setPersistent(true);
-        return pref;
-    }
-
-    private static Preference createListPref(Context context, String key,
-                                             int titleRes, int summaryRes,
-                                             CharSequence[] entries, CharSequence[] values,
-                                             String defValue) {
-        final ListPreference pref = new ListPreference(context);
-        pref.setTitle(titleRes);
-        pref.setDialogTitle(titleRes);
-        pref.setKey(key);
-        pref.setEntries(entries);
-        pref.setEntryValues(values);
-        pref.setDefaultValue(defValue);
-        pref.setPersistent(true);
-        final SharedPreferences prefs = getPrefs();
-        String current = prefs.getString(key, defValue);
-        int idx = pref.findIndexOfValue(current);
-        if (idx >= 0 && idx < entries.length) pref.setSummary(entries[idx]);
-        else pref.setSummary(summaryRes);
-        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
-        return pref;
-    }
-
-    private static Preference createReadingModePreference(Context context) {
-        return createListPref(context, VoiceSettings.PREF_READING_MODE,
-                R.string.setting_reading_mode, R.string.setting_reading_mode_summary,
-                new CharSequence[] {
-                        context.getString(R.string.reading_normal),
-                        context.getString(R.string.reading_spelling),
-                        context.getString(R.string.reading_phonetic),
-                        context.getString(R.string.reading_code)
-                },
-                new CharSequence[] {
-                        VoiceSettings.READING_NORMAL,
-                        VoiceSettings.READING_SPELLING,
-                        VoiceSettings.READING_PHONETIC,
-                        VoiceSettings.READING_CODE
-                },
-                new VoiceSettings(getPrefs(),
-                        null).getReadingMode());
-    }
-
-    private static Preference createDigitGroupThresholdPreference(Context context) {
-        CharSequence[] entries = new CharSequence[9];
-        CharSequence[] values = new CharSequence[9];
-        for (int i = 0; i < 9; i++) {
-            int n = i + 4;
-            entries[i] = context.getResources().getQuantityString(R.plurals.digits_count, n, n);
-            values[i] = String.valueOf(n);
-        }
-        return createListPref(context, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
-                R.string.setting_digit_threshold, R.string.setting_digit_threshold_summary,
-                entries, values, "7");
-    }
-
-    private static Preference createAudioProfilePreference(Context context) {
-        return createListPref(context, VoiceSettings.PREF_AUDIO_PROFILE,
-                R.string.setting_audio_profile, R.string.setting_audio_profile_summary,
-                new CharSequence[] {
-                        context.getString(R.string.audio_profile_gentle),
-                        context.getString(R.string.audio_profile_balanced),
-                        context.getString(R.string.audio_profile_full)
-                },
-                new CharSequence[] {
-                        VoiceSettings.AUDIO_PROFILE_GENTLE,
-                        VoiceSettings.AUDIO_PROFILE_BALANCED,
-                        VoiceSettings.AUDIO_PROFILE_FULL
-                },
-                VoiceSettings.AUDIO_PROFILE_BALANCED);
-    }
-
-    private static Preference createIntonationStylePreference(Context context) {
-        return createListPref(context, VoiceSettings.PREF_INTONATION_STYLE,
-                R.string.setting_intonation_style, R.string.setting_intonation_style_summary,
-                context.getResources().getTextArray(R.array.intonation_style_entries),
-                context.getResources().getTextArray(R.array.intonation_style_values),
-                VoiceSettings.INTONATION_NATURAL);
-    }
-
-    /** Raw espeakINTONATION group (0-7); only meaningful when the style above is Custom. */
-    private static Preference createIntonationGroupPreference(Context context) {
-        return createListPref(context, VoiceSettings.PREF_INTONATION_GROUP,
-                R.string.setting_intonation_group, R.string.setting_intonation_group_summary,
-                context.getResources().getTextArray(R.array.intonation_group_entries),
-                context.getResources().getTextArray(R.array.intonation_group_values),
-                "0");
-    }
-
-    /**
-     * Only used while Rate boost is on; see createRateBoostPreference(). The
-     * entries are generated from VoiceSettings' own MIN/MAX constants rather
-     * than a separate hardcoded list, so this can't silently drift out of
-     * sync with what getRateBoostMultiplier() actually allows.
-     */
-    private static Preference createRateBoostMultiplierPreference(Context context) {
-        int min = VoiceSettings.RATE_BOOST_MULTIPLIER_MIN;
-        int max = VoiceSettings.RATE_BOOST_MULTIPLIER_MAX;
-        CharSequence[] entries = new CharSequence[max - min + 1];
-        CharSequence[] values = new CharSequence[max - min + 1];
-        for (int multiplier = min; multiplier <= max; multiplier++) {
-            entries[multiplier - min] = multiplier + "×";
-            values[multiplier - min] = Integer.toString(multiplier);
-        }
-        return createListPref(context, VoiceSettings.PREF_RATE_BOOST_MULTIPLIER,
-                R.string.setting_rate_boost_multiplier, R.string.setting_rate_boost_multiplier_summary,
-                entries, values,
-                Integer.toString(VoiceSettings.RATE_BOOST_MULTIPLIER));
-    }
-
-    private static Preference createCapitalsScopePreference(Context context) {
-        return createListPref(context, VoiceSettings.PREF_CAPITALS_SCOPE,
-                R.string.setting_capitals_scope, R.string.setting_capitals_scope_summary,
-                context.getResources().getTextArray(R.array.capitals_scope_entries),
-                context.getResources().getTextArray(R.array.capitals_scope_values),
-                VoiceSettings.CAPITALS_SCOPE_CHAR);
-    }
-
-    private static Preference createRepeatedCharsPreference(Context context) {
-        return createListPref(context, VoiceSettings.PREF_REPEATED_CHARS,
-                R.string.setting_repeated_chars, R.string.setting_repeated_chars_summary,
-                context.getResources().getTextArray(R.array.repeated_chars_entries),
-                context.getResources().getTextArray(R.array.repeated_chars_values),
-                VoiceSettings.REPEATED_CHARS_OFF);
-    }
-
-    private static Preference createBackupPreference(final Context context) {
-        final Preference pref = new Preference(context);
-        pref.setTitle(R.string.setting_backup);
-        pref.setSummary(R.string.setting_backup_summary);
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (context instanceof Activity) {
-                    Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("application/json");
-                    i.putExtra(Intent.EXTRA_TITLE, "espeak_backup.json");
-                    ((Activity) context).startActivityForResult(i, REQUEST_CODE_EXPORT_BACKUP);
-                }
-                return true;
-            }
-        });
-        return pref;
-    }
-
-    private static Preference createRestorePreference(final Context context) {
-        final Preference pref = new Preference(context);
-        pref.setTitle(R.string.setting_restore);
-        pref.setSummary(R.string.setting_restore_summary);
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (context instanceof Activity) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    ((Activity) context).startActivityForResult(i, REQUEST_CODE_IMPORT_BACKUP);
-                }
-                return true;
-            }
-        });
-        return pref;
-    }
-
-    private static Preference createLogExportPreference(final Context context) {
-        final Preference pref = new Preference(context);
-        pref.setTitle(R.string.setting_export_log);
-        pref.setSummary(R.string.setting_export_log_summary);
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                final Handler handler = new Handler(Looper.getMainLooper());
-                Toast.makeText(context, R.string.export_log_collecting, Toast.LENGTH_SHORT).show();
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        final String log = LogExporter.collect(context);
-                        handler.post(new Runnable() {
-                            @Override public void run() {
-                                if (isGone(context)) return;
-                                Intent share = new Intent(Intent.ACTION_SEND);
-                                share.setType("text/plain");
-                                share.putExtra(Intent.EXTRA_SUBJECT,
-                                        context.getString(R.string.log_share_subject));
-                                share.putExtra(Intent.EXTRA_TEXT, log);
-                                context.startActivity(Intent.createChooser(share,
-                                        context.getString(R.string.setting_export_log)));
-                            }
-                        });
-                    }
-                }, "log-export").start();
-                return true;
-            }
-        });
-        return pref;
-    }
-
-    private static Preference createUserDictionaryPreference(final Context context) {
-        final Preference pref = new Preference(context);
-        // Keys the row to PREF_USER_DICTIONARY: VoiceSettings reads that key
-        // (default true) to gate the whole user-dictionary pipeline, but
-        // before this the key existed on no preference at all, so
-        // findPreference(PREF_USER_DICTIONARY) could never find anything.
-        // This row opens the rule editor; it does not toggle the boolean.
-        pref.setKey(VoiceSettings.PREF_USER_DICTIONARY);
-        pref.setTitle(R.string.setting_user_dictionary);
-        pref.setSummary(R.string.setting_user_dictionary_summary);
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                showUserDictionaryDialog(context);
-                return true;
-            }
-        });
-        return pref;
-    }
 
     private static void showUserDictionaryDialog(final Context context) {
         showUserDictionaryDialog(context, "", "all");
@@ -2173,36 +1662,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
         });
     }
 
-    private static Preference createTestVoicePreference(final Context context) {
-        final Preference pref = new Preference(context);
-        pref.setTitle(R.string.test_voice_title);
-        pref.setSummary(R.string.test_voice_summary);
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                playTestVoice(context);
-                return true;
-            }
-        });
-        return pref;
-    }
-
     private static void playTestVoice(final Context context) {
         speakPreview(context, context.getString(R.string.test_voice_sample), "sample_utterance");
-    }
-
-    private static Preference createAboutPreference(final Context context) {
-        final Preference pref = new Preference(context);
-        pref.setTitle(R.string.about_title);
-        pref.setSummary(R.string.about_summary);
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                showAboutDialog(context);
-                return true;
-            }
-        });
-        return pref;
     }
 
     private static void showAboutDialog(final Context context) {
@@ -2247,246 +1708,221 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         dialog.show();
     }
 
-    private static void addPreferences(Context context, PreferenceGroup group,
-                                       SpeechSynthesis engine, List<Voice> voices,
-                                       boolean isWatch) {
-        VoiceSettings settings = new VoiceSettings(getPrefs(), engine);
-        PreferenceManager pm = group.getPreferenceManager();
+    /** Keys of the action rows in res/xml/preferences.xml (no stored value). */
+    private static final String KEY_TEST_VOICE = "action_test_voice";
 
-        // 1. Number & Code Reading Sub-Screen
-        PreferenceScreen numberScreen = pm.createPreferenceScreen(context);
-        numberScreen.setKey("sub_number_reading");
-        numberScreen.setTitle(R.string.screen_numbers_title);
-        numberScreen.setSummary(R.string.screen_numbers_summary);
-        numberScreen.setIcon(R.drawable.ic_pin);
-
-        PreferenceCategory formatsCat = new AccessiblePreferenceCategory(context);
-        formatsCat.setTitle(R.string.category_number_formats);
-        numberScreen.addPreference(formatsCat);
-
-        formatsCat.addPreference(createIndianNumberingPreference(context));
-        formatsCat.addPreference(createDigitGroupingPreference(context));
-        if (!isWatch) {
-            formatsCat.addPreference(createDigitGroupThresholdPreference(context));
+    /**
+     * Inflates res/xml/preferences.xml and fills in what needs the engine
+     * (voice parameters, the language list). Runs on the main thread once
+     * createPreferences() has loaded the engine.
+     */
+    private static PreferenceScreen buildPreferences(final Context context, PreferenceManager pm,
+                                                     SpeechSynthesis engine, List<Voice> voices,
+                                                     boolean isWatch) {
+        final SharedPreferences prefs = getPrefs();
+        final VoiceSettings settings = new VoiceSettings(prefs, engine);
+        // These lists show their stored value. Seed it from the legacy
+        // booleans VoiceSettings still reads, or attaching the list would
+        // persist its default over the mode actually in use.
+        final SharedPreferences.Editor seed = prefs.edit();
+        if (!prefs.contains(VoiceSettings.PREF_READING_MODE)) {
+            seed.putString(VoiceSettings.PREF_READING_MODE, settings.getReadingMode());
         }
-
-        // 2. Pronunciation & Text Processing Sub-Screen
-        PreferenceScreen textProcessingScreen = pm.createPreferenceScreen(context);
-        textProcessingScreen.setKey("sub_text_processing");
-        textProcessingScreen.setTitle(R.string.screen_text_processing_title);
-        textProcessingScreen.setSummary(R.string.screen_text_processing_summary);
-        textProcessingScreen.setIcon(R.drawable.ic_spellcheck);
-
-        PreferenceCategory punctCat = new AccessiblePreferenceCategory(context);
-        punctCat.setTitle(R.string.category_punctuation_symbols);
-        textProcessingScreen.addPreference(punctCat);
-
-        punctCat.addPreference(createSpeakPunctuationPreference(context, settings, R.string.espeak_speak_punctuation));
-        punctCat.addPreference(createCapitalsPreference(context));
-        punctCat.addPreference(createCapitalsScopePreference(context));
-        punctCat.addPreference(createRepeatedCharsPreference(context));
-        punctCat.addPreference(createProgrammingSymbolsPreference(context));
-        punctCat.addPreference(createUnicodeNormalizationPreference(context));
-
-        PreferenceCategory readingCat = new AccessiblePreferenceCategory(context);
-        readingCat.setTitle(R.string.category_reading_modes);
-        textProcessingScreen.addPreference(readingCat);
-
-        readingCat.addPreference(createReadingModePreference(context));
-        if (!isWatch) {
-            readingCat.addPreference(createNatoSpellingPreference(context));
-            readingCat.addPreference(createSpokenDiacriticsPreference(context));
-            readingCat.addPreference(createEmojiProcessingPreference(context));
-            readingCat.addPreference(createCheckPref(context, VoiceSettings.PREF_SIMPLIFY_URLS,
-                    R.string.setting_simplify_urls, R.string.setting_simplify_urls_summary, false));
+        if (!prefs.contains(VoiceSettings.PREF_DIGIT_GROUPING)) {
+            seed.putString(VoiceSettings.PREF_DIGIT_GROUPING, settings.getDigitGroupingMode());
         }
-        readingCat.addPreference(createCheckPref(context, VoiceSettings.PREF_EMPHASIZE_QUESTIONS,
-                R.string.setting_emphasize_questions, R.string.setting_emphasize_questions_summary, false));
+        seed.commit();
 
-        // 3. Caller-Proof Locks Sub-Screen
-        PreferenceScreen locksScreen = pm.createPreferenceScreen(context);
-        locksScreen.setKey("sub_caller_locks");
-        locksScreen.setTitle(R.string.screen_locks_title);
-        locksScreen.setSummary(R.string.screen_locks_summary);
-        locksScreen.setIcon(R.drawable.ic_lock);
+        final PreferenceScreen screen = pm.inflateFromResource(context, R.xml.preferences, null);
 
-        PreferenceCategory lockCat = new AccessiblePreferenceCategory(context);
-        lockCat.setTitle(R.string.category_locks);
-        locksScreen.addPreference(lockCat);
+        if (isWatch) {
+            for (String key : new String[] {
+                    LanguageSettings.PREF_SUPPORTED_LANGUAGES, KEY_TEST_VOICE,
+                    VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, VoiceSettings.PREF_RATE_BOOST,
+                    VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
+                    VoiceSettings.PREF_NATO_SPELLING, VoiceSettings.PREF_SPOKEN_DIACRITICS,
+                    VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.PREF_SIMPLIFY_URLS,
+                    "category_presets", "category_data"}) {
+                screen.removePreferenceRecursively(key);
+            }
+        } else {
+            configureSupportedLanguages(context, screen.findPreference(LanguageSettings.PREF_SUPPORTED_LANGUAGES), voices);
 
-        lockCat.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_RATE,
-                R.string.setting_force_rate, R.string.setting_force_rate_summary, false));
-        lockCat.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_PITCH,
-                R.string.setting_force_pitch, R.string.setting_force_pitch_summary, false));
-        lockCat.addPreference(createCheckPref(context, VoiceSettings.PREF_FORCE_VOLUME,
-                R.string.setting_force_volume, R.string.setting_force_volume_summary, false));
+            // Generated from VoiceSettings' own limits, so the list cannot
+            // drift from what getRateBoostMultiplier() allows.
+            final int min = VoiceSettings.RATE_BOOST_MULTIPLIER_MIN;
+            final int max = VoiceSettings.RATE_BOOST_MULTIPLIER_MAX;
+            final CharSequence[] boostEntries = new CharSequence[max - min + 1];
+            final CharSequence[] boostValues = new CharSequence[max - min + 1];
+            for (int m = min; m <= max; m++) {
+                boostEntries[m - min] = m + "\u00d7";
+                boostValues[m - min] = Integer.toString(m);
+            }
+            setEntries(screen, VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, boostEntries, boostValues);
 
-        // 4. Tools, Backup & About Sub-Screen
-        PreferenceScreen toolsScreen = pm.createPreferenceScreen(context);
-        toolsScreen.setKey("sub_tools_backup");
-        toolsScreen.setTitle(R.string.screen_tools_title);
-        toolsScreen.setSummary(R.string.screen_tools_summary);
-        toolsScreen.setIcon(R.drawable.ic_build);
+            final CharSequence[] digitEntries = new CharSequence[9];
+            final CharSequence[] digitValues = new CharSequence[9];
+            for (int i = 0; i < 9; i++) {
+                final int n = i + 4;
+                digitEntries[i] = context.getResources().getQuantityString(R.plurals.digits_count, n, n);
+                digitValues[i] = String.valueOf(n);
+            }
+            setEntries(screen, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD, digitEntries, digitValues);
 
-        if (!isWatch) {
-            PreferenceCategory presetCat = new AccessiblePreferenceCategory(context);
-            presetCat.setTitle(R.string.category_presets);
-            toolsScreen.addPreference(presetCat);
-            Preference prefDefaults = createRecommendedDefaultsPreference(context);
-            prefDefaults.setIcon(R.drawable.ic_restart_alt);
-            presetCat.addPreference(prefDefaults);
-
-            PreferenceCategory dataCat = new AccessiblePreferenceCategory(context);
-            dataCat.setTitle(R.string.category_data_management);
-            toolsScreen.addPreference(dataCat);
-            Preference prefBackup = createBackupPreference(context);
-            prefBackup.setIcon(R.drawable.ic_backup);
-            dataCat.addPreference(prefBackup);
-            Preference prefRestore = createRestorePreference(context);
-            prefRestore.setIcon(R.drawable.ic_restore);
-            dataCat.addPreference(prefRestore);
-            Preference prefLogExport = createLogExportPreference(context);
-            prefLogExport.setIcon(R.drawable.ic_share);
-            dataCat.addPreference(prefLogExport);
-            Preference prefImportVoice = createImportVoicePreference(context);
-            prefImportVoice.setIcon(R.drawable.ic_unarchive);
-            dataCat.addPreference(prefImportVoice);
-        }
-
-        PreferenceCategory aboutCat = new AccessiblePreferenceCategory(context);
-        aboutCat.setTitle(R.string.category_about);
-        toolsScreen.addPreference(aboutCat);
-        Preference prefAbout = createAboutPreference(context);
-        prefAbout.setIcon(R.drawable.ic_info);
-        aboutCat.addPreference(prefAbout);
-
-        // --- ROOT SCREEN PREFERENCES (Optimized for minimal scrolling) ---
-
-        // 1. Voice and language
-        PreferenceCategory langCategory = new AccessiblePreferenceCategory(context);
-        langCategory.setTitle(R.string.category_voice_language);
-        group.addPreference(langCategory);
-
-        if (!isWatch) {
-            Preference prefLangs = createSupportedLanguagesPreference(context, voices);
-            prefLangs.setIcon(R.drawable.ic_language);
-            langCategory.addPreference(prefLangs);
-        }
-        Preference prefVariant = createVoiceVariantPreference(context, settings, R.string.espeak_variant);
-        prefVariant.setIcon(R.drawable.ic_record_voice_over);
-        langCategory.addPreference(prefVariant);
-        if (!isWatch) {
-            Preference prefTest = createTestVoicePreference(context);
-            prefTest.setIcon(R.drawable.ic_play_circle);
-            langCategory.addPreference(prefTest);
-        }
-
-        // 2. Voice parameters
-        PreferenceCategory paramCategory = new AccessiblePreferenceCategory(context);
-        paramCategory.setTitle(R.string.category_voice_parameters);
-        group.addPreference(paramCategory);
-
-        Preference ratePref = createSeekBarPreference(context, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate);
-        if (!isWatch && ratePref instanceof SeekBarPreference) {
-            ((SeekBarPreference) ratePref).setRateBoostToggleVisible(false);
-        }
-        ratePref.setIcon(R.drawable.ic_speed);
-        paramCategory.addPreference(ratePref);
-        if (!isWatch) {
-            final CheckBoxPreference rateBoostPref = (CheckBoxPreference) createRateBoostPreference(context);
-            rateBoostPref.setIcon(R.drawable.ic_flash_on);
-            paramCategory.addPreference(rateBoostPref);
-            final Preference rateBoostMultiplierPref = createRateBoostMultiplierPreference(context);
-            rateBoostMultiplierPref.setEnabled(rateBoostPref.isChecked());
-            rateBoostPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    rateBoostMultiplierPref.setEnabled((Boolean) newValue);
-                    return true;
-                }
+            onClick(screen, KEY_TEST_VOICE, () -> playTestVoice(context));
+            onClick(screen, VoiceSettings.PREF_USER_DICTIONARY, () -> showUserDictionaryDialog(context));
+            onClick(screen, "action_recommended_defaults", () -> applyRecommendedDefaults(context));
+            onClick(screen, "action_backup", () -> {
+                final Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("application/json");
+                i.putExtra(Intent.EXTRA_TITLE, "espeak_backup.json");
+                startForResult(context, i, REQUEST_CODE_EXPORT_BACKUP);
             });
-            paramCategory.addPreference(rateBoostMultiplierPref);
+            onClick(screen, "action_restore", () -> {
+                final Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("*/*");
+                startForResult(context, i, REQUEST_CODE_IMPORT_BACKUP);
+            });
+            onClick(screen, "action_export_log", () -> exportLog(context));
+            final ImportVoicePreference importVoice = screen.findPreference("action_import_voice");
+            importVoice.setOnPreferenceChangeListener(mOnPreferenceChanged);
+            importVoice.setDescription(R.string.import_voice_description);
         }
-        Preference pitchPref = createSeekBarPreference(context, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch);
-        pitchPref.setIcon(R.drawable.ic_tune);
-        paramCategory.addPreference(pitchPref);
-        paramCategory.addPreference(createSeekBarPreference(context, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range));
-        final Preference intonationStylePref = createIntonationStylePreference(context);
-        paramCategory.addPreference(intonationStylePref);
-        final Preference intonationGroupPref = createIntonationGroupPreference(context);
-        intonationGroupPref.setEnabled(VoiceSettings.INTONATION_CUSTOM.equals(
-                getPrefs().getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL)));
-        intonationStylePref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                // Keep the usual summary-updating behavior for this list preference.
-                mOnPreferenceChanged.onPreferenceChange(preference, newValue);
-                intonationGroupPref.setEnabled(VoiceSettings.INTONATION_CUSTOM.equals(newValue));
-                return true;
-            }
-        });
-        paramCategory.addPreference(intonationGroupPref);
-        Preference volumePref = createSeekBarPreference(context, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume);
-        volumePref.setIcon(R.drawable.ic_volume_up);
-        paramCategory.addPreference(volumePref);
-        paramCategory.addPreference(createSeekBarPreference(context, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap));
-        paramCategory.addPreference(createSeekBarPreference(context, engine.PauseScale, VoiceSettings.PREF_PAUSE_SCALE, R.string.setting_pause_scale));
-        CheckBoxPreference audioOptPref = createAudioOptimizerPreference(context);
-        audioOptPref.setIcon(R.drawable.ic_equalizer);
-        paramCategory.addPreference(audioOptPref);
-        final Preference audioProfile = createAudioProfilePreference(context);
-        audioProfile.setEnabled(audioOptPref.isChecked());
-        audioOptPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                boolean enabled = (Boolean) newValue;
-                audioProfile.setEnabled(enabled);
-                return true;
-            }
-        });
-        paramCategory.addPreference(audioProfile);
+        onClick(screen, "action_about", () -> showAboutDialog(context));
 
-        // 3. Advanced & specialized settings
-        PreferenceCategory advancedCategory = new AccessiblePreferenceCategory(context);
-        advancedCategory.setTitle(R.string.category_advanced_settings);
-        group.addPreference(advancedCategory);
+        // Listener first: these two report their summary through it.
+        final VoiceVariantPreference variant = screen.findPreference(VoiceSettings.PREF_VARIANT);
+        variant.setOnPreferenceChangeListener(mOnPreferenceChanged);
+        variant.setVoiceVariant(settings.getVoiceVariant());
+        final SpeakPunctuationPreference punctuation = screen.findPreference(VoiceSettings.PREF_PUNCTUATION_LEVEL);
+        punctuation.setOnPreferenceChangeListener(mOnPreferenceChanged);
+        punctuation.setVoiceSettings(settings);
 
-        if (!isWatch) {
-            Preference prefDict = createUserDictionaryPreference(context);
-            prefDict.setIcon(R.drawable.ic_dictionary);
-            advancedCategory.addPreference(prefDict);
-        }
-        advancedCategory.addPreference(numberScreen);
-        advancedCategory.addPreference(textProcessingScreen);
-        advancedCategory.addPreference(locksScreen);
-        advancedCategory.addPreference(toolsScreen);
+        configureSeekBar(context, screen, engine.Rate, VoiceSettings.PREF_RATE, R.string.setting_default_rate)
+                .setRateBoostToggleVisible(isWatch);
+        configureSeekBar(context, screen, engine.Pitch, VoiceSettings.PREF_PITCH, R.string.setting_default_pitch);
+        configureSeekBar(context, screen, engine.PitchRange, VoiceSettings.PREF_PITCH_RANGE, R.string.espeak_pitch_range);
+        configureSeekBar(context, screen, engine.Volume, VoiceSettings.PREF_VOLUME, R.string.espeak_volume);
+        configureSeekBar(context, screen, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap);
+        configureSeekBar(context, screen, engine.PauseScale, VoiceSettings.PREF_PAUSE_SCALE, R.string.setting_pause_scale);
+
+        // The raw intonation group only applies to the Custom style.
+        final Preference intonationGroup = screen.findPreference(VoiceSettings.PREF_INTONATION_GROUP);
+        intonationGroup.setEnabled(VoiceSettings.INTONATION_CUSTOM.equals(
+                prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL)));
+        screen.findPreference(VoiceSettings.PREF_INTONATION_STYLE).setOnPreferenceChangeListener((p, value) -> {
+            intonationGroup.setEnabled(VoiceSettings.INTONATION_CUSTOM.equals(value));
+            return true;
+        });
+        return screen;
     }
 
-    private static final OnPreferenceChangeListener mOnPreferenceChanged =
-            new OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if (newValue instanceof String) {
-                        String summary = "";
-                        if (preference instanceof ListPreference) {
-                            final ListPreference listPreference = (ListPreference) preference;
-                            final int index = listPreference.findIndexOfValue((String) newValue);
-                            final CharSequence[] entries = listPreference.getEntries();
+    private static void onClick(PreferenceScreen screen, String key, Runnable action) {
+        screen.findPreference(key).setOnPreferenceClickListener(p -> {
+            action.run();
+            return true;
+        });
+    }
 
-                            if (index >= 0 && index < entries.length) {
-                                summary = entries[index].toString();
-                            }
-                        } else {
-                            summary = (String)newValue;
-                        }
-                        preference.setSummary(summary);
-                    } else if (newValue instanceof Set && preference instanceof MultiSelectListPreference) {
-                        @SuppressWarnings("unchecked")
-                        final Set<String> values = new HashSet<String>((Set<String>) newValue);
-                        final int total = ((MultiSelectListPreference) preference).getEntries().length;
-                        preference.setSummary(getSupportedLanguagesSummary(preference.getContext(), values, total));
-                    }
-                    return true;
-                }
-            };
+    private static void setEntries(PreferenceScreen screen, String key,
+                                   CharSequence[] entries, CharSequence[] values) {
+        final ListPreference pref = screen.findPreference(key);
+        pref.setEntries(entries);
+        pref.setEntryValues(values);
+    }
+
+    private static void startForResult(Context context, Intent intent, int requestCode) {
+        if (context instanceof Activity) {
+            ((Activity) context).startActivityForResult(intent, requestCode);
+        }
+    }
+
+    private static void applyRecommendedDefaults(Context context) {
+        getPrefs().edit()
+                .putString(VoiceSettings.PREF_VARIANT, VoiceSettings.DEFAULT_VARIANT)
+                .putString(VoiceSettings.PREF_PITCH, Integer.toString(VoiceSettings.DEFAULT_PITCH))
+                .putString(VoiceSettings.PREF_PITCH_RANGE, Integer.toString(VoiceSettings.DEFAULT_PITCH_RANGE))
+                .putString(VoiceSettings.PREF_CAPITALS, Integer.toString(VoiceSettings.DEFAULT_CAPITALS))
+                .apply();
+        Toast.makeText(context, R.string.recommended_defaults_applied, Toast.LENGTH_SHORT).show();
+        if (context instanceof Activity) {
+            ((Activity) context).recreate();
+        }
+    }
+
+    private static void exportLog(final Context context) {
+        final Handler handler = new Handler(Looper.getMainLooper());
+        Toast.makeText(context, R.string.export_log_collecting, Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            final String log = LogExporter.collect(context);
+            handler.post(() -> {
+                if (isGone(context)) return;
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("text/plain");
+                share.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.log_share_subject));
+                share.putExtra(Intent.EXTRA_TEXT, log);
+                context.startActivity(Intent.createChooser(share,
+                        context.getString(R.string.setting_export_log)));
+            });
+        }, "log-export").start();
+    }
+
+    /** A single voice parameter, edited in a dialog of its own. */
+    private static SeekBarPreference configureSeekBar(Context context, PreferenceScreen screen,
+                                                      SpeechSynthesis.Parameter parameter,
+                                                      String key, int titleRes) {
+        final SeekBarPreference pref = screen.findPreference(key);
+        pref.addParameter(voiceParameter(context, parameter, key, titleRes));
+        pref.setSummary(pref.buildSummary());
+        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
+        return pref;
+    }
+
+    private static void configureSupportedLanguages(Context context, SupportedLanguagesPreference pref,
+                                                    List<Voice> voices) {
+        final List<Voice> sortedVoices = new ArrayList<Voice>(voices);
+        Collections.sort(sortedVoices, new Comparator<Voice>() {
+            @Override
+            public int compare(Voice lhs, Voice rhs) {
+                return getDisplayName(lhs).compareToIgnoreCase(getDisplayName(rhs));
+            }
+        });
+
+        final CharSequence[] entries = new CharSequence[sortedVoices.size()];
+        final CharSequence[] entryValues = new CharSequence[sortedVoices.size()];
+        int index = 0;
+        for (Voice voice : sortedVoices) {
+            entries[index] = getVoiceLabel(voice);
+            entryValues[index] = voice.toString();
+            ++index;
+        }
+        pref.setEntries(entries);
+        pref.setEntryValues(entryValues);
+
+        Set<String> selected = LanguageSettings.getSelectedLanguages(getPrefs());
+        if (selected == null) {
+            selected = new HashSet<String>();
+            for (Voice voice : sortedVoices) {
+                selected.add(voice.toString());
+            }
+        }
+        pref.setValues(selected);
+        pref.setSummary(getSupportedLanguagesSummary(context, selected, pref.getDistinctValueCount()));
+        pref.setOnPreferenceChangeListener(mOnPreferenceChanged);
+    }
+
+    /** Summary refresh for the custom dialog preferences and the language list. */
+    private static final OnPreferenceChangeListener mOnPreferenceChanged = (preference, newValue) -> {
+        if (newValue instanceof String) {
+            preference.setSummary((String) newValue);
+        } else if (newValue instanceof Set && preference instanceof SupportedLanguagesPreference) {
+            @SuppressWarnings("unchecked")
+            final Set<String> values = new HashSet<String>((Set<String>) newValue);
+            final int total = ((SupportedLanguagesPreference) preference).getDistinctValueCount();
+            preference.setSummary(getSupportedLanguagesSummary(preference.getContext(), values, total));
+        }
+        return true;
+    };
 }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- List choices for res/xml/preferences.xml. Entries point at translated
+     strings; values must match the constants in VoiceSettings. -->
+<resources>
+  <string-array name="emoji_processing_entries" translatable="false">
+    <item>@string/emoji_announce</item>
+    <item>@string/emoji_ignore</item>
+  </string-array>
+  <string-array name="emoji_processing_values" translatable="false">
+    <item>announce</item>
+    <item>ignore</item>
+  </string-array>
+
+  <!-- The engine treats any value 3+ as "raise pitch by this many Hz" (see
+       SpeechSynthesis.Capitals), so the three pitch presets are audibly
+       different strengths, not only the barely audible 3Hz minimum. -->
+  <string-array name="capitals_entries" translatable="false">
+    <item>@string/capitals_pitch</item>
+    <item>@string/capitals_pitch_moderate</item>
+    <item>@string/capitals_pitch_strong</item>
+    <item>@string/capitals_none</item>
+    <item>@string/capitals_sound</item>
+    <item>@string/capitals_say</item>
+  </string-array>
+  <string-array name="capitals_values" translatable="false">
+    <item>3</item>
+    <item>20</item>
+    <item>40</item>
+    <item>0</item>
+    <item>1</item>
+    <item>2</item>
+  </string-array>
+
+  <string-array name="digit_grouping_entries" translatable="false">
+    <item>@string/digit_group_off</item>
+    <item>@string/digit_group_single</item>
+    <item>@string/digit_group_double</item>
+    <item>@string/digit_group_triple</item>
+  </string-array>
+  <string-array name="digit_grouping_values" translatable="false">
+    <item>off</item>
+    <item>single</item>
+    <item>double</item>
+    <item>triple</item>
+  </string-array>
+
+  <string-array name="reading_mode_entries" translatable="false">
+    <item>@string/reading_normal</item>
+    <item>@string/reading_spelling</item>
+    <item>@string/reading_phonetic</item>
+    <item>@string/reading_code</item>
+  </string-array>
+  <string-array name="reading_mode_values" translatable="false">
+    <item>normal</item>
+    <item>spelling</item>
+    <item>phonetic</item>
+    <item>code</item>
+  </string-array>
+
+  <string-array name="audio_profile_entries" translatable="false">
+    <item>@string/audio_profile_gentle</item>
+    <item>@string/audio_profile_balanced</item>
+    <item>@string/audio_profile_full</item>
+  </string-array>
+  <string-array name="audio_profile_values" translatable="false">
+    <item>gentle</item>
+    <item>balanced</item>
+    <item>full</item>
+  </string-array>
+</resources>

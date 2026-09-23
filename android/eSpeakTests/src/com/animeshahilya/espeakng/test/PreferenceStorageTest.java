@@ -26,6 +26,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.animeshahilya.espeakng.EspeakApp;
+import com.animeshahilya.espeakng.LanguageSettings;
 import com.animeshahilya.espeakng.TtsSettingsActivity;
 import com.animeshahilya.espeakng.VoiceSettings;
 
@@ -125,6 +126,49 @@ public class PreferenceStorageTest
             waitForPreference(scenario, VoiceSettings.PREF_UNICODE_NORMALIZATION);
             assertThat(credentialEncrypted().getAll().keySet(), is(empty()));
             assertThat(deviceProtected().contains(VoiceSettings.PREF_UNICODE_NORMALIZATION), is(true));
+            // "All languages" is the absence of the key, so languages added
+            // by a later update show up; just opening the screen must not
+            // freeze today's list into it.
+            assertThat(deviceProtected().contains(LanguageSettings.PREF_SUPPORTED_LANGUAGES), is(false));
+        }
+    }
+
+    /**
+     * res/xml/preferences.xml spells the keys out as literals; a typo there
+     * would leave a setting on screen that nothing reads.
+     */
+    @Test
+    public void settingsScreenHasEverySetting() throws InterruptedException
+    {
+        final String[] keys = {
+                LanguageSettings.PREF_SUPPORTED_LANGUAGES, VoiceSettings.PREF_VARIANT,
+                VoiceSettings.PREF_RATE, VoiceSettings.PREF_RATE_BOOST,
+                VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, VoiceSettings.PREF_PITCH,
+                VoiceSettings.PREF_PITCH_RANGE, VoiceSettings.PREF_INTONATION_STYLE,
+                VoiceSettings.PREF_INTONATION_GROUP, VoiceSettings.PREF_VOLUME,
+                VoiceSettings.PREF_WORD_GAP, VoiceSettings.PREF_PAUSE_SCALE,
+                VoiceSettings.PREF_AUDIO_OPTIMIZER, VoiceSettings.PREF_AUDIO_PROFILE,
+                VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_INDIAN_NUMBERING,
+                VoiceSettings.PREF_DIGIT_GROUPING, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
+                VoiceSettings.PREF_PUNCTUATION_LEVEL, VoiceSettings.PREF_CAPITALS,
+                VoiceSettings.PREF_CAPITALS_SCOPE, VoiceSettings.PREF_REPEATED_CHARS,
+                VoiceSettings.PREF_SPEAK_PROGRAMMING_SYMBOLS, VoiceSettings.PREF_UNICODE_NORMALIZATION,
+                VoiceSettings.PREF_READING_MODE, VoiceSettings.PREF_NATO_SPELLING,
+                VoiceSettings.PREF_SPOKEN_DIACRITICS, VoiceSettings.PREF_EMOJI_PROCESSING,
+                VoiceSettings.PREF_SIMPLIFY_URLS, VoiceSettings.PREF_EMPHASIZE_QUESTIONS,
+                VoiceSettings.PREF_FORCE_RATE, VoiceSettings.PREF_FORCE_PITCH,
+                VoiceSettings.PREF_FORCE_VOLUME,
+        };
+        try (ActivityScenario<TtsSettingsActivity> scenario =
+                ActivityScenario.launch(TtsSettingsActivity.class)) {
+            waitForPreference(scenario, VoiceSettings.PREF_VARIANT);
+            scenario.onActivity(activity -> {
+                final PreferenceFragmentCompat fragment = (PreferenceFragmentCompat)
+                        activity.getSupportFragmentManager().findFragmentById(android.R.id.content);
+                for (String key : keys) {
+                    assertThat("setting " + key, fragment.findPreference(key), is(notNullValue()));
+                }
+            });
         }
     }
 

@@ -24,6 +24,7 @@ import androidx.preference.MultiSelectListPreference;
 
 import com.animeshahilya.espeakng.LanguageSettings;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ public class SupportedLanguagesPreference extends MultiSelectListPreference {
     @Override
     public boolean persistStringSet(Set<String> values) {
         if (!shouldPersist()) return false;
-        int total = (getEntryValues() != null ? getEntryValues().length : 0);
+        int total = getDistinctValueCount();
 
         SharedPreferences.Editor editor = getSharedPreferences().edit();
 
@@ -65,6 +66,16 @@ public class SupportedLanguagesPreference extends MultiSelectListPreference {
         editor.putStringSet(getKey(), copy);
         editor.apply();
         return true;
+    }
+
+    /**
+     * Number of distinct languages. Some voices share a language value
+     * (voice.toString()), so this is less than the number of entries, and
+     * selecting every value must still count as "all".
+     */
+    public int getDistinctValueCount() {
+        CharSequence[] values = getEntryValues();
+        return values == null ? 0 : new HashSet<CharSequence>(Arrays.asList(values)).size();
     }
 
     @Override
