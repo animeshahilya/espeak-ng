@@ -52,7 +52,7 @@ public class SpeechSynthesis {
     // guaranteed consistent with the lang file's own filename casing.
     public static final Set<String> REDUNDANT_VOICE_NAMES = new HashSet<String>(Arrays.asList(
             "en-029", "en-GB-x-gbclan", "en-GB-x-gbcwmd", "en-GB-x-rp", "en-Shaw", "en-US-nyc",
-            "en-gb-x-gbclan", "en-gb-x-gbcwmd", "en-gb-x-rp", "en-shaw", "en-us-nyc", "en-sg",
+            "en-gb-x-gbclan", "en-gb-x-gbcwmd", "en-gb-x-rp", "en-shaw", "en-us-nyc",
             "fa-Latn", "fa-latn", "cmn-Latn-pinyin", "cmn-latn-pinyin",
             "yue-Latn-jyutping", "yue-latn-jyutping", "xex"
     ));

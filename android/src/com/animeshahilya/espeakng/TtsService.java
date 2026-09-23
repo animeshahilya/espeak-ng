@@ -962,10 +962,6 @@ public class TtsService extends TextToSpeechService {
         return TextPreprocessor.expandProgrammingSymbols(text);
     }
 
-    public static String expandRomanNumerals(String text) {
-        return TextPreprocessor.expandRomanNumerals(text);
-    }
-
     public static String simplifyUrls(String text) {
         return TextPreprocessor.simplifyUrls(text);
     }
@@ -1030,10 +1026,6 @@ public class TtsService extends TextToSpeechService {
         return TextPreprocessor.preprocessIndianText(text, languageTag);
     }
 
-    public static boolean containsSmartCodeKeyword(String context) {
-        return TextPreprocessor.containsSmartCodeKeyword(context);
-    }
-
     public static String clarifyEmojiAnnouncements(String text) {
         return TextPreprocessor.clarifyEmojiAnnouncements(text);
     }
@@ -1062,14 +1054,6 @@ public class TtsService extends TextToSpeechService {
         return TextPreprocessor.formatDigitGrouping(text, mode, threshold);
     }
 
-    public static String expandCurrencySymbols(String text) {
-        return TextPreprocessor.expandCurrencySymbols(text);
-    }
-
-    public static String expandTimeDate(String text) {
-        return TextPreprocessor.expandTimeDate(text);
-    }
-
     public static String expandSpellingMode(String text) {
         return TextPreprocessor.expandSpellingMode(text);
     }
@@ -1096,14 +1080,6 @@ public class TtsService extends TextToSpeechService {
 
     public static String spaceSeparateDigits(String text) {
         return TextPreprocessor.spaceSeparateDigits(text);
-    }
-
-    public static String spaceSeparateSmartCodes(String text) {
-        return TextPreprocessor.spaceSeparateSmartCodes(text);
-    }
-
-    public static String spaceSeparateSmartCodes(String text, int minLen, int maxLen) {
-        return TextPreprocessor.spaceSeparateSmartCodes(text, minLen, maxLen);
     }
 
     // Protected (not private) as a test hook: eSpeakTests subclasses call

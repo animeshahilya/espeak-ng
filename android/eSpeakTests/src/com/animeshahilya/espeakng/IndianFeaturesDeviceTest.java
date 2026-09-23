@@ -197,25 +197,6 @@ public class IndianFeaturesDeviceTest {
     }
 
     @Test
-    public void testSmartOtpAndPinReading() {
-        // OTP/PIN numbers should be digit-separated
-        assertThat(TtsService.spaceSeparateSmartCodes("Your OTP is 4829"), is("Your OTP is 4 8 2 9"));
-        assertThat(TtsService.spaceSeparateSmartCodes("Verification code: 940218"), containsString("9 4 0 2 1 8"));
-        assertThat(TtsService.spaceSeparateSmartCodes("Security PIN 1234"), containsString("1 2 3 4"));
-        assertThat(TtsService.spaceSeparateSmartCodes("Train PNR: 2415829182"), containsString("2 4 1 5 8 2 9 1 8 2"));
-        assertThat(TtsService.spaceSeparateSmartCodes("Delivery pincode 110001"), containsString("1 1 0 0 0 1"));
-        assertThat(TtsService.spaceSeparateSmartCodes("Challan 849201 paid"), containsString("8 4 9 2 0 1"));
-
-        // Non-security numbers should NOT be split digit-by-digit
-        assertThat(TtsService.spaceSeparateSmartCodes("The year 2024 is great"), is("The year 2024 is great"));
-        // "code" alone is not a keyword: too common an English word to gate
-        // on (dress code, zip code, area code...) and every real OTP/
-        // verification message already matches via a more specific word.
-        assertThat(TtsService.spaceSeparateSmartCodes("The dress code for 1990 was strict"),
-                is("The dress code for 1990 was strict"));
-    }
-
-    @Test
     public void testLiveSynthesisIndicLanguages() throws InterruptedException {
         List<Voice> availableVoices = mEngine.getAvailableVoices();
         Map<String, Voice> voiceMap = new HashMap<String, Voice>();

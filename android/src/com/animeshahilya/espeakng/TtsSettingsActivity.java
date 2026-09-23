@@ -1236,16 +1236,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
         return pref;
     }
 
-    private static CheckBoxPreference createSmartCodesPreference(Context context) {
-        final CheckBoxPreference pref = new CheckBoxPreference(context);
-        pref.setTitle(R.string.setting_smart_codes);
-        pref.setSummary(R.string.setting_smart_codes_summary);
-        pref.setKey(VoiceSettings.PREF_SMART_CODES);
-        pref.setDefaultValue(true);
-        pref.setPersistent(true);
-        return pref;
-    }
-
     private static Preference createNatoSpellingPreference(Context context) {
         final CheckBoxPreference pref = new CheckBoxPreference(context);
         pref.setTitle(R.string.setting_nato_spelling);
@@ -1426,32 +1416,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 context.getResources().getTextArray(R.array.repeated_chars_entries),
                 context.getResources().getTextArray(R.array.repeated_chars_values),
                 VoiceSettings.REPEATED_CHARS_OFF);
-    }
-
-    private static Preference createSmartMinPreference(Context context) {
-        CharSequence[] entries = new CharSequence[7];
-        CharSequence[] values = new CharSequence[7];
-        for (int i = 0; i < 7; i++) {
-            int n = i + 2;
-            entries[i] = context.getResources().getQuantityString(R.plurals.digits_count, n, n);
-            values[i] = String.valueOf(n);
-        }
-        return createListPref(context, VoiceSettings.PREF_SMART_MIN_LEN,
-                R.string.setting_smart_min, R.string.setting_smart_min_summary,
-                entries, values, "4");
-    }
-
-    private static Preference createSmartMaxPreference(Context context) {
-        CharSequence[] entries = new CharSequence[9];
-        CharSequence[] values = new CharSequence[9];
-        for (int i = 0; i < 9; i++) {
-            int n = i + 4;
-            entries[i] = context.getResources().getQuantityString(R.plurals.digits_count, n, n);
-            values[i] = String.valueOf(n);
-        }
-        return createListPref(context, VoiceSettings.PREF_SMART_MAX_LEN,
-                R.string.setting_smart_max, R.string.setting_smart_max_summary,
-                entries, values, "10");
     }
 
     private static Preference createBackupPreference(final Context context) {
@@ -2296,46 +2260,15 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         numberScreen.setSummary(R.string.screen_numbers_summary);
         numberScreen.setIcon(R.drawable.ic_pin);
 
-        PreferenceCategory secDigitsCat = new AccessiblePreferenceCategory(context);
-        secDigitsCat.setTitle(R.string.category_security_digits);
-        numberScreen.addPreference(secDigitsCat);
-
-        CheckBoxPreference smartCodesPref = createSmartCodesPreference(context);
-        secDigitsCat.addPreference(smartCodesPref);
-        if (!isWatch) {
-            final Preference smartMin = createSmartMinPreference(context);
-            final Preference smartMax = createSmartMaxPreference(context);
-            boolean smartEnabled = smartCodesPref.isChecked();
-            smartMin.setEnabled(smartEnabled);
-            smartMax.setEnabled(smartEnabled);
-            smartCodesPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean enabled = (Boolean) newValue;
-                    smartMin.setEnabled(enabled);
-                    smartMax.setEnabled(enabled);
-                    return true;
-                }
-            });
-            secDigitsCat.addPreference(smartMin);
-            secDigitsCat.addPreference(smartMax);
-        }
-        secDigitsCat.addPreference(createDigitGroupingPreference(context));
-        if (!isWatch) {
-            secDigitsCat.addPreference(createDigitGroupThresholdPreference(context));
-        }
-
         PreferenceCategory formatsCat = new AccessiblePreferenceCategory(context);
         formatsCat.setTitle(R.string.category_number_formats);
         numberScreen.addPreference(formatsCat);
 
-        formatsCat.addPreference(createCheckPref(context, VoiceSettings.PREF_ROMAN_NUMERALS,
-                R.string.setting_roman_numerals, R.string.setting_roman_numerals_summary, true));
         formatsCat.addPreference(createIndianNumberingPreference(context));
-        formatsCat.addPreference(createCheckPref(context, VoiceSettings.PREF_TIME_DATE,
-                R.string.setting_time_date, R.string.setting_time_date_summary, true));
-        formatsCat.addPreference(createCheckPref(context, VoiceSettings.PREF_CURRENCY,
-                R.string.setting_currency, R.string.setting_currency_summary, true));
+        formatsCat.addPreference(createDigitGroupingPreference(context));
+        if (!isWatch) {
+            formatsCat.addPreference(createDigitGroupThresholdPreference(context));
+        }
 
         // 2. Pronunciation & Text Processing Sub-Screen
         PreferenceScreen textProcessingScreen = pm.createPreferenceScreen(context);

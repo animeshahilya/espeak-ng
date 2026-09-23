@@ -59,8 +59,6 @@ public final class TextPreprocessor {
     public static final int MAX_REQUEST_CHARS = 300000;
     public static final int MAX_CHUNKS = MAX_REQUEST_CHARS / MAX_CHUNK_CHARS + 1;
 
-    private static final Pattern SMART_CODE_KEYWORD =
-            Pattern.compile("(?i)\\b(otp|pin|pincode|passcode|password|secret|verification|security|token|login|id|txn|ref|vpa|cvv|pnr|aadhaar|aadhar|challan|account|acct|acc)\\b");
     private static final Pattern DANDA_BOUNDARY =
             Pattern.compile("([।॥])([^\\s])");
     private static final Pattern BANKING_SLASH_TXN =
@@ -77,32 +75,6 @@ public final class TextPreprocessor {
             Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:cr|crore|crores)\\b");
     private static final Pattern SLASH_RUN =
             Pattern.compile("/+");
-
-    private static final Pattern CURRENCY_DOLLAR_PREFIX =
-            Pattern.compile("\\$\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)");
-    private static final Pattern CURRENCY_DOLLAR_SUFFIX =
-            Pattern.compile("([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:dollars?|USD)\\b", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CURRENCY_EURO =
-            Pattern.compile("(?:€\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:€|euros?|EUR\\b))", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CURRENCY_POUND =
-            Pattern.compile("(?:£\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:£|pounds?|GBP\\b))", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CURRENCY_YEN =
-            Pattern.compile("(?:¥\\s*([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)|([0-9]+(?:,[0-9]+)*(?:\\.[0-9]+)?)\\s*(?:¥|yen|JPY\\b))", Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern TIME_HM =
-            Pattern.compile("\\b([01]?\\d|2[0-3]):([0-5]\\d)(?:\\s*([AP])\\.?M\\.?)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern DATE_NUMERIC =
-            Pattern.compile("\\b(\\d{1,4})[/\\-](\\d{1,2})[/\\-](\\d{1,4})\\b");
-
-    private static final Pattern PATTERN_ROMAN_CONTEXT = Pattern.compile(
-            "\\b(Chapter|Part|Section|Volume|Book|Act|Scene|Title|Grade|Level|Phase|World War|War|Super Bowl)\\s+([IVXLCDMivxlcdm]+)\\b" +
-            "|\\b(King|Queen|Pope|Emperor)\\s+(?:(?-i:([A-Z][a-zA-Z'-]*))\\s+)?(?-i:([IVXLCDM]+))\\b",
-            Pattern.CASE_INSENSITIVE);
-
-    // Precompiled: String.matches() recompiles its pattern on every call, and
-    // parseRomanNumeral() runs once per PATTERN_ROMAN_CONTEXT match.
-    private static final Pattern PATTERN_ROMAN_VALID = Pattern.compile(
-            "^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
 
     private static final Pattern PATTERN_URL = Pattern.compile(
             "\\b(?:https?://|www\\.)[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(?:/[^\\s]*)?",
@@ -222,47 +194,15 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        if (!isSsml && settings.isCurrencyEnabled()) {
-            String before = text;
-            text = expandCurrencySymbols(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
+        // Times, dates, currency amounts and Roman numerals are left to the
+        // engine, as NVDA does: eSpeak reads them natively.
 
-        // The NVDA symbol pass runs later (after time/date, so "12:30"
-        // keeps its colon until expandTimeDate has seen it). It replaces
-        // both the old programming-symbols expansion and the old repeat
-        // condensing; code-reading mode just selects level ALL there.
-
-        if (!isSsml && settings.isRomanNumeralsEnabled()) {
-            String before = text;
-            text = expandRomanNumerals(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        if (!isSsml && settings.isTimeDateEnabled()) {
-            String before = text;
-            text = expandTimeDate(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
-
-        final boolean smartCodes = settings.isSmartCodesEnabled() && !isSsml;
-        final int smartMin = settings.getSmartMinLen();
-        final int smartMax = settings.getSmartMaxLen();
         final String digitGrouping = settings.getDigitGroupingMode();
         final boolean useGrouping = !isSsml && digitGrouping != null
                 && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
         if (useGrouping) {
             String before = text;
             text = formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold());
-            offsetMap = chainOffset(offsetMap, before, text);
-            if (smartCodes && !VoiceSettings.DIGIT_GROUP_SINGLE.equals(digitGrouping)) {
-                before = text;
-                text = spaceSeparateSmartCodes(text, smartMin, smartMax);
-                offsetMap = chainOffset(offsetMap, before, text);
-            }
-        } else if (smartCodes) {
-            String before = text;
-            text = spaceSeparateSmartCodes(text, smartMin, smartMax);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -421,13 +361,6 @@ public final class TextPreprocessor {
             }
         }
         return false;
-    }
-
-    public static boolean containsSmartCodeKeyword(String context) {
-        if (context == null || context.isEmpty()) {
-            return false;
-        }
-        return SMART_CODE_KEYWORD.matcher(context).find();
     }
 
     public static boolean isDevanagariNumberLang(String languageTag) {
@@ -605,66 +538,6 @@ public final class TextPreprocessor {
         // machinery are gone; the differential fuzz harness that verified
         // that machinery is retired with them.
         return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_ALL, true);
-    }
-
-    public static String expandRomanNumerals(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        Matcher matcher = PATTERN_ROMAN_CONTEXT.matcher(text);
-        if (!matcher.find()) {
-            return text;
-        }
-        StringBuffer sb = new StringBuffer(text.length());
-        do {
-            String prefix;
-            String roman;
-            if (matcher.group(1) != null) {
-                prefix = matcher.group(1);
-                roman = matcher.group(2).toUpperCase(Locale.ROOT);
-            } else {
-                String name = matcher.group(4);
-                prefix = name != null ? matcher.group(3) + " " + name : matcher.group(3);
-                roman = matcher.group(5);
-            }
-            int val = parseRomanNumeral(roman);
-            if (val > 0) {
-                matcher.appendReplacement(sb, Matcher.quoteReplacement(prefix + " " + val));
-            } else {
-                matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(0)));
-            }
-        } while (matcher.find());
-        matcher.appendTail(sb);
-        return sb.toString();
-    }
-
-    private static int parseRomanNumeral(String s) {
-        if (s == null || s.isEmpty() || s.length() > 15) return -1;
-        if (!PATTERN_ROMAN_VALID.matcher(s).matches()) {
-            return -1;
-        }
-        int total = 0;
-        int prevValue = 0;
-        for (int i = s.length() - 1; i >= 0; i--) {
-            int curValue;
-            switch (s.charAt(i)) {
-                case 'I': curValue = 1; break;
-                case 'V': curValue = 5; break;
-                case 'X': curValue = 10; break;
-                case 'L': curValue = 50; break;
-                case 'C': curValue = 100; break;
-                case 'D': curValue = 500; break;
-                case 'M': curValue = 1000; break;
-                default: return -1;
-            }
-            if (curValue < prevValue) {
-                total -= curValue;
-            } else {
-                total += curValue;
-                prevValue = curValue;
-            }
-        }
-        return total > 0 ? total : -1;
     }
 
     public static String simplifyUrls(String text) {
@@ -982,52 +855,6 @@ public final class TextPreprocessor {
         return text;
     }
 
-    public static String expandCurrencySymbols(String text) {
-        if (text == null || text.isEmpty() || !containsDigit(text)) return text;
-        text = CURRENCY_DOLLAR_PREFIX.matcher(text).replaceAll("$1 dollars");
-        text = CURRENCY_DOLLAR_SUFFIX.matcher(text).replaceAll("$1 dollars");
-        text = CURRENCY_EURO.matcher(text).replaceAll("$1$2 euros");
-        text = CURRENCY_POUND.matcher(text).replaceAll("$1$2 pounds");
-        text = CURRENCY_YEN.matcher(text).replaceAll("$1$2 yen");
-        return text;
-    }
-
-    public static String expandTimeDate(String text) {
-        if (text == null || text.isEmpty() || !containsDigit(text)) return text;
-        boolean hasSeparator = false;
-        for (int i = 0, len = text.length(); i < len; i++) {
-            char c = text.charAt(i);
-            if (c == ':' || c == '/' || c == '-') {
-                hasSeparator = true;
-                break;
-            }
-        }
-        if (!hasSeparator) return text;
-        Matcher tm = TIME_HM.matcher(text);
-        if (tm.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String mer = tm.group(3);
-                String rep = tm.group(1) + " " + tm.group(2)
-                        + (mer != null ? " " + mer + " M" : "");
-                tm.appendReplacement(sb, Matcher.quoteReplacement(rep));
-            } while (tm.find());
-            tm.appendTail(sb);
-            text = sb.toString();
-        }
-        Matcher dm = DATE_NUMERIC.matcher(text);
-        if (dm.find()) {
-            StringBuffer sb = new StringBuffer();
-            do {
-                String rep = dm.group(1) + " " + dm.group(2) + " " + dm.group(3);
-                dm.appendReplacement(sb, Matcher.quoteReplacement(rep));
-            } while (dm.find());
-            dm.appendTail(sb);
-            text = sb.toString();
-        }
-        return text;
-    }
-
     public static String expandSpellingMode(String text) {
         if (text == null || text.isEmpty()) return text;
         StringBuilder out = new StringBuilder(text.length() * 2);
@@ -1207,72 +1034,6 @@ public final class TextPreprocessor {
             out.appendCodePoint(c);
             prevWasDigit = isDigit;
             i += charCount;
-        }
-        return out.toString();
-    }
-
-    public static String spaceSeparateSmartCodes(String text) {
-        return spaceSeparateSmartCodes(text, 4, 10);
-    }
-
-    public static String spaceSeparateSmartCodes(String text, int minLen, int maxLen) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        // Decided once: the per-run checks below each run the keyword regex
-        // over a ~50-char window, so a text with many digit runs but no
-        // keyword anywhere paid a regex find per run for nothing. When the
-        // whole text has no keyword no per-run check can hit; when it does,
-        // the per-run checks below still decide precisely.
-        final boolean anyKeyword = containsSmartCodeKeyword(text);
-        final int len = text.length();
-        StringBuilder out = new StringBuilder(len + 16);
-        int i = 0;
-        while (i < len) {
-            int cp = text.codePointAt(i);
-            if (Character.isDigit(cp)) {
-                int runStart = i;
-                int digitCount = 0;
-                while (i < len) {
-                    int c = text.codePointAt(i);
-                    if (!Character.isDigit(c)) break;
-                    digitCount++;
-                    i += Character.charCount(c);
-                }
-                int runEnd = i;
-
-                boolean separate = false;
-                if (anyKeyword && digitCount >= Math.max(2, minLen)
-                        && digitCount <= Math.max(minLen, maxLen)) {
-                    int contextStart = Math.max(0, runStart - 25);
-                    String prefix = text.substring(contextStart, runStart);
-                    int contextEnd = Math.min(len, runEnd + 25);
-                    String suffix = text.substring(runEnd, contextEnd);
-                    if (containsSmartCodeKeyword(prefix) || containsSmartCodeKeyword(suffix)) {
-                        separate = true;
-                    }
-                }
-
-                if (separate) {
-                    for (int j = runStart; j < runEnd; ) {
-                        int c = text.codePointAt(j);
-                        if (j > runStart) {
-                            out.append(' ');
-                        }
-                        out.appendCodePoint(c);
-                        j += Character.charCount(c);
-                    }
-                } else {
-                    out.append(text, runStart, runEnd);
-                }
-            } else {
-                if (cp == 0x20B9) {
-                    out.append(" rupees ");
-                } else {
-                    out.appendCodePoint(cp);
-                }
-                i += Character.charCount(cp);
-            }
         }
         return out.toString();
     }

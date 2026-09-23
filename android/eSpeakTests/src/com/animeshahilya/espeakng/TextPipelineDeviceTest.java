@@ -77,16 +77,6 @@ public class TextPipelineDeviceTest {
     }
 
     @Test
-    public void testExpandRomanNumerals() {
-        assertThat(TtsService.expandRomanNumerals("Read Chapter IV carefully."), is("Read Chapter 4 carefully."));
-        assertThat(TtsService.expandRomanNumerals("World War II ended in 1945."), is("World War 2 ended in 1945."));
-        assertThat(TtsService.expandRomanNumerals("King Henry VIII of England"), is("King Henry 8 of England"));
-        assertThat(TtsService.expandRomanNumerals("Section IX"), is("Section 9"));
-        // Unmatched words without prefix should not be falsely converted
-        assertThat(TtsService.expandRomanNumerals("This is plain IV text."), is("This is plain IV text."));
-    }
-
-    @Test
     public void testSimplifyUrls() {
         String simplified = TtsService.simplifyUrls("Check https://www.example.com/docs/guide?ref=twitter&utm_source=test");
         assertThat(simplified, containsString("example.com"));
@@ -96,65 +86,12 @@ public class TextPipelineDeviceTest {
         assertThat(simplified, not(containsString("www.")));
     }
 
-    /**
-     * Regression test for a pipeline-ordering bug: simplifyUrls must run
-     * before expandTimeDate (and the other digit/symbol expanders) in
-     * TtsService's synthesis pipeline. A URL with a date-stamped path
-     * segment (a common blog/news URL shape) has both a colon-free date
-     * pattern and a recognizable URL prefix; if expandTimeDate ran first,
-     * it would insert spaces into "2024-01-15", and simplifyUrls's
-     * PATTERN_URL - whose path match is \S-only, can't cross a space -
-     * would then only match the URL fragment up to that inserted space,
-     * silently truncating the recognized URL and leaving the rest as raw
-     * unprocessed text.
-     */
+    /** A date-shaped path segment stays part of the simplified URL. */
     @Test
-    public void testSimplifyUrlsSurvivesBeforeDateExpansion() {
-        String url = "https://example.com/blog/2024-01-15-my-post";
-
-        // Correct pipeline order (simplifyUrls first, as TtsService now
-        // does): the whole path, including the date-shaped slug, is
-        // recognized as part of the URL and survives as one contiguous
-        // "slash"-joined unit - simplifyUrls only ever touches "/", so the
-        // "2024-01-15-my-post" segment passes through with its hyphens intact.
-        String correctOrder = TtsService.simplifyUrls(url);
-        assertThat(correctOrder, containsString("2024-01-15-my-post"));
-        assertThat(correctOrder, not(containsString("https://")));
-
-        // Demonstrates why the order matters: running date expansion on the
-        // *raw* URL first breaks the date slug apart with spaces before
-        // simplifyUrls ever sees it, so the previously-intact
-        // "2024-01-15-my-post" substring no longer survives.
-        String wrongOrder = TtsService.simplifyUrls(TtsService.expandTimeDate(url));
-        assertThat(wrongOrder, not(containsString("2024-01-15-my-post")));
-    }
-
-    /**
-     * Regression test for a second pipeline-ordering bug of the same shape:
-     * expandCurrencySymbols must run before expandProgrammingSymbols.
-     * The NVDA table's "¥" entry does a blind "¥" -&gt; " yen " symbol
-     * swap with no amount awareness; expandCurrencySymbols's CURRENCY_YEN
-     * extracts the adjacent number too ("¥500" -&gt; "500 yen"). If the plain
-     * symbol swap ran first, the "¥" character would already be gone by the
-     * time CURRENCY_YEN ran, and "yen 500" (word before number) matches
-     * neither of CURRENCY_YEN's prefix ("¥" + number) or suffix (number +
-     * "yen") forms - the amount is left unformatted.
-     */
-    @Test
-    public void testCurrencyYenSurvivesBeforeProgrammingSymbols() {
-        String text = "It costs ¥500 today.";
-
-        // Correct pipeline order (currency first, as TtsService now does):
-        // the amount is properly extracted and reordered to "500 yen".
-        String correctOrder = TtsService.expandCurrencySymbols(text);
-        assertThat(correctOrder, containsString("500 yen"));
-        assertThat(correctOrder, not(containsString("¥")));
-
-        // Demonstrates why the order matters: running the plain symbol swap
-        // first consumes the "¥" character before expandCurrencySymbols ever
-        // sees it, so the proper "500 yen" phrasing is never produced.
-        String wrongOrder = TtsService.expandCurrencySymbols(TtsService.expandProgrammingSymbols(text));
-        assertThat(wrongOrder, not(containsString("500 yen")));
+    public void testSimplifyUrlsKeepsDateSlug() {
+        String simplified = TtsService.simplifyUrls("https://example.com/blog/2024-01-15-my-post");
+        assertThat(simplified, containsString("2024-01-15-my-post"));
+        assertThat(simplified, not(containsString("https://")));
     }
 
     @Test

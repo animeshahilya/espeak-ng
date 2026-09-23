@@ -52,16 +52,13 @@ public class VoiceSettings {
     public static final String PREF_PAUSE_SCALE = "espeak_pause_scale";
     public static final String PREF_INDIAN_NUMBERING = "espeak_indian_numbering";
     public static final String PREF_SPEAK_PROGRAMMING_SYMBOLS = "espeak_speak_programming_symbols";
-    public static final String PREF_SMART_CODES = "espeak_smart_codes";
     public static final String PREF_USER_DICTIONARY = "espeak_user_dictionary";
     public static final String PREF_NATO_SPELLING = "espeak_nato_spelling";
     public static final String PREF_SPOKEN_DIACRITICS = "espeak_spoken_diacritics";
     public static final String PREF_AUDIO_OPTIMIZER = "espeak_audio_optimizer";
-    // Smart text processing (digit grouping, time/date, currency, specialized modes).
+    // Digit grouping.
     public static final String PREF_DIGIT_GROUPING = "espeak_digit_grouping";
     public static final String PREF_DIGIT_GROUP_THRESHOLD = "espeak_digit_group_threshold";
-    public static final String PREF_TIME_DATE = "espeak_time_date";
-    public static final String PREF_CURRENCY = "espeak_currency";
     /** @deprecated Legacy single-mode booleans; migrated by {@link #getReadingMode}. Keys kept. */
     @Deprecated
     public static final String PREF_SPELLING_MODE = "espeak_spelling_mode";
@@ -71,19 +68,16 @@ public class VoiceSettings {
     /** @deprecated See {@link #PREF_SPELLING_MODE}. */
     @Deprecated
     public static final String PREF_CODE_READING_MODE = "espeak_code_reading";
-    // Deep-tuning: force overrides, optimizer intensity, smart-code window, unified reading mode.
+    // Deep-tuning: force overrides, optimizer intensity, unified reading mode.
     public static final String PREF_FORCE_RATE = "espeak_force_rate";
     public static final String PREF_FORCE_PITCH = "espeak_force_pitch";
     public static final String PREF_FORCE_VOLUME = "espeak_force_volume";
     public static final String PREF_AUDIO_PROFILE = "espeak_audio_profile";
-    public static final String PREF_SMART_MIN_LEN = "espeak_smart_min_len";
-    public static final String PREF_SMART_MAX_LEN = "espeak_smart_max_len";
     public static final String PREF_READING_MODE = "espeak_reading_mode";
     public static final String PREF_REPEATED_CHARS = "espeak_repeated_chars";
     public static final String PREF_INTONATION_STYLE = "espeak_intonation_style";
     public static final String PREF_CAPITALS_SCOPE = "espeak_capitals_scope";
     public static final String PREF_SIMPLIFY_URLS = "espeak_simplify_urls";
-    public static final String PREF_ROMAN_NUMERALS = "espeak_roman_numerals";
     public static final String PREF_INTONATION_GROUP = "espeak_intonation_group";
 
     /** Repeated character handling modes. */
@@ -448,10 +442,6 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_AUDIO_OPTIMIZER, false);
     }
 
-    public boolean isSmartCodesEnabled() {
-        return mPreferences.getBoolean(PREF_SMART_CODES, true);
-    }
-
     public boolean isUserDictionaryEnabled() {
         return mPreferences.getBoolean(PREF_USER_DICTIONARY, true);
     }
@@ -485,14 +475,6 @@ public class VoiceSettings {
         } catch (NumberFormatException e) {
             return 7;
         }
-    }
-
-    public boolean isTimeDateEnabled() {
-        return mPreferences.getBoolean(PREF_TIME_DATE, true);
-    }
-
-    public boolean isCurrencyEnabled() {
-        return mPreferences.getBoolean(PREF_CURRENCY, true);
     }
 
     public boolean isSpellingModeEnabled() {
@@ -553,37 +535,6 @@ public class VoiceSettings {
         return AUDIO_PROFILE_BALANCED;
     }
 
-    public int getSmartMinLen() {
-        try {
-            String raw = mPreferences.getString(PREF_SMART_MIN_LEN, "4");
-            if (raw == null) return 4;
-            int v = Integer.parseInt(raw);
-            if (v < 2) return 2;
-            if (v > 8) return 8;
-            return v;
-        } catch (NumberFormatException e) {
-            return 4;
-        }
-    }
-
-    public int getSmartMaxLen() {
-        try {
-            final int minLen = getSmartMinLen();
-            // Default of 10, not 8: an Indian PNR (a keyword this feature already
-            // recognizes, see TtsService.containsSmartCodeKeyword) is always exactly
-            // 10 digits, and a cap of 8 silently excluded it from the digit-by-digit
-            // reading this whole feature exists to provide.
-            String raw = mPreferences.getString(PREF_SMART_MAX_LEN, "10");
-            if (raw == null) return 10;
-            int v = Integer.parseInt(raw);
-            if (v < minLen) return minLen;
-            if (v > 12) return 12;
-            return v;
-        } catch (NumberFormatException e) {
-            return 10;
-        }
-    }
-
     public String getRepeatedCharactersMode() {
         String mode = mPreferences.getString(PREF_REPEATED_CHARS, REPEATED_CHARS_OFF);
         if (REPEATED_CHARS_COUNT.equals(mode) || REPEATED_CHARS_TRUNCATE.equals(mode)) {
@@ -632,9 +583,5 @@ public class VoiceSettings {
 
     public boolean isSimplifyUrlsEnabled() {
         return mPreferences.getBoolean(PREF_SIMPLIFY_URLS, false);
-    }
-
-    public boolean isRomanNumeralsEnabled() {
-        return mPreferences.getBoolean(PREF_ROMAN_NUMERALS, true);
     }
 }

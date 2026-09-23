@@ -3,7 +3,7 @@
 [![Android CI](https://github.com/animeshahilya/espeak-ng/actions/workflows/android.yml/badge.svg)](https://github.com/animeshahilya/espeak-ng/actions/workflows/android.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](COPYING)
 [![Platform: Android](https://img.shields.io/badge/Platform-Android%208.0%2B%20(API%2026%2B)-green.svg)](android/)
-[![Languages: 159](https://img.shields.io/badge/Languages-159%20Bundled-brightgreen.svg)](android/)
+[![Languages: 152](https://img.shields.io/badge/Languages-152%20Bundled-brightgreen.svg)](android/)
 [![Offline](https://img.shields.io/badge/Network-100%25%20Offline-orange.svg)](android/)
 
 A fast, lightweight, and fully offline formant-based (`TextToSpeechService`) speech synthesis engine for Android. Tailored specifically for blind and visually impaired screen reader users (TalkBack, Jieshuo, Commentary), power users, and language learners.
@@ -35,12 +35,12 @@ Every language, voice, and dictionary is packed directly into the APK. The engin
 
 ## Core Highlights
 
-* **159 Bundled Languages**: Zero downloads required. Every supported voice ships inside the APK.
+* **152 Bundled Languages**: Zero downloads required. Every supported voice ships inside the APK.
 * **100% Offline & Private**: Requests no `INTERNET` permission and makes zero network connections.
 * **Direct-Boot Compatible**: Operates in device-protected storage (`/data/user_de/`), ensuring screen readers speak immediately on boot before entering your PIN/pattern/password.
 * **Ultra-Fast & Responsive**: Formant synthesis starts speaking instantly with near-zero latency, negligible battery drain, and minuscule RAM consumption.
 * **High-Speed Screen Reading**: Unlocks speech rates up to 750+ WPM via Sonic acceleration, paired with flat-intonation intelligibility modes.
-* **Intelligent Preprocessing**: Built-in context-aware OTP detection, Indian numbering, Roman numeral expansion, repeated character collapsing, URL cleanup, and math/code reading.
+* **Intelligent Preprocessing**: Built-in Indian numbering, repeated character collapsing, URL cleanup, and math/code reading.
 
 ---
 
@@ -48,7 +48,7 @@ Every language, voice, and dictionary is packed directly into the APK. The engin
 
 ### 1. Voice & Language Management
 
-* **159 Bundled Languages & Accents**: Broad coverage across global, regional, and indigenous languages.
+* **152 Bundled Languages & Accents**: Broad coverage across global, regional, and indigenous languages.
 * **Native Language Display**: Voice names are shown in the device's native language first with English names in parentheses (e.g. *"हिन्दी (Hindi)"*, *"Español (Spanish)"*), keeping regional variants distinct.
 * **Supported Languages Picker**: Custom multi-select dialog with live search filter, count indicators, and Select-All / Clear-All toggles to unclutter the system TTS list.
 * **Voice Variants**: Extensive gender, age, and formant style selections:
@@ -90,32 +90,21 @@ A dedicated multi-band equalizer and dynamic tone shaper engineered specifically
 
 ---
 
-### 4. Smart Number & Code Reading
+### 4. Number Reading
 
-Specialized numerical processing designed for accessible daily mobile use:
+Numbers, times, dates and currency are read by eSpeak itself, exactly as in NVDA. On top of that:
 
-* **Smart OTP & Verification Code Reading**: Automatically detects incoming two-factor authentication codes, SMS OTPs, bank transaction references, and security PINs, verbalizing them digit-by-digit (`"Your OTP is 4829"` &rarr; `"4 8 2 9"`) while leaving ordinary amounts intact.
-* **Configurable OTP Length Bounds**:
-  * *Minimum Length*: 2 to 8 digits (default: 4).
-  * *Maximum Length*: Minimum up to 12 digits (default: 10, covering Indian IRCTC PNRs and bank codes).
 * **Digit Grouping Cadence**:
   * *Off*: Reads numbers as natural cardinals (e.g. `"one thousand two hundred"`).
   * *Single*: Speaks every number digit-by-digit.
   * *Double*: Groups numbers into pairs (`12 34 56`).
   * *Triple*: Groups numbers into triplets (`123 456`).
 * **Triple-Grouping Threshold**: Minimum digit count (4 to 12 digits, default: 7) required before triplet grouping takes effect.
-* **Roman Numeral Recognition**: Context-aware conversion of Roman numerals into spoken cardinals:
-  * *"Chapter IV"* &rarr; *"Chapter 4"*
-  * *"King Henry VIII"* &rarr; *"King Henry 8"*
-  * *"World War II"* &rarr; *"World War 2"*
-  * *"Section IX"* &rarr; *"Section 9"*
 * **Indian Numbering System & Currency**:
   * *Lakh & Crore Grouping*: Understands Indian comma notation (`1,00,000` &rarr; *"1 lakh"*, `1,23,45,678` &rarr; *"1 crore 23 lakh 45678"*).
   * *Shorthand Quantities*: Expands shorthand suffixes (`50k` &rarr; *"50 thousand"*, `5L` &rarr; *"5 lakh"*, `2cr` &rarr; *"2 crore"*).
   * *Rupee Currency*: Expands `₹1,00,000` &rarr; *"1 lakh rupees"*.
   * *Identifiers*: Reads UPI IDs, IFSC codes, and vehicle registration numbers cleanly digit-by-digit.
-* **Natural Time & Date**: Intelligently reads clock times (`10:30` &rarr; `"10 30"`) and calendar dates without awkward raw punctuation.
-* **Currency Amounts**: Expands currency symbols (`$`, `€`, `£`, `¥`, `₹`) into spoken currency terms.
 
 ---
 
