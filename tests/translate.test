@@ -41,6 +41,10 @@ test_phon hi "p'a~c sl'ES t'i:n" "5/3"
 test_phon en-in "s,am'o:s@ 'Id.li" "samosa idli"
 test_phon en-in "j,u:p,i:;'aI" "UPI"
 test_phon en-in "n,Vm'Vst[e:" "namaste"
+# en-in: -ed follows voicing, -le is [əl], "wh" is [ʋ], Hindi names keep dental t/d
+test_phon en-in "v#'O:kt. pl'e:d." "walked played"
+test_phon en-in "s'Imp@l p'i:p@l v#'ItS" "simple people which"
+test_phon en-in "d['Eli g'A:nd[i: r.A:dZ'e:S g'Ur.u:" "Delhi Gandhi Rajesh guru"
 # kok needs the Devanagari letter setup, or vowel signs read as letter names
 test_phon kok "pa:n.'i::0" "पाणी"
 test_phon hi "dUk'a:n" "दुकान"

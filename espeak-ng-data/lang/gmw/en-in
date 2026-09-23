@@ -9,7 +9,7 @@ status mature
 // Phoneme table en-in (ph_english_in) adds retroflex stops t./d.,
 // monophthongal eI/oU and clear l on top of the base en table.
 phonemes en-in
-dictrules 1 2 8 12
+dictrules 8 12
 
 stressLength 160 160  180 180  200 200  240 260
 stressAmp    18 18   19 19   19 19   20 20
@@ -28,14 +28,14 @@ replace 00 D d[
 // t./d. are defined in ph_english_in (mirrors ph_hindi).
 // tS/dZ are single phonemes so affricates are unaffected.
 // t2 is the non-reducing [t] variant emitted by en_rules (time, top,
-// type...); t#/d# are the American flap allophones that can surface via
-// shared en_list entries — IndE uses retroflex stops there, not flaps.
+// type...); t# is the American flap allophone that can surface via shared
+// en_list entries - IndE uses retroflex stops there, not flaps. d# is the
+// -ed suffix; ph_english_in makes it [ɖ] or [ʈ] by voicing (walked, played).
 // r- is the linking-r allophone; IndE is fully rhotic by spelling.
 replace 00 t t.
 replace 00 t2 t.
 replace 00 t# t.
 replace 00 d d.
-replace 00 d# d.
 replace 00 r- r.
 // Rhotic with retroflex colouring; spelling r always pronounced
 // (OED IndE: generally rhotic; Gargesh vs Sailaja variation).

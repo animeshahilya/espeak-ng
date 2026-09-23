@@ -4251,6 +4251,22 @@ multip) ly         laI
      &) le (_      l
     &C) le (_      @L
 ?8  &C) le (_      El
+// Indian English: [əl] (little, people, simple), not the full [ɛl] of ?8.
+// Named letters, so these outscore the ?8 rule's consonant class.
+?12 &b) le (_      @l
+?12 &c) le (_      @l
+?12 &d) le (_      @l
+?12 &f) le (_      @l
+?12 &g) le (_      @l
+?12 &k) le (_      @l
+?12 &m) le (_      @l
+?12 &n) le (_      @l
+?12 &p) le (_      @l
+?12 &s) le (_      @l
+?12 &t) le (_      @l
+?12 &v) le (_      @l
+?12 &x) le (_      @l
+?12 &z) le (_      @l
     %C) le         @L
     %C) le (y_     l
     &r) le (_      l

@@ -223,3 +223,29 @@ phoneme @
   ENDIF
   FMT(vowel/@)
 endphoneme
+
+
+// -ed suffix: [ɖ] after a voiced sound, [ʈ] after a voiceless one
+// (played [pleːɖ], walked [ʋɔːkʈ]). Replacing d# with d. in the voice file
+// lost the voiceless case.
+phoneme d#
+  vls rfx stp
+  IF prevPh(isVoiced) THEN
+    ChangePhoneme(d.)
+  ELSE
+    ChangePhoneme(t.)
+  ENDIF
+endphoneme
+
+
+// Voiceless stops are unaspirated in Indian English: pen [pen], cat [kaʈ],
+// not English [pʰ kʰ] (Wells 1982; Sailaja 2009). Same stops as Hindi's
+// p and k. The retroflex t. above is already unaspirated.
+phoneme p
+  import_phoneme consonants/p-
+endphoneme
+
+phoneme k
+  import_phoneme consonants/k-
+  voicingswitch g
+endphoneme

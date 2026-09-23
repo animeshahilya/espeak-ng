@@ -5864,3 +5864,63 @@ _𐑿	j'u:l
 ?12 rickshaws	r'IkSO:z
 ?12 dal		d['A:l
 ?12 thali	t['A:li:
+// Indian names, places and words. Hindi dental t/d are written t[ d[ so
+// the blanket t->t. d->d. of en-in doesn't make them retroflex.
+?12 ji	dZi:
+?12 guru	g'Uru:
+?12 gurus	g'Uru:z
+?12 achha	'VtSA:
+?12 accha	'VtSA:
+?12 acha	'VtSA:
+?12 theek	t'i:k
+?12 delhi	d['Eli
+?12 diwali	d[Iv'A:li:
+?12 deepawali	d[,i:pA:v'A:li:
+?12 dussehra	d[VS'eIrA:
+?12 navratri	n,Vvr'A:t[ri:
+?12 durga	d['UrgA:
+?12 shiva	S'Iv@
+?12 vishnu	v'ISnu:
+?12 hanuman	h'VnUm,A:n
+?12 sita	s'i:t[A:
+?12 gandhi	g'A:nd[i:
+?12 modi	m'o:d[i:
+?12 dhoni	d['o:ni:
+?12 kohli	k'o:hli:
+?12 virat	v'IrVt
+?12 sachin	s'VtSIn
+?12 rahul	r'A:hUl
+?12 rohit	r'o:hIt[
+?12 deepak	d['i:pVk
+?12 amit	Vm'It[
+?12 aditya	'A:d[It[j@
+?12 sunita	sUn'i:t[A:
+?12 anita	Vn'i:t[A:
+?12 kavita	k'VvIt[A:
+?12 neha	n'eIhA:
+?12 pooja	p'u:dZA:
+?12 puja	p'u:dZA:
+?12 rajesh	rA:dZ'eIS
+?12 ganesh	gVn'eIS
+?12 ramesh	rVm'eIS
+?12 suresh	sUr'eIS
+?12 mahesh	mVh'eIS
+?12 dinesh	d[In'eIS
+?12 naresh	nVr'eIS
+?12 mukesh	mUk'eIS
+?12 rakesh	rA:k'eIS
+?12 iyer	'aIj@r
+?12 hyderabad	h'aId[@rA:b,A:d[
+?12 ahmedabad	'Vhm@d[A:b,A:d[
+?12 dehradun	d[,eIhrA:d['u:n
+?12 infosys	'InfoUsIs
+?12 isro	'IsroU
+?12 aiims	'eIms
+?12 neet	n'i:t
+?12 ipl	$abbrev $allcaps
+?12 sbi	$abbrev $allcaps
+?12 hdfc	$abbrev $allcaps
+?12 gst	$abbrev $allcaps
+?12 rbi	$abbrev $allcaps
+?12 cbse	$abbrev $allcaps
+?12 jee	$abbrev $allcaps
