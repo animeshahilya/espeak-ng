@@ -61,8 +61,10 @@ import java.util.regex.Pattern;
  *   through untouched (see TextPipelineDeviceTest).</li>
  *   <li>Braille patterns (U+2800-U+28FF) are generated, not listed: the
  *   mapping is mechanical ("braille 1 2 3").</li>
- *   <li>Emoji naming (NVDA's CLDR dictionary) is not ported: that is data,
- *   not algorithm. Emoji keep the existing isolate-or-drop handling.</li>
+ *   <li>Emoji naming (NVDA's CLDR dictionary) lives in {@link NvdaEmoji} /
+ *   {@code NvdaEmojiTable} and backs Announce mode; glue codepoints with no
+ *   name (joiners, variation selectors, lone regional indicators) are
+ *   dropped, matching what NVDA's pass-through amounts to audibly.</li>
  * </ul>
  */
 public final class NvdaSymbolProcessor {

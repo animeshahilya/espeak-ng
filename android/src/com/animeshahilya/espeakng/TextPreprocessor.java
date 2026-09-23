@@ -1061,6 +1061,12 @@ public final class TextPreprocessor {
         return out.toString();
     }
 
+    /**
+     * NVDA-style emoji announcement: each emoji run is replaced by its CLDR
+     * name ({@link NvdaEmoji}, longest match first, so flags, ZWJ families
+     * and skin tones resolve to one name) and set off with a light pause,
+     * so emoji read as an aside rather than plain sentence text.
+     */
     public static String clarifyEmojiAnnouncements(String text) {
         if (text == null || text.isEmpty()) {
             return text;
@@ -1096,24 +1102,7 @@ public final class TextPreprocessor {
                 }
             }
 
-            int prevCp = -1;
-            int riRun = 0;
-            for (int j = runStart; j < i; ) {
-                int cp = text.codePointAt(j);
-                boolean joiner = isEmojiJoiner(cp) || isEmojiJoiner(prevCp);
-                if (isRegionalIndicator(cp)) {
-                    riRun++;
-                    joiner = (riRun % 2 == 0);
-                } else {
-                    riRun = 0;
-                }
-                if (j > runStart && !joiner) {
-                    out.append(' ');
-                }
-                out.appendCodePoint(cp);
-                prevCp = cp;
-                j += Character.charCount(cp);
-            }
+            out.append(NvdaEmoji.substitute(text.substring(runStart, i)));
 
             if (i < len) {
                 char next = text.charAt(i);

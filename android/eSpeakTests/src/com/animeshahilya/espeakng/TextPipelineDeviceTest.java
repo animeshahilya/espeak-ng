@@ -182,33 +182,34 @@ public class TextPipelineDeviceTest {
 
     @Test
     public void testClarifyEmojiKeepsFlagPairsGlued() {
-        // Regression: the run splitter once separated every codepoint, so the
-        // Indian flag (RI I + RI N) reached the engine as two lone regional
-        // indicators ("symbol one ef one eye...") instead of "India".
+        // NVDA CLDR naming: every cluster resolves longest-first, so the
+        // Indian flag (RI I + RI N) announces as one name instead of two
+        // lone regional indicators ("symbol one ef one eye...").
         // Flag pairs use \\u escapes (raw RI chars have been mangled by
         // tooling before); other emoji are literals with codepoints noted.
         String flag = "\uD83C\uDDEE\uD83C\uDDF3"; // U+1F1EE U+1F1F3
-        assertThat(TtsService.clarifyEmojiAnnouncements(flag), is(flag));
-        assertThat(TtsService.clarifyEmojiAnnouncements("Go " + flag + "!"), is("Go " + flag + "!"));
+        assertThat(TtsService.clarifyEmojiAnnouncements(flag), is("flag India"));
+        assertThat(TtsService.clarifyEmojiAnnouncements("Go " + flag + "!"), is("Go flag India!"));
 
-        // Two flags split *between* pairs, never within one.
+        // Two flags name *between* pairs, never within one.
         String fr = "\uD83C\uDDEB\uD83C\uDDF7"; // U+1F1EB U+1F1F7
         String de = "\uD83C\uDDE9\uD83C\uDDEA"; // U+1F1E9 U+1F1EA
-        assertThat(TtsService.clarifyEmojiAnnouncements(fr + de), is(fr + " " + de));
+        assertThat(TtsService.clarifyEmojiAnnouncements(fr + de), is("flag France flag Germany"));
 
-        // Adjacent plain emoji still separate; ZWJ families, skin tones and
-        // VS16 sequences stay glued to their base.
+        // Adjacent plain emoji each get their name; ZWJ families, skin tones
+        // and VS16 sequences resolve to a single name.
         String tears = "😂"; // U+1F602
-        assertThat(TtsService.clarifyEmojiAnnouncements(tears + tears), is(tears + " " + tears));
+        assertThat(TtsService.clarifyEmojiAnnouncements(tears + tears),
+                is("face with tears of joy face with tears of joy"));
         String family = "👨‍👩‍👧"; // U+1F468 U+200D U+1F469 U+200D U+1F467
-        assertThat(TtsService.clarifyEmojiAnnouncements(family), is(family));
+        assertThat(TtsService.clarifyEmojiAnnouncements(family), is("family man, woman, girl"));
         String toned = "👍🏽"; // U+1F44D U+1F3FD
-        assertThat(TtsService.clarifyEmojiAnnouncements(toned), is(toned));
+        assertThat(TtsService.clarifyEmojiAnnouncements(toned), is("thumbs up medium skin tone"));
         String heart = "❤️"; // U+2764 U+FE0F
-        assertThat(TtsService.clarifyEmojiAnnouncements(heart), is(heart));
+        assertThat(TtsService.clarifyEmojiAnnouncements(heart), is("red heart"));
 
         // Abutting text still gets its aside-pause on both sides.
-        assertThat(TtsService.clarifyEmojiAnnouncements("a⏯b"), is("a, ⏯, b"));
+        assertThat(TtsService.clarifyEmojiAnnouncements("a⏯b"), is("a, play or pause button, b"));
 
         // A ZWJ pulls in whatever follows it even when that codepoint is not
         // emoji on its own: U+1F642 U+200D U+2194 is the single "head shaking
@@ -216,7 +217,7 @@ public class TextPipelineDeviceTest {
         // wrong symbols instead (same failure mode as split flags).
         String shaking = "🙂‍↔";
         assertThat(TtsService.clarifyEmojiAnnouncements("a" + shaking + "b"),
-                is("a, " + shaking + ", b"));
+                is("a, head shaking horizontally, b"));
     }
 
     @Test
