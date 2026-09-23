@@ -110,11 +110,14 @@ public final class TextPreprocessor {
 
     private static final Pattern SPACE_RUNS = Pattern.compile(" {2,}");
 
+    // ICAO spellings, matching NVDA's characterDescriptions.dic ("Alfa",
+    // "Juliett", "Xray" - the Consultative Committee's spellings, chosen for
+    // cross-accent clarity, not the common misspellings).
     private static final String[] NATO_PHONETICS = {
-            "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf",
+            "Alfa", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf",
             "Hotel", "India", "Juliett", "Kilo", "Lima", "Mike", "November",
             "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform",
-            "Victor", "Whiskey", "X-ray", "Yankee", "Zulu"
+            "Victor", "Whiskey", "Xray", "Yankee", "Zulu"
     };
 
     // ==========================================
@@ -263,9 +266,9 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        // Read once: isCodeReadingModeEnabled/isSpellingModeEnabled/
-        // isPhoneticModeEnabled each re-read up to four prefs via
-        // getReadingMode(), and all three were consulted below.
+        // Read once: getReadingMode() re-reads SharedPreferences, and the
+        // value is consulted by the spelling/phonetic branches below and by
+        // the NVDA pass (code mode selects level ALL there).
         final String readingMode = settings.getReadingMode();
         if (!isSsml && VoiceSettings.READING_SPELLING.equals(readingMode)) {
             String before = text;

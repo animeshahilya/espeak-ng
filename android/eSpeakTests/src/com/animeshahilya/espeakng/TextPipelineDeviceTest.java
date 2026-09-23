@@ -292,4 +292,68 @@ public class TextPipelineDeviceTest {
         assertThat(simplified2, not(containsString("HTTP://")));
         assertThat(simplified2, not(containsString("WWW.")));
     }
+
+    /**
+     * Direct NVDA-parity pins for the symbol engine. Note the characteristic
+     * subtlety: sentence-ending dots carry level ALL (not SOME), so at SOME
+     * "Hello, world. Bye." passes through untouched - the comma is kept
+     * silently, the dots are sentence dots, and only a non-sentence dot
+     * like "a.b" is announced. Level-zero symbols (negative minus) announce
+     * even at NONE, and decimal points are never expanded.
+     */
+    @Test
+    public void testNvdaSymbolLevels() {
+        assertThat(NvdaSymbolProcessor.processText("Hello, world. Bye.",
+                NvdaSymbolProcessor.LEVEL_SOME, true), is("Hello, world. Bye."));
+        assertThat(NvdaSymbolProcessor.processText("a.b",
+                NvdaSymbolProcessor.LEVEL_SOME, true), containsString("dot"));
+        assertThat(NvdaSymbolProcessor.processText("End.",
+                NvdaSymbolProcessor.LEVEL_ALL, true), containsString("dot"));
+
+        String none = NvdaSymbolProcessor.processText("Temp -5, ok.",
+                NvdaSymbolProcessor.LEVEL_NONE, true);
+        assertThat(none, containsString("minus"));
+        assertThat(none, not(containsString("dot")));
+        assertThat(none, containsString("."));
+
+        assertThat(NvdaSymbolProcessor.processText("Pi is 3.14.",
+                NvdaSymbolProcessor.LEVEL_ALL, true), containsString("3.14"));
+
+        assertThat(NvdaSymbolProcessor.processText("well-known",
+                NvdaSymbolProcessor.LEVEL_SOME, true), not(containsString("dash")));
+    }
+
+    /**
+     * Custom-list mode speaks exactly the listed characters: the dot run is
+     * announced while "?" and "!" are neither announced NOR removed - their
+     * preserve=always keeps them as pauses, exactly like NVDA.
+     */
+    @Test
+    public void testNvdaCustomSymbols() {
+        assertThat(NvdaSymbolProcessor.processCustom("Wait... what? Yes!", ".", true),
+                is("Wait dot dot dot... what? Yes!"));
+        assertThat(NvdaSymbolProcessor.processCustom("a?b", ".?!", true),
+                containsString("question"));
+    }
+
+    @Test
+    public void testNvdaSingleSymbol() {
+        assertThat(NvdaSymbolProcessor.processSingleSymbol("!"), is("bang"));
+        assertThat(NvdaSymbolProcessor.processSingleSymbol("a"), is("a"));
+        assertThat(NvdaSymbolProcessor.processSingleSymbol(" "), is(" "));
+        assertThat(NvdaSymbolProcessor.processSingleSymbol(null), is(nullValue()));
+    }
+
+    @Test
+    public void testNvdaRepeatRuns() {
+        assertThat(NvdaSymbolProcessor.collapseRepeatRuns("-------"), containsString("7 dash"));
+        assertThat(NvdaSymbolProcessor.collapseRepeatRuns("hey!!!"), is("hey!!!"));
+        assertThat(NvdaSymbolProcessor.collapseRepeatRuns(null), is(nullValue()));
+    }
+
+    @Test
+    public void testNvdaEmojiNames() {
+        assertThat(NvdaEmoji.substitute("🇮🇳"), is("flag India"));
+        assertThat(NvdaEmoji.substitute("👍🏽"), is("thumbs up medium skin tone"));
+    }
 }

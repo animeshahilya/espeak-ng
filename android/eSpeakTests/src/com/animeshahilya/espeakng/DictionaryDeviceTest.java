@@ -112,7 +112,7 @@ public class DictionaryDeviceTest {
 
     @Test
     public void testNatoPhoneticSpelling() {
-        assertThat(TtsService.expandNatoSpelling("a"), is("a, Alpha"));
+        assertThat(TtsService.expandNatoSpelling("a"), is("a, Alfa"));
         assertThat(TtsService.expandNatoSpelling("B"), is("B, Bravo"));
         assertThat(TtsService.expandNatoSpelling("z"), is("z, Zulu"));
         // Full words unaffected

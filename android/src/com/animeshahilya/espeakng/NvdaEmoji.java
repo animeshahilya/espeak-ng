@@ -30,7 +30,7 @@ import java.util.Map;
  * audibly (the synthesizer never sees them as words). Emoji newer than the
  * table fall back to raw passthrough, i.e. the pre-CLDR behavior.
  */
-final class NvdaEmoji {
+public final class NvdaEmoji {
 
     private static final class Node {
         final Map<Character, Node> next = new HashMap<Character, Node>();
@@ -71,7 +71,7 @@ final class NvdaEmoji {
      * Replaces the emoji in {@code cluster} with CLDR names, longest match
      * first. Unknown non-glue codepoints pass through raw.
      */
-    static String substitute(String cluster) {
+    public static String substitute(String cluster) {
         if (cluster == null || cluster.isEmpty()) {
             return cluster;
         }

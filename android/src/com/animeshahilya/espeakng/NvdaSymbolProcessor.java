@@ -51,11 +51,11 @@ import java.util.regex.Pattern;
  *   same identifiers, levels, preserve modes and replacements, with a few
  *   normalized wordings ("tilde" not "tilda", "divided by" not "divide by",
  *   hyphen repairs in "less than or equal to").</li>
- *   <li>NVDA has no ASCII programming digraphs ({@code !=}}, {@code ==}},
- *   {@code &&}}, ...); they are kept here as complex-style multi-character
+ *   <li>NVDA has no ASCII programming digraphs ({@code !=}, {@code ==},
+ *   {@code &&}, ...); they are kept here as complex-style multi-character
  *   symbols at level ALL, since NVDA would otherwise read "!=" as
  *   "bang equals". Likewise {@code =>} keeps "implies" (NVDA's table only
- *   knows the {@code =>} glyph as "double right arrow").</li>
+ *   knows the &#x21d2; glyph as "double right arrow").</li>
  *   <li>{@code \n} and {@code \r} are intentionally absent from the table:
  *   this engine renders paragraph pauses from newlines, so they always pass
  *   through untouched (see TextPipelineDeviceTest).</li>

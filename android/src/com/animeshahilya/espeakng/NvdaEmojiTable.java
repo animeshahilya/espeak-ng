@@ -21,8 +21,11 @@ import java.util.List;
 
 /**
  * Emoji names from NVDA's nvda-cldr English dictionary (Unicode CLDR data,
- * generated - do not hand-edit; regenerate from source/locale/en/cldr.dic
- * via the nvda-cldr project). NVDA announces these unconditionally when its
+ * generated - do not hand-edit; regenerate from the nvda-cldr project's
+ * locale/en/cldr.dic, keeping entries whose identifier holds an astral
+ * character, a char in U+2300-U+27BF / U+FE00-U+FE0F, a ZWJ, a keycap mark,
+ * or U+203C / U+2049, last-wins on duplicates). NVDA announces these
+ * unconditionally when its
  * Unicode-Consortium-data dictionary is enabled (all entries are level
  * "none"); here they back Announce mode, where each emoji cluster is
  * replaced by its name. Duplicate identifiers resolve last-wins, exactly
