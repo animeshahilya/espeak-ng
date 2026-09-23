@@ -67,3 +67,10 @@ target_include_directories(ttsespeak PRIVATE
 target_link_libraries(ttsespeak PRIVATE
         espeak-ng ${A_LOG}
 )
+# Export only the JNI entry points; see ttsespeak.map.
+target_link_options(ttsespeak PRIVATE
+        "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/ttsespeak.map"
+)
+set_property(TARGET ttsespeak APPEND PROPERTY LINK_DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/ttsespeak.map
+)

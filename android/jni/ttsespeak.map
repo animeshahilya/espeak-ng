@@ -1,0 +1,12 @@
+/* The app reaches the library only through JNI, so nothing else is
+ * exported. With every other symbol local, the linker drops code the JNI
+ * layer never reaches, such as the dictionary and phoneme compilers (voice
+ * data is compiled on the build machine, not on the device). */
+{
+  global:
+    Java_*;
+    JNI_OnLoad;
+    JNI_OnUnload;
+  local:
+    *;
+};
