@@ -2,10 +2,15 @@
 <resources>
     <!-- AppCompat parent is required by AppCompatActivity (settings host since
          the AndroidX preference migration); DayNight keeps the -v29 night
-         story consistent back to minSdk. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+         story consistent back to minSdk.
+         Brand colors live on AppTheme.Base so qualified overlays (-v29,
+         -night-v29, -watch) inherit them instead of dropping them by
+         re-parenting straight to Theme.AppCompat.DayNight. -->
+    <style name="AppTheme.Base" parent="Theme.AppCompat.DayNight">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="AppTheme" parent="AppTheme.Base">
     </style>
 </resources>

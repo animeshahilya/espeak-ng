@@ -8,6 +8,9 @@
     <!-- Surfaces & Dividers -->
     <color name="colorDivider">#3C4043</color>
 
+    <!-- Adaptive-icon background (same dark tone as day mode) -->
+    <color name="icon_background">#232323</color>
+
     <!-- Semantic Badge & Chip Colors (Dark Mode) -->
     <color name="chip_bg_section">#28354A</color>
     <color name="chip_text_section">#A8C7FA</color>

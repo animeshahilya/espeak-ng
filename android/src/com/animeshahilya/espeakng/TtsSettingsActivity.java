@@ -60,6 +60,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
@@ -658,37 +659,34 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
 
         @Override
-        @SuppressWarnings("deprecation")
         public void onDisplayPreferenceDialog(Preference preference) {
             if (preference instanceof VoiceVariantPreference) {
-                VoiceVariantDialogFragment fragment =
-                        VoiceVariantDialogFragment.newInstance(preference.getKey());
-                fragment.setTargetFragment(this, 0);
-                fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
+                showDialogTargeted(VoiceVariantDialogFragment.newInstance(preference.getKey()));
                 return;
             }
             if (preference instanceof SpeakPunctuationPreference) {
-                SpeakPunctuationDialogFragment fragment =
-                        SpeakPunctuationDialogFragment.newInstance(preference.getKey());
-                fragment.setTargetFragment(this, 0);
-                fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
+                showDialogTargeted(SpeakPunctuationDialogFragment.newInstance(preference.getKey()));
                 return;
             }
             if (preference instanceof SeekBarPreference) {
-                SeekBarDialogFragment fragment =
-                        SeekBarDialogFragment.newInstance(preference.getKey());
-                fragment.setTargetFragment(this, 0);
-                fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
+                showDialogTargeted(SeekBarDialogFragment.newInstance(preference.getKey()));
                 return;
             }
             if (preference instanceof SupportedLanguagesPreference) {
-                SupportedLanguagesDialogFragment fragment =
-                        SupportedLanguagesDialogFragment.newInstance(preference.getKey());
-                fragment.setTargetFragment(this, 0);
-                fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
+                showDialogTargeted(SupportedLanguagesDialogFragment.newInstance(preference.getKey()));
                 return;
             }
             super.onDisplayPreferenceDialog(preference);
+        }
+
+        // Single choke point for the custom dialogs above. setTargetFragment
+        // is deprecated in general (see the comment on this fragment), but it
+        // is the documented mechanism for PreferenceDialogFragmentCompat,
+        // which resolves its preference through the target.
+        @SuppressWarnings("deprecation")
+        private void showDialogTargeted(DialogFragment fragment) {
+            fragment.setTargetFragment(this, 0);
+            fragment.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
         }
 
         @Override
@@ -1352,7 +1350,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         CharSequence[] values = new CharSequence[9];
         for (int i = 0; i < 9; i++) {
             int n = i + 4;
-            entries[i] = n + " " + context.getString(R.string.digits_suffix);
+            entries[i] = context.getResources().getQuantityString(R.plurals.digits_count, n, n);
             values[i] = String.valueOf(n);
         }
         return createListPref(context, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
@@ -1435,7 +1433,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         CharSequence[] values = new CharSequence[7];
         for (int i = 0; i < 7; i++) {
             int n = i + 2;
-            entries[i] = n + " " + context.getString(R.string.digits_suffix);
+            entries[i] = context.getResources().getQuantityString(R.plurals.digits_count, n, n);
             values[i] = String.valueOf(n);
         }
         return createListPref(context, VoiceSettings.PREF_SMART_MIN_LEN,
@@ -1448,7 +1446,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         CharSequence[] values = new CharSequence[9];
         for (int i = 0; i < 9; i++) {
             int n = i + 4;
-            entries[i] = n + " " + context.getString(R.string.digits_suffix);
+            entries[i] = context.getResources().getQuantityString(R.plurals.digits_count, n, n);
             values[i] = String.valueOf(n);
         }
         return createListPref(context, VoiceSettings.PREF_SMART_MAX_LEN,
@@ -1589,6 +1587,10 @@ public class TtsSettingsActivity extends AppCompatActivity {
         TextView chipPhoneme;
     }
 
+    private static String filterValueFor(String[] filterValues, int pos) {
+        return (pos >= 0 && pos < filterValues.length) ? filterValues[pos] : "all";
+    }
+
     private static void showUserDictionaryDialog(final Context context, final String searchQuery, final String categoryFilter) {
         final UserDictionaryManager mgr = UserDictionaryManager.getInstance(context);
         final List<UserDictionary> rules = mgr.getRules();
@@ -1677,8 +1679,10 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 holder.index.setText(context.getString(R.string.dict_rule_index, position + 1));
                 holder.pattern.setText(r.getPattern());
                 holder.replacement.setText(r.getReplacement());
-                holder.chipCategory.setText(UserDictionary.categoryLabel(r.getCategory()));
-                holder.chipMode.setText(r.isRegex() ? "Regex" : (r.isWholeWord() ? "Word" : "Substring"));
+                holder.chipCategory.setText(UserDictionary.categoryLabelRes(r.getCategory()));
+                final int modeRes = r.isRegex() ? R.string.dict_mode_regex
+                        : (r.isWholeWord() ? R.string.dict_mode_word : R.string.dict_mode_substring);
+                holder.chipMode.setText(modeRes);
 
                 if (!r.getLanguage().isEmpty()) {
                     holder.chipLang.setVisibility(View.VISIBLE);
@@ -1694,20 +1698,17 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     holder.chipPhoneme.setVisibility(View.GONE);
                 }
 
-                StringBuilder a11y = new StringBuilder();
-                a11y.append("Rule ").append(position + 1).append(": ")
-                        .append(r.getPattern()).append(" replaced with ")
-                        .append(r.getReplacement()).append(". Section: ")
-                        .append(UserDictionary.categoryLabel(r.getCategory()))
-                        .append(", ")
-                        .append(r.isRegex() ? "regex" : (r.isWholeWord() ? "whole word" : "substring"));
+                String a11y = context.getString(R.string.dict_a11y_rule,
+                        position + 1, r.getPattern(), r.getReplacement(),
+                        context.getString(UserDictionary.categoryLabelRes(r.getCategory())),
+                        context.getString(modeRes));
                 if (!r.getLanguage().isEmpty()) {
-                    a11y.append(", language ").append(r.getLanguage());
+                    a11y = context.getString(R.string.dict_a11y_rule_lang, a11y, r.getLanguage());
                 }
                 if (r.hasPhonemeOverride()) {
-                    a11y.append(", phonemes ").append(r.getPhonemes());
+                    a11y = context.getString(R.string.dict_a11y_rule_phonemes, a11y, r.getPhonemes());
                 }
-                convertView.setContentDescription(a11y.toString());
+                convertView.setContentDescription(a11y);
 
                 return convertView;
             }
@@ -1719,7 +1720,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             public void run() {
                 String q = etSearch.getText() != null ? etSearch.getText().toString().trim().toLowerCase(java.util.Locale.ROOT) : "";
                 int filterPos = spFilter.getSelectedItemPosition();
-                String filter = (filterPos >= 0 && filterPos < filterValues.length) ? filterValues[filterPos] : "all";
+                String filter = filterValueFor(filterValues, filterPos);
 
                 viewToReal.clear();
                 displayedRules.clear();
@@ -1731,10 +1732,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
                             && !r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) continue;
                     viewToReal.add(i);
                     displayedRules.add(r);
-                    labels.add((viewToReal.size()) + ". [" + UserDictionary.categoryLabel(r.getCategory()) + "] \""
-                            + r.getPattern() + "\" \u2192 \"" + r.getReplacement() + "\""
-                            + (r.isRegex() ? " [Regex]" : (r.isWholeWord() ? " [Word]" : ""))
-                            + (r.hasPhonemeOverride() ? " [Phoneme]" : "")
+                    final int rowModeRes = r.isRegex() ? R.string.dict_mode_regex
+                            : (r.isWholeWord() ? R.string.dict_mode_word : R.string.dict_mode_substring);
+                    labels.add(viewToReal.size() + ". [" + context.getString(UserDictionary.categoryLabelRes(r.getCategory())) + "] \""
+                            + r.getPattern() + "\" → \"" + r.getReplacement() + "\""
+                            + ((r.isRegex() || r.isWholeWord()) ? " [" + context.getString(rowModeRes) + "]" : "")
+                            + (r.hasPhonemeOverride() ? " [" + context.getString(R.string.dict_label_phoneme_tag) + "]" : "")
                             + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
                 }
                 listAdapter.notifyDataSetChanged();
@@ -1785,13 +1788,14 @@ public class TtsSettingsActivity extends AppCompatActivity {
         });
 
         final AlertDialog dialog = new AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.setting_user_dictionary) + " (" + rules.size() + ")")
+                .setTitle(context.getString(R.string.dict_title_count,
+                        context.getString(R.string.setting_user_dictionary), rules.size()))
                 .setView(dialogView)
                 .setPositiveButton(R.string.dict_add_rule, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
                         int pos = spFilter.getSelectedItemPosition();
-                        String f = (pos >= 0 && pos < filterValues.length) ? filterValues[pos] : "all";
+                        String f = filterValueFor(filterValues, pos);
                         showAddRuleDialog(context, etSearch.getText().toString(), f);
                     }
                 })
@@ -1799,7 +1803,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface d, int which) {
                         int pos = spFilter.getSelectedItemPosition();
-                        String f = (pos >= 0 && pos < filterValues.length) ? filterValues[pos] : "all";
+                        String f = filterValueFor(filterValues, pos);
                         showDictionaryImportExportDialog(context, etSearch.getText().toString(), f);
                     }
                 })
@@ -1812,7 +1816,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 if (position >= 0 && position < viewToReal.size()) {
                     dialog.dismiss();
                     int pos = spFilter.getSelectedItemPosition();
-                    String f = (pos >= 0 && pos < filterValues.length) ? filterValues[pos] : "all";
+                    String f = filterValueFor(filterValues, pos);
                     showRuleActionsDialog(context, etSearch.getText().toString(), f,
                             viewToReal.get(position), labels.get(position));
                 }
@@ -1870,7 +1874,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         }
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dict_back, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int w) {
                         showUserDictionaryDialog(context, searchQuery, categoryFilter);
                     }

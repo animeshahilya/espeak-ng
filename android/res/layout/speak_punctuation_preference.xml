@@ -28,6 +28,9 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary"
             android:importantForAccessibility="no"
+            android:background="?attr/selectableItemBackground"
+            android:focusable="true"
+            android:clickable="true"
             android:text="@string/punctuation_none_desc" />
 
         <RadioButton
@@ -46,6 +49,9 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary"
             android:importantForAccessibility="no"
+            android:background="?attr/selectableItemBackground"
+            android:focusable="true"
+            android:clickable="true"
             android:text="@string/punctuation_some_desc" />
 
         <RadioButton
@@ -64,6 +70,9 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary"
             android:importantForAccessibility="no"
+            android:background="?attr/selectableItemBackground"
+            android:focusable="true"
+            android:clickable="true"
             android:text="@string/punctuation_most_desc" />
 
         <RadioButton
@@ -82,6 +91,9 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary"
             android:importantForAccessibility="no"
+            android:background="?attr/selectableItemBackground"
+            android:focusable="true"
+            android:clickable="true"
             android:text="@string/punctuation_all_desc" />
 
         <RadioButton
@@ -100,6 +112,9 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary"
             android:importantForAccessibility="no"
+            android:background="?attr/selectableItemBackground"
+            android:focusable="true"
+            android:clickable="true"
             android:text="@string/punctuation_custom_desc" />
 
         <EditText
