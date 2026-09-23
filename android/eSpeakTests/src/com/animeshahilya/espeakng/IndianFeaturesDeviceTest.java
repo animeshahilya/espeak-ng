@@ -194,6 +194,19 @@ public class IndianFeaturesDeviceTest {
         assertThat(TtsService.preprocessIndianText("Salary is 50k"), containsString("50 thousand"));
         assertThat(TtsService.preprocessIndianText("Budget of 5L allocated"), containsString("5 lakh"));
         assertThat(TtsService.preprocessIndianText("Turnover 2cr expected"), containsString("2 crore"));
+        // Lowercase l is litres, not lakh.
+        assertThat(TtsService.preprocessIndianText("Add 2 l of water"), is("Add 2 l of water"));
+    }
+
+    @Test
+    public void testIndianRewritingOnlyForIndianVoices() {
+        assertThat(TextPreprocessor.isIndianLanguage("hi"), is(true));
+        assertThat(TextPreprocessor.isIndianLanguage("en-in"), is(true));
+        assertThat(TextPreprocessor.isIndianLanguage("ta"), is(true));
+        assertThat(TextPreprocessor.isIndianLanguage("en-us"), is(false));
+        assertThat(TextPreprocessor.isIndianLanguage("en"), is(false));
+        assertThat(TextPreprocessor.isIndianLanguage("de"), is(false));
+        assertThat(TextPreprocessor.isIndianLanguage(""), is(false));
     }
 
     @Test

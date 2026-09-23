@@ -994,10 +994,6 @@ public class TtsService extends TextToSpeechService {
         return TextPreprocessor.expandDevanagariDiacritic(text);
     }
 
-    public static boolean containsIndianNuanceChars(String text) {
-        return TextPreprocessor.containsIndianNuanceChars(text);
-    }
-
     public static boolean isDevanagariNumberLang(String languageTag) {
         return TextPreprocessor.isDevanagariNumberLang(languageTag);
     }

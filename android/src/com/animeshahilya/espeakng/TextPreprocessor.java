@@ -69,8 +69,9 @@ public final class TextPreprocessor {
             Pattern.compile("\\b(\\d{1,2}(?:,\\d{2})+),(\\d{3})\\b");
     private static final Pattern SHORTHAND_THOUSAND =
             Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*k\\b");
+    // Capital L only: a bare lowercase "l" is litres ("2 l of water").
     private static final Pattern SHORTHAND_LAKH =
-            Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:l|lac|lakh|lakhs)\\b");
+            Pattern.compile("\\b(\\d+(?:\\.\\d+)?)\\s*(?:L|(?i:lac|lakhs?))\\b");
     private static final Pattern SHORTHAND_CRORE =
             Pattern.compile("(?i)\\b(\\d+(?:\\.\\d+)?)\\s*(?:cr|crore|crores)\\b");
     private static final Pattern SLASH_RUN =
@@ -168,7 +169,7 @@ public final class TextPreprocessor {
                     text = expandNatoSpelling(text);
                     offsetMap = chainOffset(offsetMap, before, text);
                 }
-                if (settings.isSpokenDiacriticsEnabled()) {
+                if (settings.isSpokenDiacriticsEnabled() && isIndianLanguage(languageTag(voice))) {
                     String before = text;
                     text = expandDevanagariDiacritic(text);
                     offsetMap = chainOffset(offsetMap, before, text);
@@ -188,7 +189,9 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        if (!isSsml && settings.isIndianNumberingEnabled()) {
+        // Indian-voice only: every other voice reads these exactly as NVDA's
+        // eSpeak does ("5k", "2 l", "12,34,567" untouched).
+        if (!isSsml && settings.isIndianNumberingEnabled() && isIndianLanguage(languageTag(voice))) {
             String before = text;
             text = preprocessIndianText(text, languageTag(voice));
             offsetMap = chainOffset(offsetMap, before, text);
@@ -313,20 +316,6 @@ public final class TextPreprocessor {
         return end - start;
     }
 
-    public static boolean containsIndianNuanceChars(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            if ((c >= 0x0900 && c <= 0x0D7F) || c == 0x20B9 || c == '/' || c == ',' ||
-                c == 'k' || c == 'K' || c == 'l' || c == 'L' || c == 'c' || c == 'C' ||
-                c == 'r' || c == 'R' || c == 's' || c == 'S' || c == 'i' || c == 'I' ||
-                c == 'e' || c == 'E') {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private static boolean containsHangControls(String text) {
         final int len = text.length();
         for (int i = 0; i < len; i++) {
@@ -361,6 +350,27 @@ public final class TextPreprocessor {
             }
         }
         return false;
+    }
+
+    /**
+     * The voices the fork's Indian-language work targets: eSpeak's Indo-Aryan
+     * and Dravidian voices (lang/inc, lang/dra) plus Indian English. Every
+     * other voice must read text exactly as NVDA's eSpeak does.
+     */
+    public static boolean isIndianLanguage(String languageTag) {
+        if (languageTag == null || languageTag.isEmpty()) return false;
+        String tag = languageTag.trim().toLowerCase(Locale.ROOT);
+        if (tag.equals("en-in")) return true;
+        int dash = tag.indexOf('-');
+        String base = dash >= 0 ? tag.substring(0, dash) : tag;
+        switch (base) {
+            case "as": case "bn": case "bpy": case "gu": case "hi": case "kok":
+            case "mr": case "ne": case "or": case "pa": case "sd": case "si":
+            case "ur": case "kn": case "ml": case "ta": case "te":
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static boolean isDevanagariNumberLang(String languageTag) {
@@ -779,7 +789,7 @@ public final class TextPreprocessor {
     }
 
     public static String preprocessIndianText(String text, String languageTag) {
-        if (text == null || text.isEmpty() || !containsIndianNuanceChars(text)) {
+        if (text == null || text.isEmpty()) {
             return text;
         }
         final boolean devanagari = isDevanagariNumberLang(languageTag);
