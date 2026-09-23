@@ -941,15 +941,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         ensureLangInfoLoaded();
                     }
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (isGone(context) || !fragment.isAdded()) {
-                                return;
-                            }
-                            fragment.setPreferenceScreen(buildPreferences(context,
-                                    fragment.getPreferenceManager(), engine, voices, isWatch));
+                    handler.post(() -> {
+                        if (isGone(context) || !fragment.isAdded()) {
+                            return;
                         }
+                        fragment.setPreferenceScreen(buildPreferences(context,
+                                fragment.getPreferenceManager(), engine, voices, isWatch));
                     });
                 } catch (Throwable t) {
                     // The engine probe (native lib load, phondata, JNI voice
@@ -957,15 +954,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     // failure became an uncaught exception that killed the
                     // whole process with zero UI feedback.
                     Log.e(TAG, "Failed to build settings preferences", t);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (isGone(context)) {
-                                return;
-                            }
-                            Toast.makeText(context, R.string.settings_load_failed,
-                                    Toast.LENGTH_LONG).show();
+                    handler.post(() -> {
+                        if (isGone(context)) {
+                            return;
                         }
+                        Toast.makeText(context, R.string.settings_load_failed,
+                                Toast.LENGTH_LONG).show();
                     });
                 }
             }

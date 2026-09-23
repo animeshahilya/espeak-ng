@@ -17,31 +17,17 @@
 
 package com.animeshahilya.espeakng.preference;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.animeshahilya.espeakng.R;
-import com.animeshahilya.espeakng.ResourceIdListAdapter;
 import com.animeshahilya.espeakng.VoiceSettings;
 import com.animeshahilya.espeakng.VoiceVariant;
 
 public class VoiceVariantPreference extends PersistingDialogPreference {
     private int mCategoryIndex = 0;
     private int mVariantIndex = 0;
-
-    static class ViewHolder
-    {
-        public TextView text;
-    }
 
     // Package-visible for the dialog fragment in the same package; the table
     // contents stay private to this file.
@@ -70,57 +56,6 @@ public class VoiceVariantPreference extends PersistingDialogPreference {
 
         public VoiceVariant getVariant() {
             return variant;
-        }
-    }
-
-    public static class VariantDataListAdapter extends ArrayAdapter<VariantData>
-    {
-        private final LayoutInflater mInflater;
-
-        public VariantDataListAdapter(Activity context, VariantData[] resources)
-        {
-            super(context, android.R.layout.simple_list_item_1, resources);
-            mInflater = context.getLayoutInflater();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-            ViewHolder holder;
-            if (convertView == null)
-            {
-                convertView = mInflater.inflate(android.R.layout.simple_spinner_item, parent, false);
-                holder = new ViewHolder();
-                holder.text = (TextView)convertView.findViewById(android.R.id.text1);
-                convertView.setTag(holder);
-            }
-            else
-            {
-                holder = (ViewHolder)convertView.getTag();
-            }
-
-            holder.text.setText(getItem(position).getDisplayName(getContext()));
-            return convertView;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent)
-        {
-            ViewHolder holder;
-            if (convertView == null)
-            {
-                convertView = mInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-                holder = new ViewHolder();
-                holder.text = (TextView)convertView.findViewById(android.R.id.text1);
-                convertView.setTag(holder);
-            }
-            else
-            {
-                holder = (ViewHolder)convertView.getTag();
-            }
-
-            holder.text.setText(getItem(position).getDisplayName(getContext()));
-            return convertView;
         }
     }
 

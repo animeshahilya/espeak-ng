@@ -33,7 +33,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.preference.PreferenceDialogFragmentCompat;
 
 import com.animeshahilya.espeakng.R;
 
@@ -49,7 +48,7 @@ import java.util.Set;
  * the framework {@code onPrepareDialogBuilder}/{@code showDialog}
  * overrides, which have no AndroidX equivalents.
  */
-public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCompat {
+public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
     public static class LangEntry {
         public final CharSequence label;
         public final String value;
@@ -74,11 +73,7 @@ public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCo
     private final List<LangEntry> mAllEntries = new ArrayList<>();
 
     public static SupportedLanguagesDialogFragment newInstance(String key) {
-        SupportedLanguagesDialogFragment fragment = new SupportedLanguagesDialogFragment();
-        Bundle args = new Bundle(1);
-        args.putString(ARG_KEY, key);
-        fragment.setArguments(args);
-        return fragment;
+        return withKey(new SupportedLanguagesDialogFragment(), key);
     }
 
     private SupportedLanguagesPreference getSupportedPreference() {
@@ -92,14 +87,8 @@ public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCo
     @SuppressWarnings("deprecation")
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (!(getPreference() instanceof SupportedLanguagesPreference)) {
-            // Restored after the screen tree was rebuilt under it (rotation
-            // or process restore): getPreference() no longer resolves, and
-            // getSupportedPreference() would ClassCastException. Drop this
-            // restored instance instead of crashing the settings screen.
-            dismissAllowingStateLoss();
-            return new AlertDialog.Builder(getContext()).create();
-        }
+        Dialog stale = staleDialogUnless(SupportedLanguagesPreference.class);
+        if (stale != null) return stale;
         SupportedLanguagesPreference preference = getSupportedPreference();
 
         if (preference.getEntries() == null || preference.getEntryValues() == null) {
@@ -206,35 +195,7 @@ public class SupportedLanguagesDialogFragment extends PreferenceDialogFragmentCo
             });
         }
 
-        // Null listeners: the real handlers are wired in onStart() so the
-        // empty-selection guard can keep the dialog open (an AlertDialog
-        // button listener auto-dismisses).
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setView(mDialogView)
-                .setTitle(preference.getDialogTitle())
-                .setIcon(preference.getDialogIcon())
-                .setCancelable(true);
-        return builder.create();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        AlertDialog dialog = (AlertDialog) getDialog();
-        if (dialog == null) return;
-
-        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-        if (positive != null) {
-            positive.setOnClickListener(v -> onDialogClosed(true));
-        }
-
-        if (negative != null) {
-            negative.setOnClickListener(v -> dialog.cancel());
-        }
+        return buildDialog(mDialogView);
     }
 
     @Override

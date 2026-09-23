@@ -229,47 +229,44 @@ final class UserDictionaryScreen {
         };
         lvRules.setAdapter(listAdapter);
 
-        final Runnable updateList = new Runnable() {
-            @Override
-            public void run() {
-                String q = etSearch.getText() != null ? etSearch.getText().toString().trim().toLowerCase(java.util.Locale.ROOT) : "";
-                int filterPos = spFilter.getSelectedItemPosition();
-                String filter = filterValueFor(filterValues, filterPos);
+        final Runnable updateList = () -> {
+            String q = etSearch.getText() != null ? etSearch.getText().toString().trim().toLowerCase(java.util.Locale.ROOT) : "";
+            int filterPos = spFilter.getSelectedItemPosition();
+            String filter = filterValueFor(filterValues, filterPos);
 
-                viewToReal.clear();
-                displayedRules.clear();
-                labels.clear();
-                for (int i = 0; i < rules.size(); i++) {
-                    UserDictionary r = rules.get(i);
-                    if (!"all".equals(filter) && !r.getCategory().equals(filter)) continue;
-                    if (!q.isEmpty() && !r.getPattern().toLowerCase(java.util.Locale.ROOT).contains(q)
-                            && !r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) continue;
-                    viewToReal.add(i);
-                    displayedRules.add(r);
-                    final int rowModeRes = r.isRegex() ? R.string.dict_mode_regex
-                            : (r.isWholeWord() ? R.string.dict_mode_word : R.string.dict_mode_substring);
-                    labels.add(viewToReal.size() + ". [" + context.getString(UserDictionary.categoryLabelRes(r.getCategory())) + "] \""
-                            + r.getPattern() + "\" → \"" + r.getReplacement() + "\""
-                            + ((r.isRegex() || r.isWholeWord()) ? " [" + context.getString(rowModeRes) + "]" : "")
-                            + (r.hasPhonemeOverride() ? " [" + context.getString(R.string.dict_label_phoneme_tag) + "]" : "")
-                            + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
-                }
-                listAdapter.notifyDataSetChanged();
-                if (tvCount != null) {
-                    if (viewToReal.size() == rules.size()) {
-                        tvCount.setText(context.getResources().getQuantityString(R.plurals.dict_rules_count_all, rules.size(), rules.size()));
-                    } else {
-                        tvCount.setText(context.getResources().getQuantityString(R.plurals.dict_rules_count, rules.size(), viewToReal.size(), rules.size()));
-                    }
-                }
-                if (displayedRules.isEmpty()) {
-                    tvEmpty.setVisibility(View.VISIBLE);
-                    tvEmpty.setText(rules.isEmpty()
-                            ? context.getString(R.string.dict_empty)
-                            : context.getString(R.string.dict_no_match));
+            viewToReal.clear();
+            displayedRules.clear();
+            labels.clear();
+            for (int i = 0; i < rules.size(); i++) {
+                UserDictionary r = rules.get(i);
+                if (!"all".equals(filter) && !r.getCategory().equals(filter)) continue;
+                if (!q.isEmpty() && !r.getPattern().toLowerCase(java.util.Locale.ROOT).contains(q)
+                        && !r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) continue;
+                viewToReal.add(i);
+                displayedRules.add(r);
+                final int rowModeRes = r.isRegex() ? R.string.dict_mode_regex
+                        : (r.isWholeWord() ? R.string.dict_mode_word : R.string.dict_mode_substring);
+                labels.add(viewToReal.size() + ". [" + context.getString(UserDictionary.categoryLabelRes(r.getCategory())) + "] \""
+                        + r.getPattern() + "\" → \"" + r.getReplacement() + "\""
+                        + ((r.isRegex() || r.isWholeWord()) ? " [" + context.getString(rowModeRes) + "]" : "")
+                        + (r.hasPhonemeOverride() ? " [" + context.getString(R.string.dict_label_phoneme_tag) + "]" : "")
+                        + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
+            }
+            listAdapter.notifyDataSetChanged();
+            if (tvCount != null) {
+                if (viewToReal.size() == rules.size()) {
+                    tvCount.setText(context.getResources().getQuantityString(R.plurals.dict_rules_count_all, rules.size(), rules.size()));
                 } else {
-                    tvEmpty.setVisibility(View.GONE);
+                    tvCount.setText(context.getResources().getQuantityString(R.plurals.dict_rules_count, rules.size(), viewToReal.size(), rules.size()));
                 }
+            }
+            if (displayedRules.isEmpty()) {
+                tvEmpty.setVisibility(View.VISIBLE);
+                tvEmpty.setText(rules.isEmpty()
+                        ? context.getString(R.string.dict_empty)
+                        : context.getString(R.string.dict_no_match));
+            } else {
+                tvEmpty.setVisibility(View.GONE);
             }
         };
 
@@ -442,57 +439,48 @@ final class UserDictionaryScreen {
             return;
         }
         Toast.makeText(context, R.string.dict_share_preparing, Toast.LENGTH_SHORT).show();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    File dir = new File(context.getCacheDir(), "shared_dictionaries");
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
-                    File shareFile = new File(dir, "espeak_user_dictionary.json");
-                    try (FileOutputStream fos = new FileOutputStream(shareFile);
-                         OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
-                        JSONArray arr = new JSONArray();
-                        for (UserDictionary r : rules) {
-                            arr.put(r.toJson());
-                        }
-                        osw.write(arr.toString(2));
-                        osw.flush();
-                        fos.getFD().sync();
-                    }
-
-                    final Uri contentUri = androidx.core.content.FileProvider.getUriForFile(
-                            context, context.getPackageName() + ".fileprovider", shareFile);
-
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (TtsSettingsActivity.isGone(context)) return;
-                            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                            shareIntent.setType("application/json");
-                            shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.dict_share_subject));
-                            shareIntent.putExtra(Intent.EXTRA_TEXT,
-                                    context.getResources().getQuantityString(
-                                            R.plurals.dict_share_text,
-                                            rules.size(), rules.size()));
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            context.startActivity(Intent.createChooser(shareIntent,
-                                    context.getString(R.string.dict_share)));
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.e(TtsSettingsActivity.TAG, "Failed to share user dictionary", e);
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (TtsSettingsActivity.isGone(context)) return;
-                            Toast.makeText(context, R.string.dict_share_failed,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+        new Thread(() -> {
+            try {
+                File dir = new File(context.getCacheDir(), "shared_dictionaries");
+                if (!dir.exists()) {
+                    dir.mkdirs();
                 }
+                File shareFile = new File(dir, "espeak_user_dictionary.json");
+                try (FileOutputStream fos = new FileOutputStream(shareFile);
+                     OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+                    JSONArray arr = new JSONArray();
+                    for (UserDictionary r : rules) {
+                        arr.put(r.toJson());
+                    }
+                    osw.write(arr.toString(2));
+                    osw.flush();
+                    fos.getFD().sync();
+                }
+
+                final Uri contentUri = androidx.core.content.FileProvider.getUriForFile(
+                        context, context.getPackageName() + ".fileprovider", shareFile);
+
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (TtsSettingsActivity.isGone(context)) return;
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("application/json");
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.dict_share_subject));
+                    shareIntent.putExtra(Intent.EXTRA_TEXT,
+                            context.getResources().getQuantityString(
+                                    R.plurals.dict_share_text,
+                                    rules.size(), rules.size()));
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    context.startActivity(Intent.createChooser(shareIntent,
+                            context.getString(R.string.dict_share)));
+                });
+            } catch (Exception e) {
+                Log.e(TtsSettingsActivity.TAG, "Failed to share user dictionary", e);
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (TtsSettingsActivity.isGone(context)) return;
+                    Toast.makeText(context, R.string.dict_share_failed,
+                            Toast.LENGTH_SHORT).show();
+                });
             }
         }, "dict-share").start();
     }

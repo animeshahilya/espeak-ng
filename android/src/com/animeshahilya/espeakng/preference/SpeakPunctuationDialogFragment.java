@@ -25,11 +25,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
-import androidx.preference.PreferenceDialogFragmentCompat;
 
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.SpeechSynthesis;
@@ -41,7 +39,7 @@ import com.animeshahilya.espeakng.VoiceSettings;
  * {@code onCreateDialogView}/{@code onBindDialogView}/{@code onClick}
  * overrides, which have no AndroidX equivalents.
  */
-public class SpeakPunctuationDialogFragment extends PreferenceDialogFragmentCompat {
+public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
     private RadioButton mNone;
     private RadioButton mSome;
     private RadioButton mMost;
@@ -50,11 +48,7 @@ public class SpeakPunctuationDialogFragment extends PreferenceDialogFragmentComp
     private EditText mPunctuationCharacters;
 
     public static SpeakPunctuationDialogFragment newInstance(String key) {
-        SpeakPunctuationDialogFragment fragment = new SpeakPunctuationDialogFragment();
-        Bundle args = new Bundle(1);
-        args.putString(ARG_KEY, key);
-        fragment.setArguments(args);
-        return fragment;
+        return withKey(new SpeakPunctuationDialogFragment(), key);
     }
 
     private SpeakPunctuationPreference getPunctuationPreference() {
@@ -86,14 +80,8 @@ public class SpeakPunctuationDialogFragment extends PreferenceDialogFragmentComp
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (!(getPreference() instanceof SpeakPunctuationPreference)) {
-            // Restored after the screen tree was rebuilt under it (rotation
-            // or process restore): getPreference() no longer resolves, and
-            // getPunctuationPreference() would ClassCastException. Drop this
-            // restored instance instead of crashing the settings screen.
-            dismissAllowingStateLoss();
-            return new AlertDialog.Builder(getContext()).create();
-        }
+        Dialog stale = staleDialogUnless(SpeakPunctuationPreference.class);
+        if (stale != null) return stale;
         View root = LayoutInflater.from(getContext())
                 .inflate(R.layout.speak_punctuation_preference, null);
         mNone = (RadioButton) root.findViewById(R.id.none);
@@ -183,34 +171,7 @@ public class SpeakPunctuationDialogFragment extends PreferenceDialogFragmentComp
                 ? preference.getVoiceSettings().getPunctuationCharacters() : "");
         mPunctuationCharacters.setEnabled(isCustom);
 
-        // Null listeners: the real handler is wired in onStart() to mirror
-        // the old onClick path exactly.
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setView(root)
-                .setTitle(preference.getDialogTitle())
-                .setIcon(preference.getDialogIcon())
-                .setCancelable(true);
-        return builder.create();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        AlertDialog dialog = (AlertDialog) getDialog();
-        if (dialog == null) return;
-
-        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-        if (positive != null) {
-            positive.setOnClickListener(v -> onDialogClosed(true));
-        }
-
-        if (negative != null) {
-            negative.setOnClickListener(v -> dialog.cancel());
-        }
+        return buildDialog(root);
     }
 
     @Override

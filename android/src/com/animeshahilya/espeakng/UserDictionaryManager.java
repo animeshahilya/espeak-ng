@@ -243,11 +243,8 @@ public class UserDictionaryManager {
      */
     public void save() {
         final List<UserDictionary> snapshot = new ArrayList<>(mRules);
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                saveAtomic(snapshot);
-            }
+        mExecutor.execute(() -> {
+            saveAtomic(snapshot);
         });
     }
 
@@ -343,53 +340,14 @@ public class UserDictionaryManager {
             List<UserDictionary> batch = new ArrayList<>(1024);
             String raw = firstLine;
             do {
-                String l = raw.trim();
-                if (!l.isEmpty() && !l.startsWith("#")) {
-                    String[] parts = raw.split("\t");
-                    if (parts.length >= 2) {
-                        String pattern = parts[0].trim();
-                        String replacement = parts[1].trim();
-                        boolean caseSensitive = false;
-                        boolean isRegex = false;
-                        boolean wholeWord = true;
-
-                        if (parts.length >= 4) {
-                            caseSensitive = "1".equals(parts[3].trim());
-                        }
-                        if (parts.length >= 5) {
-                            isRegex = "1".equals(parts[4].trim());
-                            if (isRegex) wholeWord = false;
-                        }
-
-                        if (!pattern.isEmpty()) {
-                            UserDictionary rule = new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord);
-                            if (rule.isValid()) {
-                                batch.add(rule);
-                                if (batch.size() >= 2000) {
-                                    mRules.addAll(batch);
-                                    added += batch.size();
-                                    batch.clear();
-                                    if (progress != null) progress.onProgress(added);
-                                }
-                            }
-                        }
-                    } else if (parts.length == 1 && raw.contains("=")) {
-                        // Tolerate simple "word=replacement" lists too.
-                        int eq = raw.indexOf('=');
-                        String pattern = raw.substring(0, eq).trim();
-                        String replacement = raw.substring(eq + 1).trim();
-                        if (!pattern.isEmpty()) {
-                            UserDictionary rule = new UserDictionary(pattern, replacement, false, false, true);
-                            if (rule.isValid()) {
-                                batch.add(rule);
-                                if (batch.size() >= 2000) {
-                                    mRules.addAll(batch);
-                                    added += batch.size();
-                                    batch.clear();
-                                    if (progress != null) progress.onProgress(added);
-                                }
-                            }
-                        }
+                UserDictionary rule = parseDicLine(raw);
+                if (rule != null && rule.isValid()) {
+                    batch.add(rule);
+                    if (batch.size() >= 2000) {
+                        mRules.addAll(batch);
+                        added += batch.size();
+                        batch.clear();
+                        if (progress != null) progress.onProgress(added);
                     }
                 }
             } while ((raw = reader.readLine()) != null);
@@ -403,6 +361,36 @@ public class UserDictionaryManager {
             Log.e(TAG, "Failed to import dictionary", e);
         }
         return added;
+    }
+
+    /**
+     * One NVDA .dic line (pattern, replacement, comment, case, regex; tab
+     * separated) or a plain "word=replacement" line. Null for blanks,
+     * comments and lines with no usable pattern.
+     */
+    private static UserDictionary parseDicLine(String raw) {
+        String l = raw.trim();
+        if (l.isEmpty() || l.startsWith("#")) return null;
+        String[] parts = raw.split("\t");
+        String pattern;
+        String replacement;
+        boolean caseSensitive = false;
+        boolean isRegex = false;
+        if (parts.length >= 2) {
+            pattern = parts[0].trim();
+            replacement = parts[1].trim();
+            if (parts.length >= 4) caseSensitive = "1".equals(parts[3].trim());
+            if (parts.length >= 5) isRegex = "1".equals(parts[4].trim());
+        } else if (raw.contains("=")) {
+            // Tolerate simple "word=replacement" lists too.
+            int eq = raw.indexOf('=');
+            pattern = raw.substring(0, eq).trim();
+            replacement = raw.substring(eq + 1).trim();
+        } else {
+            return null;
+        }
+        if (pattern.isEmpty()) return null;
+        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, !isRegex);
     }
 
     /** Case-insensitive substring search over pattern/replacement for the UI list. */

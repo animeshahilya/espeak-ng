@@ -32,7 +32,6 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.preference.PreferenceDialogFragmentCompat;
 
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.preference.SeekBarPreference.Parameter;
@@ -44,13 +43,9 @@ import com.animeshahilya.espeakng.preference.SeekBarPreference.Parameter;
  * {@code onDismiss} overrides, which have no AndroidX equivalents; the
  * parameter model, persistence, and summary stay on the preference.
  */
-public class SeekBarDialogFragment extends PreferenceDialogFragmentCompat {
+public class SeekBarDialogFragment extends ButtonDialogFragment {
     public static SeekBarDialogFragment newInstance(String key) {
-        SeekBarDialogFragment fragment = new SeekBarDialogFragment();
-        Bundle args = new Bundle(1);
-        args.putString(ARG_KEY, key);
-        fragment.setArguments(args);
-        return fragment;
+        return withKey(new SeekBarDialogFragment(), key);
     }
 
     private SeekBarPreference getSeekBarPreference() {
@@ -59,14 +54,8 @@ public class SeekBarDialogFragment extends PreferenceDialogFragmentCompat {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (!(getPreference() instanceof SeekBarPreference)) {
-            // Restored after the screen tree was rebuilt under it (rotation
-            // or process restore): getPreference() no longer resolves, and
-            // every getter below would NPE/ClassCastException. Drop this
-            // restored instance instead of crashing the settings screen.
-            dismissAllowingStateLoss();
-            return new AlertDialog.Builder(getContext()).create();
-        }
+        Dialog stale = staleDialogUnless(SeekBarPreference.class);
+        if (stale != null) return stale;
         SeekBarPreference preference = getSeekBarPreference();
         View root = LayoutInflater.from(getContext()).inflate(R.layout.seekbar_preference, null);
         ViewGroup container = (ViewGroup) root.findViewById(R.id.parameters);
@@ -78,15 +67,7 @@ public class SeekBarDialogFragment extends PreferenceDialogFragmentCompat {
             container.addView(section);
         }
 
-        // Null listeners: the OK path is handled in onStart() and every
-        // dismissal funnels through onDismiss(), mirroring the old overrides.
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setView(root)
-                .setTitle(preference.getDialogTitle())
-                .setIcon(preference.getDialogIcon());
-        AlertDialog dialog = builder.create();
+        AlertDialog dialog = buildDialog(root);
 
         for (final Parameter parameter : preference.mParameters) {
             // Read before touching the SeekBar: setMax() notifies the progress
@@ -239,25 +220,6 @@ public class SeekBarDialogFragment extends PreferenceDialogFragmentCompat {
         });
         seekBar.setFocusable(true);
         seekBar.setFocusableInTouchMode(true);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        AlertDialog dialog = (AlertDialog) getDialog();
-        if (dialog == null) return;
-
-        // OK only updates the last-saved values; the actual persist happens
-        // in onDismiss for every dismissal path (see below).
-        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        if (positive != null) {
-            positive.setOnClickListener(v -> onDialogClosed(true));
-        }
-
-        Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        if (negative != null) {
-            negative.setOnClickListener(v -> dialog.cancel());
-        }
     }
 
     @Override

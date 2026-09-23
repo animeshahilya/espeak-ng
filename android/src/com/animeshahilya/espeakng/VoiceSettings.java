@@ -173,30 +173,6 @@ public class VoiceSettings {
         return true;
     }
 
-    /**
-     * CCE-safe wrapper: reads the preference and returns null on type mismatch.
-     * The legacy framework stored some ints as strings, and some booleans as
-     * strings too, so every read must tolerate the wrong class without
-     * crashing the TTS binder thread.
-     */
-    private String safeGetString(String key) {
-        return mPreferences.getString(key, null);
-    }
-
-    private boolean safeGetBoolean(String key, boolean defValue) {
-        return mPreferences.getBoolean(key, defValue);
-    }
-
-    private int safeGetInt(String key, int defValue) {
-        final String s = safeGetString(key);
-        if (s == null) return defValue;
-        try {
-            return Integer.parseInt(s);
-        } catch (NumberFormatException e) {
-            return defValue;
-        }
-    }
-
     public VoiceVariant getVoiceVariant() {
         String variant = mPreferences.getString(PREF_VARIANT, null);
         if (variant == null) {
@@ -236,9 +212,6 @@ public class VoiceSettings {
     }
 
     public int getPitch() {
-        int min = mEngine.Pitch.getMinValue();
-        int max = mEngine.Pitch.getMaxValue();
-
         int pitch = getPreferenceValue(PREF_PITCH, Integer.MIN_VALUE);
         if (pitch == Integer.MIN_VALUE) {
             if (mPreferences.contains(PREF_DEFAULT_PITCH)) {
@@ -248,58 +221,49 @@ public class VoiceSettings {
             }
         }
 
-        if (pitch > max) pitch = max;
-        if (pitch < min) pitch = min;
-        return pitch;
+        return clamp(mEngine.Pitch, pitch);
     }
 
     public int getPitchRange() {
-        int min = mEngine.PitchRange.getMinValue();
-        int max = mEngine.PitchRange.getMaxValue();
-
-        int range = getPreferenceValue(PREF_PITCH_RANGE, DEFAULT_PITCH_RANGE);
-        if (range > max) range = max;
-        if (range < min) range = min;
-        return range;
+        return clamp(mEngine.PitchRange, getPreferenceValue(PREF_PITCH_RANGE, DEFAULT_PITCH_RANGE));
     }
 
     public int getVolume() {
-        int min = mEngine.Volume.getMinValue();
-        int max = mEngine.Volume.getMaxValue();
-
-        int range = getPreferenceValue(PREF_VOLUME, mEngine.Volume);
-        if (range > max) range = max;
-        if (range < min) range = min;
-        return range;
+        return clamp(mEngine.Volume, getPreferenceValue(PREF_VOLUME, mEngine.Volume));
     }
 
     public int getPunctuationLevel() {
-        int min = mEngine.Punctuation.getMinValue();
-        int max = mEngine.Punctuation.getMaxValue();
-
-        int level = getPreferenceValue(PREF_PUNCTUATION_LEVEL, mEngine.Punctuation);
-        if (level > max) level = max;
-        if (level < min) level = min;
-        return level;
+        return clamp(mEngine.Punctuation, getPreferenceValue(PREF_PUNCTUATION_LEVEL, mEngine.Punctuation));
     }
 
     public String getPunctuationCharacters() {
         return mPreferences.getString(PREF_PUNCTUATION_CHARACTERS, null);
     }
 
-    private int getPreferenceValue(String preference, int defaultValue) {
+    private static int clamp(SpeechSynthesis.Parameter parameter, int value) {
+        return Math.max(parameter.getMinValue(), Math.min(parameter.getMaxValue(), value));
+    }
+
+    /**
+     * The int stored as a string under {@code preference}, or null when it is
+     * missing or malformed (e.g. hand-edited prefs), which would otherwise
+     * crash every synthesis request routed through here.
+     */
+    private Integer parsePreference(String preference) {
         String prefString = mPreferences.getString(preference, null);
         if (prefString == null) {
-            return defaultValue;
+            return null;
         }
         try {
             return Integer.parseInt(prefString);
         } catch (NumberFormatException e) {
-            // A malformed value here (e.g. hand-edited prefs) would otherwise
-            // crash every synthesis request through this method, since
-            // getRate()/getPitch()/etc. all route through it.
-            return defaultValue;
+            return null;
         }
+    }
+
+    private int getPreferenceValue(String preference, int defaultValue) {
+        Integer value = parsePreference(preference);
+        return value != null ? value : defaultValue;
     }
 
     /**
@@ -310,15 +274,8 @@ public class VoiceSettings {
      * paying four pointless JNI round-trips even with the preference set.
      */
     private int getPreferenceValue(String preference, SpeechSynthesis.Parameter parameter) {
-        String prefString = mPreferences.getString(preference, null);
-        if (prefString == null) {
-            return parameter.getDefaultValue();
-        }
-        try {
-            return Integer.parseInt(prefString);
-        } catch (NumberFormatException e) {
-            return parameter.getDefaultValue();
-        }
+        Integer value = parsePreference(preference);
+        return value != null ? value : parameter.getDefaultValue();
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -385,31 +342,16 @@ public class VoiceSettings {
     }
 
     public int getCapitals() {
-        int min = mEngine.Capitals.getMinValue();
-        int max = mEngine.Capitals.getMaxValue();
-        int value = getPreferenceValue(PREF_CAPITALS, DEFAULT_CAPITALS);
-        if (value > max) value = max;
-        if (value < min) value = min;
-        return value;
+        return clamp(mEngine.Capitals, getPreferenceValue(PREF_CAPITALS, DEFAULT_CAPITALS));
     }
 
     public int getWordGap() {
-        int min = mEngine.WordGap.getMinValue();
-        int max = mEngine.WordGap.getMaxValue();
-        int value = getPreferenceValue(PREF_WORD_GAP, mEngine.WordGap);
-        if (value > max) value = max;
-        if (value < min) value = min;
-        return value;
+        return clamp(mEngine.WordGap, getPreferenceValue(PREF_WORD_GAP, mEngine.WordGap));
     }
 
     /** Reading pace: percent multiplier on clause/sentence/paragraph pauses. 100=normal. */
     public int getPauseScale() {
-        int min = mEngine.PauseScale.getMinValue();
-        int max = mEngine.PauseScale.getMaxValue();
-        int value = getPreferenceValue(PREF_PAUSE_SCALE, mEngine.PauseScale);
-        if (value > max) value = max;
-        if (value < min) value = min;
-        return value;
+        return clamp(mEngine.PauseScale, getPreferenceValue(PREF_PAUSE_SCALE, mEngine.PauseScale));
     }
 
     /**

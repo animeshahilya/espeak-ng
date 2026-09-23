@@ -222,14 +222,11 @@ public class TtsService extends TextToSpeechService {
         // pays that cost (seconds for large imported dictionaries) on the
         // latency-critical path. Failure is non-fatal - the lazy path will
         // retry (and surface the error) if a synthesis actually needs it.
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    UserDictionaryManager.getInstance(mStorageContext);
-                } catch (Throwable t) {
-                    Log.w(TAG, "User dictionary warmup failed", t);
-                }
+        new Thread(() -> {
+            try {
+                UserDictionaryManager.getInstance(mStorageContext);
+            } catch (Throwable t) {
+                Log.w(TAG, "User dictionary warmup failed", t);
             }
         }, "espeak-dict-warmup").start();
         final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
@@ -682,7 +679,7 @@ public class TtsService extends TextToSpeechService {
 
         // Fast-path empty or whitespace-only utterances: avoid full voice/param setup
         // and JNI overhead for TalkBack spacers, empty lines, and blank elements.
-        if (isBlank(text)) {
+        if (VoiceSettings.isBlank(text)) {
             if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
                     != TextToSpeech.SUCCESS) {
                 reportError(callback, TextToSpeech.ERROR_SERVICE);
@@ -911,11 +908,7 @@ public class TtsService extends TextToSpeechService {
                     // One bad chunk (mixed-script edge case) must never kill
                     // the whole request or hang the service — skip and continue.
                     if (DEBUG) Log.w(TAG, "Chunk synth failed, skipping", t);
-                    if (mSegmentsRemaining.decrementAndGet() <= 0 || mIsStopped.get()) {
-                        if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
-                            mCallback.done();
-                        }
-                    }
+                    segmentFinished();
                 }
             }
         } else {
@@ -933,28 +926,21 @@ public class TtsService extends TextToSpeechService {
         // reportError() has signaled completion yet (e.g. native synthesis
         // error, empty string, or early stop), finalize here so the framework
         // is never hung waiting for the request to end.
+        finishRequest();
+    }
+
+    /** Signals done() exactly once per request, whichever path gets there first. */
+    private void finishRequest() {
         if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
             mCallback.done();
         }
     }
 
-    // =========================================================================
-    // Text Preprocessing Delegation Stubs
-    // The implementation lives in TextPreprocessor.java. These forwarding
-    // methods preserve 100% binary & source compatibility for tests and hooks.
-    // =========================================================================
-
-    public static final int MAX_CHUNK_CHARS = TextPreprocessor.MAX_CHUNK_CHARS;
-    public static final int MAX_REQUEST_CHARS = TextPreprocessor.MAX_REQUEST_CHARS;
-    public static final int MAX_CHUNKS = TextPreprocessor.MAX_CHUNKS;
-
-    // Delegated to VoiceSettings.isBlank to keep the definition in one place.
-    private static boolean isBlank(String text) {
-        return VoiceSettings.isBlank(text);
-    }
-
-    static String languageTag(Voice voice) {
-        return TextPreprocessor.languageTag(voice);
+    /** One chunk ended (synthesized or skipped); finish once all have, or on stop. */
+    private void segmentFinished() {
+        if (mSegmentsRemaining.decrementAndGet() <= 0 || mIsStopped.get()) {
+            finishRequest();
+        }
     }
 
     // Protected (not private) as a test hook: eSpeakTests subclasses call
@@ -1053,11 +1039,7 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthDataComplete() {
-            if (mSegmentsRemaining.decrementAndGet() <= 0 || mIsStopped.get()) {
-                if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
-                    mCallback.done();
-                }
-            }
+            segmentFinished();
         }
 
         @Override

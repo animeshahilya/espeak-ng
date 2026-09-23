@@ -17,21 +17,17 @@
 
 package com.animeshahilya.espeakng.preference;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import androidx.preference.PreferenceDialogFragmentCompat;
 
 import com.animeshahilya.espeakng.R;
-import com.animeshahilya.espeakng.ResourceIdListAdapter;
-import com.animeshahilya.espeakng.preference.VoiceVariantPreference.VariantDataListAdapter;
 
 /**
  * Dialog for {@link VoiceVariantPreference}: category/variant spinners with
@@ -40,7 +36,7 @@ import com.animeshahilya.espeakng.preference.VoiceVariantPreference.VariantDataL
  * overrides, which have no AndroidX equivalents. Working indices live here
  * so cancelling truly discards the browsed selection.
  */
-public class VoiceVariantDialogFragment extends PreferenceDialogFragmentCompat {
+public class VoiceVariantDialogFragment extends ButtonDialogFragment {
     private Spinner mCategory;
     private Spinner mVariant;
 
@@ -48,11 +44,7 @@ public class VoiceVariantDialogFragment extends PreferenceDialogFragmentCompat {
     private int mVariantIndex = 0;
 
     public static VoiceVariantDialogFragment newInstance(String key) {
-        VoiceVariantDialogFragment fragment = new VoiceVariantDialogFragment();
-        Bundle args = new Bundle(1);
-        args.putString(ARG_KEY, key);
-        fragment.setArguments(args);
-        return fragment;
+        return withKey(new VoiceVariantDialogFragment(), key);
     }
 
     private VoiceVariantPreference getVariantPreference() {
@@ -61,14 +53,8 @@ public class VoiceVariantDialogFragment extends PreferenceDialogFragmentCompat {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (!(getPreference() instanceof VoiceVariantPreference)) {
-            // Restored after the screen tree was rebuilt under it (rotation
-            // or process restore): getPreference() no longer resolves, and
-            // getVariantPreference() would ClassCastException. Drop this
-            // restored instance instead of crashing the settings screen.
-            dismissAllowingStateLoss();
-            return new AlertDialog.Builder(getContext()).create();
-        }
+        Dialog stale = staleDialogUnless(VoiceVariantPreference.class);
+        if (stale != null) return stale;
         VoiceVariantPreference preference = getVariantPreference();
         int[] selected = preference.getSelectedIndices();
         mCategoryIndex = selected[0];
@@ -81,15 +67,7 @@ public class VoiceVariantDialogFragment extends PreferenceDialogFragmentCompat {
 
         bindDialog();
 
-        // Null listeners: the real handlers are wired in onStart() to mirror
-        // the old onClick path exactly (see below).
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setView(root)
-                .setTitle(preference.getDialogTitle())
-                .setIcon(preference.getDialogIcon());
-        return builder.create();
+        return buildDialog(root);
     }
 
     private void bindDialog() {
@@ -97,16 +75,25 @@ public class VoiceVariantDialogFragment extends PreferenceDialogFragmentCompat {
         final int category = mCategoryIndex;
         final int variant = mVariantIndex;
 
-        mCategory.setAdapter(new ResourceIdListAdapter((Activity) getContext(),
-                VoiceVariantPreference.getCategories()));
+        Integer[] categories = VoiceVariantPreference.getCategories();
+        String[] categoryNames = new String[categories.length];
+        for (int i = 0; i < categories.length; i++) {
+            categoryNames[i] = getString(categories[i]);
+        }
+        mCategory.setAdapter(spinnerAdapter(categoryNames));
         mCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             private boolean mInitializing = true;
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 mCategoryIndex = position;
-                mVariant.setAdapter(new VariantDataListAdapter((Activity) getContext(),
-                        VoiceVariantPreference.getVariants(position)));
+                VoiceVariantPreference.VariantData[] variants =
+                        VoiceVariantPreference.getVariants(position);
+                String[] variantNames = new String[variants.length];
+                for (int i = 0; i < variants.length; i++) {
+                    variantNames[i] = variants[i].getDisplayName(getContext());
+                }
+                mVariant.setAdapter(spinnerAdapter(variantNames));
                 if (mInitializing) {
                     int safeVariant = Math.max(0, Math.min(variant,
                             VoiceVariantPreference.getVariants(position).length - 1));
@@ -137,22 +124,11 @@ public class VoiceVariantDialogFragment extends PreferenceDialogFragmentCompat {
         mCategory.setSelection(category);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        AlertDialog dialog = (AlertDialog) getDialog();
-        if (dialog == null) return;
-
-        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-        if (positive != null) {
-            positive.setOnClickListener(v -> onDialogClosed(true));
-        }
-
-        if (negative != null) {
-            negative.setOnClickListener(v -> dialog.cancel());
-        }
+    private ArrayAdapter<String> spinnerAdapter(String[] labels) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_item, labels);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
     }
 
     @Override

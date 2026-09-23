@@ -144,26 +144,23 @@ public class EspeakApp extends Application {
         final ComponentName alias = new ComponentName(
             this, EspeakApp.class.getPackage().getName() + ".WearLauncher");
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (!pm.hasSystemFeature(PackageManager.FEATURE_WATCH)) {
-                        return; // already disabled in the manifest
-                    }
-                    if (pm.getComponentEnabledSetting(alias)
-                            != PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
-                        pm.setComponentEnabledSetting(alias,
-                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                            PackageManager.DONT_KILL_APP);
-                    }
-                } catch (RuntimeException e) {
-                    // SecurityException (device policy), IllegalArgumentException
-                    // (alias missing from a repackaged build), or anything a
-                    // vendor PackageManager throws. Losing the launcher icon is
-                    // a cosmetic failure; taking the process down is not.
-                    Log.w(TAG, "Could not enable the Wear launcher alias", e);
+        new Thread(() -> {
+            try {
+                if (!pm.hasSystemFeature(PackageManager.FEATURE_WATCH)) {
+                    return; // already disabled in the manifest
                 }
+                if (pm.getComponentEnabledSetting(alias)
+                        != PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                    pm.setComponentEnabledSetting(alias,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
+                }
+            } catch (RuntimeException e) {
+                // SecurityException (device policy), IllegalArgumentException
+                // (alias missing from a repackaged build), or anything a
+                // vendor PackageManager throws. Losing the launcher icon is
+                // a cosmetic failure; taking the process down is not.
+                Log.w(TAG, "Could not enable the Wear launcher alias", e);
             }
         }, "wear-launcher-sync").start();
     }
