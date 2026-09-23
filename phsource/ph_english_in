@@ -303,3 +303,9 @@ phoneme z
   ENDIF
   CALL base1/z
 endphoneme
+
+// Retroflex approximant for spelled r (replace r -> r. in the voice file).
+phoneme r.
+  import_phoneme base1/r.
+  ipa ɻ
+endphoneme
