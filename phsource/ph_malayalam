@@ -318,3 +318,7 @@ phoneme k
 endphoneme
 
 
+
+phoneme z.   // ഴ, the retroflex approximant [ɻ]
+  import_phoneme base1/r.
+endphoneme

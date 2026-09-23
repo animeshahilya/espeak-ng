@@ -942,7 +942,7 @@ Translator *SelectTranslator(const char *name)
 		else if (name2 == L('g', 'u')) {
 			SetupTranslator(tr, stress_lengths_equal, stress_amps_equal);
 			tr->letter_bits_offset = OFFSET_GUJARATI;
-			tr->langopts.stress_rule = STRESSPOSN_2R;
+			tr->langopts.stress_rule = STRESSPOSN_1RH;
 		} else if (name2 == L('n', 'e')) {
 			SetupTranslator(tr, stress_lengths_equal, stress_amps_equal);
 			tr->langopts.break_numbers = BREAK_LAKH;

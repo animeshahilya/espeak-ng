@@ -36,6 +36,8 @@
 
 // Vowels
 
+.L01 क ख ग घ च छ ज झ ट ठ ड ढ त थ द ध प फ ब भ   // stops
+
 .group अ
         अ          V
         अँ         V~        // + candrabindu
@@ -56,6 +58,7 @@
                              // that phoneme's own isUnstressed guard
         इँ        i~        // + candrabindu
         इं        i~
+        इ (ंL01    I         // इंतज़ार
 
 .group ई
         ई          i:
@@ -144,6 +147,7 @@ C)        ि (_       ,i:      // final short i lengthens (shakti, vidhi); see
                               // .group इ above for why the stress mark matters
 C)        ि (ँ       I~        // like the other vowel signs: nasalize here, ँ adds nothing
 C)        िं       i~
+C)        ि (ंL01   I         // before a stop ं is a nasal consonant: हिंदुस्तानी, सिंचित
 
 .group ी
 ी	#X2i:
@@ -161,6 +165,7 @@ C)        ु (_       u:       // final short u lengthens; see .group उ for w
                               // stress mark is needed (u: has no self-demotion)
 C)        ु (ँ       u~
 C)        ुं         u~
+C)        ु (ंL01    U         // कुंडली, मुंगौरा
 C)        ुँ (_      u~
 
 .group ू
