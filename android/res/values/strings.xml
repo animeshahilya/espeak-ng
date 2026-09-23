@@ -112,9 +112,9 @@
   <string name="setting_emoji_processing">Emoji processing</string>
   <string name="emoji_announce">Announce emojis</string>
   <string name="emoji_ignore">Ignore / skip emojis</string>
-  <string name="setting_rate_boost_summary">Enable high speech rates above normal maximum using Sonic acceleration.</string>
+  <string name="setting_rate_boost_summary">Allows speech rates above the normal maximum.</string>
   <string name="setting_audio_optimizer">Richer, fuller voice (Audio Optimizer)</string>
-  <string name="setting_audio_optimizer_summary">Warms up the raw synthesized voice and evens out quiet passages, so it sounds a bit richer and less thin. Off by default - try it and see if you prefer the sound.</string>
+  <string name="setting_audio_optimizer_summary">Warmer, fuller sound, with quiet passages evened out.</string>
   <string name="import_voice_success">Successfully imported voice data.</string>
   <string name="import_voice_error">Failed to import voice file.</string>
   <string name="setting_capitals">Capital letters</string>
@@ -125,7 +125,7 @@
   <string name="capitals_pitch_strong">Raise pitch, strong (character by character)</string>
   <string name="capitals_say">Say \"capital\" (character by character)</string>
   <string name="setting_emphasize_questions">Emphasize questions and exclamations</string>
-  <string name="setting_emphasize_questions_summary">Widens the pitch rise on sentences ending in ? or ! so they stand out more clearly. Off by default - changes how sentences sound, try it and see if you prefer it.</string>
+  <string name="setting_emphasize_questions_summary">Raises the pitch more at the end of questions and exclamations.</string>
   <string name="setting_wordgap">Word pause length</string>
   <string name="formatter_gap_ms">%s ms</string>
   <string name="setting_pause_scale">Reading pace (pause length)</string>
@@ -145,20 +145,20 @@
 
   <!-- Feature Settings -->
   <string name="setting_indian_numbering">Indian number and currency formatting</string>
-  <string name="setting_indian_numbering_summary">Indian-style grouping like ₹1,00,000, shorthand like 5L and 2cr, and digit-by-digit UPI IDs and reference numbers.</string>
-  <string name="setting_programming_symbols">Speak programming and math symbols</string>
-  <string name="setting_programming_symbols_summary">Announce code and math symbols (!=, ==, &lt;=, &gt;=, =&gt;, -&gt;, &amp;&amp;, ||) as words.</string>
+  <string name="setting_indian_numbering_summary">Indian voices only. Reads amounts like ₹1,00,000, 5L and 2cr in lakh and crore.</string>
+  <string name="setting_programming_symbols">Speak symbol names</string>
+  <string name="setting_programming_symbols_summary">Reads symbols and maths signs by name, as NVDA does, at the punctuation level above.</string>
   <string name="setting_user_dictionary">User dictionary</string>
-  <string name="setting_user_dictionary_summary">Add custom word pronunciation and acronym expansion rules (standard .dic syntax).</string>
+  <string name="setting_user_dictionary_summary">Your own pronunciations for words, names and abbreviations.</string>
   <string name="setting_nato_spelling">NATO phonetic spelling</string>
-  <string name="setting_nato_spelling_summary">Speak NATO phonetics (Alpha, Bravo…) during single-character navigation.</string>
+  <string name="setting_nato_spelling_summary">Adds Alfa, Bravo and so on when reading character by character.</string>
   <string name="setting_spoken_diacritics">Devanagari matras in exploration</string>
-  <string name="setting_spoken_diacritics_summary">Announce matra and diacritic names (Aa ki matra, Halant, Anusvara) when exploring character-by-character.</string>
+  <string name="setting_spoken_diacritics_summary">When reading character by character, names matras and signs such as halant and anusvara.</string>
   <string name="test_voice_title">Preview voice sample</string>
-  <string name="test_voice_summary">Listen to a sample utterance testing current voice, pitch, speed, and formatting.</string>
+  <string name="test_voice_summary">Plays a short sample with your current settings.</string>
   <string name="test_voice_sample">This is a sample of eSpeak NG speech synthesis.</string>
   <string name="setting_recommended_defaults">Apply recommended reading style</string>
-  <string name="setting_recommended_defaults_summary" formatted="false">Configure Max variant, 40% pitch, 75% inflection, and capital pitch raise.</string>
+  <string name="setting_recommended_defaults_summary" formatted="false">Max variant, 40% pitch, 75% pitch variation and raised pitch for capitals.</string>
   <string name="recommended_defaults_applied" formatted="false">Recommended reading style applied (Max variant, 40% pitch, 75% inflection, capital pitch raise)</string>
   <string name="setting_digit_grouping">Number grouping</string>
   <string name="setting_digit_grouping_summary">How long numbers are grouped when spoken.</string>
@@ -167,11 +167,11 @@
   <string name="digit_group_double">Double / pairs (12 34 56)</string>
   <string name="digit_group_triple">Triple digits, long numbers only (123 456)</string>
   <string name="setting_backup">Backup settings and dictionary</string>
-  <string name="setting_backup_summary">Export voice tunings, preferences, and dictionaries into a single file.</string>
+  <string name="setting_backup_summary">Save your settings and dictionary to a file.</string>
   <string name="setting_restore">Restore from backup</string>
-  <string name="setting_restore_summary">Restore voice tunings, preferences, and dictionaries from a backup file.</string>
+  <string name="setting_restore_summary">Load settings and dictionary from a backup file.</string>
   <string name="setting_export_log">Export activity log</string>
-  <string name="setting_export_log_summary">1-tap log collection for troubleshooting and sharing.</string>
+  <string name="setting_export_log_summary">Share a log to help with troubleshooting.</string>
   <string name="export_log_collecting">Collecting log…</string>
   <string name="dict_import_started">Importing dictionary…</string>
   <plurals name="dict_import_done">
@@ -287,7 +287,7 @@
   <string name="category_punctuation_symbols">Punctuation &amp; symbols</string>
   <string name="category_reading_modes">Reading modes &amp; exploration</string>
   <string name="screen_locks_title">Caller-proof locks</string>
-  <string name="screen_locks_summary">Lock speech rate, pitch, and volume against overriding caller apps</string>
+  <string name="screen_locks_summary">Keep your rate, pitch and volume even when apps ask for others</string>
   <string name="screen_tools_title">Tools, backup &amp; about</string>
   <string name="screen_tools_summary">Backup &amp; restore, activity log, reading presets, about</string>
   <string name="category_presets">Reading style presets</string>

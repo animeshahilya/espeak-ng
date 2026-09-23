@@ -39,11 +39,11 @@
         android:summary="@string/setting_rate_boost_summary"
         android:icon="@drawable/ic_flash_on"
         android:defaultValue="false" />
-    <!-- not on Wear; entries filled in from VoiceSettings' limits -->
+    <!-- not on Wear; shown only while Rate boost is on; entries filled in
+         from VoiceSettings' limits -->
     <ListPreference
         android:key="espeak_rate_boost_multiplier"
         android:title="@string/setting_rate_boost_multiplier"
-        android:dependency="espeak_rate_boost"
         android:defaultValue="3"
         app:useSimpleSummaryProvider="true" />
     <com.animeshahilya.espeakng.preference.SeekBarPreference
@@ -60,7 +60,7 @@
         android:entryValues="@array/intonation_style_values"
         android:defaultValue="natural"
         app:useSimpleSummaryProvider="true" />
-    <!-- enabled only while the style above is Custom -->
+    <!-- shown only while the style above is Custom -->
     <ListPreference
         android:key="espeak_intonation_group"
         android:title="@string/setting_intonation_group"
@@ -84,12 +84,12 @@
         android:summary="@string/setting_audio_optimizer_summary"
         android:icon="@drawable/ic_equalizer"
         android:defaultValue="false" />
+    <!-- shown only while the Audio Optimizer is on -->
     <ListPreference
         android:key="espeak_audio_profile"
         android:title="@string/setting_audio_profile"
         android:entries="@array/audio_profile_entries"
         android:entryValues="@array/audio_profile_values"
-        android:dependency="espeak_audio_optimizer"
         android:defaultValue="balanced"
         app:useSimpleSummaryProvider="true" />
   </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>

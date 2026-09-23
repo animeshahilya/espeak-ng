@@ -78,7 +78,8 @@ import java.io.OutputStream;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -788,26 +789,26 @@ public class TtsSettingsActivity extends AppCompatActivity {
         return context.getResources().getQuantityString(R.plurals.espeak_supported_languages_summary, total, enabled, total);
     }
 
-    private static String getDisplayName(Voice voice) {
-        final String displayName = voice.locale.getDisplayName();
-        return (displayName == null || displayName.isEmpty()) ? voice.toString() : displayName;
-    }
-
     /**
      * Localized voice label: the name in the system's own language first
      * (e.g. "हिन्दी" on a Hindi system), followed by the English name from
      * the voice data in parentheses. That is the Android-native answer to
      * upstream #2515's self-designation registry proposal - Locale already
      * localizes every language for free, with no registry to maintain.
-     * Falls back to the plain English name when both agree (the common
-     * English-system case, where output is byte-identical to before), and to
-     * the raw voice name when neither is available. Keeping the English name
+     * On an English system the voice data's own name is used alone: the
+     * Locale name would only repeat it in other words ("Abkhazian (Abkhaz)",
+     * "Armenian (Armenian (East Armenia))"), which TalkBack then reads twice.
+     * Also falls back to the English name when both agree, and to the raw
+     * voice name when neither is available. Keeping the English name
      * always present also keeps regional variants that share a localized
      * name ("English (India)" vs "English (Singapore)") distinguishable.
      */
     private static String getVoiceLabel(Voice voice) {
         LangInfo info = lookupLangInfo(voice);
         final String english = info != null ? info.displayName : voice.name;
+        if ("en".equals(Locale.getDefault().getLanguage())) {
+            return english;
+        }
         final String localized;
         try {
             localized = voice.locale.getDisplayName(Locale.getDefault());
@@ -1152,15 +1153,32 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         configureSeekBar(context, screen, engine.WordGap, VoiceSettings.PREF_WORD_GAP, R.string.setting_wordgap);
         configureSeekBar(context, screen, engine.PauseScale, VoiceSettings.PREF_PAUSE_SCALE, R.string.setting_pause_scale);
 
-        // The raw intonation group only applies to the Custom style.
-        final Preference intonationGroup = screen.findPreference(VoiceSettings.PREF_INTONATION_GROUP);
-        intonationGroup.setEnabled(VoiceSettings.INTONATION_CUSTOM.equals(
-                prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL)));
-        screen.findPreference(VoiceSettings.PREF_INTONATION_STYLE).setOnPreferenceChangeListener((p, value) -> {
-            intonationGroup.setEnabled(VoiceSettings.INTONATION_CUSTOM.equals(value));
+        // Rows that only matter under another setting are hidden, not
+        // greyed out, while that setting is off: a disabled row is still a
+        // TalkBack stop that reads "disabled" and does nothing.
+        showWhile(screen, VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.PREF_INTONATION_GROUP,
+                value -> VoiceSettings.INTONATION_CUSTOM.equals(value),
+                prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL));
+        showWhile(screen, VoiceSettings.PREF_RATE_BOOST, VoiceSettings.PREF_RATE_BOOST_MULTIPLIER,
+                Boolean.TRUE::equals, prefs.getBoolean(VoiceSettings.PREF_RATE_BOOST, false));
+        showWhile(screen, VoiceSettings.PREF_AUDIO_OPTIMIZER, VoiceSettings.PREF_AUDIO_PROFILE,
+                Boolean.TRUE::equals, prefs.getBoolean(VoiceSettings.PREF_AUDIO_OPTIMIZER, false));
+        return screen;
+    }
+
+    /** Shows {@code childKey} only while {@code parentKey}'s value passes {@code shown}. */
+    private static void showWhile(PreferenceScreen screen, String parentKey, String childKey,
+                                  java.util.function.Predicate<Object> shown, Object current) {
+        final Preference parent = screen.findPreference(parentKey);
+        final Preference child = screen.findPreference(childKey);
+        if (parent == null || child == null) {
+            return; // dropped on Wear
+        }
+        child.setVisible(shown.test(current));
+        parent.setOnPreferenceChangeListener((p, value) -> {
+            child.setVisible(shown.test(value));
             return true;
         });
-        return screen;
     }
 
     private static void onClick(PreferenceScreen screen, String key, Runnable action) {
@@ -1226,19 +1244,20 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
 
     private static void configureSupportedLanguages(Context context, SupportedLanguagesPreference pref,
                                                     List<Voice> voices) {
+        // Sorted by the label that is shown and spoken, so the list reads in
+        // alphabetical order.
+        final Map<Voice, String> labels = new HashMap<Voice, String>();
+        for (Voice voice : voices) {
+            labels.put(voice, getVoiceLabel(voice));
+        }
         final List<Voice> sortedVoices = new ArrayList<Voice>(voices);
-        Collections.sort(sortedVoices, new Comparator<Voice>() {
-            @Override
-            public int compare(Voice lhs, Voice rhs) {
-                return getDisplayName(lhs).compareToIgnoreCase(getDisplayName(rhs));
-            }
-        });
+        Collections.sort(sortedVoices, (lhs, rhs) -> labels.get(lhs).compareToIgnoreCase(labels.get(rhs)));
 
         final CharSequence[] entries = new CharSequence[sortedVoices.size()];
         final CharSequence[] entryValues = new CharSequence[sortedVoices.size()];
         int index = 0;
         for (Voice voice : sortedVoices) {
-            entries[index] = getVoiceLabel(voice);
+            entries[index] = labels.get(voice);
             entryValues[index] = voice.toString();
             ++index;
         }
