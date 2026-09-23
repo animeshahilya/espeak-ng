@@ -133,12 +133,14 @@ phoneme e@
 endphoneme
 
 
+// i@ is also the r-less vowel of idea, various, calcium, really; NEAR words
+// spelled with r use i@3 (below), so i@ must not add an r.
 phoneme i@
   vwl  starttype #i  endtype #@
-  ipa iː
+  ipa iːə
   length 240
-  IF NOT nextPhW(r) AND NOT nextPhW(r.) THEN
-    AppendPhoneme(r.)
+  IF nextPh(r.) OR nextPh(r) THEN
+    ChangePhoneme(i:)    // hero, zero, period: [iː] before r (OED IndE)
   ENDIF
   FMT(vdiph2/ii@)
 endphoneme
@@ -166,8 +168,17 @@ phoneme U@
 endphoneme
 
 
+// aI@ is the r-less vowel of science, quiet, diet, lion; fire, hire and
+// -ier words use aI3, which gets the r.
 phoneme aI@
   vwl  starttype #a  endtype #@
+  length 260
+  FMT(vwl_en/aI@)
+endphoneme
+
+phoneme aI3
+  vwl  starttype #a  endtype #@
+  ipa aɪə
   length 260
   IF NOT nextPhW(r) AND NOT nextPhW(r.) THEN
     AppendPhoneme(r.)

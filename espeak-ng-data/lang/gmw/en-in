@@ -9,7 +9,10 @@ status mature
 // Phoneme table en-in (ph_english_in) adds retroflex stops t./d.,
 // monophthongal eI/oU and clear l on top of the base en table.
 phonemes en-in
-dictrules 8 12
+// 12 = Indian English. It carries its own copy of the ?8 full-vowel rules
+// (-ment, -ness, -less, -al...), minus the -ed one: the OED model has no
+// full vowel in a separate-syllable -ed (wanted [ʋɔnʈɪɖ], not [-ɛɖ]).
+dictrules 12
 
 stressLength 160 160  180 180  200 200  240 260
 stressAmp    18 18   19 19   19 19   20 20
