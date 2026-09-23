@@ -55,6 +55,11 @@ dependencies {
     // Gate 0 spike for the AndroidX preference migration (see
     // ANDROIDX_MIGRATION_PLAN.md). Pinned 1.2.1: latest stable 1.x line.
     implementation 'androidx.preference:preference:1.2.1'
+    // Preference pulls in activity 1.5.1, which predates the system's
+    // OnBackInvokedDispatcher: at targetSdk 36+ the Back key then bypasses
+    // TtsSettingsActivity's OnBackPressedCallback, so Back in a sub-screen
+    // left the app instead of returning to the main list. 1.6+ bridges it.
+    implementation 'androidx.activity:activity:1.10.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'org.hamcrest:hamcrest:2.2'
     androidTestImplementation 'org.hamcrest:hamcrest-core:2.2'
