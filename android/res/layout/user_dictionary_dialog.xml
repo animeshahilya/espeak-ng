@@ -25,9 +25,9 @@
         android:layout_marginBottom="8dp">
 
         <!-- LabelFor + hint together: the label names the field ("Search
-             words") while the hint describes the action ("Type to filter,
-             then Apply filter") - complementary, not a duplicate label, so
-             the LabelFor "either/or" warning is a false positive here. -->
+             words") while the hint describes the live action ("Type to
+             filter rules") - complementary, not a duplicate label, so the
+             LabelFor "either/or" warning is a false positive here. -->
         <EditText
             android:id="@+id/dict_search"
             android:layout_width="0dp"
@@ -45,7 +45,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/ic_clear"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/clear_search"
             android:visibility="gone" />
 

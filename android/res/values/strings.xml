@@ -4,7 +4,7 @@
         Source: Activity title.
         Description: Title for the Settings activity.
     -->
-  <string name="tts_settings_label">eSpeak TTS Settings</string>
+  <string name="tts_settings_label">eSpeak NG Advanced Settings</string>
   <!--
         Source: Preference title.
         Description: Title for the preference that controls default voice pitch.
@@ -105,7 +105,9 @@
   <string name="variant_old">Old</string>
   <string name="variant_croak">Croak</string>
   <string name="variant_whisper">Whisper</string>
-  <string name="import_voice_title">Import eSpeak dictionary</string>
+  <string name="variant_character">Character voices</string>
+  <string name="variant_fast">Fast</string>
+  <string name="import_voice_title">Import voice or dictionary</string>
   <string name="import_voice_description">Import an eSpeak voice dictionary (*_dict) or voice archive (*.zip).</string>
   <string name="setting_emoji_processing">Emoji processing</string>
   <string name="emoji_announce">Announce emojis</string>
@@ -113,8 +115,8 @@
   <string name="setting_rate_boost_summary">Enable high speech rates above normal maximum using Sonic acceleration.</string>
   <string name="setting_audio_optimizer">Richer, fuller voice (Audio Optimizer)</string>
   <string name="setting_audio_optimizer_summary">Warms up the raw synthesized voice and evens out quiet passages, so it sounds a bit richer and less thin. Off by default - try it and see if you prefer the sound.</string>
-  <string name="import_voice_success">Successfully imported dictionary data.</string>
-  <string name="import_voice_error">Failed to import dictionary file.</string>
+  <string name="import_voice_success">Successfully imported voice data.</string>
+  <string name="import_voice_error">Failed to import voice file.</string>
   <string name="setting_capitals">Capital letters</string>
   <string name="capitals_none">None</string>
   <string name="capitals_sound">Play a beep (character by character)</string>
@@ -197,7 +199,10 @@
   <string name="reading_code">Code reading (symbols + full punctuation)</string>
   <string name="setting_digit_threshold">Triple-grouping threshold</string>
   <string name="setting_digit_threshold_summary">Triple grouping applies only to numbers this long or longer.</string>
-  <string name="digits_suffix">digits</string>
+  <plurals name="digits_count">
+    <item quantity="one">%1$d digit</item>
+    <item quantity="other">%1$d digits</item>
+  </plurals>
   <string name="setting_audio_profile">Optimizer intensity</string>
   <string name="setting_audio_profile_summary">How strongly the audio optimizer shapes the voice.</string>
   <string name="audio_profile_gentle">Gentle warmth</string>
@@ -218,7 +223,19 @@
   <string name="dict_rule_phonemes" translatable="false">[[%1$s]]</string>
   <string name="dict_rule_arrow" translatable="false">" → "</string>
   <string name="dict_search_label">Search words</string>
-  <string name="dict_search_hint">Type to filter, then Apply filter</string>
+  <string name="dict_search_hint">Type to filter rules</string>
+  <string name="dict_title_count">%1$s (%2$d)</string>
+  <string name="dict_mode_regex">Regex</string>
+  <string name="dict_mode_word">Word</string>
+  <string name="dict_mode_substring">Substring</string>
+  <string name="dict_category_main">Main</string>
+  <string name="dict_category_root">Root</string>
+  <string name="dict_category_abbrev">Abbrev</string>
+  <string name="dict_category_character">Character</string>
+  <string name="dict_a11y_rule">Rule %1$d: %2$s replaced with %3$s. Section: %4$s, %5$s</string>
+  <string name="dict_a11y_rule_lang">%1$s, language %2$s</string>
+  <string name="dict_a11y_rule_phonemes">%1$s, phonemes %2$s</string>
+  <string name="dict_label_phoneme_tag">Phoneme</string>
   <string name="dict_filter_label">Dictionary section filter</string>
   <string name="dict_filter_all">All sections</string>
   <string name="dict_filter_main">Main only</string>

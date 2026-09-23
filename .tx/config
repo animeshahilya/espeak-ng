@@ -5,7 +5,6 @@ host = https://www.transifex.com
 file_filter = android/res/values-<lang>/strings.xml
 source_file = android/res/values/strings.xml
 source_lang = en
-trans.en_GB = android/res/values-en-rGB/strings.xml
 trans.es_419 = android/res/values-es-rUS/strings.xml
 trans.he = android/res/values-iw/strings.xml
 trans.id = android/res/values-in/strings.xml

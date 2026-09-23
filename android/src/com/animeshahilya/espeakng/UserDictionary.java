@@ -171,11 +171,11 @@ public class UserDictionary {
         return CATEGORY_MAIN;
     }
 
-    public static String categoryLabel(String category) {
-        if (CATEGORY_ROOT.equals(category)) return "Root";
-        if (CATEGORY_ABBREV.equals(category)) return "Abbrev";
-        if (CATEGORY_CHARACTER.equals(category)) return "Character";
-        return "Main";
+    public static int categoryLabelRes(String category) {
+        if (CATEGORY_ROOT.equals(category)) return R.string.dict_category_root;
+        if (CATEGORY_ABBREV.equals(category)) return R.string.dict_category_abbrev;
+        if (CATEGORY_CHARACTER.equals(category)) return R.string.dict_category_character;
+        return R.string.dict_category_main;
     }
 
     public void setLanguage(String language) {
