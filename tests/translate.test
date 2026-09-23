@@ -45,6 +45,9 @@ test_phon en-in "n,Vm'Vst[e:" "namaste"
 test_phon en-in "v#'O:kd. pl'e:d. s'INg" "walked played sing"
 test_phon en-in "s'Imp@l p'i:p@l v#'ItS" "simple people which"
 test_phon en-in "d['Eli g'A:nd[i: r.A:dZ'e:S g'Ur.u:" "Delhi Gandhi Rajesh guru"
+# en-in (OED IndE): plurals end in [s], LOT is [ɔ], "to" keeps its full vowel
+test_phon en-in "d.'0gs k'IsI2s h'0t." "dogs kisses hot"
+test_phon en-in "aI v#'0nt. t.u: g'o:" "I want to go"
 # kok needs the Devanagari letter setup, or vowel signs read as letter names
 test_phon kok "pa:n.'i::0" "पाणी"
 test_phon hi "dUk'a:n" "दुकान"

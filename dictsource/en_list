@@ -5924,3 +5924,11 @@ _𐑿	j'u:l
 ?12 rbi	$abbrev $allcaps
 ?12 cbse	$abbrev $allcaps
 ?12 jee	$abbrev $allcaps
+// Indian English doesn't reduce these to weak forms (OED IndE).
+?12 to		tu:		$u $verbf
+?12 for		fO@		$u $only $strend2
+?12 of		0f		$u $only
+?12 at		at		$u $nounf $only
+?12 an		an		$u $nounf $only
+?12 than	Dan		$u $only
+?12 has		haz		$pastf $only

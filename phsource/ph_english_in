@@ -274,3 +274,21 @@ phoneme A:
   length 230
   FMT(vowel/aa_2)
 endphoneme
+
+// LOT/CLOTH is [ɔ] (OED IndE): hot [hɔʈ], dog [ɖɔɡ].
+phoneme 0
+  vwl  starttype #o  endtype #o
+  ipa ɔ
+  length 150
+  ChangeIfDiminished(@)
+  FMT(vowel/oo)
+endphoneme
+
+// -es plural ends in [s] too: kisses [kɪsɪs], roses [roːzɪs] (OED IndE).
+// Word-final I2z is that suffix (and 3rd-person -es); "is" uses plain I.
+phoneme z
+  IF prevPh(I2) AND thisPh(isWordEnd) THEN
+    ChangePhoneme(s)
+  ENDIF
+  CALL base1/z
+endphoneme
