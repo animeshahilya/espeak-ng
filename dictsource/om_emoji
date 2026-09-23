@@ -262,8 +262,6 @@ $textmode
 ⌚	sa’aatii						// [231A]
 ⌛	sa’aatiifuullee xumurame				// [231B]
 ⌨	Kiiboordii						// [2328]
-//⍋								// [234B] (no translation)
-//⍳								// [2373] (no translation)
 ⏏	qabduu buqqisuu						// [23CF]
 ⏩	qabduu saffisaan-fuulduratti				// [23E9]
 ⏪	qabduu saffisaan duubatti				// [23EA]
@@ -479,7 +477,6 @@ $textmode
 ➡	xiyya mirgaa						// [27A1]
 ➰	marsaa qaxxaamuraa					// [27B0]
 ➿	marsaa yeroo lama qaxxaamuru				// [27BF]
-//⟳								// [27F3] (no translation)
 ⤴	xiyya mirgaa ol jallatu					// [2934]
 ⤵	xiyya mirgaa gadi jallatu				// [2935]
 ⨧	ida’uu sabiskiriiptii lama				// [2A27]
@@ -1753,8 +1750,6 @@ $textmode
 🛕	mana kadhannaa hinduu					// [1F6D5]
 🛖	mana citaa						// [1F6D6]
 🛗	liiftii							// [1F6D7]
-🛘	Sigiga lafaa						// [1F6D8]
-//🛙								// [1F6D9] (no translation)
 🛜	sarara maleessa						// [1F6DC]
 🛝	mucucaata bakka taphaa					// [1F6DD]
 🛞	wiilii							// [1F6DE]
@@ -2146,11 +2141,6 @@ $textmode
 🪇	marakaas						// [1FA87]
 🪈	uluullee						// [1FA88]
 🪉	baganaa							// [1FA89]
-🪊	tiraamboonii						// [1FA8A]
-//🪋								// [1FA8B] (no translation)
-//🪌								// [1FA8C] (no translation)
-//🪍								// [1FA8D] (no translation)
-🪎	sanduuqa faayaa						// [1FA8E]
 🪏	shoofoo							// [1FA8F]
 🪐	pilaaneetii naanna’u					// [1FA90]
 🪑	teessuma						// [1FA91]
@@ -2207,9 +2197,6 @@ $textmode
 🫄	nama ulfa						// [1FAC4]
 🫅	nama gonfoo waliin					// [1FAC5]
 🫆	ashaaraa qubaa						// [1FAC6]
-🫈	uumama rifeensaa					// [1FAC8]
-//🫌								// [1FACC] (no translation)
-🫍	qurxummuu ajjeesu					// [1FACD]
 🫎	muusii							// [1FACE]
 🫏	harree							// [1FACF]
 🫐	goraa cuquliisa						// [1FAD0]
@@ -2225,7 +2212,6 @@ $textmode
 🫚	hidda jinjibilaa					// [1FADA]
 🫛	poodii ataraa						// [1FADB]
 🫜	kuduraa hundee						// [1FADC]
-//🫝								// [1FADD] (no translation)
 🫟	dhangala’aa faca’u					// [1FADF]
 🫠	fuula baqu						// [1FAE0]
 🫡	fuula nagaa dhiyeessuu					// [1FAE1]
@@ -2237,9 +2223,6 @@ $textmode
 🫧	afuuffeewwan						// [1FAE7]
 🫨	fuula hollatu						// [1FAE8]
 🫩	fuula ija jalaa ibirkuu qabu				// [1FAE9]
-🫪	fuula jallate						// [1FAEA]
-//🫫								// [1FAEB] (no translation)
-🫯	duumessa lolaa						// [1FAEF]
 🫰	harka qubni akeektuu fi abgudduun wal qaxxamure		// [1FAF0]
 🫱	harka gara mirgaatti					// [1FAF1]
 🫲	harka gara bitaatti					// [1FAF2]
@@ -2249,5 +2232,3 @@ $textmode
 🫶	harkoota onnee						// [1FAF6]
 🫷	harka gara bitaatti dhiibu				// [1FAF7]
 🫸	harka gara mirgaatti dhiibu				// [1FAF8]
-//🫹								// [1FAF9] (no translation)
-//🫺								// [1FAFA] (no translation)

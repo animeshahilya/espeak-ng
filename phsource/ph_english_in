@@ -25,6 +25,13 @@
 // rather than relying on formant colouring. Everything else is
 // inherited from en.
 
+// one/won/once -> [ʋʌn], as in en-us; the base en table maps 02 to the RP [ɒ].
+phoneme 02
+  vwl  starttype #o  endtype #o
+  length 140
+  ChangePhoneme(V)
+endphoneme
+
 // Monophthongal FACE: day -> [deː] (Sailaja 2009; OED IndE)
 phoneme eI
   vwl  starttype #e  endtype #e

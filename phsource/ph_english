@@ -332,12 +332,10 @@ phoneme 0#    // [@] in unstressed syllables
 endphoneme
 
 
-phoneme 02   // 'one'=[wVn] etc - always V, not accent-conditional; en-us already
-             // overrode this but the shared base table (en-GB/en-AU/...) didn't,
-             // so those accents said [wQn] instead (espeak-ng/espeak-ng#2186).
+phoneme 02   // becomes V in en-us
   vwl  starttype #o  endtype #o
   length 140
-  ChangePhoneme(V)
+  ChangePhoneme(0)
 endphoneme
 
 

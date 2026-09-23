@@ -266,8 +266,6 @@ $textmode
 ⌚	Retab’al q’ij						// [231A]
 ⌛	Jalajoj lame’t						// [231B]
 ⌨	pitz’b’al						// [2328]
-//⍋								// [234B] (no translation)
-//⍳								// [2373] (no translation)
 ⏏	pitz’b’al rech relesaxik				// [23CF]
 ⏩	Aninaq Pitz’b’al chi Uwach				// [23E9]
 ⏪	Aninaq Tzalijisab’al Pitz’b’al				// [23EA]
@@ -483,7 +481,6 @@ $textmode
 ➡	wikiq’ab’ ch’ab’					// [27A1]
 ➰	Kotokik k’a’am						// [27B0]
 ➿	Kab’ichal kotokik b’atz’				// [27BF]
-//⟳								// [27F3] (no translation)
 ⤴	wikiq’ab’ ch’ab’ kotol b’i pa uwi’			// [2934]
 ⤵	wikiq’ab’ ch’ab’ kotol b’i chi uxe’			// [2935]
 //⨧								// [2A27] (no translation)
@@ -1757,8 +1754,6 @@ $textmode
 //🛕								// [1F6D5] (no translation)
 //🛖								// [1F6D6] (no translation)
 //🛗								// [1F6D7] (no translation)
-//🛘								// [1F6D8] (no translation)
-//🛙								// [1F6D9] (no translation)
 //🛜								// [1F6DC] (no translation)
 //🛝								// [1F6DD] (no translation)
 //🛞								// [1F6DE] (no translation)
@@ -2150,11 +2145,6 @@ $textmode
 //🪇								// [1FA87] (no translation)
 //🪈								// [1FA88] (no translation)
 //🪉								// [1FA89] (no translation)
-//🪊								// [1FA8A] (no translation)
-//🪋								// [1FA8B] (no translation)
-//🪌								// [1FA8C] (no translation)
-//🪍								// [1FA8D] (no translation)
-//🪎								// [1FA8E] (no translation)
 //🪏								// [1FA8F] (no translation)
 //🪐								// [1FA90] (no translation)
 //🪑								// [1FA91] (no translation)
@@ -2211,9 +2201,6 @@ $textmode
 //🫄								// [1FAC4] (no translation)
 //🫅								// [1FAC5] (no translation)
 //🫆								// [1FAC6] (no translation)
-//🫈								// [1FAC8] (no translation)
-//🫌								// [1FACC] (no translation)
-//🫍								// [1FACD] (no translation)
 //🫎								// [1FACE] (no translation)
 //🫏								// [1FACF] (no translation)
 //🫐								// [1FAD0] (no translation)
@@ -2229,7 +2216,6 @@ $textmode
 //🫚								// [1FADA] (no translation)
 //🫛								// [1FADB] (no translation)
 //🫜								// [1FADC] (no translation)
-//🫝								// [1FADD] (no translation)
 //🫟								// [1FADF] (no translation)
 //🫠								// [1FAE0] (no translation)
 //🫡								// [1FAE1] (no translation)
@@ -2241,9 +2227,6 @@ $textmode
 //🫧								// [1FAE7] (no translation)
 //🫨								// [1FAE8] (no translation)
 //🫩								// [1FAE9] (no translation)
-//🫪								// [1FAEA] (no translation)
-//🫫								// [1FAEB] (no translation)
-//🫯								// [1FAEF] (no translation)
 //🫰								// [1FAF0] (no translation)
 //🫱								// [1FAF1] (no translation)
 //🫲								// [1FAF2] (no translation)
@@ -2253,5 +2236,3 @@ $textmode
 //🫶								// [1FAF6] (no translation)
 //🫷								// [1FAF7] (no translation)
 //🫸								// [1FAF8] (no translation)
-//🫹								// [1FAF9] (no translation)
-//🫺								// [1FAFA] (no translation)

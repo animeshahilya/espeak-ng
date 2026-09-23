@@ -1823,8 +1823,6 @@ include ph_tigrinya
 phonemetable tn base1
 include ph_setswana
 
-phonemetable tok base1
-
 phonemetable tt base1
 include ph_tatar
 
@@ -1862,10 +1860,6 @@ include ph_indonesian
 
 phonemetable it base2
 include ph_italian
-
-phonemetable scn base2
-include ph_italian
-include ph_sicilian
 
 phonemetable ku base2
 include ph_kurdish
@@ -1976,10 +1970,6 @@ include ph_catalan_va
 
 phonemetable ca-ba ca
 include ph_catalan_ba
-
-phonemetable ca-al ca
-
-phonemetable ca-ro ca
 
 phonemetable an es
 include ph_aragon

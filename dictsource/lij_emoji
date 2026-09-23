@@ -261,8 +261,6 @@ $textmode
 ⌚	releuio							// [231A]
 ⌛	releuio d’æña fermo					// [231B]
 ⌨	tastea							// [2328]
-//⍋								// [234B] (no translation)
-//⍳								// [2373] (no translation)
 ⏏	pommello manda feua					// [23CF]
 ⏩	pommello avanti lesto					// [23E9]
 ⏪	pommello retorno lesto					// [23EA]
@@ -470,15 +468,14 @@ $textmode
 ❗	ponto d’esclamaçion rosso				// [2757]
 ❣	ponto d’esclamaçion à cheu				// [2763]
 ❤	cheu rosso						// [2764]
-❤‍🔥	cheu in sciamme						// [2764 200D 1F525]
-❤‍🩹	cheu guario						// [2764 200D 1FA79]
+//❤‍🔥								// [2764 200D 1F525] (no translation)
+//❤‍🩹								// [2764 200D 1FA79] (no translation)
 ➕	addiçion						// [2795]
 ➖	sottraçion						// [2796]
 ➗	divixon							// [2797]
 ➡	freccia a-a drita					// [27A1]
 ➰	gassetta						// [27B0]
 ➿	gassetta doggia						// [27BF]
-//⟳								// [27F3] (no translation)
 ⤴	freccia curva in sciù					// [2934]
 ⤵	freccia curva in zu					// [2935]
 //⨧								// [2A27] (no translation)
@@ -569,7 +566,7 @@ $textmode
 🇨🇳	Ciña							// [1F1E8 1F1F3]
 🇨🇴	Colombia						// [1F1E8 1F1F4]
 🇨🇵	Isoa de Clipperton					// [1F1E8 1F1F5]
-🇨🇶	Sark							// [1F1E8 1F1F6]
+//🇨🇶								// [1F1E8 1F1F6] (no translation)
 🇨🇷	Còsta Rica						// [1F1E8 1F1F7]
 🇨🇺	Cubba							// [1F1E8 1F1FA]
 🇨🇻	Cappo Verde						// [1F1E8 1F1FB]
@@ -987,7 +984,7 @@ $textmode
 //🏃‍♀‍➡								// [1F3C3 200D 2640 200D 27A1] (no translation)
 //🏃‍♂								// [1F3C3 200D 2642] (no translation)
 //🏃‍♂‍➡								// [1F3C3 200D 2642 200D 27A1] (no translation)
-🏃‍➡	persoña ch’a core in sciâ drita				// [1F3C3 200D 27A1]
+//🏃‍➡								// [1F3C3 200D 27A1] (no translation)
 🏄	persoña ch’a fa surf					// [1F3C4]
 //🏄‍♀								// [1F3C4 200D 2640] (no translation)
 //🏄‍♂								// [1F3C4 200D 2642] (no translation)
@@ -1130,7 +1127,7 @@ $textmode
 🐿	sciornia						// [1F43F]
 👀	euggi							// [1F440]
 👁	euggio							// [1F441]
-👁‍🗨	euggio into ballon					// [1F441 200D 1F5E8]
+//👁‍🗨								// [1F441 200D 1F5E8] (no translation)
 👂	oegia							// [1F442]
 👃	naso							// [1F443]
 👄	bocca							// [1F444]
@@ -1170,19 +1167,19 @@ $textmode
 👦	figgeu masccio						// [1F466]
 👧	figgeua							// [1F467]
 👨	òmmo							// [1F468]
-👨‍⚕	òmmo ch’o travaggia inta sanitæ				// [1F468 200D 2695]
-👨‍⚖	giudiçe masccio						// [1F468 200D 2696]
-👨‍✈	pilòtto masccio						// [1F468 200D 2708]
-👨‍❤‍👨	cobbia con cheu òmmo e òmmo				// [1F468 200D 2764 200D 1F468]
+//👨‍⚕								// [1F468 200D 2695] (no translation)
+//👨‍⚖								// [1F468 200D 2696] (no translation)
+//👨‍✈								// [1F468 200D 2708] (no translation)
+👨‍❤‍👨	cobbia con cheucobbia co-o cheu òmmo e òmmo		// [1F468 200D 2764 200D 1F468]
 👨‍❤‍💋‍👨	baxo òmmo e òmmo					// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👨‍🌾	contadin masccio					// [1F468 200D 1F33E]
-👨‍🍳	cheugo masccio						// [1F468 200D 1F373]
-👨‍🍼	òmmo ch’o dà o læte					// [1F468 200D 1F37C]
-👨‍🎓	studente masccio					// [1F468 200D 1F393]
-👨‍🎤	cantante masccio					// [1F468 200D 1F3A4]
-👨‍🎨	artista masccio						// [1F468 200D 1F3A8]
-👨‍🏫	meistro masccio						// [1F468 200D 1F3EB]
-👨‍🏭	operäio masccio						// [1F468 200D 1F3ED]
+//👨‍🌾								// [1F468 200D 1F33E] (no translation)
+//👨‍🍳								// [1F468 200D 1F373] (no translation)
+//👨‍🍼								// [1F468 200D 1F37C] (no translation)
+//👨‍🎓								// [1F468 200D 1F393] (no translation)
+//👨‍🎤								// [1F468 200D 1F3A4] (no translation)
+//👨‍🎨								// [1F468 200D 1F3A8] (no translation)
+//👨‍🏫								// [1F468 200D 1F3EB] (no translation)
+//👨‍🏭								// [1F468 200D 1F3ED] (no translation)
 👨‍👦	famiggia òmmo e figgeu masccio				// [1F468 200D 1F466]
 👨‍👦‍👦	famiggia òmmo figgeu masccio e figgeu masccio		// [1F468 200D 1F466 200D 1F466]
 👨‍👧	famiggia òmmo e figgeua					// [1F468 200D 1F467]
@@ -1198,12 +1195,12 @@ $textmode
 👨‍👩‍👧	famiggia òmmo dònna e figgeua				// [1F468 200D 1F469 200D 1F467]
 👨‍👩‍👧‍👦	famiggia òmmo dònna figgeua e figgeu masccio		// [1F468 200D 1F469 200D 1F467 200D 1F466]
 👨‍👩‍👧‍👧	famiggia òmmo dònna figgeua e figgeua			// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍💻	tecnòlogo masccio					// [1F468 200D 1F4BB]
-👨‍💼	òmmo ch’o travaggia in scagno				// [1F468 200D 1F4BC]
-👨‍🔧	mecanico masccio					// [1F468 200D 1F527]
-👨‍🔬	sciensiou masccio					// [1F468 200D 1F52C]
-👨‍🚀	astronauta masccio					// [1F468 200D 1F680]
-👨‍🚒	pompê masccio						// [1F468 200D 1F692]
+//👨‍💻								// [1F468 200D 1F4BB] (no translation)
+//👨‍💼								// [1F468 200D 1F4BC] (no translation)
+//👨‍🔧								// [1F468 200D 1F527] (no translation)
+//👨‍🔬								// [1F468 200D 1F52C] (no translation)
+//👨‍🚀								// [1F468 200D 1F680] (no translation)
+//👨‍🚒								// [1F468 200D 1F692] (no translation)
 //👨‍🦯								// [1F468 200D 1F9AF] (no translation)
 //👨‍🦯‍➡								// [1F468 200D 1F9AF 200D 27A1] (no translation)
 👨‍🦰	òmmo cavelli rosci					// [1F468 200D 1F9B0]
@@ -1215,21 +1212,21 @@ $textmode
 //👨‍🦽								// [1F468 200D 1F9BD] (no translation)
 //👨‍🦽‍➡								// [1F468 200D 1F9BD 200D 27A1] (no translation)
 👩	dònna							// [1F469]
-👩‍⚕	dònna ch’a travaggia inta sanitæ			// [1F469 200D 2695]
-👩‍⚖	giudiçe femina						// [1F469 200D 2696]
-👩‍✈	pilòtta femina						// [1F469 200D 2708]
-👩‍❤‍👨	cobbia con cheu dònna e òmmo				// [1F469 200D 2764 200D 1F468]
-👩‍❤‍👩	cobbia con cheu dònna e dònna				// [1F469 200D 2764 200D 1F469]
+//👩‍⚕								// [1F469 200D 2695] (no translation)
+//👩‍⚖								// [1F469 200D 2696] (no translation)
+//👩‍✈								// [1F469 200D 2708] (no translation)
+👩‍❤‍👨	cobbia con cheucobbia co-o cheu dònna e òmmo		// [1F469 200D 2764 200D 1F468]
+👩‍❤‍👩	cobbia con cheucobbia co-o cheu dònna e dònna		// [1F469 200D 2764 200D 1F469]
 👩‍❤‍💋‍👨	baxo dònna e òmmo					// [1F469 200D 2764 200D 1F48B 200D 1F468]
 👩‍❤‍💋‍👩	baxo dònna e dònna					// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍🌾	contadiña femina					// [1F469 200D 1F33E]
-👩‍🍳	cheuga femina						// [1F469 200D 1F373]
-👩‍🍼	dònna ch’a dà o læte					// [1F469 200D 1F37C]
-👩‍🎓	studente femina						// [1F469 200D 1F393]
-👩‍🎤	cantante femina						// [1F469 200D 1F3A4]
-👩‍🎨	artista femina						// [1F469 200D 1F3A8]
-👩‍🏫	meistra femina						// [1F469 200D 1F3EB]
-👩‍🏭	operäia femina						// [1F469 200D 1F3ED]
+//👩‍🌾								// [1F469 200D 1F33E] (no translation)
+//👩‍🍳								// [1F469 200D 1F373] (no translation)
+//👩‍🍼								// [1F469 200D 1F37C] (no translation)
+//👩‍🎓								// [1F469 200D 1F393] (no translation)
+//👩‍🎤								// [1F469 200D 1F3A4] (no translation)
+//👩‍🎨								// [1F469 200D 1F3A8] (no translation)
+//👩‍🏫								// [1F469 200D 1F3EB] (no translation)
+//👩‍🏭								// [1F469 200D 1F3ED] (no translation)
 👩‍👦	famiggia dònna e figgeu masccio				// [1F469 200D 1F466]
 👩‍👦‍👦	famiggia dònna figgeu masccio e figgeu masccio		// [1F469 200D 1F466 200D 1F466]
 👩‍👧	famiggia dònna e figgeua				// [1F469 200D 1F467]
@@ -1240,12 +1237,12 @@ $textmode
 👩‍👩‍👧	famiggia dònna dònna e figgeua				// [1F469 200D 1F469 200D 1F467]
 👩‍👩‍👧‍👦	famiggia dònna dònna figgeua e figgeu masccio		// [1F469 200D 1F469 200D 1F467 200D 1F466]
 👩‍👩‍👧‍👧	famiggia dònna dònna figgeua e figgeua			// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👩‍💻	tecnòloga femina					// [1F469 200D 1F4BB]
-👩‍💼	dònna ch’a travaggia in scagno				// [1F469 200D 1F4BC]
-👩‍🔧	mecanica femina						// [1F469 200D 1F527]
-👩‍🔬	sciensciâ femina					// [1F469 200D 1F52C]
-👩‍🚀	astronauta femina					// [1F469 200D 1F680]
-👩‍🚒	pompea femina						// [1F469 200D 1F692]
+//👩‍💻								// [1F469 200D 1F4BB] (no translation)
+//👩‍💼								// [1F469 200D 1F4BC] (no translation)
+//👩‍🔧								// [1F469 200D 1F527] (no translation)
+//👩‍🔬								// [1F469 200D 1F52C] (no translation)
+//👩‍🚀								// [1F469 200D 1F680] (no translation)
+//👩‍🚒								// [1F469 200D 1F692] (no translation)
 //👩‍🦯								// [1F469 200D 1F9AF] (no translation)
 //👩‍🦯‍➡								// [1F469 200D 1F9AF 200D 27A1] (no translation)
 👩‍🦰	dònna cavelli rosci					// [1F469 200D 1F9B0]
@@ -1261,27 +1258,27 @@ $textmode
 👬	doî òmmi che se tëgnan pe-a man				// [1F46C]
 👭	doe dònne che se tëgnan pe-a man			// [1F46D]
 👮	poliçiòtto						// [1F46E]
-👮‍♀	poliçiòtta femina					// [1F46E 200D 2640]
-👮‍♂	poliçiòtto masccio					// [1F46E 200D 2642]
+//👮‍♀								// [1F46E 200D 2640] (no translation)
+//👮‍♂								// [1F46E 200D 2642] (no translation)
 👯	persoñe co-e oege da coniggio				// [1F46F]
 //👯‍♀								// [1F46F 200D 2640] (no translation)
 //👯‍♂								// [1F46F 200D 2642] (no translation)
 👰	persoña co-o vello					// [1F470]
-👰‍♀	sposâ co-o vello					// [1F470 200D 2640]
-👰‍♂	òmmo co-o vello						// [1F470 200D 2642]
+//👰‍♀								// [1F470 200D 2640] (no translation)
+//👰‍♂								// [1F470 200D 2642] (no translation)
 👱	persoña bionda						// [1F471]
-👱‍♀	dònna bionda						// [1F471 200D 2640]
-👱‍♂	òmmo biondo						// [1F471 200D 2642]
+//👱‍♀								// [1F471 200D 2640] (no translation)
+//👱‍♂								// [1F471 200D 2642] (no translation)
 👲	persoña con copolin					// [1F472]
 👳	persoña co-o turbante					// [1F473]
-👳‍♀	dònna co-o turbante					// [1F473 200D 2640]
-👳‍♂	òmmo co-o turbante					// [1F473 200D 2642]
+//👳‍♀								// [1F473 200D 2640] (no translation)
+//👳‍♂								// [1F473 200D 2642] (no translation)
 👴	òmmo in etæ						// [1F474]
 👵	dònna in etæ						// [1F475]
 👶	figgeu da nascion					// [1F476]
 👷	massacan						// [1F477]
-👷‍♀	massacaña femina					// [1F477 200D 2640]
-👷‍♂	massacan masccio					// [1F477 200D 2642]
+//👷‍♀								// [1F477 200D 2640] (no translation)
+//👷‍♂								// [1F477 200D 2642] (no translation)
 👸	prinçipessa						// [1F478]
 👹	òrco							// [1F479]
 👺	barban							// [1F47A]
@@ -1291,21 +1288,21 @@ $textmode
 👾	mostro alieno						// [1F47E]
 👿	morin rouso co-e còrne					// [1F47F]
 💀	testa de mòrto						// [1F480]
-💁	persoña co-a parma in sciù				// [1F481]
-💁‍♀	dònna co-a parma in sciù				// [1F481 200D 2640]
-💁‍♂	òmmo co-a parma in sciù					// [1F481 200D 2642]
+💁	persoña co-o parmo in sciù				// [1F481]
+//💁‍♀								// [1F481 200D 2640] (no translation)
+//💁‍♂								// [1F481 200D 2642] (no translation)
 💂	guardia							// [1F482]
-💂‍♀	guardia femina						// [1F482 200D 2640]
-💂‍♂	guardia masccio						// [1F482 200D 2642]
+//💂‍♀								// [1F482 200D 2640] (no translation)
+//💂‍♂								// [1F482 200D 2642] (no translation)
 💃	dònna ch’a balla					// [1F483]
 💄	roscetto						// [1F484]
 💅	smato pe onge						// [1F485]
-💆	persoña massaggiâ					// [1F486]
-💆‍♀	dònna massaggiâ						// [1F486 200D 2640]
-💆‍♂	òmmo massaggiou						// [1F486 200D 2642]
-💇	cavelli							// [1F487]
-💇‍♀	dònna che ghe taggian i cavelli				// [1F487 200D 2640]
-💇‍♂	òmmo che ghe taggian i cavalli				// [1F487 200D 2642]
+💆	persoña ch’a l’é massaggiâ				// [1F486]
+//💆‍♀								// [1F486 200D 2640] (no translation)
+//💆‍♂								// [1F486 200D 2642] (no translation)
+💇	persoña che ghe taggian i cavelli			// [1F487]
+//💇‍♀								// [1F487 200D 2640] (no translation)
+//💇‍♂								// [1F487 200D 2642] (no translation)
 💈	barbê							// [1F488]
 💉	sciringa						// [1F489]
 💊	pilloa							// [1F48A]
@@ -1315,7 +1312,7 @@ $textmode
 💎	gemma							// [1F48E]
 💏	baxo							// [1F48F]
 💐	masso de scioî						// [1F490]
-💑	cobbia con cheu						// [1F491]
+💑	cobbia con cheucobbia co-o cheu				// [1F491]
 💒	maiezzo							// [1F492]
 💓	cheu ch’o batte						// [1F493]
 💔	cheu rotto						// [1F494]
@@ -1326,7 +1323,7 @@ $textmode
 💙	cheu bleu						// [1F499]
 💚	cheu verde						// [1F49A]
 💛	cheu giano						// [1F49B]
-💜	cheu moælo						// [1F49C]
+💜	cheu moelo						// [1F49C]
 💝	cheu con frexetto					// [1F49D]
 💞	cheu che gian						// [1F49E]
 💟	addobbo con cheu					// [1F49F]
@@ -1522,8 +1519,8 @@ $textmode
 🕳	beuggio							// [1F573]
 🕴	persoña co-o vestî elegante ch’a levita			// [1F574]
 🕵	investigatô						// [1F575]
-🕵‍♀	investigatoa femina					// [1F575 200D 2640]
-🕵‍♂	investigatô masccio					// [1F575 200D 2642]
+//🕵‍♀								// [1F575 200D 2640] (no translation)
+//🕵‍♂								// [1F575 200D 2642] (no translation)
 🕶	speggetti neigri					// [1F576]
 🕷	ägno							// [1F577]
 🕸	tägnâ							// [1F578]
@@ -1610,7 +1607,7 @@ $textmode
 😬	morin con grimassa					// [1F62C]
 😭	morin ch’o cianze fòrte					// [1F62D]
 😮	morin co-a bocca averta					// [1F62E]
-😮‍💨	morin ch’o l’espira					// [1F62E 200D 1F4A8]
+//😮‍💨								// [1F62E 200D 1F4A8] (no translation)
 😯	morin sorpreiso						// [1F62F]
 😰	morin anscioso con stissa de suo			// [1F630]
 😱	morin ch’o cria da-o terrô				// [1F631]
@@ -1618,9 +1615,9 @@ $textmode
 😳	morin imbarassou					// [1F633]
 😴	morin addormio						// [1F634]
 😵	morin invexendou					// [1F635]
-😵‍💫	morin co-i euggi à spirale				// [1F635 200D 1F4AB]
+//😵‍💫								// [1F635 200D 1F4AB] (no translation)
 😶	morin sensa bocca					// [1F636]
-😶‍🌫	morin inte nuvie					// [1F636 200D 1F32B]
+//😶‍🌫								// [1F636 200D 1F32B] (no translation)
 😷	morin co-a mascariña					// [1F637]
 😸	gatto ch’o rie fòrte co-i euggi contenti		// [1F638]
 😹	gatto ch’o cianze da-a contentessa			// [1F639]
@@ -1633,32 +1630,32 @@ $textmode
 🙀	gatto abbötio						// [1F640]
 🙁	morin un pittin ammagonou				// [1F641]
 🙂	morin co-o fattoriso					// [1F642]
-🙂‍↔	testa ch’a scòlla in senso orizzontale			// [1F642 200D 2194]
-🙂‍↕	testa ch’a scòlla in senso verticale			// [1F642 200D 2195]
+//🙂‍↔								// [1F642 200D 2194] (no translation)
+//🙂‍↕								// [1F642 200D 2195] (no translation)
 🙃	morin imböso						// [1F643]
 🙄	morin co-i euggi verso l’erto				// [1F644]
 🙅	persoña ch’a fa segno de no				// [1F645]
-🙅‍♀	dònna ch’a fa segno de no				// [1F645 200D 2640]
-🙅‍♂	òmmo ch’o fa segno de no				// [1F645 200D 2642]
+//🙅‍♀								// [1F645 200D 2640] (no translation)
+//🙅‍♂								// [1F645 200D 2642] (no translation)
 🙆	persoña ch’a fa OK					// [1F646]
-🙆‍♀	dònna ch’a fa OK					// [1F646 200D 2640]
-🙆‍♂	òmmo ch’o fa OK						// [1F646 200D 2642]
+//🙆‍♀								// [1F646 200D 2640] (no translation)
+//🙆‍♂								// [1F646 200D 2642] (no translation)
 🙇	persoña ch’a fâ scoaccin				// [1F647]
-🙇‍♀	dònna ch’a fa scoaccin					// [1F647 200D 2640]
-🙇‍♂	òmmo ch’o fa scoaccin					// [1F647 200D 2642]
+//🙇‍♀								// [1F647 200D 2640] (no translation)
+//🙇‍♂								// [1F647 200D 2642] (no translation)
 🙈	no veddo						// [1F648]
 🙉	no sento						// [1F649]
 🙊	no parlo						// [1F64A]
 🙋	persoña ch’a tia sciù a man				// [1F64B]
-🙋‍♀	dònna ch’a l’ïsa a man					// [1F64B 200D 2640]
-🙋‍♂	òmmo ch’o l’ïsa a man					// [1F64B 200D 2642]
+//🙋‍♀								// [1F64B 200D 2640] (no translation)
+//🙋‍♂								// [1F64B 200D 2642] (no translation)
 🙌	moen arsæ						// [1F64C]
 🙍	persoña ammagonâ					// [1F64D]
-🙍‍♀	dònna ammagonâ						// [1F64D 200D 2640]
-🙍‍♂	òmmo ammagonou						// [1F64D 200D 2642]
+//🙍‍♀								// [1F64D 200D 2640] (no translation)
+//🙍‍♂								// [1F64D 200D 2642] (no translation)
 🙎	persoña inmoronâ					// [1F64E]
-🙎‍♀	dònna inmoronâ						// [1F64E 200D 2640]
-🙎‍♂	òmmo inmoronou						// [1F64E 200D 2642]
+//🙎‍♀								// [1F64E 200D 2640] (no translation)
+//🙎‍♂								// [1F64E 200D 2642] (no translation)
 🙏	moen azzonte						// [1F64F]
 🚀	miscile							// [1F680]
 🚁	elicòttero						// [1F681]
@@ -1721,11 +1718,11 @@ $textmode
 //🚵‍♀								// [1F6B5 200D 2640] (no translation)
 //🚵‍♂								// [1F6B5 200D 2642] (no translation)
 🚶	persoña ch’a cammiña					// [1F6B6]
-🚶‍♀	dònna ch’a cammiña					// [1F6B6 200D 2640]
-🚶‍♀‍➡	dònna ch’a cammiña in sciâ drita			// [1F6B6 200D 2640 200D 27A1]
-🚶‍♂	òmmo ch’o cammiña					// [1F6B6 200D 2642]
-🚶‍♂‍➡	òmmo ch’o cammiña in sciâ drita				// [1F6B6 200D 2642 200D 27A1]
-🚶‍➡	persoña ch’a cammiña in sciâ drita			// [1F6B6 200D 27A1]
+//🚶‍♀								// [1F6B6 200D 2640] (no translation)
+//🚶‍♀‍➡								// [1F6B6 200D 2640 200D 27A1] (no translation)
+//🚶‍♂								// [1F6B6 200D 2642] (no translation)
+//🚶‍♂‍➡								// [1F6B6 200D 2642 200D 27A1] (no translation)
+//🚶‍➡								// [1F6B6 200D 27A1] (no translation)
 🚷	proibio a-i pedoin					// [1F6B7]
 🚸	figgeu che attraversan					// [1F6B8]
 🚹	leugo pe òmmi						// [1F6B9]
@@ -1752,8 +1749,6 @@ $textmode
 🛕	templio hindu						// [1F6D5]
 🛖	cabanna							// [1F6D6]
 🛗	ascensô							// [1F6D7]
-//🛘								// [1F6D8] (no translation)
-//🛙								// [1F6D9] (no translation)
 🛜	Wi-Fi							// [1F6DC]
 🛝	scuggiæla						// [1F6DD]
 🛞	reua							// [1F6DE]
@@ -1820,8 +1815,8 @@ $textmode
 🤤	morin co-a bava						// [1F924]
 🤥	morin boxardo						// [1F925]
 🤦	persoña esasperâ					// [1F926]
-🤦‍♀	dònna esasperâ						// [1F926 200D 2640]
-🤦‍♂	òmmo esasperou						// [1F926 200D 2642]
+//🤦‍♀								// [1F926 200D 2640] (no translation)
+//🤦‍♂								// [1F926 200D 2642] (no translation)
 🤧	morin ch’o stranua					// [1F927]
 🤨	morin co-e çegge aggrondæ				// [1F928]
 🤩	morin co-i euggi che fan stelle				// [1F929]
@@ -1837,12 +1832,12 @@ $textmode
 🤳	selfie							// [1F933]
 🤴	prinçipe						// [1F934]
 🤵	persoña in smoking					// [1F935]
-🤵‍♀	dònna in smoking					// [1F935 200D 2640]
-🤵‍♂	òmmo in smoking						// [1F935 200D 2642]
+//🤵‍♀								// [1F935 200D 2640] (no translation)
+//🤵‍♂								// [1F935 200D 2642] (no translation)
 🤶	Mamà Dënâ						// [1F936]
 🤷	persoña ch’a strenze e spalle				// [1F937]
-🤷‍♀	dònna ch’a strenze e spalle				// [1F937 200D 2640]
-🤷‍♂	òmmo ch’o strenze e spalle				// [1F937 200D 2642]
+//🤷‍♀								// [1F937 200D 2640] (no translation)
+//🤷‍♂								// [1F937 200D 2642] (no translation)
 🤸	persoña ch’a fa a reua					// [1F938]
 //🤸‍♀								// [1F938 200D 2640] (no translation)
 //🤸‍♂								// [1F938 200D 2642] (no translation)
@@ -2005,38 +2000,38 @@ $textmode
 🧋	bubble tea						// [1F9CB]
 🧌	tròll							// [1F9CC]
 🧍	persoña in pê						// [1F9CD]
-🧍‍♀	dònna in pê						// [1F9CD 200D 2640]
-🧍‍♂	òmmo in pê						// [1F9CD 200D 2642]
+//🧍‍♀								// [1F9CD 200D 2640] (no translation)
+//🧍‍♂								// [1F9CD 200D 2642] (no translation)
 🧎	persoña in zenoggion					// [1F9CE]
-🧎‍♀	dònna in zenoggion					// [1F9CE 200D 2640]
-🧎‍♀‍➡	dònna in zenoggion in sciâ drita			// [1F9CE 200D 2640 200D 27A1]
-🧎‍♂	òmmo in zenoggion					// [1F9CE 200D 2642]
-🧎‍♂‍➡	òmmo in zenoggion in sciâ drita				// [1F9CE 200D 2642 200D 27A1]
-🧎‍➡	persoña in zenoggion in sciâ drita			// [1F9CE 200D 27A1]
+//🧎‍♀								// [1F9CE 200D 2640] (no translation)
+//🧎‍♀‍➡								// [1F9CE 200D 2640 200D 27A1] (no translation)
+//🧎‍♂								// [1F9CE 200D 2642] (no translation)
+//🧎‍♂‍➡								// [1F9CE 200D 2642 200D 27A1] (no translation)
+//🧎‍➡								// [1F9CE 200D 27A1] (no translation)
 🧏	persoña sorda						// [1F9CF]
-🧏‍♀	dònna sorda						// [1F9CF 200D 2640]
-🧏‍♂	òmmo sordo						// [1F9CF 200D 2642]
+//🧏‍♀								// [1F9CF 200D 2640] (no translation)
+//🧏‍♂								// [1F9CF 200D 2642] (no translation)
 🧐	morin co-o monòcolo					// [1F9D0]
 🧑	persoña							// [1F9D1]
-🧑‍⚕	persoña ch’a travaggia inta sanitæ			// [1F9D1 200D 2695]
-🧑‍⚖	giudiçe							// [1F9D1 200D 2696]
-🧑‍✈	pilòtto							// [1F9D1 200D 2708]
-🧑‍🌾	contadin						// [1F9D1 200D 1F33E]
-🧑‍🍳	cheugo							// [1F9D1 200D 1F373]
-🧑‍🍼	persoña ch’a dà o læte					// [1F9D1 200D 1F37C]
+//🧑‍⚕								// [1F9D1 200D 2695] (no translation)
+//🧑‍⚖								// [1F9D1 200D 2696] (no translation)
+//🧑‍✈								// [1F9D1 200D 2708] (no translation)
+//🧑‍🌾								// [1F9D1 200D 1F33E] (no translation)
+//🧑‍🍳								// [1F9D1 200D 1F373] (no translation)
+//🧑‍🍼								// [1F9D1 200D 1F37C] (no translation)
 //🧑‍🎄								// [1F9D1 200D 1F384] (no translation)
-🧑‍🎓	studente						// [1F9D1 200D 1F393]
-🧑‍🎤	cantante						// [1F9D1 200D 1F3A4]
-🧑‍🎨	artista							// [1F9D1 200D 1F3A8]
-🧑‍🏫	meistro							// [1F9D1 200D 1F3EB]
-🧑‍🏭	operäio							// [1F9D1 200D 1F3ED]
-🧑‍💻	tecnòlogo						// [1F9D1 200D 1F4BB]
-🧑‍💼	persoña ch’a travaggia in scagno			// [1F9D1 200D 1F4BC]
-🧑‍🔧	mecanico						// [1F9D1 200D 1F527]
-🧑‍🔬	sciensiou						// [1F9D1 200D 1F52C]
-🧑‍🚀	astronauta						// [1F9D1 200D 1F680]
-🧑‍🚒	pompê							// [1F9D1 200D 1F692]
-🧑‍🤝‍🧑	doe persoñe che se tëgnan pe-a man			// [1F9D1 200D 1F91D 200D 1F9D1]
+//🧑‍🎓								// [1F9D1 200D 1F393] (no translation)
+//🧑‍🎤								// [1F9D1 200D 1F3A4] (no translation)
+//🧑‍🎨								// [1F9D1 200D 1F3A8] (no translation)
+//🧑‍🏫								// [1F9D1 200D 1F3EB] (no translation)
+//🧑‍🏭								// [1F9D1 200D 1F3ED] (no translation)
+//🧑‍💻								// [1F9D1 200D 1F4BB] (no translation)
+//🧑‍💼								// [1F9D1 200D 1F4BC] (no translation)
+//🧑‍🔧								// [1F9D1 200D 1F527] (no translation)
+//🧑‍🔬								// [1F9D1 200D 1F52C] (no translation)
+//🧑‍🚀								// [1F9D1 200D 1F680] (no translation)
+//🧑‍🚒								// [1F9D1 200D 1F692] (no translation)
+//🧑‍🤝‍🧑								// [1F9D1 200D 1F91D 200D 1F9D1] (no translation)
 //🧑‍🦯								// [1F9D1 200D 1F9AF] (no translation)
 //🧑‍🦯‍➡								// [1F9D1 200D 1F9AF 200D 27A1] (no translation)
 🧑‍🦰	persoña cavelli rosci					// [1F9D1 200D 1F9B0]
@@ -2055,8 +2050,8 @@ $textmode
 🧒	figgeu							// [1F9D2]
 🧓	persoña in etæ						// [1F9D3]
 🧔	persoña co-a barba					// [1F9D4]
-🧔‍♀	dònna co-a barba					// [1F9D4 200D 2640]
-🧔‍♂	òmmo co-a barba						// [1F9D4 200D 2642]
+//🧔‍♀								// [1F9D4 200D 2640] (no translation)
+//🧔‍♂								// [1F9D4 200D 2642] (no translation)
 🧕	dònna co-o vello					// [1F9D5]
 🧖	persoña inte unna stansia piña de vapô			// [1F9D6]
 //🧖‍♀								// [1F9D6 200D 2640] (no translation)
@@ -2145,11 +2140,6 @@ $textmode
 🪇	maracas							// [1FA87]
 🪈	flauto							// [1FA88]
 //🪉								// [1FA89] (no translation)
-//🪊								// [1FA8A] (no translation)
-//🪋								// [1FA8B] (no translation)
-//🪌								// [1FA8C] (no translation)
-//🪍								// [1FA8D] (no translation)
-//🪎								// [1FA8E] (no translation)
 //🪏								// [1FA8F] (no translation)
 🪐	pianeta con l’anello					// [1FA90]
 🪑	carrega							// [1FA91]
@@ -2206,9 +2196,6 @@ $textmode
 🫄	persoña gräia						// [1FAC4]
 🫅	persoña co-a coroña					// [1FAC5]
 //🫆								// [1FAC6] (no translation)
-//🫈								// [1FAC8] (no translation)
-//🫌								// [1FACC] (no translation)
-//🫍								// [1FACD] (no translation)
 🫎	alce							// [1FACE]
 🫏	ase							// [1FACF]
 🫐	cornaggin						// [1FAD0]
@@ -2224,7 +2211,6 @@ $textmode
 🫚	raixe de zenzao						// [1FADA]
 🫛	teiga de poïsci						// [1FADB]
 //🫜								// [1FADC] (no translation)
-//🫝								// [1FADD] (no translation)
 //🫟								// [1FADF] (no translation)
 🫠	morin ch’o se deslengua					// [1FAE0]
 🫡	morin ch’o salua					// [1FAE1]
@@ -2235,10 +2221,7 @@ $textmode
 🫦	addentâ o lapro						// [1FAE6]
 🫧	ampolle							// [1FAE7]
 🫨	morin ch’o tremma					// [1FAE8]
-🫩	morin co-i euggi bollæ					// [1FAE9]
-🫪	morin stòrto						// [1FAEA]
-//🫫								// [1FAEB] (no translation)
-🫯	nuvieta de baruffa					// [1FAEF]
+//🫩								// [1FAE9] (no translation)
 🫰	man con dio longâ e gròsso incroxæ			// [1FAF0]
 🫱	man a-a drita						// [1FAF1]
 🫲	man a-a manciña						// [1FAF2]
@@ -2248,5 +2231,3 @@ $textmode
 🫶	moen à cheu						// [1FAF6]
 🫷	man ch’a sponcia a-a manciña				// [1FAF7]
 🫸	man ch’a sponcia a-a drita				// [1FAF8]
-//🫹								// [1FAF9] (no translation)
-//🫺								// [1FAFA] (no translation)

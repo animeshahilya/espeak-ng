@@ -123,8 +123,8 @@ $textmode
 ↦	rodyklė dešinėn nuo brūkšnio				// [21A6]
 ↧	rodyklė žemyn nuo brūkšnio				// [21A7]
 ↨	rodyklė aukštyn ir žemyn su pagrindu			// [21A8]
-↩	rodyklė į dešinę užlenkta į kairę			// [21A9] text|emoji
-↪	rodyklė į kairę užlenkta į dešinę			// [21AA] text|emoji
+↩	rodyklė į dešinę, užlenkta į kairę				// [21A9] text|emoji
+↪	rodyklė į kairę, užlenkta į dešinę				// [21AA] text|emoji
 ↫	rodyklė kairėn su kilpa					// [21AB]
 ↬	rodyklė dešinėn su kilpa				// [21AC]
 ↭	vingiuota rodyklė kairėn ir dešinėn			// [21AD]
@@ -293,8 +293,6 @@ $textmode
 ⌚	laikrodis							// [231A]
 ⌛	smėlio laikrodis						// [231B]
 ⌨	klaviatūra							// [2328] text|emoji
-//⍋								// [234B] (no translation)
-//⍳								// [2373] (no translation)
 ⏏	išmetimo mygtukas						// [23CF] text|emoji
 ⏩	sukti pirmyn							// [23E9]
 ⏪	atsukti atgal							// [23EA]
@@ -454,8 +452,8 @@ $textmode
 ⚠	įspėjimas							// [26A0] text|emoji
 ⚡	aukštoji įtampa							// [26A1]
 ⚧	translyčių simbolis					// [26A7]
-⚪	baltas apskritimas					// [26AA]
-⚫	juodas apskritimas					// [26AB]
+⚪	baltas rutulys							// [26AA]
+⚫	juodas rutulys							// [26AB]
 ⚰	karstas								// [26B0] text|emoji
 ⚱	laidojimo urna							// [26B1] text|emoji
 ⚽	futbolo kamuolys						// [26BD]
@@ -505,10 +503,10 @@ $textmode
 ❇	kibirkštėlė							// [2747] text|emoji
 ❌	kryžiukas							// [274C]
 ❎	kryžiuko mygtukas						// [274E]
-❓	raudonas klaustukas					// [2753]
+❓	klaustukas							// [2753]
 ❔	baltas klaustukas						// [2754]
 ❕	baltas šauktukas						// [2755]
-❗	raudonas šauktukas					// [2757]
+❗	šauktukas							// [2757]
 ❣	storas širdelės formos šauktukas				// [2763] text|emoji
 ❤	raudona širdelė							// [2764] text|emoji
 ➕	paryškintas pliusas						// [2795]
@@ -517,12 +515,11 @@ $textmode
 ➡	rodyklė į dešinę						// [27A1] text|emoji
 ➰	kilpelė								// [27B0]
 ➿	dviguba kilpelė							// [27BF]
-//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 
-⤴	rodyklė į dešinę užlenkta į viršų			// [2934] text|emoji
-⤵	rodyklė į dešinę užlenkta į apačią			// [2935] text|emoji
+⤴	rodyklė į dešinę, užlenkta į viršų				// [2934] text|emoji
+⤵	rodyklė į dešinę, užlenkta į apačią				// [2935] text|emoji
 ⨧	plius apatinio indekso du				// [2A27]
 ⨯	vektorinė sandauga					// [2A2F]
 ⨼	vidinė sandauga						// [2A3C]
@@ -555,11 +552,11 @@ $textmode
 
 // 1F100..1F1FF : Enclosed Alphanumeric Supplement
 
-🅰	mygtukas A raudona					// [1F170] text|emoji
-🅱	mygtukas B raudona					// [1F171] text|emoji
-🅾	simbolis O raudona					// [1F17E] text|emoji
+🅰	mygtukas A (raudona)						// [1F170] text|emoji
+🅱	mygtukas B (raudona)						// [1F171] text|emoji
+🅾	simbolis O (raudona)						// [1F17E] text|emoji
 🅿	simbolis P							// [1F17F] text|emoji
-🆎	mygtukas AB raudona					// [1F18E]
+🆎	mygtukas AB (raudona)						// [1F18E]
 🆑	simbolis CL							// [1F191]
 🆒	simbolis COOL							// [1F192]
 🆓	simbolis FREE							// [1F193]
@@ -568,7 +565,7 @@ $textmode
 🆖	simbolis NG							// [1F196]
 🆗	simbolis OK							// [1F197]
 🆘	simbolis SOS							// [1F198]
-🆙	mygtukas Up						// [1F199]
+🆙	mygtukas Up!							// [1F199]
 🆚	simbolis VS							// [1F19A]
 🇨🇶	Sarkas							// [1F1E8 1F1F6]
 
@@ -620,11 +617,11 @@ $textmode
 🌑	jaunas mėnulis							// [1F311]
 🌒	priešpilnis mėnulis						// [1F312]
 🌓	pirmas fazės ketvirtis						// [1F313]
-🌔	priešpilnis pabaiga					// [1F314]
+🌔	priešpilnis (pabaiga)						// [1F314]
 🌕	pilnatis							// [1F315]
 🌖	delčia								// [1F316]
 🌗	paskutinis fazės ketvirtis					// [1F317]
-🌘	delčia pabaiga						// [1F318]
+🌘	delčia (pabaiga)						// [1F318]
 🌙	pusmėnulis							// [1F319]
 🌚	jaunas mėnulis su veidu						// [1F31A]
 🌛	priešpilnio mėnulis su veidu					// [1F31B]
@@ -636,9 +633,9 @@ $textmode
 🌡	termometras							// [1F321] text|emoji
 🌤	saulė už nedidelio debesies					// [1F324] text|emoji
 🌥	saulė už didelio debesies					// [1F325] text|emoji
-🌦	saulė už debesies iš kurio lyja				// [1F326] text|emoji
-🌧	debesis iš kurio lyja					// [1F327] text|emoji
-🌨	debesis iš kurio sninga					// [1F328] text|emoji
+🌦	saulė už debesies, iš kurio lyja				// [1F326] text|emoji
+🌧	debesis, iš kurio lyja						// [1F327] text|emoji
+🌨	debesis, iš kurio sninga					// [1F328] text|emoji
 🌩	debesis su žaibu						// [1F329] text|emoji
 🌪	tornadas							// [1F32A] text|emoji
 🌫	ūkana								// [1F32B] text|emoji
@@ -861,7 +858,7 @@ $textmode
 🐌	sraigė								// [1F40C]
 🐍	gyvatė								// [1F40D]
 🐎	arklys								// [1F40E]
-🐏	avinas gyvūnas						// [1F40F]
+🐏	avinas (gyvūnas)						// [1F40F]
 🐐	ožys								// [1F410]
 🐑	avis								// [1F411]
 🐒	beždžionė							// [1F412]
@@ -953,9 +950,9 @@ $textmode
 👨	vyras								// [1F468]
 👩	moteris								// [1F469]
 👪	šeima								// [1F46A]
-👫	vyras ir moteris susikibę už rankų			// [1F46B]
-👬	du vyrai susikibę už rankų				// [1F46C]
-👭	dvi moterys susikibusios už rankų			// [1F46D]
+👫	vyras ir moteris, susikibę už rankų				// [1F46B]
+👬	du vyrai, susikibę už rankų					// [1F46C]
+👭	dvi moterys, susikibusios už rankų				// [1F46D]
 👮	policininkas							// [1F46E]
 👯	besilinksminančios moterys					// [1F46F]
 👰	nuotaka su veliumu						// [1F470]
@@ -1128,11 +1125,11 @@ $textmode
 🔘	akutė								// [1F518]
 🔙	rodyklė su užrašu Back						// [1F519]
 🔚	rodyklė su užrašu End						// [1F51A]
-🔛	rodyklė su užrašu On					// [1F51B]
+🔛	rodyklė su užrašu On!						// [1F51B]
 🔜	rodyklė su užrašu Soon						// [1F51C]
 🔝	rodyklė su užrašu Top						// [1F51D]
 🔞	tik pilnamečiams						// [1F51E]
-🔟	mygtukas 10						// [1F51F]
+🔟	mygtukas: 10							// [1F51F]
 🔠	įvestis didžiosios lotyniškos raidės				// [1F520]
 🔡	įvestis mažosios lotyniškos raidės				// [1F521]
 🔢	įvesties skaičiai						// [1F522]
@@ -1144,7 +1141,7 @@ $textmode
 🔨	plaktukas							// [1F528]
 🔩	veržlė ir varžtas						// [1F529]
 🔪	virtuvinis peilis						// [1F52A]
-🔫	vandens šautuvas					// [1F52B]
+🔫	pistoletas							// [1F52B]
 🔬	mikroskopas							// [1F52C]
 🔭	teleskopas							// [1F52D]
 🔮	krištolinis rutulys						// [1F52E]
@@ -1153,8 +1150,8 @@ $textmode
 🔱	trišakė emblema							// [1F531]
 🔲	juodas kvadratinis mygtukas					// [1F532]
 🔳	baltas kvadratinis mygtukas					// [1F533]
-🔴	raudonas apskritimas					// [1F534]
-🔵	mėlynas apskritimas					// [1F535]
+🔴	raudonas rutulys						// [1F534]
+🔵	mėlynas rutulys							// [1F535]
 🔶	didelis oranžinis deimantas					// [1F536]
 🔷	didelis mėlynas deimantas					// [1F537]
 🔸	mažas oranžinis deimantas					// [1F538]
@@ -1219,7 +1216,7 @@ $textmode
 🖼	rėmas su paveikslu						// [1F5BC] text|emoji
 🗂	kortelių laikiklio skirtukai					// [1F5C2] text|emoji
 🗃	kortelių saugojimo dėžė						// [1F5C3] text|emoji
-🗄	bylų spintelė su stalčiais				// [1F5C4] text|emoji
+🗄	failų spintelė su stalčiais					// [1F5C4] text|emoji
 🗑	šiukšliadėžė							// [1F5D1] text|emoji
 🗒	užrašinė su spirale						// [1F5D2] text|emoji
 🗓	kalendorius su spirale						// [1F5D3] text|emoji
@@ -1245,7 +1242,7 @@ $textmode
 😂	veidas su džiaugsmo ašaromis					// [1F602]
 😃	besišypsantis išsižiojęs veidas					// [1F603]
 😄	besišypsantis išsižiojęs veidas besišypsančiomis akimis		// [1F604]
-😅	besišypsantis išsižiojęs veidas išpiltas šalto prakaito	// [1F605]
+😅	besišypsantis išsižiojęs veidas, išpiltas šalto prakaito	// [1F605]
 😆	besišypsantis išsižiojęs veidas su smarkiai užmerktomis akimis	// [1F606]
 😇	besišypsantis veidas su aureole					// [1F607]
 😈	besišypsantis veidas su ragais					// [1F608]
@@ -1259,7 +1256,7 @@ $textmode
 😐	neutralus veidas						// [1F610]
 😑	veidas be jokios išraiškos					// [1F611]
 😒	nelinksmas veidas						// [1F612]
-😓	veidas išpiltas šalto prakaito				// [1F613]
+😓	veidas, išpiltas šalto prakaito					// [1F613]
 😔	susimąstęs veidas						// [1F614]
 😕	sutrikęs veidas							// [1F615]
 😖	suglumintas veidas						// [1F616]
@@ -1288,7 +1285,7 @@ $textmode
 😭	garsiai raudantis veidas					// [1F62D]
 😮	išsižiojęs veidas						// [1F62E]
 😯	nuščiuvęs veidas						// [1F62F]
-😰	išsižiojęs veidas išpiltas šalto prakaito		// [1F630]
+😰	išsižiojęs veidas, išpiltas šalto prakaito			// [1F630]
 😱	iš baimės šaukiantis veidas					// [1F631]
 😲	apstulbęs veidas						// [1F632]
 😳	nuraudęs veidas							// [1F633]
@@ -1308,15 +1305,15 @@ $textmode
 🙁	šiek tiek paniuręs veidas					// [1F641]
 🙂	šiek tiek besišypsantis veidas					// [1F642]
 🙃	apverstas veidas						// [1F643]
-🙄	veidas vartantis akis					// [1F644]
+🙄	veidas, vartantis akis						// [1F644]
 🙅	neigiamas gestas						// [1F645]
 🙆	teigiamas gestas						// [1F646]
 🙇	nusilenkęs žmogus						// [1F647]
 🙈	užsidengusi akis beždžionė					// [1F648]
 🙉	užsidengusi ausis beždžionė					// [1F649]
 🙊	užsidengusi burną beždžionė					// [1F64A]
-🙋	žmogus iškėlęs ranką					// [1F64B]
-🙌	žmogus iškėlęs rankas					// [1F64C]
+🙋	žmogus, iškėlęs ranką						// [1F64B]
+🙌	žmogus, iškėlęs rankas						// [1F64C]
 🙍	paniuręs žmogus							// [1F64D]
 🙎	susiraukęs žmogus						// [1F64E]
 🙏	suglausti delnai						// [1F64F]
@@ -1404,8 +1401,6 @@ $textmode
 🛕	induistų šventykla					// [1F6D5]
 🛖	namelis							// [1F6D6]
 🛗	elevatorius						// [1F6D7]
-🛘	nuošliauža						// [1F6D8]
-🛙	švyturys						// [1F6D9]
 🛜	belaidis ryšys						// [1F6DC]
 🛝	čiuožykla						// [1F6DD]
 🛞	ratas							// [1F6DE]
@@ -1489,7 +1484,7 @@ $textmode
 🤲	delnai suglausti						// [1F932]
 🤳	asmenukė							// [1F933]
 🤴	princas								// [1F934]
-🤵	asmuo su smokingu					// [1F935]
+🤵	vyras su smokingu						// [1F935]
 🤶	ponia Claus							// [1F936]
 🤷	gūžtelėjimas pečiais						// [1F937]
 🤸	persivertimas šonu						// [1F938]
@@ -1546,7 +1541,7 @@ $textmode
 🥭	mangas								// [1F96D]
 🥮	mėnulio pyragas							// [1F96E]
 🥯	apvalus riestainis						// [1F96F]
-🥰	besišypsantis veidas su trimis širdelėmis		// [1F970]
+🥰	besišypsantis veidas ir 3 širdys				// [1F970]
 🥱	žiovaujantis veidas					// [1F971]
 🥲	besišypsantis veidas su ašara				// [1F972]
 🥳	švenčiantis veidas						// [1F973]
@@ -1564,7 +1559,7 @@ $textmode
 🥿	lygiapadis batelis						// [1F97F]
 🦀	krabas								// [1F980]
 🦁	liūto snukis							// [1F981]
-🦂	skorpionas gyvūnas					// [1F982]
+🦂	skorpionas (gyvūnas)						// [1F982]
 🦃	kalakutas							// [1F983]
 🦄	vienaragio snukis						// [1F984]
 🦅	erelis								// [1F985]
@@ -1589,7 +1584,7 @@ $textmode
 🦘	kengūra								// [1F998]
 🦙	lama								// [1F999]
 🦚	povas								// [1F99A]
-🦛	begemotas						// [1F99B]
+🦛	hipopotamas							// [1F99B]
 🦜	papūga								// [1F99C]
 🦝	meškėnas							// [1F99D]
 🦞	omaras								// [1F99E]
@@ -1693,264 +1688,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	Dangun Žengimo sala					// [1F1E6 1F1E8] AC
-🇦🇩	Andora							// [1F1E6 1F1E9] AD
-🇦🇪	Jungtiniai Arabų Emyratai				// [1F1E6 1F1EA] AE
-🇦🇫	Afganistanas						// [1F1E6 1F1EB] AF
-🇦🇬	Antigva ir Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	Angilija						// [1F1E6 1F1EE] AI
-🇦🇱	Albanija						// [1F1E6 1F1F1] AL
-🇦🇲	Armėnija						// [1F1E6 1F1F2] AM
-🇦🇴	Angola							// [1F1E6 1F1F4] AO
-🇦🇶	Antarktida						// [1F1E6 1F1F6] AQ
-🇦🇷	Argentina						// [1F1E6 1F1F7] AR
-🇦🇸	Amerikos Samoa						// [1F1E6 1F1F8] AS
-🇦🇹	Austrija						// [1F1E6 1F1F9] AT
-🇦🇺	Australija						// [1F1E6 1F1FA] AU
-🇦🇼	Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	Alandų Salos						// [1F1E6 1F1FD] AX
-🇦🇿	Azerbaidžanas						// [1F1E6 1F1FF] AZ
-🇧🇦	Bosnija ir Hercegovina					// [1F1E7 1F1E6] BA
-🇧🇧	Barbadosas						// [1F1E7 1F1E7] BB
-🇧🇩	Bangladešas						// [1F1E7 1F1E9] BD
-🇧🇪	Belgija							// [1F1E7 1F1EA] BE
-🇧🇫	Burkina Fasas						// [1F1E7 1F1EB] BF
-🇧🇬	Bulgarija						// [1F1E7 1F1EC] BG
-🇧🇭	Bahreinas						// [1F1E7 1F1ED] BH
-🇧🇮	Burundis						// [1F1E7 1F1EE] BI
-🇧🇯	Beninas							// [1F1E7 1F1EF] BJ
-🇧🇱	Sen Bartelemi						// [1F1E7 1F1F1] BL
-🇧🇲	Bermuda							// [1F1E7 1F1F2] BM
-🇧🇳	Brunėjus						// [1F1E7 1F1F3] BN
-🇧🇴	Bolivija						// [1F1E7 1F1F4] BO
-🇧🇶	Karibų Nyderlandai					// [1F1E7 1F1F6] BQ
-🇧🇷	Brazilija						// [1F1E7 1F1F7] BR
-🇧🇸	Bahamos							// [1F1E7 1F1F8] BS
-🇧🇹	Butanas							// [1F1E7 1F1F9] BT
-🇧🇻	Buvė Sala						// [1F1E7 1F1FB] BV
-🇧🇼	Botsvana						// [1F1E7 1F1FC] BW
-🇧🇾	Baltarusija						// [1F1E7 1F1FE] BY
-🇧🇿	Belizas							// [1F1E7 1F1FF] BZ
-🇨🇦	Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	Kokosų Kilingo Salos					// [1F1E8 1F1E8] CC
-🇨🇩	Kongas-Kinšasa						// [1F1E8 1F1E9] CD
-🇨🇫	Centrinės Afrikos Respublika				// [1F1E8 1F1EB] CF
-🇨🇬	Kongas-Brazavilis					// [1F1E8 1F1EC] CG
-🇨🇭	Šveicarija						// [1F1E8 1F1ED] CH
-🇨🇮	Dramblio Kaulo Krantas					// [1F1E8 1F1EE] CI
-🇨🇰	Kuko Salos						// [1F1E8 1F1F0] CK
-🇨🇱	Čilė							// [1F1E8 1F1F1] CL
-🇨🇲	Kamerūnas						// [1F1E8 1F1F2] CM
-🇨🇳	Kinija							// [1F1E8 1F1F3] CN
-🇨🇴	Kolumbija						// [1F1E8 1F1F4] CO
-🇨🇵	Klipertono sala						// [1F1E8 1F1F5] CP
-🇨🇷	Kosta Rika						// [1F1E8 1F1F7] CR
-🇨🇺	Kuba							// [1F1E8 1F1FA] CU
-🇨🇻	Žaliasis Kyšulys					// [1F1E8 1F1FB] CV
-🇨🇼	Kiurasao						// [1F1E8 1F1FC] CW
-🇨🇽	Kalėdų Sala						// [1F1E8 1F1FD] CX
-🇨🇾	Kipras							// [1F1E8 1F1FE] CY
-🇨🇿	Čekija							// [1F1E8 1F1FF] CZ
-🇩🇪	Vokietija						// [1F1E9 1F1EA] DE
-🇩🇬	Diego Garsija						// [1F1E9 1F1EC] DG
-🇩🇯	Džibutis						// [1F1E9 1F1EF] DJ
-🇩🇰	Danija							// [1F1E9 1F1F0] DK
-🇩🇲	Dominika						// [1F1E9 1F1F2] DM
-🇩🇴	Dominikos Respublika					// [1F1E9 1F1F4] DO
-🇩🇿	Alžyras							// [1F1E9 1F1FF] DZ
-🇪🇦	Seuta ir Melila						// [1F1EA 1F1E6] EA
-🇪🇨	Ekvadoras						// [1F1EA 1F1E8] EC
-🇪🇪	Estija							// [1F1EA 1F1EA] EE
-🇪🇬	Egiptas							// [1F1EA 1F1EC] EG
-🇪🇭	Vakarų Sachara						// [1F1EA 1F1ED] EH
-🇪🇷	Eritrėja						// [1F1EA 1F1F7] ER
-🇪🇸	Ispanija						// [1F1EA 1F1F8] ES
-🇪🇹	Etiopija						// [1F1EA 1F1F9] ET
-🇪🇺	Europos Sąjunga						// [1F1EA 1F1FA] EU
-🇫🇮	Suomija							// [1F1EB 1F1EE] FI
-🇫🇯	Fidžis							// [1F1EB 1F1EF] FJ
-🇫🇰	Folklando salos						// [1F1EB 1F1F0] FI
-🇫🇲	Mikronezija						// [1F1EB 1F1F2] FM
-🇫🇴	Farerų Salos						// [1F1EB 1F1F4] FO
-🇫🇷	Prancūzija						// [1F1EB 1F1F7] FR
-🇬🇦	Gabonas							// [1F1EC 1F1E6] GA
-🇬🇧	Jungtinė Karalystė					// [1F1EC 1F1E7] GB
-🇬🇩	Grenada							// [1F1EC 1F1E9] GD
-🇬🇪	Gruzija							// [1F1EC 1F1EA] GE
-🇬🇫	Prancūzijos Gviana					// [1F1EC 1F1EB] GF
-🇬🇬	Gernsis							// [1F1EC 1F1EC] GG
-🇬🇭	Gana							// [1F1EC 1F1ED] GH
-🇬🇮	Gibraltaras						// [1F1EC 1F1EE] GI
-🇬🇱	Grenlandija						// [1F1EC 1F1F1] GL
-🇬🇲	Gambija							// [1F1EC 1F1F2] GM
-🇬🇳	Gvinėja							// [1F1EC 1F1F3] GN
-🇬🇵	Gvadelupa						// [1F1EC 1F1F5] GP
-🇬🇶	Pusiaujo Gvinėja					// [1F1EC 1F1F6] GQ
-🇬🇷	Graikija						// [1F1EC 1F1F7] GR
-🇬🇸	Pietų Džordžija ir Pietų Sandvičo salos			// [1F1EC 1F1F8] GS
-🇬🇹	Gvatemala						// [1F1EC 1F1F9] GT
-🇬🇺	Guamas							// [1F1EC 1F1FA] GU
-🇬🇼	Bisau Gvinėja						// [1F1EC 1F1FC] GW
-🇬🇾	Gajana							// [1F1EC 1F1FE] GY
-🇭🇰	Ypatingasis Administracinis Kinijos Regionas Honkongas	// [1F1ED 1F1F0] HK
-🇭🇲	Herdo ir Makdonaldo Salos				// [1F1ED 1F1F2] HM
-🇭🇳	Hondūras						// [1F1ED 1F1F3] HN
-🇭🇷	Kroatija						// [1F1ED 1F1F7] HR
-🇭🇹	Haitis							// [1F1ED 1F1F9] HT
-🇭🇺	Vengrija						// [1F1ED 1F1FA] HU
-🇮🇨	Kanarų salos						// [1F1EE 1F1E8] IC
-🇮🇩	Indonezija						// [1F1EE 1F1E9] ID
-🇮🇪	Airija							// [1F1EE 1F1EA] IE
-🇮🇱	Izraelis						// [1F1EE 1F1F1] IL
-🇮🇲	Meno Sala						// [1F1EE 1F1F2] IM
-🇮🇳	Indija							// [1F1EE 1F1F3] IN
-🇮🇴	Indijos Vandenyno Britų Sritis				// [1F1EE 1F1F4] IO
-🇮🇶	Irakas							// [1F1EE 1F1F6] IQ
-🇮🇷	Iranas							// [1F1EE 1F1F7] IR
-🇮🇸	Islandija						// [1F1EE 1F1F8] IS
-🇮🇹	Italija							// [1F1EE 1F1F9] IT
-🇯🇪	Džersis							// [1F1EF 1F1EA] JE
-🇯🇲	Jamaika							// [1F1EF 1F1F2] JM
-🇯🇴	Jordanija						// [1F1EF 1F1F4] JO
-🇯🇵	Japonija						// [1F1EF 1F1F5] JP
-🇰🇪	Kenija							// [1F1F0 1F1EA] KE
-🇰🇬	Kirgizija						// [1F1F0 1F1EC] KG
-🇰🇭	Kambodža						// [1F1F0 1F1ED] KH
-🇰🇮	Kiribatis						// [1F1F0 1F1EE] KI
-🇰🇲	Komorai							// [1F1F0 1F1F2] KM
-🇰🇳	Sent Kitsas ir Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	Šiaurės Korėja						// [1F1F0 1F1F5] KP
-🇰🇷	Pietų Korėja						// [1F1F0 1F1F7] KR
-🇰🇼	Kuveitas						// [1F1F0 1F1FC] KW
-🇰🇾	Kaimanų Salos						// [1F1F0 1F1FE] KY
-🇰🇿	Kazachstanas						// [1F1F0 1F1FF] KZ
-🇱🇦	Laosas							// [1F1F1 1F1E6] LA
-🇱🇧	Libanas							// [1F1F1 1F1E7] LB
-🇱🇨	Sent Lusija						// [1F1F1 1F1E8] LC
-🇱🇮	Lichtenšteinas						// [1F1F1 1F1EE] LI
-🇱🇰	Šri Lanka						// [1F1F1 1F1F0] LK
-🇱🇷	Liberija						// [1F1F1 1F1F7] LR
-🇱🇸	Lesotas							// [1F1F1 1F1F8] LS
-🇱🇹	Lietuva							// [1F1F1 1F1F9] LT
-🇱🇺	Liuksemburgas						// [1F1F1 1F1FA] LU
-🇱🇻	Latvija							// [1F1F1 1F1FB] LV
-🇱🇾	Libija							// [1F1F1 1F1FE] LY
-🇲🇦	Marokas							// [1F1F2 1F1E6] MA
-🇲🇨	Monakas							// [1F1F2 1F1E8] MC
-🇲🇩	Moldova							// [1F1F2 1F1E9] MD
-🇲🇪	Juodkalnija						// [1F1F2 1F1EA] ME
-🇲🇫	Sen Martenas						// [1F1F2 1F1EB] MF
-🇲🇬	Madagaskaras						// [1F1F2 1F1EC] MG
-🇲🇭	Maršalo Salos						// [1F1F2 1F1ED] MH
-🇲🇰	Šiaurės Makedonija					// [1F1F2 1F1F0] MK
-🇲🇱	Malis							// [1F1F2 1F1F1] ML
-🇲🇲	Mianmaras Birma						// [1F1F2 1F1F2] MM
-🇲🇳	Mongolija						// [1F1F2 1F1F3] MN
-🇲🇴	Ypatingasis Administracinis Kinijos Regionas Makao	// [1F1F2 1F1F4] MO
-🇲🇵	Marianos Šiaurinės Salos				// [1F1F2 1F1F5] MP
-🇲🇶	Martinika						// [1F1F2 1F1F6] MQ
-🇲🇷	Mauritanija						// [1F1F2 1F1F7] MR
-🇲🇸	Montseratas						// [1F1F2 1F1F8] MS
-🇲🇹	Malta							// [1F1F2 1F1F9] MT
-🇲🇺	Mauricijus						// [1F1F2 1F1FA] MU
-🇲🇻	Maldyvai						// [1F1F2 1F1FB] MV
-🇲🇼	Malavis							// [1F1F2 1F1FC] MW
-🇲🇽	Meksika							// [1F1F2 1F1FD] MX
-🇲🇾	Malaizija						// [1F1F2 1F1FE] MY
-🇲🇿	Mozambikas						// [1F1F2 1F1FF] MZ
-🇳🇦	Namibija						// [1F1F3 1F1E6] NA
-🇳🇨	Naujoji Kaledonija					// [1F1F3 1F1E8] NC
-🇳🇪	Nigeris							// [1F1F3 1F1EA] NE
-🇳🇫	Norfolko sala						// [1F1F3 1F1EB] NF
-🇳🇬	Nigerija						// [1F1F3 1F1EC] NG
-🇳🇮	Nikaragva						// [1F1F3 1F1EE] NI
-🇳🇱	Nyderlandai						// [1F1F3 1F1F1] NL
-🇳🇴	Norvegija						// [1F1F3 1F1F4] NO
-🇳🇵	Nepalas							// [1F1F3 1F1F5] NP
-🇳🇷	Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	Niujė							// [1F1F3 1F1FA] NU
-🇳🇿	Naujoji Zelandija					// [1F1F3 1F1FF] NZ
-🇴🇲	Omanas							// [1F1F4 1F1F2] OM
-🇵🇦	Panama							// [1F1F5 1F1E6] PA
-🇵🇪	Peru							// [1F1F5 1F1EA] PE
-🇵🇫	Prancūzijos Polinezija					// [1F1F5 1F1EB] PF
-🇵🇬	Papua Naujoji Gvinėja					// [1F1F5 1F1EC] PG
-🇵🇭	Filipinai						// [1F1F5 1F1ED] PH
-🇵🇰	Pakistanas						// [1F1F5 1F1F0] PK
-🇵🇱	Lenkija							// [1F1F5 1F1F1] PL
-🇵🇲	Sen Pjeras ir Mikelonas					// [1F1F5 1F1F2] PM
-🇵🇳	Pitkerno salos						// [1F1F5 1F1F3] PN
-🇵🇷	Puerto Rikas						// [1F1F5 1F1F7] PR
-🇵🇸	Palestinos teritorija					// [1F1F5 1F1F8] PS
-🇵🇹	Portugalija						// [1F1F5 1F1F9] PT
-🇵🇼	Palau							// [1F1F5 1F1FC] PW
-🇵🇾	Paragvajus						// [1F1F5 1F1FE] PY
-🇶🇦	Kataras							// [1F1F6 1F1E6] QA
-🇷🇪	Reunjonas						// [1F1F7 1F1EA] RE
-🇷🇴	Rumunija						// [1F1F7 1F1F4] RO
-🇷🇸	Serbija							// [1F1F7 1F1F8] RS
-🇷🇺	Rusija							// [1F1F7 1F1FA] RU
-🇷🇼	Ruanda							// [1F1F7 1F1FC] RW
-🇸🇦	Saudo Arabija						// [1F1F8 1F1E6] SA
-🇸🇧	Saliamono Salos						// [1F1F8 1F1E7] SB
-🇸🇨	Seišeliai						// [1F1F8 1F1E8] SC
-🇸🇩	Sudanas							// [1F1F8 1F1E9] SD
-🇸🇪	Švedija							// [1F1F8 1F1EA] SE
-🇸🇬	Singapūras						// [1F1F8 1F1EC] SG
-🇸🇭	Šv. Elenos Sala						// [1F1F8 1F1ED] SH
-🇸🇮	Slovėnija						// [1F1F8 1F1EE] SI
-🇸🇯	Svalbardas ir Janas Majenas				// [1F1F8 1F1EF] SJ
-🇸🇰	Slovakija						// [1F1F8 1F1F0] SK
-🇸🇱	Siera Leonė						// [1F1F8 1F1F1] SL
-🇸🇲	San Marinas						// [1F1F8 1F1F2] SM
-🇸🇳	Senegalas						// [1F1F8 1F1F3] SN
-🇸🇴	Somalis							// [1F1F8 1F1F4] SO
-🇸🇷	Surinamas						// [1F1F8 1F1F7] SR
-🇸🇸	Pietų Sudanas						// [1F1F8 1F1F8] SS
-🇸🇹	San Tomė ir Prinsipė					// [1F1F8 1F1F9] ST
-🇸🇻	Salvadoras						// [1F1F8 1F1FB] SV
-🇸🇽	Sint Martenas						// [1F1F8 1F1FD] SX
-🇸🇾	Sirija							// [1F1F8 1F1FE] SY
-🇸🇿	Svazilandas						// [1F1F8 1F1FF] SZ
-🇹🇦	Tristano da Kunjos					// [1F1F9 1F1E6] TA
-🇹🇨	Terkso ir Kaikoso Salos					// [1F1F9 1F1E8] TC
-🇹🇩	Čadas							// [1F1F9 1F1E9] TD
-🇹🇫	Prancūzijos Pietų sritys				// [1F1F9 1F1EB] TF
-🇹🇬	Togas							// [1F1F9 1F1EC] TG
-🇹🇭	Tailandas						// [1F1F9 1F1ED] TH
-🇹🇯	Tadžikija						// [1F1F9 1F1EF] TJ
-🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
-🇹🇱	Rytų Timoras						// [1F1F9 1F1F1] TL
-🇹🇲	Turkmėnistanas						// [1F1F9 1F1F2] TM
-🇹🇳	Tunisas							// [1F1F9 1F1F3] TN
-🇹🇴	Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	Turkija							// [1F1F9 1F1F7] TR
-🇹🇹	Trinidadas ir Tobagas					// [1F1F9 1F1F9] TT
-🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	Taivanas						// [1F1F9 1F1FC] TW
-🇹🇿	Tanzanija						// [1F1F9 1F1FF] TZ
-🇺🇦	Ukraina							// [1F1FA 1F1E6] UA
-🇺🇬	Uganda							// [1F1FA 1F1EC] UG
-🇺🇲	Jungtinių Valstijų Mažosios Tolimosios Salos		// [1F1FA 1F1F2] UM
-🇺🇳	Jungtinės Tautos					// [1F1FA 1F1F3] UN
-🇺🇸	Jungtinės Valstijos					// [1F1FA 1F1F8] US
-🇺🇾	Urugvajus						// [1F1FA 1F1FE] UY
-🇺🇿	Uzbekistanas						// [1F1FA 1F1FF] UZ
-🇻🇦	Vatikano Miesto Valstybė				// [1F1FB 1F1E6] VA
-🇻🇨	Šventasis Vincentas ir Grenadinai			// [1F1FB 1F1E8] VC
-🇻🇪	Venesuela						// [1F1FB 1F1EA] VE
-🇻🇬	Didžiosios Britanijos Mergelių Salos			// [1F1FB 1F1EC] VG
-🇻🇮	Jungtinių Valstijų Mergelių Salos			// [1F1FB 1F1EE] VI
-🇻🇳	Vietnamas						// [1F1FB 1F1F3] VN
-🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
-🇼🇫	Volisas ir Futūna					// [1F1FC 1F1EB] WF
-🇼🇸	Samoa							// [1F1FC 1F1F8] WS
-🇽🇰	Kosovas							// [1F1FD 1F1F0] XK
-🇾🇪	Jemenas							// [1F1FE 1F1EA] YE
-🇾🇹	Majotas							// [1F1FE 1F1F9] YT
-🇿🇦	Pietų Afrika						// [1F1FF 1F1E6] ZA
-🇿🇲	Zambija							// [1F1FF 1F1F2] ZM
-🇿🇼	Zimbabvė						// [1F1FF 1F1FC] ZW
+🇦🇨	vėliava: Dangun Žengimo sala					// [1F1E6 1F1E8] AC
+🇦🇩	vėliava: Andora							// [1F1E6 1F1E9] AD
+🇦🇪	vėliava: Jungtiniai Arabų Emyratai				// [1F1E6 1F1EA] AE
+🇦🇫	vėliava: Afganistanas						// [1F1E6 1F1EB] AF
+🇦🇬	vėliava: Antigva ir Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	vėliava: Angilija						// [1F1E6 1F1EE] AI
+🇦🇱	vėliava: Albanija						// [1F1E6 1F1F1] AL
+🇦🇲	vėliava: Armėnija						// [1F1E6 1F1F2] AM
+🇦🇴	vėliava: Angola							// [1F1E6 1F1F4] AO
+🇦🇶	vėliava: Antarktida						// [1F1E6 1F1F6] AQ
+🇦🇷	vėliava: Argentina						// [1F1E6 1F1F7] AR
+🇦🇸	vėliava: Amerikos Samoa						// [1F1E6 1F1F8] AS
+🇦🇹	vėliava: Austrija						// [1F1E6 1F1F9] AT
+🇦🇺	vėliava: Australija						// [1F1E6 1F1FA] AU
+🇦🇼	vėliava: Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	vėliava: Alandų Salos						// [1F1E6 1F1FD] AX
+🇦🇿	vėliava: Azerbaidžanas						// [1F1E6 1F1FF] AZ
+🇧🇦	vėliava: Bosnija ir Hercegovina					// [1F1E7 1F1E6] BA
+🇧🇧	vėliava: Barbadosas						// [1F1E7 1F1E7] BB
+🇧🇩	vėliava: Bangladešas						// [1F1E7 1F1E9] BD
+🇧🇪	vėliava: Belgija						// [1F1E7 1F1EA] BE
+🇧🇫	vėliava: Burkina Fasas						// [1F1E7 1F1EB] BF
+🇧🇬	vėliava: Bulgarija						// [1F1E7 1F1EC] BG
+🇧🇭	vėliava: Bahreinas						// [1F1E7 1F1ED] BH
+🇧🇮	vėliava: Burundis						// [1F1E7 1F1EE] BI
+🇧🇯	vėliava: Beninas						// [1F1E7 1F1EF] BJ
+🇧🇱	vėliava: Sen Bartelemi						// [1F1E7 1F1F1] BL
+🇧🇲	vėliava: Bermuda						// [1F1E7 1F1F2] BM
+🇧🇳	vėliava: Brunėjus						// [1F1E7 1F1F3] BN
+🇧🇴	vėliava: Bolivija						// [1F1E7 1F1F4] BO
+🇧🇶	vėliava: Karibų Nyderlandai					// [1F1E7 1F1F6] BQ
+🇧🇷	vėliava: Brazilija						// [1F1E7 1F1F7] BR
+🇧🇸	vėliava: Bahamos						// [1F1E7 1F1F8] BS
+🇧🇹	vėliava: Butanas						// [1F1E7 1F1F9] BT
+🇧🇻	vėliava: Buvė Sala						// [1F1E7 1F1FB] BV
+🇧🇼	vėliava: Botsvana						// [1F1E7 1F1FC] BW
+🇧🇾	vėliava: Baltarusija						// [1F1E7 1F1FE] BY
+🇧🇿	vėliava: Belizas						// [1F1E7 1F1FF] BZ
+🇨🇦	vėliava: Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	vėliava: Kokosų (Kilingo) Salos					// [1F1E8 1F1E8] CC
+🇨🇩	vėliava: Kongas-Kinšasa						// [1F1E8 1F1E9] CD
+🇨🇫	vėliava: Centrinės Afrikos Respublika				// [1F1E8 1F1EB] CF
+🇨🇬	vėliava: Kongas-Brazavilis					// [1F1E8 1F1EC] CG
+🇨🇭	vėliava: Šveicarija						// [1F1E8 1F1ED] CH
+🇨🇮	vėliava: Dramblio Kaulo Krantas					// [1F1E8 1F1EE] CI
+🇨🇰	vėliava: Kuko Salos						// [1F1E8 1F1F0] CK
+🇨🇱	vėliava: Čilė							// [1F1E8 1F1F1] CL
+🇨🇲	vėliava: Kamerūnas						// [1F1E8 1F1F2] CM
+🇨🇳	vėliava: Kinija							// [1F1E8 1F1F3] CN
+🇨🇴	vėliava: Kolumbija						// [1F1E8 1F1F4] CO
+🇨🇵	vėliava: Klipertono sala					// [1F1E8 1F1F5] CP
+🇨🇷	vėliava: Kosta Rika						// [1F1E8 1F1F7] CR
+🇨🇺	vėliava: Kuba							// [1F1E8 1F1FA] CU
+🇨🇻	vėliava: Žaliasis Kyšulys					// [1F1E8 1F1FB] CV
+🇨🇼	vėliava: Kiurasao						// [1F1E8 1F1FC] CW
+🇨🇽	vėliava: Kalėdų Sala						// [1F1E8 1F1FD] CX
+🇨🇾	vėliava: Kipras							// [1F1E8 1F1FE] CY
+🇨🇿	vėliava: Čekija							// [1F1E8 1F1FF] CZ
+🇩🇪	vėliava: Vokietija						// [1F1E9 1F1EA] DE
+🇩🇬	vėliava: Diego Garsija						// [1F1E9 1F1EC] DG
+🇩🇯	vėliava: Džibutis						// [1F1E9 1F1EF] DJ
+🇩🇰	vėliava: Danija							// [1F1E9 1F1F0] DK
+🇩🇲	vėliava: Dominika						// [1F1E9 1F1F2] DM
+🇩🇴	vėliava: Dominikos Respublika					// [1F1E9 1F1F4] DO
+🇩🇿	vėliava: Alžyras						// [1F1E9 1F1FF] DZ
+🇪🇦	vėliava: Seuta ir Melila					// [1F1EA 1F1E6] EA
+🇪🇨	vėliava: Ekvadoras						// [1F1EA 1F1E8] EC
+🇪🇪	vėliava: Estija							// [1F1EA 1F1EA] EE
+🇪🇬	vėliava: Egiptas						// [1F1EA 1F1EC] EG
+🇪🇭	vėliava: Vakarų Sachara						// [1F1EA 1F1ED] EH
+🇪🇷	vėliava: Eritrėja						// [1F1EA 1F1F7] ER
+🇪🇸	vėliava: Ispanija						// [1F1EA 1F1F8] ES
+🇪🇹	vėliava: Etiopija						// [1F1EA 1F1F9] ET
+🇪🇺	vėliava: Europos Sąjunga					// [1F1EA 1F1FA] EU
+🇫🇮	vėliava: Suomija						// [1F1EB 1F1EE] FI
+🇫🇯	vėliava: Fidžis							// [1F1EB 1F1EF] FJ
+🇫🇰	vėliava: Folklando Salos					// [1F1EB 1F1F0] FI
+🇫🇲	vėliava: Mikronezija						// [1F1EB 1F1F2] FM
+🇫🇴	vėliava: Farerų Salos						// [1F1EB 1F1F4] FO
+🇫🇷	vėliava: Prancūzija						// [1F1EB 1F1F7] FR
+🇬🇦	vėliava: Gabonas						// [1F1EC 1F1E6] GA
+🇬🇧	vėliava: Jungtinė Karalystė					// [1F1EC 1F1E7] GB
+🇬🇩	vėliava: Grenada						// [1F1EC 1F1E9] GD
+🇬🇪	vėliava: Gruzija						// [1F1EC 1F1EA] GE
+🇬🇫	vėliava: Prancūzijos Gviana					// [1F1EC 1F1EB] GF
+🇬🇬	vėliava: Gernsis						// [1F1EC 1F1EC] GG
+🇬🇭	vėliava: Gana							// [1F1EC 1F1ED] GH
+🇬🇮	vėliava: Gibraltaras						// [1F1EC 1F1EE] GI
+🇬🇱	vėliava: Grenlandija						// [1F1EC 1F1F1] GL
+🇬🇲	vėliava: Gambija						// [1F1EC 1F1F2] GM
+🇬🇳	vėliava: Gvinėja						// [1F1EC 1F1F3] GN
+🇬🇵	vėliava: Gvadelupa						// [1F1EC 1F1F5] GP
+🇬🇶	vėliava: Pusiaujo Gvinėja					// [1F1EC 1F1F6] GQ
+🇬🇷	vėliava: Graikija						// [1F1EC 1F1F7] GR
+🇬🇸	vėliava: Pietų Džordžija ir Pietų Sandvičo salos		// [1F1EC 1F1F8] GS
+🇬🇹	vėliava: Gvatemala						// [1F1EC 1F1F9] GT
+🇬🇺	vėliava: Guamas							// [1F1EC 1F1FA] GU
+🇬🇼	vėliava: Bisau Gvinėja						// [1F1EC 1F1FC] GW
+🇬🇾	vėliava: Gajana							// [1F1EC 1F1FE] GY
+🇭🇰	vėliava: Ypatingasis Administracinis Kinijos Regionas Honkongas	// [1F1ED 1F1F0] HK
+🇭🇲	vėliava: Herdo ir Makdonaldo Salos				// [1F1ED 1F1F2] HM
+🇭🇳	vėliava: Hondūras						// [1F1ED 1F1F3] HN
+🇭🇷	vėliava: Kroatija						// [1F1ED 1F1F7] HR
+🇭🇹	vėliava: Haitis							// [1F1ED 1F1F9] HT
+🇭🇺	vėliava: Vengrija						// [1F1ED 1F1FA] HU
+🇮🇨	vėliava: Kanarų salos						// [1F1EE 1F1E8] IC
+🇮🇩	vėliava: Indonezija						// [1F1EE 1F1E9] ID
+🇮🇪	vėliava: Airija							// [1F1EE 1F1EA] IE
+🇮🇱	vėliava: Izraelis						// [1F1EE 1F1F1] IL
+🇮🇲	vėliava: Meno Sala						// [1F1EE 1F1F2] IM
+🇮🇳	vėliava: Indija							// [1F1EE 1F1F3] IN
+🇮🇴	vėliava: Indijos Vandenyno Britų Sritis				// [1F1EE 1F1F4] IO
+🇮🇶	vėliava: Irakas							// [1F1EE 1F1F6] IQ
+🇮🇷	vėliava: Iranas							// [1F1EE 1F1F7] IR
+🇮🇸	vėliava: Islandija						// [1F1EE 1F1F8] IS
+🇮🇹	vėliava: Italija						// [1F1EE 1F1F9] IT
+🇯🇪	vėliava: Džersis						// [1F1EF 1F1EA] JE
+🇯🇲	vėliava: Jamaika						// [1F1EF 1F1F2] JM
+🇯🇴	vėliava: Jordanija						// [1F1EF 1F1F4] JO
+🇯🇵	vėliava: Japonija						// [1F1EF 1F1F5] JP
+🇰🇪	vėliava: Kenija							// [1F1F0 1F1EA] KE
+🇰🇬	vėliava: Kirgizija						// [1F1F0 1F1EC] KG
+🇰🇭	vėliava: Kambodža						// [1F1F0 1F1ED] KH
+🇰🇮	vėliava: Kiribatis						// [1F1F0 1F1EE] KI
+🇰🇲	vėliava: Komorai						// [1F1F0 1F1F2] KM
+🇰🇳	vėliava: Sent Kitsas ir Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	vėliava: Šiaurės Korėja						// [1F1F0 1F1F5] KP
+🇰🇷	vėliava: Pietų Korėja						// [1F1F0 1F1F7] KR
+🇰🇼	vėliava: Kuveitas						// [1F1F0 1F1FC] KW
+🇰🇾	vėliava: Kaimanų Salos						// [1F1F0 1F1FE] KY
+🇰🇿	vėliava: Kazachstanas						// [1F1F0 1F1FF] KZ
+🇱🇦	vėliava: Laosas							// [1F1F1 1F1E6] LA
+🇱🇧	vėliava: Libanas						// [1F1F1 1F1E7] LB
+🇱🇨	vėliava: Sent Lusija						// [1F1F1 1F1E8] LC
+🇱🇮	vėliava: Lichtenšteinas						// [1F1F1 1F1EE] LI
+🇱🇰	vėliava: Šri Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	vėliava: Liberija						// [1F1F1 1F1F7] LR
+🇱🇸	vėliava: Lesotas						// [1F1F1 1F1F8] LS
+🇱🇹	vėliava: Lietuva						// [1F1F1 1F1F9] LT
+🇱🇺	vėliava: Liuksemburgas						// [1F1F1 1F1FA] LU
+🇱🇻	vėliava: Latvija						// [1F1F1 1F1FB] LV
+🇱🇾	vėliava: Libija							// [1F1F1 1F1FE] LY
+🇲🇦	vėliava: Marokas						// [1F1F2 1F1E6] MA
+🇲🇨	vėliava: Monakas						// [1F1F2 1F1E8] MC
+🇲🇩	vėliava: Moldova						// [1F1F2 1F1E9] MD
+🇲🇪	vėliava: Juodkalnija						// [1F1F2 1F1EA] ME
+🇲🇫	vėliava: Sen Martenas						// [1F1F2 1F1EB] MF
+🇲🇬	vėliava: Madagaskaras						// [1F1F2 1F1EC] MG
+🇲🇭	vėliava: Maršalo Salos						// [1F1F2 1F1ED] MH
+🇲🇰	vėliava: Makedonija						// [1F1F2 1F1F0] MK
+🇲🇱	vėliava: Malis							// [1F1F2 1F1F1] ML
+🇲🇲	vėliava: Mianmaras (Birma)					// [1F1F2 1F1F2] MM
+🇲🇳	vėliava: Mongolija						// [1F1F2 1F1F3] MN
+🇲🇴	vėliava: Ypatingasis Administracinis Kinijos Regionas Makao	// [1F1F2 1F1F4] MO
+🇲🇵	vėliava: Marianos Šiaurinės Salos				// [1F1F2 1F1F5] MP
+🇲🇶	vėliava: Martinika						// [1F1F2 1F1F6] MQ
+🇲🇷	vėliava: Mauritanija						// [1F1F2 1F1F7] MR
+🇲🇸	vėliava: Montseratas						// [1F1F2 1F1F8] MS
+🇲🇹	vėliava: Malta							// [1F1F2 1F1F9] MT
+🇲🇺	vėliava: Mauricijus						// [1F1F2 1F1FA] MU
+🇲🇻	vėliava: Maldyvai						// [1F1F2 1F1FB] MV
+🇲🇼	vėliava: Malavis						// [1F1F2 1F1FC] MW
+🇲🇽	vėliava: Meksika						// [1F1F2 1F1FD] MX
+🇲🇾	vėliava: Malaizija						// [1F1F2 1F1FE] MY
+🇲🇿	vėliava: Mozambikas						// [1F1F2 1F1FF] MZ
+🇳🇦	vėliava: Namibija						// [1F1F3 1F1E6] NA
+🇳🇨	vėliava: Naujoji Kaledonija					// [1F1F3 1F1E8] NC
+🇳🇪	vėliava: Nigeris						// [1F1F3 1F1EA] NE
+🇳🇫	vėliava: Norfolko sala						// [1F1F3 1F1EB] NF
+🇳🇬	vėliava: Nigerija						// [1F1F3 1F1EC] NG
+🇳🇮	vėliava: Nikaragva						// [1F1F3 1F1EE] NI
+🇳🇱	vėliava: Nyderlandai						// [1F1F3 1F1F1] NL
+🇳🇴	vėliava: Norvegija						// [1F1F3 1F1F4] NO
+🇳🇵	vėliava: Nepalas						// [1F1F3 1F1F5] NP
+🇳🇷	vėliava: Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	vėliava: Niujė							// [1F1F3 1F1FA] NU
+🇳🇿	vėliava: Naujoji Zelandija					// [1F1F3 1F1FF] NZ
+🇴🇲	vėliava: Omanas							// [1F1F4 1F1F2] OM
+🇵🇦	vėliava: Panama							// [1F1F5 1F1E6] PA
+🇵🇪	vėliava: Peru							// [1F1F5 1F1EA] PE
+🇵🇫	vėliava: Prancūzijos Polinezija					// [1F1F5 1F1EB] PF
+🇵🇬	vėliava: Papua Naujoji Gvinėja					// [1F1F5 1F1EC] PG
+🇵🇭	vėliava: Filipinai						// [1F1F5 1F1ED] PH
+🇵🇰	vėliava: Pakistanas						// [1F1F5 1F1F0] PK
+🇵🇱	vėliava: Lenkija						// [1F1F5 1F1F1] PL
+🇵🇲	vėliava: Sen Pjeras ir Mikelonas				// [1F1F5 1F1F2] PM
+🇵🇳	vėliava: Pitkerno salos						// [1F1F5 1F1F3] PN
+🇵🇷	vėliava: Puerto Rikas						// [1F1F5 1F1F7] PR
+🇵🇸	vėliava: Palestinos teritorija					// [1F1F5 1F1F8] PS
+🇵🇹	vėliava: Portugalija						// [1F1F5 1F1F9] PT
+🇵🇼	vėliava: Palau							// [1F1F5 1F1FC] PW
+🇵🇾	vėliava: Paragvajus						// [1F1F5 1F1FE] PY
+🇶🇦	vėliava: Kataras						// [1F1F6 1F1E6] QA
+🇷🇪	vėliava: Reunjonas						// [1F1F7 1F1EA] RE
+🇷🇴	vėliava: Rumunija						// [1F1F7 1F1F4] RO
+🇷🇸	vėliava: Serbija						// [1F1F7 1F1F8] RS
+🇷🇺	vėliava: Rusija							// [1F1F7 1F1FA] RU
+🇷🇼	vėliava: Ruanda							// [1F1F7 1F1FC] RW
+🇸🇦	vėliava: Saudo Arabija						// [1F1F8 1F1E6] SA
+🇸🇧	vėliava: Saliamono Salos					// [1F1F8 1F1E7] SB
+🇸🇨	vėliava: Seišeliai						// [1F1F8 1F1E8] SC
+🇸🇩	vėliava: Sudanas						// [1F1F8 1F1E9] SD
+🇸🇪	vėliava: Švedija						// [1F1F8 1F1EA] SE
+🇸🇬	vėliava: Singapūras						// [1F1F8 1F1EC] SG
+🇸🇭	vėliava: Šv. Elenos Sala					// [1F1F8 1F1ED] SH
+🇸🇮	vėliava: Slovėnija						// [1F1F8 1F1EE] SI
+🇸🇯	vėliava: Svalbardas ir Janas Majenas				// [1F1F8 1F1EF] SJ
+🇸🇰	vėliava: Slovakija						// [1F1F8 1F1F0] SK
+🇸🇱	vėliava: Siera Leonė						// [1F1F8 1F1F1] SL
+🇸🇲	vėliava: San Marinas						// [1F1F8 1F1F2] SM
+🇸🇳	vėliava: Senegalas						// [1F1F8 1F1F3] SN
+🇸🇴	vėliava: Somalis						// [1F1F8 1F1F4] SO
+🇸🇷	vėliava: Surinamas						// [1F1F8 1F1F7] SR
+🇸🇸	vėliava: Pietų Sudanas						// [1F1F8 1F1F8] SS
+🇸🇹	vėliava: San Tomė ir Prinsipė					// [1F1F8 1F1F9] ST
+🇸🇻	vėliava: Salvadoras						// [1F1F8 1F1FB] SV
+🇸🇽	vėliava: Sint Martenas						// [1F1F8 1F1FD] SX
+🇸🇾	vėliava: Sirija							// [1F1F8 1F1FE] SY
+🇸🇿	vėliava: Svazilandas						// [1F1F8 1F1FF] SZ
+🇹🇦	vėliava: Tristanas da Kunja					// [1F1F9 1F1E6] TA
+🇹🇨	vėliava: Terkso ir Kaikoso Salos				// [1F1F9 1F1E8] TC
+🇹🇩	vėliava: Čadas							// [1F1F9 1F1E9] TD
+🇹🇫	vėliava: Prancūzijos Pietų sritys				// [1F1F9 1F1EB] TF
+🇹🇬	vėliava: Togas							// [1F1F9 1F1EC] TG
+🇹🇭	vėliava: Tailandas						// [1F1F9 1F1ED] TH
+🇹🇯	vėliava: Tadžikija						// [1F1F9 1F1EF] TJ
+🇹🇰	vėliava: Tokelau						// [1F1F9 1F1F0] TK
+🇹🇱	vėliava: Rytų Timoras						// [1F1F9 1F1F1] TL
+🇹🇲	vėliava: Turkmėnistanas						// [1F1F9 1F1F2] TM
+🇹🇳	vėliava: Tunisas						// [1F1F9 1F1F3] TN
+🇹🇴	vėliava: Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	vėliava: Turkija						// [1F1F9 1F1F7] TR
+🇹🇹	vėliava: Trinidadas ir Tobagas					// [1F1F9 1F1F9] TT
+🇹🇻	vėliava: Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	vėliava: Taivanas						// [1F1F9 1F1FC] TW
+🇹🇿	vėliava: Tanzanija						// [1F1F9 1F1FF] TZ
+🇺🇦	vėliava: Ukraina						// [1F1FA 1F1E6] UA
+🇺🇬	vėliava: Uganda							// [1F1FA 1F1EC] UG
+🇺🇲	vėliava: Jungtinių Valstijų Mažosios Tolimosios Salos		// [1F1FA 1F1F2] UM
+🇺🇳	vėliava: Jungtinės Tautos					// [1F1FA 1F1F3] UN
+🇺🇸	vėliava: Jungtinės Valstijos					// [1F1FA 1F1F8] US
+🇺🇾	vėliava: Urugvajus						// [1F1FA 1F1FE] UY
+🇺🇿	vėliava: Uzbekistanas						// [1F1FA 1F1FF] UZ
+🇻🇦	vėliava: Vatikano Miesto Valstybė				// [1F1FB 1F1E6] VA
+🇻🇨	vėliava: Šventasis Vincentas ir Grenadinai			// [1F1FB 1F1E8] VC
+🇻🇪	vėliava: Venesuela						// [1F1FB 1F1EA] VE
+🇻🇬	vėliava: Didžiosios Britanijos Mergelių Salos			// [1F1FB 1F1EC] VG
+🇻🇮	vėliava: Jungtinių Valstijų Mergelių Salos			// [1F1FB 1F1EE] VI
+🇻🇳	vėliava: Vietnamas						// [1F1FB 1F1F3] VN
+🇻🇺	vėliava: Vanuatu						// [1F1FB 1F1FA] VU
+🇼🇫	vėliava: Volisas ir Futūna					// [1F1FC 1F1EB] WF
+🇼🇸	vėliava: Samoa							// [1F1FC 1F1F8] WS
+🇽🇰	vėliava: Kosovas						// [1F1FD 1F1F0] XK
+🇾🇪	vėliava: Jemenas						// [1F1FE 1F1EA] YE
+🇾🇹	vėliava: Majotas						// [1F1FE 1F1F9] YT
+🇿🇦	vėliava: Pietų Afrika						// [1F1FF 1F1E6] ZA
+🇿🇲	vėliava: Zambija						// [1F1FF 1F1F2] ZM
+🇿🇼	vėliava: Zimbabvė						// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1960,18 +1955,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#⃣	mygtukas						// [0023 20E3]
-*⃣	mygtukas						// [002A 20E3]
-0⃣	mygtukas 0						// [0030 20E3]
-1⃣	mygtukas 1						// [0031 20E3]
-2⃣	mygtukas 2						// [0032 20E3]
-3⃣	mygtukas 3						// [0033 20E3]
-4⃣	mygtukas 4						// [0034 20E3]
-5⃣	mygtukas 5						// [0035 20E3]
-6⃣	mygtukas 6						// [0036 20E3]
-7⃣	mygtukas 7						// [0037 20E3]
-8⃣	mygtukas 8						// [0038 20E3]
-9⃣	mygtukas 9						// [0039 20E3]
+#️⃣	mygtukas: #							// [0023 FE0F 20E3]
+*️⃣	mygtukas: *							// [002A FE0F 20E3]
+0️⃣	mygtukas: 0							// [0030 FE0F 20E3]
+1️⃣	mygtukas: 1							// [0031 FE0F 20E3]
+2️⃣	mygtukas: 2							// [0032 FE0F 20E3]
+3️⃣	mygtukas: 3							// [0033 FE0F 20E3]
+4️⃣	mygtukas: 4							// [0034 FE0F 20E3]
+5️⃣	mygtukas: 5							// [0035 FE0F 20E3]
+6️⃣	mygtukas: 6							// [0036 FE0F 20E3]
+7️⃣	mygtukas: 7							// [0037 FE0F 20E3]
+8️⃣	mygtukas: 8							// [0038 FE0F 20E3]
+9️⃣	mygtukas: 9							// [0039 FE0F 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	baleto bateliai						// [1FA70]
@@ -1997,11 +1992,6 @@ $textmode
 🪇	marakasai						// [1FA87]
 🪈	fleita							// [1FA88]
 🪉	arfa							// [1FA89]
-🪊	trombonas						// [1FA8A]
-🪋	meteoras						// [1FA8B]
-🪌	trintukas						// [1FA8C]
-🪍	tinklas su rankena					// [1FA8D]
-🪎	lobių skrynia						// [1FA8E]
 🪏	kastuvas						// [1FA8F]
 🪐	planeta su žiedu					// [1FA90]
 🪑	kėdė							// [1FA91]
@@ -2058,9 +2048,6 @@ $textmode
 🫄	nėščias asmuo						// [1FAC4]
 🫅	asmuo su karūna						// [1FAC5]
 🫆	piršto atspaudas					// [1FAC6]
-🫈	plaukuotas padaras					// [1FAC8]
-🫌	drugelis monarchas					// [1FACC]
-🫍	orka							// [1FACD]
 🫎	briedis							// [1FACE]
 🫏	asilas							// [1FACF]
 🫐	mėlynės							// [1FAD0]
@@ -2076,7 +2063,6 @@ $textmode
 🫚	imbiero šaknis						// [1FADA]
 🫛	žirnių ankštis						// [1FADB]
 🫜	šakninė daržovė						// [1FADC]
-🫝	raugintas agurkas					// [1FADD]
 🫟	tiškalas						// [1FADF]
 🫠	tirpstantis veidas					// [1FAE0]
 🫡	pagarbą atiduodantis veidas				// [1FAE1]
@@ -2088,9 +2074,6 @@ $textmode
 🫧	burbulai						// [1FAE7]
 🫨	besikratantis veidukas					// [1FAE8]
 🫩	veidas su maišeliais po akimis				// [1FAE9]
-🫪	ištįsęs veidas						// [1FAEA]
-🫫	lūžtantis veidas					// [1FAEB]
-🫯	kovos debesis						// [1FAEF]
 🫰	ranka sukryžiuotu smiliumi ir nykščiu			// [1FAF0]
 🫱	į dešinę rodanti ranka					// [1FAF1]
 🫲	į kairę rodanti ranka					// [1FAF2]
@@ -2100,8 +2083,6 @@ $textmode
 🫶	širdelė iš rankų					// [1FAF6]
 🫷	į kairę stumianti ranka					// [1FAF7]
 🫸	į dešinę stumianti ranka				// [1FAF8]
-🫹	nykštys į kairę						// [1FAF9]
-🫺	nykštys į dešinę					// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2130,38 +2111,38 @@ $textmode
 👨‍🦼‍➡	vyras motorizuotame vežimėlyje atsisukęs į dešinę	// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	vyras rankomis valdomame vežimėlyje			// [1F468 200D 1F9BD]
 👨‍🦽‍➡	vyras rankomis valdomame vežimėlyje atsisukęs į dešinę	// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	bučinys moteris vyras					// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	bučinys vyras vyras					// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	bučinys moteris moteris					// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	pora su širdele moteris vyras				// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	pora su širdele vyras vyras				// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	pora su širdele moteris moteris				// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	šeima vyras moteris berniukas				// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	šeima vyras moteris mergaitė				// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	šeima vyras moteris mergaitė berniukas			// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	šeima vyras moteris berniukas berniukas			// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	šeima vyras moteris mergaitė mergaitė			// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	šeima vyras vyras berniukas				// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	šeima vyras vyras mergaitė				// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	šeima vyras vyras mergaitė berniukas			// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	šeima vyras vyras berniukas berniukas			// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	šeima vyras vyras mergaitė mergaitė			// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	bučinys: moteris vyras			// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	bučinys: vyras vyras			// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	bučinys: moteris moteris		// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	pora su širdele: moteris vyras			// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	pora su širdele: vyras vyras			// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	pora su širdele: moteris moteris		// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	šeima: vyras moteris berniukas			// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	šeima: vyras moteris mergaitė			// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	šeima: vyras moteris mergaitė berniukas	// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	šeima: vyras moteris berniukas berniukas// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	šeima: vyras moteris mergaitė mergaitė	// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	šeima: vyras vyras berniukas			// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	šeima: vyras vyras mergaitė			// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	šeima: vyras vyras mergaitė berniukas	// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	šeima: vyras vyras berniukas berniukas	// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	šeima: vyras vyras mergaitė mergaitė	// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	kūdikį maitinanti moteris				// [1F469 200D 1F37C]
-👩‍👩‍👦	šeima moteris moteris berniukas				// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	šeima moteris moteris mergaitė				// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	šeima moteris moteris mergaitė berniukas		// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	šeima moteris moteris berniukas berniukas		// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	šeima moteris moteris mergaitė mergaitė			// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	šeima vyras berniukas					// [1F468 200D 1F466]
-👨‍👦‍👦	šeima vyras berniukas berniukas				// [1F468 200D 1F466 200D 1F466]
-👨‍👧	šeima vyras mergaitė					// [1F468 200D 1F467]
-👨‍👧‍👦	šeima vyras mergaitė berniukas				// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	šeima vyras mergaitė mergaitė				// [1F468 200D 1F467 200D 1F467]
-👩‍👦	šeima moteris berniukas					// [1F469 200D 1F466]
-👩‍👦‍👦	šeima moteris berniukas berniukas			// [1F469 200D 1F466 200D 1F466]
-👩‍👧	šeima moteris mergaitė					// [1F469 200D 1F467]
-👩‍👧‍👦	šeima moteris mergaitė berniukas			// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	šeima moteris mergaitė mergaitė				// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	šeima: moteris moteris berniukas		// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	šeima: moteris moteris mergaitė			// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	šeima: moteris moteris mergaitė berniukas// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	šeima: moteris moteris berniukas berniukas// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	šeima: moteris moteris mergaitė mergaitė// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	šeima: vyras berniukas					// [1F468 200D 1F466]
+👨‍👦‍👦	šeima: vyras berniukas berniukas		// [1F468 200D 1F466 200D 1F466]
+👨‍👧	šeima: vyras mergaitė					// [1F468 200D 1F467]
+👨‍👧‍👦	šeima: vyras mergaitė berniukas			// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	šeima: vyras mergaitė mergaitė			// [1F468 200D 1F467 200D 1F467]
+👩‍👦	šeima: moteris berniukas				// [1F469 200D 1F466]
+👩‍👦‍👦	šeima: moteris berniukas berniukas		// [1F469 200D 1F466 200D 1F466]
+👩‍👧	šeima: moteris mergaitė					// [1F469 200D 1F467]
+👩‍👧‍👦	šeima: moteris mergaitė berniukas		// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	šeima: moteris mergaitė mergaitė		// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 
@@ -2291,6 +2272,7 @@ $textmode
 🧛‍♂	vampyras vyras						// [1F9DB 200D 2642]
 🧜‍♀	undinėlė						// [1F9DC 200D 2640]
 🧜‍♂	vandenis undinius					// [1F9DC 200D 2642]
+🧜‍♂	vandenis/undinius					// [1F9DC 200D 2642]
 🧝‍♀	elfė							// [1F9DD 200D 2640]
 🧝‍♂	elfas vyras						// [1F9DD 200D 2642]
 🧞‍♀	džinė							// [1F9DE 200D 2640]
@@ -2338,7 +2320,7 @@ $textmode
 🤾‍♂	rankininkas						// [1F93E 200D 2642]
 🧖‍♀	moteris garų kambaryje					// [1F9D6 200D 2640]
 🧖‍♂	vyras garų kambaryje					// [1F9D6 200D 2642]
-🧗‍♀	kopianti moteris					// [1F9D7 200D 2640]
+🧗‍♀	kopiantis moteris					// [1F9D7 200D 2640]
 🧗‍♂	kopiantis vyras						// [1F9D7 200D 2642]
 🧘‍♀	moteris lotoso pozoje					// [1F9D8 200D 2640]
 🧘‍♂	vyras lotoso pozoje					// [1F9D8 200D 2642]

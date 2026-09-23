@@ -88,7 +88,7 @@ $textmode
 //№	numero								// [2116] other (no translation)
 ℗	znak praw autorskich do nagrań muzycznych		// [2117]
 //℞	prescription							// [211E] other (no translation)
-™	znak towarowy						// [2122] text|emoji
+™	zastrzeżony znak towarowy					// [2122] text|emoji
 ℹ	informacja							// [2139] text|emoji
 
 // 2150..218F : Number Forms
@@ -293,13 +293,11 @@ $textmode
 ⌚	zegarek								// [231A]
 ⌛	klepsydra							// [231B]
 ⌨	klawiatura							// [2328] text|emoji
-//⍋								// [234B] (no translation)
-//⍳								// [2373] (no translation)
 ⏏	wysuń								// [23CF] text|emoji
 ⏩	przycisk szybkiego przewijania do przodu			// [23E9]
 ⏪	przycisk szybkiego przewijania do tyłu				// [23EA]
-⏫	przycisk szybko w górę					// [23EB]
-⏬	przycisk szybko w dół					// [23EC]
+⏫	przycisk szybko w górę”						// [23EB]
+⏬	przycisk szybko w dół”						// [23EC]
 ⏭	następny utwór							// [23ED] text|emoji
 ⏮	poprzedni utwór							// [23EE] text|emoji
 ⏯	odtwórz lub wstrzymaj						// [23EF] text|emoji
@@ -392,6 +390,8 @@ $textmode
 ◽	mały średni biały kwadrat				// [25FD]
 ◾	mały średni czarny kwadrat				// [25FE]
 ◿	trójkąt w prawym dolnym rogu				// [25FF]
+◽	mały/średni biały kwadrat					// [25FD]
+◾	mały/średni czarny kwadrat					// [25FE]
 
 // 2600..26FF : Miscellaneous Symbols
 
@@ -460,7 +460,7 @@ $textmode
 ⚱	urna na prochy							// [26B1] text|emoji
 ⚽	piłka nożna							// [26BD]
 ⚾	baseball							// [26BE]
-⛄	bałwanek bez śniegu					// [26C4]
+⛄	bałwan bez śniegu						// [26C4]
 ⛅	słońce zza chmury						// [26C5]
 ⛈	chmura z piorunem i deszczem					// [26C8] text|emoji
 ⛎	Wężownik							// [26CE]
@@ -485,7 +485,7 @@ $textmode
 // 2700..27BF : Dingbats
 
 ✂	nożyczki							// [2702] text|emoji
-✅	przycisk ze znacznikiem wyboru				// [2705]
+✅	gruby biały znacznik wyboru					// [2705]
 ✈	samolot								// [2708] text|emoji
 ✉	koperta								// [2709] text|emoji
 ✊	wzniesiona pięść						// [270A]
@@ -494,8 +494,8 @@ $textmode
 ✍	pisząca dłoń							// [270D] text|emoji
 ✏	ołówek								// [270F] text|emoji
 ✒	pióro z czarną stalówką						// [2712] text|emoji
-✔	znacznik wyboru						// [2714] text|emoji
-✖	znak mnożenia						// [2716] text|emoji
+✔	gruby znacznik wyboru						// [2714] text|emoji
+✖	gruby znak x							// [2716] text|emoji
 ✝	krzyż łaciński							// [271D] text|emoji
 ✡	gwiazda Dawida							// [2721] text|emoji
 ✨	gwiazdki							// [2728]
@@ -505,19 +505,18 @@ $textmode
 ❇	iskra								// [2747] text|emoji
 ❌	znak krzyżyka							// [274C]
 ❎	przycisk z krzyżykiem						// [274E]
-❓	czerwony znak zapytania					// [2753]
+❓	znak zapytania							// [2753]
 ❔	biały znak zapytania						// [2754]
 ❕	biały wykrzyknik						// [2755]
-❗	czerwony wykrzyknik					// [2757]
-❣	wykrzyknik w kształcie serca				// [2763] text|emoji
+❗	wykrzyknik							// [2757]
+❣	czerwony wykrzyknik w kształcie serca				// [2763] text|emoji
 ❤	czerwone serce							// [2764] text|emoji
-➕	znak plus						// [2795]
-➖	znak minus						// [2796]
-➗	znak dzielenia						// [2797]
+➕	gruby znak plus							// [2795]
+➖	gruby znak minus						// [2796]
+➗	gruby znak dzielenia						// [2797]
 ➡	strzałka w prawo						// [27A1] text|emoji
 ➰	pętla								// [27B0]
 ➿	podwójna pętla							// [27BF]
-//⟳								// [27F3] (no translation)
 
 // 2900..297F : Supplemental Arrows-B
 
@@ -549,8 +548,8 @@ $textmode
 
 // 3200..32FF : Enclosed CJK Letters and Months
 
-㊗	japoński przycisk gratulacje				// [3297] text|emoji
-㊙	japoński przycisk tajemnica				// [3299] text|emoji
+㊗	japoński przycisk gratulacje”					// [3297] text|emoji
+㊙	japoński przycisk tajemnica”					// [3299] text|emoji
 ﷼	rial							// [FDFC]
 
 // 1F100..1F1FF : Enclosed Alphanumeric Supplement
@@ -568,31 +567,31 @@ $textmode
 🆖	przycisk NG							// [1F196]
 🆗	przycisk OK							// [1F197]
 🆘	przycisk SOS							// [1F198]
-🆙	przycisk UP						// [1F199]
+🆙	napis UP!							// [1F199]
 🆚	przycisk VS							// [1F19A]
 🇨🇶	Sark							// [1F1E8 1F1F6]
 
 // 1F200..1F2FF : Enclosed Ideographic Supplement
 
-🈁	japoński przycisk tutaj					// [1F201]
-🈂	japoński przycisk usługa				// [1F202] text|emoji
-🈚	japoński przycisk bezpłatne				// [1F21A]
-🈯	japoński przycisk zarezerwowane				// [1F22F]
-🈲	japoński przycisk zabronione				// [1F232]
-🈳	japoński przycisk wolne miejsce				// [1F233]
-🈴	japoński przycisk ocena pozytywna			// [1F234]
-🈵	japoński przycisk brak wolnych miejsc			// [1F235]
-🈶	japoński przycisk płatne				// [1F236]
+🈁	japoński przycisk tutaj”					// [1F201]
+🈂	sa w języku katakana						// [1F202] text|emoji
+🈚	japoński przycisk bezpłatne”					// [1F21A]
+🈯	japoński przycisk zarezerwowane”				// [1F22F]
+🈲	japoński przycisk zabronione”					// [1F232]
+🈳	japoński przycisk wolne miejsce”				// [1F233]
+🈴	japoński przycisk ocena pozytywna”				// [1F234]
+🈵	japoński przycisk brak wolnych miejsc”				// [1F235]
+🈶	japoński przycisk płatne”					// [1F236]
 🈷	ideogram księżyca						// [1F237] text|emoji
-🈸	japoński przycisk wniosek				// [1F238]
-🈹	japoński przycisk rabat					// [1F239]
-🈺	japoński przycisk czynne				// [1F23A]
-🉐	japoński przycisk okazja				// [1F250]
-🉑	japoński przycisk dozwolone				// [1F251]
+🈸	japoński przycisk wniosek”					// [1F238]
+🈹	japoński przycisk rabat”					// [1F239]
+🈺	japoński przycisk czynne”					// [1F23A]
+🉐	japoński przycisk okazja”					// [1F250]
+🉑	japoński przycisk dozwolone”					// [1F251]
 
 // 1F000..1F02F : Mahjong Tiles
 
-🀄	madżong czerwony smok					// [1F004]
+🀄	madżong: czerwony smok						// [1F004]
 
 // 1F0A0..1F0FF : Playing Cards
 
@@ -620,9 +619,9 @@ $textmode
 🌑	nów								// [1F311]
 🌒	narastający półksiężyc						// [1F312]
 🌓	pierwsza kwadra księżyca					// [1F313]
-🌔	narastający księżyc między pierwszą kwadrą a pełnią	// [1F314]
+🌔	narastający Księżyc między pierwszą kwadrą a pełnią		// [1F314]
 🌕	pełnia								// [1F315]
-🌖	zanikający księżyc między pełnią a ostatnią kwadrą	// [1F316]
+🌖	zanikający księżyc między pierwszą kwadrą a pełnią		// [1F316]
 🌗	ostatnia kwadra księżyca					// [1F317]
 🌘	zanikający półksiężyc						// [1F318]
 🌙	półksiężyc							// [1F319]
@@ -652,7 +651,7 @@ $textmode
 🌳	drzewo liściaste						// [1F333]
 🌴	palma								// [1F334]
 🌵	kaktus								// [1F335]
-🌶	ostra papryka						// [1F336] text|emoji
+🌶	papryka								// [1F336] text|emoji
 🌷	tulipan								// [1F337]
 🌸	kwiat wiśni							// [1F338]
 🌹	róża								// [1F339]
@@ -712,7 +711,7 @@ $textmode
 🍯	garnek miodu							// [1F36F]
 🍰	tort								// [1F370]
 🍱	pudełko bento							// [1F371]
-🍲	garnek z jedzeniem					// [1F372]
+🍲	miska z jedzeniem						// [1F372]
 🍳	gotowanie							// [1F373]
 🍴	widelec i nóż							// [1F374]
 🍵	filiżanka bez uszka						// [1F375]
@@ -863,10 +862,10 @@ $textmode
 🐎	koń								// [1F40E]
 🐏	biały baran							// [1F40F]
 🐐	koza								// [1F410]
-🐑	owca							// [1F411]
+🐑	rogaty baran							// [1F411]
 🐒	małpa								// [1F412]
 🐓	kogut								// [1F413]
-🐔	kura							// [1F414]
+🐔	kurczak								// [1F414]
 🐕	pies								// [1F415]
 🐖	świnia								// [1F416]
 🐗	dzik								// [1F417]
@@ -918,7 +917,7 @@ $textmode
 👅	język								// [1F445]
 👆	dłoń z palcem wskazującym w górę				// [1F446]
 👇	dłoń z palcem wskazującym w dół					// [1F447]
-👈	dłoń z palcem wskazującym w lewo			// [1F448]
+👈	palec w lewo							// [1F448]
 👉	dłoń z palcem wskazującym w prawo				// [1F449]
 👊	pięść od przodu							// [1F44A]
 👋	machająca dłoń							// [1F44B]
@@ -947,7 +946,7 @@ $textmode
 👢	kozak damski							// [1F462]
 👣	ślady stóp							// [1F463]
 👤	sylwetka popiersia						// [1F464]
-👥	sylwetki popiersi					// [1F465]
+👥	sylwetki							// [1F465]
 👦	chłopiec							// [1F466]
 👧	dziewczynka							// [1F467]
 👨	mężczyzna							// [1F468]
@@ -955,12 +954,12 @@ $textmode
 👪	rodzina								// [1F46A]
 👫	mężczyzna i kobieta trzymający się za ręce			// [1F46B]
 👬	dwóch mężczyzn trzymających się za ręce				// [1F46C]
-👭	kobiety trzymające się za ręce				// [1F46D]
+👭	dwie kobiety trzymające się za ręce				// [1F46D]
 👮	policjant							// [1F46E]
 👯	osoby z uszami królika na przyjęciu				// [1F46F]
-👰	osoba w welonie						// [1F470]
+👰	panna młoda w welonie						// [1F470]
 👱	osoba z włosami blond						// [1F471]
-👲	osoba w chińskiej czapce				// [1F472]
+👲	mężczyzna w chińskiej czapce					// [1F472]
 👳	osoba w turbanie						// [1F473]
 👴	starszy mężczyzna						// [1F474]
 👵	starsza kobieta							// [1F475]
@@ -1015,7 +1014,7 @@ $textmode
 💦	krople potu							// [1F4A6]
 💧	kropla								// [1F4A7]
 💨	szybkie poruszanie się						// [1F4A8]
-💩	kupa							// [1F4A9]
+💩	odchody								// [1F4A9]
 💪	napięty biceps							// [1F4AA]
 💫	zawroty głowy							// [1F4AB]
 💬	dymek								// [1F4AC]
@@ -1126,25 +1125,25 @@ $textmode
 🔖	zakładka							// [1F516]
 🔗	ogniwa								// [1F517]
 🔘	przycisk radiowy						// [1F518]
-🔙	strzałka z napisem BACK					// [1F519]
+🔙	strzałka wstecz							// [1F519]
 🔚	strzałka z napisem END						// [1F51A]
-🔛	strzałka z napisem ON					// [1F51B]
+🔛	strzałka z napisem ON!						// [1F51B]
 🔜	strzałka z napisem SOON						// [1F51C]
 🔝	strzałka z napisem TOP						// [1F51D]
 🔞	zakaz poniżej osiemnastego roku życia				// [1F51E]
-🔟	klawisz 10						// [1F51F]
-🔠	wielkie litery alfabet łaciński				// [1F520]
-🔡	małe litery alfabet łaciński				// [1F521]
+🔟	klawisz: 10							// [1F51F]
+🔠	wielkie litery (alfabet łaciński)				// [1F520]
+🔡	małe litery (alfabet łaciński)					// [1F521]
 🔢	cyfry								// [1F522]
 🔣	symbole								// [1F523]
-🔤	litery alfabet łaciński					// [1F524]
+🔤	litery (alfabet łaciński)					// [1F524]
 🔥	ogień								// [1F525]
 🔦	latarka								// [1F526]
 🔧	klucz warsztatowy						// [1F527]
 🔨	młotek								// [1F528]
 🔩	śruba i nakrętka						// [1F529]
 🔪	nóż kuchenny							// [1F52A]
-🔫	pistolet na wodę					// [1F52B]
+🔫	pistolet							// [1F52B]
 🔬	mikroskop							// [1F52C]
 🔭	teleskop							// [1F52D]
 🔮	kryształowa kula						// [1F52E]
@@ -1161,38 +1160,38 @@ $textmode
 🔹	mały niebieski romb						// [1F539]
 🔺	czerwony trójkąt skierowany w górę				// [1F53A]
 🔻	czerwony trójkąt skierowany w dół				// [1F53B]
-🔼	przycisk w górę						// [1F53C]
-🔽	przycisk w dół						// [1F53D]
+🔼	przycisk w górę”						// [1F53C]
+🔽	przycisk w dół”							// [1F53D]
 🕉	om								// [1F549] text|emoji
 🕊	gołąb								// [1F54A] text|emoji
 🕋	kaaba								// [1F54B]
 🕌	meczet								// [1F54C]
 🕍	synagoga							// [1F54D]
 🕎	menora								// [1F54E]
-🕐	godzina 1 00						// [1F550]
-🕑	godzina 2 00						// [1F551]
-🕒	godzina 3 00						// [1F552]
-🕓	godzina 4 00						// [1F553]
-🕔	godzina 5 00						// [1F554]
-🕕	godzina 6 00						// [1F555]
-🕖	godzina 7 00						// [1F556]
-🕗	godzina 8 00						// [1F557]
-🕘	godzina 9 00						// [1F558]
-🕙	godzina 10 00						// [1F559]
-🕚	godzina 11 00						// [1F55A]
-🕛	godzina 12 00						// [1F55B]
-🕜	godzina 1 30						// [1F55C]
-🕝	godzina 2 30						// [1F55D]
-🕞	godzina 3 30						// [1F55E]
-🕟	godzina 4 30						// [1F55F]
-🕠	godzina 5 30						// [1F560]
-🕡	godzina 6 30						// [1F561]
-🕢	godzina 7 30						// [1F562]
-🕣	godzina 8 30						// [1F563]
-🕤	godzina 9 30						// [1F564]
-🕥	godzina 10 30						// [1F565]
-🕦	godzina 11 30						// [1F566]
-🕧	godzina 12 30						// [1F567]
+🕐	godzina 1:00							// [1F550]
+🕑	godzina 2:00							// [1F551]
+🕒	godzina 3:00							// [1F552]
+🕓	godzina 4:00							// [1F553]
+🕔	godzina 5:00							// [1F554]
+🕕	godzina 6:00							// [1F555]
+🕖	godzina 7:00							// [1F556]
+🕗	godzina 8:00							// [1F557]
+🕘	godzina 9:00							// [1F558]
+🕙	godzina 10:00							// [1F559]
+🕚	godzina 11:00							// [1F55A]
+🕛	godzina 12:00							// [1F55B]
+🕜	godzina 1:30							// [1F55C]
+🕝	godzina 2:30							// [1F55D]
+🕞	godzina 3:30							// [1F55E]
+🕟	godzina 4:30							// [1F55F]
+🕠	godzina 5:30							// [1F560]
+🕡	godzina 6:30							// [1F561]
+🕢	godzina 7:30							// [1F562]
+🕣	godzina 8:30							// [1F563]
+🕤	godzina 9:30							// [1F564]
+🕥	godzina 10:30							// [1F565]
+🕦	godzina 11:30							// [1F566]
+🕧	godzina 12:30							// [1F567]
 🕯	świeca								// [1F56F] text|emoji
 🕰	zegar kominkowy							// [1F570] text|emoji
 🕳	otwór								// [1F573] text|emoji
@@ -1204,7 +1203,7 @@ $textmode
 🕹	dżojstik							// [1F579] text|emoji
 🕺	tańczący mężczyzna						// [1F57A]
 🖇	złączone spinacze						// [1F587] text|emoji
-🖊	długopis						// [1F58A] text|emoji
+🖊	pióro								// [1F58A] text|emoji
 🖋	wieczne pióro							// [1F58B] text|emoji
 🖌	pędzel								// [1F58C] text|emoji
 🖍	kredka								// [1F58D] text|emoji
@@ -1245,7 +1244,7 @@ $textmode
 😂	twarz ze łzami radości						// [1F602]
 😃	uśmiechnięta twarz z otwartymi ustami				// [1F603]
 😄	uśmiechnięta twarz z otwartymi ustami i roześmianymi oczami	// [1F604]
-😅	uśmiechnięta twarz z otwartymi ustami oblana zimnym potem	// [1F605]
+😅	uśmiechnięta twarz z otwartymi ustami, oblana zimnym potem	// [1F605]
 😆	uśmiechnięta twarz z przymrużonymi oczami			// [1F606]
 😇	uśmiechnięta twarz z aureolą					// [1F607]
 😈	uśmiechnięta twarz z rogami					// [1F608]
@@ -1296,12 +1295,12 @@ $textmode
 😵	oszołomiona twarz						// [1F635]
 😶	twarz bez ust							// [1F636]
 😷	twarz w masce medycznej						// [1F637]
-😸	uśmiechnięty kot o wesołych oczach			// [1F638]
+😸	szeroko uśmiechnięty kot o roześmianych oczach			// [1F638]
 😹	kot ze łzami radości						// [1F639]
-😺	uśmiechnięty kot					// [1F63A]
+😺	uśmiechnięty kot z otwartym pyszczkiem				// [1F63A]
 😻	uśmiechnięty kot z oczami w kształcie serca			// [1F63B]
 😼	kot z drwiącym uśmiechem					// [1F63C]
-😽	kot przesyłający całusa					// [1F63D]
+😽	kot przesyłający całusa z zamkniętymi oczami			// [1F63D]
 😾	nadąsany kot							// [1F63E]
 😿	płaczący kot							// [1F63F]
 🙀	przestraszony kot						// [1F640]
@@ -1404,8 +1403,6 @@ $textmode
 🛕	świątynia hinduistyczna					// [1F6D5]
 🛖	chata							// [1F6D6]
 🛗	winda							// [1F6D7]
-🛘	osuwisko						// [1F6D8]
-🛙	latarnia morska						// [1F6D9]
 🛜	bezprzewodowy						// [1F6DC]
 🛝	zjeżdżalnia						// [1F6DD]
 🛞	koło pojazdu						// [1F6DE]
@@ -1461,7 +1458,7 @@ $textmode
 🤖	głowa robota							// [1F916]
 🤗	twarz z gestem przytulania					// [1F917]
 🤘	gest rogów							// [1F918]
-🤙	dłoń w geście Zadzwoń do mnie				// [1F919]
+🤙	dłoń w geście Zadzwoń do mnie”					// [1F919]
 🤚	wzniesiony grzbiet dłoni					// [1F91A]
 🤛	pięść skierowana w lewo						// [1F91B]
 🤜	pięść skierowana w prawo					// [1F91C]
@@ -1489,7 +1486,7 @@ $textmode
 🤲	dłonie do góry razem						// [1F932]
 🤳	selfie								// [1F933]
 🤴	książę								// [1F934]
-🤵	osoba w smokingu					// [1F935]
+🤵	mężczyzna w smokingu						// [1F935]
 🤶	żona św. Mikołaja						// [1F936]
 🤷	osoba wzruszająca ramionami					// [1F937]
 🤸	osoba robiąca gwiazdę						// [1F938]
@@ -1542,11 +1539,11 @@ $textmode
 🥩	kawałek mięsa							// [1F969]
 🥪	kanapka								// [1F96A]
 🥫	jedzenie w puszce						// [1F96B]
-🥬	warzywo liściaste					// [1F96C]
+🥬	zielenina liściasta						// [1F96C]
 🥭	mango								// [1F96D]
 🥮	ciasteczko księżycowe						// [1F96E]
 🥯	bajgiel								// [1F96F]
-🥰	uśmiechnięta buźka z sercami				// [1F970]
+🥰	uśmiechnięta twarz z 3 sercami					// [1F970]
 🥱	ziewająca twarz						// [1F971]
 🥲	uśmiechnięta buźka ze łzą				// [1F972]
 🥳	świętująca twarz						// [1F973]
@@ -1645,7 +1642,7 @@ $textmode
 🧐	twarz z monoklem						// [1F9D0]
 🧑	dorosły								// [1F9D1]
 🧒	dziecko								// [1F9D2]
-🧓	starsza osoba						// [1F9D3]
+🧓	starszy dorosły							// [1F9D3]
 🧔	osoba z brodą							// [1F9D4]
 🧕	kobieta w chuście						// [1F9D5]
 🧖	osoba w zaparowanym pomieszczeniu				// [1F9D6]
@@ -1693,264 +1690,264 @@ $textmode
 
 // Country Flags (Regional Indicator Symbols) -- ISO 3166-1 Country Codes
 
-🇦🇨	Wyspa Wniebowstąpienia					// [1F1E6 1F1E8] AC
-🇦🇩	Andora							// [1F1E6 1F1E9] AD
-🇦🇪	Zjednoczone Emiraty Arabskie				// [1F1E6 1F1EA] AE
-🇦🇫	Afganistan						// [1F1E6 1F1EB] AF
-🇦🇬	Antigua i Barbuda					// [1F1E6 1F1EC] AG
-🇦🇮	Anguilla						// [1F1E6 1F1EE] AI
-🇦🇱	Albania							// [1F1E6 1F1F1] AL
-🇦🇲	Armenia							// [1F1E6 1F1F2] AM
-🇦🇴	Angola							// [1F1E6 1F1F4] AO
-🇦🇶	Antarktyda						// [1F1E6 1F1F6] AQ
-🇦🇷	Argentyna						// [1F1E6 1F1F7] AR
-🇦🇸	Samoa Amerykańskie					// [1F1E6 1F1F8] AS
-🇦🇹	Austria							// [1F1E6 1F1F9] AT
-🇦🇺	Australia						// [1F1E6 1F1FA] AU
-🇦🇼	Aruba							// [1F1E6 1F1FC] AW
-🇦🇽	Wyspy Alandzkie						// [1F1E6 1F1FD] AX
-🇦🇿	Azerbejdżan						// [1F1E6 1F1FF] AZ
-🇧🇦	Bośnia i Hercegowina					// [1F1E7 1F1E6] BA
-🇧🇧	Barbados						// [1F1E7 1F1E7] BB
-🇧🇩	Bangladesz						// [1F1E7 1F1E9] BD
-🇧🇪	Belgia							// [1F1E7 1F1EA] BE
-🇧🇫	Burkina Faso						// [1F1E7 1F1EB] BF
-🇧🇬	Bułgaria						// [1F1E7 1F1EC] BG
-🇧🇭	Bahrajn							// [1F1E7 1F1ED] BH
-🇧🇮	Burundi							// [1F1E7 1F1EE] BI
-🇧🇯	Benin							// [1F1E7 1F1EF] BJ
-🇧🇱	Saint-Barthélemy					// [1F1E7 1F1F1] BL
-🇧🇲	Bermudy							// [1F1E7 1F1F2] BM
-🇧🇳	Brunei							// [1F1E7 1F1F3] BN
-🇧🇴	Boliwia							// [1F1E7 1F1F4] BO
-🇧🇶	Niderlandy Karaibskie					// [1F1E7 1F1F6] BQ
-🇧🇷	Brazylia						// [1F1E7 1F1F7] BR
-🇧🇸	Bahamy							// [1F1E7 1F1F8] BS
-🇧🇹	Bhutan							// [1F1E7 1F1F9] BT
-🇧🇻	Wyspa Bouveta						// [1F1E7 1F1FB] BV
-🇧🇼	Botswana						// [1F1E7 1F1FC] BW
-🇧🇾	Białoruś						// [1F1E7 1F1FE] BY
-🇧🇿	Belize							// [1F1E7 1F1FF] BZ
-🇨🇦	Kanada							// [1F1E8 1F1E6] CA
-🇨🇨	Wyspy Kokosowe						// [1F1E8 1F1E8] CC
-🇨🇩	Demokratyczna Republika Konga				// [1F1E8 1F1E9] CD
-🇨🇫	Republika Środkowoafrykańska				// [1F1E8 1F1EB] CF
-🇨🇬	Kongo							// [1F1E8 1F1EC] CG
-🇨🇭	Szwajcaria						// [1F1E8 1F1ED] CH
-🇨🇮	Côte d’Ivoire						// [1F1E8 1F1EE] CI
-🇨🇰	Wyspy Cooka						// [1F1E8 1F1F0] CK
-🇨🇱	Chile							// [1F1E8 1F1F1] CL
-🇨🇲	Kamerun							// [1F1E8 1F1F2] CM
-🇨🇳	Chiny							// [1F1E8 1F1F3] CN
-🇨🇴	Kolumbia						// [1F1E8 1F1F4] CO
-🇨🇵	Wyspa Clippertona					// [1F1E8 1F1F5] CP
-🇨🇷	Kostaryka						// [1F1E8 1F1F7] CR
-🇨🇺	Kuba							// [1F1E8 1F1FA] CU
-🇨🇻	Republika Zielonego Przylądka				// [1F1E8 1F1FB] CV
-🇨🇼	Curaçao							// [1F1E8 1F1FC] CW
-🇨🇽	Wyspa Bożego Narodzenia					// [1F1E8 1F1FD] CX
-🇨🇾	Cypr							// [1F1E8 1F1FE] CY
-🇨🇿	Czechy							// [1F1E8 1F1FF] CZ
-🇩🇪	Niemcy							// [1F1E9 1F1EA] DE
-🇩🇬	Diego Garcia						// [1F1E9 1F1EC] DG
-🇩🇯	Dżibuti							// [1F1E9 1F1EF] DJ
-🇩🇰	Dania							// [1F1E9 1F1F0] DK
-🇩🇲	Dominika						// [1F1E9 1F1F2] DM
-🇩🇴	Dominikana						// [1F1E9 1F1F4] DO
-🇩🇿	Algieria						// [1F1E9 1F1FF] DZ
-🇪🇦	Ceuta i Melilla						// [1F1EA 1F1E6] EA
-🇪🇨	Ekwador							// [1F1EA 1F1E8] EC
-🇪🇪	Estonia							// [1F1EA 1F1EA] EE
-🇪🇬	Egipt							// [1F1EA 1F1EC] EG
-🇪🇭	Sahara Zachodnia					// [1F1EA 1F1ED] EH
-🇪🇷	Erytrea							// [1F1EA 1F1F7] ER
-🇪🇸	Hiszpania						// [1F1EA 1F1F8] ES
-🇪🇹	Etiopia							// [1F1EA 1F1F9] ET
-🇪🇺	Unia Europejska						// [1F1EA 1F1FA] EU
-🇫🇮	Finlandia						// [1F1EB 1F1EE] FI
-🇫🇯	Fidżi							// [1F1EB 1F1EF] FJ
-🇫🇰	Falklandy						// [1F1EB 1F1F0] FI
-🇫🇲	Mikronezja						// [1F1EB 1F1F2] FM
-🇫🇴	Wyspy Owcze						// [1F1EB 1F1F4] FO
-🇫🇷	Francja							// [1F1EB 1F1F7] FR
-🇬🇦	Gabon							// [1F1EC 1F1E6] GA
-🇬🇧	Wielka Brytania						// [1F1EC 1F1E7] GB
-🇬🇩	Grenada							// [1F1EC 1F1E9] GD
-🇬🇪	Gruzja							// [1F1EC 1F1EA] GE
-🇬🇫	Gujana Francuska					// [1F1EC 1F1EB] GF
-🇬🇬	Guernsey						// [1F1EC 1F1EC] GG
-🇬🇭	Ghana							// [1F1EC 1F1ED] GH
-🇬🇮	Gibraltar						// [1F1EC 1F1EE] GI
-🇬🇱	Grenlandia						// [1F1EC 1F1F1] GL
-🇬🇲	Gambia							// [1F1EC 1F1F2] GM
-🇬🇳	Gwinea							// [1F1EC 1F1F3] GN
-🇬🇵	Gwadelupa						// [1F1EC 1F1F5] GP
-🇬🇶	Gwinea Równikowa					// [1F1EC 1F1F6] GQ
-🇬🇷	Grecja							// [1F1EC 1F1F7] GR
-🇬🇸	Georgia Południowa i Sandwich Południowy		// [1F1EC 1F1F8] GS
-🇬🇹	Gwatemala						// [1F1EC 1F1F9] GT
-🇬🇺	Guam							// [1F1EC 1F1FA] GU
-🇬🇼	Gwinea Bissau						// [1F1EC 1F1FC] GW
-🇬🇾	Gujana							// [1F1EC 1F1FE] GY
-🇭🇰	SRA Hongkong Chiny					// [1F1ED 1F1F0] HK
-🇭🇲	Wyspy Heard i McDonalda					// [1F1ED 1F1F2] HM
-🇭🇳	Honduras						// [1F1ED 1F1F3] HN
-🇭🇷	Chorwacja						// [1F1ED 1F1F7] HR
-🇭🇹	Haiti							// [1F1ED 1F1F9] HT
-🇭🇺	Węgry							// [1F1ED 1F1FA] HU
-🇮🇨	Wyspy Kanaryjskie					// [1F1EE 1F1E8] IC
-🇮🇩	Indonezja						// [1F1EE 1F1E9] ID
-🇮🇪	Irlandia						// [1F1EE 1F1EA] IE
-🇮🇱	Izrael							// [1F1EE 1F1F1] IL
-🇮🇲	Wyspa Man						// [1F1EE 1F1F2] IM
-🇮🇳	Indie							// [1F1EE 1F1F3] IN
-🇮🇴	Brytyjskie Terytorium Oceanu Indyjskiego		// [1F1EE 1F1F4] IO
-🇮🇶	Irak							// [1F1EE 1F1F6] IQ
-🇮🇷	Iran							// [1F1EE 1F1F7] IR
-🇮🇸	Islandia						// [1F1EE 1F1F8] IS
-🇮🇹	Włochy							// [1F1EE 1F1F9] IT
-🇯🇪	Jersey							// [1F1EF 1F1EA] JE
-🇯🇲	Jamajka							// [1F1EF 1F1F2] JM
-🇯🇴	Jordania						// [1F1EF 1F1F4] JO
-🇯🇵	Japonia							// [1F1EF 1F1F5] JP
-🇰🇪	Kenia							// [1F1F0 1F1EA] KE
-🇰🇬	Kirgistan						// [1F1F0 1F1EC] KG
-🇰🇭	Kambodża						// [1F1F0 1F1ED] KH
-🇰🇮	Kiribati						// [1F1F0 1F1EE] KI
-🇰🇲	Komory							// [1F1F0 1F1F2] KM
-🇰🇳	Saint Kitts i Nevis					// [1F1F0 1F1F3] KN
-🇰🇵	Korea Północna						// [1F1F0 1F1F5] KP
-🇰🇷	Korea Południowa					// [1F1F0 1F1F7] KR
-🇰🇼	Kuwejt							// [1F1F0 1F1FC] KW
-🇰🇾	Kajmany							// [1F1F0 1F1FE] KY
-🇰🇿	Kazachstan						// [1F1F0 1F1FF] KZ
-🇱🇦	Laos							// [1F1F1 1F1E6] LA
-🇱🇧	Liban							// [1F1F1 1F1E7] LB
-🇱🇨	Saint Lucia						// [1F1F1 1F1E8] LC
-🇱🇮	Liechtenstein						// [1F1F1 1F1EE] LI
-🇱🇰	Sri Lanka						// [1F1F1 1F1F0] LK
-🇱🇷	Liberia							// [1F1F1 1F1F7] LR
-🇱🇸	Lesotho							// [1F1F1 1F1F8] LS
-🇱🇹	Litwa							// [1F1F1 1F1F9] LT
-🇱🇺	Luksemburg						// [1F1F1 1F1FA] LU
-🇱🇻	Łotwa							// [1F1F1 1F1FB] LV
-🇱🇾	Libia							// [1F1F1 1F1FE] LY
-🇲🇦	Maroko							// [1F1F2 1F1E6] MA
-🇲🇨	Monako							// [1F1F2 1F1E8] MC
-🇲🇩	Mołdawia						// [1F1F2 1F1E9] MD
-🇲🇪	Czarnogóra						// [1F1F2 1F1EA] ME
-🇲🇫	Saint-Martin						// [1F1F2 1F1EB] MF
-🇲🇬	Madagaskar						// [1F1F2 1F1EC] MG
-🇲🇭	Wyspy Marshalla						// [1F1F2 1F1ED] MH
-🇲🇰	Macedonia Północna					// [1F1F2 1F1F0] MK
-🇲🇱	Mali							// [1F1F2 1F1F1] ML
-🇲🇲	Mjanma Birma						// [1F1F2 1F1F2] MM
-🇲🇳	Mongolia						// [1F1F2 1F1F3] MN
-🇲🇴	SRA Makau Chiny						// [1F1F2 1F1F4] MO
-🇲🇵	Mariany Północne					// [1F1F2 1F1F5] MP
-🇲🇶	Martynika						// [1F1F2 1F1F6] MQ
-🇲🇷	Mauretania						// [1F1F2 1F1F7] MR
-🇲🇸	Montserrat						// [1F1F2 1F1F8] MS
-🇲🇹	Malta							// [1F1F2 1F1F9] MT
-🇲🇺	Mauritius						// [1F1F2 1F1FA] MU
-🇲🇻	Malediwy						// [1F1F2 1F1FB] MV
-🇲🇼	Malawi							// [1F1F2 1F1FC] MW
-🇲🇽	Meksyk							// [1F1F2 1F1FD] MX
-🇲🇾	Malezja							// [1F1F2 1F1FE] MY
-🇲🇿	Mozambik						// [1F1F2 1F1FF] MZ
-🇳🇦	Namibia							// [1F1F3 1F1E6] NA
-🇳🇨	Nowa Kaledonia						// [1F1F3 1F1E8] NC
-🇳🇪	Niger							// [1F1F3 1F1EA] NE
-🇳🇫	Norfolk							// [1F1F3 1F1EB] NF
-🇳🇬	Nigeria							// [1F1F3 1F1EC] NG
-🇳🇮	Nikaragua						// [1F1F3 1F1EE] NI
-🇳🇱	Holandia						// [1F1F3 1F1F1] NL
-🇳🇴	Norwegia						// [1F1F3 1F1F4] NO
-🇳🇵	Nepal							// [1F1F3 1F1F5] NP
-🇳🇷	Nauru							// [1F1F3 1F1F7] NR
-🇳🇺	Niue							// [1F1F3 1F1FA] NU
-🇳🇿	Nowa Zelandia						// [1F1F3 1F1FF] NZ
-🇴🇲	Oman							// [1F1F4 1F1F2] OM
-🇵🇦	Panama							// [1F1F5 1F1E6] PA
-🇵🇪	Peru							// [1F1F5 1F1EA] PE
-🇵🇫	Polinezja Francuska					// [1F1F5 1F1EB] PF
-🇵🇬	Papua-Nowa Gwinea					// [1F1F5 1F1EC] PG
-🇵🇭	Filipiny						// [1F1F5 1F1ED] PH
-🇵🇰	Pakistan						// [1F1F5 1F1F0] PK
-🇵🇱	Polska							// [1F1F5 1F1F1] PL
-🇵🇲	Saint-Pierre i Miquelon					// [1F1F5 1F1F2] PM
-🇵🇳	Pitcairn						// [1F1F5 1F1F3] PN
-🇵🇷	Portoryko						// [1F1F5 1F1F7] PR
-🇵🇸	Terytoria Palestyńskie					// [1F1F5 1F1F8] PS
-🇵🇹	Portugalia						// [1F1F5 1F1F9] PT
-🇵🇼	Palau							// [1F1F5 1F1FC] PW
-🇵🇾	Paragwaj						// [1F1F5 1F1FE] PY
-🇶🇦	Katar							// [1F1F6 1F1E6] QA
-🇷🇪	Reunion							// [1F1F7 1F1EA] RE
-🇷🇴	Rumunia							// [1F1F7 1F1F4] RO
-🇷🇸	Serbia							// [1F1F7 1F1F8] RS
-🇷🇺	Rosja							// [1F1F7 1F1FA] RU
-🇷🇼	Rwanda							// [1F1F7 1F1FC] RW
-🇸🇦	Arabia Saudyjska					// [1F1F8 1F1E6] SA
-🇸🇧	Wyspy Salomona						// [1F1F8 1F1E7] SB
-🇸🇨	Seszele							// [1F1F8 1F1E8] SC
-🇸🇩	Sudan							// [1F1F8 1F1E9] SD
-🇸🇪	Szwecja							// [1F1F8 1F1EA] SE
-🇸🇬	Singapur						// [1F1F8 1F1EC] SG
-🇸🇭	Wyspa Świętej Heleny					// [1F1F8 1F1ED] SH
-🇸🇮	Słowenia						// [1F1F8 1F1EE] SI
-🇸🇯	Svalbard i Jan Mayen					// [1F1F8 1F1EF] SJ
-🇸🇰	Słowacja						// [1F1F8 1F1F0] SK
-🇸🇱	Sierra Leone						// [1F1F8 1F1F1] SL
-🇸🇲	San Marino						// [1F1F8 1F1F2] SM
-🇸🇳	Senegal							// [1F1F8 1F1F3] SN
-🇸🇴	Somalia							// [1F1F8 1F1F4] SO
-🇸🇷	Surinam							// [1F1F8 1F1F7] SR
-🇸🇸	Sudan Południowy					// [1F1F8 1F1F8] SS
-🇸🇹	Wyspy Świętego Tomasza i Książęca			// [1F1F8 1F1F9] ST
-🇸🇻	Salwador						// [1F1F8 1F1FB] SV
-🇸🇽	Sint Maarten						// [1F1F8 1F1FD] SX
-🇸🇾	Syria							// [1F1F8 1F1FE] SY
-🇸🇿	Eswatini						// [1F1F8 1F1FF] SZ
-🇹🇦	Tristan da Cunha					// [1F1F9 1F1E6] TA
-🇹🇨	Turks i Caicos						// [1F1F9 1F1E8] TC
-🇹🇩	Czad							// [1F1F9 1F1E9] TD
-🇹🇫	Francuskie Terytoria Południowe i Antarktyczne		// [1F1F9 1F1EB] TF
-🇹🇬	Togo							// [1F1F9 1F1EC] TG
-🇹🇭	Tajlandia						// [1F1F9 1F1ED] TH
-🇹🇯	Tadżykistan						// [1F1F9 1F1EF] TJ
-🇹🇰	Tokelau							// [1F1F9 1F1F0] TK
-🇹🇱	Timor Wschodni						// [1F1F9 1F1F1] TL
-🇹🇲	Turkmenistan						// [1F1F9 1F1F2] TM
-🇹🇳	Tunezja							// [1F1F9 1F1F3] TN
-🇹🇴	Tonga							// [1F1F9 1F1F4] TO
-🇹🇷	Turcja							// [1F1F9 1F1F7] TR
-🇹🇹	Trynidad i Tobago					// [1F1F9 1F1F9] TT
-🇹🇻	Tuvalu							// [1F1F9 1F1FB] TV
-🇹🇼	Tajwan							// [1F1F9 1F1FC] TW
-🇹🇿	Tanzania						// [1F1F9 1F1FF] TZ
-🇺🇦	Ukraina							// [1F1FA 1F1E6] UA
-🇺🇬	Uganda							// [1F1FA 1F1EC] UG
-🇺🇲	Dalekie Wyspy Mniejsze Stanów Zjednoczonych		// [1F1FA 1F1F2] UM
-🇺🇳	Organizacja Narodów Zjednoczonych			// [1F1FA 1F1F3] UN
-🇺🇸	Stany Zjednoczone					// [1F1FA 1F1F8] US
-🇺🇾	Urugwaj							// [1F1FA 1F1FE] UY
-🇺🇿	Uzbekistan						// [1F1FA 1F1FF] UZ
-🇻🇦	Watykan							// [1F1FB 1F1E6] VA
-🇻🇨	Saint Vincent i Grenadyny				// [1F1FB 1F1E8] VC
-🇻🇪	Wenezuela						// [1F1FB 1F1EA] VE
-🇻🇬	Brytyjskie Wyspy Dziewicze				// [1F1FB 1F1EC] VG
-🇻🇮	Wyspy Dziewicze Stanów Zjednoczonych			// [1F1FB 1F1EE] VI
-🇻🇳	Wietnam							// [1F1FB 1F1F3] VN
-🇻🇺	Vanuatu							// [1F1FB 1F1FA] VU
-🇼🇫	Wallis i Futuna						// [1F1FC 1F1EB] WF
-🇼🇸	Samoa							// [1F1FC 1F1F8] WS
-🇽🇰	Kosowo							// [1F1FD 1F1F0] XK
-🇾🇪	Jemen							// [1F1FE 1F1EA] YE
-🇾🇹	Majotta							// [1F1FE 1F1F9] YT
-🇿🇦	Republika Południowej Afryki				// [1F1FF 1F1E6] ZA
-🇿🇲	Zambia							// [1F1FF 1F1F2] ZM
-🇿🇼	Zimbabwe						// [1F1FF 1F1FC] ZW
+🇦🇨	flaga: Wyspa Wniebowstąpienia					// [1F1E6 1F1E8] AC
+🇦🇩	flaga: Andora							// [1F1E6 1F1E9] AD
+🇦🇪	flaga: Zjednoczone Emiraty Arabskie				// [1F1E6 1F1EA] AE
+🇦🇫	flaga: Afganistan						// [1F1E6 1F1EB] AF
+🇦🇬	flaga: Antigua i Barbuda					// [1F1E6 1F1EC] AG
+🇦🇮	flaga: Anguilla							// [1F1E6 1F1EE] AI
+🇦🇱	flaga: Albania							// [1F1E6 1F1F1] AL
+🇦🇲	flaga: Armenia							// [1F1E6 1F1F2] AM
+🇦🇴	flaga: Angola							// [1F1E6 1F1F4] AO
+🇦🇶	flaga: Antarktyda						// [1F1E6 1F1F6] AQ
+🇦🇷	flaga: Argentyna						// [1F1E6 1F1F7] AR
+🇦🇸	flaga: Samoa Amerykańskie					// [1F1E6 1F1F8] AS
+🇦🇹	flaga: Austria							// [1F1E6 1F1F9] AT
+🇦🇺	flaga: Australia						// [1F1E6 1F1FA] AU
+🇦🇼	flaga: Aruba							// [1F1E6 1F1FC] AW
+🇦🇽	flaga: Wyspy Alandzkie						// [1F1E6 1F1FD] AX
+🇦🇿	flaga: Azerbejdżan						// [1F1E6 1F1FF] AZ
+🇧🇦	flaga: Bośnia i Hercegowina					// [1F1E7 1F1E6] BA
+🇧🇧	flaga: Barbados							// [1F1E7 1F1E7] BB
+🇧🇩	flaga: Bangladesz						// [1F1E7 1F1E9] BD
+🇧🇪	flaga: Belgia							// [1F1E7 1F1EA] BE
+🇧🇫	flaga: Burkina Faso						// [1F1E7 1F1EB] BF
+🇧🇬	flaga: Bułgaria							// [1F1E7 1F1EC] BG
+🇧🇭	flaga: Bahrajn							// [1F1E7 1F1ED] BH
+🇧🇮	flaga: Burundi							// [1F1E7 1F1EE] BI
+🇧🇯	flaga: Benin							// [1F1E7 1F1EF] BJ
+🇧🇱	flaga: Saint-Barthélemy						// [1F1E7 1F1F1] BL
+🇧🇲	flaga: Bermudy							// [1F1E7 1F1F2] BM
+🇧🇳	flaga: Brunei							// [1F1E7 1F1F3] BN
+🇧🇴	flaga: Boliwia							// [1F1E7 1F1F4] BO
+🇧🇶	flaga: Niderlandy Karaibskie					// [1F1E7 1F1F6] BQ
+🇧🇷	flaga: Brazylia							// [1F1E7 1F1F7] BR
+🇧🇸	flaga: Bahamy							// [1F1E7 1F1F8] BS
+🇧🇹	flaga: Bhutan							// [1F1E7 1F1F9] BT
+🇧🇻	flaga: Wyspa Bouveta						// [1F1E7 1F1FB] BV
+🇧🇼	flaga: Botswana							// [1F1E7 1F1FC] BW
+🇧🇾	flaga: Białoruś							// [1F1E7 1F1FE] BY
+🇧🇿	flaga: Belize							// [1F1E7 1F1FF] BZ
+🇨🇦	flaga: Kanada							// [1F1E8 1F1E6] CA
+🇨🇨	flaga: Wyspy Kokosowe						// [1F1E8 1F1E8] CC
+🇨🇩	flaga: Demokratyczna Republika Konga				// [1F1E8 1F1E9] CD
+🇨🇫	flaga: Republika Środkowoafrykańska				// [1F1E8 1F1EB] CF
+🇨🇬	flaga: Kongo							// [1F1E8 1F1EC] CG
+🇨🇭	flaga: Szwajcaria						// [1F1E8 1F1ED] CH
+🇨🇮	flaga: Côte d’Ivoire						// [1F1E8 1F1EE] CI
+🇨🇰	flaga: Wyspy Cooka						// [1F1E8 1F1F0] CK
+🇨🇱	flaga: Chile							// [1F1E8 1F1F1] CL
+🇨🇲	flaga: Kamerun							// [1F1E8 1F1F2] CM
+🇨🇳	flaga: Chiny							// [1F1E8 1F1F3] CN
+🇨🇴	flaga: Kolumbia							// [1F1E8 1F1F4] CO
+🇨🇵	flaga: Clipperton						// [1F1E8 1F1F5] CP
+🇨🇷	flaga: Kostaryka						// [1F1E8 1F1F7] CR
+🇨🇺	flaga: Kuba							// [1F1E8 1F1FA] CU
+🇨🇻	flaga: Republika Zielonego Przylądka				// [1F1E8 1F1FB] CV
+🇨🇼	flaga: Curaçao							// [1F1E8 1F1FC] CW
+🇨🇽	flaga: Wyspa Bożego Narodzenia					// [1F1E8 1F1FD] CX
+🇨🇾	flaga: Cypr							// [1F1E8 1F1FE] CY
+🇨🇿	flaga: Czechy							// [1F1E8 1F1FF] CZ
+🇩🇪	flaga: Niemcy							// [1F1E9 1F1EA] DE
+🇩🇬	flaga: Diego Garcia						// [1F1E9 1F1EC] DG
+🇩🇯	flaga: Dżibuti							// [1F1E9 1F1EF] DJ
+🇩🇰	flaga: Dania							// [1F1E9 1F1F0] DK
+🇩🇲	flaga: Dominika							// [1F1E9 1F1F2] DM
+🇩🇴	flaga: Dominikana						// [1F1E9 1F1F4] DO
+🇩🇿	flaga: Algieria							// [1F1E9 1F1FF] DZ
+🇪🇦	flaga: Ceuta i Melilla						// [1F1EA 1F1E6] EA
+🇪🇨	flaga: Ekwador							// [1F1EA 1F1E8] EC
+🇪🇪	flaga: Estonia							// [1F1EA 1F1EA] EE
+🇪🇬	flaga: Egipt							// [1F1EA 1F1EC] EG
+🇪🇭	flaga: Sahara Zachodnia						// [1F1EA 1F1ED] EH
+🇪🇷	flaga: Erytrea							// [1F1EA 1F1F7] ER
+🇪🇸	flaga: Hiszpania						// [1F1EA 1F1F8] ES
+🇪🇹	flaga: Etiopia							// [1F1EA 1F1F9] ET
+🇪🇺	flaga: Unia Europejska						// [1F1EA 1F1FA] EU
+🇫🇮	flaga: Finlandia						// [1F1EB 1F1EE] FI
+🇫🇯	flaga: Fidżi							// [1F1EB 1F1EF] FJ
+🇫🇰	flaga: Falklandy						// [1F1EB 1F1F0] FI
+🇫🇲	flaga: Mikronezja						// [1F1EB 1F1F2] FM
+🇫🇴	flaga: Wyspy Owcze						// [1F1EB 1F1F4] FO
+🇫🇷	flaga: Francja							// [1F1EB 1F1F7] FR
+🇬🇦	flaga: Gabon							// [1F1EC 1F1E6] GA
+🇬🇧	flaga: Wielka Brytania						// [1F1EC 1F1E7] GB
+🇬🇩	flaga: Grenada							// [1F1EC 1F1E9] GD
+🇬🇪	flaga: Gruzja							// [1F1EC 1F1EA] GE
+🇬🇫	flaga: Gujana Francuska						// [1F1EC 1F1EB] GF
+🇬🇬	flaga: Guernsey							// [1F1EC 1F1EC] GG
+🇬🇭	flaga: Ghana							// [1F1EC 1F1ED] GH
+🇬🇮	flaga: Gibraltar						// [1F1EC 1F1EE] GI
+🇬🇱	flaga: Grenlandia						// [1F1EC 1F1F1] GL
+🇬🇲	flaga: Gambia							// [1F1EC 1F1F2] GM
+🇬🇳	flaga: Gwinea							// [1F1EC 1F1F3] GN
+🇬🇵	flaga: Gwadelupa						// [1F1EC 1F1F5] GP
+🇬🇶	flaga: Gwinea Równikowa						// [1F1EC 1F1F6] GQ
+🇬🇷	flaga: Grecja							// [1F1EC 1F1F7] GR
+🇬🇸	flaga: Georgia Południowa i Sandwich Południowy			// [1F1EC 1F1F8] GS
+🇬🇹	flaga: Gwatemala						// [1F1EC 1F1F9] GT
+🇬🇺	flaga: Guam							// [1F1EC 1F1FA] GU
+🇬🇼	flaga: Gwinea Bissau						// [1F1EC 1F1FC] GW
+🇬🇾	flaga: Gujana							// [1F1EC 1F1FE] GY
+🇭🇰	flaga: SRA Hongkong (Chiny)					// [1F1ED 1F1F0] HK
+🇭🇲	flaga: Wyspy Heard i McDonalda					// [1F1ED 1F1F2] HM
+🇭🇳	flaga: Honduras							// [1F1ED 1F1F3] HN
+🇭🇷	flaga: Chorwacja						// [1F1ED 1F1F7] HR
+🇭🇹	flaga: Haiti							// [1F1ED 1F1F9] HT
+🇭🇺	flaga: Węgry							// [1F1ED 1F1FA] HU
+🇮🇨	flaga: Wyspy Kanaryjskie					// [1F1EE 1F1E8] IC
+🇮🇩	flaga: Indonezja						// [1F1EE 1F1E9] ID
+🇮🇪	flaga: Irlandia							// [1F1EE 1F1EA] IE
+🇮🇱	flaga: Izrael							// [1F1EE 1F1F1] IL
+🇮🇲	flaga: Wyspa Man						// [1F1EE 1F1F2] IM
+🇮🇳	flaga: Indie							// [1F1EE 1F1F3] IN
+🇮🇴	flaga: Brytyjskie Terytorium Oceanu Indyjskiego			// [1F1EE 1F1F4] IO
+🇮🇶	flaga: Irak							// [1F1EE 1F1F6] IQ
+🇮🇷	flaga: Iran							// [1F1EE 1F1F7] IR
+🇮🇸	flaga: Islandia							// [1F1EE 1F1F8] IS
+🇮🇹	flaga: Włochy							// [1F1EE 1F1F9] IT
+🇯🇪	flaga: Jersey							// [1F1EF 1F1EA] JE
+🇯🇲	flaga: Jamajka							// [1F1EF 1F1F2] JM
+🇯🇴	flaga: Jordania							// [1F1EF 1F1F4] JO
+🇯🇵	flaga: Japonia							// [1F1EF 1F1F5] JP
+🇰🇪	flaga: Kenia							// [1F1F0 1F1EA] KE
+🇰🇬	flaga: Kirgistan						// [1F1F0 1F1EC] KG
+🇰🇭	flaga: Kambodża							// [1F1F0 1F1ED] KH
+🇰🇮	flaga: Kiribati							// [1F1F0 1F1EE] KI
+🇰🇲	flaga: Komory							// [1F1F0 1F1F2] KM
+🇰🇳	flaga: Saint Kitts i Nevis					// [1F1F0 1F1F3] KN
+🇰🇵	flaga: Korea Północna						// [1F1F0 1F1F5] KP
+🇰🇷	flaga: Korea Południowa						// [1F1F0 1F1F7] KR
+🇰🇼	flaga: Kuwejt							// [1F1F0 1F1FC] KW
+🇰🇾	flaga: Kajmany							// [1F1F0 1F1FE] KY
+🇰🇿	flaga: Kazachstan						// [1F1F0 1F1FF] KZ
+🇱🇦	flaga: Laos							// [1F1F1 1F1E6] LA
+🇱🇧	flaga: Liban							// [1F1F1 1F1E7] LB
+🇱🇨	flaga: Saint Lucia						// [1F1F1 1F1E8] LC
+🇱🇮	flaga: Liechtenstein						// [1F1F1 1F1EE] LI
+🇱🇰	flaga: Sri Lanka						// [1F1F1 1F1F0] LK
+🇱🇷	flaga: Liberia							// [1F1F1 1F1F7] LR
+🇱🇸	flaga: Lesotho							// [1F1F1 1F1F8] LS
+🇱🇹	flaga: Litwa							// [1F1F1 1F1F9] LT
+🇱🇺	flaga: Luksemburg						// [1F1F1 1F1FA] LU
+🇱🇻	flaga: Łotwa							// [1F1F1 1F1FB] LV
+🇱🇾	flaga: Libia							// [1F1F1 1F1FE] LY
+🇲🇦	flaga: Maroko							// [1F1F2 1F1E6] MA
+🇲🇨	flaga: Monako							// [1F1F2 1F1E8] MC
+🇲🇩	flaga: Mołdawia							// [1F1F2 1F1E9] MD
+🇲🇪	flaga: Czarnogóra						// [1F1F2 1F1EA] ME
+🇲🇫	flaga: Saint-Martin						// [1F1F2 1F1EB] MF
+🇲🇬	flaga: Madagaskar						// [1F1F2 1F1EC] MG
+🇲🇭	flaga: Wyspy Marshalla						// [1F1F2 1F1ED] MH
+🇲🇰	flaga: Macedonia						// [1F1F2 1F1F0] MK
+🇲🇱	flaga: Mali							// [1F1F2 1F1F1] ML
+🇲🇲	flaga: Mjanma (Birma)						// [1F1F2 1F1F2] MM
+🇲🇳	flaga: Mongolia							// [1F1F2 1F1F3] MN
+🇲🇴	flaga: SRA Makau (Chiny)					// [1F1F2 1F1F4] MO
+🇲🇵	flaga: Mariany Północne						// [1F1F2 1F1F5] MP
+🇲🇶	flaga: Martynika						// [1F1F2 1F1F6] MQ
+🇲🇷	flaga: Mauretania						// [1F1F2 1F1F7] MR
+🇲🇸	flaga: Montserrat						// [1F1F2 1F1F8] MS
+🇲🇹	flaga: Malta							// [1F1F2 1F1F9] MT
+🇲🇺	flaga: Mauritius						// [1F1F2 1F1FA] MU
+🇲🇻	flaga: Malediwy							// [1F1F2 1F1FB] MV
+🇲🇼	flaga: Malawi							// [1F1F2 1F1FC] MW
+🇲🇽	flaga: Meksyk							// [1F1F2 1F1FD] MX
+🇲🇾	flaga: Malezja							// [1F1F2 1F1FE] MY
+🇲🇿	flaga: Mozambik							// [1F1F2 1F1FF] MZ
+🇳🇦	flaga: Namibia							// [1F1F3 1F1E6] NA
+🇳🇨	flaga: Nowa Kaledonia						// [1F1F3 1F1E8] NC
+🇳🇪	flaga: Niger							// [1F1F3 1F1EA] NE
+🇳🇫	flaga: Norfolk							// [1F1F3 1F1EB] NF
+🇳🇬	flaga: Nigeria							// [1F1F3 1F1EC] NG
+🇳🇮	flaga: Nikaragua						// [1F1F3 1F1EE] NI
+🇳🇱	flaga: Holandia							// [1F1F3 1F1F1] NL
+🇳🇴	flaga: Norwegia							// [1F1F3 1F1F4] NO
+🇳🇵	flaga: Nepal							// [1F1F3 1F1F5] NP
+🇳🇷	flaga: Nauru							// [1F1F3 1F1F7] NR
+🇳🇺	flaga: Niue							// [1F1F3 1F1FA] NU
+🇳🇿	flaga: Nowa Zelandia						// [1F1F3 1F1FF] NZ
+🇴🇲	flaga: Oman							// [1F1F4 1F1F2] OM
+🇵🇦	flaga: Panama							// [1F1F5 1F1E6] PA
+🇵🇪	flaga: Peru							// [1F1F5 1F1EA] PE
+🇵🇫	flaga: Polinezja Francuska					// [1F1F5 1F1EB] PF
+🇵🇬	flaga: Papua-Nowa Gwinea					// [1F1F5 1F1EC] PG
+🇵🇭	flaga: Filipiny							// [1F1F5 1F1ED] PH
+🇵🇰	flaga: Pakistan							// [1F1F5 1F1F0] PK
+🇵🇱	flaga: Polska							// [1F1F5 1F1F1] PL
+🇵🇲	flaga: Saint-Pierre i Miquelon					// [1F1F5 1F1F2] PM
+🇵🇳	flaga: Pitcairn							// [1F1F5 1F1F3] PN
+🇵🇷	flaga: Portoryko						// [1F1F5 1F1F7] PR
+🇵🇸	flaga: Terytoria Palestyńskie					// [1F1F5 1F1F8] PS
+🇵🇹	flaga: Portugalia						// [1F1F5 1F1F9] PT
+🇵🇼	flaga: Palau							// [1F1F5 1F1FC] PW
+🇵🇾	flaga: Paragwaj							// [1F1F5 1F1FE] PY
+🇶🇦	flaga: Katar							// [1F1F6 1F1E6] QA
+🇷🇪	flaga: Reunion							// [1F1F7 1F1EA] RE
+🇷🇴	flaga: Rumunia							// [1F1F7 1F1F4] RO
+🇷🇸	flaga: Serbia							// [1F1F7 1F1F8] RS
+🇷🇺	flaga: Rosja							// [1F1F7 1F1FA] RU
+🇷🇼	flaga: Rwanda							// [1F1F7 1F1FC] RW
+🇸🇦	flaga: Arabia Saudyjska						// [1F1F8 1F1E6] SA
+🇸🇧	flaga: Wyspy Salomona						// [1F1F8 1F1E7] SB
+🇸🇨	flaga: Seszele							// [1F1F8 1F1E8] SC
+🇸🇩	flaga: Sudan							// [1F1F8 1F1E9] SD
+🇸🇪	flaga: Szwecja							// [1F1F8 1F1EA] SE
+🇸🇬	flaga: Singapur							// [1F1F8 1F1EC] SG
+🇸🇭	flaga: Wyspa Świętej Heleny					// [1F1F8 1F1ED] SH
+🇸🇮	flaga: Słowenia							// [1F1F8 1F1EE] SI
+🇸🇯	flaga: Svalbard i Jan Mayen					// [1F1F8 1F1EF] SJ
+🇸🇰	flaga: Słowacja							// [1F1F8 1F1F0] SK
+🇸🇱	flaga: Sierra Leone						// [1F1F8 1F1F1] SL
+🇸🇲	flaga: San Marino						// [1F1F8 1F1F2] SM
+🇸🇳	flaga: Senegal							// [1F1F8 1F1F3] SN
+🇸🇴	flaga: Somalia							// [1F1F8 1F1F4] SO
+🇸🇷	flaga: Surinam							// [1F1F8 1F1F7] SR
+🇸🇸	flaga: Sudan Południowy						// [1F1F8 1F1F8] SS
+🇸🇹	flaga: Wyspy Świętego Tomasza i Książęca			// [1F1F8 1F1F9] ST
+🇸🇻	flaga: Salwador							// [1F1F8 1F1FB] SV
+🇸🇽	flaga: Sint Maarten						// [1F1F8 1F1FD] SX
+🇸🇾	flaga: Syria							// [1F1F8 1F1FE] SY
+🇸🇿	flaga: Suazi							// [1F1F8 1F1FF] SZ
+🇹🇦	flaga: Tristan da Cunha						// [1F1F9 1F1E6] TA
+🇹🇨	flaga: Turks i Caicos						// [1F1F9 1F1E8] TC
+🇹🇩	flaga: Czad							// [1F1F9 1F1E9] TD
+🇹🇫	flaga: Francuskie Terytoria Południowe i Antarktyczne		// [1F1F9 1F1EB] TF
+🇹🇬	flaga: Togo							// [1F1F9 1F1EC] TG
+🇹🇭	flaga: Tajlandia						// [1F1F9 1F1ED] TH
+🇹🇯	flaga: Tadżykistan						// [1F1F9 1F1EF] TJ
+🇹🇰	flaga: Tokelau							// [1F1F9 1F1F0] TK
+🇹🇱	flaga: Timor Wschodni						// [1F1F9 1F1F1] TL
+🇹🇲	flaga: Turkmenistan						// [1F1F9 1F1F2] TM
+🇹🇳	flaga: Tunezja							// [1F1F9 1F1F3] TN
+🇹🇴	flaga: Tonga							// [1F1F9 1F1F4] TO
+🇹🇷	flaga: Turcja							// [1F1F9 1F1F7] TR
+🇹🇹	flaga: Trynidad i Tobago					// [1F1F9 1F1F9] TT
+🇹🇻	flaga: Tuvalu							// [1F1F9 1F1FB] TV
+🇹🇼	flaga: Tajwan							// [1F1F9 1F1FC] TW
+🇹🇿	flaga: Tanzania							// [1F1F9 1F1FF] TZ
+🇺🇦	flaga: Ukraina							// [1F1FA 1F1E6] UA
+🇺🇬	flaga: Uganda							// [1F1FA 1F1EC] UG
+🇺🇲	flaga: Dalekie Wyspy Mniejsze Stanów Zjednoczonych		// [1F1FA 1F1F2] UM
+🇺🇳	flaga: Organizacja Narodów Zjednoczonych			// [1F1FA 1F1F3] UN
+🇺🇸	flaga: Stany Zjednoczone					// [1F1FA 1F1F8] US
+🇺🇾	flaga: Urugwaj							// [1F1FA 1F1FE] UY
+🇺🇿	flaga: Uzbekistan						// [1F1FA 1F1FF] UZ
+🇻🇦	flaga: Watykan							// [1F1FB 1F1E6] VA
+🇻🇨	flaga: Saint Vincent i Grenadyny				// [1F1FB 1F1E8] VC
+🇻🇪	flaga: Wenezuela						// [1F1FB 1F1EA] VE
+🇻🇬	flaga: Brytyjskie Wyspy Dziewicze				// [1F1FB 1F1EC] VG
+🇻🇮	flaga: Wyspy Dziewicze Stanów Zjednoczonych			// [1F1FB 1F1EE] VI
+🇻🇳	flaga: Wietnam							// [1F1FB 1F1F3] VN
+🇻🇺	flaga: Vanuatu							// [1F1FB 1F1FA] VU
+🇼🇫	flaga: Wallis i Futuna						// [1F1FC 1F1EB] WF
+🇼🇸	flaga: Samoa							// [1F1FC 1F1F8] WS
+🇽🇰	flaga: Kosowo							// [1F1FD 1F1F0] XK
+🇾🇪	flaga: Jemen							// [1F1FE 1F1EA] YE
+🇾🇹	flaga: Majotta							// [1F1FE 1F1F9] YT
+🇿🇦	flaga: Republika Południowej Afryki				// [1F1FF 1F1E6] ZA
+🇿🇲	flaga: Zambia							// [1F1FF 1F1F2] ZM
+🇿🇼	flaga: Zimbabwe							// [1F1FF 1F1FC] ZW
 
 // Subdivision Flags -- ISO 3166-2 Subdivision Codes
 
@@ -1960,18 +1957,18 @@ $textmode
 
 // Keycaps (NOTE: keycap 10 is a single Unicode codepoint)
 
-#⃣	klawisz							// [0023 20E3]
-*⃣	klawisz							// [002A 20E3]
-0⃣	klawisz 0						// [0030 20E3]
-1⃣	klawisz 1						// [0031 20E3]
-2⃣	klawisz 2						// [0032 20E3]
-3⃣	klawisz 3						// [0033 20E3]
-4⃣	klawisz 4						// [0034 20E3]
-5⃣	klawisz 5						// [0035 20E3]
-6⃣	klawisz 6						// [0036 20E3]
-7⃣	klawisz 7						// [0037 20E3]
-8⃣	klawisz 8						// [0038 20E3]
-9⃣	klawisz 9						// [0039 20E3]
+#️⃣	klawisz: #							// [0023 FE0F 20E3]
+*️⃣	klawisz: *							// [002A FE0F 20E3]
+0️⃣	klawisz: 0							// [0030 FE0F 20E3]
+1️⃣	klawisz: 1							// [0031 FE0F 20E3]
+2️⃣	klawisz: 2							// [0032 FE0F 20E3]
+3️⃣	klawisz: 3							// [0033 FE0F 20E3]
+4️⃣	klawisz: 4							// [0034 FE0F 20E3]
+5️⃣	klawisz: 5							// [0035 FE0F 20E3]
+6️⃣	klawisz: 6							// [0036 FE0F 20E3]
+7️⃣	klawisz: 7							// [0037 FE0F 20E3]
+8️⃣	klawisz: 8							// [0038 FE0F 20E3]
+9️⃣	klawisz: 9							// [0039 FE0F 20E3]
 
 // 1FA70..1FAFF : Symbols and Pictographs Extended-A
 🩰	baletki							// [1FA70]
@@ -1997,11 +1994,6 @@ $textmode
 🪇	marakasy						// [1FA87]
 🪈	flet							// [1FA88]
 🪉	harfa							// [1FA89]
-🪊	puzon							// [1FA8A]
-🪋	meteor							// [1FA8B]
-🪌	gumka							// [1FA8C]
-🪍	siatka z rączką						// [1FA8D]
-🪎	skrzynia skarbów					// [1FA8E]
 🪏	łopata							// [1FA8F]
 🪐	planeta z pierścieniami					// [1FA90]
 🪑	krzesło							// [1FA91]
@@ -2058,9 +2050,6 @@ $textmode
 🫄	osoba w ciąży						// [1FAC4]
 🫅	osoba w koronie						// [1FAC5]
 🫆	odcisk palca						// [1FAC6]
-🫈	włochate stworzenie					// [1FAC8]
-🫌	monarcha						// [1FACC]
-🫍	orka							// [1FACD]
 🫎	łoś							// [1FACE]
 🫏	osioł							// [1FACF]
 🫐	borówka amerykańska					// [1FAD0]
@@ -2076,7 +2065,6 @@ $textmode
 🫚	korzeń imbiru						// [1FADA]
 🫛	strąk grochu						// [1FADB]
 🫜	warzywo korzeniowe					// [1FADC]
-🫝	ogórek kiszony						// [1FADD]
 🫟	rozbryzg						// [1FADF]
 🫠	roztapiająca się twarz					// [1FAE0]
 🫡	salutująca twarz					// [1FAE1]
@@ -2088,9 +2076,6 @@ $textmode
 🫧	bąbelki							// [1FAE7]
 🫨	wstrząśnięta twarz					// [1FAE8]
 🫩	twarz z workami pod oczami				// [1FAE9]
-🫪	wykrzywiona twarz					// [1FAEA]
-🫫	popękana twarz						// [1FAEB]
-🫯	chmura walki						// [1FAEF]
 🫰	dłoń ze skrzyżowanym palcem wskazującym i kciukiem	// [1FAF0]
 🫱	dłoń skierowana w prawo					// [1FAF1]
 🫲	dłoń skierowana w lewo					// [1FAF2]
@@ -2100,8 +2085,6 @@ $textmode
 🫶	dłonie tworzące serce					// [1FAF6]
 🫷	dłoń pchająca w lewo					// [1FAF7]
 🫸	dłoń pchająca w prawo					// [1FAF8]
-🫹	gest kciuka w lewo					// [1FAF9]
-🫺	gest kciuka w prawo					// [1FAFA]
 
 // Emoji ZWJ Sequence: Family
 
@@ -2130,38 +2113,38 @@ $textmode
 👨‍🦼‍➡	mężczyzna na elektrycznym wózku inwalidzkim zwrócony w prawo	// [1F468 200D 1F9BC 200D 27A1]
 👨‍🦽	mężczyzna na wózku inwalidzkim				// [1F468 200D 1F9BD]
 👨‍🦽‍➡	mężczyzna na wózku inwalidzkim zwrócony w prawo		// [1F468 200D 1F9BD 200D 27A1]
-👩‍❤‍💋‍👨	pocałunek kobieta i mężczyzna				// [1F469 200D 2764 200D 1F48B 200D 1F468]
-👨‍❤‍💋‍👨	pocałunek mężczyzna i mężczyzna				// [1F468 200D 2764 200D 1F48B 200D 1F468]
-👩‍❤‍💋‍👩	pocałunek kobieta i kobieta				// [1F469 200D 2764 200D 1F48B 200D 1F469]
-👩‍❤‍👨	para z sercem kobieta i mężczyzna			// [1F469 200D 2764 200D 1F468]
-👨‍❤‍👨	para z sercem mężczyzna i mężczyzna			// [1F468 200D 2764 200D 1F468]
-👩‍❤‍👩	para z sercem kobieta i kobieta				// [1F469 200D 2764 200D 1F469]
-👨‍👩‍👦	rodzina mężczyzna kobieta i chłopiec			// [1F468 200D 1F469 200D 1F466]
-👨‍👩‍👧	rodzina mężczyzna kobieta i dziewczynka			// [1F468 200D 1F469 200D 1F467]
-👨‍👩‍👧‍👦	rodzina mężczyzna kobieta dziewczynka i chłopiec	// [1F468 200D 1F469 200D 1F467 200D 1F466]
-👨‍👩‍👦‍👦	rodzina mężczyzna kobieta chłopiec i chłopiec		// [1F468 200D 1F469 200D 1F466 200D 1F466]
-👨‍👩‍👧‍👧	rodzina mężczyzna kobieta dziewczynka i dziewczynka	// [1F468 200D 1F469 200D 1F467 200D 1F467]
-👨‍👨‍👦	rodzina mężczyzna mężczyzna i chłopiec			// [1F468 200D 1F468 200D 1F466]
-👨‍👨‍👧	rodzina mężczyzna mężczyzna i dziewczynka		// [1F468 200D 1F468 200D 1F467]
-👨‍👨‍👧‍👦	rodzina mężczyzna mężczyzna dziewczynka i chłopiec	// [1F468 200D 1F468 200D 1F467 200D 1F466]
-👨‍👨‍👦‍👦	rodzina mężczyzna mężczyzna chłopiec i chłopiec		// [1F468 200D 1F468 200D 1F466 200D 1F466]
-👨‍👨‍👧‍👧	rodzina mężczyzna mężczyzna dziewczynka i dziewczynka	// [1F468 200D 1F468 200D 1F467 200D 1F467]
+👩‍❤‍💋‍👨	pocałunek: kobieta i mężczyzna		// [1F469 200D 2764 200D 1F48B 200D 1F468]
+👨‍❤‍💋‍👨	pocałunek: mężczyzna i mężczyzna	// [1F468 200D 2764 200D 1F48B 200D 1F468]
+👩‍❤‍💋‍👩	pocałunek: kobieta i kobieta		// [1F469 200D 2764 200D 1F48B 200D 1F469]
+👩‍❤‍👨	para z sercem: kobieta i mężczyzna		// [1F469 200D 2764 200D 1F468]
+👨‍❤‍👨	para z sercem: mężczyzna i mężczyzna		// [1F468 200D 2764 200D 1F468]
+👩‍❤‍👩	para z sercem: kobieta i kobieta		// [1F469 200D 2764 200D 1F469]
+👨‍👩‍👦	rodzina: mężczyzna, kobieta i chłopiec		// [1F468 200D 1F469 200D 1F466]
+👨‍👩‍👧	rodzina: mężczyzna, kobieta i dziewczynka	// [1F468 200D 1F469 200D 1F467]
+👨‍👩‍👧‍👦	rodzina: mężczyzna, kobieta, dziewczynka i chłopiec// [1F468 200D 1F469 200D 1F467 200D 1F466]
+👨‍👩‍👦‍👦	rodzina: mężczyzna, kobieta, chłopiec i chłopiec// [1F468 200D 1F469 200D 1F466 200D 1F466]
+👨‍👩‍👧‍👧	rodzina: mężczyzna, kobieta, dziewczynka i dziewczynka// [1F468 200D 1F469 200D 1F467 200D 1F467]
+👨‍👨‍👦	rodzina: mężczyzna, mężczyzna i chłopiec	// [1F468 200D 1F468 200D 1F466]
+👨‍👨‍👧	rodzina: mężczyzna, mężczyzna i dziewczynka	// [1F468 200D 1F468 200D 1F467]
+👨‍👨‍👧‍👦	rodzina: mężczyzna, mężczyzna, dziewczynka i chłopiec// [1F468 200D 1F468 200D 1F467 200D 1F466]
+👨‍👨‍👦‍👦	rodzina: mężczyzna, mężczyzna, chłopiec i chłopiec// [1F468 200D 1F468 200D 1F466 200D 1F466]
+👨‍👨‍👧‍👧	rodzina: mężczyzna, mężczyzna, dziewczynka i dziewczynka// [1F468 200D 1F468 200D 1F467 200D 1F467]
 👩‍🍼	kobieta karmiąca niemowlę				// [1F469 200D 1F37C]
-👩‍👩‍👦	rodzina kobieta kobieta i chłopiec			// [1F469 200D 1F469 200D 1F466]
-👩‍👩‍👧	rodzina kobieta kobieta i dziewczynka			// [1F469 200D 1F469 200D 1F467]
-👩‍👩‍👧‍👦	rodzina kobieta kobieta dziewczynka i chłopiec		// [1F469 200D 1F469 200D 1F467 200D 1F466]
-👩‍👩‍👦‍👦	rodzina kobieta kobieta chłopiec i chłopiec		// [1F469 200D 1F469 200D 1F466 200D 1F466]
-👩‍👩‍👧‍👧	rodzina kobieta kobieta dziewczynka i dziewczynka	// [1F469 200D 1F469 200D 1F467 200D 1F467]
-👨‍👦	rodzina mężczyzna i chłopiec				// [1F468 200D 1F466]
-👨‍👦‍👦	rodzina mężczyzna chłopiec i chłopiec			// [1F468 200D 1F466 200D 1F466]
-👨‍👧	rodzina mężczyzna i dziewczynka				// [1F468 200D 1F467]
-👨‍👧‍👦	rodzina mężczyzna dziewczynka i chłopiec		// [1F468 200D 1F467 200D 1F466]
-👨‍👧‍👧	rodzina mężczyzna dziewczynka i dziewczynka		// [1F468 200D 1F467 200D 1F467]
-👩‍👦	rodzina kobieta i chłopiec				// [1F469 200D 1F466]
-👩‍👦‍👦	rodzina kobieta chłopiec i chłopiec			// [1F469 200D 1F466 200D 1F466]
-👩‍👧	rodzina kobieta i dziewczynka				// [1F469 200D 1F467]
-👩‍👧‍👦	rodzina kobieta dziewczynka i chłopiec			// [1F469 200D 1F467 200D 1F466]
-👩‍👧‍👧	rodzina kobieta dziewczynka i dziewczynka		// [1F469 200D 1F467 200D 1F467]
+👩‍👩‍👦	rodzina: kobieta, kobieta i chłopiec		// [1F469 200D 1F469 200D 1F466]
+👩‍👩‍👧	rodzina: kobieta, kobieta i dziewczynka		// [1F469 200D 1F469 200D 1F467]
+👩‍👩‍👧‍👦	rodzina: kobieta, kobieta, dziewczynka i chłopiec// [1F469 200D 1F469 200D 1F467 200D 1F466]
+👩‍👩‍👦‍👦	rodzina: kobieta, kobieta, chłopiec i chłopiec// [1F469 200D 1F469 200D 1F466 200D 1F466]
+👩‍👩‍👧‍👧	rodzina: kobieta, kobieta, dziewczynka i dziewczynka// [1F469 200D 1F469 200D 1F467 200D 1F467]
+👨‍👦	rodzina: mężczyzna i chłopiec				// [1F468 200D 1F466]
+👨‍👦‍👦	rodzina: mężczyzna, chłopiec i chłopiec		// [1F468 200D 1F466 200D 1F466]
+👨‍👧	rodzina: mężczyzna i dziewczynka			// [1F468 200D 1F467]
+👨‍👧‍👦	rodzina: mężczyzna, dziewczynka i chłopiec	// [1F468 200D 1F467 200D 1F466]
+👨‍👧‍👧	rodzina: mężczyzna, dziewczynka i dziewczynka	// [1F468 200D 1F467 200D 1F467]
+👩‍👦	rodzina: kobieta i chłopiec				// [1F469 200D 1F466]
+👩‍👦‍👦	rodzina: kobieta, chłopiec i chłopiec		// [1F469 200D 1F466 200D 1F466]
+👩‍👧	rodzina: kobieta i dziewczynka				// [1F469 200D 1F467]
+👩‍👧‍👦	rodzina: kobieta, dziewczynka i chłopiec	// [1F469 200D 1F467 200D 1F466]
+👩‍👧‍👧	rodzina: kobieta, dziewczynka i dziewczynka	// [1F469 200D 1F467 200D 1F467]
 
 // Emoji ZWJ Sequence: Gendered Role, with object
 
@@ -2171,29 +2154,29 @@ $textmode
 👩‍⚖	kobieta sędzia						// [1F469 200D 2696]
 👨‍✈	mężczyzna pilot						// [1F468 200D 2708]
 👩‍✈	kobieta pilot						// [1F469 200D 2708]
-👨‍🌾	mężczyzna rolnik					// [1F468 200D 1F33E]
+👨‍🌾	rolnik							// [1F468 200D 1F33E]
 👩‍🌾	rolniczka						// [1F469 200D 1F33E]
-👨‍🍳	mężczyzna kucharz					// [1F468 200D 1F373]
+👨‍🍳	kucharz							// [1F468 200D 1F373]
 👩‍🍳	kucharka						// [1F469 200D 1F373]
-👨‍🎓	mężczyzna student					// [1F468 200D 1F393]
+👨‍🎓	student							// [1F468 200D 1F393]
 👩‍🎓	studentka						// [1F469 200D 1F393]
-👨‍🎤	mężczyzna piosenkarz					// [1F468 200D 1F3A4]
+👨‍🎤	piosenkarz						// [1F468 200D 1F3A4]
 👩‍🎤	piosenkarka						// [1F469 200D 1F3A4]
-👨‍🎨	mężczyzna artysta					// [1F468 200D 1F3A8]
+👨‍🎨	artysta							// [1F468 200D 1F3A8]
 👩‍🎨	artystka						// [1F469 200D 1F3A8]
-👨‍🏫	mężczyzna nauczyciel					// [1F468 200D 1F3EB]
+👨‍🏫	nauczyciel						// [1F468 200D 1F3EB]
 👩‍🏫	nauczycielka						// [1F469 200D 1F3EB]
-👨‍🏭	mężczyzna pracownik fabryki				// [1F468 200D 1F3ED]
+👨‍🏭	pracownik fabryki					// [1F468 200D 1F3ED]
 👩‍🏭	pracownica fabryki					// [1F469 200D 1F3ED]
 👨‍💻	mężczyzna technolog					// [1F468 200D 1F4BB]
 👩‍💻	kobieta technolog					// [1F469 200D 1F4BB]
-👨‍💼	mężczyzna pracownik biurowy				// [1F468 200D 1F4BC]
+👨‍💼	pracownik biurowy					// [1F468 200D 1F4BC]
 👩‍💼	pracownica biurowa					// [1F469 200D 1F4BC]
 👨‍🔧	mężczyzna elektryk					// [1F468 200D 1F527]
 👩‍🔧	kobieta elektryk					// [1F469 200D 1F527]
 👨‍🔬	mężczyzna naukowiec					// [1F468 200D 1F52C]
 👩‍🔬	kobieta naukowiec					// [1F469 200D 1F52C]
-👨‍🚀	mężczyzna astronauta					// [1F468 200D 1F680]
+👨‍🚀	astronauta						// [1F468 200D 1F680]
 👩‍🚀	astronautka						// [1F469 200D 1F680]
 👨‍🚒	mężczyzna strażak					// [1F468 200D 1F692]
 👩‍🚒	kobieta strażak						// [1F469 200D 1F692]
@@ -2350,7 +2333,7 @@ $textmode
 🙅‍♀	kobieta pokazująca gest NIE				// [1F645 200D 2640]
 🙅‍♂	mężczyzna pokazujący gest NIE				// [1F645 200D 2642]
 🙆‍♀	kobieta pokazująca gest OK				// [1F646 200D 2640]
-🙆‍♂	mężczyzna pokazujący gest OK				// [1F646 200D 2642]
+🙆‍♂	mężczyzna pokazujący ojej!”				// [1F646 200D 2642]
 🙇‍♀	kobieta w ukłonie					// [1F647 200D 2640]
 🙇‍♂	mężczyzna w ukłonie					// [1F647 200D 2642]
 🙋‍♀	kobieta podnosząca rękę					// [1F64B 200D 2640]

@@ -204,11 +204,6 @@ phoneme 3:
   vwl  starttype #@  endtype #@
   length 210
   IfNextVowelAppend(r-)
-  // en-us is rhotic outside the linking-r case above (her/sir/fur/stir...); skip if
-  // the spelling already has r (blurry, referral) to avoid doubling it.
-  IF NOT nextPh(isVowel) AND NOT nextPh(r) THEN
-    AppendPhoneme(r/)
-  ENDIF
   ChangeIfDiminished(3)
   FMT(vwl_en_us/3_us2)
 endphoneme

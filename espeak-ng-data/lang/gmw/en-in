@@ -9,7 +9,7 @@ status mature
 // Phoneme table en-in (ph_english_in) adds retroflex stops t./d.,
 // monophthongal eI/oU and clear l on top of the base en table.
 phonemes en-in
-dictrules 1 2 8
+dictrules 1 2 8 12
 
 stressLength 160 160  180 180  200 200  240 260
 stressAmp    18 18   19 19   19 19   20 20

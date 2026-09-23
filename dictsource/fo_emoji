@@ -266,8 +266,6 @@ $textmode
 ⌚	ur							// [231A]
 ⌛	runnið tímaglas						// [231B]
 ⌨	knappaborð						// [2328]
-//⍋								// [234B] (no translation)
-//⍳								// [2373] (no translation)
 ⏏	varpa út knappur					// [23CF]
 ⏩	spola skjótt fram knappur				// [23E9]
 ⏪	spola skjótt aftur knappur				// [23EA]
@@ -483,7 +481,6 @@ $textmode
 ➡	pílur sum peikar til høgru				// [27A1]
 ➰	bukt							// [27B0]
 ➿	dupult bukt						// [27BF]
-//⟳								// [27F3] (no translation)
 ⤴	bogin pílur sum peikar uppeftir				// [2934]
 ⤵	bogin pílur sum peikar niðureftir			// [2935]
 //⨧								// [2A27] (no translation)
@@ -775,7 +772,7 @@ $textmode
 🇻🇳	Vjetnam							// [1F1FB 1F1F3]
 🇻🇺	Vanuatu							// [1F1FB 1F1FA]
 🇼🇫	Wallis- og Futunaoyggjar				// [1F1FC 1F1EB]
-🇼🇸	Sámoa							// [1F1FC 1F1F8]
+🇼🇸	Samoa							// [1F1FC 1F1F8]
 🇽🇰	Kosovo							// [1F1FD 1F1F0]
 🇾🇪	Jemen							// [1F1FE 1F1EA]
 🇾🇹	Mayotte							// [1F1FE 1F1F9]
@@ -1757,8 +1754,6 @@ $textmode
 🛕	hinduitempul						// [1F6D5]
 🛖	smátta							// [1F6D6]
 🛗	lyfta							// [1F6D7]
-//🛘								// [1F6D8] (no translation)
-//🛙								// [1F6D9] (no translation)
 🛜	tráðleyst						// [1F6DC]
 🛝	glíðibreyt						// [1F6DD]
 🛞	hjól							// [1F6DE]
@@ -2150,11 +2145,6 @@ $textmode
 🪇	marakas							// [1FA87]
 🪈	floyta							// [1FA88]
 🪉	harpa							// [1FA89]
-//🪊								// [1FA8A] (no translation)
-//🪋								// [1FA8B] (no translation)
-//🪌								// [1FA8C] (no translation)
-//🪍								// [1FA8D] (no translation)
-//🪎								// [1FA8E] (no translation)
 🪏	spaki							// [1FA8F]
 🪐	gongustjørna við ringi					// [1FA90]
 🪑	stólur							// [1FA91]
@@ -2211,9 +2201,6 @@ $textmode
 🫄	persónur við barn					// [1FAC4]
 🫅	persónur við krúnu					// [1FAC5]
 🫆	fingramerki						// [1FAC6]
-//🫈								// [1FAC8] (no translation)
-//🫌								// [1FACC] (no translation)
-//🫍								// [1FACD] (no translation)
 🫎	elgsdýr							// [1FACE]
 🫏	esil							// [1FACF]
 🫐	bláber							// [1FAD0]
@@ -2229,7 +2216,6 @@ $textmode
 🫚	ingifer							// [1FADA]
 🫛	ertnabjølg						// [1FADB]
 🫜	rótfrukt						// [1FADC]
-//🫝								// [1FADD] (no translation)
 🫟	sprutt							// [1FADF]
 🫠	smelta andlit						// [1FAE0]
 🫡	heilsandi andlit					// [1FAE1]
@@ -2241,9 +2227,6 @@ $textmode
 🫧	bløðrur							// [1FAE7]
 🫨	skelvandi andlit					// [1FAE8]
 🫩	andlit við posum undir eygunum				// [1FAE9]
-//🫪								// [1FAEA] (no translation)
-//🫫								// [1FAEB] (no translation)
-//🫯								// [1FAEF] (no translation)
 🫰	krossa tummil og peikifingur				// [1FAF0]
 🫱	hond til høgru						// [1FAF1]
 🫲	hond til vinstru					// [1FAF2]
@@ -2253,5 +2236,3 @@ $textmode
 🫶	hjarta hendur						// [1FAF6]
 🫷	hond skumpar til vinstru				// [1FAF7]
 🫸	hond skumpar til høgru					// [1FAF8]
-//🫹								// [1FAF9] (no translation)
-//🫺								// [1FAFA] (no translation)

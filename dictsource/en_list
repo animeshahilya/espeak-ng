@@ -713,9 +713,6 @@ lt	$dot
 prof	$dot
 rev	$dot
 st	$dot
-rs	r'u:pi:z	$dot	// Indian rupees abbreviation ("Rs. 500"); used by en-in too
-re	r'u:pi:	$dot	// Indian rupee singular ("Re. 1")
-pnr	p,i:En'A@	$allcaps	// Indian Railways PNR
 
 // not abbreviations when all-caps
 all	O:l	$allcaps
@@ -724,51 +721,6 @@ no	noU	$allcaps
 
 // MAIN WORD DICTIONARY
 //*********************
-
-aadhaar		'A:d[,A:r
-aadhar		'A:d[,A:r
-lakh		l'A:k
-lakhs		l'A:ks
-lac		l'ak
-lacs		l'aks
-crore		kr'o:r
-crores		kr'o:rz
-crorepati		kr,o:rp'Vt[I
-lakhpati		l,A:kp'Vt[I
-prepone		pri:p'oUn
-preponed	pri:p'oUnd
-preponing	pri:p'oUnIN
-preponement	pri:p'oUnm@nt
-namaste		n,Vm'Vst[eI
-namaskar	n,Vm'VskA:r
-pranam		pr.'VnA:m
-dhanyawad		d[,VnjVv'A:d[
-shukriya	S,Ukr'IjA:
-challan		tS,al'A:n
-chalan		tS,al'A:n
-jugaad		dZ,Ug'A:d
-paisa		p'aIsA:
-paise		p'aIseI
-bhai		baI
-bhaiya		b'aIj@
-didi		d['i:d[i
-desi		d['e:si:
-videsi		v,id['e:si
-sabzi		s'abzi
-biryani		b,Irj'A:ni:
-samosa		s,am'o:s@
-paneer		pan'i@
-roti		r'o:ti:
-chai		tS'aI
-masala		m@s'A:l@
-dosa		d['o:s@
-idli		'Idli
-yojana		j'o:dZ@nA:
-panchayat		pVntS'A:j@t[
-sarpanch	s,A@p'antS
-swachh		sw'VtStS
-bharat		b'A:r@t[
-hindustan		h,Ind[Ust['A:n
 
 (a &)		eIa#nd
 à		%a
@@ -1697,7 +1649,7 @@ descry		dI#skreI
 desert		dI#z3:t
 desert		dEz3t		$onlys
 desert		dI#z3:t		$verb
-desi		d['e:si:
+desi		deIsi
 desolate	dEs@l@t		$only
 desperate	$alt2
 ?3 detail	$2
@@ -2574,7 +2526,7 @@ marquis		mA@rk'i:
 marshal		mA@S@L	// -ing
 marshall	mA@S@L
 martinet	$3
-masala		m@s'A:l@ $alt3
+masala		$alt3
 massage		masA:Z
 ?3 massage	ma#sA:Z
 mastodon	mast@d0n
@@ -2886,7 +2838,7 @@ paltry		pO:ltri
 panacea		pana#s'i:@
 panache		$alt3
 panchakarma	$alt3 $3
-panchayat		pVntS'A:j@t[
+panchayat	pa#ntSaI@t
 pancreas	pankri@s
 palpate		$2
 papaya		pa#paI;@
@@ -5840,30 +5792,75 @@ _𐑿	j'u:l
 𐑕𐑳𐑥	,sVm	$nounf $unstressend $only
 𐑚𐑳𐑑	,bVt	$pause $only
 𐑢𐑦𐑗	,wItS	$pause $strend2 $only $verbf
-shit	SIt
 
-// Indian English terms unique to this block (overlapping headwords live in the
-// main dictionary above; duplicating them here shadowed one transcription).
-// Indian acronyms said letter by letter (they were read as words: UPI "yoopi", OTP "otp")
-upi	$abbrev $allcaps
-otp	$abbrev $allcaps
-ifsc	$abbrev $allcaps
-kyc	$abbrev $allcaps
-emi	$abbrev $allcaps
-neft	$abbrev $allcaps
-imps	$abbrev $allcaps
-irctc	$abbrev $allcaps
-lic	$abbrev $allcaps
-upsc	$abbrev $allcaps
-iit	$abbrev $allcaps
-icici	$abbrev $allcaps
-ncert	$abbrev $allcaps
-pan	p'an	$allcaps	// PAN card is said as a word, not spelled
-dhanyavad		d[,VnjVv'A:d[
-chappal	tS'Vpp@l
-chappals	tS'Vpp@lz
-rickshaw	r'IkSO:
-rickshaws	r'IkSO:z
-dal		d['A:l
-thali	t['A:li:
-
+// Indian English (en-in only: condition 12 is set by lang/gmw/en-in alone).
+// Kept at the end so these override the general entries above for en-in,
+// while every other English voice reads exactly as upstream/NVDA.
+?12 rs	r'u:pi:z	$dot	// "Rs. 500"
+?12 re	r'u:pi:	$dot	// Indian rupee singular ("Re. 1")
+?12 pnr	p,i:En'A@	$allcaps	// Indian Railways PNR
+?12 aadhaar		'A:d[,A:r
+?12 aadhar		'A:d[,A:r
+?12 lakh		l'A:k
+?12 lakhs		l'A:ks
+?12 lac		l'ak
+?12 lacs		l'aks
+?12 crore		kr'o:r
+?12 crores		kr'o:rz
+?12 crorepati		kr,o:rp'Vt[I
+?12 lakhpati		l,A:kp'Vt[I
+?12 prepone		pri:p'oUn
+?12 preponed	pri:p'oUnd
+?12 preponing	pri:p'oUnIN
+?12 preponement	pri:p'oUnm@nt
+?12 namaste		n,Vm'Vst[eI
+?12 namaskar	n,Vm'VskA:r
+?12 pranam		pr.'VnA:m
+?12 dhanyawad		d[,VnjVv'A:d[
+?12 shukriya	S,Ukr'IjA:
+?12 challan		tS,al'A:n
+?12 chalan		tS,al'A:n
+?12 jugaad		dZ,Ug'A:d
+?12 paisa		p'aIsA:
+?12 paise		p'aIseI
+?12 bhai		baI
+?12 bhaiya		b'aIj@
+?12 didi		d['i:d[i
+?12 desi		d['e:si:
+?12 videsi		v,id['e:si
+?12 sabzi		s'abzi
+?12 biryani		b,Irj'A:ni:
+?12 samosa		s,am'o:s@
+?12 paneer		pan'i@
+?12 roti		r'o:ti:
+?12 chai		tS'aI
+?12 masala		m@s'A:l@
+?12 dosa		d['o:s@
+?12 idli		'Idli
+?12 yojana		j'o:dZ@nA:
+?12 panchayat		pVntS'A:j@t[
+?12 sarpanch	s,A@p'antS
+?12 swachh		sw'VtStS
+?12 bharat		b'A:r@t[
+?12 hindustan		h,Ind[Ust['A:n
+?12 upi	$abbrev $allcaps
+?12 otp	$abbrev $allcaps
+?12 ifsc	$abbrev $allcaps
+?12 kyc	$abbrev $allcaps
+?12 emi	$abbrev $allcaps
+?12 neft	$abbrev $allcaps
+?12 imps	$abbrev $allcaps
+?12 irctc	$abbrev $allcaps
+?12 lic	$abbrev $allcaps
+?12 upsc	$abbrev $allcaps
+?12 iit	$abbrev $allcaps
+?12 icici	$abbrev $allcaps
+?12 ncert	$abbrev $allcaps
+?12 pan	p'an	$allcaps	// PAN card is said as a word, not spelled
+?12 dhanyavad		d[,VnjVv'A:d[
+?12 chappal	tS'Vpp@l
+?12 chappals	tS'Vpp@lz
+?12 rickshaw	r'IkSO:
+?12 rickshaws	r'IkSO:z
+?12 dal		d['A:l
+?12 thali	t['A:li:

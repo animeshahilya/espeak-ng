@@ -71,20 +71,6 @@ test_phon de "v'Ikto:r j'A:kt tsv'Wlf b'OkskEmpf3 kv'e:r_:_: _|,y:b3 de:n gr'o:s
 h'aItsWlr,yksto:s,abdEmpf,UN" "Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich. Heizölrückstoßabdämpfung." "Latn"
 test_phon el "ks,escep'azo t'im bz,ixofT'ora vD,eliQm'i;a" "Ξεσκεπάζω τὴν ψυχοφθόρα βδελυγμία." "Grek"
 test_phon en "D@ kw'Ik br'aUn f'0ks dZ'Vmps ,oUv3 D@ l'eIzi d'0g" "The quick brown fox jumps over the lazy dog" "Latn"
-test_phon en "h@l'oU" "𝐇𝐞𝐥𝐥𝐨" "math-bold normalized to ASCII"
-test_phon en "h@l'oU" "ℍ𝕖𝕝𝕝𝕠" "double-struck normalized to ASCII"
-test_phon en "z,Edz'Edm@kb'VgIN" "zzmcbugging" "spelled letters with a prefix and suffix retain the stem"
-test_phon en ",Ef'Efm@kw'O:kIN" "ffmcwalking" "different spelled letters retain another stem"
-test_phon en "z,Edz,Edz'Edm@kb'VgIN" "zzzmcbugging" "doubled spelled letters do not match as the stem"
-test_phon en ",Ef'Efm'Iskri@nts" "ffmiscreants" "spelled letters preserve a dictionary match including the prefix"
-test_phon en "z,Edz'Edm@kb'Vg" "zzmcbug" "spelled letters with a prefix only"
-test_phon en "z,Edz'Edb'VgIN" "zzbugging" "spelled letters with a suffix only"
-test_phon en "m@kb'VgIN" "mcbugging" "a prefix and suffix without spelled letters"
-test_phon en "m'Iskri@nts" "miscreants" "a dictionary match including the prefix without spelled letters"
-test_phon en-in "d[@ kv#'Ik br.'aUn f'0ks dZ'Vmps ,o:v#3r. d[@ l'e:zi d.'0g" "The quick brown fox jumps over the lazy dog" "Latn"
-test_phon en-in "t.'aIm v#'O:t.3r. t['In d[Is v#'Et. v#'Et. d.'e: g,o: l'EdZ3r." "time water thin this wet vet day go leisure" "Latn"
-test_phon en-in "k'A@r. d.'o@r. pr.i:p'o:n n,Vm'Vst[e: b,Ir.j'A:ni:" "car door prepone namaste biryani" "Latn"
-test_phon en "kl'0kwaIz g'apt s'3:k@L 'aroU d'Elt@r- aI'oUt@" "⟳ ⍋ ⍳" "clockwise gapped circle arrow, delta, iota (NVDA #17433)"
 test_phon en "b,i:dZ,eIp'i: (ml)jum'a:jul.l.a(en)" "BJPയുമായുള്ള" "script change splits a glued token"
 test_phon en "h'i@3rIN m'i: b'oU
 DI2; 'aZ3 Tr'VS k'O:z
@@ -128,9 +114,9 @@ test_phon hy "k@rn'am ,apak'i ut'el j'ev ints'i ,anhang'ist tS#@n'er" "Կրնա�
 test_phon hyw "g@rn'am ,abag'i ud'el j'ev indz'i ,anhank#'isd tS#@n'er" "Կրնամ ապակի ուտել և ինծի անհանգիստ չըներ։" "Armn"
 test_phon hr "l^'ub&znI f'En^eRdZ,Ij& tS'adZ;&vog l'its& x'otS;E d'a m'i p'ok&ZE St'os" "Љубазни фењерџија чађавог лица хоће да ми покаже штос." "Cyrl"
 test_phon hr "l^'ub&znI f'En^eRdZ,Ij& tS'adZ;&vog l'its& x'otS;E d'a m'i p'ok&ZE St'os" "Ljubazni fenjerdžija čađavog lica hoće da mi pokaže štos." "Latn"
-test_phon ht "t'ut mun f'Et l'ib
-eg'al eg'o pu dijit'e k'u w'E dw'a
-nu g'E~ la Rez'O~ ak la kO~sj'A~s ep'i nu f'Et pu nu aZ'i j'un ak l'ot ak jon lespR'i fwatEnit'e" "Tout moun fèt lib, egal ego pou diyite kou wè dwa. Nou gen la rezon ak la konsyans epi nou fèt pou nou aji youn ak lot ak yon lespri fwatènite." "Latn"
+test_phon ht "tou'ut mou'un f'et l'ib
+eg'al eg'o pou'u dijit'e kou'u w'e dw'a
+nou,u g'en l'a hez'on 'ak l'a konsj'ans ep'i nou,u f'et pou'u nou,u aj'i jou'un 'ak l'ot 'ak j'on lesph'i fwatenit'e" "Tout moun fèt lib, egal ego pou diyite kou wè dwa. Nou gen la rezon ak la konsyans epi nou fèt pou nou aji youn ak lot ak yon lespri fwatènite." "Latn"
 test_phon hu "j'o: f'oksim _|,e:S d'on kv'ijotE h'u:svAt:oS l'a:mpa:na:l _!'ylvE _!'EJ p'a:R2 b'y:vYS ts'ipY:t k,e:si:t
 _!'a:R2vi:zty:R2Y: t'ykYR2fu:R2o:ge:p" "Jó foxim és don Quijote húszwattos lámpánál ülve egy pár bűvös cipőt készít. Árvíztűrő tükörfúrógép." "Latn"
 test_phon ia "t'ote le es'eRes hum'an n'astse l'ibeRe_! e ekw'al 'in d,ignit'ate_! e 'in deR'ektos
@@ -141,41 +127,6 @@ test_phon is "c'aI:mI n'i:; 'WksI hj'E:_|R
 'I:JIsd Tj'oU:vym n'u: b'aI:DI v'i:l#_:_: O:x 'aUd@-RE:ba
 s'aI:vW_|R g@-Rj'E:d 'aU:Dan_:_: Tvi:; 'ulban va:_|R 'oU:nid" "Kæmi ný öxi hér, ykist þjófum nú bæði víl og ádrepa. Sævör grét áðan því úlpan var ónýt." "Latn"
 test_phon it "kwel f'Ets zg'embo k'Op@-*e dav'antI" "Quel fez sghembo copre davanti" "Latn"
-test_phon scn "b'Ed.0d.U siS'ilja
-C'umI
-S:'a*a E S:'ankU" "Beddu Sicilia, ciumi, sciara e xancu." "Latn"
-test_phon scn "un J'O*nU t.r.'i J0J'O*na kI J0J'O*nU" "un jornu
-tri jorna
-chi jornu" "Latn"
-test_phon scn "lu sp'ats:jU n kw'i" "lu spazziu 'n cui" "Latn"
-test_phon scn "'Oc0cU v'OJ0JU c0c'u J0J'Ot:a" "occhiu
-vogghiu
-cchiù
-gghiotta" "Latn"
-test_phon scn "p'its:a m'EndzU ts'itU" "pizza
-menzu
-zitu" "Latn"
-test_phon scn "'a: sk*'ivi*,I; 'O: tj'at.r.U d'u: l'ib:*U" "hâ scrìviri
-ô tiatru
-dû libbru" "Latn"
-test_phon scn "m'i;a ma*'i;a siS'ilja pj'anU" "mia
-Maria
-Sicilia
-pianu" "Latn"
-test_phon scn "s'aN:U k'ap:a 'ak:a k:'a" "sangu
-k
-h
-kka" "Latn"
-test_phon scn "'af:a 'av:a 'al:a" "affa
-avva
-alla" "Latn"
-test_phon scn "'ERE 'ERE s'Essa" "r
-erre
-sessa" "Latn"
-test_phon scn "E 'ERE 'O n'OvI" "e
-erre
-o
-novi" "Latn"
 test_phon ja ",ir\`oh,anihoh'eto
 t_s\\,ir\`inur\`'uo
 w,akaj,otar\`'eso
@@ -383,5 +334,9 @@ test_phon en-GB-x-gbcwmd "k'It dr'Es tr'ap l'0t str'Vt f'Ut fl'i:s p'A:m T'O:t g
 test_phon en-GB-x-rp "k'It dr'Es tr'ap l'0t str'Vt f'Ut fl'i:s p'A:m T'O:t g'u:s n'3:s st'A@t n'O@T f'O@s kj'U@ n,i@3 skw'e@ t'3:m b'3:d h'api k'0ma# l'Eta#r- Ikspl'O@ r'oUzI2z r'abIt f'eIs pr'aIs tS'OIs g'oUt m'aUT b'aaT kl'0T m'Ili@n dI2v'aIdI2d" \
 	"kit dress trap lot strut foot fleece palm thought goose nurse start north force cure near square term bird happy comma letter explore roses rabbit face price choice goat mouth bath cloth million divided" "Lexical Sets"
 
-test_phon en-US "k'It dr'Es tr'ap l'0t str'Vt f'Ut fl'i:s p'A:m T'O:t g'u:s n'3:rs st'A@t n'O@T f'o@s kj'U@ n,i@3 skw'e@ t'3:rm b'3:rd h'api k'0m@ l'Et#3r- Ekspl'o@ r'oUzI#z r'abIt f'eIs pr'aIs tS'OIs g'oUt m'aUT b'aaT kl'O2T m'Ili@n dI#v'aIdI#d" \
+test_phon en-US "k'It dr'Es tr'ap l'0t str'Vt f'Ut fl'i:s p'A:m T'O:t g'u:s n'3:s st'A@t n'O@T f'o@s kj'U@ n,i@3 skw'e@ t'3:m b'3:d h'api k'0m@ l'Et#3r- Ekspl'o@ r'oUzI#z r'abIt f'eIs pr'aIs tS'OIs g'oUt m'aUT b'aaT kl'O2T m'Ili@n dI#v'aIdI#d" \
 	"kit dress trap lot strut foot fleece palm thought goose nurse start north force cure near square term bird happy comma letter explore roses rabbit face price choice goat mouth bath cloth million divided" "Lexical Sets"
+
+test_phon en-in "d[@ kv#'Ik br.'aUn f'0ks dZ'Vmps ,o:v#3r. d[@ l'e:zi d.'0g" "The quick brown fox jumps over the lazy dog" "Latn"
+test_phon en-in "t.'aIm v#'O:t.3r. t['In d[Is v#'Et. v#'Et. d.'e: g,o: l'EdZ3r." "time water thin this wet vet day go leisure" "Latn"
+test_phon en-in "k'A@r. d.'o@r. pr.i:p'o:n n,Vm'Vst[e: b,Ir.j'A:ni:" "car door prepone namaste biryani" "Latn"

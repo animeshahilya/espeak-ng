@@ -2235,8 +2235,7 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 						if (tr->letter_bits_offset > 0) {
 							// not a Latin alphabet, switch to the default Latin alphabet language
 							if ((letter <= 0x241) && iswalpha(letter)) {
-								extern char espeakng_fallback_language[20];
-								snprintf(phonemes, ph_size, "%c%s", phonSWITCH, espeakng_fallback_language);
+								snprintf(phonemes, ph_size, "%cen", phonSWITCH);
 								return 0;
 							}
 						}
@@ -2716,8 +2715,8 @@ static const char *LookupDict2(Translator *tr, const char *word, const char *wor
 			}
 		}
 
-		ix = utf8_in(&c, word1);
-		if (flags != NULL && (word1[ix] == 0) && !IsAlpha(c))
+		ix = utf8_in(&c, word);
+		if (flags != NULL && (word[ix] == 0) && !IsAlpha(c))
 			flags[0] |= FLAG_MAX3;
 		return word_end;
 
@@ -2762,7 +2761,7 @@ int LookupDictList(Translator *tr, char **wordptr, char *ph_out, unsigned int *f
 	length = 0;
 	word2 = word1 = *wordptr;
 
-	while ((word2[nbytes = utf8_nbytes(word2)] == ' ') && (word2[nbytes+1] == '.') && (word2[nbytes+2] == ' ')) {
+	while ((word2[nbytes = utf8_nbytes(word2)] == ' ') && (word2[nbytes+1] == '.')) {
 		// look for an abbreviation of the form a.b.c
 		// try removing the spaces between the dots and looking for a match
 		if ((nbytes <= 0) || ((size_t)nbytes + 1 > sizeof(word) - (size_t)length)) {

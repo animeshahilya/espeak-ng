@@ -17,12 +17,6 @@ test_phon lv \
 test_phon en "d'eIbju:tI2d" "débuted"
 test_phon en-US "d'eIbju:t#I#d" "débuted"
 
-# one-letter words repeated more than three times in a row keep every repeat
-# (only symbols such as ~ are limited to three, see $max3 in docs/dictionary.md)
-test_phon en "b'i: b'i: b'i: b'i: b'i: b'i:" "b b b b b b"
-test_phon en "aI; aI; aI; aI; aI; 'aI" "I I I I I I"
-test_phon en "t'Ild@ t'Ild@ t'Ild@" "~ ~ ~ ~ ~ ~"
-
 # s at the end of abbreviations
 # https://github.com/espeak-ng/espeak-ng/issues/706
 test_phon en ",aIb,i:;'Em m'It 'Ib@mz m'Its ,aIb,i:;'Em ,Em,aIt'i:; ,eIp,i:;'eItS s,i:;,i:;'Es ,aIt,i:;'Eks ,aIb,i:;'Emz ,Em,aIt'i:z ,eIp,i:;'eItSIz s,i:;,i:;'EsIz ,aIt,i:;'EksIz" "ibm mit ibms mits IBM MIT APH CES ITX IBMs MIT's APHs CES's ITXs"
@@ -89,7 +83,7 @@ test_phon en "h@w'aIi:" "Hawaiʻi"
 test_phon en "'e@ri:z" "♈"
 # the replacement text is segmented like direct input (see SegmentReplacement),
 # so the Burmese asat mark now ends a word as it does in normal text
-test_phon my "@pru3'a2mj@k _| lu3'a2mj@2tsnh,a2N _|_| nm _| n'e3DN _|_| mj@k _| nh'ats" "😙"
+test_phon my "pru3'a2nke3DN _|_| mj@k _| lu3'a2mj@2tsnh,a2N _|_| nm _| n'e3DN _|_| mj@k _| nh'ats" "😙"
 test_phon ka "k'ots#nis g'amomx,atveli s'axe m'omQim,are t#v'alebit#" "😙"
 test_phon ka "'imedg,ats#ru,ebuli m'agram Sv'ebis g'amomx,atveli s'axe" "😥"
 # Adjacent emoji without whitespace now correctly separated (IsAlpha emoji fix).
@@ -136,8 +130,8 @@ test_phon de "Sv'arts@ k'ats@" "🐈‍⬛"
 test_phon en "k,aza#khst'A:n" "🇰🇿"
 test_phon en "k,aza#khst'A:n ju:n'aItI2d st'eIts" "🇰🇿🇺🇸"
 test_phon en "k,aza#khst'A:n ju:n'aItI2d st'eIts dZ'3:m@ni" "🇰🇿🇺🇸🇩🇪"
-test_phon ru "kVzaxst'An_ sVjid;in;'ennyjI St'Aty" "🇰🇿🇺🇸"
-test_phon de "k'Azaxst,A:n fEr_!'aInIgt@ St'A:t@n" "🇰🇿🇺🇸"
+test_phon ru "fl'Ag;i kVzaxst'An_ fl'Ag;i sVjid;in;'ennyjI St'Aty" "🇰🇿🇺🇸"
+test_phon de "fl'age: k'Azaxst,A:n fl'age: fEr_!'aInIgt@ St'A:t@n" "🇰🇿🇺🇸"
 # a flag next to a non-flag emoji, or next to a word, is its own token too
 test_phon en "r'Ed h'A@t k,aza#khst'A:n" "❤️🇰🇿"
 test_phon en "k,aza#khst'A:n r'Ed h'A@t" "🇰🇿❤️"
@@ -145,7 +139,7 @@ test_phon en "f'IS k,aza#khst'A:n" "fish🇰🇿"
 test_phon en "k,aza#khst'A:n f'IS" "🇰🇿fish"
 # an unpaired trailing indicator is not a flag, and must not pull the
 # preceding pair out of its flag reading
-test_phon en "k,aza#khst'A:n sImb@L_|w'Vn_|'Ef_|w'Vn_|'Ef_|'eI_:" "🇰🇿🇺"
+test_phon en "k,aza#khst'A:n sImb@L_|w'0n_|'Ef_|w'0n_|'Ef_|'eI_:" "🇰🇿🇺"
 
 # ED-14a - emoji tag sequence: the tag characters (U+E0020..U+E007F) spelling
 # out a subdivision code must stay in the word, or only the base emoji matches
@@ -169,17 +163,17 @@ test_phon en "bl'ak fl'ag" "🏴󠁵󠁳󠁴󠁸󠁿"    # 1F3F4 E0075 E0073 E00
 # a replacement whose first letter is a non-ASCII capital must be lower cased
 # with towlower2(), not tolower(): the latter dropped the letter entirely
 # (Казахстан was read as "азахстан")
-test_phon ru "kVzaxst'An_" "🇰🇿"
+test_phon ru "fl'Ag;i kVzaxst'An_" "🇰🇿"
 test_phon uk "kaz'axst[an" "🇰🇿"
-test_phon el "k,azakst'an" "🇰🇿"
+test_phon el "sim'ea k,azakst'an" "🇰🇿"
 
 # a hyphen between two letters ends a word in replacement text as it does in
 # normal input; otherwise the rules stop at the hyphen and everything from
 # there on is lost (Burkina-Faso was silent, États-Unis read as "drapeau")
 test_phon tk "bURk'inA f,ATo" "🇧🇫"
 test_phon uk "buRk'i:na f'aso" "🇧🇫"
-test_phon fr "et'az2 yn'i" "🇺🇸"
-test_phon fr "rwaj'om yn'i" "🇬🇧"
+test_phon fr "drap'o et'az2 yn'i" "🇺🇸"
+test_phon fr "drap'o rwaj'om yn'i" "🇬🇧"
 # ASCII text without a hyphen keeps its existing single-word segmentation
 test_phon en "t'i: r'Eks" "🦖"
 
