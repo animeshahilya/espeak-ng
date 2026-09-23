@@ -5803,8 +5803,8 @@ _𐑿	j'u:l
 ?12 aadhar		'A:d[,A:r
 ?12 lakh		l'A:k
 ?12 lakhs		l'A:ks
-?12 lac		l'ak
-?12 lacs		l'aks
+?12 lac		l'A:k
+?12 lacs		l'A:ks
 ?12 crore		kr'o:r
 ?12 crores		kr'o:rz
 ?12 crorepati		kr,o:rp'Vt[I
@@ -5818,8 +5818,8 @@ _𐑿	j'u:l
 ?12 pranam		pr.'VnA:m
 ?12 dhanyawad		d[,VnjVv'A:d[
 ?12 shukriya	S,Ukr'IjA:
-?12 challan		tS,al'A:n
-?12 chalan		tS,al'A:n
+?12 challan		tS,Vl'A:n
+?12 chalan		tS,Vl'A:n
 ?12 jugaad		dZ,Ug'A:d
 ?12 paisa		p'aIsA:
 ?12 paise		p'aIseI
@@ -5828,9 +5828,9 @@ _𐑿	j'u:l
 ?12 didi		d['i:d[i
 ?12 desi		d['e:si:
 ?12 videsi		v,id['e:si
-?12 sabzi		s'abzi
+?12 sabzi		s'Vbzi
 ?12 biryani		b,Irj'A:ni:
-?12 samosa		s,am'o:s@
+?12 samosa		s,Vm'o:s@
 ?12 paneer		pan'i@
 ?12 roti		r'o:ti:
 ?12 chai		tS'aI
@@ -5839,7 +5839,7 @@ _𐑿	j'u:l
 ?12 idli		'Idli
 ?12 yojana		j'o:dZ@nA:
 ?12 panchayat		pVntS'A:j@t[
-?12 sarpanch	s,A@p'antS
+?12 sarpanch	s,Vrp'VntS
 ?12 swachh		sw'VtStS
 ?12 bharat		b'A:r@t[
 ?12 hindustan		h,Ind[Ust['A:n

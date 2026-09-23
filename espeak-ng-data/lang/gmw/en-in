@@ -30,12 +30,14 @@ replace 00 D d[
 // t2 is the non-reducing [t] variant emitted by en_rules (time, top,
 // type...); t# is the American flap allophone that can surface via shared
 // en_list entries - IndE uses retroflex stops there, not flaps. d# is the
-// -ed suffix; ph_english_in makes it [ɖ] or [ʈ] by voicing (walked, played).
+// -ed suffix, which IndE says as [ɖ] whatever comes before: missed [mɪsɖ]
+// (OED IndE, after Gargesh 2008 and Sailaja 2009).
 // r- is the linking-r allophone; IndE is fully rhotic by spelling.
 replace 00 t t.
 replace 00 t2 t.
 replace 00 t# t.
 replace 00 d d.
+replace 00 d# d.
 replace 00 r- r.
 // Rhotic with retroflex colouring; spelling r always pronounced
 // (OED IndE: generally rhotic; Gargesh vs Sailaja variation).
@@ -49,6 +51,8 @@ replace 00 Z dZ
 // aI/aU/OI stay diphthongal per literature.
 replace 00 eI e:
 replace 00 oU o:
+// BATH/PALM is long [ɑː]: bath [bɑːt̪], dance [ɖɑːns] (OED IndE).
+replace 00 aa A:
 
 formant 1 100 100 100
 formant 2 100 100 100

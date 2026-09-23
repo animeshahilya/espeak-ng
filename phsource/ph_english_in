@@ -225,18 +225,6 @@ phoneme @
 endphoneme
 
 
-// -ed suffix: [ɖ] after a voiced sound, [ʈ] after a voiceless one
-// (played [pleːɖ], walked [ʋɔːkʈ]). Replacing d# with d. in the voice file
-// lost the voiceless case.
-phoneme d#
-  vls rfx stp
-  IF prevPh(isVoiced) THEN
-    ChangePhoneme(d.)
-  ELSE
-    ChangePhoneme(t.)
-  ENDIF
-endphoneme
-
 
 // Voiceless stops are unaspirated in Indian English: pen [pen], cat [kaʈ],
 // not English [pʰ kʰ] (Wells 1982; Sailaja 2009). Same stops as Hindi's
@@ -248,4 +236,41 @@ endphoneme
 phoneme k
   import_phoneme consonants/k-
   voicingswitch g
+endphoneme
+
+
+// Vowels per the OED Indian English model (Gargesh 2008; Sailaja 2009;
+// Wiltshire 2020): TRAP is [æ], STRUT is [ə].
+phoneme a
+  vwl  starttype #e  endtype #@
+  ipa æ
+  length 170
+  ChangeIfDiminished(a#)
+  FMT(vwl_en_us/a)
+endphoneme
+
+phoneme V
+  vwl  starttype #@  endtype #@
+  ipa ə
+  length 140
+  FMT(vowel/@)
+endphoneme
+
+// "sing" always ends in [ŋɡ] (OED IndE): sing [sɪŋɡ], singer [sɪŋɡər].
+phoneme N
+  vcd vel nas
+  lengthmod 8
+  IF nextPh(g) OR nextPh(k) THEN
+  ELSE
+    AppendPhoneme(g)
+  ENDIF
+  CALL base1/N
+endphoneme
+
+// [ɑː] without the RP linking r: "Pooja is" had an r (OED IndE: never
+// intrusive r). Words spelled with r use A@, which keeps its real r.
+phoneme A:
+  vwl  starttype #a  endtype #a
+  length 230
+  FMT(vowel/aa_2)
 endphoneme
