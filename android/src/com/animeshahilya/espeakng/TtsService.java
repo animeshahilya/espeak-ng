@@ -615,7 +615,6 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
-
     // BaseBundle.get(String) was deprecated in API 33, but no typed getter
     // preserves these reads: the debug dump takes arbitrary keys, and volume
     // defensively accepts Number or String. Both callers keep exact behavior.
@@ -835,7 +834,7 @@ public class TtsService extends TextToSpeechService {
         } else {
             engine.Intonation.setValue(0);
         }
-        if (!isSsml && settings.isEmphasizeQuestionsEnabled() && endsWithQuestionOrExclamation(text)) {
+        if (!isSsml && settings.isEmphasizeQuestionsEnabled() && TextPreprocessor.endsWithQuestionOrExclamation(text)) {
             int max = engine.PitchRange.getMaxValue();
             pitchRange = Math.min(max, pitchRange + Math.max(1, pitchRange / 5));
         }
@@ -890,7 +889,7 @@ public class TtsService extends TextToSpeechService {
             // applied this exact voice+variant (SpeechSynthesis memoizes it),
             // and re-applying cost a full native dictionary reload per call.
             int base = 0;
-            for (String chunk : chunkForWatchdog(text)) {
+            for (String chunk : TextPreprocessor.chunkForWatchdog(text)) {
                 units.add(chunk);
                 unitVoices.add(voice);
                 unitBases.add(base);
@@ -954,128 +953,8 @@ public class TtsService extends TextToSpeechService {
         return VoiceSettings.isBlank(text);
     }
 
-    public static boolean containsProgrammingSymbolChars(String text) {
-        return TextPreprocessor.containsProgrammingSymbolChars(text);
-    }
-
-    public static String expandProgrammingSymbols(String text) {
-        return TextPreprocessor.expandProgrammingSymbols(text);
-    }
-
-    public static String simplifyUrls(String text) {
-        return TextPreprocessor.simplifyUrls(text);
-    }
-
-    public static String condenseRepeatedCharacters(String text, String mode) {
-        return TextPreprocessor.condenseRepeatedCharacters(text, mode);
-    }
-
-    public static String condenseRepeatedEmojis(String text, String mode) {
-        return TextPreprocessor.condenseRepeatedEmojis(text, mode);
-    }
-
-    public static String normalizeIndicDigits(String text) {
-        return TextPreprocessor.normalizeIndicDigits(text);
-    }
-
-    static String stripUnpairedSurrogates(String text) {
-        return TextPreprocessor.stripUnpairedSurrogates(text);
-    }
-
     static String languageTag(Voice voice) {
         return TextPreprocessor.languageTag(voice);
-    }
-
-    public static String expandNatoSpelling(String text) {
-        return TextPreprocessor.expandNatoSpelling(text);
-    }
-
-    public static String expandDevanagariDiacritic(String text) {
-        return TextPreprocessor.expandDevanagariDiacritic(text);
-    }
-
-    public static boolean isDevanagariNumberLang(String languageTag) {
-        return TextPreprocessor.isDevanagariNumberLang(languageTag);
-    }
-
-    public static String indianGroupedNumberToWords(String grouped) {
-        return TextPreprocessor.indianGroupedNumberToWords(grouped);
-    }
-
-    public static String indianGroupedNumberToWords(String grouped, boolean devanagari) {
-        return TextPreprocessor.indianGroupedNumberToWords(grouped, devanagari);
-    }
-
-    public static String indianRupeeAmountToWords(String amount) {
-        return TextPreprocessor.indianRupeeAmountToWords(amount);
-    }
-
-    public static String indianRupeeAmountToWords(String amount, boolean devanagari) {
-        return TextPreprocessor.indianRupeeAmountToWords(amount, devanagari);
-    }
-
-    public static String preprocessIndianText(String text) {
-        return TextPreprocessor.preprocessIndianText(text);
-    }
-
-    public static String preprocessIndianText(String text, String languageTag) {
-        return TextPreprocessor.preprocessIndianText(text, languageTag);
-    }
-
-    public static String clarifyEmojiAnnouncements(String text) {
-        return TextPreprocessor.clarifyEmojiAnnouncements(text);
-    }
-
-    public static String filterEmojis(String text) {
-        return TextPreprocessor.filterEmojis(text);
-    }
-
-    public static boolean containsPotentialEmoji(String text) {
-        return TextPreprocessor.containsPotentialEmoji(text);
-    }
-
-    public static boolean isEmojiCodePoint(int codePoint) {
-        return TextPreprocessor.isEmojiCodePoint(codePoint);
-    }
-
-    public static boolean isRegionalIndicator(int codePoint) {
-        return TextPreprocessor.isRegionalIndicator(codePoint);
-    }
-
-    public static boolean isEmojiJoiner(int codePoint) {
-        return TextPreprocessor.isEmojiJoiner(codePoint);
-    }
-
-    public static String formatDigitGrouping(String text, String mode, int threshold) {
-        return TextPreprocessor.formatDigitGrouping(text, mode, threshold);
-    }
-
-    public static String expandSpellingMode(String text) {
-        return TextPreprocessor.expandSpellingMode(text);
-    }
-
-    public static String expandPhoneticMode(String text) {
-        return TextPreprocessor.expandPhoneticMode(text);
-    }
-
-    public static boolean endsWithQuestionOrExclamation(String text) {
-        return TextPreprocessor.endsWithQuestionOrExclamation(text);
-    }
-
-    public static String sanitizeForWatchdog(String text) {
-        return TextPreprocessor.sanitizeForWatchdog(text);
-    }
-
-    public static String sanitizeForWatchdog(String text, boolean isSsml) {
-        return TextPreprocessor.sanitizeForWatchdog(text, isSsml);
-    }
-
-    public static List<String> chunkForWatchdog(String text) {
-        return TextPreprocessor.chunkForWatchdog(text);
-    }
-
-    public static String spaceSeparateDigits(String text) {
-        return TextPreprocessor.spaceSeparateDigits(text);
     }
 
     // Protected (not private) as a test hook: eSpeakTests subclasses call

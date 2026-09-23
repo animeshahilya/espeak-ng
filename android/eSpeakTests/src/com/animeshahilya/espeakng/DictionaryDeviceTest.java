@@ -87,45 +87,45 @@ public class DictionaryDeviceTest {
     @Test
     public void testNormalizeIndicDigitsAcrossScripts() {
         // Devanagari numerals
-        assertThat(TtsService.normalizeIndicDigits("०१२३४५६७८९"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("०१२३४५६७८९"), is("0123456789"));
         // Gurmukhi numerals
-        assertThat(TtsService.normalizeIndicDigits("੦੧੨੩੪੫੬੭੮੯"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("੦੧੨੩੪੫੬੭੮੯"), is("0123456789"));
         // Bengali numerals
-        assertThat(TtsService.normalizeIndicDigits("০১২৩৪৫৬৭৮৯"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("০১২৩৪৫৬৭৮৯"), is("0123456789"));
         // Gujarati numerals
-        assertThat(TtsService.normalizeIndicDigits("૦૧૨૩૪૫૬૭૮૯"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("૦૧૨૩૪૫૬૭૮૯"), is("0123456789"));
         // Odia numerals
-        assertThat(TtsService.normalizeIndicDigits("୦୧୨୩୪୫୬୭୮୯"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("୦୧୨୩୪୫୬୭୮୯"), is("0123456789"));
         // Tamil numerals
-        assertThat(TtsService.normalizeIndicDigits("௦௧௨௩௪௫௬௭௮௯"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("௦௧௨௩௪௫௬௭௮௯"), is("0123456789"));
         // Telugu numerals
-        assertThat(TtsService.normalizeIndicDigits("౦౧౨౩౪౫౬౭౮౯"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("౦౧౨౩౪౫౬౭౮౯"), is("0123456789"));
         // Kannada numerals
-        assertThat(TtsService.normalizeIndicDigits("೦೧೨೩೪೫೬೭೮೯"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("೦೧೨೩೪೫೬೭೮೯"), is("0123456789"));
         // Malayalam numerals
-        assertThat(TtsService.normalizeIndicDigits("൦൧൨൩൪൫൬൭൮൯"), is("0123456789"));
+        assertThat(TextPreprocessor.normalizeIndicDigits("൦൧൨൩൪൫൬൭൮൯"), is("0123456789"));
 
         // Full Indian formatting on Devanagari digits: ₹१,५०,००० -> 1 lakh 50000 rupees
-        String res = TtsService.preprocessIndianText("कुल राशि ₹१,५०,००० प्राप्त हुई।");
+        String res = TextPreprocessor.preprocessIndianText("कुल राशि ₹१,५०,००० प्राप्त हुई।");
         assertThat(res, containsString("1 lakh 50000 rupees"));
     }
 
     @Test
     public void testNatoPhoneticSpelling() {
-        assertThat(TtsService.expandNatoSpelling("a"), is("a, Alfa"));
-        assertThat(TtsService.expandNatoSpelling("B"), is("B, Bravo"));
-        assertThat(TtsService.expandNatoSpelling("z"), is("z, Zulu"));
+        assertThat(TextPreprocessor.expandNatoSpelling("a"), is("a, Alfa"));
+        assertThat(TextPreprocessor.expandNatoSpelling("B"), is("B, Bravo"));
+        assertThat(TextPreprocessor.expandNatoSpelling("z"), is("z, Zulu"));
         // Full words unaffected
-        assertThat(TtsService.expandNatoSpelling("cat"), is("cat"));
+        assertThat(TextPreprocessor.expandNatoSpelling("cat"), is("cat"));
     }
 
     @Test
     public void testDevanagariDiacriticsExploration() {
-        assertThat(TtsService.expandDevanagariDiacritic("\u093E"), is("आ की मात्रा"));
-        assertThat(TtsService.expandDevanagariDiacritic("\u094D"), is("हलन्त"));
-        assertThat(TtsService.expandDevanagariDiacritic("\u0902"), is("अनुस्वार"));
+        assertThat(TextPreprocessor.expandDevanagariDiacritic("\u093E"), is("आ की मात्रा"));
+        assertThat(TextPreprocessor.expandDevanagariDiacritic("\u094D"), is("हलन्त"));
+        assertThat(TextPreprocessor.expandDevanagariDiacritic("\u0902"), is("अनुस्वार"));
         // Normal text unaffected
-        assertThat(TtsService.expandDevanagariDiacritic("नमस्ते"), is("नमस्ते"));
+        assertThat(TextPreprocessor.expandDevanagariDiacritic("नमस्ते"), is("नमस्ते"));
     }
 
     @Test

@@ -38,9 +38,9 @@ import static org.hamcrest.Matchers.*;
 public class TextPipelineDeviceTest {
     @Test
     public void testWatchdogSanitizerKeepsParagraphBreaks() {
-        assertThat(TtsService.sanitizeForWatchdog("First paragraph.\n\nSecond paragraph.", false),
+        assertThat(TextPreprocessor.sanitizeForWatchdog("First paragraph.\n\nSecond paragraph.", false),
                 containsString("\n\n"));
-        assertThat(TtsService.sanitizeForWatchdog("First paragraph.\n\nSecond paragraph.", true),
+        assertThat(TextPreprocessor.sanitizeForWatchdog("First paragraph.\n\nSecond paragraph.", true),
                 containsString("\n\n"));
     }
 
@@ -48,7 +48,7 @@ public class TextPipelineDeviceTest {
     public void testChunkingKeepsParagraphBreaks() {
         final String text = "First paragraph with enough words to matter.\n\n"
                 + "Second paragraph right after a blank line.\n\nThird one.";
-        final List<String> chunks = TtsService.chunkForWatchdog(text);
+        final List<String> chunks = TextPreprocessor.chunkForWatchdog(text);
         assertThat(chunks, is(not(empty())));
         final StringBuilder joined = new StringBuilder();
         for (String chunk : chunks) {
@@ -78,7 +78,7 @@ public class TextPipelineDeviceTest {
 
     @Test
     public void testSimplifyUrls() {
-        String simplified = TtsService.simplifyUrls("Check https://www.example.com/docs/guide?ref=twitter&utm_source=test");
+        String simplified = TextPreprocessor.simplifyUrls("Check https://www.example.com/docs/guide?ref=twitter&utm_source=test");
         assertThat(simplified, containsString("example.com"));
         assertThat(simplified, containsString("docs"));
         assertThat(simplified, containsString("with parameters"));
@@ -89,7 +89,7 @@ public class TextPipelineDeviceTest {
     /** A date-shaped path segment stays part of the simplified URL. */
     @Test
     public void testSimplifyUrlsKeepsDateSlug() {
-        String simplified = TtsService.simplifyUrls("https://example.com/blog/2024-01-15-my-post");
+        String simplified = TextPreprocessor.simplifyUrls("https://example.com/blog/2024-01-15-my-post");
         assertThat(simplified, containsString("2024-01-15-my-post"));
         assertThat(simplified, not(containsString("https://")));
     }
@@ -98,22 +98,22 @@ public class TextPipelineDeviceTest {
     public void testCondenseRepeatedCharacters() {
         // NVDA repeat rule: 4+ identical symbols collapse to "N name" with
         // the table's singular names ("dash", not "dashes").
-        String counted = TtsService.condenseRepeatedCharacters("Divider: -------------------- end", VoiceSettings.REPEATED_CHARS_COUNT);
+        String counted = TextPreprocessor.condenseRepeatedCharacters("Divider: -------------------- end", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(counted, containsString("20"));
         assertThat(counted, containsString("dash"));
 
-        String asterisks = TtsService.condenseRepeatedCharacters("Password: ********", VoiceSettings.REPEATED_CHARS_COUNT);
+        String asterisks = TextPreprocessor.condenseRepeatedCharacters("Password: ********", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(asterisks, containsString("8"));
         assertThat(asterisks, containsString("star"));
 
         // NVDA has no letter collapsing and no truncate mode: a letter run
         // passes through untouched (both count and truncate map to the NVDA
         // rule now).
-        String letters = TtsService.condenseRepeatedCharacters("soooooooo long", VoiceSettings.REPEATED_CHARS_TRUNCATE);
+        String letters = TextPreprocessor.condenseRepeatedCharacters("soooooooo long", VoiceSettings.REPEATED_CHARS_TRUNCATE);
         assertThat(letters, is("soooooooo long"));
 
         // Off mode
-        String off = TtsService.condenseRepeatedCharacters("-------", VoiceSettings.REPEATED_CHARS_OFF);
+        String off = TextPreprocessor.condenseRepeatedCharacters("-------", VoiceSettings.REPEATED_CHARS_OFF);
         assertThat(off, is("-------"));
     }
 
@@ -125,35 +125,35 @@ public class TextPipelineDeviceTest {
         // Flag pairs use \\u escapes (raw RI chars have been mangled by
         // tooling before); other emoji are literals with codepoints noted.
         String flag = "\uD83C\uDDEE\uD83C\uDDF3"; // U+1F1EE U+1F1F3
-        assertThat(TtsService.clarifyEmojiAnnouncements(flag), is("flag India"));
-        assertThat(TtsService.clarifyEmojiAnnouncements("Go " + flag + "!"), is("Go flag India !"));
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements(flag), is("flag India"));
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements("Go " + flag + "!"), is("Go flag India !"));
 
         // Two flags name *between* pairs, never within one.
         String fr = "\uD83C\uDDEB\uD83C\uDDF7"; // U+1F1EB U+1F1F7
         String de = "\uD83C\uDDE9\uD83C\uDDEA"; // U+1F1E9 U+1F1EA
-        assertThat(TtsService.clarifyEmojiAnnouncements(fr + de), is("flag France flag Germany"));
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements(fr + de), is("flag France flag Germany"));
 
         // Adjacent plain emoji each get their name; ZWJ families, skin tones
         // and VS16 sequences resolve to a single name.
         String tears = "😂"; // U+1F602
-        assertThat(TtsService.clarifyEmojiAnnouncements(tears + tears),
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements(tears + tears),
                 is("face with tears of joy face with tears of joy"));
         String family = "👨‍👩‍👧"; // U+1F468 U+200D U+1F469 U+200D U+1F467
-        assertThat(TtsService.clarifyEmojiAnnouncements(family), is("family man, woman, girl"));
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements(family), is("family man, woman, girl"));
         String toned = "👍🏽"; // U+1F44D U+1F3FD
-        assertThat(TtsService.clarifyEmojiAnnouncements(toned), is("thumbs up medium skin tone"));
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements(toned), is("thumbs up medium skin tone"));
         String heart = "❤️"; // U+2764 U+FE0F
-        assertThat(TtsService.clarifyEmojiAnnouncements(heart), is("red heart"));
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements(heart), is("red heart"));
 
         // Abutting text is padded with spaces, as NVDA pads a replacement.
-        assertThat(TtsService.clarifyEmojiAnnouncements("a⏯b"), is("a play or pause button b"));
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements("a⏯b"), is("a play or pause button b"));
 
         // A ZWJ pulls in whatever follows it even when that codepoint is not
         // emoji on its own: U+1F642 U+200D U+2194 is the single "head shaking
         // horizontally" emoji, and cutting the arrow off would announce two
         // wrong symbols instead (same failure mode as split flags).
         String shaking = "🙂‍↔";
-        assertThat(TtsService.clarifyEmojiAnnouncements("a" + shaking + "b"),
+        assertThat(TextPreprocessor.clarifyEmojiAnnouncements("a" + shaking + "b"),
                 is("a head shaking horizontally b"));
     }
 
@@ -162,51 +162,51 @@ public class TextPipelineDeviceTest {
         // A repeated digit run (PIN, serial, phone number) must be read as-is in
         // every mode - "count" must not say "4 fives" and "truncate" must not
         // shorten "5555" to "555" and silently change the value.
-        String counted = TtsService.condenseRepeatedCharacters("Your PIN is 5555.", VoiceSettings.REPEATED_CHARS_COUNT);
+        String counted = TextPreprocessor.condenseRepeatedCharacters("Your PIN is 5555.", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(counted, is("Your PIN is 5555."));
 
-        String truncated = TtsService.condenseRepeatedCharacters("Call 1112223333 now.", VoiceSettings.REPEATED_CHARS_TRUNCATE);
+        String truncated = TextPreprocessor.condenseRepeatedCharacters("Call 1112223333 now.", VoiceSettings.REPEATED_CHARS_TRUNCATE);
         assertThat(truncated, is("Call 1112223333 now."));
 
         // Count mode also leaves plain letter runs alone (only runs get
         // counted) and never touches the surrounding sentence punctuation.
-        String lettersUntouched = TtsService.condenseRepeatedCharacters("yessss!!!!", VoiceSettings.REPEATED_CHARS_COUNT);
+        String lettersUntouched = TextPreprocessor.condenseRepeatedCharacters("yessss!!!!", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(lettersUntouched, containsString("yessss"));
         assertThat(lettersUntouched, containsString("4 bang"));
 
         // Three repeats are below NVDA's 4+ threshold: untouched.
-        assertThat(TtsService.condenseRepeatedCharacters("hey!!!", VoiceSettings.REPEATED_CHARS_COUNT),
+        assertThat(TextPreprocessor.condenseRepeatedCharacters("hey!!!", VoiceSettings.REPEATED_CHARS_COUNT),
                 is("hey!!!"));
     }
 
     @Test
     public void testCondenseRepeatedEmojisCountMode() {
         // Simple repeating emoji run
-        String counted = TtsService.condenseRepeatedCharacters("So funny 😂😂😂😂😂!", VoiceSettings.REPEATED_CHARS_COUNT);
+        String counted = TextPreprocessor.condenseRepeatedCharacters("So funny 😂😂😂😂😂!", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(counted, containsString("😂, 5 times"));
         assertThat(counted, not(containsString("😂😂")));
 
         // Whitespace-separated repeating emoji run
-        String spaced = TtsService.condenseRepeatedCharacters("Fire 🔥 🔥 🔥 🔥 🔥 here", VoiceSettings.REPEATED_CHARS_COUNT);
+        String spaced = TextPreprocessor.condenseRepeatedCharacters("Fire 🔥 🔥 🔥 🔥 🔥 here", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(spaced, containsString("🔥, 5 times"));
 
         // Repeating emoji with skin tones
-        String toned = TtsService.condenseRepeatedCharacters("Nice 👍🏽👍🏽👍🏽👍🏽", VoiceSettings.REPEATED_CHARS_COUNT);
+        String toned = TextPreprocessor.condenseRepeatedCharacters("Nice 👍🏽👍🏽👍🏽👍🏽", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(toned, containsString("👍🏽, 4 times"));
 
         // 3 emojis trigger repeat collapsing
-        String three = TtsService.condenseRepeatedCharacters("Three 😂😂😂 end", VoiceSettings.REPEATED_CHARS_COUNT);
+        String three = TextPreprocessor.condenseRepeatedCharacters("Three 😂😂😂 end", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(three, containsString("😂, 3 times"));
 
         // 2 emojis are below the repeat threshold (threshold is 3)
-        String justTwo = TtsService.condenseRepeatedCharacters("Pair 😂 😂 ok", VoiceSettings.REPEATED_CHARS_COUNT);
+        String justTwo = TextPreprocessor.condenseRepeatedCharacters("Pair 😂 😂 ok", VoiceSettings.REPEATED_CHARS_COUNT);
         assertThat(justTwo, containsString("Pair 😂 😂 ok"));
     }
 
     @Test
     public void testCondenseRepeatedEmojisTruncateMode() {
         // Truncate mode caps repeated emoji runs at 3 instances
-        String truncated = TtsService.condenseRepeatedCharacters("Love ❤️❤️❤️❤️❤️❤️ so much", VoiceSettings.REPEATED_CHARS_TRUNCATE);
+        String truncated = TextPreprocessor.condenseRepeatedCharacters("Love ❤️❤️❤️❤️❤️❤️ so much", VoiceSettings.REPEATED_CHARS_TRUNCATE);
         assertThat(truncated, containsString("❤️ ❤️ ❤️ "));
         assertThat(truncated, not(containsString("❤️❤️❤️❤️")));
     }
@@ -214,17 +214,17 @@ public class TextPipelineDeviceTest {
     @Test
     public void testCondenseRepeatedEmojisOffMode() {
         // Off mode preserves all repetitions untouched
-        String off = TtsService.condenseRepeatedCharacters("Laugh 😂😂😂😂😂", VoiceSettings.REPEATED_CHARS_OFF);
+        String off = TextPreprocessor.condenseRepeatedCharacters("Laugh 😂😂😂😂😂", VoiceSettings.REPEATED_CHARS_OFF);
         assertThat(off, is("Laugh 😂😂😂😂😂"));
     }
 
     @Test
     public void testSimplifyUrlsMixedCaseProtocols() {
-        String simplified1 = TtsService.simplifyUrls("Visit Https://Example.com/page");
+        String simplified1 = TextPreprocessor.simplifyUrls("Visit Https://Example.com/page");
         assertThat(simplified1, containsString("Example.com"));
         assertThat(simplified1, not(containsString("Https://")));
 
-        String simplified2 = TtsService.simplifyUrls("Go to HTTP://WWW.GITHUB.COM/test");
+        String simplified2 = TextPreprocessor.simplifyUrls("Go to HTTP://WWW.GITHUB.COM/test");
         assertThat(simplified2, containsString("GITHUB.COM"));
         assertThat(simplified2, not(containsString("HTTP://")));
         assertThat(simplified2, not(containsString("WWW.")));

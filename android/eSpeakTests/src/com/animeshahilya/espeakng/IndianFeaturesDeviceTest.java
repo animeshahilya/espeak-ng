@@ -83,119 +83,119 @@ public class IndianFeaturesDeviceTest {
 
     @Test
     public void testExpandProgrammingSymbols() {
-        assertThat(TtsService.expandProgrammingSymbols("if (x != y)"), containsString("not equal"));
-        assertThat(TtsService.expandProgrammingSymbols("x ≠ y"), containsString("not equal"));
-        assertThat(TtsService.expandProgrammingSymbols("if (a == b)"), containsString("double equals"));
-        assertThat(TtsService.expandProgrammingSymbols("while (i <= 10)"), containsString("less than or equal to"));
-        assertThat(TtsService.expandProgrammingSymbols("i ≤ 10"), containsString("less than or equal to"));
-        assertThat(TtsService.expandProgrammingSymbols("if (score >= 50)"), containsString("greater than or equal to"));
-        assertThat(TtsService.expandProgrammingSymbols("score ≥ 50"), containsString("greater than or equal to"));
-        assertThat(TtsService.expandProgrammingSymbols("(x) => x * 2"), containsString("implies"));
-        assertThat(TtsService.expandProgrammingSymbols("A ⇒ B"), containsString("implies"));
-        assertThat(TtsService.expandProgrammingSymbols("ptr->value"), containsString("arrow"));
-        assertThat(TtsService.expandProgrammingSymbols("go → right"), containsString("arrow"));
-        assertThat(TtsService.expandProgrammingSymbols("go ← left"), containsString("left arrow"));
-        assertThat(TtsService.expandProgrammingSymbols("go ↑ up"), containsString("up arrow"));
-        assertThat(TtsService.expandProgrammingSymbols("go ↓ down"), containsString("down arrow"));
-        assertThat(TtsService.expandProgrammingSymbols("a && b"), containsString("double ampersand"));
-        assertThat(TtsService.expandProgrammingSymbols("c || d"), containsString("double pipe"));
-        assertThat(TtsService.expandProgrammingSymbols("/* comment */"), containsString("comment start"));
-        assertThat(TtsService.expandProgrammingSymbols("Wait..."), containsString("dot dot dot"));
-        assertThat(TtsService.expandProgrammingSymbols("Wait…"), containsString("dot dot dot"));
-        assertThat(TtsService.expandProgrammingSymbols("± 5"), containsString("plus or minus"));
-        assertThat(TtsService.expandProgrammingSymbols("5 × 10"), containsString("times"));
-        assertThat(TtsService.expandProgrammingSymbols("10 ÷ 2"), containsString("divided by"));
-        assertThat(TtsService.expandProgrammingSymbols("x ≈ y"), containsString("almost equal to"));
-        assertThat(TtsService.expandProgrammingSymbols("Done ✓"), containsString("check"));
-        assertThat(TtsService.expandProgrammingSymbols("• Item"), containsString("bullet"));
-        assertThat(TtsService.expandProgrammingSymbols("30° C"), containsString("30 degrees"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("if (x != y)"), containsString("not equal"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("x ≠ y"), containsString("not equal"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("if (a == b)"), containsString("double equals"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("while (i <= 10)"), containsString("less than or equal to"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("i ≤ 10"), containsString("less than or equal to"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("if (score >= 50)"), containsString("greater than or equal to"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("score ≥ 50"), containsString("greater than or equal to"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("(x) => x * 2"), containsString("implies"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("A ⇒ B"), containsString("implies"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("ptr->value"), containsString("arrow"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("go → right"), containsString("arrow"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("go ← left"), containsString("left arrow"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("go ↑ up"), containsString("up arrow"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("go ↓ down"), containsString("down arrow"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("a && b"), containsString("double ampersand"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("c || d"), containsString("double pipe"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("/* comment */"), containsString("comment start"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("Wait..."), containsString("dot dot dot"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("Wait…"), containsString("dot dot dot"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("± 5"), containsString("plus or minus"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("5 × 10"), containsString("times"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("10 ÷ 2"), containsString("divided by"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("x ≈ y"), containsString("almost equal to"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("Done ✓"), containsString("check"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("• Item"), containsString("bullet"));
+        assertThat(TextPreprocessor.expandProgrammingSymbols("30° C"), containsString("30 degrees"));
     }
 
     @Test
     public void testPreprocessIndianText_CurrencyAndCommas() {
         // Indian Rupee currency normalization with lakh verbalization
-        String res1 = TtsService.preprocessIndianText("Paid ₹1,50,000 for service");
+        String res1 = TextPreprocessor.preprocessIndianText("Paid ₹1,50,000 for service");
         assertThat(res1, containsString("1 lakh 50000 rupees"));
 
-        String res2 = TtsService.preprocessIndianText("Total is Rs. 25,000 only");
+        String res2 = TextPreprocessor.preprocessIndianText("Total is Rs. 25,000 only");
         assertThat(res2, containsString("25000 rupees"));
 
         // Indian comma grouping verbalization
-        String res3 = TtsService.preprocessIndianText("Population count 12,34,567 registered");
+        String res3 = TextPreprocessor.preprocessIndianText("Population count 12,34,567 registered");
         assertThat(res3, containsString("12 lakh 34567"));
 
         // Paise for decimal rupee amounts
-        assertThat(TtsService.preprocessIndianText("Paid ₹10.50 only"),
+        assertThat(TextPreprocessor.preprocessIndianText("Paid ₹10.50 only"),
                 containsString("10 rupees 50 paise"));
-        assertThat(TtsService.preprocessIndianText("Paid ₹10.00 only"),
+        assertThat(TextPreprocessor.preprocessIndianText("Paid ₹10.00 only"),
                 containsString("10 rupees"));
     }
 
     @Test
     public void testPreprocessIndianText_HindiDevanagariUnits() {
         // Devanagari-script voices get native units, not Latin transliterations.
-        String res1 = TtsService.preprocessIndianText("कुल राशि ₹1,50,000 प्राप्त हुई।", "hi");
+        String res1 = TextPreprocessor.preprocessIndianText("कुल राशि ₹1,50,000 प्राप्त हुई।", "hi");
         assertThat(res1, containsString("1 लाख 50000 रुपये"));
 
-        assertThat(TtsService.preprocessIndianText("₹10.50", "hi"), is("10 रुपये 50 पैसे"));
-        assertThat(TtsService.preprocessIndianText("Population 12,34,567", "hi"),
+        assertThat(TextPreprocessor.preprocessIndianText("₹10.50", "hi"), is("10 रुपये 50 पैसे"));
+        assertThat(TextPreprocessor.preprocessIndianText("Population 12,34,567", "hi"),
                 containsString("12 लाख 34567"));
-        assertThat(TtsService.preprocessIndianText("Budget of 5L allocated", "hi"),
+        assertThat(TextPreprocessor.preprocessIndianText("Budget of 5L allocated", "hi"),
                 containsString("5 लाख"));
-        assertThat(TtsService.preprocessIndianText("Turnover 2cr expected", "hi"),
+        assertThat(TextPreprocessor.preprocessIndianText("Turnover 2cr expected", "hi"),
                 containsString("2 करोड़"));
-        assertThat(TtsService.preprocessIndianText("Salary is 50k", "hi"),
+        assertThat(TextPreprocessor.preprocessIndianText("Salary is 50k", "hi"),
                 containsString("50 हज़ार"));
 
         // Marathi shares the Devanagari units; English keeps Latin ones.
-        assertThat(TtsService.preprocessIndianText("₹1,00,000", "mr"), is("1 लाख रुपये"));
-        assertThat(TtsService.preprocessIndianText("₹1,00,000", "en-in"), is("1 lakh rupees"));
-        assertThat(TtsService.preprocessIndianText("₹1,00,000", ""), is("1 lakh rupees"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹1,00,000", "mr"), is("1 लाख रुपये"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹1,00,000", "en-in"), is("1 lakh rupees"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹1,00,000", ""), is("1 lakh rupees"));
 
         // Space after rupee symbol, trailing /- marks, and Re. abbreviation
-        assertThat(TtsService.preprocessIndianText("₹ 500", "en-in"), is("500 rupees"));
-        assertThat(TtsService.preprocessIndianText("Rs. 500/-", "en-in"), is("500 rupees"));
-        assertThat(TtsService.preprocessIndianText("Rs 500/=", "en-in"), is("500 rupees"));
-        assertThat(TtsService.preprocessIndianText("Re. 1", "en-in"), is("1 rupee"));
-        assertThat(TtsService.preprocessIndianText("Re. 1/-", "en-in"), is("1 rupee"));
-        assertThat(TtsService.preprocessIndianText("₹1", "en-in"), is("1 rupee"));
-        assertThat(TtsService.preprocessIndianText("₹1", "hi"), is("1 रुपया"));
-        assertThat(TtsService.preprocessIndianText("₹0.50", "en-in"), is("50 paise"));
-        assertThat(TtsService.preprocessIndianText("₹0.01", "en-in"), is("1 paisa"));
-        assertThat(TtsService.preprocessIndianText("₹0.01", "hi"), is("1 पैसा"));
-        assertThat(TtsService.preprocessIndianText("₹10.5", "en-in"), is("10 rupees 50 paise"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹ 500", "en-in"), is("500 rupees"));
+        assertThat(TextPreprocessor.preprocessIndianText("Rs. 500/-", "en-in"), is("500 rupees"));
+        assertThat(TextPreprocessor.preprocessIndianText("Rs 500/=", "en-in"), is("500 rupees"));
+        assertThat(TextPreprocessor.preprocessIndianText("Re. 1", "en-in"), is("1 rupee"));
+        assertThat(TextPreprocessor.preprocessIndianText("Re. 1/-", "en-in"), is("1 rupee"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹1", "en-in"), is("1 rupee"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹1", "hi"), is("1 रुपया"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹0.50", "en-in"), is("50 paise"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹0.01", "en-in"), is("1 paisa"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹0.01", "hi"), is("1 पैसा"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹10.5", "en-in"), is("10 rupees 50 paise"));
 
         // Currency-prefixed lakh/crore/thousand shorthand ("₹5L") previously ran the
         // "L"/"Cr" suffix straight into "rupees" as a stray letter ("5 rupeesL") since the
         // currency regex only captured the digits; it must verbalize as a unit instead.
-        assertThat(TtsService.preprocessIndianText("₹5L", "en-in"), is("5 lakh rupees"));
-        assertThat(TtsService.preprocessIndianText("Rs 2.5Cr", "en-in"), is("2.5 crore rupees"));
-        assertThat(TtsService.preprocessIndianText("₹10k", "en-in"), is("10 thousand rupees"));
-        assertThat(TtsService.preprocessIndianText("₹5L", "hi"), is("5 लाख रुपये"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹5L", "en-in"), is("5 lakh rupees"));
+        assertThat(TextPreprocessor.preprocessIndianText("Rs 2.5Cr", "en-in"), is("2.5 crore rupees"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹10k", "en-in"), is("10 thousand rupees"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹5L", "hi"), is("5 लाख रुपये"));
 
         // A plain amount followed by unrelated text must not have its separating space
         // swallowed by the optional shorthand-unit lookahead ("₹500 dollars" is not "500L").
-        assertThat(TtsService.preprocessIndianText("₹500 dollars", "en-in"), is("500 rupees dollars"));
+        assertThat(TextPreprocessor.preprocessIndianText("₹500 dollars", "en-in"), is("500 rupees dollars"));
     }
 
     @Test
     public void testPreprocessIndianText_DandaAndBankingSlash() {
         // Danda spacing
-        String res1 = TtsService.preprocessIndianText("नमस्ते।आप कैसे हैं?");
+        String res1 = TextPreprocessor.preprocessIndianText("नमस्ते।आप कैसे हैं?");
         assertThat(res1, is("नमस्ते। आप कैसे हैं?"));
 
         // Banking transaction slash separation
-        String res2 = TtsService.preprocessIndianText("Transaction UPI/423891028341/PAYTM completed");
+        String res2 = TextPreprocessor.preprocessIndianText("Transaction UPI/423891028341/PAYTM completed");
         assertThat(res2, containsString("UPI / 423891028341 / PAYTM"));
     }
 
     @Test
     public void testPreprocessIndianText_ShorthandQuantities() {
-        assertThat(TtsService.preprocessIndianText("Salary is 50k"), containsString("50 thousand"));
-        assertThat(TtsService.preprocessIndianText("Budget of 5L allocated"), containsString("5 lakh"));
-        assertThat(TtsService.preprocessIndianText("Turnover 2cr expected"), containsString("2 crore"));
+        assertThat(TextPreprocessor.preprocessIndianText("Salary is 50k"), containsString("50 thousand"));
+        assertThat(TextPreprocessor.preprocessIndianText("Budget of 5L allocated"), containsString("5 lakh"));
+        assertThat(TextPreprocessor.preprocessIndianText("Turnover 2cr expected"), containsString("2 crore"));
         // Lowercase l is litres, not lakh.
-        assertThat(TtsService.preprocessIndianText("Add 2 l of water"), is("Add 2 l of water"));
+        assertThat(TextPreprocessor.preprocessIndianText("Add 2 l of water"), is("Add 2 l of water"));
     }
 
     @Test
@@ -323,7 +323,7 @@ public class IndianFeaturesDeviceTest {
         };
 
         for (String phrase : testPhrases) {
-            String expanded = TtsService.expandProgrammingSymbols(phrase);
+            String expanded = TextPreprocessor.expandProgrammingSymbols(phrase);
             mAudioBytesReceived.set(0);
             mLatch = new CountDownLatch(1);
             mEngine.synthesize(expanded, false);
