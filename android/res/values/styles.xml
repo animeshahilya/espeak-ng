@@ -46,6 +46,15 @@
         <item name="colorOutline">@color/m3_outline</item>
         <item name="colorOutlineVariant">@color/m3_outlineVariant</item>
         <item name="android:colorBackground">@color/m3_surface</item>
+        <item name="preferenceTheme">@style/AppPreferenceTheme</item>
+    </style>
+
+    <!-- Switch rows use Material 3's switch (see preference_material_switch). -->
+    <style name="AppPreferenceTheme" parent="PreferenceThemeOverlay">
+        <item name="switchPreferenceCompatStyle">@style/AppSwitchPreference</item>
+    </style>
+    <style name="AppSwitchPreference" parent="Preference.SwitchPreferenceCompat.Material">
+        <item name="android:widgetLayout">@layout/preference_material_switch</item>
     </style>
     <style name="AppTheme" parent="AppTheme.Base">
     </style>

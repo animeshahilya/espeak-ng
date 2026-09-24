@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The widget of every switch row: Material 3's switch in place of the
+     preference library's older one. It is a SwitchCompat, so
+     SwitchPreferenceCompat drives it as usual; the row itself stays the
+     single TalkBack stop and reads the switch state, as with the stock widget. -->
+<com.google.android.material.materialswitch.MaterialSwitch
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/switchWidget"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@null"
+    android:clickable="false"
+    android:focusable="false" />

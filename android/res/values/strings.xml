@@ -111,21 +111,21 @@
   <string name="setting_emoji_processing">Emoji processing</string>
   <string name="emoji_announce">Announce emojis</string>
   <string name="emoji_ignore">Ignore / skip emojis</string>
-  <string name="setting_audio_optimizer">Audio optimizer (warmer, fuller voice)</string>
+  <string name="setting_audio_optimizer">Audio optimizer</string>
   <string name="import_voice_success">Successfully imported voice data.</string>
   <string name="import_voice_error">Failed to import voice file.</string>
   <string name="setting_capitals">Capital letters</string>
   <string name="capitals_none">None</string>
-  <string name="capitals_sound">Play a beep (character by character)</string>
-  <string name="capitals_pitch">Raise pitch, subtle (character by character)</string>
-  <string name="capitals_pitch_moderate">Raise pitch, moderate (character by character)</string>
-  <string name="capitals_pitch_strong">Raise pitch, strong (character by character)</string>
-  <string name="capitals_say">Say \"capital\" (character by character)</string>
+  <string name="capitals_sound">Play a beep</string>
+  <string name="capitals_pitch">Raise pitch, subtle</string>
+  <string name="capitals_pitch_moderate">Raise pitch, moderate</string>
+  <string name="capitals_pitch_strong">Raise pitch, strong</string>
+  <string name="capitals_say">Say \"capital\"</string>
   <string name="setting_emphasize_questions">Emphasize questions and exclamations</string>
   <string name="setting_emphasize_questions_summary">Raises the pitch more at the end of questions and exclamations.</string>
-  <string name="setting_wordgap">Word pause length</string>
+  <string name="setting_wordgap">Pause between words</string>
   <string name="formatter_gap_ms">%s ms</string>
-  <string name="setting_pause_scale">Reading pace (pause length)</string>
+  <string name="setting_pause_scale">Reading pace</string>
   <string name="variant_klatt_1">Klatt 1 (Impulsive)</string>
   <string name="variant_klatt_2">Klatt 2 (Natural)</string>
   <string name="variant_klatt_3">Klatt 3 (Sampled pulse 1)</string>
@@ -134,8 +134,6 @@
   <string name="variant_klatt_6">Klatt 6 (SpeechPlayer)</string>
 
   <!-- Preference Categories -->
-  <string name="category_voice_language">Voice and language</string>
-  <string name="category_voice_parameters">Voice parameters</string>
   <string name="category_about">About</string>
   <string name="about_title">About eSpeak NG Advanced</string>
   <string name="about_summary">Version and credits</string>
@@ -144,8 +142,8 @@
   <string name="setting_indian_numbering">Indian number and currency formatting</string>
   <string name="setting_indian_numbering_summary">Indian voices only. Reads amounts like ₹1,00,000, 5L and 2cr in lakh and crore.</string>
   <string name="setting_user_dictionary">User dictionary</string>
-  <string name="setting_user_dictionary_summary">Your own pronunciations for words, names and abbreviations.</string>
-  <string name="setting_nato_spelling">Phonetic letters (Alfa, Bravo)</string>
+  <string name="setting_user_dictionary_summary">Your own pronunciations for words and names</string>
+  <string name="setting_nato_spelling">Phonetic letters</string>
   <string name="phonetic_letters_character">When moving by character</string>
   <string name="phonetic_letters_always">Always</string>
   <string name="setting_spoken_diacritics">Devanagari matras in exploration</string>
@@ -195,7 +193,6 @@
   <string name="audio_profile_gentle">Gentle warmth</string>
   <string name="audio_profile_balanced">Balanced (recommended)</string>
   <string name="audio_profile_full">Full richness</string>
-  <string name="category_locks">Caller-proof locks</string>
   <string name="setting_force_rate">Lock speech rate</string>
   <string name="setting_force_rate_summary">Ignore caller app rate requests, always use your saved rate.</string>
   <string name="setting_force_pitch">Lock pitch</string>
@@ -271,11 +268,10 @@
   <string name="languages_all_deselected">All languages deselected</string>
 
   <!-- Sub-screens and reorganized categories -->
-  <string name="category_advanced_settings">Advanced &amp; specialized settings</string>
-  <string name="screen_numbers_title">Number reading</string>
-  <string name="screen_numbers_summary">Indian number formats, digit grouping, money and codes</string>
+  <string name="screen_numbers_title">Numbers and abbreviations</string>
+  <string name="screen_numbers_summary">Indian formats, money, codes, abbreviations</string>
   <string name="category_number_formats">Number formats</string>
-  <string name="category_number_extras">Extra number reading</string>
+  <string name="category_number_extras">Read in full</string>
   <string name="setting_read_money">Read money amounts</string>
   <string name="setting_read_money_summary">English voices. Reads $5.50 as 5 dollars 50 cents. Also euros, pounds, yen and rupees.</string>
   <string name="setting_hinglish">Read Hinglish (beta)</string>
@@ -285,19 +281,18 @@
   <string name="setting_punctuation_sounds">Punctuation sounds</string>
   <string name="setting_punctuation_sounds_summary">Plays a short sound instead of naming brackets and quotes, when your punctuation level reads them.</string>
   <string name="setting_phrase_pauses">Pauses in long sentences</string>
-  <string name="setting_phrase_pauses_summary">Adds a short pause before words like \"and\" or \"because\" (Hindi \"और\", \"कि\") when a long sentence has no commas. English and Hindi voices.</string>
+  <string name="setting_phrase_pauses_summary">A short pause before words like \"and\" or \"because\" in long sentences without commas. English and Hindi.</string>
   <string name="setting_expand_abbreviations">Expand abbreviations</string>
   <string name="setting_expand_abbreviations_summary">Reads Prof, vs, approx, govt, 5 km, 12 Jan and No. 7 in full. English voices.</string>
-  <string name="screen_text_processing_title">Pronunciation &amp; text processing</string>
-  <string name="screen_text_processing_summary">Punctuation, capitals, reading modes, symbols, emojis, NATO</string>
-  <string name="category_punctuation_symbols">Punctuation &amp; symbols</string>
-  <string name="category_reading_modes">Reading modes &amp; exploration</string>
-  <string name="screen_locks_title">Caller-proof locks</string>
-  <string name="screen_locks_summary">Keep your rate, pitch and volume even when apps ask for others</string>
-  <string name="screen_tools_title">Tools, backup &amp; about</string>
-  <string name="screen_tools_summary">Backup &amp; restore, activity log, reading presets, about</string>
-  <string name="category_presets">Reading style presets</string>
-  <string name="category_data_management">Data management</string>
+  <string name="screen_text_processing_title">Punctuation and symbols</string>
+  <string name="screen_text_processing_summary">Level, sounds, capitals, emoji</string>
+  <string name="category_reading_modes">How text is read</string>
+  <string name="screen_locks_title">When apps change speech</string>
+  <string name="screen_locks_summary">Keep your rate, pitch and volume</string>
+  <string name="screen_tools_title">Backup and about</string>
+  <string name="screen_tools_summary">Backup, restore, activity log, version</string>
+  <string name="category_presets">Reading style</string>
+  <string name="category_data_management">Backup and data</string>
 
   <!-- Customization: Repeated characters -->
   <string name="setting_repeated_chars">Condense repeated characters</string>
@@ -331,7 +326,7 @@
 
   <!-- Customization: Intonation style - Custom group (advanced) -->
   <string name="setting_intonation_group">Custom intonation group</string>
-  <string name="setting_intonation_group_summary">Only used when Intonation style is set to Custom. Raw engine tone-mapping groups 0&#8211;7; only 1 (Expressive) and 3 (Flat) have a named preset above - the others are internal variants this app has not tuned or verified, offered here for advanced experimentation.</string>
+  <string name="setting_intonation_group_summary">Advanced. Engine tone groups 0 to 7: 1 is Expressive and 3 is Flat, the others are untuned.</string>
   <string-array name="intonation_group_entries">
     <item>0 (engine default)</item>
     <item>1 (same as Expressive)</item>
@@ -354,11 +349,11 @@
   </string-array>
 
   <!-- Customization: Capital letter announcement scope -->
-  <string name="setting_capitals_scope">Capital announcement scope</string>
+  <string name="setting_capitals_scope">Announce capitals</string>
   <string name="setting_capitals_scope_summary">Character navigation only, or during all reading.</string>
   <string-array name="capitals_scope_entries">
-    <item>Character navigation only (default)</item>
-    <item>All reading (words and sentences)</item>
+    <item>When moving by character</item>
+    <item>Always</item>
   </string-array>
   <string-array name="capitals_scope_values">
     <item>char_only</item>
@@ -412,4 +407,20 @@
     <item quantity="other">eSpeak NG User Dictionary (%1$d rules)</item>
   </plurals>
   <string name="dict_share_failed">Failed to share dictionary.</string>
+  <string name="category_voice">Voice</string>
+  <string name="category_customize">Customize</string>
+  <string name="category_app">App</string>
+  <string name="screen_voice_title">Voice and sound</string>
+  <string name="screen_voice_summary">Pitch, intonation, volume, rate boost</string>
+  <string name="category_tone">Tone</string>
+  <string name="category_speed_sound">Speed and sound</string>
+  <string name="screen_pauses_title">Pauses</string>
+  <string name="screen_pauses_summary">Sentences, words, long sentences</string>
+  <string name="category_punctuation">Punctuation</string>
+  <string name="category_capitals">Capital letters</string>
+  <string name="category_emoji">Emoji</string>
+  <string name="screen_reading_title">Reading</string>
+  <string name="screen_reading_summary">Reading mode, letters, web addresses, Hinglish</string>
+  <string name="category_letters">Letters</string>
+  <string name="category_advanced">Advanced</string>
 </resources>
