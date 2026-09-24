@@ -118,3 +118,14 @@ phoneme V
   FMT(vowel/V_3)
 endphoneme
 
+// Schwa the spelling rules keep on purpose (learned rules in mr_rules): the
+// same vowel as @, but never reduced to @-, which would drop it.
+phoneme @4
+  vwl flag1 starttype #@  endtype #@
+  ipa ə
+  length 130
+  IF nextPh(H) OR prevPh(H) THEN
+    FMT(vowel/@_low)
+  ENDIF
+  FMT(vowel/@_bck)
+endphoneme

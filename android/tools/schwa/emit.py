@@ -1,8 +1,8 @@
 """Write learned inherent-vowel rules into an eSpeak rules file.
 
-usage: emit.py bn|hi RULES_IN RULES_OUT [N_RULES]
+usage: emit.py bn|hi|mr RULES_IN RULES_OUT [N_RULES]
 
-Reads <lang>_rules_learned.json (from bn_learn.py / hi_learn.py) and adds
+Reads <lang>_rules_learned.json (from bn_learn.py / deva_learn.py) and adds
 eSpeak rule lines to every consonant group, each ending "// generated".
 Safe to re-run on its own output: earlier generated lines are removed
 first. Line endings of the input file are kept.
@@ -70,7 +70,37 @@ LANGS = {
        letters([(0x904, 0x93A), (0x93C, 0x94E), (0x958, 0x964)], ['ं', 'ँ', 'ः'])),
         verb_suffixes=[],
         protect_final=True,
-        # hi_slots.py leaves out word-initial consonants (their vowel is never
+        # deva_slots.py leaves out word-initial consonants (their vowel is never
+        # dropped), so no learned rule may apply there: हमारा is not "hmaara".
+        skip_initial=True,
+    ),
+    'mr': dict(
+        V='L20', C='L21', ANY='L22', N='L23', VI='L24',
+        consonant=lambda ch: 0x915 <= ord(ch) <= 0x939 or 0x958 <= ord(ch) <= 0x95F,
+        keep='@4',   # a schwa the phoneme table never reduces (ph_marathi)
+        header="""// Schwa kept or dropped: corrections learned from WikiPron on top of the
+// phoneme table's own schwa deletion.
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here. On the 20% it never saw, inherent vowels
+// kept or dropped right went from 87.6% to 92.1% (61 fixed, 19 broken).
+// Regenerate them with those tools rather than editing by hand.
+// L20 = written vowels (signs, and independent vowels except अ);
+// L21 = consonant letters; L22 = any Devanagari letter; L23 = ं ँ;
+// L24 = independent vowels except अ (what can follow a consonant's own vowel).
+""",
+        groups=lambda: """.L20 %s
+.L21 %s
+.L22 %s
+.L24 %s
+.L23 ं ँ
+""" % (letters([(0x93E, 0x94D), (0x905, 0x915)], ['ॠ', 'ॡ', 'ॢ', 'ॣ']).replace('अ ', ''),
+       letters([(0x915, 0x93A), (0x958, 0x960)]),
+       letters([(0x904, 0x93A), (0x93C, 0x94E), (0x958, 0x964)], ['ं', 'ँ', 'ः']),
+       letters([(0x906, 0x915)], ['ॠ', 'ॡ'])),
+        verb_suffixes=[],
+        protect_final=True,
+        # deva_slots.py leaves out word-initial consonants (their vowel is never
         # dropped), so no learned rule may apply there: हमारा is not "hmaara".
         skip_initial=True,
     ),
@@ -148,6 +178,8 @@ def emit(rules, cfg):
         self_letter = cons.get('self', 'L:')[2:] or None
         pres = side(cons, ['pre1', 'pre2', 'pre3'], cfg)
         posts = side(cons, ['post1', 'post2', 'post3'], cfg, implicit_first=cfg['C'])
+        if cfg.get('VI'):
+            posts = [[cfg['VI']] + p[1:] if p[:1] == [cfg['V']] else p for p in posts]
         # A drop right before a word-final consonant stops the final-vowel
         # rule from dropping that consonant's vowel (bn চামচ -> "chamcho"),
         # so unless the learned rule says otherwise the next consonant must

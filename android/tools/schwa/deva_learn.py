@@ -1,7 +1,10 @@
-"""Hindi schwa-correction rules on top of eSpeak's current behaviour.
+"""Devanagari (hi, mr, ne) schwa-correction rules
+
+usage: deva_learn.py LANG [MAX_RULES]
+ on top of eSpeak's current behaviour.
 
 Same rule induction as bn_learn, but each slot starts from what eSpeak does
-today (hi_slots.tsv 'now'), so rules only learn corrections: DROP where
+today (LANG_slots.tsv 'now'), so rules only learn corrections: DROP where
 eSpeak wrongly keeps the vowel, KEEP where it wrongly drops it.
 """
 import collections, hashlib, itertools, json, os, sys
@@ -22,9 +25,9 @@ def cls(ch):
 
 B.cls = cls
 
-def load():
+def load(lang):
     data = []
-    for line in open('hi_slots.tsv', encoding='utf-8'):
+    for line in open(f'{lang}_slots.tsv', encoding='utf-8'):
         w, i, want, now = line.rstrip('\n').split('\t')
         ctx = B.context(w, int(i))
         data.append((w, int(i), want == 'DROP', frozenset(B.feats(ctx)), now == 'DROP'))
@@ -84,11 +87,12 @@ def report(name, data, pred):
     print(f'{name}: slots {len(data)}, right {right_before} -> {right_after} ({100*right_before/len(data):.1f}% -> {100*right_after/len(data):.1f}%), fixed {fixed}, broke {broke}')
 
 if __name__ == '__main__':
-    data = load()
+    lang = sys.argv[1]
+    data = load(lang)
     train = [d for d in data if not B.is_test(d[0])]
     test = [d for d in data if B.is_test(d[0])]
-    rules = learn(train, int(sys.argv[1]) if len(sys.argv) > 1 else 40,
+    rules = learn(train, int(sys.argv[2]) if len(sys.argv) > 2 else 40,
                   min_prec=float(os.environ.get('MIN_PREC', '0.75')))
     report('train', train, apply(rules, train))
     report('TEST', test, apply(rules, test))
-    json.dump(rules, open('hi_rules_learned.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(rules, open(f'{lang}_rules_learned.json', 'w', encoding='utf-8'), ensure_ascii=False)

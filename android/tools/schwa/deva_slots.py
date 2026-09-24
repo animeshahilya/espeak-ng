@@ -1,12 +1,16 @@
-"""Hindi schwa slots: what eSpeak does now and what WikiPron wants.
+"""Devanagari schwa slots (hi, mr, ne): what eSpeak does now and what
+WikiPron wants.
 
-Needs hi_nodel.tsv (eSpeak with schwa deletion switched off, so every
-inherent vowel is spoken) and hi_norm.tsv (normal eSpeak). Each inherent
+usage: deva_slots.py LANG WIKIPRON_TSV
+
+Needs LANG_nodel.tsv (eSpeak with schwa deletion switched off, so every
+inherent vowel is spoken) and LANG_norm.tsv (normal eSpeak). Each inherent
 vowel is mapped to its position in the no-deletion output; the reference
 alignment says whether it should be kept, and the normal output says
-whether eSpeak keeps it today. Writes hi_slots.tsv: word, index, want, now
+whether eSpeak keeps it today. Writes LANG_slots.tsv: word, index, want, now
 (DROP/KEEP).
 """
+import sys
 import score as S
 
 CONS = set(chr(c) for c in range(0x915, 0x93A)) | set(chr(c) for c in range(0x958, 0x960))
@@ -41,11 +45,12 @@ def load(path):
 
 def main():
     ref = {}
-    for line in open('hin_deva_broad.tsv', encoding='utf-8'):
+    lang, tsv = sys.argv[1], sys.argv[2]
+    for line in open(tsv, encoding='utf-8'):
         w, _, p = line.rstrip('\n').partition('\t')
         if ' ' not in w and w not in ref:
             ref[w] = p
-    nodel, norm = load('hi_nodel.tsv'), load('hi_norm.tsv')
+    nodel, norm = load(f'{lang}_nodel.tsv'), load(f'{lang}_norm.tsv')
     rows, used, skipped = [], 0, 0
     for w in ref:
         if w not in nodel or w not in norm:
@@ -79,7 +84,7 @@ def main():
                 continue
             rows.append((w, idx, 'KEEP' if want.get(gpos, True) else 'DROP',
                          'KEEP' if now.get(gpos, True) else 'DROP'))
-    with open('hi_slots.tsv', 'w', encoding='utf-8') as f:
+    with open(f'{lang}_slots.tsv', 'w', encoding='utf-8') as f:
         for r in rows:
             f.write('%s\t%d\t%s\t%s\n' % r)
     import collections
