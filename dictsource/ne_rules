@@ -25,6 +25,11 @@
 
 
 
+// Vowels, vowel signs and candrabindu; not the halant, which group A includes.
+// Consonant letters only (group C also matches the anusvara: इंडिया).
+.L02 क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न ऩ प फ ब भ म य र ऱ ल ळ ऴ व श ष स ह
+.L01 अ आ इ ई उ ऊ ऋ ए ऐ ओ औ ा ि ी ु ू ृ े ै ो ौ ँ
+
 .replace
 	०	0
 	१	1
@@ -670,6 +675,13 @@
 .group ड
 	ड	d.V
 	ड (B	d.
+	// After a vowel ड is the flap [ɽ]: गाडा, करोड, अड्कल (WikiPron 48 of 53).
+	L01) ड	r.V
+	L01) ड (B	r.
+	L01) ड (_	r.
+	L02) ड	r.V
+	L02) ड (B	r.
+	L02) ड (_	r.
 	डँ	d.V~'
 	डॅ	d.V~'
 	ड (्ड	d.,
@@ -684,6 +696,13 @@
 .group ढ
 	ढ	d.#V
 	ढ (B	d.#
+	// After a vowel ढ is the breathy flap [ɽʱ] (WikiPron 23 of 24).
+	L01) ढ	r.hV
+	L01) ढ (B	r.h
+	L01) ढ (_	r.h
+	L02) ढ	r.hV
+	L02) ढ (B	r.h
+	L02) ढ (_	r.h
 	ढँ	d.#V~'
 	ढॅ	d.#V~'
 	्) ढ (_	d.#@/
@@ -849,8 +868,8 @@
 	_) वँ	wV~'
 	वॅ	vV~'
 	व (B	w'
-	_) व	wV
-	_) व (B	w
+	_) व	bV	// word-initial व is [b]: विकास, विद्यालय (WikiPron 34 of 43)
+	_) व (B	b
 	_) व (्	v
 	C्) व	w'
 	ह्) व	w'

@@ -52,9 +52,11 @@ s'upras;l;sk;i s;m;'Es.na z;m;'ilavats:a s;n;'Edats; z;n;'uxani\" 'as;p;Ekt r'as
 супрасльскі смешна змілавацца снедаць знюханы аспект расселіна вусце змёрзціся" "Cyrl"
 test_phon bg "'ax tS'udna b@Lg'arska z'em;o
 pol'uSvaj ts@ft;'aSti: Z'ita" "Ах чудна българска земьо, полюшвай цъфтящи жита." "Cyrl"
-test_phon bn "m'alO,eSi,aj 'Obojd#,O Sr'omik,Oder b'i*udd#,e tS'OlOm,an_:_: m'egat#r'i_:_: 'ob#idZ,ane Se d'eSe S'Oto S'Oto 'ob#ib,aSik,e 'at.Ok k'O*etS#,e Se d'eSer 'imigr,eSOn p'uliS
+test_phon bn "m'alO,eSi,aj 'Obojd#,O sr'omik,Oder b'i*udd#,e tS'OlOm,an_:_: m'egat#r'i_:_: 'ob#idZ,ane Se d'eSe S'Oto S'Oto 'ob#ib,aSik,e 'at.Ok k'O*etS#,e Se d'eSer 'imigr,eSOn p'uliS
 dZ'ader 'at.Ok k'O*a h'OetS#,e
 t,ader pr'aj 'O*d#ek,Oi b'aNlad,eSi n'agO*,ik" "মালয়েশিয়ায় অবৈধ শ্রমিকদের বিরুদ্ধে চলমান 'মেগা-থ্রি' অভিযানে সে দেশে শত শত অভিবাসীকে আটক করেছে সে দেশের ইমিগ্রেশন পুলিশ। যাদের আটক করা হয়েছে, তাদের প্রায় অর্ধেকই বাংলাদেশী নাগরিক।" "Beng"
+test_phon bn "sn'an" "স্নান"
+test_phon bn "sr'Om" "শ্রম"
 test_phon bs "l^'ub&znI f'En^eRdZ,Ij& tS'adZ;&vog l'its& x'otS;E d'a m'i p'ok&ZE St'os" "Љубазни фењерџија чађавог лица хоће да ми покаже штос." "Cyrl"
 test_phon bs "l^'ub&znI f'En^eRdZ,Ij& tS'adZ;&vog l'its& x'otS;E d'a m'i p'ok&ZE St'os" "Ljubazni fenjerdžija čađavog lica hoće da mi pokaže štos." "Latn"
 test_phon ca "d'on@ @m'oR k@ s@**'as f@l'is
@@ -127,6 +129,10 @@ test_phon is "c'aI:mI n'i:; 'WksI hj'E:_|R
 'I:JIsd Tj'oU:vym n'u: b'aI:DI v'i:l#_:_: O:x 'aUd@-RE:ba
 s'aI:vW_|R g@-Rj'E:d 'aU:Dan_:_: Tvi:; 'ulban va:_|R 'oU:nid" "Kæmi ný öxi hér, ykist þjófum nú bæði víl og ádrepa. Sævör grét áðan því úlpan var ónýt." "Latn"
 test_phon it "kwel f'Ets zg'embo k'Op@-*e dav'antI" "Quel fez sghembo copre davanti" "Latn"
+test_phon ne "g'a:r.a:" "गाडा"
+test_phon ne "k@*'o:r." "करोड"
+test_phon ne "'In.d.Ij,a:" "इंडिया"
+test_phon ne "bIk'a:s" "विकास"
 test_phon scn "b'Ed.0d.U siS'ilja
 C'umI
 S:'a*a E S:'ankU" "Beddu Sicilia, ciumi, sciara e xancu." "Latn"
