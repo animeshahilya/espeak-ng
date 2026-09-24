@@ -214,6 +214,12 @@ public final class TextPreprocessor {
             text = NumberReading.readCodes(text);
             offsetMap = chainOffset(offsetMap, before, text);
         }
+        if (normalReading && settings.isExpandAbbreviationsEnabled()
+                && NumberReading.isEnglish(languageTag(voice))) {
+            String before = text;
+            text = Abbreviations.process(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
         if (normalReading && settings.isReadMoneyEnabled()
                 && NumberReading.isEnglish(languageTag(voice))) {
             String before = text;
@@ -258,8 +264,26 @@ public final class TextPreprocessor {
         // punctuation. Single-character utterances skip this pass - the
         // single-char branch above already named the character.
         if (!isSsml && !isSingleCharacterUtterance) {
+            // Opt-in: brackets and quotes the level would name become sounds
+            // (markers TtsService turns into tones); the pass below then
+            // leaves the markers alone, as they are not symbols it knows.
+            if (settings.isPunctuationSoundsEnabled()) {
+                String before = text;
+                text = Earcons.mark(text, symbolLevel(settings, readingMode),
+                        customSymbols(settings, readingMode));
+                offsetMap = chainOffset(offsetMap, before, text);
+            }
             String before = text;
             text = processNvdaSymbols(text, settings, readingMode);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
+        // After the symbol pass, so the commas it adds are pauses, never
+        // announced as "comma".
+        if (normalReading && settings.isPhrasePausesEnabled()
+                && PhrasePauses.supports(languageTag(voice))) {
+            String before = text;
+            text = PhrasePauses.process(text, languageTag(voice));
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -289,27 +313,46 @@ public final class TextPreprocessor {
     private static String processNvdaSymbols(String text, VoiceSettings settings, String readingMode) {
         final boolean collapse =
                 !VoiceSettings.REPEATED_CHARS_OFF.equals(settings.getRepeatedCharactersMode());
+        final String custom = customSymbols(settings, readingMode);
+        if (custom != null) {
+            return NvdaSymbolProcessor.processCustom(text, custom, collapse);
+        }
+        return NvdaSymbolProcessor.processText(text, symbolLevel(settings, readingMode), collapse);
+    }
+
+    /** The NVDA symbol level the preset (or code mode) selects. */
+    private static int symbolLevel(VoiceSettings settings, String readingMode) {
         if (VoiceSettings.READING_CODE.equals(readingMode)) {
-            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_ALL, collapse);
+            return NvdaSymbolProcessor.LEVEL_ALL;
         }
         final int preset = settings.getPunctuationLevel();
         final String chars = settings.getPunctuationCharacters();
         if (preset == SpeechSynthesis.PUNCT_ALL) {
-            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_ALL, collapse);
+            return NvdaSymbolProcessor.LEVEL_ALL;
         }
-        if (preset == SpeechSynthesis.PUNCT_NONE) {
-            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_NONE, collapse);
-        }
-        if (chars == null || chars.isEmpty()) {
-            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_NONE, collapse);
+        if (preset == SpeechSynthesis.PUNCT_NONE || chars == null || chars.isEmpty()) {
+            return NvdaSymbolProcessor.LEVEL_NONE;
         }
         if (chars.equals(VoiceSettings.PUNCTUATION_CHARS_SOME)) {
-            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_SOME, collapse);
+            return NvdaSymbolProcessor.LEVEL_SOME;
         }
-        if (chars.equals(VoiceSettings.PUNCTUATION_CHARS_MOST)) {
-            return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_MOST, collapse);
+        return NvdaSymbolProcessor.LEVEL_MOST;
+    }
+
+    /** The custom character list in force, or null when a level applies. */
+    private static String customSymbols(VoiceSettings settings, String readingMode) {
+        if (VoiceSettings.READING_CODE.equals(readingMode)) {
+            return null;
         }
-        return NvdaSymbolProcessor.processCustom(text, chars, collapse);
+        final int preset = settings.getPunctuationLevel();
+        final String chars = settings.getPunctuationCharacters();
+        if (preset == SpeechSynthesis.PUNCT_ALL || preset == SpeechSynthesis.PUNCT_NONE
+                || chars == null || chars.isEmpty()
+                || chars.equals(VoiceSettings.PUNCTUATION_CHARS_SOME)
+                || chars.equals(VoiceSettings.PUNCTUATION_CHARS_MOST)) {
+            return null;
+        }
+        return chars;
     }
 
     public static TextOffsetMap chainOffset(TextOffsetMap previous, String before, String after) {
@@ -679,9 +722,25 @@ public final class TextPreprocessor {
             } else if (c >= 'A' && c <= 'Z') {
                 return c + ", " + NATO_PHONETICS[c - 'A'];
             }
+            // Devanagari: the word every Hindi school primer teaches
+            // ("क से कबूतर"), the way NATO words disambiguate Latin letters.
+            int i = DEVANAGARI_LETTERS.indexOf(c);
+            if (i >= 0) {
+                return c + " से " + DEVANAGARI_WORDS[i];
+            }
         }
         return text;
     }
+
+    private static final String DEVANAGARI_LETTERS =
+            "अआइईउऊएऐओऔकखगघचछजझटठडढतथदधनपफबभमयरलवशषसह";
+    private static final String[] DEVANAGARI_WORDS = {
+            "अनार", "आम", "इमली", "ईख", "उल्लू", "ऊन", "एड़ी", "ऐनक", "ओखली", "औरत",
+            "कबूतर", "खरगोश", "गमला", "घड़ी", "चम्मच", "छतरी", "जहाज़", "झंडा",
+            "टमाटर", "ठठेरा", "डमरू", "ढक्कन", "तरबूज़", "थरमस", "दवात", "धनुष", "नल",
+            "पतंग", "फल", "बकरी", "भालू", "मछली", "यज्ञ", "रथ", "लट्टू", "वकील",
+            "शलगम", "षट्कोण", "सपेरा", "हल",
+    };
 
     public static String expandDevanagariDiacritic(String text) {
         if (text == null) return text;

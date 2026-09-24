@@ -336,6 +336,56 @@ public class TextPipelineDeviceTest {
         assertThat(NumberReading.readCodes("Code at 10:30"), is("Code at 10:30"));
     }
 
+    /** Opt-in punctuation sounds: only symbols the level would name become markers. */
+    @Test
+    public void testPunctuationSounds() {
+        String most = Earcons.mark("f(x) \"hi\"", NvdaSymbolProcessor.LEVEL_MOST, null);
+        assertThat(most.length(), is(9));
+        assertThat(Earcons.isMarker(most.charAt(1)), is(true));
+        assertThat(Earcons.isMarker(most.charAt(3)), is(true));
+        assertThat(Earcons.isMarker(most.charAt(5)), is(true));
+        assertThat(most.charAt(1) != most.charAt(3), is(true));
+        // At "some" brackets are not named, so nothing becomes a sound.
+        assertThat(Earcons.mark("f(x)", NvdaSymbolProcessor.LEVEL_SOME, null), is("f(x)"));
+        // A custom list decides per character.
+        assertThat(Earcons.mark("(x)", NvdaSymbolProcessor.LEVEL_ALL, "("), is(Earcons.markerFor('(') + "x)"));
+        byte[] pcm = Earcons.pcm(Earcons.markerFor('('), 22050, 1, 100);
+        assertThat(pcm.length > 22050 / 10, is(true));
+    }
+
+    /** Opt-in phrase pauses: only long comma-less stretches, never short ones. */
+    @Test
+    public void testPhrasePauses() {
+        assertThat(PhrasePauses.process(
+                "I went to the market early this morning and bought some fresh vegetables for dinner.", "en"),
+                is("I went to the market early this morning, and bought some fresh vegetables for dinner."));
+        assertThat(PhrasePauses.process("Salt and pepper.", "en"), is("Salt and pepper."));
+        assertThat(PhrasePauses.process(
+                "मैं आज सुबह बाजार गया था और वहाँ से ताज़ी सब्ज़ियाँ लेकर आया।", "hi"),
+                is("मैं आज सुबह बाजार गया था, और वहाँ से ताज़ी सब्ज़ियाँ लेकर आया।"));
+        assertThat(PhrasePauses.supports("de"), is(false));
+    }
+
+    /** Opt-in abbreviations: the ones eSpeak reads as written, only in a settling context. */
+    @Test
+    public void testExpandAbbreviations() {
+        assertThat(Abbreviations.process("Prof. Rao vs the govt"), is("Professor Rao versus the government"));
+        assertThat(Abbreviations.process("It is approx 5 km and 1 hr away"),
+                is("It is approximately 5 kilometres and 1 hour away"));
+        assertThat(Abbreviations.process("Due on 12 Jan, room No. 7"), is("Due on 12 January, room Number 7"));
+        assertThat(Abbreviations.process("The sun rose in Jan"), is("The sun rose in Jan"));
+        assertThat(Abbreviations.process("Tata Pvt Ltd"), is("Tata Private Ltd"));
+        assertThat(Abbreviations.process("Ask Prof."), is("Ask Professor."));
+    }
+
+    /** Phonetic letters on character navigation: Devanagari letters get the primer word. */
+    @Test
+    public void testDevanagariLetterWords() {
+        assertThat(TextPreprocessor.expandNatoSpelling("क"), is("क से कबूतर"));
+        assertThat(TextPreprocessor.expandNatoSpelling("ह"), is("ह से हल"));
+        assertThat(TextPreprocessor.expandNatoSpelling("b"), is("b, Bravo"));
+    }
+
     /** Beta Hinglish reading: Hindi sentences in Latin letters become Devanagari, English stays. */
     @Test
     public void testHinglish() {

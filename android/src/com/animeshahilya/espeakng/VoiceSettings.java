@@ -61,6 +61,9 @@ public class VoiceSettings {
     // Opt-in extras beyond NVDA (new keys: the removed pre-parity toggles defaulted on).
     public static final String PREF_READ_MONEY = "espeak_read_money";
     public static final String PREF_READ_CODES = "espeak_read_codes";
+    public static final String PREF_PUNCTUATION_SOUNDS = "espeak_punctuation_sounds";
+    public static final String PREF_PHRASE_PAUSES = "espeak_phrase_pauses";
+    public static final String PREF_EXPAND_ABBREVIATIONS = "espeak_expand_abbreviations";
     public static final String PREF_HINGLISH = "espeak_hinglish";
     public static final String PREF_USER_DICTIONARY = "espeak_user_dictionary";
     /** Phonetic letters: {@link #PHONETIC_OFF}, {@link #PHONETIC_CHARACTER} or {@link #PHONETIC_ALWAYS}. */
@@ -419,6 +422,18 @@ public class VoiceSettings {
 
     public boolean isReadCodesEnabled() {
         return mPreferences.getBoolean(PREF_READ_CODES, false);
+    }
+
+    public boolean isPunctuationSoundsEnabled() {
+        return mPreferences.getBoolean(PREF_PUNCTUATION_SOUNDS, false);
+    }
+
+    public boolean isPhrasePausesEnabled() {
+        return mPreferences.getBoolean(PREF_PHRASE_PAUSES, false);
+    }
+
+    public boolean isExpandAbbreviationsEnabled() {
+        return mPreferences.getBoolean(PREF_EXPAND_ABBREVIATIONS, false);
     }
 
     /** Beta, off by default: Hindi typed in Latin letters, read as Hindi (English voices). */

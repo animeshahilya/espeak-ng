@@ -613,6 +613,22 @@ public final class NvdaSymbolProcessor {
     private NvdaSymbolProcessor() {
     }
 
+    /**
+     * Whether a plain symbol is named at this level, or with a custom list
+     * (customChars non-null) whether the list has it. Used by Earcons to swap
+     * exactly the symbols this pass would have spoken.
+     */
+    public static boolean isAnnounced(String symbol, int userLevel, String customChars) {
+        Symbol s = SIMPLE.get(symbol);
+        if (s == null || s.replacement == null || s.replacement.isEmpty()) {
+            return false;
+        }
+        if (customChars != null) {
+            return customChars.contains(symbol);
+        }
+        return userLevel >= s.level;
+    }
+
     private static boolean matchesCustom(String id, Set<Integer> custom) {
         for (int i = 0; i < id.length();) {
             int cp = id.codePointAt(i);

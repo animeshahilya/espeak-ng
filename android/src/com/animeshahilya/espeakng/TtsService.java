@@ -885,20 +885,49 @@ public class TtsService extends TextToSpeechService {
             // No setVoice() here: the call at the top of setup already
             // applied this exact voice+variant (SpeechSynthesis memoizes it),
             // and re-applying cost a full native dictionary reload per call.
+            // Punctuation sounds: each marker becomes a unit of its own,
+            // played as a tone between the pieces of speech around it.
             int base = 0;
             for (String chunk : TextPreprocessor.chunkForWatchdog(text)) {
-                units.add(chunk);
+                int start = 0;
+                for (int i = 0; i <= chunk.length(); i++) {
+                    if (i < chunk.length() && !Earcons.isMarker(chunk.charAt(i))) {
+                        continue;
+                    }
+                    if (i > start) {
+                        String piece = chunk.substring(start, i);
+                        units.add(piece);
+                        unitVoices.add(voice);
+                        unitBases.add(base);
+                        base += piece.codePointCount(0, piece.length());
+                    }
+                    if (i < chunk.length()) {
+                        units.add(chunk.substring(i, i + 1));
+                        unitVoices.add(voice);
+                        unitBases.add(base);
+                        base++;
+                    }
+                    start = i + 1;
+                }
+            }
+            if (units.isEmpty()) {
+                units.add("");
                 unitVoices.add(voice);
-                unitBases.add(base);
-                base += chunk.codePointCount(0, chunk.length());
+                unitBases.add(0);
             }
         }
 
-        if (units.size() > 1) {
+        if (units.size() > 1 || isEarconUnit(units.get(0))) {
             mSegmentsRemaining.set(units.size());
             for (int ui = 0; ui < units.size(); ui++) {
                 if (mIsStopped.get()) {
                     break;
+                }
+                if (isEarconUnit(units.get(ui))) {
+                    mSynthCallback.onSynthDataReady(Earcons.pcm(units.get(ui).charAt(0),
+                            sampleRate, engine.getChannelCount(), targetVolume));
+                    segmentFinished();
+                    continue;
                 }
                 try {
                     mChunkBase = unitBases.get(ui);
@@ -927,6 +956,10 @@ public class TtsService extends TextToSpeechService {
         // error, empty string, or early stop), finalize here so the framework
         // is never hung waiting for the request to end.
         finishRequest();
+    }
+
+    private static boolean isEarconUnit(String unit) {
+        return unit.length() == 1 && Earcons.isMarker(unit.charAt(0));
     }
 
     /** Signals done() exactly once per request, whichever path gets there first. */

@@ -144,6 +144,11 @@
         <com.animeshahilya.espeakng.preference.SpeakPunctuationPreference
             android:key="espeak_punctuation_level"
             android:title="@string/espeak_speak_punctuation" />
+        <CheckBoxPreference
+            android:key="espeak_punctuation_sounds"
+            android:title="@string/setting_punctuation_sounds"
+            android:summary="@string/setting_punctuation_sounds_summary"
+            android:defaultValue="false" />
         <ListPreference
             android:key="espeak_capitals"
             android:title="@string/setting_capitals"
@@ -186,6 +191,16 @@
             android:key="espeak_hinglish"
             android:title="@string/setting_hinglish"
             android:summary="@string/setting_hinglish_summary"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="espeak_phrase_pauses"
+            android:title="@string/setting_phrase_pauses"
+            android:summary="@string/setting_phrase_pauses_summary"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="espeak_expand_abbreviations"
+            android:title="@string/setting_expand_abbreviations"
+            android:summary="@string/setting_expand_abbreviations_summary"
             android:defaultValue="false" />
         <ListPreference
             android:key="espeak_phonetic_letters"
