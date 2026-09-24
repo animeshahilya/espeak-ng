@@ -3,13 +3,13 @@
 [![Android CI](https://github.com/animeshahilya/espeak-ng/actions/workflows/android.yml/badge.svg)](https://github.com/animeshahilya/espeak-ng/actions/workflows/android.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](COPYING)
 [![Android 8.0+](https://img.shields.io/badge/Android-8.0%2B-green.svg)](android/)
-[![152 languages](https://img.shields.io/badge/Languages-152-brightgreen.svg)](espeak-ng-data/lang)
+[![153 languages](https://img.shields.io/badge/Languages-153-brightgreen.svg)](espeak-ng-data/lang)
 
 eSpeak NG as an Android text-to-speech engine, built for screen reader users (TalkBack, Jieshuo, Commentary and others).
 
 It speaks the way eSpeak speaks in NVDA on Windows, so it sounds familiar if you already use NVDA. The Indian languages are the only exception: they get extra fixes here, and those fixes affect Indian voices only.
 
-- **Fully offline.** All 152 languages are inside the app, and it has no internet permission.
+- **Fully offline.** All 153 languages are inside the app, and it has no internet permission.
 - **Speaks before unlock.** Works in Direct Boot, so your screen reader talks on the lock screen after a restart.
 - **Fast and light.** Starts speaking at once and handles very high speech rates.
 
@@ -40,7 +40,7 @@ Every voice except the Indian ones should sound the same as eSpeak in NVDA. The 
 ## Settings
 
 ### Voice and language
-- **Languages**: choose which of the 152 languages show up in Android's voice list. Includes a search box.
+- **Languages**: choose which of the 153 languages show up in Android's voice list. Includes a search box.
 - **Voice variant**: male 1–8, female 1–5, Klatt, character voices (such as Max), young, old, croak and whisper.
 - **Test voice**: hear what your current settings sound like.
 
