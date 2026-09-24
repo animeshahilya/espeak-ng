@@ -230,10 +230,10 @@ _?	pr'oSnOtSihnO
 আমায়	$u
 আমার 	$u
 
-আমরা 	$u	// we
+আমরা	amra	$u	// we
 আমাদের	$u
 
-আপনি	$u	// you(formal)
+আপনি	apni	$u	// you(formal)
 আপনাকে	$u
 আপনার 	$u
 
@@ -247,7 +247,7 @@ _?	pr'oSnOtSihnO
 তোর 	$u
 
 এ	$u	// he/she/it
-আপনি	$u
+আপনি	apni	$u
 এটার 	$u
 এর 	$u
 
@@ -456,3 +456,7 @@ _?	pr'oSnOtSihnO
 
 // final ত keeps its vowel in this common word (the general rule drops it)
 শত		S'Oto
+
+// Common words the inherent-vowel rules get wrong
+তোমরা	tomra	$u
+ভারতে	b#arOte
