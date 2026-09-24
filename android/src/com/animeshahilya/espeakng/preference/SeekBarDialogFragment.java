@@ -17,7 +17,7 @@
 
 package com.animeshahilya.espeakng.preference;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.HapticFeedbackConstants;

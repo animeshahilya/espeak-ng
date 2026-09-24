@@ -19,7 +19,6 @@
 package com.animeshahilya.espeakng;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +46,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -56,6 +56,8 @@ import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import com.animeshahilya.espeakng.preference.ImportVoicePreference;
 import com.animeshahilya.espeakng.preference.SeekBarDialogFragment;
@@ -1020,7 +1022,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             tvVersion.setText(context.getString(R.string.about_version_format, versionName));
         }
 
-        final AlertDialog dialog = new AlertDialog.Builder(context)
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.about_title)
                 .setView(aboutView)
                 .setPositiveButton(android.R.string.ok, null)

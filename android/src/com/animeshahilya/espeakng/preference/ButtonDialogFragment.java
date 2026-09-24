@@ -1,12 +1,14 @@
 package com.animeshahilya.espeakng.preference;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.preference.PreferenceDialogFragmentCompat;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**
  * Shared base for the app's preference dialogs. OK is routed to
@@ -33,7 +35,7 @@ abstract class ButtonDialogFragment extends PreferenceDialogFragmentCompat {
             return null;
         }
         dismissAllowingStateLoss();
-        return new AlertDialog.Builder(getContext()).create();
+        return new MaterialAlertDialogBuilder(getContext()).create();
     }
 
     /**
@@ -42,7 +44,7 @@ abstract class ButtonDialogFragment extends PreferenceDialogFragmentCompat {
      * open (an AlertDialog button listener auto-dismisses).
      */
     protected final AlertDialog buildDialog(View content) {
-        return new AlertDialog.Builder(getContext())
+        return new MaterialAlertDialogBuilder(getContext())
                 .setPositiveButton(android.R.string.ok, null)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setView(content)

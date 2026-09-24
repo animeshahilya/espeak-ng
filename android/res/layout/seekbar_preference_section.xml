@@ -23,7 +23,7 @@
         android:importantForAccessibility="no"
         android:layout_marginStart="@dimen/parameter_bezel_inset"
         android:layout_marginEnd="@dimen/parameter_bezel_inset"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?attr/textAppearanceTitleMedium" />
 
     <SeekBar
         android:id="@+id/seekBar"

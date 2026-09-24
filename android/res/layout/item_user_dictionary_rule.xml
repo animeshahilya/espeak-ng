@@ -45,7 +45,7 @@
             android:text="@string/dict_rule_arrow"
             android:importantForAccessibility="no"
             android:textSize="15sp"
-            android:textColor="@color/colorAccent" />
+            android:textColor="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/rule_replacement"

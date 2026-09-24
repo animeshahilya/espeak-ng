@@ -145,26 +145,15 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
 
         syncListViewCheckedState();
 
-        final ImageButton searchClear = mDialogView.findViewById(R.id.languages_search_clear);
         final TextView countView = mDialogView.findViewById(R.id.languages_count);
         if (countView != null && getContext() != null) {
             countView.setText(getContext().getResources().getQuantityString(R.plurals.languages_count_all, mAllEntries.size(), mAllEntries.size()));
-        }
-
-        if (searchClear != null && searchInput != null) {
-            searchClear.setOnClickListener(v -> {
-                searchInput.setText("");
-                searchInput.requestFocus();
-            });
         }
 
         if (searchInput != null) {
             searchInput.addTextChangedListener(new TextWatcher() {
                 @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
                 @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (searchClear != null) {
-                        searchClear.setVisibility(s != null && s.length() > 0 ? View.VISIBLE : View.GONE);
-                    }
                     mAdapter.getFilter().filter(s, new Filter.FilterListener() {
                         @Override
                         public void onFilterComplete(int count) {

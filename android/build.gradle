@@ -60,6 +60,11 @@ dependencies {
     // TtsSettingsActivity's OnBackPressedCallback, so Back in a sub-screen
     // left the app instead of returning to the main list. 1.6+ bridges it.
     implementation 'androidx.activity:activity:1.10.1'
+    // Material 3 (Material You) styling for the settings UI: M3 theme parent,
+    // MaterialAlertDialogBuilder dialogs, TextInputLayout fields and dynamic
+    // color. Pinned 1.13.0: latest proven stable on the targetSdk 37 line
+    // (1.14.0 was weeks old when this was added).
+    implementation 'com.google.android.material:material:1.13.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'org.hamcrest:hamcrest:2.2'
     androidTestImplementation 'org.hamcrest:hamcrest-core:2.2'

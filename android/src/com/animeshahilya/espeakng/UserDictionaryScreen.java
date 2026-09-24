@@ -19,7 +19,6 @@
 package com.animeshahilya.espeakng;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,7 +47,10 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import org.json.JSONArray;
 import java.util.ArrayList;
-import java.util.List;
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;import java.util.List;
 import java.util.Locale;
 
 /**
@@ -63,30 +65,32 @@ final class UserDictionaryScreen {
         showDialog(context, "", "all");
     }
 
-    /** Adds a visible TextView label bound to an input for TalkBack. */
+    /** Adds a Material outlined text field with a floating label for TalkBack. */
     private static EditText labeledInput(Context context, LinearLayout layout,
                                          String labelText, String hintText, String initial,
                                          int inputType) {
         float density = context.getResources().getDisplayMetrics().density;
         int minTouch = (int) (48 * density + 0.5f);
 
-        final TextView label = new TextView(context);
-        label.setText(labelText);
-        label.setTextAppearance(android.R.style.TextAppearance_Small);
-        layout.addView(label);
+        // TextInputLayout carries the visible label (floating hint) and names
+        // the field to accessibility services, replacing the old standalone
+        // label TextView without losing the TalkBack binding. Outlined style
+        // matches the search fields in the XML dialog layouts.
+        final TextInputLayout field = new TextInputLayout(context, null,
+                com.google.android.material.R.attr.textInputOutlinedStyle);
+        field.setHint(labelText);
         final EditText et = new EditText(context);
         et.setHint(hintText);
         // Never set contentDescription on EditText: TalkBack needs to read user-typed text!
         if (initial != null && !initial.isEmpty()) et.setText(initial);
         if (inputType != 0) et.setInputType(inputType);
         et.setMinimumHeight(minTouch);
-        et.setId(View.generateViewId());
-        label.setLabelFor(et.getId());
+        field.addView(et);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.bottomMargin = (int) (8 * density + 0.5f);
-        et.setLayoutParams(lp);
-        layout.addView(et);
+        field.setLayoutParams(lp);
+        layout.addView(field);
         return et;
     }
 
@@ -137,18 +141,7 @@ final class UserDictionaryScreen {
         }
         spFilter.setSelection(sel);
 
-        final ImageButton btnClear = dialogView.findViewById(R.id.dict_search_clear);
         final TextView tvCount = dialogView.findViewById(R.id.dict_rules_count);
-
-        if (btnClear != null) {
-            btnClear.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    etSearch.setText("");
-                    etSearch.requestFocus();
-                }
-            });
-        }
 
         final List<Integer> viewToReal = new ArrayList<>();
         final List<UserDictionary> displayedRules = new ArrayList<>();
@@ -272,18 +265,12 @@ final class UserDictionaryScreen {
 
         if (searchQuery != null && !searchQuery.isEmpty()) {
             etSearch.setText(searchQuery);
-            if (btnClear != null) {
-                btnClear.setVisibility(View.VISIBLE);
-            }
         }
         updateList.run();
 
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (btnClear != null) {
-                    btnClear.setVisibility(s != null && s.length() > 0 ? View.VISIBLE : View.GONE);
-                }
                 updateList.run();
             }
             @Override public void afterTextChanged(Editable s) {}
@@ -298,7 +285,7 @@ final class UserDictionaryScreen {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        final AlertDialog dialog = new AlertDialog.Builder(context)
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(context.getString(R.string.dict_title_count,
                         context.getString(R.string.setting_user_dictionary), rules.size()))
                 .setView(dialogView)
@@ -352,7 +339,7 @@ final class UserDictionaryScreen {
                 context.getString(R.string.dict_action_preview),
                 context.getString(R.string.dict_action_edit),
                 context.getString(R.string.dict_action_delete) };
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(context.getString(R.string.dict_rule_title, r.getPattern()) + "\n" + label)
                 .setItems(actions, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int which) {
@@ -363,7 +350,7 @@ final class UserDictionaryScreen {
                         } else if (which == 1) {
                             showEditRuleDialog(context, searchQuery, categoryFilter, realIdx);
                         } else {
-                            new AlertDialog.Builder(context)
+                            new MaterialAlertDialogBuilder(context)
                                     .setTitle(R.string.dict_delete_confirm_title)
                                     .setMessage(context.getString(R.string.dict_delete_confirm_message, r.getPattern()))
                                     .setPositiveButton(R.string.dict_action_delete, new DialogInterface.OnClickListener() {
@@ -399,7 +386,7 @@ final class UserDictionaryScreen {
                 context.getString(R.string.dict_export_file),
                 context.getString(R.string.dict_import_file)
         };
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.dict_import_export_title)
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int which) {
@@ -603,7 +590,7 @@ final class UserDictionaryScreen {
         final ScrollView scrollView = new ScrollView(context);
         scrollView.addView(layout);
 
-        final AlertDialog dialog = new AlertDialog.Builder(context)
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(existing != null ? R.string.dict_edit_title : R.string.dict_add_title)
                 .setView(scrollView)
                 .setPositiveButton(R.string.dict_save, null)
