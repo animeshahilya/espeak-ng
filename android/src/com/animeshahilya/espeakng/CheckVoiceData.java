@@ -123,8 +123,12 @@ public class CheckVoiceData extends Activity {
      * the same time (e.g. the TTS framework binds the service while the
      * user has the reinstall screen open); without a lock they would race
      * rmdir() against each other's writes into the same directory.
+     *
+     * Readers of the tree take it too (SpeechSynthesis.getAvailableVoices(),
+     * onCreate() below): a voice listing taken mid-rmdir returned 8 of 137
+     * voices, and the check-voice-data result reported the rest missing.
      */
-    private static final Object EXTRACT_LOCK = new Object();
+    static final Object EXTRACT_LOCK = new Object();
 
     public static boolean extractVoiceData(Context context) {
         synchronized (EXTRACT_LOCK) {
@@ -140,6 +144,7 @@ public class CheckVoiceData extends Activity {
             // Invalidate the hasBaseResources() memo before the tree
             // disappears, so concurrent readers don't trust stale stats.
             sHasBaseResources = null;
+            SpeechSynthesis.clearVoiceCache();
             FileUtils.rmdir(dataPath);
 
             try (java.io.InputStream dataStream = context.getResources().openRawResource(R.raw.espeakdata)) {
@@ -156,7 +161,9 @@ public class CheckVoiceData extends Activity {
                 // (now including the freshly stamped version) actually landed,
                 // so the next launch retries instead of serving broken voices.
                 // Note the version must be written *before* this check - it is
-                // itself one of the base resources.
+                // itself one of the base resources. Re-scan rather than trust
+                // the memo: a reader may have cached "missing" mid-extraction.
+                sHasBaseResources = null;
                 if (!hasBaseResources(context)) {
                     Log.e(TAG, "Voice data extraction incomplete, will retry");
                     return false;
@@ -179,17 +186,22 @@ public class CheckVoiceData extends Activity {
         ArrayList<String> availableLanguages = new ArrayList<String>();
         ArrayList<String> unavailableLanguages = new ArrayList<String>();
 
-        boolean haveBaseResources = hasBaseResources(storageContext);
-        if (!haveBaseResources || canUpgradeResources(storageContext)) {
-            if (!haveBaseResources) {
-                unavailableLanguages.add(Locale.ENGLISH.toString());
+        final List<Voice> voices;
+        // Checked and listed under the extraction lock, so the answer
+        // describes one consistent tree, never one being rebuilt.
+        synchronized (EXTRACT_LOCK) {
+            boolean haveBaseResources = hasBaseResources(storageContext);
+            if (!haveBaseResources || canUpgradeResources(storageContext)) {
+                if (!haveBaseResources) {
+                    unavailableLanguages.add(Locale.ENGLISH.toString());
+                }
+                returnResults(Engine.CHECK_VOICE_DATA_FAIL, availableLanguages, unavailableLanguages);
+                return;
             }
-            returnResults(Engine.CHECK_VOICE_DATA_FAIL, availableLanguages, unavailableLanguages);
-            return;
-        }
 
-        final SpeechSynthesis engine = new SpeechSynthesis(storageContext, mSynthReadyCallback);
-        final List<Voice> voices = LanguageSettings.filterVoices(engine.getAvailableVoices(), prefs);
+            final SpeechSynthesis engine = new SpeechSynthesis(storageContext, mSynthReadyCallback);
+            voices = LanguageSettings.filterVoices(engine.getAvailableVoices(), prefs);
+        }
         if (BuildConfig.DEBUG) {
             Set<String> selected = LanguageSettings.getSelectedLanguages(prefs);
             Log.i(TAG, "CheckVoiceData: selected=" + (selected == null ? "ALL" : selected.size()) + ", exposing=" + voices.size());

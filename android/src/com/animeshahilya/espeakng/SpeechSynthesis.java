@@ -191,7 +191,12 @@ public class SpeechSynthesis {
                 return new ArrayList<Voice>(cached);
             }
 
-            final String[] results = nativeGetAvailableVoices();
+            // Waits out a data re-extraction: listing mid-rmdir returns a
+            // partial set of voices (see CheckVoiceData.EXTRACT_LOCK).
+            final String[] results;
+            synchronized (CheckVoiceData.EXTRACT_LOCK) {
+                results = nativeGetAvailableVoices();
+            }
             final List<Voice> voices = new ArrayList<Voice>();
             if (results != null) {
                 mVoiceCount = results.length / 4;

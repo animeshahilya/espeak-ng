@@ -27,6 +27,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.animeshahilya.espeakng.CheckVoiceData;
 import com.animeshahilya.espeakng.DownloadVoiceData;
+import com.animeshahilya.espeakng.SpeechSynthesis;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -150,6 +151,36 @@ public class CheckVoiceDataTest
             }
 
             assertThat(removed.toString(), is("[]"));
+        }
+    }
+
+    /**
+     * Listing voices while the data is being re-extracted must wait for it
+     * and return the complete list. Unguarded, a listing taken mid-rmdir
+     * returned 8 of 137 voices, which made testAvailableVoicesRemoved fail
+     * now and then with the Indian and most English voices "missing".
+     */
+    @Test
+    public void testListingDuringExtractionIsNeverPartial() throws Exception
+    {
+        final android.content.Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        final java.io.File version = new java.io.File(CheckVoiceData.getDataPath(context), "version");
+        final SpeechSynthesis engine = new SpeechSynthesis(context, null);
+        SpeechSynthesis.clearVoiceCache();
+        final int full = engine.getAvailableVoices().size();
+        assertThat(full, greaterThan(100));
+
+        for (int round = 0; round < 5; round++) {
+            // A stale version stamp makes the next extraction rebuild the tree.
+            com.animeshahilya.espeakng.FileUtils.write(version, "stale");
+            final Thread extractor = new Thread(() -> CheckVoiceData.extractVoiceData(context));
+            extractor.start();
+            while (extractor.isAlive()) {
+                SpeechSynthesis.clearVoiceCache();
+                final int n = engine.getAvailableVoices().size();
+                assertThat("partial voice list during extraction", n, is(full));
+            }
+            extractor.join();
         }
     }
 }
