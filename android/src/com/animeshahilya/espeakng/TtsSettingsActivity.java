@@ -695,26 +695,50 @@ public class TtsSettingsActivity extends AppCompatActivity {
             super.onViewCreated(view, savedInstanceState);
             // AndroidX hosts the list in a RecyclerView, not a ListView.
             final View listView = view.findViewById(androidx.preference.R.id.recycler_view);
+            // androidx.preference's preference_recyclerview.xml hardcodes
+            // clipToPadding="false", which lets rows scroll through the
+            // transparent status bar. Top/bottom padding marks the opaque
+            // system/action bars, so content must stop at those edges.
             if (listView instanceof ViewGroup) {
-                ((ViewGroup) listView).setClipToPadding(false);
+                ((ViewGroup) listView).setClipToPadding(true);
             }
             final Context context = getActivity();
             final View.OnApplyWindowInsetsListener insetsListener = new View.OnApplyWindowInsetsListener() {
-                // getSystemWindowInsetBottom() was deprecated in API 30; kept
-                // for the pre-R branch, which has no WindowInsets.Type API.
+                // getSystemWindowInset* was deprecated in API 30; kept for the
+                // pre-R branch, which has no WindowInsets.Type API. Content is
+                // edge-to-edge (fitsSystemWindows=false on android.R.id.content),
+                // and ActionBarOverlayLayout leaves the list at y=0 under the
+                // status bar and the overlaid action bar - pad top past both so
+                // the first row is reachable, bottom past the nav bar so the
+                // last row can scroll clear of it. Action-bar height comes from
+                // the laid-out container: resolving android.R.attr.actionBarSize
+                // against the M3 theme over-reports here and leaves a dead gap.
                 @Override
                 @SuppressWarnings("deprecation")
                 public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    int topInset = 0;
                     int bottomInset = 0;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        topInset = insets.getInsets(WindowInsets.Type.statusBars()).top;
                         bottomInset = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
                     } else {
+                        topInset = insets.getSystemWindowInsetTop();
                         bottomInset = insets.getSystemWindowInsetBottom();
+                    }
+                    int actionBarHeight = 0;
+                    Activity activity = getActivity();
+                    if (activity instanceof AppCompatActivity
+                            && ((AppCompatActivity) activity).getSupportActionBar() != null) {
+                        View abContainer = activity.findViewById(
+                                androidx.appcompat.R.id.action_bar_container);
+                        if (abContainer != null && abContainer.getHeight() > 0) {
+                            actionBarHeight = abContainer.getHeight();
+                        }
                     }
                     if (listView != null && context != null) {
                         listView.setPadding(
                                 listView.getPaddingLeft(),
-                                listView.getPaddingTop(),
+                                topInset + actionBarHeight,
                                 listView.getPaddingRight(),
                                 bottomInset + dpToPx(context, 16)
                         );
@@ -727,6 +751,23 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 listView.setOnApplyWindowInsetsListener(insetsListener);
             }
             view.requestApplyInsets();
+            // The action bar may still be 0-tall on the first insets pass;
+            // re-apply once it has measured so top padding clears it.
+            final View abContainer = getActivity() != null
+                    ? getActivity().findViewById(androidx.appcompat.R.id.action_bar_container)
+                    : null;
+            if (abContainer != null) {
+                abContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                    @Override
+                    public void onLayoutChange(View v, int l, int t, int r, int b,
+                                               int ol, int ot, int or, int ob) {
+                        if (b - t > 0) {
+                            v.removeOnLayoutChangeListener(this);
+                            view.requestApplyInsets();
+                        }
+                    }
+                });
+            }
         }
     }
 

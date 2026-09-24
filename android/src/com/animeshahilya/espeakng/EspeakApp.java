@@ -28,8 +28,6 @@ import android.os.Build;
 import android.os.UserManager;
 import android.util.Log;
 
-import com.google.android.material.color.DynamicColors;
-
 public class EspeakApp extends Application {
 
     private static final String TAG = EspeakApp.class.getSimpleName();
@@ -47,10 +45,9 @@ public class EspeakApp extends Application {
 
     public void onCreate() {
         super.onCreate();
-        // Material You dynamic color on Android 12+: tints the M3 theme with
-        // the wallpaper palette. No-op below S, and safe before unlock (it
-        // only registers an activity-lifecycle hook, no settings reads).
-        DynamicColors.applyToActivitiesIfAvailable(this);
+        // DynamicColors intentionally not applied: wallpaper-derived palettes
+        // clash with the fixed brand-blue roles on AppTheme.Base (e.g. a pink
+        // action bar against blue chips/fields). Ship one consistent palette.
         final Context appContext = getApplicationContext();
         EspeakApp.storageContext = appContext.createDeviceProtectedStorageContext();
         NvdaEmoji.init(appContext);
