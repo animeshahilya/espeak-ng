@@ -78,6 +78,22 @@ phoneme V
 endphoneme
 
 
+// Schwa the spelling rules keep on purpose (learned rules in hi_rules): the
+// same vowel as @, but never reduced to @-, which would drop it (अम्बर).
+phoneme @4
+  vwl flag1 starttype #@  endtype #@
+  ipa ə
+  length 130
+
+  IF nextPh(H) OR prevPh(H) THEN
+    FMT(vowel/@_low)
+  ENDIF
+  IF nextPh(j) THEN
+    FMT(vowel/V_3)
+  ENDIF
+  FMT(vowel/@_bck)
+endphoneme
+
 phoneme @2
   vwl flag1 starttype #@  endtype #@
   length 130

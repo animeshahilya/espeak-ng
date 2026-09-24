@@ -12,10 +12,10 @@
 
 // Inherent vowel dropped in the middle of a word (আপনি apni, আমরা amra,
 // আকবর akbor). The rule lines marked "// generated" in each consonant group
-// are not hand-written: android/tools/bn_schwa learns them from
-// WikiPron (rule induction on 80% of the words) and writes them here. On the
-// 20% it never saw, words read right went from 59.0% to 61.9% (50 fixed,
-// 12 broken). Regenerate them with those tools rather than editing by hand.
+// are not hand-written: android/tools/schwa learns them from WikiPron (rule
+// induction on 80% of the words) and writes them here. On the 20% it never
+// saw, words read right went from 59.0% to 61.9% (50 fixed, 12 broken).
+// Regenerate them with those tools rather than editing by hand.
 // The "_L11) X (suffix_" lines are a hand rule for verb forms (বলতে bolte,
 // করছে korchhe), which the word list the rules were learned from lacks.
 // L10 = written vowels (signs, and independent vowels except অ);
