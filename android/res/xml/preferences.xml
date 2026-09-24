@@ -130,6 +130,20 @@
             android:defaultValue="7"
             app:useSimpleSummaryProvider="true" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      <!-- Extras beyond NVDA: off by default, so the default output stays NVDA's. -->
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:title="@string/category_number_extras">
+        <CheckBoxPreference
+            android:key="espeak_read_money"
+            android:title="@string/setting_read_money"
+            android:summary="@string/setting_read_money_summary"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="espeak_read_codes"
+            android:title="@string/setting_read_codes"
+            android:summary="@string/setting_read_codes_summary"
+            android:defaultValue="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen

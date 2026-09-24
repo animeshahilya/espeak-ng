@@ -304,4 +304,35 @@ public class TextPipelineDeviceTest {
         // No NVDA dictionary for Marathi: English, as NVDA does.
         assertThat(NvdaEmoji.substitute("😀", "mr"), is("grinning face"));
     }
+
+    /** Opt-in money reading: unit after the number, cents split out, plurals right. */
+    @Test
+    public void testReadMoney() {
+        assertThat(NumberReading.readMoney("$5.50", true), is("5 dollars 50 cents"));
+        assertThat(NumberReading.readMoney("$1", true), is("1 dollar"));
+        assertThat(NumberReading.readMoney("$0.99", true), is("99 cents"));
+        assertThat(NumberReading.readMoney("£1.50", true), is("1 pound 50 pence"));
+        assertThat(NumberReading.readMoney("20 USD", true), is("20 dollars"));
+        assertThat(NumberReading.readMoney("€2.5M", true), is("2.5 million euros"));
+        assertThat(NumberReading.readMoney("-$4", true), is("minus 4 dollars"));
+        assertThat(NumberReading.readMoney("$5-$10", true), is("5 dollars-10 dollars"));
+        assertThat(NumberReading.readMoney("echo $HOME", true), is("echo $HOME"));
+        // Left for the Indian pass when it owns rupee amounts.
+        assertThat(NumberReading.readMoney("₹250", false), is("₹250"));
+        assertThat(NumberReading.isEnglish("en-US"), is(true));
+        assertThat(NumberReading.isEnglish("hi"), is(false));
+    }
+
+    /** Opt-in code reading: only numbers near a code word, never money or quantities. */
+    @Test
+    public void testReadCodes() {
+        assertThat(NumberReading.readCodes("Your OTP is 482913. Valid for 10 minutes."),
+                is("Your OTP is 4 8 2 9 1 3. Valid for 10 minutes."));
+        assertThat(NumberReading.readCodes("Use code 482 913"), is("Use code 4 8 2, 9 1 3"));
+        assertThat(NumberReading.readCodes("A/c XX1234 debited by Rs 5000"),
+                is("A/c ending 1 2 3 4 debited by Rs 5000"));
+        assertThat(NumberReading.readCodes("In 2026 we sold 48291 units"),
+                is("In 2026 we sold 48291 units"));
+        assertThat(NumberReading.readCodes("Code at 10:30"), is("Code at 10:30"));
+    }
 }

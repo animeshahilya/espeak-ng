@@ -189,16 +189,35 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
+        // Read once: getReadingMode() re-reads SharedPreferences, and the
+        // value is consulted by the number extras, the spelling/phonetic
+        // branches below and the NVDA pass (code mode selects level ALL there).
+        final String readingMode = settings.getReadingMode();
+        final boolean normalReading = !isSsml && VoiceSettings.READING_NORMAL.equals(readingMode);
+        final boolean indianNumbers = settings.isIndianNumberingEnabled()
+                && isIndianLanguage(languageTag(voice));
+
+        // Opt-in extras, off by default. Codes run first so a code is never
+        // read as money; money keeps its digits for the Indian pass below.
+        if (normalReading && settings.isReadCodesEnabled()) {
+            String before = text;
+            text = NumberReading.readCodes(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+        if (normalReading && settings.isReadMoneyEnabled()
+                && NumberReading.isEnglish(languageTag(voice))) {
+            String before = text;
+            text = NumberReading.readMoney(text, !indianNumbers);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
         // Indian-voice only: every other voice reads these exactly as NVDA's
         // eSpeak does ("5k", "2 l", "12,34,567" untouched).
-        if (!isSsml && settings.isIndianNumberingEnabled() && isIndianLanguage(languageTag(voice))) {
+        if (!isSsml && indianNumbers) {
             String before = text;
             text = preprocessIndianText(text, languageTag(voice));
             offsetMap = chainOffset(offsetMap, before, text);
         }
-
-        // Times, dates, currency amounts and Roman numerals are left to the
-        // engine, as NVDA does: eSpeak reads them natively.
 
         final String digitGrouping = settings.getDigitGroupingMode();
         final boolean useGrouping = !isSsml && digitGrouping != null
@@ -209,10 +228,6 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        // Read once: getReadingMode() re-reads SharedPreferences, and the
-        // value is consulted by the spelling/phonetic branches below and by
-        // the NVDA pass (code mode selects level ALL there).
-        final String readingMode = settings.getReadingMode();
         if (!isSsml && VoiceSettings.READING_SPELLING.equals(readingMode)) {
             String before = text;
             text = expandSpellingMode(text);

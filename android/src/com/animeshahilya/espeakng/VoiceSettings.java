@@ -51,6 +51,9 @@ public class VoiceSettings {
     public static final String PREF_WORD_GAP = "espeak_wordgap";
     public static final String PREF_PAUSE_SCALE = "espeak_pause_scale";
     public static final String PREF_INDIAN_NUMBERING = "espeak_indian_numbering";
+    // Opt-in extras beyond NVDA (new keys: the removed pre-parity toggles defaulted on).
+    public static final String PREF_READ_MONEY = "espeak_read_money";
+    public static final String PREF_READ_CODES = "espeak_read_codes";
     public static final String PREF_SPEAK_PROGRAMMING_SYMBOLS = "espeak_speak_programming_symbols";
     public static final String PREF_USER_DICTIONARY = "espeak_user_dictionary";
     public static final String PREF_NATO_SPELLING = "espeak_nato_spelling";
@@ -369,6 +372,14 @@ public class VoiceSettings {
 
     public boolean isIndianNumberingEnabled() {
         return mPreferences.getBoolean(PREF_INDIAN_NUMBERING, true);
+    }
+
+    public boolean isReadMoneyEnabled() {
+        return mPreferences.getBoolean(PREF_READ_MONEY, false);
+    }
+
+    public boolean isReadCodesEnabled() {
+        return mPreferences.getBoolean(PREF_READ_CODES, false);
     }
 
     public boolean isSpeakProgrammingSymbolsEnabled() {
