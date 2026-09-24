@@ -1,0 +1,164 @@
+// Central Kurdish (Sorani, ckb) translation rules
+// Sorani uses a modified Perso-Arabic script (33 letters) written
+// right-to-left. Unlike Arabic/Persian it is almost a true alphabet:
+// vowels are written, except short /I/ which is unwritten between
+// consonants (rendered here as epenthetic I).
+// This file is UTF-8 encoded.
+
+.replace
+	٠	0
+	١	1
+	٢	2
+	٣	3
+	٤	4
+	٥	5
+	٦	6
+	٧	7
+	٨	8
+	٩	9
+	۰	0
+	۱	1
+	۲	2
+	۳	3
+	۴	4
+	۵	5
+	۶	6
+	۷	7
+	۸	8
+	۹	9
+	ك	ک
+	ي	ی
+	ى	ی
+	ة	ە
+	ـ
+// NOTE: ZWNJ (U+200C) is handled as hyphen via chars_ignore_zwnj_hyphen
+// in tr_languages.c (same as Farsi), not here.
+
+// Vowels (single letters; وو digraph handled in .group و)
+.L01  ا ە ێ ی ۆ و ۇ ۊ
+
+// Consonants
+.L02  ب پ ت ج چ ح خ د ر ڕ ز ژ س ش ع غ ف ڤ ق ک گ ل ڵ م ن ھ ه ئ
+
+// All letters
+.L03  ا ە ێ ی ۆ و ۇ ۊ ب پ ت ج چ ح خ د ر ڕ ز ژ س ش ع غ ف ڤ ق ک گ ل ڵ م ن ھ ه ئ
+
+.group ئ
+	ئ	?
+
+.group ا
+	ا	a
+
+.group ب
+	ب	b
+
+.group پ
+	پ	p
+
+.group ت
+	ت	t
+
+.group ج
+	ج	dZ
+
+.group چ
+	چ	tS
+
+.group ح
+	ح	H
+
+.group خ
+	خ	x
+
+.group د
+	د	d
+
+.group ر
+	ر	*
+
+.group ڕ
+	ڕ	R
+
+.group ز
+	ز	z
+
+.group ژ
+	ژ	Z
+
+.group س
+	س	s
+
+.group ش
+	ش	S
+
+.group ع
+	ع	A
+
+.group غ
+	غ	gH
+
+.group ف
+	ف	f
+
+.group ڤ
+	ڤ	v
+
+.group ق
+	ق	q
+
+.group ک
+	ک	c (ێ
+	ک	c (ی
+	ک	k
+
+.group گ
+	گ	J (ێ
+	گ	J (ی
+	گ	g
+
+.group ل
+	ل	l
+
+.group ڵ
+	ڵ	L
+
+.group م
+	م	m
+
+.group ن
+	ن	n
+
+.group و
+	وو	u:
+	و	(L01	w
+	_) و	(L01	w
+	L01) و	(_	w
+	L01) و	(L02	w
+	و	U
+
+.group ۆ
+	ۆ	o
+
+.group ۇ
+	ۇ	U
+
+.group ۊ
+	ۊ	y
+
+.group ھ
+	ھ	h
+
+.group ه
+	ه	h
+
+.group ە
+	ە	E
+
+.group ی
+	_) ی	(L01	j
+	L01) ی	(L01	j
+	L01) ی	(_	j
+	ی	i
+
+.group ێ
+	ێ	e

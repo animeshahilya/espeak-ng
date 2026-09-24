@@ -638,6 +638,21 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.stress_flags = S_NO_AUTO_2 | S_FINAL_DIM | S_FINAL_DIM_ONLY | S_EO_CLAUSE1;
 	}
 		break;
+	case L3('c', 'k', 'b'): // Central Kurdish (Sorani, Arabic script)
+	{
+		static const unsigned char stress_amps_ckb[8] = { 18, 18, 20, 20, 20, 22, 22, 21 };
+		static const short stress_lengths_ckb[8] = { 180, 180, 190, 180, 0, 0, 230, 240 };
+
+		SetupTranslator(tr, stress_lengths_ckb, stress_amps_ckb);
+		tr->letter_bits_offset = OFFSET_ARABIC;
+
+		tr->langopts.stress_rule = STRESSPOSN_1RU; // stress on the last syllable, before any explicitly unstressed syllable
+		tr->langopts.numbers = NUM_HUNDRED_AND | NUM_AND_UNITS | NUM_OMIT_1_HUNDRED | NUM_AND_HUNDRED;
+		tr->langopts.param[LOPT_UNPRONOUNCABLE] = 1; // disable check for unpronouncable words
+
+		tr->chars_ignore = chars_ignore_zwnj_hyphen; // replace ZWNJ by hyphen
+	}
+		break;
 	case L('c', 'y'): // Welsh
 	{
 		static const short stress_lengths_cy[8] = { 170, 220, 180, 180, 0, 0, 250, 270 };

@@ -2092,5 +2092,8 @@ include ph_karakalpak
 phonemetable ps base1
 include ph_pashto
 
+phonemetable ckb base1
+include ph_ckb
+
 phonemetable ab base
 include ph_abkhaz

@@ -1,0 +1,179 @@
+// ph_ckb - Phoneme table for Central Kurdish (Sorani, ckb)
+// Sorani is written with a modified Perso-Arabic script (33 letters) in
+// which vowels are mandatory, except short /I/ which is unwritten.
+// Vowel inventory: a [aː] ا, E [æ] ە, e [eː] ێ, i [iː] ی, I [I]
+// (unwritten), o [oː] ۆ, U [U] و/ۇ, u: [uː] وو, y [yː] ۊ.
+// Consonants follow the Kurdish base set plus Arabic H/A/gH for ح/ع/غ,
+// R trill for ڕ, L velar for ڵ (both inherited from base).
+
+// Vowels
+
+phoneme a    // ا - open back [aː]
+  vwl starttype #a endtype #a
+  length 210
+  ipa aː
+  FMT(vowel/aa)
+endphoneme
+
+phoneme E    // ە - open front [æ]
+  vwl starttype #a endtype #a
+  length 170
+  ipa æ
+  FMT(vowel/a)
+endphoneme
+
+phoneme e    // ێ - close-mid front [eː]
+  vwl starttype #e endtype #e
+  length 220
+  ipa eː
+  FMT(vowel/e)
+endphoneme
+
+phoneme i    // ی - close front [iː]
+  vwl starttype #i endtype #i
+  length 200
+  ipa iː
+  IfNextVowelAppend(;)
+  FMT(vowel/i)
+endphoneme
+
+phoneme I    // unwritten short [I], epenthetic between consonants
+  vwl starttype #@ endtype #@
+  length 110
+  ipa I
+  FMT(vowel/ii#)
+endphoneme
+
+phoneme o    // ۆ - close-mid back [oː]
+  vwl starttype #o endtype #o
+  length 220
+  ipa oː
+  FMT(vowel/oo)
+endphoneme
+
+phoneme U    // و / ۇ - near-close back [U]
+  vwl starttype #u endtype #u
+  length 150
+  ipa U
+  FMT(vowel/uu_2)
+endphoneme
+
+phoneme u:   // وو - close back [uː]
+  vwl starttype #u endtype #u
+  length 250
+  ipa uː
+  FMT(vowel/u)
+endphoneme
+
+phoneme y    // ۊ - close front rounded [yː], southern dialects
+  vwl starttype #u endtype #u
+  length 200
+  ipa yː
+  FMT(vowel/y_5)
+endphoneme
+
+// Consonants specific to Sorani
+
+phoneme H    // ح - voiceless pharyngeal [ħ]
+  vls phr frc
+  ipa ħ
+  lengthmod 5
+  WAV(vwl_ar/hah,80)
+endphoneme
+
+phoneme A    // ع - voiced pharyngeal [ʕ]
+  vcd frc
+  ipa ʕ
+  length 160
+  Vowelin  f1=2  f2=2300 -400 500  f3=300 80
+  Vowelout f1=2  f2=2300 -300 450  f3=-100 10
+  FMT(r/xr,25) addWav(h/h_,30)
+endphoneme
+
+phoneme gH   // غ - voiced velar fricative [ɣ]
+  vcd vel frc
+  ipa ɣ
+  Vowelin f1=2  f2=2300 200 300  f3=-300 80
+  Vowelout f1=2 f2=2300 250 300  f3=-300 80 brk
+  FMT(g/g) addWav(vwl_ar/dhad)
+endphoneme
+
+phoneme R    // ڕ - trilled [r], contrasts with tap *
+  liquid trl
+  lengthmod 6
+  ipa r
+  Vowelin  f1=0  f2=1600 -300 300  f3=-200 80
+  Vowelout f1=2  f2=1600 -300 300  f3=-200 80 brk
+  FMT(r3/r_trill2) addWav(r3/r_trill2.wav, 65)
+endphoneme
+
+phoneme c    // palatalized k before front vowels (like Turkish/Persian)
+  vls pal stp
+  lengthmod 2
+  voicingswitch J
+  Vowelin f1=0  f2=2700 200 500  f3=400 80 len=60
+  Vowelout f1=0  f2=2700 300 500  f3=300 80
+  IF nextPh(isPause2) THEN
+    WAV(ustop/ki, 80)
+  ENDIF
+  WAV(ustop/ki)
+endphoneme
+
+phoneme J    // palatalized g before front vowels
+  vcd pla stp
+  voicingswitch c
+  lengthmod 5
+  Vowelin f1=2  f2=2700 400 600  f3=300 80
+  Vowelout f1=2 f2=2700 400 600  f3=300 80 colr=1
+  IF PreVoicing THEN
+    FMT(dzh/xdz_pzd)
+  ENDIF
+  FMT(dzh/dz_pzd) addWav(ustop/ki, 60)
+endphoneme
+
+phoneme v    // ڤ - labiodental [v]
+  vcd lbd frc
+  lengthmod 6
+  ipa v
+  Vowelin  f1=0  f2=1000 -300 -200  f3=-300 100
+  Vowelout f1=0  f2=1000 -500 -300  f3=-300 60  len=50
+  IF nextPh(isPause2) THEN
+    FMT(voc/v_) addWav(vocw/v)
+  ENDIF
+  FMT(voc/v) addWav(vocw/v)
+endphoneme
+
+phoneme L    // ڵ - velarized ("dark") [ɫ], contrasts with ل [l]
+  liquid
+  lengthmod 7
+  ipa ɫ
+  VowelEnding(ll/xll, -40)
+  IF prevPh(isPause) THEN
+     FMT(ll/_ll)
+  ENDIF
+  FMT(ll/ll)
+endphoneme
+
+phoneme q    // ق - voiceless uvular stop
+  vls uvl stp
+  lengthmod 2
+  ipa q
+  Vowelin f1=1  f2=1700 0 200  f3=-300 80 gpaus f4 rms=30
+  Vowelout f1=1 f2=1700 -100 200  f3=-300 80  f4 rms=35
+  IF nextPh(isPause2) THEN
+    WAV(ustop/q, 40)
+  ENDIF
+  WAV(ustop/q, 48)
+endphoneme
+
+phoneme x    // خ - voiceless velar fricative
+  vls vel frc
+  lengthmod 3
+  ipa x
+  Vowelin f1=0  f2=2300 200 400  f3=-200 80
+  Vowelout f1=0 f2=2300 300 400  f3=-200 80  rms=20
+  IF nextPh(isPause) THEN
+    WAV(ufric/x_, 60)
+  ENDIF
+  WAV(ufric/x_hr, 20)
+endphoneme

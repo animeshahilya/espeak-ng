@@ -1,0 +1,24 @@
+// Emoji and Other Symbol pronunciations for ckb (Central Kurdish, Sorani)
+// Minimal starter file; extend from CLDR ckb annotations when available.
+
+$textmode
+
+// Currency and common symbols with Sorani names
+$		d'olar
+€		j'uro
+£		p'aUnd
+¥		j'En
+¢		s'Ent
+©		m'afI_k'opI
+®		n'ISanI_bazrg'anI
+°		dErEdZ'E
+%		s'Edd
+‰		s'Edd_hEz'ar
++		k'o
+-		m'EnHa
+=		j'Eksan
+&		'EmpErsEnd
+@		'Et
+#		SUm'arE
+//_#		h'EStaG
+// Digits are spoken via the number rules; keep text mode for the rest.
