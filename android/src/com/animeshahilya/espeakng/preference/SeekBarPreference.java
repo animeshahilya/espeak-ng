@@ -201,7 +201,7 @@ public class SeekBarPreference extends PersistingDialogPreference
         }
         editor.putString(parameter.key, Integer.toString(parameter.current));
         if (parameter.hasRateBoost && mRateBoostToggleVisible) {
-            // Only write PREF_RATE_BOOST when this dialog's own checkbox is the
+            // Only write PREF_RATE_BOOST_LEVEL when this dialog's own checkbox is the
             // control the user can see and touch (Wear). On phones the checkbox
             // is hidden - parameter.boost there is just a snapshot taken when
             // this dialog was built, and the real value lives in the standalone
@@ -209,7 +209,8 @@ public class SeekBarPreference extends PersistingDialogPreference
             // hitting Cancel would silently overwrite that preference back to
             // whatever it was when the screen was constructed, discarding any
             // change made via the standalone checkbox in the meantime.
-            editor.putBoolean(VoiceSettings.PREF_RATE_BOOST, parameter.boost);
+            editor.putString(VoiceSettings.PREF_RATE_BOOST_LEVEL, parameter.boost
+                    ? Integer.toString(parameter.boostMultiplier) : VoiceSettings.RATE_BOOST_OFF);
         }
         editor.apply();
     }

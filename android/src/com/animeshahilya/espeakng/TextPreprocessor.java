@@ -164,7 +164,7 @@ public final class TextPreprocessor {
                 offsetMap = chainOffset(offsetMap, before, text);
             }
             if (!characterRuleApplied) {
-                if (settings.isNatoSpellingEnabled()) {
+                if (!VoiceSettings.PHONETIC_OFF.equals(settings.getPhoneticLetters())) {
                     String before = text;
                     text = expandNatoSpelling(text);
                     offsetMap = chainOffset(offsetMap, before, text);
@@ -228,13 +228,17 @@ public final class TextPreprocessor {
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
-        if (!isSsml && VoiceSettings.READING_SPELLING.equals(readingMode)) {
-            String before = text;
-            text = expandSpellingMode(text);
-            offsetMap = chainOffset(offsetMap, before, text);
-        } else if (!isSsml && VoiceSettings.READING_PHONETIC.equals(readingMode)) {
+        // Phonetic letters "Always" reads every letter as Alfa, Bravo and so
+        // on; it replaces spelling (which it already implies) but not code mode.
+        if (!isSsml && !isSingleCharacterUtterance
+                && VoiceSettings.PHONETIC_ALWAYS.equals(settings.getPhoneticLetters())
+                && !VoiceSettings.READING_CODE.equals(readingMode)) {
             String before = text;
             text = expandPhoneticMode(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        } else if (!isSsml && VoiceSettings.READING_SPELLING.equals(readingMode)) {
+            String before = text;
+            text = expandSpellingMode(text);
             offsetMap = chainOffset(offsetMap, before, text);
         }
 
@@ -243,7 +247,7 @@ public final class TextPreprocessor {
         // separators the condensing inserts are never mistaken for content
         // punctuation. Single-character utterances skip this pass - the
         // single-char branch above already named the character.
-        if (!isSsml && !isSingleCharacterUtterance && settings.isSpeakProgrammingSymbolsEnabled()) {
+        if (!isSsml && !isSingleCharacterUtterance) {
             String before = text;
             text = processNvdaSymbols(text, settings, readingMode);
             offsetMap = chainOffset(offsetMap, before, text);

@@ -32,19 +32,13 @@
         android:key="espeak_rate"
         android:title="@string/setting_default_rate"
         android:icon="@drawable/ic_speed" />
-    <!-- not on Wear -->
-    <CheckBoxPreference
-        android:key="espeak_rate_boost"
-        android:title="@string/setting_rate_boost"
-        android:summary="@string/setting_rate_boost_summary"
-        android:icon="@drawable/ic_flash_on"
-        android:defaultValue="false" />
-    <!-- not on Wear; shown only while Rate boost is on; entries filled in
-         from VoiceSettings' limits -->
+    <!-- not on Wear (the rate dialog carries its own boost checkbox there);
+         entries filled in from VoiceSettings' limits -->
     <ListPreference
-        android:key="espeak_rate_boost_multiplier"
-        android:title="@string/setting_rate_boost_multiplier"
-        android:defaultValue="3"
+        android:key="espeak_rate_boost_level"
+        android:title="@string/setting_rate_boost"
+        android:icon="@drawable/ic_flash_on"
+        android:defaultValue="off"
         app:useSimpleSummaryProvider="true" />
     <com.animeshahilya.espeakng.preference.SeekBarPreference
         android:key="espeak_pitch"
@@ -78,19 +72,13 @@
     <com.animeshahilya.espeakng.preference.SeekBarPreference
         android:key="espeak_pause_scale"
         android:title="@string/setting_pause_scale" />
-    <CheckBoxPreference
-        android:key="espeak_audio_optimizer"
-        android:title="@string/setting_audio_optimizer"
-        android:summary="@string/setting_audio_optimizer_summary"
-        android:icon="@drawable/ic_equalizer"
-        android:defaultValue="false" />
-    <!-- shown only while the Audio Optimizer is on -->
     <ListPreference
-        android:key="espeak_audio_profile"
-        android:title="@string/setting_audio_profile"
+        android:key="espeak_audio_optimizer_level"
+        android:title="@string/setting_audio_optimizer"
+        android:icon="@drawable/ic_equalizer"
         android:entries="@array/audio_profile_entries"
         android:entryValues="@array/audio_profile_values"
-        android:defaultValue="balanced"
+        android:defaultValue="off"
         app:useSimpleSummaryProvider="true" />
   </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 
@@ -178,11 +166,6 @@
             android:defaultValue="off"
             app:useSimpleSummaryProvider="true" />
         <CheckBoxPreference
-            android:key="espeak_speak_programming_symbols"
-            android:title="@string/setting_programming_symbols"
-            android:summary="@string/setting_programming_symbols_summary"
-            android:defaultValue="true" />
-        <CheckBoxPreference
             android:key="espeak_unicode_normalization"
             android:title="@string/setting_unicode_normalization"
             android:summary="@string/setting_unicode_normalization_summary"
@@ -199,11 +182,13 @@
             android:defaultValue="normal"
             app:useSimpleSummaryProvider="true" />
         <!-- not on Wear -->
-        <CheckBoxPreference
-            android:key="espeak_nato_spelling"
+        <ListPreference
+            android:key="espeak_phonetic_letters"
             android:title="@string/setting_nato_spelling"
-            android:summary="@string/setting_nato_spelling_summary"
-            android:defaultValue="false" />
+            android:entries="@array/phonetic_letters_entries"
+            android:entryValues="@array/phonetic_letters_values"
+            android:defaultValue="off"
+            app:useSimpleSummaryProvider="true" />
         <!-- not on Wear -->
         <CheckBoxPreference
             android:key="espeak_spoken_diacritics"

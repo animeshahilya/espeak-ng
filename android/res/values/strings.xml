@@ -20,8 +20,7 @@
         Description: When enabled, triples the selected speech rate.
     -->
   <string name="setting_rate_boost">Rate boost</string>
-  <string name="setting_rate_boost_multiplier">Rate boost amount</string>
-  <string name="setting_rate_boost_multiplier_summary">Only used when Rate boost is on: how far the rate is multiplied past the normal maximum.</string>
+  <string name="setting_off">Off</string>
   <!--
         Source: Dialog text.
         Description: Status message shown when installing voice data.
@@ -112,9 +111,7 @@
   <string name="setting_emoji_processing">Emoji processing</string>
   <string name="emoji_announce">Announce emojis</string>
   <string name="emoji_ignore">Ignore / skip emojis</string>
-  <string name="setting_rate_boost_summary">Allows speech rates above the normal maximum.</string>
-  <string name="setting_audio_optimizer">Richer, fuller voice (Audio Optimizer)</string>
-  <string name="setting_audio_optimizer_summary">Warmer, fuller sound, with quiet passages evened out.</string>
+  <string name="setting_audio_optimizer">Audio optimizer (warmer, fuller voice)</string>
   <string name="import_voice_success">Successfully imported voice data.</string>
   <string name="import_voice_error">Failed to import voice file.</string>
   <string name="setting_capitals">Capital letters</string>
@@ -146,12 +143,11 @@
   <!-- Feature Settings -->
   <string name="setting_indian_numbering">Indian number and currency formatting</string>
   <string name="setting_indian_numbering_summary">Indian voices only. Reads amounts like ₹1,00,000, 5L and 2cr in lakh and crore.</string>
-  <string name="setting_programming_symbols">Speak symbol names</string>
-  <string name="setting_programming_symbols_summary">Reads symbols and maths signs by name, as NVDA does, at the punctuation level above.</string>
   <string name="setting_user_dictionary">User dictionary</string>
   <string name="setting_user_dictionary_summary">Your own pronunciations for words, names and abbreviations.</string>
-  <string name="setting_nato_spelling">NATO phonetic spelling</string>
-  <string name="setting_nato_spelling_summary">Adds Alfa, Bravo and so on when reading character by character.</string>
+  <string name="setting_nato_spelling">Phonetic letters (Alfa, Bravo)</string>
+  <string name="phonetic_letters_character">When moving by character</string>
+  <string name="phonetic_letters_always">Always</string>
   <string name="setting_spoken_diacritics">Devanagari matras in exploration</string>
   <string name="setting_spoken_diacritics_summary">When reading character by character, names matras and signs such as halant and anusvara.</string>
   <string name="test_voice_title">Preview voice sample</string>
@@ -186,10 +182,9 @@
     <item quantity="other">Restore finished: %1$d dictionary rules restored.</item>
   </plurals>
   <string name="setting_reading_mode">Reading mode</string>
-  <string name="setting_reading_mode_summary">One mode at a time: normal, spelling, phonetic, or code reading.</string>
+  <string name="setting_reading_mode_summary">One mode at a time: normal, spelling, or code reading.</string>
   <string name="reading_normal">Normal reading</string>
   <string name="reading_spelling">Spelling (letter by letter)</string>
-  <string name="reading_phonetic">Phonetic (Alpha, Bravo…)</string>
   <string name="reading_code">Code reading (symbols + full punctuation)</string>
   <string name="setting_digit_threshold">Triple-grouping threshold</string>
   <string name="setting_digit_threshold_summary">Triple grouping applies only to numbers this long or longer.</string>
@@ -197,8 +192,6 @@
     <item quantity="one">%1$d digit</item>
     <item quantity="other">%1$d digits</item>
   </plurals>
-  <string name="setting_audio_profile">Optimizer intensity</string>
-  <string name="setting_audio_profile_summary">How strongly the audio optimizer shapes the voice.</string>
   <string name="audio_profile_gentle">Gentle warmth</string>
   <string name="audio_profile_balanced">Balanced (recommended)</string>
   <string name="audio_profile_full">Full richness</string>

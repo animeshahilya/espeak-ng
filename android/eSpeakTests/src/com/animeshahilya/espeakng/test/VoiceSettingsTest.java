@@ -744,14 +744,45 @@ public class VoiceSettingsTest
         prefs.edit().clear().commit();
         assertThat(settings.getRateBoostMultiplier(), is(VoiceSettings.RATE_BOOST_MULTIPLIER)); // no preference set
 
-        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, "8").commit();
+        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_LEVEL, "8").commit();
         assertThat(settings.getRateBoostMultiplier(), is(VoiceSettings.RATE_BOOST_MULTIPLIER_MAX)); // clamped to maximum
 
-        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, "1").commit();
+        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_LEVEL, "1").commit();
         assertThat(settings.getRateBoostMultiplier(), is(VoiceSettings.RATE_BOOST_MULTIPLIER_MIN)); // clamped to minimum
 
-        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, "4").commit();
+        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_LEVEL, "4").commit();
         assertThat(settings.getRateBoostMultiplier(), is(4));
+        assertThat(settings.isRateBoostEnabled(), is(true));
+
+        prefs.edit().putString(VoiceSettings.PREF_RATE_BOOST_LEVEL, VoiceSettings.RATE_BOOST_OFF).commit();
+        assertThat(settings.isRateBoostEnabled(), is(false));
+    }
+
+    /** Merged settings keep what the old separate toggles were set to. */
+    @Test
+    @SuppressWarnings("deprecation")
+    public void testMergedSettingsMigrate() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SpeechSynthesis synth = new SpeechSynthesis(getContext(), mCallback);
+        VoiceSettings settings = new VoiceSettings(prefs, synth);
+
+        prefs.edit().clear().commit();
+        assertThat(settings.isRateBoostEnabled(), is(false));
+        assertThat(settings.isAudioOptimizerEnabled(), is(false));
+        assertThat(settings.getPhoneticLetters(), is(VoiceSettings.PHONETIC_OFF));
+
+        prefs.edit().putBoolean(VoiceSettings.PREF_RATE_BOOST, true)
+                .putString(VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, "4")
+                .putBoolean(VoiceSettings.PREF_AUDIO_OPTIMIZER, true)
+                .putString(VoiceSettings.PREF_AUDIO_PROFILE, VoiceSettings.AUDIO_PROFILE_FULL)
+                .putBoolean(VoiceSettings.PREF_NATO_SPELLING, true).commit();
+        assertThat(settings.getRateBoostMultiplier(), is(4));
+        assertThat(settings.getAudioProfile(), is(VoiceSettings.AUDIO_PROFILE_FULL));
+        assertThat(settings.getPhoneticLetters(), is(VoiceSettings.PHONETIC_CHARACTER));
+
+        prefs.edit().putString(VoiceSettings.PREF_READING_MODE, VoiceSettings.READING_PHONETIC).commit();
+        assertThat(settings.getPhoneticLetters(), is(VoiceSettings.PHONETIC_ALWAYS));
+        assertThat(settings.getReadingMode(), is(VoiceSettings.READING_NORMAL));
     }
 
     @Test

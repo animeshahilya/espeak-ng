@@ -35,35 +35,38 @@ Every voice except the Indian ones should sound the same as eSpeak in NVDA. The 
 - **Emoji** are read by their CLDR names in the voice's own language, as NVDA reads them.
 - **Numbers, dates, times and currency** are left to eSpeak itself, just like in NVDA. Indian number reading (lakh, crore, ₹) is added only when an Indian voice is speaking.
 
+On top of that there are a few extras NVDA doesn't have, such as money and code reading. They are off by default, so the default sound stays the same as NVDA's.
+
 ---
 
 ## Settings
 
 ### Voice and language
 - **Languages**: choose which of the 153 languages show up in Android's voice list. Includes a search box.
-- **Voice variant**: male 1–8, female 1–5, Klatt, character voices (such as Max), young, old, croak and whisper.
+- **Voice variant**: male 1–8, female 1–6, Klatt, about 170 character voices (such as Max and Edward), young, old, croak and whisper.
 - **Test voice**: hear what your current settings sound like.
 
 ### Voice
-- **Speech rate**, with an optional **rate boost** (2×–4×) for very fast listening.
+- **Speech rate**, with an optional **rate boost** (off, or 2× to 5×) for very fast listening.
 - **Pitch** and **pitch variation**. Set variation to 0 for a monotone voice.
 - **Intonation style**: natural, flat (clearer at high speed), expressive, or custom.
 - **Volume** up to 200%.
 - **Word gap** and **reading pace** (pause length).
-- **Audio optimizer**: gives a warmer, fuller sound and evens out quiet passages. Offers three strength profiles.
+- **Audio optimizer**: off, gentle, balanced or full. Gives a warmer, fuller sound and evens out quiet passages.
 
 ### Numbers
 - **Digit grouping**: read long numbers as a whole, or digit by digit, or in pairs, or in threes. You can set the length at which grouping in threes starts.
 - **Indian numbering**: reads ₹1,00,000, 5L and 2cr in lakh and crore. Applies to Indian voices only.
+- **Money amounts** (off by default, English voices): reads $5.50 as "5 dollars 50 cents". Also euros, pounds, yen and rupees.
+- **Codes digit by digit** (off by default): reads OTPs, PINs and account numbers as single digits.
 
 ### Text
-- **Punctuation**: None, Some, Most, All, or a custom set of characters.
+- **Punctuation**: None, Some, Most, All, or a custom set of characters. Maths and code symbols are read by name at the chosen level, as NVDA does.
 - **Capital letters**: say nothing, play a sound, raise the pitch, or say "capital". You can limit this to character-by-character reading.
 - **Repeated characters**: "20 dashes" instead of twenty dashes, or shorten them to three.
-- **Symbol names**: reads maths and code symbols by name, as NVDA does.
 - **Fancy fonts**: reads stylised Unicode text as normal words.
-- **Reading mode**: normal, spelling, phonetic, or code.
-- **Phonetic letters**: says Alfa, Bravo and so on when you move by character.
+- **Reading mode**: normal, spelling, or code.
+- **Phonetic letters**: says Alfa, Bravo and so on, either when you move by character or for all text.
 - **Matras and signs**: names Indic vowel signs, halant, anusvara and similar marks when you move by character.
 - **Emoji**: read them out or skip them.
 - **Shorter web links**: drops `https://` and `www.`, and reads long tracking parameters as "with parameters".

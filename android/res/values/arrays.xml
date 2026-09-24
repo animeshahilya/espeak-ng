@@ -47,24 +47,35 @@
   <string-array name="reading_mode_entries" translatable="false">
     <item>@string/reading_normal</item>
     <item>@string/reading_spelling</item>
-    <item>@string/reading_phonetic</item>
     <item>@string/reading_code</item>
   </string-array>
   <string-array name="reading_mode_values" translatable="false">
     <item>normal</item>
     <item>spelling</item>
-    <item>phonetic</item>
     <item>code</item>
   </string-array>
 
   <string-array name="audio_profile_entries" translatable="false">
+    <item>@string/setting_off</item>
     <item>@string/audio_profile_gentle</item>
     <item>@string/audio_profile_balanced</item>
     <item>@string/audio_profile_full</item>
   </string-array>
   <string-array name="audio_profile_values" translatable="false">
+    <item>off</item>
     <item>gentle</item>
     <item>balanced</item>
     <item>full</item>
+  </string-array>
+
+  <string-array name="phonetic_letters_entries" translatable="false">
+    <item>@string/setting_off</item>
+    <item>@string/phonetic_letters_character</item>
+    <item>@string/phonetic_letters_always</item>
+  </string-array>
+  <string-array name="phonetic_letters_values" translatable="false">
+    <item>off</item>
+    <item>character</item>
+    <item>always</item>
   </string-array>
 </resources>

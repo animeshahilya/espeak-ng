@@ -830,15 +830,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
 
         if (VoiceSettings.PREF_RATE.equals(key)) {
-            int multiplier = VoiceSettings.RATE_BOOST_MULTIPLIER;
-            try {
-                multiplier = Integer.parseInt(prefs.getString(
-                        VoiceSettings.PREF_RATE_BOOST_MULTIPLIER,
-                        Integer.toString(VoiceSettings.RATE_BOOST_MULTIPLIER)));
-            } catch (NumberFormatException e) {
-                // Malformed value - fall back to the default multiplier
-            }
-            voiceParam.enableRateBoost(prefs.getBoolean(VoiceSettings.PREF_RATE_BOOST, false), multiplier);
+            final VoiceSettings settings = new VoiceSettings(prefs, null); // boost getters never touch the engine
+            voiceParam.enableRateBoost(settings.isRateBoostEnabled(), settings.getRateBoostMultiplier());
         }
 
         return voiceParam;
@@ -1143,7 +1136,19 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         // booleans VoiceSettings still reads, or attaching the list would
         // persist its default over the mode actually in use.
         final SharedPreferences.Editor seed = prefs.edit();
-        if (!prefs.contains(VoiceSettings.PREF_READING_MODE)) {
+        // Merged settings: seeded from the old toggles they replace. Phonetic
+        // letters first, since it reads a stored "phonetic" reading mode.
+        if (!prefs.contains(VoiceSettings.PREF_PHONETIC_LETTERS)) {
+            seed.putString(VoiceSettings.PREF_PHONETIC_LETTERS, settings.getPhoneticLetters());
+        }
+        if (!prefs.contains(VoiceSettings.PREF_RATE_BOOST_LEVEL)) {
+            seed.putString(VoiceSettings.PREF_RATE_BOOST_LEVEL, settings.getRateBoostLevel());
+        }
+        if (!prefs.contains(VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL)) {
+            seed.putString(VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL, settings.getAudioOptimizerLevel());
+        }
+        if (VoiceSettings.READING_PHONETIC.equals(prefs.getString(VoiceSettings.PREF_READING_MODE, null))
+                || !prefs.contains(VoiceSettings.PREF_READING_MODE)) {
             seed.putString(VoiceSettings.PREF_READING_MODE, settings.getReadingMode());
         }
         if (!prefs.contains(VoiceSettings.PREF_DIGIT_GROUPING)) {
@@ -1156,9 +1161,9 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         if (isWatch) {
             for (String key : new String[] {
                     LanguageSettings.PREF_SUPPORTED_LANGUAGES, KEY_TEST_VOICE,
-                    VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, VoiceSettings.PREF_RATE_BOOST,
+                    VoiceSettings.PREF_RATE_BOOST_LEVEL,
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
-                    VoiceSettings.PREF_NATO_SPELLING, VoiceSettings.PREF_SPOKEN_DIACRITICS,
+                    VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_SPOKEN_DIACRITICS,
                     VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.PREF_SIMPLIFY_URLS,
                     "category_presets", "category_data"}) {
                 screen.removePreferenceRecursively(key);
@@ -1170,13 +1175,15 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
             // drift from what getRateBoostMultiplier() allows.
             final int min = VoiceSettings.RATE_BOOST_MULTIPLIER_MIN;
             final int max = VoiceSettings.RATE_BOOST_MULTIPLIER_MAX;
-            final CharSequence[] boostEntries = new CharSequence[max - min + 1];
-            final CharSequence[] boostValues = new CharSequence[max - min + 1];
+            final CharSequence[] boostEntries = new CharSequence[max - min + 2];
+            final CharSequence[] boostValues = new CharSequence[max - min + 2];
+            boostEntries[0] = context.getString(R.string.setting_off);
+            boostValues[0] = VoiceSettings.RATE_BOOST_OFF;
             for (int m = min; m <= max; m++) {
-                boostEntries[m - min] = m + "\u00d7";
-                boostValues[m - min] = Integer.toString(m);
+                boostEntries[m - min + 1] = m + "\u00d7";
+                boostValues[m - min + 1] = Integer.toString(m);
             }
-            setEntries(screen, VoiceSettings.PREF_RATE_BOOST_MULTIPLIER, boostEntries, boostValues);
+            setEntries(screen, VoiceSettings.PREF_RATE_BOOST_LEVEL, boostEntries, boostValues);
 
             final CharSequence[] digitEntries = new CharSequence[9];
             final CharSequence[] digitValues = new CharSequence[9];
@@ -1232,10 +1239,6 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         showWhile(screen, VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.PREF_INTONATION_GROUP,
                 value -> VoiceSettings.INTONATION_CUSTOM.equals(value),
                 prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL));
-        showWhile(screen, VoiceSettings.PREF_RATE_BOOST, VoiceSettings.PREF_RATE_BOOST_MULTIPLIER,
-                Boolean.TRUE::equals, prefs.getBoolean(VoiceSettings.PREF_RATE_BOOST, false));
-        showWhile(screen, VoiceSettings.PREF_AUDIO_OPTIMIZER, VoiceSettings.PREF_AUDIO_PROFILE,
-                Boolean.TRUE::equals, prefs.getBoolean(VoiceSettings.PREF_AUDIO_OPTIMIZER, false));
         return screen;
     }
 
@@ -1324,7 +1327,10 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
             labels.put(voice, getVoiceLabel(voice));
         }
         final List<Voice> sortedVoices = new ArrayList<Voice>(voices);
-        Collections.sort(sortedVoices, (lhs, rhs) -> labels.get(lhs).compareToIgnoreCase(labels.get(rhs)));
+        // A Collator, not compareToIgnoreCase: plain char order puts accented
+        // initials ("Čeština", "Íslenska") after Z.
+        final java.text.Collator collator = java.text.Collator.getInstance();
+        Collections.sort(sortedVoices, (lhs, rhs) -> collator.compare(labels.get(lhs), labels.get(rhs)));
 
         final CharSequence[] entries = new CharSequence[sortedVoices.size()];
         final CharSequence[] entryValues = new CharSequence[sortedVoices.size()];

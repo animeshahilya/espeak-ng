@@ -35,7 +35,14 @@ public class VoiceSettings {
     public static final String PREF_VOLUME = "espeak_volume";
     public static final String PREF_PUNCTUATION_LEVEL = "espeak_punctuation_level";
     public static final String PREF_PUNCTUATION_CHARACTERS = "espeak_punctuation_characters";
+    /** Rate boost as one choice: {@link #RATE_BOOST_OFF} or the multiplier ("2"-"5"). */
+    public static final String PREF_RATE_BOOST_LEVEL = "espeak_rate_boost_level";
+    public static final String RATE_BOOST_OFF = "off";
+    /** @deprecated Toggle + amount, merged into {@link #PREF_RATE_BOOST_LEVEL}; kept as the migration source. */
+    @Deprecated
     public static final String PREF_RATE_BOOST = "espeak_rate_boost";
+    /** @deprecated See {@link #PREF_RATE_BOOST}. */
+    @Deprecated
     public static final String PREF_RATE_BOOST_MULTIPLIER = "espeak_rate_boost_multiplier";
     public static final String PREF_UNICODE_NORMALIZATION = "espeak_unicode_normalization";
     /** @deprecated Legacy eyes-free-era digit toggle; see {@link #isSpeakDigitsEnabled}. */
@@ -54,10 +61,20 @@ public class VoiceSettings {
     // Opt-in extras beyond NVDA (new keys: the removed pre-parity toggles defaulted on).
     public static final String PREF_READ_MONEY = "espeak_read_money";
     public static final String PREF_READ_CODES = "espeak_read_codes";
-    public static final String PREF_SPEAK_PROGRAMMING_SYMBOLS = "espeak_speak_programming_symbols";
     public static final String PREF_USER_DICTIONARY = "espeak_user_dictionary";
+    /** Phonetic letters: {@link #PHONETIC_OFF}, {@link #PHONETIC_CHARACTER} or {@link #PHONETIC_ALWAYS}. */
+    public static final String PREF_PHONETIC_LETTERS = "espeak_phonetic_letters";
+    public static final String PHONETIC_OFF = "off";
+    public static final String PHONETIC_CHARACTER = "character";
+    public static final String PHONETIC_ALWAYS = "always";
+    /** @deprecated Merged into {@link #PREF_PHONETIC_LETTERS} (with the old "phonetic" reading mode). */
+    @Deprecated
     public static final String PREF_NATO_SPELLING = "espeak_nato_spelling";
     public static final String PREF_SPOKEN_DIACRITICS = "espeak_spoken_diacritics";
+    /** Audio optimizer as one choice: {@link #AUDIO_PROFILE_OFF} or a profile. */
+    public static final String PREF_AUDIO_OPTIMIZER_LEVEL = "espeak_audio_optimizer_level";
+    /** @deprecated Toggle + profile, merged into {@link #PREF_AUDIO_OPTIMIZER_LEVEL}. */
+    @Deprecated
     public static final String PREF_AUDIO_OPTIMIZER = "espeak_audio_optimizer";
     // Digit grouping.
     public static final String PREF_DIGIT_GROUPING = "espeak_digit_grouping";
@@ -75,6 +92,8 @@ public class VoiceSettings {
     public static final String PREF_FORCE_RATE = "espeak_force_rate";
     public static final String PREF_FORCE_PITCH = "espeak_force_pitch";
     public static final String PREF_FORCE_VOLUME = "espeak_force_volume";
+    /** @deprecated See {@link #PREF_AUDIO_OPTIMIZER}. */
+    @Deprecated
     public static final String PREF_AUDIO_PROFILE = "espeak_audio_profile";
     public static final String PREF_READING_MODE = "espeak_reading_mode";
     public static final String PREF_REPEATED_CHARS = "espeak_repeated_chars";
@@ -110,10 +129,13 @@ public class VoiceSettings {
     /** Unified reading modes (single-select; migrates legacy booleans). */
     public static final String READING_NORMAL = "normal";
     public static final String READING_SPELLING = "spelling";
+    /** @deprecated Now {@link #PHONETIC_ALWAYS}; read only to migrate. */
+    @Deprecated
     public static final String READING_PHONETIC = "phonetic";
     public static final String READING_CODE = "code";
 
     /** Audio optimizer intensity profiles. */
+    public static final String AUDIO_PROFILE_OFF = "off";
     public static final String AUDIO_PROFILE_GENTLE = "gentle";
     public static final String AUDIO_PROFILE_BALANCED = "balanced";
     public static final String AUDIO_PROFILE_FULL = "full";
@@ -303,8 +325,17 @@ public class VoiceSettings {
         return settings;
     }
 
+    /** {@link #RATE_BOOST_OFF} or the multiplier, migrating the old toggle + amount on first read. */
+    public String getRateBoostLevel() {
+        String level = mPreferences.getString(PREF_RATE_BOOST_LEVEL, null);
+        if (level != null) return level;
+        return mPreferences.getBoolean(PREF_RATE_BOOST, false)
+                ? Integer.toString(clampBoost(getPreferenceValue(PREF_RATE_BOOST_MULTIPLIER, RATE_BOOST_MULTIPLIER)))
+                : RATE_BOOST_OFF;
+    }
+
     public boolean isRateBoostEnabled() {
-        return mPreferences.getBoolean(PREF_RATE_BOOST, false);
+        return !RATE_BOOST_OFF.equals(getRateBoostLevel());
     }
 
     /**
@@ -317,7 +348,14 @@ public class VoiceSettings {
      * costing intelligibility rather than just speed.
      */
     public int getRateBoostMultiplier() {
-        int value = getPreferenceValue(PREF_RATE_BOOST_MULTIPLIER, RATE_BOOST_MULTIPLIER);
+        try {
+            return clampBoost(Integer.parseInt(getRateBoostLevel()));
+        } catch (NumberFormatException e) {
+            return RATE_BOOST_MULTIPLIER; // off, or a malformed value
+        }
+    }
+
+    private static int clampBoost(int value) {
         if (value < RATE_BOOST_MULTIPLIER_MIN) value = RATE_BOOST_MULTIPLIER_MIN;
         if (value > RATE_BOOST_MULTIPLIER_MAX) value = RATE_BOOST_MULTIPLIER_MAX;
         return value;
@@ -382,25 +420,34 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_READ_CODES, false);
     }
 
-    public boolean isSpeakProgrammingSymbolsEnabled() {
-        return mPreferences.getBoolean(PREF_SPEAK_PROGRAMMING_SYMBOLS, true);
-    }
-
     /**
      * Default false: this tone-shaping chain was tuned by ear against a different synthesis
      * engine (see {@link AudioOptimizer}'s own doc comment) - worth trying, not assumed to suit
      * eSpeak's own formant timbre until actually confirmed on a real device.
      */
     public boolean isAudioOptimizerEnabled() {
-        return mPreferences.getBoolean(PREF_AUDIO_OPTIMIZER, false);
+        return !AUDIO_PROFILE_OFF.equals(getAudioOptimizerLevel());
+    }
+
+    /** {@link #AUDIO_PROFILE_OFF} or a profile, migrating the old toggle + profile on first read. */
+    public String getAudioOptimizerLevel() {
+        String level = mPreferences.getString(PREF_AUDIO_OPTIMIZER_LEVEL, null);
+        if (level != null) return level;
+        return mPreferences.getBoolean(PREF_AUDIO_OPTIMIZER, false)
+                ? mPreferences.getString(PREF_AUDIO_PROFILE, AUDIO_PROFILE_BALANCED)
+                : AUDIO_PROFILE_OFF;
     }
 
     public boolean isUserDictionaryEnabled() {
         return mPreferences.getBoolean(PREF_USER_DICTIONARY, true);
     }
 
-    public boolean isNatoSpellingEnabled() {
-        return mPreferences.getBoolean(PREF_NATO_SPELLING, false);
+    /** Migrates the old NATO toggle and the old "phonetic" reading mode on first read. */
+    public String getPhoneticLetters() {
+        String mode = mPreferences.getString(PREF_PHONETIC_LETTERS, null);
+        if (mode != null) return mode;
+        if (READING_PHONETIC.equals(getStoredReadingMode())) return PHONETIC_ALWAYS;
+        return mPreferences.getBoolean(PREF_NATO_SPELLING, false) ? PHONETIC_CHARACTER : PHONETIC_OFF;
     }
 
     public boolean isSpokenDiacriticsEnabled() {
@@ -434,10 +481,6 @@ public class VoiceSettings {
         return READING_SPELLING.equals(getReadingMode());
     }
 
-    public boolean isPhoneticModeEnabled() {
-        return READING_PHONETIC.equals(getReadingMode());
-    }
-
     public boolean isCodeReadingModeEnabled() {
         return READING_CODE.equals(getReadingMode());
     }
@@ -448,6 +491,12 @@ public class VoiceSettings {
      * when alone, else spelling &gt; phonetic &gt; code &gt; normal).
      */
     public String getReadingMode() {
+        String mode = getStoredReadingMode();
+        // Phonetic is now its own setting (getPhoneticLetters()).
+        return READING_PHONETIC.equals(mode) ? READING_NORMAL : mode;
+    }
+
+    private String getStoredReadingMode() {
         String mode = mPreferences.getString(PREF_READING_MODE, null);
         if (mode != null) return mode;
         boolean spelling = mPreferences.getBoolean(PREF_SPELLING_MODE, false);
@@ -483,7 +532,7 @@ public class VoiceSettings {
     }
 
     public String getAudioProfile() {
-        String p = mPreferences.getString(PREF_AUDIO_PROFILE, AUDIO_PROFILE_BALANCED);
+        String p = getAudioOptimizerLevel();
         if (AUDIO_PROFILE_GENTLE.equals(p) || AUDIO_PROFILE_FULL.equals(p)) return p;
         return AUDIO_PROFILE_BALANCED;
     }
