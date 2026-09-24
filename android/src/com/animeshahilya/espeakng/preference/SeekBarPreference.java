@@ -102,10 +102,6 @@ public class SeekBarPreference extends PersistingDialogPreference
             this.valueMultiplier = multiplier;
         }
 
-        public int getValueMultiplier()
-        {
-            return this.valueMultiplier;
-        }
 
         public void enableRateBoost(boolean enabled, int multiplier)
         {

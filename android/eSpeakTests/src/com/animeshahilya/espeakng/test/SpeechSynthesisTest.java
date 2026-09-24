@@ -40,7 +40,6 @@ import org.junit.runner.RunWith;
 import static com.animeshahilya.espeakng.test.TtsMatcher.isTtsLangCode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.AnyOf.anyOf;
 
     // Legacy Locale constructors are used deliberately: these tests exercise
     // Java<->IANA code mapping with legacy/3-letter codes ("GBR", "afr") that

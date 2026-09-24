@@ -188,7 +188,7 @@ public class DictionaryDeviceTest {
      * "cat" to "hippopotamus") shifted every rangeStart() position reported
      * afterward with no compensation - e.g. the word "and" was reported as
      * the range covering "un " (part of "run") in the original text. See
-     * TextOffsetMap's class doc and TtsService.chainOffset().
+     * TextOffsetMap's class doc and TextPreprocessor.chainOffset().
      */
     @Test
     public void testWordBoundaryOffsetsAfterDictionaryReplacement() throws Exception {

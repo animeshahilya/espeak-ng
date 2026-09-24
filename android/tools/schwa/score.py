@@ -6,7 +6,7 @@ confusions (ref -> espeak) so systematic errors surface first.
 """
 import sys, os, subprocess, unicodedata, random, collections
 
-ROOT = os.environ.get('ESPEAK_ROOT', r'C:\Users\alex\.gemini\antigravity\scratch\espeak-ng')
+ROOT = os.environ.get('ESPEAK_ROOT', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..'))
 EXE = os.path.join(ROOT, 'build', 'src', 'espeak-ng.exe')
 DATA = os.path.join(ROOT, 'build')
 

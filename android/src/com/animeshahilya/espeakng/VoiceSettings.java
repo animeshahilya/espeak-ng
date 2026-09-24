@@ -498,14 +498,6 @@ public class VoiceSettings {
         }
     }
 
-    public boolean isSpellingModeEnabled() {
-        return READING_SPELLING.equals(getReadingMode());
-    }
-
-    public boolean isCodeReadingModeEnabled() {
-        return READING_CODE.equals(getReadingMode());
-    }
-
     /**
      * Unified reading mode. Migrates the three legacy booleans on first read:
      * spelling wins over phonetic, code combines independently (mapped to code

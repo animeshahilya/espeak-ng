@@ -109,21 +109,17 @@ public final class TextPreprocessor {
             return new Result(text != null ? text : "", initialOffsetMap, false);
         }
 
-        TextOffsetMap offsetMap = initialOffsetMap;
+        final Edits edits = new Edits(initialOffsetMap);
+        final String lang = languageTag(voice);
+        final boolean english = NumberReading.isEnglish(lang);
 
         if (!isSsml) {
             if (text.indexOf('\u0001') != -1) {
-                String before = text;
-                text = text.replace("\u0001", "");
-                offsetMap = chainOffset(offsetMap, before, text);
+                text = edits.track(text, text.replace("\u0001", ""));
             }
-            String beforeSurrogates = text;
-            text = stripUnpairedSurrogates(text);
-            offsetMap = chainOffset(offsetMap, beforeSurrogates, text);
+            text = edits.track(text, stripUnpairedSurrogates(text));
             if (text.contains("[[")) {
-                String before = text;
-                text = text.replace("[[", "[ [");
-                offsetMap = chainOffset(offsetMap, before, text);
+                text = edits.track(text, text.replace("[[", "[ ["));
             }
         }
 
@@ -131,25 +127,19 @@ public final class TextPreprocessor {
             UnicodeNormalization.Result normalization = UnicodeNormalization.normalize(text);
             if (normalization != null) {
                 text = normalization.text;
-                offsetMap = TextOffsetMap.fromBoundaryMap(normalization.boundaryMap())
-                        .composeWith(offsetMap);
+                edits.map = TextOffsetMap.fromBoundaryMap(normalization.boundaryMap())
+                        .composeWith(edits.map);
             }
         }
 
-        {
-            String before = text;
-            text = sanitizeForWatchdog(text, isSsml);
-            offsetMap = chainOffset(offsetMap, before, text);
-        }
+        text = edits.track(text, sanitizeForWatchdog(text, isSsml));
 
         UserDictionaryManager dictManager = null;
         if (!isSsml && settings.isUserDictionaryEnabled() && storageContext != null) {
             // Resolved once: getInstance() is static synchronized, and the
             // single-character path below needs the same instance.
             dictManager = UserDictionaryManager.getInstance(storageContext);
-            String before = text;
-            text = dictManager.applyRules(text, languageTag(voice));
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, dictManager.applyRules(text, lang));
         }
 
         final boolean isSingleCharacterUtterance = !isSsml
@@ -159,34 +149,25 @@ public final class TextPreprocessor {
             boolean characterRuleApplied = false;
             if (dictManager != null) {
                 String before = text;
-                text = dictManager.applyCharacterRule(text, languageTag(voice));
+                text = edits.track(text, dictManager.applyCharacterRule(text, lang));
                 characterRuleApplied = !text.equals(before);
-                offsetMap = chainOffset(offsetMap, before, text);
             }
             if (!characterRuleApplied) {
                 if (!VoiceSettings.PHONETIC_OFF.equals(settings.getPhoneticLetters())) {
-                    String before = text;
-                    text = expandNatoSpelling(text);
-                    offsetMap = chainOffset(offsetMap, before, text);
+                    text = edits.track(text, expandNatoSpelling(text));
                 }
-                if (settings.isSpokenDiacriticsEnabled() && isIndianLanguage(languageTag(voice))) {
-                    String before = text;
-                    text = expandDevanagariDiacritic(text);
-                    offsetMap = chainOffset(offsetMap, before, text);
+                if (settings.isSpokenDiacriticsEnabled() && isIndianLanguage(lang)) {
+                    text = edits.track(text, expandDevanagariDiacritic(text));
                 }
                 // NVDA processSpeechSymbol: character navigation always names
                 // the character, independent of the symbol level. No-op for
                 // letters and whitespace (the lookup trims first).
-                String before = text;
-                text = NvdaSymbolProcessor.processSingleSymbol(text);
-                offsetMap = chainOffset(offsetMap, before, text);
+                text = edits.track(text, NvdaSymbolProcessor.processSingleSymbol(text));
             }
         }
 
         if (!isSsml && settings.isSimplifyUrlsEnabled()) {
-            String before = text;
-            text = simplifyUrls(text);
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, simplifyUrls(text));
         }
 
         // Read once: getReadingMode() re-reads SharedPreferences, and the
@@ -195,53 +176,42 @@ public final class TextPreprocessor {
         final String readingMode = settings.getReadingMode();
         final boolean normalReading = !isSsml && VoiceSettings.READING_NORMAL.equals(readingMode);
         final boolean indianNumbers = settings.isIndianNumberingEnabled()
-                && isIndianLanguage(languageTag(voice));
+                && isIndianLanguage(lang);
 
         // Beta extra: Hinglish words become Devanagari, which eSpeak's own
         // script detection then reads with Hindi pronunciation. Before the
         // code pass, so Hindi code words ("pin" -> पिन) still mark a code.
         if (normalReading && settings.isHinglishEnabled()
-                && NumberReading.isEnglish(languageTag(voice))) {
-            String before = text;
-            text = HinglishReader.process(text);
-            offsetMap = chainOffset(offsetMap, before, text);
+                && english) {
+            text = edits.track(text, HinglishReader.process(text));
         }
 
         // Opt-in extras, off by default. Codes run first so a code is never
         // read as money; money keeps its digits for the Indian pass below.
         if (normalReading && settings.isReadCodesEnabled()) {
-            String before = text;
-            text = NumberReading.readCodes(text);
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, NumberReading.readCodes(text));
         }
         if (normalReading && settings.isExpandAbbreviationsEnabled()
-                && NumberReading.isEnglish(languageTag(voice))) {
-            String before = text;
-            text = Abbreviations.process(text);
-            offsetMap = chainOffset(offsetMap, before, text);
+                && english) {
+            text = edits.track(text, Abbreviations.process(text));
         }
         if (normalReading && settings.isReadMoneyEnabled()
-                && NumberReading.isEnglish(languageTag(voice))) {
-            String before = text;
-            text = NumberReading.readMoney(text, !indianNumbers);
-            offsetMap = chainOffset(offsetMap, before, text);
+                && english) {
+            text = edits.track(text, NumberReading.readMoney(text, !indianNumbers));
         }
 
         // Indian-voice only: every other voice reads these exactly as NVDA's
         // eSpeak does ("5k", "2 l", "12,34,567" untouched).
         if (!isSsml && indianNumbers) {
-            String before = text;
-            text = preprocessIndianText(text, languageTag(voice));
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, preprocessIndianText(text, lang));
         }
 
         final String digitGrouping = settings.getDigitGroupingMode();
         final boolean useGrouping = !isSsml && digitGrouping != null
                 && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
         if (useGrouping) {
-            String before = text;
-            text = formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold());
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text,
+                    formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold()));
         }
 
         // Phonetic letters "Always" reads every letter as Alfa, Bravo and so
@@ -249,13 +219,9 @@ public final class TextPreprocessor {
         if (!isSsml && !isSingleCharacterUtterance
                 && VoiceSettings.PHONETIC_ALWAYS.equals(settings.getPhoneticLetters())
                 && !VoiceSettings.READING_CODE.equals(readingMode)) {
-            String before = text;
-            text = expandPhoneticMode(text);
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, expandPhoneticMode(text));
         } else if (!isSsml && VoiceSettings.READING_SPELLING.equals(readingMode)) {
-            String before = text;
-            text = expandSpellingMode(text);
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, expandSpellingMode(text));
         }
 
         // NVDA architecture: one symbol pass owns announcement, levels and
@@ -268,40 +234,30 @@ public final class TextPreprocessor {
             // (markers TtsService turns into tones); the pass below then
             // leaves the markers alone, as they are not symbols it knows.
             if (settings.isPunctuationSoundsEnabled()) {
-                String before = text;
-                text = Earcons.mark(text, symbolLevel(settings, readingMode),
-                        customSymbols(settings, readingMode));
-                offsetMap = chainOffset(offsetMap, before, text);
+                text = edits.track(text, Earcons.mark(text, symbolLevel(settings, readingMode),
+                        customSymbols(settings, readingMode)));
             }
-            String before = text;
-            text = processNvdaSymbols(text, settings, readingMode);
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, processNvdaSymbols(text, settings, readingMode));
         }
 
         // After the symbol pass, so the commas it adds are pauses, never
         // announced as "comma".
         if (normalReading && settings.isPhrasePausesEnabled()
-                && PhrasePauses.supports(languageTag(voice))) {
-            String before = text;
-            text = PhrasePauses.process(text, languageTag(voice));
-            offsetMap = chainOffset(offsetMap, before, text);
+                && PhrasePauses.supports(lang)) {
+            text = edits.track(text, PhrasePauses.process(text, lang));
         }
 
         if (!isSsml && containsPotentialEmoji(text)
                 && !VoiceSettings.REPEATED_CHARS_OFF.equals(settings.getRepeatedCharactersMode())) {
-            String before = text;
-            text = condenseRepeatedEmojis(text, settings.getRepeatedCharactersMode());
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, condenseRepeatedEmojis(text, settings.getRepeatedCharactersMode()));
         }
 
         if (!isSsml && containsPotentialEmoji(text)) {
-            String before = text;
-            text = settings.isEmojiIgnoreEnabled()
-                    ? filterEmojis(text) : clarifyEmojiAnnouncements(text, languageTag(voice));
-            offsetMap = chainOffset(offsetMap, before, text);
+            text = edits.track(text, settings.isEmojiIgnoreEnabled()
+                    ? filterEmojis(text) : clarifyEmojiAnnouncements(text, lang));
         }
 
-        return new Result(text, offsetMap, isSingleCharacterUtterance);
+        return new Result(text, edits.map, isSingleCharacterUtterance);
     }
 
     /**
@@ -355,6 +311,21 @@ public final class TextPreprocessor {
         return chars;
     }
 
+    /** The offset map of every length-changing step, composed as the steps run. */
+    private static final class Edits {
+        TextOffsetMap map;
+
+        Edits(TextOffsetMap map) {
+            this.map = map;
+        }
+
+        /** Records the step from {@code before} to {@code after}; returns {@code after}. */
+        String track(String before, String after) {
+            map = chainOffset(map, before, after);
+            return after;
+        }
+    }
+
     public static TextOffsetMap chainOffset(TextOffsetMap previous, String before, String after) {
         if (before.equals(after)) {
             return previous;
@@ -365,16 +336,6 @@ public final class TextPreprocessor {
     // ==========================================
     // Fast-path Predicates & Char Scanners
     // ==========================================
-
-    /**
-     * True when the text holds anything the NVDA symbol pass would rewrite.
-     * The old 37-pattern chain needed an elaborate trigger index because it
-     * ran 37 full-text scans; the NVDA pass is a single scan, so no gate is
-     * needed in the pipeline - this stays only as a cheap predicate.
-     */
-    public static boolean containsProgrammingSymbolChars(String text) {
-        return NvdaSymbolProcessor.containsKnownSymbol(text);
-    }
 
     /**
      * Length of {@code text} after trimming leading/trailing chars

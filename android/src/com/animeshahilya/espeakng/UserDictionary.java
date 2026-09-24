@@ -101,46 +101,26 @@ public class UserDictionary {
         return mPattern;
     }
 
-    public void setPattern(String pattern) {
-        mPattern = pattern != null ? pattern : "";
-        compile();
-    }
 
     public String getReplacement() {
         return mReplacement;
     }
 
-    public void setReplacement(String replacement) {
-        mReplacement = replacement != null ? replacement : "";
-        compile();
-    }
 
     public boolean isCaseSensitive() {
         return mCaseSensitive;
     }
 
-    public void setCaseSensitive(boolean caseSensitive) {
-        mCaseSensitive = caseSensitive;
-        compile();
-    }
 
     public boolean isRegex() {
         return mIsRegex;
     }
 
-    public void setRegex(boolean regex) {
-        mIsRegex = regex;
-        compile();
-    }
 
     public boolean isWholeWord() {
         return mWholeWord;
     }
 
-    public void setWholeWord(boolean wholeWord) {
-        mWholeWord = wholeWord;
-        compile();
-    }
 
     /** "" means the rule applies to every language. */
     public String getLanguage() {
@@ -151,15 +131,6 @@ public class UserDictionary {
         return mCategory;
     }
 
-    public void setCategory(String category) {
-        mCategory = normalizeCategory(category);
-        // compile()'s wholeWord handling now depends on the category (see
-        // there for why) - unused today (every category change in the app
-        // goes through the constructor, building a fresh instance), but this
-        // setter exists alongside the others that all recompile, and leaving
-        // it stale would be a trap for whenever something does call it.
-        compile();
-    }
 
     public static String normalizeCategory(String category) {
         if (category == null) return CATEGORY_MAIN;
@@ -187,10 +158,6 @@ public class UserDictionary {
         return mPhonemes;
     }
 
-    public void setPhonemes(String phonemes) {
-        mPhonemes = phonemes != null ? phonemes.trim() : "";
-        compile();
-    }
 
     public boolean hasPhonemeOverride() {
         return isPhonemeStringUsable(mPhonemes);

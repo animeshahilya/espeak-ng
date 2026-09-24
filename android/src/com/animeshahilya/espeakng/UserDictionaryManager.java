@@ -393,24 +393,6 @@ public class UserDictionaryManager {
         return new UserDictionary(pattern, replacement, caseSensitive, isRegex, !isRegex);
     }
 
-    /** Case-insensitive substring search over pattern/replacement for the UI list. */
-    public List<Integer> searchIndices(String query) {
-        List<Integer> out = new ArrayList<>();
-        if (query == null || query.trim().isEmpty()) {
-            for (int i = 0; i < mRules.size(); i++) out.add(i);
-            return out;
-        }
-        String q = query.toLowerCase(java.util.Locale.ROOT);
-        for (int i = 0; i < mRules.size(); i++) {
-            UserDictionary r = mRules.get(i);
-            if (r.getPattern().toLowerCase(java.util.Locale.ROOT).contains(q)
-                    || r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) {
-                out.add(i);
-            }
-        }
-        return out;
-    }
-
     public List<UserDictionary> getRulesByCategory(String category) {
         if (category == null) {
             return Collections.emptyList();

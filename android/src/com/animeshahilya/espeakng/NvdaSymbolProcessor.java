@@ -785,12 +785,4 @@ public final class NvdaSymbolProcessor {
         }
         return symbol.replacement;
     }
-
-    /** True when the text contains anything the processor would rewrite. */
-    public static boolean containsKnownSymbol(String text) {
-        if (text == null || text.isEmpty()) {
-            return false;
-        }
-        return masterCollapse.matcher(text).find();
-    }
 }
