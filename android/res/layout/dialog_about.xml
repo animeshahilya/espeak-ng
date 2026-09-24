@@ -11,7 +11,7 @@
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:paddingTop="20dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="@dimen/screen_padding">
 
         <!-- App Icon -->
         <ImageView
@@ -22,13 +22,15 @@
             android:src="@mipmap/icon"
             android:importantForAccessibility="no" />
 
-        <!-- App Title -->
+        <!-- App Title: a TalkBack heading (API 28+) so swipe-down jumps here. -->
         <TextView
+            android:id="@+id/about_title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:text="@string/app_name"
+            android:accessibilityHeading="true"
             android:textAppearance="?attr/textAppearanceHeadlineSmall" />
 
         <!-- Version & Offline Badge -->
@@ -64,66 +66,26 @@
             android:layout_marginBottom="16dp"
             android:background="?attr/colorOutlineVariant" />
 
-        <!-- Highlights Header -->
+        <!-- Highlights Header: heading for TalkBack swipe-down navigation. -->
         <TextView
+            android:id="@+id/about_features_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="@string/about_features_header"
+            android:accessibilityHeading="true"
             android:textAppearance="?attr/textAppearanceTitleMedium" />
 
-        <!-- Feature Highlights -->
+        <!-- Feature highlights: one view, one TalkBack stop. The text is
+             joined from the individual about_feature_* strings in
+             TtsSettingsActivity.showAboutDialog() so each line stays
+             independently translatable. -->
         <TextView
+            android:id="@+id/about_features"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
             android:lineSpacingMultiplier="1.15"
-            android:text="@string/about_feature_offline"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:lineSpacingMultiplier="1.15"
-            android:text="@string/about_feature_languages"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:lineSpacingMultiplier="1.15"
-            android:text="@string/about_feature_indian"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:lineSpacingMultiplier="1.15"
-            android:text="@string/about_feature_dsp"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:lineSpacingMultiplier="1.15"
-            android:text="@string/about_feature_dict"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:lineSpacingMultiplier="1.15"
-            android:text="@string/about_feature_locks"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -137,7 +99,8 @@
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
-        <!-- GitHub Button -->
+        <!-- GitHub Button: outlined (the positive OK button already owns the
+             filled/tonal primary slot in the dialog footer). -->
         <Button
             android:id="@+id/btn_about_github"
             android:layout_width="wrap_content"
@@ -146,7 +109,8 @@
             android:layout_marginTop="14dp"
             android:minHeight="48dp"
             android:minWidth="140dp"
-            android:text="@string/about_view_github" />
+            android:text="@string/about_view_github"
+            style="@style/Widget.Material3.Button.OutlinedButton" />
 
     </LinearLayout>
 

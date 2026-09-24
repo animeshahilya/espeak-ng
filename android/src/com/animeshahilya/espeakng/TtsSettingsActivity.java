@@ -635,7 +635,27 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     } else {
                         actionBar.setTitle(screen.getTitle());
                     }
+                    // Re-rooting the fragment swaps the whole list silently;
+                    // announce the new screen name so TalkBack users hear
+                    // where they landed instead of only seeing the title bar
+                    // change under them.
+                    announceScreenTitle(actionBar.getTitle());
                 }
+            }
+        }
+
+        /**
+         * announceForAccessibility was deprecated in Android 16; these one-shot
+         * polite announcements for explicit navigation are the non-disruptive
+         * case (same rationale as SupportedLanguagesDialogFragment).
+         */
+        @SuppressWarnings("deprecation")
+        private void announceScreenTitle(CharSequence title) {
+            View list = getView() != null
+                    ? getView().findViewById(androidx.preference.R.id.recycler_view)
+                    : null;
+            if (list != null && title != null) {
+                list.announceForAccessibility(title);
             }
         }
 
@@ -1020,6 +1040,22 @@ public class TtsSettingsActivity extends AppCompatActivity {
         TextView tvVersion = aboutView.findViewById(R.id.about_version);
         if (tvVersion != null) {
             tvVersion.setText(context.getString(R.string.about_version_format, versionName));
+        }
+
+        // One TextView for every highlight: six separate views were six
+        // TalkBack stops for what is visually one block. Joined here so each
+        // bullet stays an independently translated string resource.
+        TextView tvFeatures = aboutView.findViewById(R.id.about_features);
+        if (tvFeatures != null) {
+            final CharSequence[] lines = {
+                    context.getText(R.string.about_feature_offline),
+                    context.getText(R.string.about_feature_languages),
+                    context.getText(R.string.about_feature_indian),
+                    context.getText(R.string.about_feature_dsp),
+                    context.getText(R.string.about_feature_dict),
+                    context.getText(R.string.about_feature_locks),
+            };
+            tvFeatures.setText(android.text.TextUtils.join("\n\n", lines));
         }
 
         final AlertDialog dialog = new MaterialAlertDialogBuilder(context)

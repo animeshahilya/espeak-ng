@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One outlined exposed-dropdown field, reused anywhere the app needs a
+     programmatic picker that matches the M3 search fields. The hint is set
+     by the caller (TextInputLayout.setHint) so each use site owns its label. -->
+<com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dropdown_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+        android:id="@+id/dropdown_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:inputType="none"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no" />
+
+</com.google.android.material.textfield.TextInputLayout>

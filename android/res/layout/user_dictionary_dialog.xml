@@ -4,21 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="8dp">
+    android:paddingStart="@dimen/screen_padding"
+    android:paddingEnd="@dimen/screen_padding"
+    android:paddingTop="@dimen/dialog_padding_top"
+    android:paddingBottom="@dimen/dialog_padding_bottom">
 
-    <!-- Floating hint + built-in clear-text end icon (see
-         supported_languages_dialog for why the old label/clear views
-         are gone; the screen's wiring is null-safe). -->
+    <!-- Floating hint + built-in clear-text end icon; the localized end-icon
+         description keeps TalkBack from falling back to English "Clear text". -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/section_gap"
         android:hint="@string/dict_search_hint"
         app:startIconDrawable="@drawable/ic_search"
         app:endIconMode="clear_text"
+        app:endIconContentDescription="@string/clear_search"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -32,28 +32,33 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/dict_filter_label"
+    <!-- Section filter as an M3 exposed dropdown: same outlined field shape
+         as the search box above, and TalkBack announces it as a dropdown. -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dict_filter_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dict_filter_label"
-        android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:labelFor="@+id/dict_filter_spinner" />
+        android:layout_marginBottom="@dimen/content_gap"
+        android:hint="@string/dict_filter_label"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
-    <Spinner
-        android:id="@+id/dict_filter_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:layout_marginBottom="6dp" />
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/dict_filter_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:inputType="none"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Live match count status -->
     <TextView
         android:id="@+id/dict_rules_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="@dimen/content_gap"
         android:textAppearance="?attr/textAppearanceBodySmall"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:accessibilityLiveRegion="polite" />
@@ -68,16 +73,20 @@
             android:id="@+id/dict_rules_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="?android:attr/listDivider"
+            android:divider="?attr/colorOutlineVariant"
             android:dividerHeight="1dp" />
 
+        <!-- Empty state is a polite live region: switching to "no rules" or
+             "no match" reaches TalkBack without a swipe hunt. -->
         <TextView
             android:id="@+id/dict_empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:padding="16dp"
-            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:padding="@dimen/screen_padding"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:accessibilityLiveRegion="polite"
             android:visibility="gone" />
     </FrameLayout>
 

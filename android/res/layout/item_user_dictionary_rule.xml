@@ -5,11 +5,17 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="?attr/selectableItemBackground"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
+    android:paddingStart="@dimen/screen_padding"
+    android:paddingEnd="@dimen/screen_padding"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     tools:ignore="Overdraw">
+
+    <!-- The whole row carries one dict_a11y_rule* contentDescription (set in
+         UserDictionaryScreen.getView). Every child below is
+         importantForAccessibility=no so TalkBack reads that single summary
+         instead of index, pattern, arrow, replacement and each chip as five
+         separate stops. -->
 
     <!-- Primary Pattern and Replacement Row -->
     <LinearLayout
@@ -23,18 +29,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
-            android:textSize="13sp"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:textAppearance="?attr/textAppearanceLabelMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:importantForAccessibility="no" />
 
         <TextView
             android:id="@+id/rule_pattern"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnSurface"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:importantForAccessibility="no" />
 
         <TextView
             android:id="@+id/rule_arrow"
@@ -44,7 +51,7 @@
             android:layout_marginEnd="4dp"
             android:text="@string/dict_rule_arrow"
             android:importantForAccessibility="no"
-            android:textSize="15sp"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="?attr/colorPrimary" />
 
         <TextView
@@ -52,10 +59,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="15sp"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnSurface"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:importantForAccessibility="no" />
 
     </LinearLayout>
 
@@ -72,57 +80,69 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
+            android:minHeight="20dp"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:textSize="11sp"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
             android:textStyle="bold"
             android:background="@drawable/badge_chip_background"
-            android:textColor="@color/chip_text_section" />
+            android:textColor="@color/chip_text_section"
+            android:importantForAccessibility="no" />
 
         <TextView
             android:id="@+id/chip_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
+            android:minHeight="20dp"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:textSize="11sp"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
             android:textStyle="bold"
             android:background="@drawable/badge_chip_background"
-            android:textColor="@color/chip_text_match" />
+            android:textColor="@color/chip_text_match"
+            android:importantForAccessibility="no" />
 
         <TextView
             android:id="@+id/chip_lang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
+            android:minHeight="20dp"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:textSize="11sp"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
             android:textStyle="bold"
             android:background="@drawable/badge_chip_background"
             android:textColor="@color/chip_text_lang"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:importantForAccessibility="no" />
 
         <TextView
             android:id="@+id/chip_phoneme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
+            android:minHeight="20dp"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:textSize="11sp"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
             android:textStyle="bold"
             android:background="@drawable/badge_chip_background"
             android:textColor="@color/chip_text_phoneme"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:importantForAccessibility="no" />
 
     </LinearLayout>
 

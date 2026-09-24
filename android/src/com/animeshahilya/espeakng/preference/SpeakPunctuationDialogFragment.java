@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.google.android.material.textfield.TextInputLayout;
 
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.SpeechSynthesis;
@@ -90,6 +91,7 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
         mAll = (RadioButton) root.findViewById(R.id.all);
         mCustom = (RadioButton) root.findViewById(R.id.custom);
         mPunctuationCharacters = (EditText) root.findViewById(R.id.punctuation_characters);
+        final TextInputLayout punctuationLayout = root.findViewById(R.id.punctuation_characters_layout);
 
         // TalkBack: descriptions are importantForAccessibility=no in layout to
         // avoid 10 stops for 5 options. Fold each description into its
@@ -116,6 +118,11 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
                 mMost.setChecked(v == mMost || v.getId() == R.id.most_desc);
                 mAll.setChecked(v == mAll || v.getId() == R.id.all_desc);
                 mCustom.setChecked(selectCustom);
+                // Disable the whole outlined field, not just the inner EditText:
+                // a live-looking outline around a dead input reads as broken.
+                if (punctuationLayout != null) {
+                    punctuationLayout.setEnabled(selectCustom);
+                }
                 mPunctuationCharacters.setEnabled(selectCustom);
                 if (selectCustom && v != mPunctuationCharacters) {
                     mPunctuationCharacters.requestFocus();
@@ -169,6 +176,9 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
         boolean isCustom = VoiceSettings.PUNCTUATION_PRESET_CUSTOM.equals(preset);
         mPunctuationCharacters.setText(isCustom
                 ? preference.getVoiceSettings().getPunctuationCharacters() : "");
+        if (punctuationLayout != null) {
+            punctuationLayout.setEnabled(isCustom);
+        }
         mPunctuationCharacters.setEnabled(isCustom);
 
         return buildDialog(root);

@@ -50,7 +50,11 @@ import java.util.ArrayList;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputLayout;import java.util.List;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import android.view.ViewParent;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -65,7 +69,12 @@ final class UserDictionaryScreen {
         showDialog(context, "", "all");
     }
 
-    /** Adds a Material outlined text field with a floating label for TalkBack. */
+    /**
+     * Adds a Material outlined text field with a floating label for TalkBack.
+     * TextInputEditText (not plain EditText) so the enclosing TextInputLayout
+     * owns accessibility: hint, error text and the field role are announced
+     * together as one control.
+     */
     private static EditText labeledInput(Context context, LinearLayout layout,
                                          String labelText, String hintText, String initial,
                                          int inputType) {
@@ -79,7 +88,7 @@ final class UserDictionaryScreen {
         final TextInputLayout field = new TextInputLayout(context, null,
                 com.google.android.material.R.attr.textInputOutlinedStyle);
         field.setHint(labelText);
-        final EditText et = new EditText(context);
+        final EditText et = new TextInputEditText(context);
         et.setHint(hintText);
         // Never set contentDescription on EditText: TalkBack needs to read user-typed text!
         if (initial != null && !initial.isEmpty()) et.setText(initial);
@@ -92,6 +101,30 @@ final class UserDictionaryScreen {
         field.setLayoutParams(lp);
         layout.addView(field);
         return et;
+    }
+
+    /**
+     * Reports a field error through the wrapping TextInputLayout when there is
+     * one (M3 error text under the outline, announced by TalkBack as part of
+     * the field), falling back to the legacy EditText error popup otherwise.
+     */
+    private static void fieldError(EditText et, String message) {
+        ViewParent parent = et.getParent();
+        if (parent instanceof TextInputLayout) {
+            ((TextInputLayout) parent).setError(message);
+        } else {
+            et.setError(message);
+        }
+    }
+
+    /** Clears any TextInputLayout / EditText error on {@code et}. */
+    private static void fieldErrorClear(EditText et) {
+        ViewParent parent = et.getParent();
+        if (parent instanceof TextInputLayout) {
+            ((TextInputLayout) parent).setError(null);
+        } else {
+            et.setError(null);
+        }
     }
 
     private static class RuleViewHolder {
@@ -115,7 +148,7 @@ final class UserDictionaryScreen {
 
         final View dialogView = View.inflate(context, R.layout.user_dictionary_dialog, null);
         final EditText etSearch = dialogView.findViewById(R.id.dict_search);
-        final android.widget.Spinner spFilter = dialogView.findViewById(R.id.dict_filter_spinner);
+        final MaterialAutoCompleteTextView spFilter = dialogView.findViewById(R.id.dict_filter_spinner);
         final ListView lvRules = dialogView.findViewById(R.id.dict_rules_list);
         final TextView tvEmpty = dialogView.findViewById(R.id.dict_empty_view);
 
@@ -139,7 +172,10 @@ final class UserDictionaryScreen {
         for (int i = 0; i < filterValues.length; i++) {
             if (filterValues[i].equals(categoryFilter)) { sel = i; break; }
         }
-        spFilter.setSelection(sel);
+        // Exposed dropdowns show the selection as text (no selected-item
+        // position like a Spinner); track the index alongside the field.
+        final int[] filterPos = { sel };
+        spFilter.setText(filterNames[sel], false);
 
         final TextView tvCount = dialogView.findViewById(R.id.dict_rules_count);
 
@@ -224,8 +260,7 @@ final class UserDictionaryScreen {
 
         final Runnable updateList = () -> {
             String q = etSearch.getText() != null ? etSearch.getText().toString().trim().toLowerCase(java.util.Locale.ROOT) : "";
-            int filterPos = spFilter.getSelectedItemPosition();
-            String filter = filterValueFor(filterValues, filterPos);
+            String filter = filterValueFor(filterValues, filterPos[0]);
 
             viewToReal.clear();
             displayedRules.clear();
@@ -276,13 +311,9 @@ final class UserDictionaryScreen {
             @Override public void afterTextChanged(Editable s) {}
         });
 
-        spFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateList.run();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+        spFilter.setOnItemClickListener((parent, view, position, id) -> {
+            filterPos[0] = position;
+            updateList.run();
         });
 
         final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
@@ -292,17 +323,15 @@ final class UserDictionaryScreen {
                 .setPositiveButton(R.string.dict_add_rule, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
-                        int pos = spFilter.getSelectedItemPosition();
-                        String f = filterValueFor(filterValues, pos);
-                        showAddRuleDialog(context, etSearch.getText().toString(), f);
+                        showAddRuleDialog(context, etSearch.getText().toString(),
+                                filterValueFor(filterValues, filterPos[0]));
                     }
                 })
                 .setNeutralButton(R.string.dict_import_export, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
-                        int pos = spFilter.getSelectedItemPosition();
-                        String f = filterValueFor(filterValues, pos);
-                        showDictionaryImportExportDialog(context, etSearch.getText().toString(), f);
+                        showDictionaryImportExportDialog(context, etSearch.getText().toString(),
+                                filterValueFor(filterValues, filterPos[0]));
                     }
                 })
                 .setNegativeButton(R.string.dict_back, null)
@@ -313,9 +342,8 @@ final class UserDictionaryScreen {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 0 && position < viewToReal.size()) {
                     dialog.dismiss();
-                    int pos = spFilter.getSelectedItemPosition();
-                    String f = filterValueFor(filterValues, pos);
-                    showRuleActionsDialog(context, etSearch.getText().toString(), f,
+                    showRuleActionsDialog(context, etSearch.getText().toString(),
+                            filterValueFor(filterValues, filterPos[0]),
                             viewToReal.get(position), labels.get(position));
                 }
             }
@@ -515,11 +543,23 @@ final class UserDictionaryScreen {
                 existing != null ? existing.getPhonemes() : null,
                 android.text.InputType.TYPE_CLASS_TEXT);
 
-        final TextView catLabel = new TextView(context);
-        catLabel.setText(R.string.dict_label_category);
-        catLabel.setTextAppearance(android.R.style.TextAppearance_Small);
-        layout.addView(catLabel);
-        final android.widget.Spinner spCategory = new android.widget.Spinner(context);
+        // Position <-> category string, in the same order as the dropdown's
+        // own entries below (Main, Root, Abbrev, Character) - one array driving
+        // both directions instead of two hand-written ternary chains.
+        final String[] editCategoryValues = {UserDictionary.CATEGORY_MAIN, UserDictionary.CATEGORY_ROOT,
+                UserDictionary.CATEGORY_ABBREV, UserDictionary.CATEGORY_CHARACTER};
+        String preCat = existing != null ? existing.getCategory() : categoryFilter;
+        int preCatIndex = java.util.Arrays.asList(editCategoryValues).indexOf(preCat);
+        if (preCatIndex < 0) preCatIndex = 0;
+
+        // Category picker as an M3 exposed dropdown, matching the voice-variant
+        // and dictionary-filter fields: floating hint names it for TalkBack
+        // (no separate label TextView + labelFor pair to keep in sync).
+        final View categoryField = LayoutInflater.from(context)
+                .inflate(R.layout.field_exposed_dropdown, layout, false);
+        final TextInputLayout categoryLayout = categoryField.findViewById(R.id.dropdown_layout);
+        categoryLayout.setHint(context.getString(R.string.dict_label_category));
+        final MaterialAutoCompleteTextView spCategory = categoryField.findViewById(R.id.dropdown_field);
         android.widget.ArrayAdapter<String> catAdapter = new android.widget.ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_item,
                 new String[]{context.getString(R.string.dict_filter_main),
@@ -528,25 +568,12 @@ final class UserDictionaryScreen {
                         context.getString(R.string.dict_filter_character)});
         catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCategory.setAdapter(catAdapter);
-        spCategory.setContentDescription(context.getString(R.string.dict_label_category));
-        spCategory.setMinimumHeight(minTouch);
-        spCategory.setId(View.generateViewId());
-        catLabel.setLabelFor(spCategory.getId());
-        // Position <-> category string, in the same order as the spinner's own
-        // entries above (Main, Root, Abbrev, Character) - one array driving both
-        // directions instead of two hand-written ternary chains that have to be
-        // kept in sync with each other and with the entries list.
-        final String[] editCategoryValues = {UserDictionary.CATEGORY_MAIN, UserDictionary.CATEGORY_ROOT,
-                UserDictionary.CATEGORY_ABBREV, UserDictionary.CATEGORY_CHARACTER};
-        String preCat = existing != null ? existing.getCategory() : categoryFilter;
-        int preCatIndex = java.util.Arrays.asList(editCategoryValues).indexOf(preCat);
-        if (preCatIndex < 0) preCatIndex = 0;
-        spCategory.setSelection(preCatIndex);
+        spCategory.setText(catAdapter.getItem(preCatIndex), false);
         LinearLayout.LayoutParams spLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         spLp.bottomMargin = (int) (8 * density + 0.5f);
-        spCategory.setLayoutParams(spLp);
-        layout.addView(spCategory);
+        categoryField.setLayoutParams(spLp);
+        layout.addView(categoryField);
 
         final CheckBox cbWholeWord = new CheckBox(context);
         cbWholeWord.setText(R.string.dict_whole_word);
@@ -578,13 +605,10 @@ final class UserDictionaryScreen {
                 android.text.InputType.TYPE_CLASS_TEXT);
 
         final String[] chosenCategory = new String[]{editCategoryValues[preCatIndex]};
-        spCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(android.widget.AdapterView<?> p, android.view.View v, int pos, long id) {
-                chosenCategory[0] = (pos >= 0 && pos < editCategoryValues.length)
-                        ? editCategoryValues[pos] : UserDictionary.CATEGORY_MAIN;
-                if (pos == 1) cbWholeWord.setChecked(false);
-            }
-            @Override public void onNothingSelected(android.widget.AdapterView<?> p) { }
+        spCategory.setOnItemClickListener((parent, view, pos, id) -> {
+            chosenCategory[0] = (pos >= 0 && pos < editCategoryValues.length)
+                    ? editCategoryValues[pos] : UserDictionary.CATEGORY_MAIN;
+            if (pos == 1) cbWholeWord.setChecked(false);
         });
 
         final ScrollView scrollView = new ScrollView(context);
@@ -614,23 +638,26 @@ final class UserDictionaryScreen {
                 String phonemes = etPhonemes.getText().toString().trim();
 
                 if (pattern.isEmpty()) {
-                    etPattern.setError(context.getString(R.string.dict_error_empty_pattern));
+                    fieldError(etPattern, context.getString(R.string.dict_error_empty_pattern));
                     etPattern.requestFocus();
                     return;
                 }
+
+                fieldErrorClear(etPattern);
+                fieldErrorClear(etPhonemes);
 
                 if (cbRegex.isChecked()) {
                     try {
                         java.util.regex.Pattern.compile(pattern);
                     } catch (java.util.regex.PatternSyntaxException e) {
-                        etPattern.setError(context.getString(R.string.dict_error_invalid_regex));
+                        fieldError(etPattern, context.getString(R.string.dict_error_invalid_regex));
                         etPattern.requestFocus();
                         return;
                     }
                 }
 
                 if (phonemes.contains("[[") || phonemes.contains("]]")) {
-                    etPhonemes.setError(context.getString(R.string.dict_error_invalid_phonemes));
+                    fieldError(etPhonemes, context.getString(R.string.dict_error_invalid_phonemes));
                     etPhonemes.requestFocus();
                     return;
                 }
@@ -647,7 +674,7 @@ final class UserDictionaryScreen {
                 );
 
                 if (!rule.isValid()) {
-                    etPattern.setError(context.getString(R.string.dict_error_invalid_regex));
+                    fieldError(etPattern, context.getString(R.string.dict_error_invalid_regex));
                     etPattern.requestFocus();
                     return;
                 }

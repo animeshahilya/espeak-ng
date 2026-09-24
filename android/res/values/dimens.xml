@@ -6,4 +6,14 @@
          indents its content. See values-watch. -->
     <dimen name="parameter_bezel_inset">0dp</dimen>
 
+    <!-- Shared spacing tokens. Every dialog/list layout reads these instead of
+         hard-coding 6/8/10/12/16/20/24dp, so padding stays consistent as the
+         UI evolves. -->
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="dialog_padding_h">20dp</dimen>
+    <dimen name="dialog_padding_top">12dp</dimen>
+    <dimen name="dialog_padding_bottom">12dp</dimen>
+    <dimen name="section_gap">8dp</dimen>
+    <dimen name="content_gap">6dp</dimen>
+
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -10,17 +11,23 @@
         android:id="@+id/installing_voice_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/screen_padding"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:text="@string/installing_voice_data" />
 
-    <ProgressBar
-        style="@android:style/Widget.ProgressBar.Horizontal"
+    <!-- M3 indeterminate indicator: themed from colorPrimary /
+         colorPrimaryContainer instead of the framework's flat gray bar.
+         The status TextView above carries the spoken message (DownloadVoiceData
+         focuses it for TalkBack); the bar itself is decorative. -->
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/progress"
         android:indeterminate="true"
-        android:longClickable="false" />
+        android:importantForAccessibility="no"
+        app:indicatorColor="?attr/colorPrimary"
+        app:trackColor="?attr/colorPrimaryContainer" />
 
 </LinearLayout>

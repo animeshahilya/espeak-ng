@@ -61,7 +61,18 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
         ViewGroup container = (ViewGroup) root.findViewById(R.id.parameters);
         LayoutInflater inflater = LayoutInflater.from(getContext());
 
-        for (final Parameter parameter : preference.mParameters) {
+        for (int i = 0; i < preference.mParameters.size(); i++) {
+            // Hairline between stacked parameters (phone dialog has up to four):
+            // without it the sections run together into one long control slab.
+            if (i > 0) {
+                View divider = new View(getContext());
+                divider.setLayoutParams(new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, 1));
+                divider.setBackgroundColor(androidx.core.content.ContextCompat.getColor(
+                        getContext(), R.color.m3_outlineVariant));
+                container.addView(divider);
+            }
+            final Parameter parameter = preference.mParameters.get(i);
             final View section = inflater.inflate(R.layout.seekbar_preference_section, container, false);
             bindSection(preference, parameter, section);
             container.addView(section);

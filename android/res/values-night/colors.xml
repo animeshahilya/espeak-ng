@@ -20,4 +20,31 @@
     <color name="chip_text_lang">#FDD663</color>
 
     <color name="chip_text_phoneme">#D7AEFB</color>
+
+    <!-- Material 3 tonal roles, dark counterparts of the light palette in
+         values/colors.xml (brand blue at night). -->
+    <color name="m3_onPrimary">#062E6F</color>
+    <color name="m3_primaryContainer">#274472</color>
+    <color name="m3_onPrimaryContainer">#D3E3FF</color>
+
+    <color name="m3_secondary">#BCC7DC</color>
+    <color name="m3_onSecondary">#263141</color>
+    <color name="m3_secondaryContainer">#3D4758</color>
+    <color name="m3_onSecondaryContainer">#D9E3F8</color>
+
+    <color name="m3_tertiary">#D8BDE0</color>
+    <color name="m3_onTertiary">#382A48</color>
+    <color name="m3_tertiaryContainer">#503856</color>
+    <color name="m3_onTertiaryContainer">#F5D9FE</color>
+
+    <color name="m3_surface">#17191F</color>
+    <color name="m3_surfaceContainerLowest">#0D0E12</color>
+    <color name="m3_surfaceContainerLow">#1C1E25</color>
+    <color name="m3_surfaceContainer">#22242B</color>
+    <color name="m3_surfaceContainerHigh">#282A32</color>
+    <color name="m3_surfaceContainerHighest">#2E3038</color>
+    <color name="m3_onSurface">#E3E1E9</color>
+    <color name="m3_onSurfaceVariant">#C4C6D0</color>
+    <color name="m3_outline">#8E9099</color>
+    <color name="m3_outlineVariant">#44474F</color>
 </resources>

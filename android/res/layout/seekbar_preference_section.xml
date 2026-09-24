@@ -7,10 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp" >
+    android:paddingStart="@dimen/dialog_padding_h"
+    android:paddingEnd="@dimen/dialog_padding_h"
+    android:paddingTop="@dimen/section_gap"
+    android:paddingBottom="@dimen/section_gap" >
 
     <!-- SeekBarPreference writes the same string here and into the slider's
          content description, so leaving this label in the accessibility tree
@@ -52,13 +52,15 @@
             android:layout_weight="1"
             android:text="@string/setting_rate_boost" />
 
+        <!-- Text button: a filled Reset competes with the sliders for
+             attention and with OK for the primary-action role. -->
         <Button
             android:id="@+id/resetToDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:minWidth="64dp"
-            android:text="@string/resetToDefault" />
+            android:text="@string/resetToDefault"
+            style="@style/Widget.Material3.Button.TextButton" />
 
     </LinearLayout>
 

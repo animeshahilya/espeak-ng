@@ -171,16 +171,29 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
         Button buttonSelectAll = mDialogView.findViewById(R.id.button_select_all);
         Button buttonDeselectAll = mDialogView.findViewById(R.id.button_deselect_all);
 
+        // Bulk selection must reach TalkBack through the live count region
+        // (languages_count): the checkboxes change en masse without individual
+        // state announcements, and the old announceForAccessibility-only path
+        // left the visible count stale. Selection summary uses the same plural
+        // the preference row itself shows.
         if (buttonSelectAll != null) {
             buttonSelectAll.setOnClickListener(v -> {
                 setAll(true);
-                v.announceForAccessibility(getContext().getString(R.string.languages_all_selected));
+                if (countView != null && getContext() != null) {
+                    countView.setText(getContext().getResources().getQuantityString(
+                            R.plurals.espeak_supported_languages_summary,
+                            mAllEntries.size(), mAllEntries.size(), mAllEntries.size()));
+                }
             });
         }
         if (buttonDeselectAll != null) {
             buttonDeselectAll.setOnClickListener(v -> {
                 setAll(false);
-                v.announceForAccessibility(getContext().getString(R.string.languages_all_deselected));
+                if (countView != null && getContext() != null) {
+                    countView.setText(getContext().getResources().getQuantityString(
+                            R.plurals.espeak_supported_languages_summary,
+                            mAllEntries.size(), 0, mAllEntries.size()));
+                }
             });
         }
 

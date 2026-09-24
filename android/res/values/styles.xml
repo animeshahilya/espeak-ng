@@ -8,11 +8,44 @@
          dialog theme - no per-widget style needed for the standard rows.
          Brand colors live on AppTheme.Base so qualified overlays (-v29,
          -night-v29, -watch) inherit them instead of dropping them by
-         re-parenting straight to Theme.Material3.DayNight. -->
+         re-parenting straight to Theme.Material3.DayNight.
+
+         The m3_* roles below complete the tonal palette: M3 components read
+         colorPrimaryContainer / colorSurfaceContainer* / colorOutline etc.
+         from the theme, and without them they fall back to the stock M3
+         purple baseline - a brand-blue app with purple chips and fields.
+         Each m3_* color has a night override in values-night/colors.xml. -->
     <style name="AppTheme.Base" parent="Theme.Material3.DayNight">
+        <!-- Legacy brand accents (AppCompat status bar / pre-M3 references) -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Primary / secondary / tertiary tonal roles -->
+        <item name="colorOnPrimary">@color/m3_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/m3_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/m3_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/m3_secondary</item>
+        <item name="colorOnSecondary">@color/m3_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/m3_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/m3_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/m3_tertiary</item>
+        <item name="colorOnTertiary">@color/m3_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/m3_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/m3_onTertiaryContainer</item>
+
+        <!-- Surface elevation ladder + content/outline roles -->
+        <item name="colorSurface">@color/m3_surface</item>
+        <item name="colorSurfaceContainerLowest">@color/m3_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/m3_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/m3_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/m3_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/m3_surfaceContainerHighest</item>
+        <item name="colorOnSurface">@color/m3_onSurface</item>
+        <item name="colorOnSurfaceVariant">@color/m3_onSurfaceVariant</item>
+        <item name="colorOutline">@color/m3_outline</item>
+        <item name="colorOutlineVariant">@color/m3_outlineVariant</item>
+        <item name="android:colorBackground">@color/m3_surface</item>
     </style>
     <style name="AppTheme" parent="AppTheme.Base">
     </style>

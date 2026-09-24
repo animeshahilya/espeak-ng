@@ -17,7 +17,39 @@
 
     <color name="chip_text_match">#137333</color>
 
-    <color name="chip_text_lang">#B06000</color>
+    <!-- Darkened from #B06000: the old value landed at ~4.1:1 on chip_bg_section,
+         under the 4.5:1 minimum for LabelSmall text. -->
+    <color name="chip_text_lang">#8A5200</color>
 
     <color name="chip_text_phoneme">#7627BB</color>
+
+    <!-- Material 3 tonal roles, derived from the brand blue #1A73E8 so every
+         M3 component (buttons, chips, fields, sheets, switches) picks up the
+         brand instead of the stock M3 purple baseline. values-night/colors.xml
+         overrides each of these for dark mode; AppTheme.Base maps them onto
+         the corresponding theme attributes. -->
+    <color name="m3_onPrimary">#FFFFFF</color>
+    <color name="m3_primaryContainer">#D3E3FF</color>
+    <color name="m3_onPrimaryContainer">#041E49</color>
+
+    <color name="m3_secondary">#555F71</color>
+    <color name="m3_onSecondary">#FFFFFF</color>
+    <color name="m3_secondaryContainer">#D9E3F8</color>
+    <color name="m3_onSecondaryContainer">#121C2B</color>
+
+    <color name="m3_tertiary">#6F577A</color>
+    <color name="m3_onTertiary">#FFFFFF</color>
+    <color name="m3_tertiaryContainer">#F5D9FE</color>
+    <color name="m3_onTertiaryContainer">#251430</color>
+
+    <color name="m3_surface">#F5F7FC</color>
+    <color name="m3_surfaceContainerLowest">#FFFFFF</color>
+    <color name="m3_surfaceContainerLow">#F1F3F9</color>
+    <color name="m3_surfaceContainer">#ECEEF5</color>
+    <color name="m3_surfaceContainerHigh">#E6E9F1</color>
+    <color name="m3_surfaceContainerHighest">#E1E4ED</color>
+    <color name="m3_onSurface">#1A1C22</color>
+    <color name="m3_onSurfaceVariant">#44474F</color>
+    <color name="m3_outline">#74777F</color>
+    <color name="m3_outlineVariant">#C4C6D0</color>
 </resources>

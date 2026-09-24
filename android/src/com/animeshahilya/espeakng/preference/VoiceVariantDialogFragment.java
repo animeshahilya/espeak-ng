@@ -17,28 +17,27 @@
 
 package com.animeshahilya.espeakng.preference;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 
 import com.animeshahilya.espeakng.R;
 
 /**
- * Dialog for {@link VoiceVariantPreference}: category/variant spinners with
- * the cascade. Wiring moved verbatim from the framework
- * {@code onCreateDialogView}/{@code onBindDialogView}/{@code onClick}
- * overrides, which have no AndroidX equivalents. Working indices live here
- * so cancelling truly discards the browsed selection.
+ * Dialog for {@link VoiceVariantPreference}: category/variant pickers with
+ * the cascade, presented as M3 exposed dropdowns (outlined fields with a
+ * floating label) instead of framework Spinners so the control matches the
+ * rest of the settings UI and TalkBack announces it as a dropdown.
+ * Working indices live here so cancelling truly discards the browsed
+ * selection.
  */
 public class VoiceVariantDialogFragment extends ButtonDialogFragment {
-    private Spinner mCategory;
-    private Spinner mVariant;
+    private MaterialAutoCompleteTextView mCategory;
+    private MaterialAutoCompleteTextView mVariant;
 
     private int mCategoryIndex = 0;
     private int mVariantIndex = 0;
@@ -62,8 +61,8 @@ public class VoiceVariantDialogFragment extends ButtonDialogFragment {
 
         View root = LayoutInflater.from(getContext())
                 .inflate(R.layout.voice_variant_preference, null);
-        mCategory = (Spinner) root.findViewById(R.id.category);
-        mVariant = (Spinner) root.findViewById(R.id.variant);
+        mCategory = root.findViewById(R.id.category);
+        mVariant = root.findViewById(R.id.variant);
 
         bindDialog();
 
@@ -71,7 +70,6 @@ public class VoiceVariantDialogFragment extends ButtonDialogFragment {
     }
 
     private void bindDialog() {
-        // Cache the indices so they don't get overwritten by the OnItemSelectedListener handlers.
         final int category = mCategoryIndex;
         final int variant = mVariantIndex;
 
@@ -81,47 +79,40 @@ public class VoiceVariantDialogFragment extends ButtonDialogFragment {
             categoryNames[i] = getString(categories[i]);
         }
         mCategory.setAdapter(spinnerAdapter(categoryNames));
-        mCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            private boolean mInitializing = true;
+        int safeCategory = Math.max(0, Math.min(category, categoryNames.length - 1));
+        mCategoryIndex = safeCategory;
+        // setText(..., false): filter=false so the popup never auto-opens
+        // while the dialog is still being built.
+        mCategory.setText(categoryNames[safeCategory], false);
 
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                mCategoryIndex = position;
-                VoiceVariantPreference.VariantData[] variants =
-                        VoiceVariantPreference.getVariants(position);
-                String[] variantNames = new String[variants.length];
-                for (int i = 0; i < variants.length; i++) {
-                    variantNames[i] = variants[i].getDisplayName(getContext());
-                }
-                mVariant.setAdapter(spinnerAdapter(variantNames));
-                if (mInitializing) {
-                    int safeVariant = Math.max(0, Math.min(variant,
-                            VoiceVariantPreference.getVariants(position).length - 1));
-                    mVariantIndex = safeVariant;
-                    mVariant.setSelection(safeVariant);
-                    mInitializing = false;
-                } else {
-                    mVariantIndex = 0;
-                    mVariant.setSelection(0);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-        mVariant.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                mVariantIndex = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
+        // Selecting a category rebuilds the variant list and resets the
+        // variant to its first entry - same cascade the Spinner had, minus
+        // the OnItemSelectedListener initialization dance (no listener fires
+        // for setText, so the initial variant is filled in explicitly below).
+        mCategory.setOnItemClickListener((parent, view, position, id) -> {
+            mCategoryIndex = position;
+            rebuildVariants(position, 0);
         });
 
-        mCategory.setSelection(category);
+        mVariant.setOnItemClickListener((parent, view, position, id) -> {
+            mVariantIndex = position;
+        });
+
+        rebuildVariants(safeCategory, variant);
+    }
+
+    /** Fills the variant dropdown for {@code categoryIndex} and selects {@code preferredVariant} (clamped). */
+    private void rebuildVariants(int categoryIndex, int preferredVariant) {
+        VoiceVariantPreference.VariantData[] variants =
+                VoiceVariantPreference.getVariants(categoryIndex);
+        String[] variantNames = new String[variants.length];
+        for (int i = 0; i < variants.length; i++) {
+            variantNames[i] = variants[i].getDisplayName(getContext());
+        }
+        mVariant.setAdapter(spinnerAdapter(variantNames));
+        int safeVariant = Math.max(0, Math.min(preferredVariant, variantNames.length - 1));
+        mVariantIndex = safeVariant;
+        mVariant.setText(variantNames[safeVariant], false);
     }
 
     private ArrayAdapter<String> spinnerAdapter(String[] labels) {
