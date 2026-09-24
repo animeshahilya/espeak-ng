@@ -349,9 +349,13 @@ test_phon tr "piZ'amaL@ hast'a j'a:@z SofW*'E tSabudZ'ak Jyv&nd'I
 SISlid'E_:_: byj'Yk tS'Wp j@:@nLa*'@" "Pijamalı hasta yağız şoföre çabucak güvendi. Şişli’de büyük çöp yığınları." "Latn"
 test_phon tt "b0rL'Vq keSel'&r d'& 0z'0t h'&m 'yz 0brujLAr'V h'&m xoquqLAr'V jAGVnn'An t'iN bup'Vp tuAp'Ar
 0L0rG'A 0q'VL h'&m wWZ;d'An birelQ'&n h'&m b'&rb&rsen'& q0r0t'A tuGAnnArS;'A mWnAs&b&tt'& buLVrG'A tieSl'&r" "Барлык кешеләр дә азат һәм үз абруйлары һәм хокуклары ягыннан тиң бупып туапар. Аларга акыл һәм вөҗдан бирелгән һәм бәр-бәрсенә карата туганнарча мөнасәбәттә булырга тиешләр." "Cyrl"
-test_phon ur "t.#'Vnd. m'e~
+test_phon ur "t.#'Vnd. m'e~:
 'e:k q'VH@t z'Vda ga:'o:n se: g'Vz@Rte: v'aqt 'e:k c'Ir.cIr.,e:
-b'a:s@R 'o: f'a:RIQ S'axs k'o: b'a:z J'Vl p'VR,i: n'Uma: 'aZ@dHe: naz.'aR 'a:e:" "ٹھنڈ میں، ایک قحط زدہ گاؤں سے گذرتے وقت ایک چڑچڑے، باأثر و فارغ شخص کو بعض جل پری نما اژدہے نظر آئے۔" "Arab"
+b'a:s@R 'o: f'a:RIQ S'Vxs k'o: b'a:z J'Vl p'V*,i: n'Uma: 'aZ@dHe: n'Vz@3r 'a:e:" "ٹھنڈ میں، ایک قحط زدہ گاؤں سے گذرتے وقت ایک چڑچڑے، باأثر و فارغ شخص کو بعض جل پری نما اژدہے نظر آئے۔" "Arab"
+test_phon ur "b'V*f" "برف"
+test_phon ur "b#'u:t" "بھوت"
+test_phon ur "VNg'u:r" "انگور"
+test_phon ur "b,@rs'a:t" "برسات"
 test_phon uz "ozb'ektS&
 'ozbek t'yLy" "O‘zbekcha, o‘zbek tili" "Latn"
 test_phon uz "o:zb'ektS&
