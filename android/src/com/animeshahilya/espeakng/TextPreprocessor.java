@@ -200,6 +200,14 @@ public final class TextPreprocessor {
             text = edits.track(text, NumberReading.readMoney(text, !indianNumbers));
         }
 
+        // Opt-in: non-Latin-script voices read English words in English but
+        // numbers in their own language; this makes numbers inside English
+        // text follow the English.
+        if (normalReading && settings.isEnglishNumbersEnabled()
+                && !english && !NumberReading.isLatinScript(lang)) {
+            text = edits.track(text, NumberReading.englishNumbersInEnglishText(text));
+        }
+
         // Indian-voice only: every other voice reads these exactly as NVDA's
         // eSpeak does ("5k", "2 l", "12,34,567" untouched).
         if (!isSsml && indianNumbers) {

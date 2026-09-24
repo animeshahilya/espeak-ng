@@ -294,6 +294,12 @@
             android:summary="@string/setting_expand_abbreviations_summary"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_english_numbers"
+            android:title="@string/setting_english_numbers"
+            android:summary="@string/setting_english_numbers_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
     <Preference

@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Opt-in number extras on top of the NVDA baseline. Both are off by default;
+ * Opt-in number extras on top of the NVDA baseline. All are off by default;
  * with them off, text reaches eSpeak exactly as NVDA would send it.
  *
  * Numbers are left as digits so eSpeak still says them in its own voice;
@@ -55,6 +55,18 @@ public final class NumberReading {
     // "20 USD", "5€"; "3,50 €" is left alone (decimal comma is ambiguous)
     private static final Pattern MONEY_SUFFIX = Pattern.compile(
             SIGN + "(?<![\\p{L}\\d.,])" + AMOUNT + SCALE + "\\s?(€|¥|₹|USD|EUR|GBP|JPY|INR)(?![\\p{L}\\d])");
+
+    /**
+     * Whether the language is written in Latin script. Such a voice reads
+     * Latin words as its own language, so its numbers already match; any
+     * other voice switches to English for Latin words but not for numbers.
+     */
+    public static boolean isLatinScript(String languageTag) {
+        if (languageTag == null || languageTag.isEmpty()) return true;
+        String script = android.icu.util.ULocale.addLikelySubtags(
+                android.icu.util.ULocale.forLanguageTag(languageTag)).getScript();
+        return script.isEmpty() || "Latn".equals(script);
+    }
 
     public static boolean isEnglish(String languageTag) {
         if (languageTag == null) return false;
@@ -236,5 +248,122 @@ public final class NumberReading {
             if (c >= '0' && c <= '9') return true;
         }
         return false;
+    }
+
+    // ==========================================
+    // Numbers inside English text (non-Latin-script voices)
+    // ==========================================
+
+    private static final Pattern NUMBER = Pattern.compile(
+            "(?<![\\p{L}\\p{N}.,])(\\d+(?:,\\d+)*)(\\.\\d+)?(?![\\p{L}\\p{N}]|[.,]\\d)");
+    private static final String SENTENCE_ENDS = ".!?।\n";
+    /** Longer numbers (phone numbers, IDs) are read digit by digit. */
+    private static final int MAX_WHOLE_DIGITS = 7;
+    /** How far to look for the words either side of a number. */
+    private static final int NEIGHBOUR_REACH = 40;
+
+    /**
+     * A voice for a non-Latin-script language (Hindi, Urdu, Russian, Arabic,
+     * Greek...) reads English words in English but numbers in its own
+     * language ("I have 25 apples" -> "I have pacchees apples"). A number
+     * whose neighbouring words are Latin script, and none in another script,
+     * is written out in English words, which eSpeak then reads in English
+     * with the words around it. A number next to Hindi, Russian etc. is left
+     * alone.
+     */
+    public static String englishNumbersInEnglishText(String text) {
+        if (text == null || !containsAsciiDigit(text)) {
+            return text;
+        }
+        Matcher m = NUMBER.matcher(text);
+        StringBuffer sb = null;
+        while (m.find()) {
+            int before = neighbourScript(text, m.start() - 1, -1);
+            int after = neighbourScript(text, m.end(), 1);
+            boolean english = (before == LATIN || after == LATIN)
+                    && before != OTHER && after != OTHER;
+            if (!english) {
+                continue;
+            }
+            if (sb == null) {
+                sb = new StringBuffer(text.length() + 32);
+            }
+            m.appendReplacement(sb, Matcher.quoteReplacement(
+                    spell(m.group(1).replace(",", ""), m.group(2))));
+        }
+        if (sb == null) {
+            return text;
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static final String[] ONES = {"zero", "one", "two", "three", "four", "five",
+            "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen",
+            "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"};
+    private static final String[] TENS = {"", "", "twenty", "thirty", "forty", "fifty",
+            "sixty", "seventy", "eighty", "ninety"};
+
+    /** English words for a number: whole part in words, or digit by digit when long. */
+    static String spell(String whole, String fraction) {
+        StringBuilder out = new StringBuilder();
+        if (whole.length() > MAX_WHOLE_DIGITS || (whole.length() > 1 && whole.charAt(0) == '0')) {
+            digits(out, whole);
+        } else {
+            words(out, Integer.parseInt(whole));
+        }
+        if (fraction != null) {
+            out.append(" point");
+            digits(out, fraction.substring(1));
+        }
+        return out.toString().trim();
+    }
+
+    private static void digits(StringBuilder out, String ds) {
+        for (int i = 0; i < ds.length(); i++) {
+            out.append(' ').append(ONES[ds.charAt(i) - '0']);
+        }
+    }
+
+    private static void words(StringBuilder out, int n) {
+        if (n >= 1000000) {
+            words(out, n / 1000000);
+            out.append(" million");
+            n %= 1000000;
+            if (n == 0) return;
+        }
+        if (n >= 1000) {
+            words(out, n / 1000);
+            out.append(" thousand");
+            n %= 1000;
+            if (n == 0) return;
+        }
+        if (n >= 100) {
+            out.append(' ').append(ONES[n / 100]).append(" hundred");
+            n %= 100;
+            if (n == 0) return;
+        }
+        if (n >= 20) {
+            out.append(' ').append(TENS[n / 10]);
+            if (n % 10 != 0) out.append(' ').append(ONES[n % 10]);
+        } else if (n > 0 || out.length() == 0) {
+            out.append(' ').append(ONES[n]);
+        }
+    }
+
+    private static final int NONE = 0, LATIN = 1, OTHER = 2;
+
+    /** Script of the nearest letter from {@code i} in direction {@code step}. */
+    private static int neighbourScript(String text, int i, int step) {
+        for (int n = 0; i >= 0 && i < text.length() && n < NEIGHBOUR_REACH; i += step, n++) {
+            char c = text.charAt(i);
+            if (Character.isLetter(c)) {
+                return Character.UnicodeScript.of(c) == Character.UnicodeScript.LATIN ? LATIN : OTHER;
+            }
+            if (SENTENCE_ENDS.indexOf(c) >= 0) {
+                return NONE;     // a sentence boundary: the other sentence does not count
+            }
+        }
+        return NONE;
     }
 }

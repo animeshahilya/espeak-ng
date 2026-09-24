@@ -423,4 +423,6 @@
   <string name="screen_reading_summary">Reading mode, letters, web addresses, Hinglish</string>
   <string name="category_letters">Letters</string>
   <string name="category_advanced">Advanced</string>
+  <string name="setting_english_numbers">Numbers in English text</string>
+  <string name="setting_english_numbers_summary">For Hindi, Urdu, Russian and other non-Latin voices: says numbers in English when the words around them are English.</string>
 </resources>

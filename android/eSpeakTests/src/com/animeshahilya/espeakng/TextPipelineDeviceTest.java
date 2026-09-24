@@ -336,6 +336,31 @@ public class TextPipelineDeviceTest {
         assertThat(NumberReading.readCodes("Code at 10:30"), is("Code at 10:30"));
     }
 
+    /** Non-Latin-script voices: numbers inside English text are read in English. */
+    @Test
+    public void testEnglishNumbersInEnglishText() {
+        assertThat(NumberReading.englishNumbersInEnglishText("I have 25 apples and 3 books."),
+                is("I have twenty five apples and three books."));
+        assertThat(NumberReading.englishNumbersInEnglishText("It weighs 3.5 kg"),
+                is("It weighs three point five kg"));
+        assertThat(NumberReading.englishNumbersInEnglishText("Call 9876543210 now"),
+                is("Call nine eight seven six five four three two one zero now"));
+        // Hindi around the number, or nothing around it: the voice's own language.
+        assertThat(NumberReading.englishNumbersInEnglishText("मेरे पास 25 सेब हैं"),
+                is("मेरे पास 25 सेब हैं"));
+        assertThat(NumberReading.englishNumbersInEnglishText("25"), is("25"));
+        assertThat(NumberReading.englishNumbersInEnglishText("मेरे पास 25. Okay"), is("मेरे पास 25. Okay"));
+        assertThat(NumberReading.englishNumbersInEnglishText("У меня 25 яблок"), is("У меня 25 яблок"));
+        assertThat(NumberReading.englishNumbersInEnglishText("1,00,000 people"), is("one hundred thousand people"));
+        // Which voices need it: Latin-script languages read Latin words as their own.
+        assertThat(NumberReading.isLatinScript("hi"), is(false));
+        assertThat(NumberReading.isLatinScript("ur"), is(false));
+        assertThat(NumberReading.isLatinScript("ru"), is(false));
+        assertThat(NumberReading.isLatinScript("ar"), is(false));
+        assertThat(NumberReading.isLatinScript("fr"), is(true));
+        assertThat(NumberReading.isLatinScript("en-in"), is(true));
+    }
+
     /** Opt-in punctuation sounds: only symbols the level would name become markers. */
     @Test
     public void testPunctuationSounds() {
