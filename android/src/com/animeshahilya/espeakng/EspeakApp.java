@@ -51,6 +51,7 @@ public class EspeakApp extends Application {
         final Context appContext = getApplicationContext();
         EspeakApp.storageContext = appContext.createDeviceProtectedStorageContext();
         NvdaEmoji.init(appContext);
+        HinglishReader.init(appContext);
         migrateLegacyPreferences(appContext, EspeakApp.storageContext);
         if (!appContext.getSystemService(UserManager.class).isUserUnlocked()) {
             // Started at boot, for a direct-boot-aware screen reader. The

@@ -182,6 +182,11 @@
             android:defaultValue="normal"
             app:useSimpleSummaryProvider="true" />
         <!-- not on Wear -->
+        <CheckBoxPreference
+            android:key="espeak_hinglish"
+            android:title="@string/setting_hinglish"
+            android:summary="@string/setting_hinglish_summary"
+            android:defaultValue="false" />
         <ListPreference
             android:key="espeak_phonetic_letters"
             android:title="@string/setting_nato_spelling"

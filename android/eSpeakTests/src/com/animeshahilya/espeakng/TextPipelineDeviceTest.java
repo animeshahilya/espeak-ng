@@ -335,4 +335,20 @@ public class TextPipelineDeviceTest {
                 is("In 2026 we sold 48291 units"));
         assertThat(NumberReading.readCodes("Code at 10:30"), is("Code at 10:30"));
     }
+
+    /** Beta Hinglish reading: Hindi sentences in Latin letters become Devanagari, English stays. */
+    @Test
+    public void testHinglish() {
+        HinglishReader.init(androidx.test.platform.app.InstrumentationRegistry
+                .getInstrumentation().getTargetContext());
+        assertThat(HinglishReader.process("aap kaise ho bhai"), is("आप कैसे हो भाई"));
+        assertThat(HinglishReader.process("main theek hoon, tum batao"), is("मैं ठीक हूं, तुम बताओ"));
+        // English, a lone label, and acronyms stay as they are.
+        assertThat(HinglishReader.process("Your order has been shipped"), is("Your order has been shipped"));
+        assertThat(HinglishReader.process("Emoji"), is("Emoji"));
+        assertThat(HinglishReader.process("OTP bhej do yaar"), startsWith("OTP "));
+        // A mixed message: only the Hindi sentence changes.
+        assertThat(HinglishReader.process("Meeting is at 5 pm. kal milte hain"),
+                is("Meeting is at 5 pm. कल मिलते हैं"));
+    }
 }

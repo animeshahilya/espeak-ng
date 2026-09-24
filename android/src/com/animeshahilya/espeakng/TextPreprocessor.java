@@ -197,6 +197,16 @@ public final class TextPreprocessor {
         final boolean indianNumbers = settings.isIndianNumberingEnabled()
                 && isIndianLanguage(languageTag(voice));
 
+        // Beta extra: Hinglish words become Devanagari, which eSpeak's own
+        // script detection then reads with Hindi pronunciation. Before the
+        // code pass, so Hindi code words ("pin" -> पिन) still mark a code.
+        if (normalReading && settings.isHinglishEnabled()
+                && NumberReading.isEnglish(languageTag(voice))) {
+            String before = text;
+            text = HinglishReader.process(text);
+            offsetMap = chainOffset(offsetMap, before, text);
+        }
+
         // Opt-in extras, off by default. Codes run first so a code is never
         // read as money; money keeps its digits for the Indian pass below.
         if (normalReading && settings.isReadCodesEnabled()) {

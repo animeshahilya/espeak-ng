@@ -67,6 +67,7 @@ On top of that there are a few extras NVDA doesn't have, such as money and code 
 - **Fancy fonts**: reads stylised Unicode text as normal words.
 - **Reading mode**: normal, spelling, or code.
 - **Phonetic letters**: says Alfa, Bravo and so on, either when you move by character or for all text.
+- **Read Hinglish (beta, off by default)**: on English voices, Hindi typed in English letters ("aap kaise ho bhai") is read with Hindi pronunciation. English sentences are left alone.
 - **Matras and signs**: names Indic vowel signs, halant, anusvara and similar marks when you move by character.
 - **Emoji**: read them out or skip them.
 - **Shorter web links**: drops `https://` and `www.`, and reads long tracking parameters as "with parameters".
@@ -144,5 +145,6 @@ There are 117 instrumentation tests in `android/eSpeakTests/`. They cover synthe
 
 - eSpeak NG: [GPL v3 or later](COPYING)
 - getopt compatibility code: [BSD 2-Clause](COPYING.BSD2)
+- Hinglish word list (`android/assets/hinglish/hi.tsv`): built by `android/tools/build_hinglish.py` from Google's [Dakshina dataset](https://github.com/google-research-datasets/dakshina), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). English words were identified with CMUdict.
 
 Android is a trademark of Google LLC.

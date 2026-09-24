@@ -152,7 +152,7 @@ public class PreferenceStorageTest
                 VoiceSettings.PREF_PUNCTUATION_LEVEL, VoiceSettings.PREF_CAPITALS,
                 VoiceSettings.PREF_CAPITALS_SCOPE, VoiceSettings.PREF_REPEATED_CHARS,
                 VoiceSettings.PREF_UNICODE_NORMALIZATION,
-                VoiceSettings.PREF_READING_MODE, VoiceSettings.PREF_PHONETIC_LETTERS,
+                VoiceSettings.PREF_READING_MODE, VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_HINGLISH,
                 VoiceSettings.PREF_SPOKEN_DIACRITICS, VoiceSettings.PREF_EMOJI_PROCESSING,
                 VoiceSettings.PREF_SIMPLIFY_URLS, VoiceSettings.PREF_EMPHASIZE_QUESTIONS,
                 VoiceSettings.PREF_FORCE_RATE, VoiceSettings.PREF_FORCE_PITCH,
