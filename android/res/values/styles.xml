@@ -49,6 +49,23 @@
         <item name="preferenceTheme">@style/AppPreferenceTheme</item>
     </style>
 
+    <!-- Dictionary rule metadata chips: one style for all four, so type,
+         insets and background cannot drift per chip. textColor stays on each
+         chip (section/match/lang/phoneme each have their own semantic color
+         with a night override). The About version badge is a different
+         component (LabelMedium, larger insets) and keeps its own attributes. -->
+    <style name="Widget.App.BadgeChip">
+        <item name="android:textAppearance">?attr/textAppearanceLabelSmall</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">@dimen/chip_min_height</item>
+        <item name="android:paddingStart">@dimen/section_gap</item>
+        <item name="android:paddingEnd">@dimen/section_gap</item>
+        <item name="android:paddingTop">@dimen/chip_pad_v</item>
+        <item name="android:paddingBottom">@dimen/chip_pad_v</item>
+        <item name="android:background">@drawable/badge_chip_background</item>
+    </style>
+
     <!-- Switch rows use Material 3's switch (see preference_material_switch). -->
     <style name="AppPreferenceTheme" parent="PreferenceThemeOverlay">
         <item name="switchPreferenceCompatStyle">@style/AppSwitchPreference</item>
