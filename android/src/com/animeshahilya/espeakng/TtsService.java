@@ -440,10 +440,8 @@ public class TtsService extends TextToSpeechService {
         // needs a network connection. Clients read this set -- directly, or through
         // the features of the voices built in onGetVoices() -- to decide whether a
         // language can be spoken offline; leaving it empty makes eSpeak look like an
-        // engine that cannot answer the question. The literal wire value is asserted
-        // (not the deprecated constant) so a platform rename can never silently
-        // change what clients see.
-        return Collections.singleton("embeddedTts");
+        // engine that cannot answer the question.
+        return Collections.singleton(TextToSpeech.Engine.KEY_FEATURE_EMBEDDED_SYNTHESIS);
     }
 
     @Override
