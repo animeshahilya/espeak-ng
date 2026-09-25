@@ -10,6 +10,18 @@
 
 
 
+// Schwa kept or dropped: corrections learned from WikiPron on top of the
+// phoneme table's own schwa deletion.
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here.
+// L20 = written vowels (signs, and independent vowels except ਅ);
+// L21 = consonant letters; L22 = any Gurmukhi letter; L23 = ੰ ਂ.
+.L20 ਾ ਿ ੀ ੁ ੂ ੃ ੄ ੅ ੆ ੇ ੈ ੉ ੊ ੋ ੌ ਆ ਇ ਈ ਉ ਊ ਋ ਌ ਍ ਎ ਏ ਐ ਑ ਒ ਓ ਔ
+.L21 ਕ ਖ ਗ ਘ ਙ ਚ ਛ ਜ ਝ ਞ ਟ ਠ ਡ ਢ ਣ ਤ ਥ ਦ ਧ ਨ ਩ ਪ ਫ ਬ ਭ ਮ ਯ ਰ ਱ ਲ ਲ਼ ਴ ਵ ਸ਼ ਷ ਸ ਹ ਖ਼ ਗ਼ ਜ਼ ੜ ੝ ਫ਼ ਲ਼ ਸ਼
+.L22 ਅ ਆ ਇ ਈ ਉ ਊ ਋ ਌ ਍ ਎ ਏ ਐ ਑ ਒ ਓ ਔ ਕ ਖ ਗ ਘ ਙ ਚ ਛ ਜ ਝ ਞ ਟ ਠ ਡ ਢ ਣ ਤ ਥ ਦ ਧ ਨ ਩ ਪ ਫ ਬ ਭ ਮ ਯ ਰ ਱ ਲ ਲ਼ ਴ ਵ ਸ਼ ਷ ਸ ਹ ਾ ਿ ੀ ੁ ੂ ੃ ੄ ੅ ੆ ੇ ੈ ੉ ੊ ੋ ੌ ਖ਼ ਗ਼ ਜ਼ ੜ ੝ ਫ਼ ੰ ਂ ਲ਼ ਸ਼
+.L23 ੰ ਂ
+
 .replace
  ੦	0
  ੧	1
@@ -420,6 +432,12 @@ C)        ੌੰ         O~
 
 .group ਸ
         ਸ          sV
+        _L22) ਸ (L21L21_         s        // generated
+        _L22) ਸ (L21L21          s        // generated
+        _L22L22) ਸ (L21L21_      s        // generated
+        _L22L22) ਸ (L21L21       s        // generated
+        L22) ਸ (L21L21_          s        // generated
+        L22) ਸ (L21L21           s        // generated
         ਸ (B       s
         ਸ (_       s
      ੱ) ਸ          s:V

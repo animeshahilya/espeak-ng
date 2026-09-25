@@ -30,6 +30,18 @@
 .L02 क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न ऩ प फ ब भ म य र ऱ ल ळ ऴ व श ष स ह
 .L01 अ आ इ ई उ ऊ ऋ ए ऐ ओ औ ा ि ी ु ू ृ े ै ो ौ ँ
 
+// Schwa kept or dropped: corrections learned from WikiPron on top of the
+// phoneme table's own schwa deletion.
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here.
+// L20 = written vowels (signs, and independent vowels except अ);
+// L21 = consonant letters; L22 = any Devanagari letter; L23 = ं ँ.
+.L20 ा ि ी ु ू ृ ॄ ॅ ॆ े ै ॉ ॊ ो ौ आ इ ई उ ऊ ऋ ऌ ऍ ऎ ए ऐ ऑ ऒ ओ औ ॠ ॡ ॢ ॣ
+.L21 क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न ऩ प फ ब भ म य र ऱ ल ळ ऴ व श ष स ह क़ ख़ ग़ ज़ ड़ ढ़ फ़ य़
+.L22 ऄ अ आ इ ई उ ऊ ऋ ऌ ऍ ऎ ए ऐ ऑ ऒ ओ औ क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न ऩ प फ ब भ म य र ऱ ल ळ ऴ व श ष स ह ़ ऽ ा ि ी ु ू ृ ॄ ॅ ॆ े ै ॉ ॊ ो ौ ् क़ ख़ ग़ ज़ ड़ ढ़ फ़ य़ ॠ ॡ ॢ ॣ ं ँ ः
+.L23 ं ँ
+
 .replace
 	०	0
 	१	1
@@ -567,6 +579,17 @@
 
 .group क
 	क	kV
+        _L22) क (हL22_           k        // generated
+        _L22) क (हL22            k        // generated
+        _L22L22) क (हL22_        k        // generated
+        _L22L22) क (हL22         k        // generated
+        L22) क (हL22_            k        // generated
+        L22) क (हL22             k        // generated
+        _L22) क (L21ाL21         k        // generated
+        _L22) क (मा_             k        // generated
+        _L22) क (मा              k        // generated
+        _L22L22) क (मा_          k        // generated
+        _L22L22) क (मा           k        // generated
 	कँ	kV~'
 	कॅ	kV~'
 	क (B	k
@@ -578,6 +601,17 @@
 
 .group ख
 	ख	k#V
+        _L22) ख (हL22_           k#       // generated
+        _L22) ख (हL22            k#       // generated
+        _L22L22) ख (हL22_        k#       // generated
+        _L22L22) ख (हL22         k#       // generated
+        L22) ख (हL22_            k#       // generated
+        L22) ख (हL22             k#       // generated
+        _L22) ख (L21ाL21         k#       // generated
+        _L22) ख (मा_             k#       // generated
+        _L22) ख (मा              k#       // generated
+        _L22L22) ख (मा_          k#       // generated
+        _L22L22) ख (मा           k#       // generated
 	ख (B	k#
 ?1	ख (_	k#
 	्) ख (_	k#@/
@@ -587,6 +621,17 @@
 
 .group ग
 	ग	gV
+        _L22) ग (हL22_           g        // generated
+        _L22) ग (हL22            g        // generated
+        _L22L22) ग (हL22_        g        // generated
+        _L22L22) ग (हL22         g        // generated
+        L22) ग (हL22_            g        // generated
+        L22) ग (हL22             g        // generated
+        _L22) ग (L21ाL21         g        // generated
+        _L22) ग (मा_             g        // generated
+        _L22) ग (मा              g        // generated
+        _L22L22) ग (मा_          g        // generated
+        _L22L22) ग (मा           g        // generated
 	ग (B	g
 ?1	ग (_	g
 	ग (्ग	g,
@@ -596,6 +641,17 @@
 
 .group घ
 	घ	g#V
+        _L22) घ (हL22_           g#       // generated
+        _L22) घ (हL22            g#       // generated
+        _L22L22) घ (हL22_        g#       // generated
+        _L22L22) घ (हL22         g#       // generated
+        L22) घ (हL22_            g#       // generated
+        L22) घ (हL22             g#       // generated
+        _L22) घ (L21ाL21         g#       // generated
+        _L22) घ (मा_             g#       // generated
+        _L22) घ (मा              g#       // generated
+        _L22L22) घ (मा_          g#       // generated
+        _L22L22) घ (मा           g#       // generated
 	घ (B	g#
 ?1	घ (_	g#
 	घ (्घ	g#,
@@ -612,6 +668,17 @@
 
 .group च
 	च	cV
+        _L22) च (हL22_           c        // generated
+        _L22) च (हL22            c        // generated
+        _L22L22) च (हL22_        c        // generated
+        _L22L22) च (हL22         c        // generated
+        L22) च (हL22_            c        // generated
+        L22) च (हL22             c        // generated
+        _L22) च (L21ाL21         c        // generated
+        _L22) च (मा_             c        // generated
+        _L22) च (मा              c        // generated
+        _L22L22) च (मा_          c        // generated
+        _L22L22) च (मा           c        // generated
 	च (B	c
 ?1	च (_	c
 	च (्च	c,
@@ -622,6 +689,17 @@
 
 .group छ
 	छ	c#V
+        _L22) छ (हL22_           c#       // generated
+        _L22) छ (हL22            c#       // generated
+        _L22L22) छ (हL22_        c#       // generated
+        _L22L22) छ (हL22         c#       // generated
+        L22) छ (हL22_            c#       // generated
+        L22) छ (हL22             c#       // generated
+        _L22) छ (L21ाL21         c#       // generated
+        _L22) छ (मा_             c#       // generated
+        _L22) छ (मा              c#       // generated
+        _L22L22) छ (मा_          c#       // generated
+        _L22L22) छ (मा           c#       // generated
 	छ (B	c#
 	्) छ (C	c#@
 	छ (_	c#@
@@ -630,6 +708,17 @@
 
 .group ज
 	ज	JV
+        _L22) ज (हL22_           J        // generated
+        _L22) ज (हL22            J        // generated
+        _L22L22) ज (हL22_        J        // generated
+        _L22L22) ज (हL22         J        // generated
+        L22) ज (हL22_            J        // generated
+        L22) ज (हL22             J        // generated
+        _L22) ज (L21ाL21         J        // generated
+        _L22) ज (मा_             J        // generated
+        _L22) ज (मा              J        // generated
+        _L22L22) ज (मा_          J        // generated
+        _L22L22) ज (मा           J        // generated
 	ज (B	J
 ?1	ज (_	J 
 	ज (्ज	J,
@@ -654,6 +743,17 @@
 
 .group ट
 	ट	t.V
+        _L22) ट (हL22_           t.       // generated
+        _L22) ट (हL22            t.       // generated
+        _L22L22) ट (हL22_        t.       // generated
+        _L22L22) ट (हL22         t.       // generated
+        L22) ट (हL22_            t.       // generated
+        L22) ट (हL22             t.       // generated
+        _L22) ट (L21ाL21         t.       // generated
+        _L22) ट (मा_             t.       // generated
+        _L22) ट (मा              t.       // generated
+        _L22L22) ट (मा_          t.       // generated
+        _L22L22) ट (मा           t.       // generated
 	ट (B	t.
 	टँ	t.V~'
 	टॅ	t.V~'
@@ -665,6 +765,17 @@
 
 .group ठ
 	ठ	t.#V
+        _L22) ठ (हL22_           t.#      // generated
+        _L22) ठ (हL22            t.#      // generated
+        _L22L22) ठ (हL22_        t.#      // generated
+        _L22L22) ठ (हL22         t.#      // generated
+        L22) ठ (हL22_            t.#      // generated
+        L22) ठ (हL22             t.#      // generated
+        _L22) ठ (L21ाL21         t.#      // generated
+        _L22) ठ (मा_             t.#      // generated
+        _L22) ठ (मा              t.#      // generated
+        _L22L22) ठ (मा_          t.#      // generated
+        _L22L22) ठ (मा           t.#      // generated
 	ठ (B	t.#
 	ठँ	t.#V~'
 	ठॅ	t.#V~'
@@ -674,6 +785,17 @@
 
 .group ड
 	ड	d.V
+        _L22) ड (हL22_           d.       // generated
+        _L22) ड (हL22            d.       // generated
+        _L22L22) ड (हL22_        d.       // generated
+        _L22L22) ड (हL22         d.       // generated
+        L22) ड (हL22_            d.       // generated
+        L22) ड (हL22             d.       // generated
+        _L22) ड (L21ाL21         d.       // generated
+        _L22) ड (मा_             d.       // generated
+        _L22) ड (मा              d.       // generated
+        _L22L22) ड (मा_          d.       // generated
+        _L22L22) ड (मा           d.       // generated
 	ड (B	d.
 	// After a vowel ड is the flap [ɽ]: गाडा, करोड, अड्कल (WikiPron 48 of 53).
 	L01) ड	r.V
@@ -695,6 +817,17 @@
 
 .group ढ
 	ढ	d.#V
+        _L22) ढ (हL22_           d.#      // generated
+        _L22) ढ (हL22            d.#      // generated
+        _L22L22) ढ (हL22_        d.#      // generated
+        _L22L22) ढ (हL22         d.#      // generated
+        L22) ढ (हL22_            d.#      // generated
+        L22) ढ (हL22             d.#      // generated
+        _L22) ढ (L21ाL21         d.#      // generated
+        _L22) ढ (मा_             d.#      // generated
+        _L22) ढ (मा              d.#      // generated
+        _L22L22) ढ (मा_          d.#      // generated
+        _L22L22) ढ (मा           d.#      // generated
 	ढ (B	d.#
 	// After a vowel ढ is the breathy flap [ɽʱ] (WikiPron 23 of 24).
 	L01) ढ	r.hV
@@ -712,6 +845,17 @@
 
 .group ण
 	ण	n.V	// Phoneme adjustment suggested
+        _L22) ण (हL22_           n.       // generated
+        _L22) ण (हL22            n.       // generated
+        _L22L22) ण (हL22_        n.       // generated
+        _L22L22) ण (हL22         n.       // generated
+        L22) ण (हL22_            n.       // generated
+        L22) ण (हL22             n.       // generated
+        _L22) ण (L21ाL21         n.       // generated
+        _L22) ण (मा_             n.       // generated
+        _L22) ण (मा              n.       // generated
+        _L22L22) ण (मा_          n.       // generated
+        _L22L22) ण (मा           n.       // generated
 	ण (B	n.
 ?1	ण (_	n.
 	्) ण (_	n.@/
@@ -719,6 +863,17 @@
 
 .group त
 	त	tV
+        _L22) त (हL22_           t        // generated
+        _L22) त (हL22            t        // generated
+        _L22L22) त (हL22_        t        // generated
+        _L22L22) त (हL22         t        // generated
+        L22) त (हL22_            t        // generated
+        L22) त (हL22             t        // generated
+        _L22) त (L21ाL21         t        // generated
+        _L22) त (मा_             t        // generated
+        _L22) त (मा              t        // generated
+        _L22L22) त (मा_          t        // generated
+        _L22L22) त (मा           t        // generated
 	त (B	t
 	तँ	tV~'
 	तॅ	tV~'
@@ -729,6 +884,17 @@
 
 .group थ
 	थ	t#V
+        _L22) थ (हL22_           t#       // generated
+        _L22) थ (हL22            t#       // generated
+        _L22L22) थ (हL22_        t#       // generated
+        _L22L22) थ (हL22         t#       // generated
+        L22) थ (हL22_            t#       // generated
+        L22) थ (हL22             t#       // generated
+        _L22) थ (L21ाL21         t#       // generated
+        _L22) थ (मा_             t#       // generated
+        _L22) थ (मा              t#       // generated
+        _L22L22) थ (मा_          t#       // generated
+        _L22L22) थ (मा           t#       // generated
 	थँ	t#V~'
 	थॅ	t#V~'
 	थ (B	t#
@@ -738,6 +904,17 @@
 
 .group द
 	द	dV
+        _L22) द (हL22_           d        // generated
+        _L22) द (हL22            d        // generated
+        _L22L22) द (हL22_        d        // generated
+        _L22L22) द (हL22         d        // generated
+        L22) द (हL22_            d        // generated
+        L22) द (हL22             d        // generated
+        _L22) द (L21ाL21         d        // generated
+        _L22) द (मा_             d        // generated
+        _L22) द (मा              d        // generated
+        _L22L22) द (मा_          d        // generated
+        _L22L22) द (मा           d        // generated
 	दँ	dV~'
 	दॅ	dV~'
 	द (B	d
@@ -749,6 +926,17 @@
 
 .group ध
 	ध	d#V
+        _L22) ध (हL22_           d#       // generated
+        _L22) ध (हL22            d#       // generated
+        _L22L22) ध (हL22_        d#       // generated
+        _L22L22) ध (हL22         d#       // generated
+        L22) ध (हL22_            d#       // generated
+        L22) ध (हL22             d#       // generated
+        _L22) ध (L21ाL21         d#       // generated
+        _L22) ध (मा_             d#       // generated
+        _L22) ध (मा              d#       // generated
+        _L22L22) ध (मा_          d#       // generated
+        _L22L22) ध (मा           d#       // generated
 	धँ	d#V~'
 	धॅ	d#V~'
 	ध (B	d#
@@ -757,6 +945,17 @@
 
 .group न
 	न	nV
+        _L22) न (हL22_           n        // generated
+        _L22) न (हL22            n        // generated
+        _L22L22) न (हL22_        n        // generated
+        _L22L22) न (हL22         n        // generated
+        L22) न (हL22_            n        // generated
+        L22) न (हL22             n        // generated
+        _L22) न (L21ाL21         n        // generated
+        _L22) न (मा_             n        // generated
+        _L22) न (मा              n        // generated
+        _L22L22) न (मा_          n        // generated
+        _L22L22) न (मा           n        // generated
 	नँ	nV~'
 	नॅ	nV~'
 	न (B	n
@@ -773,6 +972,17 @@
 
 .group प
 	प	pV
+        _L22) प (हL22_           p        // generated
+        _L22) प (हL22            p        // generated
+        _L22L22) प (हL22_        p        // generated
+        _L22L22) प (हL22         p        // generated
+        L22) प (हL22_            p        // generated
+        L22) प (हL22             p        // generated
+        _L22) प (L21ाL21         p        // generated
+        _L22) प (मा_             p        // generated
+        _L22) प (मा              p        // generated
+        _L22L22) प (मा_          p        // generated
+        _L22L22) प (मा           p        // generated
 	पँ	pV~'
 	पॅ	pV~'
 	प (B	p
@@ -783,6 +993,17 @@
 
 .group फ
 	फ	p#V
+        _L22) फ (हL22_           p#       // generated
+        _L22) फ (हL22            p#       // generated
+        _L22L22) फ (हL22_        p#       // generated
+        _L22L22) फ (हL22         p#       // generated
+        L22) फ (हL22_            p#       // generated
+        L22) फ (हL22             p#       // generated
+        _L22) फ (L21ाL21         p#       // generated
+        _L22) फ (मा_             p#       // generated
+        _L22) फ (मा              p#       // generated
+        _L22L22) फ (मा_          p#       // generated
+        _L22L22) फ (मा           p#       // generated
 	फँ	p#V~'
 	फॅ	p#V~'
 	फ (B	p#
@@ -792,6 +1013,17 @@
 
 .group ब
 	ब	bV
+        _L22) ब (हL22_           b        // generated
+        _L22) ब (हL22            b        // generated
+        _L22L22) ब (हL22_        b        // generated
+        _L22L22) ब (हL22         b        // generated
+        L22) ब (हL22_            b        // generated
+        L22) ब (हL22             b        // generated
+        _L22) ब (L21ाL21         b        // generated
+        _L22) ब (मा_             b        // generated
+        _L22) ब (मा              b        // generated
+        _L22L22) ब (मा_          b        // generated
+        _L22L22) ब (मा           b        // generated
 	बँ	bV~'
 	बॅ	bV~'
 	ब (B	b
@@ -801,6 +1033,17 @@
 
 .group भ
 	भ	b#V
+        _L22) भ (हL22_           b#       // generated
+        _L22) भ (हL22            b#       // generated
+        _L22L22) भ (हL22_        b#       // generated
+        _L22L22) भ (हL22         b#       // generated
+        L22) भ (हL22_            b#       // generated
+        L22) भ (हL22             b#       // generated
+        _L22) भ (L21ाL21         b#       // generated
+        _L22) भ (मा_             b#       // generated
+        _L22) भ (मा              b#       // generated
+        _L22L22) भ (मा_          b#       // generated
+        _L22L22) भ (मा           b#       // generated
 	भँ	b#V~'
 	भॅ	b#V~'
 	भ (B	b#
@@ -810,6 +1053,17 @@
 
 .group म
 	म	mV
+        _L22) म (हL22_           m        // generated
+        _L22) म (हL22            m        // generated
+        _L22L22) म (हL22_        m        // generated
+        _L22L22) म (हL22         m        // generated
+        L22) म (हL22_            m        // generated
+        L22) म (हL22             m        // generated
+        _L22) म (L21ाL21         m        // generated
+        _L22) म (मा_             m        // generated
+        _L22) म (मा              m        // generated
+        _L22L22) म (मा_          m        // generated
+        _L22L22) म (मा           m        // generated
 	मँ	mV~'
 	मॅ	mV~'
 	म (B	m
@@ -819,6 +1073,17 @@
 
 .group य
 	य	jV
+        _L22) य (हL22_           j        // generated
+        _L22) य (हL22            j        // generated
+        _L22L22) य (हL22_        j        // generated
+        _L22L22) य (हL22         j        // generated
+        L22) य (हL22_            j        // generated
+        L22) य (हL22             j        // generated
+        _L22) य (L21ाL21         j        // generated
+        _L22) य (मा_             j        // generated
+        _L22) य (मा              j        // generated
+        _L22L22) य (मा_          j        // generated
+        _L22L22) य (मा           j        // generated
 	यँ	jV~'
 	यॅ	jV~'
 	य (B	j
@@ -827,6 +1092,17 @@
 
 .group र
 	र	rV
+        _L22) र (हL22_           r        // generated
+        _L22) र (हL22            r        // generated
+        _L22L22) र (हL22_        r        // generated
+        _L22L22) र (हL22         r        // generated
+        L22) र (हL22_            r        // generated
+        L22) र (हL22             r        // generated
+        _L22) र (L21ाL21         r        // generated
+        _L22) र (मा_             r        // generated
+        _L22) र (मा              r        // generated
+        _L22L22) र (मा_          r        // generated
+        _L22L22) र (मा           r        // generated
 	रँ	rV~'
 	रॅ	rV~'
 
@@ -845,6 +1121,17 @@
 
 .group ल
 	ल	lV
+        _L22) ल (हL22_           l        // generated
+        _L22) ल (हL22            l        // generated
+        _L22L22) ल (हL22_        l        // generated
+        _L22L22) ल (हL22         l        // generated
+        L22) ल (हL22_            l        // generated
+        L22) ल (हL22             l        // generated
+        _L22) ल (L21ाL21         l        // generated
+        _L22) ल (मा_             l        // generated
+        _L22) ल (मा              l        // generated
+        _L22L22) ल (मा_          l        // generated
+        _L22L22) ल (मा           l        // generated
 	लँ	lV~'
 	लॅ	lV~'
 	ल (B	l
@@ -854,16 +1141,49 @@
 
 .group ळ
 	ळ	l.V
+        _L22) ळ (हL22_           l.       // generated
+        _L22) ळ (हL22            l.       // generated
+        _L22L22) ळ (हL22_        l.       // generated
+        _L22L22) ळ (हL22         l.       // generated
+        L22) ळ (हL22_            l.       // generated
+        L22) ळ (हL22             l.       // generated
+        _L22) ळ (L21ाL21         l.       // generated
+        _L22) ळ (मा_             l.       // generated
+        _L22) ळ (मा              l.       // generated
+        _L22L22) ळ (मा_          l.       // generated
+        _L22L22) ळ (मा           l.       // generated
 	ळ (B	l.
 	्) ळ (_	l.@
 
 .group ऴ
 	ऴ	l.V	// Phoneme adjustment suggested
+        _L22) ऴ (हL22_           l.       // generated
+        _L22) ऴ (हL22            l.       // generated
+        _L22L22) ऴ (हL22_        l.       // generated
+        _L22L22) ऴ (हL22         l.       // generated
+        L22) ऴ (हL22_            l.       // generated
+        L22) ऴ (हL22             l.       // generated
+        _L22) ऴ (L21ाL21         l.       // generated
+        _L22) ऴ (मा_             l.       // generated
+        _L22) ऴ (मा              l.       // generated
+        _L22L22) ऴ (मा_          l.       // generated
+        _L22L22) ऴ (मा           l.       // generated
 	ऴ (B	l.
 	्) ऴ (_	l.@
 
 .group व
 	व	wV
+        _L22) व (हL22_           w        // generated
+        _L22) व (हL22            w        // generated
+        _L22L22) व (हL22_        w        // generated
+        _L22L22) व (हL22         w        // generated
+        L22) व (हL22_            w        // generated
+        L22) व (हL22             w        // generated
+        _L22) व (L21ाL21         w        // generated
+        _L22) व (मा_             w        // generated
+        _L22) व (मा              w        // generated
+        _L22L22) व (मा_          w        // generated
+        _L22L22) व (मा           w        // generated
 	वँ	vV~'
 	_) वँ	wV~'
 	वॅ	vV~'
@@ -880,6 +1200,17 @@
 
 .group श
 	श	SV
+        _L22) श (हL22_           S        // generated
+        _L22) श (हL22            S        // generated
+        _L22L22) श (हL22_        S        // generated
+        _L22L22) श (हL22         S        // generated
+        L22) श (हL22_            S        // generated
+        L22) श (हL22             S        // generated
+        _L22) श (L21ाL21         S        // generated
+        _L22) श (मा_             S        // generated
+        _L22) श (मा              S        // generated
+        _L22L22) श (मा_          S        // generated
+        _L22L22) श (मा           S        // generated
 	शँ	SV~'
 	शॅ	SV~'
 	श (B	S
@@ -889,6 +1220,17 @@
 
 .group ष
 	ष	s.V
+        _L22) ष (हL22_           s.       // generated
+        _L22) ष (हL22            s.       // generated
+        _L22L22) ष (हL22_        s.       // generated
+        _L22L22) ष (हL22         s.       // generated
+        L22) ष (हL22_            s.       // generated
+        L22) ष (हL22             s.       // generated
+        _L22) ष (L21ाL21         s.       // generated
+        _L22) ष (मा_             s.       // generated
+        _L22) ष (मा              s.       // generated
+        _L22L22) ष (मा_          s.       // generated
+        _L22L22) ष (मा           s.       // generated
 	षँ	s.V~'
 	षॅ	s.V~'
 	ष (B	s.
@@ -899,6 +1241,17 @@
 
 .group स
 	स	sV
+        _L22) स (हL22_           s        // generated
+        _L22) स (हL22            s        // generated
+        _L22L22) स (हL22_        s        // generated
+        _L22L22) स (हL22         s        // generated
+        L22) स (हL22_            s        // generated
+        L22) स (हL22             s        // generated
+        _L22) स (L21ाL21         s        // generated
+        _L22) स (मा_             s        // generated
+        _L22) स (मा              s        // generated
+        _L22L22) स (मा_          s        // generated
+        _L22L22) स (मा           s        // generated
 	सँ	SV~'
 	सॅ	SV~'
 	स (B	s
@@ -908,6 +1261,17 @@
 
 .group ह
 	ह	hV
+        _L22) ह (हL22_           h        // generated
+        _L22) ह (हL22            h        // generated
+        _L22L22) ह (हL22_        h        // generated
+        _L22L22) ह (हL22         h        // generated
+        L22) ह (हL22_            h        // generated
+        L22) ह (हL22             h        // generated
+        _L22) ह (L21ाL21         h        // generated
+        _L22) ह (मा_             h        // generated
+        _L22) ह (मा              h        // generated
+        _L22L22) ह (मा_          h        // generated
+        _L22L22) ह (मा           h        // generated
 	हँ	hV~'
 	हॅ	hV~'
 	ह (B	h

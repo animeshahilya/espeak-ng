@@ -104,7 +104,77 @@ LANGS = {
         # dropped), so no learned rule may apply there: हमारा is not "hmaara".
         skip_initial=True,
     ),
+    'gu': dict(
+        V='L20', C='L21', ANY='L22', N='L23',
+        consonant=lambda ch: 0x0A95 <= ord(ch) <= 0x0ABA,
+        keep='@',   # a schwa the phoneme table never reduces
+        header="""// Schwa kept or dropped: corrections learned from WikiPron on top of the
+// phoneme table's own schwa deletion.
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here.
+// L20 = written vowels (signs, and independent vowels except અ);
+// L21 = consonant letters; L22 = any Gujarati letter; L23 = ં ઁ.
+""",
+        groups=lambda: """.L20 %s
+.L21 %s
+.L22 %s
+.L23 ં ઁ
+""" % (letters([(0x0ABE, 0x0ACD), (0x0A86, 0x0A95)], ['ૢ', 'ૣ', 'ૠ', 'ૡ', 'ૅ', 'ૉ', 'ઍ', 'ઑ']),
+       letters([(0x0A95, 0x0ABA)]),
+       letters([(0x0A85, 0x0ABA), (0x0ABE, 0x0ACD)], ['ં', 'ઁ', 'ઃ', 'ૢ', 'ૣ', 'ૠ', 'ૡ', 'ૅ', 'ૉ', 'ઍ', 'ઑ'])),
+        verb_suffixes=[],
+        protect_final=True,
+        skip_initial=True,
+    ),
+    'ne': dict(
+        V='L20', C='L21', ANY='L22', N='L23',
+        consonant=lambda ch: 0x915 <= ord(ch) <= 0x939 or 0x958 <= ord(ch) <= 0x95F,
+        keep='@',   # a schwa the phoneme table never reduces
+        header="""// Schwa kept or dropped: corrections learned from WikiPron on top of the
+// phoneme table's own schwa deletion.
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here.
+// L20 = written vowels (signs, and independent vowels except अ);
+// L21 = consonant letters; L22 = any Devanagari letter; L23 = ं ँ.
+""",
+        groups=lambda: """.L20 %s
+.L21 %s
+.L22 %s
+.L23 ं ँ
+""" % (letters([(0x93E, 0x94D), (0x905, 0x915)], ['ॠ', 'ॡ', 'ॢ', 'ॣ']).replace('अ ', ''),
+       letters([(0x915, 0x93A), (0x958, 0x960)]),
+       letters([(0x904, 0x93A), (0x93C, 0x94E), (0x958, 0x964)], ['ं', 'ँ', 'ः'])),
+        verb_suffixes=[],
+        protect_final=True,
+        skip_initial=True,
+    ),
+    'pa': dict(
+        V='L20', C='L21', ANY='L22', N='L23',
+        consonant=lambda ch: 0x0A15 <= ord(ch) <= 0x0A39 or 0x0A59 <= ord(ch) <= 0x0A5E or ch in 'ਲ਼ਸ਼',
+        keep='@',   # a schwa the phoneme table never reduces
+        header="""// Schwa kept or dropped: corrections learned from WikiPron on top of the
+// phoneme table's own schwa deletion.
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here.
+// L20 = written vowels (signs, and independent vowels except ਅ);
+// L21 = consonant letters; L22 = any Gurmukhi letter; L23 = ੰ ਂ.
+""",
+        groups=lambda: """.L20 %s
+.L21 %s
+.L22 %s
+.L23 ੰ ਂ
+""" % (letters([(0x0A3E, 0x0A4D), (0x0A06, 0x0A15)]),
+       letters([(0x0A15, 0x0A3A), (0x0A59, 0x0A5F)], ['ਲ਼', 'ਸ਼']),
+       letters([(0x0A05, 0x0A3A), (0x0A3E, 0x0A4D), (0x0A59, 0x0A5F)], ['ੰ', 'ਂ', 'ਲ਼', 'ਸ਼'])),
+        verb_suffixes=[],
+        protect_final=True,
+        skip_initial=True,
+    ),
 }
+
 
 
 def strip_generated(lines, header):
@@ -133,8 +203,10 @@ def atom(a, cfg):
     kind, val = a[:2], a[2:]
     if kind == 'L:':
         return None if val == '_' else val
-    return {'C': cfg['C'], 'V': cfg['V'], 'অ': 'অ', 'अ': 'अ', '্': '্', '्': '्',
+    return {'C': cfg['C'], 'V': cfg['V'], 'অ': 'অ', 'अ': 'अ', 'અ': 'અ', 'ਅ': 'ਅ',
+            '্': '্', '्': '्', '્': '્', '੍': '੍',
             'N': cfg['N'] or 'SKIP'}.get(val, 'SKIP')
+
 
 
 def side(cons, names, cfg, implicit_first=None):

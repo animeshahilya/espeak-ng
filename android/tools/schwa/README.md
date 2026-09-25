@@ -1,52 +1,45 @@
-# Learned inherent-vowel rules (Bengali, Hindi, Marathi)
+# Learned inherent-vowel rules (Bengali, Gujarati, Hindi, Marathi, Nepali, Punjabi)
 
-Bengali and Hindi drop the inherent vowel in the middle of many words
-(bn আপনি "apni", hi कहना "kəhnaː") but not all, and the spelling alone does
-not say which. These tools learn eSpeak rules for it from WikiPron: rule
-induction over the letter contexts eSpeak rules can express, learned on 80%
-of the words and checked on the 20% held out.
+Indo-Aryan languages drop the inherent vowel in the middle of many words
+(bn আপনি "apni", hi कहना "kəhnaː", gu અંગસંગ "angsang", ne हरेक "harek", pa ਪੰਜਾਬ "panjaab")
+but not all, and the spelling alone does not say which. These tools learn eSpeak rules for
+it from WikiPron: rule induction over the letter contexts eSpeak rules can express, learned
+on 80% of the words and checked on the 20% held out.
 
-Results on the held-out words when the rules were added:
+Results across WikiPron datasets when rules were added:
 
-| Language | Words read right | Fixed / broken |
-|---|---|---|
-| Bengali | 59.0% -> 61.9% | 50 / 12 |
-| Hindi | 75.4% -> 77.7% | 154 / 14 |
-| Marathi | 73.3% -> 74.7% | 19 / 6 |
+| Language | Script | Words read right | Notes / Impact |
+|---|---|---|---|
+| Bengali (`bn`) | Bengali | 59.0% -> 61.9% | 50 fixed / 12 broken (held-out) |
+| Gujarati (`gu`) | Gujarati | 77.4% -> 78.4% | PER 6.3% -> 6.1%; +3.3% held-out slot accuracy |
+| Hindi (`hi`) | Devanagari | 75.4% -> 77.7% | 154 fixed / 14 broken (held-out) |
+| Marathi (`mr`) | Devanagari | 73.3% -> 74.7% | 19 fixed / 6 broken (held-out) |
+| Nepali (`ne`) | Devanagari | 64.0% -> 65.0% | PER 11.6% -> 11.2%; 36 false-keep schwas eliminated |
+| Punjabi (`pa`) | Gurmukhi | 63.6% -> 64.3% | PER 13.7% -> 13.5%; false keeps cut 81 -> 73 |
 
-Nepali was tried and left out: WikiPron has too few Nepali words (about
-600 inherent vowels to learn from), and the rules gained one word on the
-held-out set.
+## Unified Toolchain
 
-## Steps
+1. **Dump reference & baseline**:
+   `python dump_nodel.py LANG WIKIPRON.tsv`
+   Generates `LANG_norm.tsv` (normal eSpeak output) and `LANG_nodel.tsv` (no-deletion output
+   by temporarily compiling dictionary rules with `@` so inherent vowels are preserved).
 
-Put WikiPron's `ben_beng_dhaka_broad.tsv` / `hin_deva_broad.tsv` /
-`mar_deva_broad.tsv` in this folder and build eSpeak on the host (`espeak-ng/build`).
+2. **Extract slots**:
+   `python indic_slots.py LANG WIKIPRON.tsv`
+   Extracts inherent-vowel positions and maps whether reference and eSpeak keep or drop each vowel
+   (`LANG_slots.tsv`). Supports Devanagari, Gujarati, Gurmukhi, and Bengali scripts.
 
-**Bengali** (eSpeak keeps every medial inherent vowel, so rules only drop):
+3. **Learn rules**:
+   `MIN_PREC=0.75 python indic_learn.py LANG [MAX_RULES]`
+   Greedy rule induction over positional features (`pre3..pre1`, `self`, `post1..post3`)
+   with exact characters or character classes (`C`, `V`, `N`, virama). Saves `LANG_rules_learned.json`.
 
-1. `python bn_slots.py` labels each inherent vowel eSpeak says KEEP or DROP.
-2. `MIN_PREC=0.75 python bn_learn.py 40` learns rules and reports held-out
-   accuracy (`bn_rules_learned.json`).
+4. **Emit rules to eSpeak**:
+   `python emit.py LANG ../../../dictsource/<lang>_rules ../../../dictsource/<lang>_rules`
+   Emits the learned rules with `// generated` tags under each consonant group.
+   Safe to re-run: existing generated blocks are removed first.
 
-**Hindi, Marathi** (the phoneme table already drops many, so rules correct
-both ways; `LANG` is `hi` or `mr`):
+5. **Compile & score**:
+   Compile the dictionary via `espeak-ng.exe --compile=LANG --path=build`, then run:
+   `python score.py LANG WIKIPRON.tsv`
 
-1. Build once with schwa deletion off (in `phsource/ph_hindi` /
-   `ph_marathi`, phoneme `V`, replace the medial `ChangePhoneme(NULL)` with
-   `ChangePhoneme(@)`) and run `python dump.py LANG WIKIPRON.tsv
-   LANG_nodel.tsv`; restore the file, rebuild, and dump `LANG_norm.tsv`.
-2. `python deva_slots.py LANG WIKIPRON.tsv` labels each inherent vowel with
-   what WikiPron wants and what eSpeak does now.
-3. `MIN_PREC=0.75 python deva_learn.py LANG 40` learns corrections
-   (`LANG_rules_learned.json`).
-
-**All:** `python emit.py bn|hi|mr ../../../dictsource/<lang>_rules
-../../../dictsource/<lang>_rules` writes the rules in, each line ending
-`// generated`. It is safe to re-run: earlier generated lines are removed
-first. Hindi and Marathi "keep" rules emit `@4`, a schwa their phoneme tables
-never reduce.
-
-Always compare word-level results before and after on the held-out words
-(`score.py` has the scoring helpers), and read some everyday sentences:
-WikiPron is a dictionary, so it has few inflected forms.

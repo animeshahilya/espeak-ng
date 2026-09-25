@@ -5,6 +5,8 @@ Prints word accuracy, phone error rate, and the most frequent phone
 confusions (ref -> espeak) so systematic errors surface first.
 """
 import sys, os, subprocess, unicodedata, random, collections
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
 
 ROOT = os.environ.get('ESPEAK_ROOT', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..'))
 EXE = os.path.join(ROOT, 'build', 'src', 'espeak-ng.exe')

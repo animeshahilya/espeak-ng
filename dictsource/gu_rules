@@ -10,6 +10,18 @@
 // C   consonants
 // Y   vowel letters and vowel signs
 
+// Schwa kept or dropped: corrections learned from WikiPron on top of the
+// phoneme table's own schwa deletion.
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here.
+// L20 = written vowels (signs, and independent vowels except અ);
+// L21 = consonant letters; L22 = any Gujarati letter; L23 = ં ઁ.
+.L20 ા િ ી ુ ૂ ૃ ૄ ૅ ૆ ે ૈ ૉ ૊ ો ૌ આ ઇ ઈ ઉ ઊ ઋ ઌ ઍ ઎ એ ઐ ઑ ઒ ઓ ઔ ૢ ૣ ૠ ૡ ૅ ૉ ઍ ઑ
+.L21 ક ખ ગ ઘ ઙ ચ છ જ ઝ ઞ ટ ઠ ડ ઢ ણ ત થ દ ધ ન ઩ પ ફ બ ભ મ ય ર ઱ લ ળ ઴ વ શ ષ સ હ
+.L22 અ આ ઇ ઈ ઉ ઊ ઋ ઌ ઍ ઎ એ ઐ ઑ ઒ ઓ ઔ ક ખ ગ ઘ ઙ ચ છ જ ઝ ઞ ટ ઠ ડ ઢ ણ ત થ દ ધ ન ઩ પ ફ બ ભ મ ય ર ઱ લ ળ ઴ વ શ ષ સ હ ા િ ી ુ ૂ ૃ ૄ ૅ ૆ ે ૈ ૉ ૊ ો ૌ ં ઁ ઃ ૢ ૣ ૠ ૡ ૅ ૉ ઍ ઑ
+.L23 ં ઁ
+
 .replace
  ૦	0
  ૧	1
@@ -231,6 +243,55 @@ C)        ૣ          l-:
 
 .group ક
         ક          kV
+        _L22) ક (L21L21_         k@       // generated
+        _L22L22) ક (L21L21_      k@       // generated
+        L22) ક (L21L21_          k@       // generated
+        _L22) ક (L21L23_         k        // generated
+        _L22) ક (L21L23          k        // generated
+        _L22L22) ક (L21L23_      k        // generated
+        _L22L22) ક (L21L23       k        // generated
+        L22) ક (L21L23_          k        // generated
+        L22) ક (L21L23           k        // generated
+        _L22) ક (L21્_           k@       // generated
+        _L22) ક (L21્            k@       // generated
+        _L22L22) ક (L21્_        k@       // generated
+        _L22L22) ક (L21્         k@       // generated
+        L22) ક (L21્_            k@       // generated
+        L22) ક (L21્             k@       // generated
+        _L20L22) ક (L21_         k@       // generated
+        _L20L22) ક (L21L22_      k@       // generated
+        L20L22) ક (L21_          k@       // generated
+        L20L22) ક (L21L22_       k@       // generated
+        _L21L23) ક (L21L20_      k        // generated
+        _L21L23) ક (L21L20       k        // generated
+        L21L23) ક (L21L20_       k        // generated
+        L21L23) ક (L21L20        k        // generated
+        _L22) ક (L21ર_           k        // generated
+        _L22) ક (L21ર            k        // generated
+        _L22L22) ક (L21ર_        k        // generated
+        _L22L22) ક (L21ર         k        // generated
+        _L20) ક (પL22_           k        // generated
+        _L20) ક (પL22            k        // generated
+        _L22L20) ક (પL22_        k        // generated
+        _L22L20) ક (પL22         k        // generated
+        L20) ક (પL22_            k        // generated
+        L20) ક (પL22             k        // generated
+        _L22) ક (હL22_           k        // generated
+        _L22) ક (હL22            k        // generated
+        _L22L22) ક (હL22_        k        // generated
+        _L22L22) ક (હL22         k        // generated
+        L22) ક (હL22_            k        // generated
+        L22) ક (હL22             k        // generated
+        _ેL22) ક (L21_           k@       // generated
+        _ેL22) ક (L21L22_        k@       // generated
+        _ેL22) ક (L21            k@       // generated
+        ેL22) ક (L21_            k@       // generated
+        ેL22) ક (L21L22_         k@       // generated
+        ેL22) ક (L21             k@       // generated
+        રL22L22) ક (L21L20_      k@       // generated
+        રL22L22) ક (L21L20       k@       // generated
+        _L22) ક (L21ન_           k        // generated
+        _L22L22) ક (L21ન_        k        // generated
         કઁ         kV~        // + candrabindu
         ક (_       k
         ક (B       k
@@ -249,6 +310,55 @@ C)        ૣ          l-:
         
 .group ખ
         ખ          k#V
+        _L22) ખ (L21L21_         k#@      // generated
+        _L22L22) ખ (L21L21_      k#@      // generated
+        L22) ખ (L21L21_          k#@      // generated
+        _L22) ખ (L21L23_         k#       // generated
+        _L22) ખ (L21L23          k#       // generated
+        _L22L22) ખ (L21L23_      k#       // generated
+        _L22L22) ખ (L21L23       k#       // generated
+        L22) ખ (L21L23_          k#       // generated
+        L22) ખ (L21L23           k#       // generated
+        _L22) ખ (L21્_           k#@      // generated
+        _L22) ખ (L21્            k#@      // generated
+        _L22L22) ખ (L21્_        k#@      // generated
+        _L22L22) ખ (L21્         k#@      // generated
+        L22) ખ (L21્_            k#@      // generated
+        L22) ખ (L21્             k#@      // generated
+        _L20L22) ખ (L21_         k#@      // generated
+        _L20L22) ખ (L21L22_      k#@      // generated
+        L20L22) ખ (L21_          k#@      // generated
+        L20L22) ખ (L21L22_       k#@      // generated
+        _L21L23) ખ (L21L20_      k#       // generated
+        _L21L23) ખ (L21L20       k#       // generated
+        L21L23) ખ (L21L20_       k#       // generated
+        L21L23) ખ (L21L20        k#       // generated
+        _L22) ખ (L21ર_           k#       // generated
+        _L22) ખ (L21ર            k#       // generated
+        _L22L22) ખ (L21ર_        k#       // generated
+        _L22L22) ખ (L21ર         k#       // generated
+        _L20) ખ (પL22_           k#       // generated
+        _L20) ખ (પL22            k#       // generated
+        _L22L20) ખ (પL22_        k#       // generated
+        _L22L20) ખ (પL22         k#       // generated
+        L20) ખ (પL22_            k#       // generated
+        L20) ખ (પL22             k#       // generated
+        _L22) ખ (હL22_           k#       // generated
+        _L22) ખ (હL22            k#       // generated
+        _L22L22) ખ (હL22_        k#       // generated
+        _L22L22) ખ (હL22         k#       // generated
+        L22) ખ (હL22_            k#       // generated
+        L22) ખ (હL22             k#       // generated
+        _ેL22) ખ (L21_           k#@      // generated
+        _ેL22) ખ (L21L22_        k#@      // generated
+        _ેL22) ખ (L21            k#@      // generated
+        ેL22) ખ (L21_            k#@      // generated
+        ેL22) ખ (L21L22_         k#@      // generated
+        ેL22) ખ (L21             k#@      // generated
+        રL22L22) ખ (L21L20_      k#@      // generated
+        રL22L22) ખ (L21L20       k#@      // generated
+        _L22) ખ (L21ન_           k#       // generated
+        _L22L22) ખ (L21ન_        k#       // generated
         ખઁ         k#V~        // + candrabindu
         ખ (_       k#
         ખ (B       k#
@@ -259,6 +369,55 @@ C)        ૣ          l-:
 
 .group ગ
         ગ          gV
+        _L22) ગ (L21L21_         g@       // generated
+        _L22L22) ગ (L21L21_      g@       // generated
+        L22) ગ (L21L21_          g@       // generated
+        _L22) ગ (L21L23_         g        // generated
+        _L22) ગ (L21L23          g        // generated
+        _L22L22) ગ (L21L23_      g        // generated
+        _L22L22) ગ (L21L23       g        // generated
+        L22) ગ (L21L23_          g        // generated
+        L22) ગ (L21L23           g        // generated
+        _L22) ગ (L21્_           g@       // generated
+        _L22) ગ (L21્            g@       // generated
+        _L22L22) ગ (L21્_        g@       // generated
+        _L22L22) ગ (L21્         g@       // generated
+        L22) ગ (L21્_            g@       // generated
+        L22) ગ (L21્             g@       // generated
+        _L20L22) ગ (L21_         g@       // generated
+        _L20L22) ગ (L21L22_      g@       // generated
+        L20L22) ગ (L21_          g@       // generated
+        L20L22) ગ (L21L22_       g@       // generated
+        _L21L23) ગ (L21L20_      g        // generated
+        _L21L23) ગ (L21L20       g        // generated
+        L21L23) ગ (L21L20_       g        // generated
+        L21L23) ગ (L21L20        g        // generated
+        _L22) ગ (L21ર_           g        // generated
+        _L22) ગ (L21ર            g        // generated
+        _L22L22) ગ (L21ર_        g        // generated
+        _L22L22) ગ (L21ર         g        // generated
+        _L20) ગ (પL22_           g        // generated
+        _L20) ગ (પL22            g        // generated
+        _L22L20) ગ (પL22_        g        // generated
+        _L22L20) ગ (પL22         g        // generated
+        L20) ગ (પL22_            g        // generated
+        L20) ગ (પL22             g        // generated
+        _L22) ગ (હL22_           g        // generated
+        _L22) ગ (હL22            g        // generated
+        _L22L22) ગ (હL22_        g        // generated
+        _L22L22) ગ (હL22         g        // generated
+        L22) ગ (હL22_            g        // generated
+        L22) ગ (હL22             g        // generated
+        _ેL22) ગ (L21_           g@       // generated
+        _ેL22) ગ (L21L22_        g@       // generated
+        _ેL22) ગ (L21            g@       // generated
+        ેL22) ગ (L21_            g@       // generated
+        ેL22) ગ (L21L22_         g@       // generated
+        ેL22) ગ (L21             g@       // generated
+        રL22L22) ગ (L21L20_      g@       // generated
+        રL22L22) ગ (L21L20       g@       // generated
+        _L22) ગ (L21ન_           g        // generated
+        _L22L22) ગ (L21ન_        g        // generated
         ગઁ         gV~        // + candrabindu
         ગ (_       g
         ગ (B       g
@@ -273,12 +432,110 @@ C)        ૣ          l-:
 
 .group ઘ
         ઘ          g#V
+        _L22) ઘ (L21L21_         g#@      // generated
+        _L22L22) ઘ (L21L21_      g#@      // generated
+        L22) ઘ (L21L21_          g#@      // generated
+        _L22) ઘ (L21L23_         g#       // generated
+        _L22) ઘ (L21L23          g#       // generated
+        _L22L22) ઘ (L21L23_      g#       // generated
+        _L22L22) ઘ (L21L23       g#       // generated
+        L22) ઘ (L21L23_          g#       // generated
+        L22) ઘ (L21L23           g#       // generated
+        _L22) ઘ (L21્_           g#@      // generated
+        _L22) ઘ (L21્            g#@      // generated
+        _L22L22) ઘ (L21્_        g#@      // generated
+        _L22L22) ઘ (L21્         g#@      // generated
+        L22) ઘ (L21્_            g#@      // generated
+        L22) ઘ (L21્             g#@      // generated
+        _L20L22) ઘ (L21_         g#@      // generated
+        _L20L22) ઘ (L21L22_      g#@      // generated
+        L20L22) ઘ (L21_          g#@      // generated
+        L20L22) ઘ (L21L22_       g#@      // generated
+        _L21L23) ઘ (L21L20_      g#       // generated
+        _L21L23) ઘ (L21L20       g#       // generated
+        L21L23) ઘ (L21L20_       g#       // generated
+        L21L23) ઘ (L21L20        g#       // generated
+        _L22) ઘ (L21ર_           g#       // generated
+        _L22) ઘ (L21ર            g#       // generated
+        _L22L22) ઘ (L21ર_        g#       // generated
+        _L22L22) ઘ (L21ર         g#       // generated
+        _L20) ઘ (પL22_           g#       // generated
+        _L20) ઘ (પL22            g#       // generated
+        _L22L20) ઘ (પL22_        g#       // generated
+        _L22L20) ઘ (પL22         g#       // generated
+        L20) ઘ (પL22_            g#       // generated
+        L20) ઘ (પL22             g#       // generated
+        _L22) ઘ (હL22_           g#       // generated
+        _L22) ઘ (હL22            g#       // generated
+        _L22L22) ઘ (હL22_        g#       // generated
+        _L22L22) ઘ (હL22         g#       // generated
+        L22) ઘ (હL22_            g#       // generated
+        L22) ઘ (હL22             g#       // generated
+        _ેL22) ઘ (L21_           g#@      // generated
+        _ેL22) ઘ (L21L22_        g#@      // generated
+        _ેL22) ઘ (L21            g#@      // generated
+        ેL22) ઘ (L21_            g#@      // generated
+        ેL22) ઘ (L21L22_         g#@      // generated
+        ેL22) ઘ (L21             g#@      // generated
+        રL22L22) ઘ (L21L20_      g#@      // generated
+        રL22L22) ઘ (L21L20       g#@      // generated
+        _L22) ઘ (L21ન_           g#       // generated
+        _L22L22) ઘ (L21ન_        g#       // generated
         ઘઁ         g#V~        // + candrabindu
         ઘ (_       g#
         ઘ (B       g#
 
 .group ઙ
         ઙ          NV
+        _L22) ઙ (L21L21_         N@       // generated
+        _L22L22) ઙ (L21L21_      N@       // generated
+        L22) ઙ (L21L21_          N@       // generated
+        _L22) ઙ (L21L23_         N        // generated
+        _L22) ઙ (L21L23          N        // generated
+        _L22L22) ઙ (L21L23_      N        // generated
+        _L22L22) ઙ (L21L23       N        // generated
+        L22) ઙ (L21L23_          N        // generated
+        L22) ઙ (L21L23           N        // generated
+        _L22) ઙ (L21્_           N@       // generated
+        _L22) ઙ (L21્            N@       // generated
+        _L22L22) ઙ (L21્_        N@       // generated
+        _L22L22) ઙ (L21્         N@       // generated
+        L22) ઙ (L21્_            N@       // generated
+        L22) ઙ (L21્             N@       // generated
+        _L20L22) ઙ (L21_         N@       // generated
+        _L20L22) ઙ (L21L22_      N@       // generated
+        L20L22) ઙ (L21_          N@       // generated
+        L20L22) ઙ (L21L22_       N@       // generated
+        _L21L23) ઙ (L21L20_      N        // generated
+        _L21L23) ઙ (L21L20       N        // generated
+        L21L23) ઙ (L21L20_       N        // generated
+        L21L23) ઙ (L21L20        N        // generated
+        _L22) ઙ (L21ર_           N        // generated
+        _L22) ઙ (L21ર            N        // generated
+        _L22L22) ઙ (L21ર_        N        // generated
+        _L22L22) ઙ (L21ર         N        // generated
+        _L20) ઙ (પL22_           N        // generated
+        _L20) ઙ (પL22            N        // generated
+        _L22L20) ઙ (પL22_        N        // generated
+        _L22L20) ઙ (પL22         N        // generated
+        L20) ઙ (પL22_            N        // generated
+        L20) ઙ (પL22             N        // generated
+        _L22) ઙ (હL22_           N        // generated
+        _L22) ઙ (હL22            N        // generated
+        _L22L22) ઙ (હL22_        N        // generated
+        _L22L22) ઙ (હL22         N        // generated
+        L22) ઙ (હL22_            N        // generated
+        L22) ઙ (હL22             N        // generated
+        _ેL22) ઙ (L21_           N@       // generated
+        _ેL22) ઙ (L21L22_        N@       // generated
+        _ેL22) ઙ (L21            N@       // generated
+        ેL22) ઙ (L21_            N@       // generated
+        ેL22) ઙ (L21L22_         N@       // generated
+        ેL22) ઙ (L21             N@       // generated
+        રL22L22) ઙ (L21L20_      N@       // generated
+        રL22L22) ઙ (L21L20       N@       // generated
+        _L22) ઙ (L21ન_           N        // generated
+        _L22L22) ઙ (L21ન_        N        // generated
         ઙઁ         NV~        // + candrabindu
         ઙ (_       N
         ઙ (B       N
@@ -286,6 +543,55 @@ C)        ૣ          l-:
 
 .group ચ
         ચ          cV
+        _L22) ચ (L21L21_         c@       // generated
+        _L22L22) ચ (L21L21_      c@       // generated
+        L22) ચ (L21L21_          c@       // generated
+        _L22) ચ (L21L23_         c        // generated
+        _L22) ચ (L21L23          c        // generated
+        _L22L22) ચ (L21L23_      c        // generated
+        _L22L22) ચ (L21L23       c        // generated
+        L22) ચ (L21L23_          c        // generated
+        L22) ચ (L21L23           c        // generated
+        _L22) ચ (L21્_           c@       // generated
+        _L22) ચ (L21્            c@       // generated
+        _L22L22) ચ (L21્_        c@       // generated
+        _L22L22) ચ (L21્         c@       // generated
+        L22) ચ (L21્_            c@       // generated
+        L22) ચ (L21્             c@       // generated
+        _L20L22) ચ (L21_         c@       // generated
+        _L20L22) ચ (L21L22_      c@       // generated
+        L20L22) ચ (L21_          c@       // generated
+        L20L22) ચ (L21L22_       c@       // generated
+        _L21L23) ચ (L21L20_      c        // generated
+        _L21L23) ચ (L21L20       c        // generated
+        L21L23) ચ (L21L20_       c        // generated
+        L21L23) ચ (L21L20        c        // generated
+        _L22) ચ (L21ર_           c        // generated
+        _L22) ચ (L21ર            c        // generated
+        _L22L22) ચ (L21ર_        c        // generated
+        _L22L22) ચ (L21ર         c        // generated
+        _L20) ચ (પL22_           c        // generated
+        _L20) ચ (પL22            c        // generated
+        _L22L20) ચ (પL22_        c        // generated
+        _L22L20) ચ (પL22         c        // generated
+        L20) ચ (પL22_            c        // generated
+        L20) ચ (પL22             c        // generated
+        _L22) ચ (હL22_           c        // generated
+        _L22) ચ (હL22            c        // generated
+        _L22L22) ચ (હL22_        c        // generated
+        _L22L22) ચ (હL22         c        // generated
+        L22) ચ (હL22_            c        // generated
+        L22) ચ (હL22             c        // generated
+        _ેL22) ચ (L21_           c@       // generated
+        _ેL22) ચ (L21L22_        c@       // generated
+        _ેL22) ચ (L21            c@       // generated
+        ેL22) ચ (L21_            c@       // generated
+        ેL22) ચ (L21L22_         c@       // generated
+        ેL22) ચ (L21             c@       // generated
+        રL22L22) ચ (L21L20_      c@       // generated
+        રL22L22) ચ (L21L20       c@       // generated
+        _L22) ચ (L21ન_           c        // generated
+        _L22L22) ચ (L21ન_        c        // generated
         ચઁ         cV~        // + candrabindu
         ચ (_       c
         ચ (B       c
@@ -301,12 +607,110 @@ C)        ૣ          l-:
 
 .group છ
         છ          c#V
+        _L22) છ (L21L21_         c#@      // generated
+        _L22L22) છ (L21L21_      c#@      // generated
+        L22) છ (L21L21_          c#@      // generated
+        _L22) છ (L21L23_         c#       // generated
+        _L22) છ (L21L23          c#       // generated
+        _L22L22) છ (L21L23_      c#       // generated
+        _L22L22) છ (L21L23       c#       // generated
+        L22) છ (L21L23_          c#       // generated
+        L22) છ (L21L23           c#       // generated
+        _L22) છ (L21્_           c#@      // generated
+        _L22) છ (L21્            c#@      // generated
+        _L22L22) છ (L21્_        c#@      // generated
+        _L22L22) છ (L21્         c#@      // generated
+        L22) છ (L21્_            c#@      // generated
+        L22) છ (L21્             c#@      // generated
+        _L20L22) છ (L21_         c#@      // generated
+        _L20L22) છ (L21L22_      c#@      // generated
+        L20L22) છ (L21_          c#@      // generated
+        L20L22) છ (L21L22_       c#@      // generated
+        _L21L23) છ (L21L20_      c#       // generated
+        _L21L23) છ (L21L20       c#       // generated
+        L21L23) છ (L21L20_       c#       // generated
+        L21L23) છ (L21L20        c#       // generated
+        _L22) છ (L21ર_           c#       // generated
+        _L22) છ (L21ર            c#       // generated
+        _L22L22) છ (L21ર_        c#       // generated
+        _L22L22) છ (L21ર         c#       // generated
+        _L20) છ (પL22_           c#       // generated
+        _L20) છ (પL22            c#       // generated
+        _L22L20) છ (પL22_        c#       // generated
+        _L22L20) છ (પL22         c#       // generated
+        L20) છ (પL22_            c#       // generated
+        L20) છ (પL22             c#       // generated
+        _L22) છ (હL22_           c#       // generated
+        _L22) છ (હL22            c#       // generated
+        _L22L22) છ (હL22_        c#       // generated
+        _L22L22) છ (હL22         c#       // generated
+        L22) છ (હL22_            c#       // generated
+        L22) છ (હL22             c#       // generated
+        _ેL22) છ (L21_           c#@      // generated
+        _ેL22) છ (L21L22_        c#@      // generated
+        _ેL22) છ (L21            c#@      // generated
+        ેL22) છ (L21_            c#@      // generated
+        ેL22) છ (L21L22_         c#@      // generated
+        ેL22) છ (L21             c#@      // generated
+        રL22L22) છ (L21L20_      c#@      // generated
+        રL22L22) છ (L21L20       c#@      // generated
+        _L22) છ (L21ન_           c#       // generated
+        _L22L22) છ (L21ન_        c#       // generated
         છઁ         c#V~        // + candrabindu
         છ (_       c#
         છ (B       c#
 
 .group જ
         જ          JV
+        _L22) જ (L21L21_         J@       // generated
+        _L22L22) જ (L21L21_      J@       // generated
+        L22) જ (L21L21_          J@       // generated
+        _L22) જ (L21L23_         J        // generated
+        _L22) જ (L21L23          J        // generated
+        _L22L22) જ (L21L23_      J        // generated
+        _L22L22) જ (L21L23       J        // generated
+        L22) જ (L21L23_          J        // generated
+        L22) જ (L21L23           J        // generated
+        _L22) જ (L21્_           J@       // generated
+        _L22) જ (L21્            J@       // generated
+        _L22L22) જ (L21્_        J@       // generated
+        _L22L22) જ (L21્         J@       // generated
+        L22) જ (L21્_            J@       // generated
+        L22) જ (L21્             J@       // generated
+        _L20L22) જ (L21_         J@       // generated
+        _L20L22) જ (L21L22_      J@       // generated
+        L20L22) જ (L21_          J@       // generated
+        L20L22) જ (L21L22_       J@       // generated
+        _L21L23) જ (L21L20_      J        // generated
+        _L21L23) જ (L21L20       J        // generated
+        L21L23) જ (L21L20_       J        // generated
+        L21L23) જ (L21L20        J        // generated
+        _L22) જ (L21ર_           J        // generated
+        _L22) જ (L21ર            J        // generated
+        _L22L22) જ (L21ર_        J        // generated
+        _L22L22) જ (L21ર         J        // generated
+        _L20) જ (પL22_           J        // generated
+        _L20) જ (પL22            J        // generated
+        _L22L20) જ (પL22_        J        // generated
+        _L22L20) જ (પL22         J        // generated
+        L20) જ (પL22_            J        // generated
+        L20) જ (પL22             J        // generated
+        _L22) જ (હL22_           J        // generated
+        _L22) જ (હL22            J        // generated
+        _L22L22) જ (હL22_        J        // generated
+        _L22L22) જ (હL22         J        // generated
+        L22) જ (હL22_            J        // generated
+        L22) જ (હL22             J        // generated
+        _ેL22) જ (L21_           J@       // generated
+        _ેL22) જ (L21L22_        J@       // generated
+        _ેL22) જ (L21            J@       // generated
+        ેL22) જ (L21_            J@       // generated
+        ેL22) જ (L21L22_         J@       // generated
+        ેL22) જ (L21             J@       // generated
+        રL22L22) જ (L21L20_      J@       // generated
+        રL22L22) જ (L21L20       J@       // generated
+        _L22) જ (L21ન_           J        // generated
+        _L22L22) જ (L21ન_        J        // generated
         જઁ         JV~        // + candrabindu
         જ (_       J
         જ (B       J
@@ -330,12 +734,110 @@ C)        ૣ          l-:
 
 .group ઝ
         ઝ          J#V
+        _L22) ઝ (L21L21_         J#@      // generated
+        _L22L22) ઝ (L21L21_      J#@      // generated
+        L22) ઝ (L21L21_          J#@      // generated
+        _L22) ઝ (L21L23_         J#       // generated
+        _L22) ઝ (L21L23          J#       // generated
+        _L22L22) ઝ (L21L23_      J#       // generated
+        _L22L22) ઝ (L21L23       J#       // generated
+        L22) ઝ (L21L23_          J#       // generated
+        L22) ઝ (L21L23           J#       // generated
+        _L22) ઝ (L21્_           J#@      // generated
+        _L22) ઝ (L21્            J#@      // generated
+        _L22L22) ઝ (L21્_        J#@      // generated
+        _L22L22) ઝ (L21્         J#@      // generated
+        L22) ઝ (L21્_            J#@      // generated
+        L22) ઝ (L21્             J#@      // generated
+        _L20L22) ઝ (L21_         J#@      // generated
+        _L20L22) ઝ (L21L22_      J#@      // generated
+        L20L22) ઝ (L21_          J#@      // generated
+        L20L22) ઝ (L21L22_       J#@      // generated
+        _L21L23) ઝ (L21L20_      J#       // generated
+        _L21L23) ઝ (L21L20       J#       // generated
+        L21L23) ઝ (L21L20_       J#       // generated
+        L21L23) ઝ (L21L20        J#       // generated
+        _L22) ઝ (L21ર_           J#       // generated
+        _L22) ઝ (L21ર            J#       // generated
+        _L22L22) ઝ (L21ર_        J#       // generated
+        _L22L22) ઝ (L21ર         J#       // generated
+        _L20) ઝ (પL22_           J#       // generated
+        _L20) ઝ (પL22            J#       // generated
+        _L22L20) ઝ (પL22_        J#       // generated
+        _L22L20) ઝ (પL22         J#       // generated
+        L20) ઝ (પL22_            J#       // generated
+        L20) ઝ (પL22             J#       // generated
+        _L22) ઝ (હL22_           J#       // generated
+        _L22) ઝ (હL22            J#       // generated
+        _L22L22) ઝ (હL22_        J#       // generated
+        _L22L22) ઝ (હL22         J#       // generated
+        L22) ઝ (હL22_            J#       // generated
+        L22) ઝ (હL22             J#       // generated
+        _ેL22) ઝ (L21_           J#@      // generated
+        _ેL22) ઝ (L21L22_        J#@      // generated
+        _ેL22) ઝ (L21            J#@      // generated
+        ેL22) ઝ (L21_            J#@      // generated
+        ેL22) ઝ (L21L22_         J#@      // generated
+        ેL22) ઝ (L21             J#@      // generated
+        રL22L22) ઝ (L21L20_      J#@      // generated
+        રL22L22) ઝ (L21L20       J#@      // generated
+        _L22) ઝ (L21ન_           J#       // generated
+        _L22L22) ઝ (L21ન_        J#       // generated
         ઝઁ         J#V~        // + candrabindu
         ઝ (_       J#
         ઝ (B       J#
 
 .group ઞ
         ઞ          n^V
+        _L22) ઞ (L21L21_         n^@      // generated
+        _L22L22) ઞ (L21L21_      n^@      // generated
+        L22) ઞ (L21L21_          n^@      // generated
+        _L22) ઞ (L21L23_         n^       // generated
+        _L22) ઞ (L21L23          n^       // generated
+        _L22L22) ઞ (L21L23_      n^       // generated
+        _L22L22) ઞ (L21L23       n^       // generated
+        L22) ઞ (L21L23_          n^       // generated
+        L22) ઞ (L21L23           n^       // generated
+        _L22) ઞ (L21્_           n^@      // generated
+        _L22) ઞ (L21્            n^@      // generated
+        _L22L22) ઞ (L21્_        n^@      // generated
+        _L22L22) ઞ (L21્         n^@      // generated
+        L22) ઞ (L21્_            n^@      // generated
+        L22) ઞ (L21્             n^@      // generated
+        _L20L22) ઞ (L21_         n^@      // generated
+        _L20L22) ઞ (L21L22_      n^@      // generated
+        L20L22) ઞ (L21_          n^@      // generated
+        L20L22) ઞ (L21L22_       n^@      // generated
+        _L21L23) ઞ (L21L20_      n^       // generated
+        _L21L23) ઞ (L21L20       n^       // generated
+        L21L23) ઞ (L21L20_       n^       // generated
+        L21L23) ઞ (L21L20        n^       // generated
+        _L22) ઞ (L21ર_           n^       // generated
+        _L22) ઞ (L21ર            n^       // generated
+        _L22L22) ઞ (L21ર_        n^       // generated
+        _L22L22) ઞ (L21ર         n^       // generated
+        _L20) ઞ (પL22_           n^       // generated
+        _L20) ઞ (પL22            n^       // generated
+        _L22L20) ઞ (પL22_        n^       // generated
+        _L22L20) ઞ (પL22         n^       // generated
+        L20) ઞ (પL22_            n^       // generated
+        L20) ઞ (પL22             n^       // generated
+        _L22) ઞ (હL22_           n^       // generated
+        _L22) ઞ (હL22            n^       // generated
+        _L22L22) ઞ (હL22_        n^       // generated
+        _L22L22) ઞ (હL22         n^       // generated
+        L22) ઞ (હL22_            n^       // generated
+        L22) ઞ (હL22             n^       // generated
+        _ેL22) ઞ (L21_           n^@      // generated
+        _ેL22) ઞ (L21L22_        n^@      // generated
+        _ેL22) ઞ (L21            n^@      // generated
+        ેL22) ઞ (L21_            n^@      // generated
+        ેL22) ઞ (L21L22_         n^@      // generated
+        ેL22) ઞ (L21             n^@      // generated
+        રL22L22) ઞ (L21L20_      n^@      // generated
+        રL22L22) ઞ (L21L20       n^@      // generated
+        _L22) ઞ (L21ન_           n^       // generated
+        _L22L22) ઞ (L21ન_        n^       // generated
         ઞઁ         n^V~        // + candrabindu
         ઞ (_       n^
         ઞ (B       n^
@@ -343,6 +845,55 @@ C)        ૣ          l-:
 
 .group ટ
         ટ          t.V
+        _L22) ટ (L21L21_         t.@      // generated
+        _L22L22) ટ (L21L21_      t.@      // generated
+        L22) ટ (L21L21_          t.@      // generated
+        _L22) ટ (L21L23_         t.       // generated
+        _L22) ટ (L21L23          t.       // generated
+        _L22L22) ટ (L21L23_      t.       // generated
+        _L22L22) ટ (L21L23       t.       // generated
+        L22) ટ (L21L23_          t.       // generated
+        L22) ટ (L21L23           t.       // generated
+        _L22) ટ (L21્_           t.@      // generated
+        _L22) ટ (L21્            t.@      // generated
+        _L22L22) ટ (L21્_        t.@      // generated
+        _L22L22) ટ (L21્         t.@      // generated
+        L22) ટ (L21્_            t.@      // generated
+        L22) ટ (L21્             t.@      // generated
+        _L20L22) ટ (L21_         t.@      // generated
+        _L20L22) ટ (L21L22_      t.@      // generated
+        L20L22) ટ (L21_          t.@      // generated
+        L20L22) ટ (L21L22_       t.@      // generated
+        _L21L23) ટ (L21L20_      t.       // generated
+        _L21L23) ટ (L21L20       t.       // generated
+        L21L23) ટ (L21L20_       t.       // generated
+        L21L23) ટ (L21L20        t.       // generated
+        _L22) ટ (L21ર_           t.       // generated
+        _L22) ટ (L21ર            t.       // generated
+        _L22L22) ટ (L21ર_        t.       // generated
+        _L22L22) ટ (L21ર         t.       // generated
+        _L20) ટ (પL22_           t.       // generated
+        _L20) ટ (પL22            t.       // generated
+        _L22L20) ટ (પL22_        t.       // generated
+        _L22L20) ટ (પL22         t.       // generated
+        L20) ટ (પL22_            t.       // generated
+        L20) ટ (પL22             t.       // generated
+        _L22) ટ (હL22_           t.       // generated
+        _L22) ટ (હL22            t.       // generated
+        _L22L22) ટ (હL22_        t.       // generated
+        _L22L22) ટ (હL22         t.       // generated
+        L22) ટ (હL22_            t.       // generated
+        L22) ટ (હL22             t.       // generated
+        _ેL22) ટ (L21_           t.@      // generated
+        _ેL22) ટ (L21L22_        t.@      // generated
+        _ેL22) ટ (L21            t.@      // generated
+        ેL22) ટ (L21_            t.@      // generated
+        ેL22) ટ (L21L22_         t.@      // generated
+        ેL22) ટ (L21             t.@      // generated
+        રL22L22) ટ (L21L20_      t.@      // generated
+        રL22L22) ટ (L21L20       t.@      // generated
+        _L22) ટ (L21ન_           t.       // generated
+        _L22L22) ટ (L21ન_        t.       // generated
         ટઁ         t.V~        // + candrabindu
         ટ (_       t.
         ટ (B       t.
@@ -358,12 +909,110 @@ C)        ૣ          l-:
 
 .group ઠ
         ઠ          t.#V
+        _L22) ઠ (L21L21_         t.#@     // generated
+        _L22L22) ઠ (L21L21_      t.#@     // generated
+        L22) ઠ (L21L21_          t.#@     // generated
+        _L22) ઠ (L21L23_         t.#      // generated
+        _L22) ઠ (L21L23          t.#      // generated
+        _L22L22) ઠ (L21L23_      t.#      // generated
+        _L22L22) ઠ (L21L23       t.#      // generated
+        L22) ઠ (L21L23_          t.#      // generated
+        L22) ઠ (L21L23           t.#      // generated
+        _L22) ઠ (L21્_           t.#@     // generated
+        _L22) ઠ (L21્            t.#@     // generated
+        _L22L22) ઠ (L21્_        t.#@     // generated
+        _L22L22) ઠ (L21્         t.#@     // generated
+        L22) ઠ (L21્_            t.#@     // generated
+        L22) ઠ (L21્             t.#@     // generated
+        _L20L22) ઠ (L21_         t.#@     // generated
+        _L20L22) ઠ (L21L22_      t.#@     // generated
+        L20L22) ઠ (L21_          t.#@     // generated
+        L20L22) ઠ (L21L22_       t.#@     // generated
+        _L21L23) ઠ (L21L20_      t.#      // generated
+        _L21L23) ઠ (L21L20       t.#      // generated
+        L21L23) ઠ (L21L20_       t.#      // generated
+        L21L23) ઠ (L21L20        t.#      // generated
+        _L22) ઠ (L21ર_           t.#      // generated
+        _L22) ઠ (L21ર            t.#      // generated
+        _L22L22) ઠ (L21ર_        t.#      // generated
+        _L22L22) ઠ (L21ર         t.#      // generated
+        _L20) ઠ (પL22_           t.#      // generated
+        _L20) ઠ (પL22            t.#      // generated
+        _L22L20) ઠ (પL22_        t.#      // generated
+        _L22L20) ઠ (પL22         t.#      // generated
+        L20) ઠ (પL22_            t.#      // generated
+        L20) ઠ (પL22             t.#      // generated
+        _L22) ઠ (હL22_           t.#      // generated
+        _L22) ઠ (હL22            t.#      // generated
+        _L22L22) ઠ (હL22_        t.#      // generated
+        _L22L22) ઠ (હL22         t.#      // generated
+        L22) ઠ (હL22_            t.#      // generated
+        L22) ઠ (હL22             t.#      // generated
+        _ેL22) ઠ (L21_           t.#@     // generated
+        _ેL22) ઠ (L21L22_        t.#@     // generated
+        _ેL22) ઠ (L21            t.#@     // generated
+        ેL22) ઠ (L21_            t.#@     // generated
+        ેL22) ઠ (L21L22_         t.#@     // generated
+        ેL22) ઠ (L21             t.#@     // generated
+        રL22L22) ઠ (L21L20_      t.#@     // generated
+        રL22L22) ઠ (L21L20       t.#@     // generated
+        _L22) ઠ (L21ન_           t.#      // generated
+        _L22L22) ઠ (L21ન_        t.#      // generated
         ઠઁ         t.#V~        // + candrabindu
         ઠ (_       t.#
         ઠ (B       t.#
 
 .group ડ
         ડ          d.V
+        _L22) ડ (L21L21_         d.@      // generated
+        _L22L22) ડ (L21L21_      d.@      // generated
+        L22) ડ (L21L21_          d.@      // generated
+        _L22) ડ (L21L23_         d.       // generated
+        _L22) ડ (L21L23          d.       // generated
+        _L22L22) ડ (L21L23_      d.       // generated
+        _L22L22) ડ (L21L23       d.       // generated
+        L22) ડ (L21L23_          d.       // generated
+        L22) ડ (L21L23           d.       // generated
+        _L22) ડ (L21્_           d.@      // generated
+        _L22) ડ (L21્            d.@      // generated
+        _L22L22) ડ (L21્_        d.@      // generated
+        _L22L22) ડ (L21્         d.@      // generated
+        L22) ડ (L21્_            d.@      // generated
+        L22) ડ (L21્             d.@      // generated
+        _L20L22) ડ (L21_         d.@      // generated
+        _L20L22) ડ (L21L22_      d.@      // generated
+        L20L22) ડ (L21_          d.@      // generated
+        L20L22) ડ (L21L22_       d.@      // generated
+        _L21L23) ડ (L21L20_      d.       // generated
+        _L21L23) ડ (L21L20       d.       // generated
+        L21L23) ડ (L21L20_       d.       // generated
+        L21L23) ડ (L21L20        d.       // generated
+        _L22) ડ (L21ર_           d.       // generated
+        _L22) ડ (L21ર            d.       // generated
+        _L22L22) ડ (L21ર_        d.       // generated
+        _L22L22) ડ (L21ર         d.       // generated
+        _L20) ડ (પL22_           d.       // generated
+        _L20) ડ (પL22            d.       // generated
+        _L22L20) ડ (પL22_        d.       // generated
+        _L22L20) ડ (પL22         d.       // generated
+        L20) ડ (પL22_            d.       // generated
+        L20) ડ (પL22             d.       // generated
+        _L22) ડ (હL22_           d.       // generated
+        _L22) ડ (હL22            d.       // generated
+        _L22L22) ડ (હL22_        d.       // generated
+        _L22L22) ડ (હL22         d.       // generated
+        L22) ડ (હL22_            d.       // generated
+        L22) ડ (હL22             d.       // generated
+        _ેL22) ડ (L21_           d.@      // generated
+        _ેL22) ડ (L21L22_        d.@      // generated
+        _ેL22) ડ (L21            d.@      // generated
+        ેL22) ડ (L21_            d.@      // generated
+        ેL22) ડ (L21L22_         d.@      // generated
+        ેL22) ડ (L21             d.@      // generated
+        રL22L22) ડ (L21L20_      d.@      // generated
+        રL22L22) ડ (L21L20       d.@      // generated
+        _L22) ડ (L21ન_           d.       // generated
+        _L22L22) ડ (L21ન_        d.       // generated
         ડઁ         d.V~        // + candrabindu
         ડ (_       d.
         ડ (B       d.
@@ -383,6 +1032,55 @@ C)        ૣ          l-:
 
 .group ઢ
         ઢ          d.#V
+        _L22) ઢ (L21L21_         d.#@     // generated
+        _L22L22) ઢ (L21L21_      d.#@     // generated
+        L22) ઢ (L21L21_          d.#@     // generated
+        _L22) ઢ (L21L23_         d.#      // generated
+        _L22) ઢ (L21L23          d.#      // generated
+        _L22L22) ઢ (L21L23_      d.#      // generated
+        _L22L22) ઢ (L21L23       d.#      // generated
+        L22) ઢ (L21L23_          d.#      // generated
+        L22) ઢ (L21L23           d.#      // generated
+        _L22) ઢ (L21્_           d.#@     // generated
+        _L22) ઢ (L21્            d.#@     // generated
+        _L22L22) ઢ (L21્_        d.#@     // generated
+        _L22L22) ઢ (L21્         d.#@     // generated
+        L22) ઢ (L21્_            d.#@     // generated
+        L22) ઢ (L21્             d.#@     // generated
+        _L20L22) ઢ (L21_         d.#@     // generated
+        _L20L22) ઢ (L21L22_      d.#@     // generated
+        L20L22) ઢ (L21_          d.#@     // generated
+        L20L22) ઢ (L21L22_       d.#@     // generated
+        _L21L23) ઢ (L21L20_      d.#      // generated
+        _L21L23) ઢ (L21L20       d.#      // generated
+        L21L23) ઢ (L21L20_       d.#      // generated
+        L21L23) ઢ (L21L20        d.#      // generated
+        _L22) ઢ (L21ર_           d.#      // generated
+        _L22) ઢ (L21ર            d.#      // generated
+        _L22L22) ઢ (L21ર_        d.#      // generated
+        _L22L22) ઢ (L21ર         d.#      // generated
+        _L20) ઢ (પL22_           d.#      // generated
+        _L20) ઢ (પL22            d.#      // generated
+        _L22L20) ઢ (પL22_        d.#      // generated
+        _L22L20) ઢ (પL22         d.#      // generated
+        L20) ઢ (પL22_            d.#      // generated
+        L20) ઢ (પL22             d.#      // generated
+        _L22) ઢ (હL22_           d.#      // generated
+        _L22) ઢ (હL22            d.#      // generated
+        _L22L22) ઢ (હL22_        d.#      // generated
+        _L22L22) ઢ (હL22         d.#      // generated
+        L22) ઢ (હL22_            d.#      // generated
+        L22) ઢ (હL22             d.#      // generated
+        _ેL22) ઢ (L21_           d.#@     // generated
+        _ેL22) ઢ (L21L22_        d.#@     // generated
+        _ેL22) ઢ (L21            d.#@     // generated
+        ેL22) ઢ (L21_            d.#@     // generated
+        ેL22) ઢ (L21L22_         d.#@     // generated
+        ેL22) ઢ (L21             d.#@     // generated
+        રL22L22) ઢ (L21L20_      d.#@     // generated
+        રL22L22) ઢ (L21L20       d.#@     // generated
+        _L22) ઢ (L21ન_           d.#      // generated
+        _L22L22) ઢ (L21ન_        d.#      // generated
         ઢઁ         d.#V~        // + candrabindu
         ઢ (_       d.#
         ઢ (B       d.#
@@ -394,6 +1092,55 @@ C)        ૣ          l-:
 
 .group ણ
         ણ          n.V      
+        _L22) ણ (L21L21_         n.@      // generated
+        _L22L22) ણ (L21L21_      n.@      // generated
+        L22) ણ (L21L21_          n.@      // generated
+        _L22) ણ (L21L23_         n.       // generated
+        _L22) ણ (L21L23          n.       // generated
+        _L22L22) ણ (L21L23_      n.       // generated
+        _L22L22) ણ (L21L23       n.       // generated
+        L22) ણ (L21L23_          n.       // generated
+        L22) ણ (L21L23           n.       // generated
+        _L22) ણ (L21્_           n.@      // generated
+        _L22) ણ (L21્            n.@      // generated
+        _L22L22) ણ (L21્_        n.@      // generated
+        _L22L22) ણ (L21્         n.@      // generated
+        L22) ણ (L21્_            n.@      // generated
+        L22) ણ (L21્             n.@      // generated
+        _L20L22) ણ (L21_         n.@      // generated
+        _L20L22) ણ (L21L22_      n.@      // generated
+        L20L22) ણ (L21_          n.@      // generated
+        L20L22) ણ (L21L22_       n.@      // generated
+        _L21L23) ણ (L21L20_      n.       // generated
+        _L21L23) ણ (L21L20       n.       // generated
+        L21L23) ણ (L21L20_       n.       // generated
+        L21L23) ણ (L21L20        n.       // generated
+        _L22) ણ (L21ર_           n.       // generated
+        _L22) ણ (L21ર            n.       // generated
+        _L22L22) ણ (L21ર_        n.       // generated
+        _L22L22) ણ (L21ર         n.       // generated
+        _L20) ણ (પL22_           n.       // generated
+        _L20) ણ (પL22            n.       // generated
+        _L22L20) ણ (પL22_        n.       // generated
+        _L22L20) ણ (પL22         n.       // generated
+        L20) ણ (પL22_            n.       // generated
+        L20) ણ (પL22             n.       // generated
+        _L22) ણ (હL22_           n.       // generated
+        _L22) ણ (હL22            n.       // generated
+        _L22L22) ણ (હL22_        n.       // generated
+        _L22L22) ણ (હL22         n.       // generated
+        L22) ણ (હL22_            n.       // generated
+        L22) ણ (હL22             n.       // generated
+        _ેL22) ણ (L21_           n.@      // generated
+        _ેL22) ણ (L21L22_        n.@      // generated
+        _ેL22) ણ (L21            n.@      // generated
+        ેL22) ણ (L21_            n.@      // generated
+        ેL22) ણ (L21L22_         n.@      // generated
+        ેL22) ણ (L21             n.@      // generated
+        રL22L22) ણ (L21L20_      n.@      // generated
+        રL22L22) ણ (L21L20       n.@      // generated
+        _L22) ણ (L21ન_           n.       // generated
+        _L22L22) ણ (L21ન_        n.       // generated
         ણઁ         n.V~        // + candrabindu
         ણ (_       n.
         ણ (B       n.
@@ -401,6 +1148,55 @@ C)        ૣ          l-:
 
 .group ત
         ત          tV
+        _L22) ત (L21L21_         t@       // generated
+        _L22L22) ત (L21L21_      t@       // generated
+        L22) ત (L21L21_          t@       // generated
+        _L22) ત (L21L23_         t        // generated
+        _L22) ત (L21L23          t        // generated
+        _L22L22) ત (L21L23_      t        // generated
+        _L22L22) ત (L21L23       t        // generated
+        L22) ત (L21L23_          t        // generated
+        L22) ત (L21L23           t        // generated
+        _L22) ત (L21્_           t@       // generated
+        _L22) ત (L21્            t@       // generated
+        _L22L22) ત (L21્_        t@       // generated
+        _L22L22) ત (L21્         t@       // generated
+        L22) ત (L21્_            t@       // generated
+        L22) ત (L21્             t@       // generated
+        _L20L22) ત (L21_         t@       // generated
+        _L20L22) ત (L21L22_      t@       // generated
+        L20L22) ત (L21_          t@       // generated
+        L20L22) ત (L21L22_       t@       // generated
+        _L21L23) ત (L21L20_      t        // generated
+        _L21L23) ત (L21L20       t        // generated
+        L21L23) ત (L21L20_       t        // generated
+        L21L23) ત (L21L20        t        // generated
+        _L22) ત (L21ર_           t        // generated
+        _L22) ત (L21ર            t        // generated
+        _L22L22) ત (L21ર_        t        // generated
+        _L22L22) ત (L21ર         t        // generated
+        _L20) ત (પL22_           t        // generated
+        _L20) ત (પL22            t        // generated
+        _L22L20) ત (પL22_        t        // generated
+        _L22L20) ત (પL22         t        // generated
+        L20) ત (પL22_            t        // generated
+        L20) ત (પL22             t        // generated
+        _L22) ત (હL22_           t        // generated
+        _L22) ત (હL22            t        // generated
+        _L22L22) ત (હL22_        t        // generated
+        _L22L22) ત (હL22         t        // generated
+        L22) ત (હL22_            t        // generated
+        L22) ત (હL22             t        // generated
+        _ેL22) ત (L21_           t@       // generated
+        _ેL22) ત (L21L22_        t@       // generated
+        _ેL22) ત (L21            t@       // generated
+        ેL22) ત (L21_            t@       // generated
+        ેL22) ત (L21L22_         t@       // generated
+        ેL22) ત (L21             t@       // generated
+        રL22L22) ત (L21L20_      t@       // generated
+        રL22L22) ત (L21L20       t@       // generated
+        _L22) ત (L21ન_           t        // generated
+        _L22L22) ત (L21ન_        t        // generated
         તઁ         tV~        // + candrabindu
         ત (_       t
         ત (B       t
@@ -416,12 +1212,110 @@ C)        ૣ          l-:
 
 .group થ
         થ          t#V
+        _L22) થ (L21L21_         t#@      // generated
+        _L22L22) થ (L21L21_      t#@      // generated
+        L22) થ (L21L21_          t#@      // generated
+        _L22) થ (L21L23_         t#       // generated
+        _L22) થ (L21L23          t#       // generated
+        _L22L22) થ (L21L23_      t#       // generated
+        _L22L22) થ (L21L23       t#       // generated
+        L22) થ (L21L23_          t#       // generated
+        L22) થ (L21L23           t#       // generated
+        _L22) થ (L21્_           t#@      // generated
+        _L22) થ (L21્            t#@      // generated
+        _L22L22) થ (L21્_        t#@      // generated
+        _L22L22) થ (L21્         t#@      // generated
+        L22) થ (L21્_            t#@      // generated
+        L22) થ (L21્             t#@      // generated
+        _L20L22) થ (L21_         t#@      // generated
+        _L20L22) થ (L21L22_      t#@      // generated
+        L20L22) થ (L21_          t#@      // generated
+        L20L22) થ (L21L22_       t#@      // generated
+        _L21L23) થ (L21L20_      t#       // generated
+        _L21L23) થ (L21L20       t#       // generated
+        L21L23) થ (L21L20_       t#       // generated
+        L21L23) થ (L21L20        t#       // generated
+        _L22) થ (L21ર_           t#       // generated
+        _L22) થ (L21ર            t#       // generated
+        _L22L22) થ (L21ર_        t#       // generated
+        _L22L22) થ (L21ર         t#       // generated
+        _L20) થ (પL22_           t#       // generated
+        _L20) થ (પL22            t#       // generated
+        _L22L20) થ (પL22_        t#       // generated
+        _L22L20) થ (પL22         t#       // generated
+        L20) થ (પL22_            t#       // generated
+        L20) થ (પL22             t#       // generated
+        _L22) થ (હL22_           t#       // generated
+        _L22) થ (હL22            t#       // generated
+        _L22L22) થ (હL22_        t#       // generated
+        _L22L22) થ (હL22         t#       // generated
+        L22) થ (હL22_            t#       // generated
+        L22) થ (હL22             t#       // generated
+        _ેL22) થ (L21_           t#@      // generated
+        _ેL22) થ (L21L22_        t#@      // generated
+        _ેL22) થ (L21            t#@      // generated
+        ેL22) થ (L21_            t#@      // generated
+        ેL22) થ (L21L22_         t#@      // generated
+        ેL22) થ (L21             t#@      // generated
+        રL22L22) થ (L21L20_      t#@      // generated
+        રL22L22) થ (L21L20       t#@      // generated
+        _L22) થ (L21ન_           t#       // generated
+        _L22L22) થ (L21ન_        t#       // generated
         થઁ         t#V~        // + candrabindu
         થ (_       t#
         થ (B       t#
 
 .group દ
         દ          dV
+        _L22) દ (L21L21_         d@       // generated
+        _L22L22) દ (L21L21_      d@       // generated
+        L22) દ (L21L21_          d@       // generated
+        _L22) દ (L21L23_         d        // generated
+        _L22) દ (L21L23          d        // generated
+        _L22L22) દ (L21L23_      d        // generated
+        _L22L22) દ (L21L23       d        // generated
+        L22) દ (L21L23_          d        // generated
+        L22) દ (L21L23           d        // generated
+        _L22) દ (L21્_           d@       // generated
+        _L22) દ (L21્            d@       // generated
+        _L22L22) દ (L21્_        d@       // generated
+        _L22L22) દ (L21્         d@       // generated
+        L22) દ (L21્_            d@       // generated
+        L22) દ (L21્             d@       // generated
+        _L20L22) દ (L21_         d@       // generated
+        _L20L22) દ (L21L22_      d@       // generated
+        L20L22) દ (L21_          d@       // generated
+        L20L22) દ (L21L22_       d@       // generated
+        _L21L23) દ (L21L20_      d        // generated
+        _L21L23) દ (L21L20       d        // generated
+        L21L23) દ (L21L20_       d        // generated
+        L21L23) દ (L21L20        d        // generated
+        _L22) દ (L21ર_           d        // generated
+        _L22) દ (L21ર            d        // generated
+        _L22L22) દ (L21ર_        d        // generated
+        _L22L22) દ (L21ર         d        // generated
+        _L20) દ (પL22_           d        // generated
+        _L20) દ (પL22            d        // generated
+        _L22L20) દ (પL22_        d        // generated
+        _L22L20) દ (પL22         d        // generated
+        L20) દ (પL22_            d        // generated
+        L20) દ (પL22             d        // generated
+        _L22) દ (હL22_           d        // generated
+        _L22) દ (હL22            d        // generated
+        _L22L22) દ (હL22_        d        // generated
+        _L22L22) દ (હL22         d        // generated
+        L22) દ (હL22_            d        // generated
+        L22) દ (હL22             d        // generated
+        _ેL22) દ (L21_           d@       // generated
+        _ેL22) દ (L21L22_        d@       // generated
+        _ેL22) દ (L21            d@       // generated
+        ેL22) દ (L21_            d@       // generated
+        ેL22) દ (L21L22_         d@       // generated
+        ેL22) દ (L21             d@       // generated
+        રL22L22) દ (L21L20_      d@       // generated
+        રL22L22) દ (L21L20       d@       // generated
+        _L22) દ (L21ન_           d        // generated
+        _L22L22) દ (L21ન_        d        // generated
         દઁ         dV~        // + candrabindu
         દ (_       d
         દ (B       d
@@ -436,12 +1330,110 @@ C)        ૣ          l-:
 
 .group ધ
         ધ          d#V
+        _L22) ધ (L21L21_         d#@      // generated
+        _L22L22) ધ (L21L21_      d#@      // generated
+        L22) ધ (L21L21_          d#@      // generated
+        _L22) ધ (L21L23_         d#       // generated
+        _L22) ધ (L21L23          d#       // generated
+        _L22L22) ધ (L21L23_      d#       // generated
+        _L22L22) ધ (L21L23       d#       // generated
+        L22) ધ (L21L23_          d#       // generated
+        L22) ધ (L21L23           d#       // generated
+        _L22) ધ (L21્_           d#@      // generated
+        _L22) ધ (L21્            d#@      // generated
+        _L22L22) ધ (L21્_        d#@      // generated
+        _L22L22) ધ (L21્         d#@      // generated
+        L22) ધ (L21્_            d#@      // generated
+        L22) ધ (L21્             d#@      // generated
+        _L20L22) ધ (L21_         d#@      // generated
+        _L20L22) ધ (L21L22_      d#@      // generated
+        L20L22) ધ (L21_          d#@      // generated
+        L20L22) ધ (L21L22_       d#@      // generated
+        _L21L23) ધ (L21L20_      d#       // generated
+        _L21L23) ધ (L21L20       d#       // generated
+        L21L23) ધ (L21L20_       d#       // generated
+        L21L23) ધ (L21L20        d#       // generated
+        _L22) ધ (L21ર_           d#       // generated
+        _L22) ધ (L21ર            d#       // generated
+        _L22L22) ધ (L21ર_        d#       // generated
+        _L22L22) ધ (L21ર         d#       // generated
+        _L20) ધ (પL22_           d#       // generated
+        _L20) ધ (પL22            d#       // generated
+        _L22L20) ધ (પL22_        d#       // generated
+        _L22L20) ધ (પL22         d#       // generated
+        L20) ધ (પL22_            d#       // generated
+        L20) ધ (પL22             d#       // generated
+        _L22) ધ (હL22_           d#       // generated
+        _L22) ધ (હL22            d#       // generated
+        _L22L22) ધ (હL22_        d#       // generated
+        _L22L22) ધ (હL22         d#       // generated
+        L22) ધ (હL22_            d#       // generated
+        L22) ધ (હL22             d#       // generated
+        _ેL22) ધ (L21_           d#@      // generated
+        _ેL22) ધ (L21L22_        d#@      // generated
+        _ેL22) ધ (L21            d#@      // generated
+        ેL22) ધ (L21_            d#@      // generated
+        ેL22) ધ (L21L22_         d#@      // generated
+        ેL22) ધ (L21             d#@      // generated
+        રL22L22) ધ (L21L20_      d#@      // generated
+        રL22L22) ધ (L21L20       d#@      // generated
+        _L22) ધ (L21ન_           d#       // generated
+        _L22L22) ધ (L21ન_        d#       // generated
         ધઁ         d#V~        // + candrabindu
         ધ (_       d#
         ધ (B       d#
 
 .group ન
         ન          nV
+        _L22) ન (L21L21_         n@       // generated
+        _L22L22) ન (L21L21_      n@       // generated
+        L22) ન (L21L21_          n@       // generated
+        _L22) ન (L21L23_         n        // generated
+        _L22) ન (L21L23          n        // generated
+        _L22L22) ન (L21L23_      n        // generated
+        _L22L22) ન (L21L23       n        // generated
+        L22) ન (L21L23_          n        // generated
+        L22) ન (L21L23           n        // generated
+        _L22) ન (L21્_           n@       // generated
+        _L22) ન (L21્            n@       // generated
+        _L22L22) ન (L21્_        n@       // generated
+        _L22L22) ન (L21્         n@       // generated
+        L22) ન (L21્_            n@       // generated
+        L22) ન (L21્             n@       // generated
+        _L20L22) ન (L21_         n@       // generated
+        _L20L22) ન (L21L22_      n@       // generated
+        L20L22) ન (L21_          n@       // generated
+        L20L22) ન (L21L22_       n@       // generated
+        _L21L23) ન (L21L20_      n        // generated
+        _L21L23) ન (L21L20       n        // generated
+        L21L23) ન (L21L20_       n        // generated
+        L21L23) ન (L21L20        n        // generated
+        _L22) ન (L21ર_           n        // generated
+        _L22) ન (L21ર            n        // generated
+        _L22L22) ન (L21ર_        n        // generated
+        _L22L22) ન (L21ર         n        // generated
+        _L20) ન (પL22_           n        // generated
+        _L20) ન (પL22            n        // generated
+        _L22L20) ન (પL22_        n        // generated
+        _L22L20) ન (પL22         n        // generated
+        L20) ન (પL22_            n        // generated
+        L20) ન (પL22             n        // generated
+        _L22) ન (હL22_           n        // generated
+        _L22) ન (હL22            n        // generated
+        _L22L22) ન (હL22_        n        // generated
+        _L22L22) ન (હL22         n        // generated
+        L22) ન (હL22_            n        // generated
+        L22) ન (હL22             n        // generated
+        _ેL22) ન (L21_           n@       // generated
+        _ેL22) ન (L21L22_        n@       // generated
+        _ેL22) ન (L21            n@       // generated
+        ેL22) ન (L21_            n@       // generated
+        ેL22) ન (L21L22_         n@       // generated
+        ેL22) ન (L21             n@       // generated
+        રL22L22) ન (L21L20_      n@       // generated
+        રL22L22) ન (L21L20       n@       // generated
+        _L22) ન (L21ન_           n        // generated
+        _L22L22) ન (L21ન_        n        // generated
         નઁ         nV~        // + candrabindu
         ન (_       n
         ન (B       n
@@ -450,6 +1442,55 @@ C)        ૣ          l-:
 
 .group પ
         પ          pV
+        _L22) પ (L21L21_         p@       // generated
+        _L22L22) પ (L21L21_      p@       // generated
+        L22) પ (L21L21_          p@       // generated
+        _L22) પ (L21L23_         p        // generated
+        _L22) પ (L21L23          p        // generated
+        _L22L22) પ (L21L23_      p        // generated
+        _L22L22) પ (L21L23       p        // generated
+        L22) પ (L21L23_          p        // generated
+        L22) પ (L21L23           p        // generated
+        _L22) પ (L21્_           p@       // generated
+        _L22) પ (L21્            p@       // generated
+        _L22L22) પ (L21્_        p@       // generated
+        _L22L22) પ (L21્         p@       // generated
+        L22) પ (L21્_            p@       // generated
+        L22) પ (L21્             p@       // generated
+        _L20L22) પ (L21_         p@       // generated
+        _L20L22) પ (L21L22_      p@       // generated
+        L20L22) પ (L21_          p@       // generated
+        L20L22) પ (L21L22_       p@       // generated
+        _L21L23) પ (L21L20_      p        // generated
+        _L21L23) પ (L21L20       p        // generated
+        L21L23) પ (L21L20_       p        // generated
+        L21L23) પ (L21L20        p        // generated
+        _L22) પ (L21ર_           p        // generated
+        _L22) પ (L21ર            p        // generated
+        _L22L22) પ (L21ર_        p        // generated
+        _L22L22) પ (L21ર         p        // generated
+        _L20) પ (પL22_           p        // generated
+        _L20) પ (પL22            p        // generated
+        _L22L20) પ (પL22_        p        // generated
+        _L22L20) પ (પL22         p        // generated
+        L20) પ (પL22_            p        // generated
+        L20) પ (પL22             p        // generated
+        _L22) પ (હL22_           p        // generated
+        _L22) પ (હL22            p        // generated
+        _L22L22) પ (હL22_        p        // generated
+        _L22L22) પ (હL22         p        // generated
+        L22) પ (હL22_            p        // generated
+        L22) પ (હL22             p        // generated
+        _ેL22) પ (L21_           p@       // generated
+        _ેL22) પ (L21L22_        p@       // generated
+        _ેL22) પ (L21            p@       // generated
+        ેL22) પ (L21_            p@       // generated
+        ેL22) પ (L21L22_         p@       // generated
+        ેL22) પ (L21             p@       // generated
+        રL22L22) પ (L21L20_      p@       // generated
+        રL22L22) પ (L21L20       p@       // generated
+        _L22) પ (L21ન_           p        // generated
+        _L22L22) પ (L21ન_        p        // generated
         પઁ         pV~        // + candrabindu
         પ (_       p
         પ (B       p
@@ -461,6 +1502,55 @@ C)        ૣ          l-:
 
 .group ફ
         ફ          p#V
+        _L22) ફ (L21L21_         p#@      // generated
+        _L22L22) ફ (L21L21_      p#@      // generated
+        L22) ફ (L21L21_          p#@      // generated
+        _L22) ફ (L21L23_         p#       // generated
+        _L22) ફ (L21L23          p#       // generated
+        _L22L22) ફ (L21L23_      p#       // generated
+        _L22L22) ફ (L21L23       p#       // generated
+        L22) ફ (L21L23_          p#       // generated
+        L22) ફ (L21L23           p#       // generated
+        _L22) ફ (L21્_           p#@      // generated
+        _L22) ફ (L21્            p#@      // generated
+        _L22L22) ફ (L21્_        p#@      // generated
+        _L22L22) ફ (L21્         p#@      // generated
+        L22) ફ (L21્_            p#@      // generated
+        L22) ફ (L21્             p#@      // generated
+        _L20L22) ફ (L21_         p#@      // generated
+        _L20L22) ફ (L21L22_      p#@      // generated
+        L20L22) ફ (L21_          p#@      // generated
+        L20L22) ફ (L21L22_       p#@      // generated
+        _L21L23) ફ (L21L20_      p#       // generated
+        _L21L23) ફ (L21L20       p#       // generated
+        L21L23) ફ (L21L20_       p#       // generated
+        L21L23) ફ (L21L20        p#       // generated
+        _L22) ફ (L21ર_           p#       // generated
+        _L22) ફ (L21ર            p#       // generated
+        _L22L22) ફ (L21ર_        p#       // generated
+        _L22L22) ફ (L21ર         p#       // generated
+        _L20) ફ (પL22_           p#       // generated
+        _L20) ફ (પL22            p#       // generated
+        _L22L20) ફ (પL22_        p#       // generated
+        _L22L20) ફ (પL22         p#       // generated
+        L20) ફ (પL22_            p#       // generated
+        L20) ફ (પL22             p#       // generated
+        _L22) ફ (હL22_           p#       // generated
+        _L22) ફ (હL22            p#       // generated
+        _L22L22) ફ (હL22_        p#       // generated
+        _L22L22) ફ (હL22         p#       // generated
+        L22) ફ (હL22_            p#       // generated
+        L22) ફ (હL22             p#       // generated
+        _ેL22) ફ (L21_           p#@      // generated
+        _ેL22) ફ (L21L22_        p#@      // generated
+        _ેL22) ફ (L21            p#@      // generated
+        ેL22) ફ (L21_            p#@      // generated
+        ેL22) ફ (L21L22_         p#@      // generated
+        ેL22) ફ (L21             p#@      // generated
+        રL22L22) ફ (L21L20_      p#@      // generated
+        રL22L22) ફ (L21L20       p#@      // generated
+        _L22) ફ (L21ન_           p#       // generated
+        _L22L22) ફ (L21ન_        p#       // generated
         ફઁ         p#V~        // + candrabindu
         ફ (_       p#
         ફ (B       p#
@@ -471,18 +1561,165 @@ C)        ૣ          l-:
 
 .group બ
         બ          bV
+        _L22) બ (L21L21_         b@       // generated
+        _L22L22) બ (L21L21_      b@       // generated
+        L22) બ (L21L21_          b@       // generated
+        _L22) બ (L21L23_         b        // generated
+        _L22) બ (L21L23          b        // generated
+        _L22L22) બ (L21L23_      b        // generated
+        _L22L22) બ (L21L23       b        // generated
+        L22) બ (L21L23_          b        // generated
+        L22) બ (L21L23           b        // generated
+        _L22) બ (L21્_           b@       // generated
+        _L22) બ (L21્            b@       // generated
+        _L22L22) બ (L21્_        b@       // generated
+        _L22L22) બ (L21્         b@       // generated
+        L22) બ (L21્_            b@       // generated
+        L22) બ (L21્             b@       // generated
+        _L20L22) બ (L21_         b@       // generated
+        _L20L22) બ (L21L22_      b@       // generated
+        L20L22) બ (L21_          b@       // generated
+        L20L22) બ (L21L22_       b@       // generated
+        _L21L23) બ (L21L20_      b        // generated
+        _L21L23) બ (L21L20       b        // generated
+        L21L23) બ (L21L20_       b        // generated
+        L21L23) બ (L21L20        b        // generated
+        _L22) બ (L21ર_           b        // generated
+        _L22) બ (L21ર            b        // generated
+        _L22L22) બ (L21ર_        b        // generated
+        _L22L22) બ (L21ર         b        // generated
+        _L20) બ (પL22_           b        // generated
+        _L20) બ (પL22            b        // generated
+        _L22L20) બ (પL22_        b        // generated
+        _L22L20) બ (પL22         b        // generated
+        L20) બ (પL22_            b        // generated
+        L20) બ (પL22             b        // generated
+        _L22) બ (હL22_           b        // generated
+        _L22) બ (હL22            b        // generated
+        _L22L22) બ (હL22_        b        // generated
+        _L22L22) બ (હL22         b        // generated
+        L22) બ (હL22_            b        // generated
+        L22) બ (હL22             b        // generated
+        _ેL22) બ (L21_           b@       // generated
+        _ેL22) બ (L21L22_        b@       // generated
+        _ેL22) બ (L21            b@       // generated
+        ેL22) બ (L21_            b@       // generated
+        ેL22) બ (L21L22_         b@       // generated
+        ેL22) બ (L21             b@       // generated
+        રL22L22) બ (L21L20_      b@       // generated
+        રL22L22) બ (L21L20       b@       // generated
+        _L22) બ (L21ન_           b        // generated
+        _L22L22) બ (L21ન_        b        // generated
         બઁ         bV~        // + candrabindu
         બ (_       b
         બ (B       b
 
 .group ભ
         ભ          b#V
+        _L22) ભ (L21L21_         b#@      // generated
+        _L22L22) ભ (L21L21_      b#@      // generated
+        L22) ભ (L21L21_          b#@      // generated
+        _L22) ભ (L21L23_         b#       // generated
+        _L22) ભ (L21L23          b#       // generated
+        _L22L22) ભ (L21L23_      b#       // generated
+        _L22L22) ભ (L21L23       b#       // generated
+        L22) ભ (L21L23_          b#       // generated
+        L22) ભ (L21L23           b#       // generated
+        _L22) ભ (L21્_           b#@      // generated
+        _L22) ભ (L21્            b#@      // generated
+        _L22L22) ભ (L21્_        b#@      // generated
+        _L22L22) ભ (L21્         b#@      // generated
+        L22) ભ (L21્_            b#@      // generated
+        L22) ભ (L21્             b#@      // generated
+        _L20L22) ભ (L21_         b#@      // generated
+        _L20L22) ભ (L21L22_      b#@      // generated
+        L20L22) ભ (L21_          b#@      // generated
+        L20L22) ભ (L21L22_       b#@      // generated
+        _L21L23) ભ (L21L20_      b#       // generated
+        _L21L23) ભ (L21L20       b#       // generated
+        L21L23) ભ (L21L20_       b#       // generated
+        L21L23) ભ (L21L20        b#       // generated
+        _L22) ભ (L21ર_           b#       // generated
+        _L22) ભ (L21ર            b#       // generated
+        _L22L22) ભ (L21ર_        b#       // generated
+        _L22L22) ભ (L21ર         b#       // generated
+        _L20) ભ (પL22_           b#       // generated
+        _L20) ભ (પL22            b#       // generated
+        _L22L20) ભ (પL22_        b#       // generated
+        _L22L20) ભ (પL22         b#       // generated
+        L20) ભ (પL22_            b#       // generated
+        L20) ભ (પL22             b#       // generated
+        _L22) ભ (હL22_           b#       // generated
+        _L22) ભ (હL22            b#       // generated
+        _L22L22) ભ (હL22_        b#       // generated
+        _L22L22) ભ (હL22         b#       // generated
+        L22) ભ (હL22_            b#       // generated
+        L22) ભ (હL22             b#       // generated
+        _ેL22) ભ (L21_           b#@      // generated
+        _ેL22) ભ (L21L22_        b#@      // generated
+        _ેL22) ભ (L21            b#@      // generated
+        ેL22) ભ (L21_            b#@      // generated
+        ેL22) ભ (L21L22_         b#@      // generated
+        ેL22) ભ (L21             b#@      // generated
+        રL22L22) ભ (L21L20_      b#@      // generated
+        રL22L22) ભ (L21L20       b#@      // generated
+        _L22) ભ (L21ન_           b#       // generated
+        _L22L22) ભ (L21ન_        b#       // generated
         ભઁ         b#V~        // + candrabindu
         ભ (_       b#
         ભ (B       b#
 
 .group મ
         મ          mV
+        _L22) મ (L21L21_         m@       // generated
+        _L22L22) મ (L21L21_      m@       // generated
+        L22) મ (L21L21_          m@       // generated
+        _L22) મ (L21L23_         m        // generated
+        _L22) મ (L21L23          m        // generated
+        _L22L22) મ (L21L23_      m        // generated
+        _L22L22) મ (L21L23       m        // generated
+        L22) મ (L21L23_          m        // generated
+        L22) મ (L21L23           m        // generated
+        _L22) મ (L21્_           m@       // generated
+        _L22) મ (L21્            m@       // generated
+        _L22L22) મ (L21્_        m@       // generated
+        _L22L22) મ (L21્         m@       // generated
+        L22) મ (L21્_            m@       // generated
+        L22) મ (L21્             m@       // generated
+        _L20L22) મ (L21_         m@       // generated
+        _L20L22) મ (L21L22_      m@       // generated
+        L20L22) મ (L21_          m@       // generated
+        L20L22) મ (L21L22_       m@       // generated
+        _L21L23) મ (L21L20_      m        // generated
+        _L21L23) મ (L21L20       m        // generated
+        L21L23) મ (L21L20_       m        // generated
+        L21L23) મ (L21L20        m        // generated
+        _L22) મ (L21ર_           m        // generated
+        _L22) મ (L21ર            m        // generated
+        _L22L22) મ (L21ર_        m        // generated
+        _L22L22) મ (L21ર         m        // generated
+        _L20) મ (પL22_           m        // generated
+        _L20) મ (પL22            m        // generated
+        _L22L20) મ (પL22_        m        // generated
+        _L22L20) મ (પL22         m        // generated
+        L20) મ (પL22_            m        // generated
+        L20) મ (પL22             m        // generated
+        _L22) મ (હL22_           m        // generated
+        _L22) મ (હL22            m        // generated
+        _L22L22) મ (હL22_        m        // generated
+        _L22L22) મ (હL22         m        // generated
+        L22) મ (હL22_            m        // generated
+        L22) મ (હL22             m        // generated
+        _ેL22) મ (L21_           m@       // generated
+        _ેL22) મ (L21L22_        m@       // generated
+        _ેL22) મ (L21            m@       // generated
+        ેL22) મ (L21_            m@       // generated
+        ેL22) મ (L21L22_         m@       // generated
+        ેL22) મ (L21             m@       // generated
+        રL22L22) મ (L21L20_      m@       // generated
+        રL22L22) મ (L21L20       m@       // generated
+        _L22) મ (L21ન_           m        // generated
+        _L22L22) મ (L21ન_        m        // generated
         મઁ         mV~        // + candrabindu
         મ (_       m
         મ (B       m
@@ -500,6 +1737,55 @@ C)        ૣ          l-:
 
 .group ર
         ર          rV
+        _L22) ર (L21L21_         r@       // generated
+        _L22L22) ર (L21L21_      r@       // generated
+        L22) ર (L21L21_          r@       // generated
+        _L22) ર (L21L23_         r        // generated
+        _L22) ર (L21L23          r        // generated
+        _L22L22) ર (L21L23_      r        // generated
+        _L22L22) ર (L21L23       r        // generated
+        L22) ર (L21L23_          r        // generated
+        L22) ર (L21L23           r        // generated
+        _L22) ર (L21્_           r@       // generated
+        _L22) ર (L21્            r@       // generated
+        _L22L22) ર (L21્_        r@       // generated
+        _L22L22) ર (L21્         r@       // generated
+        L22) ર (L21્_            r@       // generated
+        L22) ર (L21્             r@       // generated
+        _L20L22) ર (L21_         r@       // generated
+        _L20L22) ર (L21L22_      r@       // generated
+        L20L22) ર (L21_          r@       // generated
+        L20L22) ર (L21L22_       r@       // generated
+        _L21L23) ર (L21L20_      r        // generated
+        _L21L23) ર (L21L20       r        // generated
+        L21L23) ર (L21L20_       r        // generated
+        L21L23) ર (L21L20        r        // generated
+        _L22) ર (L21ર_           r        // generated
+        _L22) ર (L21ર            r        // generated
+        _L22L22) ર (L21ર_        r        // generated
+        _L22L22) ર (L21ર         r        // generated
+        _L20) ર (પL22_           r        // generated
+        _L20) ર (પL22            r        // generated
+        _L22L20) ર (પL22_        r        // generated
+        _L22L20) ર (પL22         r        // generated
+        L20) ર (પL22_            r        // generated
+        L20) ર (પL22             r        // generated
+        _L22) ર (હL22_           r        // generated
+        _L22) ર (હL22            r        // generated
+        _L22L22) ર (હL22_        r        // generated
+        _L22L22) ર (હL22         r        // generated
+        L22) ર (હL22_            r        // generated
+        L22) ર (હL22             r        // generated
+        _ેL22) ર (L21_           r@       // generated
+        _ેL22) ર (L21L22_        r@       // generated
+        _ેL22) ર (L21            r@       // generated
+        ેL22) ર (L21_            r@       // generated
+        ેL22) ર (L21L22_         r@       // generated
+        ેL22) ર (L21             r@       // generated
+        રL22L22) ર (L21L20_      r@       // generated
+        રL22L22) ર (L21L20       r@       // generated
+        _L22) ર (L21ન_           r        // generated
+        _L22L22) ર (L21ન_        r        // generated
         રઁ         rV~        // + candrabindu
         ર (B       r
         ર (_       r
@@ -507,6 +1793,55 @@ C)        ૣ          l-:
 
 .group લ
         લ          lV
+        _L22) લ (L21L21_         l@       // generated
+        _L22L22) લ (L21L21_      l@       // generated
+        L22) લ (L21L21_          l@       // generated
+        _L22) લ (L21L23_         l        // generated
+        _L22) લ (L21L23          l        // generated
+        _L22L22) લ (L21L23_      l        // generated
+        _L22L22) લ (L21L23       l        // generated
+        L22) લ (L21L23_          l        // generated
+        L22) લ (L21L23           l        // generated
+        _L22) લ (L21્_           l@       // generated
+        _L22) લ (L21્            l@       // generated
+        _L22L22) લ (L21્_        l@       // generated
+        _L22L22) લ (L21્         l@       // generated
+        L22) લ (L21્_            l@       // generated
+        L22) લ (L21્             l@       // generated
+        _L20L22) લ (L21_         l@       // generated
+        _L20L22) લ (L21L22_      l@       // generated
+        L20L22) લ (L21_          l@       // generated
+        L20L22) લ (L21L22_       l@       // generated
+        _L21L23) લ (L21L20_      l        // generated
+        _L21L23) લ (L21L20       l        // generated
+        L21L23) લ (L21L20_       l        // generated
+        L21L23) લ (L21L20        l        // generated
+        _L22) લ (L21ર_           l        // generated
+        _L22) લ (L21ર            l        // generated
+        _L22L22) લ (L21ર_        l        // generated
+        _L22L22) લ (L21ર         l        // generated
+        _L20) લ (પL22_           l        // generated
+        _L20) લ (પL22            l        // generated
+        _L22L20) લ (પL22_        l        // generated
+        _L22L20) લ (પL22         l        // generated
+        L20) લ (પL22_            l        // generated
+        L20) લ (પL22             l        // generated
+        _L22) લ (હL22_           l        // generated
+        _L22) લ (હL22            l        // generated
+        _L22L22) લ (હL22_        l        // generated
+        _L22L22) લ (હL22         l        // generated
+        L22) લ (હL22_            l        // generated
+        L22) લ (હL22             l        // generated
+        _ેL22) લ (L21_           l@       // generated
+        _ેL22) લ (L21L22_        l@       // generated
+        _ેL22) લ (L21            l@       // generated
+        ેL22) લ (L21_            l@       // generated
+        ેL22) લ (L21L22_         l@       // generated
+        ેL22) લ (L21             l@       // generated
+        રL22L22) લ (L21L20_      l@       // generated
+        રL22L22) લ (L21L20       l@       // generated
+        _L22) લ (L21ન_           l        // generated
+        _L22L22) લ (L21ન_        l        // generated
         લઁ         lV~        // + candrabindu
         લ (_       l
         લ (B       l
@@ -521,30 +1856,284 @@ C)        ૣ          l-:
 
 .group વ
         વ          vV
+        _L22) વ (L21L21_         v@       // generated
+        _L22L22) વ (L21L21_      v@       // generated
+        L22) વ (L21L21_          v@       // generated
+        _L22) વ (L21L23_         v        // generated
+        _L22) વ (L21L23          v        // generated
+        _L22L22) વ (L21L23_      v        // generated
+        _L22L22) વ (L21L23       v        // generated
+        L22) વ (L21L23_          v        // generated
+        L22) વ (L21L23           v        // generated
+        _L22) વ (L21્_           v@       // generated
+        _L22) વ (L21્            v@       // generated
+        _L22L22) વ (L21્_        v@       // generated
+        _L22L22) વ (L21્         v@       // generated
+        L22) વ (L21્_            v@       // generated
+        L22) વ (L21્             v@       // generated
+        _L20L22) વ (L21_         v@       // generated
+        _L20L22) વ (L21L22_      v@       // generated
+        L20L22) વ (L21_          v@       // generated
+        L20L22) વ (L21L22_       v@       // generated
+        _L21L23) વ (L21L20_      v        // generated
+        _L21L23) વ (L21L20       v        // generated
+        L21L23) વ (L21L20_       v        // generated
+        L21L23) વ (L21L20        v        // generated
+        _L22) વ (L21ર_           v        // generated
+        _L22) વ (L21ર            v        // generated
+        _L22L22) વ (L21ર_        v        // generated
+        _L22L22) વ (L21ર         v        // generated
+        _L20) વ (પL22_           v        // generated
+        _L20) વ (પL22            v        // generated
+        _L22L20) વ (પL22_        v        // generated
+        _L22L20) વ (પL22         v        // generated
+        L20) વ (પL22_            v        // generated
+        L20) વ (પL22             v        // generated
+        _L22) વ (હL22_           v        // generated
+        _L22) વ (હL22            v        // generated
+        _L22L22) વ (હL22_        v        // generated
+        _L22L22) વ (હL22         v        // generated
+        L22) વ (હL22_            v        // generated
+        L22) વ (હL22             v        // generated
+        _ેL22) વ (L21_           v@       // generated
+        _ેL22) વ (L21L22_        v@       // generated
+        _ેL22) વ (L21            v@       // generated
+        ેL22) વ (L21_            v@       // generated
+        ેL22) વ (L21L22_         v@       // generated
+        ેL22) વ (L21             v@       // generated
+        રL22L22) વ (L21L20_      v@       // generated
+        રL22L22) વ (L21L20       v@       // generated
+        _L22) વ (L21ન_           v        // generated
+        _L22L22) વ (L21ન_        v        // generated
         વઁ         vV~        // + candrabindu
         વ (_       v
         વ (B       v
 
 .group શ
         શ          SV
+        _L22) શ (L21L21_         S@       // generated
+        _L22L22) શ (L21L21_      S@       // generated
+        L22) શ (L21L21_          S@       // generated
+        _L22) શ (L21L23_         S        // generated
+        _L22) શ (L21L23          S        // generated
+        _L22L22) શ (L21L23_      S        // generated
+        _L22L22) શ (L21L23       S        // generated
+        L22) શ (L21L23_          S        // generated
+        L22) શ (L21L23           S        // generated
+        _L22) શ (L21્_           S@       // generated
+        _L22) શ (L21્            S@       // generated
+        _L22L22) શ (L21્_        S@       // generated
+        _L22L22) શ (L21્         S@       // generated
+        L22) શ (L21્_            S@       // generated
+        L22) શ (L21્             S@       // generated
+        _L20L22) શ (L21_         S@       // generated
+        _L20L22) શ (L21L22_      S@       // generated
+        L20L22) શ (L21_          S@       // generated
+        L20L22) શ (L21L22_       S@       // generated
+        _L21L23) શ (L21L20_      S        // generated
+        _L21L23) શ (L21L20       S        // generated
+        L21L23) શ (L21L20_       S        // generated
+        L21L23) શ (L21L20        S        // generated
+        _L22) શ (L21ર_           S        // generated
+        _L22) શ (L21ર            S        // generated
+        _L22L22) શ (L21ર_        S        // generated
+        _L22L22) શ (L21ર         S        // generated
+        _L20) શ (પL22_           S        // generated
+        _L20) શ (પL22            S        // generated
+        _L22L20) શ (પL22_        S        // generated
+        _L22L20) શ (પL22         S        // generated
+        L20) શ (પL22_            S        // generated
+        L20) શ (પL22             S        // generated
+        _L22) શ (હL22_           S        // generated
+        _L22) શ (હL22            S        // generated
+        _L22L22) શ (હL22_        S        // generated
+        _L22L22) શ (હL22         S        // generated
+        L22) શ (હL22_            S        // generated
+        L22) શ (હL22             S        // generated
+        _ેL22) શ (L21_           S@       // generated
+        _ેL22) શ (L21L22_        S@       // generated
+        _ેL22) શ (L21            S@       // generated
+        ેL22) શ (L21_            S@       // generated
+        ેL22) શ (L21L22_         S@       // generated
+        ેL22) શ (L21             S@       // generated
+        રL22L22) શ (L21L20_      S@       // generated
+        રL22L22) શ (L21L20       S@       // generated
+        _L22) શ (L21ન_           S        // generated
+        _L22L22) શ (L21ન_        S        // generated
         શઁ         SV~        // + candrabindu
         શ (_       S
         શ (B       S
 
 .group ષ
         ષ          s.V
+        _L22) ષ (L21L21_         s.@      // generated
+        _L22L22) ષ (L21L21_      s.@      // generated
+        L22) ષ (L21L21_          s.@      // generated
+        _L22) ષ (L21L23_         s.       // generated
+        _L22) ષ (L21L23          s.       // generated
+        _L22L22) ષ (L21L23_      s.       // generated
+        _L22L22) ષ (L21L23       s.       // generated
+        L22) ષ (L21L23_          s.       // generated
+        L22) ષ (L21L23           s.       // generated
+        _L22) ષ (L21્_           s.@      // generated
+        _L22) ષ (L21્            s.@      // generated
+        _L22L22) ષ (L21્_        s.@      // generated
+        _L22L22) ષ (L21્         s.@      // generated
+        L22) ષ (L21્_            s.@      // generated
+        L22) ષ (L21્             s.@      // generated
+        _L20L22) ષ (L21_         s.@      // generated
+        _L20L22) ષ (L21L22_      s.@      // generated
+        L20L22) ષ (L21_          s.@      // generated
+        L20L22) ષ (L21L22_       s.@      // generated
+        _L21L23) ષ (L21L20_      s.       // generated
+        _L21L23) ષ (L21L20       s.       // generated
+        L21L23) ષ (L21L20_       s.       // generated
+        L21L23) ષ (L21L20        s.       // generated
+        _L22) ષ (L21ર_           s.       // generated
+        _L22) ષ (L21ર            s.       // generated
+        _L22L22) ષ (L21ર_        s.       // generated
+        _L22L22) ષ (L21ર         s.       // generated
+        _L20) ષ (પL22_           s.       // generated
+        _L20) ષ (પL22            s.       // generated
+        _L22L20) ષ (પL22_        s.       // generated
+        _L22L20) ષ (પL22         s.       // generated
+        L20) ષ (પL22_            s.       // generated
+        L20) ષ (પL22             s.       // generated
+        _L22) ષ (હL22_           s.       // generated
+        _L22) ષ (હL22            s.       // generated
+        _L22L22) ષ (હL22_        s.       // generated
+        _L22L22) ષ (હL22         s.       // generated
+        L22) ષ (હL22_            s.       // generated
+        L22) ષ (હL22             s.       // generated
+        _ેL22) ષ (L21_           s.@      // generated
+        _ેL22) ષ (L21L22_        s.@      // generated
+        _ેL22) ષ (L21            s.@      // generated
+        ેL22) ષ (L21_            s.@      // generated
+        ેL22) ષ (L21L22_         s.@      // generated
+        ેL22) ષ (L21             s.@      // generated
+        રL22L22) ષ (L21L20_      s.@      // generated
+        રL22L22) ષ (L21L20       s.@      // generated
+        _L22) ષ (L21ન_           s.       // generated
+        _L22L22) ષ (L21ન_        s.       // generated
         ષઁ         s.V~        // + candrabindu
         ષ (_       s.
         ષ (B       s. 
 
 .group સ
         સ          sV
+        _L22) સ (L21L21_         s@       // generated
+        _L22L22) સ (L21L21_      s@       // generated
+        L22) સ (L21L21_          s@       // generated
+        _L22) સ (L21L23_         s        // generated
+        _L22) સ (L21L23          s        // generated
+        _L22L22) સ (L21L23_      s        // generated
+        _L22L22) સ (L21L23       s        // generated
+        L22) સ (L21L23_          s        // generated
+        L22) સ (L21L23           s        // generated
+        _L22) સ (L21્_           s@       // generated
+        _L22) સ (L21્            s@       // generated
+        _L22L22) સ (L21્_        s@       // generated
+        _L22L22) સ (L21્         s@       // generated
+        L22) સ (L21્_            s@       // generated
+        L22) સ (L21્             s@       // generated
+        _L20L22) સ (L21_         s@       // generated
+        _L20L22) સ (L21L22_      s@       // generated
+        L20L22) સ (L21_          s@       // generated
+        L20L22) સ (L21L22_       s@       // generated
+        _L21L23) સ (L21L20_      s        // generated
+        _L21L23) સ (L21L20       s        // generated
+        L21L23) સ (L21L20_       s        // generated
+        L21L23) સ (L21L20        s        // generated
+        _L22) સ (L21ર_           s        // generated
+        _L22) સ (L21ર            s        // generated
+        _L22L22) સ (L21ર_        s        // generated
+        _L22L22) સ (L21ર         s        // generated
+        _L20) સ (પL22_           s        // generated
+        _L20) સ (પL22            s        // generated
+        _L22L20) સ (પL22_        s        // generated
+        _L22L20) સ (પL22         s        // generated
+        L20) સ (પL22_            s        // generated
+        L20) સ (પL22             s        // generated
+        _L22) સ (હL22_           s        // generated
+        _L22) સ (હL22            s        // generated
+        _L22L22) સ (હL22_        s        // generated
+        _L22L22) સ (હL22         s        // generated
+        L22) સ (હL22_            s        // generated
+        L22) સ (હL22             s        // generated
+        _ેL22) સ (L21_           s@       // generated
+        _ેL22) સ (L21L22_        s@       // generated
+        _ેL22) સ (L21            s@       // generated
+        ેL22) સ (L21_            s@       // generated
+        ેL22) સ (L21L22_         s@       // generated
+        ેL22) સ (L21             s@       // generated
+        રL22L22) સ (L21L20_      s@       // generated
+        રL22L22) સ (L21L20       s@       // generated
+        _L22) સ (L21ન_           s        // generated
+        _L22L22) સ (L21ન_        s        // generated
         સઁ         sV~        // + candrabindu
         સ (_       s
         સ (B       s
 
 .group હ
         હ          HV
+        _L22) હ (L21L21_         H@       // generated
+        _L22L22) હ (L21L21_      H@       // generated
+        L22) હ (L21L21_          H@       // generated
+        _L22) હ (L21L23_         H        // generated
+        _L22) હ (L21L23          H        // generated
+        _L22L22) હ (L21L23_      H        // generated
+        _L22L22) હ (L21L23       H        // generated
+        L22) હ (L21L23_          H        // generated
+        L22) હ (L21L23           H        // generated
+        _L22) હ (L21્_           H@       // generated
+        _L22) હ (L21્            H@       // generated
+        _L22L22) હ (L21્_        H@       // generated
+        _L22L22) હ (L21્         H@       // generated
+        L22) હ (L21્_            H@       // generated
+        L22) હ (L21્             H@       // generated
+        _L20L22) હ (L21_         H@       // generated
+        _L20L22) હ (L21L22_      H@       // generated
+        L20L22) હ (L21_          H@       // generated
+        L20L22) હ (L21L22_       H@       // generated
+        _L22) હ (L21_            H@       // generated
+        _L22) હ (L21L22_         H@       // generated
+        _L22) હ (L21             H@       // generated
+        _L22L22) હ (L21_         H@       // generated
+        _L22L22) હ (L21L22_      H@       // generated
+        _L22L22) હ (L21          H@       // generated
+        L22) હ (L21_             H@       // generated
+        L22) હ (L21L22_          H@       // generated
+        L22) હ (L21              H@       // generated
+        _L21L23) હ (L21L20_      H        // generated
+        _L21L23) હ (L21L20       H        // generated
+        L21L23) હ (L21L20_       H        // generated
+        L21L23) હ (L21L20        H        // generated
+        _L22) હ (L21ર_           H        // generated
+        _L22) હ (L21ર            H        // generated
+        _L22L22) હ (L21ર_        H        // generated
+        _L22L22) હ (L21ર         H        // generated
+        _L20) હ (પL22_           H        // generated
+        _L20) હ (પL22            H        // generated
+        _L22L20) હ (પL22_        H        // generated
+        _L22L20) હ (પL22         H        // generated
+        L20) હ (પL22_            H        // generated
+        L20) હ (પL22             H        // generated
+        _L22) હ (હL22_           H        // generated
+        _L22) હ (હL22            H        // generated
+        _L22L22) હ (હL22_        H        // generated
+        _L22L22) હ (હL22         H        // generated
+        L22) હ (હL22_            H        // generated
+        L22) હ (હL22             H        // generated
+        _ેL22) હ (L21_           H@       // generated
+        _ેL22) હ (L21L22_        H@       // generated
+        _ેL22) હ (L21            H@       // generated
+        ેL22) હ (L21_            H@       // generated
+        ેL22) હ (L21L22_         H@       // generated
+        ેL22) હ (L21             H@       // generated
+        રL22L22) હ (L21L20_      H@       // generated
+        રL22L22) હ (L21L20       H@       // generated
+        _L22) હ (L21ન_           H        // generated
+        _L22L22) હ (L21ન_        H        // generated
         હઁ         HV~        // + candrabindu
         હ (_       H
         હ (B       H
