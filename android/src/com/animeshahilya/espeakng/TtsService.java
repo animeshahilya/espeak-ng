@@ -187,6 +187,16 @@ public class TtsService extends TextToSpeechService {
      * without their own lock -- so the background thread takes the same
      * monitor onSynthesizeText() is synchronized on, rather than racing it.
      */
+    /**
+     * Guards {@link #mLanguagesUpdatedReceiver}: initializeTtsEngine() costs
+     * seconds of disk/JNI work, and broadcasts can arrive back-to-back (bulk
+     * voice import, restore, reinstall). Without this each broadcast spawns a
+     * thread and they queue on the TtsService monitor re-running the same
+     * re-init. A concurrent invalidation degrades to one redundant reload at
+     * most: the loser re-checks the flag after the winner finishes.
+     */
+    private final AtomicBoolean mVoiceReloadRunning = new AtomicBoolean(false);
+
     private final BroadcastReceiver mLanguagesUpdatedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -194,11 +204,18 @@ public class TtsService extends TextToSpeechService {
                     || !DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED.equals(intent.getAction())) {
                 return;
             }
+            if (!mVoiceReloadRunning.compareAndSet(false, true)) {
+                return;
+            }
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    synchronized (TtsService.this) {
-                        initializeTtsEngine();
+                    try {
+                        synchronized (TtsService.this) {
+                            initializeTtsEngine();
+                        }
+                    } finally {
+                        mVoiceReloadRunning.set(false);
                     }
                 }
             }, "espeak-voices-reload").start();
@@ -208,6 +225,7 @@ public class TtsService extends TextToSpeechService {
     @Override
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onCreate() {
+        super.onCreate();
         mStorageContext = EspeakApp.requireStorageContext(getApplicationContext());
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(mStorageContext);
@@ -237,7 +255,6 @@ public class TtsService extends TextToSpeechService {
         } else {
             registerReceiver(mLanguagesUpdatedReceiver, filter);
         }
-        super.onCreate();
     }
 
     @Override

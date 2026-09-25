@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.UserManager;
 import android.util.Log;
 
@@ -42,6 +43,7 @@ public class EspeakApp extends Application {
     @SuppressLint("StaticFieldLeak")
     private static Context storageContext;
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onCreate() {
         super.onCreate();
         // DynamicColors intentionally not applied: wallpaper-derived palettes
@@ -57,15 +59,25 @@ public class EspeakApp extends Application {
             // credential-encrypted file cannot be read yet, so run the
             // migration again when the user unlocks instead of leaving it
             // to the next process restart, which may be days away.
-            // ACTION_USER_UNLOCKED is a protected system broadcast, exempt
-            // from the exported flag that targetSdk 34 requires otherwise.
-            appContext.registerReceiver(new BroadcastReceiver() {
+            // ACTION_USER_UNLOCKED is a protected system broadcast only this
+            // app's own process acts on: register not-exported on API 33+,
+            // same pattern as TtsService's languages-updated receiver. The
+            // 3-arg overload requires Tiramisu (minSdk 26), so fall back to
+            // the unflagged overload below it (unexported by default there).
+            BroadcastReceiver unlockReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     appContext.unregisterReceiver(this);
                     migrateLegacyPreferences(appContext, EspeakApp.storageContext);
                 }
-            }, new IntentFilter(Intent.ACTION_USER_UNLOCKED));
+            };
+            IntentFilter unlockFilter = new IntentFilter(Intent.ACTION_USER_UNLOCKED);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                appContext.registerReceiver(unlockReceiver, unlockFilter,
+                        Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                appContext.registerReceiver(unlockReceiver, unlockFilter);
+            }
         }
         syncWearLauncherState();
     }

@@ -7,20 +7,26 @@
     android:orientation="vertical"
     android:padding="24dp" >
 
+    <!-- accessibilityLiveRegion="polite": the status text re-announces if it
+         ever changes (retry/failure states), matching the live-region pattern
+         used by the settings counts and empty states. DownloadVoiceData still
+         focuses this view on open so TalkBack announces the install promptly
+         instead of waiting for a text change that may never come. -->
     <TextView
         android:id="@+id/installing_voice_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/screen_padding"
         android:gravity="center"
+        android:accessibilityLiveRegion="polite"
         android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:text="@string/installing_voice_data" />
 
     <!-- M3 indeterminate indicator: themed from colorPrimary /
          colorPrimaryContainer instead of the framework's flat gray bar.
-         The status TextView above carries the spoken message (DownloadVoiceData
-         focuses it for TalkBack); the bar itself is decorative. -->
+         The status TextView above carries the spoken message; the bar
+         itself is decorative. -->
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progress"
         android:layout_width="match_parent"
