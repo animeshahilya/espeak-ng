@@ -31,6 +31,16 @@
     <item>2</item>
   </string-array>
 
+  <string-array name="indian_numbering_entries" translatable="false">
+    <item>@string/setting_off</item>
+    <item>@string/indian_numbering_indian</item>
+    <item>@string/indian_numbering_all</item>
+  </string-array>
+  <string-array name="indian_numbering_values" translatable="false">
+    <item>off</item>
+    <item>indian</item>
+    <item>all</item>
+  </string-array>
   <string-array name="digit_grouping_entries" translatable="false">
     <item>@string/digit_group_off</item>
     <item>@string/digit_group_single</item>

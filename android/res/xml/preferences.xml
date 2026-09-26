@@ -251,11 +251,13 @@
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:title="@string/category_number_formats"
           app:iconSpaceReserved="false">
-        <SwitchPreferenceCompat
-            android:key="espeak_indian_numbering"
+        <ListPreference
+            android:key="espeak_indian_numbering_voices"
             android:title="@string/setting_indian_numbering"
-            android:summary="@string/setting_indian_numbering_summary"
-            android:defaultValue="true"
+            android:entries="@array/indian_numbering_entries"
+            android:entryValues="@array/indian_numbering_values"
+            android:defaultValue="indian"
+            app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
         <ListPreference
             android:key="espeak_digit_grouping"

@@ -147,7 +147,7 @@ public class PreferenceStorageTest
                 VoiceSettings.PREF_INTONATION_GROUP, VoiceSettings.PREF_VOLUME,
                 VoiceSettings.PREF_WORD_GAP, VoiceSettings.PREF_PAUSE_SCALE,
                 VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL,
-                VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_INDIAN_NUMBERING,
+                VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_INDIAN_NUMBERING_VOICES,
                 VoiceSettings.PREF_DIGIT_GROUPING, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                 VoiceSettings.PREF_PUNCTUATION_LEVEL, VoiceSettings.PREF_CAPITALS,
                 VoiceSettings.PREF_CAPITALS_SCOPE, VoiceSettings.PREF_REPEATED_CHARS,

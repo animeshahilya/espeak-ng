@@ -112,6 +112,7 @@ public final class TextPreprocessor {
         final Edits edits = new Edits(initialOffsetMap);
         final String lang = languageTag(voice);
         final boolean english = NumberReading.isEnglish(lang);
+        final boolean readsEnglishText = readsEnglishText(lang);
 
         if (!isSsml) {
             if (text.indexOf('\u0001') != -1) {
@@ -156,7 +157,8 @@ public final class TextPreprocessor {
                 if (!VoiceSettings.PHONETIC_OFF.equals(settings.getPhoneticLetters())) {
                     text = edits.track(text, expandNatoSpelling(text));
                 }
-                if (settings.isSpokenDiacriticsEnabled() && isIndianLanguage(lang)) {
+                // Any voice: it only names Devanagari signs.
+                if (settings.isSpokenDiacriticsEnabled()) {
                     text = edits.track(text, expandDevanagariDiacritic(text));
                 }
                 // NVDA processSpeechSymbol: character navigation always names
@@ -175,14 +177,16 @@ public final class TextPreprocessor {
         // branches below and the NVDA pass (code mode selects level ALL there).
         final String readingMode = settings.getReadingMode();
         final boolean normalReading = !isSsml && VoiceSettings.READING_NORMAL.equals(readingMode);
-        final boolean indianNumbers = settings.isIndianNumberingEnabled()
-                && isIndianLanguage(lang);
+        final String indianVoices = settings.getIndianNumberingVoices();
+        final boolean indianNumbers = VoiceSettings.INDIAN_NUMBERING_ALL.equals(indianVoices)
+                || (VoiceSettings.INDIAN_NUMBERING_INDIAN.equals(indianVoices)
+                        && isIndianLanguage(lang));
 
         // Beta extra: Hinglish words become Devanagari, which eSpeak's own
         // script detection then reads with Hindi pronunciation. Before the
         // code pass, so Hindi code words ("pin" -> पिन) still mark a code.
         if (normalReading && settings.isHinglishEnabled()
-                && english) {
+                && readsEnglishText) {
             text = edits.track(text, HinglishReader.process(text));
         }
 
@@ -192,11 +196,11 @@ public final class TextPreprocessor {
             text = edits.track(text, NumberReading.readCodes(text));
         }
         if (normalReading && settings.isExpandAbbreviationsEnabled()
-                && english) {
+                && readsEnglishText) {
             text = edits.track(text, Abbreviations.process(text));
         }
         if (normalReading && settings.isReadMoneyEnabled()
-                && english) {
+                && readsEnglishText) {
             text = edits.track(text, NumberReading.readMoney(text, !indianNumbers));
         }
 
@@ -208,8 +212,9 @@ public final class TextPreprocessor {
             text = edits.track(text, NumberReading.englishNumbersInEnglishText(text));
         }
 
-        // Indian-voice only: every other voice reads these exactly as NVDA's
-        // eSpeak does ("5k", "2 l", "12,34,567" untouched).
+        // Indian voices by default; every other voice reads these exactly as
+        // NVDA's eSpeak does ("5k", "2 l", "12,34,567" untouched) unless the
+        // user picks "All voices".
         if (!isSsml && indianNumbers) {
             text = edits.track(text, preprocessIndianText(text, lang));
         }
@@ -413,6 +418,16 @@ public final class TextPreprocessor {
             default:
                 return false;
         }
+    }
+
+    /**
+     * English voices, and non-Latin voices, which read Latin words in English:
+     * the English-text extras (Hinglish, abbreviations, money) apply to both.
+     * A Latin-script voice such as French would read their English output
+     * as French, so it is left out.
+     */
+    public static boolean readsEnglishText(String languageTag) {
+        return NumberReading.isEnglish(languageTag) || !NumberReading.isLatinScript(languageTag);
     }
 
     public static boolean isDevanagariNumberLang(String languageTag) {

@@ -6,7 +6,6 @@
     <color name="colorAccent">#8AB4F8</color>
 
     <!-- Surfaces & Dividers -->
-    <color name="colorDivider">#3C4043</color>
 
     <!-- Adaptive-icon background (same dark tone as day mode) -->
     <color name="icon_background">#232323</color>

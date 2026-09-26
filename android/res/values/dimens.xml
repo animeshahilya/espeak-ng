@@ -16,25 +16,13 @@
     <dimen name="dialog_padding_bottom">12dp</dimen>
     <dimen name="section_gap">8dp</dimen>
     <dimen name="content_gap">6dp</dimen>
-    <!-- Sub-8dp steps for control internals (slider bezels, chip insets,
-         hairlines). Kept separate so section_gap/content_gap keep meaning
-         "space between blocks", not "space inside a control". -->
+    <!-- Sub-8dp steps for control internals (slider bezels, chip insets).
+         Kept separate so section_gap/content_gap keep meaning "space
+         between blocks", not "space inside a control". -->
     <dimen name="tight_gap">4dp</dimen>
-    <dimen name="hairline">1dp</dimen>
-    <!-- Radio description indent: aligns body text under the label, clear
-         of the radio button glyph. -->
-    <dimen name="radio_desc_inset">36dp</dimen>
     <!-- Dictionary rule rows. -->
     <dimen name="list_row_padding_v">10dp</dimen>
     <dimen name="chip_pad_v">2dp</dimen>
     <dimen name="chip_min_height">20dp</dimen>
-    <!-- About screen + install splash. -->
-    <dimen name="badge_pad_h">10dp</dimen>
-    <dimen name="badge_pad_v">3dp</dimen>
-    <dimen name="block_gap">12dp</dimen>
-    <dimen name="hero_padding">24dp</dimen>
-    <!-- Platform minimum touch target, read by programmatic layouts that
-         cannot use the literal (UserDictionaryScreen density math). -->
-    <dimen name="touch_target_min">48dp</dimen>
 
 </resources>

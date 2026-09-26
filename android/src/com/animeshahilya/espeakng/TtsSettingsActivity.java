@@ -1151,6 +1151,9 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
                 || !prefs.contains(VoiceSettings.PREF_READING_MODE)) {
             seed.putString(VoiceSettings.PREF_READING_MODE, settings.getReadingMode());
         }
+        if (!prefs.contains(VoiceSettings.PREF_INDIAN_NUMBERING_VOICES)) {
+            seed.putString(VoiceSettings.PREF_INDIAN_NUMBERING_VOICES, settings.getIndianNumberingVoices());
+        }
         if (!prefs.contains(VoiceSettings.PREF_DIGIT_GROUPING)) {
             seed.putString(VoiceSettings.PREF_DIGIT_GROUPING, settings.getDigitGroupingMode());
         }

@@ -803,4 +803,22 @@ public class VoiceSettingsTest
         prefs.edit().putString(VoiceSettings.PREF_INTONATION_GROUP, "5").commit();
         assertThat(settings.getIntonationGroup(), is(5));
     }
+
+    /** The old lakh/crore toggle becomes the voice choice without changing behaviour. */
+    @Test
+    public void testIndianNumberingMigration()
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.edit().clear().commit();
+        SpeechSynthesis synth = new SpeechSynthesis(getContext(), mCallback);
+        VoiceSettings settings = new VoiceSettings(prefs, synth);
+        assertThat(settings.getIndianNumberingVoices(), is(VoiceSettings.INDIAN_NUMBERING_INDIAN));
+
+        prefs.edit().putBoolean(VoiceSettings.PREF_INDIAN_NUMBERING, false).commit();
+        assertThat(settings.getIndianNumberingVoices(), is(VoiceSettings.INDIAN_NUMBERING_OFF));
+
+        prefs.edit().putString(VoiceSettings.PREF_INDIAN_NUMBERING_VOICES,
+                VoiceSettings.INDIAN_NUMBERING_ALL).commit();
+        assertThat(settings.getIndianNumberingVoices(), is(VoiceSettings.INDIAN_NUMBERING_ALL));
+    }
 }

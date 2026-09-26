@@ -57,6 +57,13 @@ public class VoiceSettings {
     public static final String PREF_EMPHASIZE_QUESTIONS = "espeak_emphasize_questions";
     public static final String PREF_WORD_GAP = "espeak_wordgap";
     public static final String PREF_PAUSE_SCALE = "espeak_pause_scale";
+    /** Which voices get lakh/crore and rupee reading: off, Indian voices or all voices. */
+    public static final String PREF_INDIAN_NUMBERING_VOICES = "espeak_indian_numbering_voices";
+    public static final String INDIAN_NUMBERING_OFF = "off";
+    public static final String INDIAN_NUMBERING_INDIAN = "indian";
+    public static final String INDIAN_NUMBERING_ALL = "all";
+    /** @deprecated On/off toggle, now {@link #PREF_INDIAN_NUMBERING_VOICES}; kept as the migration source. */
+    @Deprecated
     public static final String PREF_INDIAN_NUMBERING = "espeak_indian_numbering";
     // Opt-in extras beyond NVDA (new keys: the removed pre-parity toggles defaulted on).
     public static final String PREF_READ_MONEY = "espeak_read_money";
@@ -413,8 +420,12 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_SPEAK_DIGITS, false);
     }
 
-    public boolean isIndianNumberingEnabled() {
-        return mPreferences.getBoolean(PREF_INDIAN_NUMBERING, true);
+    /** {@link #INDIAN_NUMBERING_OFF}, _INDIAN or _ALL, migrating the old toggle on first read. */
+    public String getIndianNumberingVoices() {
+        String voices = mPreferences.getString(PREF_INDIAN_NUMBERING_VOICES, null);
+        if (voices != null) return voices;
+        return mPreferences.getBoolean(PREF_INDIAN_NUMBERING, true)
+                ? INDIAN_NUMBERING_INDIAN : INDIAN_NUMBERING_OFF;
     }
 
     public boolean isReadMoneyEnabled() {
@@ -441,7 +452,7 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_ENGLISH_NUMBERS, false);
     }
 
-    /** Beta, off by default: Hindi typed in Latin letters, read as Hindi (English voices). */
+    /** Beta, off by default: Hindi typed in Latin letters, read as Hindi. */
     public boolean isHinglishEnabled() {
         return mPreferences.getBoolean(PREF_HINGLISH, false);
     }

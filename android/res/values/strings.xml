@@ -139,8 +139,9 @@
   <string name="about_summary">Version and credits</string>
 
   <!-- Feature Settings -->
-  <string name="setting_indian_numbering">Indian number and currency formatting</string>
-  <string name="setting_indian_numbering_summary">Indian voices only. Reads amounts like ₹1,00,000, 5L and 2cr in lakh and crore.</string>
+  <string name="setting_indian_numbering">Lakh, crore and rupees (₹1,00,000, 5L, 2cr)</string>
+  <string name="indian_numbering_indian">Indian voices</string>
+  <string name="indian_numbering_all">All voices</string>
   <string name="setting_user_dictionary">User dictionary</string>
   <string name="setting_user_dictionary_summary">Your own pronunciations for words and names</string>
   <string name="setting_nato_spelling">Phonetic letters</string>
@@ -155,7 +156,6 @@
   <string name="setting_recommended_defaults_summary" formatted="false">Max variant, 40% pitch, 75% pitch variation and raised pitch for capitals.</string>
   <string name="recommended_defaults_applied" formatted="false">Recommended reading style applied (Max variant, 40% pitch, 75% inflection, capital pitch raise)</string>
   <string name="setting_digit_grouping">Number grouping</string>
-  <string name="setting_digit_grouping_summary">How long numbers are grouped when spoken.</string>
   <string name="digit_group_off">Off (natural numbers)</string>
   <string name="digit_group_single">Single digits (1 2 3)</string>
   <string name="digit_group_double">Double / pairs (12 34 56)</string>
@@ -180,12 +180,10 @@
     <item quantity="other">Restore finished: %1$d dictionary rules restored.</item>
   </plurals>
   <string name="setting_reading_mode">Reading mode</string>
-  <string name="setting_reading_mode_summary">One mode at a time: normal, spelling, or code reading.</string>
   <string name="reading_normal">Normal reading</string>
   <string name="reading_spelling">Spelling (letter by letter)</string>
   <string name="reading_code">Code reading (symbols + full punctuation)</string>
   <string name="setting_digit_threshold">Triple-grouping threshold</string>
-  <string name="setting_digit_threshold_summary">Triple grouping applies only to numbers this long or longer.</string>
   <plurals name="digits_count">
     <item quantity="one">%1$d digit</item>
     <item quantity="other">%1$d digits</item>
@@ -202,7 +200,6 @@
   <string name="dict_rule_index" translatable="false">%1$d.</string>
   <string name="dict_rule_phonemes" translatable="false">[[%1$s]]</string>
   <string name="dict_rule_arrow" translatable="false">" → "</string>
-  <string name="dict_search_label">Search words</string>
   <string name="dict_search_hint">Type to filter rules</string>
   <string name="dict_title_count">%1$s (%2$d)</string>
   <string name="dict_mode_regex">Regex</string>
@@ -264,8 +261,6 @@
   <string name="dict_delete_confirm_title">Delete rule?</string>
   <string name="dict_delete_confirm_message">Are you sure you want to delete the rule \"%1$s\"?</string>
   <string name="languages_search_hint">Search languages</string>
-  <string name="languages_all_selected">All languages selected</string>
-  <string name="languages_all_deselected">All languages deselected</string>
 
   <!-- Sub-screens and reorganized categories -->
   <string name="screen_numbers_title">Numbers and abbreviations</string>
@@ -273,9 +268,9 @@
   <string name="category_number_formats">Number formats</string>
   <string name="category_number_extras">Read in full</string>
   <string name="setting_read_money">Read money amounts</string>
-  <string name="setting_read_money_summary">English voices. Reads $5.50 as 5 dollars 50 cents. Also euros, pounds, yen and rupees.</string>
+  <string name="setting_read_money_summary">Reads $5.50 as 5 dollars 50 cents. Also euros, pounds, yen and rupees.</string>
   <string name="setting_hinglish">Read Hinglish (beta)</string>
-  <string name="setting_hinglish_summary">English voices. Reads Hindi typed in English letters, like \"aap kaise ho\", with Hindi pronunciation.</string>
+  <string name="setting_hinglish_summary">Reads Hindi typed in English letters, like \"aap kaise ho\", with Hindi pronunciation.</string>
   <string name="setting_read_codes">Read codes digit by digit</string>
   <string name="setting_read_codes_summary">Reads OTPs, PINs and account numbers as single digits, like 4 8 2 9 1 3.</string>
   <string name="setting_punctuation_sounds">Punctuation sounds</string>
@@ -283,7 +278,7 @@
   <string name="setting_phrase_pauses">Pauses in long sentences</string>
   <string name="setting_phrase_pauses_summary">A short pause before words like \"and\" or \"because\" in long sentences without commas. English and Hindi.</string>
   <string name="setting_expand_abbreviations">Expand abbreviations</string>
-  <string name="setting_expand_abbreviations_summary">Reads Prof, vs, approx, govt, 5 km, 12 Jan and No. 7 in full. English voices.</string>
+  <string name="setting_expand_abbreviations_summary">Reads Prof, vs, approx, govt, 5 km, 12 Jan and No. 7 in full.</string>
   <string name="screen_text_processing_title">Punctuation and symbols</string>
   <string name="screen_text_processing_summary">Level, sounds, capitals, emoji</string>
   <string name="category_reading_modes">How text is read</string>
@@ -296,7 +291,6 @@
 
   <!-- Customization: Repeated characters -->
   <string name="setting_repeated_chars">Condense repeated characters</string>
-  <string name="setting_repeated_chars_summary">How consecutive repeated characters and divider lines are handled.</string>
   <string-array name="repeated_chars_entries">
     <item>Off (speak all repetitions)</item>
     <item>Count repetitions (e.g. 5 dashes)</item>
@@ -310,7 +304,6 @@
 
   <!-- Customization: Intonation style -->
   <string name="setting_intonation_style">Intonation style</string>
-  <string name="setting_intonation_style_summary">Voice melody contour and pitch variation.</string>
   <string-array name="intonation_style_entries">
     <item>Natural (standard language melody)</item>
     <item>Flat / High-speed (monotone, clearer at fast rates)</item>
@@ -326,7 +319,6 @@
 
   <!-- Customization: Intonation style - Custom group (advanced) -->
   <string name="setting_intonation_group">Custom intonation group</string>
-  <string name="setting_intonation_group_summary">Advanced. Engine tone groups 0 to 7: 1 is Expressive and 3 is Flat, the others are untuned.</string>
   <string-array name="intonation_group_entries">
     <item>0 (engine default)</item>
     <item>1 (same as Expressive)</item>
@@ -350,7 +342,6 @@
 
   <!-- Customization: Capital letter announcement scope -->
   <string name="setting_capitals_scope">Announce capitals</string>
-  <string name="setting_capitals_scope_summary">Character navigation only, or during all reading.</string>
   <string-array name="capitals_scope_entries">
     <item>When moving by character</item>
     <item>Always</item>

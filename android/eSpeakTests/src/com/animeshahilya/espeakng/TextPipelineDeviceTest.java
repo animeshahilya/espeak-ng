@@ -36,6 +36,17 @@ import static org.hamcrest.Matchers.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class TextPipelineDeviceTest {
+    /** English-text extras reach English and non-Latin voices, never Latin ones like French. */
+    @Test
+    public void testReadsEnglishText() {
+        assertThat(TextPreprocessor.readsEnglishText("en-us"), is(true));
+        assertThat(TextPreprocessor.readsEnglishText("en-in"), is(true));
+        assertThat(TextPreprocessor.readsEnglishText("hi"), is(true));
+        assertThat(TextPreprocessor.readsEnglishText("ru"), is(true));
+        assertThat(TextPreprocessor.readsEnglishText("fr-fr"), is(false));
+        assertThat(TextPreprocessor.readsEnglishText("de"), is(false));
+    }
+
     @Test
     public void testWatchdogSanitizerKeepsParagraphBreaks() {
         assertThat(TextPreprocessor.sanitizeForWatchdog("First paragraph.\n\nSecond paragraph.", false),
