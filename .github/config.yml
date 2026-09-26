@@ -1,0 +1,50 @@
+# GitHub Repository Configuration
+
+# Default labels for new issues
+# https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/managing-labels
+labels:
+  - name: "bug"
+    color: "d73a4a"
+    description: "Something isn't working"
+  - name: "enhancement"
+    color: "a2eeef"
+    description: "New feature or request"
+  - name: "documentation"
+    color: "0075ca"
+    description: "Improvements or additions to documentation"
+  - name: "good first issue"
+    color: "7057ff"
+    description: "Good for newcomers"
+  - name: "help wanted"
+    color: "008672"
+    description: "Extra attention is needed"
+  - name: "nvda-parity"
+    color: "fbca04"
+    description: "Affects NVDA parity for non-Indian voices"
+  - name: "indian-languages"
+    color: "e99695"
+    description: "Indian voice specific changes"
+  - name: "voice-data"
+    color: "c2e0c6"
+    description: "Dictionary/phoneme rule changes"
+  - name: "ci/cd"
+    color: "bfd4f2"
+    description: "Build or CI/CD pipeline changes"
+  - name: "test"
+    color: "bfdadc"
+    description: "Test additions or fixes"
+
+# Auto-close stale issues/PRs
+# stale:
+#   daysUntilStale: 60
+#   daysUntilClose: 7
+#   label: "stale"
+
+# Branch protection (configure in repo settings)
+# protection:
+#   master:
+#     requiredReviews: 1
+#     requiredChecks: ["build-debug", "build-release", "test", "lint"]
+#   android:
+#     requiredReviews: 1
+#     requiredChecks: ["build-debug", "build-release", "test", "lint"]

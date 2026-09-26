@@ -1,0 +1,56 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ master, android ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+  pull_request:
+    branches: [ master, android ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint & Static Analysis
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: gradle
+
+      - name: Run Android Lint
+        run: cd android && ./gradlew lintDebug
+
+      - name: Upload Lint Report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lint-report
+          path: android/build/reports/lint-results-debug.html
+          retention-days: 30
+
+  gradle-wrapper-validation:
+    uses: ./.github/workflows/gradle-wrapper-validation.yml
+
+  check-gradle-properties:
+    runs-on: ubuntu-latest
+    name: Check gradle.properties
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify gradle.properties
+        run: |
+          # Ensure no secrets in gradle.properties
+          if grep -qE "(password|secret|key)\s*=" android/gradle.properties; then
+            echo "::error::Potential secret found in gradle.properties"
+            exit 1
+          fi
+          echo "gradle.properties OK"

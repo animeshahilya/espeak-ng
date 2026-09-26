@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.2.3)'
+        required: true
+        type: string
+      release_notes:
+        description: 'Release notes (markdown)'
+        required: false
+        type: string
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    name: Build and Create Release
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: gradle
+
+      - name: Cache native build
+        uses: actions/cache@v4
+        with:
+          path: android/.cxx
+          key: cxx-release-${{ runner.os }}-${{ hashFiles('android/jni/**', 'cmake/**', 'src/**', 'dictsource/**', 'phsource/**') }}
+          restore-keys: cxx-release-${{ runner.os }}-
+
+      - name: Build Release APK
+        run: cd android && ./gradlew assembleRelease
+
+      - name: Verify APK
+        run: |
+          APK_PATH="android/build/outputs/apk/release/espeak-release-unsigned.apk"
+          if [ ! -f "$APK_PATH" ]; then
+            echo "APK not found at $APK_PATH"
+            exit 1
+          fi
+          echo "APK size: $(du -h "$APK_PATH" | cut -f1)"
+          echo "APK sha256: $(sha256sum "$APK_PATH" | cut -d' ' -f1)"
+
+      - name: Extract Version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG="${{ github.event.inputs.version }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate Release Notes
+        id: notes
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.release_notes }}" ]]; then
+            echo "${{ github.event.inputs.release_notes }}" > release-notes.md
+          else
+            # Auto-generate from CHANGELOG.md
+            awk '/^## /{if(p)exit; p=1} p' CHANGELOG.md > release-notes.md
+          fi
+          cat release-notes.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: eSpeak NG Android ${{ steps.version.outputs.version }}
+          body_path: release-notes.md
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.tag, '-') }}
+          files: |
+            android/build/outputs/apk/release/espeak-release-unsigned.apk
+          generate_release_notes: false
+
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: espeak-android-${{ steps.version.outputs.version }}.apk
+          path: android/build/outputs/apk/release/espeak-release-unsigned.apk
+          retention-days: 90

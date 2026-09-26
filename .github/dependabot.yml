@@ -3,11 +3,37 @@
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem
 version: 2
 updates:
+  # GitHub Actions
   - package-ecosystem: github-actions
     directory: /
     groups:
       github-actions:
         patterns:
-          - "*"  # Group all Actions updates into a single larger pull request
+          - "*"
     schedule:
       interval: weekly
+
+  # Gradle (Android dependencies, plugins)
+  - package-ecosystem: gradle
+    directory: android/
+    groups:
+      gradle-plugins:
+        patterns:
+          - "com.android*"
+          - "org.jetbrains*"
+          - "com.google*"
+      testing-libs:
+        patterns:
+          - "junit*"
+          - "androidx.test*"
+          - "org.mockito*"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+
+  # Maven (if any native deps use Maven Central via CMake FetchContent)
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
