@@ -9,10 +9,7 @@
     android:paddingTop="@dimen/dialog_padding_top"
     android:paddingBottom="@dimen/dialog_padding_bottom">
 
-    <!-- Floating hint names the field to TalkBack; built-in clear-text end
-         icon replaces the old standalone clear button. endIconContentDescription
-         localizes what TalkBack says when swiping to the clear affordance
-         (the framework default is the English-only "Clear text"). -->
+    <!-- Search field with floating hint -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,45 +31,51 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Match/selection counter: a polite live region, so bulk Select all /
-         Deselect all and search filtering both reach TalkBack. -->
+    <!-- Match/selection counter as a subtle badge -->
     <TextView
         android:id="@+id/languages_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/content_gap"
-        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:paddingStart="@dimen/tight_gap"
+        android:paddingEnd="@dimen/tight_gap"
+        android:paddingTop="@dimen/chip_pad_v"
+        android:paddingBottom="@dimen/chip_pad_v"
+        android:textAppearance="?attr/textAppearanceLabelSmall"
         android:textColor="?attr/colorOnSurfaceVariant"
+        android:background="@drawable/badge_chip_background"
         android:accessibilityLiveRegion="polite" />
 
+    <!-- Language list with custom styled items -->
     <ListView
         android:id="@+id/supported_languages_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:choiceMode="multipleChoice"
-        android:divider="?attr/colorOutlineVariant"
-        android:dividerHeight="1dp" />
+        android:divider="@null"
+        android:listSelector="@drawable/list_item_selector"
+        android:paddingTop="@dimen/tight_gap"
+        android:paddingBottom="@dimen/tight_gap" />
 
+    <!-- Bulk action buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/section_gap">
+        android:layout_marginTop="@dimen/section_gap"
+        android:paddingTop="@dimen/content_gap"
+        android:background="@drawable/divider_top">
 
-        <!-- Primary bulk action: tonal. Deselect is secondary: outlined. -->
         <Button
             android:id="@+id/button_select_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:layout_weight="1"
+            android:layout_marginEnd="@dimen/tight_gap"
             android:text="@string/espeak_select_all_languages"
             style="?attr/materialButtonTonalStyle" />
-
-        <Space
-            android:layout_width="@dimen/section_gap"
-            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/button_deselect_all"
@@ -80,8 +83,10 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:layout_weight="1"
+            android:layout_marginStart="@dimen/tight_gap"
             android:text="@string/espeak_deselect_all_languages"
             style="?attr/materialButtonOutlinedStyle" />
+
     </LinearLayout>
 
 </LinearLayout>

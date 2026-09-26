@@ -5,35 +5,61 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp" >
+    android:padding="32dp" >
 
-    <!-- accessibilityLiveRegion="polite": the status text re-announces if it
-         ever changes (retry/failure states), matching the live-region pattern
-         used by the settings counts and empty states. DownloadVoiceData still
-         focuses this view on open so TalkBack announces the install promptly
-         instead of waiting for a text change that may never come. -->
+    <!-- Animated icon container -->
+    <FrameLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/section_gap"
+        android:background="?attr/colorPrimaryContainer"
+        android:elevation="4dp"
+        android:clipToOutline="true">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_language"
+            android:tint="?attr/colorPrimary"
+            android:importantForAccessibility="no"
+            android:contentDescription="@string/installing_voice_data" />
+
+    </FrameLayout>
+
+    <!-- Status text with live region -->
     <TextView
         android:id="@+id/installing_voice_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/screen_padding"
+        android:layout_marginBottom="@dimen/section_gap"
         android:gravity="center"
         android:accessibilityLiveRegion="polite"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:textColor="?attr/colorOnSurface"
         android:text="@string/installing_voice_data" />
 
-    <!-- M3 indeterminate indicator: themed from colorPrimary /
-         colorPrimaryContainer instead of the framework's flat gray bar.
-         The status TextView above carries the spoken message; the bar
-         itself is decorative. -->
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progress"
-        android:layout_width="match_parent"
+    <!-- Subtitle -->
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/section_gap"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:text="@string/installing_voice_data_subtitle" />
+
+    <!-- M3 indeterminate indicator -->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:indeterminate="true"
         android:importantForAccessibility="no"
         app:indicatorColor="?attr/colorPrimary"
-        app:trackColor="?attr/colorPrimaryContainer" />
+        app:trackColor="?attr/colorPrimaryContainer"
+        app:trackThickness="4dp"
+        app:indicatorSize="48dp" />
 
 </LinearLayout>

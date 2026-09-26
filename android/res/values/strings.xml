@@ -26,6 +26,7 @@
         Description: Status message shown when installing voice data.
     -->
   <string name="installing_voice_data">Installing voice data…</string>
+  <string name="installing_voice_data_subtitle">This may take a moment. All 153 languages are being prepared.</string>
   <!--
         Source: Spoken aloud.
         Description: Sample text spoken aloud when the user is trying out a language.
@@ -220,6 +221,7 @@
   <string name="dict_filter_abbrev">Abbreviations only</string>
   <string name="dict_filter_character">Character only</string>
   <string name="dict_empty">No custom rules configured. Use Add rule for single entries or Import for large word lists.</string>
+  <string name="dict_empty_subtitle">Tap the + button or Import to add your first pronunciation rule.</string>
   <string name="dict_no_match">No rules match this search and filter combination.</string>
   <string name="dict_rule_title">Rule: %1$s</string>
   <string name="dict_action_preview">Preview pronunciation</string>

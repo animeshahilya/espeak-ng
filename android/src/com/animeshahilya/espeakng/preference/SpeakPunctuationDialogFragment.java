@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -35,9 +36,7 @@ import com.animeshahilya.espeakng.VoiceSettings;
 
 /**
  * Dialog for {@link SpeakPunctuationPreference}: five preset radios plus a
- * custom character field. Wiring moved verbatim from the framework
- * {@code onCreateDialogView}/{@code onBindDialogView}/{@code onClick}
- * overrides, which have no AndroidX equivalents.
+ * custom character field. Uses Material 3 styled radio group with descriptions.
  */
 public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
     private RadioButton mNone;
@@ -46,6 +45,7 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
     private RadioButton mAll;
     private RadioButton mCustom;
     private EditText mPunctuationCharacters;
+    private RadioGroup mRadioGroup;
 
     public static SpeakPunctuationDialogFragment newInstance(String key) {
         return withKey(new SpeakPunctuationDialogFragment(), key);
@@ -84,18 +84,15 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
         if (stale != null) return stale;
         View root = LayoutInflater.from(getContext())
                 .inflate(R.layout.speak_punctuation_preference, null);
-        mNone = (RadioButton) root.findViewById(R.id.none);
-        mSome = (RadioButton) root.findViewById(R.id.some);
-        mMost = (RadioButton) root.findViewById(R.id.most);
-        mAll = (RadioButton) root.findViewById(R.id.all);
-        mCustom = (RadioButton) root.findViewById(R.id.custom);
-        mPunctuationCharacters = (EditText) root.findViewById(R.id.punctuation_characters);
-        final TextInputLayout punctuationLayout = root.findViewById(R.id.punctuation_characters_layout);
 
-        // TalkBack: descriptions are importantForAccessibility=no in layout to
-        // avoid 10 stops for 5 options. Fold each description into its
-        // RadioButton's content description so one swipe announces the full
-        // context ("Most. Everything in Some, plus...").
+        mRadioGroup = root.findViewById(R.id.punctuation_radio_group);
+        mNone = mRadioGroup.findViewById(R.id.none_option).findViewById(R.id.radio_button);
+        mSome = mRadioGroup.findViewById(R.id.some_option).findViewById(R.id.radio_button);
+        mMost = mRadioGroup.findViewById(R.id.most_option).findViewById(R.id.radio_button);
+        mAll = mRadioGroup.findViewById(R.id.all_option).findViewById(R.id.radio_button);
+        mCustom = mRadioGroup.findViewById(R.id.custom_option).findViewById(R.id.radio_button);
+
+        // Set descriptions
         mNone.setContentDescription(textOf(getContext(), R.string.punctuation_none)
                 + ". " + textOf(getContext(), R.string.punctuation_none_desc));
         mSome.setContentDescription(textOf(getContext(), R.string.punctuation_some)
@@ -107,15 +104,18 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
         mCustom.setContentDescription(textOf(getContext(), R.string.punctuation_custom)
                 + ". " + textOf(getContext(), R.string.punctuation_custom_desc));
 
+        mPunctuationCharacters = root.findViewById(R.id.punctuation_characters);
+        final TextInputLayout punctuationLayout = root.findViewById(R.id.punctuation_characters_layout);
+
         final RadioButton[] buttons = new RadioButton[] { mNone, mSome, mMost, mAll, mCustom };
         final View.OnClickListener selectOption = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean selectCustom = (v == mCustom || v.getId() == R.id.custom_desc);
-                mNone.setChecked(v == mNone || v.getId() == R.id.none_desc);
-                mSome.setChecked(v == mSome || v.getId() == R.id.some_desc);
-                mMost.setChecked(v == mMost || v.getId() == R.id.most_desc);
-                mAll.setChecked(v == mAll || v.getId() == R.id.all_desc);
+                boolean selectCustom = (v == mCustom);
+                mNone.setChecked(v == mNone);
+                mSome.setChecked(v == mSome);
+                mMost.setChecked(v == mMost);
+                mAll.setChecked(v == mAll);
                 mCustom.setChecked(selectCustom);
                 // Disable the whole outlined field, not just the inner EditText:
                 // a live-looking outline around a dead input reads as broken.
@@ -141,17 +141,6 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
                 }
             });
         }
-
-        View descNone = root.findViewById(R.id.none_desc);
-        if (descNone != null) descNone.setOnClickListener(selectOption);
-        View descSome = root.findViewById(R.id.some_desc);
-        if (descSome != null) descSome.setOnClickListener(selectOption);
-        View descMost = root.findViewById(R.id.most_desc);
-        if (descMost != null) descMost.setOnClickListener(selectOption);
-        View descAll = root.findViewById(R.id.all_desc);
-        if (descAll != null) descAll.setOnClickListener(selectOption);
-        View descCustom = root.findViewById(R.id.custom_desc);
-        if (descCustom != null) descCustom.setOnClickListener(selectOption);
 
         mPunctuationCharacters.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

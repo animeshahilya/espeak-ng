@@ -6,18 +6,25 @@
     android:orientation="vertical"
     android:paddingStart="@dimen/screen_padding"
     android:paddingEnd="@dimen/screen_padding"
-    android:paddingTop="@dimen/screen_padding"
-    android:paddingBottom="@dimen/screen_padding" >
+    android:paddingTop="@dimen/dialog_padding_top"
+    android:paddingBottom="@dimen/dialog_padding_bottom" >
 
-    <!-- Both pickers are M3 exposed dropdowns: same outlined field shape as
-         the search boxes elsewhere, and TalkBack announces them as dropdowns
-         with the floating label naming each one (labelFor is on the layout's
-         hint, not a separate TextView). -->
+    <!-- Header -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/section_gap"
+        android:text="@string/espeak_variant"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:textColor="?attr/colorOnSurface"
+        android:textStyle="bold" />
+
+    <!-- Category picker -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/category_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/screen_padding"
+        android:layout_marginBottom="@dimen/section_gap"
         android:hint="@string/category"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
@@ -32,6 +39,14 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/section_gap"
+        android:background="?attr/colorOutlineVariant" />
+
+    <!-- Variant picker -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/variant_layout"
         android:layout_width="match_parent"

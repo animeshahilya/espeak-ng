@@ -1,117 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Dictionary rule item with Material 3 card styling -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="?attr/selectableItemBackground"
-    android:paddingStart="@dimen/screen_padding"
-    android:paddingEnd="@dimen/screen_padding"
-    android:paddingTop="@dimen/list_row_padding_v"
-    android:paddingBottom="@dimen/list_row_padding_v"
+    android:layout_marginHorizontal="@dimen/screen_padding"
+    android:layout_marginVertical="@dimen/tight_gap"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardElevation="0dp"
+    app:strokeColor="?attr/colorOutlineVariant"
+    app:strokeWidth="1dp"
+    app:cardCornerRadius="@dimen/corner_radius_small"
     tools:ignore="Overdraw">
 
-    <!-- The whole row carries one dict_a11y_rule* contentDescription (set in
-         UserDictionaryScreen.getView). Every child below is
-         importantForAccessibility=no so TalkBack reads that single summary
-         instead of index, pattern, arrow, replacement and each chip as five
-         separate stops. -->
-
-    <!-- Primary Pattern and Replacement Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/content_gap">
 
-        <TextView
-            android:id="@+id/rule_index"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/content_gap"
-            android:textAppearance="?attr/textAppearanceLabelMedium"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:importantForAccessibility="no" />
+        <!-- The whole row carries one dict_a11y_rule* contentDescription (set in
+             UserDictionaryScreen.getView). Every child below is
+             importantForAccessibility=no so TalkBack reads that single summary
+             instead of index, pattern, arrow, replacement and each chip as five
+             separate stops. -->
 
-        <TextView
-            android:id="@+id/rule_pattern"
-            android:layout_width="wrap_content"
+        <!-- Primary Pattern and Replacement Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorOnSurface"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:importantForAccessibility="no" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/rule_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/tight_gap"
-            android:layout_marginEnd="@dimen/tight_gap"
-            android:text="@string/dict_rule_arrow"
-            android:importantForAccessibility="no"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary" />
+            <TextView
+                android:id="@+id/rule_index"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/content_gap"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:importantForAccessibility="no" />
 
-        <TextView
-            android:id="@+id/rule_replacement"
-            android:layout_width="0dp"
+            <TextView
+                android:id="@+id/rule_pattern"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnSurface"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/rule_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/content_gap"
+                android:text="@string/dict_rule_arrow"
+                android:importantForAccessibility="no"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary" />
+
+            <TextView
+                android:id="@+id/rule_replacement"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnSurface"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:importantForAccessibility="no" />
+
+        </LinearLayout>
+
+        <!-- Metadata Badge Chips Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorOnSurface"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:importantForAccessibility="no" />
+            android:layout_marginTop="@dimen/content_gap"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/chip_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/content_gap"
+                style="@style/Widget.App.BadgeChip"
+                android:textColor="@color/chip_text_section"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/chip_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/content_gap"
+                style="@style/Widget.App.BadgeChip"
+                android:textColor="@color/chip_text_match"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/chip_lang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/content_gap"
+                style="@style/Widget.App.BadgeChip"
+                android:textColor="@color/chip_text_lang"
+                android:visibility="gone"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/chip_phoneme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.App.BadgeChip"
+                android:textColor="@color/chip_text_phoneme"
+                android:visibility="gone"
+                android:importantForAccessibility="no" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Metadata Badge Chips Row -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/content_gap"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/chip_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/content_gap"
-            style="@style/Widget.App.BadgeChip"
-            android:textColor="@color/chip_text_section"
-            android:importantForAccessibility="no" />
-
-        <TextView
-            android:id="@+id/chip_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/content_gap"
-            style="@style/Widget.App.BadgeChip"
-            android:textColor="@color/chip_text_match"
-            android:importantForAccessibility="no" />
-
-        <TextView
-            android:id="@+id/chip_lang"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/content_gap"
-            style="@style/Widget.App.BadgeChip"
-            android:textColor="@color/chip_text_lang"
-            android:visibility="gone"
-            android:importantForAccessibility="no" />
-
-        <TextView
-            android:id="@+id/chip_phoneme"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Widget.App.BadgeChip"
-            android:textColor="@color/chip_text_phoneme"
-            android:visibility="gone"
-            android:importantForAccessibility="no" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

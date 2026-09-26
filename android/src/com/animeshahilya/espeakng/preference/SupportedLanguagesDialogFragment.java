@@ -116,7 +116,7 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
 
         mAdapter = new ArrayAdapter<LangEntry>(
                 getContext(),
-                android.R.layout.simple_list_item_multiple_choice,
+                R.layout.item_language,
                 new ArrayList<>(mAllEntries)) {
             @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
@@ -124,6 +124,8 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
                 LangEntry item = getItem(position);
                 if (item != null) {
                     mListView.setItemChecked(position, mCurrentSelected.contains(item.value));
+                    // Update checked state for the custom selector drawable
+                    view.setActivated(mCurrentSelected.contains(item.value));
                 }
                 return view;
             }
