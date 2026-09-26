@@ -54,7 +54,7 @@
          chip (section/match/lang/phoneme each have their own semantic color
          with a night override). The About version badge is a different
          component (LabelMedium, larger insets) and keeps its own attributes. -->
-    <style name="Widget.App.BadgeChip">
+    <style name="Widget.App.BadgeChip" parent="android:Widget.TextView">
         <item name="android:textAppearance">?attr/textAppearanceLabelSmall</item>
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">center_vertical</item>
