@@ -25,4 +25,17 @@
     <dimen name="chip_pad_v">2dp</dimen>
     <dimen name="chip_min_height">20dp</dimen>
 
+    <!-- New UI Polish dimensions -->
+    <dimen name="preference_icon_size">24dp</dimen>
+    <dimen name="category_icon_padding">4dp</dimen>
+    <dimen name="divider_inset_start">72dp</dimen>
+    <dimen name="divider_inset_end">16dp</dimen>
+    <dimen name="elevation_card">1dp</dimen>
+    <dimen name="elevation_dialog">8dp</dimen>
+    <dimen name="elevation_bottom_sheet">16dp</dimen>
+    <dimen name="corner_radius_small">12dp</dimen>
+    <dimen name="corner_radius_medium">16dp</dimen>
+    <dimen name="corner_radius_large">28dp</dimen>
+    <dimen name="touch_target_min">48dp</dimen>
+
 </resources>

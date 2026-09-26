@@ -46,7 +46,34 @@
         <item name="colorOutline">@color/m3_outline</item>
         <item name="colorOutlineVariant">@color/m3_outlineVariant</item>
         <item name="android:colorBackground">@color/m3_surface</item>
+
+        <!-- Semantic colors for state feedback -->
+        <item name="colorError">@color/error_red</item>
+        <item name="colorErrorContainer">@color/error_container</item>
+        <item name="colorOnErrorContainer">@color/error_on_container</item>
+
+        <!-- Shape appearance -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.App.LargeComponent</item>
+
         <item name="preferenceTheme">@style/AppPreferenceTheme</item>
+    </style>
+
+    <!-- Custom shape appearances for consistent rounded corners -->
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
     </style>
 
     <!-- Dictionary rule metadata chips: one style for all four, so type,
@@ -73,6 +100,22 @@
     <style name="AppSwitchPreference" parent="Preference.SwitchPreferenceCompat.Material">
         <item name="android:widgetLayout">@layout/preference_material_switch</item>
     </style>
+
+    <!-- Enhanced dialog theme for preference dialogs -->
+    <style name="AppDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
+        <item name="colorSurfaceContainerHighest">@color/m3_surfaceContainerHigh</item>
+    </style>
+
+    <!-- Bottom sheet theme for language picker -->
+    <style name="AppBottomSheetTheme" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppBottomSheetStyle</item>
+    </style>
+
+    <style name="AppBottomSheetStyle" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
+    </style>
+
     <style name="AppTheme" parent="AppTheme.Base">
     </style>
 </resources>

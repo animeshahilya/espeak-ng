@@ -46,4 +46,22 @@
     <color name="m3_onSurfaceVariant">#C4C6D0</color>
     <color name="m3_outline">#8E9099</color>
     <color name="m3_outlineVariant">#44474F</color>
+
+    <!-- Additional semantic colors for better UX (Dark Mode) -->
+    <color name="success_green">#69F08E</color>
+    <color name="success_container">#0A3616</color>
+    <color name="success_on_container">#D8F6DE</color>
+
+    <color name="warning_amber">#FDD663</color>
+    <color name="warning_container">#3E2B00</color>
+    <color name="warning_on_container">#FFF3D0</color>
+
+    <color name="error_red">#F2B8B5</color>
+    <color name="error_container">#410002</color>
+    <color name="error_on_container">#FCDCDC</color>
+
+    <!-- Scrim and shadow colors -->
+    <color name="scrim">#75000000</color>
+    <color name="shadow_ambient">#1A000000</color>
+    <color name="shadow_spot">#1F000000</color>
 </resources>

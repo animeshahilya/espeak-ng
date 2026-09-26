@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/fast_out_slow_in">
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1"
+        android:duration="@integer/animation_duration_medium" />
+    <translate
+        android:fromYDelta="8dp"
+        android:toYDelta="0"
+        android:duration="@integer/animation_duration_medium" />
+</set>

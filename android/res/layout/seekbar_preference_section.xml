@@ -12,6 +12,18 @@
     android:paddingTop="@dimen/section_gap"
     android:paddingBottom="@dimen/section_gap" >
 
+    <!-- Parameter title -->
+    <TextView
+        android:id="@+id/parameterTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/parameter_bezel_inset"
+        android:layout_marginEnd="@dimen/parameter_bezel_inset"
+        android:layout_marginBottom="4dp"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:importantForAccessibility="no" />
+
     <!-- SeekBarPreference writes the same string here and into the slider's
          content description, so leaving this label in the accessibility tree
          would announce every parameter twice. The slider is the thing you
@@ -23,17 +35,24 @@
         android:importantForAccessibility="no"
         android:layout_marginStart="@dimen/parameter_bezel_inset"
         android:layout_marginEnd="@dimen/parameter_bezel_inset"
-        android:textAppearance="?attr/textAppearanceTitleMedium" />
+        android:layout_marginBottom="4dp"
+        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textColor="?attr/colorPrimary" />
 
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
+        android:minHeight="56dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="@dimen/parameter_bezel_inset"
-        android:layout_marginEnd="@dimen/parameter_bezel_inset" />
+        android:layout_marginEnd="@dimen/parameter_bezel_inset"
+        android:splitTrack="false"
+        android:thumb="@drawable/seekbar_thumb"
+        android:progressBackgroundTint="?attr/colorSurfaceContainerHighest"
+        android:progressTint="?attr/colorPrimary"
+        android:thumbTint="?attr/colorPrimary" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,7 +69,9 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:layout_weight="1"
-            android:text="@string/setting_rate_boost" />
+            android:text="@string/setting_rate_boost"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:buttonTint="?attr/colorPrimary" />
 
         <!-- Text button: a filled Reset competes with the sliders for
              attention and with OK for the primary-action role. -->
@@ -59,6 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
+            android:layout_marginStart="8dp"
             android:text="@string/resetToDefault"
             style="@style/Widget.Material3.Button.TextButton" />
 
