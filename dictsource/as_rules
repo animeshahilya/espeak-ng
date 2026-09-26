@@ -275,6 +275,8 @@
 .group ৱ
         ৱ		wV
         ৱ (B	w
+     // After o/u vowels ৱ is not heard: কোৱা [kʊa], উঠোৱা [utʰʊa] (WikiPron).
+     // After a/e it is: সেৱা [xɛwa], so those keep [w].
      ো) ৱ		V
      ো) ৱ (B	
      ু) ৱ		V

@@ -510,6 +510,8 @@
 
 .group ं
 	ं	shI'rV,w'in'd'u
+	// After a vowel sign the vowel rule already made it nasal (सुकें [sukɛ̃]),
+	// so at word end and before a non-stop the anusvara adds nothing.
 	A) ं (_	
 	A) ं (य	
 	A) ं (र	

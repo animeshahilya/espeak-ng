@@ -52,6 +52,14 @@ test_phon en-in "d.'0gs k'IsI2s h'0t." "dogs kisses hot"
 test_phon en-in "aI v#'0nt. t.u: g'o:" "I want to go"
 # kok needs the Devanagari letter setup, or vowel signs read as letter names
 test_phon kok "pa:n.'i::0" "पाणी"
+# en-in: dictionary words ending in -ed also end in [ɖ]
+test_phon en-in "m'Isd." "missed"
+# kok: no stray stress digits; a vowel sign before anusvara is nasal, not vowel + n
+test_phon kok "k#'u:b s'Uke~:" "खूब सुकें"
+# as: ৱ is silent after o/u vowels, [w] after a/e
+test_phon as "k'Ua 'ut#U,a X'ewa" "কোৱা উঠোৱা সেৱা"
+# si: word-final ව keeps its vowel
+test_phon si "r'uw@ s'ekkuw@" "රුව සෙක්කුව"
 test_phon hi "dUk'a:n" "दुकान"
 test_phon hi "ka:n'u:n" "कानून"
 

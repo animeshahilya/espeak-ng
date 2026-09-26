@@ -9,10 +9,11 @@
 //   - alveolar t/d -> retroflex [ʈ ɖ] (t./d.)
 //   - FACE /eI/ -> [eː], GOAT /oU/ -> [oː] (monophthongization)
 //   - clear [l] everywhere (no dark ɫ)
-//   - dental fricatives, v/w merger (-> [ʋ] v#) and rhotic colouring for
-//     spelled r/r- are handled via `replace` rules in
-//     espeak-ng-data/lang/gmw/en-in, since base1 already provides t[, d[,
-//     r. and v#.
+//   - open LOT [ɔ] (not the rounded "aw" of vowel/oo)
+//   - tapped r [ɾ] for every spelled r (r. below)
+//   - dental fricatives, v/w merger (-> [ʋ] v#) and r/r- -> r. are handled
+//     via `replace` rules in espeak-ng-data/lang/gmw/en-in, since base1
+//     already provides t[, d[ and v#.
 //
 // This file defines phonemes that do NOT exist in base1/en (retroflex
 // stops t./d.), plus overrides for the unstressed/stressed r-coloured
@@ -21,7 +22,7 @@
 // for RP but wrong for IndE, which is fully rhotic (Wells 1982; Sailaja
 // 2009; OED IndE). Unlike en-US, which gets rhoticity for free from an
 // r-coloured vowel formant, IndE realises rhoticity as vowel + a real
-// consonantal retroflex approximant (Sailaja 2009), so these append r.
+// consonantal r (Sailaja 2009; tapped per OED IndE), so these append r.
 // rather than relying on formant colouring. Everything else is
 // inherited from en.
 
@@ -57,7 +58,7 @@ endphoneme
 // Rhotic unstressed schwa: water/teacher/river -> [...ər], not [...ə]
 // (base1's `3` is CALL @, i.e. plain non-rhotic schwa). IndE is rhotic
 // regardless of what follows (no RP-style vowel-only linking-r), so
-// append retroflex r. unconditionally rather than gating on next-vowel.
+// append r. unconditionally rather than gating on next-vowel.
 phoneme 3
   vwl  starttype #@  endtype #@
   unstressed
@@ -286,7 +287,8 @@ phoneme A:
   FMT(vowel/aa_2)
 endphoneme
 
-// LOT/CLOTH is [ɔ] (OED IndE): hot [hɔʈ], dog [ɖɔɡ].
+// LOT/CLOTH is [ɔ] (OED IndE): hot [hɔʈ], dog [ɖɔɡ]. vowel/0 is the open
+// quality; the closer, rounded vowel/oo sounded Bengali ("hawt").
 phoneme 0
   vwl  starttype #o  endtype #o
   ipa ɔ
