@@ -5799,6 +5799,10 @@ _𐑿	j'u:l
 ?12 rs	r'u:pi:z	$dot	// "Rs. 500"
 ?12 re	r'u:pi:	$dot	// Indian rupee singular ("Re. 1")
 ?12 pnr	p,i:En'A@	$allcaps	// Indian Railways PNR
+// -ed is [ɖ] whatever comes before (OED IndE): these entries would say [t].
+?12 ached		eIkd#
+?12 biased		baI@sd#
+?12 missed		mIsd#
 ?12 aadhaar		'A:d[,A:r
 ?12 aadhar		'A:d[,A:r
 ?12 lakh		l'A:k

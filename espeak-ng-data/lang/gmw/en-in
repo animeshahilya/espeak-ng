@@ -42,7 +42,7 @@ replace 00 t# t.
 replace 00 d d.
 replace 00 d# d.
 replace 00 r- r.
-// Rhotic with retroflex colouring; spelling r always pronounced
+// Tapped r (defined in ph_english_in); spelling r always pronounced
 // (OED IndE: generally rhotic; Gargesh vs Sailaja variation).
 replace 00 r r.
 // [ʒ] -> [dʒ]: leisure->[liːdʒər], vision->[ʋɪdʒən] (OED IndE transcribes /dʒ/).

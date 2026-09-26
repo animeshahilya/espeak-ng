@@ -292,7 +292,7 @@ phoneme 0
   ipa ɔ
   length 150
   ChangeIfDiminished(@)
-  FMT(vowel/oo)
+  FMT(vowel/0)
 endphoneme
 
 // -es plural ends in [s] too: kisses [kɪsɪs], roses [roːzɪs] (OED IndE).
@@ -304,8 +304,10 @@ phoneme z
   CALL base1/z
 endphoneme
 
-// Retroflex approximant for spelled r (replace r -> r. in the voice file).
+// Spelled r (replace r -> r. in the voice file) is a tap [ɾ]: OED IndE
+// gives trilled or tapped r and lists the approximant as a Bengali-origin
+// quality. The base1 retroflex approximant made en-in sound Bengali.
 phoneme r.
-  import_phoneme base1/r.
-  ipa ɻ
+  import_phoneme base1/*
+  ipa ɾ
 endphoneme

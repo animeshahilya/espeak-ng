@@ -145,7 +145,7 @@
 	C) ि	I
 	C) ि (_	I:0
 	C) ि (ं	i~
-	C) ि (ं_	i~:1
+	C) ि (ं_	i~:
 
 .group ी
 	ी	i:,k'a:r
@@ -167,7 +167,7 @@
 	ू	u:k'a:r
 	C) ू	u:
 	C) ू (_	u::0
-	C) ू (C	u:1
+	C) ू (C	u:
 	C) ू (ँ	u~
 	C) ूं	u~
 	C) ूँ (_	u~:1
@@ -197,7 +197,7 @@
 	C) े	e:
 	C) े (_	e:':0
 	C) े (ँ	e~
-	C) े (ं	e~:1
+	C) े (ं	e~:
 	C) ेँ (_	e~:1
 
 .group ै
@@ -453,13 +453,13 @@
 	ष (B	s.
 
 .group स
-	स	sV:0
+	स	sV:
 	स (B	s
 
 .group ह
 	ह	HV
 	ह (B	H
-	ह (व	H'V:0
+	ह (व	H'V:
 		// Additional consonants
 
 .group क़   // qa
@@ -510,6 +510,14 @@
 
 .group ं
 	ं	shI'rV,w'in'd'u
+	A) ं (_	
+	A) ं (य	
+	A) ं (र	
+	A) ं (ल	
+	A) ं (व	
+	A) ं (स	
+	A) ं (श	
+	A) ं (ह	
 	A) ं	n
 	C) ं	n
 	ं (प	m
