@@ -1846,6 +1846,10 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         if (pref == null) {
             return; // dropped on Wear
         }
+        // The XML sets useSimpleSummaryProvider: a SummaryProvider is already
+        // installed, and setSummary() throws while one is set. Clear it first;
+        // this row's summary is fully owned here from now on.
+        pref.setSummaryProvider(null);
         final VoiceSettings settings = new VoiceSettings(prefs, null);
         pref.setSummary(context.getString(R.string.summary_digit_threshold,
                 settings.getDigitGroupThreshold()));
@@ -1880,6 +1884,9 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
     }
 
     private static void updateBoostSummary(Context context, ListPreference pref, String value) {
+        // Same provider conflict as the threshold row above: the XML installs
+        // the simple provider, which must go before manual summaries.
+        pref.setSummaryProvider(null);
         if (value == null || VoiceSettings.RATE_BOOST_OFF.equals(value)) {
             pref.setSummary(context.getString(R.string.setting_off));
         } else {
