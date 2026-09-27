@@ -34,9 +34,11 @@ SCRIPTS = {
         'nasals': set('ੰਂ'),
     },
     'beng': {
-        'cons': set(chr(c) for c in range(0x0995, 0x09BA)) | set('ড়ঢ়য়'),
+        # Same Assamese extras as indic_slots.py (ৰৱ cons, ৠ indep;
+        # ৎ excluded - already dead, never a slot). No effect on bn.
+        'cons': set(chr(c) for c in range(0x0995, 0x09BA)) | set('ড়ঢ়য়ৰৱ'),
         'signs': set('ািীুূৃৄেৈোৌ'),
-        'indep': set('অআইঈউঊঋএঐওঔ'),
+        'indep': set('অআইঈউঊঋএঐওঔৠ'),
         'virama': '্',
         'inh_char': 'অ',
         'nasals': set('ংঁঃ'),
@@ -50,6 +52,7 @@ LANG_SCRIPT = {
     'gu': 'gujr',
     'pa': 'guru',
     'bn': 'beng',
+    'as': 'beng',
 }
 
 POS = ['pre3', 'pre2', 'pre1', 'self', 'post1', 'post2', 'post3']

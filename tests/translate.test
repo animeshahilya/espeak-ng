@@ -58,6 +58,8 @@ test_phon en-in "m'Isd." "missed"
 test_phon kok "k#'u:b s'Uke~:" "खूब सुकें"
 # as: ৱ is silent after o/u vowels, [w] after a/e
 test_phon as "k'Ua 'ut#U,a X'ewa" "কোৱা উঠোৱা সেৱা"
+# as: learned schwa drops medially (চৰকাৰ, সকলোতকে) but never word-initially (সপোন, নতুন)
+test_phon as "s'O*kar X'OpUn n'otun X'OkOl,Utke" "চৰকাৰ সপোন নতুন সকলোতকে"
 # si: word-final ව keeps its vowel
 test_phon si "r'uw@ s'ekkuw@" "රුව සෙක්කුව"
 test_phon hi "dUk'a:n" "दुकान"

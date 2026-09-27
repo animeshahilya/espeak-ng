@@ -1,4 +1,4 @@
-# Learned inherent-vowel rules (Bengali, Gujarati, Hindi, Marathi, Nepali, Punjabi)
+# Learned inherent-vowel rules (Assamese, Bengali, Gujarati, Hindi, Marathi, Nepali, Punjabi)
 
 Indo-Aryan languages drop the inherent vowel in the middle of many words
 (bn আপনি "apni", hi कहना "kəhnaː", gu અંગસંગ "angsang", ne हरेक "harek", pa ਪੰਜਾਬ "panjaab")
@@ -10,6 +10,7 @@ Results across WikiPron datasets when rules were added:
 
 | Language | Script | Words read right | Notes / Impact |
 |---|---|---|---|
+| Assamese (`as`) | Bengali | 84.1% -> 85.2% | PER 5.4% -> 5.2%; +1.2% held-out slot accuracy; 37 fixed / 3 broken (full set) |
 | Bengali (`bn`) | Bengali | 59.0% -> 61.9% | 50 fixed / 12 broken (held-out) |
 | Gujarati (`gu`) | Gujarati | 77.4% -> 78.4% | PER 6.3% -> 6.1%; +3.3% held-out slot accuracy |
 | Hindi (`hi`) | Devanagari | 75.4% -> 77.7% | 154 fixed / 14 broken (held-out) |

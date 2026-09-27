@@ -7,6 +7,22 @@
 // C   consonants
 // Y   vowel letters and vowel signs
 
+// Inherent vowel dropped in the middle of a word, learned from WikiPron
+// (asm_beng_broad, 2982 words: চৰকাৰ sɔɹkaɹ, সকলোতকে, আলমাৰী).
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here. Held out: slots right 91.9% to 93.1%
+// (7 fixed, 2 broken). Full set: words read right 84.1% to 85.2% (37 fixed,
+// 3 broken), PER 5.4% to 5.2%.
+// Regenerate them with those tools rather than editing by hand.
+// L10 = written vowels (signs, and independent vowels except অ);
+// L11 = consonant letters (incl. Assamese ৰৱ); L12 = any Assamese/Bengali letter.
+// Word-initial consonants take no rule (their vowel never drops:
+// সপোন, নতুন, পথাৰ keep it) - skip_initial.
+.L10 া ি ী ু ূ ৃ ৄ ে ৈ ো ৌ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ ৠ
+.L11 ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন ঩ প ফ ব ভ ম য র ঱ ল ঳ ঴ ঵ শ ষ স হ ড় ঢ় য় ৰ ৱ
+.L12 অ আ ই ঈ উ ঊ ঋ ঌ ঍ ঎ এ ঐ ঑ ঒ ও ঔ ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন ঩ প ফ ব ভ ম য র ঱ ল ঳ ঴ ঵ শ ষ স হ া ি ী ু ূ ৃ ৄ ৅ ৆ ে ৈ ৉ ৊ ো ৌ ্ ড় ঢ় য় ৰ ৱ ং ঁ ঃ
+
 .replace
  ০	0
  ১	1
@@ -120,6 +136,25 @@
 
 .group ক
         ক		kV
+        _L12) ক (L11L12ন         k        // generated
+        _L12L12) ক (L11L12ন      k        // generated
+        _L12) ক (L11L10ৰ         k        // generated
+        _L12L12) ক (L11L10ৰ      k        // generated
+        _L10) ক (L11ে_           k        // generated
+        _L10) ক (L11ে            k        // generated
+        _L12L10) ক (L11ে_        k        // generated
+        _L12L10) ক (L11ে         k        // generated
+        L10) ক (L11ে_            k        // generated
+        L10) ক (L11ে             k        // generated
+        _L12) ক (L11L12ঁ         k        // generated
+        _L12L12) ক (L11L12ঁ      k        // generated
+        L12) ক (L11L12ঁ          k        // generated
+        _া) ক (L11ো_             k        // generated
+        _া) ক (L11ো              k        // generated
+        _L12া) ক (L11ো_          k        // generated
+        _L12া) ক (L11ো           k        // generated
+        া) ক (L11ো_              k        // generated
+        া) ক (L11ো               k        // generated
         ক (B	k
      _) ক্ষ		k#V      // WikiPron: initial [kʰ], medial [kkʰ]
      _) ক্ষ (B	k#
@@ -127,36 +162,169 @@
         ক্ষ (B	kk#
 .group খ
         খ		k#V
+        _L12) খ (L11L12ন         k#       // generated
+        _L12L12) খ (L11L12ন      k#       // generated
+        _L12) খ (L11L10ৰ         k#       // generated
+        _L12L12) খ (L11L10ৰ      k#       // generated
+        _L10) খ (L11ে_           k#       // generated
+        _L10) খ (L11ে            k#       // generated
+        _L12L10) খ (L11ে_        k#       // generated
+        _L12L10) খ (L11ে         k#       // generated
+        L10) খ (L11ে_            k#       // generated
+        L10) খ (L11ে             k#       // generated
+        _L12) খ (L11L12ঁ         k#       // generated
+        _L12L12) খ (L11L12ঁ      k#       // generated
+        L12) খ (L11L12ঁ          k#       // generated
+        _া) খ (L11ো_             k#       // generated
+        _া) খ (L11ো              k#       // generated
+        _L12া) খ (L11ো_          k#       // generated
+        _L12া) খ (L11ো           k#       // generated
+        া) খ (L11ো_              k#       // generated
+        া) খ (L11ো               k#       // generated
         খ (B	k#
         
         
 .group গ
         গ		gV
+        _L12) গ (L11L12ন         g        // generated
+        _L12L12) গ (L11L12ন      g        // generated
+        _L12) গ (L11L10ৰ         g        // generated
+        _L12L12) গ (L11L10ৰ      g        // generated
+        _L10) গ (L11ে_           g        // generated
+        _L10) গ (L11ে            g        // generated
+        _L12L10) গ (L11ে_        g        // generated
+        _L12L10) গ (L11ে         g        // generated
+        L10) গ (L11ে_            g        // generated
+        L10) গ (L11ে             g        // generated
+        _L12) গ (L11L12ঁ         g        // generated
+        _L12L12) গ (L11L12ঁ      g        // generated
+        L12) গ (L11L12ঁ          g        // generated
+        _া) গ (L11ো_             g        // generated
+        _া) গ (L11ো              g        // generated
+        _L12া) গ (L11ো_          g        // generated
+        _L12া) গ (L11ো           g        // generated
+        া) গ (L11ো_              g        // generated
+        া) গ (L11ো               g        // generated
         গ (B	g
 
 
 .group ঘ
         ঘ		g#V
+        _L12) ঘ (L11L12ন         g#       // generated
+        _L12L12) ঘ (L11L12ন      g#       // generated
+        _L12) ঘ (L11L10ৰ         g#       // generated
+        _L12L12) ঘ (L11L10ৰ      g#       // generated
+        _L10) ঘ (L11ে_           g#       // generated
+        _L10) ঘ (L11ে            g#       // generated
+        _L12L10) ঘ (L11ে_        g#       // generated
+        _L12L10) ঘ (L11ে         g#       // generated
+        L10) ঘ (L11ে_            g#       // generated
+        L10) ঘ (L11ে             g#       // generated
+        _L12) ঘ (L11L12ঁ         g#       // generated
+        _L12L12) ঘ (L11L12ঁ      g#       // generated
+        L12) ঘ (L11L12ঁ          g#       // generated
+        _া) ঘ (L11ো_             g#       // generated
+        _া) ঘ (L11ো              g#       // generated
+        _L12া) ঘ (L11ো_          g#       // generated
+        _L12া) ঘ (L11ো           g#       // generated
+        া) ঘ (L11ো_              g#       // generated
+        া) ঘ (L11ো               g#       // generated
         ঘ (B	g#
 
         
 .group ঙ
         ঙ		NV
+        _L12) ঙ (L11L12ন         N        // generated
+        _L12L12) ঙ (L11L12ন      N        // generated
+        _L12) ঙ (L11L10ৰ         N        // generated
+        _L12L12) ঙ (L11L10ৰ      N        // generated
+        _L10) ঙ (L11ে_           N        // generated
+        _L10) ঙ (L11ে            N        // generated
+        _L12L10) ঙ (L11ে_        N        // generated
+        _L12L10) ঙ (L11ে         N        // generated
+        L10) ঙ (L11ে_            N        // generated
+        L10) ঙ (L11ে             N        // generated
+        _L12) ঙ (L11L12ঁ         N        // generated
+        _L12L12) ঙ (L11L12ঁ      N        // generated
+        L12) ঙ (L11L12ঁ          N        // generated
+        _া) ঙ (L11ো_             N        // generated
+        _া) ঙ (L11ো              N        // generated
+        _L12া) ঙ (L11ো_          N        // generated
+        _L12া) ঙ (L11ো           N        // generated
+        া) ঙ (L11ো_              N        // generated
+        া) ঙ (L11ো               N        // generated
         ঙ (B	N
 
 
 .group চ
         চ		sV
+        _L12) চ (L11L12ন         s        // generated
+        _L12L12) চ (L11L12ন      s        // generated
+        _L12) চ (L11L10ৰ         s        // generated
+        _L12L12) চ (L11L10ৰ      s        // generated
+        _L10) চ (L11ে_           s        // generated
+        _L10) চ (L11ে            s        // generated
+        _L12L10) চ (L11ে_        s        // generated
+        _L12L10) চ (L11ে         s        // generated
+        L10) চ (L11ে_            s        // generated
+        L10) চ (L11ে             s        // generated
+        _L12) চ (L11L12ঁ         s        // generated
+        _L12L12) চ (L11L12ঁ      s        // generated
+        L12) চ (L11L12ঁ          s        // generated
+        _া) চ (L11ো_             s        // generated
+        _া) চ (L11ো              s        // generated
+        _L12া) চ (L11ো_          s        // generated
+        _L12া) চ (L11ো           s        // generated
+        া) চ (L11ো_              s        // generated
+        া) চ (L11ো               s        // generated
         চ (B	s
 
 
 .group ছ
         ছ		sV
+        _L12) ছ (L11L12ন         s        // generated
+        _L12L12) ছ (L11L12ন      s        // generated
+        _L12) ছ (L11L10ৰ         s        // generated
+        _L12L12) ছ (L11L10ৰ      s        // generated
+        _L10) ছ (L11ে_           s        // generated
+        _L10) ছ (L11ে            s        // generated
+        _L12L10) ছ (L11ে_        s        // generated
+        _L12L10) ছ (L11ে         s        // generated
+        L10) ছ (L11ে_            s        // generated
+        L10) ছ (L11ে             s        // generated
+        _L12) ছ (L11L12ঁ         s        // generated
+        _L12L12) ছ (L11L12ঁ      s        // generated
+        L12) ছ (L11L12ঁ          s        // generated
+        _া) ছ (L11ো_             s        // generated
+        _া) ছ (L11ো              s        // generated
+        _L12া) ছ (L11ো_          s        // generated
+        _L12া) ছ (L11ো           s        // generated
+        া) ছ (L11ো_              s        // generated
+        া) ছ (L11ো               s        // generated
         ছ (B	s
 
 
 .group জ
         জ		zV
+        _L12) জ (L11L12ন         z        // generated
+        _L12L12) জ (L11L12ন      z        // generated
+        _L12) জ (L11L10ৰ         z        // generated
+        _L12L12) জ (L11L10ৰ      z        // generated
+        _L10) জ (L11ে_           z        // generated
+        _L10) জ (L11ে            z        // generated
+        _L12L10) জ (L11ে_        z        // generated
+        _L12L10) জ (L11ে         z        // generated
+        L10) জ (L11ে_            z        // generated
+        L10) জ (L11ে             z        // generated
+        _L12) জ (L11L12ঁ         z        // generated
+        _L12L12) জ (L11L12ঁ      z        // generated
+        L12) জ (L11L12ঁ          z        // generated
+        _া) জ (L11ো_             z        // generated
+        _া) জ (L11ো              z        // generated
+        _L12া) জ (L11ো_          z        // generated
+        _L12া) জ (L11ো           z        // generated
+        া) জ (L11ো_              z        // generated
+        া) জ (L11ো               z        // generated
         জ (B	z
 
         জ্ব		zV
@@ -167,31 +335,145 @@
 
 .group ঝ
         ঝ		zV
+        _L12) ঝ (L11L12ন         z        // generated
+        _L12L12) ঝ (L11L12ন      z        // generated
+        _L12) ঝ (L11L10ৰ         z        // generated
+        _L12L12) ঝ (L11L10ৰ      z        // generated
+        _L10) ঝ (L11ে_           z        // generated
+        _L10) ঝ (L11ে            z        // generated
+        _L12L10) ঝ (L11ে_        z        // generated
+        _L12L10) ঝ (L11ে         z        // generated
+        L10) ঝ (L11ে_            z        // generated
+        L10) ঝ (L11ে             z        // generated
+        _L12) ঝ (L11L12ঁ         z        // generated
+        _L12L12) ঝ (L11L12ঁ      z        // generated
+        L12) ঝ (L11L12ঁ          z        // generated
+        _া) ঝ (L11ো_             z        // generated
+        _া) ঝ (L11ো              z        // generated
+        _L12া) ঝ (L11ো_          z        // generated
+        _L12া) ঝ (L11ো           z        // generated
+        া) ঝ (L11ো_              z        // generated
+        া) ঝ (L11ো               z        // generated
         ঝ (B	z
 
 
 .group ঞ
         ঞ		nV
+        _L12) ঞ (L11L12ন         n        // generated
+        _L12L12) ঞ (L11L12ন      n        // generated
+        _L12) ঞ (L11L10ৰ         n        // generated
+        _L12L12) ঞ (L11L10ৰ      n        // generated
+        _L10) ঞ (L11ে_           n        // generated
+        _L10) ঞ (L11ে            n        // generated
+        _L12L10) ঞ (L11ে_        n        // generated
+        _L12L10) ঞ (L11ে         n        // generated
+        L10) ঞ (L11ে_            n        // generated
+        L10) ঞ (L11ে             n        // generated
+        _L12) ঞ (L11L12ঁ         n        // generated
+        _L12L12) ঞ (L11L12ঁ      n        // generated
+        L12) ঞ (L11L12ঁ          n        // generated
+        _া) ঞ (L11ো_             n        // generated
+        _া) ঞ (L11ো              n        // generated
+        _L12া) ঞ (L11ো_          n        // generated
+        _L12া) ঞ (L11ো           n        // generated
+        া) ঞ (L11ো_              n        // generated
+        া) ঞ (L11ো               n        // generated
         ঞ (B	n
  
 
 .group ট
         ট		tV
+        _L12) ট (L11L12ন         t        // generated
+        _L12L12) ট (L11L12ন      t        // generated
+        _L12) ট (L11L10ৰ         t        // generated
+        _L12L12) ট (L11L10ৰ      t        // generated
+        _L10) ট (L11ে_           t        // generated
+        _L10) ট (L11ে            t        // generated
+        _L12L10) ট (L11ে_        t        // generated
+        _L12L10) ট (L11ে         t        // generated
+        L10) ট (L11ে_            t        // generated
+        L10) ট (L11ে             t        // generated
+        _L12) ট (L11L12ঁ         t        // generated
+        _L12L12) ট (L11L12ঁ      t        // generated
+        L12) ট (L11L12ঁ          t        // generated
+        _া) ট (L11ো_             t        // generated
+        _া) ট (L11ো              t        // generated
+        _L12া) ট (L11ো_          t        // generated
+        _L12া) ট (L11ো           t        // generated
+        া) ট (L11ো_              t        // generated
+        া) ট (L11ো               t        // generated
         ট (B	t
 
 
 .group ঠ
         ঠ		t#V
+        _L12) ঠ (L11L12ন         t#       // generated
+        _L12L12) ঠ (L11L12ন      t#       // generated
+        _L12) ঠ (L11L10ৰ         t#       // generated
+        _L12L12) ঠ (L11L10ৰ      t#       // generated
+        _L10) ঠ (L11ে_           t#       // generated
+        _L10) ঠ (L11ে            t#       // generated
+        _L12L10) ঠ (L11ে_        t#       // generated
+        _L12L10) ঠ (L11ে         t#       // generated
+        L10) ঠ (L11ে_            t#       // generated
+        L10) ঠ (L11ে             t#       // generated
+        _L12) ঠ (L11L12ঁ         t#       // generated
+        _L12L12) ঠ (L11L12ঁ      t#       // generated
+        L12) ঠ (L11L12ঁ          t#       // generated
+        _া) ঠ (L11ো_             t#       // generated
+        _া) ঠ (L11ো              t#       // generated
+        _L12া) ঠ (L11ো_          t#       // generated
+        _L12া) ঠ (L11ো           t#       // generated
+        া) ঠ (L11ো_              t#       // generated
+        া) ঠ (L11ো               t#       // generated
         ঠ (B	t#
 
 .group ড
         ড		dV
+        _L12) ড (L11L12ন         d        // generated
+        _L12L12) ড (L11L12ন      d        // generated
+        _L12) ড (L11L10ৰ         d        // generated
+        _L12L12) ড (L11L10ৰ      d        // generated
+        _L10) ড (L11ে_           d        // generated
+        _L10) ড (L11ে            d        // generated
+        _L12L10) ড (L11ে_        d        // generated
+        _L12L10) ড (L11ে         d        // generated
+        L10) ড (L11ে_            d        // generated
+        L10) ড (L11ে             d        // generated
+        _L12) ড (L11L12ঁ         d        // generated
+        _L12L12) ড (L11L12ঁ      d        // generated
+        L12) ড (L11L12ঁ          d        // generated
+        _া) ড (L11ো_             d        // generated
+        _া) ড (L11ো              d        // generated
+        _L12া) ড (L11ো_          d        // generated
+        _L12া) ড (L11ো           d        // generated
+        া) ড (L11ো_              d        // generated
+        া) ড (L11ো               d        // generated
         ড (B	d
         ড়		rV
         ড় (B	r
 
 .group ঢ
         ঢ		d#V
+        _L12) ঢ (L11L12ন         d#       // generated
+        _L12L12) ঢ (L11L12ন      d#       // generated
+        _L12) ঢ (L11L10ৰ         d#       // generated
+        _L12L12) ঢ (L11L10ৰ      d#       // generated
+        _L10) ঢ (L11ে_           d#       // generated
+        _L10) ঢ (L11ে            d#       // generated
+        _L12L10) ঢ (L11ে_        d#       // generated
+        _L12L10) ঢ (L11ে         d#       // generated
+        L10) ঢ (L11ে_            d#       // generated
+        L10) ঢ (L11ে             d#       // generated
+        _L12) ঢ (L11L12ঁ         d#       // generated
+        _L12L12) ঢ (L11L12ঁ      d#       // generated
+        L12) ঢ (L11L12ঁ          d#       // generated
+        _া) ঢ (L11ো_             d#       // generated
+        _া) ঢ (L11ো              d#       // generated
+        _L12া) ঢ (L11ো_          d#       // generated
+        _L12া) ঢ (L11ো           d#       // generated
+        া) ঢ (L11ো_              d#       // generated
+        া) ঢ (L11ো               d#       // generated
         ঢ (B	d#
         ঢ়		rV
         ঢ় (B	r
@@ -199,59 +481,287 @@
 
 .group ণ
         ণ		nV   // should be [n.] if adjacent to t. or d. ?
+        _L12) ণ (L11L12ন         n        // generated
+        _L12L12) ণ (L11L12ন      n        // generated
+        _L12) ণ (L11L10ৰ         n        // generated
+        _L12L12) ণ (L11L10ৰ      n        // generated
+        _L10) ণ (L11ে_           n        // generated
+        _L10) ণ (L11ে            n        // generated
+        _L12L10) ণ (L11ে_        n        // generated
+        _L12L10) ণ (L11ে         n        // generated
+        L10) ণ (L11ে_            n        // generated
+        L10) ণ (L11ে             n        // generated
+        _L12) ণ (L11L12ঁ         n        // generated
+        _L12L12) ণ (L11L12ঁ      n        // generated
+        L12) ণ (L11L12ঁ          n        // generated
+        _া) ণ (L11ো_             n        // generated
+        _া) ণ (L11ো              n        // generated
+        _L12া) ণ (L11ো_          n        // generated
+        _L12া) ণ (L11ো           n        // generated
+        া) ণ (L11ো_              n        // generated
+        া) ণ (L11ো               n        // generated
         ণ (B	n
 
 
 .group ত
         ত		tV
+        _L12) ত (L11L12ন         t        // generated
+        _L12L12) ত (L11L12ন      t        // generated
+        _L12) ত (L11L10ৰ         t        // generated
+        _L12L12) ত (L11L10ৰ      t        // generated
+        _L10) ত (L11ে_           t        // generated
+        _L10) ত (L11ে            t        // generated
+        _L12L10) ত (L11ে_        t        // generated
+        _L12L10) ত (L11ে         t        // generated
+        L10) ত (L11ে_            t        // generated
+        L10) ত (L11ে             t        // generated
+        _L12) ত (L11L12ঁ         t        // generated
+        _L12L12) ত (L11L12ঁ      t        // generated
+        L12) ত (L11L12ঁ          t        // generated
+        _া) ত (L11ো_             t        // generated
+        _া) ত (L11ো              t        // generated
+        _L12া) ত (L11ো_          t        // generated
+        _L12া) ত (L11ো           t        // generated
+        া) ত (L11ো_              t        // generated
+        া) ত (L11ো               t        // generated
         ত (B	t
 .group থ
         থ		t#V
+        _L12) থ (L11L12ন         t#       // generated
+        _L12L12) থ (L11L12ন      t#       // generated
+        _L12) থ (L11L10ৰ         t#       // generated
+        _L12L12) থ (L11L10ৰ      t#       // generated
+        _L10) থ (L11ে_           t#       // generated
+        _L10) থ (L11ে            t#       // generated
+        _L12L10) থ (L11ে_        t#       // generated
+        _L12L10) থ (L11ে         t#       // generated
+        L10) থ (L11ে_            t#       // generated
+        L10) থ (L11ে             t#       // generated
+        _L12) থ (L11L12ঁ         t#       // generated
+        _L12L12) থ (L11L12ঁ      t#       // generated
+        L12) থ (L11L12ঁ          t#       // generated
+        _া) থ (L11ো_             t#       // generated
+        _া) থ (L11ো              t#       // generated
+        _L12া) থ (L11ো_          t#       // generated
+        _L12া) থ (L11ো           t#       // generated
+        া) থ (L11ো_              t#       // generated
+        া) থ (L11ো               t#       // generated
         থ (B	t#
 
 
 .group দ
         দ		dV
+        _L12) দ (L11L12ন         d        // generated
+        _L12L12) দ (L11L12ন      d        // generated
+        _L12) দ (L11L10ৰ         d        // generated
+        _L12L12) দ (L11L10ৰ      d        // generated
+        _L10) দ (L11ে_           d        // generated
+        _L10) দ (L11ে            d        // generated
+        _L12L10) দ (L11ে_        d        // generated
+        _L12L10) দ (L11ে         d        // generated
+        L10) দ (L11ে_            d        // generated
+        L10) দ (L11ে             d        // generated
+        _L12) দ (L11L12ঁ         d        // generated
+        _L12L12) দ (L11L12ঁ      d        // generated
+        L12) দ (L11L12ঁ          d        // generated
+        _া) দ (L11ো_             d        // generated
+        _া) দ (L11ো              d        // generated
+        _L12া) দ (L11ো_          d        // generated
+        _L12া) দ (L11ো           d        // generated
+        া) দ (L11ো_              d        // generated
+        া) দ (L11ো               d        // generated
         দ (B	d
 
 
 .group ধ
         ধ		d#V
+        _L12) ধ (L11L12ন         d#       // generated
+        _L12L12) ধ (L11L12ন      d#       // generated
+        _L12) ধ (L11L10ৰ         d#       // generated
+        _L12L12) ধ (L11L10ৰ      d#       // generated
+        _L10) ধ (L11ে_           d#       // generated
+        _L10) ধ (L11ে            d#       // generated
+        _L12L10) ধ (L11ে_        d#       // generated
+        _L12L10) ধ (L11ে         d#       // generated
+        L10) ধ (L11ে_            d#       // generated
+        L10) ধ (L11ে             d#       // generated
+        _L12) ধ (L11L12ঁ         d#       // generated
+        _L12L12) ধ (L11L12ঁ      d#       // generated
+        L12) ধ (L11L12ঁ          d#       // generated
+        _া) ধ (L11ো_             d#       // generated
+        _া) ধ (L11ো              d#       // generated
+        _L12া) ধ (L11ো_          d#       // generated
+        _L12া) ধ (L11ো           d#       // generated
+        া) ধ (L11ো_              d#       // generated
+        া) ধ (L11ো               d#       // generated
         ধ (B	d#
 
 
 .group ন
         ন		nV
+        _L12) ন (L11L12ন         n        // generated
+        _L12L12) ন (L11L12ন      n        // generated
+        _L12) ন (L11L10ৰ         n        // generated
+        _L12L12) ন (L11L10ৰ      n        // generated
+        _L10) ন (L11ে_           n        // generated
+        _L10) ন (L11ে            n        // generated
+        _L12L10) ন (L11ে_        n        // generated
+        _L12L10) ন (L11ে         n        // generated
+        L10) ন (L11ে_            n        // generated
+        L10) ন (L11ে             n        // generated
+        _L12) ন (L11L12ঁ         n        // generated
+        _L12L12) ন (L11L12ঁ      n        // generated
+        L12) ন (L11L12ঁ          n        // generated
+        _া) ন (L11ো_             n        // generated
+        _া) ন (L11ো              n        // generated
+        _L12া) ন (L11ো_          n        // generated
+        _L12া) ন (L11ো           n        // generated
+        া) ন (L11ো_              n        // generated
+        া) ন (L11ো               n        // generated
         ন (B	n
 
         
 .group প
         প		pV
+        _L12) প (L11L12ন         p        // generated
+        _L12L12) প (L11L12ন      p        // generated
+        _L12) প (L11L10ৰ         p        // generated
+        _L12L12) প (L11L10ৰ      p        // generated
+        _L10) প (L11ে_           p        // generated
+        _L10) প (L11ে            p        // generated
+        _L12L10) প (L11ে_        p        // generated
+        _L12L10) প (L11ে         p        // generated
+        L10) প (L11ে_            p        // generated
+        L10) প (L11ে             p        // generated
+        _L12) প (L11L12ঁ         p        // generated
+        _L12L12) প (L11L12ঁ      p        // generated
+        L12) প (L11L12ঁ          p        // generated
+        _া) প (L11ো_             p        // generated
+        _া) প (L11ো              p        // generated
+        _L12া) প (L11ো_          p        // generated
+        _L12া) প (L11ো           p        // generated
+        া) প (L11ো_              p        // generated
+        া) প (L11ো               p        // generated
         প (B	p
 
   
 .group ফ
         ফ		p#V
+        _L12) ফ (L11L12ন         p#       // generated
+        _L12L12) ফ (L11L12ন      p#       // generated
+        _L12) ফ (L11L10ৰ         p#       // generated
+        _L12L12) ফ (L11L10ৰ      p#       // generated
+        _L10) ফ (L11ে_           p#       // generated
+        _L10) ফ (L11ে            p#       // generated
+        _L12L10) ফ (L11ে_        p#       // generated
+        _L12L10) ফ (L11ে         p#       // generated
+        L10) ফ (L11ে_            p#       // generated
+        L10) ফ (L11ে             p#       // generated
+        _L12) ফ (L11L12ঁ         p#       // generated
+        _L12L12) ফ (L11L12ঁ      p#       // generated
+        L12) ফ (L11L12ঁ          p#       // generated
+        _া) ফ (L11ো_             p#       // generated
+        _া) ফ (L11ো              p#       // generated
+        _L12া) ফ (L11ো_          p#       // generated
+        _L12া) ফ (L11ো           p#       // generated
+        া) ফ (L11ো_              p#       // generated
+        া) ফ (L11ো               p#       // generated
         ফ (B	p#
 
 
 .group ব
         ব		bV
+        _L12) ব (L11L12ন         b        // generated
+        _L12L12) ব (L11L12ন      b        // generated
+        _L12) ব (L11L10ৰ         b        // generated
+        _L12L12) ব (L11L10ৰ      b        // generated
+        _L10) ব (L11ে_           b        // generated
+        _L10) ব (L11ে            b        // generated
+        _L12L10) ব (L11ে_        b        // generated
+        _L12L10) ব (L11ে         b        // generated
+        L10) ব (L11ে_            b        // generated
+        L10) ব (L11ে             b        // generated
+        _L12) ব (L11L12ঁ         b        // generated
+        _L12L12) ব (L11L12ঁ      b        // generated
+        L12) ব (L11L12ঁ          b        // generated
+        _া) ব (L11ো_             b        // generated
+        _া) ব (L11ো              b        // generated
+        _L12া) ব (L11ো_          b        // generated
+        _L12া) ব (L11ো           b        // generated
+        া) ব (L11ো_              b        // generated
+        া) ব (L11ো               b        // generated
         ব (B	b
 
         
 .group ভ
         ভ		b#V
+        _L12) ভ (L11L12ন         b#       // generated
+        _L12L12) ভ (L11L12ন      b#       // generated
+        _L12) ভ (L11L10ৰ         b#       // generated
+        _L12L12) ভ (L11L10ৰ      b#       // generated
+        _L10) ভ (L11ে_           b#       // generated
+        _L10) ভ (L11ে            b#       // generated
+        _L12L10) ভ (L11ে_        b#       // generated
+        _L12L10) ভ (L11ে         b#       // generated
+        L10) ভ (L11ে_            b#       // generated
+        L10) ভ (L11ে             b#       // generated
+        _L12) ভ (L11L12ঁ         b#       // generated
+        _L12L12) ভ (L11L12ঁ      b#       // generated
+        L12) ভ (L11L12ঁ          b#       // generated
+        _া) ভ (L11ো_             b#       // generated
+        _া) ভ (L11ো              b#       // generated
+        _L12া) ভ (L11ো_          b#       // generated
+        _L12া) ভ (L11ো           b#       // generated
+        া) ভ (L11ো_              b#       // generated
+        া) ভ (L11ো               b#       // generated
         ভ (B	b#
 
         
 .group ম
         ম		mV
+        _L12) ম (L11L12ন         m        // generated
+        _L12L12) ম (L11L12ন      m        // generated
+        _L12) ম (L11L10ৰ         m        // generated
+        _L12L12) ম (L11L10ৰ      m        // generated
+        _L10) ম (L11ে_           m        // generated
+        _L10) ম (L11ে            m        // generated
+        _L12L10) ম (L11ে_        m        // generated
+        _L12L10) ম (L11ে         m        // generated
+        L10) ম (L11ে_            m        // generated
+        L10) ম (L11ে             m        // generated
+        _L12) ম (L11L12ঁ         m        // generated
+        _L12L12) ম (L11L12ঁ      m        // generated
+        L12) ম (L11L12ঁ          m        // generated
+        _া) ম (L11ো_             m        // generated
+        _া) ম (L11ো              m        // generated
+        _L12া) ম (L11ো_          m        // generated
+        _L12া) ম (L11ো           m        // generated
+        া) ম (L11ো_              m        // generated
+        া) ম (L11ো               m        // generated
         ম (B	m
 
         
 .group য
         য		zV       // Assamese has no [dʒ]: WikiPron 33/37 initial য = z
+        _L12) য (L11L12ন         z        // generated
+        _L12L12) য (L11L12ন      z        // generated
+        _L12) য (L11L10ৰ         z        // generated
+        _L12L12) য (L11L10ৰ      z        // generated
+        _L10) য (L11ে_           z        // generated
+        _L10) য (L11ে            z        // generated
+        _L12L10) য (L11ে_        z        // generated
+        _L12L10) য (L11ে         z        // generated
+        L10) য (L11ে_            z        // generated
+        L10) য (L11ে             z        // generated
+        _L12) য (L11L12ঁ         z        // generated
+        _L12L12) য (L11L12ঁ      z        // generated
+        L12) য (L11L12ঁ          z        // generated
+        _া) য (L11ো_             z        // generated
+        _া) য (L11ো              z        // generated
+        _L12া) য (L11ো_          z        // generated
+        _L12া) য (L11ো           z        // generated
+        া) য (L11ো_              z        // generated
+        া) য (L11ো               z        // generated
         য (B	z
         // য় = য + nukta once Unicode-normalized, so it has to live here
         য়		jV
@@ -265,15 +775,72 @@
 
 .group ৰ
         ৰ		rV
+        _L12) ৰ (L11L12ন         r        // generated
+        _L12L12) ৰ (L11L12ন      r        // generated
+        _L12) ৰ (L11L10ৰ         r        // generated
+        _L12L12) ৰ (L11L10ৰ      r        // generated
+        _L10) ৰ (L11ে_           r        // generated
+        _L10) ৰ (L11ে            r        // generated
+        _L12L10) ৰ (L11ে_        r        // generated
+        _L12L10) ৰ (L11ে         r        // generated
+        L10) ৰ (L11ে_            r        // generated
+        L10) ৰ (L11ে             r        // generated
+        _L12) ৰ (L11L12ঁ         r        // generated
+        _L12L12) ৰ (L11L12ঁ      r        // generated
+        L12) ৰ (L11L12ঁ          r        // generated
+        _া) ৰ (L11ো_             r        // generated
+        _া) ৰ (L11ো              r        // generated
+        _L12া) ৰ (L11ো_          r        // generated
+        _L12া) ৰ (L11ো           r        // generated
+        া) ৰ (L11ো_              r        // generated
+        া) ৰ (L11ো               r        // generated
         ৰ	(B	r
 
     
 .group ল
         ল		lV
+        _L12) ল (L11L12ন         l        // generated
+        _L12L12) ল (L11L12ন      l        // generated
+        _L12) ল (L11L10ৰ         l        // generated
+        _L12L12) ল (L11L10ৰ      l        // generated
+        _L10) ল (L11ে_           l        // generated
+        _L10) ল (L11ে            l        // generated
+        _L12L10) ল (L11ে_        l        // generated
+        _L12L10) ল (L11ে         l        // generated
+        L10) ল (L11ে_            l        // generated
+        L10) ল (L11ে             l        // generated
+        _L12) ল (L11L12ঁ         l        // generated
+        _L12L12) ল (L11L12ঁ      l        // generated
+        L12) ল (L11L12ঁ          l        // generated
+        _া) ল (L11ো_             l        // generated
+        _া) ল (L11ো              l        // generated
+        _L12া) ল (L11ো_          l        // generated
+        _L12া) ল (L11ো           l        // generated
+        া) ল (L11ো_              l        // generated
+        া) ল (L11ো               l        // generated
         ল  (B	l
 
 .group ৱ
         ৱ		wV
+        _L12) ৱ (L11L12ন         w        // generated
+        _L12L12) ৱ (L11L12ন      w        // generated
+        _L12) ৱ (L11L10ৰ         w        // generated
+        _L12L12) ৱ (L11L10ৰ      w        // generated
+        _L10) ৱ (L11ে_           w        // generated
+        _L10) ৱ (L11ে            w        // generated
+        _L12L10) ৱ (L11ে_        w        // generated
+        _L12L10) ৱ (L11ে         w        // generated
+        L10) ৱ (L11ে_            w        // generated
+        L10) ৱ (L11ে             w        // generated
+        _L12) ৱ (L11L12ঁ         w        // generated
+        _L12L12) ৱ (L11L12ঁ      w        // generated
+        L12) ৱ (L11L12ঁ          w        // generated
+        _া) ৱ (L11ো_             w        // generated
+        _া) ৱ (L11ো              w        // generated
+        _L12া) ৱ (L11ো_          w        // generated
+        _L12া) ৱ (L11ো           w        // generated
+        া) ৱ (L11ো_              w        // generated
+        া) ৱ (L11ো               w        // generated
         ৱ (B	w
      // After o/u vowels ৱ is not heard: কোৱা [kʊa], উঠোৱা [utʰʊa] (WikiPron).
      // After a/e it is: সেৱা [xɛwa], so those keep [w].
@@ -295,6 +862,25 @@
 
 .group শ
         শ		XV
+        _L12) শ (L11L12ন         X        // generated
+        _L12L12) শ (L11L12ন      X        // generated
+        _L12) শ (L11L10ৰ         X        // generated
+        _L12L12) শ (L11L10ৰ      X        // generated
+        _L10) শ (L11ে_           X        // generated
+        _L10) শ (L11ে            X        // generated
+        _L12L10) শ (L11ে_        X        // generated
+        _L12L10) শ (L11ে         X        // generated
+        L10) শ (L11ে_            X        // generated
+        L10) শ (L11ে             X        // generated
+        _L12) শ (L11L12ঁ         X        // generated
+        _L12L12) শ (L11L12ঁ      X        // generated
+        L12) শ (L11L12ঁ          X        // generated
+        _া) শ (L11ো_             X        // generated
+        _া) শ (L11ো              X        // generated
+        _L12া) শ (L11ো_          X        // generated
+        _L12া) শ (L11ো           X        // generated
+        া) শ (L11ো_              X        // generated
+        া) শ (L11ো               X        // generated
         শ (B	X
         শ (্ল	s
      _) শ্ব		sV       // WikiPron: শ্ব/স্ব are [s] initially, [ss] medially
@@ -303,11 +889,49 @@
         শ্ব (B	ss
 .group ষ
         ষ		XV
+        _L12) ষ (L11L12ন         X        // generated
+        _L12L12) ষ (L11L12ন      X        // generated
+        _L12) ষ (L11L10ৰ         X        // generated
+        _L12L12) ষ (L11L10ৰ      X        // generated
+        _L10) ষ (L11ে_           X        // generated
+        _L10) ষ (L11ে            X        // generated
+        _L12L10) ষ (L11ে_        X        // generated
+        _L12L10) ষ (L11ে         X        // generated
+        L10) ষ (L11ে_            X        // generated
+        L10) ষ (L11ে             X        // generated
+        _L12) ষ (L11L12ঁ         X        // generated
+        _L12L12) ষ (L11L12ঁ      X        // generated
+        L12) ষ (L11L12ঁ          X        // generated
+        _া) ষ (L11ো_             X        // generated
+        _া) ষ (L11ো              X        // generated
+        _L12া) ষ (L11ো_          X        // generated
+        _L12া) ষ (L11ো           X        // generated
+        া) ষ (L11ো_              X        // generated
+        া) ষ (L11ো               X        // generated
         ষ (B	X
 
 
 .group স
         স		XV
+        _L12) স (L11L12ন         X        // generated
+        _L12L12) স (L11L12ন      X        // generated
+        _L12) স (L11L10ৰ         X        // generated
+        _L12L12) স (L11L10ৰ      X        // generated
+        _L10) স (L11ে_           X        // generated
+        _L10) স (L11ে            X        // generated
+        _L12L10) স (L11ে_        X        // generated
+        _L12L10) স (L11ে         X        // generated
+        L10) স (L11ে_            X        // generated
+        L10) স (L11ে             X        // generated
+        _L12) স (L11L12ঁ         X        // generated
+        _L12L12) স (L11L12ঁ      X        // generated
+        L12) স (L11L12ঁ          X        // generated
+        _া) স (L11ো_             X        // generated
+        _া) স (L11ো              X        // generated
+        _L12া) স (L11ো_          X        // generated
+        _L12া) স (L11ো           X        // generated
+        া) স (L11ো_              X        // generated
+        া) স (L11ো               X        // generated
         স (B	X        
         স (্থ	s
         স (্ত	s        
@@ -320,6 +944,34 @@
      ্) স (B	s
 .group হ
         হ		hV  
+        _L10) হ (L11_            hV       // generated
+        _L10) হ (L11L12_         hV       // generated
+        _L10) হ (L11             hV       // generated
+        _L12L10) হ (L11_         hV       // generated
+        _L12L10) হ (L11L12_      hV       // generated
+        _L12L10) হ (L11          hV       // generated
+        L10) হ (L11_             hV       // generated
+        L10) হ (L11L12_          hV       // generated
+        L10) হ (L11              hV       // generated
+        _L12) হ (L11L12ন         h        // generated
+        _L12L12) হ (L11L12ন      h        // generated
+        _L12) হ (L11L10ৰ         h        // generated
+        _L12L12) হ (L11L10ৰ      h        // generated
+        _L10) হ (L11ে_           h        // generated
+        _L10) হ (L11ে            h        // generated
+        _L12L10) হ (L11ে_        h        // generated
+        _L12L10) হ (L11ে         h        // generated
+        L10) হ (L11ে_            h        // generated
+        L10) হ (L11ে             h        // generated
+        _L12) হ (L11L12ঁ         h        // generated
+        _L12L12) হ (L11L12ঁ      h        // generated
+        L12) হ (L11L12ঁ          h        // generated
+        _া) হ (L11ো_             h        // generated
+        _া) হ (L11ো              h        // generated
+        _L12া) হ (L11ো_          h        // generated
+        _L12া) হ (L11ো           h        // generated
+        া) হ (L11ো_              h        // generated
+        া) হ (L11ো               h        // generated
         হ (B	h
 .group হ্ব
         হ্ব		vV

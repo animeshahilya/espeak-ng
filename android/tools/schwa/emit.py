@@ -1,6 +1,6 @@
 """Write learned inherent-vowel rules into an eSpeak rules file.
 
-usage: emit.py bn|hi|mr RULES_IN RULES_OUT [N_RULES]
+usage: emit.py bn|hi|mr|gu|ne|pa|as RULES_IN RULES_OUT [N_RULES]
 
 Reads <lang>_rules_learned.json (from bn_learn.py / deva_learn.py) and adds
 eSpeak rule lines to every consonant group, each ending "// generated".
@@ -148,6 +148,35 @@ LANGS = {
        letters([(0x904, 0x93A), (0x93C, 0x94E), (0x958, 0x964)], ['ं', 'ँ', 'ः'])),
         verb_suffixes=[],
         protect_final=True,
+        skip_initial=True,
+    ),
+    'as': dict(
+        V='L10', C='L11', ANY='L12', N=None,
+        consonant=lambda ch: 0x995 <= ord(ch) <= 0x9B9 or ch in 'ড়ঢ়য়ৰৱ',
+        keep='V',
+        header="""// Inherent vowel dropped in the middle of a word, learned from WikiPron
+// (asm_beng_broad, 2982 words: চৰকাৰ sɔɹkaɹ, সকলোতকে, আলমাৰী).
+// The rule lines marked "// generated" in each consonant group are not
+// hand-written: android/tools/schwa learns them (rule induction on 80% of
+// the words) and writes them here. Held out: slots right 91.9% to 93.1%
+// (7 fixed, 2 broken). Full set: words read right 84.1% to 85.2% (37 fixed,
+// 3 broken), PER 5.4% to 5.2%.
+// Regenerate them with those tools rather than editing by hand.
+// L10 = written vowels (signs, and independent vowels except অ);
+// L11 = consonant letters (incl. Assamese ৰৱ); L12 = any Assamese/Bengali letter.
+// Word-initial consonants take no rule (their vowel never drops:
+// সপোন, নতুন, পথাৰ keep it) - skip_initial.
+""",
+        groups=lambda: """.L10 া ি ী ু ূ ৃ ৄ ে ৈ ো ৌ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ ৠ
+.L11 %s
+.L12 %s
+""" % (letters([(0x995, 0x9BA)], ['ড়', 'ঢ়', 'য়', 'ৰ', 'ৱ']),
+       letters([(0x985, 0x9BA), (0x9BE, 0x9CE)], ['ড়', 'ঢ়', 'য়', 'ৰ', 'ৱ', 'ং', 'ঁ', 'ঃ'])),
+        verb_suffixes=[],
+        protect_final=True,
+        # Word-initial consonants carry no slot (indic_slots skips idx 0:
+        # their vowel is never dropped), so no learned rule may apply there.
+        # Without this, first-syllable keeps (সপোন, নতুন, পথাৰ) get dropped.
         skip_initial=True,
     ),
     'pa': dict(

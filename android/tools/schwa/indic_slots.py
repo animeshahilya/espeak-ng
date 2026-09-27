@@ -40,9 +40,14 @@ SCRIPTS = {
         'nasals': 'ੰਂ',
     },
     'beng': {
-        'cons': set(chr(c) for c in range(0x0995, 0x09BA)) | set('ড়ঢ়য়'),
+        # Assamese extras ৰ (U+09F0) ৱ (U+09F1) and ৠ (U+098C) are included:
+        # Bengali words never contain them (no behaviour change for bn),
+        # Assamese WikiPron has ৰ x873 / ৱ x291. ৎ (U+09CE khanda ta) is
+        # deliberately NOT a consonant: it is already dead, no inherent
+        # vowel to keep or drop, so it must never become a slot.
+        'cons': set(chr(c) for c in range(0x0995, 0x09BA)) | set('ড়ঢ়য়ৰৱ'),
         'signs': set('ািীুূৃৄেৈোৌ'),
-        'indep': set('অআইঈউঊঋএঐওঔ'),
+        'indep': set('অআইঈউঊঋএঐওঔৠ'),
         'virama': '্',
         'nukta': '়',
         'inh_char': 'অ',
@@ -57,6 +62,7 @@ LANG_SCRIPT = {
     'gu': 'gujr',
     'pa': 'guru',
     'bn': 'beng',
+    'as': 'beng',
 }
 
 VOWELS = set('aeiouəʌɔ')
