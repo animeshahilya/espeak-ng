@@ -14,15 +14,18 @@
         android:paddingEnd="24dp"
         android:paddingTop="24dp">
 
-        <!-- App Icon with Material 3 surface container -->
-        <FrameLayout
+        <!-- App icon on a tonal card: the old FrameLayout relied on
+             elevation + clipToOutline, which vendor skins render
+             inconsistently; the card carries its own shape and stroke. -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
-            android:background="?attr/colorPrimaryContainer"
             android:layout_marginBottom="16dp"
-            android:elevation="4dp"
-            android:clipToOutline="true">
+            app:cardBackgroundColor="?attr/colorPrimaryContainer"
+            app:cardCornerRadius="@dimen/corner_radius_large"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp">
 
             <ImageView
                 android:id="@+id/about_icon"
@@ -33,7 +36,7 @@
                 android:contentDescription="@string/app_name"
                 android:importantForAccessibility="no" />
 
-        </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- App Title: a TalkBack heading (API 28+) so swipe-down jumps here. -->
         <TextView

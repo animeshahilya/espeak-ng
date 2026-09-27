@@ -67,5 +67,18 @@ abstract class ButtonDialogFragment extends PreferenceDialogFragmentCompat {
         if (negative != null) {
             negative.setOnClickListener(v -> dialog.cancel());
         }
+        // Dialog titles are swipe-down headings for TalkBack, matching the
+        // preference categories. Done here (not onCreateDialog) because the
+        // title view only exists once the dialog is shown.
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            try {
+                android.view.View title =
+                        dialog.findViewById(androidx.appcompat.R.id.alertTitle);
+                if (title != null) {
+                    title.setAccessibilityHeading(true);
+                }
+            } catch (Exception ignored) {
+            }
+        }
     }
 }

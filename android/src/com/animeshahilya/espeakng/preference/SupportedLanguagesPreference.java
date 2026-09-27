@@ -25,7 +25,10 @@ import androidx.preference.MultiSelectListPreference;
 import com.animeshahilya.espeakng.LanguageSettings;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -83,5 +86,24 @@ public class SupportedLanguagesPreference extends MultiSelectListPreference {
         if (!shouldPersist()) return defaultReturnValue;
         Set<String> stored = getSharedPreferences().getStringSet(getKey(), defaultReturnValue);
         return (stored == null) ? defaultReturnValue : new HashSet<String>(stored);
+    }
+
+    /**
+     * Voice identifier ({@code voice.toString()}) to locale, for the
+     * touch-and-hold sample in {@link SupportedLanguagesDialogFragment}.
+     * Never persisted: rebuilt with the entries on every screen build, so a
+     * stale map cannot outlive the voice list it describes.
+     */
+    private final Map<String, Locale> mLocales = new HashMap<String, Locale>();
+
+    public void setLocales(Map<String, Locale> locales) {
+        mLocales.clear();
+        if (locales != null) {
+            mLocales.putAll(locales);
+        }
+    }
+
+    public Locale getLocaleFor(String value) {
+        return mLocales.get(value);
     }
 }

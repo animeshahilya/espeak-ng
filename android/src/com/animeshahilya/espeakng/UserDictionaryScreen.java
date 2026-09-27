@@ -349,6 +349,7 @@ final class UserDictionaryScreen {
         });
 
         dialog.show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
     }
 
     /** TalkBack-friendly rule actions as a list (Preview / Edit / Delete) + Cancel. */
@@ -366,8 +367,11 @@ final class UserDictionaryScreen {
                 context.getString(R.string.dict_action_preview),
                 context.getString(R.string.dict_action_edit),
                 context.getString(R.string.dict_action_delete) };
-        new MaterialAlertDialogBuilder(context)
-                .setTitle(context.getString(R.string.dict_rule_title, r.getPattern()) + "\n" + label)
+        // Title names the rule; details go in the message so TalkBack paces
+        // them as two stops instead of one run-on line.
+        final AlertDialog actionsDialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(context.getString(R.string.dict_rule_title, r.getPattern()))
+                .setMessage(label)
                 .setItems(actions, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int which) {
                         if (which == 0) {
@@ -377,7 +381,7 @@ final class UserDictionaryScreen {
                         } else if (which == 1) {
                             showEditRuleDialog(context, searchQuery, categoryFilter, realIdx);
                         } else {
-                            new MaterialAlertDialogBuilder(context)
+                            final AlertDialog confirmDialog = new MaterialAlertDialogBuilder(context)
                                     .setTitle(R.string.dict_delete_confirm_title)
                                     .setMessage(context.getString(R.string.dict_delete_confirm_message, r.getPattern()))
                                     .setPositiveButton(R.string.dict_action_delete, new DialogInterface.OnClickListener() {
@@ -395,7 +399,9 @@ final class UserDictionaryScreen {
                                             showDialog(context, searchQuery, categoryFilter);
                                         }
                                     })
-                                    .show();
+                                    .create();
+                            confirmDialog.show();
+                            TtsSettingsActivity.markAlertTitleHeading(confirmDialog);
                         }
                     }
                 })
@@ -404,7 +410,9 @@ final class UserDictionaryScreen {
                         showDialog(context, searchQuery, categoryFilter);
                     }
                 })
-                .show();
+                .create();
+        actionsDialog.show();
+        TtsSettingsActivity.markAlertTitleHeading(actionsDialog);
     }
 
     private static void showDictionaryImportExportDialog(final Context context, final String searchQuery, final String categoryFilter) {
@@ -413,7 +421,7 @@ final class UserDictionaryScreen {
                 context.getString(R.string.dict_export_file),
                 context.getString(R.string.dict_import_file)
         };
-        new MaterialAlertDialogBuilder(context)
+        final AlertDialog toolsDialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.dict_import_export_title)
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int which) {
@@ -442,7 +450,9 @@ final class UserDictionaryScreen {
                         showDialog(context, searchQuery, categoryFilter);
                     }
                 })
-                .show();
+                .create();
+        toolsDialog.show();
+        TtsSettingsActivity.markAlertTitleHeading(toolsDialog);
     }
 
     private static void shareDictionary(final Context context) {
@@ -627,6 +637,7 @@ final class UserDictionaryScreen {
                 .create();
 
         dialog.show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override

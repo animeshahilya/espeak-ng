@@ -418,4 +418,74 @@
   <string name="category_advanced">Advanced</string>
   <string name="setting_english_numbers">Numbers in English text</string>
   <string name="setting_english_numbers_summary">For Hindi, Urdu, Russian and other non-Latin voices: says numbers in English when the words around them are English.</string>
+
+  <!-- Test voice playback feedback -->
+  <string name="test_voice_playing">Playing sample…</string>
+
+  <!-- Human-phrase summaries for list preferences whose entries alone lack context -->
+  <string name="summary_digit_threshold" formatted="false">Group in threes from %1$d digits</string>
+  <string name="summary_rate_boost_on" formatted="false">%1$s× the normal maximum speed</string>
+
+  <!-- Language picker: empty search result + long-press sample hint -->
+  <string name="languages_no_match">No languages match this search.</string>
+  <string name="languages_sample_hint">Touch and hold a language to hear a sample.</string>
+  <string name="language_sample_playing">Playing %1$s sample…</string>
+
+  <!-- Intonation group reveal announcement -->
+  <string name="setting_intonation_group_shown">Custom intonation group is now shown.</string>
+
+  <!-- Settings search -->
+  <string name="search_settings_title">Search settings</string>
+  <string name="search_settings_hint">Search settings</string>
+  <string name="search_results_title">Search results</string>
+  <string name="search_no_match">No settings match this search.</string>
+  <string name="search_not_ready">Settings are still loading.</string>
+
+  <!-- Voice profiles: named preset files (variant, rate, pitch, punctuation) -->
+  <string name="setting_save_profile">Save voice profile</string>
+  <string name="setting_save_profile_summary">Save variant, rate, pitch and punctuation as a named file.</string>
+  <string name="setting_load_profile">Load voice profile</string>
+  <string name="setting_load_profile_summary">Apply a saved voice profile file.</string>
+  <string name="profile_saved">Voice profile saved.</string>
+  <string name="profile_save_failed">Failed to save voice profile.</string>
+  <string name="profile_applied">Voice profile applied.</string>
+  <string name="profile_load_failed">Failed to load voice profile.</string>
+
+  <!-- What's new after an update -->
+  <string name="whats_new_title">What\'s new</string>
+  <string name="whats_new_body">Voice profiles: save and share your variant, rate, pitch and punctuation as a file.\n\nFavorite voices: pin voices to the top of the voice list.\n\nSleep timer: pause all speech for a while, in Locks.\n\nReading history (opt-in): re-hear recently spoken text, in Tools.\n\nSettings search: find any setting from the top bar.\n\nTouch and hold a language to hear a sample of it.</string>
+
+  <!-- Favorite voices: pinned to the top of the system voice list -->
+  <string name="setting_favorite_voices">Favorite voices</string>
+  <string name="setting_favorite_voices_summary">Pin voices to the top of the voice list.</string>
+  <string name="favorites_summary_none">No favorites. Pinned voices appear first in the voice list.</string>
+
+  <plurals name="favorites_summary">
+    <item quantity="one">%1$d favorite pinned to the top.</item>
+    <item quantity="other">%1$d favorites pinned to the top.</item>
+  </plurals>
+
+  <!-- Sleep timer: pause all eSpeak speech until a deadline -->
+  <string name="setting_sleep_timer">Sleep timer</string>
+  <string name="setting_sleep_timer_summary">Pause all speech after a while.</string>
+  <plurals name="sleep_minutes">
+    <item quantity="one">%1$d minute</item>
+    <item quantity="other">%1$d minutes</item>
+  </plurals>
+  <string name="sleep_paused_until" formatted="false">Speech paused until %1$s</string>
+  <string name="sleep_timer_armed">All speech pauses in a few seconds…</string>
+  <string name="sleep_timer_resumed">Speech resumed.</string>
+
+  <!-- Reading history (opt-in): re-hear recently spoken text -->
+  <string name="setting_reading_history">Reading history</string>
+  <string name="setting_reading_history_summary">Keep recently spoken text on this device to re-hear it.</string>
+  <string name="setting_recent_reading">Recent reading</string>
+  <string name="setting_recent_reading_summary">Re-hear recently spoken text.</string>
+  <string name="history_empty">Nothing here yet. Turn on Reading history to keep recent speech.</string>
+  <string name="history_clear">Clear history</string>
+  <string name="history_cleared">Reading history cleared.</string>
+
+  <!-- Watch: some rows are phone-only -->
+  <string name="note_wear_limited_title">Fewer settings on watch</string>
+  <string name="note_wear_limited_summary">Rate boost, dictionary, languages and other phone-only settings are hidden here.</string>
 </resources>

@@ -821,4 +821,32 @@ public class VoiceSettingsTest
                 VoiceSettings.INDIAN_NUMBERING_ALL).commit();
         assertThat(settings.getIndianNumberingVoices(), is(VoiceSettings.INDIAN_NUMBERING_ALL));
     }
+
+    /** Sleep timer defaults to off and clamps wild values into range. */
+    @Test
+    public void testSleepTimerDefaults()
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.edit().clear().commit();
+        SpeechSynthesis synth = new SpeechSynthesis(getContext(), mCallback);
+        VoiceSettings settings = new VoiceSettings(prefs, synth);
+        assertThat(settings.getSleepTimerMinutes(), is(0));
+        assertThat(VoiceSettings.isSleepMuted(prefs), is(false));
+        assertThat(settings.isReadingHistoryEnabled(), is(false));
+
+        prefs.edit().putString(VoiceSettings.PREF_SLEEP_TIMER, "30").commit();
+        assertThat(settings.getSleepTimerMinutes(), is(30));
+
+        prefs.edit().putString(VoiceSettings.PREF_SLEEP_TIMER, "999").commit();
+        assertThat(settings.getSleepTimerMinutes(), is(VoiceSettings.SLEEP_MAX_MINUTES));
+
+        prefs.edit().putString(VoiceSettings.PREF_SLEEP_TIMER, "nonsense").commit();
+        assertThat(settings.getSleepTimerMinutes(), is(0));
+
+        long until = VoiceSettings.armSleepMute(prefs, 15);
+        assertThat(VoiceSettings.isSleepMuted(prefs), is(true));
+        assertThat(until > System.currentTimeMillis(), is(true));
+        VoiceSettings.clearSleepMute(prefs);
+        assertThat(VoiceSettings.isSleepMuted(prefs), is(false));
+    }
 }

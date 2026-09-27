@@ -19,6 +19,8 @@ package com.animeshahilya.espeakng.preference;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -33,10 +35,13 @@ import android.widget.Toast;
 
 
 import com.animeshahilya.espeakng.R;
+import com.animeshahilya.espeakng.SpeechSynthesis;
+import com.animeshahilya.espeakng.TtsSettingsActivity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -143,12 +148,31 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
             }
         });
 
+        // Touch-and-hold speaks the engine's own sample text for that
+        // language, through that language -- not the current settings voice,
+        // which would make every sample sound identical. TalkBack users
+        // discover it through the hint row above the list.
+        final SupportedLanguagesPreference sampledPreference = preference;
+        mListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            LangEntry item = mAdapter.getItem(position);
+            if (item != null && getContext() != null) {
+                playLanguageSample(sampledPreference, item);
+                return true;
+            }
+            return false;
+        });
+
         syncListViewCheckedState();
 
         final TextView countView = mDialogView.findViewById(R.id.languages_count);
+        final View emptyView = mDialogView.findViewById(R.id.languages_empty_view);
         if (countView != null && getContext() != null) {
             countView.setText(getContext().getResources().getQuantityString(R.plurals.languages_count_all, mAllEntries.size(), mAllEntries.size()));
         }
+        // The count badge is a live region: update it once typing pauses,
+        // not per keystroke, so "h-i-n-d-i" does not chatter five times.
+        final Handler countHandler = new Handler(Looper.getMainLooper());
+        final Runnable[] pendingCount = new Runnable[1];
 
         if (searchInput != null) {
             searchInput.addTextChangedListener(new TextWatcher() {
@@ -158,9 +182,28 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
                         @Override
                         public void onFilterComplete(int count) {
                             syncListViewCheckedState();
-                            if (countView != null && getContext() != null) {
-                                countView.setText(getContext().getResources().getQuantityString(R.plurals.languages_count, mAllEntries.size(), count, mAllEntries.size()));
+                            if (countView == null || getContext() == null) {
+                                return;
                             }
+                            if (pendingCount[0] != null) {
+                                countHandler.removeCallbacks(pendingCount[0]);
+                            }
+                            final int matchCount = count;
+                            pendingCount[0] = new Runnable() {
+                                @Override public void run() {
+                                    if (getContext() == null) {
+                                        return;
+                                    }
+                                    countView.setText(getContext().getResources().getQuantityString(
+                                            R.plurals.languages_count, mAllEntries.size(),
+                                            matchCount, mAllEntries.size()));
+                                    if (emptyView != null) {
+                                        emptyView.setVisibility(matchCount == 0 ? View.VISIBLE : View.GONE);
+                                        mListView.setVisibility(matchCount == 0 ? View.GONE : View.VISIBLE);
+                                    }
+                                }
+                            };
+                            countHandler.postDelayed(pendingCount[0], 300);
                         }
                     });
                 }
@@ -215,6 +258,32 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
             preference.setValues(selections);
         }
         dismiss();
+    }
+
+    /**
+     * Speaks the engine's sample text for one language, in that language.
+     * Falls back to the language label when no locale is mapped (e.g. a
+     * voice added by an update before the map was rebuilt).
+     */
+    private void playLanguageSample(SupportedLanguagesPreference preference, LangEntry item) {
+        if (getContext() == null) {
+            return;
+        }
+        Locale locale = preference != null ? preference.getLocaleFor(item.value) : null;
+        final String label = item.label != null ? item.label.toString() : item.value;
+        final String sample;
+        try {
+            sample = (locale != null)
+                    ? SpeechSynthesis.getSampleText(getContext(), locale)
+                    : label;
+        } catch (Exception e) {
+            return;
+        }
+        Toast.makeText(getContext(),
+                getContext().getString(R.string.language_sample_playing, label),
+                Toast.LENGTH_SHORT).show();
+        TtsSettingsActivity.speakPreviewInLanguage(getContext(), sample,
+                locale != null ? locale : Locale.getDefault(), "language_sample");
     }
 
     private void syncListViewCheckedState() {

@@ -314,6 +314,12 @@
         android:key="espeak_supported_languages"
         android:title="@string/espeak_supported_languages"
         android:icon="@drawable/ic_language" />
+    <!-- not on Wear -->
+    <Preference
+        android:key="action_favorite_voices"
+        android:title="@string/setting_favorite_voices"
+        android:summary="@string/setting_favorite_voices_summary"
+        android:icon="@drawable/ic_language" />
   </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 
   <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
@@ -341,6 +347,13 @@
           android:summary="@string/setting_force_volume_summary"
           android:defaultValue="false"
           app:iconSpaceReserved="false" />
+      <!-- not on Wear -->
+      <ListPreference
+          android:key="espeak_sleep_timer"
+          android:title="@string/setting_sleep_timer"
+          android:summary="@string/setting_sleep_timer_summary"
+          android:defaultValue="off"
+          app:iconSpaceReserved="false" />
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -356,6 +369,18 @@
             android:key="action_recommended_defaults"
             android:title="@string/setting_recommended_defaults"
             android:summary="@string/setting_recommended_defaults_summary"
+            app:iconSpaceReserved="false" />
+        <!-- not on Wear -->
+        <Preference
+            android:key="action_save_profile"
+            android:title="@string/setting_save_profile"
+            android:summary="@string/setting_save_profile_summary"
+            app:iconSpaceReserved="false" />
+        <!-- not on Wear -->
+        <Preference
+            android:key="action_load_profile"
+            android:title="@string/setting_load_profile"
+            android:summary="@string/setting_load_profile_summary"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 
@@ -381,6 +406,19 @@
             android:key="action_export_log"
             android:title="@string/setting_export_log"
             android:summary="@string/setting_export_log_summary"
+            app:iconSpaceReserved="false" />
+        <!-- not on Wear -->
+        <SwitchPreferenceCompat
+            android:key="espeak_reading_history"
+            android:title="@string/setting_reading_history"
+            android:summary="@string/setting_reading_history_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <!-- not on Wear -->
+        <Preference
+            android:key="action_recent_reading"
+            android:title="@string/setting_recent_reading"
+            android:summary="@string/setting_recent_reading_summary"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 

@@ -59,6 +59,7 @@ import androidx.preference.PreferenceScreen;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import com.animeshahilya.espeakng.preference.FavoriteVoicesDialogFragment;
 import com.animeshahilya.espeakng.preference.ImportVoicePreference;
 import com.animeshahilya.espeakng.preference.SeekBarDialogFragment;
 import com.animeshahilya.espeakng.preference.SeekBarPreference;
@@ -301,6 +302,60 @@ public class TtsSettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
+        final MenuItem searchItem = menu.findItem(R.id.menu_search_settings);
+        if (searchItem != null) {
+            final View actionView = searchItem.getActionView();
+            if (actionView instanceof androidx.appcompat.widget.SearchView) {
+                final androidx.appcompat.widget.SearchView searchView =
+                        (androidx.appcompat.widget.SearchView) actionView;
+                searchView.setQueryHint(getString(R.string.search_settings_hint));
+                searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return setSearchQuery(query);
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String query) {
+                        return setSearchQuery(query);
+                    }
+                });
+                // Collapsing the search field restores the screen it replaced.
+                searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        clearSearchQuery();
+                        return true;
+                    }
+                });
+            }
+        }
+        return true;
+    }
+
+    private boolean setSearchQuery(String query) {
+        Fragment current = getSupportFragmentManager().findFragmentById(android.R.id.content);
+        if (current instanceof PrefsEspeakFragment) {
+            return ((PrefsEspeakFragment) current).setSearchQuery(query);
+        }
+        return false;
+    }
+
+    private void clearSearchQuery() {
+        Fragment current = getSupportFragmentManager().findFragmentById(android.R.id.content);
+        if (current instanceof PrefsEspeakFragment) {
+            ((PrefsEspeakFragment) current).clearSearchQuery();
+        }
+    }
+
     private static TextToSpeech sTts;
 
     @Override
@@ -321,6 +376,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_EXPORT_DICT = 1003;
     public static final int REQUEST_CODE_EXPORT_BACKUP = 1004;
     public static final int REQUEST_CODE_IMPORT_BACKUP = 1005;
+    public static final int REQUEST_CODE_EXPORT_PROFILE = 1006;
+    public static final int REQUEST_CODE_IMPORT_PROFILE = 1007;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -335,6 +392,10 @@ public class TtsSettingsActivity extends AppCompatActivity {
             exportBackupUri(this, data.getData());
         } else if (requestCode == REQUEST_CODE_IMPORT_BACKUP && resultCode == RESULT_OK && data != null && data.getData() != null) {
             importBackupUri(this, data.getData());
+        } else if (requestCode == REQUEST_CODE_EXPORT_PROFILE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            exportProfileUri(this, data.getData());
+        } else if (requestCode == REQUEST_CODE_IMPORT_PROFILE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            importProfileUri(this, data.getData());
         }
     }
 
@@ -596,6 +657,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
         @Override
         public boolean onPreferenceTreeClick(Preference preference) {
+            if (preference != null && preference.getKey() != null
+                    && preference.getKey().startsWith(SEARCH_RESULT_PREFIX)) {
+                navigateToSearchResult(preference.getKey().substring(SEARCH_RESULT_PREFIX.length()));
+                return true;
+            }
             if (preference instanceof PreferenceScreen) {
                 PreferenceScreen current = getPreferenceScreen();
                 if (current != null) {
@@ -603,6 +669,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 }
                 setPreferenceScreen((PreferenceScreen) preference);
                 updateTitle();
+                focusFirstRow();
                 return true;
             }
             return super.onPreferenceTreeClick(preference);
@@ -620,7 +687,272 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
             setPreferenceScreen(parent);
             updateTitle();
+            focusFirstRow();
             return true;
+        }
+
+        /**
+         * Moves TalkBack focus to the first row after a screen change.
+         * Re-rooting swaps the whole list silently: sighted users see a new
+         * list from the top, but a screen reader's focus stays where the old
+         * list's position was -- potentially mid-list or on nothing. The
+         * announcement alone (see updateTitle()) tells the user where they
+         * landed without moving them there; this completes it. Sighted users
+         * only get the scroll reset, never a focus jump.
+         */
+        private void focusFirstRow() {
+            final View root = getView();
+            final Activity activity = getActivity();
+            if (root == null || activity == null) {
+                return;
+            }
+            final View list = root.findViewById(androidx.preference.R.id.recycler_view);
+            if (!(list instanceof androidx.recyclerview.widget.RecyclerView)) {
+                return;
+            }
+            final androidx.recyclerview.widget.RecyclerView recycler =
+                    (androidx.recyclerview.widget.RecyclerView) list;
+            recycler.scrollToPosition(0);
+            android.view.accessibility.AccessibilityManager am =
+                    (android.view.accessibility.AccessibilityManager)
+                            activity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+            if (am == null || !am.isEnabled()) {
+                return;
+            }
+            recycler.post(new Runnable() {
+                @Override public void run() {
+                    try {
+                        androidx.recyclerview.widget.RecyclerView.ViewHolder holder =
+                                recycler.findViewHolderForAdapterPosition(0);
+                        View row = holder != null ? holder.itemView : null;
+                        if (row == null && recycler.getChildCount() > 0) {
+                            row = recycler.getChildAt(0);
+                        }
+                        if (row != null) {
+                            row.performAccessibilityAction(
+                                    android.view.accessibility.AccessibilityNodeInfo
+                                            .ACTION_ACCESSIBILITY_FOCUS, null);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+        }
+
+        /**
+         * Scrolls the current screen's list to the row for {@code key} and
+         * moves TalkBack focus to it. Used after search navigation so the
+         * user lands on the match, not the top of its screen.
+         */
+        private void scrollToKey(final String key) {
+            final View root = getView();
+            if (root == null || key == null) {
+                return;
+            }
+            final View list = root.findViewById(androidx.preference.R.id.recycler_view);
+            if (!(list instanceof androidx.recyclerview.widget.RecyclerView)) {
+                return;
+            }
+            final androidx.recyclerview.widget.RecyclerView recycler =
+                    (androidx.recyclerview.widget.RecyclerView) list;
+            final androidx.recyclerview.widget.RecyclerView.Adapter<?> adapter = recycler.getAdapter();
+            if (!(adapter instanceof androidx.preference.PreferenceGroupAdapter)) {
+                return;
+            }
+            final androidx.preference.PreferenceGroupAdapter group =
+                    (androidx.preference.PreferenceGroupAdapter) adapter;
+            int position = -1;
+            for (int i = 0; i < group.getItemCount(); i++) {
+                try {
+                    Preference item = group.getItem(i);
+                    if (item != null && key.equals(item.getKey())) {
+                        position = i;
+                        break;
+                    }
+                } catch (Exception ignored) {
+                    break;
+                }
+            }
+            if (position < 0) {
+                return;
+            }
+            recycler.scrollToPosition(position);
+            final int target = position;
+            recycler.post(new Runnable() {
+                @Override public void run() {
+                    try {
+                        androidx.recyclerview.widget.RecyclerView.ViewHolder holder =
+                                recycler.findViewHolderForAdapterPosition(target);
+                        if (holder != null) {
+                            holder.itemView.performAccessibilityAction(
+                                    android.view.accessibility.AccessibilityNodeInfo
+                                            .ACTION_ACCESSIBILITY_FOCUS, null);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+        }
+
+        // Settings search: rows are tagged with this prefix so a tap can be
+        // told apart from a real preference click in onPreferenceTreeClick.
+        private static final String SEARCH_RESULT_PREFIX = "search_result::";
+        private static final int SEARCH_MAX_RESULTS = 50;
+
+        /** The full inflated tree; search always runs against this, not the showing screen. */
+        private PreferenceScreen mRootScreen;
+        private final List<SearchEntry> mSearchIndex = new ArrayList<SearchEntry>();
+        /** Target key -> chain of sub-screen keys from the root. */
+        private final Map<String, List<String>> mSearchChains = new HashMap<String, List<String>>();
+        /** Non-null while the results screen is showing. */
+        private PreferenceScreen mSearchResults;
+
+        private static final class SearchEntry {
+            final String key;
+            final String title;
+            final String detail;
+            final List<String> chain;
+
+            SearchEntry(String key, String title, String detail, List<String> chain) {
+                this.key = key;
+                this.title = title;
+                this.detail = detail;
+                this.chain = chain;
+            }
+        }
+
+        /** Called once the engine-backed tree exists; indexes every titled row. */
+        void onRootScreenReady(PreferenceScreen root) {
+            mRootScreen = root;
+            mSearchIndex.clear();
+            mSearchChains.clear();
+            if (root != null) {
+                walkSearchTree(root, new ArrayList<String>(), root.getTitle());
+            }
+        }
+
+        private void walkSearchTree(androidx.preference.PreferenceGroup group,
+                List<String> chain, CharSequence crumb) {
+            for (int i = 0; i < group.getPreferenceCount(); i++) {
+                final Preference p = group.getPreference(i);
+                if (p == null || !p.isVisible() || p.getTitle() == null) {
+                    continue;
+                }
+                if (p instanceof PreferenceScreen) {
+                    final List<String> sub = new ArrayList<String>(chain);
+                    sub.add(p.getKey());
+                    final String detail = crumb != null ? crumb.toString() : "";
+                    mSearchIndex.add(new SearchEntry(p.getKey(), p.getTitle().toString(), detail, sub));
+                    mSearchChains.put(p.getKey(), sub);
+                    walkSearchTree((PreferenceScreen) p, sub, p.getTitle());
+                } else {
+                    if (p.getKey() == null || p.getKey().startsWith(SEARCH_RESULT_PREFIX)) {
+                        continue;
+                    }
+                    CharSequence summary = p.getSummary();
+                    final String detail = (summary != null ? summary.toString() + " • " : "")
+                            + (crumb != null ? crumb.toString() : "");
+                    mSearchIndex.add(new SearchEntry(p.getKey(), p.getTitle().toString(), detail, chain));
+                    if (!mSearchChains.containsKey(p.getKey())) {
+                        mSearchChains.put(p.getKey(), chain);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Filters the whole tree for {@code query} and shows the matches.
+         * Returns true when the query was consumed (including "not ready").
+         */
+        boolean setSearchQuery(String query) {
+            final String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
+            if (q.isEmpty()) {
+                clearSearchQuery();
+                return true;
+            }
+            if (mRootScreen == null || !isAdded()) {
+                final Activity activity = getActivity();
+                if (activity != null) {
+                    Toast.makeText(activity, R.string.search_not_ready, Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+            // Reindex every query: rows reveal and hide as settings change
+            // (e.g. the custom intonation group), and the index is ~60 rows.
+            onRootScreenReady(mRootScreen);
+            final List<SearchEntry> matches = new ArrayList<SearchEntry>();
+            for (SearchEntry e : mSearchIndex) {
+                if (matches.size() >= SEARCH_MAX_RESULTS) {
+                    break;
+                }
+                final String haystack = (e.title + "\n" + e.detail).toLowerCase(Locale.ROOT);
+                if (haystack.contains(q)) {
+                    matches.add(e);
+                }
+            }
+            final PreferenceScreen current = getPreferenceScreen();
+            if (mSearchResults == null && current != null) {
+                mScreenStack.push(current);
+            }
+            final PreferenceScreen results =
+                    getPreferenceManager().createPreferenceScreen(requireContext());
+            results.setTitle(getString(R.string.search_results_title)
+                    + " (" + matches.size() + ")");
+            if (matches.isEmpty()) {
+                final Preference empty = new Preference(requireContext());
+                empty.setTitle(R.string.search_no_match);
+                empty.setSelectable(false);
+                results.addPreference(empty);
+            } else {
+                for (SearchEntry e : matches) {
+                    final Preference row = new Preference(requireContext());
+                    row.setKey(SEARCH_RESULT_PREFIX + e.key);
+                    row.setTitle(e.title);
+                    row.setSummary(e.detail);
+                    results.addPreference(row);
+                }
+            }
+            mSearchResults = results;
+            setPreferenceScreen(results);
+            updateTitle();
+            return true;
+        }
+
+        /** Leaves the results screen, returning to the screen search replaced. */
+        void clearSearchQuery() {
+            if (mSearchResults == null) {
+                return;
+            }
+            mSearchResults = null;
+            popToParent();
+        }
+
+        /** Follows one search result to its row: root, down its chain, scroll. */
+        private void navigateToSearchResult(String targetKey) {
+            final List<String> chain = mSearchChains.get(targetKey);
+            mSearchResults = null;
+            // Silent reset, not popToParent(): each pop would announce and
+            // refocus, so following one result would chatter through every
+            // screen on the way back to the root.
+            PreferenceScreen current = getPreferenceScreen();
+            PreferenceScreen parent;
+            while ((parent = mScreenStack.poll()) != null) {
+                current = parent;
+            }
+            if (current == null || chain == null) {
+                return;
+            }
+            for (String screenKey : chain) {
+                final Preference next = current.findPreference(screenKey);
+                if (!(next instanceof PreferenceScreen)) {
+                    return;
+                }
+                mScreenStack.push(current);
+                current = (PreferenceScreen) next;
+            }
+            setPreferenceScreen(current);
+            updateTitle();
+            scrollToKey(targetKey);
         }
 
         private void updateTitle() {
@@ -651,11 +983,17 @@ public class TtsSettingsActivity extends AppCompatActivity {
          */
         @SuppressWarnings("deprecation")
         private void announceScreenTitle(CharSequence title) {
+            announce(title);
+        }
+
+        /** One-shot polite announcement through the preference list view. */
+        @SuppressWarnings("deprecation")
+        void announce(CharSequence text) {
             View list = getView() != null
                     ? getView().findViewById(androidx.preference.R.id.recycler_view)
                     : null;
-            if (list != null && title != null) {
-                list.announceForAccessibility(title);
+            if (list != null && text != null) {
+                list.announceForAccessibility(text);
             }
         }
 
@@ -1001,8 +1339,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         if (isGone(context) || !fragment.isAdded()) {
                             return;
                         }
-                        fragment.setPreferenceScreen(buildPreferences(context,
-                                fragment.getPreferenceManager(), engine, voices, isWatch));
+                        final PreferenceScreen root = buildPreferences(context,
+                                (PrefsEspeakFragment) fragment,
+                                fragment.getPreferenceManager(), engine, voices, isWatch);
+                        fragment.setPreferenceScreen(root);
+                        ((PrefsEspeakFragment) fragment).onRootScreenReady(root);
+                        maybeShowWhatsNew(context);
                     });
                 } catch (Throwable t) {
                     // The engine probe (native lib load, phondata, JNI voice
@@ -1058,7 +1400,174 @@ public class TtsSettingsActivity extends AppCompatActivity {
     }
 
     private static void playTestVoice(final Context context) {
+        // The sample itself is the confirmation once it starts, but there is
+        // a beat of TTS-init silence first; the toast tells TalkBack the tap
+        // registered instead of leaving the user wondering.
+        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         speakPreview(context, context.getString(R.string.test_voice_sample), "sample_utterance");
+    }
+
+    /**
+     * Speaks {@code text} in {@code locale} through the preview engine, then
+     * restores the engine's previous voice. Used by the language picker's
+     * touch-and-hold sample: the preview engine otherwise speaks everything
+     * in the current settings voice, which would make every sample sound the
+     * same. Restoration runs on utterance completion with a timeout fallback,
+     * so a dropped callback cannot leave the preview engine (and the next
+     * test-voice tap) stuck in the sampled language.
+     */
+    public static void speakPreviewInLanguage(final Context context, final String text,
+            final java.util.Locale locale, final String utteranceId) {
+        ensurePreviewEngine(context, new Runnable() {
+            @Override public void run() {
+                if (sTts == null) return;
+                android.speech.tts.Voice previous = null;
+                try {
+                    previous = sTts.getVoice();
+                } catch (Exception ignored) {
+                }
+                final android.speech.tts.Voice restoreTo = previous;
+                try {
+                    sTts.setOnUtteranceProgressListener(new android.speech.tts.UtteranceProgressListener() {
+                        @Override public void onStart(String id) {
+                        }
+
+                        @Override public void onDone(String id) {
+                            restorePreviewVoice(restoreTo);
+                        }
+
+                        @Override public void onError(String id) {
+                            restorePreviewVoice(restoreTo);
+                        }
+
+                        @Override public void onError(String id, int errorCode) {
+                            restorePreviewVoice(restoreTo);
+                        }
+                    });
+                } catch (Exception ignored) {
+                }
+                try {
+                    sTts.setLanguage(locale);
+                } catch (Exception e) {
+                    restorePreviewVoice(restoreTo);
+                    return;
+                }
+                sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+                // Timeout fallback: no callback (or a slow engine init) must
+                // not strand the preview voice. Harmless if onDone already ran.
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override public void run() {
+                        restorePreviewVoice(restoreTo);
+                    }
+                }, 8000);
+            }
+        });
+    }
+
+    private static void restorePreviewVoice(android.speech.tts.Voice voice) {
+        if (sTts == null) return;
+        try {
+            if (voice != null) {
+                sTts.setVoice(voice);
+            } else {
+                sTts.setLanguage(java.util.Locale.getDefault());
+            }
+        } catch (Exception ignored) {
+        }
+        try {
+            sTts.setOnUtteranceProgressListener(null);
+        } catch (Exception ignored) {
+        }
+    }
+
+    /** Runs {@code after} once the lazily-initialized preview engine exists. */
+    private static void ensurePreviewEngine(final Context context, final Runnable after) {
+        if (sTts != null) {
+            after.run();
+            return;
+        }
+        sTts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    after.run();
+                }
+            }
+        }, context.getPackageName());
+    }
+
+    /**
+     * Marks an AlertDialog's title as a heading (API 28+) so TalkBack users
+     * can jump to it with heading navigation, matching the preference
+     * categories and the about dialog's own headings. No-op when the dialog
+     * has no title view yet (called before show()).
+     */
+    public static void markAlertTitleHeading(AlertDialog dialog) {
+        if (dialog == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            return;
+        }
+        try {
+            View title = dialog.findViewById(androidx.appcompat.R.id.alertTitle);
+            if (title != null) {
+                title.setAccessibilityHeading(true);
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    // Voice profiles: named files holding variant, rate, pitch, pitch range,
+    // volume and punctuation, so users can share NVDA-style voice setups.
+    // Full settings stay in backup/restore; profiles are the small sharable
+    // slice. Unknown keys in a profile are ignored, so old profiles load on
+    // newer app versions and newer profiles degrade on older ones.
+
+    private static void exportProfileUri(final Activity activity, final Uri uri) {
+        runInBackground("profile-export", new BackgroundWork<Boolean>() {
+            @Override public Boolean run() {
+                boolean ok = false;
+                try (OutputStream os = activity.getContentResolver().openOutputStream(uri)) {
+                    if (os != null) {
+                        VoiceProfile.saveToStream(activity, os);
+                        ok = true;
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Profile export failed", e);
+                }
+                return ok;
+            }
+        }, new BackgroundDone<Boolean>() {
+            @Override public void done(Boolean done) {
+                if (isGone(activity)) return;
+                Toast.makeText(activity,
+                        done ? R.string.profile_saved : R.string.profile_save_failed,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private static void importProfileUri(final Activity activity, final Uri uri) {
+        runInBackground("profile-import", new BackgroundWork<Boolean>() {
+            @Override public Boolean run() {
+                try (InputStream is = activity.getContentResolver().openInputStream(uri)) {
+                    if (is != null) {
+                        return VoiceProfile.loadFromStream(activity, is);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Profile import failed", e);
+                }
+                return false;
+            }
+        }, new BackgroundDone<Boolean>() {
+            @Override public void done(Boolean done) {
+                if (isGone(activity)) return;
+                Toast.makeText(activity,
+                        done ? R.string.profile_applied : R.string.profile_load_failed,
+                        Toast.LENGTH_SHORT).show();
+                if (done) {
+                    activity.recreate();
+                }
+            }
+        });
     }
 
     private static void showAboutDialog(final Context context) {
@@ -1098,6 +1607,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
 
+        dialog.setOnShowListener(d -> markAlertTitleHeading(dialog));
+
         Button btnGithub = aboutView.findViewById(R.id.btn_about_github);
         if (btnGithub != null) {
 btnGithub.setOnClickListener(new View.OnClickListener() {
@@ -1119,6 +1630,45 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         dialog.show();
     }
 
+    /**
+     * Recent reading: re-hear what the engine said. Entries are stored
+     * snippets (see {@link ReadingHistory}); tapping one speaks it through
+     * the preview engine with the current settings.
+     */
+    static void showRecentReadingDialog(final Context context) {
+        final SharedPreferences prefs = getPrefs();
+        final List<ReadingHistory.Entry> items = ReadingHistory.get(prefs);
+        if (items.isEmpty()) {
+            new MaterialAlertDialogBuilder(context)
+                    .setTitle(R.string.setting_recent_reading)
+                    .setMessage(R.string.history_empty)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+            return;
+        }
+        // setItems rows announce their title only; the snippet itself
+        // identifies each entry, so voice/time stay out of the tree.
+        final CharSequence[] titles = new CharSequence[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            titles[i] = items.get(i).text;
+        }
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.setting_recent_reading)
+                .setItems(titles, (d, which) -> {
+                    if (which >= 0 && which < items.size()) {
+                        speakPreview(context, items.get(which).text, "history_rehear");
+                    }
+                })
+                .setNeutralButton(R.string.history_clear, (d, which) -> {
+                    ReadingHistory.clear(prefs);
+                    Toast.makeText(context, R.string.history_cleared, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.dict_back, null)
+                .create();
+        dialog.setOnShowListener(d -> markAlertTitleHeading(dialog));
+        dialog.show();
+    }
+
     /** Keys of the action rows in res/xml/preferences.xml (no stored value). */
     private static final String KEY_TEST_VOICE = "action_test_voice";
 
@@ -1127,7 +1677,9 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
      * (voice parameters, the language list). Runs on the main thread once
      * createPreferences() has loaded the engine.
      */
-    private static PreferenceScreen buildPreferences(final Context context, PreferenceManager pm,
+    private static PreferenceScreen buildPreferences(final Context context,
+                                                     final PrefsEspeakFragment fragment,
+                                                     PreferenceManager pm,
                                                      SpeechSynthesis engine, List<Voice> voices,
                                                      boolean isWatch) {
         final SharedPreferences prefs = getPrefs();
@@ -1168,6 +1720,9 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                     VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_SPOKEN_DIACRITICS,
                     VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.PREF_SIMPLIFY_URLS,
+                    "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER,
+                    "action_save_profile", "action_load_profile",
+                    VoiceSettings.PREF_READING_HISTORY, "action_recent_reading",
                     "category_presets", "category_data"}) {
                 screen.removePreferenceRecursively(key);
             }
@@ -1241,13 +1796,216 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         // TalkBack stop that reads "disabled" and does nothing.
         showWhile(screen, VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.PREF_INTONATION_GROUP,
                 value -> VoiceSettings.INTONATION_CUSTOM.equals(value),
-                prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL));
+                prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL),
+                fragment, context.getString(R.string.setting_intonation_group_shown));
+
+        // Human-phrase summaries where the entry text alone lacks context.
+        setThresholdSummary(screen, context, prefs);
+        setBoostSummary(screen, context, prefs);
+
+        if (isWatch) {
+            // The removals above silently drop phone-only rows; say so once,
+            // or watch users hunt for settings that were never there.
+            final Preference note = new Preference(context);
+            note.setKey("note_wear_limited");
+            note.setTitle(R.string.note_wear_limited_title);
+            note.setSummary(R.string.note_wear_limited_summary);
+            note.setSelectable(false);
+            screen.addPreference(note);
+        } else {
+            configureSleepTimer(context, screen, prefs);
+            onClick(screen, "action_favorite_voices", () ->
+                    FavoriteVoicesDialogFragment.show(context, voices));
+            onClick(screen, "action_save_profile", () -> {
+                final Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("application/json");
+                i.putExtra(Intent.EXTRA_TITLE, "espeak_voice_profile.json");
+                startForResult(context, i, REQUEST_CODE_EXPORT_PROFILE);
+            });
+            onClick(screen, "action_load_profile", () -> {
+                final Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("application/json");
+                startForResult(context, i, REQUEST_CODE_IMPORT_PROFILE);
+            });
+            onClick(screen, "action_recent_reading", () ->
+                    showRecentReadingDialog(context));
+            refreshFavoritesSummary(screen, prefs);
+        }
         return screen;
+    }
+
+    /**
+     * "Group in threes from N digits": the entry text ("7 digits") names the
+     * threshold but not what it thresholds.
+     */
+    private static void setThresholdSummary(PreferenceScreen screen, Context context,
+                                            SharedPreferences prefs) {
+        final ListPreference pref = screen.findPreference(VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD);
+        if (pref == null) {
+            return; // dropped on Wear
+        }
+        final VoiceSettings settings = new VoiceSettings(prefs, null);
+        pref.setSummary(context.getString(R.string.summary_digit_threshold,
+                settings.getDigitGroupThreshold()));
+        pref.setOnPreferenceChangeListener((p, value) -> {
+            try {
+                int v = Integer.parseInt(String.valueOf(value));
+                if (v < 4) v = 4;
+                if (v > 12) v = 12;
+                p.setSummary(context.getString(R.string.summary_digit_threshold, v));
+            } catch (NumberFormatException ignored) {
+            }
+            return true;
+        });
+    }
+
+    /**
+     * "3× the normal maximum speed": the entry text ("3×") names the
+     * multiplier but not what it multiplies.
+     */
+    private static void setBoostSummary(PreferenceScreen screen, Context context,
+                                        SharedPreferences prefs) {
+        final ListPreference pref = screen.findPreference(VoiceSettings.PREF_RATE_BOOST_LEVEL);
+        if (pref == null) {
+            return; // dropped on Wear
+        }
+        updateBoostSummary(context, pref, prefs.getString(
+                VoiceSettings.PREF_RATE_BOOST_LEVEL, VoiceSettings.RATE_BOOST_OFF));
+        pref.setOnPreferenceChangeListener((p, value) -> {
+            updateBoostSummary(context, (ListPreference) p, String.valueOf(value));
+            return true;
+        });
+    }
+
+    private static void updateBoostSummary(Context context, ListPreference pref, String value) {
+        if (value == null || VoiceSettings.RATE_BOOST_OFF.equals(value)) {
+            pref.setSummary(context.getString(R.string.setting_off));
+        } else {
+            pref.setSummary(context.getString(R.string.summary_rate_boost_on, value));
+        }
+    }
+
+    /**
+     * Sleep timer choices, generated like the rate-boost list so the UI
+     * cannot drift from {@link VoiceSettings#SLEEP_MAX_MINUTES}. Arming
+     * applies the mute a few seconds later (not instantly): the "pausing"
+     * toast must itself be spoken first, and it travels through the very
+     * engine about to go silent. Clearing the timer unmutes at once.
+     */
+    private static void configureSleepTimer(final Context context, PreferenceScreen screen,
+                                            final SharedPreferences prefs) {
+        final ListPreference pref = screen.findPreference(VoiceSettings.PREF_SLEEP_TIMER);
+        if (pref == null) {
+            return; // dropped on Wear
+        }
+        final int[] options = {15, 30, 45, 60};
+        final CharSequence[] entries = new CharSequence[options.length + 1];
+        final CharSequence[] values = new CharSequence[options.length + 1];
+        entries[0] = context.getString(R.string.setting_off);
+        values[0] = VoiceSettings.SLEEP_OFF;
+        for (int i = 0; i < options.length; i++) {
+            entries[i + 1] = context.getResources().getQuantityString(
+                    R.plurals.sleep_minutes, options[i], options[i]);
+            values[i + 1] = Integer.toString(options[i]);
+        }
+        pref.setEntries(entries);
+        pref.setEntryValues(values);
+        updateSleepSummary(context, pref, prefs);
+        pref.setOnPreferenceChangeListener((p, value) -> {
+            final String v = String.valueOf(value);
+            if (VoiceSettings.SLEEP_OFF.equals(v)) {
+                VoiceSettings.clearSleepMute(prefs);
+                Toast.makeText(context, R.string.sleep_timer_resumed, Toast.LENGTH_SHORT).show();
+            } else {
+                int minutes;
+                try {
+                    minutes = Math.min(VoiceSettings.SLEEP_MAX_MINUTES, Math.max(1,
+                            Integer.parseInt(v)));
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+                Toast.makeText(context, R.string.sleep_timer_armed, Toast.LENGTH_SHORT).show();
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> VoiceSettings.armSleepMute(prefs, minutes), 3000);
+            }
+            updateSleepSummary(context, (ListPreference) p, prefs);
+            // The persisted duration is written by the preference itself;
+            // refresh the summary again once a delayed arm lands.
+            new Handler(Looper.getMainLooper()).postDelayed(
+                    () -> updateSleepSummary(context, (ListPreference) p, prefs), 3500);
+            return true;
+        });
+    }
+
+    private static void updateSleepSummary(Context context, ListPreference pref,
+                                           SharedPreferences prefs) {
+        if (VoiceSettings.isSleepMuted(prefs)) {
+            final long until = prefs.getLong(VoiceSettings.PREF_SLEEP_MUTE_UNTIL, 0);
+            final String time = android.text.format.DateFormat.getTimeFormat(context)
+                    .format(new java.util.Date(until));
+            pref.setSummary(context.getString(R.string.sleep_paused_until, time));
+        } else {
+            pref.setSummary(context.getString(R.string.setting_sleep_timer_summary));
+        }
+    }
+
+    /**
+     * One-time "what's new" after an update: the stored version trails the
+     * package version on first launch of a new APK. Shown once the engine
+     * tree exists (so it never blocks the loading path), skipped on failure
+     * to keep the screen usable.
+     */
+    private static void maybeShowWhatsNew(final Context context) {
+        try {
+            final int current;
+            try {
+                current = context.getPackageManager()
+                        .getPackageInfo(context.getPackageName(), 0).versionCode;
+            } catch (PackageManager.NameNotFoundException e) {
+                return;
+            }
+            final SharedPreferences prefs = getPrefs();
+            if (prefs.getInt(VoiceSettings.PREF_WHATS_NEW_SEEN, 0) >= current) {
+                return;
+            }
+            if (isGone(context)) {
+                return;
+            }
+            final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                    .setTitle(R.string.whats_new_title)
+                    .setMessage(R.string.whats_new_body)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .create();
+            dialog.setOnDismissListener(d ->
+                    prefs.edit().putInt(VoiceSettings.PREF_WHATS_NEW_SEEN, current).apply());
+            dialog.show();
+            markAlertTitleHeading(dialog);
+        } catch (Throwable t) {
+            Log.w(TAG, "What's-new skipped", t);
+        }
+    }
+
+    /** Favorites summary: how many voices are pinned, for sighted scanners. */
+    public static void refreshFavoritesSummary(PreferenceScreen screen, SharedPreferences prefs) {
+        final Preference pref = screen.findPreference("action_favorite_voices");
+        if (pref == null) {
+            return;
+        }
+        final int count = LanguageSettings.getFavoriteVoices(prefs).size();
+        if (count == 0) {
+            pref.setSummary(pref.getContext().getString(R.string.favorites_summary_none));
+        } else {
+            pref.setSummary(pref.getContext().getResources().getQuantityString(
+                    R.plurals.favorites_summary, count, count));
+        }
     }
 
     /** Shows {@code childKey} only while {@code parentKey}'s value passes {@code shown}. */
     private static void showWhile(PreferenceScreen screen, String parentKey, String childKey,
-                                  java.util.function.Predicate<Object> shown, Object current) {
+                                  java.util.function.Predicate<Object> shown, Object current,
+                                  PrefsEspeakFragment fragment, String revealAnnouncement) {
         final Preference parent = screen.findPreference(parentKey);
         final Preference child = screen.findPreference(childKey);
         if (parent == null || child == null) {
@@ -1255,7 +2013,13 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         }
         child.setVisible(shown.test(current));
         parent.setOnPreferenceChangeListener((p, value) -> {
-            child.setVisible(shown.test(value));
+            final boolean show = shown.test(value);
+            child.setVisible(show);
+            // The revealed row sits elsewhere on this screen; say so, or a
+            // TalkBack user toggling the parent never learns it appeared.
+            if (show && revealAnnouncement != null && fragment != null && fragment.isAdded()) {
+                fragment.announce(revealAnnouncement);
+            }
             return true;
         });
     }
@@ -1337,14 +2101,21 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
 
         final CharSequence[] entries = new CharSequence[sortedVoices.size()];
         final CharSequence[] entryValues = new CharSequence[sortedVoices.size()];
+        final Map<String, java.util.Locale> locales = new HashMap<String, java.util.Locale>();
         int index = 0;
         for (Voice voice : sortedVoices) {
             entries[index] = labels.get(voice);
             entryValues[index] = voice.toString();
+            if (voice.locale != null) {
+                locales.put(voice.toString(), voice.locale);
+            }
             ++index;
         }
         pref.setEntries(entries);
         pref.setEntryValues(entryValues);
+        // Touch-and-hold samples speak through these locales, not the
+        // current settings voice (which would make every sample identical).
+        pref.setLocales(locales);
 
         Set<String> selected = LanguageSettings.getSelectedLanguages(getPrefs());
         if (selected == null) {

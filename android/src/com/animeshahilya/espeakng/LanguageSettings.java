@@ -25,8 +25,30 @@ import java.util.Set;
 
 public final class LanguageSettings {
     public static final String PREF_SUPPORTED_LANGUAGES = "espeak_supported_languages";
+    /**
+     * Favorite voices, pinned to the top of the system voice list. Stored as
+     * voice identifiers ({@link Voice#toString()}). A favorite for a voice
+     * that is filtered out or gone after an update is ignored, never an error.
+     */
+    public static final String PREF_FAVORITE_VOICES = "espeak_favorite_voices";
 
     private LanguageSettings() {
+    }
+
+    public static Set<String> getFavoriteVoices(SharedPreferences preferences) {
+        if (!preferences.contains(PREF_FAVORITE_VOICES)) {
+            return new HashSet<String>();
+        }
+        final Set<String> stored = preferences.getStringSet(PREF_FAVORITE_VOICES, null);
+        final Set<String> favorites = new HashSet<String>();
+        if (stored != null) {
+            for (String s : stored) {
+                if (s != null && !s.isEmpty()) {
+                    favorites.add(s);
+                }
+            }
+        }
+        return favorites;
     }
 
     public static Set<String> getSelectedLanguages(SharedPreferences preferences) {

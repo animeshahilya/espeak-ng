@@ -46,17 +46,45 @@
         android:background="@drawable/badge_chip_background"
         android:accessibilityLiveRegion="polite" />
 
-    <!-- Language list with custom styled items -->
-    <ListView
-        android:id="@+id/supported_languages_list"
+    <!-- Touch-and-hold discovery: one quiet stop, not announced repeatedly. -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/content_gap"
+        android:text="@string/languages_sample_hint"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:choiceMode="multipleChoice"
-        android:divider="@null"
-        android:listSelector="@drawable/list_item_selector"
-        android:paddingTop="@dimen/tight_gap"
-        android:paddingBottom="@dimen/tight_gap" />
+        android:layout_weight="1">
+
+        <!-- Language list with custom styled items -->
+        <ListView
+            android:id="@+id/supported_languages_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:choiceMode="multipleChoice"
+            android:divider="@null"
+            android:listSelector="@drawable/list_item_selector"
+            android:paddingTop="@dimen/tight_gap"
+            android:paddingBottom="@dimen/tight_gap" />
+
+        <!-- No-match state: polite live region, like the dictionary's. -->
+        <TextView
+            android:id="@+id/languages_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/screen_padding"
+            android:text="@string/languages_no_match"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:accessibilityLiveRegion="polite"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
     <!-- Bulk action buttons -->
     <LinearLayout

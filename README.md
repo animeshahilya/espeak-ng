@@ -57,9 +57,11 @@ On top of that there are a few extras NVDA doesn't have, such as money and code 
 
 ### Voice and language
 
-- **Languages**: choose which of the 153 languages show up in Android's voice list. Includes a search box.
+- **Languages**: choose which of the 153 languages show up in Android's voice list. Includes a search box. Touch and hold a language to hear a sample of it.
+- **Favorite voices**: pin voices to the top of the voice list.
 - **Voice variant**: male 1–8, female 1–6, Klatt, about 170 character voices (such as Max and Edward), young, old, croak and whisper.
 - **Test voice**: hear what your current settings sound like.
+- **Settings search**: find any setting from the top bar. Results jump straight to the matching row.
 
 ### Voice
 
@@ -95,9 +97,13 @@ On top of that there are a few extras NVDA doesn't have, such as money and code 
 
 Stops other apps from changing your **rate**, **pitch** or **volume**.
 
+- **Sleep timer**: pause all speech for 15–60 minutes, then resume automatically. Open settings and choose Off to cancel early.
+
 ### Tools
 
 - **Recommended defaults**, which restores the settings with one tap.
+- **Voice profiles**: save your variant, rate, pitch and punctuation as a file, and load profiles shared by others.
+- **Reading history** (off by default): keeps recently spoken text on your device so you can re-hear it from **Recent reading**. Short codes and markup are never kept.
 - **Backup and restore** of all settings plus your dictionary, as one file.
 - **Export log**, which shares a troubleshooting log. No storage permission is needed.
 - **Import voice**, which adds voice or dictionary data from a file.

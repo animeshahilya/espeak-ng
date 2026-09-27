@@ -156,7 +156,8 @@ public class PreferenceStorageTest
                 VoiceSettings.PREF_SPOKEN_DIACRITICS, VoiceSettings.PREF_EMOJI_PROCESSING,
                 VoiceSettings.PREF_SIMPLIFY_URLS, VoiceSettings.PREF_EMPHASIZE_QUESTIONS,
                 VoiceSettings.PREF_FORCE_RATE, VoiceSettings.PREF_FORCE_PITCH,
-                VoiceSettings.PREF_FORCE_VOLUME,
+                VoiceSettings.PREF_FORCE_VOLUME, VoiceSettings.PREF_SLEEP_TIMER,
+                VoiceSettings.PREF_READING_HISTORY,
         };
         try (ActivityScenario<TtsSettingsActivity> scenario =
                 ActivityScenario.launch(TtsSettingsActivity.class)) {

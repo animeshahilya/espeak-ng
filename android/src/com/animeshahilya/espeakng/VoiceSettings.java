@@ -615,4 +615,60 @@ public class VoiceSettings {
     public boolean isSimplifyUrlsEnabled() {
         return mPreferences.getBoolean(PREF_SIMPLIFY_URLS, false);
     }
+
+    // Sleep timer: pause all eSpeak speech until a deadline.
+    //
+    // A TTS engine cannot "stop after the current book" the way a player app
+    // can: every utterance arrives as a fresh client request, so the only
+    // honest engine-side semantic is a mute window with a guaranteed expiry.
+    // While muted, requests complete as successful empty utterances (the same
+    // shape as the blank-text fast path), never errors, so screen readers do
+    // not surface failures. The window is bounded (max 60 minutes) and the
+    // settings screen always offers Off to cancel early.
+    public static final String PREF_SLEEP_TIMER = "espeak_sleep_timer";
+    public static final String SLEEP_OFF = "off";
+    /** Internal: wall-clock millis when the mute window ends. Not a UI row. */
+    public static final String PREF_SLEEP_MUTE_UNTIL = "espeak_sleep_mute_until";
+    public static final int SLEEP_MAX_MINUTES = 60;
+
+    /** Configured duration in minutes, or 0 for off/malformed. */
+    public int getSleepTimerMinutes() {
+        String raw = mPreferences.getString(PREF_SLEEP_TIMER, SLEEP_OFF);
+        if (raw == null || SLEEP_OFF.equals(raw)) {
+            return 0;
+        }
+        try {
+            int minutes = Integer.parseInt(raw);
+            if (minutes <= 0) return 0;
+            return Math.min(minutes, SLEEP_MAX_MINUTES);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /** True while the mute window covers now; expired windows read as off. */
+    public static boolean isSleepMuted(SharedPreferences prefs) {
+        return prefs.getLong(PREF_SLEEP_MUTE_UNTIL, 0) > System.currentTimeMillis();
+    }
+
+    /** Arms a mute window {@code minutes} out; returns the deadline millis. */
+    public static long armSleepMute(SharedPreferences prefs, int minutes) {
+        long until = System.currentTimeMillis() + Math.max(1, minutes) * 60000L;
+        prefs.edit().putLong(PREF_SLEEP_MUTE_UNTIL, until).apply();
+        return until;
+    }
+
+    public static void clearSleepMute(SharedPreferences prefs) {
+        prefs.edit().remove(PREF_SLEEP_MUTE_UNTIL).apply();
+    }
+
+    // Reading history (opt-in): keep recently spoken text on this device.
+    public static final String PREF_READING_HISTORY = "espeak_reading_history";
+
+    public boolean isReadingHistoryEnabled() {
+        return mPreferences.getBoolean(PREF_READING_HISTORY, false);
+    }
+
+    // What's-new dialog: last version code the user has seen. Not a UI row.
+    public static final String PREF_WHATS_NEW_SEEN = "espeak_whats_new_seen";
 }

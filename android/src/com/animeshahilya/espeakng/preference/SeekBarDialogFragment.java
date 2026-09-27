@@ -115,6 +115,12 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
         parameter.mSeekBar = (SeekBar) section.findViewById(R.id.seekBar);
         parameter.mValueText = (TextView) section.findViewById(R.id.valueText);
         parameter.mRateBoost = (CheckBox) section.findViewById(R.id.rateBoost);
+        // The layout carries a title view the old binding never filled, so
+        // every section showed its value with no name above it.
+        final TextView title = (TextView) section.findViewById(R.id.parameterTitle);
+        if (title != null) {
+            title.setText(parameter.title);
+        }
 
         final Button reset = (Button) section.findViewById(R.id.resetToDefault);
         // Every section carries an identically labelled button, so name the
@@ -164,10 +170,18 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
             }
 
             @Override
+            @SuppressWarnings("deprecation")
             public void onStopTrackingTouch(SeekBar seekBar)
             {
                 parameter.dragging = false;
                 preference.persist(parameter);
+                // One confirmation of the settled value on finger-lift.
+                // Per-pixel announcements during the drag come from the
+                // system (or not at all); this mirrors the reset button's
+                // one-shot pattern so the final value is always spoken once.
+                String text = String.format(parameter.formatter,
+                        Integer.toString(preference.getDisplayValue(parameter)));
+                seekBar.announceForAccessibility(parameter.title + ": " + text);
             }
         });
 

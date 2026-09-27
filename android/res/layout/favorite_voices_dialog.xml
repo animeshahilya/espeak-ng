@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Favorite voices: a plain checkbox list. Same item styling and selector
+     as the language picker, so checked rows read and feel identical. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/screen_padding"
+    android:paddingEnd="@dimen/screen_padding"
+    android:paddingTop="@dimen/dialog_padding_top"
+    android:paddingBottom="@dimen/dialog_padding_bottom">
+
+    <ListView
+        android:id="@+id/favorite_voices_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="120dp"
+        android:choiceMode="multipleChoice"
+        android:divider="@null"
+        android:listSelector="@drawable/list_item_selector"
+        android:paddingTop="@dimen/tight_gap"
+        android:paddingBottom="@dimen/tight_gap" />
+
+</FrameLayout>

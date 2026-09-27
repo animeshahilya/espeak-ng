@@ -90,6 +90,8 @@ public class TtsService extends TextToSpeechService {
 
     /** Text handed to eSpeak for the current request. */
     private String mSynthText;
+    /** Caller text as handed to the preprocessor: what reading history keeps. */
+    private String mHistoryText;
     /** Where {@link #mSynthText} starts within the text the caller supplied. */
     private int mSynthTextOffset;
     /** Length of the original text passed by the caller for boundary clamping. */
@@ -167,7 +169,10 @@ public class TtsService extends TextToSpeechService {
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    if (LanguageSettings.PREF_SUPPORTED_LANGUAGES.equals(key)) {
+                    if (LanguageSettings.PREF_SUPPORTED_LANGUAGES.equals(key)
+                            || LanguageSettings.PREF_FAVORITE_VOICES.equals(key)) {
+                        // Favorites only reorder the cached framework list, but
+                        // the same rebuild produces it, so share the path.
                         rebuildAvailableVoices();
                     }
                 }
@@ -472,6 +477,24 @@ public class TtsService extends TextToSpeechService {
                 Set<String> features = onGetFeaturesForLanguage(locale.getLanguage(), locale.getCountry(), locale.getVariant());
                 voices.add(new android.speech.tts.Voice(voice.name, voice.locale, quality, latency, false, features));
             }
+            // Favorite voices lead (in name order) so clients that present
+            // the list top-first surface the user's pins; the rest keep
+            // their existing order. Unknown/stale favorites are ignored.
+            if (mPreferences != null) {
+                final Set<String> favorites = LanguageSettings.getFavoriteVoices(mPreferences);
+                if (!favorites.isEmpty()) {
+                    final List<android.speech.tts.Voice> pinned = new ArrayList<android.speech.tts.Voice>();
+                    final List<android.speech.tts.Voice> rest = new ArrayList<android.speech.tts.Voice>();
+                    for (android.speech.tts.Voice v : voices) {
+                        (favorites.contains(v.getName()) ? pinned : rest).add(v);
+                    }
+                    if (!pinned.isEmpty()) {
+                        Collections.sort(pinned, (a, b) -> a.getName().compareTo(b.getName()));
+                        pinned.addAll(rest);
+                        voices = pinned;
+                    }
+                }
+            }
             mCachedFrameworkVoices = Collections.unmodifiableList(voices);
             return new ArrayList<android.speech.tts.Voice>(voices);
         }
@@ -737,6 +760,19 @@ public class TtsService extends TextToSpeechService {
                 : PreferenceManager.getDefaultSharedPreferences(mStorageContext);
         final VoiceSettings settings = new VoiceSettings(prefs, engine);
 
+        // Sleep timer: while the mute window covers now, complete the request
+        // as a successful empty utterance (the blank-text fast path's shape),
+        // never an error, so clients keep working silently until expiry.
+        if (VoiceSettings.isSleepMuted(prefs)) {
+            if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
+                    != TextToSpeech.SUCCESS) {
+                reportError(callback, TextToSpeech.ERROR_SERVICE);
+            } else {
+                callback.done();
+            }
+            return;
+        }
+
         // Detect SSML before normalizing. Real markup is ASCII, which NFKC
         // leaves untouched, but normalization can turn lookalikes such as a
         // fullwidth "＜ｓｐｅａｋ" into "<speak", and plain text must not
@@ -755,6 +791,7 @@ public class TtsService extends TextToSpeechService {
         final boolean isSingleCharacterUtterance = prep.isSingleCharacterUtterance;
 
         mSynthText = text;
+        mHistoryText = text;
         mSynthTextOffset = textOffset;
         mSynthOffsetMap = offsetMap;
         mSynthTextCodePoints = text.codePointCount(0, text.length());
@@ -968,6 +1005,14 @@ public class TtsService extends TextToSpeechService {
         // reportError() has signaled completion yet (e.g. native synthesis
         // error, empty string, or early stop), finalize here so the framework
         // is never hung waiting for the request to end.
+        //
+        // Reading history (opt-in): what was spoken, for re-hearing later.
+        // Recorded once per completed request; stopped requests and SSML
+        // markup are skipped inside, along with short/code-like text.
+        if (!mIsStopped.get() && mHistoryText != null && !isSsml) {
+            ReadingHistory.record(prefs, mHistoryText, voice != null ? voice.name : null);
+        }
+        mHistoryText = null;
         finishRequest();
     }
 
