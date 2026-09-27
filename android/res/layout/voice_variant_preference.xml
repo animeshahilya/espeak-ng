@@ -9,15 +9,6 @@
     android:paddingTop="@dimen/dialog_padding_top"
     android:paddingBottom="@dimen/dialog_padding_bottom" >
 
-    <!-- Header -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/section_gap"
-        android:text="@string/espeak_variant"
-        android:textAppearance="?attr/textAppearanceTitleMedium"
-        android:textColor="?attr/colorOnSurface"
-        android:textStyle="bold" />
 
     <!-- Category picker -->
     <com.google.android.material.textfield.TextInputLayout

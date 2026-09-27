@@ -116,10 +116,8 @@ public class VoiceVariantDialogFragment extends ButtonDialogFragment {
     }
 
     private ArrayAdapter<String> spinnerAdapter(String[] labels) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, labels);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        return adapter;
+        return new ArrayAdapter<>(requireContext(),
+                com.google.android.material.R.layout.mtrl_auto_complete_simple_item, labels);
     }
 
     @Override

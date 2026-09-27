@@ -163,8 +163,7 @@ final class UserDictionaryScreen {
                 UserDictionary.CATEGORY_CHARACTER };
 
         android.widget.ArrayAdapter<String> filterAdapter = new android.widget.ArrayAdapter<>(context,
-                android.R.layout.simple_spinner_item, filterNames);
-        filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                com.google.android.material.R.layout.mtrl_auto_complete_simple_item, filterNames);
         spFilter.setAdapter(filterAdapter);
 
         int sel = 0;
@@ -600,12 +599,11 @@ final class UserDictionaryScreen {
         categoryLayout.setHint(context.getString(R.string.dict_label_category));
         final MaterialAutoCompleteTextView spCategory = categoryField.findViewById(R.id.dropdown_field);
         android.widget.ArrayAdapter<String> catAdapter = new android.widget.ArrayAdapter<>(context,
-                android.R.layout.simple_spinner_item,
+                com.google.android.material.R.layout.mtrl_auto_complete_simple_item,
                 new String[]{context.getString(R.string.dict_filter_main),
                         context.getString(R.string.dict_filter_root),
                         context.getString(R.string.dict_filter_abbrev),
                         context.getString(R.string.dict_filter_character)});
-        catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCategory.setAdapter(catAdapter);
         spCategory.setText(catAdapter.getItem(preCatIndex), false);
         LinearLayout.LayoutParams spLp = new LinearLayout.LayoutParams(
@@ -614,7 +612,8 @@ final class UserDictionaryScreen {
         categoryField.setLayoutParams(spLp);
         layout.addView(categoryField);
 
-        final CheckBox cbWholeWord = new CheckBox(context);
+        final com.google.android.material.checkbox.MaterialCheckBox cbWholeWord =
+                new com.google.android.material.checkbox.MaterialCheckBox(context);
         cbWholeWord.setText(R.string.dict_whole_word);
         cbWholeWord.setContentDescription(context.getString(R.string.dict_whole_word) + ". "
                 + context.getString(R.string.dict_whole_word_summary));
@@ -622,14 +621,16 @@ final class UserDictionaryScreen {
         cbWholeWord.setMinimumHeight(minTouch);
         layout.addView(cbWholeWord);
 
-        final CheckBox cbCaseSensitive = new CheckBox(context);
+        final com.google.android.material.checkbox.MaterialCheckBox cbCaseSensitive =
+                new com.google.android.material.checkbox.MaterialCheckBox(context);
         cbCaseSensitive.setText(R.string.dict_case_sensitive);
         cbCaseSensitive.setContentDescription(context.getString(R.string.dict_case_sensitive));
         cbCaseSensitive.setChecked(existing != null && existing.isCaseSensitive());
         cbCaseSensitive.setMinimumHeight(minTouch);
         layout.addView(cbCaseSensitive);
 
-        final CheckBox cbRegex = new CheckBox(context);
+        final com.google.android.material.checkbox.MaterialCheckBox cbRegex =
+                new com.google.android.material.checkbox.MaterialCheckBox(context);
         cbRegex.setText(R.string.dict_regex);
         cbRegex.setContentDescription(context.getString(R.string.dict_regex) + ". "
                 + context.getString(R.string.dict_regex_summary));

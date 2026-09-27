@@ -1625,12 +1625,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
 
         final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.about_title)
                 .setView(aboutView)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
-
-        dialog.setOnShowListener(d -> markAlertTitleHeading(dialog));
 
         Button btnGithub = aboutView.findViewById(R.id.btn_about_github);
         if (btnGithub != null) {

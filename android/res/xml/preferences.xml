@@ -317,7 +317,7 @@
         android:key="action_favorite_voices"
         android:title="@string/setting_favorite_voices"
         android:summary="@string/setting_favorite_voices_summary"
-        android:icon="@drawable/ic_language" />
+        android:icon="@drawable/ic_star" />
   </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 
   <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
