@@ -924,13 +924,9 @@ public class TtsService extends TextToSpeechService {
         // swipes just queue short bounded units instead of one unbounded
         // synth call. SSML is never chunked: splitting markup across units
         // would corrupt it.
-        List<String> units = new ArrayList<>();
-        List<Voice> unitVoices = new ArrayList<>();
-        List<Integer> unitBases = new ArrayList<>();
+        final List<SynthUnit> units = new ArrayList<>();
         if (isSsml) {
-            units.add(text);
-            unitVoices.add(voice);
-            unitBases.add(0);
+            units.add(new SynthUnit(text, voice, 0));
         } else {
             // No setVoice() here: the call at the top of setup already
             // applied this exact voice+variant (SpeechSynthesis memoizes it),
@@ -946,43 +942,38 @@ public class TtsService extends TextToSpeechService {
                     }
                     if (i > start) {
                         String piece = chunk.substring(start, i);
-                        units.add(piece);
-                        unitVoices.add(voice);
-                        unitBases.add(base);
+                        units.add(new SynthUnit(piece, voice, base));
                         base += piece.codePointCount(0, piece.length());
                     }
                     if (i < chunk.length()) {
-                        units.add(chunk.substring(i, i + 1));
-                        unitVoices.add(voice);
-                        unitBases.add(base);
+                        units.add(new SynthUnit(chunk.substring(i, i + 1), voice, base));
                         base++;
                     }
                     start = i + 1;
                 }
             }
             if (units.isEmpty()) {
-                units.add("");
-                unitVoices.add(voice);
-                unitBases.add(0);
+                units.add(new SynthUnit("", voice, 0));
             }
         }
 
-        if (units.size() > 1 || isEarconUnit(units.get(0))) {
+        if (units.size() > 1 || units.get(0).isEarcon()) {
             mSegmentsRemaining.set(units.size());
             for (int ui = 0; ui < units.size(); ui++) {
                 if (mIsStopped.get()) {
                     break;
                 }
-                if (isEarconUnit(units.get(ui))) {
-                    mSynthCallback.onSynthDataReady(Earcons.pcm(units.get(ui).charAt(0),
+                final SynthUnit unit = units.get(ui);
+                if (unit.isEarcon()) {
+                    mSynthCallback.onSynthDataReady(Earcons.pcm(unit.text.charAt(0),
                             sampleRate, engine.getChannelCount(), targetVolume));
                     segmentFinished();
                     continue;
                 }
                 try {
-                    mChunkBase = unitBases.get(ui);
-                    engine.setVoice(unitVoices.get(ui), voiceVariant);
-                    engine.synthesize(units.get(ui), false);
+                    mChunkBase = unit.base;
+                    engine.setVoice(unit.voice, voiceVariant);
+                    engine.synthesize(unit.text, false);
                 } catch (Throwable t) {
                     // One bad chunk (mixed-script edge case) must never kill
                     // the whole request or hang the service — skip and continue.
@@ -992,7 +983,7 @@ public class TtsService extends TextToSpeechService {
             }
         } else {
             mSegmentsRemaining.set(1);
-            mChunkBase = unitBases.isEmpty() ? 0 : unitBases.get(0);
+            mChunkBase = units.isEmpty() ? 0 : units.get(0).base;
             try {
                 engine.synthesize(text, isSsml);
             } catch (Throwable t) {
@@ -1016,8 +1007,26 @@ public class TtsService extends TextToSpeechService {
         finishRequest();
     }
 
-    private static boolean isEarconUnit(String unit) {
-        return unit.length() == 1 && Earcons.isMarker(unit.charAt(0));
+    /**
+     * One watchdog chunk: its text, the voice speaking it, and its code-point
+     * base within the full request (for word-boundary re-basing). A single
+     * list of these replaces three parallel lists (text/voice/base) whose
+     * index alignment was load-bearing but invisible.
+     */
+    private static final class SynthUnit {
+        final String text;
+        final Voice voice;
+        final int base;
+
+        SynthUnit(String text, Voice voice, int base) {
+            this.text = text;
+            this.voice = voice;
+            this.base = base;
+        }
+
+        boolean isEarcon() {
+            return text.length() == 1 && Earcons.isMarker(text.charAt(0));
+        }
     }
 
     /** Signals done() exactly once per request, whichever path gets there first. */

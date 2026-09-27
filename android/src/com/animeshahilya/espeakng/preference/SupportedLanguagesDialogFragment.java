@@ -156,6 +156,14 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
         mListView.setOnItemLongClickListener((parent, view, position, id) -> {
             LangEntry item = mAdapter.getItem(position);
             if (item != null && getContext() != null) {
+                // Haptic first: the sample itself arrives after TTS init, so
+                // the buzz is the immediate "your hold registered" feedback,
+                // matching the rotary-encoder detent pattern elsewhere.
+                try {
+                    view.performHapticFeedback(
+                            android.view.HapticFeedbackConstants.VIRTUAL_KEY);
+                } catch (Exception ignored) {
+                }
                 playLanguageSample(sampledPreference, item);
                 return true;
             }

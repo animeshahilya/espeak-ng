@@ -250,6 +250,21 @@ public class TtsSettingsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         applySystemBarAppearance(getWindow(), this);
+        // Time-based rows go stale while the screen sits open (a sleep-timer
+        // mute expires with no callback to refresh it). Recompute on every
+        // return rather than running a live timer for one row.
+        try {
+            final Fragment current = getSupportFragmentManager().findFragmentById(android.R.id.content);
+            if (current instanceof PrefsEspeakFragment) {
+                final PreferenceScreen screen = ((PrefsEspeakFragment) current).getPreferenceScreen();
+                final Preference sleep = screen != null
+                        ? screen.findPreference(VoiceSettings.PREF_SLEEP_TIMER) : null;
+                if (sleep instanceof ListPreference) {
+                    updateSleepSummary(this, (ListPreference) sleep, getPrefs());
+                }
+            }
+        } catch (Exception ignored) {
+        }
     }
 
 
@@ -632,8 +647,16 @@ public class TtsSettingsActivity extends AppCompatActivity {
             // no effect on speech, and its stray file is what #2536 copied
             // over the real settings on every screen reader restart.
             getPreferenceManager().setStorageDeviceProtected();
-            // Empty until the engine has loaded; see createPreferences().
-            setPreferenceScreen(getPreferenceManager().createPreferenceScreen(requireContext()));
+            // A loading row until the engine has loaded; see
+            // createPreferences(). An empty screen left TalkBack users on a
+            // blank page for seconds with no indication anything was coming.
+            final PreferenceScreen loading = getPreferenceManager().createPreferenceScreen(requireContext());
+            final Preference loadingRow = new Preference(requireContext());
+            loadingRow.setTitle(R.string.settings_loading);
+            loadingRow.setSelectable(false);
+            loadingRow.setEnabled(false);
+            loading.addPreference(loadingRow);
+            setPreferenceScreen(loading);
             createPreferences(this);
         }
 

@@ -46,6 +46,26 @@ public class EspeakApp extends Application {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onCreate() {
         super.onCreate();
+        // Debug only: log (never crash on) main-thread disk/network use and
+        // leaked closables. This engine's whole design is "heavy work off the
+        // synth and UI threads" (worker extraction, lazy maps, apply() not
+        // commit()); a future disk read sneaking onto either thread shows up
+        // here first instead of as a user-visible stutter or ANR.
+        if (BuildConfig.DEBUG) {
+            try {
+                android.os.StrictMode.setThreadPolicy(new android.os.StrictMode.ThreadPolicy.Builder()
+                        .detectDiskReads()
+                        .detectDiskWrites()
+                        .detectNetwork()
+                        .penaltyLog()
+                        .build());
+                android.os.StrictMode.setVmPolicy(new android.os.StrictMode.VmPolicy.Builder()
+                        .detectLeakedClosableObjects()
+                        .penaltyLog()
+                        .build());
+            } catch (Throwable ignored) {
+            }
+        }
         // DynamicColors intentionally not applied: wallpaper-derived palettes
         // clash with the fixed brand-blue roles on AppTheme.Base (e.g. a pink
         // action bar against blue chips/fields). Ship one consistent palette.

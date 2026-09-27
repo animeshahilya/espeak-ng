@@ -103,6 +103,7 @@ Android TTS Framework
 - **VoiceSettings** — SharedPreferences wrapper for rate, pitch, volume, punctuation, variant; also sleep-timer mute window, reading-history opt-in, what's-new seen version
 - **LanguageSettings** — Filters available voices by user-selected languages; favorite voices pin to the top of `onGetVoices()` order
 - **ReadingHistory** — Opt-in store of recent utterances (length/code/SSML guards, device-protected, newest-first cap); re-heard through the preview engine
+- Perf notes: dictionary search debounces 200ms with precomputed lowercase + lazy row labels (large imports filter per keystroke otherwise); `TtsService` chunks are one `SynthUnit` list, not parallel arrays; debug builds run StrictMode (log-only) to catch main-thread IO regressions; the settings screen shows a loading row until the engine tree lands
 - **VoiceProfile** — Named preset files (variant, rate, pitch, punctuation) via SAF; unknown keys ignored both directions
 - **CheckVoiceData** — Intent handler that verifies voice data files exist on device
 - **DownloadVoiceData** — Extracts `espeakdata.zip` (every bundled language) to device-protected storage on a single-thread executor (~1 s on a Pixel 8 for the ~14 MB archive; runs on the caller's behalf via `CheckVoiceData.ensureVoiceData()`, which also re-verifies the tree before reporting success)

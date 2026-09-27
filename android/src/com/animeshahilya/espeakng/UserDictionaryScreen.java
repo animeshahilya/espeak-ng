@@ -180,7 +180,16 @@ final class UserDictionaryScreen {
 
         final List<Integer> viewToReal = new ArrayList<>();
         final List<UserDictionary> displayedRules = new ArrayList<>();
-        final List<String> labels = new ArrayList<>();
+        // Lowercase copies computed once per dialog open: the filter below
+        // used to lowercase every pattern and replacement on every keystroke
+        // (two allocations per rule), which stuttered on large imported
+        // dictionaries. Labels are built lazily on tap for the same reason.
+        final List<String> lowerPatterns = new ArrayList<>(rules.size());
+        final List<String> lowerReplacements = new ArrayList<>(rules.size());
+        for (UserDictionary r : rules) {
+            lowerPatterns.add(r.getPattern().toLowerCase(java.util.Locale.ROOT));
+            lowerReplacements.add(r.getReplacement().toLowerCase(java.util.Locale.ROOT));
+        }
 
         final BaseAdapter listAdapter = new BaseAdapter() {
             @Override
@@ -263,21 +272,13 @@ final class UserDictionaryScreen {
 
             viewToReal.clear();
             displayedRules.clear();
-            labels.clear();
             for (int i = 0; i < rules.size(); i++) {
                 UserDictionary r = rules.get(i);
                 if (!"all".equals(filter) && !r.getCategory().equals(filter)) continue;
-                if (!q.isEmpty() && !r.getPattern().toLowerCase(java.util.Locale.ROOT).contains(q)
-                        && !r.getReplacement().toLowerCase(java.util.Locale.ROOT).contains(q)) continue;
+                if (!q.isEmpty() && !lowerPatterns.get(i).contains(q)
+                        && !lowerReplacements.get(i).contains(q)) continue;
                 viewToReal.add(i);
                 displayedRules.add(r);
-                final int rowModeRes = r.isRegex() ? R.string.dict_mode_regex
-                        : (r.isWholeWord() ? R.string.dict_mode_word : R.string.dict_mode_substring);
-                labels.add(viewToReal.size() + ". [" + context.getString(UserDictionary.categoryLabelRes(r.getCategory())) + "] \""
-                        + r.getPattern() + "\" → \"" + r.getReplacement() + "\""
-                        + ((r.isRegex() || r.isWholeWord()) ? " [" + context.getString(rowModeRes) + "]" : "")
-                        + (r.hasPhonemeOverride() ? " [" + context.getString(R.string.dict_label_phoneme_tag) + "]" : "")
-                        + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]"));
             }
             listAdapter.notifyDataSetChanged();
             if (tvCount != null) {
@@ -302,10 +303,20 @@ final class UserDictionaryScreen {
         }
         updateList.run();
 
+        // Debounced like the language picker's count: typing "a-i-i-m-s"
+        // must not re-filter a multi-thousand-rule dictionary per keystroke.
+        // The category dropdown still filters immediately (single tap, and
+        // the user waits on its result).
+        final android.os.Handler filterHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+        final Runnable[] pendingFilter = new Runnable[1];
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                updateList.run();
+                if (pendingFilter[0] != null) {
+                    filterHandler.removeCallbacks(pendingFilter[0]);
+                }
+                pendingFilter[0] = updateList;
+                filterHandler.postDelayed(updateList, 200);
             }
             @Override public void afterTextChanged(Editable s) {}
         });
@@ -343,13 +354,32 @@ final class UserDictionaryScreen {
                     dialog.dismiss();
                     showRuleActionsDialog(context, etSearch.getText().toString(),
                             filterValueFor(filterValues, filterPos[0]),
-                            viewToReal.get(position), labels.get(position));
+                            viewToReal.get(position),
+                            ruleLabel(context, rules.get(viewToReal.get(position)), position));
                 }
             }
         });
 
+        // A debounced filter still pending when the dialog closes must not
+        // run against detached views.
+        dialog.setOnDismissListener(d -> filterHandler.removeCallbacks(updateList));
         dialog.show();
         TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    /**
+     * One-row description for the rule actions dialog ("3. [Main] ... "),
+     * built lazily on tap: the list filter used to build one per visible
+     * row per keystroke, each costing several resource lookups.
+     */
+    private static String ruleLabel(Context context, UserDictionary r, int position) {
+        final int rowModeRes = r.isRegex() ? R.string.dict_mode_regex
+                : (r.isWholeWord() ? R.string.dict_mode_word : R.string.dict_mode_substring);
+        return (position + 1) + ". [" + context.getString(UserDictionary.categoryLabelRes(r.getCategory())) + "] \""
+                + r.getPattern() + "\" → \"" + r.getReplacement() + "\""
+                + ((r.isRegex() || r.isWholeWord()) ? " [" + context.getString(rowModeRes) + "]" : "")
+                + (r.hasPhonemeOverride() ? " [" + context.getString(R.string.dict_label_phoneme_tag) + "]" : "")
+                + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]");
     }
 
     /** TalkBack-friendly rule actions as a list (Preview / Edit / Delete) + Cancel. */

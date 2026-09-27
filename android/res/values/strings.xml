@@ -422,6 +422,9 @@
   <!-- Test voice playback feedback -->
   <string name="test_voice_playing">Playing sample…</string>
 
+  <!-- Shown while the engine loads its voices on first open -->
+  <string name="settings_loading">Loading voices…</string>
+
   <!-- Human-phrase summaries for list preferences whose entries alone lack context -->
   <string name="summary_digit_threshold" formatted="false">Group in threes from %1$d digits</string>
   <string name="summary_rate_boost_on" formatted="false">%1$s× the normal maximum speed</string>
