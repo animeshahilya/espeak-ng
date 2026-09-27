@@ -25,9 +25,9 @@ jobs:
     name: Build debug APK
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
@@ -41,7 +41,7 @@ jobs:
       - name: make
         run: cd android && ./gradlew assembleDebug
       - name: upload
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: android-debug.apk
           path: android/build/outputs/apk/debug/espeak-debug.apk
@@ -52,9 +52,9 @@ jobs:
     name: Build release APK
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
@@ -68,7 +68,7 @@ jobs:
       - name: make
         run: cd android && ./gradlew assembleRelease
       - name: upload
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: android-release.apk
           path: android/build/outputs/apk/release/espeak-release-unsigned.apk
@@ -79,9 +79,9 @@ jobs:
     name: Instrumented tests
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
@@ -127,7 +127,7 @@ jobs:
           script: bash android/ci-test.sh
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: android/build/reports/androidTests/

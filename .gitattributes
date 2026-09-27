@@ -1,0 +1,19 @@
+# Auto-detect text files and normalize line endings to LF on commit
+* text=auto eol=lf
+
+# Dictionary and phoneme source files must strictly use LF
+dictsource/* text eol=lf
+phsource/* text eol=lf
+
+# Windows-specific scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files
+*.zip binary
+*.jar binary
+*.so binary
+*.png binary
+*.jpg binary
+*.ico binary

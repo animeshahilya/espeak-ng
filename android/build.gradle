@@ -156,6 +156,9 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
+        test {
+            java.srcDirs = ['test/src']
+        }
         androidTest {
             java.srcDirs = ['eSpeakTests/src']
             res.srcDirs = ['eSpeakTests/res']
@@ -171,6 +174,10 @@ android {
         language {
             enableSplit = false
         }
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 
     lint {
@@ -241,8 +248,12 @@ createDataVersion.mustRunAfter 'externalNativeBuildDebug'
 createDataVersion.mustRunAfter 'externalNativeBuildRelease'
 
 project.afterEvaluate {
-    tasks.checkData.dependsOn('externalNativeBuildDebug')
-    tasks.createDataArchive.dependsOn('externalNativeBuildDebug')
+    def isRelease = gradle.startParameter.taskNames.any { it.toLowerCase().contains("release") }
+    def nativeBuildTask = (isRelease && tasks.findByName('externalNativeBuildRelease') != null)
+            ? 'externalNativeBuildRelease'
+            : 'externalNativeBuildDebug'
+    tasks.checkData.dependsOn(nativeBuildTask)
+    tasks.createDataArchive.dependsOn(nativeBuildTask)
     tasks.named('mapDebugSourceSetPaths') {
         dependsOn ':createDataVersion', ':createDataArchive'
     }

@@ -110,21 +110,12 @@ Android TTS Framework
 - **TtsSettingsActivity** — Preferences UI, declared in `res/xml/preferences.xml` (list choices in `res/values/arrays.xml`) and inflated once the engine has loaded; `buildPreferences()` fills in the engine-dependent rows and drops the Wear-hidden ones. Also owns the settings search (menu SearchView -> whole-tree index -> result navigation with scroll+focus), per-language touch-and-hold samples (preview engine retargeted per locale, voice restored after), voice-profile SAF import/export, sleep-timer arming (delayed mute so the arming toast is still spoken), what's-new-on-update dialog, and recent-reading re-hear dialog. `UserDictionaryScreen` holds the user dictionary editor; also the `CONFIGURE_ENGINE` target and, on Wear, the launcher entry point. Voice-picker labels are localized via `getVoiceLabel()`: the system-language name first (`Locale.getDisplayName()`), English name in parentheses for disambiguation. Sub-screen navigation moves TalkBack focus to the first row (announcement alone leaves focus behind); conditionally revealed rows (e.g. custom intonation group) announce on reveal; dialog titles are headings via `markAlertTitleHeading()` / `ButtonDialogFragment.onStart()`
 - **Voice / VoiceVariant** — Data models for voice metadata and variant parsing
 
-### Launcher icon and Wear
+### Launcher icon
 
-`TtsSettingsActivity` carries a `MAIN`/`LAUNCHER` intent-filter (phone
-launcher icon) plus the `CONFIGURE_ENGINE` entry used from the system
-Text-to-speech settings. The `.WearLauncher` `<activity-alias>` targeting
-the same activity ships `android:enabled="false"`.
-`EspeakApp.syncWearLauncherState()` enables it at runtime on watches only.
-
-**Never disable that alias at runtime.** Disabling a launcher alias closes the
-activity that was started through it — silently, with no exception, and
-`DONT_KILL_APP` does not prevent it. An earlier revision shipped the alias
-enabled and disabled it on phones at first launch, which made the settings
-screen open and immediately vanish. A `@bool/`-with-`values-watch` override on
-`android:enabled` does not work either: PackageManager parses that attribute
-against a configuration with no UI mode, so it always resolves to the default.
+`TtsSettingsActivity` carries a `MAIN`/`LAUNCHER` intent-filter (launcher icon)
+plus the `CONFIGURE_ENGINE` entry used from the system Text-to-speech settings.
+This single declaration serves both phones and Wear OS watches cleanly without
+redundant aliases or runtime PackageManager modifications.
 
 ### JNI Layer (`jni/jni/eSpeakService.c`)
 

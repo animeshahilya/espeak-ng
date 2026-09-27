@@ -71,7 +71,6 @@
             android:key="espeak_rate_boost_level"
             android:title="@string/setting_rate_boost"
             android:defaultValue="off"
-            app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
         <com.animeshahilya.espeakng.preference.SeekBarPreference
             android:key="espeak_volume"
@@ -271,7 +270,6 @@
             android:key="espeak_digit_group_threshold"
             android:title="@string/setting_digit_threshold"
             android:defaultValue="7"
-            app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 

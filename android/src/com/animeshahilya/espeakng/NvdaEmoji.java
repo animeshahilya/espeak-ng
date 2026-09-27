@@ -113,12 +113,19 @@ public final class NvdaEmoji {
         }
     }
 
+    public static void warmup() {
+        root();
+    }
+
     private static String[] namesFile(String locale) {
         String[] names = sNames.get(locale);
         if (names == null) {
+            if (sAssets == null) {
+                return MISSING;
+            }
             try {
                 names = readLines(locale + ".txt").toArray(new String[0]);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 names = MISSING;
             }
             sNames.put(locale, names);

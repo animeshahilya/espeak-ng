@@ -24,12 +24,12 @@ jobs:
     name: Build and Create Release
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
@@ -73,8 +73,13 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.release_notes }}" ]]; then
             echo "${{ github.event.inputs.release_notes }}" > release-notes.md
           else
-            # Auto-generate from CHANGELOG.md
-            awk '/^## /{if(p)exit; p=1} p' CHANGELOG.md > release-notes.md
+            # Auto-generate from ChangeLog.md for current version
+            if [ -f "ChangeLog.md" ]; then
+              awk '/^### /{if(p)exit; p=1} p' ChangeLog.md > release-notes.md
+            fi
+            if [ ! -s "release-notes.md" ]; then
+              echo "Release ${{ steps.version.outputs.tag }}" > release-notes.md
+            fi
           fi
           cat release-notes.md
 
@@ -91,7 +96,7 @@ jobs:
           generate_release_notes: false
 
       - name: Upload APK as Artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: espeak-android-${{ steps.version.outputs.version }}.apk
           path: android/build/outputs/apk/release/espeak-release-unsigned.apk

@@ -237,19 +237,21 @@ public class TtsService extends TextToSpeechService {
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         CheckVoiceData.ensureVoiceData(mStorageContext);
         initializeTtsEngine();
-        // Warm the user-dictionary singleton off the main/synth threads: its
-        // first getInstance() reads and compiles every rule from disk, and
-        // without this the first synthesis request after each process start
-        // pays that cost (seconds for large imported dictionaries) on the
-        // latency-critical path. Failure is non-fatal - the lazy path will
-        // retry (and surface the error) if a synthesis actually needs it.
+        // Warm the user-dictionary singleton, emoji trie, and hinglish list off
+        // the main/synth threads: without this the first synthesis request after
+        // each process start pays that cost on the latency-critical path. Failure
+        // is non-fatal - the lazy path will retry if a synthesis actually needs it.
         new Thread(() -> {
             try {
                 UserDictionaryManager.getInstance(mStorageContext);
+                NvdaEmoji.warmup();
+                if (mPreferences.getBoolean(VoiceSettings.PREF_HINGLISH, false)) {
+                    HinglishReader.warmup();
+                }
             } catch (Throwable t) {
-                Log.w(TAG, "User dictionary warmup failed", t);
+                Log.w(TAG, "Data warmup failed", t);
             }
-        }, "espeak-dict-warmup").start();
+        }, "espeak-data-warmup").start();
         final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
         // The 3-arg registerReceiver(..., flags) overload requires API 33 (Tiramisu);
         // this app's minSdk is 26, so it must fall back to the unflagged overload below

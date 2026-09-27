@@ -87,19 +87,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity-alias
-            android:name=".WearLauncher"
-            android:targetActivity=".TtsSettingsActivity"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/icon"
-            android:label="@string/tts_settings_label">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
 
         <provider
             android:name="androidx.core.content.FileProvider"

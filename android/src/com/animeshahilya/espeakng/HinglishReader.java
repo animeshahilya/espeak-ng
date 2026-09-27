@@ -45,6 +45,11 @@ public final class HinglishReader {
         sAssets = context.getApplicationContext().getAssets();
     }
 
+    /** Warm up the Hinglish dictionary in background */
+    public static void warmup() {
+        load();
+    }
+
     /** Loads the word list on first use, so installs with the setting off never pay for it. */
     private static void load() {
         if (sHindi != null) {

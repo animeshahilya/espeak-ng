@@ -92,7 +92,6 @@ add_custom_command(
 )
 
 list(APPEND _dict_targets)
-list(APPEND _mbr_targets)
 
 foreach(_dict_name ${_dict_compile_list})
   set(_dict_target "${DATA_DIST_DIR}/${_dict_name}_dict")
@@ -130,27 +129,11 @@ foreach(_dict_name ${_dict_compile_list})
   )
 endforeach()
 
-if (USE_MBROLA)
-  file(COPY "${DATA_SRC_DIR}/voices/mb" DESTINATION "${DATA_DIST_DIR}/voices")
-  file(MAKE_DIRECTORY "${DATA_DIST_DIR}/mbrola_ph")
-  foreach(_mbl ${_mbrola_lang_list})
-    set(_mbl_src "${PHONEME_SRC_DIR}/mbrola/${_mbl}")
-    set(_mbl_out "${DATA_DIST_DIR}/mbrola_ph/${_mbl}_phtrans")
-    list(APPEND _mbr_targets ${_mbl_out})
-    add_custom_command(
-      OUTPUT "${_mbl_out}"
-      COMMAND ${ESPEAK_RUN_CMD} --compile-mbrola="${_mbl_src}"
-      DEPENDS ${ESPEAK_BIN_DEP} "${_mbl_src}"
-    )
-  endforeach(_mbl)
-endif()
-
 add_custom_target(
   data ALL
   DEPENDS
     "${DATA_DIST_DIR}/intonations"
     "${DATA_DIST_DIR}/phondata"
     ${_dict_targets}
-    ${_mbr_targets}
 )
 install(DIRECTORY ${DATA_DIST_DIR} DESTINATION share)

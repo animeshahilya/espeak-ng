@@ -14,27 +14,15 @@ add_compile_options("$<$<CONFIG:Release>:-O3>")
 add_compile_options("$<$<CONFIG:Release>:-flto=thin>")
 add_link_options("$<$<CONFIG:Release>:-flto=thin>")
 
-# Build libsonic from source for Android and pre-seed the find results so
-# cmake/deps.cmake in the main project detects it (the NDK sysroot has no sonic).
-# Pinned past fbf75c3 (2024) to pick up two upstream fixes directly relevant
-# to correctness here: a buffer-allocation skip-calculation fix (PR #55) and
-# a downSampleBuffer overflow fix (PR #57) in sonic.c, the only file of this
-# library actually compiled in - not just following upstream for its own sake.
-include(FetchContent)
-FetchContent_Declare(sonic-git
-        GIT_REPOSITORY https://github.com/waywardgeek/sonic.git
-        GIT_TAG b93885dcb70aae50c6f76b0fe4e0868f029a077e
-        GIT_SHALLOW TRUE
-)
-# Override the pinned source without editing (e.g. a local checkout):
-# cmake -DFETCHCONTENT_SOURCE_DIR_SONIC-GIT=/path/to/sonic
-FetchContent_MakeAvailable(sonic-git)
-add_library(sonic OBJECT ${sonic-git_SOURCE_DIR}/sonic.c)
+# Build libsonic from vendored source (src/sonic) for Android and pre-seed
+# the find results so cmake/deps.cmake in the main project detects it (the NDK sysroot has no sonic).
+set(SONIC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../src/sonic")
+add_library(sonic OBJECT "${SONIC_DIR}/sonic.c")
 # enable PIC in order to embed libsonic in libttsespeak.so
 set_property(TARGET sonic PROPERTY POSITION_INDEPENDENT_CODE ON)
-target_include_directories(sonic PUBLIC ${sonic-git_SOURCE_DIR})
+target_include_directories(sonic PUBLIC "${SONIC_DIR}")
 set(SONIC_LIB sonic)
-set(SONIC_INC ${sonic-git_SOURCE_DIR})
+set(SONIC_INC "${SONIC_DIR}")
 
 # Android-only fork: the NDK build needs just libttsespeak.so. Skip the
 # host CLI binary, the intonation/data configure step, and install rules -
