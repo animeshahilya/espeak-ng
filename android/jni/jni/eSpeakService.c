@@ -32,11 +32,15 @@
 #include <stdlib.h>
 #include <stdatomic.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 #include <jni.h>
 
 #include <espeak-ng/speak_lib.h>
+#include <sonic.h>
 #include <Log.h>
+
+#include "piperPhonemizer.h"
 
 #define BUFFER_SIZE_IN_MILLISECONDS 80
 
@@ -619,6 +623,83 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeTerminate(
   if (DEBUG) LOGV("%s", __FUNCTION__);
   espeak_Terminate();
   atomic_store(&s_sampleRate, 0);
+}
+
+/* Piper support: this fork's eSpeak NG as the phonemizer for Piper neural
+ * voices (see piperPhonemizer.h). Called under SpeechSynthesis.sSynthLock
+ * like every other espeak_* entry point; it changes the active voice, which
+ * the Java side accounts for by invalidating its voice memo. */
+JNIEXPORT jstring
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativePhonemizeForPiper(
+    JNIEnv *env, jobject object, jstring voice, jstring text) {
+  if (voice == NULL || text == NULL) return NULL;
+  const char *c_voice = (*env)->GetStringUTFChars(env, voice, NULL);
+  if (c_voice == NULL) return NULL; /* OOM: exception pending */
+  char *c_text = utf16_to_utf8(env, text, NULL);
+  if (c_text == NULL) {
+    (*env)->ReleaseStringUTFChars(env, voice, c_voice);
+    return NULL;
+  }
+
+  char *records = piper_phonemize(c_voice, c_text, 1);
+  if (records == NULL && DEBUG) LOGE("piper_phonemize failed for voice %s", c_voice);
+  (*env)->ReleaseStringUTFChars(env, voice, c_voice);
+  free(c_text);
+  if (records == NULL) return NULL;
+
+  /* Records are real UTF-8 (IPA is all BMP, separators are ASCII controls),
+   * so NewStringUTF's modified-UTF-8 reading of it is exact. */
+  jstring result = (*env)->NewStringUTF(env, records);
+  free(records);
+  return result;
+}
+
+/* Speed/pitch change of already-synthesized PCM with libsonic - the same
+ * library eSpeak uses above 450 wpm - for Piper speeds past what the model
+ * can do itself, and for the pitch setting (a VITS model has no pitch knob).
+ * Stateless: one stream per call, sized to the input. */
+JNIEXPORT jshortArray
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSonicStretch(
+    JNIEnv *env, jclass clazz, jshortArray samples, jint sampleRate, jfloat speed, jfloat pitch) {
+  if (samples == NULL || sampleRate <= 0 || speed <= 0.0f || pitch <= 0.0f) return NULL;
+  const jsize n = (*env)->GetArrayLength(env, samples);
+  if (n <= 0) return NULL;
+
+  sonicStream stream = sonicCreateStream(sampleRate, 1);
+  if (stream == NULL) return NULL;
+  sonicSetSpeed(stream, speed);
+  sonicSetPitch(stream, pitch);
+  sonicSetQuality(stream, 0);
+
+  jshort *in = (*env)->GetShortArrayElements(env, samples, NULL);
+  if (in == NULL) {
+    sonicDestroyStream(stream);
+    return NULL;
+  }
+  const int ok = sonicWriteShortToStream(stream, in, n);
+  (*env)->ReleaseShortArrayElements(env, samples, in, JNI_ABORT);
+  if (!ok || !sonicFlushStream(stream)) {
+    sonicDestroyStream(stream);
+    return NULL;
+  }
+
+  const int available = sonicSamplesAvailable(stream);
+  jshortArray result = NULL;
+  if (available > 0) {
+    short *out = (short *)malloc((size_t)available * sizeof(short));
+    if (out != NULL) {
+      const int got = sonicReadShortFromStream(stream, out, available);
+      if (got > 0) {
+        result = (*env)->NewShortArray(env, got);
+        if (result != NULL) {
+          (*env)->SetShortArrayRegion(env, result, 0, got, out);
+        }
+      }
+      free(out);
+    }
+  }
+  sonicDestroyStream(stream);
+  return result;
 }
 
 #ifdef __cplusplus

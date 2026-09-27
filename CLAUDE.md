@@ -44,3 +44,7 @@ Android TTS Framework
         │  C API (espeak_*)
    libespeak-ng (src/libespeak-ng/)
 ```
+
+Optional Piper neural voices (per-language, downloaded on request) reuse this
+same eSpeak NG as their phonemizer and run on ONNX Runtime - see "Natural
+voices (Piper)" in [android/CLAUDE.md](android/CLAUDE.md).

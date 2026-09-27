@@ -20,6 +20,57 @@
         android:key="espeak_rate"
         android:title="@string/setting_default_rate"
         android:icon="@drawable/ic_speed" />
+    <!-- not on Wear. Natural (Piper) voices: per-language choice between
+         eSpeak and a downloaded neural voice. PiperSettings fills in the
+         per-language rows and the download/manage actions. -->
+    <PreferenceScreen
+        android:key="sub_natural_voices"
+        android:title="@string/screen_natural_voices_title"
+        android:summary="@string/screen_natural_voices_summary"
+        android:icon="@drawable/ic_graphic_eq">
+      <SwitchPreferenceCompat
+          android:key="piper_enabled"
+          android:title="@string/setting_piper_enabled"
+          android:summary="@string/setting_piper_enabled_summary"
+          android:defaultValue="true"
+          app:iconSpaceReserved="false" />
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:key="category_piper_languages"
+          android:title="@string/category_piper_languages"
+          app:iconSpaceReserved="false" />
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:key="category_piper_voices"
+          android:title="@string/category_piper_voices"
+          app:iconSpaceReserved="false">
+        <Preference
+            android:key="action_piper_download"
+            android:title="@string/setting_piper_download"
+            android:summary="@string/setting_piper_download_summary"
+            app:iconSpaceReserved="false" />
+        <Preference
+            android:key="action_piper_manage"
+            android:title="@string/setting_piper_manage"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:title="@string/category_piper_screen_reader"
+          app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="piper_espeak_for_characters"
+            android:title="@string/setting_piper_espeak_for_characters"
+            android:summary="@string/setting_piper_espeak_for_characters_summary"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            android:key="piper_speed"
+            android:title="@string/setting_piper_speed"
+            android:entries="@array/piper_speed_entries"
+            android:entryValues="@array/piper_speed_values"
+            android:defaultValue="100"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+    </PreferenceScreen>
     <!-- not on Wear -->
     <Preference
         android:key="action_test_voice"

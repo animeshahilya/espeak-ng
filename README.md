@@ -12,7 +12,8 @@ eSpeak NG as an Android text-to-speech engine, built for screen reader users (Ta
 
 It speaks the way eSpeak speaks in NVDA on Windows, so it sounds familiar if you already use NVDA. The Indian languages are the only exception: they get extra fixes here, and those fixes affect Indian voices only.
 
-- **Fully offline.** All 153 languages are inside the app, and it has no internet permission.
+- **Offline speech.** All 153 languages are inside the app. The internet is used only if you choose to download a natural voice.
+- **Natural voices, if you want them.** Download a Piper neural voice for any language it covers and pick, per language, whether eSpeak or that voice speaks it. Piper voices read through this app's own eSpeak pronunciation rules, including the Indian-language fixes and your own dictionary.
 - **Speaks before unlock.** Works in Direct Boot, so your screen reader talks on the lock screen after a restart.
 - **Fast and light.** Starts speaking at once and handles very high speech rates.
 
@@ -31,6 +32,7 @@ It speaks the way eSpeak speaks in NVDA on Windows, so it sounds familiar if you
 
 - [NVDA parity](#nvda-parity)
 - [Settings](#settings)
+- [Natural voices (Piper)](#natural-voices-piper)
 - [My Words (pronunciation dictionary)](#my-words-pronunciation-dictionary)
 - [Indian languages](#indian-languages)
 - [Building](#building)
@@ -107,6 +109,29 @@ Stops other apps from changing your **rate**, **pitch** or **volume**.
 - **Backup and restore** of all settings plus your dictionary, as one file.
 - **Export log**, which shares a troubleshooting log. No storage permission is needed.
 - **Import voice**, which adds voice or dictionary data from a file.
+
+---
+
+## Natural voices (Piper)
+
+eSpeak is built for speed: it starts talking instantly and stays clear at very high rates, which is what most screen reader users want. Some people would rather hear a human-sounding voice for reading, at least in some languages. **Settings → Natural voices** lets you choose, language by language.
+
+- **Download natural voices**: browse the official [Piper voice catalog](https://huggingface.co/rhasspy/piper-voices) by language, play a recorded sample, and download. Each voice is 20–75 MB. Downloads run in the background with a progress notification, and every file is checked against the catalog's checksum before it can be used.
+- **Voice for each language**: every language you have a natural voice for gets a row. Choose eSpeak or one of its natural voices. The first voice you download for a language is chosen for it automatically.
+- **Use natural voices**: one switch to go back to eSpeak everywhere without losing your choices.
+- **eSpeak for single letters** (on by default): moving by character and spelling stay on eSpeak, which starts instantly.
+- **Natural voice speed**: natural voices follow your eSpeak rate; this makes them a little slower or faster than it.
+- **Downloaded voices**: test or delete a voice.
+
+How it fits with the rest of the app:
+
+- **Same pronunciation.** Piper voices are driven by phonemes, and those phonemes come from this app's own eSpeak NG, the same way the Piper project itself uses eSpeak NG. That means everything this fork fixes carries over: Indian schwa rules, Indian numbering, symbol and emoji reading, and entries in My Words.
+- **Same settings.** Rate, rate boost, pitch, volume, reading pace, the audio optimizer, punctuation sounds and reading history all apply. Very high rates are reached by speeding up the finished audio with libsonic, the same library eSpeak uses above 450 words per minute.
+- **Never silent.** A voice takes a second or two to load. Until it is ready, and if it ever fails, eSpeak speaks instead. Speech starts after the first phrase is ready, not after the whole paragraph, and stopping speech stops the voice at once.
+- **Works before unlock.** Voices are stored where eSpeak's data is, so they work on the lock screen after a restart too.
+- **Offline.** Once downloaded, a voice never uses the internet.
+
+Not every Piper voice can be used: newer Chinese, Japanese, Thai and Hebrew voices need their own phonemizers instead of eSpeak, and the app tells you so before downloading. Natural voices are not offered on Wear OS.
 
 ---
 
@@ -189,7 +214,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 ## Security
 
-This app has **no `INTERNET` permission** and makes no network calls. All voice data is bundled offline.
+Speech never uses the network. The app has the `INTERNET` permission only to download Piper natural voices, and it connects only when you open the voice list or start a download, to `huggingface.co` (voice catalog and voices) and `rhasspy.github.io` (voice samples). Downloaded voices are verified against the catalog's MD5 checksums before use.
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting and our disclosure policy.
 
@@ -212,3 +237,5 @@ Android is a trademark of Google LLC.
 - [NVDA](https://www.nvaccess.org/) for symbol/emoji processing reference
 - [Transifex translators](https://www.transifex.com/espeak-ng/espeak-ng-android/) for 46 locale translations
 - Google's [Dakshina dataset](https://github.com/google-research-datasets/dakshina) for Hinglish/Urdu data
+- [Piper](https://github.com/OHF-Voice/piper1-gpl) and the [piper-voices](https://huggingface.co/rhasspy/piper-voices) contributors for the natural voices (each voice has its own license; see its MODEL_CARD in the catalog)
+- [ONNX Runtime](https://onnxruntime.ai/) for running them on the phone

@@ -59,6 +59,9 @@ public final class BackupRestoreHelper {
         JSONObject prefsJson = new JSONObject();
         Map<String, ?> all = prefs.getAll();
         for (Map.Entry<String, ?> e : all.entrySet()) {
+            if (PiperDownloads.isDeviceLocalPref(e.getKey())) {
+                continue; // download ids mean nothing on another device
+            }
             Object v = e.getValue();
             if (v instanceof String || v instanceof Boolean || v instanceof Integer
                     || v instanceof Long || v instanceof Float) {

@@ -456,7 +456,7 @@
 
   <!-- What's new after an update -->
   <string name="whats_new_title">What\'s new</string>
-  <string name="whats_new_body">Voice profiles: save and share your variant, rate, pitch and punctuation as a file.\n\nFavorite voices: pin voices to the top of the voice list.\n\nSleep timer: pause all speech for a while, in Locks.\n\nReading history (opt-in): re-hear recently spoken text, in Tools.\n\nSettings search: find any setting from the top bar.\n\nTouch and hold a language to hear a sample of it.</string>
+  <string name="whats_new_body">Natural voices: download human-sounding Piper voices and choose, per language, whether eSpeak or a natural voice speaks it. They use this app\'s own pronunciation rules and your dictionary. Find it in Natural voices.\n\nVoice profiles: save and share your variant, rate, pitch and punctuation as a file.\n\nFavorite voices: pin voices to the top of the voice list.\n\nSleep timer: pause all speech for a while, in Locks.\n\nReading history (opt-in): re-hear recently spoken text, in Tools.\n\nSettings search: find any setting from the top bar.\n\nTouch and hold a language to hear a sample of it.</string>
 
   <!-- Favorite voices: pinned to the top of the system voice list -->
   <string name="setting_favorite_voices">Favorite voices</string>
@@ -491,4 +491,79 @@
   <!-- Watch: some rows are phone-only -->
   <string name="note_wear_limited_title">Fewer settings on watch</string>
   <string name="note_wear_limited_summary">Rate boost, dictionary, languages and other phone-only settings are hidden here.</string>
+  <!-- Natural voices (Piper) -->
+  <string name="screen_natural_voices_title">Natural voices</string>
+  <string name="screen_natural_voices_summary">Human-sounding Piper voices, chosen per language</string>
+  <string name="setting_piper_enabled">Use natural voices</string>
+  <string name="setting_piper_enabled_summary">Off speaks every language with eSpeak. Your choices below are kept.</string>
+  <string name="category_piper_languages">Voice for each language</string>
+  <string name="category_piper_voices">Voices</string>
+  <string name="category_piper_screen_reader">Screen reader</string>
+  <string name="piper_languages_empty">No natural voices yet. Download one below, and it will speak its language.</string>
+  <string name="piper_language_espeak">eSpeak (fast, screen reader voice)</string>
+  <string name="piper_language_summary_espeak">eSpeak</string>
+  <string name="piper_voice_entry">%1$s, %2$s, %3$s</string>
+  <string name="setting_piper_download">Download natural voices</string>
+  <string name="setting_piper_download_summary">Uses the internet only for this. Speech stays offline.</string>
+  <string name="setting_piper_manage">Downloaded voices</string>
+  <string name="piper_manage_summary_none">None yet</string>
+  <plurals name="piper_manage_summary">
+    <item quantity="one">%1$d voice, %2$s</item>
+    <item quantity="other">%1$d voices, %2$s</item>
+  </plurals>
+  <string name="piper_downloading_summary">Downloading %1$s, %2$d%%</string>
+  <string name="setting_piper_espeak_for_characters">eSpeak for single letters</string>
+  <string name="setting_piper_espeak_for_characters_summary">Letters and characters you move through are read by eSpeak, which starts instantly</string>
+  <string name="setting_piper_speed">Natural voice speed</string>
+  <string name="piper_speed_60">Much slower than eSpeak</string>
+  <string name="piper_speed_75">Slower than eSpeak</string>
+  <string name="piper_speed_90">A little slower than eSpeak</string>
+  <string name="piper_speed_100">Same as eSpeak</string>
+  <string name="piper_speed_110">A little faster than eSpeak</string>
+  <string name="piper_speed_125">Faster than eSpeak</string>
+  <string name="piper_speed_150">Much faster than eSpeak</string>
+  <string name="piper_loading_catalog">Loading the voice list…</string>
+  <string name="piper_catalog_failed">Could not load the voice list. Check your internet connection and try again.</string>
+  <string name="piper_choose_language">Choose a language</string>
+  <string name="piper_choose_voice">Voices for %1$s</string>
+  <string name="piper_language_row">%1$s (%2$s)</string>
+  <plurals name="piper_voice_count">
+    <item quantity="one">%d voice</item>
+    <item quantity="other">%d voices</item>
+  </plurals>
+  <string name="piper_quality_x_low">fastest</string>
+  <string name="piper_quality_low">fast</string>
+  <string name="piper_quality_medium">balanced</string>
+  <string name="piper_quality_high">best sound, slowest</string>
+  <string name="piper_catalog_voice_row">%1$s, %2$s, %3$s, %4$s</string>
+  <string name="piper_catalog_voice_installed">%1$s, downloaded</string>
+  <string name="piper_catalog_voice_downloading">%1$s, downloading</string>
+  <plurals name="piper_speakers">
+    <item quantity="one">%d speaker</item>
+    <item quantity="other">%d speakers</item>
+  </plurals>
+  <string name="piper_confirm_title">Download %1$s?</string>
+  <string name="piper_confirm_message">%1$s, %2$s. Size %3$s. A download this size is best on Wi-Fi.\n\nPiper voices sound natural but take a moment to start each sentence. eSpeak stays the fastest choice for quick navigation.</string>
+  <string name="piper_confirm_download">Download</string>
+  <string name="piper_play_sample">Play sample</string>
+  <string name="piper_sample_failed">Could not play the sample</string>
+  <string name="piper_download_started">Downloading %1$s. You can leave this screen; you will hear when it is ready.</string>
+  <string name="piper_download_start_failed">Could not start the download. Check your internet connection and try again.</string>
+  <string name="piper_download_unsupported">This voice needs a different kind of phonemizer and can\'t be used here.</string>
+  <string name="piper_download_title">Natural voice: %1$s</string>
+  <string name="piper_download_description">%1$s, %2$s</string>
+  <string name="piper_download_done">Natural voice is ready</string>
+  <string name="piper_download_failed">Natural voice download failed</string>
+  <string name="piper_voice_ready_assigned">%1$s is ready and now speaks %2$s</string>
+  <string name="piper_voice_ready">%1$s is ready</string>
+  <string name="piper_manage_title">Downloaded voices</string>
+  <string name="piper_manage_empty">No natural voices downloaded yet.</string>
+  <string name="piper_manage_row">%1$s, %2$s, %3$s</string>
+  <string name="piper_action_test">Test voice</string>
+  <string name="piper_action_delete">Delete</string>
+  <string name="piper_action_cancel_download">Cancel download</string>
+  <string name="piper_delete_confirm">Delete %1$s? Languages it speaks go back to eSpeak.</string>
+  <string name="piper_deleted">%1$s deleted</string>
+  <string name="piper_test_loading">Loading %1$s…</string>
+  <string name="piper_refresh">Refresh list</string>
 </resources>

@@ -1,0 +1,621 @@
+/*
+ * Copyright (C) 2026 Animesh Ahilya
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
+package com.animeshahilya.espeakng;
+
+import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.media.AudioAttributes;
+import android.media.AudioFormat;
+import android.media.AudioTrack;
+import android.media.MediaPlayer;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.format.Formatter;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * The "Natural voices" settings page: which voice speaks each language,
+ * downloading voices from the Piper catalog, and managing downloaded ones.
+ *
+ * <p>Everything is a plain list or dialog built from Material components, so
+ * TalkBack reads each voice as one row ("Priyamvada, India, balanced, 63 MB,
+ * downloaded") and each choice as a standard single-choice list.
+ */
+final class PiperSettings {
+    private static final String TAG = "PiperSettings";
+    static final String KEY_SCREEN = "sub_natural_voices";
+    private static final String KEY_LANGUAGES = "category_piper_languages";
+    private static final String KEY_DOWNLOAD = "action_piper_download";
+    private static final String KEY_MANAGE = "action_piper_manage";
+    private static final long PROGRESS_POLL_MS = 1500;
+
+    private PiperSettings() {
+    }
+
+    /** Wires the page. Called from TtsSettingsActivity.buildPreferences (not on Wear). */
+    static void configure(final Context context, final PreferenceScreen screen,
+                          final PreferenceFragmentCompat fragment, final SharedPreferences prefs) {
+        final Preference download = screen.findPreference(KEY_DOWNLOAD);
+        final Preference manage = screen.findPreference(KEY_MANAGE);
+        if (download == null || manage == null) {
+            return;
+        }
+        download.setOnPreferenceClickListener(p -> {
+            showCatalog(context, prefs, false);
+            return true;
+        });
+        manage.setOnPreferenceClickListener(p -> {
+            showManage(context, prefs);
+            return true;
+        });
+        refresh(context, screen, prefs);
+
+        // Live while the screen is visible: voices finishing their download
+        // appear (and are announced) without leaving the page, and download
+        // progress ticks along in the Download row's summary.
+        final Handler handler = new Handler(Looper.getMainLooper());
+        final Runnable poll = new Runnable() {
+            @Override
+            public void run() {
+                if (updateProgress(context, screen)) {
+                    handler.postDelayed(this, PROGRESS_POLL_MS);
+                }
+            }
+        };
+        final BroadcastReceiver changed = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context c, Intent intent) {
+                refresh(context, screen, prefs);
+                final String key = intent.getStringExtra(PiperDownloads.EXTRA_KEY);
+                final PiperVoiceStore.Installed voice = key == null ? null
+                        : PiperVoiceStore.find(storage(context), key);
+                if (voice != null && fragment instanceof TtsSettingsActivity.PrefsEspeakFragment
+                        && fragment.isAdded()) {
+                    final String lang = intent.getStringExtra(PiperDownloads.EXTRA_ASSIGNED_LANGUAGE);
+                    ((TtsSettingsActivity.PrefsEspeakFragment) fragment).announce(lang != null
+                            ? context.getString(R.string.piper_voice_ready_assigned,
+                                    voice.config.displayName(), languageName(voice.config.languageFamily))
+                            : context.getString(R.string.piper_voice_ready, voice.config.displayName()));
+                }
+            }
+        };
+        if (fragment == null) {
+            return;
+        }
+        fragment.getLifecycle().addObserver(new DefaultLifecycleObserver() {
+            @Override
+            public void onResume(@NonNull LifecycleOwner owner) {
+                ContextCompat.registerReceiver(context, changed,
+                        new IntentFilter(PiperDownloads.ACTION_VOICES_CHANGED),
+                        ContextCompat.RECEIVER_NOT_EXPORTED);
+                // A completion broadcast can be missed if the process died
+                // mid-download; finish those installs now.
+                new Thread(() -> {
+                    PiperDownloads.reconcile(context.getApplicationContext(), storage(context));
+                    handler.post(() -> refresh(context, screen, prefs));
+                }, "piper-reconcile").start();
+                handler.post(poll);
+            }
+
+            @Override
+            public void onPause(@NonNull LifecycleOwner owner) {
+                handler.removeCallbacks(poll);
+                try {
+                    context.unregisterReceiver(changed);
+                } catch (IllegalArgumentException ignored) {
+                    // Not registered.
+                }
+            }
+        });
+    }
+
+    private static Context storage(Context context) {
+        return EspeakApp.requireStorageContext(context.getApplicationContext());
+    }
+
+    /** Rebuilds the per-language rows and the Downloaded-voices summary. */
+    static void refresh(Context context, PreferenceScreen screen, SharedPreferences prefs) {
+        final PreferenceCategory languages = screen.findPreference(KEY_LANGUAGES);
+        if (languages == null) {
+            return;
+        }
+        PiperVoiceStore.invalidate();
+        final List<PiperVoiceStore.Installed> installed = PiperVoiceStore.list(storage(context));
+
+        // Group by language, in the order of the voices' own language names.
+        final Map<String, List<PiperVoiceStore.Installed>> byLanguage = new LinkedHashMap<>();
+        for (PiperVoiceStore.Installed v : installed) {
+            List<PiperVoiceStore.Installed> list = byLanguage.get(v.languageKey());
+            if (list == null) {
+                list = new ArrayList<>();
+                byLanguage.put(v.languageKey(), list);
+            }
+            list.add(v);
+        }
+
+        languages.removeAll();
+        if (byLanguage.isEmpty()) {
+            final Preference empty = new Preference(context);
+            empty.setKey("piper_languages_empty");
+            empty.setSummary(R.string.piper_languages_empty);
+            empty.setSelectable(false);
+            empty.setIconSpaceReserved(false);
+            languages.addPreference(empty);
+        }
+        for (Map.Entry<String, List<PiperVoiceStore.Installed>> e : byLanguage.entrySet()) {
+            final String lang = e.getKey();
+            final List<PiperVoiceStore.Installed> voices = e.getValue();
+            final CharSequence[] entries = new CharSequence[voices.size() + 1];
+            final CharSequence[] values = new CharSequence[voices.size() + 1];
+            entries[0] = context.getString(R.string.piper_language_espeak);
+            values[0] = "";
+            for (int i = 0; i < voices.size(); i++) {
+                final PiperVoiceStore.Installed v = voices.get(i);
+                entries[i + 1] = voiceLabel(context, v.config);
+                values[i + 1] = v.key;
+            }
+            final ListPreference row = new ListPreference(context);
+            row.setKey(PiperVoiceStore.PREF_VOICE_PREFIX + lang);
+            row.setTitle(languageName(voices.get(0).config.languageFamily));
+            row.setDialogTitle(row.getTitle());
+            row.setEntries(entries);
+            row.setEntryValues(values);
+            row.setDefaultValue("");
+            row.setIconSpaceReserved(false);
+            row.setSummaryProvider(p -> {
+                final CharSequence entry = ((ListPreference) p).getEntry();
+                return entry == null || "".equals(((ListPreference) p).getValue())
+                        ? context.getString(R.string.piper_language_summary_espeak) : entry;
+            });
+            row.setOnPreferenceChangeListener((p, value) -> {
+                final PiperVoiceStore.Installed chosen =
+                        PiperVoiceStore.find(storage(context), String.valueOf(value));
+                if (chosen != null) {
+                    // Load now, so the very next utterance already uses it.
+                    PiperEngine.get().preload(chosen.key, chosen.model(), chosen.config);
+                }
+                return true;
+            });
+            languages.addPreference(row);
+            // A stored key for a deleted voice would show no selection.
+            final String assigned = PiperVoiceStore.assignedKey(prefs, lang);
+            if (assigned != null && PiperVoiceStore.find(storage(context), assigned) == null) {
+                row.setValue("");
+            }
+        }
+
+        final Preference manage = screen.findPreference(KEY_MANAGE);
+        if (manage != null) {
+            long bytes = 0;
+            for (PiperVoiceStore.Installed v : installed) {
+                bytes += v.sizeBytes();
+            }
+            manage.setSummary(installed.isEmpty()
+                    ? context.getString(R.string.piper_manage_summary_none)
+                    : context.getResources().getQuantityString(R.plurals.piper_manage_summary,
+                            installed.size(), installed.size(), Formatter.formatShortFileSize(context, bytes)));
+        }
+        updateProgress(context, screen);
+    }
+
+    /** @return true while any download is running (keep polling). */
+    private static boolean updateProgress(Context context, PreferenceScreen screen) {
+        final Preference download = screen.findPreference(KEY_DOWNLOAD);
+        if (download == null) {
+            return false;
+        }
+        final Context app = context.getApplicationContext();
+        for (String key : PiperDownloads.pendingKeys(storage(context))) {
+            final PiperDownloads.Progress p = PiperDownloads.progress(app, storage(context), key);
+            if (p != null && p.status != DownloadManager.STATUS_SUCCESSFUL
+                    && p.status != DownloadManager.STATUS_FAILED) {
+                download.setSummary(context.getString(R.string.piper_downloading_summary,
+                        PiperDownloads.nameFromKey(key), p.percent()));
+                return true;
+            }
+        }
+        download.setSummary(R.string.setting_piper_download_summary);
+        return false;
+    }
+
+    /** "Hindi" in the phone's language, from Piper's "hi". */
+    @SuppressWarnings("deprecation")
+    static String languageName(String family) {
+        if (family == null) {
+            return "";
+        }
+        final Locale locale = new Locale(family);
+        final String name = locale.getDisplayLanguage();
+        return name == null || name.isEmpty() ? family : name;
+    }
+
+    private static String qualityLabel(Context context, String quality) {
+        switch (quality == null ? "" : quality) {
+            case "x_low": return context.getString(R.string.piper_quality_x_low);
+            case "low": return context.getString(R.string.piper_quality_low);
+            case "high": return context.getString(R.string.piper_quality_high);
+            default: return context.getString(R.string.piper_quality_medium);
+        }
+    }
+
+    /** "Priyamvada, India, balanced" for an installed voice. */
+    private static String voiceLabel(Context context, PiperVoiceConfig config) {
+        String region = config.languageCode;
+        final int us = region == null ? -1 : region.indexOf('_');
+        if (us > 0) {
+            region = new Locale("", region.substring(us + 1)).getDisplayCountry();
+        }
+        return context.getString(R.string.piper_voice_entry, config.displayName(),
+                region == null ? "" : region, qualityLabel(context, config.quality));
+    }
+
+    // ---- Catalog: language list -> voice list -> confirm -> download ----
+
+    private static void showCatalog(final Context context, final SharedPreferences prefs,
+                                    final boolean refresh) {
+        final AlertDialog loading = new MaterialAlertDialogBuilder(context)
+                .setMessage(R.string.piper_loading_catalog)
+                .setCancelable(true)
+                .show();
+        new Thread(() -> {
+            List<PiperDownloads.CatalogVoice> catalog = null;
+            try {
+                catalog = PiperDownloads.loadCatalog(storage(context), refresh);
+            } catch (Exception e) {
+                Log.w(TAG, "Catalog load failed", e);
+            }
+            final List<PiperDownloads.CatalogVoice> result = catalog;
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (isGone(context) || !loading.isShowing()) {
+                    return; // cancelled while loading
+                }
+                loading.dismiss();
+                if (result == null || result.isEmpty()) {
+                    Toast.makeText(context, R.string.piper_catalog_failed, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                showLanguages(context, prefs, result);
+            });
+        }, "piper-catalog").start();
+    }
+
+    private static void showLanguages(final Context context, final SharedPreferences prefs,
+                                      final List<PiperDownloads.CatalogVoice> catalog) {
+        final Map<String, List<PiperDownloads.CatalogVoice>> byLanguage = new LinkedHashMap<>();
+        for (PiperDownloads.CatalogVoice v : catalog) {
+            List<PiperDownloads.CatalogVoice> list = byLanguage.get(v.languageKey());
+            if (list == null) {
+                list = new ArrayList<>();
+                byLanguage.put(v.languageKey(), list);
+            }
+            list.add(v);
+        }
+        final List<String> keys = new ArrayList<>(byLanguage.keySet());
+        final String system = PiperVoiceStore.languageKey(Locale.getDefault());
+        Collections.sort(keys, (a, b) -> {
+            // The phone's own language first, the rest by name.
+            if (a.equals(system) != b.equals(system)) {
+                return a.equals(system) ? -1 : 1;
+            }
+            return languageName(byLanguage.get(a).get(0).family)
+                    .compareToIgnoreCase(languageName(byLanguage.get(b).get(0).family));
+        });
+        final CharSequence[] rows = new CharSequence[keys.size()];
+        for (int i = 0; i < keys.size(); i++) {
+            final List<PiperDownloads.CatalogVoice> voices = byLanguage.get(keys.get(i));
+            final PiperDownloads.CatalogVoice first = voices.get(0);
+            final String name = languageName(first.family);
+            final String label = name.equalsIgnoreCase(first.nameNative) ? name
+                    : context.getString(R.string.piper_language_row, name, first.nameNative);
+            rows[i] = label + ", " + context.getResources().getQuantityString(
+                    R.plurals.piper_voice_count, voices.size(), voices.size());
+        }
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.piper_choose_language)
+                .setItems(rows, (d, which) ->
+                        showVoices(context, prefs, byLanguage.get(keys.get(which))))
+                .setNeutralButton(R.string.piper_refresh, (d, w) -> showCatalog(context, prefs, true))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    private static void showVoices(final Context context, final SharedPreferences prefs,
+                                   final List<PiperDownloads.CatalogVoice> voices) {
+        final Context storage = storage(context);
+        final List<String> pending = PiperDownloads.pendingKeys(storage);
+        final CharSequence[] rows = new CharSequence[voices.size()];
+        for (int i = 0; i < voices.size(); i++) {
+            final PiperDownloads.CatalogVoice v = voices.get(i);
+            String row = context.getString(R.string.piper_catalog_voice_row, v.displayName(),
+                    v.country, qualityLabel(context, v.quality),
+                    Formatter.formatShortFileSize(context, v.modelSize));
+            if (v.numSpeakers > 1) {
+                row += ", " + context.getResources().getQuantityString(
+                        R.plurals.piper_speakers, v.numSpeakers, v.numSpeakers);
+            }
+            if (PiperVoiceStore.find(storage, v.key) != null) {
+                row = context.getString(R.string.piper_catalog_voice_installed, row);
+            } else if (pending.contains(v.key)) {
+                row = context.getString(R.string.piper_catalog_voice_downloading, row);
+            }
+            rows[i] = row;
+        }
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(context.getString(R.string.piper_choose_voice,
+                        languageName(voices.get(0).family)))
+                .setItems(rows, (d, which) -> {
+                    final PiperDownloads.CatalogVoice v = voices.get(which);
+                    final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storage, v.key);
+                    if (installed != null) {
+                        showVoiceActions(context, prefs, installed);
+                    } else if (pending.contains(v.key)) {
+                        confirmCancel(context, v);
+                    } else {
+                        confirmDownload(context, v);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    private static void confirmDownload(final Context context, final PiperDownloads.CatalogVoice v) {
+        final MediaPlayer[] player = {null};
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(context.getString(R.string.piper_confirm_title, v.displayName()))
+                .setMessage(context.getString(R.string.piper_confirm_message,
+                        languageName(v.family), v.country,
+                        Formatter.formatShortFileSize(context, v.modelSize)))
+                .setPositiveButton(R.string.piper_confirm_download, (d, w) -> startDownload(context, v))
+                .setNeutralButton(R.string.piper_play_sample, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setOnDismissListener(d -> releasePlayer(player))
+                .create();
+        dialog.setOnShowListener(d -> {
+            // Neutral button plays without closing the dialog.
+            final Button sample = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+            sample.setOnClickListener(b -> playSample(context, v, player));
+        });
+        dialog.show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    /** Streams the catalog's recorded sample of the voice (rhasspy/piper-samples). */
+    private static void playSample(Context context, PiperDownloads.CatalogVoice v, MediaPlayer[] player) {
+        releasePlayer(player);
+        final String url = v.sampleUrl();
+        if (url == null) {
+            return;
+        }
+        try {
+            final MediaPlayer mp = new MediaPlayer();
+            mp.setAudioAttributes(new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build());
+            mp.setDataSource(url);
+            mp.setOnPreparedListener(MediaPlayer::start);
+            mp.setOnErrorListener((m, what, extra) -> {
+                Toast.makeText(context, R.string.piper_sample_failed, Toast.LENGTH_SHORT).show();
+                return true;
+            });
+            mp.prepareAsync();
+            player[0] = mp;
+        } catch (Exception e) {
+            Log.w(TAG, "Sample playback failed", e);
+            Toast.makeText(context, R.string.piper_sample_failed, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private static void releasePlayer(MediaPlayer[] player) {
+        if (player[0] != null) {
+            try {
+                player[0].release();
+            } catch (Exception ignored) {
+                // Already released.
+            }
+            player[0] = null;
+        }
+    }
+
+    private static void startDownload(final Context context, final PiperDownloads.CatalogVoice v) {
+        final Context app = context.getApplicationContext();
+        new Thread(() -> {
+            int message;
+            try {
+                PiperDownloads.start(app, storage(context), v);
+                message = 0;
+            } catch (PiperDownloads.UnsupportedVoiceException e) {
+                message = R.string.piper_download_unsupported;
+            } catch (Exception e) {
+                Log.w(TAG, "Download start failed", e);
+                message = R.string.piper_download_start_failed;
+            }
+            final int error = message;
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(app, error == 0
+                    ? app.getString(R.string.piper_download_started, v.displayName())
+                    : app.getString(error), Toast.LENGTH_LONG).show());
+        }, "piper-download").start();
+    }
+
+    private static void confirmCancel(final Context context, final PiperDownloads.CatalogVoice v) {
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(v.displayName())
+                .setPositiveButton(R.string.piper_action_cancel_download, (d, w) -> new Thread(() ->
+                        PiperDownloads.cancel(context.getApplicationContext(), storage(context), v.key),
+                        "piper-cancel").start())
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    // ---- Downloaded voices: test, delete ----
+
+    private static void showManage(final Context context, final SharedPreferences prefs) {
+        final List<PiperVoiceStore.Installed> installed = PiperVoiceStore.list(storage(context));
+        if (installed.isEmpty()) {
+            Toast.makeText(context, R.string.piper_manage_empty, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final CharSequence[] rows = new CharSequence[installed.size()];
+        for (int i = 0; i < rows.length; i++) {
+            final PiperVoiceStore.Installed v = installed.get(i);
+            rows[i] = context.getString(R.string.piper_manage_row, voiceLabel(context, v.config),
+                    languageName(v.config.languageFamily),
+                    Formatter.formatShortFileSize(context, v.sizeBytes()));
+        }
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.piper_manage_title)
+                .setItems(rows, (d, which) -> showVoiceActions(context, prefs, installed.get(which)))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    private static void showVoiceActions(final Context context, final SharedPreferences prefs,
+                                         final PiperVoiceStore.Installed voice) {
+        final CharSequence[] actions = {
+                context.getString(R.string.piper_action_test),
+                context.getString(R.string.piper_action_delete)};
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(voiceLabel(context, voice.config))
+                .setItems(actions, (d, which) -> {
+                    if (which == 0) {
+                        testVoice(context, voice);
+                    } else {
+                        confirmDelete(context, prefs, voice);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    private static void confirmDelete(final Context context, final SharedPreferences prefs,
+                                      final PiperVoiceStore.Installed voice) {
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setMessage(context.getString(R.string.piper_delete_confirm, voice.config.displayName()))
+                .setPositiveButton(R.string.piper_action_delete, (d, w) -> new Thread(() -> {
+                    PiperVoiceStore.delete(storage(context), prefs, voice.key);
+                    PiperDownloads.broadcastChanged(context.getApplicationContext(), null, null);
+                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(
+                            context.getApplicationContext(),
+                            context.getString(R.string.piper_deleted, voice.config.displayName()),
+                            Toast.LENGTH_SHORT).show());
+                }, "piper-delete").start())
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    /**
+     * Speaks the sample sentence with this voice directly (loaded here if
+     * needed), whether or not it is the voice chosen for its language - so a
+     * voice can be heard before it is picked.
+     */
+    private static void testVoice(final Context context, final PiperVoiceStore.Installed voice) {
+        final Context app = context.getApplicationContext();
+        if (PiperEngine.get().getLoaded(voice.key) == null) {
+            Toast.makeText(app, app.getString(R.string.piper_test_loading, voice.config.displayName()),
+                    Toast.LENGTH_SHORT).show();
+        }
+        new Thread(() -> {
+            try {
+                final PiperModel model = PiperEngine.get().loadNow(voice.key, voice.model(), voice.config);
+                final SpeechSynthesis espeak = new SpeechSynthesis(storage(context), null);
+                final String text = SpeechSynthesis.getSampleText(app,
+                        new Locale(voice.config.languageFamily));
+                final ByteArrayOutputStream pcm = new ByteArrayOutputStream();
+                PiperEngine.get().synthesize(model, text, espeak::phonemizeForPiper,
+                        SpeechSynthesis::sonicStretch, new PiperEngine.Params(),
+                        new PiperEngine.Output() {
+                            @Override
+                            public void word(int position, int length, int frame) {
+                            }
+
+                            @Override
+                            public boolean audio(byte[] data) {
+                                pcm.write(data, 0, data.length);
+                                return true;
+                            }
+                        });
+                play(pcm.toByteArray(), model.config.sampleRate);
+            } catch (Throwable t) {
+                Log.w(TAG, "Voice test failed", t);
+            }
+        }, "piper-test").start();
+    }
+
+    private static void play(byte[] pcm, int sampleRate) {
+        if (pcm.length == 0) {
+            return;
+        }
+        final AudioTrack track = new AudioTrack.Builder()
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build())
+                .setAudioFormat(new AudioFormat.Builder()
+                        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                        .setSampleRate(sampleRate)
+                        .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                        .build())
+                .setTransferMode(AudioTrack.MODE_STATIC)
+                .setBufferSizeInBytes(pcm.length)
+                .build();
+        track.write(pcm, 0, pcm.length);
+        track.setNotificationMarkerPosition(pcm.length / 2);
+        track.setPlaybackPositionUpdateListener(new AudioTrack.OnPlaybackPositionUpdateListener() {
+            @Override
+            public void onMarkerReached(AudioTrack t) {
+                t.release();
+            }
+
+            @Override
+            public void onPeriodicNotification(AudioTrack t) {
+            }
+        }, new Handler(Looper.getMainLooper()));
+        track.play();
+    }
+
+    private static boolean isGone(Context context) {
+        return context instanceof Activity
+                && (((Activity) context).isFinishing() || ((Activity) context).isDestroyed());
+    }
+}

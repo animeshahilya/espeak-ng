@@ -70,7 +70,7 @@ back to an unsigned APK rather than failing.
 The release build type has `minifyEnabled true`. This is safe only because
 `proguard-rules.pro` explicitly `-keep`s the whole `SpeechSynthesis` class:
 `jni/jni/eSpeakService.c` binds to it by exact unmangled name -
-`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 10 `native`
+`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 12 `native`
 methods, plus explicit `GetMethodID()` lookups in `nativeClassInit()` for
 `nativeSynthCallback`/`nativeSynthWordCallback` (private methods invoked
 *from* native code, with no Java-side call site R8 can see marking them
@@ -84,14 +84,72 @@ touching either `proguard-rules.pro` or this class.
 ```
 Android TTS Framework
         │
-   TtsService (TextToSpeechService)
-        │
-   SpeechSynthesis (Java JNI wrapper)
+   TtsService (TextToSpeechService) ── TextPreprocessor (same pipeline for both engines)
+        │                                   │
+        │ eSpeak voice                      │ language switched to a natural voice
+        │                                   ▼
+        │                          PiperEngine ── PiperModel (ONNX Runtime, VITS)
+        │                                   │ phonemes
+   SpeechSynthesis (Java JNI wrapper) ◄─────┘ phonemizeForPiper / sonicStretch
         │  JNI calls
-   eSpeakService.c (jni/jni/) — bridge layer
+   eSpeakService.c + piperPhonemizer.c (jni/jni/) — bridge layer
         │  C API (espeak_*)
    libespeak-ng (../../src/libespeak-ng/)
 ```
+
+### Natural voices (Piper)
+
+Optional neural voices, chosen per language (Settings → Natural voices).
+eSpeak's own voice list is untouched: a language assigned to a Piper voice
+is spoken by it whichever eSpeak voice/variant of that language the client
+asked for, so NVDA parity for eSpeak voices is unaffected.
+
+- **Phonemes come from this fork.** `jni/jni/piperPhonemizer.c` mirrors
+  piper-phonemize (`espeak_TextToPhonemesWithTerminator`, IPA, `(lang)` flags
+  dropped, clause terminator -> punctuation phoneme) and additionally
+  reports each clause's code-point span for word ranges and turns on
+  `option_phoneme_input` so user-dictionary `[[...]]` overrides work.
+  `PiperPhonemesTest` pins the id encoding to piper-tts 1.8's output for a
+  real voice; the fork's own pronunciation changes can yield phonemes a voice
+  has no id for - those are skipped and logged once per voice.
+- **eSpeak's clause reader looks one character ahead**, so the offsets it
+  leaves behind land inside the next clause's first word;
+  `PiperPhonemes.alignToText()` pulls each boundary back. Don't "fix" this in C.
+- **Latency.** Chunks, not utterances: the first chunk is cut at the first
+  clause past 60 phonemes, later ones at 220 (`PiperPhonemes`), so audio
+  starts after one phrase and later chunks render while earlier ones play.
+  Leading/trailing model silence is trimmed; chunk pauses follow reading
+  pace. No pause after the last chunk (it would delay the next utterance).
+- **Never silent.** `TtsService` only uses a model that is already loaded
+  (`PiperEngine.getLoaded`); otherwise it speaks with eSpeak and calls
+  `preload()`. Models preload on `onLoadLanguage/onLoadVoice`, on settings
+  change and at service start (system language). Up to 2 stay loaded (LRU);
+  `onTrimMemory` keeps only the current one. A failed load is not retried
+  for 60 s.
+- **Stop.** `onStop()` -> `PiperEngine.stop()` -> ORT `RunOptions.setTerminate`,
+  plus the chunk loop checks between chunks.
+- **Speed/pitch.** Model speed via `length_scale` clamped to 0.5-1.8x; the
+  rest (rate boost) and pitch via `SpeechSynthesis.sonicStretch` (the
+  libsonic already linked into espeak-ng). SSML stays on eSpeak; single
+  characters too unless `piper_espeak_for_characters` is off.
+- **Threading.** Phonemizing goes through `sSynthLock` like every other
+  espeak_* call and switches the native voice, so it clears `sLastVoiceKey`.
+  Inference holds `PiperModel`'s read lock; eviction takes the write lock.
+- **Storage/download.** Voices live in device-protected
+  `files/piper/voices/<key>/model.onnx{,.json}` (`PiperVoiceStore`; Direct
+  Boot works). `PiperDownloads`: catalog = rhasspy/piper-voices `voices.json`
+  (cached 7 days); the small config is fetched first and refused unless
+  `phoneme_type` is espeak/text; the model goes through `DownloadManager` to
+  app-specific external storage, is MD5-checked, then moved in by
+  `PiperDownloadReceiver` (exported for the system's DOWNLOAD_COMPLETE; acts
+  only on ids it enqueued). The first voice of a language is auto-assigned.
+  `piper_dl_*` bookkeeping prefs are excluded from backups.
+- **Network.** `INTERNET` exists only for the catalog, samples and voice
+  downloads - never on the speech path. Keep it that way.
+- **APK size.** `onnxruntime-android` adds a 32 MB `libonnxruntime.so`;
+  `packaging.jniLibs.useLegacyPackaging` compresses it to ~12 MB in the APK.
+  A custom ORT build with only the VITS operators would shrink it further.
+- Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
 
 ### Key Classes (`src/com/animeshahilya/espeakng/`)
 
@@ -109,6 +167,7 @@ Android TTS Framework
 - **DownloadVoiceData** — Extracts `espeakdata.zip` (every bundled language) to device-protected storage on a single-thread executor (~1 s on a Pixel 8 for the ~14 MB archive; runs on the caller's behalf via `CheckVoiceData.ensureVoiceData()`, which also re-verifies the tree before reporting success)
 - **TtsSettingsActivity** — Preferences UI, declared in `res/xml/preferences.xml` (list choices in `res/values/arrays.xml`) and inflated once the engine has loaded; `buildPreferences()` fills in the engine-dependent rows and drops the Wear-hidden ones. Also owns the settings search (menu SearchView -> whole-tree index -> result navigation with scroll+focus), per-language touch-and-hold samples (preview engine retargeted per locale, voice restored after), voice-profile SAF import/export, sleep-timer arming (delayed mute so the arming toast is still spoken), what's-new-on-update dialog, and recent-reading re-hear dialog. `UserDictionaryScreen` holds the user dictionary editor; also the `CONFIGURE_ENGINE` target and, on Wear, the launcher entry point. Voice-picker labels are localized via `getVoiceLabel()`: the system-language name first (`Locale.getDisplayName()`), English name in parentheses for disambiguation. Sub-screen navigation moves TalkBack focus to the first row (announcement alone leaves focus behind); conditionally revealed rows (e.g. custom intonation group) announce on reveal; dialog titles are headings via `markAlertTitleHeading()` / `ButtonDialogFragment.onStart()`
 - **Voice / VoiceVariant** — Data models for voice metadata and variant parsing
+- **Piper\*** — natural voices (see "Natural voices (Piper)" above): `PiperEngine` (model cache + text->audio), `PiperModel` (ORT session), `PiperPhonemes` (records -> chunks -> ids), `PiperAudio` (PCM post-processing, word timing), `PiperVoiceConfig` (`.onnx.json`), `PiperVoiceStore` (installed voices + per-language prefs), `PiperDownloads`/`PiperDownloadReceiver` (catalog, DownloadManager, verify/install), `PiperSettings` (the settings page). Everything except the store/downloads/settings is Android-free and unit-tested on the JVM.
 
 ### Launcher icon
 
@@ -119,7 +178,7 @@ redundant aliases or runtime PackageManager modifications.
 
 ### JNI Layer (`jni/jni/eSpeakService.c`)
 
-10 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (plus `JNI_OnLoad`/`JNI_OnUnload`, which aren't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
+12 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (two of them for Piper: `nativePhonemizeForPiper`, `nativeSonicStretch`) (plus `JNI_OnLoad`/`JNI_OnUnload`, which aren't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
 
 ### Voice Data Lifecycle
 
@@ -127,7 +186,8 @@ On first launch (or version mismatch), `DownloadVoiceData` extracts `res/raw/esp
 
 All languages are bundled directly in the APK and selectable from first
 launch - there is no core/extra split and no network-fetched language pack
-(the app has no `INTERNET` permission and makes no network calls at all).
+(the only network access in the app is the optional Piper natural-voice
+download - see above; eSpeak data never comes from the network).
 `LanguageSettings.getSelectedLanguages()` still lets a user narrow which of
 the bundled languages show up in the voice picker via the "Supported
 languages" preference, but that's a display filter over data already on
@@ -169,7 +229,8 @@ android/
 │   └── preference/             # Custom preference widgets (11 classes)
 ├── jni/
 │   ├── CMakeLists.txt          # Native build (links espeak-ng + JNI, builds libsonic)
-│   ├── jni/eSpeakService.c     # JNI bridge (10 native methods)
+│   ├── jni/eSpeakService.c     # JNI bridge (12 native methods)
+│   ├── jni/piperPhonemizer.c   # eSpeak -> Piper phonemizer (clause records)
 │   └── include/                # config.h, Log.h
 ├── res/                        # Resources (46 locale translations, plus values-v21/-watch)
 ├── eSpeakTests/                # Instrumentation tests

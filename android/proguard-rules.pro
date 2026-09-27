@@ -1,5 +1,5 @@
 # jni/jni/eSpeakService.c binds to com.animeshahilya.espeakng.SpeechSynthesis by exact
-# class and member name: the 10 `native` methods via JNI's Java_com_animeshahilya_espeakng_
+# class and member name: the 12 `native` methods via JNI's Java_com_animeshahilya_espeakng_
 # SpeechSynthesis_* symbol naming, plus nativeSynthCallback(byte[])/nativeSynthWordCallback
 # (int,int,int) via explicit GetMethodID() lookups in nativeClassInit() - those two are
 # private Java methods invoked FROM native code, with no Java-side call site for R8 to see,
@@ -16,3 +16,7 @@
 # (AGP-generated suggestion from minifyReleaseAndroidTestWithR8.)
 -dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
 -dontwarn com.google.errorprone.annotations.MustBeClosed
+
+# ONNX Runtime (Piper natural voices): its JNI library binds to the Java API
+# classes by name and creates some of them from native code.
+-keep class ai.onnxruntime.** { *; }

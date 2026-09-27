@@ -1743,7 +1743,10 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
                     "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER,
                     "action_save_profile", "action_load_profile",
                     VoiceSettings.PREF_READING_HISTORY, "action_recent_reading",
-                    "category_presets", "category_data"}) {
+                    "category_presets", "category_data",
+                    // Neural voices need more memory and CPU than a watch
+                    // should spend on a screen reader voice.
+                    PiperSettings.KEY_SCREEN}) {
                 screen.removePreferenceRecursively(key);
             }
         } else {
@@ -1789,6 +1792,7 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
                 startForResult(context, i, REQUEST_CODE_IMPORT_BACKUP);
             });
             onClick(screen, "action_export_log", () -> exportLog(context));
+            PiperSettings.configure(context, screen, fragment, prefs);
             final ImportVoicePreference importVoice = screen.findPreference("action_import_voice");
             importVoice.setOnPreferenceChangeListener(mOnPreferenceChanged);
             importVoice.setDescription(R.string.import_voice_description);

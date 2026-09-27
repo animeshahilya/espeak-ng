@@ -117,6 +117,12 @@ public class TtsService extends TextToSpeechService {
      */
     private int mChunkBase;
 
+    /**
+     * Piper neural voices (see PiperEngine). Process-wide, like the native
+     * eSpeak engine: the settings screen's previews share its loaded models.
+     */
+    private final PiperEngine mPiper = PiperEngine.get();
+
     private List<Voice> mAllVoices = new ArrayList<Voice>();
     private final Map<String, Voice> mAvailableVoices = new HashMap<String, Voice>();
     /**
@@ -227,6 +233,59 @@ public class TtsService extends TextToSpeechService {
         }
     };
 
+    /**
+     * A natural voice was downloaded or deleted: forget the cached voice
+     * list and, if it now speaks the current language, start loading it so
+     * the next utterance can already use it.
+     */
+    private final BroadcastReceiver mPiperVoicesReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PiperVoiceStore.invalidate();
+            final Voice current;
+            synchronized (mAvailableVoices) {
+                current = mMatchingVoice;
+            }
+            preloadNaturalVoice(current);
+        }
+    };
+
+    private static final PiperEngine.Listener PIPER_LOG = new PiperEngine.Listener() {
+        @Override
+        public void onLoaded(String key, long millis) {
+            Log.i(TAG, "Natural voice " + key + " loaded in " + millis + " ms");
+        }
+
+        @Override
+        public void onLoadFailed(String key, Throwable error) {
+            Log.e(TAG, "Natural voice " + key + " failed to load; using eSpeak", error);
+        }
+
+        @Override
+        public void onMissingPhonemes(String key, List<String> phonemes) {
+            // Phonemes this fork's rules produce that the voice was never
+            // trained on (the fork's pronunciation fixes can do that); they
+            // are skipped. Logged once per voice per process.
+            Log.w(TAG, "Natural voice " + key + " has no ids for phonemes " + phonemes);
+        }
+    };
+
+    /**
+     * Starts loading the natural voice that speaks this eSpeak voice's
+     * language, if one is chosen. Loading takes a second or two; until it
+     * finishes eSpeak keeps speaking, so a screen reader is never silent.
+     */
+    private void preloadNaturalVoice(Voice voice) {
+        if (voice == null || mPreferences == null || mStorageContext == null) {
+            return;
+        }
+        final PiperVoiceStore.Installed natural =
+                PiperVoiceStore.resolve(mStorageContext, mPreferences, voice);
+        if (natural != null) {
+            mPiper.preload(natural.key, natural.model(), natural.config);
+        }
+    }
+
     @Override
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onCreate() {
@@ -241,7 +300,17 @@ public class TtsService extends TextToSpeechService {
         // the main/synth threads: without this the first synthesis request after
         // each process start pays that cost on the latency-critical path. Failure
         // is non-fatal - the lazy path will retry if a synthesis actually needs it.
+        mPiper.setListener(PIPER_LOG);
         new Thread(() -> {
+            try {
+                // Natural voice for the system language first: it takes the
+                // longest, and the first utterance is usually in that language.
+                final Voice systemVoice = findVoice(Locale.getDefault().getISO3Language(),
+                        "", "").first;
+                preloadNaturalVoice(systemVoice);
+            } catch (Throwable t) {
+                Log.w(TAG, "Natural voice warmup failed", t);
+            }
             try {
                 UserDictionaryManager.getInstance(mStorageContext);
                 NvdaEmoji.warmup();
@@ -257,10 +326,24 @@ public class TtsService extends TextToSpeechService {
         // this app's minSdk is 26, so it must fall back to the unflagged overload below
         // that API level. Pre-33 receivers are unexported by default anyway unless the
         // app explicitly requests otherwise, so this is not a behavior regression there.
+        final IntentFilter piperFilter = new IntentFilter(PiperDownloads.ACTION_VOICES_CHANGED);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(mLanguagesUpdatedReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+            registerReceiver(mPiperVoicesReceiver, piperFilter, Context.RECEIVER_NOT_EXPORTED);
         } else {
             registerReceiver(mLanguagesUpdatedReceiver, filter);
+            registerReceiver(mPiperVoicesReceiver, piperFilter);
+        }
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        // A loaded natural voice is 60-150 MB of native memory. Under pressure
+        // keep only the one in use: evicting that too would just mean a
+        // reload (and eSpeak in the meantime) on the very next utterance.
+        if (level >= TRIM_MEMORY_RUNNING_LOW) {
+            mPiper.trim(false);
         }
     }
 
@@ -276,6 +359,7 @@ public class TtsService extends TextToSpeechService {
         }
         try {
             unregisterReceiver(mLanguagesUpdatedReceiver);
+            unregisterReceiver(mPiperVoicesReceiver);
         } catch (IllegalArgumentException e) {
             // Not registered (onCreate() never completed) - nothing to undo.
         }
@@ -423,6 +507,7 @@ public class TtsService extends TextToSpeechService {
             synchronized (mAvailableVoices) {
                 mMatchingVoice = match.first;
             }
+            preloadNaturalVoice(match.first);
             return match.second;
         }
         if (match.second == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -514,14 +599,16 @@ public class TtsService extends TextToSpeechService {
     public int onLoadVoice(String name) {
         // Retargets the selection outside selectVoice(): drop its memo.
         mLastSelection = null;
+        final Voice voice;
         synchronized (mAvailableVoices) {
-            Voice voice = mAvailableVoices.get(name);
+            voice = mAvailableVoices.get(name);
             if (voice == null) {
                 return TextToSpeech.ERROR;
             }
             mMatchingVoice = voice;
-            return TextToSpeech.SUCCESS;
         }
+        preloadNaturalVoice(voice);
+        return TextToSpeech.SUCCESS;
     }
 
     @Override
@@ -537,6 +624,7 @@ public class TtsService extends TextToSpeechService {
         if (engine != null) {
             engine.stop();
         }
+        mPiper.stop();
     }
 
     private String getRequestString(SynthesisRequest request) {
@@ -801,6 +889,25 @@ public class TtsService extends TextToSpeechService {
         mAnchorOffset = 0;
         mChunkBase = 0;
 
+        // Natural voice for this language, when the user chose one and it is
+        // already in memory. SSML stays with eSpeak (Piper has no markup
+        // support), and so, by default, do single characters: character
+        // navigation is where a screen reader user notices latency most.
+        if (!isSsml && !(isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs))) {
+            final PiperVoiceStore.Installed natural =
+                    PiperVoiceStore.resolve(mStorageContext, prefs, voice);
+            if (natural != null) {
+                final PiperModel model = mPiper.getLoaded(natural.key);
+                if (model != null) {
+                    synthesizeNatural(request, callback, engine, settings, prefs, voice, natural,
+                            model, text);
+                    return;
+                }
+                // Not loaded yet: eSpeak speaks this one while it loads.
+                mPiper.preload(natural.key, natural.model(), natural.config);
+            }
+        }
+
         mCallback = callback;
         mCallbackDone.set(false);
         mIsStopped.set(false);
@@ -824,27 +931,7 @@ public class TtsService extends TextToSpeechService {
         final VoiceVariant voiceVariant = settings.getVoiceVariant();
         engine.setVoice(voice, voiceVariant);
 
-        int rate = settings.getRate();
-        int rateScale = request.getSpeechRate();
-        if (rateScale <= 0) {
-            rateScale = 100;
-        }
-        // Force override: lock to the saved rate regardless of caller requests.
-        if (!settings.isForceRateEnabled()) {
-            rate = (int)(((long)rate * rateScale) / 100);
-        }
-        // Cap at the engine max (espeakRATE_MAXIMUM) unless rate boost is on.
-        // This used to cap at 449 per NVDA issue #131, to avoid unintended
-        // Sonic engagement at 450 WPM - but upstream #2165 moved Sonic
-        // engagement strictly above 450, and #2355 made 450 the engine max,
-        // so exactly 450 never engages Sonic (no shipped voice lowers
-        // fast_settings below the 450 default either). NVDA still caps at
-        // 449 out of caution for engines predating #2165; this app always
-        // ships its own engine, so it follows the engine it ships.
-        if (!settings.isRateBoostEnabled() && rate > 450) {
-            rate = 450;
-        }
-        engine.Rate.setValue(rate);
+        engine.Rate.setValue(effectiveRate(settings, request));
 
         int pitchScale = request.getPitch();
         if (pitchScale <= 0) {
@@ -889,18 +976,7 @@ public class TtsService extends TextToSpeechService {
         }
         engine.PitchRange.setValue(pitchRange);
 
-        // Accessibility volume ducking support (KEY_PARAM_VOLUME)
-        float volumeScale = 1.0f;
-        final Bundle params = request.getParams();
-        if (!settings.isForceVolumeEnabled() && params != null) {
-            volumeScale = getVolumeScale(params);
-        }
-        if (volumeScale < 0.0f) {
-            volumeScale = 0.0f;
-        } else if (volumeScale > 1.0f) {
-            volumeScale = 1.0f;
-        }
-        int targetVolume = Math.round(settings.getVolume() * volumeScale);
+        final int targetVolume = effectiveVolume(settings, request);
         engine.Volume.setValue(targetVolume);
 
         if (isSsml) {
@@ -921,43 +997,10 @@ public class TtsService extends TextToSpeechService {
         engine.WordGap.setValue(settings.getWordGap());
         engine.PauseScale.setValue(settings.getPauseScale());
 
-        // Zero-hang watchdog: never hand the native engine one giant buffer.
-        // Anything over the chunk limit is split at clause boundaries. Rapid
-        // swipes just queue short bounded units instead of one unbounded
-        // synth call. SSML is never chunked: splitting markup across units
-        // would corrupt it.
-        final List<SynthUnit> units = new ArrayList<>();
-        if (isSsml) {
-            units.add(new SynthUnit(text, voice, 0));
-        } else {
-            // No setVoice() here: the call at the top of setup already
-            // applied this exact voice+variant (SpeechSynthesis memoizes it),
-            // and re-applying cost a full native dictionary reload per call.
-            // Punctuation sounds: each marker becomes a unit of its own,
-            // played as a tone between the pieces of speech around it.
-            int base = 0;
-            for (String chunk : TextPreprocessor.chunkForWatchdog(text)) {
-                int start = 0;
-                for (int i = 0; i <= chunk.length(); i++) {
-                    if (i < chunk.length() && !Earcons.isMarker(chunk.charAt(i))) {
-                        continue;
-                    }
-                    if (i > start) {
-                        String piece = chunk.substring(start, i);
-                        units.add(new SynthUnit(piece, voice, base));
-                        base += piece.codePointCount(0, piece.length());
-                    }
-                    if (i < chunk.length()) {
-                        units.add(new SynthUnit(chunk.substring(i, i + 1), voice, base));
-                        base++;
-                    }
-                    start = i + 1;
-                }
-            }
-            if (units.isEmpty()) {
-                units.add(new SynthUnit("", voice, 0));
-            }
-        }
+        // No setVoice() for the units: the call at the top of setup already
+        // applied this exact voice+variant (SpeechSynthesis memoizes it),
+        // and re-applying cost a full native dictionary reload per call.
+        final List<SynthUnit> units = buildUnits(text, voice, isSsml);
 
         if (units.size() > 1 || units.get(0).isEarcon()) {
             mSegmentsRemaining.set(units.size());
@@ -1004,6 +1047,201 @@ public class TtsService extends TextToSpeechService {
         // markup are skipped inside, along with short/code-like text.
         if (!mIsStopped.get() && mHistoryText != null && !isSsml) {
             ReadingHistory.record(prefs, mHistoryText, voice != null ? voice.name : null);
+        }
+        mHistoryText = null;
+        finishRequest();
+    }
+
+    /**
+     * The request's speaking rate in wpm: the saved rate scaled by the
+     * caller's rate unless locked, capped at the engine maximum unless rate
+     * boost is on.
+     *
+     * <p>The cap used to be 449 per NVDA issue #131, to avoid unintended
+     * Sonic engagement at 450 WPM - but upstream #2165 moved Sonic
+     * engagement strictly above 450, and #2355 made 450 the engine max,
+     * so exactly 450 never engages Sonic (no shipped voice lowers
+     * fast_settings below the 450 default either). NVDA still caps at
+     * 449 out of caution for engines predating #2165; this app always
+     * ships its own engine, so it follows the engine it ships.
+     */
+    private static int effectiveRate(VoiceSettings settings, SynthesisRequest request) {
+        int rate = settings.getRate();
+        int rateScale = request.getSpeechRate();
+        if (rateScale <= 0) {
+            rateScale = 100;
+        }
+        // Force override: lock to the saved rate regardless of caller requests.
+        if (!settings.isForceRateEnabled()) {
+            rate = (int)(((long)rate * rateScale) / 100);
+        }
+        if (!settings.isRateBoostEnabled() && rate > 450) {
+            rate = 450;
+        }
+        return rate;
+    }
+
+    /**
+     * Volume, 0-200 (100 = normal): the saved volume times the caller's
+     * KEY_PARAM_VOLUME (accessibility ducking) unless volume is locked.
+     */
+    private static int effectiveVolume(VoiceSettings settings, SynthesisRequest request) {
+        float volumeScale = 1.0f;
+        final Bundle params = request.getParams();
+        if (!settings.isForceVolumeEnabled() && params != null) {
+            volumeScale = getVolumeScale(params);
+        }
+        if (volumeScale < 0.0f) {
+            volumeScale = 0.0f;
+        } else if (volumeScale > 1.0f) {
+            volumeScale = 1.0f;
+        }
+        return Math.round(settings.getVolume() * volumeScale);
+    }
+
+    /**
+     * Zero-hang watchdog: never hand an engine one giant buffer. Anything
+     * over the chunk limit is split at clause boundaries, so rapid swipes
+     * just queue short bounded units instead of one unbounded synth call.
+     * SSML is never chunked: splitting markup across units would corrupt
+     * it. Punctuation sounds: each marker becomes a unit of its own, played
+     * as a tone between the pieces of speech around it.
+     */
+    private static List<SynthUnit> buildUnits(String text, Voice voice, boolean isSsml) {
+        final List<SynthUnit> units = new ArrayList<>();
+        if (isSsml) {
+            units.add(new SynthUnit(text, voice, 0));
+            return units;
+        }
+        int base = 0;
+        for (String chunk : TextPreprocessor.chunkForWatchdog(text)) {
+            int start = 0;
+            for (int i = 0; i <= chunk.length(); i++) {
+                if (i < chunk.length() && !Earcons.isMarker(chunk.charAt(i))) {
+                    continue;
+                }
+                if (i > start) {
+                    String piece = chunk.substring(start, i);
+                    units.add(new SynthUnit(piece, voice, base));
+                    base += piece.codePointCount(0, piece.length());
+                }
+                if (i < chunk.length()) {
+                    units.add(new SynthUnit(chunk.substring(i, i + 1), voice, base));
+                    base++;
+                }
+                start = i + 1;
+            }
+        }
+        if (units.isEmpty()) {
+            units.add(new SynthUnit("", voice, 0));
+        }
+        return units;
+    }
+
+    /**
+     * Speaks a request with a Piper voice. Same text pipeline, same units
+     * (watchdog chunks, earcons), same callback plumbing as eSpeak -
+     * reading history, word ranges, audio optimizer and stop all behave the
+     * same - only the audio comes from the neural model, phonemized by this
+     * fork's own eSpeak rules.
+     */
+    private void synthesizeNatural(SynthesisRequest request, SynthesisCallback callback,
+                                   final SpeechSynthesis engine, VoiceSettings settings,
+                                   SharedPreferences prefs, final Voice voice,
+                                   PiperVoiceStore.Installed natural, PiperModel model,
+                                   String text) {
+        final int sampleRate = model.config.sampleRate;
+        mCallback = callback;
+        mCallbackDone.set(false);
+        mIsStopped.set(false);
+        if (callback.start(sampleRate, AudioFormat.ENCODING_PCM_16BIT, 1) != TextToSpeech.SUCCESS) {
+            mCallback = null;
+            reportError(callback, TextToSpeech.ERROR_SERVICE);
+            return;
+        }
+        mAudioOptimizer = settings.isAudioOptimizerEnabled()
+                ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
+                : null;
+
+        final PiperEngine.Params params = new PiperEngine.Params();
+        params.speed = effectiveRate(settings, request) / (float) PiperEngine.NORMAL_RATE
+                * PiperVoiceStore.speedFactor(prefs);
+        int pitchScale = request.getPitch();
+        if (pitchScale <= 0 || settings.isForcePitchEnabled()) {
+            pitchScale = 100;
+        }
+        // eSpeak pitch 0-100 around 50 -> about half an octave down/up,
+        // times the caller's pitch. A neural voice has its own natural
+        // pitch; this only shifts it, it never flattens intonation.
+        final float userPitch = (float) Math.pow(2.0, (settings.getPitch() - 50) / 100.0);
+        params.pitch = Math.max(0.5f, Math.min(2.0f, userPitch * pitchScale / 100f));
+        final int targetVolume = effectiveVolume(settings, request);
+        params.volume = targetVolume / 100f;
+        params.pauseScale = settings.getPauseScale();
+        params.speakerId = PiperVoiceStore.speakerId(prefs, natural.key);
+
+        // The config's eSpeak voice first (what the model was trained on);
+        // if this fork lacks it, the eSpeak voice of the same language.
+        final PiperEngine.Phonemizer phonemizer = (espeakVoice, unitText) -> {
+            String raw = engine.phonemizeForPiper(espeakVoice, unitText);
+            if (raw == null && voice.name != null && !voice.name.equals(espeakVoice)) {
+                raw = engine.phonemizeForPiper(voice.name, unitText);
+            }
+            return raw;
+        };
+        final PiperEngine.TimeStretcher stretcher = SpeechSynthesis::sonicStretch;
+        final long[] frames = {0};
+        final PiperEngine.Output output = new PiperEngine.Output() {
+            @Override
+            public void word(int position, int length, int frame) {
+                mSynthCallback.onSynthWordBoundary(position, length, (int) (frames[0] + frame));
+            }
+
+            @Override
+            public boolean audio(byte[] pcm) {
+                if (pcm.length == 0) {
+                    return !mIsStopped.get(); // empty would read as end-of-stream
+                }
+                mSynthCallback.onSynthDataReady(pcm);
+                return !mIsStopped.get() && !mCallbackDone.get();
+            }
+        };
+
+        try {
+            for (SynthUnit unit : buildUnits(text, voice, false)) {
+                if (mIsStopped.get()) {
+                    break;
+                }
+                if (unit.isEarcon()) {
+                    final byte[] tone = Earcons.pcm(unit.text.charAt(0), sampleRate, 1, targetVolume);
+                    output.audio(tone);
+                    frames[0] += tone.length / 2;
+                    continue;
+                }
+                if (VoiceSettings.isBlank(unit.text)) {
+                    continue;
+                }
+                mChunkBase = unit.base;
+                final int produced = mPiper.synthesize(model, unit.text, phonemizer, stretcher,
+                        params, output);
+                if (produced > 0) {
+                    frames[0] += produced;
+                } else if (produced < 0) {
+                    Log.w(TAG, "Natural voice " + natural.key + " could not phonemize; skipped");
+                }
+            }
+        } catch (Throwable t) {
+            // A model failure mid-request: whatever was spoken stands, the
+            // request ends cleanly, and the next one retries.
+            Log.e(TAG, "Natural voice synthesis failed", t);
+            if (frames[0] == 0) {
+                reportError(callback, TextToSpeech.ERROR_SYNTHESIS);
+                return;
+            }
+        }
+
+        if (!mIsStopped.get() && mHistoryText != null) {
+            ReadingHistory.record(prefs, mHistoryText, voice.name);
         }
         mHistoryText = null;
         finishRequest();

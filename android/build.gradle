@@ -65,7 +65,15 @@ dependencies {
     // color. Pinned 1.13.0: latest proven stable on the targetSdk 37 line
     // (1.14.0 was weeks old when this was added).
     implementation 'com.google.android.material:material:1.13.0'
+    // Piper natural voices: ONNX Runtime runs the VITS models on the CPU.
+    // The full (not "mobile") package: Piper models are plain ONNX files
+    // from the voice catalog, not pre-converted ORT-format models. Only the
+    // arm64-v8a library ships (abiFilters below), about 8 MB in the APK.
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.29.0'
     testImplementation 'junit:junit:4.13.2'
+    // Real org.json for the JVM unit tests: android.jar's is a stub, and
+    // returnDefaultValues would make every Piper config parse come back empty.
+    testImplementation 'org.json:json:20250517'
     androidTestImplementation 'org.hamcrest:hamcrest:2.2'
     androidTestImplementation 'org.hamcrest:hamcrest-core:2.2'
     androidTestImplementation 'androidx.test:runner:1.6.2'
@@ -162,6 +170,17 @@ android {
         androidTest {
             java.srcDirs = ['eSpeakTests/src']
             res.srcDirs = ['eSpeakTests/res']
+        }
+    }
+
+    // Compressed native libraries: ONNX Runtime (Piper natural voices) is a
+    // 32 MB .so, stored uncompressed it would more than double the APK that
+    // people download from Releases. Compressed it costs ~12 MB; the price
+    // is one extraction at install time. Revisit if the app moves to app
+    // bundles (Play splits and compresses per device anyway).
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 

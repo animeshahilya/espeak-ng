@@ -420,6 +420,41 @@ public class SpeechSynthesis {
         nativeStop();
     }
 
+    /**
+     * Phonemizes text for a Piper voice with this engine's own dictionaries
+     * and rules (piperPhonemizer.c): clause records, see
+     * {@link PiperPhonemes#parseRecords}. Null when the eSpeak voice is
+     * unknown or the engine isn't initialized.
+     *
+     * <p>Runs under the synthesis lock (the engine is process-global and not
+     * re-entrant) and switches the native voice, so the setVoice() memo is
+     * dropped: the next eSpeak utterance re-applies its voice.
+     */
+    public String phonemizeForPiper(String espeakVoice, String text) {
+        if (espeakVoice == null || text == null || !mInitialized) {
+            return null;
+        }
+        synchronized (sSynthLock) {
+            sLastVoiceKey = null;
+            try {
+                return nativePhonemizeForPiper(espeakVoice, text);
+            } finally {
+                sLastVoiceKey = null;
+            }
+        }
+    }
+
+    /**
+     * Speed and pitch change of 16-bit mono PCM with libsonic (stateless,
+     * thread-safe: no eSpeak state involved). Null on failure.
+     */
+    public static short[] sonicStretch(short[] samples, int sampleRate, float speed, float pitch) {
+        if (samples == null || samples.length == 0) {
+            return null;
+        }
+        return nativeSonicStretch(samples, sampleRate, speed, pitch);
+    }
+
     public void terminate() {
         synchronized (SpeechSynthesis.class) {
             nativeTerminate();
@@ -526,6 +561,11 @@ public class SpeechSynthesis {
     private native boolean nativeStop();
 
     private native void nativeTerminate();
+
+    private native String nativePhonemizeForPiper(String espeakVoice, String text);
+
+    private static native short[] nativeSonicStretch(short[] samples, int sampleRate,
+                                                     float speed, float pitch);
 
     public interface SynthReadyCallback {
         void onSynthDataReady(byte[] audioData);

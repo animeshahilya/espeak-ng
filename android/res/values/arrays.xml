@@ -88,4 +88,23 @@
     <item>character</item>
     <item>always</item>
   </string-array>
+  <!-- Natural-voice speed relative to the eSpeak rate (PiperVoiceStore.PREF_SPEED). -->
+  <string-array name="piper_speed_entries">
+    <item>@string/piper_speed_60</item>
+    <item>@string/piper_speed_75</item>
+    <item>@string/piper_speed_90</item>
+    <item>@string/piper_speed_100</item>
+    <item>@string/piper_speed_110</item>
+    <item>@string/piper_speed_125</item>
+    <item>@string/piper_speed_150</item>
+  </string-array>
+  <string-array name="piper_speed_values" translatable="false">
+    <item>60</item>
+    <item>75</item>
+    <item>90</item>
+    <item>100</item>
+    <item>110</item>
+    <item>125</item>
+    <item>150</item>
+  </string-array>
 </resources>

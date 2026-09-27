@@ -51,9 +51,15 @@ find_library(A_LOG log)
 
 add_library(ttsespeak SHARED
         jni/eSpeakService.c
+        jni/piperPhonemizer.c
         )
+# SONIC_DIR: the Piper path time-stretches its audio with the libsonic that
+# is already linked into espeak-ng (see nativeSonicStretch), so only the
+# header is needed here.
 target_include_directories(ttsespeak PRIVATE
         include
+        jni
+        "${SONIC_DIR}"
 )
 target_link_libraries(ttsespeak PRIVATE
         espeak-ng ${A_LOG}
