@@ -255,14 +255,20 @@ final class PiperPhonemes {
      * Piper's phonemes_to_ids(). Phonemes the voice has no id for are skipped
      * and, when {@code missing} is given, collected so the caller can log them
      * once instead of per utterance.
+     *
+     * @param wordStarts if not null, receives the id index where each word
+     *                   (a space-separated run with a letter in it) starts,
+     *                   for timing words with the model's durations
      */
-    static long[] toIds(List<String> phonemes, PiperVoiceConfig config, List<String> missing) {
+    static long[] toIds(List<String> phonemes, PiperVoiceConfig config, List<String> missing,
+                        List<Integer> wordStarts) {
         final int[] pad = config.phonemeIdMap.get(PiperVoiceConfig.PAD);
         final int[] bos = config.phonemeIdMap.get(PiperVoiceConfig.BOS);
         final int[] eos = config.phonemeIdMap.get(PiperVoiceConfig.EOS);
         final LongList ids = new LongList(phonemes.size() * 2 + 4);
         ids.addAll(bos);
         ids.addAll(pad);
+        boolean inWord = false;
         for (String phoneme : phonemes) {
             final int[] mapped = config.phonemeIdMap.get(phoneme);
             if (mapped == null) {
@@ -271,11 +277,36 @@ final class PiperPhonemes {
                 }
                 continue;
             }
+            if (" ".equals(phoneme)) {
+                inWord = false;
+            } else if (!inWord && wordStarts != null && !isPunctuation(phoneme)) {
+                wordStarts.add(ids.size);
+                inWord = true;
+            }
             ids.addAll(mapped);
             ids.addAll(pad);
         }
         ids.addAll(eos);
         return ids.toArray();
+    }
+
+    static long[] toIds(List<String> phonemes, PiperVoiceConfig config, List<String> missing) {
+        return toIds(phonemes, config, missing, null);
+    }
+
+    private static boolean isPunctuation(String phoneme) {
+        switch (Character.getType(phoneme.codePointAt(0))) {
+            case Character.CONNECTOR_PUNCTUATION:
+            case Character.DASH_PUNCTUATION:
+            case Character.START_PUNCTUATION:
+            case Character.END_PUNCTUATION:
+            case Character.INITIAL_QUOTE_PUNCTUATION:
+            case Character.FINAL_QUOTE_PUNCTUATION:
+            case Character.OTHER_PUNCTUATION:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

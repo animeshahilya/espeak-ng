@@ -50,6 +50,8 @@ final class PiperVoiceConfig {
     final float noiseW;
     final int numSpeakers;
     final int defaultSpeakerId;
+    /** Audio samples per model frame: phoneme durations come in frames. */
+    final int hopLength;
     final Map<String, int[]> phonemeIdMap;
     /** Multi-code-point "phonemes" merged before the id lookup, longest first. */
     final List<String[]> vowelClusters;
@@ -71,6 +73,7 @@ final class PiperVoiceConfig {
         noiseW = b.noiseW;
         numSpeakers = b.numSpeakers;
         defaultSpeakerId = b.defaultSpeakerId;
+        hopLength = b.hopLength;
         phonemeIdMap = Collections.unmodifiableMap(b.phonemeIdMap);
         vowelClusters = Collections.unmodifiableList(b.vowelClusters);
         int max = 0;
@@ -99,11 +102,15 @@ final class PiperVoiceConfig {
 
     /** "Priyamvada", from the dataset name "priyamvada". */
     String displayName() {
-        final String base = dataset != null && !dataset.isEmpty() ? dataset : key;
-        final StringBuilder sb = new StringBuilder(base.length());
+        return titleCase(dataset != null && !dataset.isEmpty() ? dataset : key);
+    }
+
+    /** "Libritts R" from "libritts_r": the one name style for voices everywhere. */
+    static String titleCase(String name) {
+        final StringBuilder sb = new StringBuilder(name.length());
         boolean upper = true;
-        for (int i = 0; i < base.length(); i++) {
-            final char c = base.charAt(i);
+        for (int i = 0; i < name.length(); i++) {
+            final char c = name.charAt(i);
             if (c == '_' || c == '-') {
                 sb.append(' ');
                 upper = true;
@@ -150,6 +157,7 @@ final class PiperVoiceConfig {
 
         b.numSpeakers = root.optInt("num_speakers", 1);
         b.defaultSpeakerId = root.optInt("default_speaker_id", 0);
+        b.hopLength = root.optInt("hop_length", 256);
 
         final JSONObject idMap = root.optJSONObject("phoneme_id_map");
         if (idMap != null) {
@@ -203,6 +211,7 @@ final class PiperVoiceConfig {
         float noiseW;
         int numSpeakers;
         int defaultSpeakerId;
+        int hopLength;
         final Map<String, int[]> phonemeIdMap = new HashMap<>();
         final List<String[]> vowelClusters = new ArrayList<>();
     }

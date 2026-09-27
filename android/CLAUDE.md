@@ -111,21 +111,57 @@ asked for, so NVDA parity for eSpeak voices is unaffected.
   `option_phoneme_input` so user-dictionary `[[...]]` overrides work.
   `PiperPhonemesTest` pins the id encoding to piper-tts 1.8's output for a
   real voice; the fork's own pronunciation changes can yield phonemes a voice
-  has no id for - those are skipped and logged once per voice.
+  has no id for - those are skipped and logged once per voice (measured: none
+  across all Indian-language voices and mixed Hindi/English text, only
+  aspiration/nasal marks in the old ne x_low voice).
+  `PIPER_TERMINATOR_MASK` also drops `CLAUSE_OPTIONAL_SPACE_AFTER`: with it,
+  danda/Urdu/CJK full stops and paragraph ends reached the model with no
+  final punctuation (upstream piper-phonemize still has that gap).
 - **eSpeak's clause reader looks one character ahead**, so the offsets it
   leaves behind land inside the next clause's first word;
   `PiperPhonemes.alignToText()` pulls each boundary back. Don't "fix" this in C.
 - **Latency.** Chunks, not utterances: the first chunk is cut at the first
   clause past 60 phonemes, later ones at 220 (`PiperPhonemes`), so audio
-  starts after one phrase and later chunks render while earlier ones play.
-  Leading/trailing model silence is trimmed; chunk pauses follow reading
-  pace. No pause after the last chunk (it would delay the next utterance).
+  starts after one phrase. The next chunk renders on `piper-render` while
+  the current one plays - model run *and* post-processing (level, trim,
+  libsonic, PCM bytes): the framework blocks the synthesis thread until only
+  ~0.5 s of audio is queued, so anything slow left on that thread is a gap.
+  Before this, 142 s of Hindi played in 148 s (AudioFlinger: 250835 underrun
+  frames); now 0. Measure gaps with `dumpsys media.audio_flinger`'s
+  Underruns column or wall vs audio time - word-range callback timing has
+  jitter of its own and invents stalls. Leading/trailing model silence is
+  trimmed; chunk pauses follow reading pace. No pause after the last chunk.
+- **Model loading** (`PiperModel`, numbers from `PiperBenchDeviceTest` on a
+  Pixel 8): the first load writes `model.<ORT version>.opt.ort` beside the
+  model - ORT-format, graph-optimized once, with the duration output exposed
+  (`PiperAlignment`, the in-Java equivalent of piper1-gpl's
+  patch_voice_with_alignment.py). Later loads memory-map it and use its
+  weights in place (~15 MB private memory per voice instead of ~80; 1.1-1.3 s
+  loads instead of 2.1-3.5 s; 20-40% lower throughput, inaudible with
+  render-ahead). Each run shrinks ORT's arena (it otherwise keeps ~160 MB of
+  peak per voice); a tiny warm-up run follows every load. XNNPACK was 3x
+  slower; NNAPI is an opt-in switch, off by default (see below).
+- **Word timing.** Exact from the model's durations when the IPA words pair
+  up one to one with the text's words, else proportional
+  (`PiperAudio.alignedWordFrames` / `estimateWordFrames`).
 - **Never silent.** `TtsService` only uses a model that is already loaded
   (`PiperEngine.getLoaded`); otherwise it speaks with eSpeak and calls
   `preload()`. Models preload on `onLoadLanguage/onLoadVoice`, on settings
-  change and at service start (system language). Up to 2 stay loaded (LRU);
-  `onTrimMemory` keeps only the current one. A failed load is not retried
-  for 60 s.
+  change and at service start (system language). Voices kept loaded (LRU)
+  follow `PiperDevice`'s tier: 3 on flagships (Media Performance Class or
+  7+ GB), 2 mid-range, 1 on low-RAM phones; `onTrimMemory` keeps only the
+  current one. A failed load is not retried for 60 s. Loads (including the
+  settings screen's test) all run on the one loader thread.
+- **Device fit.** Intra-op threads = cores with at least half the top
+  core's `cpu_capacity`, max 4 (`PiperEngine.threadsFor`): 4 on a Pixel 8,
+  2 on a 2+6 phone. The catalog offers Piper "medium" as Standard and "high"
+  as Enhanced (low/x_low dropped; every language keeps a voice); Enhanced
+  says "recommended" on HIGH tier and "may be slow" on LOW.
+- **NNAPI** (`piper_nnapi`, off): measured on a Pixel 8 it takes ~10 of
+  ~2700 VITS nodes, runs them on Android's reference CPU driver (15% slower)
+  and fails the run outright for the unoptimized graph. A voice it fails
+  for - at load (warm-up run) or mid-speech - is reloaded for the CPU and
+  not offered to NNAPI again until the switch is toggled.
 - **Stop.** `onStop()` -> `PiperEngine.stop()` -> ORT `RunOptions.setTerminate`,
   plus the chunk loop checks between chunks.
 - **Speed/pitch.** Model speed via `length_scale` clamped to 0.5-1.8x; the
@@ -136,7 +172,8 @@ asked for, so NVDA parity for eSpeak voices is unaffected.
   espeak_* call and switches the native voice, so it clears `sLastVoiceKey`.
   Inference holds `PiperModel`'s read lock; eviction takes the write lock.
 - **Storage/download.** Voices live in device-protected
-  `files/piper/voices/<key>/model.onnx{,.json}` (`PiperVoiceStore`; Direct
+  `files/piper/voices/<key>/model.onnx{,.json}` plus the optimized copy,
+  deleted with the voice (`PiperVoiceStore`; Direct
   Boot works). `PiperDownloads`: catalog = rhasspy/piper-voices `voices.json`
   (cached 7 days); the small config is fetched first and refused unless
   `phoneme_type` is espeak/text; the model goes through `DownloadManager` to

@@ -41,6 +41,36 @@ public class EspeakApp extends Application {
     @SuppressLint("StaticFieldLeak")
     private static Context storageContext;
 
+    /**
+     * Natural-voice events, logged whichever component loaded the voice
+     * (the TTS service, the settings screen's test, the download receiver).
+     */
+    private static final PiperEngine.Listener PIPER_LOG = new PiperEngine.Listener() {
+        private static final String TAG = "PiperVoices";
+
+        @Override
+        public void onLoaded(String key, long millis) {
+            Log.i(TAG, "Natural voice " + key + " loaded in " + millis + " ms");
+        }
+
+        @Override
+        public void onLoadFailed(String key, Throwable error) {
+            Log.e(TAG, "Natural voice " + key + " failed to load; using eSpeak", error);
+        }
+
+        @Override
+        public void onMissingPhonemes(String key, java.util.List<String> phonemes) {
+            // Phonemes this fork's rules produce that the voice has no id
+            // for; they are skipped. Logged once per voice per process.
+            Log.w(TAG, "Natural voice " + key + " has no ids for phonemes " + phonemes);
+        }
+
+        @Override
+        public void onAccelerationFailed(String key, Throwable error) {
+            Log.w(TAG, "Natural voice " + key + " cannot use NNAPI; using the processor", error);
+        }
+    };
+
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onCreate() {
         super.onCreate();
@@ -72,6 +102,10 @@ public class EspeakApp extends Application {
         NvdaEmoji.init(appContext);
         HinglishReader.init(appContext);
         migrateLegacyPreferences(appContext, EspeakApp.storageContext);
+        PiperEngine.get().setListener(PIPER_LOG);
+        PiperEngine.get().setMaxLoaded(PiperDevice.voicesKeptLoaded(PiperDevice.tier(appContext)));
+        PiperEngine.get().setAcceleration(PiperVoiceStore.acceleration(
+                androidx.preference.PreferenceManager.getDefaultSharedPreferences(EspeakApp.storageContext)));
         if (!appContext.getSystemService(UserManager.class).isUserUnlocked()) {
             // Started at boot, for a direct-boot-aware screen reader. The
             // credential-encrypted file cannot be read yet, so run the

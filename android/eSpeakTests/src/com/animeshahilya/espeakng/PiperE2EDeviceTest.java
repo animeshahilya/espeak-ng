@@ -43,6 +43,7 @@ public class PiperE2EDeviceTest {
     private File mDir;
     private final ConcurrentHashMap<String, CountDownLatch> mDone = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> mOutcome = new ConcurrentHashMap<>();
+    private final java.util.List<Integer> mRanges = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
 
     @Before
     public void setUp() throws Exception {
@@ -60,6 +61,9 @@ public class PiperE2EDeviceTest {
             @Override public void onError(String id) { finish(id, "error"); }
             @Override public void onError(String id, int code) { finish(id, "error " + code); }
             @Override public void onStop(String id, boolean interrupted) { finish(id, "stopped"); }
+            @Override public void onRangeStart(String id, int start, int end, int frame) {
+                mRanges.add(frame);
+            }
         });
     }
 
@@ -215,6 +219,52 @@ public class PiperE2EDeviceTest {
             assertTrue("q" + i, latches[i].await(30, TimeUnit.SECONDS));
             assertEquals("done", mOutcome.get("q" + i));
         }
+    }
+
+    /**
+     * Long reading must play without gaps between chunks: wall time of a
+     * real speak() may exceed the audio's own length only by the time to
+     * the first sound. Uses the Hindi natural voice when one is assigned.
+     */
+    @Test
+    public void i_longReadingFlowsWithoutGaps() throws Exception {
+        final Locale hindi = new Locale("hi", "IN");
+        final android.content.SharedPreferences prefs = androidx.preference.PreferenceManager
+                .getDefaultSharedPreferences(InstrumentationRegistry.getInstrumentation()
+                        .getTargetContext().createDeviceProtectedStorageContext());
+        Assume.assumeTrue("no Hindi natural voice set", prefs.getBoolean("piper_enabled", true)
+                && !prefs.getString("piper_voice_hin", "").isEmpty());
+        // Until the voice is loaded eSpeak speaks (it may be cold): give it time.
+        toFile("hwarm", "नमस्ते, आप कैसे हैं?", hindi, 1f);
+        Thread.sleep(5000);
+        final StringBuilder text = new StringBuilder();
+        // Ten sentences: past TtsService's 800-character watchdog unit, so a
+        // unit boundary is crossed too.
+        for (int i = 0; i < 10; i++) {
+            text.append("आज सुबह हम सब मिलकर पास के बाज़ार गए और वहाँ से ताज़ी सब्ज़ियाँ, फल और दूध ख़रीदकर ")
+                    .append("धीरे धीरे बातें करते हुए घर वापस लौट आए, फिर सबने साथ बैठकर खाना बनाया। ");
+        }
+        final long[] file = toFile("hlong", text.toString(), hindi, 1f);
+        final long audioMs = file[1] * 1000 / file[0];
+        final CountDownLatch done = expect("hspeak");
+        mRanges.clear();
+        final long start = System.nanoTime();
+        mTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "hspeak");
+        assertTrue(done.await(300, TimeUnit.SECONDS));
+        final long wallMs = (System.nanoTime() - start) / 1_000_000;
+        assertEquals("done", mOutcome.get("hspeak"));
+        // Gaps show as wall time beyond the audio's length. Word-range
+        // callbacks can't time them: the framework delivers those with
+        // jitter of its own. VITS durations vary run to run (about 1%), so
+        // the file rendering of the same text is only a close reference.
+        // Measured on a Pixel 8, 142 s of Hindi: +6.2 s before rendering
+        // ahead (AudioFlinger counted 250835 underrun frames), -0.2 s after
+        // (0 underruns).
+        final long overheadMs = wallMs - audioMs;
+        Log.i(TAG, "long reading: audio=" + audioMs + "ms wall=" + wallMs + "ms overhead="
+                + overheadMs + "ms words=" + mRanges.size());
+        assertTrue("too few word ranges: " + mRanges.size(), mRanges.size() > 50);
+        assertTrue("gaps: " + overheadMs + " ms beyond the audio", overheadMs < 2500);
     }
 
     @Test

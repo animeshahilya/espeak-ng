@@ -24,7 +24,7 @@ public class PiperCatalogTest {
             + "  \"hi/hi_IN/priyamvada/medium/MODEL_CARD\": {\"size_bytes\": 1, \"md5_digest\": \"x\"}},"
             + " \"aliases\": []},"
             + "\"../evil\": {\"key\": \"../evil\", \"name\": \"evil\","
-            + " \"language\": {\"code\": \"en_US\", \"family\": \"en\"}, \"quality\": \"low\","
+            + " \"language\": {\"code\": \"en_US\", \"family\": \"en\"}, \"quality\": \"medium\","
             + " \"files\": {\"a.onnx\": {}, \"a.onnx.json\": {}}}"
             + "}";
 
@@ -42,6 +42,28 @@ public class PiperCatalogTest {
         assertTrue(v.configPath.endsWith(".onnx.json"));
         assertEquals("https://rhasspy.github.io/piper-samples/samples/hi/hi_IN/priyamvada/medium/speaker_0.mp3",
                 v.sampleUrl());
+    }
+
+    private static String entry(String key, String quality) {
+        final String name = key.split("-")[1];
+        return "\"" + key + "\": {\"key\": \"" + key + "\", \"name\": \"" + name + "\","
+                + " \"language\": {\"code\": \"en_US\", \"family\": \"en\"}, \"quality\": \""
+                + quality + "\", \"files\": {\"" + key + ".onnx\": {}, \"" + key + ".onnx.json\": {}}}";
+    }
+
+    @Test
+    public void offersStandardAndEnhancedOnly() throws Exception {
+        final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog("{"
+                + entry("en_US-amy-high", "high") + ","
+                + entry("en_US-amy-low", "low") + ","
+                + entry("en_US-amy-x_low", "x_low") + ","
+                + entry("en_US-amy-medium", "medium") + "}");
+        assertEquals(2, voices.size());
+        // Same voice: Standard (medium) listed before Enhanced (high).
+        assertEquals("en_US-amy-medium", voices.get(0).key);
+        assertEquals("en_US-amy-high", voices.get(1).key);
+        assertTrue(PiperDownloads.isEnhanced(voices.get(1).quality));
+        assertFalse(PiperDownloads.isEnhanced(voices.get(0).quality));
     }
 
     @Test

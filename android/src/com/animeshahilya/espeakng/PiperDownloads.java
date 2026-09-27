@@ -104,20 +104,8 @@ final class PiperDownloads {
         long configSize;
         String configMd5;
 
-        /** "Priyamvada" from "priyamvada", "Libritts R" from "libritts_r". */
         String displayName() {
-            final StringBuilder sb = new StringBuilder();
-            boolean upper = true;
-            for (char c : name.toCharArray()) {
-                if (c == '_' || c == '-') {
-                    sb.append(' ');
-                    upper = true;
-                } else {
-                    sb.append(upper ? Character.toUpperCase(c) : c);
-                    upper = false;
-                }
-            }
-            return sb.toString();
+            return PiperVoiceConfig.titleCase(name);
         }
 
         String sampleUrl() {
@@ -127,17 +115,6 @@ final class PiperDownloads {
 
         String languageKey() {
             return PiperVoiceStore.languageKey(family);
-        }
-
-        /** Rough speed rank for sorting: smaller models first (x_low 16 kHz ... high). */
-        int qualityRank() {
-            switch (quality == null ? "" : quality) {
-                case "x_low": return 0;
-                case "low": return 1;
-                case "medium": return 2;
-                case "high": return 3;
-                default: return 4;
-            }
         }
     }
 
@@ -156,6 +133,9 @@ final class PiperDownloads {
             c.key = v.optString("key", key);
             c.name = v.optString("name", key);
             c.quality = v.optString("quality", "");
+            if (!isOffered(c.quality)) {
+                continue;
+            }
             c.numSpeakers = v.optInt("num_speakers", 1);
             final JSONObject lang = v.optJSONObject("language");
             if (lang == null) {
@@ -199,7 +179,7 @@ final class PiperDownloads {
             if (d != 0) return d;
             d = a.name.compareTo(b.name);
             if (d != 0) return d;
-            return a.qualityRank() - b.qualityRank();
+            return Boolean.compare(isEnhanced(a.quality), isEnhanced(b.quality));
         });
         return out;
     }
@@ -207,13 +187,23 @@ final class PiperDownloads {
     /** "Priyamvada" from "hi_IN-priyamvada-medium" (catalog keys are lang-name-quality). */
     static String nameFromKey(String key) {
         final String[] parts = key.split("-");
-        final String name = parts.length >= 3 ? parts[1] : key;
-        final CatalogVoice c = new CatalogVoice();
-        c.name = name;
-        return c.displayName();
+        return PiperVoiceConfig.titleCase(parts.length >= 3 ? parts[1] : key);
     }
 
-    /** Keys become directory names: no separators, no "..". */
+    /**
+     * Two tiers are offered: Piper's "medium" as Standard and "high" as
+     * Enhanced. "low"/"x_low" sound clearly worse, every catalog language
+     * has a medium or high voice, and medium already runs 6-12x faster than
+     * real time on a phone - there is no speed left to trade quality for.
+     */
+    static boolean isOffered(String quality) {
+        return "medium".equals(quality) || isEnhanced(quality);
+    }
+
+    static boolean isEnhanced(String quality) {
+        return "high".equals(quality);
+    }
+
     static boolean isSafeKey(String key) {
         return key != null && key.matches("[A-Za-z0-9_.\\-]{1,128}") && !key.contains("..");
     }

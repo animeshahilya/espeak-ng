@@ -149,4 +149,20 @@ public class PiperPhonemesTest {
         assertEquals("One. ", c.get(0).ipa);
         assertEquals(15, c.get(2).end);
     }
+    @Test
+    public void recordsWhereEachWordStarts() throws Exception {
+        final PiperVoiceConfig c = amy();
+        final List<Integer> starts = new ArrayList<>();
+        final long[] ids = PiperPhonemes.toIds(PiperPhonemes.tokenize("həlˈoʊ wˈɜːld, ðɪs.", c),
+                c, null, starts);
+        // Same ids as without word tracking.
+        assertArrayEquals(PiperPhonemes.toIds(PiperPhonemes.tokenize("həlˈoʊ wˈɜːld, ðɪs.", c), c, null),
+                ids);
+        // BOS PAD, then h; "wˈɜːld," starts after 6 phonemes + space (2 ids each);
+        // the comma and space are not words.
+        assertEquals(Arrays.asList(2, 16, 32), starts);
+        assertEquals(20, ids[2]);  // h
+        assertEquals(35, ids[16]); // w
+        assertEquals(41, ids[32]); // ð
+    }
 }

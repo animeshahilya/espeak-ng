@@ -116,18 +116,20 @@ Stops other apps from changing your **rate**, **pitch** or **volume**.
 
 eSpeak is built for speed: it starts talking instantly and stays clear at very high rates, which is what most screen reader users want. Some people would rather hear a human-sounding voice for reading, at least in some languages. **Settings → Natural voices** lets you choose, language by language.
 
-- **Download natural voices**: browse the official [Piper voice catalog](https://huggingface.co/rhasspy/piper-voices) by language, play a recorded sample, and download. Each voice is 20–75 MB. Downloads run in the background with a progress notification, and every file is checked against the catalog's checksum before it can be used.
+- **Download natural voices**: browse the official [Piper voice catalog](https://huggingface.co/rhasspy/piper-voices) by language, play a recorded sample, and download. Voices come in two qualities: **Standard**, and **Enhanced** where a voice has it (marked as recommended on fast phones, and as possibly slow on low-end ones). Each download is about 60–140 MB; on the phone a voice takes about twice that, because a faster-loading copy is kept beside it. Downloads run in the background with a progress notification, and every file is checked against the catalog's checksum before it can be used.
 - **Voice for each language**: every language you have a natural voice for gets a row. Choose eSpeak or one of its natural voices. The first voice you download for a language is chosen for it automatically.
 - **Use natural voices**: one switch to go back to eSpeak everywhere without losing your choices.
 - **eSpeak for single letters** (on by default): moving by character and spelling stay on eSpeak, which starts instantly.
 - **Natural voice speed**: natural voices follow your eSpeak rate; this makes them a little slower or faster than it.
 - **Downloaded voices**: test or delete a voice.
+- **Hardware acceleration** (off by default): lets the phone's AI chip (NNAPI) try to run the voices. On the phones tested it made them slower, so it is off; a voice it can't run uses the processor anyway.
 
 How it fits with the rest of the app:
 
 - **Same pronunciation.** Piper voices are driven by phonemes, and those phonemes come from this app's own eSpeak NG, the same way the Piper project itself uses eSpeak NG. That means everything this fork fixes carries over: Indian schwa rules, Indian numbering, symbol and emoji reading, and entries in My Words.
 - **Same settings.** Rate, rate boost, pitch, volume, reading pace, the audio optimizer, punctuation sounds and reading history all apply. Very high rates are reached by speeding up the finished audio with libsonic, the same library eSpeak uses above 450 words per minute.
-- **Never silent.** A voice takes a second or two to load. Until it is ready, and if it ever fails, eSpeak speaks instead. Speech starts after the first phrase is ready, not after the whole paragraph, and stopping speech stops the voice at once.
+- **Never silent.** A voice takes about a second to load. Until it is ready, and if it ever fails, eSpeak speaks instead. Speech starts after the first phrase is ready, not after the whole paragraph, long texts play without gaps, and stopping speech stops the voice at once.
+- **Fits the phone.** Voices use the fast processor cores only, keep more voices ready on phones with more memory, and give their memory back when idle so Android doesn't close the speech service.
 - **Works before unlock.** Voices are stored where eSpeak's data is, so they work on the lock screen after a restart too.
 - **Offline.** Once downloaded, a voice never uses the internet.
 

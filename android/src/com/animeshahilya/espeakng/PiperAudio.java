@@ -9,6 +9,9 @@
 
 package com.animeshahilya.espeakng;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Post-processing of Piper's float output into the 16-bit PCM the Android
  * TTS framework takes. Pure Java; unit-tested off-device.
@@ -137,6 +140,43 @@ final class PiperAudio {
         return out;
     }
 
+    /**
+     * Exact word starts from the model's own durations (Piper alignments):
+     * the samples before each word's first phoneme id, moved by the silence
+     * trim and scaled by any time-stretch, as frame offsets into the PCM
+     * actually delivered.
+     *
+     * @param wordStartIds id index of each phoneme word (PiperPhonemes#toIds)
+     * @param durations    frames per id from the model, or null
+     * @return null when there are no durations, or the phoneme words don't
+     *         pair up one to one with the text's words (a number read as
+     *         several words, say); the caller estimates instead
+     */
+    static int[] alignedWordFrames(List<Integer> wordStartIds, float[] durations,
+                                   int hopLength, int textWords, int trimmedLead,
+                                   int speechSamples, int outSamples) {
+        if (durations == null || wordStartIds == null || wordStartIds.size() != textWords
+                || speechSamples <= 0) {
+            return null;
+        }
+        final int[] out = new int[textWords];
+        final double scale = outSamples / (double) speechSamples;
+        double samples = 0;
+        int id = 0;
+        for (int w = 0; w < textWords; w++) {
+            final int target = wordStartIds.get(w);
+            if (target > durations.length) {
+                return null;
+            }
+            while (id < target) {
+                samples += durations[id++] * hopLength;
+            }
+            final double inSpeech = Math.max(0, Math.min(speechSamples, samples - trimmedLead));
+            out[w] = (int) Math.min(outSamples, Math.round(inSpeech * scale));
+        }
+        return out;
+    }
+
     /** Code point [start, end) pairs of whitespace-separated words in text. */
     static int[] findWords(String text) {
         final int cps = text.codePointCount(0, text.length());
@@ -152,7 +192,7 @@ final class PiperAudio {
                 wordStart = cp;
             } else if (space && wordStart >= 0) {
                 if (n + 2 > spans.length) {
-                    spans = java.util.Arrays.copyOf(spans, spans.length * 2);
+                    spans = Arrays.copyOf(spans, spans.length * 2);
                 }
                 spans[n++] = wordStart;
                 spans[n++] = cp;
@@ -162,11 +202,11 @@ final class PiperAudio {
         }
         if (wordStart >= 0) {
             if (n + 2 > spans.length) {
-                spans = java.util.Arrays.copyOf(spans, spans.length + 2);
+                spans = Arrays.copyOf(spans, spans.length + 2);
             }
             spans[n++] = wordStart;
             spans[n++] = cps;
         }
-        return java.util.Arrays.copyOf(spans, n);
+        return Arrays.copyOf(spans, n);
     }
 }

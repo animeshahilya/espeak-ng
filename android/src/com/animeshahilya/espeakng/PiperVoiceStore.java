@@ -55,6 +55,8 @@ final class PiperVoiceStore {
     static final String PREF_ESPEAK_FOR_CHARACTERS = "piper_espeak_for_characters";
     /** Natural-voice speed relative to the eSpeak rate, percent. */
     static final String PREF_SPEED = "piper_speed";
+    /** Offer models to NNAPI; see PiperEngine#setAcceleration. */
+    static final String PREF_ACCELERATION = "piper_nnapi";
     /** Speaker of multi-speaker voices: "piper_speaker_" + key -> id. */
     static final String PREF_SPEAKER_PREFIX = "piper_speaker_";
 
@@ -77,8 +79,16 @@ final class PiperVoiceStore {
             return new File(dir, MODEL_FILE);
         }
 
+        /** Space on the phone: model, config and PiperModel's optimized copy. */
         long sizeBytes() {
-            return model().length();
+            long bytes = 0;
+            final File[] files = dir.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    bytes += f.length();
+                }
+            }
+            return bytes;
         }
 
         /** Language key of the voice, comparable with {@link #languageKey(Locale)}. */
@@ -194,14 +204,8 @@ final class PiperVoiceStore {
     static boolean delete(Context storageContext, SharedPreferences prefs, String key) {
         PiperEngine.get().unload(key);
         final File dir = new File(voicesDir(storageContext), key);
-        boolean ok = true;
-        final File[] files = dir.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                ok &= f.delete();
-            }
-        }
-        ok &= !dir.exists() || dir.delete();
+        PiperDownloads.deleteRecursively(dir); // model, config and its optimized copy
+        final boolean ok = !dir.exists();
         // Languages it spoke go back to eSpeak rather than to a missing voice.
         final SharedPreferences.Editor editor = prefs.edit();
         for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
@@ -279,6 +283,10 @@ final class PiperVoiceStore {
         }
         final String key = assignedKey(prefs, languageKey(espeakVoice.locale));
         return key == null ? null : find(storageContext, key);
+    }
+
+    static boolean acceleration(SharedPreferences prefs) {
+        return prefs.getBoolean(PREF_ACCELERATION, false);
     }
 
     static boolean espeakForCharacters(SharedPreferences prefs) {

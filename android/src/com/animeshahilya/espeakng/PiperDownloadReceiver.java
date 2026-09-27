@@ -13,9 +13,6 @@ import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
 
 /**
  * Receives DownloadManager's completion broadcast and installs the voice.
@@ -46,8 +43,7 @@ public class PiperDownloadReceiver extends BroadcastReceiver {
                 }
                 final int message = result == PiperDownloads.Result.INSTALLED
                         ? R.string.piper_download_done : R.string.piper_download_failed;
-                new Handler(Looper.getMainLooper()).post(() ->
-                        Toast.makeText(app, message, Toast.LENGTH_LONG).show());
+                PiperSettings.toast(app, app.getString(message));
             } finally {
                 pending.finish();
             }

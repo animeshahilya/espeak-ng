@@ -9,7 +9,6 @@
 
 package com.animeshahilya.espeakng;
 
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -53,7 +52,7 @@ import java.util.Map;
  * downloading voices from the Piper catalog, and managing downloaded ones.
  *
  * <p>Everything is a plain list or dialog built from Material components, so
- * TalkBack reads each voice as one row ("Priyamvada, India, balanced, 63 MB,
+ * TalkBack reads each voice as one row ("Priyamvada, India, Standard, 63 MB,
  * downloaded") and each choice as a standard single-choice list.
  */
 final class PiperSettings {
@@ -83,6 +82,13 @@ final class PiperSettings {
             showManage(context, prefs);
             return true;
         });
+        final Preference acceleration = screen.findPreference(PiperVoiceStore.PREF_ACCELERATION);
+        if (acceleration != null) {
+            acceleration.setOnPreferenceChangeListener((p, value) -> {
+                PiperEngine.get().setAcceleration(Boolean.TRUE.equals(value));
+                return true;
+            });
+        }
         refresh(context, screen, prefs);
 
         // Live while the screen is visible: voices finishing their download
@@ -142,6 +148,12 @@ final class PiperSettings {
                 }
             }
         });
+    }
+
+    /** A toast from any thread (downloads, deletes and installs finish off the main thread). */
+    static void toast(Context app, CharSequence text) {
+        new Handler(Looper.getMainLooper()).post(() ->
+                Toast.makeText(app, text, Toast.LENGTH_LONG).show());
     }
 
     private static Context storage(Context context) {
@@ -265,15 +277,23 @@ final class PiperSettings {
     }
 
     private static String qualityLabel(Context context, String quality) {
-        switch (quality == null ? "" : quality) {
-            case "x_low": return context.getString(R.string.piper_quality_x_low);
-            case "low": return context.getString(R.string.piper_quality_low);
-            case "high": return context.getString(R.string.piper_quality_high);
-            default: return context.getString(R.string.piper_quality_medium);
-        }
+        return context.getString(PiperDownloads.isEnhanced(quality)
+                ? R.string.piper_quality_enhanced : R.string.piper_quality_standard);
     }
 
-    /** "Priyamvada, India, balanced" for an installed voice. */
+    /** In the catalog, Enhanced also says whether this phone suits it (PiperDevice). */
+    private static String catalogQualityLabel(Context context, String quality) {
+        if (PiperDownloads.isEnhanced(quality)) {
+            switch (PiperDevice.tier(context)) {
+                case HIGH: return context.getString(R.string.piper_quality_enhanced_recommended);
+                case LOW: return context.getString(R.string.piper_quality_enhanced_slow);
+                default: break;
+            }
+        }
+        return qualityLabel(context, quality);
+    }
+
+    /** "Priyamvada, India, Standard" for an installed voice. */
     private static String voiceLabel(Context context, PiperVoiceConfig config) {
         String region = config.languageCode;
         final int us = region == null ? -1 : region.indexOf('_');
@@ -301,7 +321,7 @@ final class PiperSettings {
             }
             final List<PiperDownloads.CatalogVoice> result = catalog;
             new Handler(Looper.getMainLooper()).post(() -> {
-                if (isGone(context) || !loading.isShowing()) {
+                if (TtsSettingsActivity.isGone(context) || !loading.isShowing()) {
                     return; // cancelled while loading
                 }
                 loading.dismiss();
@@ -363,7 +383,7 @@ final class PiperSettings {
         for (int i = 0; i < voices.size(); i++) {
             final PiperDownloads.CatalogVoice v = voices.get(i);
             String row = context.getString(R.string.piper_catalog_voice_row, v.displayName(),
-                    v.country, qualityLabel(context, v.quality),
+                    v.country, catalogQualityLabel(context, v.quality),
                     Formatter.formatShortFileSize(context, v.modelSize));
             if (v.numSpeakers > 1) {
                 row += ", " + context.getResources().getQuantityString(
@@ -467,10 +487,9 @@ final class PiperSettings {
                 Log.w(TAG, "Download start failed", e);
                 message = R.string.piper_download_start_failed;
             }
-            final int error = message;
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(app, error == 0
+            toast(app, message == 0
                     ? app.getString(R.string.piper_download_started, v.displayName())
-                    : app.getString(error), Toast.LENGTH_LONG).show());
+                    : app.getString(message));
         }, "piper-download").start();
     }
 
@@ -534,10 +553,8 @@ final class PiperSettings {
                 .setPositiveButton(R.string.piper_action_delete, (d, w) -> new Thread(() -> {
                     PiperVoiceStore.delete(storage(context), prefs, voice.key);
                     PiperDownloads.broadcastChanged(context.getApplicationContext(), null, null);
-                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(
-                            context.getApplicationContext(),
-                            context.getString(R.string.piper_deleted, voice.config.displayName()),
-                            Toast.LENGTH_SHORT).show());
+                    toast(context.getApplicationContext(),
+                            context.getString(R.string.piper_deleted, voice.config.displayName()));
                 }, "piper-delete").start())
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
@@ -612,10 +629,5 @@ final class PiperSettings {
             }
         }, new Handler(Looper.getMainLooper()));
         track.play();
-    }
-
-    private static boolean isGone(Context context) {
-        return context instanceof Activity
-                && (((Activity) context).isFinishing() || ((Activity) context).isDestroyed());
     }
 }

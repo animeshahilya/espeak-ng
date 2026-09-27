@@ -531,10 +531,13 @@
     <item quantity="one">%d voice</item>
     <item quantity="other">%d voices</item>
   </plurals>
-  <string name="piper_quality_x_low">fastest</string>
-  <string name="piper_quality_low">fast</string>
-  <string name="piper_quality_medium">balanced</string>
-  <string name="piper_quality_high">best sound, slowest</string>
+  <string name="piper_quality_standard">Standard</string>
+  <string name="piper_quality_enhanced">Enhanced</string>
+  <string name="piper_quality_enhanced_recommended">Enhanced, recommended for this phone</string>
+  <string name="piper_quality_enhanced_slow">Enhanced, may be slow on this phone</string>
+  <string name="category_piper_advanced">Advanced</string>
+  <string name="setting_piper_nnapi">Hardware acceleration</string>
+  <string name="setting_piper_nnapi_summary">Try the phone\'s AI chip (NNAPI). Voices it cannot run use the processor, as when this is off.</string>
   <string name="piper_catalog_voice_row">%1$s, %2$s, %3$s, %4$s</string>
   <string name="piper_catalog_voice_installed">%1$s, downloaded</string>
   <string name="piper_catalog_voice_downloading">%1$s, downloading</string>

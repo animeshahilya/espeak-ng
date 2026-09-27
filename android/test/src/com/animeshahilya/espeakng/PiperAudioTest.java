@@ -66,4 +66,19 @@ public class PiperAudioTest {
         final int[] frames = PiperAudio.estimateWordFrames(words, 17, 1700);
         assertArrayEquals(new int[] {100, 800, 1200}, frames);
     }
+    @Test
+    public void alignedWordsFollowTheModelsDurations() {
+        // 6 ids of 2 frames each, hop 10: every id is 20 samples.
+        final float[] durations = {2, 2, 2, 2, 2, 2};
+        final java.util.List<Integer> starts = java.util.Arrays.asList(1, 4);
+        // No trim, no stretch: words at ids 1 and 4 -> samples 20 and 80.
+        assertArrayEquals(new int[] {20, 80},
+                PiperAudio.alignedWordFrames(starts, durations, 10, 2, 0, 120, 120));
+        // 15 samples trimmed from the front, then stretched to half length.
+        assertArrayEquals(new int[] {2, 32},
+                PiperAudio.alignedWordFrames(starts, durations, 10, 2, 15, 105, 52));
+        // Word counts that don't pair up, or no durations: caller estimates.
+        assertNull(PiperAudio.alignedWordFrames(starts, durations, 10, 3, 0, 120, 120));
+        assertNull(PiperAudio.alignedWordFrames(starts, null, 10, 2, 0, 120, 120));
+    }
 }

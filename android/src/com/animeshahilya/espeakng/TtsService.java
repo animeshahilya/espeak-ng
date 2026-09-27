@@ -250,25 +250,6 @@ public class TtsService extends TextToSpeechService {
         }
     };
 
-    private static final PiperEngine.Listener PIPER_LOG = new PiperEngine.Listener() {
-        @Override
-        public void onLoaded(String key, long millis) {
-            Log.i(TAG, "Natural voice " + key + " loaded in " + millis + " ms");
-        }
-
-        @Override
-        public void onLoadFailed(String key, Throwable error) {
-            Log.e(TAG, "Natural voice " + key + " failed to load; using eSpeak", error);
-        }
-
-        @Override
-        public void onMissingPhonemes(String key, List<String> phonemes) {
-            // Phonemes this fork's rules produce that the voice was never
-            // trained on (the fork's pronunciation fixes can do that); they
-            // are skipped. Logged once per voice per process.
-            Log.w(TAG, "Natural voice " + key + " has no ids for phonemes " + phonemes);
-        }
-    };
 
     /**
      * Starts loading the natural voice that speaks this eSpeak voice's
@@ -300,7 +281,6 @@ public class TtsService extends TextToSpeechService {
         // the main/synth threads: without this the first synthesis request after
         // each process start pays that cost on the latency-critical path. Failure
         // is non-fatal - the lazy path will retry if a synthesis actually needs it.
-        mPiper.setListener(PIPER_LOG);
         new Thread(() -> {
             try {
                 // Natural voice for the system language first: it takes the
