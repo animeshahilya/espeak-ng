@@ -17,7 +17,9 @@
  * deliberate difference: a clause that ends without punctuation Piper knows
  * (a bare line break, a very long run-on clause eSpeak split itself) gets a
  * space, where piper-phonemize glued the next clause's first word onto the
- * previous clause's last one.
+ * previous clause's last one; and full stops written without a following
+ * space (danda, CJK) and paragraph breaks still end in "." (see
+ * PIPER_TERMINATOR_MASK).
  */
 
 #include <stdlib.h>
@@ -46,8 +48,15 @@ extern int option_phoneme_input;
 #define CLAUSE_EXCLAMATION (45 | CLAUSE_INTONATION_EXCLAMATION | CLAUSE_TYPE_SENTENCE)
 #define CLAUSE_COLON       (30 | CLAUSE_INTONATION_FULL_STOP   | CLAUSE_TYPE_CLAUSE)
 #define CLAUSE_SEMICOLON   (30 | CLAUSE_INTONATION_COMMA       | CLAUSE_TYPE_CLAUSE)
-/* Piper masks the terminator down to pause + intonation + type. */
-#define PIPER_TERMINATOR_MASK 0x000FFFFF
+#define CLAUSE_PARAGRAPH   (70 | CLAUSE_INTONATION_FULL_STOP   | CLAUSE_TYPE_SENTENCE)
+#define CLAUSE_OPTIONAL_SPACE_AFTER   0x00008000
+/* Piper masks the terminator down to pause + intonation + type, but keeps
+ * CLAUSE_OPTIONAL_SPACE_AFTER, which eSpeak sets on terminators that need no
+ * space after them: the Devanagari danda, the Urdu full stop, CJK and
+ * Arabic marks. None of those then matched below, so their sentences reached
+ * the model with no final punctuation (flat, unfinished intonation). Masking
+ * the bit out too makes "।" a "." as it is for eSpeak itself. */
+#define PIPER_TERMINATOR_MASK (0x000FFFFF & ~CLAUSE_OPTIONAL_SPACE_AFTER)
 
 typedef struct {
   char *data;
@@ -169,7 +178,10 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
     const int punct = terminator & PIPER_TERMINATOR_MASK;
     const int ends_sentence =
         (terminator & CLAUSE_TYPE_SENTENCE) == CLAUSE_TYPE_SENTENCE || cursor == NULL;
-    if (punct == CLAUSE_PERIOD) {
+    if (clause.len == 0) {
+      /* Nothing speakable (a leading "¿", a lone mark): a punctuation-only
+       * record would become a model run of its own. */
+    } else if (punct == CLAUSE_PERIOD || punct == CLAUSE_PARAGRAPH) {
       buf_char(&clause, '.');
     } else if (punct == CLAUSE_QUESTION) {
       buf_char(&clause, '?');
@@ -181,7 +193,7 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
       buf_append(&clause, ": ", 2);
     } else if (punct == CLAUSE_SEMICOLON) {
       buf_append(&clause, "; ", 2);
-    } else if (!ends_sentence && clause.len > 0) {
+    } else if (!ends_sentence) {
       buf_char(&clause, ' ');
     }
 
