@@ -180,9 +180,29 @@ public class TtsService extends TextToSpeechService {
                         // Favorites only reorder the cached framework list, but
                         // the same rebuild produces it, so share the path.
                         rebuildAvailableVoices();
+                    } else if (PiperVoiceStore.PREF_ENABLED.equals(key)
+                            || (key != null && key.startsWith(PiperVoiceStore.PREF_VOICE_PREFIX))) {
+                        naturalVoicesChanged(TolerantPreferences.of(sharedPreferences));
                     }
                 }
             };
+
+    /**
+     * The natural-voice switch or a language's voice changed. Off frees
+     * every loaded model at once (100+ MB each) instead of holding them
+     * until the process dies; otherwise the voice now needed starts loading.
+     */
+    private void naturalVoicesChanged(SharedPreferences prefs) {
+        if (!PiperVoiceStore.isEnabled(prefs)) {
+            mPiper.unloadAll();
+            return;
+        }
+        final Voice current;
+        synchronized (mAvailableVoices) {
+            current = mMatchingVoice;
+        }
+        new Thread(() -> preloadNaturalVoice(current), "piper-preload").start();
+    }
 
     /**
      * Reloads the voice list from the native engine when new voice data lands
@@ -260,8 +280,8 @@ public class TtsService extends TextToSpeechService {
         if (voice == null || mPreferences == null || mStorageContext == null) {
             return;
         }
-        final PiperVoiceStore.Installed natural =
-                PiperVoiceStore.resolve(mStorageContext, mPreferences, voice);
+        final PiperVoiceStore.Installed natural = PiperVoiceStore.resolve(mStorageContext,
+                TolerantPreferences.of(mPreferences), voice);
         if (natural != null) {
             mPiper.preload(natural.key, natural.model(), natural.config);
         }
@@ -442,6 +462,9 @@ public class TtsService extends TextToSpeechService {
     }
 
     private Pair<Voice, Integer> getDefaultVoiceFor(String language, String country, String variant) {
+        // findVoice() tolerates null codes; the equals() calls below did not.
+        language = language != null ? language : "";
+        country = country != null ? country : "";
         final Pair<Voice, Integer> match = findVoice(language, country, variant);
         switch (match.second) {
             case TextToSpeech.LANG_AVAILABLE:
@@ -749,6 +772,11 @@ public class TtsService extends TextToSpeechService {
 
     @Override
     protected synchronized void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
+        // Cleared here, not after preprocessing: a stop (screen-reader swipe)
+        // arriving while the text is prepared belongs to this request, and
+        // clearing the flag later used to erase it - the whole first chunk
+        // then rendered before the next item could speak.
+        mIsStopped.set(false);
         if (selectVoice(request) == TextToSpeech.ERROR) {
             reportError(callback, CheckVoiceData.hasBaseResources(mStorageContext)
                     ? TextToSpeech.ERROR_SERVICE : TextToSpeech.ERROR_NOT_INSTALLED_YET);
@@ -825,9 +853,10 @@ public class TtsService extends TextToSpeechService {
             }
         }
 
-        final SharedPreferences prefs = mPreferences != null
+        // Tolerant: one setting stored with the wrong type must not silence speech.
+        final SharedPreferences prefs = TolerantPreferences.of(mPreferences != null
                 ? mPreferences
-                : PreferenceManager.getDefaultSharedPreferences(mStorageContext);
+                : PreferenceManager.getDefaultSharedPreferences(mStorageContext));
         final VoiceSettings settings = new VoiceSettings(prefs, engine);
 
         // Sleep timer: while the mute window covers now, complete the request
@@ -890,7 +919,6 @@ public class TtsService extends TextToSpeechService {
 
         mCallback = callback;
         mCallbackDone.set(false);
-        mIsStopped.set(false);
         int sampleRate = engine.getSampleRate();
         if (sampleRate <= 0) {
             reportError(callback, TextToSpeech.ERROR_SERVICE);
@@ -1010,7 +1038,9 @@ public class TtsService extends TextToSpeechService {
             mSegmentsRemaining.set(1);
             mChunkBase = units.isEmpty() ? 0 : units.get(0).base;
             try {
-                engine.synthesize(text, isSsml);
+                if (!mIsStopped.get()) {
+                    engine.synthesize(text, isSsml);
+                }
             } catch (Throwable t) {
                 if (DEBUG) Log.w(TAG, "Synth failed", t);
                 reportError(callback, TextToSpeech.ERROR_SERVICE);
@@ -1133,7 +1163,6 @@ public class TtsService extends TextToSpeechService {
         final int sampleRate = model.config.sampleRate;
         mCallback = callback;
         mCallbackDone.set(false);
-        mIsStopped.set(false);
         if (callback.start(sampleRate, AudioFormat.ENCODING_PCM_16BIT, 1) != TextToSpeech.SUCCESS) {
             mCallback = null;
             reportError(callback, TextToSpeech.ERROR_SERVICE);
@@ -1184,6 +1213,11 @@ public class TtsService extends TextToSpeechService {
                 }
                 mSynthCallback.onSynthDataReady(pcm);
                 return !mIsStopped.get() && !mCallbackDone.get();
+            }
+
+            @Override
+            public boolean stopped() {
+                return mIsStopped.get();
             }
         };
 

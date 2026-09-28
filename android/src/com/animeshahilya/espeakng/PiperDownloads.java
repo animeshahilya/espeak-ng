@@ -65,6 +65,13 @@ final class PiperDownloads {
     static final String REPO_BASE = "https://huggingface.co/rhasspy/piper-voices/resolve/main/";
     static final String CATALOG_URL = REPO_BASE + "voices.json";
     static final String SAMPLES_BASE = "https://rhasspy.github.io/piper-samples/samples/";
+    /**
+     * Community voices for languages Piper's own catalog lacks (Tamil,
+     * Sinhala), in voices.json's format plus base_url, source and license.
+     * Bundled, and each base_url pinned to a commit, so the checksums here
+     * always match; only this list may point somewhere other than REPO_BASE.
+     */
+    static final String EXTRA_CATALOG_ASSET = "piper/extra_voices.json";
     /** Refetch the catalog after a week; a manual refresh is always possible. */
     static final long CATALOG_MAX_AGE_MS = 7L * 24 * 60 * 60 * 1000;
 
@@ -82,7 +89,9 @@ final class PiperDownloads {
 
     /** Download bookkeeping, excluded from settings backups. */
     static boolean isDeviceLocalPref(String key) {
-        return key != null && (key.startsWith(PREF_DL_ID_PREFIX) || key.startsWith(PREF_DL_KEY_PREFIX));
+        return key != null && (key.startsWith(PREF_DL_ID_PREFIX) || key.startsWith(PREF_DL_KEY_PREFIX)
+                // Crash strikes and suspensions describe this phone, not the user's choices.
+                || key.startsWith("piper_crash_strikes_") || key.startsWith(PiperCrashGuard.PREF_SUSPENDED));
     }
 
     /** One entry of voices.json. */
@@ -103,12 +112,20 @@ final class PiperDownloads {
         String configPath;
         long configSize;
         String configMd5;
+        /** Where modelPath/configPath live: REPO_BASE, or a bundled extra's pinned repo. */
+        String baseUrl = REPO_BASE;
+        /** Community voices only: who made it and its license, shown before download. */
+        String source;
+        String license;
 
         String displayName() {
             return PiperVoiceConfig.titleCase(name);
         }
 
         String sampleUrl() {
+            if (!REPO_BASE.equals(baseUrl)) {
+                return null; // piper-samples only has Piper's own voices
+            }
             final int slash = modelPath.lastIndexOf('/');
             return slash < 0 ? null : SAMPLES_BASE + modelPath.substring(0, slash) + "/speaker_0.mp3";
         }
@@ -120,6 +137,11 @@ final class PiperDownloads {
 
     /** Parses voices.json; skips malformed entries rather than failing the list. */
     static List<CatalogVoice> parseCatalog(String json) throws JSONException {
+        return parseCatalog(json, false);
+    }
+
+    /** @param bundled the app's own extra list: the only one trusted with base_url */
+    static List<CatalogVoice> parseCatalog(String json, boolean bundled) throws JSONException {
         final JSONObject root = new JSONObject(json);
         final List<CatalogVoice> out = new ArrayList<>();
         final Iterator<String> keys = root.keys();
@@ -137,6 +159,14 @@ final class PiperDownloads {
                 continue;
             }
             c.numSpeakers = v.optInt("num_speakers", 1);
+            if (bundled) {
+                c.baseUrl = v.optString("base_url", REPO_BASE);
+                c.source = v.optString("source", null);
+                c.license = v.optString("license", null);
+                if (!c.baseUrl.startsWith("https://huggingface.co/") || !c.baseUrl.endsWith("/")) {
+                    continue;
+                }
+            }
             final JSONObject lang = v.optJSONObject("language");
             if (lang == null) {
                 continue;
@@ -174,6 +204,11 @@ final class PiperDownloads {
             }
             out.add(c);
         }
+        sort(out);
+        return out;
+    }
+
+    private static void sort(List<CatalogVoice> out) {
         Collections.sort(out, (a, b) -> {
             int d = a.code.compareTo(b.code);
             if (d != 0) return d;
@@ -181,6 +216,31 @@ final class PiperDownloads {
             if (d != 0) return d;
             return Boolean.compare(isEnhanced(a.quality), isEnhanced(b.quality));
         });
+    }
+
+    /** Piper's catalog plus the bundled extras it does not have (by key). */
+    private static List<CatalogVoice> withExtras(Context context, List<CatalogVoice> catalog) {
+        final List<CatalogVoice> out = new ArrayList<>(catalog);
+        try (InputStream in = context.getAssets().open(EXTRA_CATALOG_ASSET)) {
+            final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            final byte[] b = new byte[8192];
+            int n;
+            while ((n = in.read(b)) > 0) {
+                buf.write(b, 0, n);
+            }
+            final java.util.Set<String> keys = new java.util.HashSet<>();
+            for (CatalogVoice v : catalog) {
+                keys.add(v.key);
+            }
+            for (CatalogVoice v : parseCatalog(buf.toString("UTF-8"), true)) {
+                if (keys.add(v.key)) {
+                    out.add(v);
+                }
+            }
+            sort(out);
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Extra voices unavailable", e);
+        }
         return out;
     }
 
@@ -227,7 +287,7 @@ final class PiperDownloads {
                 && System.currentTimeMillis() - cache.lastModified() < CATALOG_MAX_AGE_MS;
         if (!refresh && fresh) {
             try {
-                return parseCatalog(PiperVoiceStore.readText(cache));
+                return withExtras(storageContext, parseCatalog(PiperVoiceStore.readText(cache)));
             } catch (JSONException e) {
                 Log.w(TAG, "Cached catalog unreadable; refetching", e);
             }
@@ -236,11 +296,11 @@ final class PiperDownloads {
             final byte[] data = fetch(CATALOG_URL, 8 * 1024 * 1024);
             final List<CatalogVoice> parsed = parseCatalog(new String(data, StandardCharsets.UTF_8));
             writeAtomically(cache, data);
-            return parsed;
+            return withExtras(storageContext, parsed);
         } catch (IOException e) {
             if (cache.isFile()) {
                 Log.w(TAG, "Catalog fetch failed; using cached copy", e);
-                return parseCatalog(PiperVoiceStore.readText(cache));
+                return withExtras(storageContext, parseCatalog(PiperVoiceStore.readText(cache)));
             }
             throw e;
         }
@@ -298,7 +358,7 @@ final class PiperDownloads {
      */
     static long start(Context appContext, Context storageContext, CatalogVoice voice)
             throws IOException, JSONException, UnsupportedVoiceException {
-        final byte[] configBytes = fetch(REPO_BASE + voice.configPath, 1024 * 1024);
+        final byte[] configBytes = fetch(voice.baseUrl + voice.configPath, 1024 * 1024);
         if (voice.configMd5 != null && !voice.configMd5.equalsIgnoreCase(md5(configBytes))) {
             throw new IOException("Config checksum mismatch for " + voice.key);
         }
@@ -326,7 +386,7 @@ final class PiperDownloads {
         }
         final DownloadManager dm = appContext.getSystemService(DownloadManager.class);
         final DownloadManager.Request request = new DownloadManager.Request(
-                Uri.parse(REPO_BASE + voice.modelPath))
+                Uri.parse(voice.baseUrl + voice.modelPath))
                 .setTitle(appContext.getString(R.string.piper_download_title, voice.displayName()))
                 .setDescription(appContext.getString(R.string.piper_download_description,
                         voice.nameNative, voice.country))
@@ -410,8 +470,11 @@ final class PiperDownloads {
     /**
      * Finishes a download: verifies the model against the catalog checksum
      * and moves it into place. Idempotent; blocking (hashes ~60 MB).
+     * Synchronized: the completion broadcast and the settings screen's
+     * reconcile() can finish the same download on two threads at once, and
+     * both copied into one temp file and moved one staging folder.
      */
-    static Result complete(Context appContext, Context storageContext, long id) {
+    static synchronized Result complete(Context appContext, Context storageContext, long id) {
         final SharedPreferences prefs = prefs(storageContext);
         final String key = prefs.getString(PREF_DL_ID_PREFIX + id, null);
         if (key == null) {
@@ -423,6 +486,9 @@ final class PiperDownloads {
             if (c != null && c.moveToFirst()) {
                 status = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
             }
+        } catch (RuntimeException e) {
+            Log.w(TAG, "Cannot query download " + id, e);
+            return Result.NOT_OURS; // left pending: reconcile() retries
         }
         if (status == DownloadManager.STATUS_RUNNING || status == DownloadManager.STATUS_PENDING
                 || status == DownloadManager.STATUS_PAUSED) {
@@ -468,7 +534,9 @@ final class PiperDownloads {
             }
             broadcastChanged(appContext, key, assigned);
             return Result.INSTALLED;
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
+            // Runtime too: this runs on bare threads, where anything uncaught
+            // kills the process - and with it the speech service.
             Log.w(TAG, "Install of " + key + " failed", e);
             deleteRecursively(staging);
             return Result.FAILED;
@@ -478,7 +546,11 @@ final class PiperDownloads {
                 target.delete();
             }
             forget(prefs, id, key);
-            dm.remove(id); // drops the completed-download entry (file already gone)
+            try {
+                dm.remove(id); // drops the completed-download entry (file already gone)
+            } catch (RuntimeException e) {
+                Log.w(TAG, "Cannot remove download " + id, e);
+            }
         }
     }
 
@@ -487,7 +559,13 @@ final class PiperDownloads {
         final SharedPreferences prefs = prefs(storageContext);
         for (String key : pendingKeys(storageContext)) {
             final long id = prefs.getLong(PREF_DL_KEY_PREFIX + key, -1);
-            final Progress p = progress(appContext, storageContext, key);
+            final Progress p;
+            try {
+                p = progress(appContext, storageContext, key);
+            } catch (RuntimeException e) {
+                Log.w(TAG, "Cannot query download of " + key, e);
+                continue;
+            }
             if (p == null) {
                 forget(prefs, id, key); // the system forgot it; so do we
                 deleteRecursively(stagingDir(storageContext, key));

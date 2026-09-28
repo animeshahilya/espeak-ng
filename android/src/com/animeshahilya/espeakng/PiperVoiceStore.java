@@ -47,7 +47,11 @@ import java.util.MissingResourceException;
 final class PiperVoiceStore {
     private static final String TAG = "PiperVoiceStore";
 
-    /** Master switch: off speaks everything with eSpeak, choices kept. */
+    /**
+     * Master switch: off speaks everything with eSpeak, choices kept. Off by
+     * default - natural voices are opt-in; the settings page persists the
+     * switch once shown, so anyone who downloaded a voice keeps their choice.
+     */
     static final String PREF_ENABLED = "piper_enabled";
     /** Per language: "piper_voice_" + ISO 639-2 code -> voice key, absent = eSpeak. */
     static final String PREF_VOICE_PREFIX = "piper_voice_";
@@ -214,6 +218,7 @@ final class PiperVoiceStore {
             }
         }
         editor.remove(PREF_SPEAKER_PREFIX + key);
+        editor.remove(PiperCrashGuard.PREF_SUSPENDED + key);
         editor.apply();
         synchronized (LOCK) {
             sCache.remove(key);
@@ -253,7 +258,7 @@ final class PiperVoiceStore {
     }
 
     static boolean isEnabled(SharedPreferences prefs) {
-        return prefs.getBoolean(PREF_ENABLED, true);
+        return prefs.getBoolean(PREF_ENABLED, false);
     }
 
     /** Voice key chosen for a language, or null for eSpeak. */
@@ -282,7 +287,8 @@ final class PiperVoiceStore {
             return null;
         }
         final String key = assignedKey(prefs, languageKey(espeakVoice.locale));
-        return key == null ? null : find(storageContext, key);
+        return key == null || PiperCrashGuard.isSuspended(prefs, key) ? null
+                : find(storageContext, key);
     }
 
     static boolean acceleration(SharedPreferences prefs) {

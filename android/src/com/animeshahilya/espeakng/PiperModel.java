@@ -133,9 +133,29 @@ final class PiperModel implements Closeable {
         return model;
     }
 
+    private static volatile boolean sTelemetryOff;
+
+    /**
+     * The process's ONNX Runtime environment, with the runtime's own
+     * telemetry off: speech never touches the network (its startup
+     * provider is removed in AndroidManifest.xml for the same reason).
+     */
+    private static OrtEnvironment env() {
+        final OrtEnvironment env = OrtEnvironment.getEnvironment();
+        if (!sTelemetryOff) {
+            try {
+                env.setTelemetry(false);
+            } catch (OrtException | RuntimeException ignored) {
+                // Builds without telemetry support: nothing to turn off.
+            }
+            sTelemetryOff = true;
+        }
+        return env;
+    }
+
     /** model.onnx -> model.<ONNX Runtime version>.opt.ort: a runtime update re-optimizes. */
     static File optimizedFile(File onnx) {
-        final String version = OrtEnvironment.getEnvironment().getVersion();
+        final String version = env().getVersion();
         return new File(onnx.getParentFile(), OPTIMIZED_PREFIX + version + OPTIMIZED_SUFFIX);
     }
 
@@ -156,7 +176,7 @@ final class PiperModel implements Closeable {
             options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
             options.setOptimizedModelFilePath(partial.getAbsolutePath());
             options.addConfigEntry("session.save_model_format", "ORT");
-            OrtEnvironment.getEnvironment().createSession(source.getAbsolutePath(), options).close();
+            env().createSession(source.getAbsolutePath(), options).close();
             if (!partial.renameTo(optimized)) {
                 partial.delete();
             }
@@ -182,10 +202,10 @@ final class PiperModel implements Closeable {
                 options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.NO_OPT);
                 options.addConfigEntry("session.use_ort_model_bytes_directly", "1");
                 options.addConfigEntry("session.use_ort_model_bytes_for_initializers", "1");
-                return OrtEnvironment.getEnvironment().createSession(mapped, options);
+                return env().createSession(mapped, options);
             }
             options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
-            return OrtEnvironment.getEnvironment().createSession(model.getAbsolutePath(), options);
+            return env().createSession(model.getAbsolutePath(), options);
         }
     }
 
@@ -219,21 +239,32 @@ final class PiperModel implements Closeable {
         infer(ids, config.lengthScale, config.defaultSpeakerId, null);
     }
 
-    /** Stops a run in progress from another thread; see {@link #infer}. */
+    /**
+     * Stops a run in progress from another thread; see {@link #infer}.
+     * cancel() (the framework's stop, on every screen-reader swipe) races
+     * the synthesis thread's close() when a request ends: terminating closed
+     * RunOptions throws IllegalStateException, and in the window inside
+     * close() it would touch freed native memory - either one killed the
+     * whole TTS service. Both are synchronized and cancel() skips a closed run.
+     */
     static final class RunHandle {
         private final OrtSession.RunOptions options;
         private volatile boolean cancelled;
+        private boolean closed;
 
         RunHandle() throws OrtException {
             options = runOptions();
         }
 
-        void cancel() {
+        synchronized void cancel() {
             cancelled = true;
+            if (closed) {
+                return;
+            }
             try {
                 options.setTerminate(true);
             } catch (OrtException ignored) {
-                // Already finished or closed: nothing left to stop.
+                // Already finished: nothing left to stop.
             }
         }
 
@@ -241,8 +272,11 @@ final class PiperModel implements Closeable {
             return cancelled;
         }
 
-        void close() {
-            options.close();
+        synchronized void close() {
+            if (!closed) {
+                closed = true;
+                options.close();
+            }
         }
     }
 
@@ -263,7 +297,7 @@ final class PiperModel implements Closeable {
             if (closed || (handle != null && handle.isCancelled())) {
                 return null;
             }
-            final OrtEnvironment env = OrtEnvironment.getEnvironment();
+            final OrtEnvironment env = env();
             final Map<String, OnnxTensor> inputs = new HashMap<>();
             final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
             try {

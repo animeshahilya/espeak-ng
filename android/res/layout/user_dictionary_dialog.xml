@@ -97,24 +97,16 @@
                 android:layout_height="80dp"
                 android:layout_marginBottom="@dimen/section_gap"
                 android:src="@drawable/ic_dictionary"
-                android:tint="?attr/colorOnSurfaceVariant"
+                app:tint="?attr/colorOnSurfaceVariant"
                 android:alpha="0.5"
                 android:importantForAccessibility="no" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/content_gap"
-                android:text="@string/dict_empty"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorOnSurfaceVariant" />
-
-            <TextView
+                android:id="@+id/dict_empty_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/dict_empty_subtitle"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
         </LinearLayout>

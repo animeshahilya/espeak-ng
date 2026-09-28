@@ -232,7 +232,7 @@ public class PiperE2EDeviceTest {
         final android.content.SharedPreferences prefs = androidx.preference.PreferenceManager
                 .getDefaultSharedPreferences(InstrumentationRegistry.getInstrumentation()
                         .getTargetContext().createDeviceProtectedStorageContext());
-        Assume.assumeTrue("no Hindi natural voice set", prefs.getBoolean("piper_enabled", true)
+        Assume.assumeTrue("no Hindi natural voice set", prefs.getBoolean("piper_enabled", false)
                 && !prefs.getString("piper_voice_hin", "").isEmpty());
         // Until the voice is loaded eSpeak speaks (it may be cold): give it time.
         toFile("hwarm", "नमस्ते, आप कैसे हैं?", hindi, 1f);

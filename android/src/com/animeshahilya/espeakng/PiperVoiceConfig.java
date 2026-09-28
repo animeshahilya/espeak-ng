@@ -100,8 +100,16 @@ final class PiperVoiceConfig {
         return PHONEME_TYPE_ESPEAK.equals(phonemeType);
     }
 
-    /** "Priyamvada", from the dataset name "priyamvada". */
+    /**
+     * "Priyamvada", from the catalog key "hi_IN-priyamvada-medium" - the
+     * name the catalog lists it by. Community configs can carry a generic
+     * dataset ("data"), so the dataset is only the fallback.
+     */
     String displayName() {
+        final String[] parts = key.split("-");
+        if (parts.length >= 3 && !parts[1].isEmpty()) {
+            return titleCase(parts[1]);
+        }
         return titleCase(dataset != null && !dataset.isEmpty() ? dataset : key);
     }
 
@@ -142,6 +150,13 @@ final class PiperVoiceConfig {
             b.languageCode = language.optString("code", null);
             b.languageNameNative = language.optString("name_native", null);
             b.languageNameEnglish = language.optString("name_english", null);
+        }
+        // Region from the catalog key ("ta_IN-...") when the config gives
+        // only a language ("ta"), as community voices do.
+        final java.util.regex.Matcher keyLang = java.util.regex.Pattern
+                .compile("^([a-z]{2,3}_[A-Z]{2})-").matcher(key);
+        if ((b.languageCode == null || b.languageCode.indexOf('_') < 0) && keyLang.find()) {
+            b.languageCode = keyLang.group(1);
         }
         if (b.languageFamily == null && b.espeakVoice != null) {
             // Voices trained before Piper recorded "language": the eSpeak

@@ -33,12 +33,34 @@ final class PiperDevice {
             final ActivityManager am = context.getSystemService(ActivityManager.class);
             final ActivityManager.MemoryInfo mem = new ActivityManager.MemoryInfo();
             am.getMemoryInfo(mem);
-            final int performanceClass = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                    ? Build.VERSION.MEDIA_PERFORMANCE_CLASS : 0;
-            tier = tierFor(performanceClass, mem.totalMem, am.isLowRamDevice());
+            tier = tierFor(performanceClass(), mem.totalMem, am.isLowRamDevice());
             sTier = tier;
         }
         return tier;
+    }
+
+    static int performanceClass() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                ? Build.VERSION.MEDIA_PERFORMANCE_CLASS : 0;
+    }
+
+    enum Fit { RECOMMENDED, NEUTRAL, SLOW }
+
+    /** Piper's full "high" models are about 114 MB; lighter ones run like a Standard voice. */
+    static final long HEAVY_MODEL_BYTES = 90_000_000L;
+
+    /**
+     * Whether an Enhanced voice suits this phone. A heavy model does about
+     * 5x a Standard voice's work per second of speech: 1.8x real time on a
+     * Pixel 8 (performance class 34), so a phone without a flagship-class
+     * processor - however much memory it has - falls behind and pauses.
+     */
+    static Fit enhancedFit(Tier tier, int performanceClass, long modelBytes) {
+        final boolean fastCpu = performanceClass >= Build.VERSION_CODES.TIRAMISU;
+        if (tier == Tier.LOW || (modelBytes >= HEAVY_MODEL_BYTES && !fastCpu)) {
+            return Fit.SLOW;
+        }
+        return fastCpu || tier == Tier.HIGH ? Fit.RECOMMENDED : Fit.NEUTRAL;
     }
 
     /** An 8 GB phone reports ~7.5 GB, a 4 GB one ~3.6 GB. */

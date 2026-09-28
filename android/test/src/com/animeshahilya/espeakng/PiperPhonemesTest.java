@@ -44,6 +44,17 @@ public class PiperPhonemesTest {
         return PiperVoiceConfig.parse("en_US-amy-low", AMY_SUBSET);
     }
 
+    /** A modifier letter the voice lacks falls back to its plain letter, else is reported. */
+    @Test
+    public void modifierLetterFallsBackToPlainLetter() throws Exception {
+        final List<String> missing = new java.util.ArrayList<>();
+        final long[] ids = PiperPhonemes.toIds(java.util.Arrays.asList("t", "ʰ", "ⁿ"),
+                amy(), missing);
+        // ^ _ t _ h(from ʰ) _ $ : ⁿ -> n, which this subset lacks, is skipped and reported.
+        assertArrayEquals(new long[] {1, 0, 32, 0, 20, 0, 2}, ids);
+        assertEquals(java.util.Collections.singletonList("ⁿ"), missing);
+    }
+
     @Test
     public void parsesConfig() throws Exception {
         final PiperVoiceConfig c = amy();
@@ -62,6 +73,17 @@ public class PiperPhonemesTest {
         final PiperVoiceConfig c = PiperVoiceConfig.parse("zh", AMY_SUBSET.replace(
                 "\"num_speakers\"", "\"phoneme_type\": \"pinyin\", \"num_speakers\""));
         assertFalse(c.isSupported());
+    }
+
+    /** Community config shape (tinisoft Tamil): generic dataset, language without region. */
+    @Test
+    public void communityConfigTakesNameAndRegionFromKey() throws Exception {
+        final PiperVoiceConfig c = PiperVoiceConfig.parse("ta_IN-rasa_female-medium",
+                "{\"dataset\": \"data\", \"espeak\": {\"voice\": \"ta\"},"
+                        + " \"language\": {\"code\": \"ta\"}, \"phoneme_id_map\": {\"_\": [0]}}");
+        assertEquals("Rasa Female", c.displayName());
+        assertEquals("ta_IN", c.languageCode);
+        assertEquals("ta", c.languageFamily);
     }
 
     @Test

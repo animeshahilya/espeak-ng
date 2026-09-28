@@ -19,8 +19,12 @@ package com.animeshahilya.espeakng;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -129,7 +134,7 @@ public class DictionaryDeviceTest {
     }
 
     @Test
-    public void testUserDictionaryRules() {
+    public void testUserDictionaryRules() throws java.io.IOException {
         UserDictionaryManager mgr = UserDictionaryManager.getInstance(mContext);
         mgr.clearRules();
 
@@ -331,5 +336,48 @@ public class DictionaryDeviceTest {
         assertThat(after, is("hello omega world"));
 
         mgr.clearRules();
+    }
+
+    /**
+     * Opening the editor must not crash, with and without rules. A layout
+     * change once turned a view the screen casts to TextView into a
+     * LinearLayout, which compiles fine and crashed on every open.
+     */
+    @Test
+    public void dictionaryScreenOpens() throws InterruptedException {
+        UserDictionaryManager mgr = UserDictionaryManager.getInstance(mContext);
+        List<UserDictionary> saved = mgr.getRules();
+        try (ActivityScenario<TtsSettingsActivity> scenario =
+                ActivityScenario.launch(TtsSettingsActivity.class)) {
+            mgr.clearRules();
+            openDictionary(scenario);
+            mgr.addRule(new UserDictionary("gif", "jif", false, false, true));
+            openDictionary(scenario);
+        } finally {
+            mgr.replaceAll(saved);
+        }
+    }
+
+    /** Taps the settings row, waiting for the screen to add it after the engine loads. */
+    private static void openDictionary(ActivityScenario<TtsSettingsActivity> scenario)
+            throws InterruptedException {
+        final AtomicBoolean opened = new AtomicBoolean();
+        for (int i = 0; i < 100 && !opened.get(); i++) {
+            scenario.onActivity(activity -> {
+                final PreferenceFragmentCompat fragment = (PreferenceFragmentCompat)
+                        activity.getSupportFragmentManager().findFragmentById(android.R.id.content);
+                final Preference row = fragment == null ? null
+                        : fragment.findPreference(VoiceSettings.PREF_USER_DICTIONARY);
+                if (row != null) {
+                    row.performClick();
+                    opened.set(true);
+                }
+            });
+            if (!opened.get()) {
+                Thread.sleep(100);
+            }
+        }
+        assertThat("dictionary row attached within 10 s", opened.get(), is(true));
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
 }

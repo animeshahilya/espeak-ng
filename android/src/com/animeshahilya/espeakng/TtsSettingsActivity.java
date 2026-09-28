@@ -460,8 +460,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }, new BackgroundDone<Integer>() {
             @Override public void done(Integer count) {
                 if (isGone(activity)) return;
-                Toast.makeText(activity,
-                        activity.getResources().getQuantityString(R.plurals.dict_import_done, count, count),
+                Toast.makeText(activity, count > 0
+                                ? activity.getResources().getQuantityString(R.plurals.dict_import_done, count, count)
+                                : activity.getString(R.string.dict_import_none),
                         Toast.LENGTH_LONG).show();
             }
         });
@@ -2069,9 +2070,18 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
         pref.setEntryValues(values);
     }
 
-    private static void startForResult(Context context, Intent intent, int requestCode) {
-        if (context instanceof Activity) {
+    /**
+     * Opens the system file picker. Some devices have none (Wear OS, some TV
+     * and managed profiles): say so instead of crashing the settings screen.
+     */
+    static void startForResult(Context context, Intent intent, int requestCode) {
+        if (!(context instanceof Activity)) {
+            return;
+        }
+        try {
             ((Activity) context).startActivityForResult(intent, requestCode);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, R.string.no_file_picker, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -2099,8 +2109,14 @@ btnGithub.setOnClickListener(new View.OnClickListener() {
                 share.setType("text/plain");
                 share.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.log_share_subject));
                 share.putExtra(Intent.EXTRA_TEXT, log);
-                context.startActivity(Intent.createChooser(share,
-                        context.getString(R.string.setting_export_log)));
+                try {
+                    context.startActivity(Intent.createChooser(share,
+                            context.getString(R.string.setting_export_log)));
+                } catch (RuntimeException e) {
+                    // No share sheet on this device, or a log too large to hand over.
+                    Log.w(TAG, "Log share failed", e);
+                    Toast.makeText(context, R.string.log_share_failed, Toast.LENGTH_LONG).show();
+                }
             });
         }, "log-export").start();
     }

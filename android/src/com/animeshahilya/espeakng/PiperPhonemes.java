@@ -270,7 +270,14 @@ final class PiperPhonemes {
         ids.addAll(pad);
         boolean inWord = false;
         for (String phoneme : phonemes) {
-            final int[] mapped = config.phonemeIdMap.get(phoneme);
+            int[] mapped = config.phonemeIdMap.get(phoneme);
+            if (mapped == null) {
+                // A modifier letter the voice was trained without (this fork's
+                // Sinhala prenasal "ⁿ" in a voice from an older eSpeak):
+                // its plain letter is closer than dropping the sound.
+                mapped = config.phonemeIdMap.get(
+                        java.text.Normalizer.normalize(phoneme, java.text.Normalizer.Form.NFKC));
+            }
             if (mapped == null) {
                 if (missing != null && !missing.contains(phoneme)) {
                     missing.add(phoneme);

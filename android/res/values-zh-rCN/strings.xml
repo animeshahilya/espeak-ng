@@ -2,7 +2,6 @@
 <resources>
   <!--Source: Activity title.
         Description: Title for the Settings activity.-->
-  <string name="tts_settings_label">eSpeak 文字转语音 (TTS) 设置</string>
   <!--Source: Preference title.
         Description: Title for the preference that controls default voice pitch.-->
   <string name="setting_default_pitch">默认声调</string>

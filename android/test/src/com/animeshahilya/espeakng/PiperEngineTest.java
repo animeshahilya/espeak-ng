@@ -33,4 +33,17 @@ public class PiperEngineTest {
         assertEquals(3, PiperDevice.voicesKeptLoaded(PiperDevice.Tier.HIGH));
         assertEquals(1, PiperDevice.voicesKeptLoaded(PiperDevice.Tier.LOW));
     }
+
+    @Test
+    public void enhancedVoiceFit() {
+        final long heavy = 114_199_011L; // es_AR-daniela-high
+        final long light = 63_000_000L;  // es_MX-claude-high
+        // Pixel 8: keeps up with a heavy model.
+        assertEquals(PiperDevice.Fit.RECOMMENDED, PiperDevice.enhancedFit(PiperDevice.Tier.HIGH, 34, heavy));
+        // 8 GB but no flagship processor: memory alone does not make it fast.
+        assertEquals(PiperDevice.Fit.SLOW, PiperDevice.enhancedFit(PiperDevice.Tier.HIGH, 0, heavy));
+        assertEquals(PiperDevice.Fit.RECOMMENDED, PiperDevice.enhancedFit(PiperDevice.Tier.HIGH, 0, light));
+        assertEquals(PiperDevice.Fit.NEUTRAL, PiperDevice.enhancedFit(PiperDevice.Tier.MID, 0, light));
+        assertEquals(PiperDevice.Fit.SLOW, PiperDevice.enhancedFit(PiperDevice.Tier.LOW, 34, light));
+    }
 }

@@ -4,7 +4,6 @@
         Source: Activity title.
         Description: Title for the Settings activity.
     -->
-  <string name="tts_settings_label">eSpeak NG Advanced Settings</string>
   <!--
         Source: Preference title.
         Description: Title for the preference that controls default voice pitch.
@@ -114,7 +113,7 @@
   <string name="emoji_ignore">Ignore / skip emojis</string>
   <string name="setting_audio_optimizer">Audio optimizer</string>
   <string name="import_voice_success">Successfully imported voice data.</string>
-  <string name="import_voice_error">Failed to import voice file.</string>
+  <string name="import_voice_error">Could not import that file. It may be damaged, or not an eSpeak voice or dictionary.</string>
   <string name="setting_capitals">Capital letters</string>
   <string name="capitals_none">None</string>
   <string name="capitals_sound">Play a beep</string>
@@ -169,6 +168,7 @@
   <string name="setting_export_log_summary">Share a log to help with troubleshooting.</string>
   <string name="export_log_collecting">Collecting log…</string>
   <string name="dict_import_started">Importing dictionary…</string>
+  <string name="dict_import_none">No rules found in that file. Use an NVDA dictionary (.dic), a list of word=replacement lines, or a file exported from this app.</string>
   <plurals name="dict_import_done">
     <item quantity="one">Dictionary import finished: %1$d rule added.</item>
     <item quantity="other">Dictionary import finished: %1$d rules added.</item>
@@ -221,7 +221,6 @@
   <string name="dict_filter_abbrev">Abbreviations only</string>
   <string name="dict_filter_character">Character only</string>
   <string name="dict_empty">No custom rules configured. Use Add rule for single entries or Import for large word lists.</string>
-  <string name="dict_empty_subtitle">Tap the + button or Import to add your first pronunciation rule.</string>
   <string name="dict_no_match">No rules match this search and filter combination.</string>
   <string name="dict_rule_title">Rule: %1$s</string>
   <string name="dict_action_preview">Preview pronunciation</string>
@@ -258,7 +257,9 @@
   <string name="dict_label_phonemes">Exact phonemes (optional, advanced)</string>
   <string name="dict_hint_phonemes">Space-separated espeak phoneme codes, e.g.: k V n \'i:v @ l. Overrides the spoken replacement above - used exactly as typed instead of being re-pronounced by the engine.</string>
   <string name="dict_error_empty_pattern">Original word or pattern cannot be empty.</string>
-  <string name="dict_error_invalid_regex">Invalid regular expression.</string>
+  <string name="dict_error_invalid_regex">Not a valid regular expression. Turn off Regular expression to match the text exactly as typed.</string>
+  <string name="dict_error_unsafe_regex">This pattern could make speech hang: it is over 200 characters, or repeats something inside a repeat, like (a+)+. Simplify it.</string>
+  <string name="dict_error_missing_group">The replacement uses group %1$d, but the pattern has only %2$d. Add brackets to the pattern or fix the number.</string>
   <string name="dict_error_invalid_phonemes">Phonemes cannot contain [[ or ]].</string>
   <string name="dict_delete_confirm_title">Delete rule?</string>
   <string name="dict_delete_confirm_message">Are you sure you want to delete the rule \"%1$s\"?</string>
@@ -384,22 +385,24 @@
   <string name="about_feature_offline">• 100% Offline with zero network permissions and Direct-Boot readiness</string>
   <string name="about_feature_languages">• Every eSpeak NG language bundled, with regional dialects and voice variants</string>
   <string name="about_feature_indian">• Enhanced Indian English (en-in) and Indic language phonetics</string>
-  <string name="about_feature_dsp">• Formant DSP tone shaping and audio optimizer</string>
+  <string name="about_feature_dsp">• Tone shaping and audio optimizer</string>
   <string name="about_feature_dict">• Custom user dictionary with regex, whole-word, and phoneme rules</string>
   <string name="about_feature_locks">• Caller-proof locks to prevent apps from overriding rate, pitch, or volume</string>
   <string name="about_license">Licensed under GNU General Public License v3.0 or later</string>
 
   <!-- Settings load / export failure feedback (uncaught worker used to crash silently) -->
   <string name="settings_load_failed">Failed to load settings. Close and reopen the screen.</string>
-  <string name="dict_export_failed">Failed to export dictionary file.</string>
-  <string name="backup_export_failed">Failed to export backup file.</string>
-  <string name="backup_restore_failed">Failed to restore backup file.</string>
+  <string name="dict_export_failed">Could not save the dictionary file. Try another location.</string>
+  <string name="backup_export_failed">Could not save the backup file. Try another location.</string>
+  <string name="backup_restore_failed">Could not restore that backup. The file may be damaged or not a backup from this app.</string>
   <string name="log_share_subject">eSpeak NG activity log</string>
   <plurals name="dict_share_text">
     <item quantity="one">eSpeak NG User Dictionary (%1$d rule)</item>
     <item quantity="other">eSpeak NG User Dictionary (%1$d rules)</item>
   </plurals>
-  <string name="dict_share_failed">Failed to share dictionary.</string>
+  <string name="dict_share_failed">Could not share the dictionary.</string>
+  <string name="no_file_picker">This device has no file picker, so files can not be opened or saved here.</string>
+  <string name="log_share_failed">Could not share the log from this device.</string>
   <string name="category_voice">Voice</string>
   <string name="category_customize">Customize</string>
   <string name="category_app">App</string>
@@ -450,13 +453,13 @@
   <string name="setting_load_profile">Load voice profile</string>
   <string name="setting_load_profile_summary">Apply a saved voice profile file.</string>
   <string name="profile_saved">Voice profile saved.</string>
-  <string name="profile_save_failed">Failed to save voice profile.</string>
+  <string name="profile_save_failed">Could not save the voice profile. Try another location.</string>
   <string name="profile_applied">Voice profile applied.</string>
-  <string name="profile_load_failed">Failed to load voice profile.</string>
+  <string name="profile_load_failed">Could not load that voice profile. The file may be damaged or not a profile from this app.</string>
 
   <!-- What's new after an update -->
-  <string name="whats_new_title">What\'s new in 2.5</string>
-  <string name="whats_new_body">NATURAL VOICES\n• Download human-sounding voices and choose, language by language, whether eSpeak or a natural voice speaks. They follow this app\'s pronunciation rules and your dictionary. Find them in Natural voices.\n• Standard and Enhanced quality, with a suggestion for your phone.\n• Long texts play smoothly, voices load in about a second and use little memory.\n• Hindi and Urdu sentences end with a natural tone.\n\nNEW FEATURES\n• Settings search from the top bar.\n• Voice profiles: save and share your variant, rate, pitch and punctuation as a file.\n• Favorite voices stay at the top of the voice list.\n• Sleep timer, in Locks.\n• Reading history (opt-in), in Tools.\n• Touch and hold a language to hear a sample.\n\nVOICES AND LANGUAGES\n• Better pronunciation for Assamese, Gujarati, Nepali, Punjabi, Konkani and Sinhala.\n• Indian English sounds closer to real Indian English.\n• Lakh and crore reading can be used with every voice, and Hinglish, abbreviations and money reading work with more voices.\n\nACCESSIBILITY\n• TalkBack moves to the first setting when a page opens, and sliders announce their value once.\n• TalkBack knows these voices work offline.\n\nLOOK AND STABILITY\n• A refreshed, modern design.\n• Faster start-up and more reliable voice setup.</string>
+  <string name="whats_new_title">What\'s new in 2.5.1</string>
+  <string name="whats_new_body">FIXED IN 2.5.1\n• The user dictionary opens again, and rules can be edited and deleted.\n• Natural voices no longer crash speech, including when moving quickly through items.\n• A natural voice that keeps failing on your phone switches to eSpeak instead of stopping speech.\n• Natural voices are off until you turn them on, and nothing about them runs while off.\n• The app no longer uses the internet at start-up; only voice downloads do.\n• Download suggestions match what your phone can play without pauses.\n• Dictionary export keeps every part of each rule and matches NVDA\'s format.\n• Speech keeps working even if a setting is damaged.\n• Activity logs and backups no longer include your reading history.\n• Clearer error messages, and no crash on devices without a file picker.\n\nNATURAL VOICES\n• Download human-sounding voices and choose, language by language, whether eSpeak or a natural voice speaks. They follow this app\'s pronunciation rules and your dictionary. Turn them on in Natural voices; until then everything is plain eSpeak.\n• Standard and Enhanced quality, with a suggestion for your phone.\n• Community voices for Tamil and Sinhala.\n• Long texts play smoothly, voices load in about a second and use little memory.\n• Hindi and Urdu sentences end with a natural tone.\n\nNEW FEATURES\n• Settings search from the top bar.\n• Voice profiles: save and share your variant, rate, pitch and punctuation as a file.\n• Favorite voices stay at the top of the voice list.\n• Sleep timer, in Locks.\n• Reading history (opt-in), in Tools.\n• Touch and hold a language to hear a sample.\n\nVOICES AND LANGUAGES\n• Better pronunciation for Assamese, Gujarati, Nepali, Punjabi, Konkani and Sinhala.\n• Indian English sounds closer to real Indian English.\n• Lakh and crore reading can be used with every voice, and Hinglish, abbreviations and money reading work with more voices.\n\nACCESSIBILITY\n• TalkBack moves to the first setting when a page opens, and sliders announce their value once.\n• TalkBack knows these voices work offline.\n\nLOOK AND STABILITY\n• A refreshed, modern design.\n• Faster start-up and more reliable voice setup.</string>
 
   <!-- Favorite voices: pinned to the top of the system voice list -->
   <string name="setting_favorite_voices">Favorite voices</string>
@@ -493,15 +496,18 @@
   <string name="note_wear_limited_summary">Rate boost, dictionary, languages and other phone-only settings are hidden here.</string>
   <!-- Natural voices (Piper) -->
   <string name="screen_natural_voices_title">Natural voices</string>
-  <string name="screen_natural_voices_summary">Human-sounding Piper voices, chosen per language</string>
+  <string name="screen_natural_voices_summary">On, human-sounding voices for the languages you choose</string>
   <string name="setting_piper_enabled">Use natural voices</string>
-  <string name="setting_piper_enabled_summary">Off speaks every language with eSpeak. Your choices below are kept.</string>
+  <string name="setting_piper_enabled_summary_on">Languages you choose below speak with a natural voice. The rest use eSpeak.</string>
+  <string name="setting_piper_enabled_summary_off">Off: every language uses eSpeak and nothing else is loaded. Turn on to download and use natural voices.</string>
+  <string name="screen_natural_voices_off">Off, eSpeak only</string>
   <string name="category_piper_languages">Voice for each language</string>
   <string name="category_piper_voices">Voices</string>
   <string name="category_piper_screen_reader">Screen reader</string>
   <string name="piper_languages_empty">No natural voices yet. Download one below, and it will speak its language.</string>
   <string name="piper_language_espeak">eSpeak (fast, screen reader voice)</string>
   <string name="piper_language_summary_espeak">eSpeak</string>
+  <string name="piper_voice_suspended">eSpeak for now: %1$s stopped working on this phone. Choose it again to retry.</string>
   <string name="piper_voice_entry">%1$s, %2$s, %3$s</string>
   <string name="setting_piper_download">Download natural voices</string>
   <string name="setting_piper_download_summary">Uses the internet only for this. Speech stays offline.</string>
@@ -534,10 +540,10 @@
   <string name="piper_quality_standard">Standard</string>
   <string name="piper_quality_enhanced">Enhanced</string>
   <string name="piper_quality_enhanced_recommended">Enhanced, recommended for this phone</string>
-  <string name="piper_quality_enhanced_slow">Enhanced, may be slow on this phone</string>
+  <string name="piper_quality_enhanced_slow">Enhanced, may pause on this phone</string>
   <string name="category_piper_advanced">Advanced</string>
-  <string name="setting_piper_nnapi">Hardware acceleration</string>
-  <string name="setting_piper_nnapi_summary">Try the phone\'s AI chip (NNAPI). Voices it cannot run use the processor, as when this is off.</string>
+  <string name="setting_piper_nnapi">Use the AI chip</string>
+  <string name="setting_piper_nnapi_summary">Experimental. On most phones it is not faster. Voices it can\'t run use the processor, as when this is off.</string>
   <string name="piper_catalog_voice_row">%1$s, %2$s, %3$s, %4$s</string>
   <string name="piper_catalog_voice_installed">%1$s, downloaded</string>
   <string name="piper_catalog_voice_downloading">%1$s, downloading</string>
@@ -546,17 +552,18 @@
     <item quantity="other">%d speakers</item>
   </plurals>
   <string name="piper_confirm_title">Download %1$s?</string>
-  <string name="piper_confirm_message">%1$s, %2$s. Size %3$s. A download this size is best on Wi-Fi.\n\nPiper voices sound natural but take a moment to start each sentence. eSpeak stays the fastest choice for quick navigation.</string>
+  <string name="piper_confirm_message">%1$s, %2$s. Size %3$s. A download this size is best on Wi-Fi.\n\nNatural voices take a moment to start each sentence. eSpeak stays the fastest choice for quick navigation.</string>
+  <string name="piper_confirm_community">%1$s\n\nCommunity voice by %2$s, license %3$s. Not from the main voice collection; quality may vary.</string>
   <string name="piper_confirm_download">Download</string>
   <string name="piper_play_sample">Play sample</string>
   <string name="piper_sample_failed">Could not play the sample</string>
   <string name="piper_download_started">Downloading %1$s. You can leave this screen; you will hear when it is ready.</string>
   <string name="piper_download_start_failed">Could not start the download. Check your internet connection and try again.</string>
-  <string name="piper_download_unsupported">This voice needs a different kind of phonemizer and can\'t be used here.</string>
+  <string name="piper_download_unsupported">This voice can\'t be used with this app.</string>
   <string name="piper_download_title">Natural voice: %1$s</string>
   <string name="piper_download_description">%1$s, %2$s</string>
   <string name="piper_download_done">Natural voice is ready</string>
-  <string name="piper_download_failed">Natural voice download failed</string>
+  <string name="piper_download_failed">Natural voice download failed. Check your internet connection and try again.</string>
   <string name="piper_voice_ready_assigned">%1$s is ready and now speaks %2$s</string>
   <string name="piper_voice_ready">%1$s is ready</string>
   <string name="piper_manage_title">Downloaded voices</string>
@@ -568,5 +575,6 @@
   <string name="piper_delete_confirm">Delete %1$s? Languages it speaks go back to eSpeak.</string>
   <string name="piper_deleted">%1$s deleted</string>
   <string name="piper_test_loading">Loading %1$s…</string>
+  <string name="piper_test_failed">Could not play %1$s</string>
   <string name="piper_refresh">Refresh list</string>
 </resources>

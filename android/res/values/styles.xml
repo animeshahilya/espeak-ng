@@ -112,13 +112,7 @@
     </style>
 
     <!-- Bottom sheet theme for language picker -->
-    <style name="AppBottomSheetTheme" parent="Theme.Material3.DayNight.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppBottomSheetStyle</item>
-    </style>
 
-    <style name="AppBottomSheetStyle" parent="Widget.Material3.BottomSheet.Modal">
-        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
-    </style>
 
     <style name="AppTheme" parent="AppTheme.Base">
     </style>

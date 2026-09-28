@@ -363,12 +363,21 @@ public class UserDictionaryManager {
         return added;
     }
 
+    /** NVDA .dic match types (the fifth column). */
+    private static final String DIC_ANYWHERE = "0";
+    private static final String DIC_REGEX = "1";
+    private static final String DIC_WORD = "2";
+    /** Comment written on export; this app's extra fields follow it as JSON. */
+    private static final String DIC_COMMENT = "eSpeakAndroid";
+
     /**
-     * One NVDA .dic line (pattern, replacement, comment, case, regex; tab
-     * separated) or a plain "word=replacement" line. Null for blanks,
-     * comments and lines with no usable pattern.
+     * One NVDA .dic line (pattern, replacement, comment, case sensitive, match
+     * type; tab separated) or a plain "word=replacement" line. Null for
+     * blanks, comments and lines with no usable pattern. A comment this app
+     * wrote carries the fields NVDA's format has no column for (section,
+     * language, phonemes), so an export imports back unchanged.
      */
-    private static UserDictionary parseDicLine(String raw) {
+    static UserDictionary parseDicLine(String raw) {
         String l = raw.trim();
         if (l.isEmpty() || l.startsWith("#")) return null;
         String[] parts = raw.split("\t");
@@ -376,11 +385,28 @@ public class UserDictionaryManager {
         String replacement;
         boolean caseSensitive = false;
         boolean isRegex = false;
+        boolean wholeWord = true;
+        JSONObject extras = null;
         if (parts.length >= 2) {
             pattern = parts[0].trim();
             replacement = parts[1].trim();
+            if (parts.length >= 3) {
+                final String comment = parts[2].trim();
+                final int brace = comment.indexOf('{');
+                if (comment.startsWith(DIC_COMMENT) && brace > 0) {
+                    try {
+                        extras = new JSONObject(comment.substring(brace));
+                    } catch (Exception ignored) {
+                        // Someone else's comment that happens to start the same way.
+                    }
+                }
+            }
             if (parts.length >= 4) caseSensitive = "1".equals(parts[3].trim());
-            if (parts.length >= 5) isRegex = "1".equals(parts[4].trim());
+            if (parts.length >= 5) {
+                final String type = parts[4].trim();
+                isRegex = DIC_REGEX.equals(type);
+                wholeWord = DIC_WORD.equals(type);
+            }
         } else if (raw.contains("=")) {
             // Tolerate simple "word=replacement" lists too.
             int eq = raw.indexOf('=');
@@ -390,7 +416,40 @@ public class UserDictionaryManager {
             return null;
         }
         if (pattern.isEmpty()) return null;
-        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, !isRegex);
+        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord,
+                extras != null ? extras.optString("language", "") : "",
+                extras != null ? extras.optString("category", UserDictionary.CATEGORY_MAIN)
+                        : UserDictionary.CATEGORY_MAIN,
+                extras != null ? extras.optString("phonemes", "") : "");
+    }
+
+    /** One rule as a .dic line; tabs and line breaks inside it would split the line. */
+    static String toDicLine(UserDictionary rule) {
+        String comment = DIC_COMMENT;
+        try {
+            final JSONObject extras = new JSONObject();
+            if (!UserDictionary.CATEGORY_MAIN.equals(rule.getCategory())) {
+                extras.put("category", rule.getCategory());
+            }
+            if (!rule.getLanguage().isEmpty()) {
+                extras.put("language", rule.getLanguage());
+            }
+            if (!rule.getPhonemes().isEmpty()) {
+                extras.put("phonemes", rule.getPhonemes());
+            }
+            if (extras.length() > 0) {
+                comment += " " + extras;
+            }
+        } catch (org.json.JSONException ignored) {
+            // Only strings go in; cannot happen.
+        }
+        return field(rule.getPattern()) + "\t" + field(rule.getReplacement()) + "\t"
+                + field(comment) + "\t" + (rule.isCaseSensitive() ? "1" : "0") + "\t"
+                + (rule.isRegex() ? DIC_REGEX : rule.isWholeWord() ? DIC_WORD : DIC_ANYWHERE) + "\n";
+    }
+
+    private static String field(String s) {
+        return s.replace('\t', ' ').replace('\n', ' ').replace('\r', ' ');
     }
 
     public List<UserDictionary> getRulesByCategory(String category) {
@@ -423,21 +482,16 @@ public class UserDictionaryManager {
     }
 
     /**
-     * Exports rules in standard .dic tab-delimited format.
+     * Exports rules in NVDA's .dic tab-delimited format. Throws on a failed
+     * write so the caller reports it instead of "exported".
      */
-    public synchronized void exportToStream(OutputStream os) {
+    public synchronized void exportToStream(OutputStream os) throws java.io.IOException {
         try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
             writer.write("# Speech dictionary file exported from eSpeak NG Android\n");
             for (UserDictionary rule : mRules) {
-                writer.write(rule.getPattern() + "\t" +
-                        rule.getReplacement() + "\t" +
-                        "eSpeakAndroid\t" +
-                        (rule.isCaseSensitive() ? "1" : "0") + "\t" +
-                        (rule.isRegex() ? "1" : "0") + "\n");
+                writer.write(toDicLine(rule));
             }
             writer.flush();
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to export dictionary", e);
         }
     }
 }

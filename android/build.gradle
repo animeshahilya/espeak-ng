@@ -69,7 +69,7 @@ dependencies {
     // The full (not "mobile") package: Piper models are plain ONNX files
     // from the voice catalog, not pre-converted ORT-format models. Only the
     // arm64-v8a library ships (abiFilters below), about 8 MB in the APK.
-    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.29.0'
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.30.0'
     testImplementation 'junit:junit:4.13.2'
     // Real org.json for the JVM unit tests: android.jar's is a stub, and
     // returnDefaultValues would make every Piper config parse come back empty.
@@ -93,8 +93,8 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 37
-        versionCode = 26
-        versionName = "2.5"
+        versionCode = 27
+        versionName = "2.5.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {

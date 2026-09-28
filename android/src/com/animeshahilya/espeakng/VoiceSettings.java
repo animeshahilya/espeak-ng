@@ -191,7 +191,7 @@ public class VoiceSettings {
     public static final int DEFAULT_CAPITALS = 3;
 
     public VoiceSettings(SharedPreferences preferences, SpeechSynthesis engine) {
-        mPreferences = preferences;
+        mPreferences = TolerantPreferences.of(preferences);
         mEngine = engine;
     }
 

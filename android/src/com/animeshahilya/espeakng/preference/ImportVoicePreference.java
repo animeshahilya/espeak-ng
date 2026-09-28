@@ -62,7 +62,8 @@ public class ImportVoicePreference extends Preference {
                     fallback.setType("*/*");
                     activity.startActivityForResult(fallback, TtsSettingsActivity.REQUEST_CODE_IMPORT_VOICE);
                 } catch (Exception ex) {
-                    // Ignore if no file picker available
+                    android.widget.Toast.makeText(activity, R.string.no_file_picker,
+                            android.widget.Toast.LENGTH_LONG).show();
                 }
             }
         }

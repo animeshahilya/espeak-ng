@@ -103,9 +103,16 @@ public class EspeakApp extends Application {
         HinglishReader.init(appContext);
         migrateLegacyPreferences(appContext, EspeakApp.storageContext);
         PiperEngine.get().setListener(PIPER_LOG);
+        // Before any voice can load: a voice that crashed the last process
+        // twice in a row is suspended instead of crash-looping TalkBack.
+        // Tolerant: a wrongly typed setting must not crash every process start.
+        final android.content.SharedPreferences settings = TolerantPreferences.of(
+                androidx.preference.PreferenceManager.getDefaultSharedPreferences(EspeakApp.storageContext));
+        final PiperCrashGuard crashGuard = new PiperCrashGuard(EspeakApp.storageContext, settings);
+        crashGuard.checkPreviousExit(appContext);
+        PiperEngine.get().setNativeGuard(crashGuard);
         PiperEngine.get().setMaxLoaded(PiperDevice.voicesKeptLoaded(PiperDevice.tier(appContext)));
-        PiperEngine.get().setAcceleration(PiperVoiceStore.acceleration(
-                androidx.preference.PreferenceManager.getDefaultSharedPreferences(EspeakApp.storageContext)));
+        PiperEngine.get().setAcceleration(PiperVoiceStore.acceleration(settings));
         if (!appContext.getSystemService(UserManager.class).isUserUnlocked()) {
             // Started at boot, for a direct-boot-aware screen reader. The
             // credential-encrypted file cannot be read yet, so run the

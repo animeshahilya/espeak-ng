@@ -66,6 +66,41 @@ public class PiperCatalogTest {
         assertFalse(PiperDownloads.isEnhanced(voices.get(0).quality));
     }
 
+    /** base_url is honored only in the bundled list: the remote catalog cannot redirect downloads. */
+    @Test
+    public void baseUrlOnlyFromBundledList() throws Exception {
+        final String json = "{\"ta_IN-x-medium\": {\"key\": \"ta_IN-x-medium\", \"name\": \"x\","
+                + " \"language\": {\"code\": \"ta_IN\", \"family\": \"ta\"}, \"quality\": \"medium\","
+                + " \"base_url\": \"https://huggingface.co/someone/voice/resolve/abc/\","
+                + " \"source\": \"someone\", \"license\": \"MIT\","
+                + " \"files\": {\"a.onnx\": {}, \"a.onnx.json\": {}}}}";
+        final PiperDownloads.CatalogVoice remote = PiperDownloads.parseCatalog(json).get(0);
+        assertEquals(PiperDownloads.REPO_BASE, remote.baseUrl);
+        assertEquals(null, remote.source);
+        final PiperDownloads.CatalogVoice bundled = PiperDownloads.parseCatalog(json, true).get(0);
+        assertEquals("https://huggingface.co/someone/voice/resolve/abc/", bundled.baseUrl);
+        assertEquals("someone", bundled.source);
+        assertEquals(null, bundled.sampleUrl());
+        // Anything but a Hugging Face repo is dropped.
+        assertEquals(0, PiperDownloads.parseCatalog(json.replace("https://huggingface.co/",
+                "http://evil.example/"), true).size());
+    }
+
+    /** The shipped extras file parses, every entry is kept, and each is pinned with checksums. */
+    @Test
+    public void bundledExtrasParse() throws Exception {
+        final String json = new String(java.nio.file.Files.readAllBytes(
+                java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
+        final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
+        assertEquals(3, voices.size());
+        for (PiperDownloads.CatalogVoice v : voices) {
+            assertTrue(v.key, v.baseUrl.matches("https://huggingface\\.co/[^/]+/[^/]+/resolve/[0-9a-f]{40}/"));
+            assertEquals(v.key, 32, v.modelMd5.length());
+            assertTrue(v.key, v.modelSize > 10_000_000L);
+            assertTrue(v.key, v.license != null && v.source != null);
+        }
+    }
+
     @Test
     public void nameFromKey() {
         assertEquals("Libritts R", PiperDownloads.nameFromKey("en_US-libritts_r-medium"));

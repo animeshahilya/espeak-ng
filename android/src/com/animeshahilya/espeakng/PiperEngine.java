@@ -71,6 +71,11 @@ final class PiperEngine {
 
         /** @return false once the caller no longer wants audio (stopped) */
         boolean audio(byte[] pcm);
+
+        /** True once the request was stopped, even before any audio. */
+        default boolean stopped() {
+            return false;
+        }
     }
 
     static final class Params {
@@ -117,6 +122,35 @@ final class PiperEngine {
     private final Set<String> mNoAcceleration = ConcurrentHashMap.newKeySet();
     private volatile PiperModel.RunHandle mCurrentRun;
     private volatile Listener mListener;
+    private volatile NativeGuard mGuard;
+
+    /**
+     * Brackets native (ONNX Runtime) work per voice, so a crash inside it can
+     * be pinned on the voice after the process restarts (PiperCrashGuard).
+     */
+    interface NativeGuard {
+        void enter(String key);
+
+        void exit(String key);
+    }
+
+    void setNativeGuard(NativeGuard guard) {
+        mGuard = guard;
+    }
+
+    private void enterNative(String key) {
+        final NativeGuard g = mGuard;
+        if (g != null) {
+            g.enter(key);
+        }
+    }
+
+    private void exitNative(String key) {
+        final NativeGuard g = mGuard;
+        if (g != null) {
+            g.exit(key);
+        }
+    }
 
     /** Load/failure notifications, for logging and the settings screen. */
     interface Listener {
@@ -210,14 +244,19 @@ final class PiperEngine {
     }
 
     private PiperModel loadModel(String key, File onnx, PiperVoiceConfig config) throws OrtException {
-        if (mAcceleration && !mNoAcceleration.contains(key)) {
-            try {
-                return PiperModel.load(onnx, config, inferenceThreads(), true);
-            } catch (Throwable t) {
-                accelerationFailed(key, t);
+        enterNative(key);
+        try {
+            if (mAcceleration && !mNoAcceleration.contains(key)) {
+                try {
+                    return PiperModel.load(onnx, config, inferenceThreads(), true);
+                } catch (Throwable t) {
+                    accelerationFailed(key, t);
+                }
             }
+            return PiperModel.load(onnx, config, inferenceThreads(), false);
+        } finally {
+            exitNative(key);
         }
-        return PiperModel.load(onnx, config, inferenceThreads(), false);
     }
 
     /**
@@ -290,6 +329,15 @@ final class PiperEngine {
         if (model != null) {
             model.close();
         }
+    }
+
+    /**
+     * Natural voices switched off: frees every loaded model. On the loader
+     * thread - closing waits for an inference in flight, and the caller is
+     * the main thread - and queued after any load already started.
+     */
+    void unloadAll() {
+        mLoader.execute(() -> trim(true));
     }
 
     /** Memory pressure: keep only the most recently used voice. */
@@ -414,13 +462,24 @@ final class PiperEngine {
 
         final PiperModel.RunHandle handle = new PiperModel.RunHandle();
         mCurrentRun = handle;
+        // A stop() that came before mCurrentRun was set found nothing to
+        // cancel; the caller's flag still says so (it is set before stop()).
+        if (out.stopped()) {
+            handle.cancel();
+        }
         // Everything but delivery happens on the renderer: model run, level,
         // trim, pitch/speed stretch and PCM bytes. Measured: libsonic alone
         // took 200-500 ms per sentence on the synthesis thread while the
         // model used the fast cores - enough to drain the framework's ~0.5 s
         // of queued audio and stall playback.
         final Renderer renderer = job -> mRenderer.submit(() -> {
-            final PiperModel.Output o = model.infer(job.ids, lengthScale, speaker, handle);
+            final PiperModel.Output o;
+            enterNative(config.key);
+            try {
+                o = model.infer(job.ids, lengthScale, speaker, handle);
+            } finally {
+                exitNative(config.key);
+            }
             if (o == null) {
                 return null;
             }

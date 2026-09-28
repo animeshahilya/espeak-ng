@@ -50,6 +50,16 @@ public final class LogExporter {
         return pi.versionCode;
     }
 
+    private static final String[] EXIT_REASONS = {"unknown", "exited", "signaled",
+            "low memory", "crash", "native crash", "ANR", "init failure", "permission change",
+            "excessive resources", "user requested", "user stopped", "dependency died", "other",
+            "frozen", "package state change", "package updated"};
+
+    /** ApplicationExitInfo.REASON_* by value (0-16). */
+    private static String exitReason(int reason) {
+        return reason >= 0 && reason < EXIT_REASONS.length ? EXIT_REASONS[reason] : "reason " + reason;
+    }
+
     public static String collect(Context context) {
         StringBuilder sb = new StringBuilder(32768);
         sb.append("=== eSpeak NG Advanced — activity log ===\n");
@@ -74,6 +84,12 @@ public final class LogExporter {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
             sb.append("--- Preferences ---\n");
             for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
+                if (ReadingHistory.PREF_HISTORY_ITEMS.equals(e.getKey())) {
+                    // What the phone read aloud (messages, names, codes): never
+                    // in a log people share for troubleshooting.
+                    sb.append(e.getKey()).append("=(not included)\n");
+                    continue;
+                }
                 sb.append(e.getKey()).append('=').append(String.valueOf(e.getValue())).append('\n');
             }
             sb.append('\n');
@@ -86,6 +102,25 @@ public final class LogExporter {
             sb.append("User dictionary rules: ").append(ruleCount).append("\n\n");
         } catch (Throwable t) {
             sb.append("Dictionary unavailable: ").append(t).append("\n\n");
+        }
+
+        // logcat below only reaches back to this process's start, so a
+        // crash that restarted the speech service is only visible here.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                sb.append("--- Recent process exits ---\n");
+                for (android.app.ApplicationExitInfo e : context.getSystemService(
+                        android.app.ActivityManager.class)
+                        .getHistoricalProcessExitReasons(null, 0, 10)) {
+                    sb.append(new java.util.Date(e.getTimestamp())).append(' ')
+                            .append(e.getProcessName()).append(' ').append(exitReason(e.getReason()))
+                            .append(" status=").append(e.getStatus())
+                            .append(' ').append(e.getDescription()).append('\n');
+                }
+                sb.append('\n');
+            } catch (Throwable t) {
+                sb.append("Exit reasons unavailable: ").append(t).append("\n\n");
+            }
         }
 
         sb.append("--- logcat (last ~500 lines, eSpeak + AndroidRuntime) ---\n");

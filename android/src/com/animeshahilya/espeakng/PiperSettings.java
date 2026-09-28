@@ -35,6 +35,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -82,6 +83,17 @@ final class PiperSettings {
             showManage(context, prefs);
             return true;
         });
+        // The main page's row says when natural voices are off, so someone
+        // who wants pure eSpeak can see it is without opening the page.
+        final Preference row = screen.findPreference(KEY_SCREEN);
+        final Preference enabled = screen.findPreference(PiperVoiceStore.PREF_ENABLED);
+        if (row != null && enabled != null) {
+            showEnabled(context, row, PiperVoiceStore.isEnabled(prefs));
+            enabled.setOnPreferenceChangeListener((p, value) -> {
+                showEnabled(context, row, Boolean.TRUE.equals(value));
+                return true;
+            });
+        }
         final Preference acceleration = screen.findPreference(PiperVoiceStore.PREF_ACCELERATION);
         if (acceleration != null) {
             acceleration.setOnPreferenceChangeListener((p, value) -> {
@@ -210,14 +222,30 @@ final class PiperSettings {
             row.setDefaultValue("");
             row.setIconSpaceReserved(false);
             row.setSummaryProvider(p -> {
-                final CharSequence entry = ((ListPreference) p).getEntry();
-                return entry == null || "".equals(((ListPreference) p).getValue())
-                        ? context.getString(R.string.piper_language_summary_espeak) : entry;
+                final ListPreference list = (ListPreference) p;
+                final CharSequence entry = list.getEntry();
+                if (entry == null || "".equals(list.getValue())) {
+                    return context.getString(R.string.piper_language_summary_espeak);
+                }
+                if (PiperCrashGuard.isSuspended(prefs, list.getValue())) {
+                    final PiperVoiceStore.Installed v =
+                            PiperVoiceStore.find(storage(context), list.getValue());
+                    return context.getString(R.string.piper_voice_suspended,
+                            v != null ? v.config.displayName() : entry);
+                }
+                return entry;
             });
             row.setOnPreferenceChangeListener((p, value) -> {
                 final PiperVoiceStore.Installed chosen =
                         PiperVoiceStore.find(storage(context), String.valueOf(value));
                 if (chosen != null) {
+                    // Chosen again after a suspension: the user wants to retry it.
+                    if (PiperCrashGuard.isSuspended(prefs, chosen.key)) {
+                        PiperCrashGuard.clear(prefs, chosen.key);
+                        // Re-choosing the same voice leaves the value, and so
+                        // the summary, unchanged: rebuild so it stops saying so.
+                        new Handler(Looper.getMainLooper()).post(() -> refresh(context, screen, prefs));
+                    }
                     // Load now, so the very next utterance already uses it.
                     PiperEngine.get().preload(chosen.key, chosen.model(), chosen.config);
                 }
@@ -265,6 +293,11 @@ final class PiperSettings {
         return false;
     }
 
+    private static void showEnabled(Context context, Preference row, boolean enabled) {
+        row.setSummary(enabled ? R.string.screen_natural_voices_summary
+                : R.string.screen_natural_voices_off);
+    }
+
     /** "Hindi" in the phone's language, from Piper's "hi". */
     @SuppressWarnings("deprecation")
     static String languageName(String family) {
@@ -282,15 +315,16 @@ final class PiperSettings {
     }
 
     /** In the catalog, Enhanced also says whether this phone suits it (PiperDevice). */
-    private static String catalogQualityLabel(Context context, String quality) {
-        if (PiperDownloads.isEnhanced(quality)) {
-            switch (PiperDevice.tier(context)) {
-                case HIGH: return context.getString(R.string.piper_quality_enhanced_recommended);
-                case LOW: return context.getString(R.string.piper_quality_enhanced_slow);
+    private static String catalogQualityLabel(Context context, PiperDownloads.CatalogVoice v) {
+        if (PiperDownloads.isEnhanced(v.quality)) {
+            switch (PiperDevice.enhancedFit(PiperDevice.tier(context),
+                    PiperDevice.performanceClass(), v.modelSize)) {
+                case RECOMMENDED: return context.getString(R.string.piper_quality_enhanced_recommended);
+                case SLOW: return context.getString(R.string.piper_quality_enhanced_slow);
                 default: break;
             }
         }
-        return qualityLabel(context, quality);
+        return qualityLabel(context, v.quality);
     }
 
     /** "Priyamvada, India, Standard" for an installed voice. */
@@ -383,7 +417,7 @@ final class PiperSettings {
         for (int i = 0; i < voices.size(); i++) {
             final PiperDownloads.CatalogVoice v = voices.get(i);
             String row = context.getString(R.string.piper_catalog_voice_row, v.displayName(),
-                    v.country, catalogQualityLabel(context, v.quality),
+                    v.country, catalogQualityLabel(context, v),
                     Formatter.formatShortFileSize(context, v.modelSize));
             if (v.numSpeakers > 1) {
                 row += ", " + context.getResources().getQuantityString(
@@ -417,20 +451,31 @@ final class PiperSettings {
 
     private static void confirmDownload(final Context context, final PiperDownloads.CatalogVoice v) {
         final MediaPlayer[] player = {null};
-        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+        String message = context.getString(R.string.piper_confirm_message,
+                languageName(v.family), v.country,
+                Formatter.formatShortFileSize(context, v.modelSize));
+        if (v.source != null) {
+            // Community voice: its maker and license (CC BY needs the credit).
+            message = context.getString(R.string.piper_confirm_community, message, v.source,
+                    v.license != null ? v.license : "?");
+        }
+        final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context)
                 .setTitle(context.getString(R.string.piper_confirm_title, v.displayName()))
-                .setMessage(context.getString(R.string.piper_confirm_message,
-                        languageName(v.family), v.country,
-                        Formatter.formatShortFileSize(context, v.modelSize)))
+                .setMessage(message)
                 .setPositiveButton(R.string.piper_confirm_download, (d, w) -> startDownload(context, v))
-                .setNeutralButton(R.string.piper_play_sample, null)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setOnDismissListener(d -> releasePlayer(player))
-                .create();
+                .setOnDismissListener(d -> releasePlayer(player));
+        final boolean hasSample = v.sampleUrl() != null;
+        if (hasSample) {
+            builder.setNeutralButton(R.string.piper_play_sample, null);
+        }
+        final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(d -> {
             // Neutral button plays without closing the dialog.
             final Button sample = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-            sample.setOnClickListener(b -> playSample(context, v, player));
+            if (hasSample && sample != null) {
+                sample.setOnClickListener(b -> playSample(context, v, player));
+            }
         });
         dialog.show();
         TtsSettingsActivity.markAlertTitleHeading(dialog);
@@ -595,13 +640,32 @@ final class PiperSettings {
                 play(pcm.toByteArray(), model.config.sampleRate);
             } catch (Throwable t) {
                 Log.w(TAG, "Voice test failed", t);
+                toast(app, app.getString(R.string.piper_test_failed, voice.config.displayName()));
+            } finally {
+                // Testing works with natural voices off; it must not leave a
+                // model (100+ MB) in memory that nothing will speak with.
+                if (!PiperVoiceStore.isEnabled(PreferenceManager.getDefaultSharedPreferences(
+                        storage(context)))) {
+                    PiperEngine.get().unload(voice.key);
+                }
             }
         }, "piper-test").start();
     }
 
-    private static void play(byte[] pcm, int sampleRate) {
+    /**
+     * The voice test playing now. Held: an AudioTrack nothing references can
+     * be collected mid-sample and cut off (its finalizer releases it), and a
+     * second test must stop the first instead of talking over it.
+     */
+    private static AudioTrack sTestTrack;
+
+    private static synchronized void play(byte[] pcm, int sampleRate) {
         if (pcm.length == 0) {
             return;
+        }
+        if (sTestTrack != null) {
+            sTestTrack.release();
+            sTestTrack = null;
         }
         final AudioTrack track = new AudioTrack.Builder()
                 .setAudioAttributes(new AudioAttributes.Builder()
@@ -621,13 +685,19 @@ final class PiperSettings {
         track.setPlaybackPositionUpdateListener(new AudioTrack.OnPlaybackPositionUpdateListener() {
             @Override
             public void onMarkerReached(AudioTrack t) {
-                t.release();
+                synchronized (PiperSettings.class) {
+                    t.release();
+                    if (sTestTrack == t) {
+                        sTestTrack = null;
+                    }
+                }
             }
 
             @Override
             public void onPeriodicNotification(AudioTrack t) {
             }
         }, new Handler(Looper.getMainLooper()));
+        sTestTrack = track;
         track.play();
     }
 }

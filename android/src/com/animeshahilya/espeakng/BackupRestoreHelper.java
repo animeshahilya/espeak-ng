@@ -62,6 +62,9 @@ public final class BackupRestoreHelper {
             if (PiperDownloads.isDeviceLocalPref(e.getKey())) {
                 continue; // download ids mean nothing on another device
             }
+            if (ReadingHistory.PREF_HISTORY_ITEMS.equals(e.getKey())) {
+                continue; // what was read aloud is not a setting, and backups get shared
+            }
             Object v = e.getValue();
             if (v instanceof String || v instanceof Boolean || v instanceof Integer
                     || v instanceof Long || v instanceof Float) {
@@ -126,6 +129,9 @@ public final class BackupRestoreHelper {
             java.util.Iterator<String> keys = prefsJson.keys();
             while (keys.hasNext()) {
                 String k = keys.next();
+                if (PiperDownloads.isDeviceLocalPref(k)) {
+                    continue; // download ids, crash strikes: about another phone
+                }
                 Object v = prefsJson.opt(k);
                 Object cur = existingPrefs.get(k);
                 if (cur instanceof Boolean || (cur == null && v instanceof Boolean)) {

@@ -149,7 +149,8 @@ final class UserDictionaryScreen {
         final EditText etSearch = dialogView.findViewById(R.id.dict_search);
         final MaterialAutoCompleteTextView spFilter = dialogView.findViewById(R.id.dict_filter_spinner);
         final ListView lvRules = dialogView.findViewById(R.id.dict_rules_list);
-        final TextView tvEmpty = dialogView.findViewById(R.id.dict_empty_view);
+        final View emptyView = dialogView.findViewById(R.id.dict_empty_view);
+        final TextView tvEmpty = dialogView.findViewById(R.id.dict_empty_text);
 
         final String[] filterNames = new String[] {
                 context.getString(R.string.dict_filter_all),
@@ -288,12 +289,12 @@ final class UserDictionaryScreen {
                 }
             }
             if (displayedRules.isEmpty()) {
-                tvEmpty.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.VISIBLE);
                 tvEmpty.setText(rules.isEmpty()
                         ? context.getString(R.string.dict_empty)
                         : context.getString(R.string.dict_no_match));
             } else {
-                tvEmpty.setVisibility(View.GONE);
+                emptyView.setVisibility(View.GONE);
             }
         };
 
@@ -396,11 +397,10 @@ final class UserDictionaryScreen {
                 context.getString(R.string.dict_action_preview),
                 context.getString(R.string.dict_action_edit),
                 context.getString(R.string.dict_action_delete) };
-        // Title names the rule; details go in the message so TalkBack paces
-        // them as two stops instead of one run-on line.
+        // Details stay in the title: an AlertDialog with a message hides its
+        // item list, which left this dialog with no actions at all.
         final AlertDialog actionsDialog = new MaterialAlertDialogBuilder(context)
-                .setTitle(context.getString(R.string.dict_rule_title, r.getPattern()))
-                .setMessage(label)
+                .setTitle(context.getString(R.string.dict_rule_title, r.getPattern()) + "\n" + label)
                 .setItems(actions, new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface d, int which) {
                         if (which == 0) {
@@ -457,20 +457,18 @@ final class UserDictionaryScreen {
                         if (which == 0) {
                             shareDictionary(context);
                         } else if (which == 1) {
-                            if (context instanceof Activity) {
-                                Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                                i.addCategory(Intent.CATEGORY_OPENABLE);
-                                i.setType("text/plain");
-                                i.putExtra(Intent.EXTRA_TITLE, "espeak_dictionary.dic");
-                                ((Activity) context).startActivityForResult(i, TtsSettingsActivity.REQUEST_CODE_EXPORT_DICT);
-                            }
+                            Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                            i.addCategory(Intent.CATEGORY_OPENABLE);
+                            i.setType("text/plain");
+                            i.putExtra(Intent.EXTRA_TITLE, "espeak_dictionary.dic");
+                            TtsSettingsActivity.startForResult(context, i,
+                                    TtsSettingsActivity.REQUEST_CODE_EXPORT_DICT);
                         } else if (which == 2) {
-                            if (context instanceof Activity) {
-                                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                                i.addCategory(Intent.CATEGORY_OPENABLE);
-                                i.setType("*/*");
-                                ((Activity) context).startActivityForResult(i, TtsSettingsActivity.REQUEST_CODE_IMPORT_DICT);
-                            }
+                            Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            i.addCategory(Intent.CATEGORY_OPENABLE);
+                            i.setType("*/*");
+                            TtsSettingsActivity.startForResult(context, i,
+                                    TtsSettingsActivity.REQUEST_CODE_IMPORT_DICT);
                         }
                     }
                 })
@@ -524,8 +522,13 @@ final class UserDictionaryScreen {
                                     rules.size(), rules.size()));
                     shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    context.startActivity(Intent.createChooser(shareIntent,
-                            context.getString(R.string.dict_share)));
+                    try {
+                        context.startActivity(Intent.createChooser(shareIntent,
+                                context.getString(R.string.dict_share)));
+                    } catch (RuntimeException e) {
+                        Log.w(TtsSettingsActivity.TAG, "No share sheet for the dictionary", e);
+                        Toast.makeText(context, R.string.dict_share_failed, Toast.LENGTH_SHORT).show();
+                    }
                 });
             } catch (Exception e) {
                 Log.e(TtsSettingsActivity.TAG, "Failed to share user dictionary", e);
@@ -536,6 +539,24 @@ final class UserDictionaryScreen {
                 });
             }
         }, "dict-share").start();
+    }
+
+    /**
+     * Highest "$n" group a regex replacement refers to, 0 for none. Only the
+     * first digit counts: Java's Matcher reads further digits only while the
+     * number stays a valid group, so "$10" with one group is "$1" then "0".
+     */
+    static int highestGroupReference(String replacement) {
+        int highest = 0;
+        for (int i = 0; i < replacement.length() - 1; i++) {
+            final char c = replacement.charAt(i);
+            if (c == '\\') {
+                i++; // escaped: a literal next character
+            } else if (c == '$' && Character.isDigit(replacement.charAt(i + 1))) {
+                highest = Math.max(highest, replacement.charAt(i + 1) - '0');
+            }
+        }
+        return highest;
     }
 
     private static void previewText(final Context context, final String text) {
@@ -688,14 +709,25 @@ final class UserDictionaryScreen {
                 fieldErrorClear(etPhonemes);
 
                 if (cbRegex.isChecked()) {
+                    final int groups;
                     try {
-                        java.util.regex.Pattern.compile(pattern);
+                        groups = java.util.regex.Pattern.compile(pattern).matcher("").groupCount();
                     } catch (java.util.regex.PatternSyntaxException e) {
                         fieldError(etPattern, context.getString(R.string.dict_error_invalid_regex));
                         etPattern.requestFocus();
                         return;
                     }
+                    // "$2" with one group would fail at every match, silently
+                    // (speech falls back to the unreplaced text).
+                    final int used = highestGroupReference(replacement);
+                    if (used > groups) {
+                        fieldError(etReplacement, context.getString(
+                                R.string.dict_error_missing_group, used, groups));
+                        etReplacement.requestFocus();
+                        return;
+                    }
                 }
+                fieldErrorClear(etReplacement);
 
                 if (phonemes.contains("[[") || phonemes.contains("]]")) {
                     fieldError(etPhonemes, context.getString(R.string.dict_error_invalid_phonemes));
@@ -715,7 +747,9 @@ final class UserDictionaryScreen {
                 );
 
                 if (!rule.isValid()) {
-                    fieldError(etPattern, context.getString(R.string.dict_error_invalid_regex));
+                    // It compiled above: this is UserDictionary's guard against
+                    // patterns that could hang speech (too long, nested repeats).
+                    fieldError(etPattern, context.getString(R.string.dict_error_unsafe_regex));
                     etPattern.requestFocus();
                     return;
                 }

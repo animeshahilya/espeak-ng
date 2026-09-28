@@ -79,6 +79,17 @@ silently break every JNI call in the release build with no compile-time
 warning - verify a real release build's TTS synthesis on a real device after
 touching either `proguard-rules.pro` or this class.
 
+The same trap bit natural voices: `PiperModel.mapped` is never read in Java
+(it only keeps the memory-mapped model alive while ONNX Runtime reads weights
+from it), so R8 removed it as write-only; the buffer was collected and
+unmapped seconds after a voice loaded and the next inference crashed natively
+(SIGSEGV in `OrtSession.run`, a crash loop on every release build, first seen
+on a Galaxy S25 Ultra). `proguard-rules.pro` keeps it. Any field that exists
+only to keep native memory alive needs such a rule; check the release dex
+(`dexdump -h`) rather than trusting that one exists. Debug builds and short
+tests hide this: it takes a garbage collection. A release APK repro: Natural
+voices -> Downloaded voices -> Test voice, a few times.
+
 ## Architecture
 
 ```
@@ -103,6 +114,14 @@ Optional neural voices, chosen per language (Settings → Natural voices).
 eSpeak's own voice list is untouched: a language assigned to a Piper voice
 is spoken by it whichever eSpeak voice/variant of that language the client
 asked for, so NVDA parity for eSpeak voices is unaffected.
+
+**Off by default** (`piper_enabled` defaults false in both
+`preferences.xml` and `PiperVoiceStore.isEnabled`): opt-in, for users who
+want plain eSpeak. Off means nothing natural-voice runs: `resolve()` returns
+null, TtsService's preference listener calls `PiperEngine.unloadAll()` on
+the switch, and ONNX Runtime is never even loaded (see Network). The
+language, download and screen-reader rows depend on the switch; "Downloaded
+voices" does not, so voices can still be deleted to free space.
 
 - **Phonemes come from this fork.** `jni/jni/piperPhonemizer.c` mirrors
   piper-phonemize (`espeak_TextToPhonemesWithTerminator`, IPA, `(lang)` flags
@@ -180,9 +199,33 @@ asked for, so NVDA parity for eSpeak voices is unaffected.
   app-specific external storage, is MD5-checked, then moved in by
   `PiperDownloadReceiver` (exported for the system's DOWNLOAD_COMPLETE; acts
   only on ids it enqueued). The first voice of a language is auto-assigned.
-  `piper_dl_*` bookkeeping prefs are excluded from backups.
+  `piper_dl_*` bookkeeping prefs are excluded from backups. `complete()` is
+  synchronized: the receiver and the page's `reconcile()` can race on it.
+- **Community voices.** `assets/piper/extra_voices.json` (voices.json format
+  plus `base_url`, `source`, `license`) adds languages rhasspy lacks: Tamil
+  (tinisoft rasa female/male, CC BY 4.0) and Sinhala (chan4lk, MIT). Each
+  `base_url` is pinned to a commit so its MD5s always match; only this
+  bundled list may set `base_url` (the remote catalog cannot redirect
+  downloads - `PiperCatalogTest`). Vet before adding: public, licensed,
+  `phoneme_type` espeak, not trained on another company's TTS output, and
+  listened to. Their configs name things loosely, so `PiperVoiceConfig`
+  takes the display name and region from the catalog key.
+- **Crash guard.** A native crash inside ONNX Runtime kills the process and
+  Android restarts the service, which reloads the voice: a crash loop that
+  silences TalkBack. `PiperCrashGuard` records voices whose native work is in
+  progress (a file, written around every load and inference); if the last
+  process died of a native crash (`ApplicationExitInfo`) with a voice in that
+  file twice within 10 minutes, the voice is suspended - `resolve()` skips it,
+  its language row says so, and choosing it again clears it. Deliberately not
+  "reset on success": GC-timed crashes let several inferences succeed first.
 - **Network.** `INTERNET` exists only for the catalog, samples and voice
-  downloads - never on the speech path. Keep it that way.
+  downloads - never on the speech path. Keep it that way. onnxruntime-android
+  (1.29, still in 1.30) merges in a `TelemetryInitializer` content provider
+  and `ACCESS_NETWORK_STATE`: the provider ran at every process start,
+  loaded the runtime (~7.5 MB) and set up Microsoft telemetry networking.
+  AndroidManifest.xml removes both (`tools:node="remove"`) and
+  `PiperModel.env()` calls `setTelemetry(false)`. Recheck the merged
+  manifest on every ORT bump.
 - **APK size.** `onnxruntime-android` adds a 32 MB `libonnxruntime.so`;
   `packaging.jniLibs.useLegacyPackaging` compresses it to ~12 MB in the APK.
   A custom ORT build with only the VITS operators would shrink it further.
@@ -195,9 +238,10 @@ asked for, so NVDA parity for eSpeak voices is unaffected.
 - **TextPreprocessor** — the text pipeline. **NVDA parity rule: every non-Indian voice must reach eSpeak with exactly the text NVDA would hand it.** Indian-only steps (lakh/crore and rupee reading, Indic digits, spoken Devanagari matras) are gated on `isIndianLanguage()` (lang/inc, lang/dra voices plus en-in). Extras beyond NVDA are allowed only as opt-in settings that default off: `NumberReading` reads money amounts ("$5.50" -> "5 dollars 50 cents", English voices only) and codes near words like OTP/PIN/account digit by digit (every voice), both only in Normal reading mode. Also opt-in: `Abbreviations` (English voices: Prof, vs, govt, units after numbers, months next to numbers), `PhrasePauses` (English/Hindi: a comma before "and"/"और"-type words in long comma-less stretches, added after the symbol pass so it is never announced), and `Earcons` (brackets and quotes the punctuation level would name become private-use markers; `TtsService` splits units at them and writes a short tone instead). Numbers stay as digits so eSpeak still says them itself. Symbols follow NVDA's architecture: `NvdaSymbolProcessor` (a Java reimplementation of NVDA's `characterProcessing` symbol engine - per-symbol levels none/some/most/all, preserve modes, complex symbols like sentence-ending dots vs decimal points, 4+ repeat collapsing) is driven by the punctuation preset, and the native engine is forced to `PUNCT_NONE` outside SSML so symbols never announce twice. Emoji: `NvdaEmoji` names each emoji from NVDA's own per-language CLDR dictionaries (`assets/emoji/`, regenerated by `tools/update_emoji_names.py` from nvda-cldr's main-out branch), looked up like NVDA: full locale, base language, then English; the name is padded with spaces as NVDA pads a replacement. `PipelineSnapshotTest` logs the text sent to eSpeak plus an audio hash for a fixed corpus across 18 voices - diff two runs to prove a change leaves non-Indian voices alone (see its class comment).
 - **SpeechSynthesis** — JNI wrapper; loads `libttsespeak.so`, exposes native functions as Java API
 - **UnicodeNormalization** — NFKC normalization of synthesis input (stylized Unicode → plain text) with a normalized→original offset map for `rangeStart()` word boundaries
-- **VoiceSettings** — SharedPreferences wrapper for rate, pitch, volume, punctuation, variant; also sleep-timer mute window, reading-history opt-in, what's-new seen version
+- **VoiceSettings** — SharedPreferences wrapper for rate, pitch, volume, punctuation, variant; also sleep-timer mute window, reading-history opt-in, what's-new seen version. Reads through **TolerantPreferences**: a setting stored with the wrong type reads as its default instead of throwing ClassCastException out of `onSynthesizeText` (which silenced every utterance). TtsService and EspeakApp's startup reads use it too
 - **LanguageSettings** — Filters available voices by user-selected languages; favorite voices pin to the top of `onGetVoices()` order
-- **ReadingHistory** — Opt-in store of recent utterances (length/code/SSML guards, device-protected, newest-first cap); re-heard through the preview engine
+- **ReadingHistory** — Opt-in store of recent utterances (length/code/SSML guards, device-protected, newest-first cap); re-heard through the preview engine. Its items are text the phone read aloud: `LogExporter` and `BackupRestoreHelper` leave them out (logs and backups get shared)
+- **UserDictionaryManager** — `.dic` import/export follows NVDA's columns (pattern, replacement, comment, case, type 0 anywhere / 1 regex / 2 whole word); this app's extra fields (section, language, phonemes) ride in the comment as `eSpeakAndroid {json}`, so an export imports back unchanged (`DicFormatTest`)
 - Perf notes: dictionary search debounces 200ms with precomputed lowercase + lazy row labels (large imports filter per keystroke otherwise); `TtsService` chunks are one `SynthUnit` list, not parallel arrays; debug builds run StrictMode (log-only) to catch main-thread IO regressions; the settings screen shows a loading row until the engine tree lands
 - **VoiceProfile** — Named preset files (variant, rate, pitch, punctuation) via SAF; unknown keys ignored both directions
 - **CheckVoiceData** — Intent handler that verifies voice data files exist on device

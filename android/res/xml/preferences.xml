@@ -28,15 +28,20 @@
         android:title="@string/screen_natural_voices_title"
         android:summary="@string/screen_natural_voices_summary"
         android:icon="@drawable/ic_graphic_eq">
+      <!-- Off means off: nothing natural-voice is loaded (TtsService frees
+           loaded models on the switch) and the rows that only matter while
+           on are disabled. Voices stay manageable, to free the space. -->
       <SwitchPreferenceCompat
           android:key="piper_enabled"
           android:title="@string/setting_piper_enabled"
-          android:summary="@string/setting_piper_enabled_summary"
-          android:defaultValue="true"
+          android:summaryOn="@string/setting_piper_enabled_summary_on"
+          android:summaryOff="@string/setting_piper_enabled_summary_off"
+          android:defaultValue="false"
           app:iconSpaceReserved="false" />
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:key="category_piper_languages"
           android:title="@string/category_piper_languages"
+          android:dependency="piper_enabled"
           app:iconSpaceReserved="false" />
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:key="category_piper_voices"
@@ -46,6 +51,7 @@
             android:key="action_piper_download"
             android:title="@string/setting_piper_download"
             android:summary="@string/setting_piper_download_summary"
+            android:dependency="piper_enabled"
             app:iconSpaceReserved="false" />
         <Preference
             android:key="action_piper_manage"
@@ -54,6 +60,7 @@
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:title="@string/category_piper_screen_reader"
+          android:dependency="piper_enabled"
           app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             android:key="piper_espeak_for_characters"
@@ -72,6 +79,7 @@
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:title="@string/category_piper_advanced"
+          android:dependency="piper_enabled"
           app:iconSpaceReserved="false">
         <!-- Off by default: on a Pixel 8, NNAPI takes 9 of ~2700 VITS nodes
              and then fails the run (PiperBenchDeviceTest). A voice it fails

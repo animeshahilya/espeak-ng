@@ -5,6 +5,11 @@
     <!-- Only for downloading Piper natural voices, and only when the user
          asks for one (PiperDownloads). Speech never uses the network. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Merged in by onnxruntime-android for its telemetry (removed below);
+         nothing in this app reads network state. -->
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"
+        tools:node="remove" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -111,6 +116,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <!-- onnxruntime-android's telemetry: a provider that ran at every
+             process start (natural voices or not), loaded the 32 MB runtime
+             and set up Microsoft telemetry networking. Speech never uses the
+             network, and PiperModel turns the runtime's telemetry off too. -->
+        <provider
+            android:name="ai.onnxruntime.TelemetryInitializer"
+            android:authorities="${applicationId}.onnxruntime_telemetry_initializer"
+            tools:node="remove" />
     </application>
 
 </manifest>

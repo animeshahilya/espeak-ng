@@ -20,3 +20,13 @@
 # ONNX Runtime (Piper natural voices): its JNI library binds to the Java API
 # classes by name and creates some of them from native code.
 -keep class ai.onnxruntime.** { *; }
+
+# PiperModel.mapped is never read in Java: it exists only to keep the
+# memory-mapped optimized model alive while ONNX Runtime reads the weights
+# straight out of it (session.use_ort_model_bytes_for_initializers). R8
+# removed it as a write-only field, so the buffer was garbage-collected and
+# unmapped seconds after a voice loaded, and the next inference read freed
+# memory: SIGSEGV in OrtSession.run, a crash loop on every release build.
+-keepclassmembers class com.animeshahilya.espeakng.PiperModel {
+    java.nio.ByteBuffer mapped;
+}

@@ -1,0 +1,47 @@
+{
+  "ta_IN-rasa_female-medium": {
+    "key": "ta_IN-rasa_female-medium",
+    "name": "rasa_female",
+    "language": {"code": "ta_IN", "family": "ta", "region": "IN", "name_native": "தமிழ்",
+      "name_english": "Tamil", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://huggingface.co/tinisoft/piper-ta_IN-rasa_female-medium/resolve/89e15edafc8b31e66ddf25f2adbe3bd3f20a9496/",
+    "source": "tinisoft",
+    "license": "CC BY 4.0",
+    "files": {
+      "ta_IN-rasa_female-medium.onnx": {"size_bytes": 63511037, "md5_digest": "a6faf2a695645ddccbb2fcb667d729f5"},
+      "ta_IN-rasa_female-medium.onnx.json": {"size_bytes": 7091, "md5_digest": "d796f58a424ede1c112cca38d83e9834"}
+    }
+  },
+  "ta_IN-rasa_male-medium": {
+    "key": "ta_IN-rasa_male-medium",
+    "name": "rasa_male",
+    "language": {"code": "ta_IN", "family": "ta", "region": "IN", "name_native": "தமிழ்",
+      "name_english": "Tamil", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://huggingface.co/tinisoft/piper-ta_IN-rasa_male-medium/resolve/0b041f8e882b1e6f41f427169be25bcb0e94f352/",
+    "source": "tinisoft",
+    "license": "CC BY 4.0",
+    "files": {
+      "ta_IN-rasa_male-medium.onnx": {"size_bytes": 63511037, "md5_digest": "7ce5d668a5d2d9e1c842baf4198bded3"},
+      "ta_IN-rasa_male-medium.onnx.json": {"size_bytes": 7089, "md5_digest": "044a786ff28ca84a89c03b4711ce8de7"}
+    }
+  },
+  "si_LK-sinhala-medium": {
+    "key": "si_LK-sinhala-medium",
+    "name": "sinhala",
+    "language": {"code": "si_LK", "family": "si", "region": "LK", "name_native": "සිංහල",
+      "name_english": "Sinhala", "country_english": "Sri Lanka"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://huggingface.co/chan4lk/piper-tts-sinhala/resolve/18cd56d74b4860714193224d8a333ebb6f2958c4/",
+    "source": "chan4lk",
+    "license": "MIT",
+    "files": {
+      "si_LK-sinhala-medium.onnx": {"size_bytes": 63516050, "md5_digest": "9e72d5083ab7a524d052f9abaa6663eb"},
+      "si_LK-sinhala-medium.onnx.json": {"size_bytes": 4869, "md5_digest": "44353d796d2e3d2458ae65c94964f5c8"}
+    }
+  }
+}
