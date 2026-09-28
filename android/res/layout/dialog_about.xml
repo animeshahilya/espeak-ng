@@ -115,14 +115,26 @@
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
-        <!-- GitHub Button: outlined (the positive OK button already owns the
-             filled/tonal primary slot in the dialog footer). -->
+        <!-- Feedback and GitHub buttons: outlined (the positive OK button
+             already owns the filled/tonal primary slot in the dialog footer). -->
+        <Button
+            android:id="@+id/btn_about_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:minHeight="48dp"
+            android:minWidth="160dp"
+            android:text="@string/about_feedback"
+            android:contentDescription="@string/about_feedback_description"
+            style="@style/Widget.Material3.Button.OutlinedButton" />
+
         <Button
             android:id="@+id/btn_about_github"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="8dp"
             android:minHeight="48dp"
             android:minWidth="160dp"
             android:text="@string/about_view_github"

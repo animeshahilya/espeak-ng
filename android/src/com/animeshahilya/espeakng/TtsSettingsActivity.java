@@ -1630,25 +1630,27 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
 
-        Button btnGithub = aboutView.findViewById(R.id.btn_about_github);
-        if (btnGithub != null) {
-btnGithub.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse("https://github.com/animeshahilya/espeak-ng"));
-                            // resolveActivity() returns null on API 30+ without a <queries>
-                            // manifest entry, which made this button silently do nothing.
-                            try {
-                                context.startActivity(intent);
-                            } catch (ActivityNotFoundException e) {
-                                // no browser installed; nothing to open
-                            }
-                        }
-                    });
-        }
+        openOnClick(context, aboutView.findViewById(R.id.btn_about_feedback), FEEDBACK_GROUP_URL);
+        openOnClick(context, aboutView.findViewById(R.id.btn_about_github),
+                "https://github.com/animeshahilya/espeak-ng");
 
         dialog.show();
+    }
+
+    private static final String FEEDBACK_GROUP_URL =
+            "https://chat.whatsapp.com/HKVrT3hFRsjER9mE2Jogax";
+
+    private static void openOnClick(final Context context, View button, final String url) {
+        if (button == null) return;
+        button.setOnClickListener(v -> {
+            // resolveActivity() returns null on API 30+ without a <queries>
+            // manifest entry, which made these buttons silently do nothing.
+            try {
+                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            } catch (ActivityNotFoundException e) {
+                // no browser or WhatsApp installed; nothing to open
+            }
+        });
     }
 
     /**

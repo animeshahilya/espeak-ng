@@ -50,8 +50,11 @@ public final class TextPreprocessor {
     // Regular Expressions & Constants
     // ==========================================
 
+    // Not U+200C/U+200D (ZWNJ/ZWJ): eSpeak reads them itself - Malayalam
+    // virama+ZWJ is a chillu, Persian/Kurdish ZWNJ a word break, and ZWJ
+    // joins emoji sequences that NvdaEmoji names as one.
     private static final Pattern HANG_CONTROLS =
-            Pattern.compile("[\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u2064\\uFEFF\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]");
+            Pattern.compile("[\\u200B\\u200E\\u200F\\u202A-\\u202E\\u2060-\\u2064\\uFEFF\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]");
     private static final Pattern EDGE_BRACKET_RUN =
             Pattern.compile("\\[{2,}|\\]{2,}");
 
@@ -368,7 +371,7 @@ public final class TextPreprocessor {
         for (int i = 0; i < len; i++) {
             char c = text.charAt(i);
             if ((c < 0x20 && c != '\t' && c != '\n' && c != '\r') || c == 0x7F
-                    || (c >= 0x200B && c <= 0x200F) || (c >= 0x202A && c <= 0x202E)
+                    || c == 0x200B || c == 0x200E || c == 0x200F || (c >= 0x202A && c <= 0x202E)
                     || (c >= 0x2060 && c <= 0x2064) || c == 0xFEFF) {
                 return true;
             }
@@ -1133,8 +1136,11 @@ public final class TextPreprocessor {
             chunks.add("");
             return chunks;
         }
-        String capped = text.length() > MAX_REQUEST_CHARS
-                ? text.substring(0, MAX_REQUEST_CHARS) : text;
+        int cap = MAX_REQUEST_CHARS;
+        if (text.length() > cap && Character.isLowSurrogate(text.charAt(cap))) {
+            cap--;
+        }
+        String capped = text.length() > cap ? text.substring(0, cap) : text;
         if (capped.length() <= MAX_CHUNK_CHARS) {
             chunks.add(capped);
             return chunks;
@@ -1193,6 +1199,11 @@ public final class TextPreprocessor {
 
             if (cutPoint <= start) {
                 cutPoint = targetEnd;
+                // Never between the halves of a surrogate pair (emoji,
+                // supplementary CJK): each chunk would get a lone half.
+                if (Character.isLowSurrogate(capped.charAt(cutPoint))) {
+                    cutPoint--;
+                }
             }
 
             chunks.add(capped.substring(start, cutPoint));

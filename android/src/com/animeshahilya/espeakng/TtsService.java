@@ -266,7 +266,9 @@ public class TtsService extends TextToSpeechService {
             synchronized (mAvailableVoices) {
                 current = mMatchingVoice;
             }
-            preloadNaturalVoice(current);
+            // Off the main thread: resolving rescans the voice folders and
+            // parses their configs.
+            new Thread(() -> preloadNaturalVoice(current), "piper-preload").start();
         }
     };
 

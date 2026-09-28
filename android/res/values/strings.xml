@@ -381,8 +381,10 @@
   <string name="about_developer">Developed and built by Animesh Ahilya</string>
   <string name="about_version_format">Version %1$s • 100%% Offline</string>
   <string name="about_view_github">View on GitHub</string>
+  <string name="about_feedback">Give feedback</string>
+  <string name="about_feedback_description">Give feedback: join the adev ally group on WhatsApp</string>
   <string name="about_features_header">Core Highlights</string>
-  <string name="about_feature_offline">• 100% Offline with zero network permissions and Direct-Boot readiness</string>
+  <string name="about_feature_offline">• Speech is 100% offline and works before the phone is unlocked; the internet is used only to download natural voices you ask for</string>
   <string name="about_feature_languages">• Every eSpeak NG language bundled, with regional dialects and voice variants</string>
   <string name="about_feature_indian">• Enhanced Indian English (en-in) and Indic language phonetics</string>
   <string name="about_feature_dsp">• Tone shaping and audio optimizer</string>

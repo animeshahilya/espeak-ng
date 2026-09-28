@@ -2,7 +2,10 @@
 // Sorani uses a modified Perso-Arabic script (33 letters) written
 // right-to-left. Unlike Arabic/Persian it is almost a true alphabet:
 // vowels are written, except short /I/ which is unwritten between
-// consonants (rendered here as epenthetic I).
+// consonants. Words listed in ckb_list spell it out; otherwise a
+// word-initial consonant cluster gets it (نڤێژ nIveZ, کتێب kIteb), or
+// the first consonant is swallowed. Consonant + و/ی onsets (خوا xwa)
+// are real clusters and are left alone.
 // This file is UTF-8 encoded.
 
 .replace
@@ -50,82 +53,110 @@
 	ا	a
 
 .group ب
+	_) ب (L02	bI
 	ب	b
 
 .group پ
+	_) پ (L02	pI
 	پ	p
 
 .group ت
+	_) ت (L02	tI
+	L03) ت (ن_	tI
 	ت	t
 
 .group ج
+	_) ج (L02	dZI
 	ج	dZ
 
 .group چ
+	_) چ (L02	tSI
 	چ	tS
 
 .group ح
+	_) ح (L02	HI
 	ح	H
 
 .group خ
+	_) خ (L02	xI
 	خ	x
 
 .group د
+	_) د (L02	dI
+	L03) د (ن_	dI
 	د	d
 
 .group ر
+	_) ر (L02	*I
 	ر	*
 
 .group ڕ
+	_) ڕ (L02	RI
 	ڕ	R
 
 .group ز
+	_) ز (L02	zI
 	ز	z
 
 .group ژ
+	_) ژ (L02	ZI
 	ژ	Z
 
 .group س
+	_) س (L02	sI
 	س	s
 
 .group ش
+	_) ش (L02	SI
 	ش	S
 
 .group ع
+	_) ع (L02	AI
 	ع	A
 
 .group غ
+	_) غ (L02	gHI
 	غ	gH
 
 .group ف
+	_) ف (L02	fI
 	ف	f
 
 .group ڤ
+	_) ڤ (L02	vI
 	ڤ	v
 
 .group ق
+	_) ق (L02	qI
 	ق	q
 
 .group ک
+	_) ک (L02	kI
+	L03) کردن (_	kI*dIn
 	ک	c (ێ
 	ک	c (ی
 	ک	k
 
 .group گ
+	_) گ (L02	gI
 	گ	J (ێ
 	گ	J (ی
 	گ	g
 
 .group ل
+	_) ل (L02	lI
 	ل	l
 
 .group ڵ
+	_) ڵ (L02	LI
 	ڵ	L
 
 .group م
+	_) م (L02	mI
 	م	m
 
 .group ن
+	_) ن (L02	nI
 	ن	n
 
 .group و
@@ -146,9 +177,11 @@
 	ۊ	y
 
 .group ھ
+	_) ھ (L02	hI
 	ھ	h
 
 .group ه
+	_) ه (L02	hI
 	ه	h
 
 .group ە
