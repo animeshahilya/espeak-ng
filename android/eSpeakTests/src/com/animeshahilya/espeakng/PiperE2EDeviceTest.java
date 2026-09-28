@@ -267,6 +267,26 @@ public class PiperE2EDeviceTest {
         assertTrue("gaps: " + overheadMs + " ms beyond the audio", overheadMs < 2500);
     }
 
+    /**
+     * An eSpeak English voice hands Hindi runs to the Hindi natural voice
+     * (the first request may read them with eSpeak while it loads). Natural
+     * voices peak-normalize to full scale; eSpeak peaks near 22000. Needs a
+     * Hindi natural voice chosen and no English one.
+     */
+    @Test
+    public void j_espeakHandsOtherScriptToNaturalVoice() throws Exception {
+        Assume.assumeTrue("an English natural voice is chosen", warmNaturalEnglish() == ESPEAK_RATE);
+        final String text = "This is English. नमस्ते, आप कैसे हैं? मैं ठीक हूं। Back to English.";
+        long peak = 0;
+        for (int i = 0; i < 5 && peak < 30000; i++) {
+            if (i > 0) {
+                Thread.sleep(2000);
+            }
+            peak = toFile("mix" + i, text, Locale.US, 1f)[2];
+        }
+        assertTrue("Hindi run stayed with eSpeak (peak " + peak + ")", peak >= 30000);
+    }
+
     @Test
     public void h_voicesListed() {
         assertNotNull(mTts.getVoices());

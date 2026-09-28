@@ -219,6 +219,12 @@ voices" does not, so voices can still be deleted to free space.
   only on phones that keep several voices (`keepsSeveralLoaded`), so a
   one-voice phone does not evict and reload on every switch. Runs with no
   natural voice of their own stay with the current one (as before).
+  The same holds when an eSpeak voice is speaking (`withNaturalRuns`):
+  English on eSpeak with a Hindi natural voice chosen hands each Devanagari
+  run to it as its own unit, at eSpeak's 22050 Hz (a voice at another rate
+  stays with eSpeak). Before this, only a natural primary voice switched,
+  so eSpeak-English users never heard their Hindi voice in mixed text.
+  `PiperE2EDeviceTest.j_*` checks it (natural voices peak at full scale).
 - **Crash guard.** A native crash inside ONNX Runtime kills the process and
   Android restarts the service, which reloads the voice: a crash loop that
   silences TalkBack. `PiperCrashGuard` records voices whose native work is in

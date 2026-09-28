@@ -1010,9 +1010,13 @@ public class TtsService extends TextToSpeechService {
         // No setVoice() for the units: the call at the top of setup already
         // applied this exact voice+variant (SpeechSynthesis memoizes it),
         // and re-applying cost a full native dictionary reload per call.
-        final List<SynthUnit> units = buildUnits(text, voice, isSsml);
+        List<SynthUnit> units = buildUnits(text, voice, isSsml);
+        if (!isSsml && !(isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs))) {
+            units = withNaturalRuns(units, voice, prefs, sampleRate);
+        }
+        PiperEngine.Params naturalParams = null;
 
-        if (units.size() > 1 || units.get(0).isEarcon()) {
+        if (units.size() > 1 || units.get(0).isEarcon() || units.get(0).model != null) {
             mSegmentsRemaining.set(units.size());
             for (int ui = 0; ui < units.size(); ui++) {
                 if (mIsStopped.get()) {
@@ -1024,6 +1028,25 @@ public class TtsService extends TextToSpeechService {
                             sampleRate, engine.getChannelCount(), targetVolume));
                     segmentFinished();
                     continue;
+                }
+                if (unit.model != null) {
+                    if (naturalParams == null) {
+                        naturalParams = naturalParams(settings, request, prefs);
+                    }
+                    naturalParams.speakerId = PiperVoiceStore.speakerId(prefs, unit.modelKey);
+                    mChunkBase = unit.base;
+                    int produced;
+                    try {
+                        produced = mPiper.synthesize(unit.model, unit.text, naturalPhonemizer(engine, voice),
+                                SpeechSynthesis::sonicStretch, naturalParams, naturalOutput(new long[] {0}));
+                    } catch (Throwable t) {
+                        Log.e(TAG, "Natural voice " + unit.modelKey + " failed; eSpeak reads it", t);
+                        produced = -1;
+                    }
+                    if (produced >= 0 || mIsStopped.get()) {
+                        segmentFinished();
+                        continue;
+                    }
                 }
                 try {
                     mChunkBase = unit.base;
@@ -1174,53 +1197,12 @@ public class TtsService extends TextToSpeechService {
                 ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
                 : null;
 
-        final PiperEngine.Params params = new PiperEngine.Params();
-        params.speed = effectiveRate(settings, request) / (float) PiperEngine.NORMAL_RATE
-                * PiperVoiceStore.speedFactor(prefs);
-        int pitchScale = request.getPitch();
-        if (pitchScale <= 0 || settings.isForcePitchEnabled()) {
-            pitchScale = 100;
-        }
-        // eSpeak pitch 0-100 around 50 -> about half an octave down/up,
-        // times the caller's pitch. A neural voice has its own natural
-        // pitch; this only shifts it, it never flattens intonation.
-        final float userPitch = (float) Math.pow(2.0, (settings.getPitch() - 50) / 100.0);
-        params.pitch = Math.max(0.5f, Math.min(2.0f, userPitch * pitchScale / 100f));
         final int targetVolume = effectiveVolume(settings, request);
-        params.volume = targetVolume / 100f;
-        params.pauseScale = settings.getPauseScale();
-
-        // The config's eSpeak voice first (what the model was trained on);
-        // if this fork lacks it, the eSpeak voice of the same language.
-        final PiperEngine.Phonemizer phonemizer = (espeakVoice, unitText) -> {
-            String raw = engine.phonemizeForPiper(espeakVoice, unitText);
-            if (raw == null && voice.name != null && !voice.name.equals(espeakVoice)) {
-                raw = engine.phonemizeForPiper(voice.name, unitText);
-            }
-            return raw;
-        };
+        final PiperEngine.Params params = naturalParams(settings, request, prefs);
+        final PiperEngine.Phonemizer phonemizer = naturalPhonemizer(engine, voice);
         final PiperEngine.TimeStretcher stretcher = SpeechSynthesis::sonicStretch;
         final long[] frames = {0};
-        final PiperEngine.Output output = new PiperEngine.Output() {
-            @Override
-            public void word(int position, int length, int frame) {
-                mSynthCallback.onSynthWordBoundary(position, length, (int) (frames[0] + frame));
-            }
-
-            @Override
-            public boolean audio(byte[] pcm) {
-                if (pcm.length == 0) {
-                    return !mIsStopped.get(); // empty would read as end-of-stream
-                }
-                mSynthCallback.onSynthDataReady(pcm);
-                return !mIsStopped.get() && !mCallbackDone.get();
-            }
-
-            @Override
-            public boolean stopped() {
-                return mIsStopped.get();
-            }
-        };
+        final PiperEngine.Output output = naturalOutput(frames);
 
         try {
             for (SynthUnit unit : buildUnits(text, voice, false)) {
@@ -1287,6 +1269,116 @@ public class TtsService extends TextToSpeechService {
         finishRequest();
     }
 
+    private static PiperEngine.Params naturalParams(VoiceSettings settings, SynthesisRequest request,
+                                                    SharedPreferences prefs) {
+        final PiperEngine.Params params = new PiperEngine.Params();
+        params.speed = effectiveRate(settings, request) / (float) PiperEngine.NORMAL_RATE
+                * PiperVoiceStore.speedFactor(prefs);
+        int pitchScale = request.getPitch();
+        if (pitchScale <= 0 || settings.isForcePitchEnabled()) {
+            pitchScale = 100;
+        }
+        // eSpeak pitch 0-100 around 50 -> about half an octave down/up,
+        // times the caller's pitch. A neural voice has its own natural
+        // pitch; this only shifts it, it never flattens intonation.
+        final float userPitch = (float) Math.pow(2.0, (settings.getPitch() - 50) / 100.0);
+        params.pitch = Math.max(0.5f, Math.min(2.0f, userPitch * pitchScale / 100f));
+        params.volume = effectiveVolume(settings, request) / 100f;
+        params.pauseScale = settings.getPauseScale();
+        return params;
+    }
+
+    /**
+     * The config's eSpeak voice first (what the model was trained on); if
+     * this fork lacks it, the eSpeak voice of the same language.
+     */
+    private static PiperEngine.Phonemizer naturalPhonemizer(final SpeechSynthesis engine, final Voice voice) {
+        return (espeakVoice, unitText) -> {
+            String raw = engine.phonemizeForPiper(espeakVoice, unitText);
+            if (raw == null && voice.name != null && !voice.name.equals(espeakVoice)) {
+                raw = engine.phonemizeForPiper(voice.name, unitText);
+            }
+            return raw;
+        };
+    }
+
+    /** Natural-voice audio and word ranges into this request; frames[0] is the running offset. */
+    private PiperEngine.Output naturalOutput(final long[] frames) {
+        return new PiperEngine.Output() {
+            @Override
+            public void word(int position, int length, int frame) {
+                mSynthCallback.onSynthWordBoundary(position, length, (int) (frames[0] + frame));
+            }
+
+            @Override
+            public boolean audio(byte[] pcm) {
+                if (pcm.length == 0) {
+                    return !mIsStopped.get(); // empty would read as end-of-stream
+                }
+                mSynthCallback.onSynthDataReady(pcm);
+                return !mIsStopped.get() && !mCallbackDone.get();
+            }
+
+            @Override
+            public boolean stopped() {
+                return mIsStopped.get();
+            }
+        };
+    }
+
+    /**
+     * eSpeak speaking, natural voices for other scripts: like eSpeak switching
+     * language by alphabet, a run in another script (Hindi inside English)
+     * becomes a unit of its own for that language's natural voice, when one
+     * is chosen and loaded at eSpeak's sample rate. The first use starts
+     * loading it and eSpeak reads that run meanwhile. Everything else stays
+     * together for eSpeak, which switches language by itself.
+     */
+    private List<SynthUnit> withNaturalRuns(List<SynthUnit> units, Voice voice,
+                                            SharedPreferences prefs, int sampleRate) {
+        if (!PiperVoiceStore.isEnabled(prefs)) {
+            return units;
+        }
+        final String own = PiperVoiceStore.languageKey(voice.locale);
+        // A one-voice phone still loading this language's own natural voice
+        // must not evict it for another language's.
+        final boolean mayPreload = mPiper.keepsSeveralLoaded()
+                || PiperVoiceStore.resolve(mStorageContext, prefs, voice) == null;
+        final List<SynthUnit> out = new ArrayList<>();
+        for (SynthUnit unit : units) {
+            if (unit.isEarcon()) {
+                out.add(unit);
+                continue;
+            }
+            final StringBuilder espeak = new StringBuilder();
+            int espeakStart = 0;
+            for (LanguageRuns.Run run : LanguageRuns.split(unit.text, own)) {
+                final PiperVoiceStore.Installed natural = run.language.equals(own) ? null
+                        : PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
+                final PiperModel model = natural == null ? null : mPiper.getLoaded(natural.key);
+                if (natural != null && model == null && mayPreload) {
+                    mPiper.preload(natural.key, natural.model(), natural.config);
+                }
+                if (model == null || model.config.sampleRate != sampleRate) {
+                    if (espeak.length() == 0) {
+                        espeakStart = run.start;
+                    }
+                    espeak.append(run.text);
+                    continue;
+                }
+                if (espeak.length() > 0) {
+                    out.add(new SynthUnit(espeak.toString(), voice, unit.base + espeakStart));
+                    espeak.setLength(0);
+                }
+                out.add(new SynthUnit(run.text, voice, unit.base + run.start, model, natural.key));
+            }
+            if (espeak.length() > 0) {
+                out.add(new SynthUnit(espeak.toString(), voice, unit.base + espeakStart));
+            }
+        }
+        return out;
+    }
+
     /**
      * One watchdog chunk: its text, the voice speaking it, and its code-point
      * base within the full request (for word-boundary re-basing). A single
@@ -1297,11 +1389,20 @@ public class TtsService extends TextToSpeechService {
         final String text;
         final Voice voice;
         final int base;
+        /** Natural voice for this unit, or null for eSpeak. */
+        final PiperModel model;
+        final String modelKey;
 
         SynthUnit(String text, Voice voice, int base) {
+            this(text, voice, base, null, null);
+        }
+
+        SynthUnit(String text, Voice voice, int base, PiperModel model, String modelKey) {
             this.text = text;
             this.voice = voice;
             this.base = base;
+            this.model = model;
+            this.modelKey = modelKey;
         }
 
         boolean isEarcon() {
