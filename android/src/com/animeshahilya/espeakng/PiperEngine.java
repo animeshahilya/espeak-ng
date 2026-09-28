@@ -276,6 +276,16 @@ final class PiperEngine {
         mMaxLoaded = Math.max(1, voices);
     }
 
+    /**
+     * Whether a second voice can stay loaded next to the current one.
+     * Language switching inside a request needs that; on a phone that keeps
+     * one voice, loading the other would evict the first and both would
+     * reload on every switch.
+     */
+    boolean keepsSeveralLoaded() {
+        return mMaxLoaded >= 2;
+    }
+
     /** Takes effect for voices loaded from now on: loaded ones are dropped and reload. */
     void setAcceleration(boolean enabled) {
         if (mAcceleration != enabled) {

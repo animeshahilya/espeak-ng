@@ -210,6 +210,15 @@ voices" does not, so voices can still be deleted to free space.
   `phoneme_type` espeak, not trained on another company's TTS output, and
   listened to. Their configs name things loosely, so `PiperVoiceConfig`
   takes the display name and region from the catalog key.
+- **Language switching.** Like eSpeak switching language by alphabet,
+  `LanguageRuns` splits each unit by script (Devanagari -> hin, Latin ->
+  eng, ...; a script the speaking language is written in stays with it)
+  and each run goes to its language's natural voice when one is chosen and
+  already loaded - the first use starts loading it and the current voice
+  reads that run meanwhile. Only with the same sample rate, and preloading
+  only on phones that keep several voices (`keepsSeveralLoaded`), so a
+  one-voice phone does not evict and reload on every switch. Runs with no
+  natural voice of their own stay with the current one (as before).
 - **Crash guard.** A native crash inside ONNX Runtime kills the process and
   Android restarts the service, which reloads the voice: a crash loop that
   silences TalkBack. `PiperCrashGuard` records voices whose native work is in

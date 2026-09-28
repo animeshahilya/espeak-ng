@@ -1187,7 +1187,6 @@ public class TtsService extends TextToSpeechService {
         final int targetVolume = effectiveVolume(settings, request);
         params.volume = targetVolume / 100f;
         params.pauseScale = settings.getPauseScale();
-        params.speakerId = PiperVoiceStore.speakerId(prefs, natural.key);
 
         // The config's eSpeak voice first (what the model was trained on);
         // if this fork lacks it, the eSpeak voice of the same language.
@@ -1235,13 +1234,38 @@ public class TtsService extends TextToSpeechService {
                 if (VoiceSettings.isBlank(unit.text)) {
                     continue;
                 }
-                mChunkBase = unit.base;
-                final int produced = mPiper.synthesize(model, unit.text, phonemizer, stretcher,
-                        params, output);
-                if (produced > 0) {
-                    frames[0] += produced;
-                } else if (produced < 0) {
-                    Log.w(TAG, "Natural voice " + natural.key + " could not phonemize; skipped");
+                // Like eSpeak switching language by alphabet: a Hindi run in
+                // English text goes to the Hindi natural voice, when one is
+                // chosen and loaded (it starts loading on first use; until
+                // then this voice reads it, as before).
+                for (LanguageRuns.Run run : LanguageRuns.split(unit.text, natural.languageKey())) {
+                    if (mIsStopped.get()) {
+                        break;
+                    }
+                    PiperModel runModel = model;
+                    String runKey = natural.key;
+                    if (!run.language.equals(natural.languageKey())) {
+                        final PiperVoiceStore.Installed other =
+                                PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
+                        if (other != null && !other.key.equals(natural.key)) {
+                            final PiperModel loaded = mPiper.getLoaded(other.key);
+                            if (loaded != null && loaded.config.sampleRate == sampleRate) {
+                                runModel = loaded;
+                                runKey = other.key;
+                            } else if (loaded == null && mPiper.keepsSeveralLoaded()) {
+                                mPiper.preload(other.key, other.model(), other.config);
+                            }
+                        }
+                    }
+                    params.speakerId = PiperVoiceStore.speakerId(prefs, runKey);
+                    mChunkBase = unit.base + run.start;
+                    final int produced = mPiper.synthesize(runModel, run.text, phonemizer, stretcher,
+                            params, output);
+                    if (produced > 0) {
+                        frames[0] += produced;
+                    } else if (produced < 0) {
+                        Log.w(TAG, "Natural voice " + runKey + " could not phonemize; skipped");
+                    }
                 }
             }
         } catch (Throwable t) {

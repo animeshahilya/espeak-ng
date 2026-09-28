@@ -283,10 +283,16 @@ final class PiperVoiceStore {
      * voice was deleted).
      */
     static Installed resolve(Context storageContext, SharedPreferences prefs, Voice espeakVoice) {
-        if (espeakVoice == null || !isEnabled(prefs)) {
+        return espeakVoice == null ? null
+                : assignedFor(storageContext, prefs, languageKey(espeakVoice.locale));
+    }
+
+    /** As {@link #resolve}, for a language key (a Hindi run inside English text). */
+    static Installed assignedFor(Context storageContext, SharedPreferences prefs, String languageKey) {
+        if (!isEnabled(prefs)) {
             return null;
         }
-        final String key = assignedKey(prefs, languageKey(espeakVoice.locale));
+        final String key = assignedKey(prefs, languageKey);
         return key == null || PiperCrashGuard.isSuspended(prefs, key) ? null
                 : find(storageContext, key);
     }
