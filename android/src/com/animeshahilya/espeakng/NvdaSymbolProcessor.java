@@ -256,7 +256,11 @@ public final class NvdaSymbolProcessor {
 
         // Standard punctuation and symbols (NVDA English levels).
         sym("!", "bang", A, n);
-        sym("\uff01", "fullwidth exclamation mark", A, n);
+        // CJK sentence punctuation is kept for eSpeak (its pauses), like the
+        // ASCII sentence endings. NVDA's English file lacks \u3002 and \uff0c, so their
+        // CLDR names (level none) said "ideographic period" after every
+        // Chinese sentence even with punctuation off, and dropped the pause.
+        sym("\uff01", "fullwidth exclamation mark", A, a);
         sym("\"", "quote", M, n);
         sym("#", "number", S, n);
         sym("$", "dollar", A, r);
@@ -276,19 +280,21 @@ public final class NvdaSymbolProcessor {
         sym("*", "star", S, n);
         sym(",", "comma", A, a);
         sym("\u3001", "ideographic comma", A, a);
+        sym("\uff0c", "fullwidth comma", A, a);
         sym("\u060c", "arabic comma", A, a);
         sym("-", "dash", M, a);
         sym(".", "dot", S, n);
         sym("\uff0e", "fullwidth full stop", S, n);
+        sym("\u3002", "ideographic full stop", A, a);
         sym("/", "slash", S, n);
         sym(":", "colon", M, r);
         sym("\uff1a", "fullwidth colon", M, r);
         sym(";", "semi", M, n);
         sym("\u061b", "arabic semicolon", M, n);
-        sym("\uff1b", "fullwidth semicolon", M, n);
+        sym("\uff1b", "fullwidth semicolon", M, a);
         sym("?", "question", A, n);
         sym("\u061f", "arabic question mark", A, n);
-        sym("\uff1f", "fullwidth question mark", A, n);
+        sym("\uff1f", "fullwidth question mark", A, a);
         sym("@", "at", S, n);
         sym("[", "left bracket", M, n);
         sym("]", "right bracket", M, n);
@@ -348,6 +354,23 @@ public final class NvdaSymbolProcessor {
         sym("\u00b0", "degrees", S, n);
         sym("\u00ab", "double left pointing angle bracket", M, a);
         sym("\u00bb", "double right pointing angle bracket", M, a);
+        // CJK brackets (book titles, quotes) at bracket level: only CLDR names
+        // them, at level none, so every language said "open double angle
+        // bracket" around a Chinese book title with punctuation off.
+        sym("\u3008", "open angle bracket", M, n);
+        sym("\u3009", "close angle bracket", M, n);
+        sym("\u300a", "open double angle bracket", M, n);
+        sym("\u300b", "close double angle bracket", M, n);
+        sym("\u300c", "open corner bracket", M, n);
+        sym("\u300d", "close corner bracket", M, n);
+        sym("\u300e", "open hollow corner bracket", M, n);
+        sym("\u300f", "close hollow corner bracket", M, n);
+        sym("\u3010", "open black lens bracket", M, n);
+        sym("\u3011", "close black lens bracket", M, n);
+        sym("\u3014", "open tortoise shell bracket", M, n);
+        sym("\u3015", "close tortoise shell bracket", M, n);
+        sym("\u3016", "open hollow lens bracket", M, n);
+        sym("\u3017", "close hollow lens bracket", M, n);
         sym("\u00b5", "micro", S, n);
         sym("\u2070", "superscript 0", S, n);
         sym("\u00b9", "superscript 1", S, n);

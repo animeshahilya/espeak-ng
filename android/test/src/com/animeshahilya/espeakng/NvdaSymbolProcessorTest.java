@@ -102,6 +102,37 @@ public class NvdaSymbolProcessorTest {
         assertEquals(Collections.emptyList(), problems);
     }
 
+    /**
+     * Chinese text in any voice with punctuation off: no "ideographic
+     * period" or "open double angle bracket", and 。！？ stay for eSpeak's
+     * pauses. CLDR names these at level none; NVDA's English file lacks them.
+     */
+    @Test
+    public void chinesePunctuationIsQuietAtLevelNone() {
+        final String text = "我读了《红楼梦》，写了「好」、真好。你呢？太好了！";
+        final List<String> problems = new ArrayList<>();
+        for (String file : ASSETS.list()) {
+            if (!file.endsWith(".dic") || file.endsWith(".cldr.dic")) {
+                continue;
+            }
+            final String tag = file.substring(0, file.length() - 4);
+            if (tag.equals("ja")) {
+                continue; // NVDA's Japanese file handles these itself (pauses, kanji readings)
+            }
+            final String out = NvdaSymbolProcessor.processText(text,
+                    NvdaSymbolProcessor.LEVEL_NONE, true, tag);
+            final String extra = out.replaceAll("[\\p{IsHan}\\s，。？！、《》「」]", "");
+            if (!extra.isEmpty() || !out.contains("。") || !out.contains("？")
+                    || !out.contains("！")) {
+                problems.add(tag + ": " + out);
+            }
+        }
+        assertEquals(Collections.emptyList(), problems);
+        final String all = NvdaSymbolProcessor.processText("真好。", NvdaSymbolProcessor.LEVEL_ALL,
+                true, "en-us");
+        assertTrue(all, all.contains("ideographic full stop") && all.contains("。"));
+    }
+
     /** NVDA's file format: sections, "-" inherits, escapes, display names, bad lines. */
     @Test
     public void parsesNvdaFormat() throws Exception {
