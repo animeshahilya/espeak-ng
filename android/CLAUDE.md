@@ -190,6 +190,12 @@ voices" does not, so voices can still be deleted to free space.
   sentence ends a chunk, so render-ahead keeps up without gaps down to 2.5x
   real time (0.3 s of gaps in 135 s at 1.8x, an Enhanced voice here).
   XNNPACK was 3x slower; NNAPI is an opt-in switch, off by default (see below).
+  ARM session options were measured too (Pixel 8, 2026-09-29), with no gain:
+  `mlas.enable_gemm_fastmath_arm64_bfloat16` (same speed, VITS is not
+  GEMM-bound), `session.dynamic_block_base` (0-10% slower) and
+  `session.intra_op.allow_spinning=0` (Hindi 11x -> 8x, first clause 80 ->
+  390 ms). eSpeak's own code already builds -O3 + ThinLTO; no -mcpu flag,
+  since the arm64 baseline (armv8.0) is all Android guarantees.
 - **Word timing.** Exact from the model's durations when the IPA words pair
   up one to one with the text's words, else proportional
   (`PiperAudio.alignedWordFrames` / `estimateWordFrames`).
