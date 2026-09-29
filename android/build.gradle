@@ -166,6 +166,7 @@ android {
         }
         test {
             java.srcDirs = ['test/src']
+            resources.srcDirs = ['test/resources']
         }
         androidTest {
             java.srcDirs = ['eSpeakTests/src']

@@ -13,6 +13,10 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Turns the native phonemizer's clause records into model input: chunks of
@@ -204,37 +208,99 @@ final class PiperPhonemes {
     }
 
     /**
-     * This fork's IPA for sounds upstream eSpeak NG spelled differently,
-     * mapped back to upstream's spelling for voices of the languages built
-     * on the Hindi phoneme table (every published voice was trained on
-     * upstream). Upstream never defined ड़/ढ़ there, so its phonemizer wrote
-     * the raw "r."/"r.h" and the voices learned the flap from that; the
-     * fork's "ɽ" has an id but no training behind it, and was heard as a
-     * garbled or missing sound (Whisper: सड़क/भीड़ -> "साथ"/"भीग"). "ʱ" has no
-     * id at all (NFKC made it "ɦ"). Longest first; eSpeak's own speech is
-     * unaffected.
+     * IPA respellings that put today's eSpeak output back the way a voice
+     * was trained. Every published voice learned from the eSpeak NG of its
+     * day: piper 1.0-1.2 voices from rhasspy's 2023 snapshot, 1.3+ from
+     * upstream. A symbol the voice never heard still has an id (Piper's id
+     * map is shared by all voices), so it is not skipped - it is garbled.
+     * Two sources: this fork's own changes (ड़/ढ़ became "ɽ"/"ɽʱ" where
+     * upstream wrote the raw text "r."/"r.h"; Nepali च/ज became "ts"/"dz"),
+     * and upstream's changes since 2023 (Swedish retroflexes, Ukrainian в,
+     * Portuguese nasals and r). Measured with android/tools/piper_spellings.py
+     * as words spelled exactly as the voice was trained, of 1500 per
+     * language; only rules that raise that count are kept. Pronunciation
+     * improvements (schwa deletion, vowel length) are left alone: they are
+     * sequences of symbols the voice knows. Whisper on Hindi: ड़/ढ़ words
+     * recognised 0/54 -> 34/54.
      */
-    private static final String[][] INDIC_SPELLINGS = {
-            {"ɽʱ", "r.h"}, // ढ़
-            {"ɽ", "r."},   // ड़, ড়, ੜ, ଡ଼
-            {"ɻ", "r."},   // Malayalam ഴ
-            {"ʱ", "ʰ"},    // breathy stops (Nepali झ "dzʱ", upstream "ɟʰ")
-            {"æ", "ɛ"},    // English loans (बैंक)
-    };
-    private static final String[][] NO_SPELLINGS = {};
+    static final class Spelling {
+        final Pattern pattern;
+        final String replacement;
 
-    /** Upstream eSpeak NG voices whose phoneme table is built on hi_base (phsource/phonemes). */
-    private static final java.util.Set<String> HI_BASE_LANGUAGES = new java.util.HashSet<>(
-            java.util.Arrays.asList("hi", "ne", "ur", "pa", "ta", "kn", "ml", "gu", "mr", "kok",
-                    "te", "si", "bn", "as", "or", "bpy", "sd"));
+        Spelling(String regex, String replacement) {
+            this.pattern = Pattern.compile(regex);
+            this.replacement = Matcher.quoteReplacement(replacement);
+        }
+    }
 
-    static String[][] trainedSpellings(String espeakVoice) {
+    /** Word end: no letter, mark or length follows. */
+    private static final String END = "(?![\\p{L}\\p{M}ː])";
+    /** Before a consonant or a word boundary, past a stress mark. */
+    private static final String BEFORE_CONSONANT = "(?=[ˈˌ]?[^\\p{L}\\p{M}ːˈˌ ]|[ˈˌ]?"
+            + "[bcdfɡhjklmnpqrstvwxzʃʒθðŋɲɟʎʁɾɹʋβɣçʝɕʑʈɖɳɭɻɽ])";
+
+    private static final Spelling[] NO_SPELLINGS = {};
+    /** ड़/ढ़ and breathy stops in the languages built on the Hindi phoneme table. */
+    private static final String[] FLAP = {"ɽʱ", "r.h", "ɽ", "r.", "ʱ", "ʰ"};
+    /** Portuguese nasal vowels before a consonant, as the 2023 eSpeak wrote them. */
+    private static final String[] PT_NASALS = {"ẽn", "eɪŋ", "ẽm", "eɪm", "ĩn", "iŋ", "ũn", "ũŋ",
+            "ɐ̃n" + BEFORE_CONSONANT, "ɐ̃ŋ"};
+    /** Portuguese r after a consonant, and the schwa the 2023 eSpeak put after a coda r. */
+    private static String[] ptR(String clusterR) {
+        return new String[] {"(?<=[ptkbdɡfv])ɾ", clusterR, "ɾ(?=[ptkbdɡfvszʃʒmnl])", "ɾə"};
+    }
+
+    /** Key: eSpeak voice, plus ":old" for voices trained on the 2023 eSpeak. */
+    private static final Map<String, Spelling[]> SPELLINGS = new java.util.HashMap<>();
+
+    private static void put(String key, String[]... parts) {
+        final List<Spelling> all = new ArrayList<>();
+        for (String[] part : parts) {
+            for (int i = 0; i + 1 < part.length; i += 2) {
+                all.add(new Spelling(part[i], part[i + 1]));
+            }
+        }
+        SPELLINGS.put(key, all.toArray(new Spelling[0]));
+    }
+
+    static {
+        for (String lang : new String[] {"pa", "gu", "mr", "or", "as", "sd", "bn", "kn", "ta",
+                "si", "kok", "bpy"}) {
+            put(lang, FLAP);
+        }
+        put("hi", FLAP, new String[] {"æ", "ɛ"});                    // बैंक
+        put("ur", FLAP, new String[] {"ɾ", "r", "ɑ", "a", "ɳ", "n"});
+        put("ml", new String[] {"ɻ", "r."}, FLAP);                    // ഴ
+        put("ne", new String[] {"ɽʱ", "ɖʰ", "ɽ", "ɖ", "dzʱ", "ɟʰ", "dz", "ɟ", "tsʰ", "cʰ",
+                "ts", "c", "ʱ", "ʰ"});
+        put("te", new String[] {"ŋ", "n", "ɲ", "n"});                  // పంక్తి
+        put("sv:old", new String[] {"ɧ", "sx", "ɳ", "rn", "ɭ", "rl", "ɖ", "rd", "ʈ", "t"});
+        put("uk:old", new String[] {"w(?=[ptkfsʃxʧ])", "f", "[ʋw]", "β", "ʲ", "j"});
+        put("ca:old", new String[] {"ʃ", "ɕ", "ʒ", "ʑ", "ɱ", "n", "ə" + END, "ɐ",
+                "(?<!ˈ[^\\s\\p{M}aeiouɛɔəɐ]{0,3})u", "ʊ", "i(?=[ˈˌ]?[aeoɔɛɐə])", "j"});
+        put("de:old", new String[] {"ʏ", "y", "ʊɐ", "??"});
+        put("pt-br:old", new String[] {"ʎ", "lj", "ɐ" + END, "æ", "ɾ" + END, "r", "ɪ" + END, "y",
+                "õn", "oŋ"}, PT_NASALS, ptR("r"));
+        put("pt:old", new String[] {"ɾ" + END, "ɹ", "õn", "uŋ"}, PT_NASALS, ptR("ɹ"));
+    }
+
+    /**
+     * @param oldEspeak the voice was trained with piper 1.0-1.2 (or does not
+     *                  say), i.e. on rhasspy's 2023 eSpeak NG
+     */
+    static Spelling[] trainedSpellings(String espeakVoice, boolean oldEspeak) {
         if (espeakVoice == null) {
             return NO_SPELLINGS;
         }
-        final int dash = espeakVoice.indexOf('-');
-        final String language = dash > 0 ? espeakVoice.substring(0, dash) : espeakVoice;
-        return HI_BASE_LANGUAGES.contains(language) ? INDIC_SPELLINGS : NO_SPELLINGS;
+        final String voice = espeakVoice.toLowerCase(Locale.ROOT);
+        Spelling[] s = oldEspeak ? SPELLINGS.get(voice + ":old") : null;
+        if (s == null) {
+            s = SPELLINGS.get(voice);
+        }
+        if (s == null && voice.indexOf('-') > 0) {
+            s = SPELLINGS.get(voice.substring(0, voice.indexOf('-')));
+        }
+        return s != null ? s : NO_SPELLINGS;
     }
 
     /**
@@ -244,8 +310,11 @@ final class PiperPhonemes {
      * back the way the voice learned them ({@link #trainedSpellings}).
      */
     static List<String> tokenize(String ipa, PiperVoiceConfig config) {
-        for (String[] spelling : config.trainedSpellings) {
-            ipa = ipa.replace(spelling[0], spelling[1]);
+        if (config.trainedSpellings.length > 0) {
+            ipa = Normalizer.normalize(ipa, Normalizer.Form.NFC);
+            for (Spelling spelling : config.trainedSpellings) {
+                ipa = spelling.pattern.matcher(ipa).replaceAll(spelling.replacement);
+            }
         }
         final String nfd = Normalizer.normalize(ipa, Normalizer.Form.NFD);
         final List<String> phones = new ArrayList<>(nfd.length());

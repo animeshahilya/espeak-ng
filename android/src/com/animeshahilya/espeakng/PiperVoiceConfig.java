@@ -58,8 +58,13 @@ final class PiperVoiceConfig {
     /** Multi-code-point "phonemes" merged before the id lookup, longest first. */
     final List<String[]> vowelClusters;
     final int maxClusterLength;
-    /** Fork IPA -> the spelling the voice was trained on (PiperPhonemes.trainedSpellings). */
-    final String[][] trainedSpellings;
+    /**
+     * Trained with piper 1.0-1.2 (or the config does not say): on rhasspy's
+     * 2023 eSpeak NG rather than a current upstream one.
+     */
+    final boolean oldEspeak;
+    /** Today's IPA -> the spelling the voice was trained on (PiperPhonemes.trainedSpellings). */
+    final PiperPhonemes.Spelling[] trainedSpellings;
 
     private PiperVoiceConfig(Builder b) {
         key = b.key;
@@ -86,7 +91,9 @@ final class PiperVoiceConfig {
             max = Math.max(max, c.length);
         }
         maxClusterLength = max;
-        trainedSpellings = PiperPhonemes.trainedSpellings(usesEspeak() ? espeakVoice : null);
+        oldEspeak = b.oldEspeak;
+        trainedSpellings = PiperPhonemes.trainedSpellings(usesEspeak() ? espeakVoice : null,
+                oldEspeak);
     }
 
     /**
@@ -136,6 +143,17 @@ final class PiperVoiceConfig {
         return sb.toString();
     }
 
+    /** piper 1.3 moved from rhasspy's 2023 eSpeak NG to upstream's. */
+    static boolean isOldPiper(String version) {
+        final java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("^(\\d+)\\.(\\d+)").matcher(version);
+        if (!m.find()) {
+            return true;
+        }
+        final int major = Integer.parseInt(m.group(1));
+        return major < 1 || (major == 1 && Integer.parseInt(m.group(2)) < 3);
+    }
+
     static PiperVoiceConfig parse(String key, String json) throws JSONException {
         final JSONObject root = new JSONObject(json);
         final Builder b = new Builder();
@@ -149,6 +167,7 @@ final class PiperVoiceConfig {
         final JSONObject espeak = root.optJSONObject("espeak");
         b.espeakVoice = espeak != null ? espeak.optString("voice", null) : null;
         b.phonemeType = root.optString("phoneme_type", PHONEME_TYPE_ESPEAK);
+        b.oldEspeak = isOldPiper(root.optString("piper_version", ""));
 
         final JSONObject language = root.optJSONObject("language");
         if (language != null) {
@@ -235,6 +254,7 @@ final class PiperVoiceConfig {
         String dataset;
         String espeakVoice;
         String phonemeType;
+        boolean oldEspeak;
         String languageFamily;
         String languageCode;
         String languageNameNative;

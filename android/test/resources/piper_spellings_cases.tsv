@@ -1,0 +1,481 @@
+# espeak voice	piper_version	eSpeak IPA	expected model input (tools/piper_spellings.py fixture)
+hi	1.3.0	ɟˈoːɽnˌaː	ɟˈoːr.nˌaː
+hi	1.3.0	ˈɪs seː bˈʌɽaː	ˈɪs seː bˈʌr.aː
+hi	1.3.0	ˈɪssˌeː bˈʌɽaː	ˈɪssˌeː bˈʌr.aː
+hi	1.3.0	ˈɪssˌeː bˈʌɽaː jˈaː bəɾˈaːbəɾ	ˈɪssˌeː bˈʌr.aː jˈaː bəɾˈaːbəɾ
+hi	1.3.0	ˈupɾˌiː baːˈiːn ˈoːɾ cˌətʊɾtʰˈãʃ koː cʰˈoːɽkəɾ bʰˈʌɾaː hˈʊaː ʋɾˈɪtː	ˈupɾˌiː baːˈiːn ˈoːɾ cˌətʊɾtʰˈãʃ koː cʰˈoːr.kəɾ bʰˈʌɾaː hˈʊaː ʋɾˈɪtː
+hi	1.3.0	bˈʌɽaː sˈaː kʰˈoːkʰlaː ʋɾˈɪtː	bˈʌr.aː sˈaː kʰˈoːkʰlaː ʋɾˈɪtː
+hi	1.3.0	ɾˈʌɡəɽnaː	ɾˈʌɡər.naː
+hi	1.3.0	mɪʈˈaːneː ʋˈaːlaː ɾˈʌbəɽ	mɪʈˈaːneː ʋˈaːlaː ɾˈʌbər.
+hi	1.3.0	pˈʌkəɽnaː	pˈʌkər.naː
+hi	1.3.0	mˈʊʈʰʈʰˌiː ki pˈʌkəɽ	mˈʊʈʰʈʰˌiː ki pˈʌkər.
+hi	1.3.0	bˈʌɽˌiː ˈãkʰõ ʋˈaːlaː dˈãt dɪkʰˈaːtaː cˈeːhɾˌaː	bˈʌr.ˌiː ˈãkʰõ ʋˈaːlaː dˈãt dɪkʰˈaːtaː cˈeːhɾˌaː
+hi	1.3.0	cʰˈeːɽnˌaː	cʰˈeːr.nˌaː
+hi	1.3.0	bˈʌɽaː	bˈʌr.aː
+hi	1.3.0	bˈʌɽˌiː cʰˈoːʈˌiː ˈãkʰeː	bˈʌr.ˌiː cʰˈoːʈˌiː ˈãkʰeː
+hi	1.3.0	sˈãs cʰˈoːɽtˌaː hˈʊaː cˈeːhɾˌaː	sˈãs cʰˈoːr.tˌaː hˈʊaː cˈeːhɾˌaː
+hi	1.3.0	sˈãs cʰˈoːɽnˌaː	sˈãs cʰˈoːr.nˌaː
+hi	1.3.0	ʈˈeːɽʱaː	ʈˈeːr.haː
+hi	1.3.0	hˈoːʃ ˈʊɽ ɟˈaːnaː	hˈoːʃ ˈʊr. ɟˈaːnaː
+hi	1.3.0	kʰəɽˈuːs	kʰər.ˈuːs
+hi	1.3.0	bˈʌɽˌiː ˈãkʰẽː	bˈʌr.ˌiː ˈãkʰẽː
+hi	1.3.0	kʰˈʊleː mˈũh ʋˈaːlaː tːjˈɔːɾˌiː cəɽʱˈaːtaː cˈeːhɾˌaː	kʰˈʊleː mˈũh ʋˈaːlaː tːjˈɔːɾˌiː cər.hˈaːtaː cˈeːhɾˌaː
+hi	1.3.0	kʰˈʊleː mˈũh seː tːjˈɔːɾˌiː cəɽʱˈaːnaː	kʰˈʊleː mˈũh seː tːjˈɔːɾˌiː cər.hˈaːnaː
+hi	1.3.0	tːjˈɔːɾˌiː cəɽʱˈaːnaː	tːjˈɔːɾˌiː cər.hˈaːnaː
+hi	1.3.0	pˈiːɽaː	pˈiːr.aː
+hi	1.3.0	kʰˈoːpɽˌiː	kʰˈoːpr.ˌiː
+hi	1.3.0	bˈɪllˌiː kaː ʈˈeːɽʱaː cˈeːhɾˌaː	bˈɪllˌiː kaː ʈˈeːr.haː cˈeːhɾˌaː
+hi	1.3.0	bˈʌɽʱətˌaː hˈʊaː dˈɪl	bˈʌr.hətˌaː hˈʊaː dˈɪl
+hi	1.3.0	dʰˈʌɽəktaː dˈɪl	dʰˈʌr.əktaː dˈɪl
+hi	1.3.0	dʰˈʌɽkˌən	dʰˈʌr.kˌən
+hi	1.3.0	dʰˈʌɽəknaː	dʰˈʌr.əknaː
+hi	1.3.0	ɟʰˈʌɡɽˌaː	ɟʰˈʌɡr.ˌaː
+hi	1.3.0	ɟʰˈʌɽəp	ɟʰˈʌr.əp
+hi	1.3.0	ɡʰˌəmaːsˈaːn ɟʰˈʌɡɽˌeː seː bˈʌnaː dʰˈuːl kaː ɡʊbbˈaːɾ	ɡʰˌəmaːsˈaːn ɟʰˈʌɡr.ˌeː seː bˈʌnaː dʰˈuːl kaː ɡʊbbˈaːɾ
+hi	1.3.0	dˈɔːɽ	dˈɔːr.
+hi	1.3.0	dˈɔːɽnˌaː	dˈɔːr.nˌaː
+hi	1.3.0	hˈaːtʰ pˈʌkəɽnaː	hˈaːtʰ pˈʌkər.naː
+hi	1.3.0	bˈʌɽʱɪjˌaː	bˈʌr.hɪjˌaː
+hi	1.3.0	bˈʌhʊt bˈʌɽʱɪjˌaː	bˈʌhʊt bˈʌr.hɪjˌaː
+hi	1.3.0	tʰˈoːɽaː	tʰˈoːr.aː
+hi	1.3.0	pˈʌkɽˌoː	pˈʌkr.ˌoː
+ne	1.3.0	tsʰˈaːlaː	cʰˈaːlaː
+ne	1.3.0	ˌənɖəɾəɽjˈaːs	ˌənɖəɾəɖjˈaːs
+ne	1.3.0	jˈoːdzək tsˈɪnhə	jˈoːɟək cˈɪnhə
+ne	1.3.0	mˈʌdʰjəɽˌəʈ	mˈʌdʰjəɖˌəʈ
+ne	1.3.0	ˌəlpəwˈɪɾaːm tsˈɪnhə	ˌəlpəwˈɪɾaːm cˈɪnhə
+ne	1.3.0	ˌaːɪɽɪjˈoːɡɾaːpʰˌɪk	ˌaːɪɖɪjˈoːɡɾaːpʰˌɪk
+ne	1.3.0	ˌaːɪɽɪjˈoːɡɾaːpʰˌɪk ˌəlpəwˈɪɾaːm	ˌaːɪɖɪjˈoːɡɾaːpʰˌɪk ˌəlpəwˈɪɾaːm
+ne	1.3.0	ˌəɾdʰəwˈɪɾaːm tsˈɪnhə	ˌəɾdʰəwˈɪɾaːm cˈɪnhə
+ne	1.3.0	ˈʌɾəbˌiː ˈʌɾdʰə bɪɾˈaːm tsˈɪnhə	ˈʌɾəbˌiː ˈʌɾdʰə bɪɾˈaːm cˈɪnhə
+ne	1.3.0	əpˈuːrɳə bɪɾˈaːm tsˈɪnhə	əpˈuːrɳə bɪɾˈaːm cˈɪnhə
+ne	1.3.0	bˌɪsməjˌaːdɪbˈoːdʰək tsˈɪnhə	bˌɪsməjˌaːdɪbˈoːdʰək cˈɪnhə
+ne	1.3.0	bˌɪsməjˌaːdɪwˈoːdʰək tsˈɪnhə	bˌɪsməjˌaːdɪwˈoːdʰək cˈɪnhə
+ne	1.3.0	ˌʊdɡaːɾəwˈaːtsək tsˈɪnhə	ˌʊdɡaːɾəwˈaːcək cˈɪnhə
+ne	1.3.0	tsˈɪnhə	cˈɪnhə
+ne	1.3.0	ˌʊlʈʈjaːɪˈeːkoː bˌɪsməjˌaːdɪbˈoːdʰək tsˈɪnhə	ˌʊlʈʈjaːɪˈeːkoː bˌɪsməjˌaːdɪbˈoːdʰək cˈɪnhə
+ne	1.3.0	pɾˌəsnəwˈaːtsək tsˈɪnhə	pɾˌəsnəwˈaːcək cˈɪnhə
+ne	1.3.0	ˌʊlʈʈjaːɪˈeːkoː pɾˌəsnəwˈaːtsək tsˈɪnhə	ˌʊlʈʈjaːɪˈeːkoː pɾˌəsnəwˈaːcək cˈɪnhə
+ne	1.3.0	ˈʌɾəbˌiː pɾˌəsnəwˈaːtsək tsˈɪnhə	ˈʌɾəbˌiː pɾˌəsnəwˈaːcək cˈɪnhə
+ne	1.3.0	bˌɪsməjˌaːdɪbˈoːdʰək ɾə pɾˌəsnəwˈaːtsək tsˈɪnhəkˌoː mˈɪsɾəɳ	bˌɪsməjˌaːdɪbˈoːdʰək ɾə pɾˌəsnəwˈaːcək cˈɪnhəkˌoː mˈɪsɾəɳ
+ne	1.3.0	bɪɾˈaːm tsˈɪnhə	bɪɾˈaːm cˈɪnhə
+ne	1.3.0	bɛːtsˈaːɾɪk	bɛːcˈaːɾɪk
+ne	1.3.0	ˌaːɪɽɪjˈoːɡɾaːpʰˌɪk bɪɾˈaːm tsˈɪnhə	ˌaːɪɖɪjˈoːɡɾaːpʰˌɪk bɪɾˈaːm cˈɪnhə
+ne	1.3.0	kɾoːtsˈeːʈ	kɾoːcˈeːʈ
+ne	1.3.0	tsˈutstsˌoː	cˈuccˌoː
+ne	1.3.0	kˌətsʰuwˈaː	kˌəcʰuwˈaː
+ne	1.3.0	kˌətsʰuwˈaːkoː kʰˈoːl dzˈʌstoː kʰˈulaː kˈoːsʈʰˌək	kˌəcʰuwˈaːkoː kʰˈoːl ɟˈʌstoː kʰˈulaː kˈoːsʈʰˌək
+ne	1.3.0	kˌətsʰuwˈaːkoː kʰˈoːl dzˈʌstoː bˈʌndə kˈoːsʈʰˌək	kˌəcʰuwˈaːkoː kʰˈoːl ɟˈʌstoː bˈʌndə kˈoːsʈʰˌək
+ne	1.3.0	ənutstsʰˈeːd	ənuccʰˈeːd
+ne	1.3.0	ənutstsʰˌeːd tsˈɪnhə	ənuccʰˌeːd cˈɪnhə
+ne	1.3.0	ˈeːʈ tsˈɪnhə	ˈeːʈ cˈɪnhə
+ne	1.3.0	tˈaːɾaː tsˈɪnhə	tˈaːɾaː cˈɪnhə
+ne	1.3.0	baːˈɪlɖə kˈaːɾɖə tsˈɪnhə	baːˈɪlɖə kˈaːɾɖə cˈɪnhə
+ne	1.3.0	sˈoːlɪɽˌəs	sˈoːlɪɖˌəs
+ne	1.3.0	hjˈaːs tsˈɪnhə	hjˈaːs cˈɪnhə
+ne	1.3.0	pɾˈʌtɪ hədzˈaːɾ	pɾˈʌtɪ həɟˈaːɾ
+ne	1.3.0	kʰˈʌɲdzəɾ	kʰˈʌɲɟəɾ
+ne	1.3.0	tsupˈɪːkoː tsˈɪnhə	cupˈɪːkoː cˈɪnhə
+ne	1.3.0	duˈɪːwəʈˌaː tsupˈɪːkoː tsˈɪnhə	duˈɪːwəʈˌaː cupˈɪːkoː cˈɪnhə
+ne	1.3.0	ɖˈʌbəl pɾˈaːɪm tsˈɪnhə	ɖˈʌbəl pɾˈaːɪm cˈɪnhə
+ne	1.3.0	tɾˈɪpəl pɾˈaːɪm tsˈɪnhə	tɾˈɪpəl pɾˈaːɪm cˈɪnhə
+ur	1.3.0	təbdˈiːl kˈaːɾ	təbdˈiːl kˈaːr
+ur	1.3.0	ɟˈəld ki hˈʌlkˌiː ɾˈʌŋɡət	ɟˈəld ki hˈʌlkˌiː rˈʌŋɡət
+ur	1.3.0	ɟˈəld ki dˌərmɪjˈaːnˌiː ɾˈʌŋɡət	ɟˈəld ki dˌərmɪjˈaːnˌiː rˈʌŋɡət
+ur	1.3.0	ɟˈəld ki dˌərmɪjˈaːnˌiː sjˈaːh ɾˈʌŋɡət	ɟˈəld ki dˌərmɪjˈaːnˌiː sjˈaːh rˈʌŋɡət
+ur	1.3.0	ɟˈəld ki sjˈaːh ɾˈʌŋɡət	ɟˈəld ki sjˈaːh rˈʌŋɡət
+ur	1.3.0	ˈʊfəqˌi bˈaːɾ	ˈʊfəqˌi bˈaːr
+ur	1.3.0	bˈaːɾ	bˈaːr
+ur	1.3.0	sˌəʋaːlˈiːɑ nɪʃˈaːn	sˌəʋaːlˈiːa nɪʃˈaːn
+ur	1.3.0	ˈʊlʈaː sˌəʋaːlˈiːɑ nɪʃˈaːn	ˈʊlʈaː sˌəʋaːlˈiːa nɪʃˈaːn
+ur	1.3.0	ˈərbˌiː sˌəʋaːlˈiːɑ nɪʃˈaːn	ˈərbˌiː sˌəʋaːlˈiːa nɪʃˈaːn
+ur	1.3.0	dˌərmɪjˈaːnˌiː nˈʊqtɑ	dˌərmɪjˈaːnˌiː nˈʊqta
+ur	1.3.0	nˈʊqtɑ	nˈʊqta
+ur	1.3.0	ʋˈʌstˌiː nˈʊqtɑ	ʋˈʌstˌiː nˈʊqta
+ur	1.3.0	smˈaːɾʈ əlˈaːmət ˌɪqtɪbˈaːs	smˈaːrʈ əlˈaːmət ˌɪqtɪbˈaːs
+ur	1.3.0	smˈaːɾʈ koːʈˈeːʃən	smˈaːrʈ koːʈˈeːʃən
+ur	1.3.0	zaːʋˈiːɑ	zaːʋˈiːa
+ur	1.3.0	zaːʋˈiːɑ brˈeːkɪʈ	zaːʋˈiːa brˈeːkɪʈ
+ur	1.3.0	kʰˈɪlˌiː zaːʋˈiːɑ brˈeːkɪʈ	kʰˈɪlˌiː zaːʋˈiːa brˈeːkɪʈ
+ur	1.3.0	bˈʌnd zaːʋˈiːɑ brˈeːkɪʈ	bˈʌnd zaːʋˈiːa brˈeːkɪʈ
+ur	1.3.0	ɖˈʌbəl zaːʋˈiːɑ brˈeːkɪʈ	ɖˈʌbəl zaːʋˈiːa brˈeːkɪʈ
+ur	1.3.0	kʰˈɪlˌiː ɖˈʌbəl zaːʋˈiːɑ brˈeːkɪʈ	kʰˈɪlˌiː ɖˈʌbəl zaːʋˈiːa brˈeːkɪʈ
+ur	1.3.0	bˈʌnd ɖˈʌbəl zaːʋˈiːɑ brˈeːkɪʈ	bˈʌnd ɖˈʌbəl zaːʋˈiːa brˈeːkɪʈ
+ur	1.3.0	pˈaːɾʈ	pˈaːrʈ
+ur	1.3.0	sɪtˈaːɾaː	sɪtˈaːraː
+ur	1.3.0	ʋˈaːɪlɖ kˈaːɾɖ	ʋˈaːɪlɖ kˈaːrɖ
+ur	1.3.0	sʈɾˈoːk	sʈrˈoːk
+ur	1.3.0	mˌəxrˈuːtˌiː pˈətʰːər kaː minˈaːɾ	mˌəxrˈuːtˌiː pˈətʰːər kaː minˈaːr
+ur	1.3.0	tˈiːn sɪtˈaːɾõ ʋˈaːlˌiː əlˈaːmət	tˈiːn sɪtˈaːrõ ʋˈaːlˌiː əlˈaːmət
+ur	1.3.0	sɪtˈaːɾeː	sɪtˈaːreː
+ur	1.3.0	pˈaːʋəɾ	pˈaːʋər
+ur	1.3.0	əmˈaːlˌɑ	əmˈaːlˌa
+ur	1.3.0	ɖˈɪɡɾˌiː	ɖˈɪɡrˌiː
+ur	1.3.0	aːʋˈaːz reːkˈaːrɖɪnɡ ki kˈaːpˌiː ɾˈaːɪʈ	aːʋˈaːz reːkˈaːrɖɪnɡ ki kˈaːpˌiː rˈaːɪʈ
+ur	1.3.0	kˈaːpˌiː ɾˈaːɪʈ	kˈaːpˌiː rˈaːɪʈ
+ur	1.3.0	bˈaːẽː tˈərəf ɪʃˈaːɾaː kˌərneː ʋˈaːlaː tˈiːɾ	bˈaːẽː tˈərəf ɪʃˈaːraː kˌərneː ʋˈaːlaː tˈiːr
+ur	1.3.0	tˈiːɾ	tˈiːr
+ur	1.3.0	bˈaːẽː tˈərəf tˈiːɾ kaː sʈɾˈoːk	bˈaːẽː tˈərəf tˈiːr kaː sʈrˈoːk
+ur	1.3.0	dˈaːẽː tˈərəf ɪʃˈaːɾaː kˌərneː ʋˈaːlaː tˈiːɾ	dˈaːẽː tˈərəf ɪʃˈaːraː kˌərneː ʋˈaːlaː tˈiːr
+ur	1.3.0	dˈaːẽː tˈərəf tˈiːɾ kaː sʈɾˈoːk	dˈaːẽː tˈərəf tˈiːr kaː sʈrˈoːk
+ur	1.3.0	ˈuːpər ki tˈərəf ɪʃˈaːɾaː kˌərneː ʋˈaːlaː tˈiːɾ	ˈuːpər ki tˈərəf ɪʃˈaːraː kˌərneː ʋˈaːlaː tˈiːr
+ml	1.3.0	tˈaːɻejˌuɭɭɐ ɾˈeːkʰɐ	tˈaːr.ejˌuɭɭɐ ɾˈeːkʰɐ
+ml	1.3.0	tˈaːɻejˌuɭɭɐ vˈɐɾɐ	tˈaːr.ejˌuɭɭɐ vˈɐɾɐ
+ml	1.3.0	tˈɐləɡˌiːɻaːjɐ	tˈɐləɡˌiːr.aːjɐ
+ml	1.3.0	tˈɐləɡˌiːɻaːjɐ vikʂˈeːbiɳi	tˈɐləɡˌiːr.aːjɐ vikʂˈeːbiɳi
+ml	1.3.0	tˈɐləɡˌiːɻaːjɐ cˈoːdjɐ cˈihnəm	tˈɐləɡˌiːr.aːjɐ cˈoːdjɐ cˈihnəm
+ml	1.3.0	tˈɐləɡˌiːɻaːjˌɐtɨ	tˈɐləɡˌiːr.aːjˌɐtɨ
+ml	1.3.0	tˈaːɻnnɐ ˈuddʰəɾˌɐɳi	tˈaːr.nnɐ ˈuddʰəɾˌɐɳi
+ml	1.3.0	tˈaːɻnnɐ vˈɐlətɨ viɕlˈeːʂəm	tˈaːr.nnɐ vˈɐlətɨ viɕlˈeːʂəm
+ml	1.3.0	tˈaːɻnnɐ ˈuddʰəɾˌɐɳəm	tˈaːr.nnɐ ˈuddʰəɾˌɐɳəm
+ml	1.3.0	tˈaːɻnnɐ vˈɐlətɨ ˈuddʰəɾˌɐɳɐ cˈihnəm	tˈaːr.nnɐ vˈɐlətɨ ˈuddʰəɾˌɐɳɐ cˈihnəm
+ml	1.3.0	rivˈeːɻsɨ slˈaːʂɨ	rivˈeːr.sɨ slˈaːʂɨ
+ml	1.3.0	tˈaːɻe	tˈaːr.e
+ml	1.3.0	tˈaːɻeːjkːɨ cˈuːɳɖunnɐ ˈɐmbəɖˌɐjaːɭəm	tˈaːr.eːjkːɨ cˈuːɳɖunnɐ ˈɐmbəɖˌɐjaːɭəm
+ml	1.3.0	tˈaːɻoːʈʈˌuɭɭɐ ˈiɾudˌɐlɐ ˈɐstɾəcˌihnəm	tˈaːr.oːʈʈˌuɭɭɐ ˈiɾudˌɐlɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	bˈaːril nˈinnɨ tˈaːɻoːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm	bˈaːril nˈinnɨ tˈaːr.oːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	kˈiːɻəʈʈm sˈɐhidəm mˈeːloːʈʈum tˈaːɻoːʈʈˌumuɭɭɐ ˈɐstɾəcˌihnəm	kˈiːr.əʈʈm sˈɐhidəm mˈeːloːʈʈum tˈaːr.oːʈʈˌumuɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	tˈaːɻoːʈʈɨ vˈɐɭəɲɲˌubuɭˌɐɲɲɐ ˈɐstɾəcˌihnəm	tˈaːr.oːʈʈɨ vˈɐɭəɲɲˌubuɭˌɐɲɲɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	ˈiɖətːˌoːʈʈɨ tˈiɾijˌunnɐ tˈaːɻoːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm	ˈiɖətːˌoːʈʈɨ tˈiɾijˌunnɐ tˈaːr.oːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	vˈɐlətːˌoːʈʈɨ tˈiɾijˌunnɐ tˈaːɻoːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm	vˈɐlətːˌoːʈʈɨ tˈiɾijˌunnɐ tˈaːr.oːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	mˈuːlɐ tˈaːɻeːjkːˌaːjɐ vˈɐlətːˌoːʈʈuɭɭɐ ˈɐstɾəcˌihnəm	mˈuːlɐ tˈaːr.eːjkːˌaːjɐ vˈɐlətːˌoːʈʈuɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	mˈuːlɐ tˈaːɻeːjkːˌaːjɐ ˈiɖətːˌoːʈʈuɭɭɐ ˈɐstɾəcˌihnəm	mˈuːlɐ tˈaːr.eːjkːˌaːjɐ ˈiɖətːˌoːʈʈuɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	kˈoɭutːɨ tˈaːɻeːkːˌaːjɐ ˈiɖətːˌoːʈʈuɭɭɐ cˈaːʈʈuɭi	kˈoɭutːɨ tˈaːr.eːkːˌaːjɐ ˈiɖətːˌoːʈʈuɭɭɐ cˈaːʈʈuɭi
+ml	1.3.0	kˈoɭutːɨ tˈaːɻoːʈʈˌaːjɐ vˈɐlətːˌoːʈʈuɭɭɐ cˈaːʈʈuɭi	kˈoɭutːɨ tˈaːr.oːʈʈˌaːjɐ vˈɐlətːˌoːʈʈuɭɭɐ cˈaːʈʈuɭi
+ml	1.3.0	kˈoɭutːɨ vˈɐlətːˌoːʈʈaːjɐ tˈaːɻoːʈʈˌuɭɭɐ cˈaːʈʈuɭi	kˈoɭutːɨ vˈɐlətːˌoːʈʈaːjɐ tˈaːr.oːʈʈˌuɭɭɐ cˈaːʈʈuɭi
+ml	1.3.0	kˈoɭutːɨ ˈiɖətːˌoːʈʈaːjɐ tˈaːɻoːʈʈˌuɭɭɐ cˈaːʈʈuɭi	kˈoɭutːɨ ˈiɖətːˌoːʈʈaːjɐ tˈaːr.oːʈʈˌuɭɭɐ cˈaːʈʈuɭi
+ml	1.3.0	mˈeːleːjkːum tˈaːɻeːjkːum cˈuːɳɖunnɐ ˈɐmbəɖˌɐjaːɭˌɐŋŋəɭ	mˈeːleːjkːum tˈaːr.eːjkːum cˈuːɳɖunnɐ ˈɐmbəɖˌɐjaːɭˌɐŋŋəɭ
+ml	1.3.0	ɟˈoːɖijˌaːkːijɐ tˈaːɻoːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəŋŋəɭ	ɟˈoːɖijˌaːkːijɐ tˈaːr.oːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəŋŋəɭ
+ml	1.3.0	tˈaːɻoːʈʈˌuɭɭɐ ˈiɾəʈʈɐ ˈɐstɾəcˌihnəm	tˈaːr.oːʈʈˌuɭɭɐ ˈiɾəʈʈɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	vˈɐɖəkːɨ kˈiɻəkːɨ ˈiɾəʈʈɐ ˈɐstɾəcˌihnəm	vˈɐɖəkːɨ kˈir.əkːɨ ˈiɾəʈʈɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	tˈekːɨ kˈiɻəkːɨ ˈiɾəʈʈɐ ˈɐstɾəcˌihnəm	tˈekːɨ kˈir.əkːɨ ˈiɾəʈʈɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	tˈaːɻoːʈʈˌuɭɭɐ ˈiɾəʈʈɐ vˈɐɾɐ ˈɐstɾəcˌihnəm	tˈaːr.oːʈʈˌuɭɭɐ ˈiɾəʈʈɐ vˈɐɾɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	ˈiɖəvˌiʈʈɨ vˈɐɾəjˌuɭɭɐ tˈaːɻoːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm	ˈiɖəvˌiʈʈɨ vˈɐɾəjˌuɭɭɐ tˈaːr.oːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	tˈaːɻoːʈʈˌuɭɭɐ pˈoɭɭɐ ˈɐstɾəcˌihnəm	tˈaːr.oːʈʈˌuɭɭɐ pˈoɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	tˈaːɻoːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm ˈiɖətːˌoːʈʈum mˈuɡəɭˌileːkːˌumuɭɭɐ ˈɐstɾəcˌihnəm	tˈaːr.oːʈʈˌuɭɭɐ ˈɐstɾəcˌihnəm ˈiɖətːˌoːʈʈum mˈuɡəɭˌileːkːˌumuɭɭɐ ˈɐstɾəcˌihnəm
+ml	1.3.0	kˈuɻəl	kˈur.əl
+ml	1.3.0	kˈiɻikːˌuɡɐ	kˈir.ikːˌuɡɐ
+ml	1.3.0	kˈiɻivɨ pˈoːle	kˈir.ivɨ pˈoːle
+ml	1.3.0	mˈuɡəɭil ˈiɖətːˌoːʈʈum tˈaːɻe vˈɐlətːˌoːʈʈum nˈirəvˌuɭɭɐ cˈɐduɾəm	mˈuɡəɭil ˈiɖətːˌoːʈʈum tˈaːr.e vˈɐlətːˌoːʈʈum nˈirəvˌuɭɭɐ cˈɐduɾəm
+ml	1.3.0	mˈuɡəɭil vˈɐlətːˌoːʈʈum tˈaːɻe ˈiɖətːˌoːʈʈum nˈirəvˌuɭɭɐ cˈɐduɾəm	mˈuɡəɭil vˈɐlətːˌoːʈʈum tˈaːr.e ˈiɖətːˌoːʈʈum nˈirəvˌuɭɭɐ cˈɐduɾəm
+ml	1.3.0	tˈaːɻeːjkːɨ cˈuːɳɖunnɐ nˈirəmˌuɭɭɐ tɾiɡˈoːɳəm	tˈaːr.eːjkːɨ cˈuːɳɖunnɐ nˈirəmˌuɭɭɐ tɾiɡˈoːɳəm
+te	1.3.0	lˈeːta cˈarmapu rˈaŋɡu	lˈeːta cˈarmapu rˈanɡu
+te	1.3.0	mˈadʰjastʰˌaŋɡaː lˈeːta cˈarmapu rˈaŋɡu	mˈadʰjastʰˌanɡaː lˈeːta cˈarmapu rˈanɡu
+te	1.3.0	mˈadʰjastʰa cˈarmapu rˈaŋɡu	mˈadʰjastʰa cˈarmapu rˈanɡu
+te	1.3.0	mˈadʰjastʰˌaŋɡaː mˈuduru cˈarmapu rˈaŋɡu	mˈadʰjastʰˌanɡaː mˈuduru cˈarmapu rˈanɡu
+te	1.3.0	mˈuduru cˈarmapu rˈaŋɡu	mˈuduru cˈarmapu rˈanɡu
+te	1.3.0	dˈiɡuʋa pˈaŋkti	dˈiɡuʋa pˈankti
+te	1.3.0	pˈaŋkti	pˈankti
+te	1.3.0	bjˈaːŋɡ	bjˈaːnɡ
+te	1.3.0	ˈiɳʈarrˌoːbjaːŋɡ	ˈiɳʈarrˌoːbjaːnɡ
+te	1.3.0	ˈiɳʈar pˈaɲcjuʋˌeːʂan	ˈiɳʈar pˈancjuʋˌeːʂan
+te	1.3.0	sˈiŋɡil kˈoːʈ	sˈinɡil kˈoːʈ
+te	1.3.0	tˈericˌina nˈalupu rˈaŋɡu lˈens brˈaːkeʈ	tˈericˌina nˈalupu rˈanɡu lˈens brˈaːkeʈ
+te	1.3.0	mˈuːsiʋˌeːsina nˈalupu rˈaŋɡu lˈens brˈaːkeʈ	mˈuːsiʋˌeːsina nˈalupu rˈanɡu lˈens brˈaːkeʈ
+te	1.3.0	ʋˈaŋɡina	ʋˈanɡina
+te	1.3.0	ʋˈaŋɡina sʋˈaram	ʋˈanɡina sʋˈaram
+te	1.3.0	rˈikaːrɖiŋɡ	rˈikaːrɖinɡ
+te	1.3.0	dʰʋˈani rˈikaːrɖiŋɡ kˈaːpiːraɪʈ	dʰʋˈani rˈikaːrɖinɡ kˈaːpiːraɪʈ
+te	1.3.0	ʋˈibʰaɟˌiɲcu	ʋˈibʰaɟˌincu
+te	1.3.0	ɡˈuɳiɲcu	ɡˈuɳincu
+te	1.3.0	rˈiŋɡ ˈaːparˌeːʈar	rˈinɡ ˈaːparˌeːʈar
+te	1.3.0	sˈumaːru sˈamaːnˌaŋɡaː	sˈumaːru sˈamaːnˌanɡaː
+te	1.3.0	ˈaɲcanaː	ˈancanaː
+te	1.3.0	sˈamaːnˌamloː rˈiŋɡ	sˈamaːnˌamloː rˈinɡ
+te	1.3.0	kʰˈaccitˌaŋɡaː	kʰˈaccitˌanɡaː
+te	1.3.0	kʰˈaccitˌaŋɡaː sˈamaːnam	kʰˈaccitˌanɡaː sˈamaːnam
+te	1.3.0	ʋrˈuttaːkˌaːra rˈiŋɡ ˈaːparˌeːʈar	ʋrˈuttaːkˌaːra rˈinɡ ˈaːparˌeːʈar
+te	1.3.0	hˈermiʈˌijan kˈaɲɟuɡeːʈ mjˈaːʈriks	hˈermiʈˌijan kˈanɟuɡeːʈ mjˈaːʈriks
+te	1.3.0	pˈuːriɲcˌina cˈadarˌamu	pˈuːrincˌina cˈadarˌamu
+te	1.3.0	ʋrˈuttaːkˌaːra ˈaɲculu ˈuɳɖeː bˈoːluɡaː ˈunna cˈadarˌamu	ʋrˈuttaːkˌaːra ˈanculu ˈuɳɖeː bˈoːluɡaː ˈunna cˈadarˌamu
+te	1.3.0	pˈuːriɲcˌina cˈadarˌamu kˈaliɡi ˈuɳɖeː bˈoːluɡaː ˈunna cˈadarˌamu	pˈuːrincˌina cˈadarˌamu kˈaliɡi ˈuɳɖeː bˈoːluɡaː ˈunna cˈadarˌamu
+te	1.3.0	pˈuːriɲcˌina dˈiːrɡʰacˌaturˌasram	pˈuːrincˌina dˈiːrɡʰacˌaturˌasram
+te	1.3.0	pˈuːriɲcˌina nˈiluʋu dˈiːrɡʰacˌaturˌasram	pˈuːrincˌina nˈiluʋu dˈiːrɡʰacˌaturˌasram
+te	1.3.0	pˈuːriɲcˌina sˈamaːntˌara cˈaturbʰˌuɟam	pˈuːrincˌina sˈamaːntˌara cˈaturbʰˌuɟam
+te	1.3.0	pˈuːriɲcˌina pˈaɪki cˈuːputˌunna cˈinna trˈibʰuɟam	pˈuːrincˌina pˈaɪki cˈuːputˌunna cˈinna trˈibʰuɟam
+te	1.3.0	pˈuːriɲcˌina kˈuɖiʋˌaɪpu cˈuːputˌunna cˈinna trˈibʰuɟam	pˈuːrincˌina kˈuɖiʋˌaɪpu cˈuːputˌunna cˈinna trˈibʰuɟam
+te	1.3.0	pˈuːriɲcˌina kˈuɖiʋˌaɪpu cˈuːputˌunna pˈaːjiɳʈar	pˈuːrincˌina kˈuɖiʋˌaɪpu cˈuːputˌunna pˈaːjiɳʈar
+te	1.3.0	pˈuːriɲcˌina kˈindiki cˈuːputˌunna cˈinna trˈibʰuɟam	pˈuːrincˌina kˈindiki cˈuːputˌunna cˈinna trˈibʰuɟam
+te	1.3.0	pˈuːriɲcˌina ʲˈeɖamˌaʋaɪpu cˈuːputˌunna cˈinna trˈibʰuɟam	pˈuːrincˌina ʲˈeɖamˌaʋaɪpu cˈuːputˌunna cˈinna trˈibʰuɟam
+te	1.3.0	pˈuːriɲcˌina ʲˈeɖamˌaʋaɪpu cˈuːputˌunna pˈaːjiɳʈar	pˈuːrincˌina ʲˈeɖamˌaʋaɪpu cˈuːputˌunna pˈaːjiɳʈar
+te	1.3.0	pˈuːriɲcˌina ɖˈaɪmaɳɖ	pˈuːrincˌina ɖˈaɪmaɳɖ
+bn	1.3.0	ɡʰˈoɽiɾ kˈaʈaɾ bˈamɔdˌike ʃˈirʃe ˌɔɾdʰɔbɾˈitteɾ tˈiɾ	ɡʰˈor.iɾ kˈaʈaɾ bˈamɔdˌike ʃˈirʃe ˌɔɾdʰɔbɾˈitteɾ tˈiɾ
+bn	1.3.0	ɡʰˈoɽiɾ kˈaʈaɾ ɖˈanɔdˌike ʃˈirʃe ˌɔɾdʰɔbɾˈitteɾ tˈiɾ	ɡʰˈor.iɾ kˈaʈaɾ ɖˈanɔdˌike ʃˈirʃe ˌɔɾdʰɔbɾˈitteɾ tˈiɾ
+bn	1.3.0	ɡʰˈoɽiɾ kˈaʈaɾ ɖˈanɔdˌike kʰˈola bɾˈitteɾ tˈiɾ	ɡʰˈor.iɾ kˈaʈaɾ ɖˈanɔdˌike kʰˈola bɾˈitteɾ tˈiɾ
+bn	1.3.0	bˈammukʰˌi ɟˈoɽɔbˌɔddʰɔ tˈiɾ	bˈammukʰˌi ɟˈor.ɔbˌɔddʰɔ tˈiɾ
+bn	1.3.0	ˈuɾdʰbɔmˌukʰi ɟˈoɽɔbˌɔddʰɔ tˈiɾ	ˈuɾdʰbɔmˌukʰi ɟˈor.ɔbˌɔddʰɔ tˈiɾ
+bn	1.3.0	ɖˈanmukʰˌi ɟˈoɽɔbˌɔddʰɔ tˈiɾ	ɖˈanmukʰˌi ɟˈor.ɔbˌɔddʰɔ tˈiɾ
+bn	1.3.0	nˈimnɔmˌukʰi ɟˈoɽɔbˌɔddʰɔ tˈiɾ	nˈimnɔmˌukʰi ɟˈor.ɔbˌɔddʰɔ tˈiɾ
+bn	1.3.0	ˌeɾ tʃˈee bˈɔɽ nˈɔj	ˌeɾ tʃˈee bˈɔr. nˈɔj
+bn	1.3.0	ɡˈɔɽɔpˌɔɽɔtˌa	ɡˈɔr.ɔpˌɔr.ɔtˌa
+bn	1.3.0	bˈɔɽ fˈãka bɾˈittɔ	bˈɔr. fˈãka bɾˈittɔ
+bn	1.3.0	bˈam dˈik nˈiɾdeʃˌɔkaɾˌi bˈuɽo ˈaŋul	bˈam dˈik nˈiɾdeʃˌɔkaɾˌi bˈur.o ˈaŋul
+bn	1.3.0	ɖˈan dˈik nˈiɾdeʃˌɔkaɾˌi bˈuɽo ˈaŋul	ɖˈan dˈik nˈiɾdeʃˌɔkaɾˌi bˈur.o ˈaŋul
+bn	1.3.0	bˈɔɽ bˈɔɽ tʃˈokʰ kˈɔɾe hˈaʃi mˈukʰ	bˈɔr. bˈɔr. tʃˈokʰ kˈɔɾe hˈaʃi mˈukʰ
+bn	1.3.0	ɡˈɔɽaɡˌɔɽi	ɡˈɔr.aɡˌɔr.i
+bn	1.3.0	pɾˈeme pˈɔɽa	pɾˈeme pˈɔr.a
+bn	1.3.0	mˈukʰ dˈie tʃˈumbɔn tʃʰˈõɽa	mˈukʰ dˈie tʃˈumbɔn tʃʰˈõr.a
+bn	1.3.0	bˈɔɽ	bˈɔr.
+bn	1.3.0	ɟˈibʰ bˈaɾ kˈɔɾe kˈaʈa oː dɾˈihɽɔbʰˌabe tʃˈokʰ bˈɔndʰɔ kˈɔɾa mˈukʰ	ɟˈibʰ bˈaɾ kˈɔɾe kˈaʈa oː dɾˈihr.ɔbʰˌabe tʃˈokʰ bˈɔndʰɔ kˈɔɾa mˈukʰ
+bn	1.3.0	mˈukʰ tʃʰˈaɽaˌi mˈukʰɔmˌɔnɖɔl	mˈukʰ tʃʰˈar.aˌi mˈukʰɔmˌɔnɖɔl
+bn	1.3.0	nˈiʃbaʃ tʃʰˈaɽa mˈukʰ	nˈiʃbaʃ tʃʰˈar.a mˈukʰ
+bn	1.3.0	ˈepaʃ ˈoːpaʃ mˈatʰa nˈaɽanˌo	ˈepaʃ ˈoːpaʃ mˈatʰa nˈar.anˌo
+bn	1.3.0	nˈaɽanˌo	nˈar.anˌo
+bn	1.3.0	ˌupɔɾ nˌitʃe mˈatʰa nˈaɽanˌo	ˌupɔɾ nˌitʃe mˈatʰa nˈar.anˌo
+bn	1.3.0	mˈatʰa nˈeɽe	mˈatʰa nˈer.e
+bn	1.3.0	hˈaɽ kˈãpanˌo ʈʰˈanɖa	hˈar. kˈãpanˌo ʈʰˈanɖa
+bn	1.3.0	pˈoɽuˌa mˈukʰ	pˈor.uˌa mˈukʰ
+bn	1.3.0	ˈuɽɔntˌɔ tʃˈakti	ˈur.ɔntˌɔ tʃˈakti
+bn	1.3.0	bˈiɽal	bˈir.al
+bn	1.3.0	bˈiɽalˌeɾ hˈaʃi mˈukʰ	bˈir.alˌeɾ hˈaʃi mˈukʰ
+bn	1.3.0	mˈukʰ kʰˈola ˈɔbɔstʰˌaj bˈeɽalˌeɾ hˈaʃi mˈukʰ	mˈukʰ kʰˈola ˈɔbɔstʰˌaj bˈer.alˌeɾ hˈaʃi mˈukʰ
+bn	1.3.0	tʃˈokʰe hˈaʃiɾ ʃˈatʰe mˈukʰe hˈaʃi bˈiɽal	tʃˈokʰe hˈaʃiɾ ʃˈatʰe mˈukʰe hˈaʃi bˈir.al
+bn	1.3.0	ˈanɔndˌeɾ kˈanna ʃˈɔho bˈeɽalˌeɾ mˈukʰ	ˈanɔndˌeɾ kˈanna ʃˈɔho bˈer.alˌeɾ mˈukʰ
+bn	1.3.0	ʈʰˈõʈe hˈaʃi tʃˈokʰe bʰˈalbaʃˌa nˈie bˈiɽal	ʈʰˈõʈe hˈaʃi tʃˈokʰe bʰˈalbaʃˌa nˈie bˈir.al
+bn	1.3.0	hˈaɾʈɔ ˈakaɾˌeɾ tʃˈokʰeɾ ʃˈatʰe bˈeɽalˌeɾ mˈukʰ	hˈaɾʈɔ ˈakaɾˌeɾ tʃˈokʰeɾ ʃˈatʰe bˈer.alˌeɾ mˈukʰ
+bn	1.3.0	bˈãka hˈaʃiɾ ʃˈatʰe bˈeɽalˌeɾ mˈukʰ	bˈãka hˈaʃiɾ ʃˈatʰe bˈer.alˌeɾ mˈukʰ
+bn	1.3.0	tʃˈumbɔnˌɔɾɔt bˈiɽalˌeɾ mˈukʰ	tʃˈumbɔnˌɔɾɔt bˈir.alˌeɾ mˈukʰ
+bn	1.3.0	bˈɔndʰɔ tʃˈokʰ ʃˈɔho tʃˈumbɔnˌɔɾɔt bˈiɽalˌeɾ mˈukʰ	bˈɔndʰɔ tʃˈokʰ ʃˈɔho tʃˈumbɔnˌɔɾɔt bˈir.alˌeɾ mˈukʰ
+bn	1.3.0	ˈɔbak mˈukʰe bˈiɽal	ˈɔbak mˈukʰe bˈir.al
+bn	1.3.0	klˈantɔ bˈiɽalˌeɾ mˈukʰ	klˈantɔ bˈir.alˌeɾ mˈukʰ
+bn	1.3.0	bˈiɽalˌeɾ mˈukʰe kˈanna	bˈir.alˌeɾ mˈukʰe kˈanna
+sv	1.0.0	ɧˈɪljətˌɛkːən	sxˈɪljətˌɛkːən
+sv	1.0.0	ˈɪnvəʈˌeːrat	ˈɪnvətˌeːrat
+sv	1.0.0	ˈɪnvəʈˌeːrat ˈʉːtrɔpstˌɛkːən	ˈɪnvətˌeːrat ˈʉːtrɔpstˌɛkːən
+sv	1.0.0	ˈɪnvəʈˌeːrat frˈoːjətˌɛkːən	ˈɪnvətˌeːrat frˈoːjətˌɛkːən
+sv	1.0.0	skrˈiːvmaɧˌɪnsapˌɔstruːf	skrˈiːvmasxˌɪnsapˌɔstruːf
+sv	1.0.0	sˌɪtaɧˈuːnstəkːən	sˌɪtasxˈuːnstəkːən
+sv	1.0.0	dˈɵbla vˌɪŋkəlsˌɪtaɧˈuːnstəkːən	dˈɵbla vˌɪŋkəlsˌɪtasxˈuːnstəkːən
+sv	1.0.0	hˈalv hˈœɳparəntˌeːs	hˈalv hˈœrnparəntˌeːs
+sv	1.0.0	ˈɪnleːdˌandə hˈalv hˈœɳparəntˌeːs	ˈɪnleːdˌandə hˈalv hˈœrnparəntˌeːs
+sv	1.0.0	ˈɑːvslʉːtˌandə hˈalv hˈœɳparəntˌeːs	ˈɑːvslʉːtˌandə hˈalv hˈœrnparəntˌeːs
+sv	1.0.0	ˈɪnleːdˌandə ˈuːfyld hˈalv hˈœɳparəntˌeːs	ˈɪnleːdˌandə ˈuːfyld hˈalv hˈœrnparəntˌeːs
+sv	1.0.0	ˈuːfylt hˈalvt hˈœɳparəntˌeːstəkːən	ˈuːfylt hˈalvt hˈœrnparəntˌeːstəkːən
+sv	1.0.0	ˈɑːvslʉːtˌandə ˈuːfyld hˈalv hˈœɳparəntˌeːs	ˈɑːvslʉːtˌandə ˈuːfyld hˈalv hˈœrnparəntˌeːs
+sv	1.0.0	ˈuːfyld hˈalv hˈœɳparəntˌeːs	ˈuːfyld hˈalv hˈœrnparəntˌeːs
+sv	1.0.0	lˈɛntiːkˌʉːləʈ pˈarəntˌeːstəkːən	lˈɛntiːkˌʉːlət pˈarəntˌeːstəkːən
+sv	1.0.0	ˈɪnleːdˌandə ɧˈœldpadskalfˈɔrmat pˈarəntˌeːstəkːən	ˈɪnleːdˌandə sxˈœldpadskalfˈɔrmat pˈarəntˌeːstəkːən
+sv	1.0.0	ˈɪnleːdˌandə ɧˈœldpadskˌalsparəntˌeːs	ˈɪnleːdˌandə sxˈœldpadskˌalsparəntˌeːs
+sv	1.0.0	ɧˈœldpadskalfˈɔrmat pˈarəntˌeːstəkːən	sxˈœldpadskalfˈɔrmat pˈarəntˌeːstəkːən
+sv	1.0.0	ˈɑːvslʉːtˌandə ɧˈœldpadskalfˈɔrmat pˈarəntˌeːstəkːən	ˈɑːvslʉːtˌandə sxˈœldpadskalfˈɔrmat pˈarəntˌeːstəkːən
+sv	1.0.0	ˈɑːvslʉːtˌandə ɧˈœldpadskˌalparəntˌeːs	ˈɑːvslʉːtˌandə sxˈœldpadskˌalparəntˌeːs
+sv	1.0.0	ˈuːfylt lˈɛntiːkˌʉːləʈ pˈarəntˌeːstəkːən	ˈuːfylt lˈɛntiːkˌʉːlət pˈarəntˌeːstəkːən
+sv	1.0.0	jˈuːkəʈˌɛkːən	jˈuːkətˌɛkːən
+sv	1.0.0	ɧˈɛːɳa	sxˈɛːrna
+sv	1.0.0	fˈyʈaɡ	fˈytaɡ
+sv	1.0.0	nˈɵməʈˌɛkːən	nˈɵmətˌɛkːən
+sv	1.0.0	hˈɛnviːsnˌɪŋsɕəɳˌa	hˈɛnviːsnˌɪŋsɕərnˌa
+sv	1.0.0	ɧˈɛɳbɪld	sxˈɛrnbɪld
+sv	1.0.0	nˈuːɖvəstpˌiːl meːd lˈɔŋt strˈɛk	nˈuːrdvəstpˌiːl meːd lˈɔŋt strˈɛk
+sv	1.0.0	nˈuːɖvəst dˈɵbəlpˌiːl	nˈuːrdvəst dˈɵbəlpˌiːl
+sv	1.0.0	nuːɖˈœst dˈɵbəlpˌiːl	nuːrdˈœst dˈɵbəlpˌiːl
+sv	1.0.0	pˈaʈiːˌɛl dˈɪfərˌɛntiːˌal	pˈatiːˌɛl dˈɪfərˌɛntiːˌal
+sv	1.0.0	nˈablaˌɔpərˌatuːɳ	nˈablaˌɔpərˌatuːrn
+sv	1.0.0	dˌiːviːɧˈuːn	dˌiːviːsxˈuːn
+sv	1.0.0	dˌiːviːɧˈuːnstəkːən	dˌiːviːsxˈuːnstəkːən
+sv	1.0.0	mˌɵltɪplɪkaɧˈuːn	mˌɵltɪplɪkasxˈuːn
+sv	1.0.0	mˌɵltɪplɪkaɧˈuːnstəkːən	mˌɵltɪplɪkasxˈuːnstəkːən
+sv	1.0.0	stˈɑːʈtaɡ	stˈɑːttaɡ
+sv	1.0.0	ɧˈɪlt froːn	sxˈɪlt froːn
+sv	1.0.0	nˌeːɡaɧˈuːn	nˌeːɡasxˈuːn
+sv	1.0.0	vˈɛʈiːkalˌiːs	vˈɛtiːkalˌiːs
+uk	1.0.0	ʋiːtkrˈɪwna	βiːtkrˈɪβna
+uk	1.0.0	ʋiːtkrˈɪwna fiːhˈurna dˈuʃka	βiːtkrˈɪβna fiːhˈurna dˈuʃka
+uk	1.0.0	sʋˈiːt̪lɪj t̪ˈon ʃkˈiːrɪ	sβˈiːt̪lɪj t̪ˈon ʃkˈiːrɪ
+uk	1.0.0	pomˈiːrno sʋˈiːt̪lɪj t̪ˈon ʃkˈiːrɪ	pomˈiːrno sβˈiːt̪lɪj t̪ˈon ʃkˈiːrɪ
+uk	1.0.0	ʋiːnkˈulum	βiːnkˈulum
+uk	1.0.0	sˈɪmwol piːtkrˈɛslɛnɲa	sˈɪmβol piːtkrˈɛslɛnɲa
+uk	1.0.0	dˈowhɛ	dˈoβhɛ
+uk	1.0.0	dˈowhɛ t̪ˈɪrɛ	dˈoβhɛ t̪ˈɪrɛ
+uk	1.0.0	wnut̪riːʃɲˈorʲatkoʋa krˈapka	βnut̪riːʃɲˈorjatkoβa krˈapka
+uk	1.0.0	dʋˈiː krˈapkɪ	dβˈiː krˈapkɪ
+uk	1.0.0	dwokrˈapka	dβokrˈapka
+uk	1.0.0	pɛrɪʋˈɛrnut̪ɪj	pɛrɪβˈɛrnut̪ɪj
+uk	1.0.0	pɛrɪʋˈɛrnut̪ɪj znˈak oklˈɪku	pɛrɪβˈɛrnut̪ɪj znˈak oklˈɪku
+uk	1.0.0	pɛrɪʋˈɛrnut̪ɪj znˈak pɪt̪ˈanɲa	pɛrɪβˈɛrnut̪ɪj znˈak pɪt̪ˈanɲa
+uk	1.0.0	prʲˈamɪj apˈost̪rof	prjˈamɪj apˈost̪rof
+uk	1.0.0	ʎˈiːʋɪj apˈost̪rof	ʎˈiːβɪj apˈost̪rof
+uk	1.0.0	prˈaʋɪj apˈost̪rof	prˈaβɪj apˈost̪rof
+uk	1.0.0	nˈɪʒɲiː prˈaʋiː lˈapkɪ	nˈɪʒɲiː prˈaβiː lˈapkɪ
+uk	1.0.0	ʎˈiːʋiː podʋˈiːjɲiː lˈapkɪ	ʎˈiːβiː podβˈiːjɲiː lˈapkɪ
+uk	1.0.0	podʋˈiːjɲiː lˈapkɪ	podβˈiːjɲiː lˈapkɪ
+uk	1.0.0	prˈaʋiː lˈapkɪ	prˈaβiː lˈapkɪ
+uk	1.0.0	prˈaʋiː podʋˈiːjɲiː lˈapkɪ	prˈaβiː podβˈiːjɲiː lˈapkɪ
+uk	1.0.0	nˈɪʒɲiː prˈaʋiː podʋˈiːjɲiː lˈapkɪ	nˈɪʒɲiː prˈaβiː podβˈiːjɲiː lˈapkɪ
+uk	1.0.0	ʎˈiːʋa ʃɛwrˈonna lˈapka	ʎˈiːβa ʃɛβrˈonna lˈapka
+uk	1.0.0	ʎˈiːwo	ʎˈiːβo
+uk	1.0.0	ʃˈɛwron	ʃˈɛβron
+uk	1.0.0	prˈaʋa ʃɛwrˈonna lˈapka	prˈaβa ʃɛβrˈonna lˈapka
+uk	1.0.0	prˈawo	prˈaβo
+uk	1.0.0	zakrˈɪwna	zakrˈɪβna
+uk	1.0.0	zakrˈɪwna dˈuʃka	zakrˈɪβna dˈuʃka
+uk	1.0.0	ʋiːtkrˈɪwna kʋadrˈat̪na dˈuʃka	βiːtkrˈɪβna kβadrˈat̪na dˈuʃka
+uk	1.0.0	kʋadrˈat̪na dˈuʃka	kβadrˈat̪na dˈuʃka
+uk	1.0.0	zakrˈɪwna kʋadrˈat̪na dˈuʃka	zakrˈɪβna kβadrˈat̪na dˈuʃka
+uk	1.0.0	zakrˈɪwna fiːhˈurna dˈuʃka	zakrˈɪβna fiːhˈurna dˈuʃka
+uk	1.0.0	ʋiːtkrˈɪwna kut̪ˈoʋa dˈuʃka	βiːtkrˈɪβna kut̪ˈoβa dˈuʃka
+uk	1.0.0	kut̪ˈoʋa dˈuʃka	kut̪ˈoβa dˈuʃka
+uk	1.0.0	zakrˈɪwna kut̪ˈoʋa dˈuʃka	zakrˈɪβna kut̪ˈoβa dˈuʃka
+uk	1.0.0	kut̪ˈoʋa	kut̪ˈoβa
+uk	1.0.0	ʋiːtkrˈɪwna podʋˈiːjna kut̪ˈoʋa dˈuʃka	βiːtkrˈɪβna podβˈiːjna kut̪ˈoβa dˈuʃka
+uk	1.0.0	podʋˈiːjna	podβˈiːjna
+ca	1.0.0	klˈaw əskˈɛrə	klˈaw əskˈɛrɐ
+ca	1.0.0	klˈaɾə	klˈaɾɐ
+ca	1.0.0	mˈol klˈaɾə	mˈol klˈaɾɐ
+ca	1.0.0	pˈeʎ mˈol klˈaɾə	pˈeʎ mˈol klˈaɾɐ
+ca	1.0.0	bəstˈaŋ klˈaɾə	bəstˈaŋ klˈaɾɐ
+ca	1.0.0	pˈeʎ βəstˈaŋ klˈaɾə	pˈeʎ βəstˈaŋ klˈaɾɐ
+ca	1.0.0	muɾˈɛnə	mʊɾˈɛnɐ
+ca	1.0.0	pˈeʎ muɾˈɛnə	pˈeʎ mʊɾˈɛnɐ
+ca	1.0.0	fˈoskə	fˈoskɐ
+ca	1.0.0	pˈeʎ fˈoskə	pˈeʎ fˈoskɐ
+ca	1.0.0	pˈeʎ mˈol fˈoskə	pˈeʎ mˈol fˈoskɐ
+ca	1.0.0	lˈiniə ˈaltə	lˈinjɐ ˈaltɐ
+ca	1.0.0	lˈiniə sˌupərpuzˈaðə	lˈinjɐ sˌʊpərpʊzˈaðɐ
+ca	1.0.0	kəɾˈaktər ðə suβɾəʎʎˈat	kəɾˈaktər ðɐ sʊβɾəʎʎˈat
+ca	1.0.0	ɡiˈo	ɡjˈo
+ca	1.0.0	lˈiniə	lˈinjɐ
+ca	1.0.0	rˈaʎʎə	rˈaʎʎɐ
+ca	1.0.0	rˈaʎʎə βˈaʃə	rˈaʎʎɐ βˈaɕɐ
+ca	1.0.0	ɡiunˈɛt	ɡiʊnˈɛt
+ca	1.0.0	ɡiunˈɛd də mˌɛɲʃ	ɡiʊnˈɛd dɐ mˌɛɲɕ
+ca	1.0.0	mˈɛɲʃ	mˈɛɲɕ
+ca	1.0.0	ɡiˈo midʒˈa	ɡjˈo midʑˈa
+ca	1.0.0	ɡiˈo ʎˈark	ɡjˈo ʎˈark
+ca	1.0.0	bˈarə	bˈarɐ
+ca	1.0.0	bˈarə wɾidzuntˈal	bˈarɐ wɾidzʊntˈal
+ca	1.0.0	kətəkˈanə	kətəkˈanɐ
+ca	1.0.0	pˈum bulˈat	pˈum bʊlˈat
+ca	1.0.0	pˈum bulˈat kətəkˈanə	pˈum bʊlˈat kətəkˈanɐ
+ca	1.0.0	kˈomə	kˈomɐ
+ca	1.0.0	kˈomə ˈaɾəp	kˈomɐ ˈaɾəp
+ca	1.0.0	iðeuɣɾˈafikə	iðeʊɣɾˈafikɐ
+ca	1.0.0	kˈomə jðeuɣɾˈafikə	kˈomɐ jðeʊɣɾˈafikɐ
+ca	1.0.0	pˈun i kˈomə	pˈun i kˈomɐ
+ca	1.0.0	pˈun i kˈomə ˈaɾəp	pˈun i kˈomɐ ˈaɾəp
+ca	1.0.0	əkskləməsiˈo	əkskləməsjˈo
+ca	1.0.0	uβərtˈuɾə	ʊβərtˈuɾɐ
+ca	1.0.0	intəruɣəsiˈo	intərʊɣəsjˈo
+ca	1.0.0	intəruɣˈan	intərʊɣˈan
+ca	1.0.0	pɾəɣˈuntə	pɾəɣˈuntɐ
+ca	1.0.0	sˈiɡnə əkskləruɣətˈiw	sˈiɡnɐ əksklərʊɣətˈiw
+de	1.0.0	rˈʏkʃtɾɪç	rˈykʃtɾɪç
+de	1.0.0	ɡlˈʏfə	ɡlˈyfə
+de	1.0.0	dˈʊɐçɡəʃtɾˌɪçənɜ pfˈaɪl nɑːx lˈɪŋks	dˈ??çɡəʃtɾˌɪçənɜ pfˈaɪl nɑːx lˈɪŋks
+de	1.0.0	dˈʊɐçɡəʃtɾˌɪçənɜ pfˈaɪl nɑːx rˈɛçts	dˈ??çɡəʃtɾˌɪçənɜ pfˈaɪl nɑːx rˈɛçts
+de	1.0.0	dˈʊɐçɡəʃtɾˌɪçənɜ pfˈaɪl mɪt dˈɔpəlʃtɾˌɪç nɑːx lˈɪŋks	dˈ??çɡəʃtɾˌɪçənɜ pfˈaɪl mɪt dˈɔpəlʃtɾˌɪç nɑːx lˈɪŋks
+de	1.0.0	dˈʊɐçɡəʃtɾˌɪçənɜ pfˈaɪl mɪt dˈɔpəlʃtɾˌɪç nɑːx rˈɛçts	dˈ??çɡəʃtɾˌɪçənɜ pfˈaɪl mɪt dˈɔpəlʃtɾˌɪç nɑːx rˈɛçts
+de	1.0.0	dˈʊɐçɡəʃtɾˌɪçənɜ pfˈaɪl mɪt dˈɔpəlʃtɾˌɪç nɑːx lˈɪŋks ʊnt rˈɛçts	dˈ??çɡəʃtɾˌɪçənɜ pfˈaɪl mɪt dˈɔpəlʃtɾˌɪç nɑːx lˈɪŋks ʊnt rˈɛçts
+de	1.0.0	dˈʊɐçɡəʃtɾˌɪçənɜ pfˈaɪl mɪt dˈɔpəlʃtɾˌɪç nɑːx lˈɪŋks ʊnt rˈɛçts	dˈ??çɡəʃtɾˌɪçənɜ pfˈaɪl mɪt dˈɔpəlʃtɾˌɪç nɑːx lˈɪŋks ʊnt rˈɛçts
+de	1.0.0	tˈaɪlən dˈʊɐç	tˈaɪlən dˈ??ç
+de	1.0.0	kvˈadɾatvˌʊɐtsəl	kvˈadɾatvˌ??tsəl
+de	1.0.0	vˈʊɐtsəl	vˈ??tsəl
+de	1.0.0	kˌʊɐveːnˌɪntɛɡɾˈɑːl	kˌ??veːnˌɪntɛɡɾˈɑːl
+de	1.0.0	ˌɑzʏmptˈoːtɪʃ ɡlˈaɪç	ˌɑzymptˈoːtɪʃ ɡlˈaɪç
+de	1.0.0	nɑːtˈyːɾlɪçə fɛɾknˈʏpfʊŋ	nɑːtˈyːɾlɪçə fɛɾknˈypfʊŋ
+de	1.0.0	ɡəfˈʏltɜ kɾˈaɪs	ɡəfˈyltɜ kɾˈaɪs
+de	1.0.0	ɡəvˈʏɾtsɡʊɐkə	ɡəvˈyɾtsɡ??kə
+de	1.0.0	ɡˈʊɐkə	ɡˈ??kə
+de	1.0.0	zˈaʊrə ɡˈʊɐkə	zˈaʊrə ɡˈ??kə
+de	1.0.0	zˈaʊrə ɡˈʊɐkə	zˈaʊrə ɡˈ??kə
+de	1.0.0	lˈɔøçtʊɐm	lˈɔøçt??m
+de	1.0.0	ɡlˈʏklɪç	ɡlˈyklɪç
+de	1.0.0	flˈʏsɪç	flˈysɪç
+de	1.0.0	tsuːdɾˈʏkən	tsuːdɾˈykən
+de	1.0.0	tsˈuːɡɛdɾˌʏkt	tsˈuːɡɛdɾˌykt
+de	1.0.0	fɛɾtsˈʏkt	fɛɾtsˈykt
+de	1.0.0	kˈʏsçən	kˈysçən
+de	1.0.0	kˈʏsən	kˈysən
+de	1.0.0	kˈʏsəndəs ɡəzˈɪçt	kˈysəndəs ɡəzˈɪçt
+de	1.0.0	kˈʏsəndəs ɡəzˈɪçt mɪt ɡəʃlˈɔsənən ˈaʊɡən	kˈysəndəs ɡəzˈɪçt mɪt ɡəʃlˈɔsənən ˈaʊɡən
+de	1.0.0	kˈʏsəndəs ɡəzˈɪçt mɪt lˈɛçəlndən ˈaʊɡən	kˈysəndəs ɡəzˈɪçt mɪt lˈɛçəlndən ˈaʊɡən
+de	1.0.0	fɛɾrˈʏkt	fɛɾrˈykt
+de	1.0.0	dɾˈʏkən	dɾˈykən
+de	1.0.0	fˈʊɐçt	fˈ??çt
+de	1.0.0	ʃˈʏçtɜn	ʃˈyçtɜn
+de	1.0.0	ɡəzˈɪçt mɪt dʊɐç diː fˈɪŋɜ lˈɪnzəndəm ˈaʊɡə	ɡəzˈɪçt mɪt d??ç diː fˈɪŋɜ lˈɪnzəndəm ˈaʊɡə
+de	1.0.0	zˌʏfiːzˈant	zˌyfiːzˈant
+de	1.0.0	zˌʏfiːzˈant lˈɛçəlndəs ɡəzˈɪçt	zˌyfiːzˈant lˈɛçəlndəs ɡəzˈɪçt
+de	1.0.0	ˈʊnɡlˌʏklɪç	ˈʊnɡlˌyklɪç
+de	1.0.0	kˈɔpfʃʏtəln	kˈɔpfʃytəln
+de	1.0.0	ʃˈʏtəln	ʃˈytəln
+pt-br	1.0.0	ˌabeɾtˈuɾɐ	ˌabeɾətˈuɾæ
+pt-br	1.0.0	ʃˈavɪ	ʃˈavy
+pt-br	1.0.0	ˌeskˈeɾdɐ	ˌeskˈeɾədæ
+pt-br	1.0.0	ʃˈavɪ dʒj ˌabeɾtˈuɾɐ	ʃˈavy dʒj ˌabeɾətˈuɾæ
+pt-br	1.0.0	pˈɛlɪ	pˈɛly
+pt-br	1.0.0	pˈɛlɪ klˈaɾɐ	pˈɛly klˈaɾæ
+pt-br	1.0.0	klˈaɾɐ	klˈaɾæ
+pt-br	1.0.0	mˌoɾˈenɐ	mˌoɾˈenæ
+pt-br	1.0.0	pˈɛlɪ mˌoɾˈenɐ klˈaɾɐ	pˈɛly mˌoɾˈenæ klˈaɾæ
+pt-br	1.0.0	pˈɛlɪ mˌoɾˈenɐ	pˈɛly mˌoɾˈenæ
+pt-br	1.0.0	ˌeskˈuɾɐ	ˌeskˈuɾæ
+pt-br	1.0.0	pˈɛlɪ mˌoɾˈenɐ ˌeskˈuɾɐ	pˈɛly mˌoɾˈenæ ˌeskˈuɾæ
+pt-br	1.0.0	pˈɛli ˌeskˈuɾɐ	pˈɛli ˌeskˈuɾæ
+pt-br	1.0.0	tˈõn dʒɪ pˈɛlɪ	tˈoŋ dʒy pˈɛly
+pt-br	1.0.0	lˈiɲɐ	lˈiɲæ
+pt-br	1.0.0	sˌupeɾiˈoɾ	sˌupeɾiˈor
+pt-br	1.0.0	lˈiɲɐ sˌupeɾiˈoɾ	lˈiɲæ sˌupeɾiˈor
+pt-br	1.0.0	tɾˈasʊ bˈaɪʃʊ	trˈasʊ bˈaɪʃʊ
+pt-br	1.0.0	tɾˈasʊ	trˈasʊ
+pt-br	1.0.0	tɾˈasʊ dʒj ˌuniˈɐ̃ʊ̃	trˈasʊ dʒj ˌuniˈɐ̃ʊ̃
+pt-br	1.0.0	tɾˌavesˈɐ̃ʊ̃	trˌavesˈɐ̃ʊ̃
+pt-br	1.0.0	bˈaxɐ	bˈaxæ
+pt-br	1.0.0	ˌoɾizõntˈaʊ	ˌoɾizoŋtˈaʊ
+pt-br	1.0.0	bˈaxɐ ˌoɾizõntˈaʊ	bˈaxæ ˌoɾizoŋtˈaʊ
+pt-br	1.0.0	ˌĩnteɾkalˈaɾ	ˌiŋteɾəkalˈar
+pt-br	1.0.0	kˌatakˈɐ̃nɐ	kˌatakˈɐ̃næ
+pt-br	1.0.0	pˈõntʊ	pˈoŋtʊ
+pt-br	1.0.0	pˈõntʊ mˌedʒiˈɐ̃nʊ kˌatakˈɐ̃nɐ	pˈoŋtʊ mˌedʒiˈɐ̃nʊ kˌatakˈɐ̃næ
+pt-br	1.0.0	vˈiɾɡulɐ	vˈiɾəɡulæ
+pt-br	1.0.0	ˈaɾɐbɪ	ˈaɾɐby
+pt-br	1.0.0	vˈiɾɡulɐ ˈaɾɐbɪ	vˈiɾəɡulæ ˈaɾɐby
+pt-br	1.0.0	ˌideoɡɾˈafikɐ	ˌideoɡrˈafikæ
+pt-br	1.0.0	vˈiɾɡulɐ ˌideoɡɾˈafikɐ	vˈiɾəɡulæ ˌideoɡrˈafikæ
+pt-br	1.0.0	pˈõntw i vˈiɾɡulɐ	pˈoŋtw i vˈiɾəɡulæ
+pt-br	1.0.0	pˈõntw i vˈiɾɡulɐ ˈaɾɐbɪ	pˈoŋtw i vˈiɾəɡulæ ˈaɾɐby
+pt-br	1.0.0	dˈoɪs pˈõntʊs	dˈoɪs pˈoŋtʊs
+pt-br	1.0.0	ˌatẽnsˈɐ̃ʊ̃	ˌateɪŋsˈɐ̃ʊ̃
+pt-br	1.0.0	pˈõntʊ dʒj ˌesklɐmasˈɐ̃ʊ̃	pˈoŋtʊ dʒj ˌesklɐmasˈɐ̃ʊ̃
+pt-br	1.0.0	ˌĩnveɾtʃˈidʊ	ˌiŋveɾətʃˈidʊ
+pt-br	1.0.0	pˈõntʊ dʒj ˌesklɐmasˈɐ̃ʊ̃ ˌĩnveɾtʃˈidʊ	pˈoŋtʊ dʒj ˌesklɐmasˈɐ̃ʊ̃ ˌiŋveɾətʃˈidʊ
+pt	1.0.0	ˌɐbɨɾtˈuɾɐ	ˌɐbɨɾətˈuɾɐ
+pt	1.0.0	ʃkˈeɾdɐ	ʃkˈeɾədɐ
+pt	1.0.0	ʃˈavɨ dɨ ˌɐbɨɾtˈuɾɐ	ʃˈavɨ dɨ ˌɐbɨɾətˈuɾɐ
+pt	1.0.0	tˈõn dɨ pˈɛlɨ	tˈuŋ dɨ pˈɛlɨ
+pt	1.0.0	supˌɛɾiˈoɾ	supˌɛɾiˈoɹ
+pt	1.0.0	lˈiɲɐ supˌɛɾiˈoɾ	lˈiɲɐ supˌɛɾiˈoɹ
+pt	1.0.0	tɾˈasʊ bˈaɪʃʊ	tɹˈasʊ bˈaɪʃʊ
+pt	1.0.0	tɾˈasʊ	tɹˈasʊ
+pt	1.0.0	tɾˈasʊ dɨ ˌuniˈɐ̃ʊ̃	tɹˈasʊ dɨ ˌuniˈɐ̃ʊ̃
+pt	1.0.0	tɾˌɐvɨsˈɐ̃ʊ̃	tɹˌɐvɨsˈɐ̃ʊ̃
+pt	1.0.0	ˌuɾizõntˈɑl	ˌuɾizuŋtˈɑl
+pt	1.0.0	bˈaʁɐ ˌuɾizõntˈɑl	bˈaʁɐ ˌuɾizuŋtˈɑl
+pt	1.0.0	ˌĩntɨɾkɐlˈaɾ	ˌiŋtɨɾəkɐlˈaɹ
+pt	1.0.0	pˈõntʊ	pˈuŋtʊ
+pt	1.0.0	pˈõntʊ mˌediˈɐ̃nʊ kˌɐtɐkˈɐ̃nɐ	pˈuŋtʊ mˌediˈɐ̃nʊ kˌɐtɐkˈɐ̃nɐ
+pt	1.0.0	vˈiɾɡulɐ	vˈiɾəɡulɐ
+pt	1.0.0	vˈiɾɡulɐ ˈaɾɐbɨ	vˈiɾəɡulɐ ˈaɾɐbɨ
+pt	1.0.0	idˌiuɡɾˈafikɐ	idˌiuɡɹˈafikɐ
+pt	1.0.0	vˈiɾɡulɐ idˌiuɡɾˈafikɐ	vˈiɾəɡulɐ idˌiuɡɹˈafikɐ
+pt	1.0.0	pˈõntw i vˈiɾɡulɐ	pˈuŋtw i vˈiɾəɡulɐ
+pt	1.0.0	pˈõntw i vˈiɾɡulɐ ˈaɾɐbɨ	pˈuŋtw i vˈiɾəɡulɐ ˈaɾɐbɨ
+pt	1.0.0	dˈoɪʃ pˈõntʊʃ	dˈoɪʃ pˈuŋtʊʃ
+pt	1.0.0	ˌɐtẽnsˈɐ̃ʊ̃	ˌɐteɪŋsˈɐ̃ʊ̃
+pt	1.0.0	pˈõntʊ dɨ ˌesklɐmɐsˈɐ̃ʊ̃	pˈuŋtʊ dɨ ˌesklɐmɐsˈɐ̃ʊ̃
+pt	1.0.0	ˌĩnvɨɾtˈidʊ	ˌiŋvɨɾətˈidʊ
+pt	1.0.0	pˈõntʊ dɨ ˌesklɐmɐsˈɐ̃ʊ̃ ˌĩnvɨɾtˈidʊ	pˈuŋtʊ dɨ ˌesklɐmɐsˈɐ̃ʊ̃ ˌiŋvɨɾətˈidʊ
+pt	1.0.0	ˌĩntɨʁˌuɡɐsˈɐ̃ʊ̃	ˌiŋtɨʁˌuɡɐsˈɐ̃ʊ̃
+pt	1.0.0	pˌeɾɡˈũntɐ	pˌeɾəɡˈũŋtɐ
+pt	1.0.0	pˈõntʊ d ˌĩntɨʁˌuɡɐsˈɐ̃ʊ̃	pˈuŋtʊ d ˌiŋtɨʁˌuɡɐsˈɐ̃ʊ̃
+pt	1.0.0	pˈõntʊ d ˌĩntɨʁˌuɡɐsˈɐ̃ʊ̃ ˌĩnvɨɾtˈidʊ	pˈuŋtʊ d ˌiŋtɨʁˌuɡɐsˈɐ̃ʊ̃ ˌiŋvɨɾətˈidʊ
+pt	1.0.0	pˈõntʊ d ˌĩntɨʁˌuɡɐsˈɐ̃ʊ̃ ˈaɾɐbɨ	pˈuŋtʊ d ˌiŋtɨʁˌuɡɐsˈɐ̃ʊ̃ ˈaɾɐbɨ
+pt	1.0.0	ˌĩntɨʁubˈɐ̃ŋɡwɨ	ˌiŋtɨʁubˈɐ̃ŋɡwɨ
+pt	1.0.0	pˈõntʊ finˈɑl	pˈuŋtʊ finˈɑl
+pt	1.0.0	pˈõntʊʃ	pˈuŋtʊʃ
+pt	1.0.0	ʁˌetisˈẽnsjɐʃ	ʁˌetisˈeɪŋsjɐʃ
+pt	1.0.0	tɾˈeʃ pˈõntʊʃ	tɹˈeʃ pˈuŋtʊʃ
+pt	1.0.0	idˌiuɡɾˈafikʊ	idˌiuɡɹˈafikʊ
+pt	1.0.0	pˈõntw idˌiuɡɾˈafikʊ	pˈuŋtw idˌiuɡɹˈafikʊ
+pt	1.0.0	pˈõntʊ mˌediˈɐ̃nʊ	pˈuŋtʊ mˌediˈɐ̃nʊ
+pt	1.0.0	ˌɐpˈɔʃtɾufʊ	ˌɐpˈɔʃtɹufʊ

@@ -139,11 +139,24 @@ voices" does not, so voices can still be deleted to free space.
   learned the flap from that; the fork's `ɽ`/`ɽʱ` came out garbled (Whisper
   large-v3-turbo, 14 Hindi sentences x 3 voices: 0/54 ड़/ढ़ words recognised,
   CER 13.2%; spelled upstream's way 34/54, CER 7.1% - better than upstream's
-  own phonemes, 8.0%). `PiperPhonemes.trainedSpellings` maps them back for
-  voices of hi_base-family languages only (Pashto etc. keep a real `ɽ`).
-  When the fork changes an Indic language's phonemes, diff the fork's
-  `--ipa` symbol inventory against an upstream build over real text and
-  extend that table for any new symbol.
+  own phonemes, 8.0%). `PiperPhonemes.trainedSpellings` maps such
+  spellings back, per eSpeak voice and per training generation: piper
+  1.0-1.2 voices (`PiperVoiceConfig.oldEspeak`, also when `piper_version`
+  is missing) were trained on rhasspy's 2023 eSpeak NG snapshot
+  (rhasspy/espeak-ng 0f65aa30), 1.3+ on upstream. The 2023-trained voices
+  also miss upstream's *own* later changes (Swedish retroflexes, Ukrainian
+  в = `β`, Portuguese nasals and r, Catalan, German `ʏ`). Each rule was kept
+  only if it raised the share of words spelled exactly as the voice was
+  trained (1500 CLDR/dictionary words per language, confirmed on 1500
+  held-out ones, e.g. Ukrainian 906 -> 1443, pt-BR 306 -> 1131, Nepali
+  540 -> 771; Whisper CER on 15 sentences: pt_BR-faber 28.9% -> 17.9%,
+  ne_NP-google 39.8% -> 29.1%). Improvements that only reorder known symbols (schwa
+  deletion, vowel length) are kept, not reverted. `tools/piper_spellings.py`
+  re-measures (`score`, `residual`) and regenerates
+  `test/resources/piper_spellings_cases.tsv`, 480 real-word cases the JVM
+  test runs through the Java table - its Python `RULES` mirror the Java
+  ones. After changing a language's phonemes (fork or upstream merge),
+  score it against both reference builds.
   `PIPER_TERMINATOR_MASK` also drops `CLAUSE_OPTIONAL_SPACE_AFTER`: with it,
   danda/Urdu/CJK full stops and paragraph ends reached the model with no
   final punctuation (upstream piper-phonemize still has that gap).

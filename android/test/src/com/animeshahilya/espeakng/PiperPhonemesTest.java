@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -152,11 +153,75 @@ public class PiperPhonemesTest {
                 PiperPhonemes.tokenize("pʌɽʱiː sʌɽək bæːŋk", hi));
         final PiperVoiceConfig ne = PiperVoiceConfig.parse("ne_NP-x-medium",
                 "{\"espeak\": {\"voice\": \"ne\"}," + map);
-        assertEquals(Arrays.asList("d", "z", "ʰ"), PiperPhonemes.tokenize("dzʱ", ne));
+        // झलक, चल: Nepali voices learned ɟʰ/c where the fork writes dzʱ/ts.
+        assertEquals("ɟʰˈʌ cˈʌl", String.join("", PiperPhonemes.tokenize("dzʱˈʌ tsˈʌl", ne)));
         // Other languages keep their own ɽ (Pashto defines it upstream too).
         final PiperVoiceConfig ps = PiperVoiceConfig.parse("ps_AF-x-medium",
                 "{\"espeak\": {\"voice\": \"ps\"}," + map);
         assertEquals(Arrays.asList("ɽ"), PiperPhonemes.tokenize("ɽ", ps));
+    }
+
+    /** Upstream's own changes since 2023 only apply to voices trained before piper 1.3. */
+    @Test
+    public void spellingsFollowTheEspeakTheVoiceWasTrainedOn() throws Exception {
+        final String map = "\"phoneme_id_map\": {\"_\": [0]}}";
+        final PiperVoiceConfig nst = PiperVoiceConfig.parse("sv_SE-nst-medium",
+                "{\"espeak\": {\"voice\": \"sv\"}, \"piper_version\": \"0.2.0\"," + map);
+        final PiperVoiceConfig alma = PiperVoiceConfig.parse("sv_SE-alma-medium",
+                "{\"espeak\": {\"voice\": \"sv\"}, \"piper_version\": \"1.3.0\"," + map);
+        // skiljetecken
+        assertEquals("sxˈɪljə", String.join("", PiperPhonemes.tokenize("ɧˈɪljə", nst)));
+        assertEquals("ɧˈɪljə", String.join("", PiperPhonemes.tokenize("ɧˈɪljə", alma)));
+        // Word-final and pre-consonant rules: abertura, atenção, produto.
+        final PiperVoiceConfig faber = PiperVoiceConfig.parse("pt_BR-faber-medium",
+                "{\"espeak\": {\"voice\": \"pt-br\"}, \"piper_version\": \"1.0.0\"," + map);
+        assertEquals(nfd("ˌabeɾətˈuɾæ ateɪŋsɐ̃ʊ̃ prˌodˈutʊ"),
+                String.join("", PiperPhonemes.tokenize("ˌabeɾtˈuɾɐ atẽnsɐ̃ʊ̃ pɾˌodˈutʊ", faber)));
+        // Ukrainian в before a voiceless consonant and elsewhere, soft consonants: вовк, вона, пря.
+        final PiperVoiceConfig uk = PiperVoiceConfig.parse("uk_UA-lada-x",
+                "{\"espeak\": {\"voice\": \"uk\"}, \"piper_version\": \"1.0.0\"," + map);
+        assertEquals("βofk βona prja",
+                String.join("", PiperPhonemes.tokenize("ʋowk ʋona prʲa", uk)));
+        assertTrue(PiperVoiceConfig.isOldPiper(""));
+        assertTrue(PiperVoiceConfig.isOldPiper("1.2.0"));
+        assertFalse(PiperVoiceConfig.isOldPiper("1.3.0"));
+        assertFalse(PiperVoiceConfig.isOldPiper("2.0"));
+    }
+
+    /**
+     * The Java table does what the measured Python one does: real words per
+     * language from tools/piper_spellings.py (regenerate with its "fixture"
+     * command after changing either).
+     */
+    @Test
+    public void javaSpellingsMatchTheMeasuredTable() throws Exception {
+        final java.io.InputStream in = getClass().getResourceAsStream("/piper_spellings_cases.tsv");
+        assertNotNull(in);
+        final List<String> failures = new ArrayList<>();
+        int cases = 0;
+        try (java.io.BufferedReader r = new java.io.BufferedReader(
+                new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8))) {
+            for (String line; (line = r.readLine()) != null; ) {
+                if (line.startsWith("#") || line.isEmpty()) {
+                    continue;
+                }
+                final String[] f = line.split("\t");
+                final PiperVoiceConfig c = PiperVoiceConfig.parse("x", "{\"espeak\": {\"voice\": \""
+                        + f[0] + "\"}, \"piper_version\": \"" + f[1] + "\","
+                        + "\"phoneme_id_map\": {\"_\": [0]}}");
+                final String got = String.join("", PiperPhonemes.tokenize(f[2], c));
+                if (!got.equals(nfd(f[3]))) {
+                    failures.add(f[0] + " " + f[2] + ": " + got + " != " + f[3]);
+                }
+                cases++;
+            }
+        }
+        assertTrue(cases > 400);
+        assertEquals(Collections.emptyList(), failures);
+    }
+
+    private static String nfd(String s) {
+        return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD);
     }
 
     @Test
