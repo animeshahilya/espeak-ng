@@ -55,6 +55,14 @@ public class NvdaSymbolsDeviceTest {
         assertEquals(new ArrayList<String>(), problems);
     }
 
+    /** NVDA's characterDescriptions load from the APK: phonetic letters per language. */
+    @Test
+    public void phoneticLettersUseTheVoicesLanguage() {
+        assertEquals("b, Berlin", TextPreprocessor.expandNatoSpelling("b", "de"));
+        assertEquals("б, Борис", TextPreprocessor.expandNatoSpelling("б", "ru"));
+        assertEquals("b, Bravo", TextPreprocessor.expandNatoSpelling("b", "en-us"));
+    }
+
     @Test
     public void arabicGetsArabicNames() {
         final String out = NvdaSymbolProcessor.processText("مرحبا، كيف حالك؟",

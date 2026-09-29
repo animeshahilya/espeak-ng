@@ -1,0 +1,67 @@
+﻿# Brazilian Portuguese characterDescriptions.dic
+# A part of NonVisual Desktop Access (NVDA)
+# URL: https://www.nvaccess.org/
+# Copyright (c) 2010-2023 NVDA Contributors.
+# This file is covered by the GNU General Public License.
+
+a	Alfa
+b	Bravo
+c	Carlos
+d	Delta
+e	Eco
+f	Fox
+g	Golf
+h	Hotel
+i	Índia
+j	Julieta
+k	Kilo
+l	Lima
+m	Maique
+n	Novembro
+o	Oscar
+p	Papa
+q	Quebeque
+r	Romeu
+s	Serra
+t	Tango
+u	Uniforme
+v	Vítor
+w	Wisque
+x	XRaio
+y	Yanque
+z	Zulu
+à	a grave
+á	a agudo
+â	a circunflexo
+ã	a til
+ä	a trema
+æ	a éh
+ç	c cedilha
+è	éh grave
+é	éh agudo
+ê	éh circunflexo
+ë	éh trema
+ì	i grave
+í	i agudo
+î	i circunflexo
+ï	i trema
+ñ	n til
+ò	óh grave
+ó	óh agudo
+ô	óh circunflexo
+õ	óh til
+ö	óh trema
+ø	óh cortado
+ù	u grave
+ú	u agudo
+û	u circunflexo
+ü	u trema
+ý	ípsilon agudo
+ÿ	ípsilon trema
+ĉ	c circunflexo
+ĝ	g circunflexo
+ĥ	h circunflexo
+ĵ	j circunflexo
+œ	óh éh
+ŝ	s circunflexo
+ŭ	u breve

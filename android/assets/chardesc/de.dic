@@ -1,0 +1,35 @@
+#German characterDescriptions.dic
+#A part of NonVisual Desktop Access (NVDA)
+#URL: https://www.nvda-project.org/
+#Copyright (c) 2010-2012 NVDA contributors.
+
+a	Aachen
+ä	Umlaut Aachen
+b	Berlin
+c	Chemnitz
+d	Düsseldorf
+e	Essen
+f	Frankfurt
+g	Goslar
+h	Hamburg
+i	Ingelheim
+j	Jena
+k	Köln
+l	Leipzig
+m	München
+n	Nürnberg
+o	Offenbach
+ö	Umlaut Offenbach
+p	Potsdam
+q	Quickborn
+r	Rostock
+s	Salzwedel
+ß	Eszett
+t	Tübingen
+u	Unna
+ü	Umlaut Unna
+v	Völklingen
+w	Wuppertal
+x	Xanten
+y	Ypsilon
+z	Zwickau

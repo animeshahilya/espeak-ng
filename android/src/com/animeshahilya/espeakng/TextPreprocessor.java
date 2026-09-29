@@ -158,7 +158,7 @@ public final class TextPreprocessor {
             }
             if (!characterRuleApplied) {
                 if (!VoiceSettings.PHONETIC_OFF.equals(settings.getPhoneticLetters())) {
-                    text = edits.track(text, expandNatoSpelling(text));
+                    text = edits.track(text, expandNatoSpelling(text, lang));
                 }
                 // Any voice: it only names Devanagari signs.
                 if (settings.isSpokenDiacriticsEnabled()) {
@@ -235,7 +235,7 @@ public final class TextPreprocessor {
         if (!isSsml && !isSingleCharacterUtterance
                 && VoiceSettings.PHONETIC_ALWAYS.equals(settings.getPhoneticLetters())
                 && !VoiceSettings.READING_CODE.equals(readingMode)) {
-            text = edits.track(text, expandPhoneticMode(text));
+            text = edits.track(text, expandPhoneticMode(text, lang));
         } else if (!isSsml && VoiceSettings.READING_SPELLING.equals(readingMode)) {
             text = edits.track(text, expandSpellingMode(text));
         }
@@ -702,20 +702,33 @@ public final class TextPreprocessor {
     }
 
     public static String expandNatoSpelling(String text) {
+        return expandNatoSpelling(text, "en");
+    }
+
+    /**
+     * A lone character with the words that tell it apart: NVDA's
+     * characterDescriptions for the voice's language ("b, Berlin" in German,
+     * example words for a Chinese character), else NATO for a-z.
+     */
+    public static String expandNatoSpelling(String text, String languageTag) {
         if (text == null) return text;
         String trimmed = text.trim();
-        if (trimmed.length() == 1) {
+        if (trimmed.codePointCount(0, trimmed.length()) == 1) {
             char c = trimmed.charAt(0);
-            if (c >= 'a' && c <= 'z') {
-                return c + ", " + NATO_PHONETICS[c - 'a'];
-            } else if (c >= 'A' && c <= 'Z') {
-                return c + ", " + NATO_PHONETICS[c - 'A'];
-            }
             // Devanagari: the word every Hindi school primer teaches
             // ("क से कबूतर"), the way NATO words disambiguate Latin letters.
             int i = DEVANAGARI_LETTERS.indexOf(c);
             if (i >= 0) {
                 return c + " से " + DEVANAGARI_WORDS[i];
+            }
+            final String[] described = NvdaCharacterDescriptions.get(languageTag, trimmed);
+            if (described != null) {
+                return trimmed + ", " + String.join(" ", described);
+            }
+            if (c >= 'a' && c <= 'z') {
+                return c + ", " + NATO_PHONETICS[c - 'a'];
+            } else if (c >= 'A' && c <= 'Z') {
+                return c + ", " + NATO_PHONETICS[c - 'A'];
             }
         }
         return text;
@@ -963,11 +976,27 @@ public final class TextPreprocessor {
     }
 
     public static String expandPhoneticMode(String text) {
+        return expandPhoneticMode(text, "en");
+    }
+
+    /**
+     * Every letter as its word, in the voice's language (NVDA's
+     * characterDescriptions, NATO for a-z otherwise). Not for Chinese,
+     * Japanese or Korean characters: their example words would replace
+     * every character of running text.
+     */
+    public static String expandPhoneticMode(String text, String languageTag) {
         if (text == null || text.isEmpty()) return text;
         StringBuilder out = new StringBuilder(text.length() * 6);
         for (int i = 0; i < text.length(); ) {
             int cp = text.codePointAt(i);
-            if ((cp >= 'A' && cp <= 'Z') || (cp >= 'a' && cp <= 'z')) {
+            final String[] described = Character.isLetter(cp) && !isCjk(cp)
+                    ? NvdaCharacterDescriptions.get(languageTag, new String(Character.toChars(cp)))
+                    : null;
+            if (described != null) {
+                if (out.length() > 0 && out.charAt(out.length() - 1) != ' ') out.append(' ');
+                out.append(described[0]);
+            } else if ((cp >= 'A' && cp <= 'Z') || (cp >= 'a' && cp <= 'z')) {
                 int idx = Character.toUpperCase(cp) - 'A';
                 if (out.length() > 0 && out.charAt(out.length() - 1) != ' ') out.append(' ');
                 out.append(NATO_PHONETICS[idx]);
@@ -977,6 +1006,13 @@ public final class TextPreprocessor {
             i += Character.charCount(cp);
         }
         return out.toString();
+    }
+
+    private static boolean isCjk(int cp) {
+        final Character.UnicodeScript script = Character.UnicodeScript.of(cp);
+        return script == Character.UnicodeScript.HAN || script == Character.UnicodeScript.HANGUL
+                || script == Character.UnicodeScript.HIRAGANA
+                || script == Character.UnicodeScript.KATAKANA;
     }
 
     /** {@link #clarifyEmojiAnnouncements(String, String)} with English names. */

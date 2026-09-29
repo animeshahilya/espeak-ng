@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Regenerate android/assets/symbols/ from NVDA's per-language symbol data.
+"""Regenerate android/assets/symbols/ and chardesc/ from NVDA's per-language data.
 
 NVDA reads punctuation and symbols with its locale's symbols.dic, then the
 locale's CLDR names, then English (characterProcessing.py). This copies the
 same files so NvdaSymbolProcessor can merge them the same way:
 
   git clone --depth 1 --filter=blob:none --sparse https://github.com/nvaccess/nvda.git
-  git -C nvda sparse-checkout set --no-cone 'source/locale/*/symbols.dic'
+  git -C nvda sparse-checkout set --no-cone 'source/locale/*/symbols.dic' \
+      'source/locale/*/characterDescriptions.dic'
   git clone --depth 1 --branch main-out https://github.com/nvaccess/nvda-cldr.git
   python android/tools/update_nvda_symbols.py nvda nvda-cldr
 
@@ -16,6 +17,8 @@ Output, with lower-cased NVDA locale names (pt_br, zh_cn):
   <locale>.cldr.dic  the non-emoji lines of nvda-cldr's cldr.dic (Unicode
                      license); emoji names already live in assets/emoji/
   SOURCE.txt         the commits both came from
+  ../chardesc/<locale>.dic  NVDA's characterDescriptions.dic, unchanged: the
+                     words "phonetic letters" say for a character
 """
 import os
 import subprocess
@@ -44,6 +47,17 @@ def main():
             data = open(src, "rb").read()
             open(os.path.join(out, locale.lower() + ".dic"), "wb").write(data)
             count += 1
+    chardesc = os.path.join(out, "..", "chardesc")
+    os.makedirs(chardesc, exist_ok=True)
+    for old in os.listdir(chardesc):
+        os.remove(os.path.join(chardesc, old))
+    desc_count = 0
+    for locale in sorted(os.listdir(locales)):
+        src = os.path.join(locales, locale, "characterDescriptions.dic")
+        if os.path.isfile(src):
+            data = open(src, "rb").read()
+            open(os.path.join(chardesc, locale.lower() + ".dic"), "wb").write(data)
+            desc_count += 1
     cldr_count = 0
     for locale in sorted(os.listdir(os.path.join(cldr, "locale"))):
         src = os.path.join(cldr, "locale", locale, "cldr.dic")
@@ -65,7 +79,8 @@ def main():
     with open(os.path.join(out, "SOURCE.txt"), "w", encoding="utf-8", newline="\n") as f:
         f.write("symbols.dic: https://github.com/nvaccess/nvda " + commit(nvda) + "\n")
         f.write("cldr.dic: https://github.com/nvaccess/nvda-cldr (main-out) " + commit(cldr) + "\n")
-    print(count, "symbols.dic,", cldr_count, "cldr.dic ->", os.path.normpath(out))
+    print(count, "symbols.dic,", cldr_count, "cldr.dic,", desc_count,
+          "characterDescriptions.dic ->", os.path.normpath(os.path.join(out, "..")))
 
 
 if __name__ == "__main__":

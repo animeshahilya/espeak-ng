@@ -708,22 +708,38 @@ public final class NvdaSymbolProcessor {
      * "pt", then an alias), or English when NVDA has no symbol data for it.
      */
     static String locale(String languageTag) {
+        for (String candidate : localeCandidates(languageTag)) {
+            if (load(candidate + ".dic", true) != null
+                    || load(candidate + ".cldr.dic", false) != null) {
+                return candidate;
+            }
+        }
+        return EN;
+    }
+
+    /**
+     * NVDA locale names to try for a voice language tag, in order: "pt-br"
+     * gives pt_br, pt, then pt's alias; English gives none (it is the base).
+     */
+    static List<String> localeCandidates(String languageTag) {
+        final List<String> out = new ArrayList<String>(3);
         if (languageTag == null || languageTag.isEmpty()) {
-            return EN;
+            return out;
         }
         final String full = languageTag.toLowerCase(Locale.ROOT).replace('-', '_');
         final int sep = full.indexOf('_');
         final String base = sep > 0 ? full.substring(0, sep) : full;
         if (EN.equals(base)) {
-            return EN;
+            return out;
         }
-        for (String candidate : new String[] {full, base, LOCALE_ALIASES.get(base)}) {
-            if (candidate != null && (load(candidate + ".dic", true) != null
-                    || load(candidate + ".cldr.dic", false) != null)) {
-                return candidate;
-            }
+        out.add(full);
+        if (!base.equals(full)) {
+            out.add(base);
         }
-        return EN;
+        if (LOCALE_ALIASES.containsKey(base)) {
+            out.add(LOCALE_ALIASES.get(base));
+        }
+        return out;
     }
 
     /** The merged table for a voice language (English for null/unknown). */
@@ -874,18 +890,31 @@ public final class NvdaSymbolProcessor {
                 }
                 alternation.append(Pattern.quote(id));
             }
+            // Consecutive characters as ranges (braille is one): the JDK
+            // chains one predicate per class item, and a merged table's
+            // thousand-odd items overflowed the stack while matching.
             final StringBuilder cls = new StringBuilder("[");
             final StringBuilder repeats = new StringBuilder("(?<run>");
             boolean firstRepeat = true;
-            for (String id : singles) {
-                final String escaped = escapeChar(id.charAt(0));
-                cls.append(escaped);
-                if (id.charAt(0) > ' ') {
-                    repeats.append(firstRepeat ? "" : "|").append(escaped);
-                    firstRepeat = false;
+            for (int i = 0; i < singles.size(); ) {
+                final char from = singles.get(i).charAt(0);
+                char to = from;
+                while (i + 1 < singles.size() && singles.get(i + 1).charAt(0) == to + 1) {
+                    to = singles.get(++i).charAt(0);
+                }
+                i++;
+                cls.append(escapeChar(from));
+                if (to > from) {
+                    cls.append('-').append(escapeChar(to));
                 }
             }
             cls.append(']');
+            for (String id : singles) {
+                if (id.charAt(0) > ' ') {
+                    repeats.append(firstRepeat ? "" : "|").append(escapeChar(id.charAt(0)));
+                    firstRepeat = false;
+                }
+            }
             repeats.append(")\\k<run>{3,}");
             final String singleClass = singles.isEmpty() ? "(?!)" : cls.toString();
             masterCollapse = Pattern.compile(master(true, singleClass, alternation.toString()));
