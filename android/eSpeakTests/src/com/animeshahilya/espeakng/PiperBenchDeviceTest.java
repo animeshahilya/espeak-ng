@@ -54,7 +54,45 @@ public class PiperBenchDeviceTest {
     public void benchmark() throws Exception {
         final Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final File dir = new File(ctx.getFilesDir(), "piper-bench");
-        copyInstalledVoices(ctx, dir);
+        final boolean copied = copyInstalledVoices(ctx, dir);
+        try {
+            benchmark(ctx, dir);
+        } finally {
+            if (copied) {
+                removeCopiedVoices();
+            }
+        }
+    }
+
+    /**
+     * Deletes the bench folder's copies of installed voices and every
+     * optimized model it wrote (~120 MB per voice); pushed models stay.
+     */
+    @Test
+    public void removeCopiedVoices() {
+        final Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        final File dir = new File(ctx.getFilesDir(), "piper-bench");
+        final File[] installed = new File(ctx.createDeviceProtectedStorageContext().getFilesDir(),
+                "piper/voices").listFiles(File::isDirectory);
+        final java.util.Set<String> keys = new java.util.HashSet<>();
+        if (installed != null) {
+            for (File k : installed) {
+                keys.add(k.getName());
+            }
+        }
+        final File[] files = dir.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File f : files) {
+            final String key = f.getName().replaceFirst("\\.(opt\\.)?(onnx|ort)(\\.json)?$", "");
+            if (f.getName().contains(".opt.") || keys.contains(key)) {
+                Log.i(TAG, "removed " + f.getName() + " " + f.delete());
+            }
+        }
+    }
+
+    private void benchmark(Context ctx, File dir) throws Exception {
         final File[] models = dir.listFiles((d, n) -> n.endsWith(".onnx") && !n.contains(".opt."));
         Assume.assumeTrue("no models in " + dir, models != null && models.length > 0);
 
@@ -131,16 +169,16 @@ public class PiperBenchDeviceTest {
      * (device-protected files/piper/voices/KEY/model.onnx{,.json}; read
      * only) into the bench folder, preferring Hindi and English.
      */
-    private static void copyInstalledVoices(Context ctx, File dir) throws Exception {
+    private static boolean copyInstalledVoices(Context ctx, File dir) throws Exception {
         final File[] existing = dir.listFiles((d, n) -> n.endsWith(".onnx") && !n.contains(".opt."));
         if (existing != null && existing.length > 0) {
-            return;
+            return false;
         }
         final File voices = new File(ctx.createDeviceProtectedStorageContext().getFilesDir(),
                 "piper/voices");
         final File[] keys = voices.listFiles(File::isDirectory);
         if (keys == null) {
-            return;
+            return false;
         }
         java.util.Arrays.sort(keys, (a, b) -> rank(a.getName()) - rank(b.getName()));
         dir.mkdirs();
@@ -155,6 +193,7 @@ public class PiperBenchDeviceTest {
                 copied++;
             }
         }
+        return copied > 0;
     }
 
     private static int rank(String key) {
