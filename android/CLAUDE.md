@@ -70,7 +70,7 @@ back to an unsigned APK rather than failing.
 The release build type has `minifyEnabled true`. This is safe only because
 `proguard-rules.pro` explicitly `-keep`s the whole `SpeechSynthesis` class:
 `jni/jni/eSpeakService.c` binds to it by exact unmangled name -
-`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 13 `native`
+`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 14 `native`
 methods, plus explicit `GetMethodID()` lookups in `nativeClassInit()` for
 `nativeSynthCallback`/`nativeSynthWordCallback` (private methods invoked
 *from* native code, with no Java-side call site R8 can see marking them
