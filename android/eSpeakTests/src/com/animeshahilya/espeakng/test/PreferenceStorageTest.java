@@ -28,6 +28,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.animeshahilya.espeakng.EspeakApp;
 import com.animeshahilya.espeakng.LanguageSettings;
 import com.animeshahilya.espeakng.TtsSettingsActivity;
+import com.animeshahilya.espeakng.ScriptLanguages;
 import com.animeshahilya.espeakng.VoiceSettings;
 
 import org.junit.After;
@@ -158,6 +159,8 @@ public class PreferenceStorageTest
                 VoiceSettings.PREF_FORCE_RATE, VoiceSettings.PREF_FORCE_PITCH,
                 VoiceSettings.PREF_FORCE_VOLUME, VoiceSettings.PREF_SLEEP_TIMER,
                 VoiceSettings.PREF_READING_HISTORY,
+                ScriptLanguages.PREF_PREFIX + "latin", ScriptLanguages.PREF_PREFIX + "hi",
+                ScriptLanguages.PREF_PREFIX + "cyr", ScriptLanguages.PREF_NATURAL_SWITCHING,
         };
         try (ActivityScenario<TtsSettingsActivity> scenario =
                 ActivityScenario.launch(TtsSettingsActivity.class)) {

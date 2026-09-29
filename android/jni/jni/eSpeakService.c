@@ -537,6 +537,18 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetPunctuationChar
 }
 
 JNIEXPORT jboolean
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetScriptLanguage(
+    JNIEnv *env, jobject object, jstring script, jstring language) {
+  if (DEBUG) LOGV("%s", __FUNCTION__);
+  const char *c_script = script ? (*env)->GetStringUTFChars(env, script, NULL) : NULL;
+  const char *c_language = language ? (*env)->GetStringUTFChars(env, language, NULL) : NULL;
+  const espeak_ERROR result = espeak_SetScriptLanguage(c_script, c_language);
+  if (c_script) (*env)->ReleaseStringUTFChars(env, script, c_script);
+  if (c_language) (*env)->ReleaseStringUTFChars(env, language, c_language);
+  return (result == EE_OK) ? JNI_TRUE : JNI_FALSE;
+}
+
+JNIEXPORT jboolean
 JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
     JNIEnv *env, jobject object, jstring text, jboolean isSsml) {
   if (DEBUG) LOGV("%s", __FUNCTION__);

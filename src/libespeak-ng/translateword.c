@@ -999,8 +999,10 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 		// speak the name of the alphabet
 		current_alphabet = alphabet;
 		if ((alphabet != NULL) && !(al_flags & AL_DONT_NAME) && (al_offset != translator->letter_bits_offset)) {
-			if ((al_flags & AL_DONT_NAME) || (al_offset == translator->langopts.alt_alphabet) || (al_offset == translator->langopts.our_alphabet)) {
-				// don't say the alphabet name
+			if ((al_flags & AL_DONT_NAME) || (al_offset == translator->langopts.alt_alphabet) || (al_offset == translator->langopts.our_alphabet)
+			    || ((tr != translator) && (ScriptLanguage(alphabet) != NULL))) {
+				// don't say the alphabet name (nor inside a word switched to the
+				// language the user chose for this alphabet, which spells it)
 			} else {
 				ph_buf2[0] = 0;
 				if (Lookup(translator, alphabet->name, ph_alphabet) == 0) { // the original language for the current voice
@@ -1031,21 +1033,28 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 
 	if (ph_buf[0] == 0) {
 		int language;
+		// the language the user chose for this alphabet, or for Latin in a
+		// non-Latin voice (espeak_SetScriptLanguage)
+		const char *chosen = NULL;
 		if ((al_offset != 0) && (al_offset == translator->langopts.alt_alphabet))
 			language = translator->langopts.alt_alphabet_lang;
-		else if ((alphabet != NULL) && (alphabet->language != 0) && !(al_flags & AL_NOT_LETTERS))
-			language = alphabet->language;
-		else
-			language = L('e', 'n');
+		else {
+			if ((alphabet != NULL) ? (al_offset != translator->letter_bits_offset) : (translator->letter_bits_offset > 0))
+				chosen = ScriptLanguage(alphabet);
+			if ((alphabet != NULL) && (alphabet->language != 0) && !(al_flags & AL_NOT_LETTERS))
+				language = alphabet->language;
+			else
+				language = L('e', 'n');
+		}
 
-		if ((language != tr->translator_name) || (language == L('k', 'o'))) {
+		if ((chosen != NULL) || (language != tr->translator_name) || (language == L('k', 'o'))) {
 			char *p3;
 			//int initial, code;
 			char hangul_buf[12];
 
 			// speak in the language for this alphabet (or English)
 			char word_buf[5];
-			ph_buf[2] = SetTranslator3(WordToString2(word_buf, language));
+			ph_buf[2] = SetTranslator3((chosen != NULL) ? chosen : WordToString2(word_buf, language));
 
 			if (translator3 != NULL) {
 				int code;

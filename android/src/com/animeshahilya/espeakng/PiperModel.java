@@ -236,7 +236,7 @@ final class PiperModel implements Closeable {
             return;
         }
         final long[] ids = {bos[0], pad[0], vowel[0], pad[0], vowel[0], pad[0], eos[0]};
-        infer(ids, config.lengthScale, config.defaultSpeakerId, null);
+        infer(ids, config.lengthScale, config.defaultSpeakerId, 1f, 1f, null);
     }
 
     /**
@@ -289,9 +289,12 @@ final class PiperModel implements Closeable {
     /**
      * Phoneme ids to audio (at config.sampleRate).
      *
+     * @param noise  multiplier of the voice's noise_scale (speaking style)
+     * @param noiseW multiplier of the voice's noise_w (rhythm variation)
      * @return null when the model was closed or the run cancelled
      */
-    Output infer(long[] ids, float lengthScale, int speakerId, RunHandle handle) throws OrtException {
+    Output infer(long[] ids, float lengthScale, int speakerId, float noise, float noiseW,
+                 RunHandle handle) throws OrtException {
         lock.readLock().lock();
         try {
             if (closed || (handle != null && handle.isCancelled())) {
@@ -306,7 +309,7 @@ final class PiperModel implements Closeable {
                 inputs.put("input_lengths", OnnxTensor.createTensor(env,
                         LongBuffer.wrap(new long[] {ids.length}), new long[] {1}));
                 inputs.put("scales", OnnxTensor.createTensor(env, FloatBuffer.wrap(new float[] {
-                        config.noiseScale, lengthScale, config.noiseW}), new long[] {3}));
+                        config.noiseScale * noise, lengthScale, config.noiseW * noiseW}), new long[] {3}));
                 if (hasSpeakerInput) {
                     final int sid = config.numSpeakers > 1 ? speakerId : 0;
                     inputs.put("sid", OnnxTensor.createTensor(env,

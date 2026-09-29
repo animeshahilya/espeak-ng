@@ -350,7 +350,7 @@ static void VoiceFormant(char *p)
 		voice->width[0] = (voice->width[0] * 105)/100;
 }
 
-static void PhonemeReplacement(char *p)
+static void PhonemeReplacementInto(char *p, REPLACE_PHONEMES *replace, int *n_replace)
 {
 	int n;
 	int phon;
@@ -359,16 +359,21 @@ static void PhonemeReplacement(char *p)
 	char phon_string2[12];
 
 	strcpy(phon_string2, "NULL");
-	n = sscanf(p, "%d %s %s", &flags, phon_string1, phon_string2);
-	if ((n < 2) || (n_replace_phonemes >= N_REPLACE_PHONEMES))
+	n = sscanf(p, "%d %11s %11s", &flags, phon_string1, phon_string2);
+	if ((n < 2) || (*n_replace >= N_REPLACE_PHONEMES))
 		return;
 
 	if ((phon = LookupPhonemeString(phon_string1)) == 0)
 		return; // not recognised
 
-	replace_phonemes[n_replace_phonemes].old_ph = phon;
-	replace_phonemes[n_replace_phonemes].new_ph = LookupPhonemeString(phon_string2);
-	replace_phonemes[n_replace_phonemes++].type = flags;
+	replace[*n_replace].old_ph = phon;
+	replace[*n_replace].new_ph = LookupPhonemeString(phon_string2);
+	replace[(*n_replace)++].type = flags;
+}
+
+static void PhonemeReplacement(char *p)
+{
+	PhonemeReplacementInto(p, replace_phonemes, &n_replace_phonemes);
 }
 
 int Read8Numbers(char *data_in, int data[8])
@@ -721,6 +726,101 @@ break;
 	}
 
 	return voice;
+}
+
+// eSpeak NG Advanced: the translator for words switched to a voice the user
+// chose for their script (espeak_SetScriptLanguage). SelectTranslator(name)
+// only knows base languages; this reads the voice file, so a variant such as
+// en-in gets the en dictionary with its own phoneme table, dictionary rules,
+// stress settings and, with replacements set, its phoneme replacements.
+// Settings of the whole clause (intonation, tunes, word gaps) stay the
+// speaking voice's. Returns the phoneme table number, or -1.
+int LoadSwitchTranslator(const char *name, Translator **translator, bool replacements)
+{
+	espeak_VOICE *v;
+	FILE *f_voice;
+	char buf[N_PATH_BUF];
+	char *p;
+	char language_name[40];
+	char dictionary[40] = "";
+	char phonemes_name[40] = "";
+	int key;
+	int tab;
+	int n_replace = 0;
+	REPLACE_PHONEMES replace[N_REPLACE_PHONEMES];
+	bool phonemes_set = false;
+	Translator *tr = NULL;
+
+	if ((v = SelectVoiceByName(NULL, name)) == NULL)
+		return -1;
+	snprintf(buf, sizeof(buf), "%s%cvoices%c%s", path_home, PATHSEP, PATHSEP, v->identifier);
+	if (GetFileLength(buf) <= 0)
+		snprintf(buf, sizeof(buf), "%s%clang%c%s", path_home, PATHSEP, PATHSEP, v->identifier);
+	if ((f_voice = fopen(buf, "r")) == NULL)
+		return -1;
+
+	while (fgets_strip(buf, sizeof(buf), f_voice) != NULL) {
+		for (p = buf; (*p != 0) && !isspace(*p); p++) ;
+		*p++ = 0;
+		if (buf[0] == 0) continue;
+
+		if ((key = LookupMnem(langopts_tab, buf)) != 0) {
+			if ((tr != NULL) && (key != V_INTONATION) && (key != V_TUNES) && (key != V_WORDGAP))
+				LoadLanguageOptions(tr, key, p);
+			continue;
+		}
+		switch (LookupMnem(keyword_tab, buf))
+		{
+		case V_LANGUAGE:
+			language_name[0] = 0;
+			sscanf(p, "%39s", language_name);
+			if ((tr == NULL) && (strcmp(language_name, "variant") != 0)) {
+				const char *base = strtok(language_name, "-");
+				if (base == NULL)
+					break;
+				tr = SelectTranslator(base);
+				strncpy0(dictionary, base, sizeof(dictionary));
+				strncpy0(phonemes_name, base, sizeof(phonemes_name));
+			}
+			break;
+		case V_DICTIONARY:
+			sscanf(p, "%39s", dictionary);
+			break;
+		case V_PHONEMES:
+			sscanf(p, "%39s", phonemes_name);
+			break;
+		case V_REPLACE:
+			if (!replacements)
+				break;
+			if (phonemes_set == false) {
+				// phoneme mnemonics are looked up in the voice's phoneme table
+				SelectPhonemeTableName(phonemes_name);
+				phonemes_set = true;
+			}
+			PhonemeReplacementInto(p, replace, &n_replace);
+			break;
+		}
+	}
+	fclose(f_voice);
+
+	if (tr == NULL) {
+		SelectPhonemeTable(voice->phoneme_tab_ix);
+		return -1;
+	}
+	if (((tab = SelectPhonemeTableName(phonemes_name)) < 0) || (LoadDictionary(tr, dictionary, 0) != 0)) {
+		DeleteTranslator(tr);
+		SelectPhonemeTable(voice->phoneme_tab_ix);
+		return -1;
+	}
+	tr->phoneme_tab_ix = tab;
+	*translator = tr;
+
+	if (replacements) {
+		memcpy(switch_replace_phonemes, replace, n_replace * sizeof(replace[0]));
+		n_switch_replace_phonemes = n_replace;
+		switch_replace_tab = tab;
+	}
+	return tab;
 }
 
 static char *ExtractVoiceVariantName(char *vname, int variant_num, int add_dir)

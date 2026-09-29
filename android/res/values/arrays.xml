@@ -98,6 +98,16 @@
     <item>@string/piper_speed_125</item>
     <item>@string/piper_speed_150</item>
   </string-array>
+  <string-array name="piper_style_entries">
+    <item>@string/piper_style_steady</item>
+    <item>@string/piper_style_natural</item>
+    <item>@string/piper_style_lively</item>
+  </string-array>
+  <string-array name="piper_style_values" translatable="false">
+    <item>steady</item>
+    <item>natural</item>
+    <item>lively</item>
+  </string-array>
   <string-array name="piper_speed_values" translatable="false">
     <item>60</item>
     <item>75</item>

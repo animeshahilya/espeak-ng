@@ -91,7 +91,9 @@ final class PiperDownloads {
     static boolean isDeviceLocalPref(String key) {
         return key != null && (key.startsWith(PREF_DL_ID_PREFIX) || key.startsWith(PREF_DL_KEY_PREFIX)
                 // Crash strikes and suspensions describe this phone, not the user's choices.
-                || key.startsWith("piper_crash_strikes_") || key.startsWith(PiperCrashGuard.PREF_SUSPENDED));
+                || key.startsWith("piper_crash_strikes_") || key.startsWith(PiperCrashGuard.PREF_SUSPENDED)
+                // Which voices this phone used lately (startup preloading).
+                || key.equals(PiperVoiceStore.PREF_RECENT));
     }
 
     /** One entry of voices.json. */

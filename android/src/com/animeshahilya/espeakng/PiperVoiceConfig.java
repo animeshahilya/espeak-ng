@@ -50,6 +50,8 @@ final class PiperVoiceConfig {
     final float noiseW;
     final int numSpeakers;
     final int defaultSpeakerId;
+    /** Speaker names by id from speaker_id_map ("p239"); null where unnamed. */
+    final String[] speakerNames;
     /** Audio samples per model frame: phoneme durations come in frames. */
     final int hopLength;
     final Map<String, int[]> phonemeIdMap;
@@ -73,6 +75,7 @@ final class PiperVoiceConfig {
         noiseW = b.noiseW;
         numSpeakers = b.numSpeakers;
         defaultSpeakerId = b.defaultSpeakerId;
+        speakerNames = b.speakerNames;
         hopLength = b.hopLength;
         phonemeIdMap = Collections.unmodifiableMap(b.phonemeIdMap);
         vowelClusters = Collections.unmodifiableList(b.vowelClusters);
@@ -172,6 +175,18 @@ final class PiperVoiceConfig {
 
         b.numSpeakers = root.optInt("num_speakers", 1);
         b.defaultSpeakerId = root.optInt("default_speaker_id", 0);
+        b.speakerNames = new String[Math.max(1, b.numSpeakers)];
+        final JSONObject speakers = root.optJSONObject("speaker_id_map");
+        if (speakers != null) {
+            final Iterator<String> names = speakers.keys();
+            while (names.hasNext()) {
+                final String name = names.next();
+                final int id = speakers.optInt(name, -1);
+                if (id >= 0 && id < b.speakerNames.length) {
+                    b.speakerNames[id] = name;
+                }
+            }
+        }
         b.hopLength = root.optInt("hop_length", 256);
 
         final JSONObject idMap = root.optJSONObject("phoneme_id_map");
@@ -226,6 +241,7 @@ final class PiperVoiceConfig {
         float noiseW;
         int numSpeakers;
         int defaultSpeakerId;
+        String[] speakerNames;
         int hopLength;
         final Map<String, int[]> phonemeIdMap = new HashMap<>();
         final List<String[]> vowelClusters = new ArrayList<>();

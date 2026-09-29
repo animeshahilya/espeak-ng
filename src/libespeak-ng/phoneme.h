@@ -269,6 +269,13 @@ typedef struct {
 extern int n_replace_phonemes;
 extern REPLACE_PHONEMES replace_phonemes[N_REPLACE_PHONEMES];
 
+// eSpeak NG Advanced: replacements of the voice that words in another script
+// switch to, when the user chose one (espeak_SetScriptLanguage); they apply
+// to switched words in phoneme table switch_replace_tab
+extern int n_switch_replace_phonemes;
+extern int switch_replace_tab;
+extern REPLACE_PHONEMES switch_replace_phonemes[N_REPLACE_PHONEMES];
+
 // Table of phoneme programs and lengths.  Used by MakeVowelLists
 typedef struct {
 	unsigned int addr;

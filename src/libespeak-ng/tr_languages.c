@@ -34,6 +34,7 @@
 #include "common.h"
 #include "setlengths.h"          // for SetLengthMods
 #include "translate.h"           // for Translator, LANGUAGE_OPTIONS, L, NUM...
+#include "voice.h"               // for SelectVoiceByName
 
 // start of unicode pages for character sets
 #define OFFSET_GREEK    0x380
@@ -110,6 +111,50 @@ const ALPHABET *AlphabetFromChar(int c)
 		alphabet++;
 	}
 	return NULL;
+}
+
+// eSpeak NG Advanced: the language the user chose for words in each script
+// (espeak_SetScriptLanguage). Empty means eSpeak's own choice - the
+// alphabet's language, English for Latin, or naming the letters - so output
+// is unchanged until the user picks one. The last slot is Latin.
+#define N_ALPHABETS (sizeof(alphabets) / sizeof(alphabets[0]) - 1)
+static char script_languages[N_ALPHABETS + 1][20];
+
+ESPEAK_API espeak_ERROR espeak_SetScriptLanguage(const char *script, const char *language)
+{
+	unsigned int ix;
+	bool found = false;
+
+	if ((language != NULL) && (language[0] != 0)
+	    && ((strlen(language) >= sizeof(script_languages[0]) - 1) || (SelectVoiceByName(NULL, language) == NULL)))
+		return EE_NOT_FOUND;
+
+	for (ix = 0; ix <= N_ALPHABETS; ix++) {
+		const char *name = (ix < N_ALPHABETS) ? &alphabets[ix].name[1] : "latin";
+		if ((script == NULL) || (strcmp(script, name) == 0)) {
+			strcpy(script_languages[ix], (language != NULL) ? language : "");
+			found = true;
+		}
+	}
+	return found ? EE_OK : EE_NOT_FOUND;
+}
+
+const char *ScriptLanguage(const ALPHABET *alphabet)
+{
+	// alphabet NULL: Latin
+	const char *language = script_languages[(alphabet != NULL) ? (unsigned int)(alphabet - alphabets) : N_ALPHABETS];
+	return (language[0] != 0) ? language : NULL;
+}
+
+bool IsScriptLanguage(const char *language)
+{
+	unsigned int ix;
+
+	for (ix = 0; ix <= N_ALPHABETS; ix++) {
+		if ((script_languages[ix][0] != 0) && (strcmp(script_languages[ix], language) == 0))
+			return true;
+	}
+	return false;
 }
 
 static void Translator_Russian(Translator *tr);

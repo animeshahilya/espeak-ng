@@ -2235,8 +2235,10 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 
 						if (tr->letter_bits_offset > 0) {
 							// not a Latin alphabet, switch to the default Latin alphabet language
+							// (or the one the user chose for Latin)
 							if ((letter <= 0x241) && iswalpha(letter)) {
-								snprintf(phonemes, ph_size, "%cen", phonSWITCH);
+								const char *latin = ScriptLanguage(NULL);
+								snprintf(phonemes, ph_size, "%c%s", phonSWITCH, (latin != NULL) ? latin : "en");
 								return 0;
 							}
 						}
@@ -2278,6 +2280,12 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 						if (((alphabet = AlphabetFromChar(letter)) != NULL)  && (alphabet->offset != tr->letter_bits_offset)) {
 							if (tr->langopts.alt_alphabet == alphabet->offset) {
 								snprintf(phonemes, ph_size, "%c%s", phonSWITCH, WordToString2(word_buf, tr->langopts.alt_alphabet_lang));
+								return 0;
+							}
+							const char *chosen = ScriptLanguage(alphabet);
+							if (chosen != NULL) {
+								// the language the user chose for this alphabet
+								snprintf(phonemes, ph_size, "%c%s", phonSWITCH, chosen);
 								return 0;
 							}
 							if (alphabet->flags & AL_WORDS) {

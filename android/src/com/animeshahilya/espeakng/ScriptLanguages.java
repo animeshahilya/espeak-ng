@@ -1,0 +1,124 @@
+/*
+ * Copyright (C) 2026 Animesh Ahilya
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
+package com.animeshahilya.espeakng;
+
+import android.content.SharedPreferences;
+
+import java.lang.Character.UnicodeScript;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * The language words in each script are read in (Settings -> Mixed-language
+ * text). eSpeak switches language by alphabet on its own: Devanagari in
+ * English text is read as Hindi, English words in Hindi text as British
+ * English, and some scripts (Cyrillic, Hebrew, Telugu...) are spelled letter
+ * by letter. Each script here can be given another language instead
+ * (espeak_SetScriptLanguage). Unset, the default, keeps eSpeak's own choice,
+ * so output stays NVDA's until a user picks one.
+ *
+ * <p>The same choice routes that script to the chosen language's natural
+ * voice ({@link LanguageRuns}). Offered languages were each checked to read
+ * their script as words (Thai, Burmese, Hakka and Ancient Greek were not).
+ */
+public final class ScriptLanguages {
+    private ScriptLanguages() {
+    }
+
+    public static final String PREF_PREFIX = "espeak_script_";
+
+    /** Natural voices take over runs in other scripts (on by default, as before). */
+    public static final String PREF_NATURAL_SWITCHING = "piper_switch_languages";
+
+    static final class Script {
+        /** Native alphabet name, see espeak_SetScriptLanguage. */
+        final String key;
+        /** Voice named as eSpeak's own choice for it, or null when it spells the letters. */
+        final String espeakDefault;
+        /** eSpeak voice names the user can choose. */
+        final String[] choices;
+        final UnicodeScript[] scripts;
+
+        Script(String key, String espeakDefault, String[] choices, UnicodeScript... scripts) {
+            this.key = key;
+            this.espeakDefault = espeakDefault;
+            this.choices = choices;
+            this.scripts = scripts;
+        }
+
+        String prefKey() {
+            return PREF_PREFIX + key;
+        }
+    }
+
+    static final Script[] SCRIPTS = {
+            new Script("latin", "en-gb", new String[] {"en-in", "en-us"}, UnicodeScript.LATIN),
+            new Script("hi", "hi", new String[] {"mr", "ne", "kok"}, UnicodeScript.DEVANAGARI),
+            new Script("bn", "bn", new String[] {"as", "bpy"}, UnicodeScript.BENGALI),
+            new Script("ar", "ar", new String[] {"ur", "fa", "ps", "sd", "ckb", "ug"}, UnicodeScript.ARABIC),
+            new Script("cyr", null, new String[] {"ru", "uk", "be", "bg", "mk", "sr", "kk", "ky", "tt",
+                    "ba", "cv", "mn"}, UnicodeScript.CYRILLIC),
+            new Script("he", null, new String[] {"he"}, UnicodeScript.HEBREW),
+            new Script("te", null, new String[] {"te"}, UnicodeScript.TELUGU),
+            new Script("or", null, new String[] {"or"}, UnicodeScript.ORIYA),
+            new Script("zh", null, new String[] {"cmn", "yue"}, UnicodeScript.HAN),
+            new Script("ja", null, new String[] {"ja"}, UnicodeScript.HIRAGANA, UnicodeScript.KATAKANA),
+            new Script("eth", null, new String[] {"am", "ti"}, UnicodeScript.ETHIOPIC),
+    };
+
+    /**
+     * Native script name -> eSpeak voice name, for each script the user chose
+     * a language for. Empty when nothing was chosen.
+     */
+    static Map<String, String> chosen(SharedPreferences prefs) {
+        Map<String, String> chosen = null;
+        for (Script script : SCRIPTS) {
+            final String voice = prefs.getString(script.prefKey(), "");
+            if (!voice.isEmpty() && Arrays.asList(script.choices).contains(voice)) {
+                if (chosen == null) {
+                    chosen = new TreeMap<>();
+                }
+                chosen.put(script.key, voice);
+            }
+        }
+        return chosen != null ? chosen : Collections.emptyMap();
+    }
+
+    /**
+     * The chosen language of each Unicode script, from {@link #chosen}, as
+     * natural voices key languages ({@link PiperVoiceStore#languageKey}):
+     * en-in -> eng, mr -> mar.
+     */
+    static Map<UnicodeScript, String> runLanguages(Map<String, String> chosen) {
+        if (chosen.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        final Map<UnicodeScript, String> out = new EnumMap<>(UnicodeScript.class);
+        for (Script script : SCRIPTS) {
+            final String voice = chosen.get(script.key);
+            if (voice != null) {
+                // Piper spells Chinese "zh" where eSpeak's voice is "cmn".
+                final String language = PiperVoiceStore.languageKey(
+                        "cmn".equals(voice) ? "zh" : voice.split("-")[0]);
+                for (UnicodeScript s : script.scripts) {
+                    out.put(s, language);
+                }
+            }
+        }
+        return out;
+    }
+
+    static boolean naturalSwitching(SharedPreferences prefs) {
+        return prefs.getBoolean(PREF_NATURAL_SWITCHING, true);
+    }
+}

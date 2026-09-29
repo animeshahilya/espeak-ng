@@ -661,6 +661,8 @@ void InitNamedata(void);
 void InitText(int flags);
 void InitText2(void);
 const ALPHABET *AlphabetFromChar(int c);
+const char *ScriptLanguage(const ALPHABET *alphabet);
+bool IsScriptLanguage(const char *language);
 
 Translator *SelectTranslator(const char *name);
 int SetTranslator2(const char *name);

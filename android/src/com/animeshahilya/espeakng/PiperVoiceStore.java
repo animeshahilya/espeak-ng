@@ -63,6 +63,16 @@ final class PiperVoiceStore {
     static final String PREF_ACCELERATION = "piper_nnapi";
     /** Speaker of multi-speaker voices: "piper_speaker_" + key -> id. */
     static final String PREF_SPEAKER_PREFIX = "piper_speaker_";
+    /** A voice's own speed, percent, over {@link #PREF_SPEED}: "piper_speed_" + key. */
+    static final String PREF_VOICE_SPEED_PREFIX = "piper_speed_";
+    /** Speaking style for every natural voice, see {@link #styleScales}. */
+    static final String PREF_STYLE = "piper_style";
+    static final String STYLE_STEADY = "steady";
+    static final String STYLE_NATURAL = "natural";
+    static final String STYLE_LIVELY = "lively";
+    /** Recently used voice keys, newest first, comma-separated (device state). */
+    static final String PREF_RECENT = "piper_recent";
+    static final int RECENT_MAX = 3;
 
     static final String MODEL_FILE = "model.onnx";
     static final String CONFIG_FILE = "model.onnx.json";
@@ -218,6 +228,7 @@ final class PiperVoiceStore {
             }
         }
         editor.remove(PREF_SPEAKER_PREFIX + key);
+        editor.remove(PREF_VOICE_SPEED_PREFIX + key);
         editor.remove(PiperCrashGuard.PREF_SUSPENDED + key);
         editor.apply();
         synchronized (LOCK) {
@@ -307,13 +318,76 @@ final class PiperVoiceStore {
 
     /** Speed multiplier from {@link #PREF_SPEED}, 0.5-2.0. */
     static float speedFactor(SharedPreferences prefs) {
-        int percent;
+        return percent(prefs, PREF_SPEED, 100) / 100f;
+    }
+
+    /** As {@link #speedFactor(SharedPreferences)}, unless this voice has its own speed. */
+    static float speedFactor(SharedPreferences prefs, String key) {
+        final int own = percent(prefs, PREF_VOICE_SPEED_PREFIX + key, 0);
+        return own > 0 ? own / 100f : speedFactor(prefs);
+    }
+
+    /** A stored percent, 50-200, or {@code fallback} when unset or unreadable. */
+    private static int percent(SharedPreferences prefs, String pref, int fallback) {
         try {
-            percent = Integer.parseInt(prefs.getString(PREF_SPEED, "100"));
+            final String value = prefs.getString(pref, null);
+            if (value == null || value.isEmpty()) {
+                return fallback;
+            }
+            return Math.max(50, Math.min(200, Integer.parseInt(value)));
         } catch (NumberFormatException | ClassCastException e) {
-            percent = 100;
+            return fallback;
         }
-        return Math.max(50, Math.min(200, percent)) / 100f;
+    }
+
+    /**
+     * Speaking style: {noise_scale, noise_w} multipliers of the voice's own
+     * values. Lower noise_scale gives flatter, steadier audio with fewer
+     * glitches; lower noise_w gives more even phoneme lengths (rhythm).
+     */
+    static float[] styleScales(SharedPreferences prefs) {
+        final String style = prefs.getString(PREF_STYLE, STYLE_NATURAL);
+        if (STYLE_STEADY.equals(style)) {
+            return new float[] {0.5f, 0.5f};
+        }
+        if (STYLE_LIVELY.equals(style)) {
+            return new float[] {1.3f, 1.25f};
+        }
+        return new float[] {1f, 1f};
+    }
+
+    /** Most recently used voice keys, newest first (see {@link #noteUsed}). */
+    static List<String> recent(SharedPreferences prefs) {
+        final String value = prefs.getString(PREF_RECENT, "");
+        final List<String> keys = new ArrayList<>();
+        for (String k : value.split(",")) {
+            if (!k.isEmpty()) {
+                keys.add(k);
+            }
+        }
+        return keys;
+    }
+
+    /**
+     * Remembers the natural voices a request used, newest first, so the next
+     * service start can preload them - otherwise, after Android restarts the
+     * speech service, the first Hindi words in English text are read by eSpeak
+     * while the Hindi voice loads. Writes only when the order changes.
+     */
+    static void noteUsed(SharedPreferences prefs, List<String> used) {
+        if (used.isEmpty()) {
+            return;
+        }
+        final List<String> keys = new ArrayList<>(used);
+        for (String k : recent(prefs)) {
+            if (!keys.contains(k)) {
+                keys.add(k);
+            }
+        }
+        final String value = String.join(",", keys.subList(0, Math.min(RECENT_MAX, keys.size())));
+        if (!value.equals(prefs.getString(PREF_RECENT, ""))) {
+            prefs.edit().putString(PREF_RECENT, value).apply();
+        }
     }
 
     static int speakerId(SharedPreferences prefs, String key) {

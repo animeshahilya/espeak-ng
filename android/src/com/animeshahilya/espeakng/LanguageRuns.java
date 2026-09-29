@@ -11,6 +11,7 @@ package com.animeshahilya.espeakng;
 
 import java.lang.Character.UnicodeScript;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,8 @@ import java.util.Map;
  * <p>Language keys are ISO 639-2 codes, as {@link PiperVoiceStore#languageKey}
  * produces. A script the speaking language itself is written in stays with
  * it (Devanagari in Marathi text stays Marathi); digits, spaces, punctuation
- * and combining marks join the run around them.
+ * and combining marks join the run around them. A language the user chose
+ * for a script ({@link ScriptLanguages}) replaces eSpeak's.
  */
 final class LanguageRuns {
     private LanguageRuns() {
@@ -120,20 +122,29 @@ final class LanguageRuns {
     }
 
     /** The language a letter in {@code script} is read in, speaking {@code language}. */
-    private static String languageFor(UnicodeScript script, String language) {
+    private static String languageFor(UnicodeScript script, String language,
+                                      Map<UnicodeScript, String> chosen) {
         if (belongsTo(script, language)) {
             return language;
         }
-        final String other = SCRIPT_LANGUAGE.get(script);
+        String other = chosen.get(script);
+        if (other == null) {
+            other = SCRIPT_LANGUAGE.get(script);
+        }
         return other != null ? other : language;
+    }
+
+    static List<Run> split(String text, String language) {
+        return split(text, language, Collections.emptyMap());
     }
 
     /**
      * Runs of {@code text} with the language each is read in, speaking
-     * {@code language}. Always at least one run for non-empty text; the
-     * runs' texts concatenate back to {@code text}.
+     * {@code language}, with {@code chosen} the languages the user chose for
+     * scripts. Always at least one run for non-empty text; the runs' texts
+     * concatenate back to {@code text}.
      */
-    static List<Run> split(String text, String language) {
+    static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen) {
         final List<Run> runs = new ArrayList<>();
         if (text == null || text.isEmpty()) {
             return runs;
@@ -149,7 +160,7 @@ final class LanguageRuns {
             // marks) characters never start a new run.
             if (script != UnicodeScript.COMMON && script != UnicodeScript.INHERITED
                     && script != UnicodeScript.UNKNOWN) {
-                final String lang = languageFor(script, language);
+                final String lang = languageFor(script, language, chosen);
                 if (current == null) {
                     current = lang;
                 } else if (!lang.equals(current)) {

@@ -20,78 +20,200 @@ final class PiperAudio {
     private PiperAudio() {
     }
 
-    /** Below this (after peak normalization) a sample counts as silence. */
-    static final float SILENCE_THRESHOLD = 0.012f;
+    /**
+     * Speech level every natural voice is brought to: the RMS of its
+     * speaking 10 ms frames, in dBFS. Peak normalization (Piper's own) left
+     * voices wherever their peak-to-average ratio put them - measured on a
+     * Pixel 8, Hindi Priyamvada spoke at -17 dB and English LibriVox at
+     * -22 dB, so English words inside Hindi text came out ~10 dB quieter
+     * and speech recognition missed them.
+     */
+    static final float TARGET_SPEECH_DBFS = -20f;
+    /** Frames within this of the loudest one are speech, for the level. */
+    static final float SPEECH_RANGE_DB = 30f;
+    /** Frames this far below the speech level are silence, for trimming. */
+    static final float SILENCE_BELOW_SPEECH_DB = 30f;
+    static final int FRAME_MS = 10;
     /** Kept on each side of trimmed speech so onsets/releases aren't clipped. */
-    static final int TRIM_MARGIN_MS = 12;
+    static final int TRIM_MARGIN_MS = 20;
+    /** Above this the soft limiter bends samples down instead of clipping them. */
+    static final float LIMITER_KNEE = 0.7f;
 
-    /** Result of {@link #process}: PCM plus how much leading audio was cut. */
+    /**
+     * Longest pause kept inside a chunk at normal reading pace. VITS voices
+     * make their own pauses at commas; Hindi Priyamvada's run to ~700 ms
+     * (eSpeak's are 150-190 ms), and until they were capped the reading-pace
+     * setting could not shorten them.
+     */
+    static final int MAX_PAUSE_MS = 250;
+    /** Never shorter: stop closures inside words are silent for up to ~100 ms. */
+    static final int MIN_PAUSE_CAP_MS = 120;
+
+    /** Result of {@link #process}: PCM plus what was cut from the model's audio. */
     static final class Pcm {
         final short[] samples;
         /** Samples removed from the front; word-boundary estimates shift by this. */
         final int trimmedLead;
         /** Samples of the model output that remain, before any time stretch. */
         final int speechSamples;
+        /** Pauses shortened inside: (model sample index, samples removed) pairs, in order. */
+        final int[] cuts;
 
         Pcm(short[] samples, int trimmedLead, int speechSamples) {
+            this(samples, trimmedLead, speechSamples, new int[0]);
+        }
+
+        Pcm(short[] samples, int trimmedLead, int speechSamples, int[] cuts) {
             this.samples = samples;
             this.trimmedLead = trimmedLead;
             this.speechSamples = speechSamples;
+            this.cuts = cuts;
         }
     }
 
+    /** Where model sample {@code s} lands in the output, before any time stretch. */
+    static double toOutput(double s, int trimmedLead, int[] cuts) {
+        double p = s - trimmedLead;
+        for (int i = 0; i + 1 < cuts.length && s > cuts[i]; i += 2) {
+            p -= Math.min(cuts[i + 1], s - cuts[i]);
+        }
+        return p;
+    }
+
+    /** Pause cap for a reading pace (percent) and speed; see {@link #MAX_PAUSE_MS}. */
+    static int maxPauseMs(int pauseScalePercent, float speed) {
+        return Math.max(MIN_PAUSE_CAP_MS,
+                Math.round(MAX_PAUSE_MS * Math.max(0, pauseScalePercent) / 100f / Math.max(1f, speed)));
+    }
+
     /**
-     * Piper's own output handling (peak-normalize, then volume, then clip),
-     * plus trimming the silence VITS pads every chunk with. For a screen
-     * reader that pad is pure latency - ~50-150 ms before the first word of
-     * each utterance - and between chunks the app inserts its own pause,
-     * scaled by the user's reading-pace setting, instead.
+     * Brings a chunk to {@link #TARGET_SPEECH_DBFS} (then volume, then a
+     * soft limiter), and trims the silence VITS pads every chunk with. For a
+     * screen reader that pad is pure latency - ~50-150 ms before the first
+     * word of each utterance - and between chunks the app inserts its own
+     * pause, scaled by the user's reading-pace setting, instead. Trimming
+     * follows a 10 ms loudness envelope, not single samples: one noisy sample
+     * in a breath used to stop it, leaving 200-600 ms of near-silence at every
+     * switch between two languages' voices.
      *
-     * @param volume linear gain after normalization (1 = Piper's default)
+     * @param volume linear gain after normalization (1 = the target level)
      */
     static Pcm process(float[] audio, float volume, int sampleRate, boolean trim) {
+        return process(audio, volume, sampleRate, trim, 0);
+    }
+
+    /**
+     * As {@link #process(float[], float, int, boolean)}, also shortening
+     * pauses inside the chunk to {@code maxPauseMs} (0 = keep them); the
+     * middle of a long pause is cut, so its fade-out and fade-in stay.
+     */
+    static Pcm process(float[] audio, float volume, int sampleRate, boolean trim, int maxPauseMs) {
         if (audio == null || audio.length == 0) {
             return new Pcm(new short[0], 0, 0);
         }
-        float peak = 0f;
-        for (float v : audio) {
-            final float a = Math.abs(v);
-            if (a > peak) {
-                peak = a;
+        final int frame = Math.max(1, sampleRate * FRAME_MS / 1000);
+        final int frames = (audio.length + frame - 1) / frame;
+        final double[] power = new double[frames];
+        double loudest = 0;
+        for (int f = 0; f < frames; f++) {
+            final int end = Math.min(audio.length, (f + 1) * frame);
+            double sum = 0;
+            for (int i = f * frame; i < end; i++) {
+                sum += audio[i] * (double) audio[i];
             }
+            power[f] = sum / (end - f * frame);
+            loudest = Math.max(loudest, power[f]);
         }
-        if (peak < 1e-8f) {
+        if (loudest < 1e-16) {
             return new Pcm(new short[0], 0, 0);
         }
-        final float scale = 1f / peak;
+        final double speechFloor = loudest * Math.pow(10, -SPEECH_RANGE_DB / 10);
+        double speech = 0;
+        int speaking = 0;
+        for (double p : power) {
+            if (p >= speechFloor) {
+                speech += p;
+                speaking++;
+            }
+        }
+        speech /= speaking;
 
         int from = 0;
         int to = audio.length;
+        int[] cuts = new int[0];
         if (trim) {
-            final float threshold = SILENCE_THRESHOLD * peak;
-            while (from < to && Math.abs(audio[from]) < threshold) {
-                from++;
+            final double silence = speech * Math.pow(10, -SILENCE_BELOW_SPEECH_DB / 10);
+            int first = 0;
+            while (first < frames && power[first] < silence) {
+                first++;
             }
-            while (to > from && Math.abs(audio[to - 1]) < threshold) {
-                to--;
+            int last = frames - 1;
+            while (last > first && power[last] < silence) {
+                last--;
             }
             final int margin = sampleRate * TRIM_MARGIN_MS / 1000;
-            from = Math.max(0, from - margin);
-            to = Math.min(audio.length, to + margin);
+            from = Math.max(0, first * frame - margin);
+            to = Math.min(audio.length, (last + 1) * frame + margin);
+            if (maxPauseMs > 0) {
+                cuts = pauseCuts(power, silence, first, last, frame, sampleRate * maxPauseMs / 1000);
+            }
         }
 
-        final float gain = scale * volume * 32767f;
-        final short[] out = new short[to - from];
-        for (int i = from; i < to; i++) {
-            float s = audio[i] * gain;
-            if (s > 32767f) {
-                s = 32767f;
-            } else if (s < -32768f) {
-                s = -32768f;
-            }
-            out[i - from] = (short) s;
+        int removed = 0;
+        for (int i = 1; i < cuts.length; i += 2) {
+            removed += cuts[i];
         }
-        return new Pcm(out, from, to - from);
+        final double gain = Math.pow(10, TARGET_SPEECH_DBFS / 20) / Math.sqrt(speech) * volume;
+        final short[] out = new short[to - from - removed];
+        int o = 0;
+        int c = 0;
+        for (int i = from; i < to; i++) {
+            if (c < cuts.length && i == cuts[c]) {
+                i += cuts[c + 1] - 1;
+                c += 2;
+                continue;
+            }
+            out[o++] = (short) Math.round(limit(audio[i] * gain) * 32767);
+        }
+        return new Pcm(out, from, out.length, cuts);
+    }
+
+    /** (start, length) of the middle of each silent run longer than {@code keep} samples. */
+    private static int[] pauseCuts(double[] power, double silence, int first, int last, int frame,
+                                   int keep) {
+        int[] cuts = new int[8];
+        int n = 0;
+        int f = first;
+        while (f <= last) {
+            if (power[f] >= silence) {
+                f++;
+                continue;
+            }
+            int end = f;
+            while (end <= last && power[end] < silence) {
+                end++;
+            }
+            final int length = (end - f) * frame;
+            if (length > keep) {
+                if (n + 2 > cuts.length) {
+                    cuts = Arrays.copyOf(cuts, cuts.length * 2);
+                }
+                cuts[n++] = f * frame + keep / 2;
+                cuts[n++] = length - keep;
+            }
+            f = end;
+        }
+        return Arrays.copyOf(cuts, n);
+    }
+
+    /** Soft limiter: linear to the knee, then bends toward (never past) full scale. */
+    static double limit(double s) {
+        final double a = Math.abs(s);
+        if (a <= LIMITER_KNEE) {
+            return s;
+        }
+        final double room = 1 - LIMITER_KNEE;
+        return Math.signum(s) * (LIMITER_KNEE + room * Math.tanh((a - LIMITER_KNEE) / room));
     }
 
     static byte[] toBytes(short[] samples, int count) {
@@ -155,6 +277,14 @@ final class PiperAudio {
     static int[] alignedWordFrames(List<Integer> wordStartIds, float[] durations,
                                    int hopLength, int textWords, int trimmedLead,
                                    int speechSamples, int outSamples) {
+        return alignedWordFrames(wordStartIds, durations, hopLength, textWords, trimmedLead,
+                new int[0], speechSamples, outSamples);
+    }
+
+    /** As above, for a chunk whose long pauses were shortened ({@link Pcm#cuts}). */
+    static int[] alignedWordFrames(List<Integer> wordStartIds, float[] durations,
+                                   int hopLength, int textWords, int trimmedLead, int[] cuts,
+                                   int speechSamples, int outSamples) {
         if (durations == null || wordStartIds == null || wordStartIds.size() != textWords
                 || speechSamples <= 0) {
             return null;
@@ -171,7 +301,8 @@ final class PiperAudio {
             while (id < target) {
                 samples += durations[id++] * hopLength;
             }
-            final double inSpeech = Math.max(0, Math.min(speechSamples, samples - trimmedLead));
+            final double inSpeech = Math.max(0, Math.min(speechSamples,
+                    toOutput(samples, trimmedLead, cuts)));
             out[w] = (int) Math.min(outSamples, Math.round(inSpeech * scale));
         }
         return out;

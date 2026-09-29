@@ -489,6 +489,24 @@ ESPEAK_API int espeak_GetParameter(espeak_PARAMETER parameter, int current);
 #ifdef __cplusplus
 extern "C"
 #endif
+ESPEAK_API espeak_ERROR espeak_SetScriptLanguage(const char *script, const char *language);
+/* (eSpeak NG Advanced extension) The language words in another script switch
+   to, instead of eSpeak's own choice (Devanagari: Hindi, Latin in a non-Latin
+   voice: English; scripts such as Cyrillic or Telugu are spelled letter by
+   letter in other voices).
+
+   script: an alphabet name without its underscore ("hi" is Devanagari, "cyr",
+      "ar", "bn", "te", "zh", ...), "latin", or NULL for every script.
+   language: a voice name ("mr", "en-in", "ru"), whose dictionary rules,
+      phoneme table and phoneme replacements the switched words use; NULL or
+      "" restores eSpeak's own choice.
+
+   Return: EE_OK, or EE_NOT_FOUND for an unknown script or voice.
+*/
+
+#ifdef __cplusplus
+extern "C"
+#endif
 ESPEAK_API espeak_ERROR espeak_SetPunctuationList(const wchar_t *punctlist);
 /* Specified a list of punctuation characters whose names are to be spoken when the
    value of the Punctuation parameter is set to "some".

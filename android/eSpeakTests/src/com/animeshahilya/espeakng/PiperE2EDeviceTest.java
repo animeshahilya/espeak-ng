@@ -145,7 +145,7 @@ public class PiperE2EDeviceTest {
                         + "and the URL is example.com. Does it sound right?", Locale.US, 1f);
         assertEquals(rate, s[0]);
         assertTrue("too short", s[1] > rate * 3L);
-        // Peak reaches full scale by design: PiperAudio peak-normalizes like Piper.
+        // PiperAudio brings speech to -20 dBFS, its peaks limited just under full scale.
         assertTrue("silent", s[2] > 2000 && s[3] > 200_000);
     }
 
@@ -270,7 +270,7 @@ public class PiperE2EDeviceTest {
     /**
      * An eSpeak English voice hands Hindi runs to the Hindi natural voice
      * (the first request may read them with eSpeak while it loads). Natural
-     * voices peak-normalize to full scale; eSpeak peaks near 22000. Needs a
+     * voices' limited peaks pass 27000; eSpeak peaks near 22000. Needs a
      * Hindi natural voice chosen and no English one.
      */
     @Test
@@ -278,13 +278,13 @@ public class PiperE2EDeviceTest {
         Assume.assumeTrue("an English natural voice is chosen", warmNaturalEnglish() == ESPEAK_RATE);
         final String text = "This is English. नमस्ते, आप कैसे हैं? मैं ठीक हूं। Back to English.";
         long peak = 0;
-        for (int i = 0; i < 5 && peak < 30000; i++) {
+        for (int i = 0; i < 5 && peak < 27000; i++) {
             if (i > 0) {
                 Thread.sleep(2000);
             }
             peak = toFile("mix" + i, text, Locale.US, 1f)[2];
         }
-        assertTrue("Hindi run stayed with eSpeak (peak " + peak + ")", peak >= 30000);
+        assertTrue("Hindi run stayed with eSpeak (peak " + peak + ")", peak >= 27000);
     }
 
     @Test

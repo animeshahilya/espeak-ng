@@ -113,6 +113,9 @@ static char source[N_TR_SOURCE+40]; // extra space for embedded command & voice 
 
 int n_replace_phonemes;
 REPLACE_PHONEMES replace_phonemes[N_REPLACE_PHONEMES];
+int n_switch_replace_phonemes;
+int switch_replace_tab = -1;
+REPLACE_PHONEMES switch_replace_phonemes[N_REPLACE_PHONEMES];
 
 // other characters which break a word, but don't produce a pause
 static const unsigned short breaks[] = { '_', 0 };
@@ -374,9 +377,34 @@ static int SetAlternateTranslator(const char *new_language, Translator **transla
 	// Set alternate translator to a second language
 	int new_phoneme_tab;
 
+	if (IsScriptLanguage(new_language)) {
+		// eSpeak NG Advanced: a voice the user chose for a script, made from
+		// its voice file; "*" keeps it apart from eSpeak's own translator for
+		// the same name
+		char key[20];
+		snprintf(key, sizeof(key), "*%s", new_language);
+		if ((*translator != NULL) && (strcmp(key, translator_language) == 0)) {
+			SelectPhonemeTable((*translator)->phoneme_tab_ix);
+			(*translator)->phonemes_repeat[0] = 0;
+			return (*translator)->phoneme_tab_ix;
+		}
+		if (*translator != NULL) {
+			DeleteTranslator(*translator);
+			*translator = NULL;
+		}
+		translator_language[0] = 0;
+		if ((new_phoneme_tab = LoadSwitchTranslator(new_language, translator, translator == &translator2)) >= 0) {
+			snprintf(translator_language, 20, "%s", key);
+			(*translator)->phonemes_repeat[0] = 0;
+		}
+		return new_phoneme_tab;
+	}
+
 	if ((new_phoneme_tab = SelectPhonemeTableName(new_language)) >= 0) {
 		if ((*translator != NULL) && (strcmp(new_language, translator_language) != 0)) {
 			// we already have an alternative translator, but not for the required language, delete it
+			if ((translator == &translator2) && (translator_language[0] == '*'))
+				n_switch_replace_phonemes = 0; // it was a chosen voice's, see above
 			DeleteTranslator(*translator);
 			*translator = NULL;
 		}
@@ -1802,6 +1830,11 @@ void TranslateClauseWithTerminator(Translator *tr, int *tone_out, char **voice_c
 				clause_pause = 10;
 				if (tone_out != NULL)
 					*tone_out = 4;
+				// eSpeak NG Advanced: say so to espeak_TextToPhonemesWithTerminator
+				// callers too (natural voices), which otherwise end the sentence
+				// at "Dr." with a full stop's pause and falling tone
+				if (terminator_out != NULL)
+					*terminator_out = CLAUSE_NONE;
 			}
 		}
 

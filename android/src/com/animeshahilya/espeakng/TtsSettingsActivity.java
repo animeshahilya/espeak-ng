@@ -1735,6 +1735,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         seed.commit();
 
         final PreferenceScreen screen = pm.inflateFromResource(context, R.xml.preferences, null);
+        configureScriptLanguages(context, screen, voices);
 
         if (isWatch) {
             for (String key : new String[] {
@@ -1749,7 +1750,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     "category_presets", "category_data",
                     // Neural voices need more memory and CPU than a watch
                     // should spend on a screen reader voice.
-                    PiperSettings.KEY_SCREEN}) {
+                    PiperSettings.KEY_SCREEN, "category_natural_switching"}) {
                 screen.removePreferenceRecursively(key);
             }
         } else {
@@ -2063,6 +2064,38 @@ public class TtsSettingsActivity extends AppCompatActivity {
             action.run();
             return true;
         });
+    }
+
+    /**
+     * Mixed-language text: each script's list offers eSpeak's own choice
+     * first (stored as "", so nothing changes until a user picks), then the
+     * voices of {@link ScriptLanguages}, named as in the voice picker.
+     */
+    private static void configureScriptLanguages(Context context, PreferenceScreen screen,
+                                                 List<Voice> voices) {
+        final Map<String, Voice> byName = new HashMap<>();
+        for (Voice voice : voices) {
+            byName.put(voice.name, voice);
+        }
+        for (ScriptLanguages.Script script : ScriptLanguages.SCRIPTS) {
+            final CharSequence[] entries = new CharSequence[script.choices.length + 1];
+            final CharSequence[] values = new CharSequence[script.choices.length + 1];
+            entries[0] = script.espeakDefault == null
+                    ? context.getString(R.string.script_language_spell)
+                    : context.getString(R.string.script_language_default,
+                            voiceLabel(byName, script.espeakDefault));
+            values[0] = "";
+            for (int i = 0; i < script.choices.length; i++) {
+                entries[i + 1] = voiceLabel(byName, script.choices[i]);
+                values[i + 1] = script.choices[i];
+            }
+            setEntries(screen, script.prefKey(), entries, values);
+        }
+    }
+
+    private static String voiceLabel(Map<String, Voice> byName, String name) {
+        final Voice voice = byName.get(name);
+        return voice != null ? getVoiceLabel(voice) : name;
     }
 
     private static void setEntries(PreferenceScreen screen, String key,

@@ -89,6 +89,9 @@ final class PiperEngine {
         int pauseScale = 100;
         boolean trimSilence = true;
         int speakerId = -1;
+        /** Multipliers of the voice's noise_scale and noise_w (speaking style). */
+        float noiseScale = 1f;
+        float noiseW = 1f;
     }
 
     private static final PiperEngine INSTANCE = new PiperEngine();
@@ -286,6 +289,10 @@ final class PiperEngine {
         return mMaxLoaded >= 2;
     }
 
+    int maxLoaded() {
+        return mMaxLoaded;
+    }
+
     /** Takes effect for voices loaded from now on: loaded ones are dropped and reload. */
     void setAcceleration(boolean enabled) {
         if (mAcceleration != enabled) {
@@ -454,7 +461,12 @@ final class PiperEngine {
         final boolean stretch = stretcher != null
                 && (Math.abs(residualSpeed - 1f) > 0.01f || Math.abs(pitch - 1f) > 0.01f);
         final float lengthScale = config.lengthScale / modelSpeed;
-        final int speaker = params.speakerId >= 0 ? params.speakerId : config.defaultSpeakerId;
+        final int speaker = params.speakerId >= 0 && params.speakerId < config.numSpeakers
+                ? params.speakerId : config.defaultSpeakerId;
+        final float noise = params.noiseScale;
+        final float noiseW = params.noiseW;
+        // The voice's own pauses follow reading pace too (PiperAudio.MAX_PAUSE_MS).
+        final int maxPauseMs = PiperAudio.maxPauseMs(params.pauseScale, speed);
         final int rate = config.sampleRate;
 
         // Ids for every chunk up front (microseconds); the model runs are
@@ -486,7 +498,7 @@ final class PiperEngine {
             final PiperModel.Output o;
             enterNative(config.key);
             try {
-                o = model.infer(job.ids, lengthScale, speaker, handle);
+                o = model.infer(job.ids, lengthScale, speaker, noise, noiseW, handle);
             } finally {
                 exitNative(config.key);
             }
@@ -494,7 +506,7 @@ final class PiperEngine {
                 return null;
             }
             final PiperAudio.Pcm pcm = PiperAudio.process(o.audio, params.volume, rate,
-                    params.trimSilence);
+                    params.trimSilence, maxPauseMs);
             short[] samples = pcm.samples;
             if (stretch && samples.length > 0) {
                 final short[] stretched = stretcher.process(samples, rate, residualSpeed, pitch);
@@ -503,7 +515,7 @@ final class PiperEngine {
                 }
             }
             return new Rendered(PiperAudio.toBytes(samples, samples.length), samples.length,
-                    pcm.trimmedLead, pcm.speechSamples, o.durations);
+                    pcm.trimmedLead, pcm.cuts, pcm.speechSamples, o.durations);
         });
         int frames = 0;
         Future<Rendered> pending = null;
@@ -538,7 +550,7 @@ final class PiperEngine {
                 final String chunkText = text.substring(cpToIndex[chunkStart], cpToIndex[chunkEnd]);
                 final int[] words = PiperAudio.findWords(chunkText);
                 int[] wordFrames = PiperAudio.alignedWordFrames(job.wordStarts, rendered.durations,
-                        config.hopLength, words.length / 2, rendered.trimmedLead,
+                        config.hopLength, words.length / 2, rendered.trimmedLead, rendered.cuts,
                         rendered.speechSamples, rendered.samples);
                 if (wordFrames == null) {
                     wordFrames = PiperAudio.estimateWordFrames(words, chunkEnd - chunkStart,
@@ -597,13 +609,16 @@ final class PiperEngine {
         final byte[] pcm;
         final int samples;
         final int trimmedLead;
+        final int[] cuts;
         final int speechSamples;
         final float[] durations;
 
-        Rendered(byte[] pcm, int samples, int trimmedLead, int speechSamples, float[] durations) {
+        Rendered(byte[] pcm, int samples, int trimmedLead, int[] cuts, int speechSamples,
+                 float[] durations) {
             this.pcm = pcm;
             this.samples = samples;
             this.trimmedLead = trimmedLead;
+            this.cuts = cuts;
             this.speechSamples = speechSamples;
             this.durations = durations;
         }

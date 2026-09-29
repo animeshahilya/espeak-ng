@@ -188,6 +188,7 @@ static const MNEM_TAB keyword_tab[] = {
 const char *SelectVoice(espeak_VOICE *voice_select, int *found);
 espeak_VOICE *SelectVoiceByName(espeak_VOICE **voices, const char *name);
 voice_t *LoadVoice(const char *voice_name, int control);
+int LoadSwitchTranslator(const char *name, Translator **translator, bool replacements);
 voice_t *LoadVoiceVariant(const char *voice_name, int variant);
 espeak_ng_STATUS DoVoiceChange(voice_t *v);
 void WavegenSetVoice(voice_t *v);

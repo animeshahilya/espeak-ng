@@ -72,6 +72,11 @@ public class SpeechSynthesis {
     // re-init, terminate).
     private static volatile String sLastVoiceKey = null;
 
+    // Per-script languages last applied to the native engine
+    // (setScriptLanguages); same memo idea as sLastVoiceKey. Guarded by
+    // sSynthLock.
+    private static Map<String, String> sScriptLanguages = Collections.emptyMap();
+
     // Process-wide lock protecting native synthesis calls. The underlying C engine
     // maintains process-global state and is not re-entrant. stop() intentionally does
     // not acquire this lock so it can immediately signal native abort without waiting.
@@ -306,6 +311,29 @@ public class SpeechSynthesis {
     public void setPunctuationCharacters(String characters) {
         if (characters == null) return;
         nativeSetPunctuationCharacters(characters);
+    }
+
+    /**
+     * The languages words in other scripts switch to (native script name ->
+     * eSpeak voice name, see {@link ScriptLanguages}); scripts left out get
+     * eSpeak's own choice. Applied only when it changed.
+     */
+    public void setScriptLanguages(Map<String, String> languages) {
+        if (!mInitialized) {
+            return;
+        }
+        synchronized (sSynthLock) {
+            if (languages.equals(sScriptLanguages)) {
+                return;
+            }
+            nativeSetScriptLanguage(null, null);
+            for (Map.Entry<String, String> e : languages.entrySet()) {
+                if (!nativeSetScriptLanguage(e.getKey(), e.getValue())) {
+                    Log.w(TAG, "No voice " + e.getValue() + " for script " + e.getKey());
+                }
+            }
+            sScriptLanguages = new HashMap<>(languages);
+        }
     }
 
     /** Don't announce any punctuation characters. */
@@ -555,6 +583,8 @@ public class SpeechSynthesis {
     private native int nativeGetParameter(int parameter, int current);
 
     private native boolean nativeSetPunctuationCharacters(String characters);
+
+    private native boolean nativeSetScriptLanguage(String script, String language);
 
     private native boolean nativeSynthesize(String text, boolean isSsml);
 

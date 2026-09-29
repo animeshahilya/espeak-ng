@@ -70,7 +70,7 @@ back to an unsigned APK rather than failing.
 The release build type has `minifyEnabled true`. This is safe only because
 `proguard-rules.pro` explicitly `-keep`s the whole `SpeechSynthesis` class:
 `jni/jni/eSpeakService.c` binds to it by exact unmangled name -
-`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 12 `native`
+`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 13 `native`
 methods, plus explicit `GetMethodID()` lookups in `nativeClassInit()` for
 `nativeSynthCallback`/`nativeSynthWordCallback` (private methods invoked
 *from* native code, with no Java-side call site R8 can see marking them
@@ -183,6 +183,17 @@ voices" does not, so voices can still be deleted to free space.
   not offered to NNAPI again until the switch is toggled.
 - **Stop.** `onStop()` -> `PiperEngine.stop()` -> ORT `RunOptions.setTerminate`,
   plus the chunk loop checks between chunks.
+- **Customization.** `piper_style` (Steady/Natural/Lively) multiplies the
+  voice's own `noise_scale`/`noise_w` (0.5/0.5, 1/1, 1.3/1.25; measured on
+  a Pixel 8 with Priyamvada: mean utterance length 112.6k/117.3k/120.6k
+  bytes). Per voice, under Downloaded voices: `piper_speed_<key>` overrides
+  `piper_speed`, and `piper_speaker_<key>` picks the speaker of multi-speaker
+  voices (names from `speaker_id_map`; the pref was read but had no UI
+  before). Test voice uses all of these.
+- **Startup preload.** `piper_recent` (device-local, not backed up) keeps
+  the last 3 voices used; the service preloads them after the system
+  language's, up to the tier's loaded-voice budget. Before, after a service
+  restart the first Hindi words were eSpeak's while the voice loaded (~1 s).
 - **Speed/pitch.** Model speed via `length_scale` clamped to 0.5-1.8x; the
   rest (rate boost) and pitch via `SpeechSynthesis.sonicStretch` (the
   libsonic already linked into espeak-ng). SSML stays on eSpeak; single
@@ -203,7 +214,14 @@ voices" does not, so voices can still be deleted to free space.
   synchronized: the receiver and the page's `reconcile()` can race on it.
 - **Community voices.** `assets/piper/extra_voices.json` (voices.json format
   plus `base_url`, `source`, `license`) adds languages rhasspy lacks: Tamil
-  (tinisoft rasa female/male, CC BY 4.0) and Sinhala (chan4lk, MIT). Each
+  (tinisoft rasa female/male, CC BY 4.0) and Sinhala (chan4lk, MIT); and,
+  added 2026-09-29 from a scan of ~2000 Hugging Face repos, en_AU LibriVox
+  (10 speakers, public-domain recordings, CC BY 4.0), Kurmanji (90 speakers,
+  Common Voice 24, MIT, default speaker 54), Latvian Rudolfs (Latvian Library
+  for the Blind audiobooks with permission, CC0) and Sinhala Dilu (MIT).
+  Rejected in that scan: clones of named people or game/film characters,
+  voices named after Azure voices, proprietary or no-provenance models.
+  Sinhala voices lack the fork's prenasal `ⁿ` id (skipped, logged). Each
   `base_url` is pinned to a commit so its MD5s always match; only this
   bundled list may set `base_url` (the remote catalog cannot redirect
   downloads - `PiperCatalogTest`). Vet before adding: public, licensed,
@@ -225,6 +243,9 @@ voices" does not, so voices can still be deleted to free space.
   stays with eSpeak). Before this, only a natural primary voice switched,
   so eSpeak-English users never heard their Hindi voice in mixed text.
   `PiperE2EDeviceTest.j_*` checks it (natural voices peak at full scale).
+  A language the user chose for a script (see "Mixed-language text" below)
+  replaces the script's default here too, and `piper_switch_languages`
+  (on by default) turns natural-voice switching off.
 - **Crash guard.** A native crash inside ONNX Runtime kills the process and
   Android restarts the service, which reloads the voice: a crash loop that
   silences TalkBack. `PiperCrashGuard` records voices whose native work is in
@@ -245,6 +266,28 @@ voices" does not, so voices can still be deleted to free space.
   `packaging.jniLibs.useLegacyPackaging` compresses it to ~12 MB in the APK.
   A custom ORT build with only the VITS operators would shrink it further.
 - Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
+
+### Mixed-language text (per-script languages)
+
+eSpeak switches language by alphabet with fixed choices
+(`alphabets[]` in `tr_languages.c`): Devanagari -> hi, Latin inside a
+non-Latin voice -> en, and scripts without `AL_WORDS` (Cyrillic, Hebrew,
+Telugu, Odia, CJK, Ethiopic) spelled letter by letter.
+`espeak_SetScriptLanguage(script, voice)` (fork extension, `speak_lib.h`)
+overrides one script; unset keeps eSpeak's choice, so default output is
+unchanged (checked: 21 voices x 12 mixed texts, phonemes and audio identical
+to the previous build). The override translator is built from the voice
+*file* (`LoadSwitchTranslator` in `voices.c`), not `SelectTranslator(name)`,
+so a variant like en-in gets its dictionary rules, phoneme table and
+`replace` rules - the latter apply to switched words only
+(`switch_replace_phonemes`, `phonemelist.c`). Clause-level options
+(intonation, tunes, word gaps) stay the speaking voice's.
+`ScriptLanguages` lists the offered choices; each was checked with the CLI
+(`--script=cyr:ru`) to read words, not letters (Thai, Burmese, Hakka,
+Ancient Greek and Western Armenian did not, so they are not offered).
+`TtsService` applies them per request through the memoized
+`SpeechSynthesis.setScriptLanguages`. `ScriptLanguagesDeviceTest` checks the
+engine end to end.
 
 ### Key Classes (`src/com/animeshahilya/espeakng/`)
 
@@ -274,7 +317,7 @@ redundant aliases or runtime PackageManager modifications.
 
 ### JNI Layer (`jni/jni/eSpeakService.c`)
 
-12 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (two of them for Piper: `nativePhonemizeForPiper`, `nativeSonicStretch`) (plus `JNI_OnLoad`/`JNI_OnUnload`, which aren't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
+13 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (two of them for Piper: `nativePhonemizeForPiper`, `nativeSonicStretch`) (plus `JNI_OnLoad`/`JNI_OnUnload`, which aren't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
 
 ### Voice Data Lifecycle
 
@@ -325,7 +368,7 @@ android/
 │   └── preference/             # Custom preference widgets (11 classes)
 ├── jni/
 │   ├── CMakeLists.txt          # Native build (links espeak-ng + JNI, builds libsonic)
-│   ├── jni/eSpeakService.c     # JNI bridge (12 native methods)
+│   ├── jni/eSpeakService.c     # JNI bridge (13 native methods)
 │   ├── jni/piperPhonemizer.c   # eSpeak -> Piper phonemizer (clause records)
 │   └── include/                # config.h, Log.h
 ├── res/                        # Resources (46 locale translations, plus values-v21/-watch)

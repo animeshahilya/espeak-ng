@@ -42,6 +42,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -574,19 +575,107 @@ final class PiperSettings {
 
     private static void showVoiceActions(final Context context, final SharedPreferences prefs,
                                          final PiperVoiceStore.Installed voice) {
-        final CharSequence[] actions = {
-                context.getString(R.string.piper_action_test),
-                context.getString(R.string.piper_action_delete)};
+        final List<CharSequence> actions = new ArrayList<>();
+        final List<Runnable> handlers = new ArrayList<>();
+        actions.add(context.getString(R.string.piper_action_test));
+        handlers.add(() -> testVoice(context, voice));
+        actions.add(context.getString(R.string.piper_action_speed, speedLabel(context, prefs, voice.key)));
+        handlers.add(() -> chooseSpeed(context, prefs, voice));
+        if (voice.config.numSpeakers > 1) {
+            actions.add(context.getString(R.string.piper_action_speaker,
+                    speakerLabel(context, voice.config, PiperVoiceStore.speakerId(prefs, voice.key))));
+            handlers.add(() -> chooseSpeaker(context, prefs, voice));
+        }
+        actions.add(context.getString(R.string.piper_action_delete));
+        handlers.add(() -> confirmDelete(context, prefs, voice));
         final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(voiceLabel(context, voice.config))
-                .setItems(actions, (d, which) -> {
-                    if (which == 0) {
-                        testVoice(context, voice);
-                    } else {
-                        confirmDelete(context, prefs, voice);
-                    }
-                })
+                .setItems(actions.toArray(new CharSequence[0]), (d, which) -> handlers.get(which).run())
                 .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    /**
+     * "Speaker 3 (P239)", or the voice's default speaker when none was chosen.
+     * Names that are only ids (Common Voice speakers are 128-digit hashes)
+     * are left out: TalkBack would read every digit.
+     */
+    private static String speakerLabel(Context context, PiperVoiceConfig config, int id) {
+        final int speaker = id >= 0 && id < config.numSpeakers ? id : config.defaultSpeakerId;
+        final String name = speaker < config.speakerNames.length ? config.speakerNames[speaker] : null;
+        return isReadableName(name, speaker)
+                ? context.getString(R.string.piper_speaker_named, speaker + 1,
+                        PiperVoiceConfig.titleCase(name))
+                : context.getString(R.string.piper_speaker_number, speaker + 1);
+    }
+
+    static boolean isReadableName(String name, int id) {
+        return name != null && !name.equals(String.valueOf(id)) && name.length() <= 32
+                && !name.matches("[0-9a-fA-F]{12,}");
+    }
+
+    /**
+     * Multi-speaker voices (VCTK, LibriTTS, Arctic...) hold up to hundreds of
+     * voices in one download; this picks one. Choosing plays it at once.
+     */
+    private static void chooseSpeaker(final Context context, final SharedPreferences prefs,
+                                      final PiperVoiceStore.Installed voice) {
+        final PiperVoiceConfig config = voice.config;
+        final CharSequence[] rows = new CharSequence[config.numSpeakers];
+        for (int i = 0; i < rows.length; i++) {
+            rows[i] = speakerLabel(context, config, i);
+        }
+        final int current = PiperVoiceStore.speakerId(prefs, voice.key);
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(context.getString(R.string.piper_choose_speaker, config.displayName()))
+                .setSingleChoiceItems(rows, current >= 0 && current < rows.length
+                        ? current : config.defaultSpeakerId, (d, which) -> {
+                    prefs.edit().putString(PiperVoiceStore.PREF_SPEAKER_PREFIX + voice.key,
+                            String.valueOf(which)).apply();
+                    testVoice(context, voice);
+                })
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+        TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    private static String speedLabel(Context context, SharedPreferences prefs, String key) {
+        final String own = prefs.getString(PiperVoiceStore.PREF_VOICE_SPEED_PREFIX + key, "");
+        if (own.isEmpty()) {
+            return context.getString(R.string.piper_speed_shared);
+        }
+        final String[] values = context.getResources().getStringArray(R.array.piper_speed_values);
+        final String[] entries = context.getResources().getStringArray(R.array.piper_speed_entries);
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(own)) {
+                return entries[i];
+            }
+        }
+        return own + "%";
+    }
+
+    /** This voice's own speed over the shared natural-voice speed; choosing plays it. */
+    private static void chooseSpeed(final Context context, final SharedPreferences prefs,
+                                    final PiperVoiceStore.Installed voice) {
+        final String[] values = context.getResources().getStringArray(R.array.piper_speed_values);
+        final String[] entries = context.getResources().getStringArray(R.array.piper_speed_entries);
+        final CharSequence[] rows = new CharSequence[values.length + 1];
+        rows[0] = context.getString(R.string.piper_speed_shared);
+        System.arraycopy(entries, 0, rows, 1, entries.length);
+        final String pref = PiperVoiceStore.PREF_VOICE_SPEED_PREFIX + voice.key;
+        final int current = Arrays.asList(values).indexOf(prefs.getString(pref, "")) + 1;
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(context.getString(R.string.piper_choose_speed, voice.config.displayName()))
+                .setSingleChoiceItems(rows, current, (d, which) -> {
+                    if (which == 0) {
+                        prefs.edit().remove(pref).apply();
+                    } else {
+                        prefs.edit().putString(pref, values[which - 1]).apply();
+                    }
+                    testVoice(context, voice);
+                })
+                .setPositiveButton(android.R.string.ok, null)
                 .show();
         TtsSettingsActivity.markAlertTitleHeading(dialog);
     }
@@ -624,8 +713,17 @@ final class PiperSettings {
                 final String text = SpeechSynthesis.getSampleText(app,
                         new Locale(voice.config.languageFamily));
                 final ByteArrayOutputStream pcm = new ByteArrayOutputStream();
+                // As it will speak: this voice's speaker and speed, the style.
+                final SharedPreferences prefs = TolerantPreferences.of(
+                        PreferenceManager.getDefaultSharedPreferences(storage(context)));
+                final PiperEngine.Params params = new PiperEngine.Params();
+                params.speakerId = PiperVoiceStore.speakerId(prefs, voice.key);
+                params.speed = PiperVoiceStore.speedFactor(prefs, voice.key);
+                final float[] style = PiperVoiceStore.styleScales(prefs);
+                params.noiseScale = style[0];
+                params.noiseW = style[1];
                 PiperEngine.get().synthesize(model, text, espeak::phonemizeForPiper,
-                        SpeechSynthesis::sonicStretch, new PiperEngine.Params(),
+                        SpeechSynthesis::sonicStretch, params,
                         new PiperEngine.Output() {
                             @Override
                             public void word(int position, int length, int frame) {

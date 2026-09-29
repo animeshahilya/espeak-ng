@@ -62,6 +62,7 @@ static int SubstitutePhonemes(PHONEME_LIST *plist_out)
 	PHONEME_LIST2 *plist2;
 	PHONEME_TAB *next = NULL;
 	int deleted_sourceix = -1;
+	int switched_tab = -1; // phoneme table of the words switched to
 
 	for (ix = 0; (ix < n_ph_list2) && (n_plist_out < N_PHONEME_LIST); ix++) {
 		plist2 = &ph_list2[ix];
@@ -70,11 +71,24 @@ static int SubstitutePhonemes(PHONEME_LIST *plist_out)
 			deleted_sourceix = -1;
 		}
 
-		if (plist2->phcode == phonSWITCH)
+		if (plist2->phcode == phonSWITCH) {
 			SelectPhonemeTable(plist2->tone_ph);
+			switched_tab = plist2->tone_ph;
+		}
 
-		// don't do any substitution if the language has been temporarily changed
+		// The voice's own substitutions don't apply if the language has been
+		// temporarily changed; words switched to a voice the user chose for
+		// their script get that voice's (espeak_SetScriptLanguage).
+		const REPLACE_PHONEMES *replace = NULL;
+		int n_replace = 0;
 		if (!(plist2->synthflags & SFLAG_SWITCHED_LANG)) {
+			replace = replace_phonemes;
+			n_replace = n_replace_phonemes;
+		} else if ((n_switch_replace_phonemes > 0) && (switched_tab == switch_replace_tab)) {
+			replace = switch_replace_phonemes;
+			n_replace = n_switch_replace_phonemes;
+		}
+		if (replace != NULL) {
 			if (ix < (n_ph_list2 -1))
 				next = phoneme_tab[ph_list2[ix+1].phcode];
 
@@ -83,9 +97,9 @@ static int SubstitutePhonemes(PHONEME_LIST *plist_out)
 				word_end = true; // this phoneme is the end of a word
 
 			// check whether a Voice has specified that we should replace this phoneme
-			for (k = 0; k < n_replace_phonemes; k++) {
-				if (plist2->phcode == replace_phonemes[k].old_ph) {
-					replace_flags = replace_phonemes[k].type;
+			for (k = 0; k < n_replace; k++) {
+				if (plist2->phcode == replace[k].old_ph) {
+					replace_flags = replace[k].type;
 
 					if ((replace_flags & 1) && (word_end == false))
 						continue; // this replacement only occurs at the end of a word
@@ -97,7 +111,7 @@ static int SubstitutePhonemes(PHONEME_LIST *plist_out)
 						continue; // this replacement only occurs at the start of a word
 
 					// substitute the replacement phoneme
-					plist2->phcode = replace_phonemes[k].new_ph;
+					plist2->phcode = replace[k].new_ph;
 					if ((plist2->stresslevel > 1) && (phoneme_tab[plist2->phcode] != NULL) &&
 					    (phoneme_tab[plist2->phcode]->phflags & phUNSTRESSED))
 						plist2->stresslevel = 0; // the replacement must be unstressed

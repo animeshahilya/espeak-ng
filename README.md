@@ -89,6 +89,7 @@ On top of that there are a few extras NVDA doesn't have, such as money and code 
 - **Fancy fonts**: reads stylised Unicode text as normal words.
 - **Reading mode**: normal, spelling, or code.
 - **Phonetic letters**: says Alfa, Bravo and so on, either when you move by character or for all text.
+- **Mixed-language text**: choose the language for words in each script. Read Devanagari as Marathi, Nepali or Konkani instead of Hindi, English words in Hindi text with an Indian or American accent, Arabic script as Urdu or Persian, and Russian, Ukrainian, Hebrew, Telugu, Odia, Chinese, Japanese or Amharic as words instead of letter by letter. Every script starts on eSpeak's own choice, so nothing changes until you pick.
 - **Read Hinglish (beta, off by default)**: on English voices, Hindi typed in English letters ("aap kaise ho bhai") is read with Hindi pronunciation. English sentences are left alone.
 - **Matras and signs**: names Indic vowel signs, halant, anusvara and similar marks when you move by character.
 - **Emoji**: read them out or skip them.
@@ -119,15 +120,19 @@ eSpeak is built for speed: it starts talking instantly and stays clear at very h
 - **Download natural voices**: browse the official [Piper voice catalog](https://huggingface.co/rhasspy/piper-voices) by language, play a recorded sample, and download. Voices come in two qualities: **Standard**, and **Enhanced** where a voice has it (marked as recommended on fast phones, and as possibly slow on low-end ones). Each download is about 60–140 MB; on the phone a voice takes about twice that, because a faster-loading copy is kept beside it. Downloads run in the background with a progress notification, and every file is checked against the catalog's checksum before it can be used.
 - **Voice for each language**: every language you have a natural voice for gets a row. Choose eSpeak or one of its natural voices. The first voice you download for a language is chosen for it automatically.
 - **Use natural voices**: one switch to go back to eSpeak everywhere without losing your choices.
+- **Switch natural voices by script** (on by default, in Mixed-language text): Hindi words in English text go to your Hindi natural voice, and so on, following your choices for each script. Turn it off to have one voice read everything.
 - **eSpeak for single letters** (on by default): moving by character and spelling stay on eSpeak, which starts instantly.
 - **Natural voice speed**: natural voices follow your eSpeak rate; this makes them a little slower or faster than it.
-- **Downloaded voices**: test or delete a voice.
+- **Community voices**: besides the Piper catalog, vetted community voices for Tamil, Sinhala, Australian English (10 speakers), Kurdish Kurmanji (90 speakers) and Latvian. Each is pinned to an exact file and checked before use.
+- **Speaking style**: Steady (even and clear, fewer glitches), Natural (as the voice was made), or Lively (more varied tone and rhythm).
+- **Downloaded voices**: test or delete a voice, give it its own speed, and pick the speaker of voices that hold several (some English voices hold dozens or hundreds). Every change plays a sample.
 - **Hardware acceleration** (off by default): lets the phone's AI chip (NNAPI) try to run the voices. On the phones tested it made them slower, so it is off; a voice it can't run uses the processor anyway.
 
 How it fits with the rest of the app:
 
 - **Same pronunciation.** Piper voices are driven by phonemes, and those phonemes come from this app's own eSpeak NG, the same way the Piper project itself uses eSpeak NG. That means everything this fork fixes carries over: Indian schwa rules, Indian numbering, symbol and emoji reading, and entries in My Words.
 - **Same settings.** Rate, rate boost, pitch, volume, reading pace, the audio optimizer, punctuation sounds and reading history all apply. Very high rates are reached by speeding up the finished audio with libsonic, the same library eSpeak uses above 450 words per minute.
+- **Ready when you are.** The voices you used last are loaded again when the speech service starts, so the first sentence after a restart is already in the natural voice.
 - **Never silent.** A voice takes about a second to load. Until it is ready, and if it ever fails, eSpeak speaks instead. Speech starts after the first phrase is ready, not after the whole paragraph, long texts play without gaps, and stopping speech stops the voice at once.
 - **Fits the phone.** Voices use the fast processor cores only, keep more voices ready on phones with more memory, and give their memory back when idle so Android doesn't close the speech service.
 - **Works before unlock.** Voices are stored where eSpeak's data is, so they work on the lock screen after a restart too.

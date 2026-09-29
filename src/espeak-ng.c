@@ -79,6 +79,9 @@ static const char *help_text =
     "-m\t   Interpret SSML markup, and ignore other < > tags\n"
     "--ssml-break=<percentage>\n"
     "\t   Set SSML break time multiplier, default is 100\n"
+    "--script=<script>:<voice>\n"
+    "\t   Read words in this script (hi, cyr, ar, latin, ...) with this voice\n"
+    "\t   instead of eSpeak's own choice; may be repeated\n"
     "-q\t   Quiet, don't produce any speech (may be useful with -x)\n"
     "-x\t   Write phoneme mnemonics to stdout\n"
     "-X\t   Write phonemes mnemonics and translation trace to stdout\n"
@@ -327,6 +330,7 @@ int main(int argc, char **argv)
 		{ "compile-phonemes", optional_argument, 0, 0x110 },
 		{ "load",    no_argument,       0, 0x111 },
 		{ "ssml-break", required_argument, 0, 0x112 },
+		{ "script",  required_argument, 0, 0x113 },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -358,6 +362,8 @@ int main(int argc, char **argv)
 	int option_linelength = 0;
 	int option_waveout = 0;
 	int ssml_break = -1;
+	char *scripts[40];
+	int n_scripts = 0;
 	bool deterministic = 0;
 	
 	espeak_VOICE voice_select;
@@ -572,6 +578,10 @@ int main(int argc, char **argv)
 		case 0x112: // --ssml-break
 			ssml_break = atoi(optarg2);
 			break;
+		case 0x113: // --script
+			if (n_scripts < 40)
+				scripts[n_scripts++] = optarg2;
+			break;
 		default:
 			exit(0);
 		}
@@ -632,6 +642,14 @@ int main(int argc, char **argv)
 			espeak_ng_PrintStatusCodeMessage(result, stderr, NULL);
 			exit(EXIT_FAILURE);
 		}
+	}
+
+	for (ix = 0; ix < n_scripts; ix++) {
+		char *language = strchr(scripts[ix], ':');
+		if (language != NULL)
+			*language++ = 0;
+		if (espeak_SetScriptLanguage(scripts[ix], language) != EE_OK)
+			fprintf(stderr, "Unknown script or voice: %s:%s\n", scripts[ix], language != NULL ? language : "");
 	}
 
 	if (flag_compile) {
