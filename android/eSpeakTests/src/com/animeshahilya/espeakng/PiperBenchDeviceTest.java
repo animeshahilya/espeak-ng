@@ -54,6 +54,7 @@ public class PiperBenchDeviceTest {
     public void benchmark() throws Exception {
         final Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final File dir = new File(ctx.getFilesDir(), "piper-bench");
+        copyInstalledVoices(ctx, dir);
         final File[] models = dir.listFiles((d, n) -> n.endsWith(".onnx") && !n.contains(".opt."));
         Assume.assumeTrue("no models in " + dir, models != null && models.length > 0);
 
@@ -86,29 +87,78 @@ public class PiperBenchDeviceTest {
             final File ort = new File(dir, key + ".opt.ort");
             opt.delete();
             ort.delete();
-            run(key, "write-onnx", o -> {
-                base(o, 4);
-                o.setOptimizedModelFilePath(opt.getAbsolutePath());
-            }, onnx.getAbsolutePath(), null, config, inputs, true);
             run(key, "write-ort", o -> {
                 base(o, 4);
                 o.setOptimizedModelFilePath(ort.getAbsolutePath());
                 o.addConfigEntry("session.save_model_format", "ORT");
             }, onnx.getAbsolutePath(), null, config, inputs, true);
-            for (int round = 0; round < 4; round++) {
+            for (int round = 0; round < 3; round++) {
+                // The app today: ORT format, memory-mapped, weights used in
+                // place, arena shrunk after every run.
                 Thread.sleep(8000); // let the SoC cool between measurements
-                run(key, "opt-onnx", o -> {
+                run(key, "app", o -> {
                     base(o, 4);
                     o.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.NO_OPT);
-                }, opt.getAbsolutePath(), null, config, inputs, true);
-                Thread.sleep(8000);
-                run(key, "ort-mmap", o -> {
-                    base(o, 4);
                     o.addConfigEntry("session.use_ort_model_bytes_directly", "1");
                     o.addConfigEntry("session.use_ort_model_bytes_for_initializers", "1");
                 }, null, ort, config, inputs, true);
+                Thread.sleep(8000);
+                run(key, "no-shrink", o -> {
+                    base(o, 4);
+                    o.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.NO_OPT);
+                    o.addConfigEntry("session.use_ort_model_bytes_directly", "1");
+                    o.addConfigEntry("session.use_ort_model_bytes_for_initializers", "1");
+                }, null, ort, config, inputs, false);
+                // Mapped file, but initializers copied: ORT may pre-pack them.
+                Thread.sleep(8000);
+                run(key, "mmap-copy", o -> {
+                    base(o, 4);
+                    o.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.NO_OPT);
+                    o.addConfigEntry("session.use_ort_model_bytes_directly", "1");
+                }, null, ort, config, inputs, true);
+                // Loaded into memory from the path (no mapping at all).
+                Thread.sleep(8000);
+                run(key, "in-memory", o -> {
+                    base(o, 4);
+                    o.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.NO_OPT);
+                }, ort.getAbsolutePath(), null, config, inputs, true);
             }
         }
+    }
+
+    /**
+     * With nothing pushed, copies up to two of the phone's downloaded voices
+     * (device-protected files/piper/voices/KEY/model.onnx{,.json}; read
+     * only) into the bench folder, preferring Hindi and English.
+     */
+    private static void copyInstalledVoices(Context ctx, File dir) throws Exception {
+        final File[] existing = dir.listFiles((d, n) -> n.endsWith(".onnx") && !n.contains(".opt."));
+        if (existing != null && existing.length > 0) {
+            return;
+        }
+        final File voices = new File(ctx.createDeviceProtectedStorageContext().getFilesDir(),
+                "piper/voices");
+        final File[] keys = voices.listFiles(File::isDirectory);
+        if (keys == null) {
+            return;
+        }
+        java.util.Arrays.sort(keys, (a, b) -> rank(a.getName()) - rank(b.getName()));
+        dir.mkdirs();
+        int copied = 0;
+        for (File k : keys) {
+            final File model = new File(k, "model.onnx");
+            final File json = new File(k, "model.onnx.json");
+            if (copied < 2 && model.isFile() && json.isFile()) {
+                Files.copy(model.toPath(), new File(dir, k.getName() + ".onnx").toPath());
+                Files.copy(json.toPath(), new File(dir, k.getName() + ".onnx.json").toPath());
+                Log.i(TAG, "copied installed voice " + k.getName());
+                copied++;
+            }
+        }
+    }
+
+    private static int rank(String key) {
+        return key.startsWith("hi_") ? 0 : key.startsWith("en_") ? 1 : 2;
     }
 
     /** The few .onnx.json fields inference needs, and Piper's phonemes_to_ids(). */

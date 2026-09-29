@@ -180,10 +180,16 @@ voices" does not, so voices can still be deleted to free space.
   (`PiperAlignment`, the in-Java equivalent of piper1-gpl's
   patch_voice_with_alignment.py). Later loads memory-map it and use its
   weights in place (~15 MB private memory per voice instead of ~80; 1.1-1.3 s
-  loads instead of 2.1-3.5 s; 20-40% lower throughput, inaudible with
-  render-ahead). Each run shrinks ORT's arena (it otherwise keeps ~160 MB of
-  peak per voice); a tiny warm-up run follows every load. XNNPACK was 3x
-  slower; NNAPI is an opt-in switch, off by default (see below).
+  loads instead of 2.1-3.5 s). Each run shrinks ORT's arena (it otherwise
+  keeps ~160 MB of peak per voice); a tiny warm-up run follows every load.
+  Re-measured 2026-09-29 (Priyamvada, 3 rounds): this setup renders 11.4x
+  real time, the same as copying the weights into memory (11.1-11.6x, +77
+  MB); only skipping the arena shrink is faster (12.7x, +160 MB per loaded
+  voice - not worth it). Earlier notes of 20-40% lower throughput for the
+  mapped weights did not reproduce. Chunking was checked too: every
+  sentence ends a chunk, so render-ahead keeps up without gaps down to 2.5x
+  real time (0.3 s of gaps in 135 s at 1.8x, an Enhanced voice here).
+  XNNPACK was 3x slower; NNAPI is an opt-in switch, off by default (see below).
 - **Word timing.** Exact from the model's durations when the IPA words pair
   up one to one with the text's words, else proportional
   (`PiperAudio.alignedWordFrames` / `estimateWordFrames`).
