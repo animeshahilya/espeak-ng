@@ -243,6 +243,15 @@ voices" does not, so voices can still be deleted to free space.
   (10 speakers, public-domain recordings, CC BY 4.0), Kurmanji (90 speakers,
   Common Voice 24, MIT, default speaker 54), Latvian Rudolfs (Latvian Library
   for the Blind audiobooks with permission, CC0) and Sinhala Dilu (MIT).
+  Added 2026-09-29 from the SherpaVoices catalog, each rendered through
+  this fork's phonemes and heard first: Indian English SPICOR
+  (NavGurukul, AGPL-3.0), Tracy ManyVoice (Bryce Beattie, 16 LibriVox
+  speakers, public domain) and Nepali Seto Bagh (Wiseyak, 18 speakers,
+  OpenRAIL). Of SherpaVoices' other 44 Piper voices not carried here, 35
+  are named-person/character clones and the rest lack a license or
+  provenance, are synthetic-data or non-commercial (OpenVoiceOS Dii/Miro),
+  low quality (Sinhala Weerawardhana, 16 kHz), or duplicates. Its Mimic3
+  Gujarati would need a Mimic3 input mode ("#" word separator, own id map).
   Rejected in that scan: clones of named people or game/film characters,
   voices named after Azure voices, proprietary or no-provenance models.
   Sinhala voices lack the fork's prenasal `ⁿ` id (skipped, logged). Each

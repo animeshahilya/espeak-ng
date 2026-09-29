@@ -103,5 +103,50 @@
       "lv_LV-rudolfs-medium.onnx": {"size_bytes": 63516051, "md5_digest": "23e6d2130cf0885107aeb72866136834"},
       "lv_LV-rudolfs-medium.onnx.json": {"size_bytes": 5063, "md5_digest": "459227ff625882d09b377b85db0aeb1f"}
     }
+  },
+  "en_IN-spicor-medium": {
+    "key": "en_IN-spicor-medium",
+    "name": "spicor",
+    "language": {"code": "en_IN", "family": "en", "region": "IN",
+      "name_native": "English", "name_english": "English", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://huggingface.co/navgurukul-ai-labs/text-to-speech-en-IN-piper/resolve/a4ff93ef95684b5dafc3800b99fb78a6b4c30235/",
+    "source": "NavGurukul",
+    "license": "AGPL-3.0",
+    "files": {
+      "en_IN-dataset=spicor-english-base=ljspeech-epochs=1089.onnx": {"size_bytes": 63516050, "md5_digest": "988c4fac66d373306710425380861cdf"},
+      "en_IN-dataset=spicor-english-base=ljspeech-epochs=1089.onnx.json": {"size_bytes": 4858, "md5_digest": "c8184203830e488ca48140af6418cac5"}
+    }
+  },
+  "en_US-tracy_manyvoice-medium": {
+    "key": "en_US-tracy_manyvoice-medium",
+    "name": "tracy_manyvoice",
+    "language": {"code": "en_US", "family": "en", "region": "US",
+      "name_native": "English", "name_english": "English", "country_english": "United States"},
+    "quality": "medium",
+    "num_speakers": 16,
+    "base_url": "https://huggingface.co/agentvibes/piper-custom-voices/resolve/aca138594af5ccd37d79fde299991576a2aaab5f/",
+    "source": "Bryce Beattie (LibriVox)",
+    "license": "Public domain",
+    "files": {
+      "16Speakers.onnx": {"size_bytes": 77100103, "md5_digest": "705b38474d2a57d694c1413e34b0bc21"},
+      "16Speakers.onnx.json": {"size_bytes": 7528, "md5_digest": "5c2c86a9b78e42927750f141fcbc8a86"}
+    }
+  },
+  "ne_NP-seto_bagh-medium": {
+    "key": "ne_NP-seto_bagh-medium",
+    "name": "seto_bagh",
+    "language": {"code": "ne_NP", "family": "ne", "region": "NP",
+      "name_native": "नेपाली", "name_english": "Nepali", "country_english": "Nepal"},
+    "quality": "medium",
+    "num_speakers": 18,
+    "base_url": "https://huggingface.co/Wiseyak/piper_tts/resolve/a8e70625137d209b4f16fdf4686ba46bb114b6ee/",
+    "source": "Wiseyak",
+    "license": "OpenRAIL",
+    "files": {
+      "ne-seto_bagh-medium.onnx": {"size_bytes": 76691724, "md5_digest": "6bd3d62b9635d600fcf3ca5c1c54812e"},
+      "ne-seto_bagh-medium.onnx.json": {"size_bytes": 7085, "md5_digest": "4f5d43c9de9e7105e6c9873072f5757d"}
+    }
   }
 }
