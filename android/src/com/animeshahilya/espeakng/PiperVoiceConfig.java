@@ -58,6 +58,8 @@ final class PiperVoiceConfig {
     /** Multi-code-point "phonemes" merged before the id lookup, longest first. */
     final List<String[]> vowelClusters;
     final int maxClusterLength;
+    /** Fork IPA -> the spelling the voice was trained on (PiperPhonemes.trainedSpellings). */
+    final String[][] trainedSpellings;
 
     private PiperVoiceConfig(Builder b) {
         key = b.key;
@@ -84,6 +86,7 @@ final class PiperVoiceConfig {
             max = Math.max(max, c.length);
         }
         maxClusterLength = max;
+        trainedSpellings = PiperPhonemes.trainedSpellings(usesEspeak() ? espeakVoice : null);
     }
 
     /**

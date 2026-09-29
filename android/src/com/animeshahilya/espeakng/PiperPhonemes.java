@@ -204,11 +204,49 @@ final class PiperPhonemes {
     }
 
     /**
+     * This fork's IPA for sounds upstream eSpeak NG spelled differently,
+     * mapped back to upstream's spelling for voices of the languages built
+     * on the Hindi phoneme table (every published voice was trained on
+     * upstream). Upstream never defined ड़/ढ़ there, so its phonemizer wrote
+     * the raw "r."/"r.h" and the voices learned the flap from that; the
+     * fork's "ɽ" has an id but no training behind it, and was heard as a
+     * garbled or missing sound (Whisper: सड़क/भीड़ -> "साथ"/"भीग"). "ʱ" has no
+     * id at all (NFKC made it "ɦ"). Longest first; eSpeak's own speech is
+     * unaffected.
+     */
+    private static final String[][] INDIC_SPELLINGS = {
+            {"ɽʱ", "r.h"}, // ढ़
+            {"ɽ", "r."},   // ड़, ড়, ੜ, ଡ଼
+            {"ɻ", "r."},   // Malayalam ഴ
+            {"ʱ", "ʰ"},    // breathy stops (Nepali झ "dzʱ", upstream "ɟʰ")
+            {"æ", "ɛ"},    // English loans (बैंक)
+    };
+    private static final String[][] NO_SPELLINGS = {};
+
+    /** Upstream eSpeak NG voices whose phoneme table is built on hi_base (phsource/phonemes). */
+    private static final java.util.Set<String> HI_BASE_LANGUAGES = new java.util.HashSet<>(
+            java.util.Arrays.asList("hi", "ne", "ur", "pa", "ta", "kn", "ml", "gu", "mr", "kok",
+                    "te", "si", "bn", "as", "or", "bpy", "sd"));
+
+    static String[][] trainedSpellings(String espeakVoice) {
+        if (espeakVoice == null) {
+            return NO_SPELLINGS;
+        }
+        final int dash = espeakVoice.indexOf('-');
+        final String language = dash > 0 ? espeakVoice.substring(0, dash) : espeakVoice;
+        return HI_BASE_LANGUAGES.contains(language) ? INDIC_SPELLINGS : NO_SPELLINGS;
+    }
+
+    /**
      * Splits IPA into Piper "phonemes": NFD code points (so "ç" is "c" plus
      * a combining cedilla, as in training), then the voice's vowel clusters
-     * merged back into single symbols.
+     * merged back into single symbols. Fork-only spellings are first put
+     * back the way the voice learned them ({@link #trainedSpellings}).
      */
     static List<String> tokenize(String ipa, PiperVoiceConfig config) {
+        for (String[] spelling : config.trainedSpellings) {
+            ipa = ipa.replace(spelling[0], spelling[1]);
+        }
         final String nfd = Normalizer.normalize(ipa, Normalizer.Form.NFD);
         final List<String> phones = new ArrayList<>(nfd.length());
         for (int i = 0; i < nfd.length(); ) {

@@ -130,9 +130,20 @@ voices" does not, so voices can still be deleted to free space.
   `option_phoneme_input` so user-dictionary `[[...]]` overrides work.
   `PiperPhonemesTest` pins the id encoding to piper-tts 1.8's output for a
   real voice; the fork's own pronunciation changes can yield phonemes a voice
-  has no id for - those are skipped and logged once per voice (measured: none
-  across all Indian-language voices and mixed Hindi/English text, only
-  aspiration/nasal marks in the old ne x_low voice).
+  has no id for - those are skipped and logged once per voice.
+- **Having an id is not enough: the voice must have heard the symbol.**
+  Every published voice was trained on upstream eSpeak's IPA, and Piper's
+  id map is shared by all voices, so a fork-only symbol usually *has* an id
+  that the voice never trained. Upstream never defined `r.`/`r.h` in
+  `hi_base`, so it wrote ड़/ढ़ as the raw text "r."/"r.h" and the voices
+  learned the flap from that; the fork's `ɽ`/`ɽʱ` came out garbled (Whisper
+  large-v3-turbo, 14 Hindi sentences x 3 voices: 0/54 ड़/ढ़ words recognised,
+  CER 13.2%; spelled upstream's way 34/54, CER 7.1% - better than upstream's
+  own phonemes, 8.0%). `PiperPhonemes.trainedSpellings` maps them back for
+  voices of hi_base-family languages only (Pashto etc. keep a real `ɽ`).
+  When the fork changes an Indic language's phonemes, diff the fork's
+  `--ipa` symbol inventory against an upstream build over real text and
+  extend that table for any new symbol.
   `PIPER_TERMINATOR_MASK` also drops `CLAUSE_OPTIONAL_SPACE_AFTER`: with it,
   danda/Urdu/CJK full stops and paragraph ends reached the model with no
   final punctuation (upstream piper-phonemize still has that gap).

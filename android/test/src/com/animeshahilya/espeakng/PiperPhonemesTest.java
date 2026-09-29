@@ -140,6 +140,25 @@ public class PiperPhonemesTest {
                 PiperPhonemes.tokenize("çaɪt", c));
     }
 
+    /** Fork-only Indic IPA goes back to upstream's spelling, which the voices were trained on. */
+    @Test
+    public void indicVoicesGetTheSpellingTheyWereTrainedOn() throws Exception {
+        final String map = "\"phoneme_id_map\": {\"_\": [0]}}";
+        final PiperVoiceConfig hi = PiperVoiceConfig.parse("hi_IN-x-medium",
+                "{\"espeak\": {\"voice\": \"hi\"}," + map);
+        // पढ़ी, सड़क, बैंक
+        assertEquals(Arrays.asList("p", "ʌ", "r", ".", "h", "i", "ː", " ", "s", "ʌ", "r", ".", "ə",
+                "k", " ", "b", "ɛ", "ː", "ŋ", "k"),
+                PiperPhonemes.tokenize("pʌɽʱiː sʌɽək bæːŋk", hi));
+        final PiperVoiceConfig ne = PiperVoiceConfig.parse("ne_NP-x-medium",
+                "{\"espeak\": {\"voice\": \"ne\"}," + map);
+        assertEquals(Arrays.asList("d", "z", "ʰ"), PiperPhonemes.tokenize("dzʱ", ne));
+        // Other languages keep their own ɽ (Pashto defines it upstream too).
+        final PiperVoiceConfig ps = PiperVoiceConfig.parse("ps_AF-x-medium",
+                "{\"espeak\": {\"voice\": \"ps\"}," + map);
+        assertEquals(Arrays.asList("ɽ"), PiperPhonemes.tokenize("ɽ", ps));
+    }
+
     @Test
     public void clauseBoundariesAreAlignedToText() {
         // eSpeak's one-character look-ahead reports "Hello, t|his" as the cut.
