@@ -271,7 +271,8 @@ final class PiperDownloads {
     }
 
     static boolean isSafePath(String path) {
-        return path != null && path.matches("[A-Za-z0-9_./\\-]{1,256}") && !path.contains("..");
+        // "=": NavGurukul's Indian English file is named "...dataset=spicor-...".
+        return path != null && path.matches("[A-Za-z0-9_./=\\-]{1,256}") && !path.contains("..");
     }
 
     private static File catalogFile(Context storageContext) {
