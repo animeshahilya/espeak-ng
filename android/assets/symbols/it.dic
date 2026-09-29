@@ -1,0 +1,631 @@
+﻿#locale/it/symbols.dic
+#A part of NonVisual Desktop Access (NVDA)
+#Copyright (c) 2011-2024 NVDA contributors.
+#This file is covered by the GNU General Public License.
+
+complexSymbols:
+# identifier	regexp
+# Sentence endings.
+. sentence ending	(?<=[^\s.])\.(?=[\"'”’)\s]|$)
+! sentence ending	(?<=[^\s!])\!(?=[\"'”’)\s]|$)
+? sentence ending	(?<=[^\s?])\?(?=[\"'”’)\s]|$)
+# Phrase endings.
+; phrase ending	(?<=[^\s;]);(?=\s|$)
+: phrase ending	(?<=[^\s:]):(?=\s|$)
+# Series of dots used for visual presentation, e.g. in table of contents
+multiple .	\.{4,}
+# Others
+decimal point	(?<![^\d -])\.(?=\d)
+in-word '	(?<=[^\W_])['’]
+negative number	(?<!\w)[-−]{1}(?=[$£€¥.]?\d)
+
+symbols:
+# identifier	replacement[[	level][	preserve]][	# display name]
+
+# Complex symbols
+. sentence ending	punto	all	always
+! sentence ending	punto esclamativo	all	always
+? sentence ending	punto di domanda	all	always
+; phrase ending	punto e virgola	most	always
+: phrase ending	due punti	most	always
+multiple .	più puntini	all	always
+decimal point		none	always
+in-word '	apostrofo	all	norep
+negative number	meno	none	norep
+
+# Whitespace
+\0	vuoto	char	# null
+\t	tab
+\n	nuova riga	char
+\f	fine pagina	none
+\r	ritorno a capo	char
+ 	spazio	char
+ 	spazio	char	# no-break space
+
+# Standard punctuation/symbols
+!	punto esclamativo	all
+！	punto esclamativo pieno	all
+"	virgolette	most
+\#	cancelletto	some
+$	dollari	all	norep
+£	lire sterline	all	norep
+€	euro	all	norep
+¢	Centesimi	all	norep
+¥	Yen	all	norep
+₹	Rupie	some	norep
+ƒ	fiorini	all	norep
+¤	segno di valuta	all	norep
+%	percento	some
+‰	per mille	some
+&	and	some
+'	apostrofo	all
+(	aperta parentesi	most	always
+)	chiusa parentesi	most	always
+*	asterisco	some
+,	virgola	all	always
+、	virgola ideografica	all	always
+،	virgola araba	all	always
+-	trattino	most	always
+.	punto	some
+．	punto pieno	some
+/	barra	some
+:	due punti	most	norep
+：	due punti pieni	most	norep
+;	punto e virgola	most
+؛	punto e virgola arabo	most
+?	punto di domanda	all
+؟	punto di domanda arabo	all
+@	chiocciola	some
+[	aperta quadra	most
+]	chiusa quadra	most
+\\	controbarra	most
+^	accento circonflesso	most
+_	sottolineato	most
+`	accento grave	most
+{	aperta graffa	most
+}	chiusa graffa	most
+|	barra verticale	most
+¦	barra interrotta	most
+~	tilde	most
+¡	punto esclamativo invertito	some
+¿	punto interrogativo invertito	some
+·	punto medio	most
+‚	virgoletta in basso	most
+„	doppie virgolette in basso	some
+′	primo	some
+″	doppio primo	some
+‴	triplo primo	some
+
+# Other characters
+•	puntato	some
+…	punto punto punto	all	always
+...	punto punto punto	all	always
+“	aperte virgolette	most
+”	chiuse virgolette	most
+‘	aperto apostrofo	most
+’	chiuso apostrofo	most
+–	Trattino corto	most	always
+—	trattino lungo	most	always
+­	trattino d'unione	most
+⁃	Trattino	none
+●	Cerchio	most
+○	Cerchio bianco	most
+¨	dieresi	most
+¯	macron	most
+´	acuto	most
+¸	cediglia	most
+‎	marcatore da sinistra a destra	char
+‏	marcatore da destra a sinistra	char
+¶	indicatore di paragrafo	most
+■	quadrato nero	some
+▪	quadratino nero	some
+◾	Quadrato nero	some
+□	Quadrato bianco	some
+◦	Punto elenco bianco	some
+⇒	doppia freccia a destra	some
+⇨	freccia a destra bianca	some
+➔	freccia a destra	some
+➢	Punta di freccia a destra	some
+⮚	Punta di freccia a destra	some
+❖	Segno di quadri con X	some
+♣	Segno di fiori	some
+♦	segno di quadri	some
+◆	Segno di quadri	some
+§	sezione	all
+°	gradi	some
+«	aperte doppie virgolette angolari	most	always
+»	chiuse doppie virgolette angolari	most	always
+µ	micro	some
+⁰	apice 0	some
+¹	apice 1	some
+²	apice 2	some
+³	apice 3	some
+⁴	apice 4	some
+⁵	apice 5	some
+⁶	apice 6	some
+⁷	apice 7	some
+⁸	apice 8	some
+⁹	apice 9	some
+⁺	apice più	some
+⁻	apice meno	some
+⁼	apice uguale	some
+⁽	apice aperta tonda	some
+⁾	apice chiusa Tonda	some
+ⁿ	apice n	some
+₀	pedice 0	some
+₁	pedice 1	some
+₂	pedice 2	some
+₃	pedice 3	some
+₄	pedice 4	some
+₅	pedice 5	some
+₆	pedice 6	some
+₇	pedice 7	some
+₈	pedice 8	some
+₉	pedice 9	some
+₊	pedice piu	some
+₋	pedice meno	some
+₌	pedice uguale	some
+₍	pedice Aperta tonda	some
+₎	pedice Chiusa Tonda	some
+®	marchio registrato	some
+™	Marchio di fabbrica	some
+©	Copyright	some
+℠	Marchio di servizio	some
+←	freccia sinistra	some
+↑	freccia su	some
+→	freccia destra	some
+↓	freccia giù	some
+✓	segno di spunta	some
+✔	segno di spunta	some
+🡺	freccia destra	some
+†	pugnale	some
+‡	doppio pugnale	some
+‣	Puntato triangolare	none
+✗	Puntato a X	none
+⊕	più cerchiato	none
+⊖	meno cerchiato	none
+⇄	freccia destra su freccia sinistra	none
+
+#Arithmetic operators
++	più	some
+−	meno	some
+×	per	some
+⋅	per	some
+⨯	per	none
+∕	diviso	some
+⁄	diviso	some
+÷	diviso	some
+∓	meno o più	some
+±	più o meno	some
+
+#Set operations
+∖	meno none
+⊍	unione disgiunta di	none
+𝒫	insieme delle parti di	none
+𝔓	insieme potenza di	none
+℘	potenza dell'insieme	none
+∁	insieme complementare di	none
+
+#Set relations and set constructions
+∅	Insieme vuoto	none
+⊂	sottoinsieme proprio di	none
+⊄	non è un sottoinsieme di	none
+⊃	sovrainsieme proprio di	none
+⊅	non è un sovrainsieme di	none
+⊆	sottoinsieme di o uguale a	none
+⊈	né un sottoinsieme di né uguale a	none
+⊇	sovrainsieme di o uguale a	none
+⊉	né un sovrainsieme di né uguale a	none
+⊌	insieme multiplo	none
+
+#Equality signs
+=	uguale	some
+≃	asintoticamente uguale a	none
+≄	non asintoticamente uguale a	none
+≅	approssimativamente uguale a	none
+≆	approssimativamente ma non realmente uguale a	none
+≈	quasi uguale a	none
+≌	tutto uguale a	none
+≍	equivalente a	none
+≭	non equivalente a	none
+≎	geometricamente equivalente a	none
+≑	geometricamente uguale a	none
+≚	equiangolare a	none
+≬	tra	none
+≠	non uguale a	none
+≡	congruente a 	none
+≣	strettamente congruente a	none
+≢	non congruente a	none
+∼	simile a	none
+≙	è stimato	none
+≟	è equivalente a? (domanda)	none
+
+#comparison signs
+<	minore di	some
+>	maggiore di	some
+≤	minore o uguale a	none
+≦	minore o uguale a	none
+≪	molto più piccolo di	none
+≥	maggiore o uguale a	none
+≧	maggiore o uguale a	none
+≫	molto più grande di	none
+≶	minore o maggiore di	none
+≷	maggiore o minore di	none
+≮	non minore di 	none
+≯	non maggiore di	none
+
+#Functions
+⁻	funzione inversa	some
+∘	composta	none
+∂	derivata parziale	none
+∇	gradiente di	none
+
+#Geometry and linear Algebra
+⃗	vettore tra	none
+△	triangolo	none
+▭	rettangolo	none
+∟	angolo retto	none
+∠	angolo	none
+∥	parallelo a	none
+∦	non parallelo a	none
+⊥	perpendicolare a	none
+⟂	ortogonale a	none
+‖	norma del vettore	none
+̂	normalizza	none
+∿	onda sinusoidale	none
+∡	Angolo misurato	none
+∢	angolo sferico	none
+
+#Logical operators
+∀	per ogni	none
+∃	esiste	none
+∄	non esiste	none
+⇏	non implica	none
+⇐	è implicato da	none
+
+#Other mathematical Operators
+∈	appartenente a	none
+∉	non appartiene a	none
+∊	piccolo simbolo di appartenenza	none
+∋	contiene come elemento	none
+∌	non contiene come elemento	none
+∍	piccolo contiene come elemento	none
+∎	fine dimostrazione	none
+∏	prodotto n-ario	none
+∐	coprodotto n-ario	none
+∑	sommatoria	none
+√	radice quadrata	none
+∛	radice cubica	none
+∜	radice quarta	none
+∝	proporzionale a	none
+∞	infinito	none
+∧	e	none
+∨	o	none
+¬	not	none
+∩	intersezione	none
+∪	unione	none
+∫	integrale	none
+∬	integrale doppio	none
+∭	integrale triplo	none
+∮	integrale di contorno	none
+∯	integrale di superficie	none
+∰	integrale triplo	none
+∱	integrale in senso orario	none
+∲	integrale di contorno in senso orario	none
+∳	integrale di contorno in senso antiorario	none
+∴	perciò	none
+∵	perché	none
+∶	tale che	none
+∷	proporzione	none
+∹	eccede	none
+∺	proporzione geometrica	none
+≀	prodotto corona	none
+≏	differenza fra	none
+≐	si avvicina al limite	none
+∙	punto	none
+∣	tale che	none
+∤	non tale che	none
+≔	è uguale per definizione a	none
+≕	è uguale per definizione a 	none
+≺	non è preferito a	none
+≻	è preferito a none
+⊀	non precede	none
+⊁	non succede a	none
+
+# Vulgar Fractions U+2150 to U+215E
+¼	un quarto	none
+½	un mezzo	none
+¾	tre quarti	none
+⅐	un settimo	none
+⅑	un nono	none
+⅒	un decimo	none
+⅓	un terzo	none
+⅔	due terzi	none
+⅕	un quinto	none
+⅖	due quinti	none
+⅗	tre quinti	none
+⅘	quattro quinti	none
+⅙	un sesto	none
+⅚	cinque sesti	none
+⅛	un ottavo	none
+⅜	tre ottavi	none
+⅝	cinque ottavi	none
+⅞	sette ottavi	none
+
+#Number sets
+𝔸	numeri algebrici	none
+ℂ	numeri complessi	none
+ℑ	parte immaginaria di un numero complesso	none
+ℍ	quaternioni	none
+ℕ	numeri naturali	none
+𝕁	numeri non negativi (interi)	none
+ℚ	numeri razionali	none
+ℝ	numeri reali	none
+ℜ	parte reale del numero complesso	none
+ℤ	numeri interi	none
+ℵ	Numero aleph	none
+ℶ	Numero beth	none
+
+# Miscellaneous Technical
+⌘	Mac tasto Command	none
+⌥	mac tasto Option	none
+
+## 6-dot cell
+### note: the character on the next line is U+2800 (braille space), not U+0020 (ASCII space)
+⠀	spazio
+⠁	braille 1
+⠂	braille 2
+⠃	braille 1 2
+⠄	braille 3
+⠅	braille 1 3
+⠆	braille 2 3
+⠇	braille 1 2 3
+⠈	braille 4
+⠉	braille 1 4
+⠊	braille 2 4
+⠋	braille 1 2 4
+⠌	braille 3 4
+⠍	braille 1 3 4
+⠎	braille 2 3 4
+⠏	braille 1 2 3 4
+⠐	braille 5
+⠑	braille 1 5
+⠒	braille 2 5
+⠓	braille 1 2 5
+⠔	braille 3 5
+⠕	braille 1 3 5
+⠖	braille 2 3 5
+⠗	braille 1 2 3 5
+⠘	braille 4 5
+⠙	braille 1 4 5
+⠚	braille 2 4 5
+⠛	braille 1 2 4 5
+⠜	braille 3 4 5
+⠝	braille 1 3 4 5
+⠞	braille 2 3 4 5
+⠟	braille 1 2 3 4 5
+⠠	braille 6
+⠡	braille 1 6
+⠢	braille 2 6
+⠣	braille 1 2 6
+⠤	braille 3 6
+⠥	braille 1 3 6
+⠦	braille 2 3 6
+⠧	braille 1 2 3 6
+⠨	braille 4 6
+⠩	braille 1 4 6
+⠪	braille 2 4 6
+⠫	braille 1 2 4 6
+⠬	braille 3 4 6
+⠭	braille 1 3 4 6
+⠮	braille 2 3 4 6
+⠯	braille 1 2 3 4 6
+⠰	braille 5 6
+⠱	braille 1 5 6
+⠲	braille 2 5 6
+⠳	braille 1 2 5 6
+⠴	braille 3 5 6
+⠵	braille 1 3 5 6
+⠶	braille 2 3 5 6
+⠷	braille 1 2 3 5 6
+⠸	braille 4 5 6
+⠹	braille 1 4 5 6
+⠺	braille 2 4 5 6
+⠻	braille 1 2 4 5 6
+⠼	braille 3 4 5 6
+⠽	braille 1 3 4 5 6
+⠾	braille 2 3 4 5 6
+⠿	braille 1 2 3 4 5 6
+## 8-braille cell
+⡀	braille 7
+⡁	braille 1 7
+⡂	braille 2 7
+⡃	braille 1 2 7
+⡄	braille 3 7
+⡅	braille 1 3 7
+⡆	braille 2 3 7
+⡇	braille 1 2 3 7
+⡈	braille 4 7
+⡉	braille 1 4 7
+⡊	braille 2 4 7
+⡋	braille 1 2 4 7
+⡌	braille 3 4 7
+⡍	braille 1 3 4 7
+⡎	braille 2 3 4 7
+⡏	braille 1 2 3 4 7
+⡐	braille 5 7
+⡑	braille 1 5 7
+⡒	braille 2 5 7
+⡓	braille 1 2 5 7
+⡔	braille 3 5 7
+⡕	braille 1 3 5 7
+⡖	braille 2 3 5 7
+⡗	braille 1 2 3 5 7
+⡘	braille 4 5 7
+⡙	braille 1 4 5 7
+⡚	braille 2 4 5 7
+⡛	braille 1 2 4 5 7
+⡜	braille 3 4 5 7
+⡝	braille 1 3 4 5 7
+⡞	braille 2 3 4 5 7
+⡟	braille 1 2 3 4 5 7
+⡠	braille 6 7
+⡡	braille 1 6 7
+⡢	braille 2 6 7
+⡣	braille 1 2 6 7
+⡤	braille 3 6 7
+⡥	braille 1 3 6 7
+⡦	braille 2 3 6 7
+⡧	braille 1 2 3 6 7
+⡨	braille 4 6 7
+⡩	braille 1 4 6 7
+⡪	braille 2 4 6 7
+⡫	braille 1 2 4 6 7
+⡬	braille 3 4 6 7
+⡭	braille 1 3 4 6 7
+⡮	braille 2 3 4 6 7
+⡯	braille 1 2 3 4 6 7
+⡰	braille 5 6 7
+⡱	braille 1 5 6 7
+⡲	braille 2 5 6 7
+⡳	braille 1 2 5 6 7
+⡴	braille 3 5 6 7
+⡵	braille 1 3 5 6 7
+⡶	braille 2 3 5 6 7
+⡷	braille 1 2 3 5 6 7
+⡸	braille 1 2 3 7
+⡹	braille 1 4 5 6 7
+⡺	braille 2 4 5 6 7
+⡻	braille 1 2 4 5 6 7
+⡼	braille 3 4 5 6 7
+⡽	braille 1 3 4 5 6 7
+⡾	braille 2 3 4 5 6 7
+⡿	braille 1 2 3 4 5 6 7
+⢀	braille 8
+⢁	braille 1 8
+⢂	braille 2 8
+⢃	braille 1 2 8
+⢄	braille 3 8
+⢅	braille 1 3 8
+⢆	braille 2 3 8
+⢇	braille 1 2 3 8
+⢈	braille 4 8
+⢉	braille 1 4 8
+⢊	braille 2 4 8
+⢋	braille 1 2 4 8
+⢌	braille 3 4 8
+⢍	braille 1 3 4 8
+⢎	braille 2 3 4 8
+⢏	braille 1 2 3 4 8
+⢐	braille 5 8
+⢑	braille 1 5 8
+⢒	braille 2 5 8
+⢓	braille 1 2 5 8
+⢔	braille 3 5 8
+⢕	braille 1 3 5 8
+⢖	braille 2 3 5 8
+⢗	braille 1 2 3 5 8
+⢘	braille 4 5 8
+⢙	braille 1 4 5 8
+⢚	braille 2 4 5 8
+⢛	braille 1 2 4 5 8
+⢜	braille 3 4 5 8
+⢝	braille 1 3 4 5 8
+⢞	braille 2 3 4 5 8
+⢟	braille 1 2 3 4 5 8
+⢠	braille 6 8
+⢡	braille 1 6 8
+⢢	braille 2 6 8
+⢣	braille 1 2 6 8
+⢤	braille 3 6 8
+⢥	braille 1 3 6 8
+⢦	braille 2 3 6 8
+⢧	braille 1 2 3 6 8
+⢨	braille 4 6 8
+⢩	braille 1 4 6 8
+⢪	braille 2 4 6 8
+⢫	braille 1 2 4 6 8
+⢬	braille 3 4 6 8
+⢭	braille 1 3 4 6 8
+⢮	braille 2 3 4 6 8
+⢯	braille 1 2 3 4 6 8
+⢰	braille 5 6 8
+⢱	braille 1 5 6 8
+⢲	braille 2 5 6 8
+⢳	braille 1 2 5 6 8
+⢴	braille 3 5 6 8
+⢵	braille 1 3 5 6 8
+⢶	braille 2 3 5 6 8
+⢷	braille 1 2 3 5 6 8
+⢸	braille 1 2 3 8
+⢹	braille 1 4 5 6 8
+⢺	braille 2 4 5 6 8
+⢻	braille 1 2 4 5 6 8
+⢼	braille 3 4 5 6 8
+⢽	braille 1 3 4 5 6 8
+⢾	braille 2 3 4 5 6 8
+⢿	braille 1 2 3 4 5 6 8
+⣀	braille 7 8
+⣁	braille 1 7 8
+⣂	braille 2 7 8
+⣃	braille 1 2 7 8
+⣄	braille 3 7 8
+⣅	braille 1 3 7 8
+⣆	braille 2 3 7 8
+⣇	braille 1 2 3 7 8
+⣈	braille 4 7 8
+⣉	braille 1 4 7 8
+⣊	braille 2 4 7 8
+⣋	braille 1 2 4 7 8
+⣌	braille 3 4 7 8
+⣍	braille 1 3 4 7 8
+⣎	braille 2 3 4 7 8
+⣏	braille 1 2 3 4 7 8
+⣐	braille 5 7 8
+⣑	braille 1 5 7 8
+⣒	braille 2 5 7 8
+⣓	braille 1 2 5 7 8
+⣔	braille 3 5 7 8
+⣕	braille 1 3 5 7 8
+⣖	braille 2 3 5 7 8
+⣗	braille 1 2 3 5 7 8
+⣘	braille 4 5 7 8
+⣙	braille 1 4 5 7 8
+⣚	braille 2 4 5 7 8
+⣛	braille 1 2 4 5 7 8
+⣜	braille 3 4 5 7 8
+⣝	braille 1 3 4 5 7 8
+⣞	braille 2 3 4 5 7 8
+⣟	braille 1 2 3 4 5 7 8
+⣠	braille 6 7 8
+⣡	braille 1 6 7 8
+⣢	braille 2 6 7 8
+⣣	braille 1 2 6 7 8
+⣤	braille 3 6 7 8
+⣥	braille 1 3 6 7 8
+⣦	braille 2 3 6 7 8
+⣧	braille 1 2 3 6 7 8
+⣨	braille 4 6 7 8
+⣩	braille 1 4 6 7 8
+⣪	braille 2 4 6 7 8
+⣫	braille 1 2 4 6 7 8
+⣬	braille 3 4 6 7 8
+⣭	braille 1 3 4 6 7 8
+⣮	braille 2 3 4 6 7 8
+⣯	braille 1 2 3 4 6 7 8
+⣰	braille 5 6 7 8
+⣱	braille 1 5 6 7 8
+⣲	braille 2 5 6 7 8
+⣳	braille 1 2 5 6 7 8
+⣴	braille 3 5 6 7 8
+⣵	braille 1 3 5 6 7 8
+⣶	braille 2 3 5 6 7 8
+⣷	braille 1 2 3 5 6 7 8
+⣸	braille 1 2 3 7 8
+⣹	braille 1 4 5 6 7 8
+⣺	braille 2 4 5 6 7 8
+⣻	braille 1 2 4 5 6 7 8
+⣼	braille 3 4 5 6 7 8
+⣽	braille 1 3 4 5 6 7 8
+⣾	braille 2 3 4 5 6 7 8
+⣿	braille 1 2 3 4 5 6 7 8

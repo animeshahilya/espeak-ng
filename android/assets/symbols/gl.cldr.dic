@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	chave de apertura	-
+‾	liña alta	-
+_	trazo baixo	-
+-	menos	-
+‐	trazo	-
+–	trazo longo	-
+—	raia	-
+―	barra horizontal	-
+・	punto medio katakana	-
+,	coma	-
+،	coma árabe	-
+、	coma ideográfica	-
+;	punto e coma	-
+؛	punto e coma árabe	-
+:	dous puntos	-
+!	signo de exclamación	-
+¡	signo de exclamación invertido	-
+?	signo de interrogación	-
+¿	signo de interrogación invertido	-
+؟	signo de interrogación árabe	-
+‽	interrogación con exclamación	-
+.	punto	-
+…	puntos suspensivos	-
+。	punto ideográfico	-
+·	punto medio	-
+'	aspas simples rectas	-
+‘	apóstrofo esquerdo	-
+’	apóstrofo dereito	-
+‚	apóstrofo baixo dereito	-
+“	aspas esquerdas	-
+”	aspas dereitas	-
+„	aspas baixas dereitas	-
+«	aspas angulares esquerdas	-
+»	aspas angulares dereitas	-
+)	paréntese de peche	-
+[	corchete de apertura	-
+]	corchete de peche	-
+}	chave de peche	-
+〈	corchete angular de apertura	-
+〉	corchete angular de peche	-
+《	corchetes angulares duplos de apertura	-
+》	corchetes angulares duplos de peche	-
+「	corchete esquinado de apertura	-
+」	corchete esquinado de peche	-
+『	corchete esquinado oco de apertura	-
+』	corchete esquinado oco de peche	-
+【	corchete lenticular de apertura	-
+】	corchete lenticular de peche	-
+〔	corchete de tartaruga de apertura	-
+〕	corchete de tartaruga de peche	-
+〖	corchete lenticular oco de apertura	-
+〗	corchete lenticular oco de peche	-
+§	sección	-
+¶	caldeirón	-
+@	arroba	-
+*	asterisco	-
+/	barra	-
+\	barra inversa	-
+&	et	-
+%	porcentaxe	-
+‰	por mil	-
+†	signo da cruz	-
+‡	signo da dobre cruz	-
+•	viñeta	-
+‧	punto de separación	-
+′	prima	-
+″	segunda	-
+‴	terceira	-
+‸	operador exponencial	-
+※	marca de referencia	-
+⁂	asterismo	-
+`	acento grave	-
+´	acento agudo	-
+^	acento circunflexo	-
+¨	diérese	-
+°	grao	-
+℗	copyright de gravación sonora	-
+←	frecha apuntando cara a esquerda	-
+↚	frecha cara á esquerda con trazo	-
+→	frecha apuntando cara a dereita	-
+↛	frecha cara á dereita con trazo	-
+↑	frecha apuntando cara arriba	-
+↓	frecha apuntando cara abaixo	-
+↜	frecha ondulada cara á esquerda	-
+↝	frecha ondulada cara á dereita	-
+↞	frecha con dúas puntas cara á esquerda	-
+↟	frecha con dúas puntas cara arriba	-
+↠	frecha con dúas puntas cara á dereita	-
+↡	frecha con dúas puntas cara abaixo	-
+↢	frecha con cola cara á esquerda	-
+↣	frecha con cola cara á dereita	-
+↤	frecha cara á esquerda desde unha barra	-
+↥	frecha cara arriba desde unha barra	-
+↦	frecha cara á dereita desde unha barra	-
+↧	frecha cara abaixo desde unha barra	-
+↨	frecha cara arriba e cara abaixo con base	-
+↫	frecha en lazo cara á esquerda	-
+↬	frecha en lazo cara á dereita	-
+↭	frecha ondulada cara á esquerda e cara á dereita	-
+↯	frecha en zigzag cara abaixo	-
+↰	frecha cara arriba coa punta cara á esquerda	-
+↱	frecha cara arriba coa punta cara á dereita	-
+↲	frecha cara abaixo coa punta cara á esquerda	-
+↳	frecha cara abaixo coa punta cara á dereita	-
+↴	frecha cara á dereita coa esquina cara abaixo	-
+↵	frecha cara á esquerda coa esquina cara abaixo	-
+↶	frecha en semicírculo xirando cara á esquerda	-
+↷	frecha en semicírculo xirando cara á dereita	-
+↸	frecha cara ao noroeste cunha barra longa	-
+↹	frecha cara á esquerda cunha barra sobre frecha cara á dereita cunha barra	-
+↺	frecha en círculo aberto xirando cara á esquerda	-
+↻	frecha en círculo aberto xirando cara á dereita	-
+↼	arpón cara á esquerda coa punta cara arriba	-
+↽	arpón cara á esquerda coa punta cara abaixo	-
+↾	arpón cara arriba coa punta cara á dereita	-
+↿	arpón cara arriba coa punta cara á esquerda	-
+⇀	arpón cara á dereita coa punta cara arriba	-
+⇁	arpón cara á dereita coa punta cara abaixo	-
+⇂	arpón cara abaixo coa punta cara á dereita	-
+⇃	arpón cara abaixo coa punta cara á esquerda	-
+⇄	frecha cara á dereita sobre frecha cara á esquerda	-
+⇅	frechas apuntando cara arriba e cara abaixo	-
+⇆	frechas cara a esquerda e dereita	-
+⇇	par de frechas cara á esquerda	-
+⇈	par de frechas cara arriba	-
+⇉	par de frechas cara á dereita	-
+⇊	par de frechas cara abaixo	-
+⇋	arpón cara á esquerda sobre arpón cara á dereita	-
+⇌	arpón cara á dereita sobre arpón cara á esquerda	-
+⇐	frecha dobre cara á esquerda	-
+⇍	frecha dobre cará a esquerda con trazo	-
+⇑	frecha dobre cara arriba	-
+⇒	frecha dobre cara á dereita	-
+⇏	frecha dobre cara á dereita con trazo	-
+⇓	dobre	-
+⇔	frecha dobre cara á esquerda e cara á dereita	-
+⇎	frecha dobre cara á esquerda e cara á dereita con trazo	-
+⇖	frecha dobre cara ao noroeste	-
+⇗	frecha dobre cara ao nordeste	-
+⇘	frecha dobre cara ao sueste	-
+⇙	frecha dobre cara ao suroeste	-
+⇚	frecha tripla cara á esquerda	-
+⇛	frecha tripla cara á dereita	-
+⇜	frecha esborranchada cara á esquerda	-
+⇝	frecha esborranchada cara á dereita	-
+⇞	frecha cara arriba con trazo dobre	-
+⇟	frecha cara abaixo con trazo dobre	-
+⇠	frecha descontinua cara á esquerda	-
+⇡	frecha descontinua cara arriba	-
+⇢	frecha descontinua cara á dereita	-
+⇣	frecha descontinua cara abaixo	-
+⇤	frecha cara á esquerda con barra vertical	-
+⇥	frecha cara á dereita con barra vertical	-
+⇦	frecha baleira cara á esquerda	-
+⇧	frecha baleira cara arriba	-
+⇨	frecha baleira cara á dereita	-
+⇩	frecha baleira cara abaixo	-
+⇪	frecha baleira cara arriba desde barra	-
+⇵	frecha cara abaixo xunto a frecha cara arriba	-
+∀	para todo	-
+∂	diferencial parcial	-
+∃	existe	-
+∅	conxunto baleiro	-
+∆	incremento	-
+∇	nabla	-
+∈	elemento de	-
+∉	non é un elemento	-
+∋	contén como membro	-
+∎	fin da demostración	-
+∏	produto n-ario	-
+∑	sumatorio n-ario	-
++	signo máis	-
+±	signo máis-menos	-
+÷	signo de división	-
+×	signo de multiplicación	-
+<	menor que	-
+≮	non menor que	-
+=	igual	-
+≠	non igual	-
+>	maior que	-
+≯	non maior que	-
+¬	negación	-
+|	liña vertical	-
+~	til	-
+−	signo menos	-
+⁻	menos en superíndice	-
+∓	menos ou máis	-
+∕	barra de división	-
+⁄	barra de fracción	-
+∗	operador asterisco	-
+∘	operador anel	-
+∙	operador de viñeta	-
+√	raíz cadrada	-
+∝	proporcional	-
+∞	signo do infinito	-
+∟	ángulo recto	-
+∠	ángulo	-
+∣	divide	-
+∥	paralelo	-
+∧	e lóxica	-
+∩	intersección	-
+∪	unión	-
+∫	integral	-
+∬	integral dobre	-
+∮	integral de contorno	-
+∴	entón	-
+∵	porque	-
+∶	razón	-
+∷	proporción	-
+∼	operador til	-
+∽	til invertido	-
+∾	s deitada invertida	-
+≃	asintoticamente igual	-
+≅	aproximadamente igual	-
+≈	case igual	-
+≌	todo igual	-
+≒	aproximadamente igual á imaxe	-
+≖	círculo en igual	-
+≡	idéntico a	-
+≣	estritamente equivalente	-
+≤	menor ou igual a	-
+≥	maior ou igual a	-
+≦	menor sobre igual	-
+≧	maior sobre igual	-
+≪	moito menor que	-
+≫	moito maior que	-
+≬	entre	-
+≳	maior que ou equivalente	-
+≺	precede	-
+≻	sucede	-
+⊁	non sucede	-
+⊂	subconxunto de	-
+⊃	superconxunto	-
+⊆	subconxunto igual a	-
+⊇	superconxunto igual a	-
+⊕	máis nun círculo	-
+⊖	menos nun círculo	-
+⊗	multiplicación nun círculo	-
+⊘	división nun círculo	-
+⊙	operador punto nun círculo	-
+⊚	operador anel nun círculo	-
+⊛	operador asterisco nun círculo	-
+⊞	máis nun cadrado	-
+⊟	menos nun cadrado	-
+⊥	chatola cara arriba	-
+⊮	non forza	-
+⊰	precede baixo relación	-
+⊱	sucede baixo relación	-
+⋭	non contén como subgrupo normal igual a	-
+⊶	orixinal	-
+⊹	matriz hermitiana conxugada	-
+⊿	triángulo rectángulo	-
+⋁	ou lóxico n-ario	-
+⋂	intersección n-aria	-
+⋃	unión n-aria	-
+⋅	operador punto	-
+⋆	operador estrela	-
+⋈	unión natural	-
+⋒	dobre intersección	-
+⋘	considerablemente menor que	-
+⋙	considerablemente maior que	-
+⋮	elipse vertical	-
+⋯	elipse horizontal centrada	-
+⋰	elipse diagonal da dereita cara a arriba	-
+⋱	elipse diagonal da dereita cara a abaixo	-
+⨧	máis cun dous en subíndice	-
+⨯	produto cruzado de vectores	-
+⨼	produto interior	-
+⩣	ou lóxico con barra inferior dobre	-
+⩽	menor que ou igual inclinado	-
+⪍	menor que sobre similar ou igual	-
+⪚	igual de liña dobre ou maior que	-
+⪺	sucede sobre non case igual a	-
+⭐	estrela	-
+⬆	frecha cara arriba	-
+↗	frecha cara arriba á dereita	-
+↘	frecha cara abaixo á dereita	-
+⬇	frecha cara abaixo	-
+↙	frecha cara abaixo á esquerda	-
+⬅	frecha cara á esquerda	-
+↖	frecha cara arriba á esquerda	-
+↕	frecha cara arriba e abaixo	-
+↔	frecha cara á esquerda e a dereita	-
+↮	frecha cara á esquerda e cara á dereita con trazo	-
+↩	frecha curvada cara á esquerda	-
+↪	frecha curvada cara á dereita	-
+⤴	frecha curvada cara arriba	-
+⤵	frecha curvada cara abaixo	-
+〰	liña ondulada	-
+⭕	círculo groso	-
+〽	signo de alternancia	-
+©	copyright	-
+®	marca rexistrada “R”	-
+™	marca rexistrada “TM”	-
+ℹ	punto de información	-
+㊗	botón "parabéns" en xaponés	-
+㊙	botón "secreto" en xaponés	-
+⬛	cadrado grande negro	-
+⬜	cadrado grande branco	-
+¢	centavo	-
+$	dólar	-
+£	libra (divisa)	-
+¥	ien	-
+₢	cruzeiro	-
+₣	franco francés	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	penique alemán	-
+₱	peso	-
+₳	austral	-
+₶	libra tornesa	-
+₷	spesmilo	-
+₹	rupia india	-
+₽	rublo	-
+₿	bitcoin	-
+¹	un en superíndice	-
+²	dous en superíndice	-
+³	tres en superíndice	-
+₨	rupia	-
+µ	signo de micro	-
+﷼	rial	-
+¤	moeda descoñecida	-
+֏	dram armenio	-
+؋	afgani afgán	-
+৳	taka de Bangladesh	-
+฿	baht tailandés	-
+៛	riel camboxano	-
+₡	colón costarriqueño	-
+₦	naira nixeriano	-
+₪	novo shequel israelí	-
+₫	dong vietnamita	-
+₭	kip laosiano	-
+₮	tugrik mongol	-
+₲	guaraní paraguaio	-
+₴	hrivna ucraína	-
+₵	cedi ghanés	-
+₸	tenge kazako	-
+₺	lira turca	-
+₼	manat acerbaixano	-
+₾	lari xeorxiano	-
+₧	Peseta española	-

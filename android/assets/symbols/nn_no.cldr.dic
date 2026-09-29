@@ -1,0 +1,172 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+-	bindestrek-minus-teikn	-
+―	vassrett strek	-
+!	utropsteikn	-
+¡	opp-ned utropsteikn	-
+?	spørsmålsteikn	-
+¿	opp-ned spørsmålsteikn	-
+؟	arabisk spørsmålsteikn	-
+'	enkelt rett hermeteikn	-
+‘	enkelt krøllete venstre hermeteikn	-
+’	enkelt krøllete høgre hermeteikn	-
+‚	enkelt krøllete lågt venstre hermeteikn	-
+“	dobbelt krøllete venstre hermeteikn	-
+”	dobbelt krøllete høgre hermeteikn	-
+„	dobbelt krøllete lågt venstre hermeteikn	-
+«	venstre hermeteikn	-
+»	høgre hermeteikn	-
+)	høgre parentes	-
+]	slutthakeparentes	-
+}	høgre krøllparentes	-
+〉	sluttvinkelparentes	-
+《	dobbel startvinkelparentes	-
+》	dobbel sluttvinkelparentes	-
+「	starthjørneparentes	-
+」	slutthjørneparentes	-
+『	hol starthjørneparentes	-
+』	hol slutthjørneparentes	-
+【	svart startlinseparentes	-
+】	svart sluttlinseparentes	-
+〔	venstre skjelpaddeskalparentes	-
+〕	høgre skjelpaddeskalparentes	-
+〖	hol startlinseparentes	-
+〗	hol sluttlinseparentes	-
+§	paragrafteikn	-
+¶	avsnittsteikn	-
+&	og-teikn	-
+†	krossteikn	-
+‡	dobbelkrossteikn	-
+•	punktteikn	-
+‧	stavingsmerke	-
+′	primteikn	-
+″	dobbelt primteikn	-
+‴	trippelt primteikn	-
+‸	innsetjingsteikn	-
+°	gradeteikn	-
+→	pil mot høgre	-
+↛	pil høgre med skråstrek	-
+↝	bølgepil mot høgre	-
+↞	pil venstre med to mothakar	-
+↟	pil opp med to mothakar	-
+↠	pil høgre med to mothakar	-
+↡	pil ned med to mothakar	-
+↣	pil høgre med styrefjær	-
+↤	pil venstre frå loddrett strek	-
+↥	pil opp frå vassrett strek	-
+↦	pil høgre frå loddrett strek	-
+↧	pil ned frå vassrett strek	-
+↬	pil høgre med løkke	-
+↭	bølgepil mot høgre og venstre	-
+↱	pil opp med spiss mot høgre	-
+↳	pil ned med spiss mot høgre	-
+↴	pil høgre som snur ned	-
+↶	halvsirkelpil mot klokka	-
+↷	halvsirkelpil med klokka	-
+↹	pil venstre over pil høgre mot loddrette strek	-
+↺	pil open sirkel mot klokka	-
+↻	pil open sirkel med klokka	-
+↾	harpunpil opp med mothake mot høgre	-
+⇀	harpunpil høgre med mothake opp	-
+⇁	harpunpil høgre med mothake ned	-
+⇂	harpunpil ned med mothake mot høgre	-
+⇄	pil høgre over pil venstre	-
+⇅	pil oppover framfor pil nedover	-
+⇆	pil mot venstre over pil mot høgre	-
+⇉	parallelle piler mot høgre	-
+⇋	harpunpil venstre over harpunpil høgre	-
+⇌	harpunpil høgre over harpunpil venstre	-
+⇒	dobbeltpil høgre	-
+⇏	dobbeltpil høgre med strek	-
+⇔	dobbeltpil begge vegar	-
+⇎	dobbeltpil begge vegar med strek	-
+⇗	dobbeltpil nordaust	-
+⇘	dobbeltpil søraust	-
+⇛	trippelpil høgre	-
+⇝	snirkelpil høgre	-
+⇞	pil opp med to strekar	-
+⇟	pil ned med to strekar	-
+⇠	stipla pil venstre	-
+⇡	stipla pil opp	-
+⇢	stipla pil høgre	-
+⇣	stipla pil ned	-
+⇥	pil høgre mot loddrett strek	-
+⇦	hol pil venstre	-
+⇧	hol pil opp	-
+⇨	hol pil høgre	-
+⇩	hol pil ned	-
+⇪	hol pil opp frå vassrett strek	-
+∅	den tomme mengda	-
+∉	er ikkje element i	-
+∋	inneheld som medlem	-
+∑	sum av ei rekkje	-
++	plussteikn	-
+÷	divisjonsteikn	-
+×	multiplikasjonsteikn	-
+≮	er ikkje mindre enn	-
+≠	er ikkje lik	-
+≯	er ikkje større enn	-
+−	minusteikn	-
+⁻	heva minusteikn	-
+∞	uendelegheitsteikn	-
+∫	integralteikn	-
+∬	dobbeltintegralteikn	-
+∽	omvend tilde	-
+∾	spegelvend liggande s	-
+≅	tilnærma lik	-
+≈	er tilnærma lik	-
+≒	tilnærma lik biletet	-
+≖	ring i likskapsteikn	-
+≦	mindre enn over likskapsteikn	-
+≧	større enn over likskapsteikn	-
+≪	mykje mindre enn	-
+≫	mykje større enn	-
+≳	større enn tilnærma lik	-
+≺	kjem før	-
+≻	kjem etter	-
+⊁	kjem ikkje etter	-
+⊂	delmengd av	-
+⊃	supermengd	-
+⊆	delmengd lik	-
+⊇	supermengd lik	-
+⊕	plussteikn i sirkel	-
+⊖	minusteikn i sirkel	-
+⊗	multipliseringsteikn i sirkel	-
+⊞	plussteikn i firkant	-
+⊟	minusteikn i firkant	-
+⊮	tvingar ikkje	-
+⊰	kjem før under relasjon	-
+⊱	kjem etter under relasjon	-
+⋭	inneheld ikkje som normal delgruppe lik	-
+⊿	rettvinkla trekant	-
+⋈	naturleg skøyt	-
+⋘	veldig mykje mindre enn	-
+⋙	veldig mykje større enn	-
+⋯	sentrert vassrett ellipse	-
+⋰	diagonal ellipse opp mot høgre	-
+⋱	diagonal ellipse ned mot høgre	-
+⨧	plussteikn med senka to-tal	-
+⨯	kryssprodukt av vektorar	-
+⩣	logisk eller dobbelt understreka	-
+⩽	mindre enn eller lik med likskapsteikn på skrå	-
+⪚	likskapsteikn over større enn	-
+⪺	kjem etter over ikkje tilnærma lik	-
+↗	pil opp-høgre	-
+↘	pil ned -høgre	-
+↔	pil venstre-høgre	-
+↮	pil begge vegar med skråstrek	-
+↪	pil som bøyer mot høgre	-
+〰	bølgjestrek	-
+⭕	tjukk raud sirkel	-
+㊙	«hemmeleg» på japansk	-
+⬜	stor kvit firkant	-
+₽	rublar	-
+¹	heva eittal	-
+²	heva total	-
+³	heva tretal	-
+µ	mikroteikn	-
+¤	ukjend valuta	-
+₡	kostarikanske colón	-
+₪	nye israelske sheklar	-
+₲	paraguayanske guaraní	-
+₺	tyrkiske lira	-

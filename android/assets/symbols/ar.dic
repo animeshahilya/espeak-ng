@@ -1,0 +1,173 @@
+# A part of NonVisual Desktop Access (NVDA)
+# Copyright (C) 2011-2025 NV Access Limited
+# This file may be used under the terms of the GNU General Public License, version 2 or later, as modified by the NVDA license.
+# For full terms and any additional permissions, see the NVDA license file: https://github.com/nvaccess/nvda/blob/master/copying.txt
+complexSymbols:
+# identifier	regexp
+# Sentence endings.
+. sentence ending	(?<=[^\s.])\.(?=[\"'”’)\s]|$)
+؟ sentence ending	(?<=[^\s؟])؟(?=[\"'”’)\s]|$)
+! sentence ending	(?<=[^\s!])\!(?=[\"'”’)\s]|$)
+# Phrase endings.
+; phrase ending	(?<=[^\s;]);(?=\s|$)
+: phrase ending	(?<=[^\s:]):(?=\s|$)
+# Others
+decimal point	(?<![^\d -])\.(?=\d)
+
+symbols:
+# identifier	replacement[[	level][	preserve]][	# display name]
+
+# Complex symbols
+. sentence ending	نقطة	all	always
+! sentence ending	تعجب	all	always
+? sentence ending	استفهام	all	always
+؟ sentence ending	استفهام	all	always
+; phrase ending	فاصلة منقوطة	most	always
+: phrase ending	نقطتان رأسيَّتان	most	always
+decimal point		none	always
+in-word '	apostrophe	all	norep
+negative number	ناقص	none	norep
+
+# Whitespace
+\0	خالٍ	char	# null
+\t	انتقال
+\n	السطر التالي	char
+\f	فاصل الصفحة	none
+\r	حد السطر	char
+ 	مسافة	char
+ 	مسافة	char	# no-break space
+
+# Standard punctuation/symbols
+!	تعجُّب	all
+"	تنصيص	most
+\#	رقم	some
+$	دولار	all	norep
+£	جنيه إسترليني	all	norep
+€	يورو	all	norep
+¢	سنتس	all	norep
+¥	ين	all	norep
+₹	روبية	some	norep
+ƒ	فلورين	all	norep
+¤	الرمز العام للعملات	all	norep
+%	بالمائة	some
+‰	لكل ميل	some
+&	و	some
+'	apostrophe	all
+(	فَتْحُ قَوْسٍ هلالي	most	always
+)	إغلاقُ قَوْسٍ هلالي	most	always
+*	نجمة	some
+,	فاصلة	all	always
+،	فاصلة	all	always
+-	شَرطة	most	always
+.	نقطة	some
+/	شَرطة مائلة	some
+:	نقطتان رأسيَّتان	most	norep
+;	فاصلة منقوطة	most
+؛	فاصلة منقوطة	most
+?	استفهام	all
+؟	استفهام	all
+@	at	some
+[	فَتْحُ قَوْسٍ مُرَبّعْ	most
+]	إغلاقُ قَوْسٍ مُرَبّعْ	most
+\	شَرطةٌ مائلة للخلف	most
+^	أُس	most
+_	خط سُفْلِي	most
+`	نبر الإطالة	most
+{	فَتْحُ قَوْسٍ مُزَخرَف	most
+}	إغلاقُ قَوْسٍ مُزَخرَف	most
+|	شريط	most
+~	tilda	most
+¡	علامة تعجُّب مقلوبة	some
+¿	علامة استفهام مقلوبة mark	some
+·	نقطة في الوسط	most
+‚	علامة اقتباس منخفضة منفردة	most
+„	علامة اقتباس منخفضة مزدوجة	most
+
+# Other characters
+•	نقطة تعداد	some
+…	نقطة نقطة نقطة	all	always
+...	نقطة نقطة نقطة	all	always
+	bullet	some
+“	فتح تنصيص	most
+”	إغلاق تنصيص	most
+‘	left tick	most
+’	right tick	most
+–	شَرطة قصيرة	most
+—	شَرطة طويلة	most
+­	شرطة خفيفة	most
+⁃	شرطة مُنَقَّطة	none
+●	دائرة	most
+○	دائرة بيضاء	most
+¨	diaeresis	most
+⁺	superscript plus	some
+‎	علامة يسار إلى يمن	char
+‏	علامة يمين إلى يسار	char
+¶	علامة الفقرة	most
+■	مربع أَسود
+▪	مربَّع صغير أَسود	some
+□	مربَّع أبيض	some
+◦	رمز نقطي مفَرَّغ	some
+♦	ألماسة سوداء	some
+◆	مُعيَّن ممتلئ	some
+⇨	سهم مفرَّغ إلى اليمين	some
+➔	سهم يُشير لليمين	some
+§	قسم
+°	درجات
+«	علامة تنصيص مزدوجة للفتح	none
+»	علامة تنصيص مزدوجة للإغلاق	none
+µ	مايكرو	some
+⁰	أُس 0	some
+¹	أُس1
+²	أُس2
+³	أُس3
+⁴	أُس4	some
+⁵	أُس5	some
+⁶	أُس6	some
+⁷	أُس7	some
+⁸	أُس8	some
+⁹	أُس9	some
+⁺	أُس زائد	some
+⁼	أُس يساوي	some
+⁽	أُس قوس أيسر	some
+⁾	أُس قوس أيمن	some
+®	مُسجَّل	some
+™	علامة تجارية	some
+©	علامة حقوق النشر	some
+℠	علامة الخدمة	some
+←	سهم لليسار	some
+↑	سهم لأعلى	some
+→	سهم لليمين	some
+↓	سهم لأسفل	some
+✓	مُعلم
+✔	معلم
+🡺	سهم لليمين	some
+⇄	سهم لليمين على سهم لليسار	none
+⇒	سهم مزدوج لليمين	none
+
+#Arithmetic operators
++	زائد	some
+−	ناقص	some
+×	ضرب
+∕	شَرْطة القسمة المائلة	some
+⁄	شرطة مائلة في كسر	some
+÷	قسمة
+∓	ناقص أو زائد	some
+±	زائد أو ناقص	some
+
+#Equality signs
+=	يساوي	some
+≃	يساوي تقاربيا	none
+≄	لا يساوي بشكل متقارب	none
+≅	يساوي تقريبا	none
+≆	تقريبا ولكن لا يساويه في الحقيقة equal to	none
+≠	لا يساوي	none
+<	أصغر من	most
+>	أكبر من	most
+
+
+
+# arabic symbols
+،	فاصلة	all	always
+؟	استفهام	all
+ـ	شَرطةٌ منخفضة	char
+

@@ -40,11 +40,17 @@ public final class Earcons {
 
     /** Text with every sounding symbol the level announces replaced by its marker. */
     public static String mark(String text, int level, String customChars) {
+        return mark(text, level, customChars, null);
+    }
+
+    /** {@link #mark(String, int, String)} with the voice language's symbol levels. */
+    public static String mark(String text, int level, String customChars, String languageTag) {
         StringBuilder sb = null;
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             char m = markerFor(c);
-            if (m != 0 && NvdaSymbolProcessor.isAnnounced(String.valueOf(c), level, customChars)) {
+            if (m != 0 && NvdaSymbolProcessor.isAnnounced(String.valueOf(c), level, customChars,
+                    languageTag)) {
                 if (sb == null) {
                     sb = new StringBuilder(text);
                 }

@@ -1,0 +1,626 @@
+﻿#locale/da/symbols.dic
+#A part of NonVisual Desktop Access (NVDA)
+#Copyright (c) 2011-2024 NVDA Contributors
+#This file is covered by the GNU General Public License.
+
+complexSymbols:
+# identifier	regexp
+# Sentence endings.
+. sentence ending	(?<=[^\s.])\.(?=[\"'”’)\s]|$)
+! sentence ending	(?<=[^\s!])\!(?=[\"'”’)\s]|$)
+? sentence ending	(?<=[^\s?])\?(?=[\"'”’)\s]|$)
+# Phrase endings.
+; phrase ending	(?<=[^\s;]);(?=\s|$)
+: phrase ending	(?<=[^\s:]):(?=\s|$)
+# Series of dots used for visual presentation, e.g. in table of contents
+multiple .	\.{4,}
+# Others
+decimal point	(?<=\d)\.(?=\d)
+in-word '	(?<=[^\W_])['’]
+negative number	(?<!\w)[-−]{1}(?=[$£€¥.]?\d)
+
+symbols:
+# identifier	replacement[[	level][	preserve]][	# display name]
+
+# Complex symbols
+. sentence ending	punkt	all	always
+! sentence ending	udråbstegn	all	always
+? sentence ending	spørgsmålstegn	all	always
+; phrase ending	semikolon	most	always
+: phrase ending	kolon	most	always
+multiple .	flere prikker	all	always
+decimal point		none	always
+in-word '	apostrof	all	norep
+negative number	minus	none	norep
+
+# Whitespace
+\0	blank	# null
+\t	tab
+\n	linjeskift	char
+\f	sideskift	none
+\r	vognretur	char
+ 	mellemrum
+ 	blødt mellemrum	# no-break space
+
+# Standard punctuation/symbols
+!	udråbstegn	all
+"	anførselstegn	most
+\#	nummertegn	some
+$	dollar	all	norep
+£	pund	all	norep
+€	euro	all	norep
+¢	Cents	all	norep
+¥	Yen	all	norep
+₹	Rupee	some	norep
+ƒ	f	all	norep
+¤	valutategn	all	norep
+%	procent	some
+‰	promille	some
+&	og	some
+'	apostrof	all
+(	venstre parentes	most	always
+)	højre parentes	most	always
+*	stjerne	most
+,	komma	all	always
+、	ideografisk komma	all	always
+،	arabisk komma	all	always
+-	streg	most	always
+.	punkt	some
+/	skråstreg	some
+:	kolon	most	norep
+;	semikolon	most
+؛	arabisk semikolon	most
+?	spørgsmålstegn	all
+؟	arabisk spørgsmålstegn	all
+@	snabel a	some
+[	venstre klamme	most
+]	højre klamme	most
+\\	omvendt skråstreg	most
+^	accent circonflex	most
+_	understregning	most
+`	accent grave	most
+{	venstre tuborg	most
+}	højre tuborg	most
+|	lodret streg	most
+¦	brudt lodret streg	most
+~	tilde	most
+¡	omvendt udråbstegn point	some
+¿	omvendt spørgsmålstegn	some
+·	ophøjet punktum	most
+‚	enkelt anførselstegn	most
+„	dobbelt sænket anførselstegn	most
+′	prime	some
+″	dobbel prime	some
+‴	tre prime	some
+
+# Other characters
+•	punkttegn	some
+…	prik prik prik	all	always
+...	prik prik prik	all	always
+“	anførselstegn begynd	most
+”	anførselstegn slut	most
+‘	venstre apostrof	most
+’	højre apostrof	most
+–	kort tankestreg	most	always
+—	lang tankestreg	most	always
+­	blød bindestreg	most
+⁃	listepunkt	none
+●	cirkel	most
+○	hvid cirkel	most
+¨	tremmer	most
+¯	macron	most
+´	accent aigu	most
+¸	cedille	most
+‎	venstre mod højre tegn	char
+‏	højre mod venstre tegn	char
+¶	afsnitstegn	most
+■	sort firkant	some
+▪	sort firkant	some
+◾	sort firkant	some
+□	hvid firkant	some
+◦	hvidt punkttegn	some
+⇨	hvid højre pil	some
+➔	dobbelte højre pil	some
+➢	pilespids til højre	some
+❖	black diamond minus white X	some
+♣	klør	some
+♦	ruder	some
+◆	ruder	some
+§	paragraf	all
+°	grader	some
+«	dobbel venstre vinkelparentes	mostalways
+»	dobbel højre vinkelparentes	mostalways
+µ	my	some
+⁰	hævet 0	some
+¹	i første	some
+²	i anden	some
+³	i tredje	some
+⁴	i fjerde	some
+⁵	i femte	some
+⁶	i sjette	some
+⁷	i syvende	some
+⁸	i ottende	some
+⁹	i niende	some
+⁺	hævet plus	some
+⁼	hævet lig med	some
+⁽	hævet venstre parentes	some
+⁾	hævet højre parentes	some
+ⁿ	hævet n	some
+₀	sænket 0	some
+₁	sænket i første	some
+₂	sænket i anden	some
+₃	sænket i tredje	some
+₄	sænket i fjerde	some
+₅	sænket i femte	some
+₆	sænket i sjette	some
+₇	sænket i syvende	some
+₈	sænket i ottende	some
+₉	sænket i niende	some
+₊	sænket plus	some
+₋	sænket minus	some
+₌	sænket lig med	some
+₍	sænket venstre parentes	some
+₎	sænket højre parentes	some
+®	registreret	some
+™	varemærke	some
+©	Copyright	some
+℠	ServiceMark	some
+←	venstre pil	some
+↑	pil op	some
+→	højre pil	some
+↓	pil ned	some
+✓	check	some
+✔	check	some
+🡺	højre pil	some
+†	dagger	some
+‡	dobbel dagger	some
+‣	trekantet listepunkt	none
+✗	x-formet listepunkt	none
+⊕	cirklet plus	none
+⊖	cirklet minus	none
+⇄	højre pil over venstre pil	none
+⇒	dobbelt -højre pil	none
+
+#
++	plus	some
+−	minus	some
+×	gange	some
+⋅	gange	some
+⨯	gange	none
+∕	division	some
+	⁄	brøkdel	some
+÷	divider med	some
+∓	minus eller plus	some
+±	plus eller Minus	some
+
+#Set operations
+∖	set minus	none
+⊍	set union	none
+𝒫	power set of the set	none
+𝔓	power set of the set	none
+℘	power set of the set	none
+∁	complement of the set	none
+
+#Set relations and set constructions
+∅	tom mængde	none
+⊂	delmængde af	none
+⊄	ikke delmængde af	none
+⊃	indeholder som delmængde	none
+⊅	indeholder ikke	none
+⊆	delmængde eller lig med	none
+⊈	ikke en delmængde af eller lig med	none
+⊇	indeholder eller er lig med	none
+⊉	indeholder ikke eller er ikke lig med	none
+⊌	multiset	none
+
+#Equality signs
+=	lig med	some
+≃	asymptotisk lig med	none
+≄	ikke asymptotisk lig med	none
+≅	cirka lig med	none
+≆	cirka men ikke lig med	none
+≈	næsten lig med	none
+≌	alle lig med	none
+≍	lignende til	none
+≭	ikke lignende 	none
+≎	geometrisk lignende	none
+≑	geometrisk lig med	none
+≚	ligevinklet til	none
+≬	mellem	none
+≠	ikke lig med	none
+≡	identisk med	none
+≣	fuldkommen identisk med	none
+≢	ikke identisk med	none
+∼	tilde-operator	none
+≙	estunates	none
+≟	questioned equal to	none
+
+#comparison signs
+<	mindre end	some
+>	større end	some
+≤	mindre end eller lig med	none
+≦	mindre end eller lig med	none
+≪	meget mindre end	none
+≥	større end eller lig med	none
+≧	større end eller lig med	none
+≫	meget større end	none
+≶	mindre end eller større end	none
+≷	større end mindre end	none
+≮	ikke mindre end	none
+≯	ikke større end	none
+
+#Functions
+⁻	hævet minus	some
+∘	ringoperator	none
+∂	delvis afledning	none
+∇	NABLA	none
+
+#Geometry and linear Algebra
+⃗	vektor mellem	none
+△	trekant	none
+▭	rektangel	none
+∟	ret vinkel	none
+∠	vinkel	none
+∥	parallel med	none
+∦	ikke parallel med	none
+⊥	vinkelret med	none
+⟂	ortogonal med	none
+‖	norm of vector	none
+̂	normaliserer	none
+∿	sinusbølge	none
+∡	målt vinkel	none
+∢	sfærisk vinkel	none
+
+#Logical operators
+∀	for alle	none
+∃	der eksisterer	none
+∄	der eksisterer ikke	none
+⇏	dobbeltpil mod højre med skråstreg	none
+⇐	dobbeltpil mod venstre	none
+
+#Other mathematical Operators
+∈	er element i	none
+∉	er ikke element i	none
+∊	Lille er element i	none
+∋	indeholder som element	none
+∌	indeholder ikke som element	none
+∍	lille indeholder som element	none
+∎	slut på bevis	none
+∏	n-ær produkt	none
+∐	n-ær koprodukt	none
+∑	n-ær summering	none
+√	kvadratrod	none
+∛	kubikrod	none
+∜	fjerde rod	none
+∝	proportionel med	none
+∞	uendeligt	none
+∧	logisk og	none
+∨	logisk eller	none
+¬	logisk negation	none
+∩	fælles mængde	none
+∪	foreningsmængde	none
+∫	integral	none
+∬	dobbelt Integral	none
+∭	tredobbelt Integral	none
+∮	lukket kurveintegral	none
+∯	overfladeintegral	none
+∰	volume integral	none
+∱	integral med uret	none
+∲	kurveintegral med uret	none
+∳	kurveintegral mod uret	none
+∴	derfor	none
+∵	fordi	none
+∶	forhold	none
+∷	proportion	none
+∹	overskydende	none
+∺	geometrisk proportion	none
+≀	wreath product	none
+≏	difference mellem	none
+≐	tæt på grænsen	none
+∙	punktoperator	none
+∣	deler	none
+∤	deler ikke	none
+≔	kolon lig med	none
+≕	lig med kolon	none
+≺	kommer før	none
+≻	mængder	none
+⊀	kommer ikke før	none
+⊁	kommer ikke efter	none
+
+# Vulgar Fractions U+2150 to U+215E
+¼	en kvart	none
+½	en halv	none
+¾	trekvart	none
+⅐	en syvendedel	none
+⅑	en niendedel	none
+⅒	en tiendedel	none
+⅓	en tredjedel	none
+⅔	to tredjedele	none
+⅕	en femtedel	none
+⅖	to femtedele	none
+⅗	tre femtedele	none
+⅘	fire femtedele	none
+⅙	en sjettedel	none
+⅚	fem sjettedele	none
+⅛	en ottendedel	none
+⅜	tre ottendedele	none
+⅝	fem ottendedele	none
+⅞	syv ottendedele	none
+
+#Number sets
+𝔸	algebraiske tal	none
+ℂ	komplekse tal	none
+ℑ	imaginær del af komplekst tal	none
+ℍ	kvaternioner	none
+ℕ	naturlige tal	none
+𝕁	ikke-negative (hele) tal	none
+ℚ	rationelle tal	none
+ℝ	reelle tal	none
+ℜ	reel del af komplekst tal	none
+ℤ	heltal	none
+ℵ	aleph kardinaltal	none
+ℶ	beth kardinaltal	none
+
+# Miscellaneous Technical
+⌘	mac-kommandotast	none
+⌥	mac-alternativtast	none
+
+## 6-dot cell
+### note: the character on the next line is U+2800 (braille space), not U+0020 (ASCII space)
+⠀	space
+⠁	braille 1
+⠂	braille 2
+⠃	braille 1 2
+⠄	braille 3
+⠅	braille 1 3
+⠆	braille 2 3
+⠇	braille 1 2 3
+⠈	braille 4
+⠉	braille 1 4
+⠊	braille 2 4
+⠋	braille 1 2 4
+⠌	braille 3 4
+⠍	braille 1 3 4
+⠎	braille 2 3 4
+⠏	braille 1 2 3 4
+⠐	braille 5
+⠑	braille 1 5
+⠒	braille 2 5
+⠓	braille 1 2 5
+⠔	braille 3 5
+⠕	braille 1 3 5
+⠖	braille 2 3 5
+⠗	braille 1 2 3 5
+⠘	braille 4 5
+⠙	braille 1 4 5
+⠚	braille 2 4 5
+⠛	braille 1 2 4 5
+⠜	braille 3 4 5
+⠝	braille 1 3 4 5
+⠞	braille 2 3 4 5
+⠟	braille 1 2 3 4 5
+⠠	braille 6
+⠡	braille 1 6
+⠢	braille 2 6
+⠣	braille 1 2 6
+⠤	braille 3 6
+⠥	braille 1 3 6
+⠦	braille 2 3 6
+⠧	braille 1 2 3 6
+⠨	braille 4 6
+⠩	braille 1 4 6
+⠪	braille 2 4 6
+⠫	braille 1 2 4 6
+⠬	braille 3 4 6
+⠭	braille 1 3 4 6
+⠮	braille 2 3 4 6
+⠯	braille 1 2 3 4 6
+⠰	braille 5 6
+⠱	braille 1 5 6
+⠲	braille 2 5 6
+⠳	braille 1 2 5 6
+⠴	braille 3 5 6
+⠵	braille 1 3 5 6
+⠶	braille 2 3 5 6
+⠷	braille 1 2 3 5 6
+⠸	braille 4 5 6
+⠹	braille 1 4 5 6
+⠺	braille 2 4 5 6
+⠻	braille 1 2 4 5 6
+⠼	braille 3 4 5 6
+⠽	braille 1 3 4 5 6
+⠾	braille 2 3 4 5 6
+⠿	braille 1 2 3 4 5 6
+## 8-braille cell
+⡀	braille 7
+⡁	braille 1 7
+⡂	braille 2 7
+⡃	braille 1 2 7
+⡄	braille 3 7
+⡅	braille 1 3 7
+⡆	braille 2 3 7
+⡇	braille 1 2 3 7
+⡈	braille 4 7
+⡉	braille 1 4 7
+⡊	braille 2 4 7
+⡋	braille 1 2 4 7
+⡌	braille 3 4 7
+⡍	braille 1 3 4 7
+⡎	braille 2 3 4 7
+⡏	braille 1 2 3 4 7
+⡐	braille 5 7
+⡑	braille 1 5 7
+⡒	braille 2 5 7
+⡓	braille 1 2 5 7
+⡔	braille 3 5 7
+⡕	braille 1 3 5 7
+⡖	braille 2 3 5 7
+⡗	braille 1 2 3 5 7
+⡘	braille 4 5 7
+⡙	braille 1 4 5 7
+⡚	braille 2 4 5 7
+⡛	braille 1 2 4 5 7
+⡜	braille 3 4 5 7
+⡝	braille 1 3 4 5 7
+⡞	braille 2 3 4 5 7
+⡟	braille 1 2 3 4 5 7
+⡠	braille 6 7
+⡡	braille 1 6 7
+⡢	braille 2 6 7
+⡣	braille 1 2 6 7
+⡤	braille 3 6 7
+⡥	braille 1 3 6 7
+⡦	braille 2 3 6 7
+⡧	braille 1 2 3 6 7
+⡨	braille 4 6 7
+⡩	braille 1 4 6 7
+⡪	braille 2 4 6 7
+⡫	braille 1 2 4 6 7
+⡬	braille 3 4 6 7
+⡭	braille 1 3 4 6 7
+⡮	braille 2 3 4 6 7
+⡯	braille 1 2 3 4 6 7
+⡰	braille 5 6 7
+⡱	braille 1 5 6 7
+⡲	braille 2 5 6 7
+⡳	braille 1 2 5 6 7
+⡴	braille 3 5 6 7
+⡵	braille 1 3 5 6 7
+⡶	braille 2 3 5 6 7
+⡷	braille 1 2 3 5 6 7
+⡸	braille 1 2 3 7
+⡹	braille 1 4 5 6 7
+⡺	braille 2 4 5 6 7
+⡻	braille 1 2 4 5 6 7
+⡼	braille 3 4 5 6 7
+⡽	braille 1 3 4 5 6 7
+⡾	braille 2 3 4 5 6 7
+⡿	braille 1 2 3 4 5 6 7
+⢀	braille 8
+⢁	braille 1 8
+⢂	braille 2 8
+⢃	braille 1 2 8
+⢄	braille 3 8
+⢅	braille 1 3 8
+⢆	braille 2 3 8
+⢇	braille 1 2 3 8
+⢈	braille 4 8
+⢉	braille 1 4 8
+⢊	braille 2 4 8
+⢋	braille 1 2 4 8
+⢌	braille 3 4 8
+⢍	braille 1 3 4 8
+⢎	braille 2 3 4 8
+⢏	braille 1 2 3 4 8
+⢐	braille 5 8
+⢑	braille 1 5 8
+⢒	braille 2 5 8
+⢓	braille 1 2 5 8
+⢔	braille 3 5 8
+⢕	braille 1 3 5 8
+⢖	braille 2 3 5 8
+⢗	braille 1 2 3 5 8
+⢘	braille 4 5 8
+⢙	braille 1 4 5 8
+⢚	braille 2 4 5 8
+⢛	braille 1 2 4 5 8
+⢜	braille 3 4 5 8
+⢝	braille 1 3 4 5 8
+⢞	braille 2 3 4 5 8
+⢟	braille 1 2 3 4 5 8
+⢠	braille 6 8
+⢡	braille 1 6 8
+⢢	braille 2 6 8
+⢣	braille 1 2 6 8
+⢤	braille 3 6 8
+⢥	braille 1 3 6 8
+⢦	braille 2 3 6 8
+⢧	braille 1 2 3 6 8
+⢨	braille 4 6 8
+⢩	braille 1 4 6 8
+⢪	braille 2 4 6 8
+⢫	braille 1 2 4 6 8
+⢬	braille 3 4 6 8
+⢭	braille 1 3 4 6 8
+⢮	braille 2 3 4 6 8
+⢯	braille 1 2 3 4 6 8
+⢰	braille 5 6 8
+⢱	braille 1 5 6 8
+⢲	braille 2 5 6 8
+⢳	braille 1 2 5 6 8
+⢴	braille 3 5 6 8
+⢵	braille 1 3 5 6 8
+⢶	braille 2 3 5 6 8
+⢷	braille 1 2 3 5 6 8
+⢸	braille 1 2 3 8
+⢹	braille 1 4 5 6 8
+⢺	braille 2 4 5 6 8
+⢻	braille 1 2 4 5 6 8
+⢼	braille 3 4 5 6 8
+⢽	braille 1 3 4 5 6 8
+⢾	braille 2 3 4 5 6 8
+⢿	braille 1 2 3 4 5 6 8
+⣀	braille 7 8
+⣁	braille 1 7 8
+⣂	braille 2 7 8
+⣃	braille 1 2 7 8
+⣄	braille 3 7 8
+⣅	braille 1 3 7 8
+⣆	braille 2 3 7 8
+⣇	braille 1 2 3 7 8
+⣈	braille 4 7 8
+⣉	braille 1 4 7 8
+⣊	braille 2 4 7 8
+⣋	braille 1 2 4 7 8
+⣌	braille 3 4 7 8
+⣍	braille 1 3 4 7 8
+⣎	braille 2 3 4 7 8
+⣏	braille 1 2 3 4 7 8
+⣐	braille 5 7 8
+⣑	braille 1 5 7 8
+⣒	braille 2 5 7 8
+⣓	braille 1 2 5 7 8
+⣔	braille 3 5 7 8
+⣕	braille 1 3 5 7 8
+⣖	braille 2 3 5 7 8
+⣗	braille 1 2 3 5 7 8
+⣘	braille 4 5 7 8
+⣙	braille 1 4 5 7 8
+⣚	braille 2 4 5 7 8
+⣛	braille 1 2 4 5 7 8
+⣜	braille 3 4 5 7 8
+⣝	braille 1 3 4 5 7 8
+⣞	braille 2 3 4 5 7 8
+⣟	braille 1 2 3 4 5 7 8
+⣠	braille 6 7 8
+⣡	braille 1 6 7 8
+⣢	braille 2 6 7 8
+⣣	braille 1 2 6 7 8
+⣤	braille 3 6 7 8
+⣥	braille 1 3 6 7 8
+⣦	braille 2 3 6 7 8
+⣧	braille 1 2 3 6 7 8
+⣨	braille 4 6 7 8
+⣩	braille 1 4 6 7 8
+⣪	braille 2 4 6 7 8
+⣫	braille 1 2 4 6 7 8
+⣬	braille 3 4 6 7 8
+⣭	braille 1 3 4 6 7 8
+⣮	braille 2 3 4 6 7 8
+⣯	braille 1 2 3 4 6 7 8
+⣰	braille 5 6 7 8
+⣱	braille 1 5 6 7 8
+⣲	braille 2 5 6 7 8
+⣳	braille 1 2 5 6 7 8
+⣴	braille 3 5 6 7 8
+⣵	braille 1 3 5 6 7 8
+⣶	braille 2 3 5 6 7 8
+⣷	braille 1 2 3 5 6 7 8
+⣸	braille 1 2 3 7 8
+⣹	braille 1 4 5 6 7 8
+⣺	braille 2 4 5 6 7 8
+⣻	braille 1 2 4 5 6 7 8
+⣼	braille 3 4 5 6 7 8
+⣽	braille 1 3 4 5 6 7 8
+⣾	braille 2 3 4 5 6 7 8
+⣿	braille 1 2 3 4 5 6 7 8

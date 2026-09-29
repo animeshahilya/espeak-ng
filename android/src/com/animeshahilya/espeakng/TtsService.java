@@ -344,6 +344,7 @@ public class TtsService extends TextToSpeechService {
             try {
                 UserDictionaryManager.getInstance(mStorageContext);
                 NvdaEmoji.warmup();
+                NvdaSymbolProcessor.warmup(Locale.getDefault().toLanguageTag());
                 if (mPreferences.getBoolean(VoiceSettings.PREF_HINGLISH, false)) {
                     HinglishReader.warmup();
                 }

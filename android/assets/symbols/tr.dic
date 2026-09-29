@@ -1,0 +1,817 @@
+# A part of NonVisual Desktop Access (NVDA)
+# Copyright (C) 2011-2026 NV Access Limited
+# This file may be used under the terms of the GNU General Public License, version 2 or later, as modified by the NVDA license.
+# For full terms and any additional permissions, see the NVDA license file: https://github.com/nvaccess/nvda/blob/master/copying.txt
+
+complexSymbols:
+# identifier	regexp
+# Sentence endings.
+. sentence ending	(?<=[^\s.])\.(?=[\"'”’)\s]|$)
+! sentence ending	(?<=[^\s!])\!(?=[\"'”’)\s]|$)
+? sentence ending	(?<=[^\s?])\?(?=[\"'”’)\s]|$)
+# Phrase endings.
+; phrase ending	(?<=[^\s;]);(?=\s|$)
+: phrase ending	(?<=[^\s:]):(?=\s|$)
+# Series of dots used for visual presentation, e.g. in table of contents
+multiple .	\.{4,}
+# Others
+decimal point	(?<![^\d -])\.(?=\d)
+in-word '	(?<=[^\W_])['’]
+negative number	(?<!\w)[-−]{1}(?=[$£€¥.]?\d)
+
+symbols:
+# identifier	replacement[[	level][	preserve]][	# display name]
+
+# Complex symbols
+. sentence ending	nokta	all	always
+! sentence ending	ünlem	all	always
+? sentence ending	soru	all	always
+; phrase ending	noktalıvirgül	most	always
+: phrase ending	ikinokta	most	always
+multiple .	çoklu nokta	all	always
+decimal point		none	always
+in-word '	apostrof	all	norep
+negative number	eksi	none	norep
+
+# Whitespace
+\0	boş	char	# null
+\t	sekme
+\n	yeni satır	char
+\f	sayfa geçişi	none
+\r	satır sonu	char
+ 	aralık	char
+ 	aralık	char	# no-break space (U+00A0)
+
+# Standard punctuation/symbols
+!	ünlem	all
+！	tam genişlikte ünlem	all
+"	tırnak	most
+\#	diyez	some
+$	dolar	all	norep
+£	paund	all	norep
+€	euro	all	norep
+¢	sent	all	norep
+¥	yen	all	norep
+₹	Rupi	some	norep
+₺	TL	all	norep
+ƒ	florin	all	norep
+¤	para birimi işareti	all	norep
+%	yüzde	some
+‰	binde	some
+&	ve	some
+′	prime	some
+″	çift prime	some
+‴	üçlü prime	some
+'	kesme işareti	all
+(	açparantez	most	always
+)	kapaparantez	most	always
+*	yıldız	some
+,	virgül	all	always
+、	ideografik virgül	all	always
+،	Arapça virgülü	all	always
+-	tire	most	always
+.	nokta	all
+．	tam genişlikte nokta	some
+·	orta nokta	all
+‚	tek alt tırnak	most
+„	çift alt tırnak	most
+/	bölü	some
+:	ikinokta	most	norep
+：	tam genişlikte ikinokta	most	norep
+;	noktalıvirgül	most
+؛	Arapça noktalıvirgülü	most
+；	tam genişlikte noktalıvirgül	most
+?	soru	all
+؟	Arapça soru işareti	all
+？	tam genişlikte soru işareti	all
+@	et	some
+[	aç köşeli parantez	most
+]	kapa köşeli parantez	most
+\\	tersbölü	most
+^	düzeltme imi	most
+_	alt çizgi	most
+`	üst tırnak	most
+´	akut	most
+{	aç küme parantezi	most
+}	kapa küme parantezi	most
+|	dikçizgi	most
+¦	kırık çizgi	most
+~	tilda	most
+¡	ters ünlem	some
+¿	ters soru	some
+‐	kısa tire	most	always
+
+# Other characters
+•	madde imi	some
+…	üçnokta	all	always
+...	üçnokta	all	always
+“	tırnakaç	most
+”	tırnakkapa	most
+‘	tektırnakaç	most
+’	tektırnakkapa	most
+–	orta tire	most	always
+—	uzun tire	most	always
+­	ince tire	most
+⁃	kalın tire	none
+●	daire	most
+○	çember	most
+¨	diaeresis	most
+¯	uzatma işareti	most
+‎	soldan sağa işareti	char
+‏	sağdan sola işareti	char
+¶	paragraf işareti	most
+■	siyah kare	some
+▪	siyah kare	some
+◾	siyah kare	some
+□	boş kare	some
+◦	beyaz madde imi	some
+⇨	sağ beyaz ok	some
+➔	sağ ok	some
+➢	sağ ok ucu	some
+⮚	sağ ok ucu	some
+❖	çizgili karo	some
+♣	siyah sinek	some
+♦	siyah karo	some
+◆	siyah karo	some
+§	bölüm	all
+°	derece	some
+«	çift kancalı parantez aç	most	always
+»	çift kancalı parantez kapa	most	always
+µ	mikro	some
+¸	cedilla	most
+⁰	üssü 0	some
+¹	üssü 1	some
+²	üssü 2	some
+³	üssü 3	some
+⁴	üssü 4	some
+⁵	üssü 5	some
+⁶	üssü 6	some
+⁷	üssü 7	some
+⁸	üssü 8	some
+⁹	üssü 9	some
+⁺	üssü artı	some
+⁼	üssü eşittir	some
+⁽	üssü aç parantez	some
+⁾	üssü parantez kapa	some
+ⁿ	üssü n	some
+₀	alt simge 0	some
+₁	alt simge 1	some
+₂	alt simge 2	some
+₃	alt simge 3	some
+₄	alt simge 4	some
+₅	alt simge 5	some
+₆	alt simge 6	some
+₇	alt simge 7	some
+₈	alt simge 8	some
+₉	alt simge 9	some
+₊	alt simge artı	some
+₋	alt simge eksi	some
+₌	alt simge eşittir	some
+₍	alt simge sol parantez	some
+₎	alt simge sağ parantez	some
+®	kayıtlı	some
+™	ticari marka	some
+©	telif hakkı	some
+℠	hizmet işareti	some
+←	sol ok	some
+↑	yukarı ok	some
+→	sağ ok	some
+↓	aşağı ok	some
+✓	onay	some
+✔	onay	some
+🡺	sağ ok	some
+†	kama işareti	some
+‡	çift kama işareti	some
+‣	üçgen madde imi	none
+✗	x şeklinde madde imi	none
+⊕	daireli artı	none
+⊖	daireli eksi	none
+⇄	sağ ok üstünde sol ok	none
+⇒	sağ çift ok	some
+⇐	sol çift ok	some
+⇏	gerektirmez	none
+
+#Arithmetic operators
++	artı	some
+−	eksi	some
+×	çarpı	some
+⋅	nokta çarpım	some
+⨯	vektörel çarpım	none
+∕	bölü	some
+⁄	bölü	some
+÷	bölü	some
+∓	eksi veya artı	some
+±	artı veya eksi	some
+
+#Set operations
+∖	küme farkı	none
+⊍	küme birleşimi	none
+𝒫	kümeler kümesi	none
+𝔓	kümeler kümesi	none
+℘	kümeler kümesi	none
+∁	tümleyen küme	none
+
+#Set relations and set constructions
+∅	boş küme	none
+⊂	alt kümesi	none
+⊄	alt kümesi değil	none
+⊃	üst kümesi	none
+⊅	üst kümesi değil	none
+⊆	eşit veya alt kümesi	none
+⊈	eşit veya alt kümesi değil	none
+⊇	eşit veya üst kümesi	none
+⊉	eşit veya üst kümesi değil	none
+⊌	çoklukümesi	none
+
+#Equality signs
+=	eşittir	some
+≃	asimptotik olarak eşit	none
+≄	asimptotik olarak eşit değil	none
+≅	yaklaşık olarak eşit	none
+≆	yaklaşık ama tam olarak eşit değil	none
+≈	hemen hemen eşit	none
+≌	tamamen eşit	none
+≍	denk	none
+≭	denk değil	none
+≎	geometrik olarak denk	none
+≑	geometrik olarak eşit	none
+≚	eş açılı	none
+≬	arasında	none
+≠	eşit değil	none
+≡	özdeş	none
+≣	kesinlikle özdeş	none
+≢	özdeş değil	none
+∼	benzer	none
+≙	tahmin	none
+≟	sorgulu eşittir	none
+
+#comparison signs
+<	küçüktür	some
+>	büyüktür	some
+≤	eşit veya küçüktür	none
+≦	eşit veya küçüktür	none
+≪	çok küçüktür	none
+≥	eşit veya büyüktür	none
+≧	eşit veya büyüktür	none
+≫	çok büyüktür	none
+≶	küçüktür veya büyüktür	none
+≷	büyüktür veya küçüktür	none
+≮	küçük değildir	none
+≯	büyük değildir	none
+
+#Functions
+⁻	ters	some
+∘	halka operatörü	none
+∂	kısmi türev	none
+∇	nabla	none
+
+#Geometry and linear Algebra
+⃗	vektör	none
+△	üçgen	none
+▭	dikdörtgen	none
+∟	dik açı	none
+∠	açı	none
+∥	paralel	none
+∦	paralel değil	none
+⊥	dik	none
+⟂	dik	none
+‖	vektör normu	none
+̂	şapka	none
+∿	sinüs dalgası	none
+∡	ölçülü açı	none
+∢	küresel açı	none
+
+#Logical operators
+∀	her biri için	none
+∃	vardır	none
+∄	yoktur	none
+⇐	gerektirir	none
+
+#Other mathematical Operators
+∈	elemanıdır	none
+∉	elemanı değildir	none
+∊	küçük elemanıdır	none
+∋	içerir	none
+∌	içermez	none
+∍	küçük içerir	none
+∎	ispat sonu	none
+∏	çarpım	none
+∐	ortak çarpım	none
+∑	toplam	none
+√	karekök	none
+∛	küp kök	none
+∜	dördüncü kök	none
+∝	orantılı	none
+∞	sonsuz	none
+∧	mantık ve	none
+∨	mantık veya	none
+¬	değil	none
+∩	kesişim	none
+∪	birleşim	none
+∫	integral	none
+∬	çift integral	none
+∭	üç katlı integral	none
+∮	kontur integrali	none
+∯	yüzey integrali	none
+∰	hacim integrali	none
+∱	saat yönünde integral	none
+∲	saat yönünde kontur integrali	none
+∳	saat yönü tersinde kontur integrali	none
+∴	dolayısıyla	none
+∵	çünkü	none
+∶	oran	none
+∷	orantı	none
+∹	fazlalık	none
+∺	geometrik oran	none
+≀	çelenk çarpımı	none
+≏	arasındaki fark	none
+≐	limite yaklaşır	none
+∙	madde imi operatörü	none
+∣	böler	none
+∤	bölmez	none
+≔	ikinokta eşittir	none
+≕	eşittir ikinokta	none
+≺	önce gelir	none
+≻	sonra gelir	none
+⊀	önce gelmez	none
+⊁	sonra gelmez	none
+
+# Vulgar Fractions U+2150 to U+215E
+¼	dörtte bir	none
+½	ikide bir	none
+¾	dörtte üç	none
+⅐	yedide bir	none
+⅑	dokuzda bir	none
+⅒	onda bir	none
+⅓	üçte bir	none
+⅔	üçte iki	none
+⅕	beşte bir	none
+⅖	beşte iki	none
+⅗	beşte üç	none
+⅘	beşte dört	none
+⅙	altıda bir	none
+⅚	altıda beş	none
+⅛	sekizde bir	none
+⅜	sekizde üç	none
+⅝	sekizde beş	none
+⅞	sekizde yedi	none
+
+#Number sets
+𝔸	cebirsel sayılar	none
+ℂ	karmaşık sayılar	none
+ℑ	karmaşık sayının sanal kısmı	none
+ℍ	dördey	none
+ℕ	doğal sayılar	none
+𝕁	negatif olmayan tam sayılar	none
+ℚ	rasyonel sayılar	none
+ℝ	gerçek sayılar	none
+ℜ	karmaşık sayının gerçek kısmı	none
+ℤ	tam sayılar	none
+ℵ	alef sayısı	none
+ℶ	beth sayısı	none
+
+# Miscellaneous Technical
+⌘	Mac komut tuşu	none
+⌥	Mac option tuşu	none
+
+## 6-dot cell
+### note: the character on the next line is U+2800 (braille space), not U+0020 (ASCII space)
+⠀	aralık
+⠁	braille 1
+⠂	braille 2
+⠃	braille 1 2
+⠄	braille 3
+⠅	braille 1 3
+⠆	braille 2 3
+⠇	braille 1 2 3
+⠈	braille 4
+⠉	braille 1 4
+⠊	braille 2 4
+⠋	braille 1 2 4
+⠌	braille 3 4
+⠍	braille 1 3 4
+⠎	braille 2 3 4
+⠏	braille 1 2 3 4
+⠐	braille 5
+⠑	braille 1 5
+⠒	braille 2 5
+⠓	braille 1 2 5
+⠔	braille 3 5
+⠕	braille 1 3 5
+⠖	braille 2 3 5
+⠗	braille 1 2 3 5
+⠘	braille 4 5
+⠙	braille 1 4 5
+⠚	braille 2 4 5
+⠛	braille 1 2 4 5
+⠜	braille 3 4 5
+⠝	braille 1 3 4 5
+⠞	braille 2 3 4 5
+⠟	braille 1 2 3 4 5
+⠠	braille 6
+⠡	braille 1 6
+⠢	braille 2 6
+⠣	braille 1 2 6
+⠤	braille 3 6
+⠥	braille 1 3 6
+⠦	braille 2 3 6
+⠧	braille 1 2 3 6
+⠨	braille 4 6
+⠩	braille 1 4 6
+⠪	braille 2 4 6
+⠫	braille 1 2 4 6
+⠬	braille 3 4 6
+⠭	braille 1 3 4 6
+⠮	braille 2 3 4 6
+⠯	braille 1 2 3 4 6
+⠰	braille 5 6
+⠱	braille 1 5 6
+⠲	braille 2 5 6
+⠳	braille 1 2 5 6
+⠴	braille 3 5 6
+⠵	braille 1 3 5 6
+⠶	braille 2 3 5 6
+⠷	braille 1 2 3 5 6
+⠸	braille 4 5 6
+⠹	braille 1 4 5 6
+⠺	braille 2 4 5 6
+⠻	braille 1 2 4 5 6
+⠼	braille 3 4 5 6
+⠽	braille 1 3 4 5 6
+⠾	braille 2 3 4 5 6
+⠿	braille 1 2 3 4 5 6
+## 8-braille cell
+⡀	braille 7
+⡁	braille 1 7
+⡂	braille 2 7
+⡃	braille 1 2 7
+⡄	braille 3 7
+⡅	braille 1 3 7
+⡆	braille 2 3 7
+⡇	braille 1 2 3 7
+⡈	braille 4 7
+⡉	braille 1 4 7
+⡊	braille 2 4 7
+⡋	braille 1 2 4 7
+⡌	braille 3 4 7
+⡍	braille 1 3 4 7
+⡎	braille 2 3 4 7
+⡏	braille 1 2 3 4 7
+⡐	braille 5 7
+⡑	braille 1 5 7
+⡒	braille 2 5 7
+⡓	braille 1 2 5 7
+⡔	braille 3 5 7
+⡕	braille 1 3 5 7
+⡖	braille 2 3 5 7
+⡗	braille 1 2 3 5 7
+⡘	braille 4 5 7
+⡙	braille 1 4 5 7
+⡚	braille 2 4 5 7
+⡛	braille 1 2 4 5 7
+⡜	braille 3 4 5 7
+⡝	braille 1 3 4 5 7
+⡞	braille 2 3 4 5 7
+⡟	braille 1 2 3 4 5 7
+⡠	braille 6 7
+⡡	braille 1 6 7
+⡢	braille 2 6 7
+⡣	braille 1 2 6 7
+⡤	braille 3 6 7
+⡥	braille 1 3 6 7
+⡦	braille 2 3 6 7
+⡧	braille 1 2 3 6 7
+⡨	braille 4 6 7
+⡩	braille 1 4 6 7
+⡪	braille 2 4 6 7
+⡫	braille 1 2 4 6 7
+⡬	braille 3 4 6 7
+⡭	braille 1 3 4 6 7
+⡮	braille 2 3 4 6 7
+⡯	braille 1 2 3 4 6 7
+⡰	braille 5 6 7
+⡱	braille 1 5 6 7
+⡲	braille 2 5 6 7
+⡳	braille 1 2 5 6 7
+⡴	braille 3 5 6 7
+⡵	braille 1 3 5 6 7
+⡶	braille 2 3 5 6 7
+⡷	braille 1 2 3 5 6 7
+⡸	braille 1 2 3 7
+⡹	braille 1 4 5 6 7
+⡺	braille 2 4 5 6 7
+⡻	braille 1 2 4 5 6 7
+⡼	braille 3 4 5 6 7
+⡽	braille 1 3 4 5 6 7
+⡾	braille 2 3 4 5 6 7
+⡿	braille 1 2 3 4 5 6 7
+⢀	braille 8
+⢁	braille 1 8
+⢂	braille 2 8
+⢃	braille 1 2 8
+⢄	braille 3 8
+⢅	braille 1 3 8
+⢆	braille 2 3 8
+⢇	braille 1 2 3 8
+⢈	braille 4 8
+⢉	braille 1 4 8
+⢊	braille 2 4 8
+⢋	braille 1 2 4 8
+⢌	braille 3 4 8
+⢍	braille 1 3 4 8
+⢎	braille 2 3 4 8
+⢏	braille 1 2 3 4 8
+⢐	braille 5 8
+⢑	braille 1 5 8
+⢒	braille 2 5 8
+⢓	braille 1 2 5 8
+⢔	braille 3 5 8
+⢕	braille 1 3 5 8
+⢖	braille 2 3 5 8
+⢗	braille 1 2 3 5 8
+⢘	braille 4 5 8
+⢙	braille 1 4 5 8
+⢚	braille 2 4 5 8
+⢛	braille 1 2 4 5 8
+⢜	braille 3 4 5 8
+⢝	braille 1 3 4 5 8
+⢞	braille 2 3 4 5 8
+⢟	braille 1 2 3 4 5 8
+⢠	braille 6 8
+⢡	braille 1 6 8
+⢢	braille 2 6 8
+⢣	braille 1 2 6 8
+⢤	braille 3 6 8
+⢥	braille 1 3 6 8
+⢦	braille 2 3 6 8
+⢧	braille 1 2 3 6 8
+⢨	braille 4 6 8
+⢩	braille 1 4 6 8
+⢪	braille 2 4 6 8
+⢫	braille 1 2 4 6 8
+⢬	braille 3 4 6 8
+⢭	braille 1 3 4 6 8
+⢮	braille 2 3 4 6 8
+⢯	braille 1 2 3 4 6 8
+⢰	braille 5 6 8
+⢱	braille 1 5 6 8
+⢲	braille 2 5 6 8
+⢳	braille 1 2 5 6 8
+⢴	braille 3 5 6 8
+⢵	braille 1 3 5 6 8
+⢶	braille 2 3 5 6 8
+⢷	braille 1 2 3 5 6 8
+⢸	braille 4 5 6 8
+⢹	braille 1 4 5 6 8
+⢺	braille 2 4 5 6 8
+⢻	braille 1 2 4 5 6 8
+⢼	braille 3 4 5 6 8
+⢽	braille 1 3 4 5 6 8
+⢾	braille 2 3 4 5 6 8
+⢿	braille 1 2 3 4 5 6 8
+⣀	braille 7 8
+⣁	braille 1 7 8
+⣂	braille 2 7 8
+⣃	braille 1 2 7 8
+⣄	braille 3 7 8
+⣅	braille 1 3 7 8
+⣆	braille 2 3 7 8
+⣇	braille 1 2 3 7 8
+⣈	braille 4 7 8
+⣉	braille 1 4 7 8
+⣊	braille 2 4 7 8
+⣋	braille 1 2 4 7 8
+⣌	braille 3 4 7 8
+⣍	braille 1 3 4 7 8
+⣎	braille 2 3 4 7 8
+⣏	braille 1 2 3 4 7 8
+⣐	braille 5 7 8
+⣑	braille 1 5 7 8
+⣒	braille 2 5 7 8
+⣓	braille 1 2 5 7 8
+⣔	braille 3 5 7 8
+⣕	braille 1 3 5 7 8
+⣖	braille 2 3 5 7 8
+⣗	braille 1 2 3 5 7 8
+⣘	braille 4 5 7 8
+⣙	braille 1 4 5 7 8
+⣚	braille 2 4 5 7 8
+⣛	braille 1 2 4 5 7 8
+⣜	braille 3 4 5 7 8
+⣝	braille 1 3 4 5 7 8
+⣞	braille 2 3 4 5 7 8
+⣟	braille 1 2 3 4 5 7 8
+⣠	braille 6 7 8
+⣡	braille 1 6 7 8
+⣢	braille 2 6 7 8
+⣣	braille 1 2 6 7 8
+⣤	braille 3 6 7 8
+⣥	braille 1 3 6 7 8
+⣦	braille 2 3 6 7 8
+⣧	braille 1 2 3 6 7 8
+⣨	braille 4 6 7 8
+⣩	braille 1 4 6 7 8
+⣪	braille 2 4 6 7 8
+⣫	braille 1 2 4 6 7 8
+⣬	braille 3 4 6 7 8
+⣭	braille 1 3 4 6 7 8
+⣮	braille 2 3 4 6 7 8
+⣯	braille 1 2 3 4 6 7 8
+⣰	braille 5 6 7 8
+⣱	braille 1 5 6 7 8
+⣲	braille 2 5 6 7 8
+⣳	braille 1 2 5 6 7 8
+⣴	braille 3 5 6 7 8
+⣵	braille 1 3 5 6 7 8
+⣶	braille 2 3 5 6 7 8
+⣷	braille 1 2 3 5 6 7 8
+⣸	braille 1 2 3 7 8
+⣹	braille 1 4 5 6 7 8
+⣺	braille 2 4 5 6 7 8
+⣻	braille 1 2 4 5 6 7 8
+⣼	braille 3 4 5 6 7 8
+⣽	braille 1 3 4 5 6 7 8
+⣾	braille 2 3 4 5 6 7 8
+⣿	braille 1 2 3 4 5 6 7 8
+
+# Ottoman chars:
+أ	elif altında hemze	some
+ا	elif	some
+إ	elif	some
+آ	elif med	some
+ب	be	some
+ت	te	some
+ث	se	some
+ج	cim	some
+ح	ha	some
+خ	hı	some
+د	dal	some
+ذ	zel	some
+ر	ra	some
+ز	ze	some
+س	sin	some
+ش	şın	some
+ص	sad	some
+ض	dat	some
+ط	tı	some
+ظ	zı	some
+ع	ayn	some
+غ	ğayn	some
+ف	fe	some
+ق	kaf	some
+ك	kef	some
+ل	lam	some
+م	mim	some
+ن	nun	some
+ه	he	some
+و	vav	some
+ي	ye	some
+ﺍ	elif	some
+ﺎ	elif	some
+ﺀ	hemze	some
+ﺏ	be	some
+ﺐ	be	some
+ﺒ	be	some
+ﺑ	be	some
+ﭖ	pe	some
+ﭗ	pe	some
+ﭙ	pe	some
+ﭘ	pe	some
+ﺕ	te	some
+ﺖ	te	some
+ﺘ	te	some
+ﺗ	te	some
+ﺙ	se	some
+ﺚ	se	some
+ﺜ	se	some
+ﺛ	se	some
+ﺝ	cim	some
+ﺞ	cim	some
+ﺠ	cim	some
+ﺟ	cim	some
+ﭺ	çim	some
+ﭻ	çim	some
+ﭽ	çim	some
+ﭼ	çim	some
+ﺡ	ha	some
+ﺢ	ha	some
+ﺤ	ha	some
+ﺣ	ha	some
+ﺥ	hı	some
+ﺦ	hı	some
+ﺨ	hı	some
+ﺧ	hı	some
+ﺩ	dal	some
+ﺪ	dal	some
+ﺫ	zel	some
+ﺬ	zel	some
+ﺭ	re	some
+ﺮ	re	some
+ﺯ	ze	some
+ﺰ	ze	some
+ﮊ	je	some
+ﮋ	je	some
+ﺱ	sin	some
+ﺲ	sin	some
+ﺴ	sin	some
+ﺳ	sin	some
+ﺵ	şın	some
+ﺶ	şın	some
+ﺸ	şın	some
+ﺷ	şın	some
+ﺹ	sat	some
+ﺺ	sat	some
+ﺼ	sat	some
+ﺻ	sat	some
+ﺽ	dat	some
+ﺾ	dat	some
+ﻀ	dat	some
+ﺿ	dat	some
+ﻁ	tı	some
+ﻂ	tı	some
+ﻄ	tı	some
+ﻃ	tı	some
+ﻅ	zı	some
+ﻆ	zı	some
+ﻈ	zı	some
+ﻇ	zı	some
+ﻉ	ayın	some
+ﻊ	ayın	some
+ﻌ	ayın	some
+ﻋ	ayın	some
+ﻍ	gayın	some
+ﻎ	gayın	some
+ﻐ	gayın	some
+ﻏ	gayın	some
+ﻑ	fe	some
+ﻒ	fe	some
+ﻔ	fe	some
+ﻓ	fe	some
+ﻕ	kaf	some
+ﻖ	kaf	some
+ﻘ	kaf	some
+ﻗ	kaf	some
+ﻙ	kef	some
+ﻚ	kef	some
+ﻜ	kef	some
+ﻛ	kef	some
+ﮒ	gef	some
+ﮓ	gef	some
+ﮕ	gef	some
+ﮔ	gef	some
+ﯓ	Nef Sağır Kef	some
+ﯔ	Nef Sağır Kef	some
+ﯖ	Nef Sağır Kef	some
+ﯕ	Nef Sağır Kef	some
+ﻝ	lam	some
+ﻞ	lam	some
+ﻠ	lam	some
+ﻟ	lam	some
+ﻡ	mim	some
+ﻢ	mim	some
+ﻤ	mim	some
+ﻣ	mim	some
+ﻥ	nun	some
+ﻦ	nun	some
+ﻨ	nun	some
+ﻧ	nun	some
+ﻭ	vav	some
+ﻮ	vav	some
+ﻩ	he	some
+ﻪ	he	some
+ﻬ	he	some
+ﻫ	he	some
+ﻻ	lamelif	some
+ﻼ	lamelif	some
+ﻯ	ye	some
+ﻰ	ye	some
+ﻴ	ye	some
+ﻳ	ye	some
+ژ	j	some
+ە	hemze	some
+پ	pe	some
+ً	İki Üstün	some
+ؤ	Vav Hemze	some
+ئ	ya hemze	some
+ٍ	İki Esre	some
+ٌ	İki Ötre	some
+ى	ye	some
+َ	Üstün	some
+ّ	Şed	some
+ِ	esre	some
+ْ	Cezim sükun	some
+ة	ta-yı merbut	some
+ُ	Ötre	some
+،	virgül	some
+؛	Noktalı virgül	some
+ی	elif Maksure	some
+١	1	some
+٢	2	some
+٣	3	some
+٤	4	some
+٥	5	some
+٦	6	some
+٧	7	some
+٨	8	some
+٩	9	some
+٠	0	some

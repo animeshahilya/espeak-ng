@@ -1,0 +1,29 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+”	schliessendes doppeltes Anführungszeichen oben	-
+)	schliessende runde Klammer	-
+]	schliessende eckige Klammer	-
+}	schliessende geschweifte Klammer	-
+〉	schliessende spitze Klammer	-
+》	schliessende doppelte spitze Klammer	-
+」	schliessende Eckklammer	-
+』	schliessende hohle Eckklammer	-
+】	schliessende schwarze konkave Klammer	-
+〕	schliessende stumpfe Klammer	-
+〗	schliessende hohle konkave Klammer	-
+⇦	weisser Pfeil nach links	-
+⇧	weisser Pfeil nach oben	-
+⇨	weisser Pfeil nach rechts	-
+⇩	weisser Pfeil nach unten	-
+⇪	weisser Pfeil nach oben von Strich weglaufend	-
+>	grösser als	-
+≯	nicht grösser als	-
+≥	grösser als oder gleich	-
+≧	grösser als über gleich	-
+≫	viel grösser als	-
+≳	grösser als oder äquivalent	-
+⋙	sehr viel grösser als	-
+⪚	gleich über grösser als	-
+⭐	weisser mittelgrosser Stern	-
+⬛	grosses schwarzes Quadrat	-
+⬜	grosses weisses Quadrat	-

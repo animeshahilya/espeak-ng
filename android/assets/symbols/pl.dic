@@ -1,0 +1,636 @@
+﻿#locale/pl/symbols.dic
+#A part of NonVisual Desktop Access (NVDA)
+#Copyright (c) 2011-2024 NVDA Contributors
+#This file is covered by the GNU General Public License.
+
+complexSymbols:
+# identifier	regexp
+# Sentence endings.
+. sentence ending	(?<=[^\s.])\.(?=[\"'”’)\s]|$)
+! sentence ending	(?<=[^\s!])\!(?=[\"'”’)\s]|$)
+? sentence ending	(?<=[^\s?])\?(?=[\"'”’)\s]|$)
+# Phrase endings.
+; phrase ending	(?<=[^\s;]);(?=\s|$)
+: phrase ending	(?<=[^\s:]):(?=\s|$)
+# Series of dots used for visual presentation, e.g. in table of contents
+multiple .	\.{4,}
+# Others
+decimal point	(?<![^\d -])\.(?=\d)
+in-word '	(?<=[^\W_])['’]
+negative number	(?<!\w)[-−]{1}(?=[$£€¥.]?\d)
+
+symbols:
+# identifier	replacement[[	level][	preserve]][	# display name]
+
+# Complex symbols
+. sentence ending	kropka	all	always
+! sentence ending	wykrzyknik	all	always
+? sentence ending	pytajnik	all	always
+; phrase ending	średnik	most	always
+: phrase ending	dwukropek	most	always
+multiple .	kropki	all	always
+przecinek		none	always
+in-word '	apostrof	all	norep
+negative number	minus	none	norep
+
+# Whitespace
+\0	pusta	char	# null
+\t	tab
+\n	koniec linii	char
+\f	podział strony	none
+\r	koniec wiersza	char
+ 	spacja	char
+ 	spacja	char	# no-break space
+
+# Standard punctuation/symbols
+!	wykrzyknik	all
+！	ideograficzny wykrzyknik	all
+"	cudzysłów	most
+\#	hasz	some
+$	dolar	all	norep
+£	funt	all	norep
+€	euro	all	norep
+¢	cent	all	norep
+¥	yen	all	norep
+₹	rupia	some	norep
+ƒ	florin	all	norep
+¤	waluta	all	norep
+%	procent	some
+‰	promil	some
+&	and	some
+'	apostrof	all
+(	lewy nawias	most	always
+)	prawy nawias	most	always
+*	gwiazdka	some
+,	przecinek	all	always
+、	Przecinek ideograficzny	all	always
+،	Przecinek arabski	all	always
+-	minus	most	always
+.	kropka	some
+．	Kropka ideograficzna	some
+/	slesz	some
+:	dwukropek	most	norep
+：	dwukropek ideograficzny	most	norep
+;	średnik	most
+؛	średnik arabski	most
+；	średnik ideograficzny	most
+?	pytajnik	all	always
+؟	pytajnik arabski	all
+？	pytajnik ideograficzny	all
+@	małpa	some
+[	lewy kwadratowy	most
+]	prawy kwadratowy	most
+\\	bekslesz	most
+^	daszek	most
+_	podkreślacz	most
+`	akcent	most
+{	lewy klamrowy	most
+}	prawy klamrowy	most
+|	kreska pionowa	most
+¦	linia łamana	most
+~	tylda	most
+¡	odwrócony wykrzyknik	some
+¿	odwrócony pytajnik	some
+·	kropka środkowa	most
+‚	cudzysłów nizki	most
+„	podwójny cudzysłów nizki	most
+′	symbol liczby pierwszej	some
+″	podwójny symbol liczby pierwszej	some
+‴	potrójny symbol liczby pierwszej	some
+‐	dyviz	most	always
+
+# Other characters
+•	punktor	some
+…	wielokropek	all	always
+...	trzy kropki	all	always
+“	lewy cudzysłów	most
+”	prawy cudzysłów	most
+‘	lewy apostrof	most
+’	prawy apostrof	most
+–	półpauza	most	always
+—	myślnik	most	always
+­	miękki myślnik	most
+⁃	podłużny punktor	none
+●	kółko	most
+○	białe kółko	most
+¨	diereza	most
+¯	nadkreślenie	most
+´	akut	most
+¸	cedilla	most
+‎	znak lewa do prawej	char
+‏	znak prawa do lewej	char
+¶	paragraf	most
+■	czarny kwadrat	some
+▪	czarny kwadrat	some
+◾	czarny kwadrat	some
+□	biały kwadrat	some
+◦	biały punktor	some
+⇨	biała strzałka w prawo	some
+➔	strzałka wskazująca w prawo	some
+➢	prawy grot strzałki	some
+❖	czarny diament minus białe iks	some
+♣	czarny trefl	some
+♦	czarny diament	some
+◆	czarny diament	some
+§	paragraf	none
+°	stopień	some
+«	podwójny cudzysłów otwierający	most	always
+»	podwójny cudzysłów zamykający	most	always
+µ	mikro	some
+⁰	indeks górny 0	some
+¹	indeks górny 1	some
+²	kwadrat	some
+³	sześcian	some
+⁴	indeks górny 4	some
+⁵	indeks górny 5	some
+⁶	indeks górny 6	some
+⁷	indeks górny 7	some
+⁸	indeks górny 8	some
+⁹	indeks górny 9	some
+⁺	indeks górny plus	some
+⁼	indeks górny równa się	some
+⁽	indeks górny lewy nawias	some
+⁾	indek górny prawy nawias	some
+ⁿ	indeks górny n	some
+₀	indeks dolny 0	some
+₁	indeks dolny 1	some
+₂	indeks dolny 2	some
+₃	indeks dolny 3	some
+₄	indeks dolny 4	some
+₅	indeks dolny 5	some
+₆	indeks dolny 6	some
+₇	indeks dolny 7	some
+₈	indeks dolny 8	some
+₉	indeks dolny 9	some
+₊	indeks dolny plus	some
+₋	indeks dolny minus	some
+₌	indeks dolny ruwna sie	some
+₍	indeks dolny lewy nawias	some
+₎	indeks dolny prawy nawias	some
+®	zarejestrowany	some
+™	znak handlowy	some
+©	znak praw autorskich	some
+℠	znak usługi	some
+←	strzałka w lewo	some
+↑	strzałka w górę	some
+→	strzałka w prawo	some
+↓	strzałka w dół	some
+✓	haczyk	some
+✔	haczyk	some
+🡺	strzałka w prawo	some
+†	krzyżyk	some
+‡	podwójny krzyżyk	some
+‣	trójkątna kropka	none
+✗	kropka w kształcie x	none
+⊕	zaokrąglony plus	none
+⊖	zaokrąglony minus	none
+⇄	right arrow over left arrow	none
+⇒	podwójna strzałka w prawo	none
+
+#Arithmetic operators
++	plus	some
+−	minus	some
+×	razy	some
+⋅	razy	some
+⨯	razy	none
+∕	podzielone przez	some
+⁄	podzielone przez	some
+÷	dzielenie	some
+∓	minus lub plus	some
+±	plus Minus	some
+
+#Set operations
+∖	odejmowanie zbiorów	none
+⊍	mnożenie wielokrotne	none
+𝒫	Kapitał Pisma Matematycznego P	none
+𝔓	Fraktur matematyczny Kapitał P	none
+℘	Skrypt Kapitał P	none
+∁	Komplement	none
+
+#Set relations and set constructions
+∅	zbiór pusty	none
+⊂	podzbiór zbioru	none
+⊄	nie jest podzbiorem	none
+⊃	nadzbiór zbioru	none
+⊅	nie jest rzeczywistym podzbiorem	none
+⊆	podzbiór lub równość	none
+⊈	Ani podzbiór ani równy	none
+⊇	nadzbiór lub równość	none
+⊉	Ani Superset, ani równy	none
+⊌	multiset	none
+
+#Equality signs
+=	równe	some
+≃	Asymptotycznie równy	none
+≄	Nie asymptotycznie równy	none
+≅	W przybliżeniu równe	none
+≆	W przybliżeniu ale nie tak naprawdę równy	none
+≈	prawie równe	none
+≌	Wszystko równe	none
+≍	Równoważny	none
+≭	Nie jest równoważny	none
+≎	geometrycznie równoważny	none
+≑	geometrycznie równe	none
+≚	równe z kątem	none
+≬	pomiędzy	none
+≠	różne	none
+≡	tożsamy z	none
+≣	srogo równoważne z	none
+≢	nie jest identyczne	none
+∼	podobne do	none
+≙	szacowane	none
+≟	pytany równy do	none
+
+#comparison signs
+<	mniejsze	some
+>	większe	some
+≤	mniejsze lub równe	none
+≦	Mniej niż ponad równe	none
+≪	Znacznie mniej niż	none
+≥	większe lub równe	none
+≧	Większy niż ponad równy	none
+≫	dużo większe od	none
+≶	Mniej niż lub więcej niż	none
+≷	Większy niż lub mniejszy niż	none
+≮	Nie mniej niż	none
+≯	Nie większy niż	none
+
+#Functions
+⁻	indeks górny minus	some
+∘	ring Operator	none
+∂	pochodna cząstkowa	none
+∇	nabla	none
+
+#Geometry and linear Algebra
+⃗	wektor	none
+△	trójkąt	none
+▭	biały prostokąt	none
+∟	kąt prosty	none
+∠	kąt	none
+∥	równoległe do	none
+∦	nie równoległę do	none
+⊥	perpendykularnie do	none
+⟂	ortogonalnie z	none
+‖	norma wektoru	none
+̂	cyrkumfleks	none
+∿	fala synusoidalna	none
+∡	przemierzony kąt	none
+∢	Kąt sferyczny	none
+
+#Logical operators
+∀	dla każdego	none
+∃	istnieje	none
+∄	nie istnieje	none
+⇏	nie implikuje	none
+⇐	jest implikowany przez	none
+
+#Other mathematical Operators
+∈	jest elementem zbioru	none
+∉	nie jest elementem zbioru	none
+∊	mały element zbioru	none
+∋	zawiera jako element	none
+∌	nie zawiera jako element	none
+∍	mały zawiera jako element	none
+∎	koniec dowodu	none
+∏	enty produkt	none
+∐	koprodukt n-ty	none
+∑	n-ta suma	none
+√	pierwiastek kwadratowy	none
+∛	pierwiastek sześcienny	none
+∜	pierwiastek czwartego stopnia	none
+∝	proporcjonalnie do	none
+∞	nieskończoność	none
+∧	logiczne i	none
+∨	logiczne lub	none
+¬	logiczne nie	none
+∩	przecięcie	none
+∪	część wspólna	none
+∫	całka	none
+∬	całka podwójna	none
+∭	całka potrójna	none
+∮	Całka konturowa	none
+∯	Całka powierzchniowa	none
+∰	Całość objętościowa	none
+∱	Całkowanie zgodnie z ruchem wskazówek zegara	none
+∲	Całka konturowa zgodna z ruchem wskazówek zegara	none
+∳	Całka konturowa przeciwnie do ruchu wskazówek zegara	none
+∴	dlatego	none
+∵	ponieważ	none
+∶	stosunek	none
+∷	proporcja	none
+∹	Nadmiar	none
+∺	Proporcja geometryczna	none
+≀	Produkt wieniec	none
+≏	różnica pomiędzy	none
+≐	Zbliża się do limitu	none
+∙	operator punktor	none
+∣	Dzieli	none
+∤	nie dzieli	none
+≔	dwukropek równa sie	none
+≕	równa się dwukropek	none
+≺	poprzedza	none
+≻	śledzi	none
+⊀	nie poprzedza	none
+⊁	nie śledzi	none
+
+# Vulgar Fractions U+2150 to U+215E
+¼	jedna czwarta	none
+½	jedna druga	none
+¾	trzy czwarte	none
+⅐	jedna siódma	none
+⅑	jedna dziewiąta	none
+⅒	jedna dziesiąta	none
+⅓	jedna trzecia	none
+⅔	dwie trzecie	none
+⅕	jedna piąta	none
+⅖	dwie piąte	none
+⅗	trzy piąte	none
+⅘	cztery piąte	none
+⅙	jedna szósta	none
+⅚	pięć szóstych	none
+⅛	jedna ósma	none
+⅜	trzy ósme	none
+⅝	pięć ósmych	none
+⅞	siedem ósmych	none
+
+#Number sets
+𝔸	liczby algebraiczne	none
+ℂ	liczby zespolone	none
+ℑ	część urojona liczby zespolonej	none
+ℍ	formalne	none
+ℕ	liczby naturalne	none
+𝕁	całkowite liczby nieujemne	none
+ℚ	liczby wymierne	none
+ℝ	liczby rzeczywiste	none
+ℜ	rzeczywista część liczby zespolonej	none
+ℤ	liczby całkowite	none
+ℵ	Skala alefów	none
+ℶ	skala betów	none
+
+# Miscellaneous Technical
+⌘	klawisz command	none
+⌥	klawisz option	none
+
+## 6-dot cell
+### note: the character on the next line is U+2800 (braille space), not U+0020 (ASCII space)
+⠀	spacja
+⠁	punkt 1
+⠂	punkt 2
+⠃	punkt 1 2
+⠄	punkt 3
+⠅	punkt 1 3
+⠆	punkt 2 3
+⠇	punkt 1 2 3
+⠈	punkt 4
+⠉	punkt 1 4
+⠊	punkt 2 4
+⠋	punkt 1 2 4
+⠌	punkt 3 4
+⠍	punkt 1 3 4
+⠎	punkt 2 3 4
+⠏	punkt 1 2 3 4
+⠐	punkt 5
+⠑	punkt 1 5
+⠒	punkt 2 5
+⠓	punkt 1 2 5
+⠔	punkt 3 5
+⠕	punkt 1 3 5
+⠖	punkt 2 3 5
+⠗	punkt 1 2 3 5
+⠘	punkt 4 5
+⠙	punkt 1 4 5
+⠚	punkt 2 4 5
+⠛	punkt 1 2 4 5
+⠜	punkt 3 4 5
+⠝	punkt 1 3 4 5
+⠞	punkt 2 3 4 5
+⠟	punkt 1 2 3 4 5
+⠠	punkt 6
+⠡	punkt 1 6
+⠢	punkt 2 6
+⠣	punkt 1 2 6
+⠤	punkt 3 6
+⠥	punkt 1 3 6
+⠦	punkt 2 3 6
+⠧	punkt 1 2 3 6
+⠨	punkt 4 6
+⠩	punkt 1 4 6
+⠪	punkt 2 4 6
+⠫	punkt 1 2 4 6
+⠬	punkt 3 4 6
+⠭	punkt 1 3 4 6
+⠮	punkt 2 3 4 6
+⠯	punkt 1 2 3 4 6
+⠰	punkt 5 6
+⠱	punkt 1 5 6
+⠲	punkt 2 5 6
+⠳	punkt 1 2 5 6
+⠴	punkt 3 5 6
+⠵	punkt 1 3 5 6
+⠶	punkt 2 3 5 6
+⠷	punkt 1 2 3 5 6
+⠸	punkt 4 5 6
+⠹	punkt 1 4 5 6
+⠺	punkt 2 4 5 6
+⠻	punkt 1 2 4 5 6
+⠼	punkt 3 4 5 6
+⠽	punkt 1 3 4 5 6
+⠾	punkt 2 3 4 5 6
+⠿	punkt 1 2 3 4 5 6
+## 8-braille cell
+⡀	punkt 7
+⡁	punkt 1 7
+⡂	punkt 2 7
+⡃	punkt 1 2 7
+⡄	punkt 3 7
+⡅	punkt 1 3 7
+⡆	punkt 2 3 7
+⡇	punkt 1 2 3 7
+⡈	punkt 4 7
+⡉	punkt 1 4 7
+⡊	punkt 2 4 7
+⡋	punkt 1 2 4 7
+⡌	punkt 3 4 7
+⡍	punkt 1 3 4 7
+⡎	punkt 2 3 4 7
+⡏	punkt 1 2 3 4 7
+⡐	punkt 5 7
+⡑	punkt 1 5 7
+⡒	punkt 2 5 7
+⡓	punkt 1 2 5 7
+⡔	punkt 3 5 7
+⡕	punkt 1 3 5 7
+⡖	punkt 2 3 5 7
+⡗	punkt 1 2 3 5 7
+⡘	punkt 4 5 7
+⡙	punkt 1 4 5 7
+⡚	punkt 2 4 5 7
+⡛	punkt 1 2 4 5 7
+⡜	punkt 3 4 5 7
+⡝	punkt 1 3 4 5 7
+⡞	punkt 2 3 4 5 7
+⡟	punkt 1 2 3 4 5 7
+⡠	punkt 6 7
+⡡	punkt 1 6 7
+⡢	punkt 2 6 7
+⡣	punkt 1 2 6 7
+⡤	punkt 3 6 7
+⡥	punkt 1 3 6 7
+⡦	punkt 2 3 6 7
+⡧	punkt 1 2 3 6 7
+⡨	punkt 4 6 7
+⡩	punkt 1 4 6 7
+⡪	punkt 2 4 6 7
+⡫	punkt 1 2 4 6 7
+⡬	punkt 3 4 6 7
+⡭	punkt 1 3 4 6 7
+⡮	punkt 2 3 4 6 7
+⡯	punkt 1 2 3 4 6 7
+⡰	punkt 5 6 7
+⡱	punkt 1 5 6 7
+⡲	punkt 2 5 6 7
+⡳	punkt 1 2 5 6 7
+⡴	punkt 3 5 6 7
+⡵	punkt 1 3 5 6 7
+⡶	punkt 2 3 5 6 7
+⡷	punkt 1 2 3 5 6 7
+⡸	punkt 1 2 3 7
+⡹	punkt 1 4 5 6 7
+⡺	punkt 2 4 5 6 7
+⡻	punkt 1 2 4 5 6 7
+⡼	punkt 3 4 5 6 7
+⡽	punkt 1 3 4 5 6 7
+⡾	punkt 2 3 4 5 6 7
+⡿	punkt 1 2 3 4 5 6 7
+⢀	punkt 8
+⢁	punkt 1 8
+⢂	punkt 2 8
+⢃	punkt 1 2 8
+⢄	punkt 3 8
+⢅	punkt 1 3 8
+⢆	punkt 2 3 8
+⢇	punkt 1 2 3 8
+⢈	punkt 4 8
+⢉	punkt 1 4 8
+⢊	punkt 2 4 8
+⢋	punkt 1 2 4 8
+⢌	punkt 3 4 8
+⢍	punkt 1 3 4 8
+⢎	punkt 2 3 4 8
+⢏	punkt 1 2 3 4 8
+⢐	punkt 5 8
+⢑	punkt 1 5 8
+⢒	punkt 2 5 8
+⢓	punkt 1 2 5 8
+⢔	punkt 3 5 8
+⢕	punkt 1 3 5 8
+⢖	punkt 2 3 5 8
+⢗	punkt 1 2 3 5 8
+⢘	punkt 4 5 8
+⢙	punkt 1 4 5 8
+⢚	punkt 2 4 5 8
+⢛	punkt 1 2 4 5 8
+⢜	punkt 3 4 5 8
+⢝	punkt 1 3 4 5 8
+⢞	punkt 2 3 4 5 8
+⢟	punkt 1 2 3 4 5 8
+⢠	punkt 6 8
+⢡	punkt 1 6 8
+⢢	punkt 2 6 8
+⢣	punkt 1 2 6 8
+⢤	punkt 3 6 8
+⢥	punkt 1 3 6 8
+⢦	punkt 2 3 6 8
+⢧	punkt 1 2 3 6 8
+⢨	punkt 4 6 8
+⢩	punkt 1 4 6 8
+⢪	punkt 2 4 6 8
+⢫	punkt 1 2 4 6 8
+⢬	punkt 3 4 6 8
+⢭	punkt 1 3 4 6 8
+⢮	punkt 2 3 4 6 8
+⢯	punkt 1 2 3 4 6 8
+⢰	punkt 5 6 8
+⢱	punkt 1 5 6 8
+⢲	punkt 2 5 6 8
+⢳	punkt 1 2 5 6 8
+⢴	punkt 3 5 6 8
+⢵	punkt 1 3 5 6 8
+⢶	punkt 2 3 5 6 8
+⢷	punkt 1 2 3 5 6 8
+⢸	punkt 1 2 3 8
+⢹	punkt 1 4 5 6 8
+⢺	punkt 2 4 5 6 8
+⢻	punkt 1 2 4 5 6 8
+⢼	punkt 3 4 5 6 8
+⢽	punkt 1 3 4 5 6 8
+⢾	punkt 2 3 4 5 6 8
+⢿	punkt 1 2 3 4 5 6 8
+⣀	punkt 7 8
+⣁	punkt 1 7 8
+⣂	punkt 2 7 8
+⣃	punkt 1 2 7 8
+⣄	punkt 3 7 8
+⣅	punkt 1 3 7 8
+⣆	punkt 2 3 7 8
+⣇	punkt 1 2 3 7 8
+⣈	punkt 4 7 8
+⣉	punkt 1 4 7 8
+⣊	punkt 2 4 7 8
+⣋	punkt 1 2 4 7 8
+⣌	punkt 3 4 7 8
+⣍	punkt 1 3 4 7 8
+⣎	punkt 2 3 4 7 8
+⣏	punkt 1 2 3 4 7 8
+⣐	punkt 5 7 8
+⣑	punkt 1 5 7 8
+⣒	punkt 2 5 7 8
+⣓	punkt 1 2 5 7 8
+⣔	punkt 3 5 7 8
+⣕	punkt 1 3 5 7 8
+⣖	punkt 2 3 5 7 8
+⣗	punkt 1 2 3 5 7 8
+⣘	punkt 4 5 7 8
+⣙	punkt 1 4 5 7 8
+⣚	punkt 2 4 5 7 8
+⣛	punkt 1 2 4 5 7 8
+⣜	punkt 3 4 5 7 8
+⣝	punkt 1 3 4 5 7 8
+⣞	punkt 2 3 4 5 7 8
+⣟	punkt 1 2 3 4 5 7 8
+⣠	punkt 6 7 8
+⣡	punkt 1 6 7 8
+⣢	punkt 2 6 7 8
+⣣	punkt 1 2 6 7 8
+⣤	punkt 3 6 7 8
+⣥	punkt 1 3 6 7 8
+⣦	punkt 2 3 6 7 8
+⣧	punkt 1 2 3 6 7 8
+⣨	punkt 4 6 7 8
+⣩	punkt 1 4 6 7 8
+⣪	punkt 2 4 6 7 8
+⣫	punkt 1 2 4 6 7 8
+⣬	punkt 3 4 6 7 8
+⣭	punkt 1 3 4 6 7 8
+⣮	punkt 2 3 4 6 7 8
+⣯	punkt 1 2 3 4 6 7 8
+⣰	punkt 5 6 7 8
+⣱	punkt 1 5 6 7 8
+⣲	punkt 2 5 6 7 8
+⣳	punkt 1 2 5 6 7 8
+⣴	punkt 3 5 6 7 8
+⣵	punkt 1 3 5 6 7 8
+⣶	punkt 2 3 5 6 7 8
+⣷	punkt 1 2 3 5 6 7 8
+⣸	punkt 1 2 3 7 8
+⣹	punkt 1 4 5 6 7 8
+⣺	punkt 2 4 5 6 7 8
+⣻	punkt 1 2 4 5 6 7 8
+⣼	punkt 3 4 5 6 7 8
+⣽	punkt 1 3 4 5 6 7 8
+⣾	punkt 2 3 4 5 6 7 8
+⣿	punkt 1 2 3 4 5 6 7 8
+
+#polish symbol wrongly interpreted by the synth
+ó	u kreska	char	always
+Ó	u kreska	char	always

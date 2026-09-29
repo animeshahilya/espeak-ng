@@ -16,14 +16,22 @@
 
 package com.animeshahilya.espeakng;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,6 +48,16 @@ import java.util.regex.Pattern;
  * the raw character (preserve) or a pause (a single space), never to silence
  * that would glue words together.
  *
+ * <p>Per language, like NVDA: a voice's table merges, in order, NVDA's
+ * {@code symbols.dic} for its locale, that locale's CLDR symbol names, the
+ * English table below, NVDA's English {@code symbols.dic} and English CLDR
+ * names (assets/symbols/, from tools/update_nvda_symbols.py). For each
+ * symbol the first source that sets a field wins; "-" inherits. So an
+ * Arabic voice says "فاصلة" for "،" where it used to get the English word
+ * "comma" read with Arabic rules. A language NVDA has no data for uses
+ * English, as NVDA does. Without assets (JVM tests) only the English table
+ * below exists.
+ *
  * <p>Behavioral notes (deliberate, tested):
  * <ul>
  *   <li>Levels are NONE=0, SOME=100, MOST=200, ALL=300. A symbol is spoken
@@ -47,24 +65,26 @@ import java.util.regex.Pattern;
  *   means "always spoken" (decimal points stay silent via their empty
  *   replacement instead). This matches NVDA, where e.g. math symbols and
  *   negative-number "minus" announce at every level.</li>
- *   <li>The data below is NVDA's English table, re-expressed (not copied):
+ *   <li>The English data below is NVDA's English table, re-expressed:
  *   same identifiers, levels, preserve modes and replacements, with a few
  *   normalized wordings ("tilde" not "tilda", "divided by" not "divide by",
- *   hyphen repairs in "less than or equal to").</li>
+ *   hyphen repairs in "less than or equal to"). It comes before NVDA's own
+ *   English file, which only fills what it lacks.</li>
  *   <li>NVDA has no ASCII programming digraphs ({@code !=}, {@code ==},
  *   {@code &&}, ...); they are kept here as complex-style multi-character
  *   symbols at level ALL, since NVDA would otherwise read "!=" as
  *   "bang equals". Likewise {@code =>} keeps "implies" (NVDA's table only
  *   knows the &#x21d2; glyph as "double right arrow").</li>
- *   <li>{@code \n} and {@code \r} are intentionally absent from the table:
- *   this engine renders paragraph pauses from newlines, so they always pass
- *   through untouched (see TextPipelineDeviceTest).</li>
+ *   <li>{@code \n} and {@code \r} never enter a table, whatever a source
+ *   says: this engine renders paragraph pauses from newlines, so they always
+ *   pass through untouched (see TextPipelineDeviceTest).</li>
  *   <li>Braille patterns (U+2800-U+28FF) are generated, not listed: the
  *   mapping is mechanical ("braille 1 2 3").</li>
  *   <li>Emoji naming (NVDA's per-language CLDR dictionaries) lives in
  *   {@link NvdaEmoji} and backs Announce mode; glue codepoints with no
  *   name (joiners, variation selectors, lone regional indicators) are
- *   dropped, matching what NVDA's pass-through amounts to audibly.</li>
+ *   dropped, matching what NVDA's pass-through amounts to audibly. The
+ *   CLDR files here hold only the non-emoji names.</li>
  * </ul>
  */
 public final class NvdaSymbolProcessor {
@@ -93,6 +113,27 @@ public final class NvdaSymbolProcessor {
     private static final int a = PRESERVE_ALWAYS;
     private static final int r = PRESERVE_NOREP;
 
+    /** One symbol as a source defines it; a null field inherits (NVDA's "-"). */
+    private static final class Entry {
+        final String replacement;
+        final Integer level;
+        final Integer preserve;
+
+        Entry(String replacement, Integer level, Integer preserve) {
+            this.replacement = replacement;
+            this.level = level;
+            this.preserve = preserve;
+        }
+    }
+
+    /** One dictionary's raw data in file order: NVDA's SpeechSymbols. */
+    static final class Source {
+        final Map<String, String> complex = new LinkedHashMap<String, String>();
+        /** Text a custom character list matches a complex symbol by. */
+        final Map<String, String> samples = new HashMap<String, String>();
+        final Map<String, Entry> symbols = new LinkedHashMap<String, Entry>();
+    }
+
     private static final class Symbol {
         final String id;
         final String replacement;
@@ -108,15 +149,17 @@ public final class NvdaSymbolProcessor {
     }
 
     private static final class Complex {
-        final Pattern pattern;
+        final String regex;
         /** Representative text for custom-list matching (the id is a name). */
         final String sample;
         final String replacement;
         final int level;
         final int preserve;
+        /** Group number of this symbol's own group in the master pattern. */
+        int group;
 
         Complex(String regex, String sample, String replacement, int level, int preserve) {
-            this.pattern = Pattern.compile(regex);
+            this.regex = regex;
             this.sample = sample;
             this.replacement = replacement;
             this.level = level;
@@ -124,59 +167,69 @@ public final class NvdaSymbolProcessor {
         }
     }
 
-    private static final Map<String, Symbol> SIMPLE = new HashMap<String, Symbol>();
-    private static final List<Complex> COMPLEX = new ArrayList<Complex>();
-    private static final List<String> MULTI = new ArrayList<String>();
-    private static String singleCharClass;
-    private static String multiAlternation;
-
-    private static Pattern masterCollapse;
-    private static Pattern masterNoCollapse;
-    /**
-     * Repeat runs only, for the condensing entry point. Whitespace is
-     * excluded (the old patterns never matched it either); emoji never
-     * matches (no emoji in the table) and is condensed separately.
-     */
-    private static Pattern repeatsOnly;
-
-    private static void sym(String id, String replacement, int level, int preserve) {
-        Symbol s = new Symbol(id, replacement, level, preserve);
-        SIMPLE.put(id, s);
-        if (id.length() > 1) {
-            MULTI.add(id);
-        }
+    /** Opens a file of assets/symbols/ by name; missing files throw. */
+    public interface DataSource {
+        InputStream open(String name) throws IOException;
     }
 
-    private static void complex(String regex, String sample, String replacement, int level,
-            int preserve) {
-        COMPLEX.add(new Complex(regex, sample, replacement, level, preserve));
+    private static final Source ENGLISH = new Source();
+    private static final String EN = "en";
+    /**
+     * eSpeak languages whose NVDA locale is not the language code itself:
+     * a region-less tag has no file of its own there.
+     */
+    private static final Map<String, String> LOCALE_ALIASES = new HashMap<String, String>();
+
+    private static volatile DataSource sData;
+    private static final Map<String, Table> TABLES = new ConcurrentHashMap<String, Table>();
+    private static final Map<String, Source> SOURCES = new ConcurrentHashMap<String, Source>();
+    private static final Source MISSING = new Source();
+
+    private static void sym(String id, String replacement, int level, int preserve) {
+        ENGLISH.symbols.put(id, new Entry(replacement, level, preserve));
+    }
+
+    private static void complex(String id, String regex, String sample, String replacement,
+            int level, int preserve) {
+        ENGLISH.complex.put(id, regex);
+        ENGLISH.samples.put(id, sample);
+        sym(id, replacement, level, preserve);
     }
 
     static {
         buildTable();
-        buildPatterns();
+        LOCALE_ALIASES.put("pt", "pt_pt");
+        LOCALE_ALIASES.put("zh", "zh_cn");
+        LOCALE_ALIASES.put("cmn", "zh_cn");
+        LOCALE_ALIASES.put("yue", "zh_hk");
+        LOCALE_ALIASES.put("nb", "nb_no");
+        LOCALE_ALIASES.put("no", "nb_no");
+        LOCALE_ALIASES.put("nn", "nn_no");
+        LOCALE_ALIASES.put("ku", "kmr");
+        LOCALE_ALIASES.put("af", "af_za");
     }
 
     private static void buildTable() {
         // Complex symbols first: sentence/phrase endings, visual dot runs,
-        // decimal points, in-word apostrophes, negative numbers. The "//"
-        // guard is split in two because Java lookbehind needs fixed length
+        // decimal points, in-word apostrophes, negative numbers. Identifiers
+        // are NVDA's, so a language's file can rename or redefine them. The
+        // "//" guard is split in two because Java lookbehind needs fixed length
         // (NVDA's "(?<!https?:)" is variable length and won't compile).
-        complex("(?<!https:)(?<!http:)//", "/", "double slash", A, n);
-        complex("(?<=[^\\s.])\\.(?=[\"'\"\u201d\u2019)\\s]|$)", ".", "dot", A, a);
-        complex("(?<=[^\\s!])!(?=[\"'\"\u201d\u2019)\\s]|$)", "!", "bang", A, a);
-        complex("(?<=[^\\s?])\\?(?=[\"'\"\u201d\u2019)\\s]|$)", "?", "question", A, a);
-        complex("(?<=[^\\s;]);(?=\\s|$)", ";", "semi", M, a);
-        complex("(?<=[^\\s:]):(?=\\s|$)", ":", "colon", M, a);
-        complex("\\.{4,}", "...", "multiple dots", A, a);
-        complex("(?<![^\\d -])\\.(?=\\d)", ".", "", N, a);
+        complex("double slash", "(?<!https:)(?<!http:)//", "/", "double slash", A, n);
+        complex(". sentence ending", "(?<=[^\\s.])\\.(?=[\"'\"”’)\\s]|$)", ".", "dot", A, a);
+        complex("! sentence ending", "(?<=[^\\s!])!(?=[\"'\"”’)\\s]|$)", "!", "bang", A, a);
+        complex("? sentence ending", "(?<=[^\\s?])\\?(?=[\"'\"”’)\\s]|$)", "?", "question", A, a);
+        complex("; phrase ending", "(?<=[^\\s;]);(?=\\s|$)", ";", "semi", M, a);
+        complex(": phrase ending", "(?<=[^\\s:]):(?=\\s|$)", ":", "colon", M, a);
+        complex("multiple .", "\\.{4,}", "...", "multiple dots", A, a);
+        complex("decimal point", "(?<![^\\d -])\\.(?=\\d)", ".", "", N, a);
         // [\p{L}\p{N}] approximates NVDA's [^\W_]: Unicode letters and
         // digits, no underscore. Java's \W is ASCII-only, so [^\W_] would
         // wrongly match after Devanagari/CJK letters.
-        complex("(?<=[\\p{L}\\p{N}])['\u2019]", "'", "tick", A, r);
-        complex("(?<!\\w)[-\u2212]{1}(?=[$\u00a3\u20ac\u00a5.]?\\d)", "-", "minus", N, r);
+        complex("in-word '", "(?<=[\\p{L}\\p{N}])['’]", "'", "tick", A, r);
+        complex("negative number", "(?<!\\w)[-−]{1}(?=[$£€¥.]?\\d)", "-", "minus", N, r);
         // Bare "*" between words is a star; between digits it is times.
-        complex("(?<=\\d)\\s*\\*\\s*(?=\\d)", "*", "times", S, n);
+        complex("* between numbers", "(?<=\\d)\\s*\\*\\s*(?=\\d)", "*", "times", S, n);
 
         // ASCII programming digraphs: no NVDA equivalent (NVDA would read
         // "!=" as "bang equals"), kept as multi-character symbols at ALL.
@@ -521,7 +574,7 @@ public final class NvdaSymbolProcessor {
         sym("\u2325", "mac option key", N, n);
 
         // Braille patterns are mechanical ("braille 1 2 3"); generate them.
-        SIMPLE.put("\u2800", new Symbol("\u2800", "space", A, n));
+        sym("⠀", "space", A, n);
         for (int cp = 0x2801; cp <= 0x28ff; cp++) {
             StringBuilder dots = new StringBuilder("braille");
             for (int bit = 0; bit < 8; bit++) {
@@ -529,104 +582,483 @@ public final class NvdaSymbolProcessor {
                     dots.append(' ').append(bit + 1);
                 }
             }
-            String id = new String(Character.toChars(cp));
-            SIMPLE.put(id, new Symbol(id, dots.toString(), A, n));
+            sym(new String(Character.toChars(cp)), dots.toString(), A, n);
         }
     }
 
-    private static void buildPatterns() {
-        // Longest first, so "==" wins over "=" and "..." over ".".
-        Collections.sort(MULTI, new Comparator<String>() {
-            @Override
-            public int compare(String a, String b) {
-                return b.length() - a.length();
-            }
-        });
-        StringBuilder multi = new StringBuilder();
-        for (int i = 0; i < MULTI.size(); i++) {
-            if (i > 0) {
-                multi.append('|');
-            }
-            multi.append(Pattern.quote(MULTI.get(i)));
-        }
-        multiAlternation = multi.toString();
+    // ---- NVDA dictionary files ------------------------------------------
 
-        // Single characters as a character class. Newlines are absent from
-        // the table by design (paragraph pauses); guard anyway.
-        StringBuilder cls = new StringBuilder("[");
-        List<String> singles = new ArrayList<String>();
-        for (String id : SIMPLE.keySet()) {
-            if (id.length() == 1 && !id.equals("\n") && !id.equals("\r")) {
-                singles.add(id);
-            }
-        }
-        Collections.sort(singles);
-        for (String id : singles) {
-            char c = id.charAt(0);
-            if (c == '\\' || c == '^' || c == '-' || c == '[' || c == ']' || c == '&') {
-                cls.append('\\');
-            }
-            cls.append(c);
-        }
-        cls.append(']');
-        singleCharClass = cls.toString();
+    private static final Map<String, Integer> LEVELS = new HashMap<String, Integer>();
+    private static final Map<String, Integer> PRESERVES = new HashMap<String, Integer>();
+    private static final Map<Character, String> ESCAPES = new HashMap<Character, String>();
 
-        masterCollapse = Pattern.compile(buildMaster(true));
-        masterNoCollapse = Pattern.compile(buildMaster(false));
-
-        StringBuilder rep = new StringBuilder("(?<run>");
-        boolean first = true;
-        for (String id : singles) {
-            char c = id.charAt(0);
-            if (c <= ' ') {
-                continue;
-            }
-            if (!first) {
-                rep.append('|');
-            }
-            rep.append(Pattern.quote(id));
-            first = false;
-        }
-        rep.append(")\\k<run>{3,}");
-        repeatsOnly = Pattern.compile(rep.toString());
-    }
-
-    private static String buildMaster(boolean collapseRepeats) {
-        StringBuilder rx = new StringBuilder();
-        for (int i = 0; i < COMPLEX.size(); i++) {
-            if (i > 0) {
-                rx.append('|');
-            }
-            // Group names must be valid Java identifiers: c0, c1, ...
-            rx.append("(?<c").append(i).append('>');
-            rx.append(COMPLEX.get(i).pattern.pattern());
-            rx.append(')');
-        }
-        rx.append("|(?<rstrip>  +$)");
-        if (collapseRepeats) {
-            rx.append("|(?<repeated>(?<repTmp>").append(singleCharClass).append(")\\k<repTmp>{3,})");
-        }
-        rx.append("|(?<simple>").append(multiAlternation).append('|').append(singleCharClass).append(')');
-        return rx.toString();
-    }
-
-    private NvdaSymbolProcessor() {
+    static {
+        LEVELS.put("none", N);
+        LEVELS.put("some", S);
+        LEVELS.put("most", M);
+        LEVELS.put("all", A);
+        LEVELS.put("char", C);
+        PRESERVES.put("never", n);
+        PRESERVES.put("always", a);
+        PRESERVES.put("norep", r);
+        ESCAPES.put('0', "\0");
+        ESCAPES.put('t', "\t");
+        ESCAPES.put('n', "\n");
+        ESCAPES.put('r', "\r");
+        ESCAPES.put('f', "\f");
+        ESCAPES.put('v', "\u000b");
+        ESCAPES.put('#', "#");
+        ESCAPES.put('\\', "\\");
     }
 
     /**
-     * Whether a plain symbol is named at this level, or with a custom list
-     * (customChars non-null) whether the list has it. Used by Earcons to swap
-     * exactly the symbols this pass would have spoken.
+     * Parses an NVDA symbols.dic / cldr.dic exactly as SpeechSymbols.load
+     * does: "complexSymbols:" and "symbols:" sections, tab-separated fields,
+     * "-" for inherit, a trailing "# ..." field is a display name, and an
+     * invalid line is skipped.
      */
-    public static boolean isAnnounced(String symbol, int userLevel, String customChars) {
-        Symbol s = SIMPLE.get(symbol);
-        if (s == null || s.replacement == null || s.replacement.isEmpty()) {
-            return false;
+    static Source parse(BufferedReader in, boolean allowComplex) throws IOException {
+        final Source source = new Source();
+        int section = 0; // 1 complex, 2 symbols
+        boolean first = true;
+        for (String line; (line = in.readLine()) != null; ) {
+            if (first && !line.isEmpty() && line.charAt(0) == '﻿') {
+                line = line.substring(1);
+            }
+            first = false;
+            if (line.trim().isEmpty() || line.startsWith("#")) {
+                continue;
+            }
+            if (line.equals("complexSymbols:") && allowComplex) {
+                section = 1;
+            } else if (line.equals("symbols:")) {
+                section = 2;
+            } else if (section == 1) {
+                final String[] f = line.split("\t", -1);
+                if (f.length == 2) {
+                    source.complex.put(f[0], f[1]);
+                }
+            } else if (section == 2) {
+                parseSymbol(source, line.split("\t", -1));
+            }
         }
-        if (customChars != null) {
-            return customChars.contains(symbol);
+        return source;
+    }
+
+    private static void parseSymbol(Source source, String[] f) {
+        int count = f.length;
+        if (count > 0 && f[count - 1].startsWith("#")) {
+            count--; // display name
         }
-        return userLevel >= s.level;
+        if (count < 2 || f[0].isEmpty()) {
+            return;
+        }
+        String id = f[0];
+        if (id.startsWith("\\") && id.length() >= 2) {
+            final String escape = ESCAPES.get(id.charAt(1));
+            id = (escape != null ? escape : String.valueOf(id.charAt(1))) + id.substring(2);
+        }
+        final String replacement = "-".equals(f[1]) ? null : f[1];
+        Integer level = null;
+        Integer preserve = null;
+        if (count > 2 && !"-".equals(f[2])) {
+            level = LEVELS.get(f[2]);
+            if (level == null) {
+                return;
+            }
+        }
+        if (count > 3 && !"-".equals(f[3])) {
+            preserve = PRESERVES.get(f[3]);
+            if (preserve == null) {
+                return;
+            }
+        }
+        source.symbols.put(id, new Entry(replacement, level, preserve));
+    }
+
+    // ---- Per-language tables --------------------------------------------
+
+    /** Where the per-language data comes from (EspeakApp: assets/symbols/). */
+    public static void setDataSource(DataSource data) {
+        sData = data;
+        TABLES.clear();
+        SOURCES.clear();
+    }
+
+    private static Source load(String file, boolean allowComplex) {
+        final DataSource data = sData;
+        if (data == null) {
+            return null;
+        }
+        Source source = SOURCES.get(file);
+        if (source == null) {
+            try (BufferedReader in = new BufferedReader(
+                    new InputStreamReader(data.open(file), StandardCharsets.UTF_8))) {
+                source = parse(in, allowComplex);
+            } catch (IOException e) {
+                source = MISSING;
+            }
+            SOURCES.put(file, source);
+        }
+        return source == MISSING ? null : source;
+    }
+
+    /**
+     * NVDA's locale for a voice language tag ("pt-br" -> "pt_br", then
+     * "pt", then an alias), or English when NVDA has no symbol data for it.
+     */
+    static String locale(String languageTag) {
+        if (languageTag == null || languageTag.isEmpty()) {
+            return EN;
+        }
+        final String full = languageTag.toLowerCase(Locale.ROOT).replace('-', '_');
+        final int sep = full.indexOf('_');
+        final String base = sep > 0 ? full.substring(0, sep) : full;
+        if (EN.equals(base)) {
+            return EN;
+        }
+        for (String candidate : new String[] {full, base, LOCALE_ALIASES.get(base)}) {
+            if (candidate != null && (load(candidate + ".dic", true) != null
+                    || load(candidate + ".cldr.dic", false) != null)) {
+                return candidate;
+            }
+        }
+        return EN;
+    }
+
+    /** The merged table for a voice language (English for null/unknown). */
+    static Table forLanguage(String languageTag) {
+        final String locale = locale(languageTag);
+        Table table = TABLES.get(locale);
+        if (table == null) {
+            final List<Source> sources = new ArrayList<Source>();
+            if (!EN.equals(locale)) {
+                addIfPresent(sources, load(locale + ".dic", true));
+                addIfPresent(sources, load(locale + ".cldr.dic", false));
+            }
+            sources.add(ENGLISH);
+            addIfPresent(sources, load("en.dic", true));
+            addIfPresent(sources, load("en.cldr.dic", false));
+            table = new Table(sources);
+            TABLES.put(locale, table);
+        }
+        return table;
+    }
+
+    private static void addIfPresent(List<Source> sources, Source source) {
+        if (source != null) {
+            sources.add(source);
+        }
+    }
+
+    /** Builds the table now, off the speech path (service start). */
+    public static void warmup(String languageTag) {
+        forLanguage(languageTag);
+    }
+
+    /**
+     * NVDA complex-symbol patterns this device's regex engine (ICU on
+     * Android) refused for a language; empty when all compiled.
+     */
+    public static List<String> skippedPatterns(String languageTag) {
+        return Collections.unmodifiableList(forLanguage(languageTag).skipped);
+    }
+
+    /** One language's merged symbols, NVDA's SpeechSymbolProcessor. */
+    static final class Table {
+        private final Map<String, Symbol> simple = new HashMap<String, Symbol>();
+        private final List<Complex> complex = new ArrayList<Complex>();
+        /** Complex symbols dropped because Java/ICU could not compile them. */
+        final List<String> skipped = new ArrayList<String>();
+        private final Pattern masterCollapse;
+        private final Pattern masterNoCollapse;
+        /**
+         * Repeat runs only, for the condensing entry point. Whitespace is
+         * excluded; emoji never matches (no emoji in the table) and is
+         * condensed separately.
+         */
+        private final Pattern repeatsOnly;
+
+        Table(List<Source> sources) {
+            // NVDA's merge: complex symbols from every source first (first
+            // definition wins), then every source's symbols, each field
+            // taken from the first source that sets it.
+            final Map<String, String[]> fields = new LinkedHashMap<String, String[]>();
+            final Map<String, Integer[]> numbers = new HashMap<String, Integer[]>();
+            final Map<String, String> patterns = new LinkedHashMap<String, String>();
+            final Map<String, String> samples = new HashMap<String, String>();
+            for (Source source : sources) {
+                for (Map.Entry<String, String> e : source.complex.entrySet()) {
+                    if (!patterns.containsKey(e.getKey())) {
+                        patterns.put(e.getKey(), e.getValue());
+                        fields.put(e.getKey(), new String[1]);
+                        numbers.put(e.getKey(), new Integer[2]);
+                    }
+                    if (!samples.containsKey(e.getKey()) && source.samples.containsKey(e.getKey())) {
+                        samples.put(e.getKey(), source.samples.get(e.getKey()));
+                    }
+                }
+            }
+            for (Source source : sources) {
+                for (Map.Entry<String, Entry> e : source.symbols.entrySet()) {
+                    final String id = e.getKey();
+                    if (id.indexOf('\n') >= 0 || id.indexOf('\r') >= 0) {
+                        continue; // paragraph pauses, see the class comment
+                    }
+                    String[] f = fields.get(id);
+                    Integer[] num = numbers.get(id);
+                    if (f == null) {
+                        f = new String[1];
+                        num = new Integer[2];
+                        fields.put(id, f);
+                        numbers.put(id, num);
+                    }
+                    final Entry entry = e.getValue();
+                    if (f[0] == null) {
+                        f[0] = entry.replacement;
+                    }
+                    if (num[0] == null) {
+                        num[0] = entry.level;
+                    }
+                    if (num[1] == null) {
+                        num[1] = entry.preserve;
+                    }
+                }
+            }
+            final List<String> multi = new ArrayList<String>();
+            final List<String> singles = new ArrayList<String>();
+            for (Map.Entry<String, String[]> e : fields.entrySet()) {
+                final String id = e.getKey();
+                final String replacement = e.getValue()[0];
+                if (replacement == null) {
+                    continue; // NVDA drops symbols nobody named
+                }
+                final Integer[] num = numbers.get(id);
+                final int level = num[0] != null ? num[0] : A;
+                final int preserve = num[1] != null ? num[1] : n;
+                final String regex = patterns.get(id);
+                if (regex != null) {
+                    final String sample = samples.containsKey(id) ? samples.get(id) : sampleOf(id);
+                    complex.add(new Complex(regex, sample, replacement, level, preserve));
+                    continue;
+                }
+                simple.put(id, new Symbol(id, replacement, level, preserve));
+                if (id.length() == 1) {
+                    singles.add(id);
+                } else {
+                    multi.add(id);
+                }
+            }
+            // A pattern Java/ICU cannot compile (Python-only syntax) is
+            // dropped on its own rather than losing the whole language.
+            for (int i = complex.size() - 1; i >= 0; i--) {
+                try {
+                    Pattern.compile(complex.get(i).regex);
+                } catch (RuntimeException e) {
+                    skipped.add(complex.get(i).regex);
+                    complex.remove(i);
+                }
+            }
+            // Longest first, so "==" wins over "=" and "..." over ".".
+            Collections.sort(multi, new Comparator<String>() {
+                @Override
+                public int compare(String x, String y) {
+                    return y.length() - x.length();
+                }
+            });
+            Collections.sort(singles);
+            final StringBuilder alternation = new StringBuilder();
+            for (String id : multi) {
+                if (alternation.length() > 0) {
+                    alternation.append('|');
+                }
+                alternation.append(Pattern.quote(id));
+            }
+            final StringBuilder cls = new StringBuilder("[");
+            final StringBuilder repeats = new StringBuilder("(?<run>");
+            boolean firstRepeat = true;
+            for (String id : singles) {
+                final String escaped = escapeChar(id.charAt(0));
+                cls.append(escaped);
+                if (id.charAt(0) > ' ') {
+                    repeats.append(firstRepeat ? "" : "|").append(escaped);
+                    firstRepeat = false;
+                }
+            }
+            cls.append(']');
+            repeats.append(")\\k<run>{3,}");
+            final String singleClass = singles.isEmpty() ? "(?!)" : cls.toString();
+            masterCollapse = Pattern.compile(master(true, singleClass, alternation.toString()));
+            masterNoCollapse = Pattern.compile(master(false, singleClass, alternation.toString()));
+            repeatsOnly = Pattern.compile(firstRepeat ? "(?!)" : repeats.toString());
+        }
+
+        /** \x{...} for anything but letters and digits: safe in Java and ICU classes. */
+        private static String escapeChar(char c) {
+            return Character.isLetterOrDigit(c) ? String.valueOf(c)
+                    : "\\x{" + Integer.toHexString(c) + "}";
+        }
+
+        private String master(boolean collapseRepeats, String singleClass, String alternation) {
+            final StringBuilder rx = new StringBuilder();
+            int group = 1;
+            for (int i = 0; i < complex.size(); i++) {
+                final Complex c = complex.get(i);
+                if (i > 0) {
+                    rx.append('|');
+                }
+                // Group names must be valid Java identifiers: c0, c1, ...
+                rx.append("(?<c").append(i).append('>').append(c.regex).append(')');
+                c.group = group;
+                group += 1 + Pattern.compile(c.regex).matcher("").groupCount();
+            }
+            rx.append(complex.isEmpty() ? "" : "|").append("(?<rstrip>  +$)");
+            if (collapseRepeats) {
+                rx.append("|(?<repeated>(?<repTmp>").append(singleClass).append(")\\k<repTmp>{3,})");
+            }
+            rx.append("|(?<simple>");
+            if (alternation.length() > 0) {
+                rx.append(alternation).append('|');
+            }
+            rx.append(singleClass).append(')');
+            return rx.toString();
+        }
+
+        boolean isAnnounced(String symbol, int userLevel, String customChars) {
+            final Symbol s = simple.get(symbol);
+            if (s == null || s.replacement == null || s.replacement.isEmpty()) {
+                return false;
+            }
+            if (customChars != null) {
+                return customChars.contains(symbol);
+            }
+            return userLevel >= s.level;
+        }
+
+        String process(String text, int userLevel, boolean collapseRepeats, Set<Integer> custom) {
+            if (text == null || text.isEmpty()) {
+                return text;
+            }
+            final Matcher m = (collapseRepeats ? masterCollapse : masterNoCollapse).matcher(text);
+            if (!m.find()) {
+                return text;
+            }
+            final StringBuffer sb = new StringBuffer(text.length() + 16);
+            do {
+                m.appendReplacement(sb, Matcher.quoteReplacement(
+                        replaceMatch(m, userLevel, collapseRepeats, custom)));
+            } while (m.find());
+            m.appendTail(sb);
+            return sb.toString();
+        }
+
+        private String replaceMatch(Matcher m, int userLevel, boolean collapseRepeats,
+                Set<Integer> custom) {
+            if (m.group("rstrip") != null) {
+                return "";
+            }
+            if (collapseRepeats && m.group("repeated") != null) {
+                final String run = m.group("repeated");
+                final Symbol symbol = simple.get(String.valueOf(run.charAt(0)));
+                final int effective = custom == null ? symbol.level
+                        : (matchesCustom(String.valueOf(run.charAt(0)), custom) ? LEVEL_ALWAYS
+                                : LEVEL_NEVER);
+                if (userLevel >= effective) {
+                    return "  " + run.length() + " " + symbol.replacement + " ";
+                }
+                if (symbol.preserve == PRESERVE_ALWAYS || symbol.preserve == PRESERVE_NOREP) {
+                    return run;
+                }
+                return " ";
+            }
+            for (int i = 0; i < complex.size(); i++) {
+                if (m.group("c" + i) != null) {
+                    final Complex c = complex.get(i);
+                    return symbolOutput(m.group(), c.sample, replaceGroups(m, c),
+                            c.level, c.preserve, userLevel, custom);
+                }
+            }
+            final String text = m.group("simple");
+            final Symbol symbol = simple.get(text);
+            return symbolOutput(text, text, symbol.replacement, symbol.level, symbol.preserve,
+                    userLevel, custom);
+        }
+
+        /** NVDA's _replaceGroups: \1..\9 are the symbol's own groups, \\ a backslash. */
+        private static String replaceGroups(Matcher m, Complex c) {
+            final String replacement = c.replacement;
+            if (replacement.indexOf('\\') < 0) {
+                return replacement;
+            }
+            final StringBuilder out = new StringBuilder();
+            for (int i = 0; i < replacement.length(); i++) {
+                final char ch = replacement.charAt(i);
+                if (ch != '\\' || i + 1 >= replacement.length()) {
+                    out.append(ch);
+                    continue;
+                }
+                final char next = replacement.charAt(++i);
+                if (next >= '0' && next <= '9') {
+                    final String group = m.group(c.group + (next - '0'));
+                    out.append(group != null ? group : "");
+                } else {
+                    out.append(next);
+                }
+            }
+            return out.toString();
+        }
+
+        String collapseRepeatRuns(String text) {
+            if (text == null || text.isEmpty()) {
+                return text;
+            }
+            final Matcher m = repeatsOnly.matcher(text);
+            if (!m.find()) {
+                return text;
+            }
+            final StringBuffer sb = new StringBuffer(text.length() + 16);
+            do {
+                // Whole match, not group("run"): the group only holds the first
+                // character, the backreference holds the rest.
+                final String run = m.group();
+                final Symbol symbol = simple.get(String.valueOf(run.charAt(0)));
+                m.appendReplacement(sb, Matcher.quoteReplacement(
+                        "  " + run.length() + " " + symbol.replacement + " "));
+            } while (m.find());
+            m.appendTail(sb);
+            return sb.toString();
+        }
+
+        String processSingleSymbol(String text) {
+            if (text == null) {
+                return null;
+            }
+            final String trimmed = text.trim();
+            if (trimmed.isEmpty() || trimmed.codePointCount(0, trimmed.length()) != 1) {
+                return text;
+            }
+            final Symbol symbol = simple.get(trimmed);
+            if (symbol == null || symbol.replacement == null || symbol.replacement.isEmpty()) {
+                return text;
+            }
+            return symbol.replacement;
+        }
+    }
+
+    /**
+     * Custom-list text for a complex symbol NVDA names by words: its first
+     * character that is not a letter or space (". sentence ending" -> "."),
+     * else the identifier itself.
+     */
+    private static String sampleOf(String id) {
+        for (int i = 0; i < id.length(); ) {
+            final int cp = id.codePointAt(i);
+            if (!Character.isLetterOrDigit(cp) && !Character.isWhitespace(cp)) {
+                return new String(Character.toChars(cp));
+            }
+            i += Character.charCount(cp);
+        }
+        return id;
     }
 
     private static boolean matchesCustom(String id, Set<Integer> custom) {
@@ -638,92 +1070,6 @@ public final class NvdaSymbolProcessor {
             i += Character.charCount(cp);
         }
         return true;
-    }
-
-    /**
-     * Processes text the way NVDA does: complex symbols, trailing-space
-     * strip, optional repeat collapsing, then plain symbols longest-first.
-     *
-     * @param text the text to process (null passes through as null)
-     * @param userLevel one of LEVEL_NONE/SOME/MOST/ALL
-     * @param collapseRepeats whether 4+ runs collapse to "N name"
-     * @return the processed text
-     */
-    public static String processText(String text, int userLevel, boolean collapseRepeats) {
-        return processText(text, userLevel, collapseRepeats, null);
-    }
-
-    /**
-     * Custom-list mode: exactly the given characters are announced (with
-     * their table names); every other known symbol degrades to keep-or-pause
-     * and is never announced.
-     *
-     * @param customChars characters the user chose to hear, e.g. ".?!"
-     */
-    public static String processCustom(String text, String customChars, boolean collapseRepeats) {
-        if (text == null) {
-            return null;
-        }
-        Set<Integer> custom = new HashSet<Integer>();
-        if (customChars != null) {
-            for (int i = 0; i < customChars.length();) {
-                int cp = customChars.codePointAt(i);
-                custom.add(cp);
-                i += Character.charCount(cp);
-            }
-        }
-        return processText(text, LEVEL_ALL, collapseRepeats, custom);
-    }
-
-    private static String processText(String text, int userLevel, boolean collapseRepeats,
-            Set<Integer> custom) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        Pattern master = collapseRepeats ? masterCollapse : masterNoCollapse;
-        Matcher m = master.matcher(text);
-        if (!m.find()) {
-            return text;
-        }
-        StringBuffer sb = new StringBuffer(text.length() + 16);
-        do {
-            String replacement = replaceMatch(m, userLevel, collapseRepeats, custom);
-            m.appendReplacement(sb, Matcher.quoteReplacement(replacement));
-        } while (m.find());
-        m.appendTail(sb);
-        return sb.toString();
-    }
-
-    private static String replaceMatch(Matcher m, int userLevel, boolean collapseRepeats,
-            Set<Integer> custom) {
-        if (m.group("rstrip") != null) {
-            return "";
-        }
-        if (collapseRepeats && m.group("repeated") != null) {
-            String run = m.group("repeated");
-            Symbol symbol = SIMPLE.get(String.valueOf(run.charAt(0)));
-            int effective = custom == null ? symbol.level
-                    : (matchesCustom(String.valueOf(run.charAt(0)), custom) ? LEVEL_ALWAYS
-                            : LEVEL_NEVER);
-            if (userLevel >= effective) {
-                return "  " + run.length() + " " + symbol.replacement + " ";
-            }
-            if (symbol.preserve == PRESERVE_ALWAYS || symbol.preserve == PRESERVE_NOREP) {
-                return run;
-            }
-            return " ";
-        }
-        for (int i = 0; i < COMPLEX.size(); i++) {
-            if (m.group("c" + i) != null) {
-                Complex c = COMPLEX.get(i);
-                return symbolOutput(m.group(), c.sample, c.replacement, c.level, c.preserve,
-                        userLevel, custom);
-            }
-        }
-        String text = m.group("simple");
-        Symbol symbol = SIMPLE.get(text);
-        return symbolOutput(text, text, symbol.replacement, symbol.level, symbol.preserve,
-                userLevel, custom);
     }
 
     private static String symbolOutput(String text, String matchId, String replacement, int level,
@@ -738,6 +1084,71 @@ public final class NvdaSymbolProcessor {
         return suffix;
     }
 
+    private NvdaSymbolProcessor() {
+    }
+
+    // ---- Public API: English unless a language tag is given --------------
+
+    /**
+     * Whether a plain symbol is named at this level, or with a custom list
+     * (customChars non-null) whether the list has it. Used by Earcons to swap
+     * exactly the symbols this pass would have spoken.
+     */
+    public static boolean isAnnounced(String symbol, int userLevel, String customChars) {
+        return isAnnounced(symbol, userLevel, customChars, EN);
+    }
+
+    public static boolean isAnnounced(String symbol, int userLevel, String customChars,
+            String languageTag) {
+        return forLanguage(languageTag).isAnnounced(symbol, userLevel, customChars);
+    }
+
+    /**
+     * Processes text the way NVDA does: complex symbols, trailing-space
+     * strip, optional repeat collapsing, then plain symbols longest-first.
+     *
+     * @param text the text to process (null passes through as null)
+     * @param userLevel one of LEVEL_NONE/SOME/MOST/ALL
+     * @param collapseRepeats whether 4+ runs collapse to "N name"
+     * @return the processed text
+     */
+    public static String processText(String text, int userLevel, boolean collapseRepeats) {
+        return processText(text, userLevel, collapseRepeats, EN);
+    }
+
+    /** {@link #processText(String, int, boolean)} with the voice language's symbol names. */
+    public static String processText(String text, int userLevel, boolean collapseRepeats,
+            String languageTag) {
+        return forLanguage(languageTag).process(text, userLevel, collapseRepeats, null);
+    }
+
+    /**
+     * Custom-list mode: exactly the given characters are announced (with
+     * their table names); every other known symbol degrades to keep-or-pause
+     * and is never announced.
+     *
+     * @param customChars characters the user chose to hear, e.g. ".?!"
+     */
+    public static String processCustom(String text, String customChars, boolean collapseRepeats) {
+        return processCustom(text, customChars, collapseRepeats, EN);
+    }
+
+    public static String processCustom(String text, String customChars, boolean collapseRepeats,
+            String languageTag) {
+        if (text == null) {
+            return null;
+        }
+        Set<Integer> custom = new HashSet<Integer>();
+        if (customChars != null) {
+            for (int i = 0; i < customChars.length();) {
+                int cp = customChars.codePointAt(i);
+                custom.add(cp);
+                i += Character.charCount(cp);
+            }
+        }
+        return forLanguage(languageTag).process(text, LEVEL_ALL, collapseRepeats, custom);
+    }
+
     /**
      * Repeat collapsing alone (" 20 dash "), without any other symbol
      * rewriting: the condensing entry point's contract. Runs need 4+
@@ -745,24 +1156,7 @@ public final class NvdaSymbolProcessor {
      * so sentences keep their final punctuation here.
      */
     public static String collapseRepeatRuns(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        Matcher m = repeatsOnly.matcher(text);
-        if (!m.find()) {
-            return text;
-        }
-        StringBuffer sb = new StringBuffer(text.length() + 16);
-        do {
-            // Whole match, not group("run"): the group only holds the first
-            // character, the backreference holds the rest.
-            String run = m.group();
-            Symbol symbol = SIMPLE.get(String.valueOf(run.charAt(0)));
-            m.appendReplacement(sb,
-                    Matcher.quoteReplacement("  " + run.length() + " " + symbol.replacement + " "));
-        } while (m.find());
-        m.appendTail(sb);
-        return sb.toString();
+        return forLanguage(EN).collapseRepeatRuns(text);
     }
 
     /**
@@ -772,17 +1166,10 @@ public final class NvdaSymbolProcessor {
      * not announce "space" here; the engine handles the pause).
      */
     public static String processSingleSymbol(String text) {
-        if (text == null) {
-            return null;
-        }
-        String trimmed = text.trim();
-        if (trimmed.isEmpty() || trimmed.codePointCount(0, trimmed.length()) != 1) {
-            return text;
-        }
-        Symbol symbol = SIMPLE.get(trimmed);
-        if (symbol == null || symbol.replacement == null || symbol.replacement.isEmpty()) {
-            return text;
-        }
-        return symbol.replacement;
+        return processSingleSymbol(text, EN);
+    }
+
+    public static String processSingleSymbol(String text, String languageTag) {
+        return forLanguage(languageTag).processSingleSymbol(text);
     }
 }

@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	nyitó kapcsos zárójel	-
+‾	föléhúzás	-
+_	aláhúzásjel	-
+-	elválasztójel	-
+‐	kötőjel	-
+–	félkvirt	-
+—	kvirtmínusz	-
+―	vízszintes vonal	-
+・	katakana középső pont	-
+,	vessző	-
+،	arab vessző	-
+、	ideogrammatikus vessző	-
+;	pontosvessző	-
+؛	arab pontosvessző	-
+:	kettőspont	-
+!	felkiáltójel	-
+¡	fordított felkiáltójel	-
+?	kérdőjel	-
+¿	fordított kérdőjel	-
+؟	arab kérdőjel	-
+‽	interrobang	-
+.	pont	-
+…	három pont	-
+。	képírásos pont	-
+·	középvonali pont	-
+'	írógép-aposztróf	-
+‘	kezdő egyszeres idézőjel	-
+’	záró egyszeres idézőjel	-
+‚	alsó jobb egyszeres idézőjel	-
+“	kezdő idézőjel	-
+”	záró idézőjel	-
+„	alsó kezdő idézőjel	-
+«	balra mutató belső idézőjel	-
+»	jobbra mutató belső idézőjel	-
+)	berekesztő zárójel	-
+[	nyitó szögletes zárójel	-
+]	berekesztő szögletes zárójel	-
+}	berekesztő kapcsos zárójel	-
+〈	nyitó kúpos zárójel	-
+〉	berekesztő kúpos zárójel	-
+《	nyitó csúcsos zárójel	-
+》	berekesztő csúcsos zárójel	-
+「	bal mennyezet	-
+」	jobb mennyezet	-
+『	bal üres mennyezet	-
+』	jobb üres mennyezet	-
+【	nyitó teli lencse zárójel	-
+】	berekesztő teli lencse zárójel	-
+〔	nyitó teknőspáncél zárójel	-
+〕	berekesztő teknőspáncél zárójel	-
+〖	nyitó üres lencse zárójel	-
+〗	berekesztő üres lencse zárójel	-
+§	szakasz	-
+¶	bekezdésjel	-
+@	kukacjel	-
+*	csillagjel	-
+/	perjel	-
+\	fordított perjel	-
+&	és jel	-
+%	százalékjel	-
+‰	ezrelékjel	-
+†	kereszt szimbólum	-
+‡	kettős kereszt szimbólum	-
+•	listajel	-
+‧	elválasztó pont	-
+′	felső vessző	-
+″	dupla felső vessző	-
+‴	tripla felső vessző	-
+‸	beszúrási jel	-
+※	hivatkozásjel	-
+⁂	három csillag jel	-
+`	tompa ékezet	-
+´	éles ékezet	-
+^	kúpos ékezet	-
+¨	tréma	-
+°	fok	-
+℗	hangrögzítési szerzői jog	-
+←	bal oldalra mutató nyíl	-
+↚	balra mutató nyíl vonással	-
+→	jobb oldalra mutató nyíl	-
+↛	jobbra mutató nyíl vonással	-
+↑	felfelé néző nyíl	-
+↓	lefelé néző nyíl	-
+↜	balra mutató hullámos nyíl	-
+↝	jobbra mutató hullámos nyíl	-
+↞	balra mutató duplafejű nyíl	-
+↟	felfelé mutató duplafejű nyíl	-
+↠	jobbra mutató duplafejű nyíl	-
+↡	lefelé mutató duplafejű nyíl	-
+↢	balra mutató nyíl tolla	-
+↣	jobbra mutató nyíl tolla	-
+↤	balra mutató talpas nyíl	-
+↥	felfelé mutató talpas nyíl	-
+↦	jobbra mutató talpas nyíl	-
+↧	lefelé mutató talpas nyíl	-
+↨	felfelé és lefelé mutató nyíl alapvonallal	-
+↫	balra mutató nyíl hurokkal	-
+↬	jobbra mutató nyíl hurokkal	-
+↭	hullámos balra-jobbra nyíl	-
+↯	lefelé mutató cikcakkos nyíl	-
+↰	felfelé és balra mutató nyílhegy	-
+↱	felfelé és jobbra mutató nyílhegy	-
+↲	lefelé és balra mutató nyílhegy	-
+↳	lefelé és jobbra mutató nyílhegy	-
+↴	jobbra induló és lefelé mutató nyíl	-
+↵	lefelé induló és balra mutató nyíl	-
+↶	óramutató járásával ellentétes felső félköríves nyíl	-
+↷	óramutató járásával megegyező felső félköríves nyíl	-
+↸	északnyugat felé mutató és hosszú vonalig érő nyíl	-
+↹	balra mutató és vonalig érő nyíl és alatta jobbra mutató és vonalig érő nyíl	-
+↺	óramutató járásával ellentétes nyílt körkörös nyíl	-
+↻	óramutató járásával megegyező nyílt körkörös nyíl	-
+↼	balra mutató felső félhegyű nyíl	-
+↽	balra mutató alsó félhegyű nyíl	-
+↾	felfelé mutató jobb félhegyű nyíl	-
+↿	felfelé mutató bal félhegyű nyíl	-
+⇀	jobbra mutató felső félhegyű nyíl	-
+⇁	jobbra mutató alsó félhegyű nyíl	-
+⇂	lefelé mutató jobb félhegyű nyíl	-
+⇃	lefelé mutató bal félhegyű nyíl	-
+⇄	jobbra mutató nyíl balra mutató nyíl felett	-
+⇅	felfelé és lefelé mutató nyíl	-
+⇆	oda-vissza nyíl	-
+⇇	balra mutató páros nyíl	-
+⇈	felfelé mutató páros nyíl	-
+⇉	jobbra mutató páros nyíl	-
+⇊	lefelé mutató páros nyíl	-
+⇋	balra mutató félhegyű nyíl jobbra mutató félhegyű nyíl felett	-
+⇌	jobbra mutató félhegyű nyíl balra mutató félhegyű nyíl felett	-
+⇐	balra mutató kettős nyíl	-
+⇍	balra mutató áthúzott kettős nyíl	-
+⇑	felfelé mutató kettős nyíl	-
+⇒	jobbra mutató kettős nyíl	-
+⇏	jobbra mutató áthúzott kettős nyíl	-
+⇓	lefelé mutató kettős nyíl	-
+⇔	kettős balra-jobbra nyíl	-
+⇎	áthúzott kettős balra-jobbra nyíl	-
+⇖	északnyugat felé mutató kettős nyíl	-
+⇗	északkelet felé mutató kettős nyíl	-
+⇘	délkelet felé mutató kettős nyíl	-
+⇙	délnyugat felé mutató kettős nyíl	-
+⇚	balra mutató hármas nyíl	-
+⇛	jobbra mutató hármas nyíl	-
+⇜	balra mutató kígyózó nyíl	-
+⇝	jobbra mutató kígyózó nyíl	-
+⇞	felfelé mutató duplán áthúzott nyíl	-
+⇟	lefelé mutató duplán áthúzott nyíl	-
+⇠	balra mutató szaggatott nyíl	-
+⇡	felfelé mutató szaggatott nyíl	-
+⇢	jobbra mutató szaggatott nyíl	-
+⇣	lefelé mutató szaggatott nyíl	-
+⇤	balra és vonalig mutató nyíl	-
+⇥	jobbra és vonalig mutató nyíl	-
+⇦	balra mutató üres nyíl	-
+⇧	felfelé mutató üres nyíl	-
+⇨	jobbra mutató üres nyíl	-
+⇩	lefelé mutató üres nyíl	-
+⇪	felfelé mutató üres nyíl kiindulási vonallal	-
+⇵	bal lefelé mutató és jobb felfelé mutató nyíl	-
+∀	univerzális kvantor	-
+∂	parciális differenciál	-
+∃	létezik	-
+∅	üres halmaz	-
+∆	növekmény	-
+∇	nabla	-
+∈	eleme	-
+∉	nem eleme	-
+∋	fordított eleme	-
+∎	bizonyítás vége	-
+∏	n-áris produktum	-
+∑	n-áris szumma	-
++	pluszjel	-
+±	plusz-mínusz	-
+÷	osztásjel	-
+×	szorzásjel	-
+<	kisebb, mint	-
+≮	nem kisebb, mint	-
+=	egyenlő	-
+≠	nem egyenlő	-
+>	nagyobb, mint	-
+≯	nem nagyobb, mint	-
+¬	negáció	-
+|	függőleges vonal	-
+~	hullámvonal	-
+−	mínuszjel	-
+⁻	mínuszjel felső indexben	-
+∓	mínusz vagy plusz	-
+∕	osztási perjel	-
+⁄	törtvonás	-
+∗	aszteriszk műveleti jel	-
+∘	gyűrű műveleti jel	-
+∙	listajel műveleti jel	-
+√	négyzetgyök	-
+∝	arányos	-
+∞	végtelen szimbólum	-
+∟	derékszög	-
+∠	szög	-
+∣	oszt	-
+∥	párhuzamos	-
+∧	logikai és	-
+∩	metszet	-
+∪	unió	-
+∫	integrál	-
+∬	dupla integrál	-
+∮	vonalintegrál	-
+∴	tehát	-
+∵	mert	-
+∶	arány	-
+∷	arányzat	-
+∼	hasonlóság műveleti jel	-
+∽	fordított hasonlóságjel	-
+∾	fordított s betű	-
+≃	aszimptotikusan egyenlő	-
+≅	megközelítőleg egyenlő	-
+≈	közelítőleg egyenlő	-
+≌	mind egyenlő	-
+≒	megközelítőleg egyezik a képpel	-
+≖	gyűrű egyenlőségjelben	-
+≡	egyenlőségjel	-
+≣	szigorúan egyenlő	-
+≤	kisebb vagy egyenlő	-
+≥	nagyobb vagy egyenlő	-
+≦	kisebb jel egyenlőségjel felett	-
+≧	nagyobb jel egyenlőségjel felett	-
+≪	sokkal kevesebb, mint	-
+≫	sokkal nagyobb, mint	-
+≬	között	-
+≳	nagyobb vagy azonos	-
+≺	megelőzi	-
+≻	követi	-
+⊁	nem követi	-
+⊂	valódi részhalmaza	-
+⊃	szuperhalmaz	-
+⊆	részhalmaz egyenlő	-
+⊇	szuperhalmaz egyenlő	-
+⊕	pluszjel körben	-
+⊖	mínuszjel körben	-
+⊗	szorzásjel körben	-
+⊘	osztásjel körben	-
+⊙	pont műveleti jel körben	-
+⊚	gyűrű műveleti jel körben	-
+⊛	csillag műveleti jel körben	-
+⊞	bekeretezett pluszjel	-
+⊟	bekeretezett mínuszjel	-
+⊥	felfelé mutató merőleges	-
+⊮	nem kényszeríti	-
+⊰	reláció szerint megelőzi	-
+⊱	reláció szerint követi	-
+⋭	nem tartalmazza normál alcsoport-megfelelőként	-
+⊶	eredeti	-
+⊹	hermitikus konjugált mátrix	-
+⊿	derékszögű háromszög	-
+⋁	n-áris logikai vagy	-
+⋂	n-áris keresztmetszet	-
+⋃	n-áris unió	-
+⋅	pont műveleti jel	-
+⋆	csillag műveleti jel	-
+⋈	természetes kapcsolás	-
+⋒	kettős keresztmetszet	-
+⋘	sokkal többel kevesebb, mint	-
+⋙	sokkal többel nagyobb, mint	-
+⋮	függőleges hármaspont	-
+⋯	középső vízszintes hármaspont	-
+⋰	felfelé és jobbra mutató átlós hármaspont	-
+⋱	lefelé és jobbra mutató átlós hármaspont	-
+⨧	pluszjel alsó indexben kettessel	-
+⨯	vektoriális keresztszorzat	-
+⨼	belső szorzat	-
+⩣	logikai vagy kettős alulvonás	-
+⩽	kisebb jel döntött egyenlőségjellel	-
+⪍	kisebb jel hasonlóság- és egyenlőségjel felett	-
+⪚	kétvonalas egyenlőségjel nagyobb jellel	-
+⪺	követi jel alatta nem majdnem egyenlő jellel	-
+⭐	csillag	-
+⬆	felfelé mutató nyíl	-
+↗	jobbra felfelé mutató nyíl	-
+↘	jobbra lefelé mutató nyíl	-
+⬇	lefelé mutató nyíl	-
+↙	balra lefelé mutató nyíl	-
+⬅	balra mutató nyíl	-
+↖	balra felfelé mutató nyíl	-
+↕	fel-le mutató nyíl	-
+↔	balra-jobbra mutató nyíl	-
+↮	kétirányú nyíl vonással	-
+↩	balra görbülő jobb nyíl	-
+↪	jobbra görbülő bal nyíl	-
+⤴	felfelé görbülő jobb nyíl	-
+⤵	lefelé görbülő jobb nyíl	-
+〰	hullámos gondolatjel	-
+⭕	nagy, vastag kör	-
+〽	részelválasztó	-
+©	copyright (szerzői jog által védett)	-
+®	registered (bejegyzett)	-
+™	védjegy	-
+ℹ	információforrás	-
+㊗	japán „gratuláció” gomb	-
+㊙	japán „titok” gomb	-
+⬛	nagy fekete négyzet	-
+⬜	nagy fehér négyzet	-
+¢	cent	-
+$	dollár	-
+£	font	-
+¥	jen	-
+₢	cruzeiro	-
+₣	francia frank	-
+₤	líra	-
+₥	mill	-
+₩	von	-
+€	euró	-
+₰	német pfennig	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	indiai rúpia	-
+₽	rubel	-
+₿	bitcoin	-
+¹	egyes felső index	-
+²	kettes felső index	-
+³	hármas felső index	-
+₨	rúpia	-
+µ	mikro szimbólum	-
+﷼	riál	-
+¤	ismeretlen pénznem	-
+֏	örmény dram	-
+؋	afgán afghani	-
+৳	bangladesi taka	-
+฿	thai baht	-
+៛	kambodzsai riel	-
+₡	Costa Rica-i colon	-
+₦	nigériai naira	-
+₪	izraeli új sékel	-
+₫	vietnámi dong	-
+₭	laoszi kip	-
+₮	mongóliai tugrik	-
+₲	paraguayi guarani	-
+₴	ukrán hrivnya	-
+₵	ghánai cedi	-
+₸	kazahsztáni tenge	-
+₺	török líra	-
+₼	azerbajdzsáni manat	-
+₾	grúz lari	-
+₧	Spanyol peseta	-

@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	clau d’obertura	-
+‾	sobreratllat	-
+_	ratlla baixa	-
+-	guionet de menys	-
+‐	guionet	-
+–	guió mitjà	-
+—	guió llarg	-
+―	barra horitzontal	-
+・	punt volat katakana	-
+,	coma	-
+،	coma àrab	-
+、	coma ideogràfica	-
+;	punt i coma	-
+؛	punt i coma àrab	-
+:	dos punts	-
+!	signe d’exclamació	-
+¡	signe d’exclamació d’obertura	-
+?	signe d’interrogació	-
+¿	signe d’interrogació d’obertura	-
+؟	signe d’interrogació àrab	-
+‽	signe exclarrogatiu	-
+.	punt	-
+…	punts suspensius	-
+。	punt ideogràfic	-
+·	punt volat	-
+'	apòstrof tipogràfic	-
+‘	cometa esquerra	-
+’	cometa dreta	-
+‚	cometa baixa dreta	-
+“	cometa doble alta esquerra	-
+”	cometa doble alta dreta	-
+„	cometa doble baixa dreta	-
+«	cometa llatina esquerra	-
+»	cometa llatina dreta	-
+)	parèntesi de tancament	-
+[	claudàtor d’obertura	-
+]	claudàtor de tancament	-
+}	clau de tancament	-
+〈	parèntesi angular d’obertura	-
+〉	parèntesi angular de tancament	-
+《	parèntesi angular doble d’obertura	-
+》	parèntesi angular doble de tancament	-
+「	semiclaudàtor alt esquerre	-
+」	semiclaudàtor baix dret	-
+『	semiclaudàtor buit d’obertura	-
+』	semiclaudàtor buit de tancament	-
+【	claudàtor de lent negre d’obertura	-
+】	semiclaudàtor de lent negre de tancament	-
+〔	claudàtor de tortuga d’obertura	-
+〕	claudàtor de tortuga de tancament	-
+〖	claudàtor de lent buit d’obertura	-
+〗	claudàtor de lent buit de tancament	-
+§	secció	-
+¶	marca de paràgraf	-
+@	arrova	-
+*	asterisc	-
+/	barra inclinada	-
+\	barra inversa	-
+&	et	-
+%	tant per cent	-
+‰	per mil	-
+†	signe d’obelisc	-
+‡	signe d’obelisc de dos braços	-
+•	punt de llista	-
+‧	punt de guió	-
+′	prima	-
+″	doble prima	-
+‴	triple prima	-
+‸	circumflex	-
+※	marca de referència	-
+⁂	asterisme	-
+`	accent greu	-
+´	accent agut	-
+^	accent circumflex	-
+¨	dièresi	-
+°	grau	-
+℗	enregistrament de so amb copyright	-
+←	fletxa que apunta cap a l’esquerra	-
+↚	fletxa cap a l’esquerra amb traç	-
+→	fletxa que apunta cap a la dreta	-
+↛	fletxa cap a la dreta amb barra inclinada	-
+↑	fletxa que apunta cap amunt	-
+↓	fletxa que apunta cap avall	-
+↜	fletxa ondulada cap a l’esquerra	-
+↝	fletxa ondulada cap a la dreta	-
+↞	fletxa cap a l’esquerra amb dues puntes	-
+↟	fletxa cap amunt amb dues puntes	-
+↠	fletxa cap a la dreta amb dues puntes	-
+↡	fletxa cap avall amb dues puntes	-
+↢	fletxa cap a l’esquerra amb cua	-
+↣	fletxa cap a la dreta amb cua	-
+↤	fletxa des d’una barra cap a l’esquerra	-
+↥	fletxa des d’una barra cap amunt	-
+↦	fletxa des d’una barra cap a la dreta	-
+↧	fletxa des d’una barra cap avall	-
+↨	fletxa amunt i avall amb una base	-
+↫	fletxa cap a l’esquerra amb bucle	-
+↬	fletxa cap a la dreta amb bucle	-
+↭	fletxa esquerra i dreta ondulada	-
+↯	fletxa cap avall en zig-zag	-
+↰	fletxa cap amunt amb punta cap a l’esquerra	-
+↱	fletxa cap amunt amb punta cap a la dreta	-
+↲	fletxa cap avall amb punta cap a l’esquerra	-
+↳	fletxa cap avall amb punta cap a la dreta	-
+↴	fletxa curta cap a la dreta amb punta cap avall	-
+↵	fletxa curta cap avall amb punta cap a l’esquerra	-
+↶	fletxa semicircular superior antihorària	-
+↷	fletxa semicircular superior en sentit horari	-
+↸	fletxa cap al nord-oest amb barra llarga	-
+↹	fletxa esquerra sobre dreta amb barra	-
+↺	fletxa circular oberta en sentit antihorari	-
+↻	fletxa circular oberta en sentit horari	-
+↼	arpó cap a l’esquerra amb dent a sobre	-
+↽	arpó cap a l’esquerra amb dent a sota	-
+↾	arpó cap amunt amb dent a la dreta	-
+↿	arpó cap amunt amb dent a l’esquerra	-
+⇀	arpó cap a la dreta amb dent a sobre	-
+⇁	arpó cap a la dreta amb dent a sota	-
+⇂	arpó cap avall amb dent a la dreta	-
+⇃	arpó cap avall amb dent a l’esquerra	-
+⇄	fletxa dreta per sobre d’una fletxa esquerra	-
+⇅	fletxes que apunten cap amunt i cap avall	-
+⇆	fletxes cap a l’esquerra i la dreta	-
+⇇	dues fletxes cap a l’esquerra	-
+⇈	dues fletxes cap amunt	-
+⇉	dues fletxes cap a la dreta	-
+⇊	dues fletxes cap avall	-
+⇋	arpó esquerre per sobre d’un arpó dret	-
+⇌	arpó dret per sobre d’un arpó esquerre	-
+⇐	fletxa doble cap a l’esquerra	-
+⇍	fletxa doble cap a l’esquerra amb traç	-
+⇑	fletxa doble cap amunt	-
+⇒	fletxa doble cap a la dreta	-
+⇏	fletxa doble cap a la dreta amb traç	-
+⇓	fletxa doble cap avall	-
+⇔	fletxa doble cap a l’esquerra i la dreta	-
+⇎	fletxa doble esquerra i dreta amb traç	-
+⇖	fletxa doble cap al nord-oest	-
+⇗	fletxa doble cap al nord-est	-
+⇘	fletxa doble cap al sud-est	-
+⇙	fletxa doble cap al sud-oest	-
+⇚	fletxa triple cap a l’esquerra	-
+⇛	fletxa triple cap a la dreta	-
+⇜	fletxa en ziga-zaga cap a l’esquerra	-
+⇝	fletxa en ziga-zaga cap a la dreta	-
+⇞	fletxa cap amunt amb doble traç	-
+⇟	fletxa cap avall amb doble traç	-
+⇠	fletxa puntejada cap a l’esquerra	-
+⇡	fletxa puntejada cap amunt	-
+⇢	fletxa puntejada cap a la dreta	-
+⇣	fletxa puntejada cap avall	-
+⇤	fletxa cap a l’esquerra amb barra	-
+⇥	fletxa cap a la dreta amb barra	-
+⇦	fletxa buida cap a l’esquerra	-
+⇧	fletxa buida cap amunt	-
+⇨	fletxa buida cap a la dreta	-
+⇩	fletxa buida cap avall	-
+⇪	fletxa buida cap amunt des d’una barra	-
+⇵	fletxa esquerra cap avall i dreta cap amunt	-
+∀	per a tot	-
+∂	derivada parcial	-
+∃	existeix	-
+∅	conjunt buit	-
+∆	increment	-
+∇	nabla	-
+∈	element de	-
+∉	no és un element	-
+∋	conté com a membre	-
+∎	final de prova	-
+∏	producte d’operador n	-
+∑	sumatòria d’operador n	-
++	signe més	-
+±	signe de més o menys	-
+÷	signe de divisió	-
+×	signe de multiplicació	-
+<	menor que	-
+≮	no menor que	-
+=	igual	-
+≠	no és igual que	-
+>	major que	-
+≯	no major que	-
+¬	negació	-
+|	barra vertical	-
+~	titlla	-
+−	signe menys	-
+⁻	superíndex resta	-
+∓	més menys	-
+∕	barra de divisió	-
+⁄	barra de fracció	-
+∗	operador asterisc	-
+∘	operador anell	-
+∙	operador vinyeta	-
+√	arrel quadrada	-
+∝	proporcional	-
+∞	signe d’infinit	-
+∟	angle recte	-
+∠	angle	-
+∣	divideix	-
+∥	paral·lel	-
+∧	I lògic	-
+∩	intersecció	-
+∪	unió	-
+∫	integral	-
+∬	integral doble	-
+∮	integral de contorn	-
+∴	per tant	-
+∵	perquè	-
+∶	relació	-
+∷	proporció	-
+∼	operador titlla	-
+∽	titlla invertida	-
+∾	s inclinada invertida	-
+≃	igual asimptòtic	-
+≅	igual aproximat	-
+≈	aproximació	-
+≌	tot igual a	-
+≒	aproximadament igual que la imatge	-
+≖	anell dintre del signe d’igual	-
+≡	idèntic a	-
+≣	estrictament equivalent	-
+≤	menor o igual a	-
+≥	major o igual a	-
+≦	menor que a sobre del signe d’igual	-
+≧	major que a sobre del signe d’igual	-
+≪	molt menor que	-
+≫	molt major que	-
+≬	entre	-
+≳	major que equivalent	-
+≺	precedeix	-
+≻	succeeix	-
+⊁	no succeeix	-
+⊂	subconjunt de	-
+⊃	supraconjunt	-
+⊆	subconjunt igual	-
+⊇	supraconjunt igual	-
+⊕	signe més encerclat	-
+⊖	signe menys encerclat	-
+⊗	signe de multiplicació encerclat	-
+⊘	barra de divisió encerclada	-
+⊙	operador punt encerclat	-
+⊚	operador anell encerclat	-
+⊛	operador asterisc encerclat	-
+⊞	signe més en un quadrat	-
+⊟	signe menys en un quadrat	-
+⊥	tatxa cap amunt	-
+⊮	no força	-
+⊰	precedeix en la relació	-
+⊱	succeeix en la relació	-
+⋭	no conté com un subgrup normal igual	-
+⊶	original	-
+⊹	matriu hermítica conjugada	-
+⊿	triangle rectangle	-
+⋁	O lògic d’operador n	-
+⋂	intersecció d’operador n	-
+⋃	unió d’operador n	-
+⋅	operador punt	-
+⋆	operador estrella	-
+⋈	unió natural	-
+⋒	intersecció doble	-
+⋘	considerablement menor que	-
+⋙	considerablement major que	-
+⋮	el·lipsi vertical	-
+⋯	el·lipsi horitzontal volada	-
+⋰	el·lipsi diagonal cap amunt a la dreta	-
+⋱	el·lipsi diagonal cap avall a la dreta	-
+⨧	signe més amb el nombre dos en subíndex	-
+⨯	producte creuat vector	-
+⨼	producte interior	-
+⩣	O lògic amb barra inferior doble	-
+⩽	menor que o igual inclinat	-
+⪍	menor que sobre igual similar	-
+⪚	major que o igual de doble línia	-
+⪺	succeeix a sobre de no gairebé igual a	-
+⭐	estrella	-
+⬆	fletxa cap amunt	-
+↗	fletxa cap amunt a la dreta	-
+↘	fletxa cap avall a la dreta	-
+⬇	fletxa cap avall	-
+↙	fletxa cap avall a l’esquerra	-
+⬅	fletxa cap a l’esquerra	-
+↖	fletxa cap amunt a l’esquerra	-
+↕	fletxa cap amunt i cap avall	-
+↔	fletxa cap a l’esquerra i cap a la dreta	-
+↮	fletxa esquerra i dreta amb traç	-
+↩	fletxa dreta que gira cap a l’esquerra	-
+↪	fletxa esquerra que gira cap a la dreta	-
+⤴	fletxa dreta que gira cap amunt	-
+⤵	fletxa dreta que gira cap avall	-
+〰	guió ondulat	-
+⭕	cercle buit vermell	-
+〽	signe d’alternança	-
+©	drets d’autor	-
+®	marca registrada	-
+™	marca comercial	-
+ℹ	informació	-
+㊗	botó japonès "enhorabona"	-
+㊙	botó japonès "secret"	-
+⬛	quadrat gran negre	-
+⬜	quadrat gran blanc	-
+¢	centau	-
+$	dòlar	-
+£	lliura	-
+¥	ien	-
+₢	cruzeiro	-
+₣	franc francès	-
+₤	lira	-
+₥	milió	-
+₩	won	-
+€	euro	-
+₰	penic alemany	-
+₱	peso	-
+₳	austral	-
+₶	lliura tornesa	-
+₷	spesmilo	-
+₹	rupia índia	-
+₽	ruble	-
+₿	bitcoin	-
+¹	superíndex u	-
+²	superíndex dos	-
+³	superíndex tres	-
+₨	rupia	-
+µ	signe de micró	-
+﷼	rial	-
+¤	moneda desconeguda	-
+֏	dram	-
+؋	afgani afganès	-
+৳	taka	-
+฿	baht	-
+៛	riel cambodjà	-
+₡	colon costa-riqueny	-
+₦	naira nigerià	-
+₪	nou xéquel israelià	-
+₫	dong vietnamita	-
+₭	kip laosià	-
+₮	tögrög mongol	-
+₲	guaraní	-
+₴	hrívnia	-
+₵	cedi ghanès	-
+₸	tenge	-
+₺	lira turca	-
+₼	manat azerbaidjanès	-
+₾	lari	-
+₧	pesseta espanyola	-

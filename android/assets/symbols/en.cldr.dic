@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+_	low line	none
+،	arabic comma	none
+؛	arabic semicolon	none
+؟	arabic question mark	none
+.	period	none
+。	ideographic period	none
+'	typewriter apostrophe	none
+【	open black lens bracket	none
+】	close black lens bracket	none
+〖	open hollow lens bracket	none
+〗	close hollow lens bracket	none
+@	at-sign	none
+%	percent	none
+†	dagger sign	none
+‡	double dagger sign	none
+↚	leftwards arrow stroke	none
+↛	rightwards arrow stroke	none
+↞	leftwards two headed arrow	none
+↟	upwards two headed arrow	none
+↠	rightwards two headed arrow	none
+↡	downwards two headed arrow	none
+↢	leftwards arrow tail	none
+↣	rightwards arrow tail	none
+↨	up down arrow with base	none
+↫	leftwards arrow loop	none
+↬	rightwards arrow loop	none
+↭	left right wave arrow	none
+↰	upwards arrow tip leftwards	none
+↱	upwards arrow tip rightwards	none
+↲	downwards arrow tip leftwards	none
+↳	downwards arrow tip rightwards	none
+↴	rightwards arrow corner downwards	none
+↵	downwards arrow corner leftwards	none
+↶	anticlockwise top semicircle arrow	none
+↷	clockwise top semicircle arrow	none
+↸	north west arrow long bar	none
+↺	anticlockwise open circle arrow	none
+↻	clockwise open circle arrow	none
+↼	leftwards harpoon barb upwards	none
+↽	leftwards harpoon barb downwards	none
+↾	upwards harpoon barb rightwards	none
+↿	upwards harpoon barb leftwards	none
+⇀	rightwards harpoon barb upwards	none
+⇁	rightwards harpoon barb downwards	none
+⇂	downwards harpoon barb rightwards	none
+⇃	downwards harpoon barb leftwards	none
+⇍	leftwards double arrow stroke	none
+⇏	rightwards double arrow stroke	none
+⇔	left right double arrow	none
+⇎	left right double arrow stroke	none
+⇖	north west double arrow	none
+⇗	north east double arrow	none
+⇘	south east double arrow	none
+⇙	south west double arrow	none
+⇞	upwards arrow double stroke	none
+⇟	downwards arrow double stroke	none
+⇤	leftwards arrow bar	none
+⇥	rightwards arrow bar	none
+⇵	downwards arrow leftwards upwards arrow	none
+∎	end proof	none
+∝	proportional	none
+∥	parallel	none
+≃	asymptotically equal	none
+≅	approximately equal	none
+≌	all equal	none
+≣	strictly equivalent	none
+≳	greater-than equivalent	none
+⊃	superset	none
+⊆	subset equal	none
+⊇	superset equal	none
+⋭	does not contain as normal subgroup equal	none
+⊶	original	none
+⋰	up right diagonal ellipsis	none
+⋱	down right diagonal ellipsis	none
+⨧	plus subscript two	none
+⨯	vector cross product	none
+⩣	logical or double underbar	none
+⩽	less-than slanted equal	none
+⪍	less-than above similar equal	none
+⪚	double-line equal greater-than	none
+↮	left right arrow stroke	none
+₣	french franc	none
+₰	german penny	none
+₹	indian rupee	none
+₽	ruble	none
+{	open curly bracket	none
+‾	overline	none
+-	hyphen-minus	none
+‐	hyphen	none
+–	en dash	none
+—	em dash	none
+―	horizontal bar	none
+・	katakana middle dot	none
+,	comma	none
+、	ideographic comma	none
+;	semicolon	none
+:	colon	none
+!	exclamation mark	none
+¡	inverted exclamation mark	none
+?	question mark	none
+¿	inverted question mark	none
+‽	interrobang	none
+…	ellipsis	none
+·	middle dot	none
+‘	left apostrophe	none
+’	right apostrophe	none
+‚	low right apostrophe	none
+“	left quotation mark	none
+”	right quotation mark	none
+„	low right quotation mark	none
+«	left guillemet	none
+»	right guillemet	none
+)	close parenthesis	none
+[	open square bracket	none
+]	close square bracket	none
+}	close curly bracket	none
+〈	open angle bracket	none
+〉	close angle bracket	none
+《	open double angle bracket	none
+》	close double angle bracket	none
+「	open corner bracket	none
+」	close corner bracket	none
+『	open hollow corner bracket	none
+』	close hollow corner bracket	none
+〔	open tortoise shell bracket	none
+〕	close tortoise shell bracket	none
+§	section	none
+¶	paragraph mark	none
+*	asterisk	none
+/	slash	none
+\	backslash	none
+&	ampersand	none
+‰	per mille	none
+•	bullet	none
+‧	hyphenation point	none
+′	prime	none
+″	double prime	none
+‴	triple prime	none
+‸	caret	none
+※	reference mark	none
+⁂	asterism	none
+`	grave accent	none
+´	acute accent	none
+^	circumflex accent	none
+¨	diaeresis	none
+°	degree	none
+℗	sound recording copyright	none
+←	left-pointing arrow	none
+→	right-pointing arrow	none
+↑	up-pointing arrow	none
+↓	down-pointing arrow	none
+↜	leftwards wave arrow	none
+↝	rightwards wave arrow	none
+↤	leftwards arrow from bar	none
+↥	upwards arrow from bar	none
+↦	rightwards arrow from bar	none
+↧	downwards arrow from bar	none
+↯	downwards zigzag arrow	none
+↹	leftwards over rightwards arrow bars	none
+⇄	rightwards arrow over leftwards arrow	none
+⇅	up-pointing and down-pointing arrows	none
+⇆	left-pointing over right-pointing arrows	none
+⇇	leftwards paired arrows	none
+⇈	upwards paired arrows	none
+⇉	rightwards paired arrows	none
+⇊	downwards paired arrows	none
+⇋	leftwards harpoon over rightwards harpoon	none
+⇌	rightwards harpoon over leftwards harpoon	none
+⇐	leftwards double arrow	none
+⇑	upwards double arrow	none
+⇒	rightwards double arrow	none
+⇓	downwards double arrow	none
+⇚	leftwards triple arrow	none
+⇛	rightwards triple arrow	none
+⇜	leftwards squiggle arrow	none
+⇝	rightwards squiggle arrow	none
+⇠	leftwards dashed arrow	none
+⇡	upwards dashed arrow	none
+⇢	rightwards dashed arrow	none
+⇣	downwards dashed arrow	none
+⇦	leftwards hollow arrow	none
+⇧	upwards hollow arrow	none
+⇨	rightwards hollow arrow	none
+⇩	downwards hollow arrow	none
+⇪	upwards hollow arrow from bar	none
+∀	for all	none
+∂	partial differential	none
+∃	there exists	none
+∅	empty set	none
+∆	increment	none
+∇	nabla	none
+∈	element of	none
+∉	not an element	none
+∋	contains as member	none
+∏	n-ary product	none
+∑	n-ary summation	none
++	plus sign	none
+±	plus-minus	none
+÷	division sign	none
+×	multiplication sign	none
+<	less-than	none
+≮	not less-than	none
+=	equal	none
+≠	not equal	none
+>	greater-than	none
+≯	not greater-than	none
+¬	negation	none
+|	vertical line	none
+~	tilde	none
+−	minus sign	none
+⁻	superscript minus	none
+∓	minus-or-plus	none
+∕	division slash	none
+⁄	fraction slash	none
+∗	asterisk operator	none
+∘	ring operator	none
+∙	bullet operator	none
+√	square root	none
+∞	infinity sign	none
+∟	right angle	none
+∠	angle	none
+∣	divides	none
+∧	logical and	none
+∩	intersection	none
+∪	union	none
+∫	integral	none
+∬	double integral	none
+∮	contour integral	none
+∴	therefore	none
+∵	because	none
+∶	ratio	none
+∷	proportion	none
+∼	tilde operator	none
+∽	reversed tilde	none
+∾	inverted lazy s	none
+≈	almost equal	none
+≒	approximately equal the image	none
+≖	ring in equal	none
+≡	identical to	none
+≤	less-than or equal	none
+≥	greater-than or equal	none
+≦	less-than over equal	none
+≧	greater-than over equal	none
+≪	much less-than	none
+≫	much greater-than	none
+≬	between	none
+≺	precedes	none
+≻	succeeds	none
+⊁	does not succeed	none
+⊂	subset of	none
+⊕	circled plus	none
+⊖	circled minus	none
+⊗	circled times	none
+⊘	circled division slash	none
+⊙	circled dot operator	none
+⊚	circled ring operator	none
+⊛	circled asterisk operator	none
+⊞	squared plus	none
+⊟	squared minus	none
+⊥	up tack	none
+⊮	does not force	none
+⊰	precedes under relation	none
+⊱	succeeds under relation	none
+⊹	hermitian conjugate matrix	none
+⊿	right triangle	none
+⋁	n-ary logical or	none
+⋂	n-ary intersection	none
+⋃	n-ary union	none
+⋅	dot operator	none
+⋆	star operator	none
+⋈	natural join	none
+⋒	double intersection	none
+⋘	very much less-than	none
+⋙	very much greater-than	none
+⋮	vertical ellipsis	none
+⋯	midline horizontal ellipsis	none
+⨼	interior product	none
+⪺	succeeds above not almost equal	none
+⭐	star	none
+⬆	up arrow	none
+↗	up-right arrow	none
+↘	down-right arrow	none
+⬇	down arrow	none
+↙	down-left arrow	none
+⬅	left arrow	none
+↖	up-left arrow	none
+↕	up-down arrow	none
+↔	left-right arrow	none
+↩	right arrow curving left	none
+↪	left arrow curving right	none
+⤴	right arrow curving up	none
+⤵	right arrow curving down	none
+〰	wavy dash	none
+⭕	hollow red circle	none
+〽	part alternation mark	none
+©	copyright	none
+®	registered	none
+™	trade mark	none
+ℹ	information	none
+㊗	Japanese “congratulations” button	none
+㊙	Japanese “secret” button	none
+⬛	black large square	none
+⬜	white large square	none
+¢	cent	none
+$	dollar	none
+£	pound	none
+¥	yen	none
+₢	cruzeiro	none
+₤	lira	none
+₥	mill	none
+₩	won	none
+€	euro	none
+₱	peso	none
+₳	austral	none
+₶	livre tournois	none
+₷	spesmilo	none
+₿	bitcoin	none
+¹	superscript one	none
+²	superscript two	none
+³	superscript three	none
+₨	rupee	none
+µ	micro sign	none
+﷼	rial	none
+¤	Unknown Currency	none
+֏	Armenian Dram	none
+؋	Afghan Afghani	none
+৳	Bangladeshi Taka	none
+฿	Thai Baht	none
+៛	Cambodian Riel	none
+₡	Costa Rican Colón	none
+₦	Nigerian Naira	none
+₪	Israeli New Shekel	none
+₫	Vietnamese Dong	none
+₭	Laotian Kip	none
+₮	Mongolian Tugrik	none
+₲	Paraguayan Guarani	none
+₴	Ukrainian Hryvnia	none
+₵	Ghanaian Cedi	none
+₸	Kazakhstani Tenge	none
+₺	Turkish Lira	none
+₼	Azerbaijani Manat	none
+₾	Georgian Lari	none
+₧	Spanish Peseta	none

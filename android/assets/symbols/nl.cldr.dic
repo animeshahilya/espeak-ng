@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	accolade openen	-
+‾	bovenlijn	-
+_	underscore	-
+-	liggend streepje	-
+‐	koppelteken	-
+–	gedachtestreepje	-
+—	aandachtsstreepje	-
+―	horizontale balk	-
+・	katakana middelste punt	-
+,	komma	-
+،	Arabische komma	-
+、	ideografische komma	-
+;	puntkomma	-
+؛	Arabische puntkomma	-
+:	dubbele punt	-
+!	uitroepteken	-
+¡	omgekeerd uitroepteken	-
+?	vraagteken	-
+¿	omgekeerd vraagteken	-
+؟	Arabisch vraagteken	-
+‽	interrobang	-
+.	punt	-
+…	beletselteken	-
+。	ideografische punt	-
+·	hoge punt	-
+'	rechte apostrof	-
+‘	linker apostrof	-
+’	rechter apostrof	-
+‚	lage rechter apostrof	-
+“	linker dubbel aanhalingsteken	-
+”	rechter dubbel aanhalingsteken	-
+„	laag rechter dubbel aanhalingsteken	-
+«	guillemet naar links	-
+»	guillemet naar rechts	-
+)	haakje sluiten	-
+[	rechte haak openen	-
+]	rechte haak sluiten	-
+}	accolade sluiten	-
+〈	punthaakje openen	-
+〉	punthaakje sluiten	-
+《	dubbel punthaakje openen	-
+》	dubbel punthaakje sluiten	-
+「	Oost-Aziatisch aanhalingsteken openen	-
+」	Oost-Aziatisch aanhalingsteken sluiten	-
+『	Aziatisch aanhalingsteken openen	-
+』	Aziatisch aanhalingsteken sluiten	-
+【	zwart lensvormig haakje openen	-
+】	lensvormig contourhaakje sluiten	-
+〔	schildhaakje openen	-
+〕	schildhaakje sluiten	-
+〖	lensvormig haakje openen	-
+〗	lensvormig haakje sluiten	-
+§	paragraaf	-
+¶	paragraafteken	-
+@	apenstaartje	-
+*	asterisk	-
+/	schuine streep	-
+\	backslash	-
+&	en-teken	-
+%	procent	-
+‰	promille	-
+†	obelisk	-
+‡	dubbele obelisk	-
+•	bullet	-
+‧	koppeling	-
+′	prime	-
+″	dubbele prime	-
+‴	drievoudige prime	-
+‸	inlasteken	-
+※	referentieteken	-
+⁂	asterisme	-
+`	accent grave	-
+´	accent aigu	-
+^	accent circonflexe	-
+¨	trema	-
+°	graden	-
+℗	copyright geluidsopname	-
+←	naar links wijzende pijl	-
+↚	streep met pijl naar links	-
+→	naar rechts wijzende pijl	-
+↛	streep met pijl naar rechts	-
+↑	omhoog wijzende pijl	-
+↓	omlaag wijzende pijl	-
+↜	golvende pijl naar links	-
+↝	golvende pijl naar rechts	-
+↞	pijl met twee koppen naar links	-
+↟	pijl met twee koppen omhoog	-
+↠	pijl met twee koppen naar rechts	-
+↡	pijl met twee koppen omlaag	-
+↢	pijl met staart naar links	-
+↣	pijl met staart naar rechts	-
+↤	pijl naar links vanaf balk	-
+↥	pijl omhoog vanaf balk	-
+↦	pijl naar rechts vanaf balk	-
+↧	pijl omlaag vanaf balk	-
+↨	pijl omhoog/omlaag met basis	-
+↫	pijl met lus naar links	-
+↬	pijl met lus naar rechts	-
+↭	golvende pijl naar links/rechts	-
+↯	zigzagpijl omlaag	-
+↰	pijlpunt omhoog en naar links wijzend	-
+↱	pijlpunt omhoog en naar rechts wijzend	-
+↲	pijlpunt omlaag en naar links wijzend	-
+↳	pijlpunt omlaag en naar rechts wijzend	-
+↴	hoekpijl omlaag en naar rechts wijzend	-
+↵	hoekpijl omlaag en naar links wijzend	-
+↶	pijl omhoog tegen de klok in met halve cirkel	-
+↷	pijl omhoog met de klok mee met halve cirkel	-
+↸	pijl noordwest lange balk	-
+↹	pijl naar links naar balk boven pijl naar rechts naar balk	-
+↺	pijl met open cirkel tegen de klok in	-
+↻	pijl met open cirkel met de klok mee	-
+↼	harpoen naar links met weerhaak naar boven	-
+↽	harpoen naar links met weerhaak naar beneden	-
+↾	harpoen naar boven met weerhaak naar rechts	-
+↿	harpoen naar boven met weerhaak naar links	-
+⇀	harpoen naar rechts met weerhaak naar boven	-
+⇁	harpoen naar rechts met weerhaak naar beneden	-
+⇂	harpoen naar beneden met weerhaak naar rechts	-
+⇃	harpoen naar beneden met weerhaak naar links	-
+⇄	pijl naar rechts boven pijl naar links	-
+⇅	omhoog en omlaag wijzende pijlen	-
+⇆	naar links boven naar rechts wijzende pijlen	-
+⇇	twee pijlen naar links	-
+⇈	twee pijlen naar boven	-
+⇉	twee pijlen naar rechts	-
+⇊	twee pijlen naar beneden	-
+⇋	harpoen naar links boven harpoen naar rechts	-
+⇌	harpoen naar rechts boven harpoen naar links	-
+⇐	dubbele pijl naar links	-
+⇍	dubbele doorgestreepte pijl naar links	-
+⇑	dubbele pijl omhoog	-
+⇒	dubbele pijl naar rechts	-
+⇏	dubbele doorgestreepte pijl naar rechts	-
+⇓	dubbele pijl omlaag	-
+⇔	dubbele pijl links/rechts	-
+⇎	dubbele doorgestreepte pijl links/rechts	-
+⇖	dubbele pijl noordwest	-
+⇗	dubbele pijl noordoost	-
+⇘	dubbele pijl zuidoost	-
+⇙	dubbele pijl zuidwest	-
+⇚	driedubbele pijl naar links	-
+⇛	driedubbele pijl naar rechts	-
+⇜	kronkelpijl naar links	-
+⇝	kronkelpijl naar rechts	-
+⇞	pijl naar boven met twee strepen	-
+⇟	pijl naar beneden met twee strepen	-
+⇠	gestippelde pijl naar links	-
+⇡	gestippelde pijl naar boven	-
+⇢	gestippelde pijl naar rechts	-
+⇣	gestippelde pijl naar beneden	-
+⇤	pijl naar links naar balk	-
+⇥	pijl naar rechts naar balk	-
+⇦	doorzichtige pijl naar linkss	-
+⇧	doorzichtige pijl naar boven	-
+⇨	doorzichtige pijl naar rechts	-
+⇩	doorzichtige pijl naar beneden	-
+⇪	doorzichtige pijl naar boven vanaf balk	-
+⇵	pijl omlaag links van pijl omhoog	-
+∀	voor alles	-
+∂	partiële afgeleide	-
+∃	bestaat	-
+∅	lege verzameling	-
+∆	toename	-
+∇	nabla	-
+∈	element van	-
+∉	geen element van	-
+∋	bevat als lid	-
+∎	qed	-
+∏	cartesisch product	-
+∑	productverzameling	-
++	plusteken	-
+±	plusminus	-
+÷	deelteken	-
+×	vermenigvuldigingsteken	-
+<	kleiner-danteken	-
+≮	niet minder dan	-
+=	gelijkteken	-
+≠	niet-gelijkteken	-
+>	groter-danteken	-
+≯	niet groter dan	-
+¬	negatie	-
+|	verticale lijn	-
+~	tilde	-
+−	minteken	-
+⁻	superscript min	-
+∓	min-of-plusteken	-
+∕	deelstreep	-
+⁄	breukstreep	-
+∗	asterisk-teken	-
+∘	operator samenstelling	-
+∙	puntteken	-
+√	vierkantswortel	-
+∝	evenredig	-
+∞	oneindig teken	-
+∟	rechte hoek	-
+∠	hoek	-
+∣	deler	-
+∥	parallel	-
+∧	logisch en	-
+∩	doorsnede	-
+∪	vereniging	-
+∫	integraal	-
+∬	dubbele integraal	-
+∮	kringintegraal	-
+∴	daarom	-
+∵	omdat	-
+∶	ratio	-
+∷	verhouding	-
+∼	tilde-teken	-
+∽	omgekeerde tilde	-
+∾	oneindigheid	-
+≃	asymptotisch gelijkwaardige	-
+≅	ongeveer gelijk	-
+≈	ongeveerteken	-
+≌	alles gelijk	-
+≒	ongeveer gelijk aan de afbeelding	-
+≖	ring in gelijk	-
+≡	is gelijk aan	-
+≣	strict gelijk	-
+≤	kleiner dan of gelijk aan	-
+≥	groter dan of gelijk aan	-
+≦	minder dan boven gelijk aan	-
+≧	groter dan boven gelijk aan	-
+≪	veel minder dan	-
+≫	veel groter dan	-
+≬	tussen	-
+≳	groter of gelijk dan	-
+≺	komt voor	-
+≻	komt na	-
+⊁	komt niet na	-
+⊂	deelverzameling van	-
+⊃	verzameling	-
+⊆	deelverzameling gelijk aan	-
+⊇	verzameling gelijk aan	-
+⊕	plusteken in cirkel	-
+⊖	minteken in cirkel	-
+⊗	vermenigvuldigingsteken in cirkel	-
+⊘	schuine streep voorwaarts in cirkel	-
+⊙	operator met punt in cirkel	-
+⊚	operator met ring in cirkel	-
+⊛	operator met asterisk in cirkel	-
+⊞	plusteken in vierkant	-
+⊟	minteken in vierkant	-
+⊥	falsum	-
+⊮	forceert niet	-
+⊰	komt voor onder relatie	-
+⊱	komt na onder relatie	-
+⋭	is gelijk aan bevat geen normale deelverzameling	-
+⊶	origineel	-
+⊹	geconjugeerde hermitische matrix	-
+⊿	driehoek rechts	-
+⋁	n-ary logisch of	-
+⋂	n-ary doorsnede	-
+⋃	n-ary vereniging	-
+⋅	puntoperator	-
+⋆	steroperator	-
+⋈	natuurlijk samenvoegen	-
+⋒	dubbele doorsnede	-
+⋘	heel veel minder dan	-
+⋙	heel veel groter dan	-
+⋮	verticale ellips	-
+⋯	horizontale ellips op middellijn	-
+⋰	ellips diagonaal rechts omhoog	-
+⋱	ellips diagonaal rechts omlaag	-
+⨧	plus subscript twee	-
+⨯	vectorkruisproduct	-
+⨼	inwendig product	-
+⩣	logische of dubbele onderbalk	-
+⩽	minder dan of gelijk aan	-
+⪍	minder dan boven soortgelijk aan	-
+⪚	dubbele lijn soortgelijk aan groter dan	-
+⪺	komt na boven niet bijna gelijk aan	-
+⭐	witte middelgrote ster	-
+⬆	pijl omhoog	-
+↗	pijl rechtsomhoog	-
+↘	pijl rechtsomlaag	-
+⬇	pijl omlaag	-
+↙	pijl linksomlaag	-
+⬅	pijl naar links	-
+↖	pijl linksomhoog	-
+↕	pijl omhoog en omlaag	-
+↔	pijl naar links en rechts	-
+↮	streep met pijl naar links/rechts	-
+↩	pijl naar rechts die naar links draait	-
+↪	pijl naar links die naar rechts draait	-
+⤴	pijl naar rechts die omhoog draait	-
+⤵	pijl naar rechts die omlaag draait	-
+〰	golvend streepje	-
+⭕	lege rode cirkel	-
+〽	rolwisselingsmarkering	-
+©	copyright	-
+®	gedeponeerd	-
+™	handelsmerksymbool	-
+ℹ	informatie	-
+㊗	Japans teken voor ‘gefeliciteerd’	-
+㊙	Japans teken voor ‘geheim’	-
+⬛	groot zwart vierkant	-
+⬜	groot wit vierkant	-
+¢	cent	-
+$	dollar	-
+£	Brits pond	-
+¥	yen	-
+₢	cruzeiro	-
+₣	Franse franc	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	Duitse pfennig	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	Indiase roepie	-
+₽	roebel	-
+₿	bitcoin	-
+¹	superscript één	-
+²	superscript twee	-
+³	superscript drie	-
+₨	roepie	-
+µ	mu	-
+﷼	rial	-
+¤	onbekende munteenheid	-
+֏	Armeense dram	-
+؋	Afghaanse afghani	-
+৳	Bengalese taka	-
+฿	Thaise baht	-
+៛	Cambodjaanse riel	-
+₡	Costa Ricaanse colon	-
+₦	Nigeriaanse naira	-
+₪	Israëlische nieuwe shekel	-
+₫	Vietnamese dong	-
+₭	Laotiaanse kip	-
+₮	Mongoolse tugrik	-
+₲	Paraguayaanse guarani	-
+₴	Oekraïense hryvnia	-
+₵	Ghanese cedi	-
+₸	Kazachse tenge	-
+₺	Turkse lira	-
+₼	Azerbeidzjaanse manat	-
+₾	Georgische lari	-
+₧	Spaanse peseta	-

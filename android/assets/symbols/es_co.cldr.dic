@@ -1,0 +1,50 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+-	menos	-
+‘	apóstrofe izquierdo	-
+‚	apóstrofe derecho bajo	-
+«	diple de apertura	-
+»	diple de cierre	-
+§	sección	-
+†	signo de daga	-
+‡	signo de daga doble	-
+•	viñeta	-
+↴	flecha hacia abajo con punta hacia la esquina derecha	-
+↵	flecha hacia abajo con punta hacia la esquina izquierda	-
+↸	flecha hacia noroeste con barra	-
+⇀	arpón hacia la derecha con flecha por arriba	-
+⇁	arpón hacia la derecha con flecha por debajo	-
+⇄	flecha a la derecha sobre flecha a la izquierda	-
+⇅	flecha doble hacia arriba y abajo	-
+⇆	flecha doble hacia la izquierda y derecha	-
+⇇	par de flechas hacia la izquierda	-
+⇈	par de flechas hacia arriba	-
+⇉	par de flechas hacia la derecha	-
+⇊	par de flechas hacia abajo	-
+⇋	arpón a la izquierda sobre arpón a la derecha	-
+⇌	arpón a la derecha sobre arpón a la izquierda	-
+∉	no es un elemento de	-
+∋	es un elemento de	-
+∓	menos-más	-
+∠	ángulo agudo	-
+∴	por lo tanto	-
+≤	menor o igual que	-
+≥	mayor o igual que	-
+⋁	o lógico n-ario	-
+⋮	elipsis vertical	-
+⋯	elipsis horizontal de línea media	-
+⋰	elipsis en diagonal hacia la derecha	-
+⋱	elipsis en diagonal hacia la izquierda	-
+⨯	producto vectorial	-
+⩣	o lógico sobre doble barra	-
+⩽	menor o igual que con barra inclinada	-
+⪺	sucede sobre no igual	-
+〰	línea ondulada	-
+〽	alternancia	-
+™	marca comercial	-
+¢	centavo	-
+₥	mill	-
+₿	bitcoin	-
+µ	signo micro	-
+฿	baht tailandes	-
+₸	tenge kazajo	-

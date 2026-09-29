@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	venstre krøllparentes	-
+‾	overstrek	-
+_	understrek	-
+-	bindestrek-minus-tegn	-
+‐	bindestrek	-
+–	tankestrek	-
+—	lang tankestrek	-
+―	vannrett strek	-
+・	midtstilt prikk i katakana	-
+,	komma	-
+،	arabisk komma	-
+、	ideografisk komma	-
+;	semikolon	-
+؛	arabisk semikolon	-
+:	kolon	-
+!	utropstegn	-
+¡	opp-ned utropstegn	-
+?	spørsmålstegn	-
+¿	opp-ned spørsmålstegn	-
+؟	arabisk spørsmålstegn	-
+‽	interrobang	-
+.	punktum	-
+…	ellipse	-
+。	ideografisk punktum	-
+·	midtstilt punkt	-
+'	rett apostrof	-
+‘	enkelt krøllet venstre anførselstegn	-
+’	enkelt krøllet høyre anførselstegn	-
+‚	enkelt krøllet lavt venstre anførselstegn	-
+“	dobbelt krøllet venstre anførselstegn	-
+”	dobbelt krøllet høyre anførselstegn	-
+„	dobbelt krøllet lavt venstre anførselstegn	-
+«	venstre anførselstegn	-
+»	høyre anførselstegn	-
+)	høyre parentes	-
+[	venstre hakeparentes	-
+]	høyre hakeparentes	-
+}	høyre krøllparentes	-
+〈	venstre vinkelparentes	-
+〉	høyre vinkelparentes	-
+《	venstre dobbel vinkelparentes	-
+》	høyre dobbel vinkelparentes	-
+「	venstre hjørneparentes	-
+」	høyre hjørneparentes	-
+『	venstre hul hjørneparentes	-
+』	høyre hul hjørneparentes	-
+【	venstre fylt linseparentes	-
+】	høyre fylt linseparentes	-
+〔	venstre skilpaddeparentes	-
+〕	høyre skilpaddeparentes	-
+〖	venstre hul linseparentes	-
+〗	høyre hul linseparentes	-
+§	paragraftegn	-
+¶	avsnittstegn	-
+@	krøllalfa	-
+*	asterisk	-
+/	skråstrek	-
+\	omvendt skråstrek	-
+&	og-tegn	-
+%	prosent	-
+‰	promille	-
+†	korstegn	-
+‡	dobbeltkorstegn	-
+•	punkttegn	-
+‧	stavelsesmerke	-
+′	primtegn	-
+″	dobbelt primtegn	-
+‴	trippelt primtegn	-
+‸	innsettingstegn	-
+※	referansemerke	-
+⁂	asterisme	-
+`	gravis	-
+´	akutt aksent	-
+^	circumfleks	-
+¨	trema	-
+°	gradetegn	-
+℗	opphavsrett for lydopptak	-
+←	pil mot venstre	-
+↚	pil venstre med skråstrek	-
+→	pil mot høyre	-
+↛	pil høyre med skråstrek	-
+↑	pil oppover	-
+↓	pil nedover	-
+↜	bølgepil mot venstre	-
+↝	bølgepil mot høyre	-
+↞	pil venstre med to mothaker	-
+↟	pil opp med to mothaker	-
+↠	pil høyre med to mothaker	-
+↡	pil ned med to mothaker	-
+↢	pil venstre med styrefjær	-
+↣	pil høyre med styrefjær	-
+↤	pil venstre fra loddrett strek	-
+↥	pil opp fra vannrett strek	-
+↦	pil høyre fra loddrett strek	-
+↧	pil ned fra vannrett strek	-
+↨	pil opp og ned med underlag	-
+↫	pil venstre med løkke	-
+↬	pil høyre med løkke	-
+↭	bølgepil mot høyre og venstre	-
+↯	sikksakkpil nedover	-
+↰	pil opp med spiss mot venstre	-
+↱	pil opp med spiss mot høyre	-
+↲	pil ned med spiss mot venstre	-
+↳	pil ned med spiss mot høyre	-
+↴	pil høyre som snur ned	-
+↵	pil ned som snur mot venstre	-
+↶	halvsirkelpil mot klokken	-
+↷	halvsirkelpil med klokken	-
+↸	pil mot nordvest med strek over	-
+↹	pil venstre over pil høyre mot loddrette streker	-
+↺	pil åpen sirkel mot klokken	-
+↻	pil åpen sirkel med klokken	-
+↼	harpunpil venstre med mothake opp	-
+↽	harpunpil venstre med mothake ned	-
+↾	harpunpil opp med mothake mot høyre	-
+↿	harpunpil opp med mothake mot venstre	-
+⇀	harpunpil høyre med mothake opp	-
+⇁	harpunpil høyre med mothake ned	-
+⇂	harpunpil ned med mothake mot høyre	-
+⇃	harpunpil ned med mothake mot venstre	-
+⇄	pil høyre over pil venstre	-
+⇅	pil oppover foran pil nedover	-
+⇆	pil mot venstre over pil mot høyre	-
+⇇	parallelle piler mot venstre	-
+⇈	parallelle piler opp	-
+⇉	parallelle piler mot høyre	-
+⇊	parallelle piler ned	-
+⇋	harpunpil venstre over harpunpil høyre	-
+⇌	harpunpil høyre over harpunpil venstre	-
+⇐	dobbeltpil venstre	-
+⇍	dobbeltpil venstre med strek	-
+⇑	dobbeltpil opp	-
+⇒	dobbeltpil høyre	-
+⇏	dobbeltpil høyre med strek	-
+⇓	dobbeltpil ned	-
+⇔	dobbeltpil begge veier	-
+⇎	dobbeltpil begge veier med strek	-
+⇖	dobbeltpil nordvest	-
+⇗	dobbeltpil nordøst	-
+⇘	dobbeltpil sørøst	-
+⇙	dobbeltpil sørvest	-
+⇚	trippelpil venstre	-
+⇛	trippelpil høyre	-
+⇜	snirkelpil venstre	-
+⇝	snirkelpil høyre	-
+⇞	pil opp med to streker	-
+⇟	pil ned med to streker	-
+⇠	stiplet pil venstre	-
+⇡	stiplet pil opp	-
+⇢	stiplet pil høyre	-
+⇣	stiplet pil ned	-
+⇤	pil venstre mot loddrett strek	-
+⇥	pil høyre mot loddrett strek	-
+⇦	hul pil venstre	-
+⇧	hul pil opp	-
+⇨	hul pil høyre	-
+⇩	hul pil ned	-
+⇪	hul pil opp fra vannrett strek	-
+⇵	pil ned til venstre for pil opp	-
+∀	allkvantor	-
+∂	partiellderivert	-
+∃	eksistenskvantor	-
+∅	den tomme mengden	-
+∆	matematisk endring	-
+∇	nabla	-
+∈	element i	-
+∉	er ikke element i	-
+∋	inneholder som medlem	-
+∎	slutt på bevis	-
+∏	produkt	-
+∑	sum	-
++	plusstegn	-
+±	pluss/minus	-
+÷	deletegn	-
+×	gangetegn	-
+<	er mindre enn	-
+≮	er ikke mindre enn	-
+=	er lik	-
+≠	er ikke lik	-
+>	er større enn	-
+≯	er ikke større enn	-
+¬	negasjon	-
+|	loddrett strek	-
+~	tilde	-
+−	minustegn	-
+⁻	hevet minustegn	-
+∓	minus-pluss	-
+∕	skråstrek for divisjon	-
+⁄	skråstrek for brøk	-
+∗	asteriskoperator	-
+∘	ringoperator	-
+∙	punktoperator	-
+√	kvadratrot	-
+∝	er proporsjonal med	-
+∞	uendelighetstegn	-
+∟	rett vinkel	-
+∠	vinkel	-
+∣	divisor	-
+∥	parallell	-
+∧	logisk og	-
+∩	snitt	-
+∪	union	-
+∫	integral	-
+∬	dobbelt integral	-
+∮	konturintegral	-
+∴	derfor	-
+∵	fordi	-
+∶	forhold	-
+∷	proporsjon	-
+∼	tildeoperator	-
+∽	omvendt tilde	-
+∾	speilvendt liggende s	-
+≃	asymptotisk lik	-
+≅	tilnærmet lik	-
+≈	er tilnærmet lik	-
+≌	kongruent	-
+≒	tilnærmet lik bildet	-
+≖	ring i likhetstegn	-
+≡	identisk lik	-
+≣	strengt ekvivalent	-
+≤	er mindre enn eller lik	-
+≥	er større enn eller lik	-
+≦	mindre enn over likhetstegn	-
+≧	større enn over likhetstegn	-
+≪	mye mindre enn	-
+≫	mye større enn	-
+≬	mellom	-
+≳	tilnærmet større enn	-
+≺	kommer før	-
+≻	kommer etter	-
+⊁	kommer ikke etter	-
+⊂	delmengde av	-
+⊃	supermengde	-
+⊆	delmengde lik	-
+⊇	supermengde lik	-
+⊕	plusstegn i sirkel	-
+⊖	minustegn i sirkel	-
+⊗	multipliseringstegn i sirkel	-
+⊘	skråstrek for divisjon i sirkel	-
+⊙	prikkoperator i sirkel	-
+⊚	ringoperator i sirkel	-
+⊛	stjerneoperator i sirkel	-
+⊞	plusstegn i firkant	-
+⊟	minustegn i firkant	-
+⊥	falsum	-
+⊮	tvinger ikke	-
+⊰	kommer før under relasjon	-
+⊱	kommer etter under relasjon	-
+⋭	inneholder ikke som normal delgruppe lik	-
+⊶	original	-
+⊹	hermitisk konjugert matrise	-
+⊿	rettvinklet trekant	-
+⋁	n-ær logisk eller	-
+⋂	n-ært snitt	-
+⋃	n-ær union	-
+⋅	prikkoperator	-
+⋆	stjerneoperator	-
+⋈	naturlig skjøt	-
+⋒	dobbelt snitt	-
+⋘	veldig mye mindre enn	-
+⋙	veldig mye større enn	-
+⋮	loddrett ellipse	-
+⋯	sentrert vannrett ellipse	-
+⋰	diagonal ellipse opp mot høyre	-
+⋱	diagonal ellipse ned mot høyre	-
+⨧	plusstegn med senket totall	-
+⨯	kryssprodukt av vektorer	-
+⨼	indreprodukt	-
+⩣	logisk eller dobbelt understreket	-
+⩽	mindre enn eller lik med likhetstegn på skrå	-
+⪍	mindre enn eller lik over asymptotisk lik	-
+⪚	likhetstegn over større enn	-
+⪺	kommer etter over ikke tilnærmet lik	-
+⭐	stjerne	-
+⬆	pil opp	-
+↗	pil opp-høyre	-
+↘	pil ned-høyre	-
+⬇	pil ned	-
+↙	pil ned-venstre	-
+⬅	pil venstre	-
+↖	pil opp-venstre	-
+↕	pil opp og ned	-
+↔	pil venstre-høyre	-
+↮	pil begge veier med skråstrek	-
+↩	pil som bøyer mot venstre	-
+↪	pil som bøyer mot høyre	-
+⤴	pil som bøyer opp	-
+⤵	pil som bøyer ned	-
+〰	bølgestrek	-
+⭕	tykk rød sirkel	-
+〽	merke for nytt parti	-
+©	opphavsrett	-
+®	registrert varemerke	-
+™	varemerke	-
+ℹ	informasjon	-
+㊗	«gratulerer» på japansk	-
+㊙	«hemmelig» på japansk	-
+⬛	stort svart kvadrat	-
+⬜	stort hvitt kvadrat	-
+¢	cent	-
+$	dollar	-
+£	pund	-
+¥	yen	-
+₢	cruzeiro	-
+₣	fransk franc	-
+₤	lire	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	tysk pfennig	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	indiske rupi	-
+₽	rubler	-
+₿	bitcoin	-
+¹	hevet ettall	-
+²	hevet totall	-
+³	hevet tretall	-
+₨	rupi	-
+µ	mikrotegn	-
+﷼	rial	-
+¤	ukjent valuta	-
+֏	armenske dram	-
+؋	afghanske afghani	-
+৳	bangladeshiske taka	-
+฿	thailandske baht	-
+៛	kambodsjanske riel	-
+₡	costaricanske colón	-
+₦	nigerianske naira	-
+₪	nye israelske shekler	-
+₫	vietnamesiske dong	-
+₭	laotiske kip	-
+₮	mongolske tugrik	-
+₲	paraguayanske guarani	-
+₴	ukrainske hryvnia	-
+₵	ghanesiske cedi	-
+₸	kasakhstanske tenge	-
+₺	tyrkiske lire	-
+₼	aserbajdsjanske manat	-
+₾	georgiske lari	-
+₧	spanske peseta	-

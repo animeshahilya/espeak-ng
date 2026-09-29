@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	otwierający nawias klamrowy	-
+‾	nadkreślenie	-
+_	znak podkreślenia	-
+-	łącznik-minus	-
+‐	dywiz	-
+–	znak półpauzy	-
+—	znak pauzy	-
+―	pozioma kreska	-
+・	kropka środkowa katakana	-
+,	przecinek	-
+،	przecinek arabski	-
+、	przecinek ideograficzny	-
+;	średnik	-
+؛	średnik arabski	-
+:	dwukropek	-
+!	wykrzyknik	-
+¡	odwrócony wykrzyknik	-
+?	znak zapytania	-
+¿	odwrócony znak zapytania	-
+؟	arabski znak zapytania	-
+‽	interrobang	-
+.	kropka	-
+…	wielokropek	-
+。	kropka ideograficzna	-
+·	kropka środkowa	-
+'	apostrof prosty	-
+‘	apostrof odwrócony	-
+’	apostrof	-
+‚	apostrof dolny	-
+“	górny cudzysłów otwierający	-
+”	górny cudzysłów zamykający	-
+„	dolny cudzysłów otwierający	-
+«	lewy cudzysłów ostrokątny	-
+»	prawy cudzysłów ostrokątny	-
+)	nawias zamykający	-
+[	otwierający nawias kwadratowy	-
+]	zamykający nawias kwadratowy	-
+}	zamykający nawias klamrowy	-
+〈	otwierający nawias ostrokątny	-
+〉	zamykający nawias ostrokątny	-
+《	podwójny otwierający nawias ostrokątny	-
+》	podwójny zamykający nawias ostrokątny	-
+「	lewy sufit	-
+」	prawa podłoga	-
+『	gruby lewy sufit	-
+』	gruba prawa podłoga	-
+【	otwierający czarny nawias soczewkowy	-
+】	zamykający czarny nawias soczewkowy	-
+〔	otwierający nawias zaokrąglony	-
+〕	zamykający nawias zaokrąglony	-
+〖	otwierający gruby nawias soczewkowy	-
+〗	zamykający gruby nawias soczewkowy	-
+§	paragraf	-
+¶	znak akapitu	-
+@	znak małpy	-
+*	gwiazdka	-
+/	ukośnik	-
+\	ukośnik wsteczny	-
+&	et	-
+%	procent	-
+‰	promil	-
+†	znak sztyletu	-
+‡	znak podwójnego sztyletu	-
+•	punktor	-
+‧	punkt podziału	-
+′	prim	-
+″	bis	-
+‴	ter	-
+‸	kareta	-
+※	znak odniesienia	-
+⁂	asteryzm	-
+`	grawis	-
+´	akcent ostry	-
+^	akcent przeciągły	-
+¨	diereza	-
+°	stopień	-
+℗	znak praw autorskich do nagrań muzycznych	-
+←	strzałka skierowana w lewo	-
+↚	przekreślona strzałka w lewo	-
+→	strzałka skierowana w prawo	-
+↛	przekreślona strzałka w prawo	-
+↑	strzałka skierowana w górę	-
+↓	strzałka skierowana w dół	-
+↜	falista strzałka w lewo	-
+↝	falista strzałka w prawo	-
+↞	strzałka w lewo z podwójnym grotem	-
+↟	strzałka w górę z podwójnym grotem	-
+↠	strzałka w prawo z podwójnym grotem	-
+↡	strzałka w dół z podwójnym grotem	-
+↢	strzałka w lewo z lotką	-
+↣	strzałka w prawo z lotką	-
+↤	strzałka w lewo z kreski	-
+↥	strzałka w górę z kreski	-
+↦	strzałka w prawo z kreski	-
+↧	strzałka w dół z kreski	-
+↨	strzałka w górę i w dół z podstawą	-
+↫	strzałka w lewo z pętlą	-
+↬	strzałka w prawo z pętlą	-
+↭	falista strzałka w lewo i prawo	-
+↯	zygzakowata strzałka w dół	-
+↰	strzałka w górę z grotem skierowanym w lewo	-
+↱	strzałka w górę z grotem skierowanym w prawo	-
+↲	strzałka w dół z grotem skierowanym w lewo	-
+↳	strzałka w dół z grotem skierowanym w prawo	-
+↴	strzałka w prawo z narożnikiem w dół	-
+↵	strzałka w dół skręcająca w lewo	-
+↶	górna półkolista strzałka w lewo	-
+↷	górna półkolista strzałka w prawo	-
+↸	strzałka na północny zachód z długą kreską	-
+↹	strzałka z kreską w lewo nad strzałką z kreską w prawo	-
+↺	otwarta kolista strzałka w lewo	-
+↻	otwarta kolista strzałka w prawo	-
+↼	harpun w lewo z kolcem w górę	-
+↽	harpun w lewo z kolcem w dół	-
+↾	harpun w górę z kolcem w prawo	-
+↿	harpun w górę z kolcem w lewo	-
+⇀	harpun w prawo z kolcem w górę	-
+⇁	harpun w prawo z kolcem w dół	-
+⇂	harpun w dół z kolcem w prawo	-
+⇃	harpun w dół z kolcem w lewo	-
+⇄	strzałka w prawo nad strzałką w lewo	-
+⇅	strzałki skierowane w górę i w dół	-
+⇆	strzałka w lewo nad strzałką w prawo	-
+⇇	para strzałek w lewo	-
+⇈	para strzałek w górę	-
+⇉	para strzałek w prawo	-
+⇊	para strzałek w dół	-
+⇋	harpun w lewo nad harpunem w prawo	-
+⇌	harpun w prawo nad harpunem w lewo	-
+⇐	podwójna strzałka w lewo	-
+⇍	przekreślona podwójna strzałka w lewo	-
+⇑	podwójna strzałka w górę	-
+⇒	podwójna strzałka w prawo	-
+⇏	przekreślona podwójna strzałka w prawo	-
+⇓	podwójna strzałka w dół	-
+⇔	podwójna strzałka w lewo i w prawo	-
+⇎	przekreślona podwójna strzałka w lewo i w prawo	-
+⇖	podwójna strzałka na północny zachód	-
+⇗	podwójna strzałka na północny wschód	-
+⇘	podwójna strzałka na południowy wschód	-
+⇙	podwójna strzałka na południowy zachód	-
+⇚	potrójna strzałka w lewo	-
+⇛	potrójna strzałka w prawo	-
+⇜	zygzakowata strzałka w lewo	-
+⇝	zygzakowata strzałka w prawo	-
+⇞	podwójnie przekreślona strzałka w górę	-
+⇟	podwójnie przekreślona strzałka w dół	-
+⇠	przerywana strzałka w lewo	-
+⇡	przerywana strzałka w górę	-
+⇢	przerywana strzałka w prawo	-
+⇣	przerywana strzałka w dół	-
+⇤	strzałka z kreską w lewo	-
+⇥	strzałka z kreską w prawo	-
+⇦	pusta strzałka w lewo	-
+⇧	pusta strzałka w górę	-
+⇨	pusta strzałka w prawo	-
+⇩	pusta strzałka w dół	-
+⇪	pusta strzałka w górę z kreski	-
+⇵	strzałka w dół po lewej strzałka w górę	-
+∀	dla wszystkich	-
+∂	pochodna cząstkowa	-
+∃	kwantyfikator egzystencjalny	-
+∅	zbiór pusty	-
+∆	delta	-
+∇	nabla	-
+∈	należy do	-
+∉	nie jest elementem	-
+∋	zawiera w sobie element	-
+∎	znak końca dowodu	-
+∏	iloczyn n czynników	-
+∑	suma n składników	-
++	plus	-
+±	plus-minus	-
+÷	znak ilorazu	-
+×	znak iloczynu	-
+<	mniejsze niż	-
+≮	nie mniejsze niż	-
+=	równość	-
+≠	różne	-
+>	większe niż	-
+≯	nie większe niż	-
+¬	negacja	-
+|	kreska pionowa	-
+~	tylda	-
+−	minus	-
+⁻	minus w indeksie górnym	-
+∓	plus lub minus	-
+∕	ukośnik dzielenia	-
+⁄	ukośnik ułamkowy	-
+∗	operator asterysk	-
+∘	operator składania	-
+∙	operator punktor	-
+√	pierwiastek kwadratowy	-
+∝	proporcjonalne	-
+∞	znak nieskończoności	-
+∟	kąt prosty	-
+∠	kąt	-
+∣	dzieli	-
+∥	równoległe	-
+∧	koniunkcja	-
+∩	iloczyn zbiorów	-
+∪	suma zbiorów	-
+∫	całka	-
+∬	całka podwójna	-
+∮	całka konturowa	-
+∴	dlatego	-
+∵	ponieważ	-
+∶	stosunek	-
+∷	proporcja	-
+∼	operator tylda	-
+∽	odwrócona tylda	-
+∾	odwrócone leniwe s	-
+≃	asymptotycznie równe	-
+≅	w przybliżeniu równe	-
+≈	prawie równe	-
+≌	wszystkie równe	-
+≒	w przybliżeniu równe obrazowi	-
+≖	pierścień w znaku równości	-
+≡	tożsamy z	-
+≣	ściśle równoważne	-
+≤	mniejsze niż lub równe	-
+≥	większe niż lub równe	-
+≦	znak mniejszości nad znakiem równości	-
+≧	znak większości nad znakiem równości	-
+≪	dużo mniejsze niż	-
+≫	dużo większe niż	-
+≬	pomiędzy	-
+≳	większe niż lub równoważne	-
+≺	poprzedza	-
+≻	następuje po	-
+⊁	nie następuje po	-
+⊂	jest zawarty w	-
+⊃	nadzbiór	-
+⊆	podzbiór równy	-
+⊇	nadzbiór równy	-
+⊕	zakreślony znak dodawania	-
+⊖	zakreślony znak odejmowania	-
+⊗	zakreślony znak mnożenia	-
+⊘	zakreślony ukośnik dzielenia	-
+⊙	zakreślony operator kropka środkowa	-
+⊚	zakreślony operator składania	-
+⊛	zakreślony operator asterysk	-
+⊞	znak dodawania w kwadracie	-
+⊟	znak odejmowania w kwadracie	-
+⊥	znak sprzeczności	-
+⊮	nie wymusza	-
+⊰	poprzedza w relacji	-
+⊱	następuje w relacji	-
+⋭	nie zawiera jako normalnej podgrupy równej	-
+⊶	pochodzący z	-
+⊹	sprzężenie hermitowskie macierzy	-
+⊿	trójkąt prostokątny	-
+⋁	suma logiczna	-
+⋂	iloczyn mnogościowy	-
+⋃	suma n-argumentowa	-
+⋅	operator kropka środkowa	-
+⋆	operator gwiazdka	-
+⋈	naturalne połączenie	-
+⋒	podwójna część wspólna	-
+⋘	bardzo dużo mniejsze niż	-
+⋙	bardzo dużo większe niż	-
+⋮	wielokropek pionowy	-
+⋯	wielokropek poziomy w linii środkowej	-
+⋰	wielokropek ukośny wznoszący się w prawo	-
+⋱	wielokropek ukośny opadający w prawo	-
+⨧	plus z dwójką w indeksie dolnym	-
+⨯	iloczyn wektorowy	-
+⨼	iloczyn wewnętrzny	-
+⩣	alternatywa z podwójnym podkreśleniem	-
+⩽	znak mniejszości z ukośnym znakiem równości	-
+⪍	znak mniejszości nad znakiem asymptotycznej równości	-
+⪚	znak równości nad znakiem większości	-
+⪺	następuje nad nie prawie równe	-
+⭐	gwiazda	-
+⬆	strzałka w górę	-
+↗	strzałka w górę w prawo	-
+↘	strzałka w dół w prawo	-
+⬇	strzałka w dół	-
+↙	strzałka w dół w lewo	-
+⬅	strzałka w lewo	-
+↖	strzałka w górę w lewo	-
+↕	strzałka w górę i w dół	-
+↔	strzałka w lewo i w prawo	-
+↮	przekreślona strzałka w lewo i prawo	-
+↩	strzałka zakręcona w lewo	-
+↪	strzałka zakręcona w prawo	-
+⤴	strzałka w prawo skręcająca w górę	-
+⤵	strzałka w prawo skręcająca w dół	-
+〰	falista kreska	-
+⭕	gruby czerwony okrąg	-
+〽	początek partii wokalnej	-
+©	znak praw autorskich	-
+®	zarejestrowany znak towarowy	-
+™	znak towarowy	-
+ℹ	informacja	-
+㊗	japoński przycisk „gratulacje”	-
+㊙	japoński przycisk „tajemnica”	-
+⬛	duży czarny kwadrat	-
+⬜	duży biały kwadrat	-
+¢	cent	-
+$	dolar	-
+£	funt	-
+¥	jen	-
+₢	cruzeiro	-
+₣	frank francuski	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	niemiecki fenig	-
+₱	peso	-
+₳	austral	-
+₶	funt turoński	-
+₷	spesmilo	-
+₹	rupia indyjska	-
+₽	rubel	-
+₿	bitcoin	-
+¹	jeden w indeksie górnym	-
+²	dwa w indeksie górnym	-
+³	trzy w indeksie górnym	-
+₨	rupia	-
+µ	znak mikro	-
+﷼	rial	-
+¤	nieznana waluta	-
+֏	dram armeński	-
+؋	afgani afgańskie	-
+৳	taka bengalska	-
+฿	baht tajski	-
+៛	riel kambodżański	-
+₡	colon kostarykański	-
+₦	naira nigeryjska	-
+₪	nowy szekel izraelski	-
+₫	dong wietnamski	-
+₭	kip laotański	-
+₮	tugrik mongolski	-
+₲	guarani paragwajskie	-
+₴	hrywna ukraińska	-
+₵	cedi ghańskie	-
+₸	tenge kazachskie	-
+₺	lira turecka	-
+₼	manat azerski	-
+₾	lari gruzińskie	-
+₧	peseta hiszpańska	-

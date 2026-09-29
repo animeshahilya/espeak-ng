@@ -100,6 +100,8 @@ public class EspeakApp extends Application {
         final Context appContext = getApplicationContext();
         EspeakApp.storageContext = appContext.createDeviceProtectedStorageContext();
         NvdaEmoji.init(appContext);
+        final android.content.res.AssetManager assets = appContext.getAssets();
+        NvdaSymbolProcessor.setDataSource(name -> assets.open("symbols/" + name));
         HinglishReader.init(appContext);
         migrateLegacyPreferences(appContext, EspeakApp.storageContext);
         PiperEngine.get().setListener(PIPER_LOG);

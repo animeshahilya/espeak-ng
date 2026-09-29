@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	atidaromasis riestinis skliaustas	-
+‾	brūkšnys viršuje	-
+_	apatinė linija	-
+-	minuso brūkšnelis	-
+‐	brūkšnelis	-
+–	brūkšnys	-
+—	ilgasis brūkšnys	-
+―	horizontalus brūkšnys	-
+・	katakana vidurinis taškas	-
+,	kablelis	-
+،	arabų k. kablelis	-
+、	ideografinis kablelis	-
+;	kabliataškis	-
+؛	arabų k. kabliataškis	-
+:	dvitaškis	-
+!	šauktukas	-
+¡	apverstas šauktukas	-
+?	klaustukas	-
+¿	apverstas klaustukas	-
+؟	arabų k. klaustukas	-
+‽	klaustukas ir šauktukas	-
+.	taškas	-
+…	daugtaškis	-
+。	ideografinis taškas	-
+·	interpunktas	-
+'	tiesusis apstrofas	-
+‘	kairysis apostrofas	-
+’	dešinysis apostrofas	-
+‚	apatinis dešinysis apostrofas	-
+“	kairiosios kabutės	-
+”	dešiniųjų kabučių ženklas	-
+„	apatinės dešiniosios kabutės	-
+«	atidaromosios laužtinės kabutės	-
+»	uždaromosios laužtinės kabutės	-
+)	uždaromasis skliaustas	-
+[	atidaromasis laužtinis skliaustas	-
+]	uždaromasis laužtinis skliaustas	-
+}	uždaromasis riestinis skliaustas	-
+〈	atidaromasis kampinis skliaustas	-
+〉	uždaromasis kampinis skliaustas	-
+《	atidaromasis dvigubas kampinis skliaustas	-
+》	uždaromasis dvigubas kampinis skliaustas	-
+「	atidaromasis pusinio kampo skliaustas	-
+」	uždaromasis pusinio kampo skliaustas	-
+『	atidaromasis tuščiavidurio pusinio kampo skliaustas	-
+』	uždaromasis tuščiavidurio pusinio kampo skliaustas	-
+【	atidaromasis juodo lęšio formos skliaustas	-
+】	uždaromasis juodo lęšio formos skliaustas	-
+〔	atidaromasis vėžlio kiauto formos skliaustas	-
+〕	uždaromasis vėžlio kiauto formos skliaustas	-
+〖	atidaromasis tuščiaviduris lęšio formos skliaustas	-
+〗	uždaromasis tuščiaviduris lęšio formos skliaustas	-
+§	pastraipos simbolis	-
+¶	paragrafo simbolis	-
+@	eta	-
+*	žvaigždutė	-
+/	pasvirasis brūkšnys	-
+\	įžambus kairinis brūkšnys	-
+&	ampersandas	-
+%	procento ženklas	-
+‰	promilės ženklas	-
+†	kryžiaus ženklas	-
+‡	dvigubas kryžiaus ženklas	-
+•	ženklelis	-
+‧	kėlimo brūkšnelis	-
+′	pagrindinis simbolis	-
+″	dvigubas pagrindinis simbolis	-
+‴	trigubas pagrindinis simbolis	-
+‸	stogelio ženklas	-
+※	atskaitos žyma	-
+⁂	asterizmas	-
+`	kairinis kirtis	-
+´	dešininis kirtis	-
+^	stogelis	-
+¨	diarė	-
+°	laipsnis	-
+℗	garso įrašo autorių teisių simbolis	-
+←	į kairę nukreipta rodyklė	-
+↚	perbraukta rodyklė kairėn	-
+→	į dešinę nukreipta rodyklė	-
+↛	perbraukta rodyklė dešinėn	-
+↑	į viršų nukreipta rodyklė	-
+↓	į apačią nukreipta rodyklė	-
+↜	vingiuota rodyklė kairėn	-
+↝	vingiuota rodyklė dešinėn	-
+↞	rodyklė kairėn su dvigubu smaigaliu	-
+↟	rodyklė aukštyn su dvigubu smaigaliu	-
+↠	rodyklė dešinėn su dvigubu smaigaliu	-
+↡	rodyklė žemyn su dvigubu smaigaliu	-
+↢	rodyklė kairėn su uodega	-
+↣	rodyklė dešinėn su uodega	-
+↤	rodyklė kairėn nuo brūkšnio	-
+↥	rodyklė aukštyn nuo brūkšnio	-
+↦	rodyklė dešinėn nuo brūkšnio	-
+↧	rodyklė žemyn nuo brūkšnio	-
+↨	rodyklė aukštyn ir žemyn su pagrindu	-
+↫	rodyklė kairėn su kilpa	-
+↬	rodyklė dešinėn su kilpa	-
+↭	vingiuota rodyklė kairėn ir dešinėn	-
+↯	laužyta rodyklė žemyn	-
+↰	rodyklė aukštyn, pasukta į kairę	-
+↱	rodyklė aukštyn, pasukta į dešinę	-
+↲	rodyklė žemyn, pasukta į kairę	-
+↳	rodyklė žemyn, pasukta į dešinę	-
+↴	kampinė rodyklė dešinėn ir žemyn	-
+↵	kampinė rodyklė žemyn ir kairėn	-
+↶	pusapskritimė rodyklė su prieš laikrodžio rodyklę nukreiptu smaigaliu	-
+↷	pusapskritimė rodyklė su laikrodžio rodyklės kryptimi nukreiptu smaigaliu	-
+↸	rodyklė į šiaurės vakarus su ilgu brūkšniu	-
+↹	rodyklė kairėn su brūkšneliu virš rodyklės dešinėn su brūkšneliu	-
+↺	atvira apskrita rodyklė su prieš laikrodžio rodyklę nukreiptu smaigaliu	-
+↻	atvira apskrita rodyklė su laikrodžio rodyklės kryptimi nukreiptu smaigaliu	-
+↼	kabliukinė rodyklė kairėn su užkarpa aukštyn	-
+↽	kabliukinė rodyklė kairėn su užkarpa žemyn	-
+↾	kabliukinė rodyklė aukštyn su užkarpa dešinėn	-
+↿	kabliukinė rodyklė aukštyn su užkarpa kairėn	-
+⇀	kabliukinė rodyklė dešinėn su užkarpa aukštyn	-
+⇁	kabliukinė rodyklė dešinėn su užkarpa žemyn	-
+⇂	kabliukinė rodyklė žemyn su užkarpa dešinėn	-
+⇃	kabliukinė rodyklė žemyn su užkarpa kairėn	-
+⇄	rodyklė dešinėn virš rodyklės kairėn	-
+⇅	į viršų ir į apačią nukreiptos rodyklės	-
+⇆	į kairę nukreipta rodyklė virš į dešinę nukreiptos rodyklės	-
+⇇	suporuotos rodyklės kairėn	-
+⇈	suporuotos rodyklės aukštyn	-
+⇉	suporuotos rodyklės dešinėn	-
+⇊	suporuotos rodyklės žemyn	-
+⇋	kabliukinė rodyklė kairėn virš kabliukinės rodyklės dešinėn	-
+⇌	kabliukinė rodyklė dešinėn virš kabliukinės rodyklės kairėn	-
+⇐	dviguba rodyklė kairėn	-
+⇍	dviguba perbraukta rodyklė kairėn	-
+⇑	dviguba rodyklė aukštyn	-
+⇒	dviguba rodyklė dešinėn	-
+⇏	dviguba perbraukta rodyklė dešinėn	-
+⇓	dviguba rodyklė žemyn	-
+⇔	dviguba rodyklė kairėn ir dešinėn	-
+⇎	dviguba perbraukta rodyklė kairėn ir dešinėn	-
+⇖	dviguba rodyklė į šiaurės vakarus	-
+⇗	dviguba rodyklė į šiaurės rytus	-
+⇘	dviguba rodyklė į pietryčius	-
+⇙	dviguba rodyklė į pietvakarius	-
+⇚	triguba rodyklė kairėn	-
+⇛	triguba rodyklė dešinėn	-
+⇜	raityta rodyklė kairėn	-
+⇝	raityta rodyklė dešinėn	-
+⇞	dukart perbraukta rodyklė aukštyn	-
+⇟	dukart perbraukta rodyklė žemyn	-
+⇠	brūkšninė rodyklė kairėn	-
+⇡	brūkšninė rodyklė aukštyn	-
+⇢	brūkšninė rodyklė dešinėn	-
+⇣	brūkšninė rodyklė žemyn	-
+⇤	rodyklė kairėn su brūkšneliu	-
+⇥	rodyklė dešinėn su brūkšneliu	-
+⇦	tuščiavidurė rodyklė kairėn	-
+⇧	tuščiavidurė rodyklė aukštyn	-
+⇨	tuščiavidurė rodyklė dešinėn	-
+⇩	tuščiavidurė rodyklė žemyn	-
+⇪	tuščiavidurė rodyklė aukštyn nuo brūkšnio	-
+⇵	rodyklė žemyn į kairę nuo rodyklės aukštyn	-
+∀	visiems	-
+∂	dalinis diferencialas	-
+∃	egzistuoja	-
+∅	tuščia aibė	-
+∆	didinti	-
+∇	nabla	-
+∈	priklauso	-
+∉	ne elementas	-
+∋	įeina kaip narys	-
+∎	galutinis įrodymas	-
+∏	n-arė sandauga	-
+∑	n-aris sumavimas	-
++	pliuso ženklas	-
+±	pliusas ir minusas	-
+÷	dalybos simbolis	-
+×	daugybos simbolis	-
+<	mažiau už	-
+≮	ne mažiau nei	-
+=	lygu	-
+≠	nelygu	-
+>	daugiau už	-
+≯	ne daugiau nei	-
+¬	nesutikimas	-
+|	vertikali linija	-
+~	riestinis ženklas	-
+−	minuso ženklas	-
+⁻	minusas viršutiniame indekse	-
+∓	minusas arba pliusas	-
+∕	dalybos ženklas	-
+⁄	trupmenos ženklas	-
+∗	žvaigždutės operatorius	-
+∘	žiedo operatorius	-
+∙	ženklelio operatorius	-
+√	kvadratinė šaknis	-
+∝	proporcingas	-
+∞	begalybės simbolis	-
+∟	statusis kampas	-
+∠	kampas	-
+∣	dalija	-
+∥	lygiagretus	-
+∧	loginis ir	-
+∩	sankirta	-
+∪	sąjunga	-
+∫	integralas	-
+∬	dvigubas integralas	-
+∮	kontūrinis integralas	-
+∴	iš to išplaukia	-
+∵	todėl, kad	-
+∶	santykis	-
+∷	proporcija	-
+∼	tildės operatorius	-
+∽	atvirkščia tildė	-
+∾	apversta horizontali s	-
+≃	asimptotiškai lygu	-
+≅	apytiksliai lygu	-
+≈	apytiksliai	-
+≌	lygybė	-
+≒	apytiksliai lygu arba atvaizdas	-
+≖	lygybė su žiedu	-
+≡	tapatu	-
+≣	griežtai ekvivalentu	-
+≤	mažiau arba lygu	-
+≥	daugiau arba lygu	-
+≦	mažiau nei per lygus	-
+≧	daugiau nei per lygu	-
+≪	daug mažiau nei	-
+≫	daug daugiau nei	-
+≬	tarp	-
+≳	daugiau nei arba ekvivalentu	-
+≺	yra prieš	-
+≻	yra po	-
+⊁	nėra po	-
+⊂	poaibis	-
+⊃	superaibė	-
+⊆	poaibis lygus	-
+⊇	superaibė lygi	-
+⊕	pliuso ženklas apskritime	-
+⊖	minuso ženklas apskritime	-
+⊗	daugybos ženklas apskritime	-
+⊘	dalybos ženklas apskritime	-
+⊙	taško operatorius apskritime	-
+⊚	žiedo operatorius apskritime	-
+⊛	žvaigždutės operatorius apskritime	-
+⊞	pliuso ženklas kvadrate	-
+⊟	minuso ženklas kvadrate	-
+⊥	aukštyn	-
+⊮	neverčia	-
+⊰	yra prieš pagal sąryšį	-
+⊱	yra po pagal sąryšį	-
+⋭	neįeina kaip normali pogrupio lygybė	-
+⊶	originalas	-
+⊹	Hermito konjugacijos matrica	-
+⊿	statusis trikampis	-
+⋁	n-aris loginis arba	-
+⋂	n-arė sankirta	-
+⋃	n-arė sąjunga	-
+⋅	taško operatorius	-
+⋆	žvaigždės operatorius	-
+⋈	natūralioji sąjunga	-
+⋒	dviguba sankirta	-
+⋘	labai daug mažiau nei	-
+⋙	labai daug daugiau nei	-
+⋮	vertikalioji elipsė	-
+⋯	horizontalioji elipsė eilutės viduryje	-
+⋰	įstriža elipsė aukštyn ir dešinėn	-
+⋱	įstriža elipsė žemyn ir dešinėn	-
+⨧	plius apatinio indekso du	-
+⨯	vektorinė sandauga	-
+⨼	vidinė sandauga	-
+⩣	dukart pabrauktas loginis arba	-
+⩽	pasvirasis mažiau arba lygu	-
+⪍	mažiau nei virš panašiai lygu	-
+⪚	daugiau su dviguba linija	-
+⪺	eina po virš ne beveik lygu	-
+⭐	balta vidutinė žvaigždė	-
+⬆	rodyklė į viršų	-
+↗	rodyklė į viršų ir į dešinę	-
+↘	rodyklė į apačią ir į dešinę	-
+⬇	rodyklė į apačią	-
+↙	rodyklė į apačią ir į kairę	-
+⬅	rodyklė į kairę	-
+↖	rodyklė į viršų ir į kairę	-
+↕	rodyklė į viršų ir į apačią	-
+↔	rodyklė į kairę ir į dešinę	-
+↮	perbraukta rodyklė kairėn ir dešinėn	-
+↩	rodyklė į dešinę, užlenkta į kairę	-
+↪	rodyklė į kairę, užlenkta į dešinę	-
+⤴	rodyklė į dešinę, užlenkta į viršų	-
+⤵	rodyklė į dešinę, užlenkta į apačią	-
+〰	vingiuotas brūkšnys	-
+⭕	ryškus didelis ratas	-
+〽	dalių apkeitimo ženklas	-
+©	autorių teisės	-
+®	užregistruota	-
+™	prekės ženklas	-
+ℹ	informacija	-
+㊗	pasveikinimą reiškiantis hieroglifas	-
+㊙	paslaptį reiškiantis hieroglifas	-
+⬛	juodas didelis kvadratas	-
+⬜	baltas didelis kvadratas	-
+¢	cento ženklas	-
+$	dolerio ženklas	-
+£	svaras	-
+¥	jena	-
+₢	kruzeiras	-
+₣	Prancūzijos frankas	-
+₤	lita	-
+₥	milio ženklas	-
+₩	vono ženklas	-
+€	euras	-
+₰	pfenigas	-
+₱	peso ženklas	-
+₳	australis	-
+₶	Tūro livras	-
+₷	spesmilo	-
+₹	Indijos rupija	-
+₽	rublis	-
+₿	bitkoino ženklas	-
+¹	vienetas viršutiniame indekse	-
+²	dvejetas viršutiniame indekse	-
+³	trejetas viršutiniame indekse	-
+₨	rupija	-
+µ	„mikro-“ simbolis	-
+﷼	rialas	-
+¤	nežinoma valiuta	-
+֏	Armėnijos dramas	-
+؋	Afganistano afganis	-
+৳	Bangladešo taka	-
+฿	Tailando batas	-
+៛	Kambodžos rielis	-
+₡	Kosta Rikos kolonas	-
+₦	Nigerijos naira	-
+₪	Izraelio naujasis šekelis	-
+₫	Vietnamo dongas	-
+₭	Laoso kipas	-
+₮	Mongolijos tugrikas	-
+₲	Paragvajaus guaranis	-
+₴	Ukrainos grivina	-
+₵	Ganos sedis	-
+₸	Kazachstano tengė	-
+₺	Turkijos lira	-
+₼	Azerbaidžano manatas	-
+₾	Gruzijos laris	-
+₧	Ispanijos peseta	-

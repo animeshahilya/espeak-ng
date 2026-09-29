@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	acoladă deschisă	-
+‾	supralinie	-
+_	underscore	-
+-	cratimă-minus	-
+‐	cratimă	-
+–	linie de pauză	-
+—	linie de dialog	-
+―	linie orizontală	-
+・	punct median katakana	-
+,	virgulă	-
+،	virgulă arabă	-
+、	virgulă ideografică	-
+;	punct și virgulă	-
+؛	punct și virgulă arabe	-
+:	două puncte	-
+!	semn de exclamare	-
+¡	semnul exclamării întors	-
+?	semn de întrebare	-
+¿	semnul întrebării întors	-
+؟	semnul întrebării arab	-
+‽	semnul exclamării și întrebării	-
+.	punct	-
+…	puncte de suspensie	-
+。	punct ideografic	-
+·	punct la mijloc	-
+'	apostrof mașină de scris	-
+‘	apostrof stânga	-
+’	apostrof dreapta	-
+‚	apostrof dreapta jos	-
+“	ghilimele stânga	-
+”	ghilimele dreapta	-
+„	ghilimele dreapta jos	-
+«	ghilimele ascuțite stânga	-
+»	ghilimele ascuțite dreapta	-
+)	paranteză închisă	-
+[	paranteză pătrată deschisă	-
+]	paranteză pătrată închisă	-
+}	acoladă închisă	-
+〈	paranteză ascuțită deschisă	-
+〉	paranteză ascuțită închisă	-
+《	paranteză ascuțită dublă deschisă	-
+》	paranteză ascuțită dublă închisă	-
+「	paranteză colț deschisă	-
+」	paranteză colț închisă	-
+『	paranteză colț goală deschisă	-
+』	paranteză colț goală închisă	-
+【	paranteză lentilă neagră deschisă	-
+】	paranteză lentilă neagră închisă	-
+〔	paranteză tortoise shell deschisă	-
+〕	paranteză tortoise shell închisă	-
+〖	paranteză lentilă goală deschisă	-
+〗	paranteză lentilă goală închisă	-
+§	secțiune	-
+¶	semn de paragraf	-
+@	a rond	-
+*	asterisc	-
+/	bară oblică	-
+\	bară oblică inversă	-
+&	ampersand	-
+%	procent	-
+‰	promilă	-
+†	semn cruciuliță	-
+‡	semn cruciuliță dublă	-
+•	marcator	-
+‧	punct de despărțire	-
+′	prim	-
+″	secund	-
+‴	terț	-
+‸	semn de omisiune	-
+※	semn de referință	-
+⁂	asterism	-
+`	accent grav	-
+´	accent ascuțit	-
+^	accent circumflex	-
+¨	tremă	-
+°	grad	-
+℗	drepturi de autor pentru înregistrare audio	-
+←	săgeată spre stânga	-
+↚	săgeată spre stânga cu bară oblică	-
+→	săgeată spre dreapta	-
+↛	săgeată spre dreapta cu bară oblică	-
+↑	săgeată în sus	-
+↓	săgeată în jos	-
+↜	săgeată ondulată spre stânga	-
+↝	săgeată ondulată spre dreapta	-
+↞	săgeată cu două vârfuri spre stânga	-
+↟	săgeată cu două vârfuri în sus	-
+↠	săgeată cu două vârfuri spre dreapta	-
+↡	săgeată cu două vârfuri în jos	-
+↢	săgeată spre stânga cu coadă	-
+↣	săgeată spre dreapta cu coadă	-
+↤	săgeată spre stânga dinspre bară	-
+↥	săgeată în sus dinspre bară	-
+↦	săgeată spre dreapta dinspre bară	-
+↧	săgeată în jos dinspre bară	-
+↨	săgeată sus-jos cu bază	-
+↫	săgeată spre stânga cu buclă	-
+↬	săgeată spre dreapta cu buclă	-
+↭	săgeată ondulată bidirecțională	-
+↯	săgeată în zigzag în jos	-
+↰	săgeată în sus cu vârf spre stânga	-
+↱	săgeată în sus cu vârf spre dreapta	-
+↲	săgeată în jos cu vârf spre stânga	-
+↳	săgeată în jos cu vârf spre dreapta	-
+↴	săgeată spre dreapta cu colțul în jos	-
+↵	săgeată spre stânga cu colțul în jos	-
+↶	săgeată în semicerc în sus în sens antiorar	-
+↷	săgeată în semicerc în sus în sens orar	-
+↸	săgeată spre nord-vest către bară lungă	-
+↹	săgeată spre stânga către bară peste săgeată spre dreapta către bară	-
+↺	săgeată cerc deschis în sens antiorar	-
+↻	săgeată cerc deschis în sens orar	-
+↼	harpon spre stânga cu vârful în sus	-
+↽	harpon spre stânga cu vârful în jos	-
+↾	harpon în sus cu vârful spre dreapta	-
+↿	harpon în sus cu vârful spre stânga	-
+⇀	harpon spre dreapta cu vârful în sus	-
+⇁	harpon spre dreapta cu vârful în jos	-
+⇂	harpon în jos cu vârful spre dreapta	-
+⇃	harpon în jos cu vârful spre stânga	-
+⇄	săgeată spre dreapta peste săgeată spre stânga	-
+⇅	săgeată în sus și săgeată în jos	-
+⇆	săgeată la stânga pe săgeată la dreapta	-
+⇇	două săgeți spre stânga	-
+⇈	două săgeți în sus	-
+⇉	două săgeți spre dreapta	-
+⇊	două săgeți în jos	-
+⇋	harpon spre stânga peste harpon spre dreapta	-
+⇌	harpon spre dreapta peste harpon spre stânga	-
+⇐	săgeată dublă spre stânga	-
+⇍	săgeată dublă spre stânga barată	-
+⇑	săgeată dublă în sus	-
+⇒	săgeată dublă spre dreapta	-
+⇏	săgeată dublă spre dreapta barată	-
+⇓	săgeată dublă în jos	-
+⇔	săgeată dublă bidirecțională	-
+⇎	săgeată dublă bidirecțională barată	-
+⇖	săgeată dublă spre nord-vest	-
+⇗	săgeată dublă spre nord-est	-
+⇘	săgeată dublă spre sud-est	-
+⇙	săgeată dublă spre sud-vest	-
+⇚	săgeată triplă spre stânga	-
+⇛	săgeată triplă spre dreapta	-
+⇜	săgeată zigzagată spre stânga	-
+⇝	săgeată zigzagată spre dreapta	-
+⇞	săgeată în sus cu două bare orizontale	-
+⇟	săgeată în jos cu două bare orizontale	-
+⇠	săgeată cu linie întreruptă spre stânga	-
+⇡	săgeată cu linie întreruptă în sus	-
+⇢	săgeată cu linie întreruptă spre dreapta	-
+⇣	săgeată cu linie întreruptă în jos	-
+⇤	săgeată spre stânga către bară	-
+⇥	săgeată spre dreapta către bară	-
+⇦	săgeată goală spre stânga	-
+⇧	săgeată goală în sus	-
+⇨	săgeată goală spre dreapta	-
+⇩	săgeată goală în jos	-
+⇪	săgeată goală în sus dinspre bară	-
+⇵	săgeată în jos lângă săgeată în sus	-
+∀	cuantificator universal	-
+∂	derivată parțială	-
+∃	cuantificator existențial	-
+∅	mulțimea vidă	-
+∆	creștere	-
+∇	nabla	-
+∈	element al	-
+∉	nu aparține lui	-
+∋	include ca element	-
+∎	sfârșitul demonstrației	-
+∏	produs cartezian	-
+∑	sumă peste	-
++	semnul plus	-
+±	plus-minus	-
+÷	semnul împărțirii	-
+×	semnul înmulțirii	-
+<	mai mic decât	-
+≮	nu mai mic decât	-
+=	egal	-
+≠	nu este egal	-
+>	mai mare decât	-
+≯	nu mai mare decât	-
+¬	negare	-
+|	linie verticală	-
+~	tildă	-
+−	semnul minus	-
+⁻	exponent minus	-
+∓	minus sau plus	-
+∕	bară oblică de împărțire	-
+⁄	bară oblică de fracție	-
+∗	operator asterisc	-
+∘	operator inel	-
+∙	operator punct	-
+√	rădăcină pătrată	-
+∝	proporțional	-
+∞	semnul infinit	-
+∟	unghi drept	-
+∠	unghi	-
+∣	divide	-
+∥	paralel cu	-
+∧	și logic	-
+∩	intersecție	-
+∪	reuniune	-
+∫	integrală	-
+∬	integrală dublă	-
+∮	integrală pe contur	-
+∴	prin urmare	-
+∵	deoarece	-
+∶	raport	-
+∷	proporție	-
+∼	operator tildă	-
+∽	tildă inversată	-
+∾	s orizontal inversat	-
+≃	asimptotic egal cu	-
+≅	aproximativ egal cu	-
+≈	aproape egal	-
+≌	toate egale cu	-
+≒	aproximativ egal cu imaginea	-
+≖	inel în egal cu	-
+≡	identic cu	-
+≣	strict echivalent cu	-
+≤	mai mic sau egal cu	-
+≥	mai mare sau egal cu	-
+≦	mai mic decât peste egal cu	-
+≧	mai mare decât peste egal cu	-
+≪	mult mai mic decât	-
+≫	mult mai mare decât	-
+≬	între	-
+≳	mai mare decât sau echivalent cu	-
+≺	precedă	-
+≻	succedă	-
+⊁	nu succedă	-
+⊂	submulțime a	-
+⊃	este o supramulțime pentru	-
+⊆	este o submulțime pentru sau egală cu	-
+⊇	este o supramulțime pentru sau egală cu	-
+⊕	plus încercuit	-
+⊖	minus încercuit	-
+⊗	ori încercuit	-
+⊘	bară împărțire încercuită	-
+⊙	operator punct încercuit	-
+⊚	operator inel încercuit	-
+⊛	operator asterisc încercuit	-
+⊞	plus în pătrat	-
+⊟	minus în pătrat	-
+⊥	e perpendicular pe	-
+⊮	nu forțează	-
+⊰	precedă sub relație	-
+⊱	succedă sub relație	-
+⋭	nu conține ca submulțime normală pe sau este egală cu	-
+⊶	original	-
+⊹	matrice hermitic conjugată	-
+⊿	triunghi dreptunghic	-
+⋁	sau logic n-ar	-
+⋂	intersecție n-ară	-
+⋃	reuniune n-ară	-
+⋅	operator punct de înmulțire	-
+⋆	operator stea	-
+⋈	joncțiune naturală	-
+⋒	intersecție dublă	-
+⋘	foarte mult mai mic decât	-
+⋙	foarte mult mai mare decât	-
+⋮	puncte de suspensie verticale	-
+⋯	puncte de suspensie orizontale pe linia mediană	-
+⋰	puncte de suspensie diagonale dreapta sus	-
+⋱	puncte de suspensie diagonale dreapta jos	-
+⨧	plus indice doi	-
+⨯	produs vectorial	-
+⨼	produs interior	-
+⩣	disjuncție logică cu bară dublă	-
+⩽	mai mic sau egal	-
+⪍	mai mic peste aproximativ egal	-
+⪚	mai mare sau egal cu două linii	-
+⪺	succedă peste nu aproape egal	-
+⭐	stea	-
+⬆	săgeată orientată în sus	-
+↗	săgeată orientată în dreapta-sus	-
+↘	săgeată orientată în dreapta-jos	-
+⬇	săgeată orientată în jos	-
+↙	săgeată orientată în stânga jos	-
+⬅	săgeată orientată în stânga	-
+↖	săgeată orientată în stânga-sus	-
+↕	săgeată sus-jos	-
+↔	săgeată dreapta-stânga	-
+↮	săgeată bidirecțională cu bară oblică	-
+↩	săgeată dreapta curbată spre stânga	-
+↪	săgeată stânga curbată spre dreapta	-
+⤴	săgeată dreapta curbată în sus	-
+⤵	săgeată dreapta curbată în jos	-
+〰	liniuță ondulată	-
+⭕	cerc roșu gol	-
+〽	alternare cântăreț	-
+©	drepturi de autor	-
+®	marcă înregistrată	-
+™	marcă comercială	-
+ℹ	informații	-
+㊗	buton cu semnificația „felicitări” în japoneză	-
+㊙	buton cu semnificația „secret” în japoneză	-
+⬛	pătrat negru mare	-
+⬜	pătrat alb mare	-
+¢	cent	-
+$	dolar	-
+£	liră	-
+¥	yen	-
+₢	cruzeiro	-
+₣	franc francez	-
+₤	liră sterlină	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	pfenig german	-
+₱	peso	-
+₳	austral argentinian	-
+₶	livră tournois	-
+₷	spesmilo	-
+₹	rupie indiană	-
+₽	rublă	-
+₿	bitcoin	-
+¹	exponent unu	-
+²	exponent doi	-
+³	exponent trei	-
+₨	rupie	-
+µ	semnul micro	-
+﷼	rial	-
+¤	monedă necunoscută	-
+֏	dram armenesc	-
+؋	afgani afgan	-
+৳	taka din Bangladesh	-
+฿	baht thailandez	-
+៛	riel cambodgian	-
+₡	colón costarican	-
+₦	naira nigeriană	-
+₪	shekel israelian nou	-
+₫	dong vietnamez	-
+₭	kip laoțian	-
+₮	tugrik mongol	-
+₲	guarani	-
+₴	grivnă	-
+₵	cedi ghanez	-
+₸	tenge kazahă	-
+₺	liră turcească	-
+₼	manat azer	-
+₾	lari georgian	-
+₧	pesetă spaniolă	-

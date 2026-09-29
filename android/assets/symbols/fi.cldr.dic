@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	vasen aaltosulje	-
+‾	ylleviivaus	-
+_	alaviiva	-
+-	miinusviiva	-
+‐	yhdysviiva	-
+–	lyhyt ajatusviiva	-
+—	pitkä ajatusviiva	-
+―	vaakaviiva	-
+・	katakana keskipiste	-
+,	pilkku	-
+،	arabialainen pilkku	-
+、	ideografinen pilkku	-
+;	puolipiste	-
+؛	arabialainen puolipiste	-
+:	kaksoispiste	-
+!	huudahdus	-
+¡	käänteinen huutomerkki	-
+?	kysymys	-
+¿	käänteinen kysymysmerkki	-
+؟	arabialainen kysymysmerkki	-
+‽	kysymys-huutomerkki	-
+.	piste	-
+…	kolme pistettä	-
+。	ideografinen piste	-
+·	rivinkeskinen piste	-
+'	koneheittomerkki	-
+‘	vasen heittomerkki	-
+’	oikea heittomerkki	-
+‚	oikea alaheittomerkki	-
+“	vasen lainausmerkki	-
+”	oikea lainausmerkki	-
+„	oikea alalainausmerkki	-
+«	vasen kulmalainausmerkki	-
+»	oikea kulmalainausmerkki	-
+)	oikea kaarisulje	-
+[	vasen hakasulje	-
+]	oikea hakasulje	-
+}	oikea aaltosulje	-
+〈	vasen kulmasulje	-
+〉	oikea kulmasulje	-
+《	vasen kaksoiskulmasulje	-
+》	oikea kaksoiskulmasulje	-
+「	vasen nurkkasulje	-
+」	oikea nurkkasulje	-
+『	vasen ontto nurkkasulje	-
+』	oikea ontto nurkkasulje	-
+【	vasen musta linssisulje	-
+】	oikea musta linssisulje	-
+〔	vasen tylppäkulmainen hakasulje	-
+〕	oikea tylppäkulmainen hakasulje	-
+〖	vasen ontto linssisulje	-
+〗	oikea ontto linssisulje	-
+§	pykälämerkki	-
+¶	kappalemerkki	-
+@	ät-merkki	-
+*	asteriski	-
+/	kauttaviiva	-
+\	kenoviiva	-
+&	et-merkki	-
+%	prosentti	-
+‰	promille	-
+†	ristimerkki	-
+‡	kaksoisristimerkki	-
+•	luettelomerkki	-
+‧	tavupiste	-
+′	yläpuolinen indeksointipilkku	-
+″	kaksinkertainen yläpuolinen indeksointipilkku	-
+‴	kolminkertainen yläpuolinen indeksointipilkku	-
+‸	poisjääntimerkki	-
+※	viitemerkki	-
+⁂	asterismi	-
+`	gravis	-
+´	akuutti	-
+^	sirkumfleksi	-
+¨	treema	-
+°	aste	-
+℗	äänitteen tekijänoikeus	-
+←	vasemmalle osoittava nuoli	-
+↚	vasemmalle vetävä nuoli	-
+→	oikealle osoittava nuoli	-
+↛	oikealle vetävä nuoli	-
+↑	ylös osoittava nuoli	-
+↓	alas osoittava nuoli	-
+↜	aaltonuoli vasemmalle	-
+↝	aaltonuoli oikealle	-
+↞	kaksipäinen nuoli vasemmalle	-
+↟	kaksipäinen nuoli ylös	-
+↠	kaksipäinen nuoli oikealle	-
+↡	kaksipäinen nuoli alas	-
+↢	hahlonuoli vasemmalle	-
+↣	hahlonuoli oikealle	-
+↤	nuoli palkista vasemmalle	-
+↥	nuoli palkista ylös	-
+↦	nuoli palkista oikealle	-
+↧	nuoli palkista alas	-
+↨	nuoli ylös ja alas sekä kanta	-
+↫	kierrenuoli vasemmalle	-
+↬	kierrenuoli oikealle	-
+↭	aaltonuoli vasemmalle ja oikealle	-
+↯	siksak-nuoli alas	-
+↰	vasemmalle kaartuva nuoli ylös	-
+↱	oikealle kaartuva nuoli ylös	-
+↲	vasemmalle kaartuva nuoli alas	-
+↳	oikealle kaartuva nuoli alas	-
+↴	alas kaartuva kulmanuoli oikealle	-
+↵	vasemmalle kaartuva kulmanuoli alas	-
+↶	vastapäivään kulkeva ylempi puoliympyränuoli	-
+↷	myötäpäivään kulkeva ylempi puoliympyränuoli	-
+↸	luodenuoli ja pitkä palkki	-
+↹	oikealle osoittavan nuolipalkin yllä nuolipalkki vasemmalle	-
+↺	avoimen ympyrän nuoli vastapäivään	-
+↻	avoimen ympyrän nuoli myötäpäivään	-
+↼	väkäpiikki vasemmalle ja ylös	-
+↽	väkäpiikki vasemmalle ja alas	-
+↾	väkäpiikki ylös ja oikealle	-
+↿	väkäpiikki ylös ja vasemmalle	-
+⇀	väkäpiikki oikealle ja ylös	-
+⇁	väkäpiikki oikealle ja alas	-
+⇂	väkäpiikki alas ja oikealle	-
+⇃	väkäpiikki alas ja vasemmalle	-
+⇄	nuoli oikealle jonka alla nuoli vasemmalle	-
+⇅	ylös ja alas osoittavat nuolet	-
+⇆	nuolet vasemmalle ja oikealle päällekkäin	-
+⇇	nuolipari vasemmalle	-
+⇈	nuolipari ylös	-
+⇉	nuolipari oikealle	-
+⇊	nuolipari alas	-
+⇋	väkäpiikki vasemmalle jonka alla väkäpiikki oikealle	-
+⇌	väkäpiikki oikealle jonka alla väkäpiikki vasemmalle	-
+⇐	kaksoisnuoli vasemmalle	-
+⇍	yliviivattu kaksoisnuoli vasemmalle	-
+⇑	kaksoisnuoli ylös	-
+⇒	kaksoisnuoli oikealle	-
+⇏	yliviivattu kaksoisnuoli oikealle	-
+⇓	kaksoisnuoli alas	-
+⇔	kaksoisnuoli vasemmalle ja oikealle	-
+⇎	yliviivattu kaksoisnuoli vasemmalle ja oikealle	-
+⇖	kaksoisnuoli luoteeseen	-
+⇗	kaksoisnuoli koiliseen	-
+⇘	kaksoisnuoli kaakkoon	-
+⇙	kaksoisnuoli lounaaseen	-
+⇚	kolmoisnuoli vasemmalle	-
+⇛	kolmoisnuoli oikealle	-
+⇜	koukeronuoli vasemmalle	-
+⇝	koukeronuoli oikealle	-
+⇞	kahdesti yliviivattu nuoli ylös	-
+⇟	kahdesti yliviivattu nuoli alas	-
+⇠	katkoviivanuoli vasemmalle	-
+⇡	katkoviivanuoli ylös	-
+⇢	katkoviivanuoli oikealle	-
+⇣	katkoviivanuoli alas	-
+⇤	pystyviivaan päättyvä vasemmalle osoittava nuoli	-
+⇥	pystyviivaan päättyvä oikealle osoittava nuoli	-
+⇦	tyhjä nuoli vasemmalle	-
+⇧	tyhjä nuoli ylös	-
+⇨	tyhjä nuoli oikealle	-
+⇩	tyhjä nuoli alas	-
+⇪	palkista alkava tyhjä nuoli ylös	-
+⇵	nuoli alas ja nuoli ylös	-
+∀	kaikille	-
+∂	osittaisderivaatta	-
+∃	eksistenssikvanttori	-
+∅	tyhjä joukko	-
+∆	lisäys	-
+∇	nabla	-
+∈	kuuluu joukkoon	-
+∉	ei kuulu joukkoon	-
+∋	jäsenenä joukkoon kuuluva	-
+∎	todistuksen loppu	-
+∏	monikkotulo	-
+∑	summa	-
++	plus	-
+±	plus-miinus	-
+÷	jakolaskumerkki	-
+×	kertolaskumerkki	-
+<	pienempi kuin	-
+≮	ei pienempi kuin	-
+=	yhtä suuri kuin	-
+≠	eri suuri kuin	-
+>	suurempi kuin	-
+≯	ei suurempi kuin	-
+¬	negaatio	-
+|	pystyviiva	-
+~	tilde	-
+−	miinus	-
+⁻	yläindeksi miinus	-
+∓	miinus tai plus	-
+∕	jakoviiva	-
+⁄	murtoluvun vinoviiva	-
+∗	asteriskioperaattori	-
+∘	pallo-operaattori	-
+∙	luettelomerkkioperaattori	-
+√	neliöjuuri	-
+∝	verrannollinen	-
+∞	äärettömän merkki	-
+∟	oikea kulma	-
+∠	kulma	-
+∣	jakaja	-
+∥	paralleeli	-
+∧	looginen konjunktio	-
+∩	leikkaus	-
+∪	yhdiste	-
+∫	integraali	-
+∬	kaksoisintegraali	-
+∮	käyräintegraali	-
+∴	siis	-
+∵	koska	-
+∶	suhde	-
+∷	suhteellisuus	-
+∼	tildeoperaattori	-
+∽	käänteinen tilde	-
+∾	ylösalainen laiska s	-
+≃	asymptoottinen	-
+≅	yhtenevä	-
+≈	likimäärin yhtä suuri kuin	-
+≌	kaikki yhtä suuria kuin	-
+≒	lähes yhtä suuri	-
+≖	ympyrän sisältävä yhtäläisyysmerkki	-
+≡	sama kuin	-
+≣	tarkka vastaavuus	-
+≤	pienempi tai yhtä suuri kuin	-
+≥	suurempi tai yhtä suuri kuin	-
+≦	yhtäläisyysmerkin yläpuolella oleva pienempi kuin -merkki	-
+≧	yhtäläisyysmerkin yläpuolella oleva suurempi kuin -merkki	-
+≪	paljon pienempi kuin	-
+≫	paljon suurempi kuin	-
+≬	välissä	-
+≳	suurempi kuin tai ekvivalentti	-
+≺	edeltää	-
+≻	seuraa	-
+⊁	ei seuraa	-
+⊂	on osajoukko	-
+⊃	ylijoukko	-
+⊆	osajoukko	-
+⊇	yläjoukko	-
+⊕	ympyröity plus	-
+⊖	ympyröity miinus	-
+⊗	ympyröity kertomerkki	-
+⊘	ympyröity jakomerkki	-
+⊙	ympyröity pisteoperaattori	-
+⊚	ympyröity pallo-operaattori	-
+⊛	ympyröity asteriskioperaattori	-
+⊞	plus neliössä	-
+⊟	miinus neliössä	-
+⊥	ylös osoittava nupi	-
+⊮	ei pakota	-
+⊰	relationaalinen edeltäminen	-
+⊱	relationaalinen seuraaminen	-
+⋭	normaalina aliryhmänä sisältämisen ja yhtäläisyyden negaatio	-
+⊶	alkuperäinen	-
+⊹	Hermiten konjugaattimatriisi	-
+⊿	oikeanpuoleinen kolmio	-
+⋁	monikko looginen tai	-
+⋂	monikkoleikkaus	-
+⋃	monikkounioni	-
+⋅	pisteoperaattori	-
+⋆	tähtioperaattori	-
+⋈	luonnollinen liitos	-
+⋒	kaksoisleikkaus	-
+⋘	huomattavasti pienempi kuin	-
+⋙	huomattavasti suurempi kuin	-
+⋮	pystysuuntainen ellipsi	-
+⋯	rivinkeskinen ellipsi	-
+⋰	ellipsi ylös oikealle	-
+⋱	ellipsi alas oikealle	-
+⨧	plusmerkki ja alaindeksi kaksi	-
+⨯	vektoriristitulo	-
+⨼	sisätulo	-
+⩣	looginen tai kaksoisalaviiva	-
+⩽	pienempi vino yhteneväisyys	-
+⪍	pienempi kuin, alla vastaava yhtäsuuruus	-
+⪚	kaksoisviivallinen yhtäsuuruus suurempi	-
+⪺	seuraa, jonka alla noin-merkin negaatio	-
+⭐	valkoinen tähti	-
+⬆	nuoli ylös	-
+↗	nuoli yläoikealle	-
+↘	nuoli alaoikealle	-
+⬇	nuoli alas	-
+↙	nuoli alavasemmalle	-
+⬅	nuoli vasemmalle	-
+↖	nuoli ylävasemmalle	-
+↕	nuoli ylös ja alas	-
+↔	nuoli oikealle ja vasemmalle	-
+↮	vasen-oikea vetonuoli	-
+↩	vasemmalle kääntyvä nuoli	-
+↪	oikealle kääntyvä nuoli	-
+⤴	ylös kääntyvä nuoli	-
+⤵	alas kääntyvä nuoli	-
+〰	aaltoviiva	-
+⭕	suuri ympyrä	-
+〽	osanvaihtomerkki	-
+©	tekijänoikeusmerkki	-
+®	rekisteröity-merkki	-
+™	tavaramerkki	-
+ℹ	info	-
+㊗	onnittelut-kirjoitusmerkki	-
+㊙	salainen-kirjoitusmerkki	-
+⬛	iso musta neliö	-
+⬜	iso valkoinen neliö	-
+¢	sentti	-
+$	dollari	-
+£	punta	-
+¥	jeni	-
+₢	cruzeiro	-
+₣	Ranskan frangi	-
+₤	liira	-
+₥	milli	-
+₩	won	-
+€	euro	-
+₰	Saksan penni	-
+₱	peso	-
+₳	austral	-
+₶	Toursin livre	-
+₷	spesmilo	-
+₹	Intian rupia	-
+₽	rupla	-
+₿	bitcoin	-
+¹	yläindeksi yksi	-
+²	yläindeksi kaksi	-
+³	yläindeksi kolme	-
+₨	rupia	-
+µ	mikromerkki	-
+﷼	rial	-
+¤	tuntematon rahayksikkö	-
+֏	Armenian dram	-
+؋	Afganistanin afgaani	-
+৳	Bangladeshin taka	-
+฿	Thaimaan baht	-
+៛	Kambodžan riel	-
+₡	Costa Rican colón	-
+₦	Nigerian naira	-
+₪	Israelin uusi sekeli	-
+₫	Vietnamin dong	-
+₭	Laosin kip	-
+₮	Mongolian tugrik	-
+₲	Paraguayn guarani	-
+₴	Ukrainan hryvnia	-
+₵	Ghanan cedi	-
+₸	Kazakstanin tenge	-
+₺	Turkin liira	-
+₼	Azerbaidžanin manat	-
+₾	Georgian lari	-
+₧	Espanjan peseta	-

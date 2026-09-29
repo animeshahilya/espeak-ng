@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	lúibín catach tosaigh	-
+‾	forlíne	-
+_	líne íseal	-
+-	fleiscín-lúide	-
+‐	fleiscín	-
+–	ein-dais	-
+—	eim-dais	-
+―	barra comthrománach	-
+・	lárphonc katakana	-
+,	camóg	-
+،	camóg arabach	-
+、	camóg idéaagrafach	-
+;	leathstad	-
+؛	leathstad arabach	-
+:	idirstad	-
+!	comhartha uaillbhreasa	-
+¡	comhartha uaillbhreasa aisiompaithe	-
+?	comhartha ceiste	-
+¿	comhartha ceiste aisiompaithe	-
+؟	comhartha ceiste arabach	-
+‽	comhartha ceiste uaillbhreasa	-
+.	lánstad	-
+…	bearna san insint	-
+。	lánstad idéagrafach	-
+·	lárphonc	-
+'	uaschamóg chlóscríobháin	-
+‘	uaschamóg ar chlé	-
+’	uaschamóg ar dheis	-
+‚	uaschamóg íseal ar dheis	-
+“	comhartha athfhriotail ar chlé	-
+”	comhartha athfhriotail ar dheis	-
+„	comhartha athfhriotail íseal ar dheis	-
+«	rachtán tosaigh	-
+»	rachtán deiridh	-
+)	lúibín deiridh	-
+[	lúibín cearnógach tosaigh	-
+]	lúibín cearnógach deiridh	-
+}	lúibín catach deiridh	-
+〈	lúibín uillinne tosaigh	-
+〉	lúibín uillinne deiridh	-
+《	lúibín uillinne dúbailte tosaigh	-
+》	lúibín uillinne dúbailte deiridh	-
+「	lúibín cúinne tosaigh	-
+」	lúibín cúinne deiridh	-
+『	lúibín cúinne toll tosaigh	-
+』	lúibín cúinne toll deiridh	-
+【	lúibín lionsach dubh tosaigh	-
+】	lúibín lionsach dubh deiridh	-
+〔	lúibín blaosc toirtíse tosaigh	-
+〕	lúibín blaosc toirtíse deiridh	-
+〖	lúibín lionsach toll tosaigh	-
+〗	lúibín lionsach toll deiridh	-
+§	rannán	-
+¶	marc ailt	-
+@	comhartha @	-
+*	réiltín	-
+/	slais	-
+\	cúlslais	-
+&	amparsan	-
+%	céatadán	-
+‰	in aghaidh an mhíle	-
+†	comhartha miodóige	-
+‡	comhartha miodóige dúbailte	-
+•	urchar	-
+‧	ponc le fleiscín	-
+′	prím	-
+″	prím dhúbailte	-
+‴	prím thriarach	-
+‸	carait	-
+※	marc tagartha	-
+⁂	réaltlach	-
+`	graif	-
+´	agúid	-
+^	cuairín	-
+¨	déiréis	-
+°	céim	-
+℗	cóipcheart taifid fuaime	-
+←	saighead chlé	-
+↚	túlslais saighde ar chlé	-
+→	saighead dheas	-
+↛	túlslais saighde ar dheis	-
+↑	saighead dhírithe suas	-
+↓	saighead dhírithe síos	-
+↜	saighead chorrach ar chlé	-
+↝	saighead chorrach ar dheis	-
+↞	saighead dhécheannach ar chlé	-
+↟	saighead dhécheannach suas	-
+↠	saighead dhécheannach ar dheis	-
+↡	saighead dhécheannach síos	-
+↢	saighead eiteach ar chlé	-
+↣	saighead eiteach ar dheis	-
+↤	saighead ar chlé as barra	-
+↥	saighead suas as barra	-
+↦	saighead ar dheis as barra	-
+↧	saighead síos as barra	-
+↨	saighead suas síos le bonn	-
+↫	saighead lúbach ar chlé	-
+↬	saighead lúbach ar dheis	-
+↭	tonnsaighead chlé dheas	-
+↯	saighead fhiarlánach síos	-
+↰	saigheas suas barr ar chlé	-
+↱	saighead suas barr ar dheis	-
+↲	saighead síos barr ar chlé	-
+↳	saighead síos barr ar dheis	-
+↴	saighead ar dheis cúinne síos	-
+↵	saighead síos cúinne ar chlé	-
+↶	saighead thuathal uachtar leathchiorcail	-
+↷	saighead dheiseal uachtar leathchiorcail	-
+↸	saighead siar ó thuaidh barra fada	-
+↹	saigheadbharra ar chlé os cionn ceann ar dheis	-
+↺	ciorcalshaighead oscailte tuathalach	-
+↻	ciorcalshaighead oscailte deiseal	-
+↼	harpún ar chlé friofac thuas	-
+↽	harpún ar chlé friofac thíos	-
+↾	harpún suas friofac ar dheis	-
+↿	harpún suas friofac ar chlé	-
+⇀	harpún ar dheis friofac thuas	-
+⇁	harpún ar dheis friofac thíos	-
+⇂	harpún síos friofac ar dheis	-
+⇃	harpún síos friofac ar chlé	-
+⇄	saighead ar dheis os cionn saighde ar chlé	-
+⇅	saighead suas agus saighead síos	-
+⇆	saighead chlé os cionn saighead dheas	-
+⇇	péire saighead ar chlé	-
+⇈	péire saighead suas	-
+⇉	péire saighead ar dheis	-
+⇊	péire saighead síos	-
+⇋	harpún ar chlé os cionn harpúin ar dheis	-
+⇌	harpún ar dheis os cionn harpúin ar chlé	-
+⇐	saighead dhúbailte ar chlé	-
+⇍	saigheadstríoc dhúbailte ar chlé	-
+⇑	saighead dhúbailte suas	-
+⇒	saighead dhúbailte ar dheis	-
+⇏	saigheadstríoc dhúbailte ar dheis	-
+⇓	saighead dhúbailte síos	-
+⇔	saighead dhúbailte chlé dheas	-
+⇎	saigheadstríoc dhúbailte chlé dheas	-
+⇖	saighead dhúbailte siar ó thuaidh	-
+⇗	saighead dhúbailte soir ó thuaidh	-
+⇘	saighead dhúbailte soir ó dheas	-
+⇙	saighead dhúbailte siar ó dheas	-
+⇚	saighead thriarach ar chlé	-
+⇛	saighead thriarach ar dheis	-
+⇜	scríobshaighead ar chlé	-
+⇝	scríobshaighead ar dheis	-
+⇞	saighead suas stríce dúbailte	-
+⇟	saighead síos stríce dúbailte	-
+⇠	saighead bhriste ar chlé	-
+⇡	saighead bhriste suas	-
+⇢	saighead bhriste ar dheis	-
+⇣	saighead bhriste síos	-
+⇤	saigheadbharra ar chlé	-
+⇥	saigheadbharra ar dheis	-
+⇦	saighead tholl ar chlé	-
+⇧	saighead tholl suas	-
+⇨	saighead tholl ar dheis	-
+⇩	saighead tholl síos	-
+⇪	saighead tholl suas ó bharra	-
+⇵	saighead síos saighead suas ar chlé	-
+∀	gach rud	-
+∂	páirtdifreálach	-
+∃	is ann do	-
+∅	tacar folamh	-
+∆	incrimint	-
+∇	nabla	-
+∈	ball de	-
+∉	ní ball de	-
+∋	ann mar bhall	-
+∎	cruthú deiridh	-
+∏	toradh n-ary	-
+∑	suimiú n-ary	-
++	comhartha móide	-
+±	móide-lúide	-
+÷	comhartha roinnte	-
+×	comhartha iolraithe	-
+<	níos lú ná	-
+≮	nach bhfuil níos lú ná	-
+=	cothrom le	-
+≠	míchothrom	-
+>	níos mó ná	-
+≯	nach bhfuil níos mó ná	-
+¬	diúltú	-
+|	líne ingearach	-
+~	tilde	-
+−	comhartha lúide	-
+⁻	lúide forscríofa	-
+∓	lúide nó móide	-
+∕	slais roinnte	-
+⁄	slais chodáin	-
+∗	oibritheoir réiltín	-
+∘	oibritheoir fáinne	-
+∙	oibritheoir urchair	-
+√	fréamh chearnach	-
+∝	comhréireach	-
+∞	comhartha éigríche	-
+∟	dronuillinn	-
+∠	uillinn	-
+∣	roinneann	-
+∥	línte comhthreomhara	-
+∧	loighciúil agus	-
+∩	idirmhír	-
+∪	aontas	-
+∫	suimeálaí	-
+∬	suimeálaí dúbailte	-
+∮	cuarshuimeálaí	-
+∴	mar sin	-
+∵	mar	-
+∶	cóimheas	-
+∷	comhréir	-
+∼	oibritheoir tilde	-
+∽	tilde aisiompaithe	-
+∾	s aisiompaithe ar a taobh	-
+≃	cothrom le go hasamtóiteach	-
+≅	beagnach cothrom lena chéile	-
+≈	beagnach cothrom le	-
+≌	gach rud cothrom lena chéile	-
+≒	beagnach cothrom leis an íomhá	-
+≖	fáinne i gcothrom lena chéile	-
+≡	comhionann le	-
+≣	ceartchothrom	-
+≤	níos lú ná nó cothrom le	-
+≥	níos mó ná nó cothrom le	-
+≦	níos lú ná os cionn cothrom lena chéile	-
+≧	níos mó ná os cionn cothrom lena chéile	-
+≪	i bhfad níos lú ná	-
+≫	i bhfad níos mó ná	-
+≬	idir	-
+≳	níos mó ná cothrom le	-
+≺	tagann sé roimh	-
+≻	tagann sé i ndiaidh	-
+⊁	ní thagann sé i ndiaidh	-
+⊂	fo-thacar de chuid	-
+⊃	forthacar	-
+⊆	cothrom lena chéile fothacair	-
+⊇	cothrom lena chéile forthacair	-
+⊕	móide i gciorcal	-
+⊖	lúide i gciorcal	-
+⊗	comhartha iolraithe i gciorcal	-
+⊘	slais roinnte i gciorcal	-
+⊙	ponc-oibritheoir i gciorcal	-
+⊚	oibritheoir fáinne i gciorcal	-
+⊛	oibritheoir réiltín i gciorcal	-
+⊞	móide i gcearnóg	-
+⊟	lúide i gcearnóg	-
+⊥	tacóid suas	-
+⊮	ní úsáideann sé fórsa	-
+⊰	tagann sé roimhe faoi choibhneas	-
+⊱	tagann sé i ndiaidh faoi choibhneas	-
+⋭	níl mar bhall de mar cothrom le gnách foghrúpa	-
+⊶	buncheann	-
+⊹	maitrís chomhchuingeach Hermite	-
+⊿	triantán dronuilleach	-
+⋁	or loighciúil n-ary	-
+⋂	idirmhír n-ary	-
+⋃	aontas n-ary	-
+⋅	ponc-oibritheoir	-
+⋆	oibritheoir réalta	-
+⋈	ceangal nádúrtha	-
+⋒	idirmhír dhúbailte	-
+⋘	i bhfad bhfad níos nú ná	-
+⋙	i bhfad bhfad níos mó ná	-
+⋮	comhartha focalbhá ingearach	-
+⋯	comhartha focalbhá meánlíne	-
+⋰	focalbhá trasnánach suas ar dheis	-
+⋱	comhartha focalbhá trasnánach síos ar dheis	-
+⨧	móide síntiús a dó	-
+⨯	táirge tras veicteoir	-
+⨼	táirge inmheánach	-
+⩣	loighciúil nó bar íochtar dúbailte	-
+⩽	níos lú ná claonta comhionann	-
+⪍	níos lú ná thuas comhionann céanna	-
+⪚	líne dhúbailte comhionann níos mó ná	-
+⪺	éiríonn thuas ní beagnach comhionann	-
+⭐	réalta	-
+⬆	saighead suas	-
+↗	saighead suas ar dheis	-
+↘	saighead síos ar dheis	-
+⬇	saighead síos	-
+↙	saighead síos ar chlé	-
+⬅	saighead ar chlé	-
+↖	saighead suas ar chlé	-
+↕	saighead suas-síos	-
+↔	saighead chlé-dheas	-
+↮	túlslais saighde ar chlé ar dheis	-
+↩	saighead dheas ag dul ar chlé	-
+↪	saighead chlé ag dul ar dheis	-
+⤴	saighead dheas ag dul suas	-
+⤵	saighead dheas ag dul síos	-
+〰	dais chorrach	-
+⭕	ciorcal dearg toll	-
+〽	cuid de mharc ailtéarnaithe	-
+©	cóipcheart	-
+®	cláraithe	-
+™	comhartha trádmhairc	-
+ℹ	foinse eolais	-
+㊗	cnaipe Seapáinise "comhghairdeas"	-
+㊙	cnaipe Seapáinise "rún"	-
+⬛	cearnóg mhór dhubh	-
+⬜	cearnóg mhór bhán	-
+¢	cent	-
+$	dollar	-
+£	punt	-
+¥	yen	-
+₢	cruzeiro	-
+₣	franc na Fraince	-
+₤	lira	-
+₥	mil	-
+₩	won	-
+€	euro	-
+₰	pingin na Gearmáine	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	rúipí na hIndia	-
+₽	rúbal	-
+₿	bonn giotáin	-
+¹	aon forscríofa	-
+²	dó forscríofa	-
+³	trí forscríofa	-
+₨	rúipí	-
+µ	comhartha micre	-
+﷼	rial	-
+¤	Airgeadra Anaithnid	-
+֏	Dram na hAirméine	-
+؋	Afghani na hAfganastáine	-
+৳	Taka na Banglaidéise	-
+฿	Baht na Téalainne	-
+៛	Riel na Cambóide	-
+₡	Colón Chósta Ríce	-
+₦	Naira na Nigéire	-
+₪	Seiceal Nua Iosrael	-
+₫	Dong Vítneam	-
+₭	Kip Laos	-
+₮	Tugrik na Mongóile	-
+₲	Guaraní Pharagua	-
+₴	Hryvnia na hÚcráine	-
+₵	Cedi Ghána	-
+₸	Tenge na Casacstáine	-
+₺	Lira na Tuirce	-
+₼	Manat na hAsarbaiseáine	-
+₾	Lari na Seoirsia	-
+₧	Peseta na Spáinne	-

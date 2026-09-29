@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	chaveta esquerda	-
+‾	traço sobrescrito	-
+_	sublinhado	-
+-	hífen-menos	-
+‐	hífen	-
+–	meia-risca	-
+—	travessão	-
+―	barra horizontal	-
+・	katakana - ponto central	-
+,	vírgula	-
+،	virgula árabe	-
+、	vírgula ideográfica	-
+;	ponto e vírgula	-
+؛	ponto e vírgula árabe	-
+:	dois pontos	-
+!	ponto de exclamação	-
+¡	ponto de exclamação invertido	-
+?	ponto de interrogação	-
+¿	ponto de interrogação invertido	-
+؟	ponto de interrogação árabe	-
+‽	ponto de exclarrogação	-
+.	ponto	-
+…	reticências	-
+。	ideograma de ponto final	-
+·	ponto mediano	-
+'	plica	-
+‘	apóstrofo esquerdo	-
+’	apóstrofo direito	-
+‚	apóstrofo direito inferior	-
+“	aspas esquerdas	-
+”	aspas direitas	-
+„	aspas direitas inferiores	-
+«	aspas em linha esquerdas	-
+»	aspas em linha direitas	-
+)	parêntese direito	-
+[	parêntese reto esquerdo	-
+]	parêntese reto direito	-
+}	chaveta direita	-
+〈	parêntese angular esquerdo	-
+〉	parêntese angular direito	-
+《	parêntese angular duplo esquerdo	-
+》	parêntese angular duplo direito	-
+「	parêntese de canto esquerdo	-
+」	parêntese de canto direito	-
+『	parêntese de canto vazio esquerdo	-
+』	parêntese de canto vazio direito	-
+【	parêntese lenticular preto esquerdo	-
+】	parêntese lenticular preto direito	-
+〔	parêntese de tartaruga esquerdo	-
+〕	parêntese de tartaruga direito	-
+〖	parêntese lenticular vazio esquerdo	-
+〗	parêntese lenticular vazio direito	-
+§	secção	-
+¶	marca de parágrafo	-
+@	arroba	-
+*	asterisco	-
+/	barra	-
+\	barra invertida	-
+&	E comercial	-
+%	por cento	-
+‰	por mil	-
+†	obelisco	-
+‡	obelisco duplo	-
+•	marca de lista	-
+‧	ponto de hifenização	-
+′	apóstrofo	-
+″	apóstrofo duplo	-
+‴	apóstrofo triplo	-
+‸	circunflexo	-
+※	marca de referência	-
+⁂	asterismo	-
+`	acento grave	-
+´	acento agudo	-
+^	acento circunflexo	-
+¨	trema	-
+°	grau	-
+℗	símbolo de direitos de autor de fonograma	-
+←	seta a apontar para a esquerda	-
+↚	seta para a esquerda com traço	-
+→	seta a apontar para a direita	-
+↛	seta para a direita com traço	-
+↑	seta a apontar para cima	-
+↓	seta a apontar para baixo	-
+↜	seta ondulada para a esquerda	-
+↝	seta ondulada para a direita	-
+↞	seta de duas pontas para a esquerda	-
+↟	seta de duas pontas para cima	-
+↠	seta de duas pontas para a direita	-
+↡	seta de duas pontas para baixo	-
+↢	seta para a esquerda com cauda	-
+↣	seta para a direita com cauda	-
+↤	seta para a esquerda da barra	-
+↥	seta para cima da barra	-
+↦	seta para a direita da barra	-
+↧	seta para baixo da barra	-
+↨	seta para cima e para baixo com base	-
+↫	seta para a esquerda com laço	-
+↬	seta para a direita com laço	-
+↭	seta ondulada bidirecional	-
+↯	seta em zigue-zague para baixo	-
+↰	seta para cima com a ponta para a esquerda	-
+↱	seta para cima com a ponta para a direita	-
+↲	seta para baixo com a ponta para a esquerda	-
+↳	seta para baixo com a ponta para a direita	-
+↴	seta para a direita com canto para baixo	-
+↵	seta para baixo com canto para a esquerda	-
+↶	seta semicircular superior no sentido anti-horário	-
+↷	seta semicircular superior no sentido horário	-
+↸	seta noroeste sob barra longa	-
+↹	seta para a esquerda com barra sobre seta para a direita com barra	-
+↺	seta de círculo aberto no sentido anti-horário	-
+↻	seta de círculo aberto no sentido horário	-
+↼	arpão para a esquerda com farpa para cima	-
+↽	arpão para a esquerda com farpa para baixo	-
+↾	arpão para cima com farpa para a direita	-
+↿	arpão para cima com farpa para a esquerda	-
+⇀	arpão para a direita com farpa para cima	-
+⇁	arpão para a direita com farpa para baixo	-
+⇂	arpão para baixo com farpa para a direita	-
+⇃	arpão para baixo com farpa para a esquerda	-
+⇄	seta para a direita sobre seta para a esquerda	-
+⇅	setas a apontar para cima e para baixo	-
+⇆	setas a apontar para a esquerda e para a direita	-
+⇇	setas paralelas para a esquerda	-
+⇈	setas paralelas para cima	-
+⇉	setas paralelas para a direita	-
+⇊	setas paralelas para baixo	-
+⇋	arpão para a esquerda sobre arpão para a direita	-
+⇌	arpão para a direita sobre arpão para a esquerda	-
+⇐	seta dupla para a esquerda	-
+⇍	seta dupla para a esquerda com traço	-
+⇑	seta dupla para cima	-
+⇒	seta dupla para a direita	-
+⇏	seta dupla para a direita com traço	-
+⇓	seta dupla para baixo	-
+⇔	seta dupla bidirecional	-
+⇎	seta dupla bidirecional com traço	-
+⇖	seta dupla para noroeste	-
+⇗	seta dupla para nordeste	-
+⇘	seta dupla para sudeste	-
+⇙	seta dupla para sudoeste	-
+⇚	seta tripla para a esquerda	-
+⇛	seta tripla para a direita	-
+⇜	seta de rabisco para a esquerda	-
+⇝	seta de rabisco para a direita	-
+⇞	seta para cima com traço duplo	-
+⇟	seta para baixo com traço duplo	-
+⇠	seta tracejada para a esquerda	-
+⇡	seta tracejada para cima	-
+⇢	seta tracejada para a direita	-
+⇣	seta tracejada para baixo	-
+⇤	seta para a esquerda com barra	-
+⇥	seta para a direita com barra	-
+⇦	seta vazia para a esquerda	-
+⇧	seta vazia para cima	-
+⇨	seta vazia para a direita	-
+⇩	seta vazia para baixo	-
+⇪	seta vazia para cima da barra	-
+⇵	seta para baixo à esquerda da seta para cima	-
+∀	para todo	-
+∂	diferencial parcial	-
+∃	existe	-
+∅	conjunto vazio	-
+∆	delta	-
+∇	nabla	-
+∈	pertence	-
+∉	não pertence	-
+∋	contém como membro	-
+∎	fim da prova	-
+∏	produto n-ário	-
+∑	somatório n-ário	-
++	sinal de mais	-
+±	mais-menos	-
+÷	sinal de divisão	-
+×	sinal de multiplicação	-
+<	menor	-
+≮	não menor que	-
+=	igual	-
+≠	desigual	-
+>	maior	-
+≯	não maior que	-
+¬	negação	-
+|	barra vertical	-
+~	til	-
+−	sinal de menos	-
+⁻	menos sobrescrito	-
+∓	menos ou mais	-
+∕	barra de divisão	-
+⁄	barra de fração	-
+∗	operador de asterisco	-
+∘	operador de anel	-
+∙	operador de marca de lista	-
+√	raiz quadrada	-
+∝	proporcional	-
+∞	símbolo de infinito	-
+∟	ângulo reto	-
+∠	ângulo	-
+∣	divide	-
+∥	paralelo	-
+∧	e lógico	-
+∩	interseção	-
+∪	união	-
+∫	integral	-
+∬	integral duplo	-
+∮	integral de contorno	-
+∴	então	-
+∵	porque	-
+∶	razão	-
+∷	proporção	-
+∼	operador de til	-
+∽	til invertido	-
+∾	s preguiçoso invertido	-
+≃	assintoticamente igual	-
+≅	aproximadamente igual	-
+≈	quase igual	-
+≌	tudo igual	-
+≒	aproximadamente igual à imagem	-
+≖	anel em igual	-
+≡	idêntico a	-
+≣	estritamente equivalente	-
+≤	menor ou igual	-
+≥	maior ou igual	-
+≦	menor que sobre igual	-
+≧	maior que sobre igual	-
+≪	muito menor que	-
+≫	muito maior que	-
+≬	entre	-
+≳	maior que ou equivalente	-
+≺	precede	-
+≻	sucede	-
+⊁	não sucede	-
+⊂	subconjunto de	-
+⊃	superconjunto	-
+⊆	subconjunto de ou igual	-
+⊇	superconjunto de ou igual	-
+⊕	mais em círculo	-
+⊖	menos em círculo	-
+⊗	vezes em círculo	-
+⊘	barra de divisão em círculo	-
+⊙	operador de ponto em círculo	-
+⊚	operador de anel em círculo	-
+⊛	operador de asterisco em círculo	-
+⊞	mais em quadrado	-
+⊟	menos em quadrado	-
+⊥	contradição arbitrária	-
+⊮	não força	-
+⊰	precede em relação	-
+⊱	sucede em relação	-
+⋭	não contém como subgrupo normal ou igual	-
+⊶	original	-
+⊹	matriz conjugada hermitiana	-
+⊿	triângulo retângulo	-
+⋁	ou lógico n-ário	-
+⋂	interseção n-ária	-
+⋃	união n-ária	-
+⋅	operador de ponto	-
+⋆	operador de estrela	-
+⋈	junção natural	-
+⋒	interseção dupla	-
+⋘	muitíssimo menor que	-
+⋙	muitíssimo maior que	-
+⋮	reticências verticais	-
+⋯	reticências horizontais a meio da linha	-
+⋰	reticências diagonais direitas para cima	-
+⋱	reticências diagonais direitas para baixo	-
+⨧	mais com dois subscrito	-
+⨯	produto vetorial	-
+⨼	produto interior	-
+⩣	ou lógico com duas barras subscritas	-
+⩽	menor que ou igual inclinado	-
+⪍	menor que acima de similar ou igual	-
+⪚	igual de duas linhas ou maior que	-
+⪺	sucede acima de não quase igual	-
+⭐	estrela	-
+⬆	seta para cima	-
+↗	seta para cima e para a direita	-
+↘	seta para a direita e para baixo	-
+⬇	seta para baixo	-
+↙	seta para baixo e para a esquerda	-
+⬅	seta para a esquerda	-
+↖	seta para cima e para a esquerda	-
+↕	seta para cima e para baixo	-
+↔	seta para a esquerda e para a direita	-
+↮	seta bidirecional com traço	-
+↩	seta para a direita com curva para a esquerda	-
+↪	seta para a esquerda com curva para a direita	-
+⤴	seta para a direita com curva para cima	-
+⤵	seta para a direita com curva para baixo	-
+〰	traço ondulado	-
+⭕	círculo vermelho oco	-
+〽	marca de alternância parcial	-
+©	direitos de autor	-
+®	marca registada	-
+™	marca comercial	-
+ℹ	posto de informação	-
+㊗	botão "parabéns" em japonês	-
+㊙	botão "segredo" em japonês	-
+⬛	quadrado preto grande	-
+⬜	quadrado branco grande	-
+¢	cêntimo	-
+$	dólar	-
+£	libra	-
+¥	iene	-
+₢	cruzeiro	-
+₣	franco francês	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	centavo alemão	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	rupia indiana	-
+₽	rublo	-
+₿	bitcoin	-
+¹	número um sobrescrito	-
+²	número dois sobrescrito	-
+³	número três sobrescrito	-
+₨	rupia	-
+µ	sinal micro	-
+﷼	rial	-
+¤	moeda desconhecida	-
+֏	dram arménio	-
+؋	afegâni afegão	-
+৳	taka bengali	-
+฿	baht tailandês	-
+៛	riel cambojano	-
+₡	colon costa-riquenho	-
+₦	naira nigeriana	-
+₪	sheqel novo israelita	-
+₫	dong vietnamita	-
+₭	kip laosiano	-
+₮	tugrik mongol	-
+₲	guarani paraguaio	-
+₴	hryvnia ucraniano	-
+₵	cedi ganês	-
+₸	tenge cazaque	-
+₺	lira turca	-
+₼	manat azeri	-
+₾	lari georgiano	-
+₧	Peseta espanhola	-

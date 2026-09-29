@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	öffnende geschweifte Klammer	-
+‾	Überstrich	-
+_	Unterstrich	-
+-	Bindestrich-Minus	-
+‐	Bindestrich	-
+–	Halbgeviertstrich	-
+—	Geviertstrich	-
+―	waagerechter Strich	-
+・	Katakana-Mittelpunkt	-
+,	Komma	-
+،	arabisches Komma	-
+、	ideografisches Komma	-
+;	Semikolon	-
+؛	arabisches Semikolon	-
+:	Doppelpunkt	-
+!	Ausrufezeichen	-
+¡	umgekehrtes Ausrufezeichen	-
+?	Fragezeichen	-
+¿	umgekehrtes Fragezeichen	-
+؟	arabisches Fragezeichen	-
+‽	Interrobang	-
+.	Punkt	-
+…	Ellipse	-
+。	ideografischer Punkt	-
+·	Mittelpunkt	-
+'	gerader Apostroph	-
+‘	Apostroph links	-
+’	Apostroph rechts	-
+‚	Apostroph rechts unten	-
+“	öffnendes doppeltes Anführungszeichen oben	-
+”	schließendes doppeltes Anführungszeichen oben	-
+„	öffnendes doppeltes Anführungszeichen unten	-
+«	nach links weisendes Guillemet	-
+»	nach rechts weisendes Guillemet	-
+)	schließende runde Klammer	-
+[	öffnende eckige Klammer	-
+]	schließende eckige Klammer	-
+}	schließende geschweifte Klammer	-
+〈	öffnende spitze Klammer	-
+〉	schließende spitze Klammer	-
+《	öffnende doppelte spitze Klammer	-
+》	schließende doppelte spitze Klammer	-
+「	öffnende Eckklammer	-
+」	schließende Eckklammer	-
+『	öffnende hohle Eckklammer	-
+』	schließende hohle Eckklammer	-
+【	öffnende schwarze konkave Klammer	-
+】	schließende schwarze konkave Klammer	-
+〔	öffnende stumpfe Klammer	-
+〕	schließende stumpfe Klammer	-
+〖	öffnende hohle konkave Klammer	-
+〗	schließende hohle konkave Klammer	-
+§	Paragraf	-
+¶	Absatzzeichen	-
+@	At-Zeichen	-
+*	Sternchen	-
+/	Schrägstrich	-
+\	umgekehrter Schrägstrich	-
+&	Et-Zeichen	-
+%	Prozent	-
+‰	Promille	-
+†	Langkreuz	-
+‡	Zweibalkenkreuz	-
+•	Aufzählungspunkt	-
+‧	Silbentrennungspunkt	-
+′	Prime	-
+″	Doppelprime	-
+‴	Dreistrich	-
+‸	Caret	-
+※	Komejirushi	-
+⁂	Asterism	-
+`	Gravis	-
+´	Akut	-
+^	Zirkumflex	-
+¨	Trema	-
+°	Grad Alkohol	-
+℗	Copyrightzeichen für Audioaufnahme	-
+←	nach links weisender Pfeil	-
+↚	durchgestrichener Pfeil nach links	-
+→	nach rechts weisender Pfeil	-
+↛	durchgestrichener Pfeil nach rechts	-
+↑	nach oben weisender Pfeil	-
+↓	nach unten weisender Pfeil	-
+↜	Wellenpfeil nach links	-
+↝	Wellenpfeil nach rechts	-
+↞	Pfeil mit Doppelspitze nach links	-
+↟	Pfeil mit Doppelspitze nach oben	-
+↠	Pfeil mit Doppelspitze nach rechts	-
+↡	Pfeil mit Doppelspitze nach unten	-
+↢	Pfeilschwanz nach links	-
+↣	Pfeilschwanz nach rechts	-
+↤	Pfeil nach links von Strich weglaufend	-
+↥	Pfeil nach oben von Strich weglaufend	-
+↦	Pfeil nach rechts von Strich weglaufend	-
+↧	Pfeil nach unten von Strich weglaufend	-
+↨	Pfeil nach oben und unten mit Unterstrich	-
+↫	Pfeil nach links mit Schleife	-
+↬	Pfeil nach rechts mit Schleife	-
+↭	Wellenpfeil nach links und rechts	-
+↯	Zickzack-Pfeil nach unten	-
+↰	Pfeil nach oben mit Spitze nach links	-
+↱	Pfeil nach oben mit Spitze nach rechts	-
+↲	Pfeil nach unten mit Spitze nach links	-
+↳	Pfeil nach unten mit Spitze nach rechts	-
+↴	Pfeil nach rechts mit Spitze nach unten	-
+↵	Pfeil nach unten mit Ecke nach links	-
+↶	Halbkreisförmiger Pfeil gegen Uhrzeigersinn oben	-
+↷	Halbkreisförmiger Pfeil im Uhrzeigersinn oben	-
+↸	Pfeil nach Nordwesten auf langen Strich zulaufend	-
+↹	Pfeil nach links auf Strich zulaufend über Pfeil nach rechts auf Strich zulaufend	-
+↺	Kreisförmiger Pfeil gegen Uhrzeigersinn	-
+↻	Kreisförmiger Pfeil im Uhrzeigersinn	-
+↼	Harpune nach links mit Zacken nach oben	-
+↽	Harpune nach links mit Zacken nach unten	-
+↾	Harpune nach oben mit Zacken nach rechts	-
+↿	Harpune nach oben mit Zacken nach links	-
+⇀	Harpune nach rechts mit Zacken nach oben	-
+⇁	Harpune nach rechts mit Zacken nach unten	-
+⇂	Harpune nach unten mit Zacken nach rechts	-
+⇃	Harpune nach unten mit Zacken nach links	-
+⇄	Pfeil nach rechts über Pfeil nach links	-
+⇅	nach oben und nach unten weisende Pfeile	-
+⇆	Linkspfeil über Rechtspfeil	-
+⇇	gepaarte Pfeile nach links	-
+⇈	gepaarte Pfeile nach oben	-
+⇉	gepaarte Pfeile nach rechts	-
+⇊	gepaarte Pfeile nach unten	-
+⇋	Harpune nach links über Harpune nach rechts	-
+⇌	Harpune nach rechts über Harpune nach links	-
+⇐	Pfeil mit Doppelstrich nach links	-
+⇍	Durchgestrichener Pfeil mit Doppelstrich nach links	-
+⇑	Pfeil mit Doppelstrich nach oben	-
+⇒	Pfeil mit Doppelstrich nach rechts	-
+⇏	durchgestrichener Pfeil mit Doppelstrich nach rechts	-
+⇓	Pfeil mit Doppelstrich nach unten	-
+⇔	Pfeil mit Doppelstrich nach links und rechts	-
+⇎	durchgestrichener Pfeil mit Doppelstrich nach links und rechts	-
+⇖	Pfeil mit Doppelstrich nach Nordwesten	-
+⇗	Pfeil mit Doppelstrich nach Nordosten	-
+⇘	Pfeil mit Doppelstrich nach Südosten	-
+⇙	Pfeil mit Doppelstrich nach Südwesten	-
+⇚	Pfeil mit Dreifachstrich nach links	-
+⇛	Pfeil mit Dreifachstrich nach rechts	-
+⇜	Schnörkelpfeil nach links	-
+⇝	Schnörkelpfeil nach rechts	-
+⇞	Pfeil nach oben mit doppeltem Querstrich	-
+⇟	Pfeil nach unten mit doppeltem Querstrich	-
+⇠	Gestrichelter Pfeil nach links	-
+⇡	Gestrichelter Pfeil nach oben	-
+⇢	Gestrichelter Pfeil nach rechts	-
+⇣	Gestrichelter Pfeil nach unten	-
+⇤	Pfeil nach links auf Strich zulaufend	-
+⇥	Pfeil nach rechts auf Strich zulaufend	-
+⇦	weißer Pfeil nach links	-
+⇧	weißer Pfeil nach oben	-
+⇨	weißer Pfeil nach rechts	-
+⇩	weißer Pfeil nach unten	-
+⇪	weißer Pfeil nach oben von Strich weglaufend	-
+⇵	Pfeil nach unten links neben Pfeil nach oben	-
+∀	für alle	-
+∂	partielle Ableitung	-
+∃	es existiert	-
+∅	leere Menge	-
+∆	Inkrement	-
+∇	Nabla	-
+∈	Element	-
+∉	kein Element von	-
+∋	enthält als Element	-
+∎	Ende des Beweises	-
+∏	Produktzeichen	-
+∑	Summenzeichen	-
++	Pluszeichen	-
+±	Plusminuszeichen	-
+÷	Division	-
+×	Multiplikation	-
+<	kleiner als	-
+≮	nicht kleiner als	-
+=	Gleichheitszeichen	-
+≠	ungleich	-
+>	größer als	-
+≯	nicht größer als	-
+¬	Negationszeichen	-
+|	senkrechter Strich	-
+~	Tilde	-
+−	Minuszeichen	-
+⁻	hochgestelltes Minuszeichen	-
+∓	minus oder plus	-
+∕	Divisionsstrich	-
+⁄	Bruchstrich	-
+∗	Sternchen-Operator	-
+∘	Ring-Operator	-
+∙	Kreis-Operator	-
+√	Quadratwurzel	-
+∝	proportional zu	-
+∞	Unendlichkeitszeichen	-
+∟	rechter Winkel	-
+∠	Winkel-Zeichen	-
+∣	Teilt-Zeichen	-
+∥	parallel zu	-
+∧	logisches Und	-
+∩	Schnittmenge	-
+∪	Vereinigungsmenge	-
+∫	Integral	-
+∬	Doppelintegral	-
+∮	Kurvenintegral	-
+∴	Folglich	-
+∵	Weil	-
+∶	Verhältniszeichen	-
+∷	Proportionszeichen	-
+∼	Tilde-Operator	-
+∽	gespiegelte Tilde	-
+∾	umgekehrtes schlafendes S	-
+≃	asymptotisch gleich	-
+≅	ungefähr-gleich	-
+≈	ungefähr gleich	-
+≌	alles gleich	-
+≒	ungefähr gleich oder Bild von	-
+≖	Ring im Gleichheitszeichen	-
+≡	identisch	-
+≣	genau äquivalent	-
+≤	kleiner als oder gleich	-
+≥	größer als oder gleich	-
+≦	kleiner als über gleich	-
+≧	größer als über gleich	-
+≪	viel kleiner als	-
+≫	viel größer als	-
+≬	zwischen	-
+≳	größer als oder äquivalent	-
+≺	vorangehend	-
+≻	nachfolgend	-
+⊁	nicht nachfolgend	-
+⊂	Teilmenge	-
+⊃	Obermenge von	-
+⊆	Teilmenge von oder gleich mit	-
+⊇	Obermenge von oder gleich mit	-
+⊕	eingekreistes Pluszeichen	-
+⊖	eingekreistes Minuszeichen	-
+⊗	eingekreistes Multiplikationszeichen	-
+⊘	eingekreister Divisionsstrich	-
+⊙	eingekreister Punkt-Operator	-
+⊚	eingekreister Ring-Operator	-
+⊛	eingekreister Stern-Operator	-
+⊞	eingerahmtes Pluszeichen	-
+⊟	eingerahmtes Minuszeichen	-
+⊥	senkrecht nach oben	-
+⊮	erzwingt nicht	-
+⊰	vorangehend in Relation	-
+⊱	nachfolgend in Relation	-
+⋭	enthält nicht als normale Untergruppe oder gleich	-
+⊶	Original von	-
+⊹	hermitesche konjugierte Matrix	-
+⊿	rechtes Dreieck	-
+⋁	N-stufiges logisches Oder	-
+⋂	N-stufige Schnittmenge	-
+⋃	N-stufige Vereinigungsmenge	-
+⋅	Punkt-Operator	-
+⋆	Stern-Operator	-
+⋈	natürliche Verknüpfung	-
+⋒	doppelte Schnittmenge	-
+⋘	sehr viel kleiner als	-
+⋙	sehr viel größer als	-
+⋮	vertikale Ellipse	-
+⋯	horizontale Ellipse auf mittlerer Höhe	-
+⋰	rechts-aufwärts steigende diagonale Ellipse	-
+⋱	rechts-abwärts fallende diagonale Ellipse	-
+⨧	Pluszeichen mit tiefgestellter Zwei	-
+⨯	Vektor-/Kreuzprodukt	-
+⨼	inneres Produkt	-
+⩣	logisches Oder mit doppeltem Unterstrich	-
+⩽	schräg gleich oder kleiner als	-
+⪍	kleiner als über ähnlich oder gleich	-
+⪚	gleich über größer als	-
+⪺	nachfolgend über fast ungleich	-
+⭐	weißer mittelgroßer Stern	-
+⬆	Pfeil nach oben	-
+↗	Pfeil nach rechts oben	-
+↘	Pfeil nach rechts unten	-
+⬇	Pfeil nach unten	-
+↙	Pfeil nach links unten	-
+⬅	Pfeil nach links	-
+↖	Pfeil nach links oben	-
+↕	Pfeil nach oben und unten	-
+↔	Pfeil nach links und rechts	-
+↮	durchgestrichener Pfeil nach links und rechts	-
+↩	geschwungener Pfeil nach links	-
+↪	geschwungener Pfeil nach rechts	-
+⤴	geschwungener Pfeil nach oben	-
+⤵	geschwungener Pfeil nach unten	-
+〰	Wellenlinie	-
+⭕	hohler roter Kreis	-
+〽	Teilalternationszeichen	-
+©	Copyright	-
+®	Registered-Trademark	-
+™	Markenzeichen	-
+ℹ	Buchstabe „i“ in blauem Quadrat	-
+㊗	Schriftzeichen für „Gratulation“	-
+㊙	Schriftzeichen für „Geheimnis“	-
+⬛	großes schwarzes Quadrat	-
+⬜	großes weißes Quadrat	-
+¢	Cent	-
+$	Dollar	-
+£	Pfund Sterling	-
+¥	Yen	-
+₢	Cruzeiro	-
+₣	französischer Franc	-
+₤	Lira	-
+₥	Millzeichen	-
+₩	Won	-
+€	Euro	-
+₰	Pfennig	-
+₱	Peso	-
+₳	Austral	-
+₶	Livre tournoise	-
+₷	Spesmilo	-
+₹	Indische Rupie	-
+₽	Rubel	-
+₿	Bitcoin-Zeichen	-
+¹	hochgestellte Eins	-
+²	hochgestellte Zwei	-
+³	hochgestellte Drei	-
+₨	Rupie	-
+µ	Mikro-Zeichen	-
+﷼	Rial	-
+¤	Unbekannte Währung	-
+֏	Armenischer Dram	-
+؋	Afghanischer Afghani	-
+৳	Bangladesch-Taka	-
+฿	Thailändischer Baht	-
+៛	Kambodschanischer Riel	-
+₡	Costa-Rica-Colón	-
+₦	Nigerianischer Naira	-
+₪	Israelischer Neuer Schekel	-
+₫	Vietnamesischer Dong	-
+₭	Laotischer Kip	-
+₮	Mongolischer Tögrög	-
+₲	Paraguayischer Guaraní	-
+₴	Ukrainische Hrywnja	-
+₵	Ghanaischer Cedi	-
+₸	Kasachischer Tenge	-
+₺	Türkische Lira	-
+₼	Aserbaidschan-Manat	-
+₾	Georgischer Lari	-
+₧	Spanische Peseta	-

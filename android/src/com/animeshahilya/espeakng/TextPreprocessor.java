@@ -167,7 +167,7 @@ public final class TextPreprocessor {
                 // NVDA processSpeechSymbol: character navigation always names
                 // the character, independent of the symbol level. No-op for
                 // letters and whitespace (the lookup trims first).
-                text = edits.track(text, NvdaSymbolProcessor.processSingleSymbol(text));
+                text = edits.track(text, NvdaSymbolProcessor.processSingleSymbol(text, lang));
             }
         }
 
@@ -251,9 +251,9 @@ public final class TextPreprocessor {
             // leaves the markers alone, as they are not symbols it knows.
             if (settings.isPunctuationSoundsEnabled()) {
                 text = edits.track(text, Earcons.mark(text, symbolLevel(settings, readingMode),
-                        customSymbols(settings, readingMode)));
+                        customSymbols(settings, readingMode), lang));
             }
-            text = edits.track(text, processNvdaSymbols(text, settings, readingMode));
+            text = edits.track(text, processNvdaSymbols(text, settings, readingMode, lang));
         }
 
         // After the symbol pass, so the commas it adds are pauses, never
@@ -282,14 +282,16 @@ public final class TextPreprocessor {
      * characters (NVDA has no custom mode - its users edit symbols
      * individually, which is what the list approximates here).
      */
-    private static String processNvdaSymbols(String text, VoiceSettings settings, String readingMode) {
+    private static String processNvdaSymbols(String text, VoiceSettings settings, String readingMode,
+            String lang) {
         final boolean collapse =
                 !VoiceSettings.REPEATED_CHARS_OFF.equals(settings.getRepeatedCharactersMode());
         final String custom = customSymbols(settings, readingMode);
         if (custom != null) {
-            return NvdaSymbolProcessor.processCustom(text, custom, collapse);
+            return NvdaSymbolProcessor.processCustom(text, custom, collapse, lang);
         }
-        return NvdaSymbolProcessor.processText(text, symbolLevel(settings, readingMode), collapse);
+        return NvdaSymbolProcessor.processText(text, symbolLevel(settings, readingMode), collapse,
+                lang);
     }
 
     /** The NVDA symbol level the preset (or code mode) selects. */

@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	levá složená závorka	-
+‾	pruh	-
+_	podtržení	-
+-	spojovník-minus	-
+‐	spojovník	-
+–	krátká pomlčka	-
+—	dlouhá pomlčka	-
+―	vodorovná čára	-
+・	japonská středová tečka	-
+,	čárka	-
+،	arabská čárka	-
+、	ideografická čárka	-
+;	středník	-
+؛	arabský středník	-
+:	dvojtečka	-
+!	vykřičník	-
+¡	obrácený vykřičník	-
+?	otazník	-
+¿	obrácený otazník	-
+؟	arabský otazník	-
+‽	překvapník	-
+.	tečka	-
+…	výpustka	-
+。	ideografická tečka	-
+·	střední puntík	-
+'	apostrof	-
+‘	jednoduchá uvozovka nahoře	-
+’	obrácená jednoduchá uvozovka nahoře	-
+‚	jednoduchá uvozovka dole	-
+“	uvozovky nahoře	-
+”	obrácené uvozovky nahoře	-
+„	uvozovky dole	-
+«	boční uvozovky mířící doleva	-
+»	boční uvozovky mířící doprava	-
+)	pravá závorka	-
+[	levá hranatá závorka	-
+]	pravá hranatá závorka	-
+}	pravá složená závorka	-
+〈	levá lomená závorka	-
+〉	pravá lomená závorka	-
+《	dvojitá levá lomená závorka	-
+》	dvojitá pravá lomená závorka	-
+「	levá rohová závorka	-
+」	pravá rohová závorka	-
+『	dvojitá levá rohová závorka	-
+』	dvojitá pravá rohová závorka	-
+【	levá plná lentikulární závorka	-
+】	pravá plná lentikulární závorka	-
+〔	levá asijská komentářová závorka	-
+〕	pravá asijská komentářová závorka	-
+〖	levá dutá lentikulární závorka	-
+〗	pravá dutá lentikulární závorka	-
+§	paragraf	-
+¶	značka odstavce	-
+@	zavináč	-
+*	hvězdička	-
+/	lomítko	-
+\	zpětné lomítko	-
+&	ampersand	-
+%	procento	-
+‰	promile	-
+†	znak křížku	-
+‡	znak dvojitého křížku	-
+•	puntík	-
+‧	spojovací tečka	-
+′	jednoduchá čárka	-
+″	dvojitá čárka	-
+‴	trojitá čárka	-
+‸	stříška (nediakritický znak)	-
+※	odkazovací znaménko	-
+⁂	asterismus	-
+`	obrácená diakritická čárka	-
+´	diakritická čárka	-
+^	stříška	-
+¨	trema	-
+°	stupeň	-
+℗	znak práv ke zvukovému záznamu	-
+←	šipka ukazující doleva	-
+↚	přeškrtnutá šipka doleva	-
+→	šipka ukazující doprava	-
+↛	přeškrtnutá šipka doprava	-
+↑	šipka ukazující nahoru	-
+↓	šipka ukazující dolů	-
+↜	vlnitá šipka doleva	-
+↝	vlnitá šipka doprava	-
+↞	dvojitá šipka doleva	-
+↟	dvojitá šipka nahoru	-
+↠	dvojitá šipka doprava	-
+↡	dvojitá šipka dolů	-
+↢	šipka doleva s chvostem	-
+↣	šipka doprava s chvostem	-
+↤	šipka vlevo od zarážky	-
+↥	šipka nahoru od zarážky	-
+↦	šipka vpravo od zarážky	-
+↧	šipka dolů od zarážky	-
+↨	šipka nahoru a dolů se základnou	-
+↫	šipka doleva se smyčkou	-
+↬	šipka doprava se smyčkou	-
+↭	vlnitá šipka doleva a doprava	-
+↯	klikatá šipka dolů	-
+↰	šipka směrem nahoru a doleva	-
+↱	šipka směrem nahoru a doprava	-
+↲	šipka směrem dolů a doleva	-
+↳	šipka směrem dolů a doprava	-
+↴	šipka doprava a dolů	-
+↵	šipka dolů a doleva	-
+↶	polokruhová šipka horní proti směru ručiček	-
+↷	polokruhová šipka horní po směru ručiček	-
+↸	šipka na severozápad s horní zarážkou	-
+↹	šipka doleva se zarážkou nad šipkou doprava se zarážkou	-
+↺	otevřená kruhová šipka proti směru ručiček	-
+↻	otevřená kruhová šipka po směru ručiček	-
+↼	praporek nahoře směrem doleva	-
+↽	praporek dole směrem doleva	-
+↾	praporek vpravo směrem nahoru	-
+↿	praporek vlevo směrem nahoru	-
+⇀	praporek nahoře směrem doprava	-
+⇁	praporek dole směrem doprava	-
+⇂	praporek vpravo směrem dolů	-
+⇃	praporek vlevo směrem dolů	-
+⇄	šipka doprava nad šipkou doleva	-
+⇅	šipky nahoru a dolů	-
+⇆	šipka doleva nad šipkou doprava	-
+⇇	dvě šipky doleva	-
+⇈	dvě šipky nahoru	-
+⇉	dvě šipky doprava	-
+⇊	dvě šipky dolů	-
+⇋	praporek nahoře směrem doleva nad praporkem dole směrem doprava	-
+⇌	praporek nahoře směrem doprava nad praporkem dole směrem doleva	-
+⇐	zdvojená šipka doleva	-
+⇍	přeškrtnutá zdvojená šipka doleva	-
+⇑	zdvojená šipka nahoru	-
+⇒	zdvojená šipka doprava	-
+⇏	přeškrtnutá zdvojená šipka doprava	-
+⇓	zdvojená šipka dolů	-
+⇔	obousměrná zdvojená šipka	-
+⇎	přeškrtnutá obousměrná zdvojená šipka	-
+⇖	zdvojená šipka na severozápad	-
+⇗	zdvojená šipka na severovýchod	-
+⇘	zdvojená šipka na jihovýchod	-
+⇙	zdvojená šipka na jihozápad	-
+⇚	ztrojená šipka doleva	-
+⇛	ztrojená šipka doprava	-
+⇜	klikatá šipka doleva	-
+⇝	klikatá šipka doprava	-
+⇞	dvojitě přeškrtnutá šipka nahoru	-
+⇟	dvojitě přeškrtnutá šipka dolů	-
+⇠	přerušovaná šipka doleva	-
+⇡	přerušovaná šipka nahoru	-
+⇢	přerušovaná šipka doprava	-
+⇣	přerušovaná šipka dolů	-
+⇤	šipka doleva k zarážce	-
+⇥	šipka doprava k zarážce	-
+⇦	bílá šipka doleva	-
+⇧	bílá šipka nahoru	-
+⇨	bílá šipka doprava	-
+⇩	bílá šipka dolů	-
+⇪	bílá šipka nahoru se základnou	-
+⇵	šipka dolů vedle šipky nahoru	-
+∀	pro každé	-
+∂	parciální derivace	-
+∃	existuje	-
+∅	prázdná množina	-
+∆	delta	-
+∇	nabla	-
+∈	prvek množiny	-
+∉	není prvkem	-
+∋	obsahuje člen	-
+∎	konec důkazu	-
+∏	součin řady	-
+∑	suma	-
++	znaménko plus	-
+±	plus minus	-
+÷	symbol dělení	-
+×	symbol násobení	-
+<	je menší než	-
+≮	ne méně než	-
+=	rovná se	-
+≠	nerovná se	-
+>	je větší než	-
+≯	ne více než	-
+¬	negace	-
+|	svislá čára	-
+~	vlnovka	-
+−	znaménko minus	-
+⁻	minus jako horní index	-
+∓	minus nebo plus	-
+∕	dělicí lomítko	-
+⁄	zlomkové lomítko	-
+∗	operátor hvězdička	-
+∘	operátor kroužek	-
+∙	operátor plné kolečko	-
+√	druhá odmocnina	-
+∝	je úměrné	-
+∞	znak nekonečna	-
+∟	pravý úhel	-
+∠	úhel	-
+∣	je dělitelem	-
+∥	je rovnoběžné s	-
+∧	logický součin	-
+∩	průnik	-
+∪	sjednocení	-
+∫	integrál	-
+∬	dvojný integrál	-
+∮	křivkový integrál	-
+∴	proto	-
+∵	protože	-
+∶	poměr	-
+∷	vzájemný poměr	-
+∼	operátor vlnovka	-
+∽	obrácená vlnovka	-
+∾	obrácené ležaté s	-
+≃	je asymptoticky ekvivalentní	-
+≅	je shodné s	-
+≈	rovná se přibližně	-
+≌	vše se rovná	-
+≒	je přibližně rovno nebo je obrazem	-
+≖	kroužek v rovnítku	-
+≡	shoduje se	-
+≣	je striktně ekvivalentní	-
+≤	je menší nebo rovno	-
+≥	je větší nebo rovno	-
+≦	je menší než nad rovná se	-
+≧	je větší než nad rovná se	-
+≪	je mnohem menší než	-
+≫	je mnohem větší než	-
+≬	má neprázdný průnik s	-
+≳	je větší než nebo ekvivalentní	-
+≺	předchází	-
+≻	následuje	-
+⊁	nenásleduje	-
+⊂	podmnožina	-
+⊃	je nadmnožinou	-
+⊆	je podmnožinou nebo se rovná	-
+⊇	je nadmnožinou nebo se rovná	-
+⊕	plus v kroužku	-
+⊖	minus v kroužku	-
+⊗	krát v kroužku	-
+⊘	lomeno v kroužku	-
+⊙	operátor tečka v kroužku	-
+⊚	operátor kroužek v kroužku	-
+⊛	operátor hvězdička v kroužku	-
+⊞	plus ve čtverečku	-
+⊟	minus ve čtverečku	-
+⊥	je kolmé k	-
+⊮	nevynucuje	-
+⊰	předchází v relaci	-
+⊱	následuje v relaci	-
+⋭	neobsahuje jako normální podgrupu a není rovno	-
+⊶	je originálem	-
+⊹	hermitovsky sdružená matice	-
+⊿	pravoúhlý trojúhelník	-
+⋁	n-ární logický součet	-
+⋂	n-ární průnik	-
+⋃	n-ární sjednocení	-
+⋅	operátor tečka	-
+⋆	operátor hvězda	-
+⋈	přirozené spojení relací	-
+⋒	dvojitý průnik	-
+⋘	mnohem mnohem menší než	-
+⋙	mnohem mnohem větší než	-
+⋮	svislá výpustka	-
+⋯	středová vodorovná výpustka	-
+⋰	diagonální výpustka doprava nahoru	-
+⋱	diagonální výpustka doprava dolů	-
+⨧	plus s dolním indexem dva	-
+⨯	kartézský součin	-
+⨼	vnitřní součin	-
+⩣	dvojitě podtržený logický součet	-
+⩽	je menší nebo rovno se šikmým rovnítkem	-
+⪍	je menší než nad přibližně rovno	-
+⪚	rovná se nad je větší než	-
+⪺	následuje nad není přibližně rovno	-
+⭐	bílá hvězda střední velikosti	-
+⬆	šipka nahoru	-
+↗	šipka doprava nahoru	-
+↘	šipka doprava dolů	-
+⬇	šipka dolů	-
+↙	šipka doleva dolů	-
+⬅	šipka doleva	-
+↖	šipka doleva nahoru	-
+↕	šipka nahoru a dolů	-
+↔	šipka doleva a doprava	-
+↮	přeškrtnutá šipka doleva a doprava	-
+↩	šipka doprava stáčející se doleva	-
+↪	šipka doleva stáčející se doprava	-
+⤴	šipka doprava stáčející se nahoru	-
+⤵	šipka doprava stáčející se dolů	-
+〰	dlouhá vlnovka	-
+⭕	červený kruh bez výplně	-
+〽	značka přechodu mezi částmi skladby	-
+©	znak ochrany autorského práva	-
+®	znak registrované ochranné známky	-
+™	znak ochranné známky	-
+ℹ	informace	-
+㊗	štítek s japonským znakem „blahopřání“	-
+㊙	štítek s japonským znakem „tajné“	-
+⬛	velký černý čtverec	-
+⬜	velký bílý čtverec	-
+¢	cent	-
+$	dolar	-
+£	libra	-
+¥	jen	-
+₢	cruzeiro	-
+₣	francouzský frank	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	německý fenik	-
+₱	peso	-
+₳	austral	-
+₶	tourská libra	-
+₷	spesmilo	-
+₹	indická rupie	-
+₽	rubl	-
+₿	bitcoin	-
+¹	číslice jedna jako horní index	-
+²	číslice dvě jako horní index	-
+³	číslice tři jako horní index	-
+₨	rupie	-
+µ	znak mikro	-
+﷼	rijál	-
+¤	neznámá měna	-
+֏	arménský dram	-
+؋	afghánský afghán	-
+৳	bangladéšská taka	-
+฿	thajský baht	-
+៛	kambodžský riel	-
+₡	kostarický colón	-
+₦	nigerijská naira	-
+₪	izraelský nový šekel	-
+₫	vietnamský dong	-
+₭	laoský kip	-
+₮	mongolský tugrik	-
+₲	paraguajské guarani	-
+₴	ukrajinská hřivna	-
+₵	ghanský cedi	-
+₸	kazašské tenge	-
+₺	turecká lira	-
+₼	ázerbájdžánský manat	-
+₾	gruzínské lari	-
+₧	španělská peseta	-

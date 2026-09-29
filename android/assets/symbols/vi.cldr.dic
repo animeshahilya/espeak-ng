@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	dấu ngoặc nhọn mở	-
+‾	đường trên đầu	-
+_	dấu gạch dưới	-
+-	dấu gạch nối-dấu trừ	-
+‐	dấu gạch nối	-
+–	dấu gạch ngắn	-
+—	dấu gạch dài	-
+―	dấu gạch ngang dài	-
+・	dấu chấm giữa katakana	-
+,	dấu phẩy	-
+،	dấu phẩy ả rập	-
+、	dấu phẩy tượng hình	-
+;	dấu chấm phẩy	-
+؛	dấu chấm phẩy ả rập	-
+:	dấu hai chấm	-
+!	dấu chấm than	-
+¡	dấu chấm than ngược	-
+?	dấu hỏi	-
+¿	dấu hỏi ngược	-
+؟	dấu hỏi ả rập	-
+‽	dấu hỏi than	-
+.	dấu chấm	-
+…	dấu ba chấm	-
+。	dấu chấm tượng hình	-
+·	dấu chấm giữa dòng	-
+'	dấu móc lửng máy chữ	-
+‘	dấu móc lửng trái	-
+’	dấu móc lửng phải	-
+‚	dấu móc dưới phải	-
+“	dấu nháy kép trái	-
+”	dấu nháy kép phải	-
+„	dấu nháy kép dưới phải	-
+«	dấu ngoặc kép trái	-
+»	dấu ngoặc kép phải	-
+)	dấu ngoặc đơn đóng	-
+[	dấu ngoặc vuông mở	-
+]	dấu ngoặc vuông đóng	-
+}	dấu ngoặc nhọn đóng	-
+〈	dấu ngoặc góc mở	-
+〉	dấu ngoặc góc đóng	-
+《	dấu ngoặc góc kép mở	-
+》	dấu ngoặc góc kép đóng	-
+「	dấu ngoặc chữ L mở	-
+」	dấu ngoặc chữ L đóng	-
+『	dấu ngoặc chữ L rỗng mở	-
+』	dấu ngoặc chữ L rỗng đóng	-
+【	dấu ngoặc thấu kính đen mở	-
+】	dấu ngoặc thấu kính đen đóng	-
+〔	dấu ngoặc mai rùa mở	-
+〕	dấu ngoặc mai rùa đóng	-
+〖	dấu ngoặc thấu kính rỗng mở	-
+〗	dấu ngoặc thấu kính rỗng đóng	-
+§	mục	-
+¶	dấu ngắt đoạn	-
+@	a còng	-
+*	dấu hoa thị	-
+/	dấu sổ chéo	-
+\	dấu sổ ngược	-
+&	dấu và	-
+%	phần trăm	-
+‰	phần nghìn	-
+†	biểu tượng kiếm ngược	-
+‡	biểu tượng song kiếm	-
+•	dấu đầu câu	-
+‧	dấu chấm nối	-
+′	dấu nháy	-
+″	dấu nháy kép	-
+‴	dấu nháy ba	-
+‸	dấu sót	-
+※	dấu tham chiếu	-
+⁂	dấu chia văn bản	-
+`	dấu huyền	-
+´	dấu sắc	-
+^	dấu mũ	-
+¨	dấu tách đôi	-
+°	độ	-
+℗	bản quyền ghi âm	-
+←	mũi tên hướng trái	-
+↚	mũi tên trái có dấu gạch chéo	-
+→	mũi tên hướng phải	-
+↛	mũi tên phải có dấu gạch chéo	-
+↑	mũi tên hướng lên	-
+↓	mũi tên hướng xuống	-
+↜	mũi tên sóng trái	-
+↝	mũi tên sóng phải	-
+↞	mũi tên trái hai đầu	-
+↟	mũi tên hướng lên hai đầu	-
+↠	mũi tên phải hai đầu	-
+↡	mũi tên hướng xuống hai đầu	-
+↢	mũi tên trái có đuôi	-
+↣	mũi tên phải có đuôi	-
+↤	mũi tên trái từ thanh	-
+↥	mũi tên hướng lên từ thanh	-
+↦	mũi tên phải từ thanh	-
+↧	mũi tên hướng xuống từ thanh	-
+↨	mũi tên lên xuống có nét ngang	-
+↫	mũi tên trái có vòng tròn nhỏ	-
+↬	mũi tên phải có vòng tròn nhỏ	-
+↭	mũi tên sóng trái phải	-
+↯	mũi tên xuống hình dích dắc	-
+↰	mũi tên hướng lên có đầu sang trái	-
+↱	mũi tên hướng lên có đầu sang phải	-
+↲	mũi tên hướng xuống có đầu sang trái	-
+↳	mũi tên hướng xuống có đầu sang phải	-
+↴	mũi tên phải có góc hướng xuống	-
+↵	mũi tên hướng xuống có góc sang trái	-
+↶	mũi tên hình bán nguyệt đầu ngược chiều kim đồng hồ	-
+↷	mũi tên hình bán nguyệt đầu theo chiều kim đồng hồ	-
+↸	mũi tên tây bắc đến thanh dài	-
+↹	mũi tên trái đến thanh trên mũi tên phải đến thanh	-
+↺	mũi tên mở tròn ngược chiều kim đồng hồ	-
+↻	mũi tên mở tròn theo chiều kim đồng hồ	-
+↼	nét thẳng trái có ngạnh hướng lên	-
+↽	nét thẳng trái có ngạnh hướng xuống	-
+↾	nét thẳng hướng lên có ngạnh sang phải	-
+↿	nét thẳng hướng lên có ngạnh sang trái	-
+⇀	nét thẳng phải có ngạnh hướng lên	-
+⇁	nét thẳng phải có ngạnh hướng xuống	-
+⇂	nét thẳng hướng xuống có ngạnh sang phải	-
+⇃	nét thẳng hướng xuống có ngạnh sang trái	-
+⇄	mũi tên phải trên mũi tên trái	-
+⇅	mũi tên lên/xuống	-
+⇆	mũi tên trái/phải	-
+⇇	mũi tên ghép trái	-
+⇈	mũi tên ghép hướng lên	-
+⇉	mũi tên ghép phải	-
+⇊	mũi tên ghép hướng xuống	-
+⇋	nét thẳng có ngạnh trái trên nét thẳng có ngạnh phải	-
+⇌	nét thẳng có ngạnh phải trên nét thẳng có ngạnh trái	-
+⇐	mũi tên kép trái	-
+⇍	mũi tên kép trái có dấu gạch chéo	-
+⇑	mũi tên kép hướng lên	-
+⇒	mũi tên kép phải	-
+⇏	mũi tên kép phải có dấu gạch chéo	-
+⇓	mũi tên kép xuống	-
+⇔	mũi tên kép trái phải	-
+⇎	mũi tên kép trái phải có dấu gạch chéo	-
+⇖	mũi tên kép tây bắc	-
+⇗	mũi tên kép đông bắc	-
+⇘	mũi tên kép đông nam	-
+⇙	mũi tên kép tây nam	-
+⇚	mũi tên ba trái	-
+⇛	mũi tên ba phải	-
+⇜	mũi tên ngoằn ngoèo trái	-
+⇝	mũi tên ngoằn ngoèo phải	-
+⇞	mũi tên hướng lên có hai nét gạch	-
+⇟	mũi tên hướng xuống có hai nét gạch	-
+⇠	mũi tên trái nét đứt	-
+⇡	mũi tên hướng lên nét đứt	-
+⇢	mũi tên phải nét đứt	-
+⇣	mũi tên hướng xuống nét đứt	-
+⇤	mũi tên trái đến thanh	-
+⇥	mũi tên phải đến thanh	-
+⇦	mũi tên rỗng trái	-
+⇧	mũi tên rỗng hướng lên	-
+⇨	mũi tên rỗng phải	-
+⇩	mũi tên rỗng hướng xuống	-
+⇪	mũi tên rỗng hướng lên từ thanh	-
+⇵	mũi tên hướng xuống bên trái mũi tên hướng lên	-
+∀	với mọi	-
+∂	vi phân riêng phần	-
+∃	tồn tại	-
+∅	tập hợp rỗng	-
+∆	số gia	-
+∇	nabla	-
+∈	phần tử của	-
+∉	không thuộc	-
+∋	chứa	-
+∎	chứng minh kết thúc	-
+∏	tích đa phân	-
+∑	tổng đa phân	-
++	dấu cộng	-
+±	dấu cộng trừ	-
+÷	biểu tượng dấu chia	-
+×	biểu tượng dấu nhân	-
+<	dấu nhỏ hơn	-
+≮	không nhỏ hơn	-
+=	dấu bằng	-
+≠	dấu khác	-
+>	dấu lớn hơn	-
+≯	không lớn hơn	-
+¬	dấu phủ định	-
+|	dấu sổ thẳng	-
+~	dấu ngã	-
+−	dấu trừ	-
+⁻	dấu trừ trên	-
+∓	trừ hoặc cộng	-
+∕	dấu gạch chéo phân chia	-
+⁄	dấu gạch chéo phân số	-
+∗	toán tử dấu hoa thị	-
+∘	vòng toán tử	-
+∙	toán tử dấu đầu dòng	-
+√	căn bậc hai	-
+∝	tỷ lệ	-
+∞	biểu tượng vô cực	-
+∟	góc vuông	-
+∠	góc	-
+∣	chia ra	-
+∥	song song	-
+∧	logic và	-
+∩	giao	-
+∪	hợp	-
+∫	tích phân	-
+∬	tích phân kép	-
+∮	tích phân theo chu tuyến	-
+∴	do đó	-
+∵	vì	-
+∶	tỉ số	-
+∷	tỷ lệ thức	-
+∼	toán tử tương ứng	-
+∽	dấu ngã ngược	-
+∾	cực thuận	-
+≃	gần bằng	-
+≅	xấp xỉ bằng	-
+≈	dấu xấp xỉ	-
+≌	như nhau	-
+≒	xấp xỉ	-
+≖	tương đương	-
+≡	bằng	-
+≣	tương đồng	-
+≤	dấu nhỏ hơn hoặc bằng	-
+≥	dấu lớn hơn hoặc bằng	-
+≦	nhỏ hơn bằng	-
+≧	lớn hơn bằng	-
+≪	ít hơn rất nhiều so với	-
+≫	lớn hơn nhiều	-
+≬	trong khoảng	-
+≳	lớn hơn tương đương	-
+≺	đứng trước	-
+≻	đứng sau	-
+⊁	không đứng sau	-
+⊂	tập hợp con của	-
+⊃	tập cha	-
+⊆	tập con bằng	-
+⊇	tập cha bằng	-
+⊕	dấu cộng trong vòng tròn	-
+⊖	dấu trừ trong vòng tròn	-
+⊗	dấu nhân trong vòng tròn	-
+⊘	dấu chia trong vòng tròn	-
+⊙	toán tử dấu chấm trong vòng tròn	-
+⊚	toán tử hình khuyên trong vòng tròn	-
+⊛	toán tử hoa thị trong vòng tròn	-
+⊞	dấu cộng trong hình vuông	-
+⊟	dấu trừ trong hình vuông	-
+⊥	chữ T lộn ngược	-
+⊮	không bắt buộc	-
+⊰	đứng trước trong hệ thức	-
+⊱	đứng sau trong hệ thức	-
+⋭	không chứa như nhóm con bình thường bằng	-
+⊶	gốc	-
+⊹	ma trận liên hợp hermitian	-
+⊿	tam giác vuông	-
+⋁	logic hoặc đa phân	-
+⋂	giao đa phân	-
+⋃	hợp đa phân	-
+⋅	toán tử dấu chấm	-
+⋆	toán tử dấu sao	-
+⋈	phép nối tự nhiên	-
+⋒	giao kép	-
+⋘	ít hơn rất nhiều	-
+⋙	lớn hơn rất nhiều	-
+⋮	dấu ba chấm dọc	-
+⋯	dấu ba chấm ngang đường trung tuyến	-
+⋰	dấu ba chấm chéo phải trên	-
+⋱	dấu ba chấm chéo phải xuống	-
+⨧	dấu cộng với chỉ số dưới hai	-
+⨯	tích vectơ hữu hướng	-
+⨼	tích tự đẳng cấu trong	-
+⩣	logic hoặc gạch dưới kép	-
+⩽	nhỏ hơn hoặc nghiêng bằng	-
+⪍	nhỏ hơn hoặc đồng dạng bằng	-
+⪚	dấu bằng kép hoặc lớn hơn	-
+⪺	đứng sau hoặc gần như không bằng	-
+⭐	ngôi sao	-
+⬆	mũi tên lên	-
+↗	mũi tên lên bên phải	-
+↘	mũi tên xuống bên phải	-
+⬇	mũi tên xuống	-
+↙	mũi tên xuống bên trái	-
+⬅	mũi tên trái	-
+↖	mũi tên lên bên trái	-
+↕	mũi tên lên xuống	-
+↔	mũi tên trái phải	-
+↮	mũi tên trái phải có dấu gạch chéo	-
+↩	mũi tên phải cong sang trái	-
+↪	mũi tên trái cong sang phải	-
+⤴	mũi tên phải cong lên	-
+⤵	mũi tên phải cong xuống	-
+〰	dấu gạch ngang lượn sóng	-
+⭕	vòng tròn lớn đậm	-
+〽	ký hiệu thay đổi luân phiên	-
+©	bản quyền	-
+®	đã đăng ký	-
+™	nhãn hiệu	-
+ℹ	thông tin	-
+㊗	nút Tiếng Nhật “chúc mừng”	-
+㊙	nút Tiếng Nhật “bí mật”	-
+⬛	hình vuông lớn màu đen	-
+⬜	hình vuông lớn màu trắng	-
+¢	xu	-
+$	đô la	-
+£	bảng Anh	-
+¥	Yên Nhật	-
+₢	cruzeiro	-
+₣	đồng franc Pháp	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	xu Đức	-
+₱	peso	-
+₳	austral	-
+₶	đồng livre	-
+₷	đồng spesmilo	-
+₹	rupee Ấn Độ	-
+₽	rúp	-
+₿	bitcoin	-
+¹	mũ một	-
+²	mũ hai	-
+³	mũ ba	-
+₨	rupee	-
+µ	ký hiệu micro	-
+﷼	rial	-
+¤	Tiền tệ chưa biết	-
+֏	Dram Armenia	-
+؋	Afghani Afghanistan	-
+৳	Taka Bangladesh	-
+฿	Bạt Thái Lan	-
+៛	Riel Campuchia	-
+₡	Colón Costa Rica	-
+₦	Naira Nigeria	-
+₪	Sheqel Israel mới	-
+₫	Đồng Việt Nam	-
+₭	Kip Lào	-
+₮	Tugrik Mông Cổ	-
+₲	Guarani Paraguay	-
+₴	Hryvnia Ukraina	-
+₵	Cedi Ghana	-
+₸	Tenge Kazakhstan	-
+₺	Lia Thổ Nhĩ Kỳ	-
+₼	Manat Azerbaijan	-
+₾	Lari Georgia	-
+₧	Đồng Peseta Tây Ban Nha	-

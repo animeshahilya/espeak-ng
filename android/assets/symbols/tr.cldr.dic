@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	açık süslü ayraç	-
+‾	üst çizgi	-
+_	alt çizgi	-
+-	tire-eksi	-
+‐	tire işareti	-
+–	tire	-
+—	uzun tire	-
+―	yatay çizgi	-
+・	katakana orta nokta	-
+,	virgül	-
+،	arapça virgül	-
+、	ideografik virgül	-
+;	noktalı virgül	-
+؛	arapça noktalı virgül	-
+:	iki nokta	-
+!	ünlem işareti	-
+¡	ters ünlem işareti	-
+?	soru işareti	-
+¿	ters soru işareti	-
+؟	arapça soru işareti	-
+‽	soru ve ünlem işareti	-
+.	nokta	-
+…	üç nokta	-
+。	ideografik nokta	-
+·	orta nokta	-
+'	daktilo kesme işareti	-
+‘	sol kesme işareti	-
+’	sağ kesme işareti	-
+‚	sağ alt kesme işareti	-
+“	sol tırnak işareti	-
+”	sağ tırnak işareti	-
+„	sağ alt tırnak işareti	-
+«	sola bakan köşeli tırnak işareti	-
+»	sağa bakan köşeli tırnak işareti	-
+)	kapalı parantez	-
+[	açık kare parantez	-
+]	kapalı kare parantez	-
+}	kapalı süslü ayraç	-
+〈	açık açılı ayraç	-
+〉	kapalı açılı ayraç	-
+《	açık çift açılı ayraç	-
+》	kapalı çift açılı ayraç	-
+「	açık köşeli ayraç	-
+」	kapalı köşeli ayraç	-
+『	açık köşeli oyuk ayraç	-
+』	kapalı köşeli oyuk ayraç	-
+【	açık siyah lens ayraç	-
+】	kapalı siyah lens ayraç	-
+〔	açık kaplumbağa kabuğu şeklinde ayraç	-
+〕	kapalı kaplumbağa kabuğu şeklinde ayraç	-
+〖	açık oyuk mercek ayraç	-
+〗	kapalı oyuk lens ayraç	-
+§	bölüm	-
+¶	paragraf işareti	-
+@	kuyruklu a	-
+*	asterisk	-
+/	eğik çizgi	-
+\	ters eğik çizgi	-
+&	ampersan	-
+%	yüzde	-
+‰	binde	-
+†	kama işareti	-
+‡	çift kama işareti	-
+•	madde imi	-
+‧	tireleme noktası	-
+′	üssü	-
+″	iki üssü	-
+‴	üç üssü	-
+‸	düzeltme işareti	-
+※	referans işareti	-
+⁂	üç yıldız işareti	-
+`	aksan işareti	-
+´	tiz aksan	-
+^	inceltme işareti	-
+¨	ikilenme	-
+°	derece	-
+℗	ses kaydı telif hakkı	-
+←	solu gösteren ok	-
+↚	sola doğru çizgili ok	-
+→	sağı gösteren ok	-
+↛	sağa doğru çizgili ok	-
+↑	yukarı gösteren ok	-
+↓	aşağı gösteren ok	-
+↜	sola doğru dalgalı ok	-
+↝	sağa doğru dalgalı ok	-
+↞	sola doğru çift başlı ok	-
+↟	yukarı doğru çift başlı ok	-
+↠	sağa doğru çift başlı ok	-
+↡	aşağı doğru çift başlı ok	-
+↢	sola doğru kuyruklu ok	-
+↣	sağa doğru kuyruklu ok	-
+↤	sola doğru çubuktan ok	-
+↥	yukarı doğru çubuktan ok	-
+↦	sağa doğru çubuktan ok	-
+↧	aşağı doğru çubuktan ok	-
+↨	yukarı aşağı tabanlı ok	-
+↫	sola döngülü ok	-
+↬	sağa döngülü ok	-
+↭	sol sağ dalgalı ok	-
+↯	aşağı yönlü zikzak ok	-
+↰	solda ipucu ile yukarı ok	-
+↱	sağda ipucu ile yukarı ok	-
+↲	solda ipucu ile aşağı ok	-
+↳	sağda ipucu ile aşağı ok	-
+↴	aşağı doğru köşesi olan sağ ok	-
+↵	sola doğru köşesi olan aşağı ok	-
+↶	saat yönünün tersinde üst yarım daireli ok	-
+↷	saat yönünde üst yarım daireli ok	-
+↸	kuzeybatı yönlü uzun çubuklu ok	-
+↹	sağ ok çubuğu üstünde sol ok çubuğu	-
+↺	saat yönünün tersinde açık daireli ok	-
+↻	saat yönünde açık daireli ok	-
+↼	yukarı kancalı sol yönlü zıpkın	-
+↽	aşağı kancalı sol yönlü zıpkın	-
+↾	sağ kancalı yukarı yönlü zıpkın	-
+↿	sol kancalı yukarı yönlü zıpkın	-
+⇀	yukarı kancalı sağ yönlü zıpkın	-
+⇁	aşağı kancalı sağ yönlü zıpkın	-
+⇂	sağ kancalı aşağı yönlü zıpkın	-
+⇃	sol kancalı aşağı yönlü zıpkın	-
+⇄	sol ok üzerinde sağ ok	-
+⇅	yukarı ve aşağı bakan oklar	-
+⇆	altta sağa üstte sola bakan oklar	-
+⇇	sola eşleştirilmiş oklar	-
+⇈	yukarı eşleştirilmiş oklar	-
+⇉	aşağı doğru eşleştirilmiş oklar	-
+⇊	aşağı eşleştirilmiş oklar	-
+⇋	sağ zıpkın üstünde sol zıpkın	-
+⇌	sol zıpkın üstünde sağ zıpkın	-
+⇐	sola çift ok	-
+⇍	sola çizgili çift ok	-
+⇑	yukarı çift ok	-
+⇒	sağa çift ok	-
+⇏	sağa çizgili çift ok	-
+⇓	aşağı çift ok	-
+⇔	sol sağ çift ok	-
+⇎	sol sağ çizgili çift ok	-
+⇖	kuzeybatı yönlü çift ok	-
+⇗	kuzeydoğu yönlü çift ok	-
+⇘	güneydoğu yönlü çift ok	-
+⇙	güneybatı yönlü çift ok	-
+⇚	sola üçlü ok	-
+⇛	sağa üçlü ok	-
+⇜	sola eğri ok	-
+⇝	sağa eğri ok	-
+⇞	çift çizgili yukarı ok	-
+⇟	çift çizgili aşağı ok	-
+⇠	sola çizgili ok	-
+⇡	yukarı çizgili ok	-
+⇢	sağa çizgili ok	-
+⇣	aşağı çizgili ok	-
+⇤	sol ok çubuğu	-
+⇥	sağ ok çubuğu	-
+⇦	sola boş ok	-
+⇧	yukarı boş ok	-
+⇨	sağa boş ok	-
+⇩	aşağı boş ok	-
+⇪	çubuktan yukarı boş ok	-
+⇵	aşağı ok sol yukarı ok	-
+∀	tümü için	-
+∂	kısmi fark	-
+∃	vardır	-
+∅	boş küme	-
+∆	artım	-
+∇	nabla	-
+∈	elemanıdır	-
+∉	elemanı değildir	-
+∋	eleman olarak kapsar	-
+∎	silinmiş öğe	-
+∏	n öğeli çarpım	-
+∑	n öğeli toplama	-
++	artı işareti	-
+±	artı-eksi	-
+÷	bölme işareti	-
+×	çarpma işareti	-
+<	küçüktür	-
+≮	küçük değildir	-
+=	eşittir	-
+≠	eşit değildir	-
+>	büyüktür	-
+≯	büyük değildir	-
+¬	olumsuzlama	-
+|	dikey çizgi	-
+~	yaklaşık	-
+−	eksi işareti	-
+⁻	üs eksi	-
+∓	artı veya eksi	-
+∕	bölme çizgisi	-
+⁄	kesir bölme işareti	-
+∗	yıldız işareti işleci	-
+∘	döngü işleci	-
+∙	madde işareti işleci	-
+√	karekök	-
+∝	orantılı	-
+∞	sonsuzluk işareti	-
+∟	dik açı	-
+∠	açı	-
+∣	bölen	-
+∥	paralel	-
+∧	mantıksal ve	-
+∩	kesişim	-
+∪	birleşim	-
+∫	entegral	-
+∬	çift entegral	-
+∮	çevre entegrali	-
+∴	öyleyse	-
+∵	çünkü	-
+∶	oran	-
+∷	orantı	-
+∼	tilde işleci	-
+∽	ters tilde	-
+∾	ters çevrilmiş yavaş s	-
+≃	asimptotik olarak eşit	-
+≅	yaklaşık olarak eşit	-
+≈	neredeyse eşit	-
+≌	tamamen eşit	-
+≒	yaklaşık olarak eşit veya sanalı	-
+≖	eşitlikte döngü	-
+≡	denktir	-
+≣	tamamen eşdeğeri	-
+≤	küçük eşit	-
+≥	büyük eşit	-
+≦	küçük eşittirden büyük	-
+≧	büyük eşittirden küçük	-
+≪	çok daha küçüktür	-
+≫	çok daha büyüktür	-
+≬	arasında	-
+≳	büyük veya eşdeğer	-
+≺	önce gelir	-
+≻	sonra gelir	-
+⊁	sonra gelmez	-
+⊂	alt kümesidir	-
+⊃	üst küme	-
+⊆	alt küme eşittir	-
+⊇	üst küme eşittir	-
+⊕	daire içinde artı	-
+⊖	daire içinde eksi	-
+⊗	daire içinde çarpı	-
+⊘	daire içinde bölme işareti	-
+⊙	daire içinde nokta işleci	-
+⊚	daire içinde döngü işleci	-
+⊛	daire içinde yıldız işareti işleci	-
+⊞	kare içinde artı	-
+⊟	kare içinde eksi	-
+⊥	üst iğne	-
+⊮	gerektirmez	-
+⊰	bağıntıya göre önce gelir	-
+⊱	bağıntıya göre sonra gelir	-
+⋭	normal alt grup olarak kapsamaz	-
+⊶	orijinal	-
+⊹	hermit eşleniği matrisi	-
+⊿	dik üçgen	-
+⋁	n öğeli mantıksal veya	-
+⋂	n öğeli kesişim	-
+⋃	n öğeli birleşim	-
+⋅	nokta işleci	-
+⋆	yıldız işleci	-
+⋈	doğal birleşim	-
+⋒	çift kesişim	-
+⋘	çok fazla küçüktür	-
+⋙	çok fazla büyüktür	-
+⋮	dikey üç nokta	-
+⋯	orta çizgi yatay üç nokta	-
+⋰	yukarı sağa çapraz üç nokta	-
+⋱	aşağı sağa çapraz üç nokta	-
+⨧	altı iki olan artı simgesi	-
+⨯	vektör çapraz çarpım	-
+⨼	iç çarpım	-
+⩣	mantıksal veya çift alt çubuklu	-
+⩽	küçüktür veya eğimli eşittir	-
+⪍	benzer veya eşittir üstündeki küçüktür	-
+⪚	çift çizgili eşittir veya büyüktür	-
+⪺	hemen hemen eşit değil üstünde sonra gelir	-
+⭐	yıldız	-
+⬆	yukarı ok	-
+↗	sağ yukarı ok	-
+↘	sağ aşağı ok	-
+⬇	aşağı ok	-
+↙	sol aşağı ok	-
+⬅	sol ok	-
+↖	sol yukarı ok	-
+↕	yukarı ve aşağı ok	-
+↔	sol ve sağ ok	-
+↮	sol sağ çizgili ok	-
+↩	sola kıvrımlı sağ ok	-
+↪	sağa kıvrımlı sol ok	-
+⤴	yukarı kıvrımlı sağ ok	-
+⤵	aşağı kıvrımlı sağ ok	-
+〰	dalgalı çizgi	-
+⭕	kalın kırmızı çember	-
+〽	parça değiştirme işareti	-
+©	telif hakkı işareti	-
+®	tescil işareti	-
+™	ticari marka işareti	-
+ℹ	bilgi	-
+㊗	Japonca "tebrikler" düğmesi	-
+㊙	Japonca "sır" düğmesi	-
+⬛	büyük siyah kare	-
+⬜	büyük beyaz kare	-
+¢	sent	-
+$	dolar	-
+£	sterlin	-
+¥	yen	-
+₢	cruzeiro	-
+₣	fransız frangı	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	avro	-
+₰	alman senti	-
+₱	pezo	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	hint rupisi	-
+₽	ruble	-
+₿	bitcoin	-
+¹	üs bir	-
+²	üs iki	-
+³	üs üç	-
+₨	rupi	-
+µ	mikro işareti	-
+﷼	riyal	-
+¤	Bilinmeyen Para Birimi	-
+֏	Ermenistan dramı	-
+؋	Afganistan afganisi	-
+৳	Bangladeş takası	-
+฿	Tayland bahtı	-
+៛	Kamboçya rieli	-
+₡	Kosta Rika kolonu	-
+₦	Nijerya nairası	-
+₪	Yeni İsrail şekeli	-
+₫	Vietnam dongu	-
+₭	Laos kipi	-
+₮	Moğolistan tugriki	-
+₲	Paraguay guaranisi	-
+₴	Ukrayna grivnası	-
+₵	Gana sedisi	-
+₸	Kazakistan tengesi	-
+₺	Türk lirası	-
+₼	Azerbaycan manatı	-
+₾	Gürcistan larisi	-
+₧	İspanyol Pezetası	-

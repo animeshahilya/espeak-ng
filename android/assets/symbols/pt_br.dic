@@ -1,0 +1,628 @@
+﻿# A part of NonVisual Desktop Access (NVDA)
+# Copyright (c) 2011-2024 NVDA Contributors, Cleverson Casarin Uliana, Rui Batista, Marlin Rodrigues da Silva, Tiago Melo Casal
+# This file is covered by the GNU General Public License.
+
+# pt_BR: na medida do possível, foi usado os nomes oficiais dos caracteres constantes na tabela Unicode como fonte para tradução, fontes como dicionários/enciclopédias/wikipedia/páginas especializadas também foram utilizadas, nos casos em que há nomes locais oficiais foi preferido utilizar a forma local ou uma forma híbrida, foi utilizado para cada caractere um nome distinto dos demais evitando ambiguidades ocasionadas por nomes idênticos para caracteres diferentes, em pouquíssimos casos especiais adaptações foram usadas para uma melhor pronúncia dos sintetizadores. Link da tabela internacional de caracteres Unicode: www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
+
+complexSymbols:
+# identifier	regexp
+# Others
+# pt_BR: em português o separador decimal é , (vírgula) e o separador de classes (milhares) tradicional é . (ponto)
+decimal point	(?<![^\d -])\,(?=\d)
+thousands separator	(?<=\d)\.(?=\d)
+
+symbols:
+# identifier	replacement[[	level][	preserve]][	# display name]
+
+# Complex symbols
+. sentence ending	ponto	# ponto em fim de sentença
+! sentence ending	exclamação	# exclamação em fim de sentença
+? sentence ending	interrogação	# interrogação em fim de sentença
+; phrase ending	ponto e vírgula	# ponto e vírgula em fim de período
+: phrase ending	dois pontos	# dois pontos em fim de período
+multiple .	múltiplos pontos	# múltiplos pontos (vários pontos em sequência)
+decimal point		# separador decimal
+in-word '	apóstrofo	# apóstrofo em palavra
+negative number	menos	# número negativo
+thousands separator	ponto	all	norep	# separador de classes numéricas (milhares, milhão, etc)
+
+# Whitespace
+\0	em branco	# nulo
+\t	tab
+\n	nova linha
+\f	quebra de página
+\r	retôrno
+ 	espaço
+ 	espaço sem quebra	# espaço rígido
+
+# Standard punctuation/symbols
+!	exclamação
+！	ponto de exclamação de largura total
+"	aspas
+# pt_BR: "#" na tabela Unicode (caractere U+0023) é nomeado oficialmente como "number sign" (sinal de número), no symbols.dic está como "number", traduzido então como "número"
+\#	número
+$	cifrão
+£	libra
+€	euro
+¢	centavos
+¥	iene
+₹	rupya
+ƒ	florim
+¤	símbolo monetário
+%	porcento
+# pt_BR: nos itens em que aparece letra "e" individual, usado "eh" no lugar para pronúncia correta com alguns sintetizadores
+&	eh comercial
+‰	por mil
+'	apóstrofo
+(	abre parêntesis
+)	fecha parêntesis
+*	asterisco
+,	vírgula
+、	vírgula ideográfica
+،	vírgula árabe
+-	hífen
+.	ponto
+．	ponto de largura total
+/	barra
+:	dois pontos
+：	dois pontos de largura total
+;	ponto e vírgula
+؛	ponto e vírgula árabe
+；	ponto e vírgula de largura total
+?	interrogação
+؟	ponto de interrogação árabe
+？	ponto de interrogação de largura total
+@	arroba
+[	abre colchete
+]	fecha colchete
+\\	barra invertida
+^	circunflexo
+_	sublinha
+`	grave
+{	abre chave
+}	fecha chave
+|	barra vertical
+¦	barra vertical cortada
+~	til
+¡	exclamação invertida
+¿	interrogação invertida
+·	ponto mediano
+‚	aspa baixa simples
+„	aspa baixa dupla
+′	plica
+″	plica dupla
+‴	plica tripla
+
+# Other characters
+•	bolinha
+…	reticências
+...	ponto ponto ponto
+“	abre aspas
+”	fecha aspas
+‘	apóstrofo esquerdo
+’	apóstrofo direito
+–	traço
+—	travessão
+­	hífen discricionário
+⁃	marcador tracinho
+●	círculo
+○	círculo branco
+¨	trema
+¯	mácron
+´	agudo
+¸	cedilha
+‎	esquerda para direita
+‏	direita para esquerda
+¶	indicador de parágrafo
+■	quadrado preto
+▪	quadradinho preto
+◾	quadradinho médio preto
+□	quadrado branco
+◦	bolinha branca
+⇨	seta branca para a direita
+➔	seta realçada para a direita de cabeça larga
+➢	Seta para a direita com iluminação superior tridimensional
+# pt_BR: para caracteres no original chamados de "diamond", em vez de usar "diamante" para traduzir foi usado "losango" que é uma das traduções para tal palavra inglesa representando melhor o formato de tais caracteres
+❖	losango preto menos x branco
+# pt_BR: caracteres unicode chamados de "club suit", na tradução em vez de usar "clube" são traduzidos como "naipe de paus" por ser a tradução para tal expressão inglesa representando o formato de tais caracteres, mesmo tipo de situação com os caracteres "diamond suit" que são traduzidos como "naipe de ouros"
+♣	naipe de paus preto
+♦	naipe de ouros Preto
+◆	losango preto
+§	parágrafo
+°	graus
+«	abre aspas angulares
+»	fecha aspas angulares
+µ	micro
+⁰	0 sobrescrito
+¹	1 sobrescrito
+²	2 sobrescrito
+³	3 sobrescrito
+⁴	4 sobrescrito
+⁵	5 sobrescrito
+⁶	6 sobrescrito
+⁷	7 sobrescrito
+⁸	8 sobrescrito
+⁹	9 sobrescrito
+⁺	mais sobrescrito
+⁼	igual sobrescrito
+⁽	abre parêntesis sobrescrito
+⁾	fecha parêntesis sobrescrito
+ⁿ	n sobrescrito
+₀	0 subscrito
+₁	1 subscrito
+₂	2 subscrito
+₃	3 subscrito
+₄	4 subscrito
+₅	5 subscrito
+₆	6 subscrito
+₇	7 subscrito
+₈	8 subscrito
+₉	9 subscrito
+₊	mais subscrito
+₋	menos subscrito
+₌	igual subscrito
+₍	abre parêntesis subscrito
+₎	fecha parêntesis subscrito
+®	registrado
+™	marca registrada
+©	copyright
+℠	Marca de Serviço
+←	seta para esquerda
+↑	seta para cima
+→	seta para direita
+↓	seta para baixo
+✓	marca de verificação
+✔	marca de verificação realçada
+🡺	seta farpada realçada para a direita de cabeça larga
+†	cruz
+‡	cruz dupla
+‣	marcador triangular
+✗	x de cédula
+⊕	mais circulado
+⊖	menos circulado
+⇄	seta para a direita sobre seta para a esquerda
+⇒	seta dupla para a direita
+
+#Arithmetic operators
++	mais
+−	menos
+×	vezes
+⋅	operador ponto de multiplicação
+⨯	vetor ou produto vetorial
+∕	barra de divisão
+⁄	barra de fração
+÷	dividido por
+∓	menos ou mais
+±	mais ou menos
+
+#Set operations
+∖	diferença de conjunto
+⊍	multiplicação de multiconjunto
+𝒫	conjunto potência p maiúsculo
+𝔓	p maiúsculo fraktur
+℘	p maiúsculo Weierstrass
+∁	conjunto complementar
+
+#Set relations and set constructions
+∅	conjunto vazio
+⊂	subconjunto de
+⊄	não é um subconjunto de
+⊃	superconjunto de
+⊅	não é um superconjunto de
+⊆	subconjunto de ou igual a
+⊈	nem um subconjunto de nem igual a
+⊇	superconjunto de ou igual a
+⊉	nem um superconjunto de nem igual a
+⊌	multiconjunto
+
+#Equality signs
+=	igual
+≃	assintoticamente igual a
+≄	não assintoticamente igual a
+≅	aproximadamente igual a
+≆	aproximadamente mas não realmente igual a
+≈	quase igual a
+≌	tudo igual a
+≍	equivalente a
+≭	não equivalente a
+≎	geometricamente equivalente a
+≑	geometricamente igual a
+≚	equiangular a
+≬	entre
+≠	diferente de
+≡	idêntico a
+≣	estritamente idêntico a
+≢	não idêntico a
+∼	semelhante a ou operador til
+≙	estimativas
+≟	questionado igual a
+
+#comparison signs
+<	menor
+>	maior
+≤	menor ou igual a
+≦	menos do quê igual a
+≪	muito menor quê
+≥	maior ou igual a
+≧	maior do quê igual a
+≫	muito maior quê
+≶	menor quê ou maior quê
+≷	maior quê ou menor quê
+≮	não menor quê
+≯	não maior quê
+
+#Functions
+⁻	inversa menos sobrescrito
+∘	Operador anel
+∂	derivada parcial
+∇	nabla
+
+#Geometry and linear Algebra
+⃗	vetor entre
+△	triângulo branco apontando para cima
+▭	retângulo branco
+∟	ângulo reto
+∠	ângulo
+∥	paralelo a
+∦	não paralelo a
+⊥	aderência para cima
+⟂	perpendicular
+‖	linha vertical dupla
+̂	normaliza
+∿	onda senoidal
+∡	Ângulo medido
+∢	Ângulo esférico
+
+#Logical operators
+∀	para todo
+∃	existe
+∄	não existe
+⇏	seta dupla para a direita com traço não implica
+⇐	seta dupla para a esquerda implica
+
+#Other mathematical Operators
+∈	pertence
+∉	não pertence
+∊	pertence pequeno
+∋	contém como membro
+∌	não contém como membro
+∍	contém como membro pequeno
+∎	fim de prova
+∏	produtório
+∐	coprodutório
+∑	somatório
+√	raíz quadrada
+∛	raíz cúbica
+∜	raiz quarta
+∝	proporcional a
+∞	infinito
+∧	eh lógico
+∨	ou lógico
+¬	não
+∩	interseção
+∪	união
+∫	integral
+∬	Integral dupla
+∭	Integral tripla
+∮	Integral de linha
+∯	Integral de superfície
+∰	Integral de volume
+∱	Integral em sentido horário
+∲	Integral linear em sentido horário
+∳	Integral linear em sentido anti-horário
+∴	portanto
+∵	porquê
+∶	razão
+∷	proporção
+∹	excesso
+∺	proporção geométrica
+≀	produto entrelaçado
+≏	diferença entre
+≐	aproxima-se do limite
+∙	Operador bolinha
+∣	divide
+∤	não divide
+≔	dois pontos igual
+≕	igual dois pontos
+≺	precede
+≻	sucede
+⊀	não precede
+⊁	não sucede
+
+# Vulgar Fractions U+2150 to U+215E
+¼	um quarto
+½	um meio
+¾	três quartos
+⅐	um sétimo
+⅑	um nono
+⅒	um décimo
+⅓	um terço
+⅔	dois terços
+⅕	um quinto
+⅖	dois quintos
+⅗	três quintos
+⅘	quatro quintos
+⅙	um sexto
+⅚	cinco sextos
+⅛	um oitavo
+⅜	três oitavos
+⅝	cinco oitavos
+⅞	sete oitavos
+
+#Number sets
+𝔸	números algébricos a maiúsculo cunhado
+ℂ	números complexos c maiúsculo cunhado
+ℑ	parte imaginária do número complexo letra preta i maiúscula
+ℍ	quatérnios h maiúsculo cunhado
+ℕ	números naturais n maiúsculo cunhado
+𝕁	números não negativos (inteiros) j maiúsculo cunhado
+ℚ	números racionais q maiúsculo cunhado
+ℝ	números reais r maiúsculo cunhado
+ℜ	parte real do número complexo letra preta r maiúscula
+ℤ	inteiros z maiúsculo cunhado
+ℵ	primeiro cardinal transfinito símbolo alef
+ℶ	segundo cardinal transfinito símbolo bet
+
+# Miscellaneous Technical
+⌘	tecla Command do mac
+⌥	tecla Option do mac
+
+## 6-dot cell
+### note: the character on the next line is U+2800 (braille space), not U+0020 (ASCII space)
+⠀	braille em branco
+⠁	braille 1
+⠂	braille 2
+⠃	braille 1 2
+⠄	braille 3
+⠅	braille 1 3
+⠆	braille 2 3
+⠇	braille 1 2 3
+⠈	braille 4
+⠉	braille 1 4
+⠊	braille 2 4
+⠋	braille 1 2 4
+⠌	braille 3 4
+⠍	braille 1 3 4
+⠎	braille 2 3 4
+⠏	braille 1 2 3 4
+⠐	braille 5
+⠑	braille 1 5
+⠒	braille 2 5
+⠓	braille 1 2 5
+⠔	braille 3 5
+⠕	braille 1 3 5
+⠖	braille 2 3 5
+⠗	braille 1 2 3 5
+⠘	braille 4 5
+⠙	braille 1 4 5
+⠚	braille 2 4 5
+⠛	braille 1 2 4 5
+⠜	braille 3 4 5
+⠝	braille 1 3 4 5
+⠞	braille 2 3 4 5
+⠟	braille 1 2 3 4 5
+⠠	braille 6
+⠡	braille 1 6
+⠢	braille 2 6
+⠣	braille 1 2 6
+⠤	braille 3 6
+⠥	braille 1 3 6
+⠦	braille 2 3 6
+⠧	braille 1 2 3 6
+⠨	braille 4 6
+⠩	braille 1 4 6
+⠪	braille 2 4 6
+⠫	braille 1 2 4 6
+⠬	braille 3 4 6
+⠭	braille 1 3 4 6
+⠮	braille 2 3 4 6
+⠯	braille 1 2 3 4 6
+⠰	braille 5 6
+⠱	braille 1 5 6
+⠲	braille 2 5 6
+⠳	braille 1 2 5 6
+⠴	braille 3 5 6
+⠵	braille 1 3 5 6
+⠶	braille 2 3 5 6
+⠷	braille 1 2 3 5 6
+⠸	braille 4 5 6
+⠹	braille 1 4 5 6
+⠺	braille 2 4 5 6
+⠻	braille 1 2 4 5 6
+⠼	braille 3 4 5 6
+⠽	braille 1 3 4 5 6
+⠾	braille 2 3 4 5 6
+⠿	braille 1 2 3 4 5 6
+## 8-braille cell
+⡀	braille 7
+⡁	braille 1 7
+⡂	braille 2 7
+⡃	braille 1 2 7
+⡄	braille 3 7
+⡅	braille 1 3 7
+⡆	braille 2 3 7
+⡇	braille 1 2 3 7
+⡈	braille 4 7
+⡉	braille 1 4 7
+⡊	braille 2 4 7
+⡋	braille 1 2 4 7
+⡌	braille 3 4 7
+⡍	braille 1 3 4 7
+⡎	braille 2 3 4 7
+⡏	braille 1 2 3 4 7
+⡐	braille 5 7
+⡑	braille 1 5 7
+⡒	braille 2 5 7
+⡓	braille 1 2 5 7
+⡔	braille 3 5 7
+⡕	braille 1 3 5 7
+⡖	braille 2 3 5 7
+⡗	braille 1 2 3 5 7
+⡘	braille 4 5 7
+⡙	braille 1 4 5 7
+⡚	braille 2 4 5 7
+⡛	braille 1 2 4 5 7
+⡜	braille 3 4 5 7
+⡝	braille 1 3 4 5 7
+⡞	braille 2 3 4 5 7
+⡟	braille 1 2 3 4 5 7
+⡠	braille 6 7
+⡡	braille 1 6 7
+⡢	braille 2 6 7
+⡣	braille 1 2 6 7
+⡤	braille 3 6 7
+⡥	braille 1 3 6 7
+⡦	braille 2 3 6 7
+⡧	braille 1 2 3 6 7
+⡨	braille 4 6 7
+⡩	braille 1 4 6 7
+⡪	braille 2 4 6 7
+⡫	braille 1 2 4 6 7
+⡬	braille 3 4 6 7
+⡭	braille 1 3 4 6 7
+⡮	braille 2 3 4 6 7
+⡯	braille 1 2 3 4 6 7
+⡰	braille 5 6 7
+⡱	braille 1 5 6 7
+⡲	braille 2 5 6 7
+⡳	braille 1 2 5 6 7
+⡴	braille 3 5 6 7
+⡵	braille 1 3 5 6 7
+⡶	braille 2 3 5 6 7
+⡷	braille 1 2 3 5 6 7
+⡸	braille 1 2 3 7
+⡹	braille 1 4 5 6 7
+⡺	braille 2 4 5 6 7
+⡻	braille 1 2 4 5 6 7
+⡼	braille 3 4 5 6 7
+⡽	braille 1 3 4 5 6 7
+⡾	braille 2 3 4 5 6 7
+⡿	braille 1 2 3 4 5 6 7
+⢀	braille 8
+⢁	braille 1 8
+⢂	braille 2 8
+⢃	braille 1 2 8
+⢄	braille 3 8
+⢅	braille 1 3 8
+⢆	braille 2 3 8
+⢇	braille 1 2 3 8
+⢈	braille 4 8
+⢉	braille 1 4 8
+⢊	braille 2 4 8
+⢋	braille 1 2 4 8
+⢌	braille 3 4 8
+⢍	braille 1 3 4 8
+⢎	braille 2 3 4 8
+⢏	braille 1 2 3 4 8
+⢐	braille 5 8
+⢑	braille 1 5 8
+⢒	braille 2 5 8
+⢓	braille 1 2 5 8
+⢔	braille 3 5 8
+⢕	braille 1 3 5 8
+⢖	braille 2 3 5 8
+⢗	braille 1 2 3 5 8
+⢘	braille 4 5 8
+⢙	braille 1 4 5 8
+⢚	braille 2 4 5 8
+⢛	braille 1 2 4 5 8
+⢜	braille 3 4 5 8
+⢝	braille 1 3 4 5 8
+⢞	braille 2 3 4 5 8
+⢟	braille 1 2 3 4 5 8
+⢠	braille 6 8
+⢡	braille 1 6 8
+⢢	braille 2 6 8
+⢣	braille 1 2 6 8
+⢤	braille 3 6 8
+⢥	braille 1 3 6 8
+⢦	braille 2 3 6 8
+⢧	braille 1 2 3 6 8
+⢨	braille 4 6 8
+⢩	braille 1 4 6 8
+⢪	braille 2 4 6 8
+⢫	braille 1 2 4 6 8
+⢬	braille 3 4 6 8
+⢭	braille 1 3 4 6 8
+⢮	braille 2 3 4 6 8
+⢯	braille 1 2 3 4 6 8
+⢰	braille 5 6 8
+⢱	braille 1 5 6 8
+⢲	braille 2 5 6 8
+⢳	braille 1 2 5 6 8
+⢴	braille 3 5 6 8
+⢵	braille 1 3 5 6 8
+⢶	braille 2 3 5 6 8
+⢷	braille 1 2 3 5 6 8
+⢸	braille 1 2 3 8
+⢹	braille 1 4 5 6 8
+⢺	braille 2 4 5 6 8
+⢻	braille 1 2 4 5 6 8
+⢼	braille 3 4 5 6 8
+⢽	braille 1 3 4 5 6 8
+⢾	braille 2 3 4 5 6 8
+⢿	braille 1 2 3 4 5 6 8
+⣀	braille 7 8
+⣁	braille 1 7 8
+⣂	braille 2 7 8
+⣃	braille 1 2 7 8
+⣄	braille 3 7 8
+⣅	braille 1 3 7 8
+⣆	braille 2 3 7 8
+⣇	braille 1 2 3 7 8
+⣈	braille 4 7 8
+⣉	braille 1 4 7 8
+⣊	braille 2 4 7 8
+⣋	braille 1 2 4 7 8
+⣌	braille 3 4 7 8
+⣍	braille 1 3 4 7 8
+⣎	braille 2 3 4 7 8
+⣏	braille 1 2 3 4 7 8
+⣐	braille 5 7 8
+⣑	braille 1 5 7 8
+⣒	braille 2 5 7 8
+⣓	braille 1 2 5 7 8
+⣔	braille 3 5 7 8
+⣕	braille 1 3 5 7 8
+⣖	braille 2 3 5 7 8
+⣗	braille 1 2 3 5 7 8
+⣘	braille 4 5 7 8
+⣙	braille 1 4 5 7 8
+⣚	braille 2 4 5 7 8
+⣛	braille 1 2 4 5 7 8
+⣜	braille 3 4 5 7 8
+⣝	braille 1 3 4 5 7 8
+⣞	braille 2 3 4 5 7 8
+⣟	braille 1 2 3 4 5 7 8
+⣠	braille 6 7 8
+⣡	braille 1 6 7 8
+⣢	braille 2 6 7 8
+⣣	braille 1 2 6 7 8
+⣤	braille 3 6 7 8
+⣥	braille 1 3 6 7 8
+⣦	braille 2 3 6 7 8
+⣧	braille 1 2 3 6 7 8
+⣨	braille 4 6 7 8
+⣩	braille 1 4 6 7 8
+⣪	braille 2 4 6 7 8
+⣫	braille 1 2 4 6 7 8
+⣬	braille 3 4 6 7 8
+⣭	braille 1 3 4 6 7 8
+⣮	braille 2 3 4 6 7 8
+⣯	braille 1 2 3 4 6 7 8
+⣰	braille 5 6 7 8
+⣱	braille 1 5 6 7 8
+⣲	braille 2 5 6 7 8
+⣳	braille 1 2 5 6 7 8
+⣴	braille 3 5 6 7 8
+⣵	braille 1 3 5 6 7 8
+⣶	braille 2 3 5 6 7 8
+⣷	braille 1 2 3 5 6 7 8
+⣸	braille 1 2 3 7 8
+⣹	braille 1 4 5 6 7 8
+⣺	braille 2 4 5 6 7 8
+⣻	braille 1 2 4 5 6 7 8
+⣼	braille 3 4 5 6 7 8
+⣽	braille 1 3 4 5 6 7 8
+⣾	braille 2 3 4 5 6 7 8
+⣿	braille 1 2 3 4 5 6 7 8

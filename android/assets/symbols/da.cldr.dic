@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	venstre akkolade	-
+‾	høj streg	-
+_	lav streg	-
+-	tankestreg-minus	-
+‐	bindestreg	-
+–	tankestreg	-
+—	lang tankestreg	-
+―	vandret streg	-
+・	katakana-mellemprik	-
+,	komma	-
+،	arabisk komma	-
+、	ideografisk komma	-
+;	semikolon	-
+؛	arabisk semikolon	-
+:	kolon	-
+!	udråbstegn	-
+¡	omvendt udråbstegn	-
+?	spørgsmålstegn	-
+¿	omvendt spørgsmålstegn	-
+؟	arabisk spørgsmålstegn	-
+‽	interrobang	-
+.	punktum	-
+…	udeladelsesprikker	-
+。	ideografisk punktum	-
+·	underordnet punkttegn	-
+'	apostrof	-
+‘	venstre apostrof	-
+’	højre apostrof	-
+‚	lav højre apostrof	-
+“	venstre anførselstegn	-
+”	højre anførselstegn	-
+„	lavt højre anførselstegn	-
+«	venstre fransk anførselstegn	-
+»	højre fransk anførselstegn	-
+)	slutparentes	-
+[	venstre firkantet parentes	-
+]	højre firkantet parentes	-
+}	højre akkolade	-
+〈	venstre vinkelparentes	-
+〉	højre vinkelparentes	-
+《	venstre dobbelt vinkelparentes	-
+》	højre dobbelt vinkelparentes	-
+「	venstre hjørneparentes	-
+」	højre hjørneparentes	-
+『	venstre hul hjørneparentes	-
+』	højre hul hjørneparentes	-
+【	venstre sort linseparentes	-
+】	højre sort linseparentes	-
+〔	venstre skjoldparentes	-
+〕	højre skjoldparentes	-
+〖	venstre hul linseparentes	-
+〗	højre hul linseparentes	-
+§	paragraf	-
+¶	afsnitstegn	-
+@	snabel-a	-
+*	asterisk	-
+/	skråstreg	-
+\	omvendt skråstreg	-
+&	og-tegn	-
+%	procent	-
+‰	promille	-
+†	korstegn	-
+‡	dobbeltkorstegn	-
+•	punkttegn	-
+‧	bindeprik	-
+′	enkelt anførselstegn	-
+″	dobbelt anførselstegn	-
+‴	tredobbelt anførselstegn	-
+‸	indskudstegn	-
+※	henvisningstegn	-
+⁂	asterisme	-
+`	accent grave	-
+´	accent aigu	-
+^	accent circumfleks	-
+¨	tréma	-
+°	grader	-
+℗	copyright på lydoptagelse	-
+←	venstrepil	-
+↚	venstrepil og skråstreg	-
+→	højrepil	-
+↛	højrepil og skråstreg	-
+↑	pil op	-
+↓	pil ned	-
+↜	bølget venstrepil	-
+↝	bølget højrepil	-
+↞	tohovedet venstrepil	-
+↟	tohovedet pil op	-
+↠	tohovedet højrepil	-
+↡	tohovedet pil ned	-
+↢	venstrepil med fjer	-
+↣	højrepil med fjer	-
+↤	venstrepil fra streg	-
+↥	pil op fra streg	-
+↦	højrepil fra streg	-
+↧	pil ned fra streg	-
+↨	pil op/ned med fod	-
+↫	venstrepil med sløjfe	-
+↬	højrepil med sløjfe	-
+↭	venstre-/højrepil med bølge	-
+↯	zigzagpil ned	-
+↰	pil op og til venstre	-
+↱	pil op og til højre	-
+↲	pil ned og til venstre	-
+↳	pil ned og til højre	-
+↴	hjørnepil til højre og ned	-
+↵	hjørnepil ned og til venstre	-
+↶	halvcirkelpil mod uret, top	-
+↷	halvcirkelpil med uret, top	-
+↸	pil mod nordvest med lang streg	-
+↹	venstrepil med streg over højrepil med streg	-
+↺	åben cirkelpil mod uret	-
+↻	åben cirkelpil med uret	-
+↼	venstre harpun med krog op	-
+↽	venstre harpun med krog ned	-
+↾	harpun op med krog til højre	-
+↿	harpun op med krog til venstre	-
+⇀	højre harpun med krog op	-
+⇁	højre harpun med krog ned	-
+⇂	harpun ned med krog til højre	-
+⇃	harpun ned med krog til venstre	-
+⇄	højrepil over venstrepil	-
+⇅	pil op og pil ned	-
+⇆	venstrepil over højrepil	-
+⇇	to pile mod venstre	-
+⇈	to pile op	-
+⇉	to pile mod højre	-
+⇊	to pile ned	-
+⇋	venstre harpun over højre harpun	-
+⇌	højre harpun over venstre harpun	-
+⇐	dobbeltpil mod venstre	-
+⇍	dobbeltpil mod venstre med skråstreg	-
+⇑	dobbeltpil op	-
+⇒	dobbeltpil mod højre	-
+⇏	dobbeltpil mod højre med skråstreg	-
+⇓	dobbeltpil ned	-
+⇔	dobbeltpil mod venstre og højre	-
+⇎	dobbeltpil mod venstre og højre med skråstreg	-
+⇖	dobbeltpil mod nordvest	-
+⇗	dobbeltpil mod nordøst	-
+⇘	dobbeltpil mod sydøst	-
+⇙	dobbeltpil mod sydvest	-
+⇚	tredobbelt pil mod venstre	-
+⇛	tredobbelt pil mod højre	-
+⇜	snoet pil mod venstre	-
+⇝	snoet pil mod højre	-
+⇞	pil op med dobbelt tværstreg	-
+⇟	pil ned med dobbelt tværstreg	-
+⇠	stiplet venstrepil	-
+⇡	stiplet pil op	-
+⇢	stiplet højrepil	-
+⇣	stiplet pil ned	-
+⇤	venstrepil mod streg	-
+⇥	højrepil mod streg	-
+⇦	hul venstrepil	-
+⇧	hul pil op	-
+⇨	hul højrepil	-
+⇩	hul pil ned	-
+⇪	hul pil op fra streg	-
+⇵	pil ned til venstre for pil op	-
+∀	for alle	-
+∂	partiel differentialligning	-
+∃	der findes	-
+∅	tom mængde	-
+∆	optælling	-
+∇	nabla	-
+∈	element i	-
+∉	tilhører ikke	-
+∋	indeholder som element	-
+∎	slut på bevis	-
+∏	n-ært produkt	-
+∑	n-ær summering	-
++	plustegn	-
+±	plus/minus	-
+÷	divisionstegn	-
+×	gangetegn	-
+<	mindre end	-
+≮	ikke mindre end	-
+=	lig med	-
+≠	ikke lig med	-
+>	større end	-
+≯	ikke større end	-
+¬	negation	-
+|	lodret streg	-
+~	tilde	-
+−	minustegn	-
+⁻	hævet minus	-
+∓	minus eller plus	-
+∕	division	-
+⁄	brøkdel	-
+∗	asteriskoperator	-
+∘	ringoperator	-
+∙	punktoperator	-
+√	kvadratrod	-
+∝	proportionalt med	-
+∞	uendelighedstegn	-
+∟	ret vinkel	-
+∠	vinkel	-
+∣	deler	-
+∥	parallel	-
+∧	logisk og	-
+∩	fællesmængde	-
+∪	foreningsmængde	-
+∫	integral	-
+∬	dobbelt integral	-
+∮	lukket kurveintegral	-
+∴	derfor	-
+∵	fordi	-
+∶	forhold	-
+∷	proportion	-
+∼	tilde-operator	-
+∽	omvendt tilde	-
+∾	omvendt dovent s	-
+≃	asymptotisk lig med	-
+≅	cirka lig med	-
+≈	næsten lig med	-
+≌	alle lig med	-
+≒	cirka lig med billedet	-
+≖	ring i lighedstegn	-
+≡	identisk med	-
+≣	strengt ækvivalent	-
+≤	mindre end eller lig med	-
+≥	større end eller lig med	-
+≦	mindre end over lig med	-
+≧	større end over lig med	-
+≪	meget mindre end	-
+≫	meget større end	-
+≬	mellem	-
+≳	større end-ækvivalent	-
+≺	kommer før	-
+≻	kommer efter	-
+⊁	kommer ikke efter	-
+⊂	delmængde af	-
+⊃	supermængde	-
+⊆	delmængde eller lig med	-
+⊇	supermængde eller lig med	-
+⊕	plus med ring	-
+⊖	minus med ring	-
+⊗	gange med ring	-
+⊘	division med ring	-
+⊙	punktoperator med ring	-
+⊚	ring-operator med ring	-
+⊛	stjerne-operator med ring	-
+⊞	firkant med plus	-
+⊟	firkant med minus	-
+⊥	falsum	-
+⊮	gennemtvinger ikke	-
+⊰	kommer før under relation	-
+⊱	følger efter under relation	-
+⋭	indeholder ikke som normal undergruppe lig med	-
+⊶	oprindelig	-
+⊹	hermitisk transponeret matrix	-
+⊿	retvinklet trekant	-
+⋁	n-ært logisk eller	-
+⋂	n-ær fællesmængde	-
+⋃	n-ær foreningsmængde	-
+⋅	prikoperator	-
+⋆	stjerneoperator	-
+⋈	naturlig join	-
+⋒	dobbelt fællesmængde	-
+⋘	langt mindre end	-
+⋙	langt større end	-
+⋮	lodret ellipse	-
+⋯	vandret ellipse	-
+⋰	diagonal ellipse opad mod højre	-
+⋱	diagonal ellipse nedad mod højre	-
+⨧	plus med sænket 2	-
+⨯	krydsprodukt, vektor	-
+⨼	indre produkt	-
+⩣	logisk eller med dobbelt understregning	-
+⩽	mindre end med skråt lighedstegn	-
+⪍	mindre end over cirka lig med	-
+⪚	dobbeltstreget lighedstegn og større end	-
+⪺	følger efter over ikke cirka lig med	-
+⭐	stjerne	-
+⬆	opadvendt pil	-
+↗	opadvendt pil mod højre	-
+↘	nedadvendt pil mod højre	-
+⬇	nedadvendt pil	-
+↙	nedadvendt pil mod venstre	-
+⬅	pil mod venstre	-
+↖	opadvendt pil mod venstre	-
+↕	op- og nedadvendt pil	-
+↔	pil mod venstre og højre	-
+↮	venstre-/højrepil og skråstreg	-
+↩	pil mod højre med sving til venstre	-
+↪	pil mod venstre med sving til højre	-
+⤴	pil mod højre med sving opad	-
+⤵	pil mod højre med sving nedad	-
+〰	bølgestreg	-
+⭕	stor rød cirkel	-
+〽	japansk kommatering	-
+©	copyright	-
+®	registreret varemærke	-
+™	varemærke	-
+ℹ	information	-
+㊗	cirkulært ideogram for lykønskning	-
+㊙	cirkulært ideogram for hemmelighed	-
+⬛	stort sort kvadrat	-
+⬜	stort hvidt kvadrat	-
+¢	cent	-
+$	dollar	-
+£	pund	-
+¥	yen	-
+₢	cruzeiro	-
+₣	fransk franc	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	tysk pfennig	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	indisk rupee	-
+₽	rubel	-
+₿	bitcoin	-
+¹	hævet ettal	-
+²	hævet total	-
+³	hævet tretal	-
+₨	rupee	-
+µ	mikrotegn	-
+﷼	rial	-
+¤	ukendt valuta	-
+֏	armensk dram	-
+؋	afghansk afghani	-
+৳	bangladeshisk taka	-
+฿	thailandsk baht	-
+៛	cambodjansk riel	-
+₡	costaricansk colón	-
+₦	nigeriansk naira	-
+₪	ny israelsk shekel	-
+₫	vietnamesisk dong	-
+₭	laotisk kip	-
+₮	mongolsk tugrik	-
+₲	paraguaysk guarani	-
+₴	ukrainsk grynia	-
+₵	ghanesisk cedi	-
+₸	kasakhisk tenge	-
+₺	tyrkisk lira	-
+₼	aserbajdsjansk manat	-
+₾	georgisk lari	-
+₧	Spansk peseta	-

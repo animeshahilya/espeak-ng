@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	accolade ouvrante	-
+‾	trait suscrit	-
+_	trait de soulignement	-
+-	trait d’union-moins	-
+‐	trait d’union	-
+–	tiret demi-cadratin	-
+—	tiret cadratin	-
+―	barre horizontale	-
+・	point médian katakana	-
+,	virgule	-
+،	virgule arabe	-
+、	virgule idéographique	-
+;	point-virgule	-
+؛	point-virgule arabe	-
+:	deux-points	-
+!	point d’exclamation	-
+¡	point d’exclamation inversé	-
+?	point d’interrogation	-
+¿	point d’interrogation inversé	-
+؟	point d’interrogation arabe	-
+‽	point exclarrogatif	-
+.	point	-
+…	points de suspension	-
+。	point idéographique	-
+·	point médian	-
+'	apostrophe dactylographique	-
+‘	apostrophe gauche	-
+’	apostrophe droite	-
+‚	apostrophe droite basse	-
+“	guillemet droit gauche	-
+”	guillemet droit droit	-
+„	guillemet droit bas	-
+«	guillemet gauche	-
+»	guillemet droit	-
+)	parenthèse fermante	-
+[	crochet ouvrant	-
+]	crochet fermant	-
+}	accolade fermante	-
+〈	chevron angulaire ouvrant	-
+〉	chevron angulaire fermant	-
+《	chevron angulaire ouvrant double	-
+》	chevron angulaire fermant double	-
+「	crochet de partie entière ouvrant	-
+」	crochet de partie entière fermant	-
+『	crochet de partie entière ouvrant creux	-
+』	crochet de partie entière fermant creux	-
+【	crochet lenticulaire ouvrant noir	-
+】	crochet lenticulaire fermant noir	-
+〔	crochet en écaille ouvrant	-
+〕	crochet en écaille fermant	-
+〖	crochet lenticulaire ouvrant creux	-
+〗	crochet lenticulaire fermant creux	-
+§	section	-
+¶	marque de paragraphe	-
+@	arobase	-
+*	astérisque	-
+/	slash	-
+\	antislash	-
+&	esperluette	-
+%	pourcent	-
+‰	pour mille	-
+†	obèle	-
+‡	double obèle	-
+•	puce	-
+‧	point de coupure de mot	-
+′	prime	-
+″	double prime	-
+‴	triple prime	-
+‸	caret	-
+※	marque de référence	-
+⁂	astérisme	-
+`	accent grave	-
+´	accent aigu	-
+^	accent circonflexe	-
+¨	diérèse	-
+°	degré	-
+℗	copyright phonographique	-
+←	flèche vers la gauche	-
+↚	flèche vers la gauche barrée	-
+→	flèche vers la droite	-
+↛	flèche vers la droite barrée	-
+↑	flèche vers le haut	-
+↓	flèche vers le bas	-
+↜	flèche vers la gauche ondulée	-
+↝	flèche vers la droite ondulée	-
+↞	flèche à deux pointes vers la gauche	-
+↟	flèche à deux pointes vers le haut	-
+↠	flèche à deux pointes vers la droite	-
+↡	flèche à deux pointes vers le bas	-
+↢	flèche vers la gauche avec empenne	-
+↣	flèche vers la droite avec empenne	-
+↤	flèche d’un taquet vers la gauche	-
+↥	flèche d’un taquet vers le haut	-
+↦	flèche d’un taquet vers la droite	-
+↧	flèche d’un taquet vers le bas	-
+↨	flèche haut-bas sur base	-
+↫	flèche vers la gauche avec boucle	-
+↬	flèche vers la droite avec boucle	-
+↭	flèche gauche-droite ondulée	-
+↯	flèche vers le bas en zigzag	-
+↰	flèche vers le haut avec pointe vers la gauche	-
+↱	flèche vers le haut avec pointe vers la droite	-
+↲	flèche vers le bas avec pointe vers la gauche	-
+↳	flèche vers le bas avec pointe vers la droite	-
+↴	flèche vers la droite avec coin vers le bas	-
+↵	flèche vers le bas avec coin vers la gauche	-
+↶	flèche semi-circulaire sens antihoraire en chef	-
+↷	flèche semi-circulaire sens horaire en chef	-
+↸	flèche nord-ouest jusqu’à un long taquet	-
+↹	flèches gauche et droite superposées avec taquets	-
+↺	flèche circulaire ouverte sens antihoraire	-
+↻	flèche circulaire ouverte sens horaire	-
+↼	harpon vers la gauche avec barbillon vers le haut	-
+↽	harpon vers la gauche avec barbillon vers le bas	-
+↾	harpon vers le haut avec barbillon vers la droite	-
+↿	harpon vers le haut avec barbillon vers la gauche	-
+⇀	harpon vers la droite avec barbillon vers le haut	-
+⇁	harpon vers la droite avec barbillon vers le bas	-
+⇂	harpon vers le bas avec barbillon vers la droite	-
+⇃	harpon vers le bas avec barbillon vers la gauche	-
+⇄	flèche vers la droite sur flèche vers la gauche	-
+⇅	flèches vers le haut et vers le bas	-
+⇆	flèche gauche au-dessus de flèche droite	-
+⇇	paire de flèches vers la gauche	-
+⇈	paire de flèches vers le haut	-
+⇉	paire de flèches vers la droite	-
+⇊	paire de flèches vers le bas	-
+⇋	harpon vers la gauche sur harpon vers la droite	-
+⇌	harpon vers la droite sur harpon vers la gauche	-
+⇐	flèche double vers la gauche	-
+⇍	double flèche vers la gauche barrée	-
+⇑	flèche double vers le haut	-
+⇒	flèche double vers la droite	-
+⇏	double flèche vers la droite barrée	-
+⇓	flèche double vers le bas	-
+⇔	flèche double vers la gauche et la droite	-
+⇎	double flèche gauche-droite barrée	-
+⇖	flèche double vers le nord-ouest	-
+⇗	flèche double vers le nord-est	-
+⇘	flèche double vers le sud-est	-
+⇙	flèche double vers le sud-ouest	-
+⇚	flèche triple vers la gauche	-
+⇛	flèche triple vers la droite	-
+⇜	flèche vers la gauche en tire-bouchon	-
+⇝	flèche vers la droite en tire-bouchon	-
+⇞	flèche vers le haut avec double barre	-
+⇟	flèche vers le bas avec double barre	-
+⇠	flèche pointillée vers la gauche	-
+⇡	flèche pointillée vers le haut	-
+⇢	flèche pointillée vers la droite	-
+⇣	flèche pointillée vers le bas	-
+⇤	flèche vers la gauche jusqu’à un taquet	-
+⇥	flèche vers la droite jusqu’à un taquet	-
+⇦	flèche creuse vers la gauche	-
+⇧	flèche creuse vers le haut	-
+⇨	flèche creuse vers la droite	-
+⇩	flèche creuse vers le bas	-
+⇪	flèche creuse d’un taquet vers le haut	-
+⇵	flèche vers le bas à gauche d’une flèche vers le haut	-
+∀	pour tout	-
+∂	dérivée partielle	-
+∃	il existe	-
+∅	ensemble vide	-
+∆	incrément	-
+∇	nabla	-
+∈	appartient à	-
+∉	n’appartient pas	-
+∋	contient comme élément	-
+∎	fin d’article	-
+∏	produit de la famille	-
+∑	sommation de la famille	-
++	signe plus	-
+±	plus-moins	-
+÷	signe de division	-
+×	signe de multiplication	-
+<	inférieur à	-
+≮	pas inférieur à	-
+=	égal	-
+≠	non égal	-
+>	supérieur à	-
+≯	pas supérieur à	-
+¬	négation	-
+|	ligne verticale	-
+~	tilde	-
+−	signe moins	-
+⁻	exposant moins	-
+∓	plus ou moins	-
+∕	barre oblique de division	-
+⁄	barre oblique de fraction	-
+∗	opérateur astérisque	-
+∘	opérateur rond	-
+∙	opérateur puce	-
+√	racine carrée	-
+∝	proportionnel	-
+∞	symbole de l’infini	-
+∟	angle droit	-
+∠	angle	-
+∣	est un diviseur de	-
+∥	parallèle	-
+∧	et logique	-
+∩	intersection	-
+∪	union	-
+∫	intégrale	-
+∬	double intégrale	-
+∮	intégrale de contour	-
+∴	par conséquent	-
+∵	parce que	-
+∶	rapport	-
+∷	proportion	-
+∼	opérateur tilde	-
+∽	tilde renversé	-
+∾	s couché renversé	-
+≃	asymptotiquement égal à	-
+≅	approximativement égal à	-
+≈	presque égal	-
+≌	entièrement égal à	-
+≒	approximativement égal à ou image de	-
+≖	rond dans égal	-
+≡	identique à	-
+≣	strictement équivalent à	-
+≤	inférieur ou égal	-
+≥	supérieur ou égal	-
+≦	inférieur à sur égal à	-
+≧	supérieur à sur égal à	-
+≪	très inférieur à	-
+≫	très supérieur à	-
+≬	entre	-
+≳	supérieur ou équivalent à	-
+≺	précède	-
+≻	suit	-
+⊁	ne suit pas	-
+⊂	sous-ensemble de	-
+⊃	sur-ensemble de	-
+⊆	sous-ensemble égal à	-
+⊇	sur-ensemble égal à	-
+⊕	plus cerclé	-
+⊖	moins cerclé	-
+⊗	fois cerclé	-
+⊘	barre oblique de division cerclée	-
+⊙	opérateur point cerclé	-
+⊚	opérateur rond cerclé	-
+⊛	opérateur astérisque cerclé	-
+⊞	plus encadré	-
+⊟	moins encadré	-
+⊥	taquet vers le haut	-
+⊮	n’oblige pas	-
+⊰	précède sous relation	-
+⊱	suit sous relation	-
+⋭	ni égal ni contenant comme sous-groupe normal	-
+⊶	original de	-
+⊹	matrice hermitienne conjuguée	-
+⊿	triangle rectangle	-
+⋁	ou logique de la famille	-
+⋂	intersection de la famille	-
+⋃	union de la famille	-
+⋅	opérateur point	-
+⋆	opérateur étoile	-
+⋈	jointure naturelle	-
+⋒	double intersection	-
+⋘	considérablement inférieur à	-
+⋙	considérablement supérieur à	-
+⋮	trois points suspendus	-
+⋯	trois points médians	-
+⋰	trois points diagonaux vers le coin haut à droite	-
+⋱	trois points diagonaux vers le coin bas à droite	-
+⨧	signe plus avec indice deux	-
+⨯	produit vectoriel	-
+⨼	produit intérieur	-
+⩣	ou logique à deux barres souscrites	-
+⩽	inférieur à ou égal à incliné	-
+⪍	inférieur à sur similaire ou égal à	-
+⪚	égal en deux lignes ou supérieur à	-
+⪺	suit sur non presque égal à	-
+⭐	étoile	-
+⬆	flèche haut	-
+↗	flèche haut droite	-
+↘	flèche bas droite	-
+⬇	flèche bas	-
+↙	flèche bas gauche	-
+⬅	flèche gauche	-
+↖	flèche haut gauche	-
+↕	flèche haut bas	-
+↔	flèche gauche droite	-
+↮	flèche gauche-droite barrée	-
+↩	flèche courbe gauche	-
+↪	flèche courbe droite	-
+⤴	flèche courbe haut	-
+⤵	flèche courbe bas	-
+〰	ligne ondulée	-
+⭕	cercle rouge	-
+〽	alternance	-
+©	symbole copyright	-
+®	marque déposée	-
+™	marque commerciale déposée	-
+ℹ	source d’informations	-
+㊗	bouton félicitations en japonais	-
+㊙	bouton secret en japonais	-
+⬛	grand carré noir	-
+⬜	grand carré blanc	-
+¢	cent	-
+$	dollar	-
+£	livre	-
+¥	yen	-
+₢	cruzeiro	-
+₣	franc français	-
+₤	lire	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	penny allemand	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	roupie indienne	-
+₽	rouble	-
+₿	bitcoin	-
+¹	exposant un	-
+²	exposant deux	-
+³	exposant trois	-
+₨	roupie	-
+µ	symbole micro	-
+﷼	rial	-
+¤	devise inconnue ou non valide	-
+֏	dram arménien	-
+؋	afghani afghan	-
+৳	taka bangladeshi	-
+฿	baht thaïlandais	-
+៛	riel cambodgien	-
+₡	colón costaricain	-
+₦	naira nigérian	-
+₪	nouveau shekel israélien	-
+₫	dông vietnamien	-
+₭	kip laotien	-
+₮	tugrik mongol	-
+₲	guaraní paraguayen	-
+₴	hryvnia ukrainienne	-
+₵	cédi ghanéen	-
+₸	tenge kazakh	-
+₺	livre turque	-
+₼	manat azéri	-
+₾	lari géorgien	-
+₧	peseta espagnole	-

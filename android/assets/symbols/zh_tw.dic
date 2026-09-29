@@ -1,0 +1,1977 @@
+# Edited by NVDA-Taiwan Volunteers Team on 2026/07/17
+# A part of NonVisual Desktop Access (NVDA)
+# Copyright (c) 2011-2026 NVDA Contributors
+# This file is covered by the GNU General Public License.
+
+complexSymbols:
+# identifier	regexp
+# Sentence endings.
+. sentence ending	(?<=[^\s.])\.(?=[\"'”’)\s]|$)
+! sentence ending	(?<=[^\s!])\!(?=[\"'”’)\s]|$)
+? sentence ending	(?<=[^\s?])\?(?=[\"'”’)\s]|$)
+# Phrase endings.
+; phrase ending	(?<=[^\s;]);(?=\s|$)
+: phrase ending	(?<=[^\s:]):(?=\s|$)
+# 用於視覺呈現的連續點 (例如用於目錄中)
+multiple .	\.{4,}
+
+# Others
+decimal point	(?<![^\d -])\.(?=\d)
+in-word '	(?<=[^\W_])['’]
+negative number	(?<!\w)[-−]{1}(?=[$£€¥.]?\d)
+
+symbols:
+# identifier	replacement[[	level][	preserve]][	# display name]
+
+# Complex symbols
+. sentence ending	dot	all	always
+! sentence ending	英文驚嘆號	all	always
+? sentence ending	question	all	always
+; phrase ending	semi	most	always
+: phrase ending	colon	most	always
+multiple .	多個點	all	always
+decimal point		none	always
+in-word '	tick	all	norep
+negative number	負	none	norep
+
+# Whitespace
+\0	blank	char	# null
+\t	tab
+\n	航尾	char	# 取行尾同音
+\f	分頁符號	none
+\r	航尾	char
+ 	空格	char
+ 	space	char	# no-break space
+
+# Standard punctuation/symbols
+!	英文驚嘆號	all
+"	quote	most
+\#	number	some
+$	錢號	all	norep
+£	英鎊	all	norep
+€	歐元	all	norep
+¢	分	all	norep
+¥	日圓	all	norep
+₹	盧比	some	norep
+ƒ	弗羅林	all	norep
+¤	貨幣符號	all	norep
+%	percent	some
+&	and	some
+‰	per mille	some
+'	tick	all
+(	左括號	most	always
+)	右括號	most	always
+*	star	some
+,	comma	all	always
+،	阿拉伯逗號	all	always
+-	dash	most	always
+.	dot	some
+/	slash	some
+:	colon	most	norep
+;	semi	most
+؛	阿拉伯冒號	most
+?	question	all
+؟	阿拉伯問號	all
+@	小老鼠	some
+[	左中括號	most	always
+]	右中括號	most	always
+\\	backslash	most
+^	caret	most
+_	底線	most
+‐	連字號	most	always
+`	graav	most
+{	左大括號	most	always
+}	右大括號	most	always
+|	bar	most
+¦	broken bar	most
+~	tilda	most
+¡	倒驚嘆號	some
+¿	倒問號	some
+‚	single low quote	most
+„	double low quote	most
+′	prime	some
+″	double prime	some
+‴	triple prime	some
+·	middle dot	most
+
+# Other characters
+•	項目符號	some
+…	點點點	all	always
+...	點點點	all	always
+“	左雙引號	most
+”	右雙引號	most
+‘	左單引號	most
+’	右單引號	most
+–	en dash	most	always
+­	soft hyphen	most
+⁃	橫線項目符號	none
+○	空心圓	most
+●	實心圓	most
+¨	分音符號	most	# 多用於德語、西班牙語、葡萄牙語
+¯	macron	most
+´	尖音符	most
+¸	cedilla	most
+‎	左至右符號	char
+‏	右至左符號	char
+¶	段落符號	most
+□	空心方形	some
+■	實心方形	some
+◆	實心菱形	some
+▪	實心小方形	some
+◾	實心中小方形	some
+◦	空心項目符號	some
+⇨	向右粗箭頭	some
+➔	向右鍵頭	some
+➢	right arrowhead	some
+❖	black diamond minus white X	some
+♣	黑桃	some
+♦	實心方塊	some
+§	章節符號	all
+°	度	some
+«	double left pointing angle bracket	most	always
+»	double right pointing angle bracket	most	always
+µ	micro	some
+⁰	上標0	some
+¹	上標1	some
+²	上標2	some
+³	上標3	some
+⁴	上標4	some
+⁵	上標5	some
+⁶	上標6	some
+⁷	上標7	some
+⁸	上標8	some
+⁹	上標9	some
+⁺	上標加號	some
+⁼	上標等號	some
+⁽	上標左小括號	some
+⁾	上標右小括號	some
+ⁿ	上標n	some
+₀	下標0	some
+₁	下標1	some
+₂	下標2	some
+₃	下標3	some
+₄	下標4	some
+₅	下標5	some
+₆	下標6	some
+₇	下標7	some
+₈	下標8	some
+₉	下標9	some
+₊	下標加號	some
+₋	下標減號	some
+₌	下標等號	some
+₍	下標左小括號	some
+₎	下標右小括號	some
+®	註冊商標	some
+™	商標	some
+©	Copyright	some
+℠	ServiceMark	some
+←	左箭頭	some
+↑	上箭頭	some
+→	右箭頭	some
+↓	下箭頭	some
+✓	勾選	some
+🡺	右箭頭	some
+✔	勾選	some
+†	拉丁十字	some
+‡	雙拉丁十字	some
+‣	三角形項目符號	none
+✗	x形項目符號	none
+⊕	圓圈加號	none
+⊖	圓圈減號	none
+⇄	向右箭頭在上，向左箭頭在下	none
+⇒	向右雙箭頭	none
+
+# Arithmetic operators
++	plus	some
+−	minus	some
+×	乘以	some
+⋅	乘以	some
+⨯	乘以	none
+∕	除以	some
+⁄	除以	some
+÷	除以	some
+∓	減加	some
+±	加減	some
+
+# Set operations
+∖	差集	none
+⊍	多重集乘積	none
+𝒫	積集合	none
+𝔓	積集合	none
+℘	積集合	none
+∁	補集	none
+
+# Set relations and set constructions
+∅	空集合	none
+⊂	包含於	none
+⊄	不包含於	none
+⊃	包含	none
+⊅	不包含	none
+⊆	包含於或等於	none
+⊈	不包含於也不等於	none
+⊇	包含或等於	none
+⊉	不包含也不等於	none
+⊌	多重集合	none
+
+# Equality signs
+=	equals	some
+≃	漸近等於	none
+≄	不漸近等於	none
+≅	約等於	none
+≆	約等於但不等於	none
+≈	約等於	none
+≌	全等於	none
+≍	等價於	none
+≭	不等價於	none
+≎	幾何上等價於	none
+≑	幾何上等於	none
+≚	等角於	none
+≬	介於	none
+≠	不等於	none
+≡	同餘	none
+≣	恆等於	none
+≢	非同餘	none
+∼	波浪符運算子	none
+≙	估計為	none
+≟	問號等於	none
+
+# comparison signs
+<	less	some
+>	greater	some
+≤	小於等於	none
+≦	小於等於	none
+≪	遠小於	none
+≥	大於等於	none
+≧	大於等於	none
+≫	遠大於	none
+≶	小於或大於	none
+≷	大於或小於	none
+≮	不小於	none
+≯	不大於	none
+
+# Functions
+⁻	上標減號	some
+∘	圓圈算符	none
+∂	偏微分	none
+∇	梯度	none
+
+# Geometry and linear Algebra
+⃗	向量	none
+△	三角形	none
+▭	矩形	none
+∟	直角	none
+∠	角	none
+∥	平行	none
+∦	不平行	none
+⊥	垂直	none
+⟂	正交於	none
+‖	向量範數	none
+̂	正規化	none
+∿	正弦波	none
+∡	測量角	none
+∢	球面角	none
+
+# Logical operators
+∀	對於所有	none
+∃	存在	none
+∄	不存在	none
+⇏	被斜線撇過的向右雙箭頭	none
+⇐	向左雙箭頭	none
+
+# Other mathematical Operators
+∈	屬於	none
+∉	不屬於	none
+∊	小型屬於	none
+∋	包含元素	none
+∌	不包含元素	none
+∍	包含小型元素	none
+∎	證明完畢	none
+∏	連續乘積	none
+∐	連續餘積	none
+∑	加總	none
+√	根號	none
+∛	立方根	none
+∜	四次方根	none
+∝	正比於	none
+∞	無限大	none
+∧	且	none
+∨	或	none
+¬	非	none
+∩	交集	none
+∪	聯集	none
+∫	積分	none
+∬	二重積分	none
+∭	三重積分	none
+∮	圍道積分	none
+∯	面積分	none
+∰	體積分	none
+∱	順時針積分	none
+∲	順時針圍道積分	none
+∳	逆時針圍道積分	none
+∴	所以	none
+∵	因為	none
+∶	比	none
+∷	如同	none
+∹	超出	none
+∺	幾何比例	none
+≀	圈積	none
+≏	差異	none
+≐	接近極線值	none
+∙	圓點算符	none
+∣	整除	none
+∤	不整除	none
+≔	冒號等號	none
+≕	等號冒號	none
+≺	先於	none
+≻	後於	none
+⊀	不先於	none
+⊁	不後於	none
+
+# Number sets
+𝔸	代數數	none
+ℂ	複數	none
+ℑ	複數中的虛數部分	none
+ℍ	四元數	none
+ℕ	自然數	none
+𝕁	非複數	none
+ℚ	有理數	none
+ℝ	實數	none
+ℜ	複數中的實數部分	none
+ℤ	整數	none
+ℵ	aleph number	none
+ℶ	beth number	none
+
+# Vulgar Fractions U+2150 to U+215E
+½	二分之一	none
+⅓	三分之一	none
+⅔	三分之二	none
+¼	四分之一	none
+¾	四分之三	none
+⅕	五分之一	none
+⅖	五分之二	none
+⅗	五分之三	none
+⅘	五分之四	none
+⅙	六分之一	none
+⅚	六分之五	none
+⅛	八分之一	none
+⅜	八分之三	none
+⅝	八分之五	none
+⅞	八分之七	none
+⅐	七分之一	none
+⅑	九分之一	none
+⅒	十分之一	none
+
+# Miscellaneous Technical
+⌘	Mac Command 鍵	none
+⌥	mac Option 鍵	none
+
+# 中文標點與全形符號
+，	逗號	all	always
+、	頓號	all	always
+。	句號	all	always
+．	點	none
+；	分號	all	always
+？	問號	all	always
+！	驚嘆號	all	always
+：	冒號	all	always
+—	連接號	most	always
+～	連接號	some
+︱	直連接號	most
+─	破折號	most
+│	直破折號	most
+（	左夾注號	most	always
+）	右夾注號	most	always
+︵	上夾注號	most	always
+︶	下夾注號	most	always
+［	全形左中括號	most	always
+］	全形右中括號	most	always
+﹇	全形上中括號	most	always
+﹈	全形下中括號	most	always
+｛	全形左大括號	most	always
+｝	全形右大括號	most	always
+︷	全形上大括號	most	always
+︸	全形下大括號	most	always
+〔	左六角括號	most	always
+〕	右六角括號	most	always
+︹	上六角括號	most	always
+︺	下六角括號	most	always
+【	左方頭括號	most	always
+】	右方頭括號	most	always
+︻	上方頭括號	most	always
+︼	下方頭括號	most	always
+《	左書名號	most	always
+》	右書名號	most	always
+︽	上書名號	most	always
+︾	下書名號	most	always
+〈	左單書名號	most	always
+〉	右單書名號	most	always
+︿	上單書名號	most	always
+﹀	下單書名號	most	always
+「	左上單引號	most	always
+」	右下單引號	most	always
+『	左上雙引號	most
+』	右下雙引號	most
+﹁	右上單引號	most	always
+﹂	左下單引號	most	always
+﹃	右上雙引號	most
+﹄	左下雙引號	most
+〖	左空心方頭括號	most	always
+〗	右空心方頭括號	most	always
+︙	點點點	all	always
+╴	靠左短橫線	most
+︳	靠左直線	most
+︴	靠左直波浪線	most
+﹋	靠上波浪線	most
+﹌	靠上雙波浪線	most
+﹉	靠上虛線	most
+﹏	靠下波浪線	most
+｀	全形 graav	most
+＠	全形小老鼠	some
+＃	全形 number	some
+＄	全形錢號	all	norep
+％	百分比	some
+＾	全形 caret	most
+＆	全形 and 符號	some
+＊	星號	most
+－	減號	some
+＿	全形底線	most
+＝	等於	some
+＋	加號	some
+＼	反斜線	some
+｜	全形 bar	most
+＇	全形 tick	all
+＂	全形 quote	most
+＜	小於	some
+＞	大於	some
+／	斜線	some
+﹗	小型英文驚嘆號	all
+﹫	小型小老鼠	some
+﹟	小型 number	some
+﹩	小型錢號	all	norep
+﹪	小型 percent	some
+﹠	小型 and 符號	some
+﹡	小型 star	some
+﹣	小型 dash	most
+﹘	小型 em dash	most
+﹦	小型 equals	some
+﹢	小型 plus	some
+﹨	小型 backslash	most
+﹙	小型左括號	most	always
+﹚	小型右括號	most	always
+﹝	小型左六角括號	most	always
+﹞	小型右六角括號	most	always
+﹛	小型左大括號	most	always
+﹜	小型右大括號	most	always
+﹔	小型 semi	most
+﹕	小型 colon	most	norep
+﹑	小型頓號	all	always
+﹤	小型 less	some
+﹥	小型 greater	some
+﹐	小型 comma	all	always
+﹒	小型 dot	some
+﹖	小型 question	all
+　	全形空格	all
+‥	左右兩點引導符號	most
+︰	上下兩點引導符號	most
+※	米字符號	most
+〃	同上符號	most
+◎	雙圓圈	most
+☆	空心星號	most
+★	實心星號	most
+◇	空心菱形	most
+㊣	正字標記	none
+㏒	對數	some
+㏑	自然對數	some
+♀	女性符號	some
+♂	男性符號	some
+￥	人民幣	none
+￡	英鎊	none
+℃	度C	none
+℉	度F	none
+㏕	密耳	none
+㎜	毫米	none
+㎝	公分	none
+㎞	公里	none
+㏎	公里	none
+㏄	cc	none
+㎡	平方公尺	none
+㎎	毫克	none
+㎏	公斤	none
+〜	日文波浪破哲號	most
+╳	斜十字交叉線	most
+￠	全形分	all	norep
+￣	全形 macron	most
+
+# 選擇題選項
+①	圓圈數字1	none
+②	圓圈數字2	none
+③	圓圈數字3	none
+④	圓圈數字4	none
+⑤	圓圈數字5	none
+⑥	圓圈數字6	none
+⑦	圓圈數字7	none
+⑧	圓圈數字8	none
+⑨	圓圈數字9	none
+⑩	圓圈數字十	none
+Ⓐ	圓圈大寫字母A	none
+Ⓑ	圓圈大寫字母B	none
+Ⓒ	圓圈大寫字母C	none
+Ⓓ	圓圈大寫字母D	none
+Ⓔ	圓圈大寫字母E	none
+Ⓕ	圓圈大寫字母F	none
+ⓐ	圓圈小寫字母a	none
+ⓑ	圓圈小寫字母b	none
+ⓒ	圓圈小寫字母c	none
+ⓓ	圓圈小寫字母d	none
+ⓔ	圓圈小寫字母e	none
+ⓕ	圓圈小寫字母f	none
+	選項A	none
+	選項B	none
+	選項C	none
+	選項D	none
+
+# 全形英文大寫字母
+Ａ	A	none
+Ｂ	B	none
+Ｃ	C	none
+Ｄ	D	none
+Ｅ	E	none
+Ｆ	F	none
+Ｇ	G	none
+Ｈ	H	none
+ＩI		none
+Ｊ	J	none
+Ｋ	K	none
+Ｌ	L	none
+Ｍ	M	none
+Ｎ	N	none
+Ｏ	O	none
+Ｐ	P	none
+Ｑ	Q	none
+Ｒ	R	none
+Ｓ	S	none
+Ｔ	T	none
+Ｕ	U	none
+Ｖ	V	none
+Ｗ	W	none
+Ｘ	X	none
+Ｙ	Y	none
+Ｚ	Z	none
+
+# 希臘字母
+α	Alpha	none
+β	Beta	none
+γ	Gamma	none
+δ	Delta	none
+ε	Epsilon	none
+ζ	Zeta	none
+η	aita	none
+θ	Theta	none
+ι	Iota	none
+κ	Kappa	none
+λ	Lambda	none
+μ	Mu	none
+ν	Nu	none
+ξ	zeye	none
+ο	omacron	none
+π	Pi	none
+ρ	Rho	none
+σ	Sigma	none
+τ	Tau	none
+υ	up salon	none
+φ	Phi	none
+χ	kai	none
+ψ	Psi	none
+ω	Omega	none
+Α	Alpha	none
+Β	Beta	none
+Γ	Gamma	none
+Δ	Delta	none
+Ε	Epsilon	none
+Ζ	Zeta	none
+Η	aita	none
+Θ	Theta	none
+Ι	Iota	none
+Κ	Kappa	none
+Λ	Lambda	none
+Μ	Mu	none
+Ν	Nu	none
+Ξ	zeye	none
+Ο	omacron	none
+Π	Pi	none
+Ρ	Rho	none
+Σ	Sigma	none
+Τ	Tau	none
+Υ	up salon	none
+Φ	Phi	none
+Χ	kai	none
+Ψ	Psi	none
+Ω	Omega	none
+
+# 點字符號
+⠀	點字空格
+⠁	點字第一點
+⠂	點字第二點
+⠃	點字一二點
+⠄	點字第三點
+⠅	點字一三點
+⠆	點字二三點
+⠇	點字一二三點
+⠈	點字第四點
+⠉	點字一四點
+⠊	點字二四點
+⠋	點字一二四點
+⠌	點字三四點
+⠍	點字一三四點
+⠎	點字二三四點
+⠏	點字一二三四點
+⠐	點字第五點
+⠑	點字一五點
+⠒	點字二五點
+⠓	點字一二五點
+⠔	點字三五點
+⠕	點字一三五點
+⠖	點字二三五點
+⠗	點字一二三五點
+⠘	點字四五點
+⠙	點字一四五點
+⠚	點字二四五點
+⠛	點字一二四五點
+⠜	點字三四五點
+⠝	點字一三四五點
+⠞	點字二三四五點
+⠟	點字一二三四五點
+⠠	點字第六點
+⠡	點字一六點
+⠢	點字二六點
+⠣	點字一二六點
+⠤	點字三六點
+⠥	點字一三六點
+⠦	點字二三六點
+⠧	點字一二三六點
+⠨	點字四六點
+⠩	點字一四六點
+⠪	點字二四六點
+⠫	點字一二四六點
+⠬	點字三四六點
+⠭	點字一三四六點
+⠮	點字二三四六點
+⠯	點字一二三四六點
+⠰	點字五六點
+⠱	點字一五六點
+⠲	點字二五六點
+⠳	點字一二五六點
+⠴	點字三五六點
+⠵	點字一三五六點
+⠶	點字二三五六點
+⠷	點字一二三五六點
+⠸	點字四五六點
+⠹	點字一四五六點
+⠺	點字二四五六點
+⠻	點字一二四五六點
+⠼	點字三四五六點
+⠽	點字一三四五六點
+⠾	點字二三四五六點
+⠿	點字一二三四五六點
+⡀	點字第七點
+⡁	點字一七點
+⡂	點字二七點
+⡃	點字一二七點
+⡄	點字三七點
+⡅	點字一三七點
+⡆	點字二三七點
+⡇	點字一二三七點
+⡈	點字四七點
+⡉	點字一四七點
+⡊	點字二四七點
+⡋	點字一二四七點
+⡌	點字三四七點
+⡍	點字一三四七點
+⡎	點字二三四七點
+⡏	點字一二三四七點
+⡐	點字五七點
+⡑	點字一五七點
+⡒	點字二五七點
+⡓	點字一二五七點
+⡔	點字三五七點
+⡕	點字一三五七點
+⡖	點字二三五七點
+⡗	點字一二三五七點
+⡘	點字四五七點
+⡙	點字一四五七點
+⡚	點字二四五七點
+⡛	點字一二四五七點
+⡜	點字三四五七點
+⡝	點字一三四五七點
+⡞	點字二三四五七點
+⡟	點字一二三四五七點
+⡠	點字六七點
+⡡	點字一六七點
+⡢	點字二六七點
+⡣	點字一二六七點
+⡤	點字三六七點
+⡥	點字一三六七點
+⡦	點字二三六七點
+⡧	點字一二三六七點
+⡨	點字四六七點
+⡩	點字一四六七點
+⡪	點字二四六七點
+⡫	點字一二四六七點
+⡬	點字三四六七點
+⡭	點字一三四六七點
+⡮	點字二三四六七點
+⡯	點字一二三四六七點
+⡰	點字五六七點
+⡱	點字一五六七點
+⡲	點字二五六七點
+⡳	點字一二五六七點
+⡴	點字三五六七點
+⡵	點字一三五六七點
+⡶	點字二三五六七點
+⡷	點字一二三五六七點
+⡸	點字四五六七點
+⡹	點字一四五六七點
+⡺	點字二四五六七點
+⡻	點字一二四五六七點
+⡼	點字三四五六七點
+⡽	點字一三四五六七點
+⡾	點字二三四五六七點
+⡿	點字一二三四五六七點
+⢀	點字第八點
+⢁	點字一八點
+⢂	點字二八點
+⢃	點字一二八點
+⢄	點字三八點
+⢅	點字一三八點
+⢆	點字二三八點
+⢇	點字一二三八點
+⢈	點字四八點
+⢉	點字一四八點
+⢊	點字二四八點
+⢋	點字一二四八點
+⢌	點字三四八點
+⢍	點字一三四八點
+⢎	點字二三四八點
+⢏	點字一二三四八點
+⢐	點字五八點
+⢑	點字一五八點
+⢒	點字二五八點
+⢓	點字一二五八點
+⢔	點字三五八點
+⢕	點字一三五八點
+⢖	點字二三五八點
+⢗	點字一二三五八點
+⢘	點字四五八點
+⢙	點字一四五八點
+⢚	點字二四五八點
+⢛	點字一二四五八點
+⢜	點字三四五八點
+⢝	點字一三四五八點
+⢞	點字二三四五八點
+⢟	點字一二三四五八點
+⢠	點字六八點
+⢡	點字一六八點
+⢢	點字二六八點
+⢣	點字一二六八點
+⢤	點字三六八點
+⢥	點字一三六八點
+⢦	點字二三六八點
+⢧	點字一二三六八點
+⢨	點字四六八點
+⢩	點字一四六八點
+⢪	點字二四六八點
+⢫	點字一二四六八點
+⢬	點字三四六八點
+⢭	點字一三四六八點
+⢮	點字二三四六八點
+⢯	點字一二三四六八點
+⢰	點字五六八點
+⢱	點字一五六八點
+⢲	點字二五六八點
+⢳	點字一二五六八點
+⢴	點字三五六八點
+⢵	點字一三五六八點
+⢶	點字二三五六八點
+⢷	點字一二三五六八點
+⢸	點字四五六八點
+⢹	點字一四五六八點
+⢺	點字二四五六八點
+⢻	點字一二四五六八點
+⢼	點字三四五六八點
+⢽	點字一三四五六八點
+⢾	點字二三四五六八點
+⢿	點字一二三四五六八點
+⣀	點字七八點
+⣁	點字一七八點
+⣂	點字二七八點
+⣃	點字一二七八點
+⣄	點字三七八點
+⣅	點字一三七八點
+⣆	點字二三七八點
+⣇	點字一二三七八點
+⣈	點字四七八點
+⣉	點字一四七八點
+⣊	點字二四七八點
+⣋	點字一二四七八點
+⣌	點字三四七八點
+⣍	點字一三四七八點
+⣎	點字二三四七八點
+⣏	點字一二三四七八點
+⣐	點字五七八點
+⣑	點字一五七八點
+⣒	點字二五七八點
+⣓	點字一二五七八點
+⣔	點字三五七八點
+⣕	點字一三五七八點
+⣖	點字二三五七八點
+⣗	點字一二三五七八點
+⣘	點字四五七八點
+⣙	點字一四五七八點
+⣚	點字二四五七八點
+⣛	點字一二四五七八點
+⣜	點字三四五七八點
+⣝	點字一三四五七八點
+⣞	點字二三四五七八點
+⣟	點字一二三四五七八點
+⣠	點字六七八點
+⣡	點字一六七八點
+⣢	點字二六七八點
+⣣	點字一二六七八點
+⣤	點字三六七八點
+⣥	點字一三六七八點
+⣦	點字二三六七八點
+⣧	點字一二三六七八點
+⣨	點字四六七八點
+⣩	點字一四六七八點
+⣪	點字二四六七八點
+⣫	點字一二四六七八點
+⣬	點字三四六七八點
+⣭	點字一三四六七八點
+⣮	點字二三四六七八點
+⣯	點字一二三四六七八點
+⣰	點字五六七八點
+⣱	點字一五六七八點
+⣲	點字二五六七八點
+⣳	點字一二五六七八點
+⣴	點字三五六七八點
+⣵	點字一三五六七八點
+⣶	點字二三五六七八點
+⣷	點字一二三五六七八點
+⣸	點字四五六七八點
+⣹	點字一四五六七八點
+⣺	點字二四五六七八點
+⣻	點字一二四五六七八點
+⣼	點字三四五六七八點
+⣽	點字一三四五六七八點
+⣾	點字二三四五六七八點
+⣿	點字一二三四五六七八點
+
+# 以下區段為「中日韓統一表意文字 (0x4e00~0x9fff)」
+丨	滾	none
+丶	主	none
+乚	乙	none
+亪	噎	none
+亻	人	none
+兙	十克	none
+兛	千克	none
+兝	分克	none
+兞	毛克	none
+兡	百克	none
+兣	厘克	none
+冂	扃	none
+冖	密	none
+冫	冰	none
+凪	指	none
+凵	砍	none
+刂	刀	none
+卩	節	none
+吖	鴉	none
+呔	太	none
+呠	本	none
+呤	鈴	none
+呾	旦	none
+咁	甘	none
+咹	安	none
+哢	弄	none
+唍	完	none
+啿	堪	none
+営	營	none
+嗏	茶	none
+嗧	加侖	none
+嘌	飄	none
+噻	賽	none
+垻	貝	none
+塀	評	none
+塩	顏	none
+売	邁	none
+宀	棉	none
+尢	汪	none
+岃	某	none
+忄	心	none
+扌	手	none
+攴	撲	none
+攵	撲	none
+敻	詗	none
+昻	昂	none
+柡	永	none
+栃	立	none
+栄	榮	none
+榊	神	none
+槗	橋	none
+歚	善	none
+歯	齒	none
+歳	歲	none
+歺	傣	none
+氬	亞	none
+氰	青	none
+氵	水	none
+渇	渴	none
+渋	澀	none
+濏	瑟	none
+爿	牆	none
+犭	犬	none
+瓩	千瓦	none
+甾	玆	none
+疒	床	none
+癪	積	none
+砈	厄	none
+竔	公升	none
+笹	世	none
+籖	籤	none
+籵	公丈	none
+粀	丈	none
+粁	千	none
+粌	銀	none
+粎	公尺	none
+糎	公分	none
+糹	密	none
+絵	惠	none
+繍	秀	none
+罒	往	none
+肟	污	none
+胂	申	none
+胜	生	none
+胲	亥	none
+胺	安	none
+脎	殺	none
+腈	青	none
+膦	磷	none
+芘	比	none
+芪	氏	none
+苝	北	none
+苨	尼	none
+茋	底	none
+茬	在	none
+荘	莊	none
+菐	僕	none
+萉	肥	none
+薁	奧	none
+虍	呼	none
+辵	輟	none
+辶	輟	none
+釙	破	none
+鈀	巴	none
+鈇	夫	none
+鈷	姑	none
+鈽	布	none
+鈾	又	none
+鉨	你	none
+鉭	旦	none
+鉮	申	none
+銻	替	none
+鋞	徑	none
+鋶	流	none
+鋽	卓	none
+錪	典	none
+鍗	帝	none
+鎝	塔	none
+镸	常	none
+閪	某	none
+餎	忇	none
+饂	餛	none
+饹	了	none
+駅	驛	none
+黽	敏	none
+龵	手	none
+龺	濁	none
+鿌	良	none
+鿍	槓	none
+鿎	妲	none
+鿏	邁	none
+鿔	鎶	none
+鿕	耽	none
+鿪	燧	none
+鿫	澳	none
+鿬	田	none
+鿭	你	none
+
+# 以下區段為「中日韓統一表意文字擴充 A (0x3400~0x4dbf)」
+㐁	瑱	none
+㐄	跨	none
+㐌	宜	none
+㐮	襄	none
+㐱	軫	none
+㑁	捉	none
+㑇	皺	none
+㑊	亦	none
+㑳	宙	none
+㒰	全	none
+㒸	歲	none
+㒼	蠻	none
+㓾	旗	none
+㔂	林	none
+㔾	節	none
+㕚	沼	none
+㕡	貨	none
+㕮	甫	none
+㕸	立	none
+㖅	續	none
+㖕	辛	none
+㖠	奈	none
+㖸	絕	none
+㗁	咢	none
+㗎	架	none
+㗘	博	none
+㗱	集	none
+㘎	喊	none
+㘔	腮	none
+㘚	喊	none
+㘛	龕	none
+㘝	逆	none
+㘭	凹	none
+㘿	涅	none
+㙍	多	none
+㙘	邀	none
+㙦	協	none
+㚇	宗	none
+㚬	軍	none
+㚸	司	none
+㛃	節	none
+㛄	依	none
+㛚	統	none
+㛢	秀	none
+㛹	胼	none
+㜮	濫	none
+㜷	彌	none
+㝗	郎	none
+㝩	康	none
+㞢	之	none
+㟃	司	none
+㠇	就	none
+㠓	蒙	none
+㠣	立	none
+㠭	展	none
+㢟	梴	none
+㤉	訝	none
+㤕	觸	none
+㤘	皺	none
+㥄	靈	none
+㥐	怨	none
+㥮	炒	none
+㦊	驊	none
+㧁	覷	none
+㧌	帽	none
+㧎	牙	none
+㧐	聳	none
+㧑	輝	none
+㧒	玉	none
+㧟	蒯	none
+㧡	位	none
+㧣	豬	none
+㧬	拱	none
+㧱	拿	none
+㧻	濁	none
+㧾	忽	none
+㨂	董	none
+㨑	宗	none
+㨗	捷	none
+㨨	抽	none
+㨪	晃	none
+㨻	殘	none
+㩆	促	none
+㩒	勤	none
+㩳	聳	none
+㪐	路	none
+㫃	眼	none
+㫰	埌	none
+㬊	緩	none
+㬎	顯	none
+㬚	撤	none
+㬱	替	none
+㬹	爭	none
+㭎	棡	none
+㭕	驅	none
+㮝	河	none
+㮾	朗	none
+㯴	蓉	none
+㰀	黎	none
+㰵	族	none
+㳇	物	none
+㳘	充	none
+㳚	續	none
+㳺	游	none
+㴔	係	none
+㴘	冒	none
+㴙	眨	none
+㵐	卻	none
+㵘	慢	none
+㶈	螢	none
+㶲	用	none
+㷍	倫	none
+㷫	廎	none
+㷮	遭	none
+㷻	無	none
+㸂	燧	none
+㸆	靠	none
+㸌	霍	none
+㸐	然	none
+㸰	陀	none
+㹭	億	none
+㹴	庚	none
+㺄	宇	none
+㺭	紫	none
+㻅	璯	none
+㻬	禿	none
+㼈	羅	none
+㼓	連	none
+㽎	談	none
+㽏	淦	none
+㾀	竊	none
+㾊	刺	none
+㿠	岲	none
+㿸	蠻	none
+䀐	山	none
+䀘	西	none
+䀠	具	none
+䀯	甫	none
+䀴	影	none
+䀹	睫	none
+䁖	瞜	none
+䁯	西	none
+䂥	民	none
+䂮	略	none
+䃅	磾	none
+䃎	榨	none
+䃗	撥	none
+䃮	妲	none
+䅟	慘	none
+䅿	驊	none
+䆀	每	none
+䇶	握	none
+䈁	侖	none
+䈄	函	none
+䉂	蕾	none
+䌈	踏	none
+䌓	繁	none
+䌷	紬	none
+䌸	縳	none
+䌹	絅	none
+䍃	由	none
+䎃	冉	none
+䎖	增	none
+䏝	專	none
+䏟	必	none
+䏡	是	none
+䏲	悌	none
+䐃	菌	none
+䐶	潛	none
+䓖	藭	none
+䓛	股	none
+䓝	孟	none
+䓣	啢	none
+䓨	罃	none
+䓫	旗	none
+䓬	卓	none
+䔥	蕭	none
+䕒	嘉	none
+䕫	揆	none
+䖙	梯	none
+䖳	榨	none
+䖵	坤	none
+䗁	七	none
+䗆	管	none
+䗐	施	none
+䗖	第	none
+䗛	修	none
+䗪	蔗	none
+䗴	廷	none
+䘆	遣	none
+䘥	頰	none
+䘼	宛	none
+䜢	顯	none
+䜣	新	none
+䝉	蒙	none
+䝙	貙	none
+䞚	旗	none
+䟓	丁	none
+䟘	沆	none
+䟩	卻	none
+䠡	茶	none
+䠷	窕	none
+䡵	歲	none
+䢍	放	none
+䢢	賶	none
+䢺	出	none
+䢼	公	none
+䢿	安	none
+䣘	堂	none
+䥑	麥	none
+䥕	鐅	none
+䥽	鏺	none
+䦃	捉	none
+䧟	陷	none
+䨩	靈	none
+䩄	靦	none
+䪞	雜	none
+䪸	民	none
+䫌	痞	none
+䭲	以	none
+䮄	懸	none
+䯋	博	none
+䰾	巴	none
+䱀	秧	none
+䱛	或	none
+䲁	位	none
+䲅	規	none
+䲘	管	none
+䲜	夜	none
+䲟	鮣	none
+䲠	鰆	none
+䲢	鰧	none
+䴉	懸	none
+䴓	鳾	none
+䴔	交	none
+䴕	鴷	none
+䴖	經	none
+䴗	鶪	none
+䴘	踢	none
+䴙	闢	none
+䶮	龑	none
+
+# 以下區段為「中日韓統一表意文字擴充 B (0x20000~0x2a6df)」
+𠁽	丸	none
+𠂆	億	none
+𠂔	紫	none
+𠂢	派	none
+𠂤	堆	none
+𠅤	錫	none
+𠊎	捱	none
+𠍐	令	none
+𠎷	薩	none
+𠓗	富	none
+𠔌	絕	none
+𠕇	店	none
+𠖄	同	none
+𠗻	懸	none
+𠙶	偶	none
+𠜱	批	none
+𠞩	誜	none
+𠞭	漏	none
+𠠃	千	none
+𠠝	歷	none
+𠢕	豪	none
+𠤎	匕	none
+𠧗	弄	none
+𠫓	圖	none
+𠬛	末	none
+𠬝	福	none
+𠬪	飆	none
+𠮻	久	none
+𠮿	山	none
+𠯑	瓜	none
+𠯗	匝	none
+𠯤	井	none
+𠰂	完	none
+𠰌	末	none
+𠰐	剖	none
+𠰢	半	none
+𠱠	玲	none
+𠲿	朔	none
+𠳐	邦	none
+𠳭	克	none
+𠷬	練	none
+𡈼	挺	none
+𡊋	封	none
+𡍼	塗	none
+𡎚	覑	none
+𡐓	康	none
+𡑍	牢	none
+𡖖	卿	none
+𡟚	盈	none
+𡢃	嫌	none
+𡩋	寧	none
+𡩣	桀	none
+𡳞	吝	none
+𡻕	嵗	none
+𢎙	嫌	none
+𢎨	弔	none
+𢙺	志	none
+𢡄	慘	none
+𢡊	愆	none
+𢪱	勿	none
+𢫦	拍	none
+𢯭	鄧	none
+𢯾	冒	none
+𢱤	聳	none
+𢲴	慰	none
+𢲸	鹵	none
+𢳂	瞥	none
+𢳆	傲	none
+𢳪	樹	none
+𢶀	拽	none
+𢼌	報	none
+𢼛	格	none
+𣁳	握	none
+𣅀	指	none
+𣎳	牝	none
+𣏕	癈	none
+𣏟	派	none
+𣓾	易	none
+𣗋	黨	none
+𣛮	聖	none
+𣦻	殘	none
+𣦼	纏	none
+𣬂	灌	none
+𣬉	毗	none
+𣮈	屈	none
+𣲗	湋	none
+𣲘	潕	none
+𣲩	巴	none
+𣸣	豶	none
+𣼎	卻	none
+𤆬	ㄔㄨㄚ	none
+𤉙	君	none
+𤊶	辣	none
+𤋮	熙	none
+𤌍	胡	none
+𤍒	昭	none
+𤐙	壁	none
+𤐰	貨	none
+𤔔	亂	none
+𤘅	牙	none
+𤞚	消	none
+𤣩	玉	none
+𤣹	髮	none
+𤧛	帝	none
+𤧞	美	none
+𤧟	亭	none
+𤨁	晉	none
+𤩽	環	none
+𤫉	燮	none
+𤰇	備	none
+𤰈	備	none
+𤲍	霞	none
+𤴔	書	none
+𤶃	兆	none
+𤸁	惠	none
+𤸱	愾	none
+𤺅	墜	none
+𤺪	善	none
+𥁕	溫	none
+𥉉	替	none
+𥉌	褡	none
+𥌚	樹	none
+𥍉	設	none
+𥐵	批	none
+𥑮	古	none
+𥔲	餓	none
+𥕢	曹	none
+𥕥	驅	none
+𥖨	噪	none
+𥗽	恰	none
+𥠖	黎	none
+𥡪	翌	none
+𥪕	秉	none
+𥫗	竹	none
+𥯟	派	none
+𥯥	撤	none
+𥰔	品	none
+𥳐	遣	none
+𥴊	敢	none
+𥴰	靖	none
+𥺆	呈	none
+𥻗	茶	none
+𦈡	須	none
+𦈢	鴀	none
+𦉎	荽	none
+𦊓	領	none
+𦍋	羋	none
+𦍌	羊	none
+𦐇	踏	none
+𦒍	童	none
+𦘒	聶	none
+𦙶	古	none
+𦜆	顄	none
+𦜳	經	none
+𦝼	嚕	none
+𦟪	連	none
+𦣝	頤	none
+𦣞	宜	none
+𦥑	局	none
+𦬩	路	none
+𦭌	卡	none
+𦭜	隻	none
+𦭽	伊	none
+𦮦	帽	none
+𦯉	伯	none
+𦰡	納	none
+𦲾	奔	none
+𦸽	黑	none
+𦺻	傘	none
+𦾐	藍	none
+𧃽	應	none
+𧉟	胎	none
+𧊅	拐	none
+𧌄	惡	none
+𧝁	禤	none
+𧨾	ㄕㄢˊ	none
+𧩣	腦	none
+𧮙	昨	none
+𧰨	堩	none
+𧶠	玉	none
+𧷏	玉	none
+𧻓	蹦	none
+𧻴	埌	none
+𧾷	族	none
+𧿬	屯	none
+𧿳	福	none
+𧿹	母	none
+𨂾	男	none
+𨂿	ㄨㄞˇ	none
+𨃰	眼	none
+𨅔	殘	none
+𨋢	立	none
+𨐈	光	none
+𨑨	志	none
+𨒇	甲	none
+𨓻	逮	none
+𨙸	旗	none
+𨚕	變	none
+𨜏	盈	none
+𨟠	悛	none
+𨠳	富	none
+𨠴	西	none
+𨢑	鹼	none
+𨥙	井	none
+𨦡	羊	none
+𨧀	杜	none
+𨨏	波	none
+𨭆	黑	none
+𨭉	班	none
+𨭎	喜	none
+𨱇	銶	none
+𨱏	褡	none
+𨱑	鐄	none
+𨱔	鐏	none
+𨳊	鳩	none
+𨶒	閻	none
+𨸏	阜	none
+𨺙	逆	none
+𨿅	名	none
+𩑾	低	none
+𩓙	以	none
+𩓩	兜	none
+𩚨	題	none
+𩛩	餄	none
+𩜄	餓	none
+𩜰	屁	none
+𩱧	庚	none
+𩵚	杜	none
+𩵱	午	none
+𩷍	役	none
+𩸙	立	none
+𩸶	握	none
+𩻸	帶	none
+𩼧	邊	none
+𩽾	安	none
+𩾃	勉	none
+𩾌	鱇	none
+𩿀	眾	none
+𪁎	消	none
+𪆱	劉	none
+𪐞	杜	none
+𪖐	藥	none
+𪘒	韓	none
+𪚥	蔗	none
+
+# 以下區段為「中日韓統一表意文字擴充 C (0x2a700~0x2b73f)」
+𪜶	因	none
+𪟝	季	none
+𪡓	昆	none
+𪣻	樓	none
+𪤗	廖	none
+𪧟	甯	none
+𪨰	驅	none
+𪨶	奢	none
+𪩘	巘	none
+𪹚	棒	none
+𪾢	睍	none
+𫄧	綖	none
+𫄨	嗤	none
+𫄷	繶	none
+𫄸	纁	none
+𫇭	蒍	none
+𫌀	機	none
+𫍣	童	none
+𫍯	諴	none
+𫍲	謏	none
+𫍽	宣	none
+𫎇	蒙	none
+𫐄	軏	none
+𫐐	霓	none
+𫐓	輮	none
+𫑡	蒙	none
+𫓧	伕	none
+𫓯	銈	none
+𫓶	鋗	none
+𫓹	錤	none
+𫔍	鐇	none
+𫔎	絕	none
+𫔶	闑	none
+𫖮	顗	none
+𫖯	府	none
+𫖳	氳	none
+𫗧	餗	none
+𫗴	饘	none
+𫘜	雯	none
+𫘝	絕	none
+𫘦	騊	none
+𫘧	騄	none
+𫘨	騠	none
+𫘪	騵	none
+𫘬	錫	none
+𫚕	鰤	none
+𫚖	此	none
+𫚭	獵	none
+𫛭	鵟	none
+
+# 以下區段為「中日韓統一表意文字擴充 D (0x2b740~0x2b81f)」
+𫞩	璊	none
+𫟅	綡	none
+𫟦	歲	none
+𫟷	鉝	none
+𫟹	鉷	none
+𫟼	鐽	none
+𫠆	頍	none
+𫠊	玄	none
+𫠜	齯	none
+
+# 以下區段為「中日韓統一表意文字擴充 E (0x2b820~0x2ceaf)」
+𫡼	曹	none
+𫢸	僤	none
+𫣆	恩	none
+𫩒	巾	none
+𫫇	餓	none
+𫭟	毆	none
+𫭢	稐	none
+𫭼	牢	none
+𫮃	墠	none
+𫰛	娙	none
+𫵷	立	none
+𫶇	嵽	none
+𫷷	新	none
+𫸩	彄	none
+𬀩	暐	none
+𬀪	晛	none
+𬂩	加	none
+𬃊	櫍	none
+𬇕	萬	none
+𬇙	貝	none
+𬇹	漍	none
+𬉼	偶	none
+𬊈	巡	none
+𬊤	產	none
+𬌗	河	none
+𬍛	瓅	none
+𬍡	璗	none
+𬍤	璕	none
+𬒈	卻	none
+𬒔	耿	none
+𬒗	藍	none
+𬓽	穆	none
+𬕂	攏	none
+𬘓	紃	none
+𬘘	紞	none
+𬘡	絪	none
+𬘩	綎	none
+𬘫	環	none
+𬘬	欠	none
+𬘭	撐	none
+𬘯	準	none
+𬙂	眼	none
+𬙊	纆	none
+𬙋	香	none
+𬜢	久	none
+𬜬	蔄	none
+𬜯	啢	none
+𬜴	快	none
+𬞟	蘋	none
+𬟁	億	none
+𬟽	東	none
+𬣙	須	none
+𬣞	主	none
+𬣡	諓	none
+𬣳	詪	none
+𬤇	諲	none
+𬤊	是	none
+𬤝	譓	none
+𬨂	軝	none
+𬨎	輶	none
+𬩽	巡	none
+𬪩	醲	none
+𬬩	釴	none
+𬬭	錀	none
+𬬮	鋹	none
+𬬱	斤	none
+𬬸	樹	none
+𬬹	神	none
+𬬻	鑪	none
+𬬿	鉊	none
+𬭁	鉧	none
+𬭊	杜	none
+𬭎	鋐	none
+𬭚	淳	none
+𬭛	撥	none
+𬭤	鍭	none
+𬭩	鎓	none
+𬭬	彗	none
+𬭯	䥕	none
+𬭳	璽	none
+𬭶	潶	none
+𬭸	鄰	none
+𬭼	鐩	none
+𬮱	闉	none
+𬮿	概	none
+𬯀	隮	none
+𬯎	頹	none
+𬱖	頔	none
+𬱟	頠	none
+𬳵	駓	none
+𬳶	駉	none
+𬳽	駪	none
+𬳿	駼	none
+𬴂	騑	none
+𬴃	锪	none
+𬴊	驎	none
+𬶋	疽	none
+𬶍	鮀	none
+𬶏	鮠	none
+𬶐	鮡	none
+𬶟	鯻	none
+𬶠	鰊	none
+𬶨	鱀	none
+𬶭	鰶	none
+𬶮	囍	none
+𬷕	補	none
+𬸘	鶠	none
+𬸚	鸑	none
+𬸣	鶱	none
+𬸦	鷟	none
+𬸪	鷭	none
+𬹼	齘	none
+𬺈	齮	none
+𬺓	楚	none
+
+# 以下區段為「中日韓統一表意文字擴充 F (0x2ceb0~0x2ebef)」
+𭈻	星	none
+𮏒	蕭	none	# 姓氏用字之讀音
+𮠺	帝	none
+
+# 以下區段為「中日韓統一表意文字擴充 G (0x30000~0x3134f)」
+𰹬	狀	none
+𱆥	耽	none
+
+# 以下區段為「中日韓統一表意文字擴充 H (0x31350~0x323af)」
+𱽕	叨	none
+𱽖	申	none
+𱽥	米	none
+𱾝	椎	none
+𲆦	矽	none
+𲆩	松	none
+𲆰	錫	none
+𲆱	朋	none
+𲆳	品	none
+𲇊	西	none
+𲇙	嗅	none
+
+# 以下區段為「中日韓統一表意文字擴充 I (0x2ebf0~0x2ee5f)」
+
+# 以下區段為「中日韓相容表意文字 (0xf900~0xfaff)」
+塀	評	none
+𤋮	熙	none
+𢡊	愆	none
+𢡄	慘	none
+𣏕	癈	none
+㮝	河	none
+䀘	西	none
+䀹	睫	none
+𥉉	替	none
+𥳐	遣	none
+𧻓	蹦	none
+
+# 以下區段為「中日韓相容表意文字補充 (0x2f800~0x2fa1f)」
+𥄳	踏	none
+
+# 以下區段為「康熙部首 (0x2f00~0x2fdf)」
+⼀	一	none
+⼁	丨	none
+⼂	丶	none
+⼃	丿	none
+⼄	乙	none
+⼅	亅	none
+⼆	二	none
+⼇	亠	none
+⼈	人	none
+⼉	儿	none
+⼊	入	none
+⼋	八	none
+⼌	冂	none
+⼍	冖	none
+⼎	冫	none
+⼏	几	none
+⼐	凵	none
+⼑	刀	none
+⼒	力	none
+⼓	勹	none
+⼔	匕	none
+⼕	匚	none
+⼖	匸	none
+⼗	十	none
+⼘	卜	none
+⼙	卩	none
+⼚	厂	none
+⼛	厶	none
+⼜	又	none
+⼝	口	none
+⼞	囗	none
+⼟	土	none
+⼠	士	none
+⼡	夂	none
+⼢	夊	none
+⼣	夕	none
+⼤	大	none
+⼥	女	none
+⼦	子	none
+⼧	宀	none
+⼨	寸	none
+⼩	小	none
+⼪	尢	none
+⼫	尸	none
+⼬	屮	none
+⼭	山	none
+⼮	巛	none
+⼯	工	none
+⼰	己	none
+⼱	巾	none
+⼲	干	none
+⼳	幺	none
+⼴	广	none
+⼵	廴	none
+⼶	廾	none
+⼷	弋	none
+⼸	弓	none
+⼹	彐	none
+⼺	彡	none
+⼻	彳	none
+⼼	心	none
+⼽	戈	none
+⼾	戶	none
+⼿	手	none
+⽀	支	none
+⽁	攴	none
+⽂	文	none
+⽃	斗	none
+⽄	斤	none
+⽅	方	none
+⽆	无	none
+⽇	日	none
+⽈	曰	none
+⽉	月	none
+⽊	木	none
+⽋	欠	none
+⽌	止	none
+⽍	歹	none
+⽎	殳	none
+⽏	毋	none
+⽐	比	none
+⽑	毛	none
+⽒	氏	none
+⽓	气	none
+⽔	水	none
+⽕	火	none
+⽖	爪	none
+⽗	父	none
+⽘	爻	none
+⽙	爿	none
+⽚	片	none
+⽛	牙	none
+⽜	牛	none
+⽝	犬	none
+⽞	玄	none
+⽟	玉	none
+⽠	瓜	none
+⽡	瓦	none
+⽢	甘	none
+⽣	生	none
+⽤	用	none
+⽥	田	none
+⽦	疋	none
+⽧	疒	none
+⽨	癶	none
+⽩	白	none
+⽪	皮	none
+⽫	皿	none
+⽬	目	none
+⽭	矛	none
+⽮	矢	none
+⽯	石	none
+⽰	示	none
+⽱	禸	none
+⽲	禾	none
+⽳	穴	none
+⽴	立	none
+⽵	竹	none
+⽶	米	none
+⽷	糸	none
+⽸	缶	none
+⽹	网	none
+⽺	羊	none
+⽻	羽	none
+⽼	老	none
+⽽	而	none
+⽾	耒	none
+⽿	耳	none
+⾀	聿	none
+⾁	肉	none
+⾂	臣	none
+⾃	自	none
+⾄	至	none
+⾅	臼	none
+⾆	舌	none
+⾇	舛	none
+⾈	舟	none
+⾉	艮	none
+⾊	色	none
+⾋	艸	none
+⾌	虍	none
+⾍	虫	none
+⾎	血	none
+⾏	行	none
+⾐	衣	none
+⾑	襾	none
+⾒	見	none
+⾓	角	none
+⾔	言	none
+⾕	谷	none
+⾖	豆	none
+⾗	豕	none
+⾘	豸	none
+⾙	貝	none
+⾚	赤	none
+⾛	走	none
+⾜	足	none
+⾝	身	none
+⾞	車	none
+⾟	辛	none
+⾠	辰	none
+⾡	辵	none
+⾢	邑	none
+⾣	酉	none
+⾤	釆	none
+⾥	里	none
+⾦	金	none
+⾧	長	none
+⾨	門	none
+⾩	阜	none
+⾪	隶	none
+⾫	隹	none
+⾬	雨	none
+⾭	靑	none
+⾮	非	none
+⾯	面	none
+⾰	革	none
+⾱	韋	none
+⾲	韭	none
+⾳	音	none
+⾴	頁	none
+⾵	風	none
+⾶	飛	none
+⾷	食	none
+⾸	首	none
+⾹	香	none
+⾺	馬	none
+⾻	骨	none
+⾼	高	none
+⾽	髟	none
+⾾	鬥	none
+⾿	鬯	none
+⿀	鬲	none
+⿁	鬼	none
+⿂	魚	none
+⿃	鳥	none
+⿄	鹵	none
+⿅	鹿	none
+⿆	麥	none
+⿇	麻	none
+⿈	黃	none
+⿉	黍	none
+⿊	黑	none
+⿋	黹	none
+⿌	黽	none
+⿍	鼎	none
+⿎	鼓	none
+⿏	鼠	none
+⿐	鼻	none
+⿑	齊	none
+⿒	齒	none
+⿓	龍	none
+⿔	龜	none
+⿕	龠	none
+
+# 漢語拼音符號
+ā	一聲 a	none
+á	二聲 a	none
+ǎ	三聲 a	none
+à	四聲 a	none
+ē	一聲 e	none
+é	二聲 e	none
+ě	三聲 e	none
+è	四聲 e	none
+ī	一聲 i	none
+í	二聲 i	none
+ǐ	三聲 i	none
+ì	四聲 i	none
+ō	一聲 o	none
+ó	二聲 o	none
+ǒ	三聲 o	none
+ò	四聲 o	none
+ū	一聲 u	none
+ú	二聲 u	none
+ǔ	三聲 u	none
+ù	四聲 u	none
+ǖ	一聲 淤	none
+ǘ	二聲 淤	none
+ǚ	三聲 淤	none
+ǜ	四聲 淤	none
+ế	二聲 ㄝ	none
+ề	四聲 ㄝ	none
+ḿ	二聲 m	none
+ń	二聲 n	none
+ň	三聲 n	none
+ǹ	四聲 n	none
+
+# 其他符號
+˙	輕聲	none
+ˉ	第一聲	none
+｢	半形左上單引號	most	always
+｣	半形右下單引號	most	always
+｡	半形句號	all	always
+､	半形頓號	all	always
+‵	reversed prime	some
+Å	埃	none
+Å	埃	none
+K	克耳文	none
+Ω	歐姆	none
+℥	盎司	none
+
+# End of file

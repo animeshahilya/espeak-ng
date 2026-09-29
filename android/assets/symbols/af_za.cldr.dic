@@ -1,0 +1,344 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	oop-krulhakie	-
+‾	oorstreep	-
+_	onderste streep	-
+-	koppelteken-minus	-
+‐	koppelteken	-
+–	en-streep	-
+—	em-streep	-
+―	horisontale balk	-
+・	katakana-middelkol	-
+,	komma	-
+،	arabiese komma	-
+、	ideografiese komma	-
+;	kommapunt	-
+؛	arabiese kommapunt	-
+:	dubbelpunt	-
+!	uitroepteken	-
+¡	omgekeerde uitroepteken	-
+?	vraagteken	-
+¿	omgekeerde vraagteken	-
+؟	arabiese vraagteken	-
+‽	vraagroepteken	-
+.	punt	-
+…	ellips	-
+。	ideografiese punt	-
+·	middelkol	-
+'	tikmasjien-apostroof	-
+‘	apostroof links	-
+’	apostroof regs	-
+‚	onderste regter-apostroof	-
+“	linkeraanhalingsteken	-
+”	regteraanhalingsteken	-
+„	onderste regter-enkelaanhaling	-
+«	links-guillemet	-
+»	regs-guillemet	-
+)	sluithakie	-
+[	oop-blokhakie	-
+]	sluit-blokhakie	-
+}	sluit-krulhakie	-
+〈	oop-hoekhakie	-
+〉	sluit-hoekhakie	-
+《	oop-dubbelhoekhakie	-
+》	sluit-dubbelhoekhakie	-
+「	oop-raamhakie	-
+」	sluit-raamhakie	-
+『	oop-holraamhakie	-
+』	sluit-holraamhakie	-
+【	oop-swartlenshakie	-
+】	sluit-swartlenshakie	-
+〔	oop-skilpaddophakie	-
+〕	sluit-skilpaddophakie	-
+〖	oop-hollenshakie	-
+〗	sluit-hollenshakie	-
+§	afdeling	-
+¶	paragraafteken	-
+@	"at"-teken	-
+*	asterisk	-
+/	skuinsstreep	-
+\	agtertoe-skuinsstreep	-
+&	ampersand	-
+%	persent	-
+‰	permille	-
+†	dolkteken	-
+‡	dubbeldolkteken	-
+•	kol	-
+‧	koppeltekenpunt	-
+′	priem	-
+″	dubbelpriem	-
+‴	trippelpriem	-
+‸	inlasteken	-
+※	verwysingsteken	-
+⁂	asterisme	-
+`	gravisaksent	-
+´	akuutaksent	-
+^	kappie	-
+¨	diërese	-
+°	graad	-
+℗	kopiereg vir klankopname	-
+←	linkswysende pyltjie	-
+↚	pyl na links met streep	-
+→	regswysende pyltjie	-
+↛	pyl na regs met streep	-
+↑	opwysende pyltjie	-
+↓	afwysende pyltjie	-
+↜	golwende pyl na links	-
+↝	golwende pyl na regs	-
+↞	dubbelkoppyl na links	-
+↟	dubbelkoppyl na bo	-
+↠	dubbelkoppyl na regs	-
+↡	dubbelkoppyl na onder	-
+↢	pyl met stert na links	-
+↣	pyl met stert na regs	-
+↤	pyl na links vanaf balk	-
+↥	pyl na bo vanaf balk	-
+↦	pyl na regs vanaf balk	-
+↧	pyl na onder vanaf balk	-
+↨	pyl op en af met basis	-
+↫	pyl na links met lus	-
+↬	pyl na regs met lus	-
+↭	golwende pyl links en regs	-
+↯	sigsag pyl na onder	-
+↰	opwaartse pylpunt na links	-
+↱	opwaartse pylpunt na regs	-
+↲	afwaartse pylpunt na links	-
+↳	afwaartse pylpunt na regs	-
+↴	pylhoek na regs ondertoe	-
+↵	pylhoek na links ondertoe	-
+↶	teenkloksgewyse boonste halfsirkelpyl	-
+↷	kloksgewyse boonste halfsirkelpyl	-
+↸	noordwes-pyl met lang balk	-
+↹	pylbalk na links bo-op pylbalk na regs	-
+↺	teenkloksgewyse oopsirkelpyl	-
+↻	kloksgewyse oopsirkelpyl	-
+↼	linkswaartse harpoenhoek na bo	-
+↽	linkswaartse harpoenhoek na onder	-
+↾	opwaartse harpoenhoek na regs	-
+↿	opwaartse harpoenhoek na links	-
+⇀	regswaartse harpoenhoek na bo	-
+⇁	regswaartse harpoenhoek na onder	-
+⇂	afwaartse harpoenhoek na regs	-
+⇃	afwaartse harpoenhoek na links	-
+⇄	pyl na regs bo-op pyl na links	-
+⇅	opwysende en afwysende pyltjies	-
+⇆	linkswysende oor regswysende pyltjies	-
+⇇	gepaarde pyle na links	-
+⇈	gepaarde pyle na bo	-
+⇉	gepaarde pyle na regs	-
+⇊	gepaarde pyle na onder	-
+⇋	harpoen na links bo-op harpoen na regs	-
+⇌	harpoen na regs bo-op harpoen na links	-
+⇐	dubbelpyl na links	-
+⇍	dubbelpyl na links met streep	-
+⇑	dubbelpyl na bo	-
+⇒	dubbelpyl na regs	-
+⇏	dubbelpyl na regs met streep	-
+⇓	dubbelpyl na onder	-
+⇔	dubbelpyl links en regs	-
+⇎	dubbelpyl links en regs met streep	-
+⇖	noordwes-dubbelpyl	-
+⇗	noordoos-dubbelpyl	-
+⇘	suidoos-dubbelpyl	-
+⇙	suidwes-dubbelpyl	-
+⇚	driedubbele pyl na links	-
+⇛	driedubbele pyl na regs	-
+⇜	opgewende pyl na links	-
+⇝	opgewende pyl na regs	-
+⇞	pyl na bo met twee strepe	-
+⇟	pyl na onder met twee strepe	-
+⇠	gestippelde pyl na links	-
+⇡	gestippelde pyl na bo	-
+⇢	gestippelde pyl na regs	-
+⇣	gestippelde pyl na onder	-
+⇤	pylbalk na links	-
+⇥	pylbalk na regs	-
+⇦	hol pyl na links	-
+⇧	hol pyl na bo	-
+⇨	hol pyl na regs	-
+⇩	hol pyl na onder	-
+⇪	hol pyl na bo vanaf balk	-
+⇵	pyl na onder en linkswaartse pyl na bo	-
+∀	vir alles	-
+∂	gedeeltelik differensiaal	-
+∃	daar bestaan	-
+∅	leë stel	-
+∆	vermeerdering	-
+∇	nabla	-
+∈	element van	-
+∉	nie ‘n element nie	-
+∋	bevat as ‘n lid	-
+∎	eindbewys	-
+∏	n-êre produk	-
+∑	n-êre opsomming	-
++	plusteken	-
+±	plus-minus	-
+÷	deelteken wiskunde	-
+×	vermenigvuldigteken	-
+<	kleiner as	-
+≮	nie kleiner-as nie	-
+=	gelyk aan	-
+≠	nie gelyk	-
+>	groter as	-
+≯	nie groter-as nie	-
+¬	negering	-
+|	vertikale streep	-
+~	tilde	-
+−	minusteken	-
+⁻	boskrifminus	-
+∓	minus-of-plus	-
+∕	deelteken-skuinsstreep	-
+⁄	breukskuinsstreep	-
+∗	asteriskoperator	-
+∘	ringoperator	-
+∙	koeëlpuntoperator	-
+√	vierkantswortel	-
+∝	proporsioneel	-
+∞	oneindigheidsteken	-
+∟	regte hoek	-
+∠	hoekpunt	-
+∣	verdeel	-
+∥	parallel	-
+∧	logika en	-
+∩	interseksie	-
+∪	unie	-
+∫	integraal	-
+∬	dubbele integraal	-
+∮	kontoerintegraal	-
+∴	dus	-
+∵	omdat	-
+∶	verhouding	-
+∷	proporsie	-
+∼	tilde-operator	-
+∽	omgekeerde tilde	-
+∾	omgekeerde lui -s	-
+≃	asimptotiese gelykheid	-
+≅	ongeveer gelyk	-
+≈	amper gelyk	-
+≌	alles gelyk	-
+≒	beeld is ongeveer gelykvormig	-
+≖	gelykvormige ring	-
+≡	identies aan	-
+≣	streng ekwivalent	-
+≤	kleiner as of gelyk aan	-
+≥	groter as of gelyk aan	-
+≦	kleiner-as bo-op gelyk aan	-
+≧	groter-as bo-op gelyk aan	-
+≪	baie kleiner as	-
+≫	baie groter as	-
+≬	tussen	-
+≳	groter-as-ekwivalent	-
+≺	voorafgaan	-
+≻	volg op	-
+⊁	volg nie daarop nie	-
+⊂	substel van	-
+⊃	superstel	-
+⊆	gelyk aan substel	-
+⊇	gelyk aan superstel	-
+⊕	omsirkelde plus	-
+⊖	omsirkelde minus	-
+⊗	omsirkelde maalteken	-
+⊘	omsirkelde deelskuinsstreep	-
+⊙	omsirkelde kolletjieoperator	-
+⊚	omsirkelde ringoperator	-
+⊛	omsirkelde asteriskoperator	-
+⊞	plusteken in vierkant	-
+⊟	minusteken in vierkant	-
+⊥	valse logika	-
+⊮	ongedwonge	-
+⊰	voorafgegaan onder verhouding	-
+⊱	daaropvolgend onder verhouding	-
+⋭	bevat nie soos normale subgroepgelykvormigheid nie	-
+⊶	oorspronklike	-
+⊹	hermitiese gekonjugeerde matriks	-
+⊿	reghoekige driehoek	-
+⋁	n-êre logika	-
+⋂	n-êre-aansluiting	-
+⋃	n-êre vereniging	-
+⋅	kolletjie-operator	-
+⋆	sterretjie-operator	-
+⋈	natuurlike vereniging	-
+⋒	dubbele aansluiting	-
+⋘	veel meer kleiner as	-
+⋙	veel meer groter as	-
+⋮	vertikale ellips	-
+⋯	middellyn horisontale ellips	-
+⋰	diagonale ellips na regs bo	-
+⋱	diagonale ellips na regs onder	-
+⨧	plusteken met onderskrif twee	-
+⨯	vektor kruisproduk	-
+⨼	binneproduk	-
+⩣	logiese of dubbele onderbalk	-
+⩽	kleiner-as skuins gelyk aan	-
+⪍	kleiner-as bo-op soortgelyke gelyk aan	-
+⪚	dubbellyn gelyk aan groter as	-
+⪺	volg daarop bo-op nie amper gelyk nie	-
+⭐	ster	-
+⬆	pyl na bo	-
+↗	pyl na regs bo	-
+↘	pyl na regs onder	-
+⬇	pyl na onder	-
+↙	pyl na links onder	-
+⬅	pyl na links	-
+↖	pyl na links bo	-
+↕	pyl op en af	-
+↔	pyl links en regs	-
+↮	linksregspyl met streep	-
+↩	pyl na regs buig na links	-
+↪	pyl na links buig na regs	-
+⤴	pyl na regs buig op	-
+⤵	pyl na regs buig af	-
+〰	golfstreep	-
+⭕	hol rooi sirkel	-
+〽	stembeginteken	-
+©	kopieregmerk	-
+®	registrasiemerk	-
+™	handelmerk	-
+ℹ	inligting	-
+㊗	Japannese "veels geluk"-knoppie	-
+㊙	Japannese "geheim"-knoppie	-
+⬛	groot swart vierkant	-
+⬜	groot wit vierkant	-
+¢	sent	-
+$	dollar	-
+£	pond	-
+¥	yen	-
+₢	cruzeiro	-
+₣	Franse frank	-
+₤	lier	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	Duitse pennie	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	indiese roepee	-
+₽	roebel	-
+₿	bitcoin	-
+¹	boskrif-een	-
+²	boskrif twee	-
+³	boskrifdrie	-
+₨	roepee	-
+µ	mikroteken	-
+﷼	rial	-
+¤	Onbekende geldeenheid	-
+֏	Armeense dram	-
+؋	Afgaanse afgani	-
+৳	Bangladesjiese taka	-
+฿	Thaise baht	-
+៛	Kambodjaanse riel	-
+₡	Costa Ricaanse colón	-
+₦	Nigeriese naira	-
+₪	Israeliese nuwe sikkel	-
+₫	Viëtnamese dong	-
+₭	Laosiaanse kip	-
+₮	Mongoolse toegrik	-
+₲	Paraguaanse guarani	-
+₴	Oekraïnse hriwna	-
+₵	Ghanese cedi	-
+₸	Kazakse tenge	-
+₺	Turkse lira	-
+₼	Azerbeidjaanse manat	-
+₾	Georgiese lari	-

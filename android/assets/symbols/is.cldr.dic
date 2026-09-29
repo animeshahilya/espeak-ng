@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	vinstri oddsvigi	-
+‾	yfirstrik	-
+_	lágstrik	-
+-	bandstrik-mínus	-
+‐	bandstrik	-
+–	tilstrik	-
+—	þankastrik	-
+―	lárétt rönd	-
+・	katakana miðstæður punktur	-
+,	komma	-
+،	arabísk komma	-
+、	myndleturskomma	-
+;	semíkomma	-
+؛	arabísk semíkomma	-
+:	tvípunktur	-
+!	upphrópunarmerki	-
+¡	öfugt upphrópunarmerki	-
+?	spurningarmerki	-
+¿	öfugt spurningarmerki	-
+؟	arabískt spurningarmerki	-
+‽	hrópspurningarmerki	-
+.	punktur	-
+…	úrfelling	-
+。	myndpunktur	-
+·	miðjudepill	-
+'	prenthögg	-
+‘	vinstra högg	-
+’	hægra högg	-
+‚	lágstætt hægra högg	-
+“	hástætt vinstra tvíhögg	-
+”	hástætt hægra tvíhögg	-
+„	lágstætt hægra tvíhögg	-
+«	franskar gæsalappir vinstri	-
+»	franskar gæsalappir hægri	-
+)	hægri svigi	-
+[	vinstri hornklofi	-
+]	hægri hornklofi	-
+}	hægri oddsvigi	-
+〈	vinstri oddklofi	-
+〉	hægri oddklofi	-
+《	tvöfaldur vinstri oddklofi	-
+》	tvöfaldur hægri oddklofi	-
+「	hástætt vinstra vinkilmerki	-
+」	lágstætt hægra vinkilmerki	-
+『	hástætt holt vinstra vinkilmerki	-
+』	lágstætt holt hægra vinkilmerki	-
+【	vinstri svartur linsusvigi	-
+】	hægri svartur linsusvigi	-
+〔	vinstri skjaldbökuskel	-
+〕	hægri skjaldbökuskel	-
+〖	vinstri holur linsusvigi	-
+〗	hægri holur linsusvigi	-
+§	kaflamerki	-
+¶	efnisgreinarmerki	-
+@	vistmerki	-
+*	stjarna	-
+/	skástrik	-
+\	öfugt skástrik	-
+&	og-merki	-
+%	prósent	-
+‰	prómill	-
+†	úreldingarmerki	-
+‡	tvöfalt úreldingarmerki	-
+•	merkill	-
+‧	miðstæður punktur	-
+′	mínútumerki	-
+″	tvíhögg	-
+‴	þríhögg	-
+‸	innskotsmerki	-
+※	tilvísunarmerki	-
+⁂	stjörnuþríhyrningur	-
+`	öfugur broddur	-
+´	frambroddur	-
+^	hattur	-
+¨	tvídepill	-
+°	gráða	-
+℗	höfundarréttur hljóðupptöku	-
+←	ör sem vísar til vinstri	-
+↚	ör til vinstri með striki	-
+→	ör sem vísar til hægri	-
+↛	ör til hægri með striki	-
+↑	ör sem vísar upp	-
+↓	ör sem vísar niður	-
+↜	bylgjuör til vinstri	-
+↝	bylgjuör til hægri	-
+↞	tvíhöfða ör til vinstri	-
+↟	tvíhöfða ör upp á við	-
+↠	tvíhöfða ör til hægri	-
+↡	tvíhöfða ör niður á við	-
+↢	örvarendi til vinstri	-
+↣	örvarendi til hægri	-
+↤	ör til vinstri frá rönd	-
+↥	ör upp á við frá rönd	-
+↦	ör til hægri frá rönd	-
+↧	ör niður á við frá rönd	-
+↨	ör upp niður með grunni	-
+↫	ör til vinstri með lykkju	-
+↬	ör til hægri með lykkju	-
+↭	bylgjuör vinstri hægri	-
+↯	sikksakk ör niður á við	-
+↰	örvaroddur upp á við til vinstri	-
+↱	örvaroddur upp á við til hægri	-
+↲	örvaroddur niður á við til vinstri	-
+↳	örvaroddur niður á við til hægri	-
+↴	ör til hægri með beygju niður á við	-
+↵	ör niður á við með beygju tl vinstri	-
+↶	ör uppi í hálfhring rangsælis	-
+↷	ör uppi í hálfhring réttsælis	-
+↸	ör ská upp til vinstri að rönd	-
+↹	örvar að striki vinstri yfir hægri	-
+↺	opin hringör rangsælis	-
+↻	opin hringör réttsælis	-
+↼	skutull til vinstri með brodd upp á við	-
+↽	skutull til vinstri með brodd niður á við	-
+↾	skutull upp á við með brodd til hægri	-
+↿	skutull upp á við með brodd til vinstri	-
+⇀	skutull til hægri með brodd upp á við	-
+⇁	skutull til hægri með brodd niður á við	-
+⇂	skutull niður á við með brodd til hægri	-
+⇃	skutull niður á við með brodd til vinstri	-
+⇄	ör til hægri yfir ör til vinstri	-
+⇅	ör sem vísar upp og ör sem vísar niður	-
+⇆	vinstriör yfir hægriör	-
+⇇	örvapar til vinstri	-
+⇈	örvapar upp á við	-
+⇉	örvapar til hægri	-
+⇊	örvapar niður á við	-
+⇋	skutull til vinstri yfir skutli til hægri	-
+⇌	skutull til hægri yfir skutli til vinstri	-
+⇐	tvöföld ör til vinstri	-
+⇍	tvístrikuð ör til vinstri	-
+⇑	tvöföld ör upp á við	-
+⇒	tvöföld ör til hægri	-
+⇏	tvístrikuð ör til hægri	-
+⇓	tvöföld ör niður á við	-
+⇔	tvöföld ör vinstri hægri	-
+⇎	tvístrikuð ör vinstri hægri	-
+⇖	tvöföld ör í norðvestur	-
+⇗	tvöföld ör í norðaustur	-
+⇘	tvöföld ör í suðaustur	-
+⇙	tvöföld ör í suðvestur	-
+⇚	þreföld ör til vinstri	-
+⇛	þreföld ör til hægri	-
+⇜	hlykkjótt ör til vinstri	-
+⇝	hlykkjótt ör til hægri	-
+⇞	tvístrikuð ör upp á við	-
+⇟	tvístrikuð ör niður á við	-
+⇠	punktalínuör til vinstri	-
+⇡	punktalínuör upp á við	-
+⇢	punktalínuör til hægri	-
+⇣	punktalínuör niður á við	-
+⇤	ör að striki til vinstri	-
+⇥	ör að striki til hægri	-
+⇦	hol ör til vinstri	-
+⇧	hol ör upp á við	-
+⇨	hol ör til hægri	-
+⇩	hol ör niður á við	-
+⇪	hol ör upp á við frá rönd	-
+⇵	ör niður á við vinstra megin við ör upp á við	-
+∀	algildi	-
+∂	hlutafleiða	-
+∃	tilvist	-
+∅	tómamengi	-
+∆	aukning	-
+∇	nafla	-
+∈	stak í	-
+∉	ekki stak	-
+∋	stak	-
+∎	endanleg sönnun	-
+∏	n-unda-margfeldi	-
+∑	n-unda-summun	-
++	plúsmerki	-
+±	plús-mínus	-
+÷	deilingarmerki	-
+×	margföldunarmerki	-
+<	minna en	-
+≮	ekki minna en	-
+=	jafnt	-
+≠	ekki jafnt	-
+>	stærra en	-
+≯	ekki stærra en	-
+¬	neitun	-
+|	lóðrétt lína	-
+~	tilda	-
+−	mínusmerki	-
+⁻	brjóstletur mínus	-
+∓	mínus-eða-plús	-
+∕	deilingarskástrik	-
+⁄	brotaskástrik	-
+∗	stjörnuvirki	-
+∘	hringvirkir	-
+∙	virkir	-
+√	kvaðratrót	-
+∝	hlutfallsmerki	-
+∞	óendanlegt-merki	-
+∟	rétt horn	-
+∠	horn	-
+∣	deilir	-
+∥	samsíða	-
+∧	og-röktákn	-
+∩	sniðmengi	-
+∪	sammengi	-
+∫	heildi	-
+∬	tvöfalt heildi	-
+∮	lykkjuheildi	-
+∴	þar af leiðandi	-
+∵	vegna þess	-
+∶	hlutfall	-
+∷	hlutfallsleiki	-
+∼	tilduvirkir	-
+∽	öfug tilda	-
+∾	öfugt s á hlið	-
+≃	undirstrikuð bugða	-
+≅	tvíundirstrikuð bugða	-
+≈	næstum jafnt	-
+≌	öll jöfn	-
+≒	næstum jafnt eða gildi	-
+≖	hringur í jafnaðarmerki	-
+≡	nákvæmlega eins og	-
+≣	aljafnaðarmerki	-
+≤	minna en eða jafnt	-
+≥	stærra en eða jafnt	-
+≦	minna en yfir jafngildi	-
+≧	stærra en yfir jafngildi	-
+≪	miklu minna en	-
+≫	miklu stærra en	-
+≬	á milli	-
+≳	stærra en jafngildi	-
+≺	kemur á undan	-
+≻	kemur á eftir	-
+⊁	kemur ekki á eftir	-
+⊂	hlutmengi í	-
+⊃	yfirmengistákn	-
+⊆	hlutmengisjafnaðartákn	-
+⊇	yfirmengisjafnaðartákn	-
+⊕	plús í hring	-
+⊖	mínus í hring	-
+⊗	margföldun í hring	-
+⊘	deilingarskástrik í hring	-
+⊙	depill í hring virki	-
+⊚	hringur í hring virki	-
+⊛	stjarna í hring virki	-
+⊞	plús í ferningi	-
+⊟	mínus í ferningi	-
+⊥	hornrétt á	-
+⊮	þvingar ekki	-
+⊰	kemur á undan í venslum	-
+⊱	kemur á eftir í venslum	-
+⋭	inniheldur ekki sem normleg hlutgrúpa eða jafnt	-
+⊶	upprunaleg	-
+⊹	hermískt samoka fylki	-
+⊿	réttur þríhyrningur	-
+⋁	n-unda-eða-röktákn	-
+⋂	n-unda-sniðmengi	-
+⋃	n-unda-sammengi	-
+⋅	punktavirkir	-
+⋆	stjörnuvirkir	-
+⋈	eðlileg töflutenging	-
+⋒	tvöfalt sniðmengi	-
+⋘	mjög miklu minna en	-
+⋙	mjög miklu stærra en	-
+⋮	lóðrétt úrfellingarmerki	-
+⋯	lárétt úrfellingarmerki á miðlínu	-
+⋰	úrfellingarmerki á ská upp hægri	-
+⋱	úrfellingarmerki á ská niður hægri	-
+⨧	plús og hnéletrað tveir	-
+⨯	krossfeldi	-
+⨼	innfeldi	-
+⩣	röklegt eða tvöfalt undirstrik	-
+⩽	minna en eða jafnt og hallandi	-
+⪍	minna en fyrir ofan svipað eða jafnt	-
+⪚	jafnt eða meira en með tvöfaldri línu	-
+⪺	kemur á eftir fyrir ofan ekki næstum jafnt	-
+⭐	gul stjarna	-
+⬆	ör upp	-
+↗	ör ská upp til hægri	-
+↘	ör ská niður til hægri	-
+⬇	ör niður	-
+↙	ör ská niður til vinstri	-
+⬅	ör til vinstri	-
+↖	ör ská upp til vinstri	-
+↕	ör upp og niður	-
+↔	ör til vinstri og hægri	-
+↮	ör vinstri hægri með striki	-
+↩	sveigð ör til vinstri	-
+↪	sveigð ör til hægri	-
+⤴	sveigð ör upp	-
+⤵	sveigð ör niður	-
+〰	bugðustrik	-
+⭕	holur rauður hringur	-
+〽	japanskt upphafsmerki söngs	-
+©	höfundarréttarmerki	-
+®	skráð	-
+™	skrásett vörumerki	-
+ℹ	upplýsingaveita	-
+㊗	„Til hamingju“ á japönsku	-
+㊙	„Leyndarmál“ á japönsku	-
+⬛	stór svartur ferningur	-
+⬜	stór hvítur ferningur	-
+¢	sent	-
+$	dalur	-
+£	pund	-
+¥	jen	-
+₢	cruzeiro	-
+₣	franskur franki	-
+₤	líra	-
+₥	millidalur	-
+₩	vonn	-
+€	evra	-
+₰	þýskt pfennig	-
+₱	pesi	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	indversk rúpía	-
+₽	rúbla	-
+₿	bitcoin	-
+¹	brjóstletur einn	-
+²	brjóstletur tveir	-
+³	brjóstletur þrír	-
+₨	rúpía	-
+µ	míkró-merki	-
+﷼	ríal	-
+¤	óþekktur gjaldmiðill	-
+֏	armenskt dramm	-
+؋	afgani	-
+৳	bangladessk taka	-
+฿	taílenskt bat	-
+៛	kambódískt ríal	-
+₡	kostarískt kólon	-
+₦	nígerísk næra	-
+₪	nýr ísraelskur sikill	-
+₫	víetnamskt dong	-
+₭	laoskt kip	-
+₮	mongólskur túríkur	-
+₲	paragvæskt gvaraní	-
+₴	úkraínsk hrinja	-
+₵	ganverskur sedi	-
+₸	kasakst tengi	-
+₺	tyrknesk líra	-
+₼	aserskt manat	-
+₾	georgískur lari	-
+₧	Spænskur peseti	-

@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	inledande klammerparentes	-
+‾	överstreck	-
+_	understreck	-
+-	bindestreck-minustecken	-
+‐	bindestreck	-
+–	tankstreck	-
+—	långt tankstreck	-
+―	horisontellt streck	-
+・	katakana – mellanpunkt	-
+,	kommatecken	-
+،	arabiskt kommatecken	-
+、	ideografiskt kommatecken	-
+;	semikolon	-
+؛	arabiskt semikolon	-
+:	kolon	-
+!	utropstecken	-
+¡	inverterat utropstecken	-
+?	frågetecken	-
+¿	inverterat frågetecken	-
+؟	arabiskt frågetecken	-
+‽	interrobang	-
+.	punkt	-
+…	ellips	-
+。	ideografisk punkt	-
+·	halvhög punkt	-
+'	skrivmaskinsapostrof	-
+‘	vänster apostrof	-
+’	höger apostrof	-
+‚	nedsänkt högerställd apostrof	-
+“	inledande citattecken	-
+”	avslutande citattecken	-
+„	nedre avslutande citattecken	-
+«	gåsögon vänster	-
+»	gåsögon höger	-
+)	avslutande parentes	-
+[	inledande hakparentes	-
+]	avslutande hakparentes	-
+}	avslutande klammerparentes	-
+〈	inledande vinkelparentes	-
+〉	avslutande vinkelparentes	-
+《	inledande dubbel vinkelparentes	-
+》	avslutande dubbel vinkelparentes	-
+「	inledande halv hörnparentes	-
+」	avslutande halv hörnparentes	-
+『	inledande ofylld halv hörnparentes	-
+』	avslutande ofylld halv hörnparentes	-
+【	inledande svart konkavt parentestecken	-
+】	avslutande svart konkavt parentestecken	-
+〔	inledande sköldpaddsskalsparentes	-
+〕	avslutande sköldpaddsskalparentes	-
+〖	inledande ofyllt konkavt parentestecken	-
+〗	avslutande ofyllt konkavt parentestecken	-
+§	avsnitt	-
+¶	paragraftecken	-
+@	snabel-a	-
+*	asterisk	-
+/	snedstreck	-
+\	omvänt snedstreck	-
+&	et-tecken	-
+%	procent	-
+‰	promille	-
+†	korstecken	-
+‡	dubbelkorstecken	-
+•	listpunkt	-
+‧	avstavningspunkt	-
+′	primtecken	-
+″	dubbelprimtecken	-
+‴	trippelprimtecken	-
+‸	insättningstecken	-
+※	källhänvisning	-
+⁂	asterism	-
+`	grav accent	-
+´	akut accent	-
+^	cirkumflex	-
+¨	trema	-
+°	grad	-
+℗	ljudinspelning upphovsrätt	-
+←	vänsterriktad pil	-
+↚	vänsterriktat pilstreck	-
+→	högerriktad pil	-
+↛	högerriktat pilstreck	-
+↑	uppåtriktad pil	-
+↓	nedåtriktad pil	-
+↜	vänsterriktad vågig pil	-
+↝	högerriktad vågig pil	-
+↞	vänsterriktad dubbelhövdad pil	-
+↟	uppåtriktad dubbelhövdad pil	-
+↠	högerriktad dubbelhövdad pil	-
+↡	nedåtriktad dubbelhövdad pil	-
+↢	vänsterriktad pilsvans	-
+↣	högerriktad pilsvans	-
+↤	vänsterriktad pil från streck	-
+↥	uppåtriktad pil från streck	-
+↦	högerriktad pil från streck	-
+↧	nedåtriktad pil från streck	-
+↨	upp- och nedåtriktad pil med bas	-
+↫	vänsterriktad pilloop	-
+↬	högerriktad pilloop	-
+↭	höger- och vänsterriktad vågpil	-
+↯	nedåtriktad sicksackpil	-
+↰	uppåtriktad pil med spetsen åt vänster	-
+↱	uppåtriktad pil med spetsen åt höger	-
+↲	nedåtriktad pil med spetsen åt vänster	-
+↳	nedåtriktad pil med spetsen åt höger	-
+↴	högerriktad vinklad pil med spetsen nedåt	-
+↵	nedåtriktad vinklad pil med spetsen åt vänster	-
+↶	delcirkelpil uppifrån motsols	-
+↷	delcirkelpil uppifrån medsols	-
+↸	nordvästpil med långt streck	-
+↹	vänsterriktat pilstreck över högerriktat pilstreck	-
+↺	motsols öppen cirkelpil	-
+↻	medsols öppen cirkelpil	-
+↼	vänsterriktad harpunhulling uppåt	-
+↽	vänsterriktad harpunhulling nedåt	-
+↾	uppåtriktad harpunhulling åt höger	-
+↿	uppåtriktad harpunhulling åt vänster	-
+⇀	högerriktad harpunhulling uppåt	-
+⇁	högerriktad harpunhulling nedåt	-
+⇂	nedåtriktad harpunhulling åt höger	-
+⇃	nedåtriktad harpunhulling åt vänster	-
+⇄	högerriktad pil över vänsterriktad pil	-
+⇅	uppåt- och nedåtriktade pilar	-
+⇆	vänsterriktad över högerriktad pil	-
+⇇	vänsterriktat pilpar	-
+⇈	uppåtriktat pilpar	-
+⇉	högerriktat pilpar	-
+⇊	nedåtriktat pilpar	-
+⇋	vänsterriktad harpun över högerriktad harpun	-
+⇌	högerriktad harpun över vänsterriktad harpun	-
+⇐	vänsterriktad dubbelpil	-
+⇍	vänsterriktat dubbelpilstreck	-
+⇑	uppåtriktad dubbelpil	-
+⇒	högerriktad dubbelpil	-
+⇏	högerriktat dubbelpilstreck	-
+⇓	nedåtriktad dubbelpil	-
+⇔	vänster- och högerriktad dubbelpil	-
+⇎	vänster- och högerriktat dubbelpilstreck	-
+⇖	nordväst dubbelpil	-
+⇗	nordöst dubbelpil	-
+⇘	sydöst dubbelpil	-
+⇙	sydväst dubbelpil	-
+⇚	vänsterriktad trippelpil	-
+⇛	högerriktad trippelpil	-
+⇜	vänsterriktad krusig pil	-
+⇝	högerriktad krusig pil	-
+⇞	uppåtriktat dubbelpilstreck	-
+⇟	nedåtriktat dubbelpilstreck	-
+⇠	vänsterriktad streckad pil	-
+⇡	uppåtriktad streckad pil	-
+⇢	högerriktad streckad pil	-
+⇣	nedåtriktad streckad pil	-
+⇤	vänsterriktat pilfält	-
+⇥	högerriktat pilfält	-
+⇦	vänsterriktad ihålig pil	-
+⇧	uppåtriktad ihålig pil	-
+⇨	högerriktad ihålig pil	-
+⇩	nedåtriktad ihålig pil	-
+⇪	uppåtriktad ihålig pil från streck	-
+⇵	nedåtriktad pil åt vänster uppåtriktad pil	-
+∀	för allt	-
+∂	partiell differential	-
+∃	existenskvanta	-
+∅	tom mängd	-
+∆	tillskott	-
+∇	nablaoperatorn	-
+∈	element i	-
+∉	inte ett element	-
+∋	tillhör mängd	-
+∎	bevisslut	-
+∏	n-ställig produkt	-
+∑	n-ställig summering	-
++	plustecken	-
+±	plus-minus	-
+÷	divisionstecken	-
+×	multiplikationstecken	-
+<	mindre än	-
+≮	inte mindre än	-
+=	likhetstecken	-
+≠	inte lika med	-
+>	större än	-
+≯	inte större än	-
+¬	negation	-
+|	vertikalstreck	-
+~	tilde	-
+−	minustecken	-
+⁻	upphöjt till minus	-
+∓	minus eller plus	-
+∕	divisionsstreck	-
+⁄	bråkstreck	-
+∗	asteriskoperator	-
+∘	ringoperator	-
+∙	punktoperator	-
+√	kvadratrot	-
+∝	proportionerlig	-
+∞	oändlighetstecken	-
+∟	rät vinkel	-
+∠	vinkel	-
+∣	delar	-
+∥	parallell	-
+∧	logiskt och	-
+∩	snitt	-
+∪	union	-
+∫	integral	-
+∬	dubbelintegral	-
+∮	konturintegral	-
+∴	alltså	-
+∵	eftersom	-
+∶	förhållande	-
+∷	proportion	-
+∼	tildeoperator	-
+∽	omvänd tilde	-
+∾	inverterat liggande s	-
+≃	asymptotiskt lika med	-
+≅	ungefär lika med	-
+≈	nästan lika med	-
+≌	allt lika	-
+≒	ungefärligt lika med-bild	-
+≖	ring i likhetstecken	-
+≡	identiskt lika med	-
+≣	strikt ekvivalent	-
+≤	mindre än eller lika med	-
+≥	större än eller lika med	-
+≦	mindre än över lika med	-
+≧	större än över lika med	-
+≪	mycket mindre än	-
+≫	mycket större än	-
+≬	mellan	-
+≳	större än likvärdig	-
+≺	föregår	-
+≻	efterföljer	-
+⊁	efterföljer inte	-
+⊂	delmängd av	-
+⊃	supermängd	-
+⊆	delmängd lika med	-
+⊇	supermängd lika med	-
+⊕	plus i cirkel	-
+⊖	minus i cirkel	-
+⊗	gångertecken i cirkel	-
+⊘	divisionsstreck i cirkel	-
+⊙	prickoperator i cirkel	-
+⊚	ringoperator i cirkel	-
+⊛	asteriskoperator i cirkel	-
+⊞	plus i kvadrat	-
+⊟	minus i kvadrat	-
+⊥	falsum	-
+⊮	tvingar inte	-
+⊰	efterföljer under relation	-
+⊱	föregår under relation	-
+⋭	innehåller inte som normal delgruppslikvärdig	-
+⊶	original	-
+⊹	hermitesk matris	-
+⊿	rätvinklig triangel	-
+⋁	n-ställig logik eller	-
+⋂	n-ställigt snitt	-
+⋃	n-ställig union	-
+⋅	prickoperator	-
+⋆	stjärnoperator	-
+⋈	naturlig ordning	-
+⋒	dubbelsnitt	-
+⋘	väldigt mycket mindre än	-
+⋙	väldigt mycket större än	-
+⋮	vertikal ellips	-
+⋯	mellanhög horisontell ellips	-
+⋰	högerstigande diagonal ellips	-
+⋱	högersjunkande diagonal ellips	-
+⨧	plus nedsänkt två	-
+⨯	vektorkryssprodukt	-
+⨼	inre produkt	-
+⩣	logiskt eller dubbelt understreck	-
+⩽	lutande mindre än-likhetstecken	-
+⪍	lutande mindre än ovanför-likhetstecken	-
+⪚	lika med större än med dubbla linjer	-
+⪺	föregår över inte nästan lika med	-
+⭐	stjärna	-
+⬆	uppåtpil	-
+↗	uppåtpil höger	-
+↘	nedåtpil höger	-
+⬇	nedåtpil	-
+↙	nedåtpil vänster	-
+⬅	vänsterpil	-
+↖	uppåtpil vänster	-
+↕	pil upp och ned	-
+↔	pil höger och vänster	-
+↮	höger och vänsterriktat pilstreck	-
+↩	svängd vänsterpil	-
+↪	svängd högerpil	-
+⤴	svängd uppåtpil	-
+⤵	svängd nedåtpil	-
+〰	vågigt tankstreck	-
+⭕	tung stor cirkel	-
+〽	japansk kommatering	-
+©	upphovsrättssymbol	-
+®	registrerat varumärke	-
+™	skyddat varumärke	-
+ℹ	information	-
+㊗	japansk ”grattis”-knapp	-
+㊙	japansk ”hemligt”-knapp	-
+⬛	stor svart ruta	-
+⬜	stor vit ruta	-
+¢	cent	-
+$	dollar	-
+£	pund	-
+¥	yen	-
+₢	cruzeiro	-
+₣	fransk franc	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	tysk pfennig	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	indisk rupie	-
+₽	rubel	-
+₿	bitcoin	-
+¹	upphöjt till ett	-
+²	upphöjt till två	-
+³	upphöjt till tre	-
+₨	rupie	-
+µ	mikrotecken	-
+﷼	rial	-
+¤	okänd valuta	-
+֏	armenisk dram	-
+؋	afghansk afghani	-
+৳	bangladeshisk taka	-
+฿	thailändsk baht	-
+៛	kambodjansk riel	-
+₡	costarikansk colón	-
+₦	nigeriansk naira	-
+₪	israelisk ny shekel	-
+₫	vietnamesisk dong	-
+₭	laotisk kip	-
+₮	mongolisk tögrög	-
+₲	paraguayansk guarani	-
+₴	ukrainsk hryvnia	-
+₵	ghanansk cedi	-
+₸	kazakisk tenge	-
+₺	turkisk lira	-
+₼	azerbajdzjansk manat	-
+₾	georgisk lari	-
+₧	spansk peseta	-

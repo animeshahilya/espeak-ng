@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	zaviti uklepaj	-
+‾	nadčrtano	-
+_	podčrtaj	-
+-	znak minus	-
+‐	vezaj	-
+–	pomišljaj	-
+—	dolgi pomišljaj	-
+―	vodoravna črta	-
+・	katakanska srednja pika	-
+,	vejica	-
+،	arabska vejica	-
+、	ideografska vejica	-
+;	podpičje	-
+؛	arabsko podpičje	-
+:	dvopičje	-
+!	klicaj	-
+¡	obrnjen klicaj	-
+?	vprašaj	-
+¿	obrnjen vprašaj	-
+؟	arabski vprašaj	-
+‽	klicajvprašaj	-
+.	pika	-
+…	elipsa	-
+。	ideografska pika	-
+·	srednja pika	-
+'	strojepisni opuščaj	-
+‘	levi opuščaj	-
+’	desni opuščaj	-
+‚	nizki desni opuščaj	-
+“	levi narekovaj	-
+”	desni narekovaj	-
+„	nizki desni narekovaj	-
+«	levi francoski narekovaj	-
+»	desni francoski narekovaj	-
+)	zaklepaj	-
+[	oglati uklepaj	-
+]	oglati zaklepaj	-
+}	zaviti zaklepaj	-
+〈	kotni uklepaj	-
+〉	kotni zaklepaj	-
+《	dvojni kotni uklepaj	-
+》	dvojni kotni zaklepaj	-
+「	vogalni uklepaj	-
+」	vogalni zaklepaj	-
+『	votli vogalni uklepaj	-
+』	votli vogalni zaklepaj	-
+【	polni lečasti uklepaj	-
+】	polni lečasti zaklepaj	-
+〔	rombasti uklepaj	-
+〕	rombasti zaklepaj	-
+〖	votli lečasti uklepaj	-
+〗	votli lečasti zaklepaj	-
+§	razdelek	-
+¶	znak za odstavek	-
+@	afna	-
+*	zvezdica	-
+/	poševnica	-
+\	leva poševnica	-
+&	znak et	-
+%	odstotek	-
+‰	odtisoček	-
+†	znak za bodalo	-
+‡	znak za dvojno bodalo	-
+•	vrstična oznaka	-
+‧	delilna pika	-
+′	znak za kotne minute in čevlje	-
+″	znak za kotne sekunde in inče	-
+‴	znak za linijo	-
+‸	spodnja strešica	-
+※	referenčna oznaka	-
+⁂	asterizem	-
+`	krativec	-
+´	ostrivec	-
+^	strešica	-
+¨	preglas	-
+°	stopinja	-
+℗	avtorske pravice za zvočni posnetek	-
+←	puščica, obrnjena v levo	-
+↚	puščica levo s poševnico	-
+→	puščica, obrnjena v desno	-
+↛	puščica desno s poševnico	-
+↑	puščica, obrnjena navzgor	-
+↓	puščica, obrnjena navzdol	-
+↜	vijugasta puščica levo	-
+↝	vijugasta puščica desno	-
+↞	puščica z dvojno glavo levo	-
+↟	puščica z dvojno glavo navzgor	-
+↠	puščica z dvojno glavo desno	-
+↡	puščica z dvojno glavo navzdol	-
+↢	puščica z repom levo	-
+↣	puščica z repom desno	-
+↤	puščica od črte levo	-
+↥	puščica od črte navzgor	-
+↦	puščica od črte desno	-
+↧	puščica od črte navzdol	-
+↨	puščica gor-dol z osnovno črto	-
+↫	zankasta puščica levo	-
+↬	zankasta puščica desno	-
+↭	vijugasta puščica levo-desno	-
+↯	cikcakasta puščica navzdol	-
+↰	puščica navzgor levo	-
+↱	puščica navzgor desno	-
+↲	puščica navzdol levo	-
+↳	puščica navzdol desno	-
+↴	kotna puščica desno navzdol	-
+↵	kotna puščica levo navzdol	-
+↶	zgornja polkrožna puščica v nasprotni smeri urnega kazalca	-
+↷	zgornja polkrožna puščica v smeri urnega kazalca	-
+↸	puščica severozahod z dolgo črtico zgoraj	-
+↹	puščica levo s črtico nad puščico desno s črtico	-
+↺	odprta krožna puščica v nasprotni smeri urnega kazalca	-
+↻	odprta krožna puščica v smeri urnega kazalca	-
+↼	harpuna levo z ostjo navzgor	-
+↽	harpuna levo z ostjo navzdol	-
+↾	harpuna navzgor z desno ostjo	-
+↿	harpuna navzgor z levo ostjo	-
+⇀	harpuna desno z ostjo navzgor	-
+⇁	harpuna desno z ostjo navzdol	-
+⇂	harpuna navzdol z desno ostjo	-
+⇃	harpuna navzdol z levo ostjo	-
+⇄	puščica desno nad puščico levo	-
+⇅	puščici, obrnjeni navzgor in navzdol	-
+⇆	puščica v levo nad puščico v desno	-
+⇇	par puščic levo	-
+⇈	par puščic navzgor	-
+⇉	par puščic desno	-
+⇊	par puščic navzdol	-
+⇋	harpuna levo nad harpuno desno	-
+⇌	harpuna desno nad harpuno levo	-
+⇐	dvojna puščica levo	-
+⇍	dvojna prečrtana puščica levo	-
+⇑	dvojna puščica navzgor	-
+⇒	dvojna puščica desno	-
+⇏	dvojna prečrtana puščica desno	-
+⇓	dvojna puščica navzdol	-
+⇔	dvojna puščica levo-desno	-
+⇎	dvojna prečrtana puščica levo-desno	-
+⇖	dvojna puščica severozahod	-
+⇗	dvojna puščica severovzhod	-
+⇘	dvojna puščica jugovzhod	-
+⇙	dvojna puščica jugozahod	-
+⇚	trojna puščica levo	-
+⇛	trojna puščica desno	-
+⇜	valovita puščica levo	-
+⇝	valovita puščica desno	-
+⇞	dvakrat prečrtana puščica navzgor	-
+⇟	dvakrat prečrtana puščica navzdol	-
+⇠	črtkana puščica levo	-
+⇡	črtkana puščica navzgor	-
+⇢	črtkana puščica desno	-
+⇣	črtkana puščica navzdol	-
+⇤	puščica levo s črtico	-
+⇥	puščica desno s črtico	-
+⇦	votla puščica levo	-
+⇧	votla puščica navzgor	-
+⇨	votla puščica desno	-
+⇩	votla puščica navzdol	-
+⇪	votla puščica od črte navzgor	-
+⇵	puščica navzdol levo od puščice navzgor	-
+∀	za vse	-
+∂	parcialni diferencial	-
+∃	obstaja	-
+∅	prazna množica	-
+∆	razlika	-
+∇	nabla	-
+∈	je element množice	-
+∉	ni element	-
+∋	vključuje kot element	-
+∎	znak za konec	-
+∏	produkt n-skupine	-
+∑	vsota n-skupine	-
++	znak za plus	-
+±	znak plus/minus	-
+÷	znak za deljenje	-
+×	znak za množenje	-
+<	manjše od	-
+≮	ne manjše od	-
+=	enačaj	-
+≠	ni enako	-
+>	večje od	-
+≯	ne večje od	-
+¬	negacija	-
+|	navpična črta	-
+~	vijuga	-
+−	znak za minus	-
+⁻	nadpisani minus	-
+∓	minus ali plus	-
+∕	poševnica za deljenje	-
+⁄	poševnica ulomka	-
+∗	operator zvezdice	-
+∘	operator obroča	-
+∙	operator vrstične oznake	-
+√	kvadratni koren	-
+∝	sorazmerno	-
+∞	znak za neskončno	-
+∟	pravi kot	-
+∠	kot	-
+∣	deljenje	-
+∥	vzporedno	-
+∧	logični in	-
+∩	presek	-
+∪	unija	-
+∫	integral	-
+∬	dvojni integral	-
+∮	obrisni integral	-
+∴	zato	-
+∵	ker	-
+∶	razmerje	-
+∷	sorazmerje	-
+∼	operator vijuge	-
+∽	obrnjena vijuga	-
+∾	obrnjen ležeči s	-
+≃	asimptotično enako	-
+≅	približno enako	-
+≈	skoraj enako	-
+≌	vse enako	-
+≒	približno enako preslikavi	-
+≖	obroč v enačaju	-
+≡	je enako	-
+≣	povsem enako	-
+≤	manjše ali enako	-
+≥	večje ali enako	-
+≦	manjše od nad enačajem	-
+≧	večje od nad enačajem	-
+≪	veliko manjše od	-
+≫	veliko večje od	-
+≬	med	-
+≳	večje od enakovredno	-
+≺	predhodnik	-
+≻	naslednik	-
+⊁	ni naslednik	-
+⊂	je podmnožica množice	-
+⊃	nadmnožica	-
+⊆	je podmnožica	-
+⊇	je nadmnožica	-
+⊕	plus v krogu	-
+⊖	minus v krogu	-
+⊗	krat v krogu	-
+⊘	poševnica za deljenje v krogu	-
+⊙	operator pike v krogu	-
+⊚	operator obroča v krogu	-
+⊛	operator zvezdice v krogu	-
+⊞	plus v kvadratu	-
+⊟	minus v kvadratu	-
+⊥	žebljiček navzgor	-
+⊮	ne vsiljuje	-
+⊰	predhodnik v razmerju	-
+⊱	naslednik v razmerju	-
+⋭	ne vsebuje kot običajna podskupina, enaka	-
+⊶	original	-
+⊹	hermitska konjugirana matrika	-
+⊿	pravokotni trikotnik	-
+⋁	logična n-skupina ali	-
+⋂	presek n-skupin	-
+⋃	unija n-skupin	-
+⋅	operator pike	-
+⋆	operator zvezde	-
+⋈	naravna združitev	-
+⋒	dvojni presek	-
+⋘	zelo veliko manj kot	-
+⋙	zelo veliko več kot	-
+⋮	navpične tri pike	-
+⋯	tri pike v sredi vodoravno	-
+⋰	tri pike v diagonali gor desno	-
+⋱	tri pike v diagonali dol desno	-
+⨧	plus s podpisano številko 2	-
+⨯	vektorski produkt	-
+⨼	notranji produkt	-
+⩣	logična ali dvojna podčrta	-
+⩽	manjše od s poševnim enačajem	-
+⪍	manjše od nad približno enako	-
+⪚	dvočrtni enačaj nad večje od	-
+⪺	naslednik nad skoraj enako	-
+⭐	bela srednja zvezda	-
+⬆	puščica gor	-
+↗	puščica desno gor	-
+↘	puščica desno dol	-
+⬇	puščica dol	-
+↙	puščica levo dol	-
+⬅	puščica levo	-
+↖	puščica levo gor	-
+↕	puščica gor dol	-
+↔	puščica levo desno	-
+↮	puščica levo-desno s poševnico	-
+↩	puščica desno, ki se ukrivlja v levo	-
+↪	puščica levo, ki se ukrivlja v desno	-
+⤴	puščica desno, ki se ukrivlja gor	-
+⤵	puščica desno, ki se ukrivlja dol	-
+〰	valovit pomišljaj	-
+⭕	velik prazen krog	-
+〽	znak za part	-
+©	avtorske pravice	-
+®	registrirano	-
+™	blagovna znamka	-
+ℹ	vir informacij	-
+㊗	pojmovni znak za čestitanje v krogu	-
+㊙	pojmovni znak za skrivnost v krogu	-
+⬛	velik črn kvadrat	-
+⬜	velik bel kvadrat	-
+¢	cent	-
+$	dolar	-
+£	funt	-
+¥	jen	-
+₢	cruzeiro	-
+₣	francoski frank	-
+₤	lira	-
+₥	tisočinka	-
+₩	won	-
+€	evro	-
+₰	nemški pfenig	-
+₱	peso	-
+₳	avstral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	indijska rupija	-
+₽	rubelj	-
+₿	bitcoin	-
+¹	nadpisana enka	-
+²	nadpisana dvojka	-
+³	nadpisana trojka	-
+₨	rupija	-
+µ	znak za mikro	-
+﷼	rial	-
+¤	neznana valuta	-
+֏	armenski dram	-
+؋	afgani	-
+৳	bangladeška taka	-
+฿	tajski baht	-
+៛	kamboški riel	-
+₡	kostariški kolon	-
+₦	nigerijska naira	-
+₪	izraelski šekel	-
+₫	vietnamski dong	-
+₭	laoški kip	-
+₮	mongolski tugrik	-
+₲	paragvajski gvarani	-
+₴	ukrajinska grivna	-
+₵	ganski cedi	-
+₸	kazahstanski tenge	-
+₺	turška lira	-
+₼	azerbajdžanski manat	-
+₾	gruzijski lari	-
+₧	španska pezeta	-

@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	lijeva vitičasta zagrada	-
+‾	nadcrta	-
+_	donja crta	-
+-	spojnica-minus	-
+‐	spojnica	-
+–	crtica	-
+—	crta	-
+―	vodoravna crta	-
+・	srednja točka u katakana pismu	-
+,	zarez	-
+،	zarez u arapskom pismu	-
+、	zarez u ideografskom pismu	-
+;	točka sa zarezom	-
+؛	točka sa zarezom u arapskom pismu	-
+:	dvotočka	-
+!	uskličnik	-
+¡	obrnuti uskličnik	-
+?	upitnik	-
+¿	obrnuti upitnik	-
+؟	upitnik u arapskom pismu	-
+‽	upitnik s uskličnikom	-
+.	točka	-
+…	trotočka	-
+。	točka u ideografskom pismu	-
+·	srednja točka	-
+'	polunavodnik na pisaćem stroju	-
+‘	lijevi polunavodnik	-
+’	desni polunavodnik	-
+‚	donji desni polunavodnik	-
+“	lijevi navodnik	-
+”	desni navodnik	-
+„	donji desni navodnik	-
+«	lijevo usmjereni šiljasti navodnik	-
+»	desno usmjereni šiljasti navodnik	-
+)	desna zagrada	-
+[	lijeva uglata zagrada	-
+]	desna uglata zagrada	-
+}	desna vitičasta zagrada	-
+〈	lijeva izlomljena zagrada	-
+〉	desna izlomljena zagrada	-
+《	lijeva dvostruka izlomljena zagrada	-
+》	desna dvostruka izlomljena zagrada	-
+「	lijeva jednouglata zagrada	-
+」	desna jednouglata zagrada	-
+『	lijeva jednouglata zagrada bez ispune	-
+』	desna jednouglata zagrada bez ispune	-
+【	crna lijeva konkavna zagrada	-
+】	crna desna konkavna zagrada	-
+〔	lijeva saćasta zagrada	-
+〕	desna saćasta zagrada	-
+〖	lijeva konkavna zagrada bez ispune	-
+〗	desna konkavna zagrada bez ispune	-
+§	odjeljak	-
+¶	prijelom odlomka	-
+@	znak „at”	-
+*	zvjezdica	-
+/	kosa crta	-
+\	obrnuta kosa crta	-
+&	znak &	-
+%	postotak	-
+‰	promil	-
+†	znak bodeža	-
+‡	znak dvostrukog bodeža	-
+•	grafička oznaka	-
+‧	točka za rastavljanje riječi	-
+′	izostavnik	-
+″	dvostruki navodnik	-
+‴	trostruki navodnik	-
+‸	karet	-
+※	referenca	-
+⁂	asterizam	-
+`	kratkouzlazni naglasak	-
+´	dugouzlazni naglasak	-
+^	dugosilazni naglasak	-
+¨	dijereza	-
+°	stupanj	-
+℗	simbol autorskog prava za snimanje zvuka	-
+←	strelica koja pokazuje ulijevo	-
+↚	kosa crta sa strelicom ulijevo	-
+→	strelica koja pokazuje udesno	-
+↛	kosa crta sa strelicom udesno	-
+↑	strelica koja pokazuje prema gore	-
+↓	strelica koja pokazuje prema dolje	-
+↜	valovita strelica ulijevo	-
+↝	valovita strelica udesno	-
+↞	strelica s dva vrha ulijevo	-
+↟	strelica s dva vrha prema gore	-
+↠	strelica s dva vrha udesno	-
+↡	strelica s dva vrha prema dolje	-
+↢	strelica s repom ulijevo	-
+↣	strelica s repom udesno	-
+↤	strelica s crtom ulijevo	-
+↥	strelica s crtom prema gore	-
+↦	strelica s crtom udesno	-
+↧	strelica s crtom prema dolje	-
+↨	strelica prema gore i prema dolje s bazom	-
+↫	strelica s petljom ulijevo	-
+↬	strelica s petljom udesno	-
+↭	valovita strelica s vrhom ulijevo i vrhom udesno	-
+↯	cik-cak strelica prema dolje	-
+↰	strelica prema gore s vrhom ulijevo	-
+↱	strelica prema gore s vrhom udesno	-
+↲	strelica prema dolje s vrhom ulijevo	-
+↳	strelica prema dolje s vrhom udesno	-
+↴	strelica udesno s kutom prema dolje	-
+↵	strelica prema dolje s kutom ulijevo	-
+↶	polukružna strelica u smjeru suprotnom od kazaljke na satu	-
+↷	polukružna strelica u smjeru kazaljke na satu	-
+↸	strelica s dugom crtom u smjeru sjeverozapada	-
+↹	strelica s crtom ulijevo iznad strelice s crtom udesno	-
+↺	otvorena kružna strelica u smjeru suprotnom od kazaljke na satu	-
+↻	otvorena kružna strelica u smjeru kazaljke na satu	-
+↼	harpun ulijevo sa šiljkom prema gore	-
+↽	harpun ulijevo sa šiljkom prema dolje	-
+↾	harpun prema gore sa šiljkom udesno	-
+↿	harpun prema gore sa šiljkom ulijevo	-
+⇀	harpun udesno sa šiljkom prema gore	-
+⇁	harpun udesno sa šiljkom prema dolje	-
+⇂	harpun prema dolje sa šiljkom udesno	-
+⇃	harpun prema dolje sa šiljkom ulijevo	-
+⇄	strelica udesno iznad strelice ulijevo	-
+⇅	strelica prema gore i strelica prema dolje	-
+⇆	strelica ulijevo iznad strelice udesno	-
+⇇	uparene strelice ulijevo	-
+⇈	uparene strelice prema gore	-
+⇉	uparene strelice udesno	-
+⇊	uparene strelice prema dolje	-
+⇋	harpun ulijevo iznad harpuna udesno	-
+⇌	harpun udesno iznad harpuna ulijevo	-
+⇐	dvostruka strelica ulijevo	-
+⇍	precrtana dvostruka strelica ulijevo	-
+⇑	dvostruka strelica prema gore	-
+⇒	dvostruka strelica udesno	-
+⇏	precrtana dvostruka strelica udesno	-
+⇓	dvostruka strelica prema dolje	-
+⇔	dvostruka strelica ulijevo i udesno	-
+⇎	precrtana dvostruka strelica ulijevo i udesno	-
+⇖	dvostruka strelica prema gore-lijevo	-
+⇗	dvostruka strelica prema gore-desno	-
+⇘	dvostruka strelica prema dolje-desno	-
+⇙	dvostruka strelica prema dolje-lijevo	-
+⇚	trostruka strelica ulijevo	-
+⇛	trostruka strelica udesno	-
+⇜	vijugava strelica ulijevo	-
+⇝	vijugava strelica udesno	-
+⇞	dvostruko precrtana strelica prema gore	-
+⇟	dvostruko precrtana strelica prema dolje	-
+⇠	iscrtkana strelica ulijevo	-
+⇡	iscrtkana strelica prema gore	-
+⇢	iscrtkana strelica udesno	-
+⇣	iscrtkana strelica prema dolje	-
+⇤	strelica ulijevo s crtom	-
+⇥	strelica udesno s crtom	-
+⇦	neispunjena strelica ulijevo	-
+⇧	neispunjena strelica prema gore	-
+⇨	neispunjena strelica udesno	-
+⇩	neispunjena strelica prema dolje	-
+⇪	neispunjena strelica s crtom prema gore	-
+⇵	strelica prema dolje i strelica prema gore	-
+∀	za sve	-
+∂	parcijalni diferencijal	-
+∃	kvantifikator egzistencije	-
+∅	prazan skup	-
+∆	inkrement	-
+∇	nabla	-
+∈	je element	-
+∉	nije element	-
+∋	sadrži član	-
+∎	kraj dokaza	-
+∏	Kartezijev umnožak	-
+∑	zbroj neograničenog broja operanada	-
++	znak plusa	-
+±	plus-minus	-
+÷	znak za dijeljenje	-
+×	znak za množenje	-
+<	manje	-
+≮	ne manje od	-
+=	jednako	-
+≠	različito	-
+>	veće	-
+≯	ne veće od	-
+¬	negacija	-
+|	okomita crta	-
+~	tilda	-
+−	znak minusa	-
+⁻	minus u eksponentu	-
+∓	minus ili plus	-
+∕	kosa crta za dijeljenje	-
+⁄	razlomačka kosa crta	-
+∗	operator u obliku zvjezdice	-
+∘	operator u obliku prstena	-
+∙	operator u obliku grafičke oznake	-
+√	kvadratni korijen	-
+∝	razmjerno	-
+∞	beskonačno	-
+∟	desni kut	-
+∠	kut	-
+∣	dijeljenje	-
+∥	paralelno	-
+∧	logičko „i”	-
+∩	presjek skupova	-
+∪	unija skupova	-
+∫	integral	-
+∬	dvostruki integral	-
+∮	konturni integral	-
+∴	zato	-
+∵	zbog toga	-
+∶	omjer	-
+∷	udio	-
+∼	operator u obliku tilde	-
+∽	obrnuta tilda	-
+∾	obrnuto polegnuto „s”	-
+≃	asimptotski jednako	-
+≅	otprilike jednako	-
+≈	približno jednako	-
+≌	sve jednako	-
+≒	otprilike jednako slici	-
+≖	prsten u jednakosti	-
+≡	identično jednako	-
+≣	strogo jednako	-
+≤	manje ili jednako	-
+≥	veće ili jednako	-
+≦	manje od iznad jednako	-
+≧	više od iznad jednako	-
+≪	puno manje od	-
+≫	puno veće od	-
+≬	između	-
+≳	veće od ekvivalenta	-
+≺	prethodi	-
+≻	slijedi	-
+⊁	ne slijedi	-
+⊂	je pravi podskup od	-
+⊃	nadskup	-
+⊆	podskup jednak	-
+⊇	nadskup jednak	-
+⊕	zaokruženi plus	-
+⊖	zaokruženi minus	-
+⊗	zaokruženi znak množenja	-
+⊘	zaokruženi znak dijeljenja	-
+⊙	operator u obliku zaokružene točke	-
+⊚	operator u obliku zaokruženog prstena	-
+⊛	operator u obliku zaokružene zvjezdice	-
+⊞	plus u kvadratu	-
+⊟	minus u kvadratu	-
+⊥	netočno	-
+⊮	ne forsira	-
+⊰	prethodi ispod relacije	-
+⊱	slijedi ispod relacije	-
+⋭	ne sadrži kao normalnu podgrupu jednaku	-
+⊶	original	-
+⊹	hermitska matrica	-
+⊿	pravokutni trokut	-
+⋁	n-arni logički simbol „ili”	-
+⋂	presjek neograničenog broja operanada	-
+⋃	unija neograničenog broja operanada	-
+⋅	operator u obliku točke	-
+⋆	operator u obliku zvijezde	-
+⋈	prirodni spoj	-
+⋒	dvostruki presjek	-
+⋘	izrazito manje od	-
+⋙	izrazito veće od	-
+⋮	okomita trotočka	-
+⋯	srednja vodoravna trotočka	-
+⋰	dijagonalna trotočka gore udesno	-
+⋱	dijagonalna trotočka dolje udesno	-
+⨧	plus i broj 2 u indeksu	-
+⨯	vektorski proizvod	-
+⨼	interni proizvod	-
+⩣	logičko „ili” s dvostrukom podcrtom	-
+⩽	ukošeno manje od jednako	-
+⪍	manje od iznad slično jednakom	-
+⪚	dvostruka linija jednaka veće od	-
+⪺	slijedi iznad nije približno jednako	-
+⭐	zvijezda	-
+⬆	strelica prema gore	-
+↗	strelica prema gore-desno	-
+↘	strelica prema dolje-desno	-
+⬇	strelica prema dolje	-
+↙	strelica prema dolje-lijevo	-
+⬅	strelica prema lijevo	-
+↖	strelica prema gore-lijevo	-
+↕	strelica gore-dolje	-
+↔	strelica lijevo-desno	-
+↮	kosa crta sa strelicom ulijevo i udesno	-
+↩	desna strelica koja se zakrivljuje ulijevo	-
+↪	lijeva strelica koja se zakrivljuje udesno	-
+⤴	desna strelica koja se zakrivljuje prema gore	-
+⤵	desna strelica koja se zakrivljuje prema dolje	-
+〰	valovita crta	-
+⭕	crveni krug s rupom	-
+〽	oznaka djelomične alternacije	-
+©	znak za autorska prava	-
+®	znak za registrirano	-
+™	zaštitni znak tm	-
+ℹ	izvor informacija	-
+㊗	tipka s ideogramom "čestitke"	-
+㊙	tipka s ideogramom "tajna"	-
+⬛	veliki crni kvadrat	-
+⬜	veliki bijeli kvadrat	-
+¢	cent	-
+$	dolar	-
+£	funta	-
+¥	jen	-
+₢	cruzeiro	-
+₣	francuski franak	-
+₤	lira	-
+₥	mill	-
+₩	von	-
+€	euro	-
+₰	njemački pfennig	-
+₱	pezo	-
+₳	austral	-
+₶	francuska livra	-
+₷	spesmilo	-
+₹	indijska rupija	-
+₽	rubalj	-
+₿	bitcoin	-
+¹	eksponent 1	-
+²	eksponent 2	-
+³	eksponent 3	-
+₨	rupija	-
+µ	znak mikro	-
+﷼	rijal	-
+¤	nepoznata valuta	-
+֏	armenski dram	-
+؋	afganistanski afgani	-
+৳	bangladeška taka	-
+฿	tajlandski baht	-
+៛	kambodžanski rijal	-
+₡	kostarikanski kolon	-
+₦	nigerijska naira	-
+₪	novi izraelski šekel	-
+₫	vijetnamski dong	-
+₭	laoski kip	-
+₮	mongolski tugrik	-
+₲	paragvajski gvarani	-
+₴	ukrajinska hrivnja	-
+₵	ganski cedi	-
+₸	kazahstanski tenge	-
+₺	turska lira	-
+₼	azerbajdžanski manat	-
+₾	gruzijski lari	-
+₧	španjolska pezeta	-

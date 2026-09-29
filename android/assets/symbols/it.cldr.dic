@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	parentesi graffa aperta	-
+‾	linea in alto	-
+_	trattino basso	-
+-	trattino-segno meno	-
+‐	trattino	-
+–	trattino corto	-
+—	trattino lungo	-
+―	barra orizzontale	-
+・	punto mediano katakana	-
+,	virgola	-
+،	virgola araba	-
+、	virgola ideografica	-
+;	punto e virgola	-
+؛	punto e virgola arabo	-
+:	due punti	-
+!	punto esclamativo	-
+¡	punto esclamativo al contrario	-
+?	punto interrogativo	-
+¿	punto interrogativo al contrario	-
+؟	punto interrogativo arabo	-
+‽	punto esclarrogativo	-
+.	punto	-
+…	puntini di sospensione	-
+。	punto ideografico	-
+·	punto mediano	-
+'	virgoletta dritta	-
+‘	virgoletta a sinistra	-
+’	virgoletta a destra	-
+‚	virgoletta bassa a destra	-
+“	virgolette a sinistra	-
+”	virgolette a destra	-
+„	virgolette basse a destra	-
+«	virgolette basse doppie aperte	-
+»	virgolette basse doppie chiuse	-
+)	parentesi di chiusura	-
+[	parentesi quadra aperta	-
+]	parentesi quadra chiusa	-
+}	parentesi graffa chiusa	-
+〈	parentesi angolare aperta	-
+〉	parentesi angolare chiusa	-
+《	parentesi angolare doppia aperta	-
+》	parentesi angolare doppia chiusa	-
+「	mezza parentesi quadra aperta in alto	-
+」	mezza parentesi quadra chiusa in basso	-
+『	mezza parentesi quadra vuota aperta in alto	-
+』	mezza parentesi quadra vuota chiusa in basso	-
+【	parentesi lenticolare piena aperta	-
+】	parentesi lenticolare piena chiusa	-
+〔	parentesi quadra spezzata aperta	-
+〕	parentesi quadra spezzata chiusa	-
+〖	parentesi lenticolare vuota aperta	-
+〗	parentesi lenticolare vota chiusa	-
+§	simbolo di sezione	-
+¶	simbolo di paragrafo	-
+@	simbolo della chiocciola	-
+*	simbolo dell’asterisco	-
+/	barra obliqua	-
+\	barra rovesciata	-
+&	e commerciale	-
+%	simbolo di percentuale	-
+‰	per mille	-
+†	simbolo dell’obelisco	-
+‡	simbolo del doppio obelisco	-
+•	punto elenco	-
+‧	punto di sillabazione	-
+′	virgoletta singola	-
+″	virgoletta doppia	-
+‴	virgoletta tripla	-
+‸	cursore	-
+※	segno di riferimento	-
+⁂	asterismo	-
+`	accento grave	-
+´	accento acuto	-
+^	accento circonflesso	-
+¨	dieresi	-
+°	simbolo di grado	-
+℗	simbolo di copyright della registrazione sonora	-
+←	freccia verso sinistra	-
+↚	freccia verso sinistra barrata	-
+→	freccia verso destra	-
+↛	freccia verso destra barrata	-
+↑	freccia verso l’alto	-
+↓	freccia verso il basso	-
+↜	freccia ondulata verso sinistra	-
+↝	freccia ondulata verso destra	-
+↞	freccia a due punte verso sinistra	-
+↟	freccia a due punte verso l’alto	-
+↠	freccia a due punte verso destra	-
+↡	freccia a due punte verso il basso	-
+↢	freccia verso sinistra con coda	-
+↣	freccia verso destra con coda	-
+↤	freccia verso sinistra dalla barra	-
+↥	freccia verso l’alto dalla barra	-
+↦	freccia verso destra dalla barra	-
+↧	freccia verso il basso dalla barra	-
+↨	freccia bidirezionale con base	-
+↫	freccia verso sinistra con anello	-
+↬	freccia verso destra con anello	-
+↭	freccia sinistra e destra ondulata	-
+↯	freccia a zigzag verso il basso	-
+↰	freccia verso l’alto con punta a sinistra	-
+↱	freccia verso l’alto con punta a destra	-
+↲	freccia verso il basso con punta a sinistra	-
+↳	freccia verso il basso con punta a destra	-
+↴	freccia verso destra con angolo rivolto in basso	-
+↵	freccia verso il basso con angolo rivolto a sinistra	-
+↶	freccia semicircolare superiore in senso antiorario	-
+↷	freccia semicircolare superiore in senso orario	-
+↸	freccia nord-ovest verso barra lunga	-
+↹	freccia a sinistra verso barra su freccia a destra verso barra	-
+↺	freccia circolare aperta in senso antiorario	-
+↻	freccia circolare aperta in senso orario	-
+↼	arpione a sinistra con punta verso l’alto	-
+↽	arpione a sinistra con punta verso il basso	-
+↾	arpione in alto con punta verso destra	-
+↿	arpione in alto con punta verso sinistra	-
+⇀	arpione a destra con punta verso l’alto	-
+⇁	arpione a destra con punta verso il basso	-
+⇂	arpione in basso con punta verso destra	-
+⇃	arpione in basso con punta verso sinistra	-
+⇄	freccia a destra su freccia a sinistra	-
+⇅	freccia verso l’alto e freccia verso il basso	-
+⇆	freccia verso sinistra su freccia verso destra	-
+⇇	coppia di frecce rivolte a sinistra	-
+⇈	coppia di frecce rivolte verso l’alto	-
+⇉	coppia di frecce rivolte a destra	-
+⇊	coppia di frecce rivolte verso il basso	-
+⇋	arpione a sinistra su arpione a destra	-
+⇌	arpione a destra su arpione a sinistra	-
+⇐	freccia doppia a sinstra	-
+⇍	freccia doppia a sinistra barrata	-
+⇑	freccia doppia verso l’alto	-
+⇒	freccia doppia a destra	-
+⇏	freccia doppia a destra barrata	-
+⇓	freccia doppia verso il basso	-
+⇔	freccia doppia sinistra e destra	-
+⇎	freccia doppia sinistra e destra barrata	-
+⇖	freccia doppia nord-ovest	-
+⇗	freccia doppia nord-est	-
+⇘	freccia doppia sud-est	-
+⇙	freccia doppia sud-ovest	-
+⇚	freccia tripla a sinistra	-
+⇛	freccia tripla a destra	-
+⇜	freccia ondulare a sinistra	-
+⇝	freccia ondulare a destra	-
+⇞	freccia doppia verso l’alto con doppia barra	-
+⇟	freccia doppia verso il basso con doppia barra	-
+⇠	freccia tratteggiata a sinistra	-
+⇡	freccia tratteggiata verso l’alto	-
+⇢	freccia tratteggiata a destra	-
+⇣	freccia tratteggiata verso il basso	-
+⇤	freccia a sinistra verso barra	-
+⇥	freccia a destra verso barra	-
+⇦	freccia vuota a sinistra	-
+⇧	freccia vuota verso l’alto	-
+⇨	freccia vuota a destra	-
+⇩	freccia vuota verso il basso	-
+⇪	freccia vuota verso l’alto dalla barra	-
+⇵	freccia verso il basso con freccia verso l’alto a destra	-
+∀	per ogni	-
+∂	derivata parziale	-
+∃	esiste	-
+∅	insieme vuoto	-
+∆	simbolo di incremento	-
+∇	nabla	-
+∈	simbolo di appartenenza	-
+∉	non appartiene	-
+∋	contiene	-
+∎	end of proof	-
+∏	prodotto n-ario	-
+∑	sommatoria n-aria	-
++	segno più	-
+±	più o meno	-
+÷	segno di divisione	-
+×	segno di moltiplicazione	-
+<	minore	-
+≮	non minore di	-
+=	uguale	-
+≠	disuguale	-
+>	maggiore	-
+≯	non maggiore di	-
+¬	negazione	-
+|	linea verticale	-
+~	tilde	-
+−	segno meno	-
+⁻	segno meno in apice	-
+∓	meno o più	-
+∕	barra di divisione	-
+⁄	barra di frazione	-
+∗	operatore asterisco	-
+∘	operatore anello	-
+∙	operatore punto elenco	-
+√	radice quadrata	-
+∝	proporzionale	-
+∞	simbolo di infinito	-
+∟	angolo retto	-
+∠	angolo	-
+∣	divide	-
+∥	parallelo	-
+∧	and logico	-
+∩	simbolo di intersezione	-
+∪	simbolo di unione	-
+∫	integrale	-
+∬	integrale doppio	-
+∮	integrale curvilineo	-
+∴	quindi	-
+∵	perché	-
+∶	rapporto	-
+∷	proporzione	-
+∼	operatore tilde	-
+∽	tilde rovesciata	-
+∾	lazy s invertito	-
+≃	asintoticamente uguale	-
+≅	congruente geometricamente	-
+≈	quasi uguale	-
+≌	tutto uguale	-
+≒	approssimativamente uguale all’immagine	-
+≖	anello pari a	-
+≡	simbolo di coincidenza	-
+≣	strettamente equivalente	-
+≤	minore o uguale	-
+≥	maggiore o uguale	-
+≦	minore di su uguale	-
+≧	maggiore di su uguale	-
+≪	molto minore di	-
+≫	molto maggiore di	-
+≬	tra	-
+≳	maggiore di o equivalente a	-
+≺	precede	-
+≻	segue	-
+⊁	non segue	-
+⊂	simbolo di sottoinsieme	-
+⊃	sovrainsieme	-
+⊆	sottoinsieme uguale a	-
+⊇	sovrainsieme uguale a	-
+⊕	segno più in cerchio	-
+⊖	segno meno in cerchio	-
+⊗	segno di moltiplicazione in cerchio	-
+⊘	barra di divisione in cerchio	-
+⊙	operatore punto in cerchio	-
+⊚	operatore anello in cerchio	-
+⊛	operatore asterisco in cerchio	-
+⊞	segno più in quadrato	-
+⊟	segno meno in quadrato	-
+⊥	contraddizione	-
+⊮	non forza	-
+⊰	precede nella relazione	-
+⊱	segue nella relazione	-
+⋭	non contiene come sottogruppo normale o uguale	-
+⊶	originale	-
+⊹	matrice hermitiana coniugata	-
+⊿	triangolo rettangolo	-
+⋁	or logico n-ario	-
+⋂	intersezione n-aria	-
+⋃	unione n-aria	-
+⋅	operatore punto	-
+⋆	operatore asterisco (*)	-
+⋈	unione naturale	-
+⋒	intersezione doppia	-
+⋘	molto molto minore di	-
+⋙	molto molto maggiore di	-
+⋮	puntini di sospensione verticali	-
+⋯	puntini di sospensione centrati	-
+⋰	puntini di sospensione diagonali in alto a destra	-
+⋱	puntini di sospensione diagonali in basso a destra	-
+⨧	segno più con pedice due	-
+⨯	prodotto vettoriale	-
+⨼	prodotto interno	-
+⩣	operatore logico or con barra inferiore doppia	-
+⩽	minore di sopra uguale a obliquo	-
+⪍	minore di sopra circa uguale	-
+⪚	uguale doppio sopra maggiore di	-
+⪺	segue sopra non quasi uguale	-
+⭐	stella	-
+⬆	freccia rivolta verso l’alto	-
+↗	freccia rivolta verso destra che punta in alto	-
+↘	freccia in basso a destra	-
+⬇	freccia rivolta verso il basso	-
+↙	freccia in basso a sinistra	-
+⬅	freccia rivolta a sinistra	-
+↖	freccia in alto a sinistra	-
+↕	freccia su-giù	-
+↔	freccia sinistra-destra	-
+↮	freccia sinistra e destra barrata	-
+↩	freccia curva a sinistra	-
+↪	freccia curva a destra	-
+⤴	freccia curva in alto	-
+⤵	freccia curva in basso	-
+〰	trattino ondulato	-
+⭕	cerchio rosso vuoto	-
+〽	simbolo di alternanza delle parti	-
+©	copyright	-
+®	marchio registrato	-
+™	marchio	-
+ℹ	punto informazioni	-
+㊗	ideogramma giapponese di “Congratulazioni”	-
+㊙	ideogramma giapponese di “Segreto”	-
+⬛	quadrato nero grande	-
+⬜	quadrato bianco grande	-
+¢	centesimo	-
+$	simbolo del dollaro	-
+£	simbolo della sterlina	-
+¥	simbolo dello yen	-
+₢	cruzeiro	-
+₣	franco francese	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	simbolo dell’euro	-
+₰	pfennig tedesco	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	simbolo della rupia indiana	-
+₽	simbolo del rublo	-
+₿	bitcoin	-
+¹	numero uno in apice	-
+²	numero due in apice	-
+³	numero tre in apice	-
+₨	rupia	-
+µ	simbolo del micron	-
+﷼	rial	-
+¤	valuta sconosciuta	-
+֏	dram armeno	-
+؋	afghani	-
+৳	taka bangladese	-
+฿	baht thailandese	-
+៛	riel cambogiano	-
+₡	colón costaricano	-
+₦	naira nigeriana	-
+₪	nuovo siclo israeliano	-
+₫	dong vietnamita	-
+₭	kip laotiano	-
+₮	tugrik mongolo	-
+₲	guaraní paraguayano	-
+₴	grivnia ucraina	-
+₵	cedi ghanese	-
+₸	tenge kazako	-
+₺	lira turca	-
+₼	manat azero	-
+₾	lari georgiano	-
+₧	peseta spagnola	-

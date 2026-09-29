@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	llave de apertura	-
+‾	línea superpuesta	-
+_	guion bajo	-
+-	guion menos	-
+‐	guion	-
+–	guion corto	-
+—	raya	-
+―	barra horizontal	-
+・	punto medio katakana	-
+,	coma	-
+،	coma árabe	-
+、	coma ideográfica	-
+;	punto y coma	-
+؛	punto y coma árabe	-
+:	dos puntos	-
+!	exclamación de cierre	-
+¡	exclamación de apertura	-
+?	interrogación de cierre	-
+¿	interrogación de apertura	-
+؟	interrogación árabe	-
+‽	exclarrogativo	-
+.	punto	-
+…	puntos suspensivos	-
+。	punto ideográfico	-
+·	punto medio	-
+'	comillas rectas	-
+‘	apóstrofo izquierdo	-
+’	apóstrofo derecho	-
+‚	apóstrofo derecho bajo	-
+“	comillas dobles izquierdas	-
+”	comillas dobles derechas	-
+„	comillas dobles derechas bajas	-
+«	comillas latinas de apertura	-
+»	comillas latinas de cierre	-
+)	paréntesis de cierre	-
+[	corchete de apertura	-
+]	corchete de cierre	-
+}	llave de cierre	-
+〈	corchete angular de apertura	-
+〉	corchete angular de cierre	-
+《	corchete angular doble de apertura	-
+》	corchete angular doble de cierre	-
+「	corchete esquinado de apertura	-
+」	corchete esquinado de cierre	-
+『	corchete esquinado de apertura hueco	-
+』	corchete esquinado de cierre hueco	-
+【	corchete lenticular de apertura	-
+】	corchete lenticular de cierre	-
+〔	corchete caparazón tortuga de apertura	-
+〕	corchete caparazón tortuga de cierre	-
+〖	corchete lenticular de apertura hueco	-
+〗	corchete lenticular de cierre hueco	-
+§	signo de sección	-
+¶	calderón	-
+@	arroba	-
+*	asterisco	-
+/	barra	-
+\	barra invertida	-
+&	ampersand	-
+%	porcentaje	-
+‰	por mil	-
+†	signo de cruz	-
+‡	signo de cruz doble	-
+•	bolo	-
+‧	punto de unión con guion	-
+′	prima	-
+″	doble prima	-
+‴	triple prima	-
+‸	intercalación	-
+※	marca de referencia	-
+⁂	asterismo	-
+`	acento grave	-
+´	acento agudo	-
+^	acento circunflejo	-
+¨	diéresis	-
+°	grado	-
+℗	copyright de grabación de sonido	-
+←	flecha apuntando hacia la izquierda	-
+↚	flecha hacia la izquierda tachada	-
+→	flecha apuntando hacia la derecha	-
+↛	flecha hacia la derecha tachada	-
+↑	flecha apuntando hacia arriba	-
+↓	flecha apuntando hacia abajo	-
+↜	flecha de onda hacia la izquierda	-
+↝	flecha de onda hacia la derecha	-
+↞	flecha de doble punta hacia la izquierda	-
+↟	flecha de doble punta hacia arriba	-
+↠	flecha de doble punta hacia la derecha	-
+↡	flecha de doble punta hacia abajo	-
+↢	flecha hacia la izquierda con cola	-
+↣	flecha hacia la derecha con cola	-
+↤	flecha hacia la izquierda desde barra	-
+↥	flecha hacia arriba desde barra	-
+↦	flecha hacia la derecha desde barra	-
+↧	flecha hacia abajo desde barra	-
+↨	flecha arriba abajo con base	-
+↫	flecha hacia la izquierda con bucle	-
+↬	flecha hacia la derecha con bucle	-
+↭	flecha de onda hacia la izquierda y la derecha	-
+↯	flecha en zigzag hacia abajo	-
+↰	flecha hacia arriba con punta hacia la izquierda	-
+↱	flecha hacia arriba con punta hacia la derecha	-
+↲	flecha hacia abajo con punta hacia la izquierda	-
+↳	flecha hacia abajo con punta hacia la derecha	-
+↴	flecha hacia la derecha con ángulo hacia abajo	-
+↵	flecha hacia abajo con ángulo hacia la izquierda	-
+↶	flecha en semicírculo superior hacia la izquierda	-
+↷	flecha en semicírculo superior hacia la derecha	-
+↸	flecha hacia el noroeste con barra larga	-
+↹	flecha hacia la izquierda con barra sobre flecha hacia la derecha con barra	-
+↺	círculo abierto con flecha en sentido antihorario	-
+↻	círculo abierto con flecha en sentido horario	-
+↼	arpón hacia la izquierda con la punta hacia arriba	-
+↽	arpón hacia la izquierda con la punta hacia abajo	-
+↾	arpón hacia arriba con la punta hacia la derecha	-
+↿	arpón hacia arriba con la punta hacia la izquierda	-
+⇀	arpón hacia la derecha con la punta hacia arriba	-
+⇁	arpón hacia la derecha con la punta hacia abajo	-
+⇂	arpón hacia abajo con la punta hacia la derecha	-
+⇃	arpón hacia abajo con la punta hacia la izquierda	-
+⇄	flecha hacia la derecha sobre flecha hacia la izquierda	-
+⇅	flechas apuntando arriba y abajo	-
+⇆	flechas apuntando izquierda sobre derecha	-
+⇇	pareja de flechas hacia la izquierda	-
+⇈	pareja de flechas hacia arriba	-
+⇉	pareja de flechas hacia la derecha	-
+⇊	pareja de flechas hacia abajo	-
+⇋	arpón hacia la izquierda sobre arpón hacia la derecha	-
+⇌	arpón hacia la derecha sobre arpón hacia la izquierda	-
+⇐	flecha doble hacia la izquierda	-
+⇍	flecha doble hacia la izquierda tachada	-
+⇑	flecha doble hacia arriba	-
+⇒	flecha doble hacia la derecha	-
+⇏	flecha doble hacia la derecha tachada	-
+⇓	flecha doble hacia abajo	-
+⇔	flecha doble hacia la izquierda y la derecha	-
+⇎	flecha doble hacia la izquierda y la derecha tachada	-
+⇖	flecha doble hacia el noroeste	-
+⇗	flecha doble hacia el nordeste	-
+⇘	flecha doble hacia sudeste	-
+⇙	flecha doble hacia el sudoeste	-
+⇚	flecha triple hacia la izquierda	-
+⇛	flecha triple hacia la derecha	-
+⇜	flecha ondulada hacia la izquierda	-
+⇝	flecha ondulada hacia la derecha	-
+⇞	flecha hacia arriba con doble tachado	-
+⇟	flecha hacia abajo con doble tachado	-
+⇠	flecha discontinua hacia la izquierda	-
+⇡	flecha discontinua hacia arriba	-
+⇢	flecha discontinua hacia la derecha	-
+⇣	flecha discontinua hacia abajo	-
+⇤	flecha hacia la izquierda con barra	-
+⇥	flecha hacia la derecha con barra	-
+⇦	flecha hueca hacia la izquierda	-
+⇧	flecha hueca hacia arriba	-
+⇨	flecha hueca hacia la derecha	-
+⇩	flecha hueca hacia abajo	-
+⇪	flecha hueca hacia arriba desde barra	-
+⇵	flecha hacia abajo a la izquierda de flecha hacia arriba	-
+∀	para todo	-
+∂	derivada parcial	-
+∃	existe	-
+∅	conjunto vacío	-
+∆	incremento	-
+∇	nabla	-
+∈	elemento de	-
+∉	no es elemento	-
+∋	contiene como miembro	-
+∎	fin de la prueba	-
+∏	producto n-ario	-
+∑	sumativa n-aria	-
++	signo más	-
+±	signo más/menos	-
+÷	signo de división	-
+×	signo de multiplicación	-
+<	menor que	-
+≮	no menor que	-
+=	igual	-
+≠	no igual	-
+>	mayor que	-
+≯	no mayor que	-
+¬	negación	-
+|	línea vertical	-
+~	virgulilla	-
+−	signo menos	-
+⁻	menos en superíndice	-
+∓	menos o más	-
+∕	barra de división	-
+⁄	barra de fracción	-
+∗	operador de asterisco	-
+∘	operador de anillo	-
+∙	operador de bolo	-
+√	raíz cuadrada	-
+∝	proporcional	-
+∞	signo de infinito	-
+∟	ángulo recto	-
+∠	ángulo	-
+∣	divide	-
+∥	paralelo	-
+∧	y lógica	-
+∩	intersección	-
+∪	unión	-
+∫	integral	-
+∬	doble integral	-
+∮	integral de contorno	-
+∴	conclusión	-
+∵	porque	-
+∶	ratio	-
+∷	proporción	-
+∼	operador de virgulilla	-
+∽	virgulilla inversa	-
+∾	s invertida horizontal	-
+≃	asintóticamente igual a	-
+≅	aproximadamente igual a	-
+≈	casi igual	-
+≌	todo igual	-
+≒	aproximadamente igual o la imagen de	-
+≖	anillo en igual a	-
+≡	equivalente a	-
+≣	estrictamente equivalente	-
+≤	menor que o igual	-
+≥	mayor que o igual	-
+≦	menor que sobre igual	-
+≧	mayor que sobre igual	-
+≪	mucho menor que	-
+≫	mucho mayor que	-
+≬	entre	-
+≳	equivalente mayor que	-
+≺	precede	-
+≻	sucede	-
+⊁	no sucede	-
+⊂	subconjunto de	-
+⊃	superconjunto de	-
+⊆	subconjunto igual a	-
+⊇	superconjunto igual a	-
+⊕	más dentro de círculo	-
+⊖	menos dentro de círculo	-
+⊗	por dentro de círculo	-
+⊘	barra de división dentro de círculo	-
+⊙	operador de punto dentro de círculo	-
+⊚	operador de anillo dentro de círculo	-
+⊛	operador de asterisco dentro de círculo	-
+⊞	más dentro de cuadrado	-
+⊟	menos dentro de cuadrado	-
+⊥	tachuela hacia arriba	-
+⊮	no fuerza	-
+⊰	precede en relación	-
+⊱	sucede en relación	-
+⋭	no contiene como subgrupo normal o igual a	-
+⊶	original	-
+⊹	matriz conjugada hermitiana	-
+⊿	triángulo rectángulo	-
+⋁	o lógica n-aria	-
+⋂	intersección n-aria	-
+⋃	unión n-aria	-
+⋅	operador de punto	-
+⋆	operador de estrella	-
+⋈	unión natural	-
+⋒	doble intersección	-
+⋘	mucho mucho menor que	-
+⋙	mucho mucho mayor que	-
+⋮	puntos suspensivos verticales	-
+⋯	puntos suspensivos horizontales	-
+⋰	puntos suspensivos diagonales hacia arriba a la derecha	-
+⋱	puntos suspensivos diagonales hacia abajo a la derecha	-
+⨧	más subíndice dos	-
+⨯	vector o producto cruzado	-
+⨼	producto interior	-
+⩣	lógica o doble barra inferior	-
+⩽	menor que o igual con barra inclinada	-
+⪍	menor que sobre igual o similar	-
+⪚	doble línea sobre mayor que	-
+⪺	sucede sobre signo de no casi igual	-
+⭐	estrella	-
+⬆	flecha hacia arriba	-
+↗	flecha hacia la esquina superior derecha	-
+↘	flecha hacia la esquina inferior derecha	-
+⬇	flecha hacia abajo	-
+↙	flecha hacia la esquina inferior izquierda	-
+⬅	flecha hacia la izquierda	-
+↖	flecha hacia la esquina superior izquierda	-
+↕	flecha arriba y abajo	-
+↔	flecha izquierda y derecha	-
+↮	flecha hacia la izquierda y la derecha tachada	-
+↩	flecha derecha curvándose a la izquierda	-
+↪	flecha izquierda curvándose a la derecha	-
+⤴	flecha derecha curvándose hacia arriba	-
+⤵	flecha derecha curvándose hacia abajo	-
+〰	guion ondulado	-
+⭕	círculo rojo hueco	-
+〽	marca de alternancia	-
+©	copyright	-
+®	marca registrada	-
+™	símbolo de marca comercial	-
+ℹ	información	-
+㊗	ideograma japonés para "enhorabuena"	-
+㊙	ideograma japonés para "secreto"	-
+⬛	cuadrado negro grande	-
+⬜	cuadrado blanco grande	-
+¢	céntimo	-
+$	dólar	-
+£	libra esterlina	-
+¥	yen	-
+₢	cruceiro	-
+₣	franco francés	-
+₤	lira	-
+₥	milésimo	-
+₩	won	-
+€	euro	-
+₰	penique alemán	-
+₱	peso	-
+₳	austral	-
+₶	libra tornesa	-
+₷	spesmilo	-
+₹	rupia india	-
+₽	rublo	-
+₿	bitcóin	-
+¹	uno en superíndice	-
+²	dos en superíndice	-
+³	tres en superíndice	-
+₨	rupia	-
+µ	símbolo de micro	-
+﷼	rial	-
+¤	moneda desconocida	-
+֏	dram armenio	-
+؋	afgani afgano	-
+৳	taka bangladesí	-
+฿	bat tailandés	-
+៛	riel camboyano	-
+₡	colón costarricense	-
+₦	naira nigeriano	-
+₪	nuevo séquel israelí	-
+₫	dong vietnamita	-
+₭	kip laosiano	-
+₮	tugrik mongol	-
+₲	guaraní paraguayo	-
+₴	grivna ucraniana	-
+₵	cedi ghanés	-
+₸	tengue kazajo	-
+₺	lira turca	-
+₼	manat azerbaiyano	-
+₾	lari georgiano	-
+₧	peseta española	-

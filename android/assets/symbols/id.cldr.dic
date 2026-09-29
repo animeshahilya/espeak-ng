@@ -1,0 +1,345 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	kurung kurawal buka	-
+‾	garis atas	-
+_	garis bawah	-
+-	tanda hubung-minus	-
+‐	tanda hubung	-
+–	en dash	-
+—	em dash	-
+―	batang horizontal	-
+・	titik tengah katakana	-
+,	koma	-
+،	koma arab	-
+、	koma ideograf	-
+;	titik koma	-
+؛	titik koma arab	-
+:	titik dua	-
+!	tanda seru	-
+¡	tanda seru terbalik	-
+?	tanda tanya	-
+¿	tanda tanya terbalik	-
+؟	tanda tanya arab	-
+‽	interobang	-
+.	titik	-
+…	elipsis	-
+。	titik ideografis	-
+·	titik tengah	-
+'	apostrof mesin tik	-
+‘	apostrof kiri	-
+’	apostrof kanan	-
+‚	apostrof kanan bawah	-
+“	tanda petik kiri	-
+”	tanda petik kanan	-
+„	tanda petik kanan bawah	-
+«	guillemet kiri	-
+»	guillemet kanan	-
+)	kurung tutup	-
+[	kurung siku buka	-
+]	kurung siku tutup	-
+}	kurung kurawal tutup	-
+〈	kurung sudut buka	-
+〉	kurung sudut tutup	-
+《	kurung sudut ganda buka	-
+》	kurung sudut ganda tutup	-
+「	kurung tekuk buka	-
+」	kurung tekuk tutup	-
+『	kurung tekuk bolong buka	-
+』	kurung tekuk bolong tutup	-
+【	kurung lensa penuh buka	-
+】	kurung lensa penuh tutup	-
+〔	tanda kurung tempurung buka	-
+〕	tanda kurung tempurung tutup	-
+〖	kurung lensa bolong buka	-
+〗	kurung lensa bolong tutup	-
+§	bagian	-
+¶	tanda paragraf	-
+@	tanda et	-
+*	asterisk	-
+/	garis miring	-
+\	garis miring terbalik	-
+&	ampersan	-
+%	persen	-
+‰	permil	-
+†	tanda dagger	-
+‡	tanda dagger ganda	-
+•	bullet	-
+‧	titik hubung	-
+′	prime	-
+″	prime ganda	-
+‴	prime tripel	-
+‸	caret	-
+※	tanda referensi	-
+⁂	asterisme	-
+`	tanda aksen rendah	-
+´	tanda aksen tirus	-
+^	aksen sirkumfleks	-
+¨	diaeresis	-
+°	derajat	-
+℗	hak cipta rekaman suara	-
+←	tanda panah mengarah ke kiri	-
+↚	panah arah kiri	-
+→	tanda panah mengarah ke kanan	-
+↛	panah arah kanan	-
+↑	tanda panah mengarah ke atas	-
+↓	tanda panah mengarah ke bawah	-
+↜	gelombang panah arah kiri	-
+↝	gelombang panah arah kanan	-
+↞	panah dua mata arah kiri	-
+↟	panah dua mata arah naik	-
+↠	panah dua mata arah kanan	-
+↡	panah dua mata arah turun	-
+↢	anak panah ke kiri	-
+↣	anak panah ke kanan	-
+↤	panah ke kiri dari batang	-
+↥	panah ke atas dari batang	-
+↦	panah ke kanan dari batang	-
+↧	panah ke bawah dari batang	-
+↨	panah naik turun berdudukan	-
+↫	panah simpal ke kiri	-
+↬	panah simpal ke kanan	-
+↭	panah simpal kanan kiri	-
+↯	panah zigzag turun	-
+↰	panah naik mata ke kiri	-
+↱	panah naik mata ke kanan	-
+↲	panah turun mata ke kiri	-
+↳	panah turun mata ke kanan	-
+↴	panah kanan siku turun	-
+↵	panah turun siku ke kiri	-
+↶	panah lengkung atas ke kiri	-
+↷	panah lengkung atas ke kanan	-
+↸	panah barat laut bilah panjang	-
+↹	panah ke batang kiri di atas panah ke batang kanan	-
+↺	panah lingkar terbuka melawan arah jarum jam	-
+↻	panah lingkar terbuka searah jarum jam	-
+↼	panah seruit atas ke kiri	-
+↽	panah seruit bawah ke kiri	-
+↾	panah seruit kanan ke atas	-
+↿	panah seruit kiri ke atas	-
+⇀	panah seruit atas ke kanan	-
+⇁	panah seruit bawah ke kanan	-
+⇂	panah seruit kanan ke bawah	-
+⇃	panah seruit kiri ke bawah	-
+⇄	panah ke kanan di atas panah ke kiri	-
+⇅	tanda panah mengarah ke atas dan ke bawah	-
+⇆	tanda panah mengarah ke kiri di atas tanda panah mengarah ke kanan	-
+⇇	sepasang panah ke kiri	-
+⇈	sepasang panah ke atas	-
+⇉	sepasang panah ke kanan	-
+⇊	sepasang panah ke bawah	-
+⇋	panah seruit ke kiri di atas panah seruit ke kanan	-
+⇌	panah seruit ke kanan di atas panah seruit ke kiri	-
+⇐	panah ganda ke kiri	-
+⇍	panah ganda ke kiri dicoret	-
+⇑	panah ganda ke atas	-
+⇒	panah ganda ke kanan	-
+⇏	panah ganda ke kanan dicoret	-
+⇓	panah ganda ke bawah	-
+⇔	panah ganda ke kanan kiri	-
+⇎	panah ganda ke kanan kiri dicoret	-
+⇖	panah ganda barat laut	-
+⇗	panah ganda timur laut	-
+⇘	panah ganda tenggara	-
+⇙	panah ganda barat daya	-
+⇚	panah tripel ke kiri	-
+⇛	panah tripel ke kanan	-
+⇜	panah keriting ke kiri	-
+⇝	panah keriting ke kanan	-
+⇞	panah ke atas coret ganda	-
+⇟	panah ke bawah coret ganda	-
+⇠	panah bergaris putus-putus ke kiri	-
+⇡	panah bergaris putus-putus ke atas	-
+⇢	panah bergaris putus-putus ke kanan	-
+⇣	panah bergaris putus-putus ke bawah	-
+⇤	batang panah ke kiri	-
+⇥	batang panah ke kanan	-
+⇦	panah putih ke kiri	-
+⇧	panah putih ke atas	-
+⇨	panah putih ke kanan	-
+⇩	panah putih ke bawah	-
+⇪	panah putih ke atas dari batang	-
+⇵	panah ke bawah di sebelah kiri panah ke atas	-
+∀	untuk semua	-
+∂	diferensial parsial	-
+∃	di sana ada	-
+∅	himpunan kosong	-
+∆	pertambahan	-
+∇	nabla	-
+∈	anggota	-
+∉	bukan elemen	-
+∋	berisi	-
+∎	pembuktian selesai	-
+∏	produk n-ary	-
+∑	penjumlahan n-ary	-
++	tanda plus	-
+±	plus-minus	-
+÷	tanda pembagian	-
+×	tanda perkalian	-
+<	kurang dari	-
+≮	tidak kurang dari	-
+=	sama dengan	-
+≠	tidak sama dengan	-
+>	lebih dari	-
+≯	tidak lebih dari	-
+¬	negasi	-
+|	garis vertikal	-
+~	tilde	-
+−	tanda minus	-
+⁻	minus superskrip	-
+∓	minus-atau-plus	-
+∕	garis miring pembagian	-
+⁄	garis miring pecahan	-
+∗	operator asterisk	-
+∘	operator cincin	-
+∙	operator bullet	-
+√	akar kuadrat	-
+∝	proporsional	-
+∞	tanda tak terhingga	-
+∟	sudut kanan	-
+∠	sudut	-
+∣	membagi	-
+∥	paralel	-
+∧	dan logika	-
+∩	irisan	-
+∪	gabungan	-
+∫	integral	-
+∬	integral ganda	-
+∮	integral kontur	-
+∴	karena itu	-
+∵	karena	-
+∶	rasio	-
+∷	proporsi	-
+∼	operator tilde	-
+∽	tilde terbalik	-
+∾	lazy s terbalik	-
+≃	sama asimptotis	-
+≅	kira-kira sama	-
+≈	hampir sama dengan	-
+≌	semua sama	-
+≒	kira-kira sama dengan atau gambaran	-
+≖	cincin di dalam tanda sama dengan	-
+≡	setara dengan	-
+≣	setara terbatas	-
+≤	kurang dari atau sama dengan	-
+≥	lebih dari atau sama dengan	-
+≦	kurang dari di atas sama dengan	-
+≧	lebih dari di atas sama dengan	-
+≪	jauh lebih sedikit dari	-
+≫	jauh lebih besar dari	-
+≬	antara	-
+≳	lebih besar dari atau setara	-
+≺	mendahului	-
+≻	mengikuti	-
+⊁	tidak mengikuti	-
+⊂	subhimpunan dari	-
+⊃	superset	-
+⊆	subset sama dengan	-
+⊇	superset sama dengan	-
+⊕	plus dilingkari	-
+⊖	minus dilingkari	-
+⊗	tanda perkalian dilingkari	-
+⊘	garis miring pembagian dilingkari	-
+⊙	operator titik dilingkari	-
+⊚	operator cincin dilingkari	-
+⊛	operator asterisk dilingkari	-
+⊞	tanda plus dalam persegi	-
+⊟	tanda minus dalam persegi	-
+⊥	falsum	-
+⊮	tidak memaksa	-
+⊰	mendahului di bawah relasi	-
+⊱	mengikuti di bawah relasi	-
+⋭	tidak mencakup sebagai subgrup normal atau sama dengan	-
+⊶	orisinal	-
+⊹	matriks konjugasi hermitian	-
+⊿	segitiga kanan	-
+⋁	atau logika n-ary	-
+⋂	irisan n-ary	-
+⋃	gabungan n-ary	-
+⋅	operator titik	-
+⋆	operator bintang	-
+⋈	gabungan alami	-
+⋒	irisan ganda	-
+⋘	sangat lebih sedikit dari	-
+⋙	sangat lebih besar dari	-
+⋮	elipsis vertikal	-
+⋯	elipsis horizontal garis tengah	-
+⋰	elipsis diagonal naik ke kanan	-
+⋱	elipsis diagonal turun ke kanan	-
+⨧	plus dengan subskrip angka dua	-
+⨯	produk vektor	-
+⨼	produk interior	-
+⩣	atau logika dengan dua garis bawah	-
+⩽	kurang dari dengan tanda sama dengan miring	-
+⪍	kurang dari di atas tanda sama dengan atau kira-kira sama dengan	-
+⪚	dua garis sama dengan di atas tanda lebih dari	-
+⪺	mengikuti di atas tanda tidak hampir sama	-
+⭐	bintang medium putih	-
+⬆	tanda panah atas	-
+↗	tanda panah kanan atas	-
+↘	tanda panah kanan bawah	-
+⬇	tanda panah bawah	-
+↙	tanda panah kiri bawah	-
+⬅	tanda panah kiri	-
+↖	tanda panah kiri atas	-
+↕	tanda panah atas bawah	-
+↔	tanda panah kiri kanan	-
+↮	panah arah kanan kiri	-
+↩	tanda panah kanan melengkung ke kiri	-
+↪	tanda panah kanan melengkung ke kanan	-
+⤴	tanda panah kanan melengkung ke atas	-
+⤵	tanda panah kanan melengkung ke bawah	-
+〰	garis bergelombang	-
+⭕	lingkaran besar tebal	-
+〽	tanda alternasi bagian	-
+©	hak cipta	-
+®	terdaftar	-
+™	merek dagang	-
+ℹ	informasi	-
+㊗	tombol Jepang "selamat"	-
+㊙	tombol Jepang "rahasia"	-
+⬛	persegi besar hitam	-
+⬜	persegi besar putih	-
+¢	sen	-
+$	dolar	-
+£	pound	-
+¥	yen	-
+₢	cruzeiro	-
+₣	franc prancis	-
+₤	lira	-
+₥	mill	-
+₩	won	-
+€	euro	-
+₰	penny jerman	-
+₱	peso	-
+₳	austral	-
+₶	livre tournois	-
+₷	spesmilo	-
+₹	rupee india	-
+₽	ruble	-
+₿	bitcoin	-
+¹	satu superskrip	-
+²	dua superskrip	-
+³	tiga superskrip	-
+₨	rupee	-
+µ	tanda mikro	-
+﷼	rial	-
+¤	Mata Uang Tidak Dikenal	-
+֏	Dram Armenia	-
+؋	Afgani Afganistan	-
+৳	Taka Bangladesh	-
+฿	Baht Thailand	-
+៛	Riel Kamboja	-
+₡	Colon Kosta Rika	-
+₦	Naira Nigeria	-
+₪	Shekel Baru Israel	-
+₫	Dong Vietnam	-
+₭	Kip Laos	-
+₮	Tugrik Mongolia	-
+₲	Guarani Paraguay	-
+₴	Hryvnia Ukraina	-
+₵	Cedi Ghana	-
+₸	Tenge Kazakhstan	-
+₺	Lira Turki	-
+₼	Manat Azerbaijan	-
+₾	Lari Georgia	-
+₧	Peseta Spanyol	-

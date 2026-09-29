@@ -1,0 +1,344 @@
+# Non-emoji symbol names from Unicode CLDR via nvda-cldr (Unicode License v3).
+symbols:
+{	kllapë hapëse gjarpërushe	-
+‾	vizë lart	-
+_	vijë e ulët	-
+-	ndarje minus	-
+‐	ndarje	-
+–	vizë e mesme	-
+—	vizë e gjatë	-
+―	shirit horizontal	-
+・	pikë mesi katakana	-
+,	presje	-
+،	presje arabe	-
+、	presje ideografike	-
+;	pikëpresje	-
+؛	pikëpresje arabe	-
+:	dy pika	-
+!	pikëçuditje	-
+¡	pikëçuditëse përmbys	-
+?	shenja e pikëpyetjes	-
+¿	pikëpyetje përmbys	-
+؟	pikëpyetje arabe	-
+‽	pikëpyetje me pikëçuditje	-
+.	pikë fundore	-
+…	tre pika	-
+。	pikë ideografike	-
+·	pikë mesi	-
+'	apostrof makine shkrimi	-
+‘	apostrof i majtë	-
+’	apostrof i djathtë	-
+‚	apostrof i djathtë i ulët	-
+“	thonjëz e majtë	-
+”	thonjëz e djathtë	-
+„	thonjëz e djathtë e ulët	-
+«	thonjëza të majta	-
+»	thonjëza të djathta	-
+)	kllapë mbyllëse	-
+[	kllapë hapëse e madhe	-
+]	kllapë mbyllëse e madhe	-
+}	kllapë mbyllëse gjarpërushe	-
+〈	kllapë hapëse këndore	-
+〉	kllapë mbyllëse këndore	-
+《	kllapë hapëse këndore dyshe	-
+》	kllapë mbyllëse këndore dyshe	-
+「	kllapë hapëse këndi	-
+」	kllapë mbyllëse këndi	-
+『	kllapë hapëse këndi e zgavërt	-
+』	kllapë mbyllëse këndi e zgavërt	-
+【	kllapë hapëse thjerrë e zezë	-
+】	kllapë mbyllëse thjerrë e zezë	-
+〔	kllapë hapëse lakore	-
+〕	kllapë mbyllëse lakore	-
+〖	kllapë hapëse thjerrë e zgavërt	-
+〗	kllapë mbyllëse thjerrë e zgavërt	-
+§	seksion	-
+¶	paragraf	-
+@	shenja at	-
+*	yll	-
+/	fraksion	-
+\	fraksion mbrapsht	-
+&	dhe	-
+%	përqind	-
+‰	për mijë	-
+†	shenja e kamës	-
+‡	shenja e kamës dyshe	-
+•	pikë liste	-
+‧	pikë ndarëse	-
+′	prim	-
+″	dy prim	-
+‴	prim i trefishtë	-
+‸	shenja e shkrimit	-
+※	shenjë reference	-
+⁂	yjësi	-
+`	apostrof mbrapsht	-
+´	theks i fortë	-
+^	theks hundor	-
+¨	dierezë	-
+°	gradë	-
+℗	e drejta e autorit për regjistrim zanor	-
+←	shigjetë me drejtim majtas	-
+↚	shigjetë majtas fraksion	-
+→	shigjetë me drejtim djathtas	-
+↛	shigjetë djtathtas fraksion	-
+↑	shigjetë me drejtim lart	-
+↓	shigjetë me drejtim poshtë	-
+↜	shigjetë majtas e valëzuar	-
+↝	shigjetë djathtas e valëzuar	-
+↞	shigjetë dymajëshe majtas	-
+↟	shigjetë dymajëshe lart	-
+↠	shigjetë dymajëshe djathtas	-
+↡	shigjetë dymajëshe poshtë	-
+↢	shigjetë majtas me bisht	-
+↣	shigjetë djathtas me bisht	-
+↤	shigjetë majtas me shufër	-
+↥	shigjetë lart me shufër	-
+↦	shigjetë djathtas me shufër	-
+↧	shigjetë poshtë me shufër	-
+↨	shigjetë lart-poshtë me bazament	-
+↫	shigjetë majtas me lak	-
+↬	shigjetë djathtas me lak	-
+↭	shigjetë e valëzuar majtas-djathtas	-
+↯	shigjetë zigzage poshtë	-
+↰	shigjetë lart me majë majtas	-
+↱	shigjetë lart me majë djathtas	-
+↲	shigjetë poshtë me majë majtas	-
+↳	shigjetë poshtë me majë djathtas	-
+↴	shigjetë djathtas me kënd poshtë	-
+↵	shigjetë poshtë me kënd majtas	-
+↶	shigjetë gjysmëhark lart me drejtim kundërorar	-
+↷	shigjetë gjysmëhark lart me drejtim orar	-
+↸	shigjetë veriperëndim me tra të gjatë	-
+↹	shigjetë majtas me shufër mbi shigjetë djathtas me shufër	-
+↺	shigjetë rrethhapur me drejtim kundërorar	-
+↻	shigjetë rrethhapur me drejtim orar	-
+↼	fuzhnjë majtas me grep lart	-
+↽	fuzhnjë majtas me grep poshtë	-
+↾	fuzhnjë lart me grep djathtas	-
+↿	fuzhnjë lart me grep majtas	-
+⇀	fuzhnjë djathtas me grep lart	-
+⇁	fuzhnjë djathtas me grep poshtë	-
+⇂	fuzhnjë poshtë me grep djathtas	-
+⇃	fuzhnjë poshtë me grep majtas	-
+⇄	shigjetë djathtas mbi shigjetë majtas	-
+⇅	shigjeta me drejtim lart dhe me drejtim poshtë	-
+⇆	shigjeta me drejtim majtas mbi me drejtim djathtas	-
+⇇	shigjeta dyshe majtas	-
+⇈	shigjeta dyshe lart	-
+⇉	shigjeta dyshe djathtas	-
+⇊	shigjeta dyshe poshtë	-
+⇋	fuzhnjë majtas mbi fuzhnjë djathtas	-
+⇌	fuzhnjë djathtas mbi fuzhnjë majtas	-
+⇐	shigjetë dyshe majtas	-
+⇍	shigjetë dyshe majtas me fraksion	-
+⇑	shigjetë dyshe lart	-
+⇒	shigjetë dyshe djathtas	-
+⇏	shigjetë dyshe djathtas me fraksion	-
+⇓	shigjetë dyshe poshtë	-
+⇔	shigjetë dyshe majtas-djathtas	-
+⇎	shigjetë dyshe majtas-djathtas me fraksion	-
+⇖	shigjetë dyshe veriperëndim	-
+⇗	shigjetë dyshe verilindje	-
+⇘	shigjetë dyshe juglindje	-
+⇙	shigjetë dyshe drejt jugperëndimit	-
+⇚	shigjetë treshe majtas	-
+⇛	shigjetë treshe djathtas	-
+⇜	shigjetë e përdredhur majtas	-
+⇝	shigjetë e përdredhur djathtas	-
+⇞	shigjetë lart me dy viza	-
+⇟	shigjetë poshtë me dy viza	-
+⇠	shigjetë majtas me ndërprerje	-
+⇡	shigjetë lart me ndërprerje	-
+⇢	shigjetë djathtas me ndërprerje	-
+⇣	shigjetë poshtë me ndërprerje	-
+⇤	shigjetë me shufër majtas	-
+⇥	shigjetë me shufër djathtas	-
+⇦	shigjetë bosh majtas	-
+⇧	shigjetë bosh lart	-
+⇨	shigjetë bosh djathtas	-
+⇩	shigjetë bosh poshtë	-
+⇪	shigjetë bosh lart nga shufër	-
+⇵	shigjetë poshtë majtas shigjetë lart	-
+∀	për të gjitha	-
+∂	diferencial i pjesshëm	-
+∃	ka	-
+∅	bashkësi bosh	-
+∆	rritje	-
+∇	nabla	-
+∈	element i	-
+∉	jo element	-
+∋	përmban si pjesëtar	-
+∎	fundi i vërtetimit	-
+∏	prodhim n	-
+∑	shumë n	-
++	shenja e plusit	-
+±	plus-minus	-
+÷	shenja e pjesëtimit	-
+×	shenja e shumëzimit	-
+<	më e vogël se	-
+≮	jo më pak se	-
+=	baras	-
+≠	jo baras	-
+>	më e madhe se	-
+≯	jo më shumë se	-
+¬	mohim	-
+|	vijë vertikale	-
+~	tildë	-
+−	shenja e minusit	-
+⁻	minus me superskript	-
+∓	minus ose plus	-
+∕	thyesë pjesëtimi	-
+⁄	thyesë	-
+∗	operator yllth	-
+∘	operator rreth	-
+∙	operator pikësim	-
+√	rrënja katrore	-
+∝	përpjesëtimor	-
+∞	shenja e infinitit	-
+∟	kënd i djathtë	-
+∠	kënd	-
+∣	ndarëse	-
+∥	paralele	-
+∧	dhe logjike	-
+∩	ndërprerje	-
+∪	bashkim	-
+∫	integrale	-
+∬	integrale dyshe	-
+∮	integrale me kontur	-
+∴	prandaj	-
+∵	sepse	-
+∶	raport	-
+∷	përpjesëtim	-
+∼	operator dredhëz	-
+∽	dredhëz përmbys	-
+∾	infinit	-
+≃	barazim asimptotik	-
+≅	afërsisht baraz	-
+≈	thuajse baras	-
+≌	të gjitha baras	-
+≒	afërsisht baras me imazhin	-
+≖	unazë barazimi	-
+≡	njëlloj me	-
+≣	barasvlerë strikte	-
+≤	më e vogël ose baras	-
+≥	më e madhe ose baras	-
+≦	më pak ose baras	-
+≧	më shumë ose baras	-
+≪	shumë më pak	-
+≫	shumë më shumë	-
+≬	ndërmjet	-
+≳	më shumë ose afërsisht	-
+≺	pararend	-
+≻	tejkalon	-
+⊁	nuk tejkalon	-
+⊂	nënbashkësi e	-
+⊃	mbibashkësi	-
+⊆	nënbashkësia baras	-
+⊇	mbibashkësia baras	-
+⊕	rreth me plus	-
+⊖	rreth me minus	-
+⊗	rreth me kryq	-
+⊘	rreth me thyesë	-
+⊙	operator rrethi me pikë	-
+⊚	operator rrethi me rreth	-
+⊛	operator rrethi me yll	-
+⊞	katror me plus	-
+⊟	katror me minus	-
+⊥	thumb lart	-
+⊮	nuk detyron	-
+⊰	pararend në raport	-
+⊱	tejkalon në raport	-
+⋭	nuk përmban si të barabartë nëngrupi normal	-
+⊶	origjinal	-
+⊹	matricë lidhjeje hermitiane	-
+⊿	trekëndësh kënddrejtë	-
+⋁	n-ar logjik ose	-
+⋂	ndërprerje n-are	-
+⋃	bashkim n-ar	-
+⋅	operator pikë	-
+⋆	operator yll	-
+⋈	bashkim natyral	-
+⋒	ndërprerje dyshe	-
+⋘	shumë më pak se	-
+⋙	shumë më shumë se	-
+⋮	trepikësh vertikal	-
+⋯	trepikësh horizontal mesi	-
+⋰	trepikësh diagonal djathtas lart	-
+⋱	trepikësh diagonal djathtas poshtë	-
+⨧	plus dy subskript	-
+⨯	kryq vektorial produkti	-
+⨼	produkt i brendshëm	-
+⩣	nënviza logjike ose dyshe	-
+⩽	më pak ose baras i pjerrët	-
+⪍	më pak ose përafërsisht	-
+⪚	më shumë ose baras me dy rreshta	-
+⪺	tejkalon ose përafërsisht	-
+⭐	yll mesatar i bardhë	-
+⬆	shigjeta lart	-
+↗	shigjeta lart-djathtas	-
+↘	shigjetë poshtë djathtas	-
+⬇	shigjetë poshtë	-
+↙	shigjetë poshtë majtas	-
+⬅	shigjeta majtas	-
+↖	shigjeta lart-majtas	-
+↕	shigjeta lart-poshtë	-
+↔	shigjetë majtas-djathtas	-
+↮	shigjetë majtas-djathtas fraksion	-
+↩	shigjetë djathtas e përkulur majtas	-
+↪	shigjeta majtas me hark djathtas	-
+⤴	shigjetë djathtas e përkulur lart	-
+⤵	shigjetë djathtas e përkulur poshtë	-
+〰	vijë e valëzuar	-
+⭕	rreth i madh i trashë	-
+〽	shenja e ndryshimit të pjesës	-
+©	të drejtat e autorit	-
+®	i regjistruar	-
+™	markë tregtare	-
+ℹ	informacion	-
+㊗	butoni «urime» në japonisht	-
+㊙	butoni «sekret» në japonisht	-
+⬛	katror i madh i zi	-
+⬜	katror i madh i bardhë	-
+¢	qindarkë	-
+$	dollar	-
+£	stërlinë britanike	-
+¥	jen	-
+₢	kruseiro	-
+₣	frangë franceze	-
+₤	lirë	-
+₥	mill	-
+₩	uon	-
+€	euro	-
+₰	qindarkë gjermane	-
+₱	pezo	-
+₳	austral	-
+₶	lirë tureze	-
+₷	spesmilo	-
+₹	rupi indiane	-
+₽	rubël	-
+₿	bitcoin	-
+¹	një me superskript	-
+²	dy me superskript	-
+³	tre me superskript	-
+₨	rupi	-
+µ	shenja mikro	-
+﷼	rial	-
+¤	Valutë e panjohur	-
+֏	Dramia armene	-
+؋	Afgani afgan	-
+৳	Taka e Bangladeshit	-
+฿	Bata tajlandeze	-
+៛	Riali kamboxhian	-
+₡	Koloni kostarikan	-
+₦	Naira nigeriane	-
+₪	Shekeli izrealit	-
+₫	Donga vietnameze	-
+₭	Kipa e Laosit	-
+₮	Tugrika mongole	-
+₲	Guarani paraguaian	-
+₴	Rivnia ukrainase	-
+₵	Sejda ganeze	-
+₸	Tenga kazake	-
+₺	Lira turke	-
+₼	Manata azerbajxhanase	-
+₾	Laria gjeorgjiane	-
