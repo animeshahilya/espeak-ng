@@ -71,7 +71,18 @@ public class VoiceSettings {
     public static final String PREF_PUNCTUATION_SOUNDS = "espeak_punctuation_sounds";
     public static final String PREF_PHRASE_PAUSES = "espeak_phrase_pauses";
     public static final String PREF_EXPAND_ABBREVIATIONS = "espeak_expand_abbreviations";
-    public static final String PREF_ENGLISH_NUMBERS = "espeak_english_numbers";
+    /** Language numbers and times are read in: {@link #NUMBERS_AUTO} and the other NUMBERS_ values. */
+    public static final String PREF_NUMBERS_LANGUAGE = "espeak_numbers_language";
+    /** The "Numbers in English text" switch it replaced; on reads as {@link #NUMBERS_AROUND}. */
+    private static final String LEGACY_ENGLISH_NUMBERS = "espeak_english_numbers";
+    /** As eSpeak reads them (the voice's language), and natural voices (the words around them). */
+    public static final String NUMBERS_AUTO = "";
+    /** The language of the words around them: numbers next to English words in English. */
+    public static final String NUMBERS_AROUND = "around";
+    /** Always the voice's own language, also inside words in another script. */
+    public static final String NUMBERS_VOICE = "voice";
+    /** Always English. */
+    public static final String NUMBERS_ENGLISH = "en";
     public static final String PREF_HINGLISH = "espeak_hinglish";
     public static final String PREF_USER_DICTIONARY = "espeak_user_dictionary";
     /** Phonetic letters: {@link #PHONETIC_OFF}, {@link #PHONETIC_CHARACTER} or {@link #PHONETIC_ALWAYS}. */
@@ -448,8 +459,13 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_EXPAND_ABBREVIATIONS, false);
     }
 
-    public boolean isEnglishNumbersEnabled() {
-        return mPreferences.getBoolean(PREF_ENGLISH_NUMBERS, false);
+    /** See {@link #PREF_NUMBERS_LANGUAGE}. */
+    public String getNumbersLanguage() {
+        final String value = mPreferences.getString(PREF_NUMBERS_LANGUAGE, null);
+        if (value == null) {
+            return mPreferences.getBoolean(LEGACY_ENGLISH_NUMBERS, false) ? NUMBERS_AROUND : NUMBERS_AUTO;
+        }
+        return value;
     }
 
     /** Beta, off by default: Hindi typed in Latin letters, read as Hindi. */

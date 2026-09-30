@@ -138,13 +138,22 @@ final class LanguageRuns {
         return split(text, language, Collections.emptyMap());
     }
 
+    static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen) {
+        return split(text, language, chosen, null);
+    }
+
     /**
      * Runs of {@code text} with the language each is read in, speaking
      * {@code language}, with {@code chosen} the languages the user chose for
      * scripts. Always at least one run for non-empty text; the runs' texts
      * concatenate back to {@code text}.
+     *
+     * @param numbers language digits are read in (their separators, like the
+     *                colon of 10:30, go with them), or null for the language
+     *                of the words around them
      */
-    static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen) {
+    static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
+                           String numbers) {
         final List<Run> runs = new ArrayList<>();
         if (text == null || text.isEmpty()) {
             return runs;
@@ -156,11 +165,13 @@ final class LanguageRuns {
         for (int i = 0; i < text.length(); ) {
             final int c = text.codePointAt(i);
             final UnicodeScript script = UnicodeScript.of(c);
+            final boolean digit = numbers != null && Character.isDigit(c);
             // Common (digits, spaces, punctuation) and inherited (combining
-            // marks) characters never start a new run.
-            if (script != UnicodeScript.COMMON && script != UnicodeScript.INHERITED
-                    && script != UnicodeScript.UNKNOWN) {
-                final String lang = languageFor(script, language, chosen);
+            // marks) characters never start a new run - digits only when
+            // numbers have a language of their own.
+            if (digit || (script != UnicodeScript.COMMON && script != UnicodeScript.INHERITED
+                    && script != UnicodeScript.UNKNOWN)) {
+                final String lang = digit ? numbers : languageFor(script, language, chosen);
                 if (current == null) {
                     current = lang;
                 } else if (!lang.equals(current)) {

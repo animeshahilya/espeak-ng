@@ -207,12 +207,16 @@ public final class TextPreprocessor {
             text = edits.track(text, NumberReading.readMoney(text, !indianNumbers));
         }
 
-        // Opt-in: non-Latin-script voices read English words in English but
-        // numbers in their own language; this makes numbers inside English
-        // text follow the English.
-        if (normalReading && settings.isEnglishNumbersEnabled()
-                && !english && !NumberReading.isLatinScript(lang)) {
-            text = edits.track(text, NumberReading.englishNumbersInEnglishText(text));
+        // Opt-in (Mixed-language text -> Numbers and times): non-Latin-script
+        // voices read English words in English but numbers in their own
+        // language; written out as English words, numbers inside English
+        // text follow the English, or all of them are English.
+        final String numbers = settings.getNumbersLanguage();
+        if (normalReading && !english && !NumberReading.isLatinScript(lang)
+                && (VoiceSettings.NUMBERS_AROUND.equals(numbers)
+                        || VoiceSettings.NUMBERS_ENGLISH.equals(numbers))) {
+            text = edits.track(text, NumberReading.englishNumbers(text,
+                    VoiceSettings.NUMBERS_ENGLISH.equals(numbers)));
         }
 
         // Indian voices by default; every other voice reads these exactly as

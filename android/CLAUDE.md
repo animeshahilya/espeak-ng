@@ -281,15 +281,18 @@ voices" does not, so voices can still be deleted to free space.
 - **Community voices.** `assets/piper/extra_voices.json` (voices.json format
   plus `base_url`, `source`, `license`) adds languages rhasspy lacks: Tamil
   (tinisoft rasa female/male, CC BY 4.0) and Sinhala (chan4lk, MIT); and,
-  added 2026-09-29 from a scan of ~2000 Hugging Face repos, en_AU LibriVox
-  (10 speakers, public-domain recordings, CC BY 4.0), Kurmanji (90 speakers,
+  added 2026-09-29 from a scan of ~2000 Hugging Face repos, Kurmanji (90 speakers,
   Common Voice 24, MIT, default speaker 54), Latvian Rudolfs (Latvian Library
   for the Blind audiobooks with permission, CC0) and Sinhala Dilu (MIT).
   Added 2026-09-29 from the SherpaVoices catalog, each rendered through
   this fork's phonemes and heard first: Indian English SPICOR
   (NavGurukul, AGPL-3.0), Tracy ManyVoice (Bryce Beattie, 16 LibriVox
   speakers, public domain) and Nepali Seto Bagh (Wiseyak, 18 speakers,
-  OpenRAIL). Of SherpaVoices' other 44 Piper voices not carried here, 35
+  OpenRAIL). Removed 2026-09-30: en_AU LibriVox (DataCraftsmanAustralia),
+  which garbles a word spoken on its own ("office" alone -> "in the
+  wallpits", Whisper, 3/3) and so every English word switched out of Hindi
+  text; whole sentences were fine. Test a candidate on isolated words too
+  (SPICOR and Tracy pass). Of SherpaVoices' other 44 Piper voices not carried here, 35
   are named-person/character clones and the rest lack a license or
   provenance, are synthetic-data or non-commercial (OpenVoiceOS Dii/Miro),
   low quality (Sinhala Weerawardhana, 16 kHz), or duplicates. Its Mimic3
@@ -310,8 +313,21 @@ voices" does not, so voices can still be deleted to free space.
   already loaded - the first use starts loading it and the current voice
   reads that run meanwhile. Only with the same sample rate, and preloading
   only on phones that keep several voices (`keepsSeveralLoaded`), so a
-  one-voice phone does not evict and reload on every switch. Runs with no
-  natural voice of their own stay with the current one (as before).
+  one-voice phone does not evict and reload on every switch. A run in a
+  language with no loaded natural voice (Gujarati with only Hindi and
+  English natural voices, or English words with only Hindi - the user's
+  choice) is read by eSpeak in that language: `TtsService.espeakReadsPart`
+  sends such a request down the eSpeak path, where `withNaturalRuns` gives
+  the voice's own runs back to its natural voice. Before 2026-09-30 such
+  runs stayed with the current natural voice (Priyamvada read Gujarati
+  from eSpeak's Gujarati phonemes). Needs the natural voice at eSpeak's
+  22050 Hz (one rate per request); otherwise the old behaviour. Numbers and
+  times (`VoiceSettings.PREF_NUMBERS_LANGUAGE`, on the Mixed-language page,
+  replacing the "Numbers in English text" switch, whose "on" reads as
+  "around"): automatic (unchanged), the words around them, the voice's
+  language (digits become their own run, `LanguageRuns.split(..., numbers)`)
+  or English (written out as English words for non-Latin voices,
+  `NumberReading.englishNumbers`, 10:30 as "ten thirty").
   The same holds when an eSpeak voice is speaking (`withNaturalRuns`):
   English on eSpeak with a Hindi natural voice chosen hands each Devanagari
   run to it as its own unit, at eSpeak's 22050 Hz (a voice at another rate

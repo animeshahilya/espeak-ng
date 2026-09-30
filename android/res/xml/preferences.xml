@@ -374,12 +374,6 @@
             android:summary="@string/setting_expand_abbreviations_summary"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-        <SwitchPreferenceCompat
-            android:key="espeak_english_numbers"
-            android:title="@string/setting_english_numbers"
-            android:summary="@string/setting_english_numbers_summary"
-            android:defaultValue="false"
-            app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
@@ -456,6 +450,14 @@
         <ListPreference
             android:key="espeak_script_eth"
             android:title="@string/setting_script_eth"
+            android:defaultValue=""
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            android:key="espeak_numbers_language"
+            android:title="@string/setting_numbers_language"
+            android:entries="@array/numbers_language_entries"
+            android:entryValues="@array/numbers_language_values"
             android:defaultValue=""
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />

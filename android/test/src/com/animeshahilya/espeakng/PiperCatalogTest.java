@@ -92,7 +92,7 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(10, voices.size());
+        assertEquals(9, voices.size());
         for (PiperDownloads.CatalogVoice v : voices) {
             assertTrue(v.key, v.baseUrl.matches("https://huggingface\\.co/[^/]+/[^/]+/resolve/[0-9a-f]{40}/"));
             assertEquals(v.key, 32, v.modelMd5.length());

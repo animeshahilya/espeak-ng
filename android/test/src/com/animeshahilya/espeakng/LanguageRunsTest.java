@@ -78,6 +78,21 @@ public class LanguageRunsTest {
         assertEquals("hin@0[नमस्ते]", describe(LanguageRuns.split("नमस्ते", "hin", chosen)));
     }
 
+    /**
+     * Numbers and times with a language of their own: digits, and the colon
+     * between them, become a run in it; unset, they stay with their words.
+     */
+    @Test
+    public void numbersCanHaveTheirOwnLanguage() {
+        final Map<UnicodeScript, String> none = new EnumMap<>(UnicodeScript.class);
+        assertEquals("hin@0[मीटिंग]eng@6[ 10:30]hin@12[ बजे]",
+                describe(LanguageRuns.split("मीटिंग 10:30 बजे", "hin", none, "eng")));
+        assertEquals("eng@0[call at]hin@7[ 5]eng@9[ pm]",
+                describe(LanguageRuns.split("call at 5 pm", "eng", none, "hin")));
+        assertEquals("hin@0[मीटिंग 10:30 बजे]",
+                describe(LanguageRuns.split("मीटिंग 10:30 बजे", "hin", none, null)));
+    }
+
     /** Scripts eSpeak has no language for get the chosen one. */
     @Test
     public void chosenLanguageCoversNewScripts() {

@@ -44,21 +44,6 @@
       "si_LK-sinhala-medium.onnx.json": {"size_bytes": 4869, "md5_digest": "44353d796d2e3d2458ae65c94964f5c8"}
     }
   },
-  "en_AU-librivox-medium": {
-    "key": "en_AU-librivox-medium",
-    "name": "librivox",
-    "language": {"code": "en_AU", "family": "en", "region": "AU",
-      "name_native": "English", "name_english": "English", "country_english": "Australia"},
-    "quality": "medium",
-    "num_speakers": 10,
-    "base_url": "https://huggingface.co/DataCraftsmanAustralia/piper-en_AU-librivox-medium/resolve/7f35faf19fe1789ece4b14233448f7c04e35a84f/",
-    "source": "DataCraftsmanAustralia",
-    "license": "CC BY 4.0",
-    "files": {
-      "en_AU-librivox-medium.onnx": {"size_bytes": 77072486, "md5_digest": "4a2b7e9c28de44374a739cba816efe34"},
-      "en_AU-librivox-medium.onnx.json": {"size_bytes": 5285, "md5_digest": "d681ab3abb705f9cfdca52ba4e52c46d"}
-    }
-  },
   "si_LK-dilu-medium": {
     "key": "si_LK-dilu-medium",
     "name": "dilu",

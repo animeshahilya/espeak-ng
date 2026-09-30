@@ -272,30 +272,65 @@ public final class NumberReading {
      * alone.
      */
     public static String englishNumbersInEnglishText(String text) {
+        return englishNumbers(text, false);
+    }
+
+    /** Clock times: 10:30, 9:05, 14:00 (not ratios or scores with more digits). */
+    private static final Pattern TIME = Pattern.compile(
+            "(?<![\\p{L}\\p{N}.,:])([01]?\\d|2[0-3]):([0-5]\\d)(?![\\p{L}\\p{N}]|[.,:]\\d)");
+
+    /**
+     * Numbers and clock times written out as English words (see
+     * {@link #englishNumbersInEnglishText}): every one when {@code all},
+     * else only those whose neighbouring words are English. 10:30 is "ten
+     * thirty", 9:05 "nine oh five", 10:00 "ten o'clock".
+     */
+    public static String englishNumbers(String text, boolean all) {
         if (text == null || !containsAsciiDigit(text)) {
             return text;
         }
-        Matcher m = NUMBER.matcher(text);
+        return replaceEnglish(replaceEnglish(text, TIME, all, true), NUMBER, all, false);
+    }
+
+    private static String replaceEnglish(String text, Pattern pattern, boolean all, boolean time) {
+        Matcher m = pattern.matcher(text);
         StringBuffer sb = null;
         while (m.find()) {
-            int before = neighbourScript(text, m.start() - 1, -1);
-            int after = neighbourScript(text, m.end(), 1);
-            boolean english = (before == LATIN || after == LATIN)
-                    && before != OTHER && after != OTHER;
-            if (!english) {
-                continue;
+            if (!all) {
+                int before = neighbourScript(text, m.start() - 1, -1);
+                int after = neighbourScript(text, m.end(), 1);
+                boolean english = (before == LATIN || after == LATIN)
+                        && before != OTHER && after != OTHER;
+                if (!english) {
+                    continue;
+                }
             }
             if (sb == null) {
                 sb = new StringBuffer(text.length() + 32);
             }
-            m.appendReplacement(sb, Matcher.quoteReplacement(
-                    spell(m.group(1).replace(",", ""), m.group(2))));
+            m.appendReplacement(sb, Matcher.quoteReplacement(time
+                    ? spellTime(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)))
+                    : spell(m.group(1).replace(",", ""), m.group(2))));
         }
         if (sb == null) {
             return text;
         }
         m.appendTail(sb);
         return sb.toString();
+    }
+
+    static String spellTime(int hours, int minutes) {
+        StringBuilder out = new StringBuilder();
+        words(out, hours);
+        if (minutes == 0) {
+            out.append(" o'clock");
+        } else {
+            if (minutes < 10) {
+                out.append(" oh");
+            }
+            words(out, minutes);
+        }
+        return out.toString().trim();
     }
 
     private static final String[] ONES = {"zero", "one", "two", "three", "four", "five",
