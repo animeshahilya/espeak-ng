@@ -29,4 +29,5 @@
 # memory: SIGSEGV in OrtSession.run, a crash loop on every release build.
 -keepclassmembers class com.animeshahilya.espeakng.PiperModel {
     java.nio.ByteBuffer mapped;
+    java.nio.ByteBuffer mappedDecoder;
 }

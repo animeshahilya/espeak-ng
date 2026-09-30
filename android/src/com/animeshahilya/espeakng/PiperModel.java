@@ -17,6 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.LongBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -54,23 +55,45 @@ import ai.onnxruntime.OrtSession;
  *     arena otherwise keeps its peak, ~160 MB per voice, for the life of the
  *     process - and a screen reader's TTS service is exactly the process
  *     Android must not kill for memory. Time to first sound is unchanged.
+ * <li>The optimized copy is two models ({@link PiperSplit}): encoder and
+ *     decoder, so the decoder can run over pieces of a chunk and speech
+ *     start after the first piece ({@link #encode}, {@link #decode}). Same
+ *     weights, same audio; a voice that can't be split keeps one model.
  * </ul>
  */
 final class PiperModel implements Closeable {
     private static final String OPTIMIZED_PREFIX = "model.";
-    private static final String OPTIMIZED_SUFFIX = ".opt.ort";
+    /** One whole model, for a voice that can't be split (".opt.ort" before the split: rebuilt). */
+    private static final String OPTIMIZED_SUFFIX = ".whole.ort";
+    private static final String ENCODER_SUFFIX = ".enc.ort";
+    private static final String DECODER_SUFFIX = ".dec.ort";
+    /**
+     * Latent frames of context decoded on each side of a piece and cropped:
+     * enough for the decoder's receptive field. Measured (Priyamvada, Daniela
+     * high, VCTK): 12 joins exactly, 8 leaves -26 to -69 dB of error, the 3
+     * of Sonata's RT voices -13 to -33 dB.
+     */
+    static final int DECODE_OVERLAP = 12;
 
     final PiperVoiceConfig config;
     final File file;
     /** True when running through NNAPI (see PiperEngine#setAcceleration). */
     final boolean accelerated;
+    /** The whole model, or the encoder when {@link #decoder} is set. */
     private final OrtSession session;
+    private final OrtSession decoder;
     /** The mapped optimized model the session reads its weights from; lives as long. */
     private final ByteBuffer mapped;
+    /** Same for the decoder (proguard-rules.pro keeps both: never read in Java). */
+    private final ByteBuffer mappedDecoder;
+    /** Encoder outputs that are decoder inputs (latent first); the next one, if any, is durations. */
+    private final String[] boundary;
     private final boolean hasSpeakerInput;
     private final boolean hasDurations;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private boolean closed;
+    /** Decoder throughput, audio seconds per second of work (running average; 0 = unmeasured). */
+    private volatile double decodeSpeed;
 
     /** One model run: audio in about [-1, 1], and frames per phoneme id if known. */
     static final class Output {
@@ -84,15 +107,46 @@ final class PiperModel implements Closeable {
         }
     }
 
+    /** A chunk through the encoder: the latent (1 x channels x frames) and what else the decoder reads. */
+    static final class Encoded {
+        final float[][] tensors;
+        final long[][] shapes;
+        final int channels;
+        final int frames;
+        /** Frames per phoneme id, or null. */
+        final float[] durations;
+
+        Encoded(float[][] tensors, long[][] shapes, float[] durations) {
+            this.tensors = tensors;
+            this.shapes = shapes;
+            this.channels = (int) shapes[0][1];
+            this.frames = (int) shapes[0][2];
+            this.durations = durations;
+        }
+    }
+
     private PiperModel(PiperVoiceConfig config, File file, OrtSession session, ByteBuffer mapped,
-                       boolean accelerated) {
+                       OrtSession decoder, ByteBuffer mappedDecoder, boolean accelerated) {
         this.config = config;
         this.file = file;
         this.session = session;
         this.mapped = mapped;
+        this.decoder = decoder;
+        this.mappedDecoder = mappedDecoder;
         this.accelerated = accelerated;
         this.hasSpeakerInput = session.getInputNames().contains("sid");
-        this.hasDurations = session.getOutputNames().size() > 1;
+        this.boundary = decoder != null ? decoder.getInputNames().toArray(new String[0]) : new String[0];
+        this.hasDurations = session.getOutputNames().size() > (decoder != null ? boundary.length : 1);
+    }
+
+    /** True when {@link #encode}/{@link #decode} can render a chunk in pieces. */
+    boolean streams() {
+        return decoder != null;
+    }
+
+    /** How fast {@link #decode} has run on this device: audio seconds per second, 0 if never. */
+    double decodeSpeed() {
+        return decodeSpeed;
     }
 
     /**
@@ -105,13 +159,32 @@ final class PiperModel implements Closeable {
      */
     static PiperModel load(File onnx, PiperVoiceConfig config, int threads, boolean nnapi)
             throws OrtException {
-        final File optimized = optimizedFile(onnx);
-        if (!optimized.isFile()) {
-            buildOptimized(onnx, optimized, threads);
+        final File optimized = derivedFile(onnx, OPTIMIZED_SUFFIX);
+        final File encoder = derivedFile(onnx, ENCODER_SUFFIX);
+        final File decoderFile = derivedFile(onnx, DECODER_SUFFIX);
+        if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile())) {
+            buildOptimized(onnx, optimized, encoder, decoderFile, threads);
         }
         OrtSession session = null;
         ByteBuffer mapped = null;
-        if (optimized.isFile()) {
+        OrtSession decoder = null;
+        ByteBuffer mappedDecoder = null;
+        if (encoder.isFile() && decoderFile.isFile()) {
+            try {
+                mapped = map(encoder);
+                session = open(null, mapped, threads, nnapi);
+                mappedDecoder = map(decoderFile);
+                decoder = open(null, mappedDecoder, threads, nnapi);
+            } catch (IOException | OrtException e) {
+                closeQuietly(session);
+                session = null;
+                mapped = null;
+                mappedDecoder = null;
+                encoder.delete(); // stale or damaged: rebuilt at the next load
+                decoderFile.delete();
+            }
+        }
+        if (session == null && optimized.isFile()) {
             try {
                 mapped = map(optimized);
                 session = open(null, mapped, threads, nnapi);
@@ -123,7 +196,8 @@ final class PiperModel implements Closeable {
         if (session == null) {
             session = open(onnx, null, threads, nnapi);
         }
-        final PiperModel model = new PiperModel(config, onnx, session, mapped, nnapi);
+        final PiperModel model = new PiperModel(config, onnx, session, mapped, decoder, mappedDecoder,
+                nnapi);
         try {
             model.warmUp();
         } catch (OrtException | RuntimeException e) {
@@ -153,37 +227,77 @@ final class PiperModel implements Closeable {
         return env;
     }
 
-    /** model.onnx -> model.<ONNX Runtime version>.opt.ort: a runtime update re-optimizes. */
-    static File optimizedFile(File onnx) {
-        final String version = env().getVersion();
-        return new File(onnx.getParentFile(), OPTIMIZED_PREFIX + version + OPTIMIZED_SUFFIX);
+    /** model.onnx -> model.<ONNX Runtime version><suffix>: a runtime update re-optimizes. */
+    private static File derivedFile(File onnx, String suffix) {
+        return new File(onnx.getParentFile(), OPTIMIZED_PREFIX + env().getVersion() + suffix);
     }
 
-    /** Writes the optimized, alignment-enabled copy; on any failure there is simply none. */
-    private static void buildOptimized(File onnx, File optimized, int threads) {
+    /**
+     * Writes the optimized copy: encoder and decoder if the model splits,
+     * else one alignment-enabled model. On any failure there is simply none.
+     */
+    private static void buildOptimized(File onnx, File optimized, File encoder, File decoder,
+                                       int threads) {
         final File dir = onnx.getParentFile();
         final File[] stale = dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
-                && (n.contains(".opt.") || n.endsWith(".tmp")));
+                && (n.endsWith(".ort") || n.endsWith(".tmp")));
         if (stale != null) {
             for (File f : stale) {
                 f.delete();
             }
         }
+        final File encoderSource = new File(dir, OPTIMIZED_PREFIX + "encoder.tmp");
+        final File decoderSource = new File(dir, OPTIMIZED_PREFIX + "decoder.tmp");
+        try {
+            if (PiperSplit.split(onnx, encoderSource, decoderSource)
+                    && saveOptimized(encoderSource, encoder, threads)) {
+                if (saveOptimized(decoderSource, decoder, threads)) {
+                    return;
+                }
+                encoder.delete();
+            }
+        } catch (IOException | RuntimeException ignored) {
+            // Not splittable: one model below.
+        } finally {
+            encoderSource.delete();
+            decoderSource.delete();
+        }
         final File aligned = new File(dir, OPTIMIZED_PREFIX + "aligned.tmp");
-        final File partial = new File(dir, optimized.getName() + ".tmp");
+        try {
+            saveOptimized(PiperAlignment.addDurationOutput(onnx, aligned) ? aligned : onnx, optimized,
+                    threads);
+        } catch (IOException | RuntimeException ignored) {
+            // No optimized copy: loads read the original.
+        } finally {
+            aligned.delete();
+        }
+    }
+
+    /** {@code source} graph-optimized into ONNX Runtime's format at {@code out}. */
+    private static boolean saveOptimized(File source, File out, int threads) {
+        final File partial = new File(out.getParentFile(), out.getName() + ".tmp");
         try (OrtSession.SessionOptions options = options(threads, false)) {
-            final File source = PiperAlignment.addDurationOutput(onnx, aligned) ? aligned : onnx;
             options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
             options.setOptimizedModelFilePath(partial.getAbsolutePath());
             options.addConfigEntry("session.save_model_format", "ORT");
             env().createSession(source.getAbsolutePath(), options).close();
-            if (!partial.renameTo(optimized)) {
-                partial.delete();
+            if (partial.renameTo(out)) {
+                return true;
             }
-        } catch (IOException | OrtException | RuntimeException e) {
-            partial.delete();
-        } finally {
-            aligned.delete();
+        } catch (OrtException | RuntimeException ignored) {
+            // Falls through: no copy.
+        }
+        partial.delete();
+        return false;
+    }
+
+    private static void closeQuietly(OrtSession s) {
+        if (s != null) {
+            try {
+                s.close();
+            } catch (OrtException ignored) {
+                // Nothing more to release.
+            }
         }
     }
 
@@ -295,6 +409,11 @@ final class PiperModel implements Closeable {
      */
     Output infer(long[] ids, float lengthScale, int speakerId, float noise, float noiseW,
                  RunHandle handle) throws OrtException {
+        if (decoder != null) {
+            final Encoded e = encode(ids, lengthScale, speakerId, noise, noiseW, handle);
+            final float[] audio = e == null ? null : decode(e, 0, e.frames, handle);
+            return audio == null ? null : new Output(audio, e.durations);
+        }
         lock.readLock().lock();
         try {
             if (closed || (handle != null && handle.isCancelled())) {
@@ -304,17 +423,7 @@ final class PiperModel implements Closeable {
             final Map<String, OnnxTensor> inputs = new HashMap<>();
             final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
             try {
-                inputs.put("input", OnnxTensor.createTensor(env, LongBuffer.wrap(ids),
-                        new long[] {1, ids.length}));
-                inputs.put("input_lengths", OnnxTensor.createTensor(env,
-                        LongBuffer.wrap(new long[] {ids.length}), new long[] {1}));
-                inputs.put("scales", OnnxTensor.createTensor(env, FloatBuffer.wrap(new float[] {
-                        config.noiseScale * noise, lengthScale, config.noiseW * noiseW}), new long[] {3}));
-                if (hasSpeakerInput) {
-                    final int sid = config.numSpeakers > 1 ? speakerId : 0;
-                    inputs.put("sid", OnnxTensor.createTensor(env,
-                            LongBuffer.wrap(new long[] {sid}), new long[] {1}));
-                }
+                putInputs(env, inputs, ids, lengthScale, speakerId, noise, noiseW);
                 try (OrtSession.Result r = session.run(inputs,
                         handle != null ? handle.options : ownOptions)) {
                     final float[] audio = floats(r.get(0));
@@ -340,6 +449,142 @@ final class PiperModel implements Closeable {
             }
         } finally {
             lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * A split model's encoder: phoneme ids to the latent the decoder reads.
+     * Same arguments as {@link #infer}.
+     *
+     * @return null when the model was closed or the run cancelled
+     */
+    Encoded encode(long[] ids, float lengthScale, int speakerId, float noise, float noiseW,
+                   RunHandle handle) throws OrtException {
+        lock.readLock().lock();
+        try {
+            if (closed || (handle != null && handle.isCancelled())) {
+                return null;
+            }
+            final OrtEnvironment env = env();
+            final Map<String, OnnxTensor> inputs = new HashMap<>();
+            final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
+            try {
+                putInputs(env, inputs, ids, lengthScale, speakerId, noise, noiseW);
+                try (OrtSession.Result r = session.run(inputs,
+                        handle != null ? handle.options : ownOptions)) {
+                    final float[][] tensors = new float[boundary.length][];
+                    final long[][] shapes = new long[boundary.length][];
+                    for (int i = 0; i < boundary.length; i++) {
+                        final OnnxValue v = r.get(i);
+                        tensors[i] = floats(v);
+                        if (tensors[i] == null) {
+                            return null;
+                        }
+                        shapes[i] = ((OnnxTensor) v).getInfo().getShape();
+                    }
+                    if (shapes[0].length != 3) {
+                        return null;
+                    }
+                    final float[] durations = hasDurations ? floats(r.get(boundary.length)) : null;
+                    return new Encoded(tensors, shapes,
+                            durations != null && durations.length == ids.length ? durations : null);
+                }
+            } catch (OrtException e) {
+                if (handle != null && handle.isCancelled()) {
+                    return null;
+                }
+                throw e;
+            } finally {
+                for (OnnxTensor t : inputs.values()) {
+                    t.close();
+                }
+                if (ownOptions != null) {
+                    ownOptions.close();
+                }
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Audio for latent frames [from, to) of an encoded chunk: decoded with
+     * {@link #DECODE_OVERLAP} frames of context on each side, which are
+     * cropped, so consecutive pieces join exactly.
+     *
+     * @return null when the model was closed or the run cancelled
+     */
+    float[] decode(Encoded e, int from, int to, RunHandle handle) throws OrtException {
+        lock.readLock().lock();
+        try {
+            if (closed || (handle != null && handle.isCancelled())) {
+                return null;
+            }
+            final int start = Math.max(0, from - DECODE_OVERLAP);
+            final int end = Math.min(e.frames, to + DECODE_OVERLAP);
+            final int span = end - start;
+            if (span <= 0) {
+                return new float[0];
+            }
+            final float[] latent = new float[e.channels * span];
+            for (int c = 0; c < e.channels; c++) {
+                System.arraycopy(e.tensors[0], c * e.frames + start, latent, c * span, span);
+            }
+            final OrtEnvironment env = env();
+            final Map<String, OnnxTensor> inputs = new HashMap<>();
+            final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
+            try {
+                inputs.put(boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
+                        new long[] {1, e.channels, span}));
+                for (int i = 1; i < boundary.length; i++) {
+                    inputs.put(boundary[i], OnnxTensor.createTensor(env, FloatBuffer.wrap(e.tensors[i]),
+                            e.shapes[i]));
+                }
+                final long started = System.nanoTime();
+                try (OrtSession.Result r = decoder.run(inputs,
+                        handle != null ? handle.options : ownOptions)) {
+                    final float[] audio = floats(r.get(0));
+                    if (audio == null) {
+                        return null;
+                    }
+                    final double speed = audio.length / (double) config.sampleRate
+                            / Math.max(1e-6, (System.nanoTime() - started) / 1e9);
+                    decodeSpeed = decodeSpeed == 0 ? speed : 0.7 * decodeSpeed + 0.3 * speed;
+                    final int hop = audio.length / span;
+                    return Arrays.copyOfRange(audio, (from - start) * hop,
+                            audio.length - (end - to) * hop);
+                }
+            } catch (OrtException ex) {
+                if (handle != null && handle.isCancelled()) {
+                    return null;
+                }
+                throw ex;
+            } finally {
+                for (OnnxTensor t : inputs.values()) {
+                    t.close();
+                }
+                if (ownOptions != null) {
+                    ownOptions.close();
+                }
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    private void putInputs(OrtEnvironment env, Map<String, OnnxTensor> inputs, long[] ids,
+                           float lengthScale, int speakerId, float noise, float noiseW)
+            throws OrtException {
+        inputs.put("input", OnnxTensor.createTensor(env, LongBuffer.wrap(ids),
+                new long[] {1, ids.length}));
+        inputs.put("input_lengths", OnnxTensor.createTensor(env,
+                LongBuffer.wrap(new long[] {ids.length}), new long[] {1}));
+        inputs.put("scales", OnnxTensor.createTensor(env, FloatBuffer.wrap(new float[] {
+                config.noiseScale * noise, lengthScale, config.noiseW * noiseW}), new long[] {3}));
+        if (hasSpeakerInput) {
+            final int sid = config.numSpeakers > 1 ? speakerId : 0;
+            inputs.put("sid", OnnxTensor.createTensor(env,
+                    LongBuffer.wrap(new long[] {sid}), new long[] {1}));
         }
     }
 
@@ -373,11 +618,8 @@ final class PiperModel implements Closeable {
                 return;
             }
             closed = true;
-            try {
-                session.close();
-            } catch (OrtException ignored) {
-                // Nothing more to release.
-            }
+            closeQuietly(session);
+            closeQuietly(decoder);
         } finally {
             lock.writeLock().unlock();
         }

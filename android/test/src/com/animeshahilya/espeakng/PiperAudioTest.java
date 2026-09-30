@@ -42,6 +42,32 @@ public class PiperAudioTest {
         assertEquals(speechDb(a, 0, a.length), speechDb(b, 0, b.length), 0.1);
     }
 
+    /**
+     * A chunk rendered in two pieces is trimmed only at its own ends, and the
+     * second piece, levelled from the whole chunk, comes out exactly as that
+     * part of the chunk rendered whole.
+     */
+    @Test
+    public void piecesTrimOnlyTheChunksEndsAndTheRestMatchesWhole() {
+        final float[] whole = new float[8820];
+        for (int i = 2205; i < 6615; i++) {
+            whole[i] = (float) Math.sin(i * 0.2) * (i < 4410 ? 0.4f : 0.2f); // quieter after the cut
+        }
+        final float[] head = java.util.Arrays.copyOfRange(whole, 0, 4410);
+        final float[] tail = java.util.Arrays.copyOfRange(whole, 4410, 8820);
+        final PiperAudio.Pcm a = PiperAudio.process(head, 1f, 22050, true, false, 0, 0);
+        final PiperAudio.Pcm b = PiperAudio.process(tail, 1f, 22050, false, true, 0,
+                PiperAudio.speechPower(whole, 22050));
+        assertTrue("lead trimmed", a.trimmedLead > 1500);
+        assertEquals("end of the first piece kept", head.length - a.trimmedLead, a.samples.length);
+        assertEquals("start of the second piece kept", 0, b.trimmedLead);
+        assertTrue("tail trimmed", b.samples.length < 2205 + 2 * 441 + 220);
+        final short[] at = PiperAudio.process(whole, 1f, 22050, false, false, 0, 0).samples;
+        for (int i = 0; i < 2000; i++) {
+            assertEquals("sample " + i, at[4410 + i], b.samples[i]);
+        }
+    }
+
     /** Breath and noise around a word, well below speech, are trimmed too. */
     @Test
     public void trimsLowNoiseNotJustDigitalSilence() {

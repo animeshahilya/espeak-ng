@@ -174,11 +174,41 @@ voices" does not, so voices can still be deleted to free space.
   Underruns column or wall vs audio time - word-range callback timing has
   jitter of its own and invents stalls. Leading/trailing model silence is
   trimmed; chunk pauses follow reading pace. No pause after the last chunk.
+- **Streaming split** (2026-09-30, from piper1-gpl PR #302 and Sonata's
+  "fast"/RT voices). `PiperSplit` cuts each voice into encoder (text
+  encoder, durations, flow - the whole chunk, so prosody is unchanged) and
+  decoder (HiFi-GAN) at the tensors "/dec/" nodes read from outside it.
+  The decoder is convolutional, so pieces decoded with 12 frames of context
+  per side (`PiperModel.DECODE_OVERLAP`) join exactly: measured 12 exact,
+  8 leaves -26 to -69 dB of error, Sonata's 3 -13 to -33 dB. Only the first
+  chunk of each text is rendered in two pieces (`PiperEngine.Pass`), cut at
+  a word start (so word timing stays exact) placed by the voice's measured
+  decoder speed: the rest must decode before the first piece has played,
+  so a slow (Enhanced) voice gets a longer first piece instead of a gap.
+  Pieces are trimmed only at the chunk's ends. Both pieces are at least
+  1 s (`MIN_PIECE_S`) or the chunk renders whole, and the second piece is
+  levelled from the whole chunk (`PiperAudio.speechPower` of both), so
+  everything after the first second matches rendering whole exactly; only
+  the first second has its own level (0.6 dB off on average). The first
+  version levelled the rest from a first piece as short as one word: a
+  Hindi run inside English text came out ~3 dB quieter and
+  `PiperE2EDeviceTest.j_*` failed - keep that test passing. Same-draw
+  audio is otherwise identical (1e-6); the user heard no difference.
+  Pixel 8, long first sentence (`PiperLatencyDeviceTest`, which also
+  stops 30 times mid-chunk): first audio Hindi Priyamvada 748 -> 281-490
+  ms, English LibriVox 577 -> ~300 ms (cool phone with 0.25 s pieces; 1 s
+  pieces, warm phone, for the upper Hindi figure); total render the same
+  to +7%. Encoder share of a run: ~30% for
+  medium voices, ~5% for high, so Enhanced gains most (PC sim at the
+  Pixel's ~2x: 1377 -> 706 ms, no gap). Compare builds with the same
+  random draw: two runs of one build already differ audibly.
 - **Model loading** (`PiperModel`, numbers from `PiperBenchDeviceTest` on a
-  Pixel 8): the first load writes `model.<ORT version>.opt.ort` beside the
-  model - ORT-format, graph-optimized once, with the duration output exposed
+  Pixel 8): the first load writes `model.<ORT version>.enc.ort` and
+  `.dec.ort` beside the model (`.whole.ort` for a voice that doesn't split;
+  the older `.opt.ort` is deleted and rebuilt once, ~3 s) - ORT-format,
+  graph-optimized once, with the duration output exposed
   (`PiperAlignment`, the in-Java equivalent of piper1-gpl's
-  patch_voice_with_alignment.py). Later loads memory-map it and use its
+  patch_voice_with_alignment.py). Later loads memory-map them and use their
   weights in place (~15 MB private memory per voice instead of ~80; 1.1-1.3 s
   loads instead of 2.1-3.5 s). Each run shrinks ORT's arena (it otherwise
   keeps ~160 MB of peak per voice); a tiny warm-up run follows every load.

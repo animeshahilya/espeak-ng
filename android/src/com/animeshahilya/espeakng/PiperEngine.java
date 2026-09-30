@@ -12,6 +12,7 @@ package com.animeshahilya.espeakng;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,6 +39,15 @@ import ai.onnxruntime.OrtException;
  * rendering in turn left long reading with gaps: 142 s of Hindi played in
  * 148 s on a Pixel 8, AudioFlinger counting 250835 underrun frames; with
  * rendering ahead (post-processing included, see synthesize) there are none.
+ *
+ * <p>The first chunk of each text is itself rendered in two pieces when the
+ * voice is split ({@link PiperSplit}): the encoder over the whole chunk (so
+ * its prosody is unchanged), then the decoder over the words up to a cut,
+ * which play while it decodes the rest. The cut follows the voice's measured
+ * decoder speed, so the rest is ready before the first piece ends - a slow
+ * (Enhanced) voice gets a longer first piece instead of a gap. Both pieces
+ * are at least a second long (a short chunk renders whole, as fast as
+ * before), and the rest is levelled from the whole chunk, as if whole.
  *
  * <p>No Android imports: the unit tests drive it on the JVM with the desktop
  * ONNX Runtime and a real voice.
@@ -471,6 +481,7 @@ final class PiperEngine {
 
         // Ids for every chunk up front (microseconds); the model runs are
         // what the renderer overlaps with delivery.
+        final int[] cpToIndex = codePointIndex(text);
         final List<String> missing = new ArrayList<>();
         final List<Job> jobs = new ArrayList<>(chunks.size());
         for (PiperPhonemes.Chunk chunk : chunks) {
@@ -478,7 +489,7 @@ final class PiperEngine {
             final long[] ids = PiperPhonemes.toIds(PiperPhonemes.tokenize(chunk.ipa, config),
                     config, missing, wordStarts);
             if (ids.length > 3) { // more than BOS PAD EOS: something to say
-                jobs.add(new Job(chunk, ids, wordStarts));
+                jobs.add(new Job(chunk, ids, wordStarts, text, cpToIndex));
             }
         }
 
@@ -494,38 +505,18 @@ final class PiperEngine {
         // took 200-500 ms per sentence on the synthesis thread while the
         // model used the fast cores - enough to drain the framework's ~0.5 s
         // of queued audio and stall playback.
-        final Renderer renderer = job -> mRenderer.submit(() -> {
-            final PiperModel.Output o;
-            enterNative(config.key);
-            try {
-                o = model.infer(job.ids, lengthScale, speaker, noise, noiseW, handle);
-            } finally {
-                exitNative(config.key);
-            }
-            if (o == null) {
-                return null;
-            }
-            final PiperAudio.Pcm pcm = PiperAudio.process(o.audio, params.volume, rate,
-                    params.trimSilence, maxPauseMs);
-            short[] samples = pcm.samples;
-            if (stretch && samples.length > 0) {
-                final short[] stretched = stretcher.process(samples, rate, residualSpeed, pitch);
-                if (stretched != null) {
-                    samples = stretched;
-                }
-            }
-            return new Rendered(PiperAudio.toBytes(samples, samples.length), samples.length,
-                    pcm.trimmedLead, pcm.cuts, pcm.speechSamples, o.durations);
-        });
+        final Pass pass = new Pass(model, params, stretch ? stretcher : null, residualSpeed, pitch,
+                lengthScale, speaker, noise, noiseW, maxPauseMs, handle);
         int frames = 0;
         Future<Rendered> pending = null;
+        Future<Rendered> pendingRest = null;
         try {
-            final int[] cpToIndex = codePointIndex(text);
             if (!jobs.isEmpty()) {
-                pending = renderer.render(jobs.get(0));
+                final Job first = jobs.get(0);
+                pending = mRenderer.submit(() -> pass.render(first, true));
             }
             for (int j = 0; j < jobs.size(); j++) {
-                final Rendered rendered;
+                Rendered rendered;
                 try {
                     rendered = await(pending);
                 } catch (OrtException e) {
@@ -537,34 +528,46 @@ final class PiperEngine {
                     }
                     throw e;
                 }
-                pending = j + 1 < jobs.size() ? renderer.render(jobs.get(j + 1)) : null;
-                if (rendered == null || handle.isCancelled()) {
-                    break;
+                // The first chunk's second piece was queued ahead of this.
+                pendingRest = rendered != null ? rendered.rest : null;
+                if (j + 1 < jobs.size()) {
+                    final Job next = jobs.get(j + 1);
+                    pending = mRenderer.submit(() -> pass.render(next, false));
+                } else {
+                    pending = null;
                 }
                 final Job job = jobs.get(j);
-
-                // Word positions first, then the audio they point into (the
-                // framework takes rangeStart() markers ahead of the frames).
-                final int chunkStart = Math.max(0, Math.min(job.chunk.start, cpToIndex.length - 1));
-                final int chunkEnd = Math.max(chunkStart, Math.min(job.chunk.end, cpToIndex.length - 1));
-                final String chunkText = text.substring(cpToIndex[chunkStart], cpToIndex[chunkEnd]);
-                final int[] words = PiperAudio.findWords(chunkText);
-                int[] wordFrames = PiperAudio.alignedWordFrames(job.wordStarts, rendered.durations,
-                        config.hopLength, words.length / 2, rendered.trimmedLead, rendered.cuts,
-                        rendered.speechSamples, rendered.samples);
-                if (wordFrames == null) {
-                    wordFrames = PiperAudio.estimateWordFrames(words, chunkEnd - chunkStart,
+                boolean delivered = true;
+                while (rendered != null && !handle.isCancelled()) {
+                    // Word positions first, then the audio they point into (the
+                    // framework takes rangeStart() markers ahead of the frames).
+                    int[] wordFrames = PiperAudio.alignedWordFrames(rendered.wordStarts,
+                            rendered.durations, config.hopLength, rendered.wordTo - rendered.wordFrom,
+                            rendered.trimmedLead, rendered.cuts, rendered.speechSamples,
                             rendered.samples);
+                    if (wordFrames == null) {
+                        wordFrames = PiperAudio.estimateWordFrames(job.words,
+                                job.chunkEnd - job.chunkStart, rendered.samples);
+                    }
+                    for (int w = 0; w < wordFrames.length; w++) {
+                        final int word = 2 * (rendered.wordFrom + w);
+                        out.word(job.chunkStart + job.words[word] + 1,
+                                job.words[word + 1] - job.words[word], frames + wordFrames[w]);
+                    }
+                    if (!out.audio(rendered.pcm)) {
+                        delivered = false;
+                        break;
+                    }
+                    frames += rendered.samples;
+                    if (rendered.rest == null) {
+                        break;
+                    }
+                    rendered = await(rendered.rest);
+                    pendingRest = null;
                 }
-                for (int w = 0; w < wordFrames.length; w++) {
-                    out.word(chunkStart + words[2 * w] + 1, words[2 * w + 1] - words[2 * w],
-                            frames + wordFrames[w]);
-                }
-
-                if (!out.audio(rendered.pcm)) {
+                if (rendered == null || handle.isCancelled() || !delivered) {
                     break;
                 }
-                frames += rendered.samples;
 
                 if (j < jobs.size() - 1) {
                     // No pause after the last chunk: trailing silence would
@@ -580,11 +583,16 @@ final class PiperEngine {
                 }
             }
         } finally {
-            if (pending != null) {
+            if (pending != null || pendingRest != null) {
                 // Stopped or failed with the next chunk in flight: end it
                 // before its RunOptions are closed below.
                 handle.cancel();
-                awaitQuietly(pending);
+                if (pendingRest != null) {
+                    awaitQuietly(pendingRest);
+                }
+                if (pending != null) {
+                    awaitQuietly(pending);
+                }
             }
             if (mCurrentRun == handle) {
                 mCurrentRun = null;
@@ -600,11 +608,171 @@ final class PiperEngine {
         return frames;
     }
 
-    private interface Renderer {
-        Future<Rendered> render(Job job);
+    /**
+     * Shortest piece on either side of a cut, in seconds of audio. The
+     * first piece sets its own level: one word of it could make that a few
+     * dB off (a Hindi run inside English text came out ~3 dB quieter), a
+     * second of speech keeps it within about a dB of the whole chunk's.
+     */
+    static final float MIN_PIECE_S = 1f;
+    /** Share of the measured decoder speed counted on when placing the cut. */
+    static final float DECODE_SPEED_MARGIN = 0.7f;
+
+    /**
+     * Where to cut a chunk of {@code frames} latent frames so the rest decodes
+     * while the first piece plays: at the first word start with at least
+     * (frames + overlap) / (1 + speed) frames before it, speed being audio
+     * seconds per second of decoding (with a margin), and at least
+     * {@code minFrames} on each side.
+     *
+     * @param wordStarts id index of each word
+     * @param durations  frames per id
+     * @return the index of the word that starts the second piece, or -1 for
+     *         no cut (too short, or no word start far enough in)
+     */
+    static int firstPieceEnd(List<Integer> wordStarts, float[] durations, int frames, double speed,
+                             int minFrames) {
+        final double s = Math.max(0, speed) * DECODE_SPEED_MARGIN;
+        final int needed = Math.max(minFrames,
+                (int) Math.ceil((frames + PiperModel.DECODE_OVERLAP) / (1 + s)));
+        int id = 0;
+        double at = 0;
+        for (int w = 1; w < wordStarts.size(); w++) {
+            while (id < wordStarts.get(w)) {
+                at += durations[id++];
+            }
+            if (at >= needed) {
+                return frames - at >= minFrames ? w : -1;
+            }
+        }
+        return -1;
     }
 
-    /** A chunk ready to deliver: 16-bit PCM plus what word timing needs. */
+    /** Everything one synthesize() call renders with; runs on the renderer thread. */
+    private final class Pass {
+        final PiperModel model;
+        final Params params;
+        final TimeStretcher stretcher;
+        final float residualSpeed;
+        final float pitch;
+        final float lengthScale;
+        final int speaker;
+        final float noise;
+        final float noiseW;
+        final int maxPauseMs;
+        final PiperModel.RunHandle handle;
+
+        Pass(PiperModel model, Params params, TimeStretcher stretcher, float residualSpeed,
+             float pitch, float lengthScale, int speaker, float noise, float noiseW, int maxPauseMs,
+             PiperModel.RunHandle handle) {
+            this.model = model;
+            this.params = params;
+            this.stretcher = stretcher;
+            this.residualSpeed = residualSpeed;
+            this.pitch = pitch;
+            this.lengthScale = lengthScale;
+            this.speaker = speaker;
+            this.noise = noise;
+            this.noiseW = noiseW;
+            this.maxPauseMs = maxPauseMs;
+            this.handle = handle;
+        }
+
+        /** A chunk, in two pieces if {@code split} and the voice allows (see class comment). */
+        Rendered render(Job job, boolean split) throws OrtException {
+            final String key = model.config.key;
+            final int words = job.words.length / 2;
+            if (!split || !model.streams() || job.wordStarts.size() != words || words < 2) {
+                final PiperModel.Output o;
+                enterNative(key);
+                try {
+                    o = model.infer(job.ids, lengthScale, speaker, noise, noiseW, handle);
+                } finally {
+                    exitNative(key);
+                }
+                return o == null ? null : finish(o.audio, o.durations, job.wordStarts, 0, words,
+                        true, true, 0);
+            }
+            final PiperModel.Encoded e;
+            enterNative(key);
+            try {
+                e = model.encode(job.ids, lengthScale, speaker, noise, noiseW, handle);
+            } finally {
+                exitNative(key);
+            }
+            if (e == null) {
+                return null;
+            }
+            final int hop = model.config.hopLength;
+            final int rate = model.config.sampleRate;
+            // Played faster by the time stretch: less time to decode the rest in.
+            final double speed = model.decodeSpeed() / (stretcher != null ? residualSpeed : 1f);
+            final int cut = e.durations == null ? -1 : firstPieceEnd(job.wordStarts, e.durations,
+                    e.frames, speed, (int) Math.ceil(MIN_PIECE_S * rate / hop));
+            if (cut < 0) {
+                final float[] audio = decode(e, 0, e.frames);
+                return audio == null ? null : finish(audio, e.durations, job.wordStarts, 0, words,
+                        true, true, 0);
+            }
+            final int splitId = job.wordStarts.get(cut);
+            int splitFrame = 0;
+            for (int i = 0; i < splitId; i++) {
+                splitFrame += Math.round(e.durations[i]);
+            }
+            final float[] head = decode(e, 0, splitFrame);
+            if (head == null) {
+                return null;
+            }
+            final Rendered first = finish(head, Arrays.copyOfRange(e.durations, 0, splitId),
+                    job.wordStarts.subList(0, cut), 0, cut, true, false, 0);
+            final List<Integer> restStarts = new ArrayList<>();
+            for (int w = cut; w < words; w++) {
+                restStarts.add(job.wordStarts.get(w) - splitId);
+            }
+            final int from = splitFrame;
+            // Queued now, so it runs before the next chunk's render.
+            first.rest = mRenderer.submit(() -> {
+                final float[] tail = decode(e, from, e.frames);
+                if (tail == null) {
+                    return null;
+                }
+                final float[] whole = Arrays.copyOf(head, head.length + tail.length);
+                System.arraycopy(tail, 0, whole, head.length, tail.length);
+                return finish(tail, Arrays.copyOfRange(e.durations, splitId, e.durations.length),
+                        restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate));
+            });
+            return first;
+        }
+
+        private float[] decode(PiperModel.Encoded e, int from, int to) throws OrtException {
+            enterNative(model.config.key);
+            try {
+                return model.decode(e, from, to, handle);
+            } finally {
+                exitNative(model.config.key);
+            }
+        }
+
+        /** Level, trim, pause cap, stretch and PCM bytes for one piece of audio. */
+        private Rendered finish(float[] audio, float[] durations, List<Integer> wordStarts,
+                                int wordFrom, int wordTo, boolean lead, boolean tail, double level) {
+            final int rate = model.config.sampleRate;
+            final PiperAudio.Pcm pcm = PiperAudio.process(audio, params.volume, rate,
+                    params.trimSilence && lead, params.trimSilence && tail, maxPauseMs, level);
+            short[] samples = pcm.samples;
+            if (stretcher != null && samples.length > 0) {
+                final short[] stretched = stretcher.process(samples, rate, residualSpeed, pitch);
+                if (stretched != null) {
+                    samples = stretched;
+                }
+            }
+            return new Rendered(PiperAudio.toBytes(samples, samples.length), samples.length,
+                    pcm.trimmedLead, pcm.cuts, pcm.speechSamples, durations, wordStarts, wordFrom,
+                    wordTo);
+        }
+    }
+
+    /** A chunk, or a piece of one, ready to deliver: 16-bit PCM plus what word timing needs. */
     private static final class Rendered {
         final byte[] pcm;
         final int samples;
@@ -612,28 +780,46 @@ final class PiperEngine {
         final int[] cuts;
         final int speechSamples;
         final float[] durations;
+        /** Id index of each of this piece's words, from its first id. */
+        final List<Integer> wordStarts;
+        /** This piece's words: [wordFrom, wordTo) of the chunk's. */
+        final int wordFrom;
+        final int wordTo;
+        /** The chunk's next piece, being rendered; null for the last. */
+        volatile Future<Rendered> rest;
 
         Rendered(byte[] pcm, int samples, int trimmedLead, int[] cuts, int speechSamples,
-                 float[] durations) {
+                 float[] durations, List<Integer> wordStarts, int wordFrom, int wordTo) {
             this.pcm = pcm;
             this.samples = samples;
             this.trimmedLead = trimmedLead;
             this.cuts = cuts;
             this.speechSamples = speechSamples;
             this.durations = durations;
+            this.wordStarts = wordStarts;
+            this.wordFrom = wordFrom;
+            this.wordTo = wordTo;
         }
     }
 
-    /** One chunk's model input, and where its words start in it. */
+    /** One chunk's model input, its text's words, and where they start in the ids. */
     private static final class Job {
         final PiperPhonemes.Chunk chunk;
         final long[] ids;
         final List<Integer> wordStarts;
+        /** Code point span of the chunk in the text, and its words ([start, end) pairs in it). */
+        final int chunkStart;
+        final int chunkEnd;
+        final int[] words;
 
-        Job(PiperPhonemes.Chunk chunk, long[] ids, List<Integer> wordStarts) {
+        Job(PiperPhonemes.Chunk chunk, long[] ids, List<Integer> wordStarts, String text,
+            int[] cpToIndex) {
             this.chunk = chunk;
             this.ids = ids;
             this.wordStarts = wordStarts;
+            chunkStart = Math.max(0, Math.min(chunk.start, cpToIndex.length - 1));
+            chunkEnd = Math.max(chunkStart, Math.min(chunk.end, cpToIndex.length - 1));
+            words = PiperAudio.findWords(text.substring(cpToIndex[chunkStart], cpToIndex[chunkEnd]));
         }
     }
 

@@ -108,52 +108,46 @@ final class PiperAudio {
      * middle of a long pause is cut, so its fade-out and fade-in stay.
      */
     static Pcm process(float[] audio, float volume, int sampleRate, boolean trim, int maxPauseMs) {
+        return process(audio, volume, sampleRate, trim, trim, maxPauseMs, 0);
+    }
+
+    /**
+     * One piece of a chunk rendered in pieces (PiperEngine): silence is
+     * trimmed only at the chunk's own ends, and a later piece takes the
+     * level of the whole chunk ({@link #speechPower} of all its audio so
+     * far), which is the level the chunk would get rendered whole.
+     *
+     * @param level speech power to set the level from, 0 = this audio's
+     */
+    static Pcm process(float[] audio, float volume, int sampleRate, boolean trimLead,
+                       boolean trimTail, int maxPauseMs, double level) {
         if (audio == null || audio.length == 0) {
             return new Pcm(new short[0], 0, 0);
         }
-        final int frame = Math.max(1, sampleRate * FRAME_MS / 1000);
-        final int frames = (audio.length + frame - 1) / frame;
-        final double[] power = new double[frames];
-        double loudest = 0;
-        for (int f = 0; f < frames; f++) {
-            final int end = Math.min(audio.length, (f + 1) * frame);
-            double sum = 0;
-            for (int i = f * frame; i < end; i++) {
-                sum += audio[i] * (double) audio[i];
-            }
-            power[f] = sum / (end - f * frame);
-            loudest = Math.max(loudest, power[f]);
-        }
-        if (loudest < 1e-16) {
+        final int frame = frameSize(sampleRate);
+        final double[] power = framePowers(audio, frame);
+        final int frames = power.length;
+        final double speech = level > 0 ? level : speech(power);
+        if (speech <= 0) {
             return new Pcm(new short[0], 0, 0);
         }
-        final double speechFloor = loudest * Math.pow(10, -SPEECH_RANGE_DB / 10);
-        double speech = 0;
-        int speaking = 0;
-        for (double p : power) {
-            if (p >= speechFloor) {
-                speech += p;
-                speaking++;
-            }
-        }
-        speech /= speaking;
 
         int from = 0;
         int to = audio.length;
         int[] cuts = new int[0];
-        if (trim) {
+        if (trimLead || trimTail) {
             final double silence = speech * Math.pow(10, -SILENCE_BELOW_SPEECH_DB / 10);
             int first = 0;
-            while (first < frames && power[first] < silence) {
+            while (trimLead && first < frames && power[first] < silence) {
                 first++;
             }
             int last = frames - 1;
-            while (last > first && power[last] < silence) {
+            while (trimTail && last > first && power[last] < silence) {
                 last--;
             }
             final int margin = sampleRate * TRIM_MARGIN_MS / 1000;
-            from = Math.max(0, first * frame - margin);
-            to = Math.min(audio.length, (last + 1) * frame + margin);
+            from = trimLead ? Math.max(0, first * frame - margin) : 0;
+            to = trimTail ? Math.min(audio.length, (last + 1) * frame + margin) : audio.length;
             if (maxPauseMs > 0) {
                 cuts = pauseCuts(power, silence, first, last, frame, sampleRate * maxPauseMs / 1000);
             }
@@ -176,6 +170,49 @@ final class PiperAudio {
             out[o++] = (short) Math.round(limit(audio[i] * gain) * 32767);
         }
         return new Pcm(out, from, out.length, cuts);
+    }
+
+    /** Mean power of the speaking 10 ms frames: what the level is set from; 0 for silence. */
+    static double speechPower(float[] audio, int sampleRate) {
+        return audio == null || audio.length == 0 ? 0 : speech(framePowers(audio, frameSize(sampleRate)));
+    }
+
+    private static int frameSize(int sampleRate) {
+        return Math.max(1, sampleRate * FRAME_MS / 1000);
+    }
+
+    private static double[] framePowers(float[] audio, int frame) {
+        final double[] power = new double[(audio.length + frame - 1) / frame];
+        for (int f = 0; f < power.length; f++) {
+            final int end = Math.min(audio.length, (f + 1) * frame);
+            double sum = 0;
+            for (int i = f * frame; i < end; i++) {
+                sum += audio[i] * (double) audio[i];
+            }
+            power[f] = sum / (end - f * frame);
+        }
+        return power;
+    }
+
+    /** Frames within {@link #SPEECH_RANGE_DB} of the loudest are speech. */
+    private static double speech(double[] power) {
+        double loudest = 0;
+        for (double p : power) {
+            loudest = Math.max(loudest, p);
+        }
+        if (loudest < 1e-16) {
+            return 0;
+        }
+        final double speechFloor = loudest * Math.pow(10, -SPEECH_RANGE_DB / 10);
+        double speech = 0;
+        int speaking = 0;
+        for (double p : power) {
+            if (p >= speechFloor) {
+                speech += p;
+                speaking++;
+            }
+        }
+        return speech / speaking;
     }
 
     /** (start, length) of the middle of each silent run longer than {@code keep} samples. */

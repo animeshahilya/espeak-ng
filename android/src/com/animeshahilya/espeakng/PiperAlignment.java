@@ -81,7 +81,7 @@ final class PiperAlignment {
     }
 
     /** The graph message's span inside the ModelProto. */
-    private static final class Graph {
+    static final class Graph {
         final int tagStart;
         final int start;
         final int length;
@@ -93,7 +93,7 @@ final class PiperAlignment {
         }
     }
 
-    private static Graph findGraph(ByteBuffer buf) {
+    static Graph findGraph(ByteBuffer buf) {
         final int[] pos = {0};
         final int limit = buf.limit();
         while (pos[0] < limit) {
@@ -203,14 +203,14 @@ final class PiperAlignment {
         return out;
     }
 
-    private static byte[] concat(byte[] a, byte[] b) {
+    static byte[] concat(byte[] a, byte[] b) {
         final byte[] out = new byte[a.length + b.length];
         System.arraycopy(a, 0, out, 0, a.length);
         System.arraycopy(b, 0, out, a.length, b.length);
         return out;
     }
 
-    private static long readVarint(ByteBuffer buf, int[] pos) {
+    static long readVarint(ByteBuffer buf, int[] pos) {
         long result = 0;
         for (int shift = 0; shift < 64; shift += 7) {
             final byte b = buf.get(pos[0]++);
@@ -222,7 +222,7 @@ final class PiperAlignment {
         throw new IllegalArgumentException("Malformed varint");
     }
 
-    private static String readString(ByteBuffer buf, int[] pos) {
+    static String readString(ByteBuffer buf, int[] pos) {
         final int length = (int) readVarint(buf, pos);
         final byte[] bytes = new byte[length];
         for (int i = 0; i < length; i++) {
@@ -232,7 +232,7 @@ final class PiperAlignment {
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
-    private static void skip(ByteBuffer buf, int[] pos, int wire) {
+    static void skip(ByteBuffer buf, int[] pos, int wire) {
         switch (wire) {
             case WIRE_VARINT:
                 readVarint(buf, pos);
@@ -252,7 +252,7 @@ final class PiperAlignment {
         }
     }
 
-    private static void transfer(FileChannel src, long from, long count, FileChannel dst)
+    static void transfer(FileChannel src, long from, long count, FileChannel dst)
             throws IOException {
         long done = 0;
         while (done < count) {
