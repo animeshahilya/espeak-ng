@@ -69,7 +69,15 @@ dependencies {
     // The full (not "mobile") package: Piper models are plain ONNX files
     // from the voice catalog, not pre-converted ORT-format models. Only the
     // arm64-v8a library ships (abiFilters below), about 8 MB in the APK.
-    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.30.0'
+    // -Psnapdragon builds the Snapdragon APK instead: the QNN package (its
+    // newest is 1.29) plus Qualcomm's runtime, so natural-voice decoders run
+    // on the Hexagon NPU (PiperModel.attachNpu; ~22x real time vs ~4x on a
+    // Galaxy S25 Ultra's CPU). It adds ~60 MB, hence a separate APK.
+    if (project.hasProperty('snapdragon')) {
+        implementation 'com.microsoft.onnxruntime:onnxruntime-android-qnn:1.29.0'
+    } else {
+        implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.30.0'
+    }
     testImplementation 'junit:junit:4.13.2'
     // Real org.json for the JVM unit tests: android.jar's is a stub, and
     // returnDefaultValues would make every Piper config parse come back empty.
@@ -303,5 +311,12 @@ project.afterEvaluate {
     }
     tasks.named('packageReleaseResources') {
         dependsOn ':createDataVersion', ':createDataArchive'
+    }
+}
+
+// The Snapdragon build (see the onnxruntime dependency) is its own APK file.
+if (project.hasProperty('snapdragon')) {
+    base {
+        archivesName = 'espeak-snapdragon'
     }
 }

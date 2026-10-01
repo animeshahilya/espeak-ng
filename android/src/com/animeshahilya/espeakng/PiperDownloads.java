@@ -65,6 +65,9 @@ final class PiperDownloads {
     static final String REPO_BASE = "https://huggingface.co/rhasspy/piper-voices/resolve/main/";
     static final String CATALOG_URL = REPO_BASE + "voices.json";
     static final String SAMPLES_BASE = "https://rhasspy.github.io/piper-samples/samples/";
+    /** SYSPIN + AI4Bharat Rasa character voices, md5-pinned in the extra list. */
+    static final String RESPIN_SYSPIN_RELEASES =
+            "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/";
     /**
      * Community voices for languages Piper's own catalog lacks (Tamil,
      * Sinhala), in voices.json's format plus base_url, source and license.
@@ -108,6 +111,11 @@ final class PiperDownloads {
         String country;
         String quality;
         int numSpeakers;
+        /**
+         * Needs Enhanced-class compute whatever its size (SYSPIN/Rasa: HiFi-GAN
+         * decoders 7-15x a Piper medium's work). Only the bundled list sets it.
+         */
+        boolean heavy;
         String modelPath;
         long modelSize;
         String modelMd5;
@@ -165,7 +173,9 @@ final class PiperDownloads {
                 c.baseUrl = v.optString("base_url", REPO_BASE);
                 c.source = v.optString("source", null);
                 c.license = v.optString("license", null);
-                if (!c.baseUrl.startsWith("https://huggingface.co/") || !c.baseUrl.endsWith("/")) {
+                c.heavy = v.optBoolean("heavy", false);
+                if (!(c.baseUrl.startsWith("https://huggingface.co/")
+                        || c.baseUrl.equals(RESPIN_SYSPIN_RELEASES)) || !c.baseUrl.endsWith("/")) {
                     continue;
                 }
             }
@@ -178,6 +188,7 @@ final class PiperDownloads {
             c.region = lang.optString("region", "");
             c.nameNative = lang.optString("name_native", c.family);
             c.nameEnglish = lang.optString("name_english", c.family);
+            PiperVoiceConfig.rememberName(c.family, c.nameEnglish);
             c.country = lang.optString("country_english", c.region);
             final JSONObject files = v.optJSONObject("files");
             if (files == null) {
@@ -223,6 +234,21 @@ final class PiperDownloads {
     /** Piper's catalog plus the bundled extras it does not have (by key). */
     private static List<CatalogVoice> withExtras(Context context, List<CatalogVoice> catalog) {
         final List<CatalogVoice> out = new ArrayList<>(catalog);
+        final java.util.Set<String> keys = new java.util.HashSet<>();
+        for (CatalogVoice v : catalog) {
+            keys.add(v.key);
+        }
+        for (CatalogVoice v : bundledExtras(context)) {
+            if (keys.add(v.key)) {
+                out.add(v);
+            }
+        }
+        sort(out);
+        return out;
+    }
+
+    /** The app's own list (assets): needs no network, so also for Compact lookups. */
+    static List<CatalogVoice> bundledExtras(Context context) {
         try (InputStream in = context.getAssets().open(EXTRA_CATALOG_ASSET)) {
             final ByteArrayOutputStream buf = new ByteArrayOutputStream();
             final byte[] b = new byte[8192];
@@ -230,20 +256,11 @@ final class PiperDownloads {
             while ((n = in.read(b)) > 0) {
                 buf.write(b, 0, n);
             }
-            final java.util.Set<String> keys = new java.util.HashSet<>();
-            for (CatalogVoice v : catalog) {
-                keys.add(v.key);
-            }
-            for (CatalogVoice v : parseCatalog(buf.toString("UTF-8"), true)) {
-                if (keys.add(v.key)) {
-                    out.add(v);
-                }
-            }
-            sort(out);
+            return parseCatalog(buf.toString("UTF-8"), true);
         } catch (IOException | JSONException e) {
             Log.w(TAG, "Extra voices unavailable", e);
+            return new ArrayList<>();
         }
-        return out;
     }
 
     /** "Priyamvada" from "hi_IN-priyamvada-medium" (catalog keys are lang-name-quality). */
@@ -259,7 +276,22 @@ final class PiperDownloads {
      * real time on a phone - there is no speed left to trade quality for.
      */
     static boolean isOffered(String quality) {
-        return "medium".equals(quality) || isEnhanced(quality);
+        return "medium".equals(quality) || isEnhanced(quality) || isCompact(quality);
+    }
+
+    /**
+     * This project's own tier for heavy voices (SYSPIN, Rasa, Piper "high"):
+     * the same voice with its decoder in INT8 (sherpa-onnx-respin-syspin's
+     * build_compact.py). About twice as fast on a CPU, smaller, slightly noisier.
+     */
+    static boolean isCompact(String quality) {
+        return "compact".equals(quality);
+    }
+
+    /** "hi_IN-kavya-medium" -> "hi_IN-kavya-compact": a voice's Compact version, by key. */
+    static String compactKey(String key) {
+        final int dash = key.lastIndexOf('-');
+        return dash > 0 ? key.substring(0, dash) + "-compact" : key + "-compact";
     }
 
     static boolean isEnhanced(String quality) {
@@ -361,6 +393,15 @@ final class PiperDownloads {
      */
     static long start(Context appContext, Context storageContext, CatalogVoice voice)
             throws IOException, JSONException, UnsupportedVoiceException {
+        return start(appContext, storageContext, voice, false);
+    }
+
+    /**
+     * @param update a newer version of an installed voice: it waits for Wi-Fi
+     *               and charging, and replaces the old files only once verified
+     */
+    static long start(Context appContext, Context storageContext, CatalogVoice voice, boolean update)
+            throws IOException, JSONException, UnsupportedVoiceException {
         final byte[] configBytes = fetch(voice.baseUrl + voice.configPath, 1024 * 1024);
         if (voice.configMd5 != null && !voice.configMd5.equalsIgnoreCase(md5(configBytes))) {
             throw new IOException("Config checksum mismatch for " + voice.key);
@@ -378,6 +419,9 @@ final class PiperDownloads {
         writeAtomically(new File(staging, PiperVoiceStore.CONFIG_FILE), configBytes);
         // Remember what the model must match, for install time.
         writeAtomically(new File(staging, "expected"), (voice.modelMd5 + "\n" + voice.modelSize)
+                .getBytes(StandardCharsets.UTF_8));
+        // Kept with the voice: which catalog version it is (checkForUpdates).
+        writeAtomically(new File(staging, SOURCE_FILE), (voice.modelMd5 + "\n" + md5(configBytes))
                 .getBytes(StandardCharsets.UTF_8));
 
         final File target = downloadTarget(appContext, voice.key);
@@ -399,6 +443,9 @@ final class PiperDownloads {
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setDestinationUri(Uri.fromFile(target))
                 .setAllowedOverRoaming(false);
+        if (update) {
+            request.setAllowedOverMetered(false).setRequiresCharging(true);
+        }
         final long id = dm.enqueue(request);
         prefs(storageContext).edit()
                 .putString(PREF_DL_ID_PREFIX + id, voice.key)
@@ -579,6 +626,89 @@ final class PiperDownloads {
         }
     }
 
+    /** Model and config MD5s an installed voice came from (one per line). */
+    static final String SOURCE_FILE = "source";
+    private static final String PREF_UPDATE_CHECKED = "piper_update_checked";
+    private static final long UPDATE_CHECK_INTERVAL_MS = 24L * 60 * 60 * 1000;
+
+    /**
+     * Voice-file auto-update: at most daily, re-downloads every installed
+     * voice whose catalog files changed (a fixed model, a corrected config).
+     * The download waits for Wi-Fi and charging; complete() swaps the voice
+     * in only after its checksum matches, so the old one keeps speaking until
+     * then. Blocking (catalog fetch, hashing older installs once): call off
+     * the main and speech threads.
+     *
+     * @return keys whose update started
+     */
+    static List<String> checkForUpdates(Context appContext, Context storageContext) {
+        final List<String> started = new ArrayList<>();
+        final SharedPreferences prefs = prefs(storageContext);
+        final long now = System.currentTimeMillis();
+        if (now - prefs.getLong(PREF_UPDATE_CHECKED, 0) < UPDATE_CHECK_INTERVAL_MS) {
+            return started;
+        }
+        final List<PiperVoiceStore.Installed> installed = PiperVoiceStore.list(storageContext);
+        if (installed.isEmpty()) {
+            return started;
+        }
+        final List<CatalogVoice> catalog;
+        try {
+            catalog = loadCatalog(storageContext, false);
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Update check: catalog unavailable", e);
+            return started; // offline: tried again next start
+        }
+        prefs.edit().putLong(PREF_UPDATE_CHECKED, now).apply();
+        final List<String> pending = pendingKeys(storageContext);
+        for (PiperVoiceStore.Installed v : installed) {
+            CatalogVoice entry = null;
+            for (CatalogVoice c : catalog) {
+                if (c.key.equals(v.key)) {
+                    entry = c;
+                    break;
+                }
+            }
+            if (entry == null || entry.modelMd5 == null || entry.configMd5 == null
+                    || pending.contains(v.key)) {
+                continue; // no longer listed, unpinned, or already downloading
+            }
+            final String[] source = installedSource(v);
+            if (source == null || (entry.modelMd5.equalsIgnoreCase(source[0])
+                    && entry.configMd5.equalsIgnoreCase(source[1]))) {
+                continue;
+            }
+            try {
+                start(appContext, storageContext, entry, true);
+                started.add(v.key);
+                Log.i(TAG, "Update for " + v.key + " queued (waits for Wi-Fi and charging)");
+            } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
+                Log.w(TAG, "Update of " + v.key + " not started", e);
+            }
+        }
+        return started;
+    }
+
+    /** {model MD5, config MD5} of an installed voice; hashed once for voices from before. */
+    private static String[] installedSource(PiperVoiceStore.Installed v) {
+        final File source = new File(v.dir, SOURCE_FILE);
+        try {
+            if (source.isFile()) {
+                final String[] lines = PiperVoiceStore.readText(source).trim().split("\n");
+                if (lines.length == 2) {
+                    return lines;
+                }
+            }
+            final File model = v.model();
+            final String[] computed = {md5(model), md5(new File(v.dir, PiperVoiceStore.CONFIG_FILE))};
+            writeAtomically(source, (computed[0] + "\n" + computed[1]).getBytes(StandardCharsets.UTF_8));
+            return computed;
+        } catch (IOException e) {
+            Log.w(TAG, "Cannot hash " + v.key, e);
+            return null;
+        }
+    }
+
     static void broadcastChanged(Context context, String key, String assignedLanguage) {
         final Intent intent = new Intent(ACTION_VOICES_CHANGED).setPackage(context.getPackageName());
         if (key != null) {
@@ -601,6 +731,21 @@ final class PiperDownloads {
 
     private static SharedPreferences settingsPrefs(Context storageContext) {
         return PreferenceManager.getDefaultSharedPreferences(storageContext);
+    }
+
+    /** MD5 of a file, streamed (models are 40-200 MB). */
+    static String md5(File file) throws IOException {
+        try (InputStream in = new java.io.FileInputStream(file)) {
+            final MessageDigest digest = MessageDigest.getInstance("MD5");
+            final byte[] buf = new byte[1 << 16];
+            int n;
+            while ((n = in.read(buf)) > 0) {
+                digest.update(buf, 0, n);
+            }
+            return hex(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     static String md5(byte[] data) {

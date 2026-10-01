@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sample for a language only a natural voice speaks (the system's TTS settings "Play"). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="sample_text" tools:ignore="StringFormatCount">बडोलेण्डनि समायना मिथिंगा, दैमा-दैसा आरो हाजो-हालानि नुथायआ जोंनि गोसोखौ गोजोननायजों आबुं खालामो।</string>
+</resources>

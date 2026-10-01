@@ -63,6 +63,23 @@ final class PiperDevice {
         return fastCpu || tier == Tier.HIGH ? Fit.RECOMMENDED : Fit.NEUTRAL;
     }
 
+    /**
+     * Whether a heavy voice (SYSPIN/Rasa Standard, Piper Enhanced) keeps up
+     * here. Measured whole-model on CPU: Pixel 8 (Tensor G3, little cores)
+     * 1.2-1.9x real time, so long text pauses; Galaxy S25 Ultra (8 Elite, no
+     * little cores, 6 threads) ~4x; its NPU (Snapdragon build) ~22x.
+     */
+    static Fit heavyFit(boolean npu, int performanceClass, boolean noLittleCores) {
+        if (npu) {
+            return Fit.RECOMMENDED;
+        }
+        return performanceClass >= Build.VERSION_CODES.TIRAMISU && noLittleCores ? Fit.NEUTRAL : Fit.SLOW;
+    }
+
+    static Fit heavyFit() {
+        return heavyFit(PiperModel.hasNpuRuntime(), performanceClass(), PiperEngine.noLittleCores());
+    }
+
     /** An 8 GB phone reports ~7.5 GB, a 4 GB one ~3.6 GB. */
     static Tier tierFor(int mediaPerformanceClass, long totalMemBytes, boolean lowRam) {
         final long gb = 1024L * 1024 * 1024;

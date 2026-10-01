@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sample for a language only a natural voice speaks (the system's TTS settings "Play"). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="sample_text" tools:ignore="StringFormatCount">नमस्ते! एषा मम स्थानीयवाणी, या अस्मिन् दूरभाषे प्रवर्तते।</string>
+</resources>

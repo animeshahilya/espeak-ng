@@ -76,7 +76,8 @@ final class LanguageRuns {
         SCRIPT_LANGUAGE.put(UnicodeScript.ARMENIAN, "hye");
         SCRIPT_LANGUAGE.put(UnicodeScript.GEORGIAN, "kat");
 
-        for (String lang : new String[] {"hin", "mar", "nep", "san", "kok", "mai", "bho", "sat"}) {
+        for (String lang : new String[] {"hin", "mar", "nep", "san", "kok", "mai", "bho", "sat",
+                "hne", "mag", "brx", "doi"}) {
             LANGUAGE_SCRIPT.put(lang, UnicodeScript.DEVANAGARI);
         }
         LANGUAGE_SCRIPT.put("ben", UnicodeScript.BENGALI);
@@ -104,6 +105,16 @@ final class LanguageRuns {
         LANGUAGE_SCRIPT.put("kor", UnicodeScript.HANGUL);
         LANGUAGE_SCRIPT.put("hye", UnicodeScript.ARMENIAN);
         LANGUAGE_SCRIPT.put("kat", UnicodeScript.GEORGIAN);
+    }
+
+    /**
+     * The language eSpeak reads {@code language}'s script in, for a language
+     * eSpeak has no voice for (Chhattisgarhi -> Hindi); null if its script is
+     * not listed.
+     */
+    static String standIn(String language) {
+        final UnicodeScript s = LANGUAGE_SCRIPT.get(language);
+        return s != null ? SCRIPT_LANGUAGE.get(s) : null;
     }
 
     /** The script {@code language} is written in (Latin unless listed). */

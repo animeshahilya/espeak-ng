@@ -183,6 +183,8 @@ public class TtsService extends TextToSpeechService {
                         rebuildAvailableVoices();
                     } else if (PiperVoiceStore.PREF_ENABLED.equals(key)
                             || (key != null && key.startsWith(PiperVoiceStore.PREF_VOICE_PREFIX))) {
+                        // A language only a natural voice speaks comes or goes.
+                        rebuildAvailableVoices();
                         naturalVoicesChanged(TolerantPreferences.of(sharedPreferences));
                     }
                 }
@@ -263,6 +265,11 @@ public class TtsService extends TextToSpeechService {
         @Override
         public void onReceive(Context context, Intent intent) {
             PiperVoiceStore.invalidate();
+            // An updated voice: its new files load on next use (no-op for a new one).
+            final String changed = intent.getStringExtra(PiperDownloads.EXTRA_KEY);
+            if (changed != null) {
+                mPiper.unload(changed);
+            }
             final Voice current;
             synchronized (mAvailableVoices) {
                 current = mMatchingVoice;
@@ -338,6 +345,9 @@ public class TtsService extends TextToSpeechService {
                         "", "").first;
                 preloadNaturalVoice(systemVoice);
                 preloadRecentNaturalVoices();
+                if (mPreferences != null && PiperVoiceStore.isEnabled(TolerantPreferences.of(mPreferences))) {
+                    PiperDownloads.checkForUpdates(getApplicationContext(), mStorageContext);
+                }
             } catch (Throwable t) {
                 Log.w(TAG, "Natural voice warmup failed", t);
             }
@@ -1563,6 +1573,7 @@ public class TtsService extends TextToSpeechService {
             for (Voice voice : voices) {
                 mAvailableVoices.put(voice.name, voice);
             }
+            addNaturalOnlyVoices();
             if (DEBUG && mPreferences != null) {
                 Set<String> selected = LanguageSettings.getSelectedLanguages(mPreferences);
                 Log.i(TAG, "Rebuilt voices: selected=" + (selected == null ? "ALL" : selected.size()) +
@@ -1570,6 +1581,18 @@ public class TtsService extends TextToSpeechService {
             }
             if (mMatchingVoice != null && !mAvailableVoices.containsKey(mMatchingVoice.name)) {
                 mMatchingVoice = null;
+            }
+        }
+    }
+
+    /** Languages only a natural voice speaks, as voices of their own (PiperVoiceStore). */
+    private void addNaturalOnlyVoices() {
+        if (mPreferences == null) {
+            return;
+        }
+        for (Voice v : PiperVoiceStore.naturalOnlyVoices(mPreferences, mAllVoices)) {
+            if (!mAvailableVoices.containsKey(v.name)) {
+                mAvailableVoices.put(v.name, v);
             }
         }
     }

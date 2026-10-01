@@ -90,6 +90,27 @@ public class PiperSplitTest {
                 Files.readAllBytes(dec.toPath()));
     }
 
+    /** INT8 (Compact) Rasa lists its speaker "cond" Conv before conv_pre: still cut at the latent. */
+    @Test
+    public void theLatentIsWhatConvPreReadsEvenWhenAnotherConvComesFirst() throws Exception {
+        final File in = tmp.newFile("model.onnx");
+        final File enc = tmp.newFile("enc.onnx");
+        final File dec = tmp.newFile("dec.onnx");
+        final byte[] g = node("/emb_g/Gather", "Gather", "/g", "sid", "emb.w");
+        final byte[] cond = node("/dec/cond/Conv", "Conv", "/dec/c", "/g", "cond.w");
+        final byte[] add = node("/dec/Add", "Add", "/dec/x", "/dec/a", "/dec/c");
+        final byte[] tanh = node("/dec/Tanh", "Tanh", "output", "/dec/x");
+        Files.write(in.toPath(), model(cat(ENC, CEIL, MASK, g, cond, CONV, add, tanh, ENC_W,
+                initializer("emb.w"), initializer("cond.w"), DEC_W, INPUT, field(11, str(1, "sid")),
+                field(12, str(1, "output")))));
+
+        assertTrue(PiperSplit.split(in, enc, dec));
+        assertArrayEquals(model(cat(cond, CONV, add, tanh, initializer("cond.w"), DEC_W,
+                        PiperSplit.floatInput("/Mul_7_output_0"), PiperSplit.floatInput("/g"),
+                        PiperAlignment.outputEntry("output"))),
+                Files.readAllBytes(dec.toPath()));
+    }
+
     @Test
     public void aModelWithoutPipersDecoderIsNotSplit() throws Exception {
         final File in = tmp.newFile("model.onnx");

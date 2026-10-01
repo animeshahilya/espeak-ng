@@ -566,6 +566,11 @@
   <string name="piper_quality_enhanced">Enhanced</string>
   <string name="piper_quality_enhanced_recommended">Enhanced, recommended for this phone</string>
   <string name="piper_quality_enhanced_slow">Enhanced, may pause on this phone</string>
+  <string name="piper_quality_standard_slow">Standard, may pause on this phone</string>
+  <string name="piper_quality_compact">Compact</string>
+  <string name="piper_quality_compact_recommended">Compact, recommended for this phone</string>
+  <string name="piper_action_compact">Download the Compact version (%1$s), about twice as fast</string>
+  <string name="piper_action_compact_measured">Download the Compact version (%1$s): this voice runs at %2$.1f times real time here, Compact about twice that</string>
   <string name="category_piper_advanced">Advanced</string>
   <string name="setting_piper_nnapi">Use the AI chip</string>
   <string name="setting_piper_nnapi_summary">Experimental. On most phones it is not faster. Voices it can\'t run use the processor, as when this is off.</string>

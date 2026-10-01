@@ -310,6 +310,9 @@ final class PiperPhonemes {
      * back the way the voice learned them ({@link #trainedSpellings}).
      */
     static List<String> tokenize(String ipa, PiperVoiceConfig config) {
+        if (!config.usesEspeak()) {
+            return textTokens(ipa, config);
+        }
         if (config.trainedSpellings.length > 0) {
             ipa = Normalizer.normalize(ipa, Normalizer.Form.NFC);
             for (Spelling spelling : config.trainedSpellings) {
@@ -424,10 +427,42 @@ final class PiperPhonemes {
     }
 
     /**
+     * A "text" voice's letters, lower-cased: each composed letter as is when
+     * the voice has it (character VITS voices trained on NFC script, so
+     * Bengali "ো" stays one letter), else its NFD parts (Piper's own text
+     * voices map decomposed letters).
+     */
+    private static List<String> textTokens(String text, PiperVoiceConfig config) {
+        final String nfc = Normalizer.normalize(text, Normalizer.Form.NFC).toLowerCase(Locale.ROOT);
+        final List<String> out = new ArrayList<>(nfc.length());
+        for (int i = 0; i < nfc.length(); ) {
+            final int n = Character.charCount(nfc.codePointAt(i));
+            final String letter = nfc.substring(i, i + n);
+            i += n;
+            if (config.phonemeIdMap.containsKey(letter)) {
+                out.add(letter);
+                continue;
+            }
+            final String nfd = Normalizer.normalize(letter, Normalizer.Form.NFD);
+            for (int j = 0; j < nfd.length(); ) {
+                final int m = Character.charCount(nfd.codePointAt(j));
+                out.add(nfd.substring(j, j + m));
+                j += m;
+            }
+        }
+        return out;
+    }
+
+    /**
      * For "text" voices (phonemes are the letters themselves): split at
      * sentence punctuation so long input still streams sentence by sentence.
      */
     static List<Clause> textClauses(String text) {
+        return textClauses(text, null);
+    }
+
+    /** @param spell rewrites each sentence before it is read (numbers into words), or null */
+    static List<Clause> textClauses(String text, java.util.function.UnaryOperator<String> spell) {
         final List<Clause> clauses = new ArrayList<>();
         int start = 0;
         int cpStart = 0;
@@ -441,7 +476,8 @@ final class PiperPhonemes {
             if (sentenceEnd || i >= text.length()) {
                 final String piece = text.substring(start, i);
                 if (!piece.trim().isEmpty()) {
-                    clauses.add(new Clause(true, cpStart, cp, piece.trim() + " "));
+                    final String said = spell != null ? spell.apply(piece.trim()) : piece.trim();
+                    clauses.add(new Clause(true, cpStart, cp, said + " "));
                 }
                 start = i;
                 cpStart = cp;

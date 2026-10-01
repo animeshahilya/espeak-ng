@@ -92,9 +92,22 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(9, voices.size());
+        assertEquals(107, voices.size());
         for (PiperDownloads.CatalogVoice v : voices) {
-            assertTrue(v.key, v.baseUrl.matches("https://huggingface\\.co/[^/]+/[^/]+/resolve/[0-9a-f]{40}/"));
+            if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
+                // Release assets: each path starts with its tag; the MD5s pin the bytes.
+                if (PiperDownloads.isCompact(v.quality)) {
+                    assertTrue(v.key, v.key.endsWith("-compact"));
+                    assertTrue(v.key, v.modelPath.matches("compact-v1/[^/]+-compact\\.onnx"));
+                    assertTrue(v.key, v.configPath.matches("compact-v1/[^/]+\\.onnx\\.json"));
+                } else {
+                    assertTrue(v.key, v.modelPath.matches("(v1\\.1\\.0-fp16|piper-v1)/[^/]+\\.onnx"));
+                    assertTrue(v.key, v.configPath.matches("piper-v1/[^/]+\\.onnx\\.json"));
+                    assertTrue(v.key, v.heavy);
+                }
+            } else {
+                assertTrue(v.key, v.baseUrl.matches("https://huggingface\\.co/[^/]+/[^/]+/resolve/[0-9a-f]{40}/"));
+            }
             assertEquals(v.key, 32, v.modelMd5.length());
             assertTrue(v.key, v.modelSize > 10_000_000L);
             assertTrue(v.key, v.license != null && v.source != null);

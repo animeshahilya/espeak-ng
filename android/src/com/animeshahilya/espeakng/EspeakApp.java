@@ -49,8 +49,9 @@ public class EspeakApp extends Application {
         private static final String TAG = "PiperVoices";
 
         @Override
-        public void onLoaded(String key, long millis) {
-            Log.i(TAG, "Natural voice " + key + " loaded in " + millis + " ms");
+        public void onLoaded(String key, long millis, String npu) {
+            Log.i(TAG, "Natural voice " + key + " loaded in " + millis + " ms"
+                    + (npu != null ? ", decoder " + npu : ""));
         }
 
         @Override

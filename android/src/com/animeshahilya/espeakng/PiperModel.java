@@ -17,8 +17,10 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.LongBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -74,6 +76,16 @@ final class PiperModel implements Closeable {
      * of Sonata's RT voices -13 to -33 dB.
      */
     static final int DECODE_OVERLAP = 12;
+    /**
+     * Latent frames per Qualcomm NPU run: its graphs have fixed shapes, so
+     * the decoder runs in windows of this size (DECODE_OVERLAP of context
+     * each side). Galaxy S25 Ultra, SYSPIN/Rasa decoders: ~22x real time at
+     * any of 40-160 frames, vs ~4x on its CPU.
+     */
+    static final int NPU_FRAMES = 80;
+    private static final String NPU_SUFFIX = ".npu" + NPU_FRAMES + ".onnx";
+    /** Holds why the NPU failed; the revision makes phones retry after NPU code changes. */
+    private static final String NPU_FAILED_SUFFIX = ".npu-r2.failed";
 
     final PiperVoiceConfig config;
     final File file;
@@ -92,6 +104,12 @@ final class PiperModel implements Closeable {
     private final boolean hasDurations;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private boolean closed;
+    /** The decoder compiled for Qualcomm's NPU (Snapdragon build), or null for the CPU one. */
+    private volatile OrtSession npuDecoder;
+    /** Why the NPU is not used on a build that has it (for the log), or null. */
+    private volatile String npuProblem;
+    /** Shapes of the decoder inputs from the first encoder run (warm-up), for the NPU graph. */
+    private volatile long[][] boundaryShapes;
     /** Decoder throughput, audio seconds per second of work (running average; 0 = unmeasured). */
     private volatile double decodeSpeed;
 
@@ -204,7 +222,111 @@ final class PiperModel implements Closeable {
             model.close();
             throw e;
         }
+        if (!nnapi && model.decoder != null) {
+            model.attachNpu(onnx);
+        }
         return model;
+    }
+
+    /** True when this ONNX Runtime has Qualcomm's QNN provider: the Snapdragon build. */
+    static boolean hasNpuRuntime() {
+        try {
+            return env().getAvailableProviders().contains(ai.onnxruntime.OrtProvider.QNN);
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Moves the decoder to Qualcomm's NPU when this build and phone have it.
+     * The first time, writes the decoder with fixed input shapes and lets
+     * QNN compile it (2-9 s), saving the compiled graph beside the model;
+     * later loads read that (~0.15 s). Any failure keeps the CPU decoder
+     * and is remembered, so a phone without the NPU pays for it once.
+     */
+    private void attachNpu(File onnx) {
+        final long[][] shapes = boundaryShapes;
+        final File failed = derivedFile(onnx, NPU_FAILED_SUFFIX);
+        if (shapes == null || !hasNpuRuntime()) {
+            return;
+        }
+        if (failed.exists()) {
+            String why = "";
+            try {
+                why = new String(java.nio.file.Files.readAllBytes(failed.toPath()),
+                        java.nio.charset.StandardCharsets.UTF_8);
+            } catch (IOException ignored) {
+                // The reason is only for the log.
+            }
+            npuProblem = "on the CPU (NPU failed before: " + why + ")";
+            return;
+        }
+        final File compiled = derivedFile(onnx, NPU_SUFFIX);
+        final File source = derivedFile(onnx, ".npu.tmp");
+        OrtSession npu = null;
+        try {
+            final boolean compile = !compiled.isFile();
+            if (compile) {
+                final Map<String, long[]> fixed = new HashMap<>();
+                for (int i = 0; i < boundary.length; i++) {
+                    fixed.put(boundary[i], i == 0
+                            ? new long[] {1, shapes[0][1], NPU_FRAMES} : shapes[i]);
+                }
+                if (!PiperSplit.split(onnx, null, source, fixed)) {
+                    throw new IOException("not splittable");
+                }
+            }
+            try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
+                final Map<String, String> qnn = new HashMap<>();
+                qnn.put("backend_type", "htp");
+                qnn.put("enable_htp_fp16_precision", "1");
+                qnn.put("htp_performance_mode", "burst");
+                options.addQnn(qnn);
+                // All of it on the NPU or not at all: a half-offloaded graph is slower.
+                options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
+                if (compile) {
+                    options.addConfigEntry("ep.context_enable", "1");
+                    options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
+                }
+                npu = env().createSession((compile ? source : compiled).getAbsolutePath(), options);
+            }
+            // A real window through it before it speaks.
+            final Map<String, OnnxTensor> inputs = new HashMap<>();
+            try {
+                for (int i = 0; i < boundary.length; i++) {
+                    final long[] shape = i == 0 ? new long[] {1, shapes[0][1], NPU_FRAMES} : shapes[i];
+                    inputs.put(boundary[i], OnnxTensor.createTensor(env(),
+                            FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
+                }
+                npu.run(inputs).close();
+            } finally {
+                for (OnnxTensor t : inputs.values()) {
+                    t.close();
+                }
+            }
+            npuDecoder = npu;
+        } catch (IOException | OrtException | RuntimeException e) {
+            closeQuietly(npu);
+            compiled.delete();
+            npuProblem = "on the CPU (NPU failed: " + e + ")";
+            try (java.io.FileWriter w = new java.io.FileWriter(failed)) {
+                w.write(npuProblem);
+            } catch (IOException ignored) {
+                // Tried again next load.
+            }
+        } finally {
+            source.delete();
+        }
+    }
+
+    /** True when the decoder runs on Qualcomm's NPU. */
+    boolean onNpu() {
+        return npuDecoder != null;
+    }
+
+    /** Why a build with the NPU runtime isn't using it for this voice, or null. */
+    String npuProblem() {
+        return npuProblem;
     }
 
     private static volatile boolean sTelemetryOff;
@@ -240,7 +362,7 @@ final class PiperModel implements Closeable {
                                        int threads) {
         final File dir = onnx.getParentFile();
         final File[] stale = dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
-                && (n.endsWith(".ort") || n.endsWith(".tmp")));
+                && (n.endsWith(".ort") || n.endsWith(".tmp") || n.contains(".npu")));
         if (stale != null) {
             for (File f : stale) {
                 f.delete();
@@ -345,6 +467,15 @@ final class PiperModel implements Closeable {
         int[] vowel = config.phonemeIdMap.get("a");
         if (vowel == null) {
             vowel = config.phonemeIdMap.get("ə");
+        }
+        if (vowel == null) {
+            // Text voices in other scripts (SYSPIN Hindi has no "a"): any letter.
+            for (Map.Entry<String, int[]> e : config.phonemeIdMap.entrySet()) {
+                if (e.getKey().length() == 1 && Character.isLetter(e.getKey().charAt(0))) {
+                    vowel = e.getValue();
+                    break;
+                }
+            }
         }
         if (pad == null || bos == null || eos == null || vowel == null) {
             return;
@@ -486,6 +617,9 @@ final class PiperModel implements Closeable {
                         return null;
                     }
                     final float[] durations = hasDurations ? floats(r.get(boundary.length)) : null;
+                    if (boundaryShapes == null) {
+                        boundaryShapes = shapes;
+                    }
                     return new Encoded(tensors, shapes,
                             durations != null && durations.length == ids.length ? durations : null);
                 }
@@ -519,6 +653,9 @@ final class PiperModel implements Closeable {
         try {
             if (closed || (handle != null && handle.isCancelled())) {
                 return null;
+            }
+            if (npuDecoder != null) {
+                return decodeOnNpu(e, from, to, handle);
             }
             final int start = Math.max(0, from - DECODE_OVERLAP);
             final int end = Math.min(e.frames, to + DECODE_OVERLAP);
@@ -572,6 +709,78 @@ final class PiperModel implements Closeable {
         }
     }
 
+    /**
+     * {@link #decode} on the NPU: fixed windows of NPU_FRAMES, each with
+     * DECODE_OVERLAP frames of context on both sides where the chunk has
+     * them, cropped and joined. Past a chunk's end the window is zeros,
+     * which only touches the last few frames (the trimmed tail silence).
+     * Caller holds the read lock.
+     */
+    private float[] decodeOnNpu(Encoded e, int from, int to, RunHandle handle) throws OrtException {
+        final int step = NPU_FRAMES - 2 * DECODE_OVERLAP;
+        final OrtEnvironment env = env();
+        final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
+        final List<float[]> parts = new ArrayList<>();
+        int total = 0;
+        final long started = System.nanoTime();
+        try {
+            for (int s = from; s < to; s += step) {
+                if (handle != null && handle.isCancelled()) {
+                    return null;
+                }
+                final int len = Math.min(step, to - s);
+                final int ws = Math.max(0, Math.min(s - DECODE_OVERLAP, e.frames - NPU_FRAMES));
+                final int have = Math.min(NPU_FRAMES, e.frames - ws);
+                final float[] latent = new float[e.channels * NPU_FRAMES];
+                for (int c = 0; c < e.channels; c++) {
+                    System.arraycopy(e.tensors[0], c * e.frames + ws, latent, c * NPU_FRAMES, have);
+                }
+                final Map<String, OnnxTensor> inputs = new HashMap<>();
+                try {
+                    inputs.put(boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
+                            new long[] {1, e.channels, NPU_FRAMES}));
+                    for (int i = 1; i < boundary.length; i++) {
+                        inputs.put(boundary[i], OnnxTensor.createTensor(env,
+                                FloatBuffer.wrap(e.tensors[i]), e.shapes[i]));
+                    }
+                    try (OrtSession.Result r = npuDecoder.run(inputs,
+                            handle != null ? handle.options : ownOptions)) {
+                        final float[] audio = floats(r.get(0));
+                        if (audio == null) {
+                            return null;
+                        }
+                        final int hop = audio.length / NPU_FRAMES;
+                        parts.add(Arrays.copyOfRange(audio, (s - ws) * hop, (s - ws + len) * hop));
+                        total += len * hop;
+                    }
+                } finally {
+                    for (OnnxTensor t : inputs.values()) {
+                        t.close();
+                    }
+                }
+            }
+        } catch (OrtException ex) {
+            if (handle != null && handle.isCancelled()) {
+                return null;
+            }
+            throw ex;
+        } finally {
+            if (ownOptions != null) {
+                ownOptions.close();
+            }
+        }
+        final float[] out = new float[total];
+        int at = 0;
+        for (float[] p : parts) {
+            System.arraycopy(p, 0, out, at, p.length);
+            at += p.length;
+        }
+        final double speed = total / (double) config.sampleRate
+                / Math.max(1e-6, (System.nanoTime() - started) / 1e9);
+        decodeSpeed = decodeSpeed == 0 ? speed : 0.7 * decodeSpeed + 0.3 * speed;
+        return out;
+    }
+
     private void putInputs(OrtEnvironment env, Map<String, OnnxTensor> inputs, long[] ids,
                            float lengthScale, int speakerId, float noise, float noiseW)
             throws OrtException {
@@ -582,7 +791,9 @@ final class PiperModel implements Closeable {
         inputs.put("scales", OnnxTensor.createTensor(env, FloatBuffer.wrap(new float[] {
                 config.noiseScale * noise, lengthScale, config.noiseW * noiseW}), new long[] {3}));
         if (hasSpeakerInput) {
-            final int sid = config.numSpeakers > 1 ? speakerId : 0;
+            // A one-voice config over a multi-speaker file (each Rasa voice)
+            // names its speaker as the default.
+            final int sid = config.numSpeakers > 1 ? speakerId : config.defaultSpeakerId;
             inputs.put("sid", OnnxTensor.createTensor(env,
                     LongBuffer.wrap(new long[] {sid}), new long[] {1}));
         }
@@ -620,6 +831,7 @@ final class PiperModel implements Closeable {
             closed = true;
             closeQuietly(session);
             closeQuietly(decoder);
+            closeQuietly(npuDecoder);
         } finally {
             lock.writeLock().unlock();
         }

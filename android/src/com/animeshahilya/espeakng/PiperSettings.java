@@ -307,16 +307,35 @@ final class PiperSettings {
         }
         final Locale locale = new Locale(family);
         final String name = locale.getDisplayLanguage();
-        return name == null || name.isEmpty() ? family : name;
+        if (name == null || name.isEmpty() || name.equals(family)) {
+            final String known = PiperVoiceConfig.englishName(family);
+            return known != null ? known : family;
+        }
+        return name;
     }
 
     private static String qualityLabel(Context context, String quality) {
-        return context.getString(PiperDownloads.isEnhanced(quality)
-                ? R.string.piper_quality_enhanced : R.string.piper_quality_standard);
+        return context.getString(PiperDownloads.isEnhanced(quality) ? R.string.piper_quality_enhanced
+                : PiperDownloads.isCompact(quality) ? R.string.piper_quality_compact
+                : R.string.piper_quality_standard);
     }
 
     /** In the catalog, Enhanced also says whether this phone suits it (PiperDevice). */
     private static String catalogQualityLabel(Context context, PiperDownloads.CatalogVoice v) {
+        // Heavy voices and their Compact versions: by what this phone can run.
+        // Compact is recommended exactly where its original would pause: a
+        // heavy SYSPIN/Rasa voice by heavyFit, a Piper Enhanced one by enhancedFit.
+        if (PiperDownloads.isCompact(v.quality)) {
+            final PiperDevice.Fit original = v.heavy ? PiperDevice.heavyFit()
+                    : PiperDevice.enhancedFit(PiperDevice.tier(context), PiperDevice.performanceClass(),
+                            PiperDevice.HEAVY_MODEL_BYTES);
+            return context.getString(original == PiperDevice.Fit.SLOW
+                    ? R.string.piper_quality_compact_recommended : R.string.piper_quality_compact);
+        }
+        if (v.heavy && PiperDevice.heavyFit() == PiperDevice.Fit.SLOW) {
+            return context.getString(PiperDownloads.isEnhanced(v.quality)
+                    ? R.string.piper_quality_enhanced_slow : R.string.piper_quality_standard_slow);
+        }
         if (PiperDownloads.isEnhanced(v.quality)) {
             switch (PiperDevice.enhancedFit(PiperDevice.tier(context),
                     PiperDevice.performanceClass(), v.modelSize)) {
@@ -573,6 +592,27 @@ final class PiperSettings {
         TtsSettingsActivity.markAlertTitleHeading(dialog);
     }
 
+    /** Below this many seconds of audio per second of decoding, long text pauses. */
+    private static final double SLOW_SPEED = 2.0;
+
+    /** The Compact version of an installed voice, when the app offers one and it isn't installed. */
+    private static PiperDownloads.CatalogVoice compactVersion(Context context,
+                                                              PiperVoiceStore.Installed voice) {
+        if (PiperDownloads.isCompact(voice.config.quality)) {
+            return null;
+        }
+        final String key = PiperDownloads.compactKey(voice.key);
+        if (PiperVoiceStore.find(storage(context), key) != null) {
+            return null;
+        }
+        for (PiperDownloads.CatalogVoice v : PiperDownloads.bundledExtras(context)) {
+            if (v.key.equals(key)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     private static void showVoiceActions(final Context context, final SharedPreferences prefs,
                                          final PiperVoiceStore.Installed voice) {
         final List<CharSequence> actions = new ArrayList<>();
@@ -585,6 +625,17 @@ final class PiperSettings {
             actions.add(context.getString(R.string.piper_action_speaker,
                     speakerLabel(context, voice.config, PiperVoiceStore.speakerId(prefs, voice.key))));
             handlers.add(() -> chooseSpeaker(context, prefs, voice));
+        }
+        final PiperDownloads.CatalogVoice compact = compactVersion(context, voice);
+        if (compact != null) {
+            final PiperModel loaded = PiperEngine.get().getLoaded(voice.key);
+            final double speed = loaded == null ? 0 : loaded.decodeSpeed();
+            final String size = Formatter.formatShortFileSize(context, compact.modelSize);
+            // The speed this phone measured, when it is too slow to keep up.
+            actions.add(speed > 0 && speed < SLOW_SPEED
+                    ? context.getString(R.string.piper_action_compact_measured, size, speed)
+                    : context.getString(R.string.piper_action_compact, size));
+            handlers.add(() -> confirmDownload(context, compact));
         }
         actions.add(context.getString(R.string.piper_action_delete));
         handlers.add(() -> confirmDelete(context, prefs, voice));

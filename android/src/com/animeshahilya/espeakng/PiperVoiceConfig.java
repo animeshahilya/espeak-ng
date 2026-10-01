@@ -29,6 +29,22 @@ final class PiperVoiceConfig {
     static final String PHONEME_TYPE_ESPEAK = "espeak";
     static final String PHONEME_TYPE_TEXT = "text";
 
+    /**
+     * English language names from catalogs and configs, for languages the
+     * platform has no name for (Chhattisgarhi, "hne", on Android 16).
+     */
+    private static final Map<String, String> ENGLISH_NAMES = new java.util.concurrent.ConcurrentHashMap<>();
+
+    static void rememberName(String family, String english) {
+        if (family != null && english != null && !english.isEmpty() && !english.equals(family)) {
+            ENGLISH_NAMES.put(family, english);
+        }
+    }
+
+    static String englishName(String family) {
+        return family != null ? ENGLISH_NAMES.get(family) : null;
+    }
+
     static final String PAD = "_";
     static final String BOS = "^";
     static final String EOS = "$";
@@ -175,6 +191,7 @@ final class PiperVoiceConfig {
             b.languageCode = language.optString("code", null);
             b.languageNameNative = language.optString("name_native", null);
             b.languageNameEnglish = language.optString("name_english", null);
+            rememberName(b.languageFamily, b.languageNameEnglish);
         }
         // Region from the catalog key ("ta_IN-...") when the config gives
         // only a language ("ta"), as community voices do.

@@ -28,6 +28,11 @@
         android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules"
         tools:ignore="WearRecents" >
+        <!-- Snapdragon build: Qualcomm's NPU is reached through this vendor
+             library, which Android 12+ hides from apps that don't list it
+             (QNN then fails to start and everything runs on the CPU).
+             Optional, so other phones and the standard build are unaffected. -->
+        <uses-native-library android:name="libcdsprpc.so" android:required="false" />
 
         <uses-library
             android:name="com.google.android.wearable"

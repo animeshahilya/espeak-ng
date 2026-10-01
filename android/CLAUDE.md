@@ -280,14 +280,15 @@ voices" does not, so voices can still be deleted to free space.
   synchronized: the receiver and the page's `reconcile()` can race on it.
 - **Community voices.** `assets/piper/extra_voices.json` (voices.json format
   plus `base_url`, `source`, `license`) adds languages rhasspy lacks: Tamil
-  (tinisoft rasa female/male, CC BY 4.0) and Sinhala (chan4lk, MIT); and,
+  (tinisoft rasa female/male, CC BY 4.0; Jeyaram-K hemalatha female / valluvar male, Apache-2.0) and Sinhala (chan4lk, MIT); and,
   added 2026-09-29 from a scan of ~2000 Hugging Face repos, Kurmanji (90 speakers,
   Common Voice 24, MIT, default speaker 54), Latvian Rudolfs (Latvian Library
   for the Blind audiobooks with permission, CC0) and Sinhala Dilu (MIT).
   Added 2026-09-29 from the SherpaVoices catalog, each rendered through
   this fork's phonemes and heard first: Indian English SPICOR
   (NavGurukul, AGPL-3.0), Tracy ManyVoice (Bryce Beattie, 16 LibriVox
-  speakers, public domain) and Nepali Seto Bagh (Wiseyak, 18 speakers,
+  speakers, public domain), British assistant Jarvis (jgkawell, MIT),
+  HAL 9000 (campwill, Apache-2.0) and Nepali Seto Bagh (Wiseyak, 18 speakers,
   OpenRAIL). Removed 2026-09-30: en_AU LibriVox (DataCraftsmanAustralia),
   which garbles a word spoken on its own ("office" alone -> "in the
   wallpits", Whisper, 3/3) and so every English word switched out of Hindi
@@ -306,6 +307,92 @@ voices" does not, so voices can still be deleted to free space.
   `phoneme_type` espeak, not trained on another company's TTS output, and
   listened to. Their configs name things loosely, so `PiperVoiceConfig`
   takes the display name and region from the catalog key.
+- **Character voices (SYSPIN + Rasa, 2026-10-01).** 42 voices that read
+  script letters, not eSpeak phonemes (`phoneme_type` "text"): 22 SYSPIN
+  (IISc, Coqui VITS, MIT, 22050 Hz) and 20 AI4Bharat Rasa (CC BY 4.0,
+  24000 Hz, one 20-speaker file; each voice is its own entry with
+  `num_speakers` 1 and `default_speaker_id` = its speaker, which
+  `PiperModel.putInputs` passes as `sid`, so the shared file downloads once
+  per voice). Hosted on animeshahilya/sherpa-onnx-respin-syspin releases
+  (`PiperDownloads.RESPIN_SYSPIN_RELEASES`, the one non-Hugging-Face
+  `base_url` allowed; paths carry the tag, MD5s pin the bytes); configs
+  and catalog entries come from that repo's `build_piper_configs.py`.
+  `_`/`^`/`$` map to the model's blank, which reproduces its add_blank
+  training input (one extra blank at each end). Text voices tokenize as
+  NFC letters lower-cased, decomposing only letters the voice lacks
+  (`PiperPhonemes.textTokens`): plain NFD split Bengali/Tamil vowel signs
+  the voices were trained on composed. Digits become words through ICU's
+  spellout for the voice's language (`PiperEngine.numberWords`; skipped
+  where ICU falls back to English). Languages eSpeak lacks (Bhojpuri,
+  Chhattisgarhi, Magahi, Maithili, Sanskrit, Bodo, Dogri) keep their own
+  language and, like SherpaVoices, become TTS voices of their own once a
+  natural voice is chosen for them (`PiperVoiceStore.naturalOnlyVoices`,
+  `Voice.naturalOnly`): eSpeak stands in with the rules of the script's
+  language (`LanguageRuns.standIn`, Devanagari -> Hindi), which also drives
+  text processing (`TextPreprocessor.languageTag`). They must be added in
+  `CheckVoiceData` too: Android Settings' TTS language list comes from
+  CHECK_TTS_DATA, not `onGetVoices`. Native `sample_text` in
+  `values-b+hne` etc. Android has no name for "hne" (its lists say
+  "hne (India)"); the app falls back to the catalog's English name
+  (`PiperVoiceConfig.englishName`). `PiperSplit` also cuts Coqui
+  (`/waveform_decoder/`) and transformers (`/decoder/`) decoders, keeping
+  fp16 weights' upcast nodes with the decoder; checked on both: 12-frame
+  overlapped decoding matches whole within 2e-6, 256 samples per frame.
+  Device-verified on a Pixel 8 and a Galaxy S25 Ultra. Speed is their
+  weakness: whole-model ORT on a Pixel 8 CPU, Priyamvada 12x real time vs
+  SYSPIN/Rasa 0.8-1.7x (their HiFi-GAN decoders are 7-15x heavier), so
+  long text stalls on CPU-only phones.
+- **Snapdragon build** (`./gradlew assembleRelease -Psnapdragon` ->
+  `espeak-snapdragon-release.apk`, ~90 MB vs 33): onnxruntime-android-qnn
+  (newest 1.29) plus Qualcomm's QNN runtime. `PiperModel.attachNpu` moves
+  the decoder to the Hexagon NPU after warm-up: writes it with fixed input
+  shapes (`PiperSplit.split(..., decoderShapes)`, `NPU_FRAMES` = 80 latent
+  frames), lets QNN compile it (2-9 s, once) and keeps the compiled graph
+  as `model.<ort>.npu80.onnx` (0.15 s loads); `decodeOnNpu` runs fixed
+  windows with `DECODE_OVERLAP` context. All of the graph on the NPU or
+  none (`disable_cpu_ep_fallback`); a failure keeps the CPU decoder and
+  writes `model.<ort>.npu-r2.failed` with the reason (bump the revision
+  after NPU code changes so phones retry). The load log says where the
+  decoder runs. Needs `<uses-native-library libcdsprpc.so>` in the
+  manifest (Android 12+ hides it otherwise, and QNN silently falls back to
+  the CPU); do not set ADSP_LIBRARY_PATH yourself (it made QNN reject 37
+  convolutions). Galaxy S25 Ultra (8 Elite, HTP v79): decoders ~22x real
+  time on the NPU vs ~4x on 6 CPU threads; Piper voices use it too. HTP
+  fp16 is not bit-exact (11.9 dB SNR vs CPU for SYSPIN, 22.7 for Rasa;
+  PC fp16 is 84 dB, so it is HTP arithmetic) - the user listened: "mostly
+  same". QNN's GPU backend failed (ORT NHWC ConvTranspose bug); NNAPI is
+  skipped in this build (its runtime has none). Threads: up to 6 on chips
+  with no little cores (8 Elite: 6 threads 4.0x vs 4 threads 2.6x, 8
+  threads 1.8x); others keep 4. CI builds only the standard APK.
+- **Compact tier** (quality "compact", keys `<lang>-<name>-compact`, release
+  `compact-v1` on sherpa-onnx-respin-syspin, made by its `build_compact.py`):
+  the same voice with only its HiFi-GAN decoder in INT8 (static QDQ,
+  per-channel, Conv/ConvTranspose), keeping the decoder's last upsampling
+  stage and conv_post float (where INT8's noise floor showed: pause noise
+  -50.6 -> -55.2 dBFS). Text encoder, durations and flow stay float, so word
+  timing is unchanged (whole-model dynamic INT8 had shifted durations).
+  Pixel 8 CPU, 4 threads: Kavya 1.9 -> 2.9x real time, Kaveri 1.2 -> 2.3x,
+  LJSpeech high 1.3 -> 2.3x; 42-49 MB instead of 58-62 (114 for Piper
+  high). User listened: "compact sounds ok". Offered for all 42 SYSPIN/Rasa
+  voices and 10 Piper "high" voices whose licences allow re-hosting (not
+  lessac: Blizzard licence; ryan: NC; es_MX-claude and en_US-libritts:
+  older exports with unnamed graph nodes, so no decoder to find - they
+  don't stream-split either). Labels: `heavy` catalog entries (SYSPIN/Rasa Standard)
+  and Compact follow `PiperDevice.heavyFit` (NPU runtime, or a fast CPU with
+  no little cores, else "may pause"); Compact of a Piper Enhanced voice is
+  "recommended" exactly where its original's `enhancedFit` says SLOW. A
+  downloaded voice with a Compact version offers "Download the Compact
+  version", quoting the decoder speed measured here when under 2x.
+  `PiperSplit` finds the latent as conv_pre's input (INT8 Rasa lists its
+  speaker "cond" Conv first; node order alone fed it the speaker vector).
+- **Voice-file auto-update** (`PiperDownloads.checkForUpdates`, from the
+  service's warm-up thread, at most daily, natural voices on): each voice
+  keeps a `source` file (catalog model + config MD5; hashed once, streamed,
+  for older installs); a changed catalog entry re-downloads through the
+  normal path with `setAllowedOverMetered(false)` + `setRequiresCharging`,
+  and `complete()` swaps it in only after the checksum matches. The voices
+  -changed broadcast unloads that key so the new files load on next use.
+  The bundled list changes with app updates, rhasspy's with its voices.json.
 - **Language switching.** Like eSpeak switching language by alphabet,
   `LanguageRuns` splits each unit by script (Devanagari -> hin, Latin ->
   eng, ...; a script the speaking language is written in stays with it)

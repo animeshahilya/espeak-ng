@@ -1282,6 +1282,9 @@ public final class TextPreprocessor {
     }
 
     public static String languageTag(Voice voice) {
+        if (voice != null && voice.standIn != null) {
+            voice = voice.standIn; // text rules of the eSpeak voice that reads it
+        }
         if (voice == null || voice.locale == null) return "";
         String language = voice.locale.getLanguage();
         if (language == null) return "";

@@ -28,13 +28,29 @@ public class Voice {
     public final int gender;
     public final int age;
     public final Locale locale;
+    /**
+     * For a language only a natural voice speaks (Chhattisgarhi): the eSpeak
+     * voice that stands in for it - its rules read the text meanwhile and
+     * its language drives text processing. Null for eSpeak's own voices.
+     */
+    public final Voice standIn;
 
     public Voice(String name, String identifier, int gender, int age, Locale locale) {
+        this(name, identifier, gender, age, locale, null);
+    }
+
+    private Voice(String name, String identifier, int gender, int age, Locale locale, Voice standIn) {
         this.name = name;
         this.identifier = identifier;
         this.gender = gender;
         this.age = age;
         this.locale = locale;
+        this.standIn = standIn;
+    }
+
+    /** A voice for {@code locale} that eSpeak speaks as {@code standIn}. */
+    public static Voice naturalOnly(String name, Locale locale, Voice standIn) {
+        return new Voice(name, standIn.identifier, standIn.gender, standIn.age, locale, standIn);
     }
 
     /**

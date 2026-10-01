@@ -61,12 +61,16 @@ final class PiperSplit {
     private static final int VALUE_INFO_TYPE = 2;
     private static final int TYPE_TENSOR = 1;
     private static final int TENSOR_TYPE_ELEM = 1;
+    private static final int TENSOR_TYPE_SHAPE = 2;
+    private static final int SHAPE_DIM = 1;
+    private static final int DIM_VALUE = 1;
     private static final int ELEM_FLOAT = 1;
     private static final int WIRE_LEN = 2;
 
     private static final int MODEL_GRAPH = 7;
 
-    static final String DECODER_PREFIX = "/dec/";
+    /** Piper's decoder, Coqui's (SYSPIN) and transformers' (AI4Bharat Rasa). */
+    static final String[] DECODER_PREFIXES = {"/dec/", "/waveform_decoder/", "/decoder/"};
     static final String AUDIO_OUTPUT = "output";
 
     /** One field of the GraphProto: its byte span, and for nodes/initializers what they name. */
@@ -93,6 +97,16 @@ final class PiperSplit {
      *         decoder
      */
     static boolean split(File in, File encoderOut, File decoderOut) throws IOException {
+        return split(in, encoderOut, decoderOut, null);
+    }
+
+    /**
+     * @param decoderShapes fixed shapes for the decoder's inputs by name, for
+     *                      accelerators that need them (Qualcomm's NPU), or
+     *                      null; with them, {@code encoderOut} may be null
+     */
+    static boolean split(File in, File encoderOut, File decoderOut, Map<String, long[]> decoderShapes)
+            throws IOException {
         try (RandomAccessFile raf = new RandomAccessFile(in, "r");
              FileChannel channel = raf.getChannel()) {
             final MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
@@ -133,11 +147,13 @@ final class PiperSplit {
             }
             final List<byte[]> decoderExtra = new ArrayList<>();
             for (String name : boundary) {
-                decoderExtra.add(floatInput(name));
+                decoderExtra.add(floatInput(name, decoderShapes == null ? null : decoderShapes.get(name)));
             }
             decoderExtra.add(PiperAlignment.outputEntry(AUDIO_OUTPUT));
 
-            write(channel, graph, entries, encoderNodes, true, encoderExtra, encoderOut);
+            if (encoderOut != null) {
+                write(channel, graph, entries, encoderNodes, true, encoderExtra, encoderOut);
+            }
             write(channel, graph, entries, decoderNodes, false, decoderExtra, decoderOut);
             return true;
         }
@@ -205,23 +221,52 @@ final class PiperSplit {
         return "";
     }
 
+    static boolean isDecoder(String nodeName) {
+        for (String prefix : DECODER_PREFIXES) {
+            if (nodeName.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** The latent first, then any conditioning; null if this isn't Piper's decoder. */
     private static List<String> boundary(List<Entry> entries, Map<String, Entry> producers) {
+        final Set<String> weights = new HashSet<>();
+        for (Entry e : entries) {
+            if (e.field == GRAPH_INITIALIZER) {
+                weights.add(e.name);
+            }
+        }
+        // The latent is what the decoder's conv_pre reads (Piper, Coqui and
+        // transformers all name it so); else the first Conv's input. Node order
+        // alone is not enough: INT8 (Compact) Rasa lists its speaker "cond"
+        // Conv first.
         String latent = null;
+        String firstConv = null;
         final Set<String> crossing = new LinkedHashSet<>();
         for (Entry e : entries) {
-            if (e.field != GRAPH_NODE || !e.name.startsWith(DECODER_PREFIX)) {
+            if (e.field != GRAPH_NODE || !isDecoder(e.name)) {
                 continue;
             }
-            if (latent == null && "Conv".equals(e.opType) && !e.inputs.isEmpty()) {
-                latent = e.inputs.get(0);
+            if ("Conv".equals(e.opType) && !e.inputs.isEmpty()) {
+                if (latent == null && e.name.contains("/conv_pre/")) {
+                    latent = e.inputs.get(0);
+                }
+                if (firstConv == null) {
+                    firstConv = e.inputs.get(0);
+                }
             }
             for (String i : e.inputs) {
                 final Entry p = producers.get(i);
-                if (p != null && !p.name.startsWith(DECODER_PREFIX)) {
+                // A weight's own node (an fp16 weight's upcast) goes with the decoder.
+                if (p != null && !isDecoder(p.name) && !weights.containsAll(p.inputs)) {
                     crossing.add(i);
                 }
             }
+        }
+        if (latent == null) {
+            latent = firstConv;
         }
         if (latent == null || !crossing.remove(latent)) {
             return null;
@@ -259,8 +304,23 @@ final class PiperSplit {
 
     /** GraphProto.input entry: a float tensor of any shape. */
     static byte[] floatInput(String name) {
+        return floatInput(name, null);
+    }
+
+    /** As {@link #floatInput(String)}, with a fixed shape when {@code dims} is given. */
+    static byte[] floatInput(String name, long[] dims) {
         final byte[] utf8 = name.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        final byte[] elem = {(byte) (TENSOR_TYPE_ELEM << 3), ELEM_FLOAT};
+        byte[] elem = {(byte) (TENSOR_TYPE_ELEM << 3), ELEM_FLOAT};
+        if (dims != null) {
+            byte[] shape = new byte[0];
+            for (long d : dims) {
+                final byte[] value = PiperAlignment.concat(new byte[] {DIM_VALUE << 3}, PiperAlignment.varint(d));
+                shape = PiperAlignment.concat(shape, PiperAlignment.concat(
+                        PiperAlignment.tagAndLength(SHAPE_DIM, value.length), value));
+            }
+            elem = PiperAlignment.concat(elem, PiperAlignment.concat(
+                    PiperAlignment.tagAndLength(TENSOR_TYPE_SHAPE, shape.length), shape));
+        }
         final byte[] tensorType = PiperAlignment.concat(PiperAlignment.tagAndLength(TYPE_TENSOR, elem.length), elem);
         final byte[] info = PiperAlignment.concat(
                 PiperAlignment.concat(PiperAlignment.tagAndLength(VALUE_INFO_NAME, utf8.length), utf8),

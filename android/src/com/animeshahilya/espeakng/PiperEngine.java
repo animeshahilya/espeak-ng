@@ -167,7 +167,11 @@ final class PiperEngine {
 
     /** Load/failure notifications, for logging and the settings screen. */
     interface Listener {
-        void onLoaded(String key, long millis);
+        /**
+         * @param npu the decoder's place on a build with Qualcomm's NPU
+         *            ("on the NPU", or why not), null on other builds
+         */
+        void onLoaded(String key, long millis, String npu);
 
         void onLoadFailed(String key, Throwable error);
 
@@ -218,7 +222,9 @@ final class PiperEngine {
                 mFailed.remove(key);
                 final Listener l = mListener;
                 if (l != null) {
-                    l.onLoaded(key, System.currentTimeMillis() - t0);
+                    final PiperModel loaded = getLoaded(key);
+                    l.onLoaded(key, System.currentTimeMillis() - t0, loaded == null ? null
+                            : loaded.onNpu() ? "on the NPU" : loaded.npuProblem());
                 }
             } catch (Throwable t) {
                 mFailed.put(key, System.currentTimeMillis());
@@ -259,7 +265,8 @@ final class PiperEngine {
     private PiperModel loadModel(String key, File onnx, PiperVoiceConfig config) throws OrtException {
         enterNative(key);
         try {
-            if (mAcceleration && !mNoAcceleration.contains(key)) {
+            // The Snapdragon build's runtime has no NNAPI; it uses the NPU itself.
+            if (mAcceleration && !mNoAcceleration.contains(key) && !PiperModel.hasNpuRuntime()) {
                 try {
                     return PiperModel.load(onnx, config, inferenceThreads(), true);
                 } catch (Throwable t) {
@@ -399,7 +406,7 @@ final class PiperEngine {
 
     /**
      * One intra-op thread per fast core, at most 4 (VITS stops scaling
-     * there). A parallel step waits for its slowest thread, so a thread on a
+     * there), or 6 on chips with no little cores. A parallel step waits for its slowest thread, so a thread on a
      * little core slows every step: count cores with at least half the top
      * core's capacity. Pixel 8 (4x182, 4x725, 1x1024): 4. A 2+6 phone: 2,
      * where cores/2 gave 4. Without capacities (old kernels): cores/2.
@@ -418,7 +425,27 @@ final class PiperEngine {
                 fast++;
             }
         }
-        return Math.max(1, Math.min(4, fast));
+        // No little cores at all (Snapdragon 8 Elite: 6x765 + 2x1024): 6 threads
+        // ran SYSPIN/Rasa decoders at 4.0x real time vs 2.6x with 4 (8: 1.8x).
+        return Math.max(1, Math.min(fast == capacities.length ? 6 : 4, fast));
+    }
+
+    /** True when every core is a fast one (Snapdragon 8 Elite), false if unknown. */
+    static boolean noLittleCores() {
+        final int[] capacities = cpuCapacities();
+        if (capacities.length == 0) {
+            return false;
+        }
+        int top = 0;
+        for (int c : capacities) {
+            top = Math.max(top, c);
+        }
+        for (int c : capacities) {
+            if (c * 2 < top) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** The kernel's relative core performance (EAS, 1024 = fastest); empty if unavailable. */
@@ -442,6 +469,78 @@ final class PiperEngine {
         return out;
     }
 
+    private static final java.util.regex.Pattern DIGITS =
+            java.util.regex.Pattern.compile("\\p{Nd}+(?:,\\p{Nd}{2,3})*");
+
+    /**
+     * "Text" voices read letters, and their alphabets have no digits: numbers
+     * become words in the voice's language, where ICU has spell-out rules
+     * for it (Hindi, Bengali, Tamil...). Otherwise digits stay and are skipped.
+     */
+    static java.util.function.UnaryOperator<String> numberWords(String language) {
+        if (language == null) {
+            return null;
+        }
+        final java.util.function.UnaryOperator<String> words =
+                NUMBER_WORDS.computeIfAbsent(language, PiperEngine::buildNumberWords);
+        return words == NO_NUMBER_WORDS ? null : words;
+    }
+
+    private static final Map<String, java.util.function.UnaryOperator<String>> NUMBER_WORDS =
+            new ConcurrentHashMap<>();
+    private static final java.util.function.UnaryOperator<String> NO_NUMBER_WORDS = s -> s;
+
+    private static java.util.function.UnaryOperator<String> buildNumberWords(String language) {
+        final android.icu.text.MessageFormat format;
+        try {
+            format = new android.icu.text.MessageFormat("{0,spellout}",
+                    new android.icu.util.ULocale(language));
+            // Without rules for the language ICU falls back to English words (or digits).
+            final String seven = format.format(new Object[] {7L});
+            if (seven.matches(".*\\d.*") || (!"en".equals(language) && seven.matches("(?i).*seven.*"))) {
+                return NO_NUMBER_WORDS;
+            }
+        } catch (RuntimeException e) { // no ICU data for it: digits stay
+            return NO_NUMBER_WORDS;
+        }
+        return s -> {
+            final java.util.regex.Matcher m = DIGITS.matcher(s);
+            if (!m.find()) {
+                return s;
+            }
+            final StringBuffer out = new StringBuffer(s.length() * 2);
+            do {
+                final String digits = m.group().replace(",", "");
+                String words;
+                try {
+                    if (digits.length() > 15) {
+                        words = m.group();
+                    } else {
+                        synchronized (format) { // MessageFormat is not thread-safe
+                            words = format.format(new Object[] {Long.parseLong(toAscii(digits))});
+                        }
+                    }
+                } catch (RuntimeException e) {
+                    words = m.group();
+                }
+                m.appendReplacement(out, java.util.regex.Matcher.quoteReplacement(" " + words + " "));
+            } while (m.find());
+            m.appendTail(out);
+            return out.toString().replaceAll("\\s+", " ").trim();
+        };
+    }
+
+    /** "१२३" -> "123": Long.parseLong reads only ASCII digits. */
+    private static String toAscii(String digits) {
+        final StringBuilder sb = new StringBuilder(digits.length());
+        for (int i = 0; i < digits.length(); ) {
+            final int cp = digits.codePointAt(i);
+            sb.append((char) ('0' + Character.digit(cp, 10)));
+            i += Character.charCount(cp);
+        }
+        return sb.toString();
+    }
+
     /**
      * Synthesizes one piece of text.
      *
@@ -459,7 +558,7 @@ final class PiperEngine {
             }
             clauses = PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), text);
         } else {
-            clauses = PiperPhonemes.textClauses(text);
+            clauses = PiperPhonemes.textClauses(text, numberWords(config.languageFamily));
         }
         final List<PiperPhonemes.Chunk> chunks = PiperPhonemes.chunk(clauses,
                 PiperPhonemes.FIRST_CHUNK_PHONEMES, PiperPhonemes.CHUNK_PHONEMES);

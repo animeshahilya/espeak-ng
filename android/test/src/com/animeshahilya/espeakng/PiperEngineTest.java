@@ -3,6 +3,7 @@ package com.animeshahilya.espeakng;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PiperEngineTest {
     @Test
@@ -12,7 +13,9 @@ public class PiperEngineTest {
         // Typical 2+6 mid-range phone: only the two big cores.
         assertEquals(2, PiperEngine.threadsFor(new int[] {400, 400, 400, 400, 400, 400, 1024, 1024}, 8));
         // All cores alike: capped at 4.
-        assertEquals(4, PiperEngine.threadsFor(new int[] {1024, 1024, 1024, 1024, 1024, 1024}, 6));
+        assertEquals(6, PiperEngine.threadsFor(new int[] {1024, 1024, 1024, 1024, 1024, 1024}, 6));
+        // Galaxy S25 Ultra (Snapdragon 8 Elite): no little cores, 6 measured fastest.
+        assertEquals(6, PiperEngine.threadsFor(new int[] {765, 765, 765, 765, 765, 765, 1024, 1024}, 8));
         // No capacities exposed: half the cores, capped.
         assertEquals(4, PiperEngine.threadsFor(new int[0], 8));
         assertEquals(1, PiperEngine.threadsFor(new int[0], 1));
@@ -45,5 +48,23 @@ public class PiperEngineTest {
         assertEquals(PiperDevice.Fit.RECOMMENDED, PiperDevice.enhancedFit(PiperDevice.Tier.HIGH, 0, light));
         assertEquals(PiperDevice.Fit.NEUTRAL, PiperDevice.enhancedFit(PiperDevice.Tier.MID, 0, light));
         assertEquals(PiperDevice.Fit.SLOW, PiperDevice.enhancedFit(PiperDevice.Tier.LOW, 34, light));
+    }
+
+    @Test
+    public void heavyVoicesNeedTheNpuOrAnAllBigCoreChip() {
+        // Pixel 8: performance class 34 but little cores, SYSPIN/Rasa 1.2-1.9x real time.
+        assertEquals(PiperDevice.Fit.SLOW, PiperDevice.heavyFit(false, 34, false));
+        // Galaxy S25 Ultra CPU: no little cores, ~4x with 6 threads.
+        assertEquals(PiperDevice.Fit.NEUTRAL, PiperDevice.heavyFit(false, 35, true));
+        // Its NPU (Snapdragon build): ~22x.
+        assertEquals(PiperDevice.Fit.RECOMMENDED, PiperDevice.heavyFit(true, 35, true));
+        assertEquals(PiperDevice.Fit.SLOW, PiperDevice.heavyFit(false, 0, true));
+    }
+
+    @Test
+    public void compactKeyReplacesTheQuality() {
+        assertEquals("hi_IN-kavya-compact", PiperDownloads.compactKey("hi_IN-kavya-medium"));
+        assertEquals("en_US-ljspeech-compact", PiperDownloads.compactKey("en_US-ljspeech-high"));
+        assertTrue(PiperDownloads.isOffered("compact"));
     }
 }

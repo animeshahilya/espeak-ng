@@ -200,7 +200,10 @@ public class CheckVoiceData extends Activity {
             }
 
             final SpeechSynthesis engine = new SpeechSynthesis(storageContext, mSynthReadyCallback);
-            voices = LanguageSettings.filterVoices(engine.getAvailableVoices(), prefs);
+            final List<Voice> all = engine.getAvailableVoices();
+            voices = new ArrayList<>(LanguageSettings.filterVoices(all, prefs));
+            // The system's language list comes from here, not onGetVoices().
+            voices.addAll(PiperVoiceStore.naturalOnlyVoices(prefs, all));
         }
         if (BuildConfig.DEBUG) {
             Set<String> selected = LanguageSettings.getSelectedLanguages(prefs);

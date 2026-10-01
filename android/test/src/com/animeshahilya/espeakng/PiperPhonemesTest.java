@@ -255,6 +255,31 @@ public class PiperPhonemesTest {
         assertEquals("One. ", c.get(0).ipa);
         assertEquals(15, c.get(2).end);
     }
+
+    /** A character voice (SYSPIN/Rasa): composed letters it knows stay whole, others decompose. */
+    @Test
+    public void textVoicesKeepComposedLettersTheyKnow() throws Exception {
+        final PiperVoiceConfig c = PiperVoiceConfig.parse("bn_IN-tithi-medium", "{\"phoneme_type\": \"text\","
+                + " \"num_speakers\": 1, \"default_speaker_id\": 2,"
+                + " \"phoneme_id_map\": {\"_\": [0], \"^\": [0], \"$\": [0],"
+                + " \"ক\": [5], \"ো\": [6], \"ক়\": [9], \"়\": [7], \"a\": [8]}}");
+        assertTrue(c.isSupported());
+        assertEquals(2, c.defaultSpeakerId);
+        // "কো" in NFD would be ক + ে + া: the voice was trained on the composed vowel sign.
+        assertEquals(Arrays.asList("ক", "ো", "a"),
+                PiperPhonemes.tokenize("কোA", c));
+        // য় (U+09DF) is not in the map: its NFD parts are.
+        assertEquals(Arrays.asList("য", "়"), PiperPhonemes.tokenize("য়", c));
+        assertArrayEquals(new long[] {0, 0, 5, 0, 6, 0, 0},
+                PiperPhonemes.toIds(PiperPhonemes.tokenize("কো", c), c, null));
+    }
+
+    @Test
+    public void textClausesSpellEachSentence() {
+        final List<PiperPhonemes.Clause> c = PiperPhonemes.textClauses("A 5. B", t -> t.replace("5", "five"));
+        assertEquals("A five. ", c.get(0).ipa);
+        assertEquals(4, c.get(0).end);
+    }
     @Test
     public void recordsWhereEachWordStarts() throws Exception {
         final PiperVoiceConfig c = amy();

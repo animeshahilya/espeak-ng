@@ -409,4 +409,48 @@ final class PiperVoiceStore {
             return new String(data, 0, off, StandardCharsets.UTF_8);
         }
     }
+
+    private static final java.util.regex.Pattern VOICE_KEY_LOCALE =
+            java.util.regex.Pattern.compile("^([a-z]{2,3})_([A-Z]{2})-");
+
+    /**
+     * Like SherpaVoices, a language only a natural voice speaks (Chhattisgarhi,
+     * Bhojpuri, Dogri...) becomes a TTS voice of its own, so screen readers,
+     * apps and the system language list can pick it. eSpeak reads it with
+     * the rules of its script's language (Hindi for Devanagari) until the
+     * natural voice has loaded. One per language that has a natural voice
+     * chosen and no eSpeak voice.
+     */
+    static List<Voice> naturalOnlyVoices(SharedPreferences prefs, List<Voice> espeakVoices) {
+        final List<Voice> out = new ArrayList<>();
+        if (!isEnabled(prefs)) {
+            return out;
+        }
+        for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
+            if (!e.getKey().startsWith(PREF_VOICE_PREFIX) || !(e.getValue() instanceof String)) {
+                continue;
+            }
+            final String language = e.getKey().substring(PREF_VOICE_PREFIX.length());
+            final String standInLanguage = LanguageRuns.standIn(language);
+            final java.util.regex.Matcher m = VOICE_KEY_LOCALE.matcher((String) e.getValue());
+            if (standInLanguage == null || !m.find()) {
+                continue;
+            }
+            Voice standIn = null;
+            boolean espeakHasIt = false;
+            for (Voice v : espeakVoices) {
+                final String key = languageKey(v.locale);
+                espeakHasIt |= key.equals(language);
+                if (standIn == null && key.equals(standInLanguage)) {
+                    standIn = v;
+                }
+            }
+            if (!espeakHasIt && standIn != null) {
+                @SuppressWarnings("deprecation")
+                final Locale locale = new Locale(m.group(1), m.group(2));
+                out.add(Voice.naturalOnly(m.group(1), locale, standIn));
+            }
+        }
+        return out;
+    }
 }
