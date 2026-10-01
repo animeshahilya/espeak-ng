@@ -429,6 +429,15 @@ voices" does not, so voices can still be deleted to free space.
   to the log every 25 chunks and accumulate in prefs
   `piper_cache_hits_total` / `piper_cache_chunks_total`. Not done: a tier on
   storage, idle pre-rendering.
+  Android performance hints (ADPF) were measured and dropped (2026-10-01):
+  a hint session over ORT's pools ("piper-loader" threads), the renderer and
+  the synthesis thread, 100 ms target, reporting each chunk render. Pixel 8,
+  the replay test inside 150 s Perfetto power-rail traces, off/on/off/on:
+  CPU energy 192.7 vs 181.3 J (within the run-to-run drift, which fell
+  200 -> 183 -> 186 -> 179 J as the phone settled), render to first audio
+  614 vs 600 ms (two "off" runs alone differed 540 vs 687 ms). No gain, no
+  measurable cost. Perfetto configs must be in /data/misc/perfetto-configs;
+  rails are power.rails.cpu.big/.mid/.little in uWs.
 - **Voice-file auto-update** (`PiperDownloads.checkForUpdates`, from the
   service's warm-up thread, at most daily, natural voices on): each voice
   keeps a `source` file (catalog model + config MD5; hashed once, streamed,
