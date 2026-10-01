@@ -412,16 +412,23 @@ voices" does not, so voices can still be deleted to free space.
   speaker "cond" Conv first; node order alone fed it the speaker vector).
 - **Phrase cache** (`PiperPhraseCache`, in `PiperEngine.Pass.render`):
   screen readers repeat short phrases ("Button", "Double-tap to activate"),
-  so a chunk's raw model output is kept on its first repeat and replayed
-  through the normal post-processing (level, trim, speed, pitch - so those
-  settings still apply). Keyed on the voice's model file (key + size +
-  mtime), speaker, model speed, style and the chunk's phoneme ids: a
-  dictionary edit or voice update just misses. Chunks up to 3 s, 8 MB, LRU,
-  memory only; forgotten on unload. Pixel 8, Mamta Compact (CPU): cached
-  chunk first audio 3 ms vs 905 ms rendered. Counts only (never text) go to
-  the log every 25 chunks and accumulate in prefs `piper_cache_hits_total` /
-  `piper_cache_chunks_total` across service restarts, for the real-use hit
-  rate. Not done yet: a persistent tier on storage, idle pre-rendering.
+  so a chunk's raw model output is kept and replayed through the normal
+  post-processing (level, trim, speed, pitch - so those settings still
+  apply). Keyed on the voice's model file (key + size + mtime), speaker,
+  model speed, style and the chunk's phoneme ids: a dictionary edit or voice
+  update just misses. Chunks up to 3 s, kept from their first sighting, 8 MB
+  of 16-bit audio, LRU, memory only (gone with the process - which is what
+  makes first-sighting admission acceptable); forgotten on unload. Measured
+  with `PhraseCacheReplayDeviceTest` (replays `tools/talkback_trace.py`'s
+  TalkBack-like trace of real screens through the TTS API, render-to-file,
+  ~1 min; driving real TalkBack over adb was unreliable - injected swipes and
+  Alt+arrow keys moved focus only sometimes): Pixel 8, Priya Compact, 258
+  utterances: second-sighting/float 46% of chunks (its ceiling), 35 entries
+  in 5.7 MB; first-sighting/16-bit 60% (ceiling 64%), 92 entries in 7.1 MB;
+  first audio 5 ms cached vs ~540 ms rendered. Counts only (never text) go
+  to the log every 25 chunks and accumulate in prefs
+  `piper_cache_hits_total` / `piper_cache_chunks_total`. Not done: a tier on
+  storage, idle pre-rendering.
 - **Voice-file auto-update** (`PiperDownloads.checkForUpdates`, from the
   service's warm-up thread, at most daily, natural voices on): each voice
   keeps a `source` file (catalog model + config MD5; hashed once, streamed,

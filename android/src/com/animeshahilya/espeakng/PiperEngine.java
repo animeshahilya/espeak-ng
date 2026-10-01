@@ -122,10 +122,10 @@ final class PiperEngine {
     });
     /** Renders the chunk after the one being delivered (see class comment). */
     /**
-     * Repeated chunks (screen-reader UI words): 8 MB, chunks up to 3 s, kept
-     * on their first repeat (PiperPhraseCache).
+     * Repeated chunks (screen-reader UI words): 8 MB of 16-bit audio, chunks
+     * up to 3 s, kept from their first sighting (PiperPhraseCache).
      */
-    private final PiperPhraseCache mCache = new PiperPhraseCache(8L * 1024 * 1024, 3 * 24000, 2, 1024);
+    private final PiperPhraseCache mCache = new PiperPhraseCache(8L * 1024 * 1024, 3 * 24000, 1, 1024);
     private long mHitNanos;
     private long mMissNanos;
     private long mHitCount;

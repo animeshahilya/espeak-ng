@@ -24,8 +24,10 @@ import java.util.Map;
  * <p>Keyed on what the model reads - the voice's model file, speaker, model
  * speed, style and the chunk's phoneme ids - so a dictionary edit, a voice
  * update or another style simply misses; nothing has to invalidate it.
- * Admission on the second sighting and short chunks only, so one-off text
- * (messages, articles) is never kept. Memory only, least recently used out.
+ * Short chunks only (reading stays out), kept from their first sighting:
+ * replaying a TalkBack trace of real Pixel screens, that raised the ceiling
+ * from 46% to 64% of chunks; it is memory only (gone with the process), which
+ * is what makes that acceptable. Least recently used out.
  * Pure Java: unit-tested on the JVM.
  */
 final class PiperPhraseCache {
@@ -80,16 +82,47 @@ final class PiperPhraseCache {
             this.audio = audio;
             this.durations = durations;
         }
+    }
+
+    /**
+     * As kept: 16-bit samples, half the memory of floats (twice the phrases in
+     * the budget), far finer than the model's own noise floor.
+     */
+    private static final class Stored {
+        final short[] audio;
+        final float scale;
+        final float[] durations;
+
+        Stored(float[] audio, float[] durations) {
+            float peak = 1e-9f;
+            for (float x : audio) {
+                peak = Math.max(peak, Math.abs(x));
+            }
+            scale = peak / 32767f;
+            this.audio = new short[audio.length];
+            for (int i = 0; i < audio.length; i++) {
+                this.audio[i] = (short) Math.round(audio[i] / scale);
+            }
+            this.durations = durations == null ? null : durations.clone();
+        }
+
+        Entry toEntry() {
+            final float[] out = new float[audio.length];
+            for (int i = 0; i < out.length; i++) {
+                out[i] = audio[i] * scale;
+            }
+            return new Entry(out, durations == null ? null : durations.clone());
+        }
 
         long bytes() {
-            return 4L * audio.length + (durations == null ? 0 : 4L * durations.length) + 64;
+            return 2L * audio.length + (durations == null ? 0 : 4L * durations.length) + 64;
         }
     }
 
     private final long maxBytes;
     private final int maxSamplesPerEntry;
     private final int admitAfter;
-    private final Map<Key, Entry> entries = new LinkedHashMap<>(64, 0.75f, true);
+    private final Map<Key, Stored> entries = new LinkedHashMap<>(64, 0.75f, true);
     /** How often recent chunks were seen; bounded, access-ordered. */
     private final Map<Key, Integer> seen;
     private long bytes;
@@ -116,13 +149,13 @@ final class PiperPhraseCache {
 
     /** A copy of the cached run for {@code key} (the caller's processing may alter it), or null. */
     synchronized Entry get(Key key) {
-        final Entry e = entries.get(key);
+        final Stored e = entries.get(key);
         if (e == null) {
             misses++;
             return null;
         }
         hits++;
-        return new Entry(e.audio.clone(), e.durations == null ? null : e.durations.clone());
+        return e.toEntry();
     }
 
     /** A model run just made for {@code key}: counted, and kept once it has repeated. */
@@ -134,10 +167,10 @@ final class PiperPhraseCache {
                 || entries.containsKey(key)) {
             return;
         }
-        final Entry e = new Entry(audio.clone(), durations == null ? null : durations.clone());
+        final Stored e = new Stored(audio, durations);
         entries.put(key, e);
         bytes += e.bytes();
-        final Iterator<Map.Entry<Key, Entry>> it = entries.entrySet().iterator();
+        final Iterator<Map.Entry<Key, Stored>> it = entries.entrySet().iterator();
         while (bytes > maxBytes && it.hasNext()) {
             bytes -= it.next().getValue().bytes();
             it.remove();
@@ -146,9 +179,9 @@ final class PiperPhraseCache {
 
     /** Drops a voice's audio (unloaded, deleted or updated). */
     synchronized void forget(String voicePrefix) {
-        final Iterator<Map.Entry<Key, Entry>> it = entries.entrySet().iterator();
+        final Iterator<Map.Entry<Key, Stored>> it = entries.entrySet().iterator();
         while (it.hasNext()) {
-            final Map.Entry<Key, Entry> e = it.next();
+            final Map.Entry<Key, Stored> e = it.next();
             if (e.getKey().voice.startsWith(voicePrefix)) {
                 bytes -= e.getValue().bytes();
                 it.remove();

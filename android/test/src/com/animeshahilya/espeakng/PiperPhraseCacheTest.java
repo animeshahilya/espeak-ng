@@ -20,7 +20,7 @@ public class PiperPhraseCacheTest {
         c.offer(k, new float[] {0.1f, 0.2f}, new float[] {1, 1, 1});
         final PiperPhraseCache.Entry e = c.get(k);
         assertNotNull(e);
-        assertArrayEquals(new float[] {0.1f, 0.2f}, e.audio, 0f);
+        assertArrayEquals(new float[] {0.1f, 0.2f}, e.audio, 1e-4f); // 16-bit as kept
         assertEquals(1, c.hits());
     }
 
@@ -33,7 +33,7 @@ public class PiperPhraseCacheTest {
         audio[0] = 9f; // the caller's later processing must not reach the cache
         final PiperPhraseCache.Entry e = c.get(k);
         e.audio[0] = 7f;
-        assertEquals(0.5f, c.get(k).audio[0], 0f);
+        assertEquals(0.5f, c.get(k).audio[0], 1e-4f);
     }
 
     @Test
@@ -55,12 +55,12 @@ public class PiperPhraseCacheTest {
 
     @Test
     public void staysWithinItsBudgetDroppingTheLeastRecentlyUsed() {
-        // Each entry is 4 * 100 + 64 bytes: two fit in 1000.
+        // Each entry is 2 * 200 + 64 bytes: two fit in 1000.
         final PiperPhraseCache c = new PiperPhraseCache(1000, 1000, 1, 100);
-        c.offer(key("v|1:1", 1), new float[100], null);
-        c.offer(key("v|1:1", 2), new float[100], null);
+        c.offer(key("v|1:1", 1), new float[200], null);
+        c.offer(key("v|1:1", 2), new float[200], null);
         assertNotNull(c.get(key("v|1:1", 1))); // 1 is now the most recent
-        c.offer(key("v|1:1", 3), new float[100], null);
+        c.offer(key("v|1:1", 3), new float[200], null);
         assertNotNull(c.get(key("v|1:1", 1)));
         assertNull(c.get(key("v|1:1", 2)));
         assertNotNull(c.get(key("v|1:1", 3)));
