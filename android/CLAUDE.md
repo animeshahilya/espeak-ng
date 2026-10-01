@@ -410,6 +410,18 @@ voices" does not, so voices can still be deleted to free space.
   version", quoting the decoder speed measured here when under 2x.
   `PiperSplit` finds the latent as conv_pre's input (INT8 Rasa lists its
   speaker "cond" Conv first; node order alone fed it the speaker vector).
+- **Phrase cache** (`PiperPhraseCache`, in `PiperEngine.Pass.render`):
+  screen readers repeat short phrases ("Button", "Double-tap to activate"),
+  so a chunk's raw model output is kept on its first repeat and replayed
+  through the normal post-processing (level, trim, speed, pitch - so those
+  settings still apply). Keyed on the voice's model file (key + size +
+  mtime), speaker, model speed, style and the chunk's phoneme ids: a
+  dictionary edit or voice update just misses. Chunks up to 3 s, 8 MB, LRU,
+  memory only; forgotten on unload. Pixel 8, Mamta Compact (CPU): cached
+  chunk first audio 3 ms vs 905 ms rendered. Counts only (never text) go to
+  the log every 25 chunks and accumulate in prefs `piper_cache_hits_total` /
+  `piper_cache_chunks_total` across service restarts, for the real-use hit
+  rate. Not done yet: a persistent tier on storage, idle pre-rendering.
 - **Voice-file auto-update** (`PiperDownloads.checkForUpdates`, from the
   service's warm-up thread, at most daily, natural voices on): each voice
   keeps a `source` file (catalog model + config MD5; hashed once, streamed,

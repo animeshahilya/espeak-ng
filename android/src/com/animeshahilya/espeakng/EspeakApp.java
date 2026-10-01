@@ -45,6 +45,12 @@ public class EspeakApp extends Application {
      * Natural-voice events, logged whichever component loaded the voice
      * (the TTS service, the settings screen's test, the download receiver).
      */
+    /** Phrase cache counts since install (device-local numbers, no text). */
+    static final String PREF_CACHE_HITS = "piper_cache_hits_total";
+    static final String PREF_CACHE_CHUNKS = "piper_cache_chunks_total";
+    private static long sReportedHits;
+    private static long sReportedChunks;
+
     private static final PiperEngine.Listener PIPER_LOG = new PiperEngine.Listener() {
         private static final String TAG = "PiperVoices";
 
@@ -57,6 +63,34 @@ public class EspeakApp extends Application {
         @Override
         public void onLoadFailed(String key, Throwable error) {
             Log.e(TAG, "Natural voice " + key + " failed to load; using eSpeak", error);
+        }
+
+        @Override
+        public void onPhraseCache(long hits, long misses, double hitMs, double missMs, long bytes,
+                                  int entries) {
+            // Numbers only, never text: the cache holds what was spoken.
+            long totalHits = hits;
+            long totalChunks = hits + misses;
+            final Context storage = storageContext;
+            if (storage != null) {
+                // Across service restarts: add what this process counted since its last report.
+                final android.content.SharedPreferences prefs =
+                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(storage);
+                synchronized (this) {
+                    totalHits = prefs.getLong(PREF_CACHE_HITS, 0) + hits - sReportedHits;
+                    totalChunks = prefs.getLong(PREF_CACHE_CHUNKS, 0) + hits + misses - sReportedChunks;
+                    sReportedHits = hits;
+                    sReportedChunks = hits + misses;
+                    prefs.edit().putLong(PREF_CACHE_HITS, totalHits).putLong(PREF_CACHE_CHUNKS, totalChunks)
+                            .apply();
+                }
+            }
+            Log.i(TAG, String.format(java.util.Locale.ROOT,
+                    "Phrase cache: %d of %d chunks from cache (%.0f%%), first audio %.0f ms vs %.0f ms"
+                            + " rendered; %d entries, %.1f MB; since install %d of %d (%.0f%%)",
+                    hits, hits + misses, 100.0 * hits / Math.max(1, hits + misses), hitMs, missMs,
+                    entries, bytes / 1048576.0, totalHits, totalChunks,
+                    100.0 * totalHits / Math.max(1, totalChunks)));
         }
 
         @Override

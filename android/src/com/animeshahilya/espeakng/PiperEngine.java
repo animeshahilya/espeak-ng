@@ -121,6 +121,45 @@ final class PiperEngine {
         return t;
     });
     /** Renders the chunk after the one being delivered (see class comment). */
+    /**
+     * Repeated chunks (screen-reader UI words): 8 MB, chunks up to 3 s, kept
+     * on their first repeat (PiperPhraseCache).
+     */
+    private final PiperPhraseCache mCache = new PiperPhraseCache(8L * 1024 * 1024, 3 * 24000, 2, 1024);
+    private long mHitNanos;
+    private long mMissNanos;
+    private long mHitCount;
+    private long mMissCount;
+
+    /** A chunk's time to first audio, for the cache's numbers; reported every 25 chunks. */
+    private void timed(boolean hit, long startNanos) {
+        final long[] snapshot;
+        synchronized (mCache) {
+            if (hit) {
+                mHitNanos += System.nanoTime() - startNanos;
+                mHitCount++;
+            } else {
+                mMissNanos += System.nanoTime() - startNanos;
+                mMissCount++;
+            }
+            if ((mHitCount + mMissCount) % 25 != 0) {
+                return;
+            }
+            snapshot = new long[] {mHitCount, mMissCount, mHitNanos, mMissNanos};
+        }
+        final Listener l = mListener;
+        if (l != null) {
+            l.onPhraseCache(snapshot[0], snapshot[1],
+                    snapshot[0] == 0 ? 0 : snapshot[2] / 1e6 / snapshot[0],
+                    snapshot[1] == 0 ? 0 : snapshot[3] / 1e6 / snapshot[1], mCache.bytes(), mCache.size());
+        }
+    }
+
+    /** Cache identity of a loaded voice: its key and model file, so an update never matches. */
+    private static String voiceStamp(PiperModel model) {
+        return model.config.key + "|" + model.file.length() + ":" + model.file.lastModified();
+    }
+
     private final ExecutorService mRenderer = Executors.newSingleThreadExecutor(r -> {
         final Thread t = new Thread(r, "piper-render");
         t.setPriority(Thread.NORM_PRIORITY + 2);
@@ -179,6 +218,14 @@ final class PiperEngine {
 
         /** NNAPI could not run this voice; it was loaded for the CPU instead. */
         void onAccelerationFailed(String key, Throwable error);
+
+        /**
+         * Phrase cache counts since the process started (no text): chunks
+         * served from it and rendered, and their average time to first audio.
+         */
+        default void onPhraseCache(long hits, long misses, double hitMs, double missMs, long bytes,
+                                   int entries) {
+        }
     }
 
     void setListener(Listener listener) {
@@ -366,6 +413,7 @@ final class PiperEngine {
             model = mLoaded.remove(key);
         }
         mFailed.remove(key);
+        mCache.forget(key + "|");
         if (model != null) {
             model.close();
         }
@@ -785,8 +833,19 @@ final class PiperEngine {
 
         /** A chunk, in two pieces if {@code split} and the voice allows (see class comment). */
         Rendered render(Job job, boolean split) throws OrtException {
+            final long started = System.nanoTime();
             final String key = model.config.key;
             final int words = job.words.length / 2;
+            // A chunk said before with these settings: its model run, re-processed.
+            final PiperPhraseCache.Key cacheKey = new PiperPhraseCache.Key(voiceStamp(model), job.ids,
+                    speaker, lengthScale, noise, noiseW);
+            final PiperPhraseCache.Entry cached = mCache.get(cacheKey);
+            if (cached != null) {
+                final Rendered r = finish(cached.audio, cached.durations, job.wordStarts, 0, words,
+                        true, true, 0);
+                timed(true, started);
+                return r;
+            }
             if (!split || !model.streams() || job.wordStarts.size() != words || words < 2) {
                 final PiperModel.Output o;
                 enterNative(key);
@@ -795,8 +854,13 @@ final class PiperEngine {
                 } finally {
                     exitNative(key);
                 }
-                return o == null ? null : finish(o.audio, o.durations, job.wordStarts, 0, words,
-                        true, true, 0);
+                if (o == null) {
+                    return null;
+                }
+                mCache.offer(cacheKey, o.audio, o.durations); // before finish() alters the audio
+                final Rendered r = finish(o.audio, o.durations, job.wordStarts, 0, words, true, true, 0);
+                timed(false, started);
+                return r;
             }
             final PiperModel.Encoded e;
             enterNative(key);
@@ -816,8 +880,13 @@ final class PiperEngine {
                     e.frames, speed, (int) Math.ceil(MIN_PIECE_S * rate / hop));
             if (cut < 0) {
                 final float[] audio = decode(e, 0, e.frames);
-                return audio == null ? null : finish(audio, e.durations, job.wordStarts, 0, words,
-                        true, true, 0);
+                if (audio == null) {
+                    return null;
+                }
+                mCache.offer(cacheKey, audio, e.durations);
+                final Rendered r = finish(audio, e.durations, job.wordStarts, 0, words, true, true, 0);
+                timed(false, started);
+                return r;
             }
             final int splitId = job.wordStarts.get(cut);
             int splitFrame = 0;
@@ -828,8 +897,10 @@ final class PiperEngine {
             if (head == null) {
                 return null;
             }
+            final float[] headRaw = head.clone(); // finish() may alter head; the cache needs it as made
             final Rendered first = finish(head, Arrays.copyOfRange(e.durations, 0, splitId),
                     job.wordStarts.subList(0, cut), 0, cut, true, false, 0);
+            timed(false, started);
             final List<Integer> restStarts = new ArrayList<>();
             for (int w = cut; w < words; w++) {
                 restStarts.add(job.wordStarts.get(w) - splitId);
@@ -841,8 +912,9 @@ final class PiperEngine {
                 if (tail == null) {
                     return null;
                 }
-                final float[] whole = Arrays.copyOf(head, head.length + tail.length);
-                System.arraycopy(tail, 0, whole, head.length, tail.length);
+                final float[] whole = Arrays.copyOf(headRaw, headRaw.length + tail.length);
+                System.arraycopy(tail, 0, whole, headRaw.length, tail.length);
+                mCache.offer(cacheKey, whole, e.durations);
                 return finish(tail, Arrays.copyOfRange(e.durations, splitId, e.durations.length),
                         restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate));
             });
