@@ -83,6 +83,40 @@ final class PiperModel implements Closeable {
      * any of 40-160 frames, vs ~4x on its CPU.
      */
     static final int NPU_FRAMES = 80;
+    /**
+     * A voice's NPU decoder, downloaded beside its model by the Snapdragon
+     * build (PiperDownloads.fetchNpuDecoders): fully INT8 (sherpa-onnx-respin-
+     * syspin's build_npu.py), fixed window, the Standard decoder's input
+     * names. S25 Ultra: 24.5x real time vs 12.4x for the FP16 graph, same
+     * accuracy. Used when it matches this model's split; else the FP16 path.
+     */
+    static final String NPU_DECODER_FILE = "npu.onnx";
+    /**
+     * An NPU is used only if it decodes at least this many seconds of audio
+     * per second: measured, not assumed, since Snapdragons differ widely
+     * (only the 8 Elite was measured: ~22-24x). Below it the CPU decoder stays.
+     */
+    static final double MIN_NPU_SPEED = 4.0;
+
+    /**
+     * Times one more window through a just-attached NPU graph; throws when it
+     * is slower than MIN_NPU_SPEED (the caller then keeps the CPU decoder).
+     */
+    private void checkNpuSpeed(OrtSession npu, Map<String, OnnxTensor> inputs, int frames)
+            throws OrtException, IOException {
+        final long t0 = System.nanoTime();
+        final int samples;
+        try (OrtSession.Result r = npu.run(inputs)) {
+            final float[] audio = floats(r.get(0));
+            samples = audio == null ? 0 : audio.length;
+        }
+        final double seconds = (System.nanoTime() - t0) / 1e9;
+        final double speed = samples / (double) config.sampleRate / Math.max(1e-6, seconds);
+        if (speed < MIN_NPU_SPEED) {
+            throw new IOException(String.format(java.util.Locale.ROOT,
+                    "NPU too slow here: %.1fx real time over %d frames", speed, frames));
+        }
+    }
     private static final String NPU_SUFFIX = ".npu" + NPU_FRAMES + ".onnx";
     /** Holds why the NPU failed; the revision makes phones retry after NPU code changes. */
     private static final String NPU_FAILED_SUFFIX = ".npu-r2.failed";
@@ -108,6 +142,10 @@ final class PiperModel implements Closeable {
     private volatile OrtSession npuDecoder;
     /** Why the NPU is not used on a build that has it (for the log), or null. */
     private volatile String npuProblem;
+    /** Latent frames per NPU run: the INT8 file's window, or NPU_FRAMES for the FP16 graph. */
+    private volatile int npuFrames = NPU_FRAMES;
+    /** "INT8" or "FP16": which NPU graph runs (for the log). */
+    private volatile String npuKind;
     /** Shapes of the decoder inputs from the first encoder run (warm-up), for the NPU graph. */
     private volatile long[][] boundaryShapes;
     /** Decoder throughput, audio seconds per second of work (running average; 0 = unmeasured). */
@@ -245,6 +283,81 @@ final class PiperModel implements Closeable {
      * and is remembered, so a phone without the NPU pays for it once.
      */
     private void attachNpu(File onnx) {
+        final File int8 = new File(onnx.getParentFile(), NPU_DECODER_FILE);
+        if (boundaryShapes != null && int8.isFile() && hasNpuRuntime() && attachInt8Npu(onnx, int8)) {
+            return;
+        }
+        attachFp16Npu(onnx);
+    }
+
+    /**
+     * The downloaded INT8 decoder on the NPU. Its graph is already fixed-size
+     * and quantized, so QNN only compiles it (cached beside the model, keyed
+     * by the file's size so an updated file recompiles).
+     */
+    private boolean attachInt8Npu(File onnx, File int8) {
+        final File failed = derivedFile(onnx, ".npuq-r1." + int8.length() + ".failed");
+        if (failed.exists()) {
+            return false;
+        }
+        final File compiled = derivedFile(onnx, ".npuq." + int8.length() + ".onnx");
+        OrtSession npu = null;
+        try {
+            final boolean compile = !compiled.isFile();
+            try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
+                final Map<String, String> qnn = new HashMap<>();
+                qnn.put("backend_type", "htp");
+                qnn.put("htp_performance_mode", "burst");
+                // The latent's own quantize step runs on the NPU too.
+                qnn.put("offload_graph_io_quantization", "1");
+                options.addQnn(qnn);
+                options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
+                if (compile) {
+                    options.addConfigEntry("ep.context_enable", "1");
+                    options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
+                }
+                npu = env().createSession((compile ? int8 : compiled).getAbsolutePath(), options);
+            }
+            // It must read exactly what this model's encoder hands the decoder.
+            final Map<String, ai.onnxruntime.NodeInfo> info = npu.getInputInfo();
+            if (!info.keySet().equals(new java.util.HashSet<>(Arrays.asList(boundary)))) {
+                throw new IOException("inputs " + info.keySet() + " are not " + Arrays.toString(boundary));
+            }
+            final long[] latent = ((ai.onnxruntime.TensorInfo) info.get(boundary[0]).getInfo()).getShape();
+            if (latent.length != 3 || latent[1] != boundaryShapes[0][1] || latent[2] <= 2 * DECODE_OVERLAP) {
+                throw new IOException("latent " + Arrays.toString(latent));
+            }
+            final Map<String, OnnxTensor> inputs = new HashMap<>();
+            try {
+                for (int i = 0; i < boundary.length; i++) {
+                    final long[] shape = i == 0 ? latent : boundaryShapes[i];
+                    inputs.put(boundary[i], OnnxTensor.createTensor(env(),
+                            FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
+                }
+                npu.run(inputs).close();
+                checkNpuSpeed(npu, inputs, (int) latent[2]);
+            } finally {
+                for (OnnxTensor t : inputs.values()) {
+                    t.close();
+                }
+            }
+            npuFrames = (int) latent[2];
+            npuKind = "INT8";
+            npuDecoder = npu;
+            return true;
+        } catch (IOException | OrtException | RuntimeException e) {
+            closeQuietly(npu);
+            compiled.delete();
+            try (java.io.FileWriter w = new java.io.FileWriter(failed)) {
+                w.write(String.valueOf(e));
+            } catch (IOException ignored) {
+                // Tried again next load.
+            }
+            return false;
+        }
+    }
+
+    private void attachFp16Npu(File onnx) {
         final long[][] shapes = boundaryShapes;
         final File failed = derivedFile(onnx, NPU_FAILED_SUFFIX);
         if (shapes == null || !hasNpuRuntime()) {
@@ -299,11 +412,14 @@ final class PiperModel implements Closeable {
                             FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
                 }
                 npu.run(inputs).close();
+                checkNpuSpeed(npu, inputs, NPU_FRAMES);
             } finally {
                 for (OnnxTensor t : inputs.values()) {
                     t.close();
                 }
             }
+            npuFrames = NPU_FRAMES;
+            npuKind = "FP16";
             npuDecoder = npu;
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
@@ -322,6 +438,11 @@ final class PiperModel implements Closeable {
     /** True when the decoder runs on Qualcomm's NPU. */
     boolean onNpu() {
         return npuDecoder != null;
+    }
+
+    /** "INT8" or "FP16" when on the NPU, else null. */
+    String npuKind() {
+        return npuDecoder != null ? npuKind : null;
     }
 
     /** Why a build with the NPU runtime isn't using it for this voice, or null. */
@@ -362,7 +483,7 @@ final class PiperModel implements Closeable {
                                        int threads) {
         final File dir = onnx.getParentFile();
         final File[] stale = dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
-                && (n.endsWith(".ort") || n.endsWith(".tmp") || n.contains(".npu")));
+                && (n.endsWith(".ort") || n.endsWith(".tmp") || n.contains(".npu")) && !n.equals(NPU_DECODER_FILE));
         if (stale != null) {
             for (File f : stale) {
                 f.delete();
@@ -717,7 +838,8 @@ final class PiperModel implements Closeable {
      * Caller holds the read lock.
      */
     private float[] decodeOnNpu(Encoded e, int from, int to, RunHandle handle) throws OrtException {
-        final int step = NPU_FRAMES - 2 * DECODE_OVERLAP;
+        final int frames = npuFrames;
+        final int step = frames - 2 * DECODE_OVERLAP;
         final OrtEnvironment env = env();
         final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
         final List<float[]> parts = new ArrayList<>();
@@ -729,16 +851,16 @@ final class PiperModel implements Closeable {
                     return null;
                 }
                 final int len = Math.min(step, to - s);
-                final int ws = Math.max(0, Math.min(s - DECODE_OVERLAP, e.frames - NPU_FRAMES));
-                final int have = Math.min(NPU_FRAMES, e.frames - ws);
-                final float[] latent = new float[e.channels * NPU_FRAMES];
+                final int ws = Math.max(0, Math.min(s - DECODE_OVERLAP, e.frames - frames));
+                final int have = Math.min(frames, e.frames - ws);
+                final float[] latent = new float[e.channels * frames];
                 for (int c = 0; c < e.channels; c++) {
-                    System.arraycopy(e.tensors[0], c * e.frames + ws, latent, c * NPU_FRAMES, have);
+                    System.arraycopy(e.tensors[0], c * e.frames + ws, latent, c * frames, have);
                 }
                 final Map<String, OnnxTensor> inputs = new HashMap<>();
                 try {
                     inputs.put(boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
-                            new long[] {1, e.channels, NPU_FRAMES}));
+                            new long[] {1, e.channels, frames}));
                     for (int i = 1; i < boundary.length; i++) {
                         inputs.put(boundary[i], OnnxTensor.createTensor(env,
                                 FloatBuffer.wrap(e.tensors[i]), e.shapes[i]));
@@ -749,7 +871,7 @@ final class PiperModel implements Closeable {
                         if (audio == null) {
                             return null;
                         }
-                        final int hop = audio.length / NPU_FRAMES;
+                        final int hop = audio.length / frames;
                         parts.add(Arrays.copyOfRange(audio, (s - ws) * hop, (s - ws + len) * hop));
                         total += len * hop;
                     }

@@ -224,7 +224,7 @@ final class PiperEngine {
                 if (l != null) {
                     final PiperModel loaded = getLoaded(key);
                     l.onLoaded(key, System.currentTimeMillis() - t0, loaded == null ? null
-                            : loaded.onNpu() ? "on the NPU" : loaded.npuProblem());
+                            : loaded.onNpu() ? "on the NPU (" + loaded.npuKind() + ")" : loaded.npuProblem());
                 }
             } catch (Throwable t) {
                 mFailed.put(key, System.currentTimeMillis());
@@ -247,8 +247,14 @@ final class PiperEngine {
         final Future<PiperModel> load = mLoader.submit(() -> {
             PiperModel model = getLoaded(key);
             if (model == null) {
+                final long t0 = System.currentTimeMillis();
                 model = loadModel(key, onnx, config);
                 install(key, model);
+                final Listener l = mListener;
+                if (l != null) { // the settings screen's Test voice is logged too
+                    l.onLoaded(key, System.currentTimeMillis() - t0, model.onNpu()
+                            ? "on the NPU (" + model.npuKind() + ")" : model.npuProblem());
+                }
             }
             return model;
         });

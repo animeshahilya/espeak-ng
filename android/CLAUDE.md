@@ -364,6 +364,31 @@ voices" does not, so voices can still be deleted to free space.
   skipped in this build (its runtime has none). Threads: up to 6 on chips
   with no little cores (8 Elite: 6 threads 4.0x vs 4 threads 2.6x, 8
   threads 1.8x); others keep 4. CI builds only the standard APK.
+  Two APKs on purpose: Qualcomm's QNN licence allows distributing its
+  runtime only "as incorporated in Your software application", never "on a
+  standalone basis", so a downloadable NPU pack for one app is not allowed
+  (user chose two APKs over one 85 MB APK). Releases are signed locally: attach
+  both `espeak-release.apk` and `espeak-snapdragon-release.apk`. The standard
+  app on an 8-series Snapdragon from SM8450 (8 Gen 1) on shows "Faster on this
+  phone: Snapdragon version" (`PiperSettings.offersSnapdragonBuild`), opening
+  the latest release; same package and key, so it installs over and keeps
+  voices. The Snapdragon build hides the NNAPI switch (its runtime has none).
+- **NPU decoders** (Snapdragon build): `assets/piper/npu_decoders.json`
+  (voice key -> `npu-v1/<model>-npu.onnx` on sherpa-onnx-respin-syspin, made
+  by its `build_npu.py`): each voice's decoder fully INT8 (Conv, ConvTranspose,
+  LeakyRelu, Add, Div, Tanh, Mul), fixed 80-frame window, the Standard
+  decoder's input names. `PiperDownloads.fetchNpuDecoders` (service start and
+  after each install; any network, mobile data too; MD5-checked, `npu.onnx`
+  + `.md5` stamp in the voice folder) then reloads the voice;
+  `PiperModel.attachInt8Npu` compiles it once (`model.<ort>.npuq.<size>.onnx`)
+  and uses it if its inputs match the split, else the FP16 graph. S25 Ultra,
+  Kavya: INT8 24.5x vs FP16 12.4x real time, same accuracy (speech SNR 12.4
+  vs 11.9 dB, pause noise -48.2 vs -48.9 dBFS); Compact on the NPU gains
+  nothing (its float islands - LeakyRelu, last stage - fall back to the CPU),
+  and full INT8 is bad on a CPU (pause noise -38 dBFS), so the three stay
+  separate files. Covered: 42 SYSPIN/Rasa Standard keys and 10 Piper high.
+  Speed is measured, not assumed: an NPU graph is kept only if a timed window
+  runs at `MIN_NPU_SPEED` (4x) or more - only the 8 Elite was ever measured.
 - **Compact tier** (quality "compact", keys `<lang>-<name>-compact`, release
   `compact-v1` on sherpa-onnx-respin-syspin, made by its `build_compact.py`):
   the same voice with only its HiFi-GAN decoder in INT8 (static QDQ,
@@ -389,7 +414,8 @@ voices" does not, so voices can still be deleted to free space.
   service's warm-up thread, at most daily, natural voices on): each voice
   keeps a `source` file (catalog model + config MD5; hashed once, streamed,
   for older installs); a changed catalog entry re-downloads through the
-  normal path with `setAllowedOverMetered(false)` + `setRequiresCharging`,
+  normal path at once, on any network and without waiting for charging
+  (the user asked for neither restriction),
   and `complete()` swaps it in only after the checksum matches. The voices
   -changed broadcast unloads that key so the new files load on next use.
   The bundled list changes with app updates, rhasspy's with its voices.json.

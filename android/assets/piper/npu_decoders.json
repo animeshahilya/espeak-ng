@@ -1,0 +1,165 @@
+{
+ "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+ "voices": {
+  "as_IN-bornali-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "as_IN-rituraj-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "bho_IN-kajal-medium": {
+   "size_bytes": 14759306,
+   "md5_digest": "c2696317000d249ced4db365029645f9",
+   "path": "npu-v1/vits-syspin-bho-female-npu.onnx"
+  },
+  "bho_IN-ranjit-medium": {
+   "size_bytes": 14759315,
+   "md5_digest": "bb555b4e0c04d39b91bc0faf07ed3fa9",
+   "path": "npu-v1/vits-syspin-bho-male-npu.onnx"
+  },
+  "bn_IN-anirban-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "bn_IN-riya-medium": {
+   "size_bytes": 14759321,
+   "md5_digest": "bf73272d31d1c1f5f009ce9c2d884e11",
+   "path": "npu-v1/vits-syspin-bn-female-npu.onnx"
+  },
+  "bn_IN-sourav-medium": {
+   "size_bytes": 14759321,
+   "md5_digest": "7e447e66e4eb57f75df7c2a2f66e2478",
+   "path": "npu-v1/vits-syspin-bn-male-npu.onnx"
+  },
+  "bn_IN-tithi-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "brx_IN-mainao-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "brx_IN-sansuma-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "doi_IN-sheetal-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "doi_IN-vijay-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "en_IN-priya-medium": {
+   "size_bytes": 14759310,
+   "md5_digest": "8d6ed65a14af2a7ea272542c29cc1c1f",
+   "path": "npu-v1/vits-syspin-en-female-npu.onnx"
+  },
+  "en_IN-rahul-medium": {
+   "size_bytes": 14759316,
+   "md5_digest": "c7419a3308f865a60419688dcb51f757",
+   "path": "npu-v1/vits-syspin-en-male-npu.onnx"
+  },
+  "gu_IN-hetal-medium": {
+   "size_bytes": 14759315,
+   "md5_digest": "4867ac663b47aaa7eb334c977ba8cb21",
+   "path": "npu-v1/vits-syspin-gu-female-npu.onnx"
+  },
+  "gu_IN-jay-medium": {
+   "size_bytes": 14759312,
+   "md5_digest": "f5d7fcd9f527e5eac68d9a89a1cc3729",
+   "path": "npu-v1/vits-syspin-gu-male-npu.onnx"
+  },
+  "hi_IN-kavya-medium": {
+   "size_bytes": 14759323,
+   "md5_digest": "0dfd861088d83f73e0fbafd5f5997a0b",
+   "path": "npu-v1/vits-syspin-hi-female-npu.onnx"
+  },
+  "hi_IN-vihaan-medium": {
+   "size_bytes": 14759326,
+   "md5_digest": "bb5afdbea28a741f333f3ab9f01e7d52",
+   "path": "npu-v1/vits-syspin-hi-male-npu.onnx"
+  },
+  "hne_IN-bhupesh-medium": {
+   "size_bytes": 14759319,
+   "md5_digest": "2ef2f77a7e12ffd57326ed29f9b33aaf",
+   "path": "npu-v1/vits-syspin-hne-male-npu.onnx"
+  },
+  "hne_IN-mamta-medium": {
+   "size_bytes": 14759314,
+   "md5_digest": "6f9429a635de1d3c49acb5ad70abb3cc",
+   "path": "npu-v1/vits-syspin-hne-female-npu.onnx"
+  },
+  "kn_IN-chetan-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "kn_IN-spoorthi-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "mai_IN-shravan-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "ml_IN-aparna-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "mr_IN-mrunal-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "mr_IN-tejas-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "ne_NP-prerana-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "pa_IN-harpreet-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "pa_IN-simran-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "sa_IN-vedant-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "ta_IN-kaveri-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  },
+  "te_IN-harini-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
+  }
+ }
+}

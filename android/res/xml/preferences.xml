@@ -54,6 +54,13 @@
             android:dependency="piper_enabled"
             app:iconSpaceReserved="false" />
         <Preference
+            android:key="action_piper_snapdragon"
+            android:title="@string/setting_piper_snapdragon"
+            android:summary="@string/setting_piper_snapdragon_summary"
+            android:dependency="piper_enabled"
+            app:isPreferenceVisible="false"
+            app:iconSpaceReserved="false" />
+        <Preference
             android:key="action_piper_manage"
             android:title="@string/setting_piper_manage"
             app:iconSpaceReserved="false" />

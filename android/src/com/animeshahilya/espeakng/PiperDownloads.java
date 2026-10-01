@@ -397,8 +397,9 @@ final class PiperDownloads {
     }
 
     /**
-     * @param update a newer version of an installed voice: it waits for Wi-Fi
-     *               and charging, and replaces the old files only once verified
+     * @param update a newer version of an installed voice: downloads like any
+     *               other (mobile data too, no charging wait) and replaces the
+     *               old files only once verified
      */
     static long start(Context appContext, Context storageContext, CatalogVoice voice, boolean update)
             throws IOException, JSONException, UnsupportedVoiceException {
@@ -443,9 +444,6 @@ final class PiperDownloads {
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setDestinationUri(Uri.fromFile(target))
                 .setAllowedOverRoaming(false);
-        if (update) {
-            request.setAllowedOverMetered(false).setRequiresCharging(true);
-        }
         final long id = dm.enqueue(request);
         prefs(storageContext).edit()
                 .putString(PREF_DL_ID_PREFIX + id, voice.key)
@@ -583,6 +581,8 @@ final class PiperDownloads {
                 }
             }
             broadcastChanged(appContext, key, assigned);
+            // Snapdragon build: its NPU decoder follows (no-op elsewhere).
+            new Thread(() -> fetchNpuDecoders(appContext, storageContext), "piper-npu-fetch").start();
             return Result.INSTALLED;
         } catch (IOException | RuntimeException e) {
             // Runtime too: this runs on bare threads, where anything uncaught
@@ -626,6 +626,64 @@ final class PiperDownloads {
         }
     }
 
+    /** voice key -> its INT8 NPU decoder (Snapdragon build), from sherpa-onnx-respin-syspin. */
+    static final String NPU_DECODERS_ASSET = "piper/npu_decoders.json";
+
+    /**
+     * Snapdragon build: gives every installed voice that has one its INT8 NPU
+     * decoder (~15 MB, any network), checksum-verified, then reloads the voice
+     * so PiperModel picks it up. Cheap when all are present: run it at every
+     * service start and after an install. Blocking; off the main thread.
+     */
+    static void fetchNpuDecoders(Context appContext, Context storageContext) {
+        if (!PiperModel.hasNpuRuntime()) {
+            return;
+        }
+        final JSONObject list;
+        try (InputStream in = appContext.getAssets().open(NPU_DECODERS_ASSET)) {
+            final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            final byte[] b = new byte[8192];
+            int n;
+            while ((n = in.read(b)) > 0) {
+                buf.write(b, 0, n);
+            }
+            list = new JSONObject(buf.toString("UTF-8"));
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "NPU decoder list unavailable", e);
+            return;
+        }
+        final String base = list.optString("base_url", "");
+        final JSONObject voices = list.optJSONObject("voices");
+        if (voices == null || !RESPIN_SYSPIN_RELEASES.equals(base)) {
+            return;
+        }
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            final JSONObject f = voices.optJSONObject(v.key);
+            if (f == null || !isSafePath(f.optString("path", ""))) {
+                continue;
+            }
+            final String md5 = f.optString("md5_digest", "");
+            final File target = new File(v.dir, PiperModel.NPU_DECODER_FILE);
+            final File stamp = new File(v.dir, PiperModel.NPU_DECODER_FILE + ".md5");
+            try {
+                if (target.isFile() && stamp.isFile()
+                        && md5.equalsIgnoreCase(PiperVoiceStore.readText(stamp).trim())) {
+                    continue;
+                }
+                final byte[] data = fetch(base + f.getString("path"), 64 * 1024 * 1024);
+                if (!md5.equalsIgnoreCase(md5(data))) {
+                    throw new IOException("NPU decoder checksum mismatch for " + v.key);
+                }
+                writeAtomically(target, data);
+                writeAtomically(stamp, md5.getBytes(StandardCharsets.UTF_8));
+                Log.i(TAG, "NPU decoder for " + v.key + " installed");
+                broadcastChanged(appContext, v.key, null);
+            } catch (IOException | JSONException | RuntimeException e) {
+                Log.w(TAG, "NPU decoder for " + v.key + " not fetched; tried again later", e);
+            }
+        }
+    }
+
     /** Model and config MD5s an installed voice came from (one per line). */
     static final String SOURCE_FILE = "source";
     private static final String PREF_UPDATE_CHECKED = "piper_update_checked";
@@ -634,7 +692,7 @@ final class PiperDownloads {
     /**
      * Voice-file auto-update: at most daily, re-downloads every installed
      * voice whose catalog files changed (a fixed model, a corrected config).
-     * The download waits for Wi-Fi and charging; complete() swaps the voice
+     * It downloads at once, on any network; complete() swaps the voice
      * in only after its checksum matches, so the old one keeps speaking until
      * then. Blocking (catalog fetch, hashing older installs once): call off
      * the main and speech threads.
@@ -681,7 +739,7 @@ final class PiperDownloads {
             try {
                 start(appContext, storageContext, entry, true);
                 started.add(v.key);
-                Log.i(TAG, "Update for " + v.key + " queued (waits for Wi-Fi and charging)");
+                Log.i(TAG, "Update for " + v.key + " started");
             } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
                 Log.w(TAG, "Update of " + v.key + " not started", e);
             }

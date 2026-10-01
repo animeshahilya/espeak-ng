@@ -134,4 +134,24 @@ public class PiperCatalogTest {
         assertEquals("hin", PiperVoiceStore.languageKey("hi"));
         assertEquals(PiperVoiceStore.languageKey("en"), PiperVoiceStore.languageKey(Locale.US));
     }
+
+    /** The Snapdragon build's NPU decoders: our release only, pinned, Standard keys of the catalog. */
+    @Test
+    public void bundledNpuDecodersArePinnedToOurRelease() throws Exception {
+        final org.json.JSONObject list = new org.json.JSONObject(new String(java.nio.file.Files.readAllBytes(
+                java.nio.file.Paths.get("assets", PiperDownloads.NPU_DECODERS_ASSET)), "UTF-8"));
+        assertEquals(PiperDownloads.RESPIN_SYSPIN_RELEASES, list.getString("base_url"));
+        final org.json.JSONObject voices = list.getJSONObject("voices");
+        assertTrue(voices.length() >= 30);
+        final java.util.Iterator<String> keys = voices.keys();
+        while (keys.hasNext()) {
+            final String key = keys.next();
+            final org.json.JSONObject f = voices.getJSONObject(key);
+            assertFalse(key, key.endsWith("-compact"));
+            assertTrue(key, f.getString("path").matches("npu-v1/[^/]+-npu\\.onnx"));
+            assertTrue(key, PiperDownloads.isSafePath(f.getString("path")));
+            assertEquals(key, 32, f.getString("md5_digest").length());
+            assertTrue(key, f.getLong("size_bytes") > 1_000_000L);
+        }
+    }
 }

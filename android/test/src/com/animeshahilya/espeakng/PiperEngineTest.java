@@ -3,6 +3,7 @@ package com.animeshahilya.espeakng;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class PiperEngineTest {
@@ -59,6 +60,16 @@ public class PiperEngineTest {
         // Its NPU (Snapdragon build): ~22x.
         assertEquals(PiperDevice.Fit.RECOMMENDED, PiperDevice.heavyFit(true, 35, true));
         assertEquals(PiperDevice.Fit.SLOW, PiperDevice.heavyFit(false, 0, true));
+    }
+
+    @Test
+    public void snapdragonBuildIsOfferedOnlyForModernNpus() {
+        assertTrue(PiperSettings.hasModernNpu("SM8750"));   // 8 Elite (measured: ~22x)
+        assertTrue(PiperSettings.hasModernNpu("SM8450"));   // 8 Gen 1
+        assertFalse(PiperSettings.hasModernNpu("SM8350")); // 888: older NPU, unmeasured
+        assertFalse(PiperSettings.hasModernNpu("SM7450")); // mid-range
+        assertFalse(PiperSettings.hasModernNpu("Tensor G3"));
+        assertFalse(PiperSettings.hasModernNpu(null));
     }
 
     @Test

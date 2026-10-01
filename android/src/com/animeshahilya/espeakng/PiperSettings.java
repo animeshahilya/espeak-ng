@@ -63,6 +63,31 @@ final class PiperSettings {
     private static final String KEY_LANGUAGES = "category_piper_languages";
     private static final String KEY_DOWNLOAD = "action_piper_download";
     private static final String KEY_MANAGE = "action_piper_manage";
+    private static final String KEY_SNAPDRAGON = "action_piper_snapdragon";
+    /** Where both builds are published; the Snapdragon one is espeak-snapdragon-*.apk. */
+    static final String SNAPDRAGON_RELEASES = "https://github.com/animeshahilya/espeak-ng/releases/latest";
+
+    /**
+     * A Snapdragon with a modern NPU, running the standard build. Only the
+     * 8-series from 8 Gen 1 (SM8450, 2022) on: QNN's HTP libraries start at
+     * that generation's NPU, and older or mid-range chips are unmeasured. The
+     * Snapdragon build itself still checks the speed (PiperModel.MIN_NPU_SPEED)
+     * and keeps the CPU where the NPU isn't clearly faster.
+     */
+    static boolean offersSnapdragonBuild() {
+        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+                && "QTI".equalsIgnoreCase(android.os.Build.SOC_MANUFACTURER)
+                && hasModernNpu(android.os.Build.SOC_MODEL)
+                && !PiperModel.hasNpuRuntime();
+    }
+
+    /** SM8450 and later 8-series ("SM8450", "SM8550", "SM8650", "SM8750", ...). */
+    static boolean hasModernNpu(String socModel) {
+        if (socModel == null || !socModel.matches("SM8\\d{3}.*")) {
+            return false;
+        }
+        return Integer.parseInt(socModel.substring(2, 6)) >= 8450;
+    }
     private static final long PROGRESS_POLL_MS = 1500;
 
     private PiperSettings() {
@@ -95,7 +120,25 @@ final class PiperSettings {
                 return true;
             });
         }
+        final Preference snapdragon = screen.findPreference(KEY_SNAPDRAGON);
+        if (snapdragon != null) {
+            // The standard app on a Snapdragon phone: point to the faster build
+            // (same package and key, so it installs over this one, voices kept).
+            snapdragon.setVisible(offersSnapdragonBuild());
+            snapdragon.setOnPreferenceClickListener(p -> {
+                try {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW,
+                            android.net.Uri.parse(SNAPDRAGON_RELEASES)));
+                } catch (android.content.ActivityNotFoundException e) {
+                    Toast.makeText(context, SNAPDRAGON_RELEASES, Toast.LENGTH_LONG).show();
+                }
+                return true;
+            });
+        }
         final Preference acceleration = screen.findPreference(PiperVoiceStore.PREF_ACCELERATION);
+        if (acceleration != null && PiperModel.hasNpuRuntime()) {
+            acceleration.setVisible(false); // this build uses the NPU itself; its runtime has no NNAPI
+        }
         if (acceleration != null) {
             acceleration.setOnPreferenceChangeListener((p, value) -> {
                 PiperEngine.get().setAcceleration(Boolean.TRUE.equals(value));

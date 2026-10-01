@@ -566,6 +566,8 @@
   <string name="piper_quality_enhanced">Enhanced</string>
   <string name="piper_quality_enhanced_recommended">Enhanced, recommended for this phone</string>
   <string name="piper_quality_enhanced_slow">Enhanced, may pause on this phone</string>
+  <string name="setting_piper_snapdragon">Faster on this phone: Snapdragon version</string>
+  <string name="setting_piper_snapdragon_summary">This phone has a Qualcomm NPU. The Snapdragon version of this app can run natural voices on it, often much faster; it checks the speed and keeps using the processor where the NPU isn\'t faster. Opens the download page; it installs over this app and keeps your voices and settings.</string>
   <string name="piper_quality_standard_slow">Standard, may pause on this phone</string>
   <string name="piper_quality_compact">Compact</string>
   <string name="piper_quality_compact_recommended">Compact, recommended for this phone</string>
