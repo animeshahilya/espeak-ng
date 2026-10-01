@@ -386,7 +386,7 @@ voices" does not, so voices can still be deleted to free space.
   vs 11.9 dB, pause noise -48.2 vs -48.9 dBFS); Compact on the NPU gains
   nothing (its float islands - LeakyRelu, last stage - fall back to the CPU),
   and full INT8 is bad on a CPU (pause noise -38 dBFS), so the three stay
-  separate files. Covered: 42 SYSPIN/Rasa Standard keys and 10 Piper high.
+  separate files. Covered: all 42 SYSPIN/Rasa Standard keys and 10 Piper high (52).
   Speed is measured, not assumed: an NPU graph is kept only if a timed window
   runs at `MIN_NPU_SPEED` (4x) or more - only the 8 Elite was ever measured.
 - **Compact tier** (quality "compact", keys `<lang>-<name>-compact`, release

@@ -142,7 +142,7 @@ public class PiperCatalogTest {
                 java.nio.file.Paths.get("assets", PiperDownloads.NPU_DECODERS_ASSET)), "UTF-8"));
         assertEquals(PiperDownloads.RESPIN_SYSPIN_RELEASES, list.getString("base_url"));
         final org.json.JSONObject voices = list.getJSONObject("voices");
-        assertTrue(voices.length() >= 30);
+        assertTrue(voices.length() >= 50);
         final java.util.Iterator<String> keys = voices.keys();
         while (keys.hasNext()) {
             final String key = keys.next();
