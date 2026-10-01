@@ -66,8 +66,8 @@ public class EspeakApp extends Application {
         }
 
         @Override
-        public void onPhraseCache(long hits, long misses, double hitMs, double missMs, long bytes,
-                                  int entries) {
+        public void onPhraseCache(long hits, long misses, long fromStorage, double hitMs, double missMs,
+                                  long bytes, int entries) {
             // Numbers only, never text: the cache holds what was spoken.
             long totalHits = hits;
             long totalChunks = hits + misses;
@@ -86,9 +86,10 @@ public class EspeakApp extends Application {
                 }
             }
             Log.i(TAG, String.format(java.util.Locale.ROOT,
-                    "Phrase cache: %d of %d chunks from cache (%.0f%%), first audio %.0f ms vs %.0f ms"
+                    "Phrase cache: %d of %d chunks from cache (%.0f%%; %d read back from storage),"
+                            + " first audio %.0f ms vs %.0f ms"
                             + " rendered; %d entries, %.1f MB; since install %d of %d (%.0f%%)",
-                    hits, hits + misses, 100.0 * hits / Math.max(1, hits + misses), hitMs, missMs,
+                    hits, hits + misses, 100.0 * hits / Math.max(1, hits + misses), fromStorage, hitMs, missMs,
                     entries, bytes / 1048576.0, totalHits, totalChunks,
                     100.0 * totalHits / Math.max(1, totalChunks)));
         }
@@ -141,6 +142,9 @@ public class EspeakApp extends Application {
         HinglishReader.init(appContext);
         migrateLegacyPreferences(appContext, EspeakApp.storageContext);
         PiperEngine.get().setListener(PIPER_LOG);
+        // Phrases survive the speech service restarting (device-protected, not backed up).
+        PiperEngine.get().setPhraseCacheDir(new java.io.File(PiperVoiceStore.root(EspeakApp.storageContext),
+                "phrase-cache"));
         // Before any voice can load: a voice that crashed the last process
         // twice in a row is suspended instead of crash-looping TalkBack.
         // Tolerant: a wrongly typed setting must not crash every process start.

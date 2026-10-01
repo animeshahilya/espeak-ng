@@ -149,10 +149,23 @@ final class PiperEngine {
         }
         final Listener l = mListener;
         if (l != null) {
-            l.onPhraseCache(snapshot[0], snapshot[1],
+            l.onPhraseCache(snapshot[0], snapshot[1], mCache.diskHits(),
                     snapshot[0] == 0 ? 0 : snapshot[2] / 1e6 / snapshot[0],
                     snapshot[1] == 0 ? 0 : snapshot[3] / 1e6 / snapshot[1], mCache.bytes(), mCache.size());
         }
+    }
+
+    /**
+     * Keeps the phrase cache on storage too (32 MB, a phrase written once
+     * heard twice), so it survives Android restarting the speech service.
+     */
+    void setPhraseCacheDir(java.io.File dir) {
+        mCache.setDisk(dir, 32L * 1024 * 1024, 2);
+    }
+
+    /** A deleted voice's cached phrases go with it, from memory and storage. */
+    void deleteCachedPhrases(String key) {
+        mCache.deleteVoice(key);
     }
 
     /** Cache identity of a loaded voice: its key and model file, so an update never matches. */
@@ -223,8 +236,8 @@ final class PiperEngine {
          * Phrase cache counts since the process started (no text): chunks
          * served from it and rendered, and their average time to first audio.
          */
-        default void onPhraseCache(long hits, long misses, double hitMs, double missMs, long bytes,
-                                   int entries) {
+        default void onPhraseCache(long hits, long misses, long fromStorage, double hitMs, double missMs,
+                                   long bytes, int entries) {
         }
     }
 

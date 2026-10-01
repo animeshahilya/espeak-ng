@@ -427,8 +427,18 @@ voices" does not, so voices can still be deleted to free space.
   in 5.7 MB; first-sighting/16-bit 60% (ceiling 64%), 92 entries in 7.1 MB;
   first audio 5 ms cached vs ~540 ms rendered. Counts only (never text) go
   to the log every 25 chunks and accumulate in prefs
-  `piper_cache_hits_total` / `piper_cache_chunks_total`. Not done: a tier on
-  storage, idle pre-rendering.
+  `piper_cache_hits_total` / `piper_cache_chunks_total`. Second tier on
+  storage (`PiperPhraseCache.setDisk`, `files/piper/phrase-cache`,
+  device-protected and outside the backup rules): 32 MB, a phrase written
+  once heard twice (hits count as sightings - memory keeps it from the first,
+  so its repeats are hits), each file `<voice key>-<hash>.pcm` holding its
+  full key (checked on read: a hash collision never plays another phrase),
+  oldest out past the cap (trimmed every 20 writes), a deleted voice's files
+  deleted with it. Pixel 8, replay in two processes: run 2 (memory empty, as
+  after the service restarts) 78% of chunks from the cache vs 60% cold, 45
+  read back from storage at ~8 ms, whole session 46 vs 90 s. Idle
+  pre-rendering not done: storage already covers restarts; only a style,
+  speed or voice change starts the cache over.
   Android performance hints (ADPF) were measured and dropped (2026-10-01):
   a hint session over ORT's pools ("piper-loader" threads), the renderer and
   the synthesis thread, 100 ms target, reporting each chunk render. Pixel 8,

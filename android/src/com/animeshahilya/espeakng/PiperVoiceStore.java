@@ -217,6 +217,7 @@ final class PiperVoiceStore {
 
     static boolean delete(Context storageContext, SharedPreferences prefs, String key) {
         PiperEngine.get().unload(key);
+        PiperEngine.get().deleteCachedPhrases(key);
         final File dir = new File(voicesDir(storageContext), key);
         PiperDownloads.deleteRecursively(dir); // model, config and its optimized copy
         final boolean ok = !dir.exists();
