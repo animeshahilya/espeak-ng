@@ -1060,12 +1060,14 @@ public class TtsService extends TextToSpeechService {
         // No setVoice() for the units: the call at the top of setup already
         // applied this exact voice+variant (SpeechSynthesis memoizes it),
         // and re-applying cost a full native dictionary reload per call.
-        List<SynthUnit> units = buildUnits(text, voice, isSsml);
-        if (!isSsml && !(isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs))) {
-            units = withNaturalRuns(units, voice, prefs, settings, sampleRate, scriptLanguages);
-        }
-        PiperEngine.Params naturalParams = null;
+        final List<SynthUnit> units =
+                !isSsml && !(isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs))
+                        ? withNaturalRuns(buildUnits(text, voice, isSsml), voice, prefs, settings,
+                                sampleRate, scriptLanguages)
+                        : buildUnits(text, voice, isSsml);
         final List<String> naturalUsed = new ArrayList<>();
+        final NaturalAhead ahead = new NaturalAhead(naturalPhonemizer(engine, voice),
+                naturalParams(settings, request, prefs), settings, request, prefs, naturalUsed);
 
         if (units.size() > 1 || units.get(0).isEarcon() || units.get(0).model != null) {
             mSegmentsRemaining.set(units.size());
@@ -1081,18 +1083,14 @@ public class TtsService extends TextToSpeechService {
                     continue;
                 }
                 if (unit.model != null) {
-                    if (naturalParams == null) {
-                        naturalParams = naturalParams(settings, request, prefs);
-                    }
-                    forVoice(naturalParams, settings, request, prefs, unit.modelKey);
-                    if (!naturalUsed.contains(unit.modelKey)) {
-                        naturalUsed.add(unit.modelKey);
-                    }
                     mChunkBase = unit.base;
+                    final int next = ui + 1;
                     int produced;
                     try {
-                        produced = synthesizeAt(unit.model, unit.text, naturalPhonemizer(engine, voice),
-                                naturalParams, naturalOutput(new long[] {0}), sampleRate);
+                        final PiperEngine.Prepared prepared = ahead.take(units, ui);
+                        produced = prepared == null ? -1 : playAt(prepared,
+                                naturalOutput(new long[] {0}), sampleRate,
+                                () -> ahead.prepare(units, next));
                     } catch (Throwable t) {
                         Log.e(TAG, "Natural voice " + unit.modelKey + " failed; eSpeak reads it", t);
                         produced = -1;
@@ -1102,6 +1100,8 @@ public class TtsService extends TextToSpeechService {
                         continue;
                     }
                 }
+                // A natural voice speaking next renders while eSpeak speaks.
+                ahead.prepare(units, ui + 1);
                 try {
                     mChunkBase = unit.base;
                     engine.setVoice(unit.voice, voiceVariant);
@@ -1138,6 +1138,7 @@ public class TtsService extends TextToSpeechService {
             ReadingHistory.record(prefs, mHistoryText, voice != null ? voice.name : null);
         }
         mHistoryText = null;
+        ahead.discard(); // stopped with the next natural piece still rendering
         PiperVoiceStore.noteUsed(prefs, naturalUsed);
         finishRequest();
     }
@@ -1262,70 +1263,75 @@ public class TtsService extends TextToSpeechService {
         final String numbers = numbersRunLanguage(settings, natural.languageKey());
         final List<String> used = new ArrayList<>();
 
+        // Like eSpeak switching language by alphabet: a Hindi run in English
+        // text goes to the Hindi natural voice, when one is chosen and loaded
+        // (it starts loading on first use; until then this voice reads it, as
+        // before). Switched off, this voice reads everything.
+        final List<SynthUnit> pieces = new ArrayList<>();
+        for (SynthUnit unit : buildUnits(text, voice, false)) {
+            if (unit.isEarcon()) {
+                pieces.add(unit);
+                continue;
+            }
+            if (VoiceSettings.isBlank(unit.text)) {
+                continue;
+            }
+            final List<LanguageRuns.Run> runs = runLanguages == null
+                    ? Collections.singletonList(new LanguageRuns.Run(0, unit.text, natural.languageKey()))
+                    : naturalRuns(unit.text, natural.languageKey(), runLanguages, numbers, prefs);
+            for (LanguageRuns.Run run : runs) {
+                PiperModel runModel = model;
+                String runKey = natural.key;
+                if (!run.language.equals(natural.languageKey())) {
+                    final PiperVoiceStore.Installed other =
+                            PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
+                    if (other != null && !other.key.equals(natural.key)) {
+                        final PiperModel loaded = mPiper.getLoaded(other.key);
+                        if (loaded != null) {
+                            runModel = loaded;
+                            runKey = other.key;
+                        } else if (mPiper.keepsSeveralLoaded()) {
+                            mPiper.preload(other.key, other.model(), other.config);
+                        }
+                    }
+                }
+                pieces.add(new SynthUnit(run.text, voice, unit.base + run.start, runModel, runKey));
+            }
+        }
+
+        final NaturalAhead ahead = new NaturalAhead(phonemizer, params, settings, request, prefs, used);
         try {
-            for (SynthUnit unit : buildUnits(text, voice, false)) {
+            for (int i = 0; i < pieces.size(); i++) {
                 if (mIsStopped.get()) {
                     break;
                 }
-                if (unit.isEarcon()) {
-                    final byte[] tone = Earcons.pcm(unit.text.charAt(0), sampleRate, 1, targetVolume);
+                final SynthUnit piece = pieces.get(i);
+                if (piece.isEarcon()) {
+                    final byte[] tone = Earcons.pcm(piece.text.charAt(0), sampleRate, 1, targetVolume);
                     output.audio(tone);
                     frames[0] += tone.length / 2;
                     continue;
                 }
-                if (VoiceSettings.isBlank(unit.text)) {
+                final PiperEngine.Prepared prepared = ahead.take(pieces, i);
+                if (prepared == null) {
+                    Log.w(TAG, "Natural voice " + piece.modelKey + " could not phonemize; skipped");
                     continue;
                 }
-                // Like eSpeak switching language by alphabet: a Hindi run in
-                // English text goes to the Hindi natural voice, when one is
-                // chosen and loaded (it starts loading on first use; until
-                // then this voice reads it, as before). Switched off, this
-                // voice reads everything.
-                final List<LanguageRuns.Run> runs = runLanguages == null
-                        ? Collections.singletonList(new LanguageRuns.Run(0, unit.text, natural.languageKey()))
-                        : naturalRuns(unit.text, natural.languageKey(), runLanguages, numbers, prefs);
-                for (LanguageRuns.Run run : runs) {
-                    if (mIsStopped.get()) {
-                        break;
-                    }
-                    PiperModel runModel = model;
-                    String runKey = natural.key;
-                    if (!run.language.equals(natural.languageKey())) {
-                        final PiperVoiceStore.Installed other =
-                                PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
-                        if (other != null && !other.key.equals(natural.key)) {
-                            final PiperModel loaded = mPiper.getLoaded(other.key);
-                            if (loaded != null) {
-                                runModel = loaded;
-                                runKey = other.key;
-                            } else if (loaded == null && mPiper.keepsSeveralLoaded()) {
-                                mPiper.preload(other.key, other.model(), other.config);
-                            }
-                        }
-                    }
-                    forVoice(params, settings, request, prefs, runKey);
-                    if (!used.contains(runKey)) {
-                        used.add(runKey);
-                    }
-                    mChunkBase = unit.base + run.start;
-                    final int produced = synthesizeAt(runModel, run.text, phonemizer, params, output,
-                            sampleRate);
-                    if (produced > 0) {
-                        frames[0] += produced;
-                    } else if (produced < 0) {
-                        Log.w(TAG, "Natural voice " + runKey + " could not phonemize; skipped");
-                    }
-                }
+                mChunkBase = piece.base;
+                final int next = i + 1;
+                frames[0] += playAt(prepared, output, sampleRate, () -> ahead.prepare(pieces, next));
             }
         } catch (Throwable t) {
             // A model failure mid-request: whatever was spoken stands, the
             // request ends cleanly, and the next one retries.
             Log.e(TAG, "Natural voice synthesis failed", t);
             if (frames[0] == 0) {
+                ahead.discard();
                 reportError(callback, TextToSpeech.ERROR_SYNTHESIS);
                 return;
             }
         }
+        ahead.discard();
 
         if (!mIsStopped.get() && mHistoryText != null) {
             ReadingHistory.record(prefs, mHistoryText, voice.name);
@@ -1354,16 +1360,97 @@ public class TtsService extends TextToSpeechService {
     private int synthesizeAt(PiperModel model, String text, PiperEngine.Phonemizer phonemizer,
                              PiperEngine.Params params, PiperEngine.Output output, int rate)
             throws ai.onnxruntime.OrtException {
-        if (model.config.sampleRate == rate) {
-            return mPiper.synthesize(model, text, phonemizer, SpeechSynthesis::sonicStretch, params,
-                    output);
+        final PiperEngine.Prepared prepared = mPiper.prepare(model, text, phonemizer,
+                SpeechSynthesis::sonicStretch, params);
+        return prepared == null ? -1 : playAt(prepared, output, rate, null);
+    }
+
+    /** {@link PiperEngine#play} into a request at {@code rate}, resampled where the voice's differs. */
+    private int playAt(PiperEngine.Prepared prepared, PiperEngine.Output output, int rate,
+                       Runnable lastRendered) throws ai.onnxruntime.OrtException {
+        if (prepared.model.config.sampleRate == rate) {
+            return mPiper.play(prepared, output, lastRendered);
         }
         final PcmResampler.Output converted =
-                new PcmResampler.Output(output, model.config.sampleRate, rate);
-        final int produced = mPiper.synthesize(model, text, phonemizer, SpeechSynthesis::sonicStretch,
-                params, converted);
-        final int written = converted.finish();
-        return produced < 0 ? produced : written;
+                new PcmResampler.Output(output, prepared.model.config.sampleRate, rate);
+        mPiper.play(prepared, converted, lastRendered);
+        return converted.finish();
+    }
+
+    /**
+     * The next natural-voice piece of a request, rendering while the current
+     * one plays (see {@link PiperEngine.Prepared}). Holds at most one.
+     */
+    private final class NaturalAhead {
+        private final PiperEngine.Phonemizer phonemizer;
+        private final PiperEngine.Params params;
+        private final VoiceSettings settings;
+        private final SynthesisRequest request;
+        private final SharedPreferences prefs;
+        private final List<String> used;
+        private PiperEngine.Prepared prepared;
+        private int preparedIndex = -1;
+
+        NaturalAhead(PiperEngine.Phonemizer phonemizer, PiperEngine.Params params,
+                     VoiceSettings settings, SynthesisRequest request, SharedPreferences prefs,
+                     List<String> used) {
+            this.phonemizer = phonemizer;
+            this.params = params;
+            this.settings = settings;
+            this.request = request;
+            this.prefs = prefs;
+            this.used = used;
+        }
+
+        /** Starts the first natural piece at or after {@code from}, unless one is waiting. */
+        void prepare(List<SynthUnit> units, int from) {
+            if (prepared != null || mIsStopped.get()) {
+                return;
+            }
+            for (int i = from; i < units.size(); i++) {
+                final SynthUnit unit = units.get(i);
+                if (unit.model != null) {
+                    try {
+                        prepared = start(unit);
+                        preparedIndex = i;
+                    } catch (ai.onnxruntime.OrtException e) {
+                        // take() starts it again in its turn, and reports a failure then.
+                        Log.w(TAG, "Natural voice " + unit.modelKey + " not prepared ahead", e);
+                    }
+                    return;
+                }
+                if (!unit.isEarcon()) {
+                    return; // eSpeak speaks next: it starts at once
+                }
+            }
+        }
+
+        /** The piece at {@code index}: the one prepared ahead, or started now. */
+        PiperEngine.Prepared take(List<SynthUnit> units, int index) throws ai.onnxruntime.OrtException {
+            if (prepared != null && preparedIndex == index) {
+                final PiperEngine.Prepared p = prepared;
+                prepared = null;
+                return p;
+            }
+            discard();
+            return start(units.get(index));
+        }
+
+        private PiperEngine.Prepared start(SynthUnit unit) throws ai.onnxruntime.OrtException {
+            forVoice(params, settings, request, prefs, unit.modelKey);
+            if (!used.contains(unit.modelKey)) {
+                used.add(unit.modelKey);
+            }
+            return mPiper.prepare(unit.model, unit.text, phonemizer, SpeechSynthesis::sonicStretch,
+                    params);
+        }
+
+        void discard() {
+            if (prepared != null) {
+                mPiper.discard(prepared);
+                prepared = null;
+            }
+        }
     }
 
     private static PiperEngine.Params naturalParams(VoiceSettings settings, SynthesisRequest request,

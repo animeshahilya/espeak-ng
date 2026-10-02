@@ -174,6 +174,12 @@ voices" does not, so voices can still be deleted to free space.
   Underruns column or wall vs audio time - word-range callback timing has
   jitter of its own and invents stalls. Leading/trailing model silence is
   trimmed; chunk pauses follow reading pace. No pause after the last chunk.
+  Across voices too (`PiperEngine.prepare`/`play`, `TtsService.NaturalAhead`):
+  the next run of a mixed-language request starts rendering once the current
+  run's last chunk has rendered (or while eSpeak speaks the part before it),
+  so a switch waits for no render. Pixel 8, Hindi/Marathi/English mixes:
+  no measurable gap before or after (voices there are fast enough); it is
+  for slower phones. `stop()` cancels a run prepared ahead.
 - **Streaming split** (2026-09-30, from piper1-gpl PR #302 and Sonata's
   "fast"/RT voices). `PiperSplit` cuts each voice into encoder (text
   encoder, durations, flow - the whole chunk, so prosody is unchanged) and

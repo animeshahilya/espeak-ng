@@ -102,6 +102,19 @@ final class PiperEngine {
         /** Multipliers of the voice's noise_scale and noise_w (speaking style). */
         float noiseScale = 1f;
         float noiseW = 1f;
+
+        Params copy() {
+            final Params c = new Params();
+            c.speed = speed;
+            c.pitch = pitch;
+            c.volume = volume;
+            c.pauseScale = pauseScale;
+            c.trimSilence = trimSilence;
+            c.speakerId = speakerId;
+            c.noiseScale = noiseScale;
+            c.noiseW = noiseW;
+            return c;
+        }
     }
 
     private static final PiperEngine INSTANCE = new PiperEngine();
@@ -462,6 +475,9 @@ final class PiperEngine {
         if (run != null) {
             run.cancel();
         }
+        for (PiperModel.RunHandle ahead : mAhead) {
+            ahead.cancel();
+        }
     }
 
     private static final int INFERENCE_THREADS = threadsFor(cpuCapacities(),
@@ -616,12 +632,58 @@ final class PiperEngine {
      */
     int synthesize(PiperModel model, String text, Phonemizer phonemizer, TimeStretcher stretcher,
                    Params params, Output out) throws OrtException {
+        final Prepared prepared = prepare(model, text, phonemizer, stretcher, params);
+        return prepared == null ? -1 : play(prepared, out, null);
+    }
+
+    /**
+     * A piece of text phonemized, with its first chunk already rendering, so
+     * the next voice of a mixed-language request starts while the current one
+     * still plays: before, each run began rendering only once the previous
+     * one had delivered its last audio, a gap at every switch on slow voices.
+     * Each one is {@link #play}ed or {@link #discard}ed.
+     */
+    static final class Prepared {
+        final PiperModel model;
+        final Pass pass;
+        final List<Job> jobs;
+        final List<String> missing;
+        final PiperModel.RunHandle handle;
+        final Params params;
+        final float speed;
+        final Future<Rendered> first;
+
+        Prepared(PiperModel model, Pass pass, List<Job> jobs, List<String> missing,
+                 PiperModel.RunHandle handle, Params params, float speed, Future<Rendered> first) {
+            this.model = model;
+            this.pass = pass;
+            this.jobs = jobs;
+            this.missing = missing;
+            this.handle = handle;
+            this.params = params;
+            this.speed = speed;
+            this.first = first;
+        }
+    }
+
+    /** Prepared runs not yet playing: {@link #stop} cancels them too. */
+    private final Set<PiperModel.RunHandle> mAhead = ConcurrentHashMap.newKeySet();
+
+    /**
+     * Phonemizes {@code text} and starts rendering its first chunk. Copies
+     * the params: callers change them per voice before the run plays.
+     *
+     * @return null if the text could not be phonemized
+     */
+    Prepared prepare(PiperModel model, String text, Phonemizer phonemizer, TimeStretcher stretcher,
+                     Params callerParams) throws OrtException {
+        final Params params = callerParams.copy();
         final PiperVoiceConfig config = model.config;
         final List<PiperPhonemes.Clause> clauses;
         if (config.usesEspeak()) {
             final String raw = phonemizer.phonemize(config.espeakVoice, text);
             if (raw == null) {
-                return -1;
+                return null;
             }
             clauses = PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), text);
         } else {
@@ -660,12 +722,7 @@ final class PiperEngine {
         }
 
         final PiperModel.RunHandle handle = new PiperModel.RunHandle();
-        mCurrentRun = handle;
-        // A stop() that came before mCurrentRun was set found nothing to
-        // cancel; the caller's flag still says so (it is set before stop()).
-        if (out.stopped()) {
-            handle.cancel();
-        }
+        mAhead.add(handle);
         // Everything but delivery happens on the renderer: model run, level,
         // trim, pitch/speed stretch and PCM bytes. Measured: libsonic alone
         // took 200-500 ms per sentence on the synthesis thread while the
@@ -673,14 +730,61 @@ final class PiperEngine {
         // of queued audio and stall playback.
         final Pass pass = new Pass(model, params, stretch ? stretcher : null, residualSpeed, pitch,
                 lengthScale, speaker, noise, noiseW, maxPauseMs, handle);
-        int frames = 0;
-        Future<Rendered> pending = null;
-        Future<Rendered> pendingRest = null;
-        try {
-            if (!jobs.isEmpty()) {
-                final Job first = jobs.get(0);
-                pending = mRenderer.submit(() -> pass.render(first, true));
+        final Future<Rendered> first = jobs.isEmpty() ? null
+                : mRenderer.submit(() -> pass.render(jobs.get(0), true));
+        return new Prepared(model, pass, jobs, missing, handle, params, speed, first);
+    }
+
+    /** Drops a prepared run that will not play, ending its render first. */
+    void discard(Prepared p) {
+        if (p == null) {
+            return;
+        }
+        p.handle.cancel();
+        if (p.first != null) {
+            try {
+                final Rendered r = p.first.get();
+                if (r != null && r.rest != null) {
+                    awaitQuietly(r.rest);
+                }
+            } catch (Exception ignored) {
+                // Cancelled or failed: nothing left in flight.
             }
+        }
+        mAhead.remove(p.handle);
+        p.handle.close();
+    }
+
+    /**
+     * Delivers a prepared run.
+     *
+     * @param lastRendered called once the run's last chunk has rendered and
+     *                     only delivery is left: the moment to prepare the
+     *                     next run without delaying this one's chunks on the
+     *                     single renderer. May be null.
+     * @return audio frames written
+     */
+    int play(Prepared p, Output out, Runnable lastRendered) throws OrtException {
+        final PiperModel model = p.model;
+        final PiperVoiceConfig config = model.config;
+        final List<Job> jobs = p.jobs;
+        final Pass pass = p.pass;
+        final Params params = p.params;
+        final float speed = p.speed;
+        final int rate = config.sampleRate;
+        final PiperModel.RunHandle handle = p.handle;
+        mAhead.remove(handle);
+        mCurrentRun = handle;
+        // A stop() that came before mCurrentRun was set found nothing to
+        // cancel; the caller's flag still says so (it is set before stop()).
+        if (out.stopped()) {
+            handle.cancel();
+        }
+        int frames = 0;
+        Future<Rendered> pending = p.first;
+        Future<Rendered> pendingRest = null;
+        boolean announced = false;
+        try {
             for (int j = 0; j < jobs.size(); j++) {
                 Rendered rendered;
                 try {
@@ -701,6 +805,10 @@ final class PiperEngine {
                     pending = mRenderer.submit(() -> pass.render(next, false));
                 } else {
                     pending = null;
+                    if (lastRendered != null && rendered != null) {
+                        announced = true;
+                        lastRendered.run();
+                    }
                 }
                 final Job job = jobs.get(j);
                 boolean delivered = true;
@@ -765,10 +873,13 @@ final class PiperEngine {
             }
             handle.close();
         }
-        if (!missing.isEmpty() && mMissingLogged.add(config.key)) {
+        if (!announced && lastRendered != null) {
+            lastRendered.run(); // nothing said, stopped or failed: the caller still moves on
+        }
+        if (!p.missing.isEmpty() && mMissingLogged.add(config.key)) {
             final Listener l = mListener;
             if (l != null) {
-                l.onMissingPhonemes(config.key, missing);
+                l.onMissingPhonemes(config.key, p.missing);
             }
         }
         return frames;
