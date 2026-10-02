@@ -78,4 +78,19 @@ public class PiperEngineTest {
         assertEquals("en_US-ljspeech-compact", PiperDownloads.compactKey("en_US-ljspeech-high"));
         assertTrue(PiperDownloads.isOffered("compact"));
     }
+
+    @Test
+    public void leadInGoesAfterBosAndIsCutByItsFrames() throws Exception {
+        final PiperVoiceConfig config = PiperVoiceConfig.parse("en_US-test-medium",
+                "{\"audio\":{\"sample_rate\":22050},\"phoneme_type\":\"text\","
+                        + "\"phoneme_id_map\":{\"_\":[0],\"^\":[1],\"$\":[2],\"a\":[5]}}");
+        final java.util.List<Integer> starts = new java.util.ArrayList<>(java.util.Arrays.asList(2));
+        final long[] ids = PiperEngine.withLeadIn(new long[] {1, 0, 5, 0, 2}, config, 3, starts);
+        org.junit.Assert.assertArrayEquals(new long[] {1, 0, 0, 0, 0, 5, 0, 2}, ids);
+        org.junit.Assert.assertEquals(Integer.valueOf(5), starts.get(0));
+        final float[] durations = {2, 1, 1, 1, 3, 4, 1, 0};
+        org.junit.Assert.assertEquals(5, PiperEngine.cutLeadIn(durations, 3)); // BOS + 3 blanks
+        org.junit.Assert.assertArrayEquals(new float[] {0, 0, 0, 0, 3, 4, 1, 0}, durations, 0f);
+        org.junit.Assert.assertEquals(0, PiperEngine.cutLeadIn(null, 3));
+    }
 }

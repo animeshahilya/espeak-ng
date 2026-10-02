@@ -717,7 +717,9 @@ final class PiperEngine {
             final long[] ids = PiperPhonemes.toIds(PiperPhonemes.tokenize(chunk.ipa, config),
                     config, missing, wordStarts);
             if (ids.length > 3) { // more than BOS PAD EOS: something to say
-                jobs.add(new Job(chunk, ids, wordStarts, text, cpToIndex));
+                final int lead = needsLeadIn(model) ? LEAD_IN : 0;
+                jobs.add(new Job(chunk, withLeadIn(ids, config, lead, wordStarts), wordStarts, lead,
+                        text, cpToIndex));
             }
         }
 
@@ -981,8 +983,14 @@ final class PiperEngine {
                 if (o == null) {
                     return null;
                 }
-                mCache.offer(cacheKey, o.audio, o.durations); // before finish() alters the audio
-                final Rendered r = finish(o.audio, o.durations, job.wordStarts, 0, words, true, true, 0);
+                final int leadSamples = cutLeadIn(o.durations, job.lead) * model.config.hopLength;
+                final float[] audio = leadSamples == 0 ? o.audio
+                        : Arrays.copyOfRange(o.audio, Math.min(o.audio.length, leadSamples), o.audio.length);
+                if (leadSamples > 0) {
+                    PiperAudio.fadeIn(audio, model.config.sampleRate);
+                }
+                mCache.offer(cacheKey, audio, o.durations); // before finish() alters the audio
+                final Rendered r = finish(audio, o.durations, job.wordStarts, 0, words, true, true, 0);
                 timed(false, started);
                 return r;
             }
@@ -998,12 +1006,14 @@ final class PiperEngine {
             }
             final int hop = model.config.hopLength;
             final int rate = model.config.sampleRate;
+            // Decoding starts after the lead-in, which stays as the decoder's context.
+            final int lead = cutLeadIn(e.durations, job.lead);
             // Played faster by the time stretch: less time to decode the rest in.
             final double speed = model.decodeSpeed() / (stretcher != null ? residualSpeed : 1f);
             final int cut = e.durations == null ? -1 : firstPieceEnd(job.wordStarts, e.durations,
-                    e.frames, speed, (int) Math.ceil(MIN_PIECE_S * rate / hop));
+                    e.frames - lead, speed, (int) Math.ceil(MIN_PIECE_S * rate / hop));
             if (cut < 0) {
-                final float[] audio = decode(e, 0, e.frames);
+                final float[] audio = decode(e, lead, e.frames);
                 if (audio == null) {
                     return null;
                 }
@@ -1013,11 +1023,11 @@ final class PiperEngine {
                 return r;
             }
             final int splitId = job.wordStarts.get(cut);
-            int splitFrame = 0;
+            int splitFrame = lead;
             for (int i = 0; i < splitId; i++) {
                 splitFrame += Math.round(e.durations[i]);
             }
-            final float[] head = decode(e, 0, splitFrame);
+            final float[] head = decode(e, lead, splitFrame);
             if (head == null) {
                 return null;
             }
@@ -1103,21 +1113,74 @@ final class PiperEngine {
         }
     }
 
+    /**
+     * Blank ids put before each chunk and cut from its audio. The SYSPIN
+     * voices stumble on the first sound of an input (as rhasspy/piper#252
+     * reports for Piper voices): a word a language switch leaves on its own
+     * lost its start ("Delhi" -> "E", "battery" -> "vatri"). With a lead-in
+     * to settle on, then cut at its exact frames, the word starts cleanly; the
+     * decoder's overlap context makes the cut seamless. Measured (Whisper,
+     * 20 English words x 3 renders): Priya Compact 10/60 -> 32/60 words
+     * recognised. Rasa and Piper voices said lone words well already and the
+     * lead-in made them worse (Mrunal 9/12 -> 4/12), so they get none.
+     */
+    static final int LEAD_IN = 8;
+
+    /** SYSPIN: a letter-reading voice at 22050 Hz (Rasa's are 24 kHz, Piper's read phonemes). */
+    static boolean needsLeadIn(PiperModel model) {
+        return model.hasDurations() && !model.config.usesEspeak() && model.config.sampleRate == 22050;
+    }
+
+    /** {@code ids} with {@code lead} blanks after BOS; word starts shift with them. */
+    static long[] withLeadIn(long[] ids, PiperVoiceConfig config, int lead, List<Integer> wordStarts) {
+        final int[] pad = config.phonemeIdMap.get(PiperVoiceConfig.PAD);
+        if (lead <= 0 || pad == null || pad.length != 1 || ids.length == 0) {
+            return ids;
+        }
+        final long[] out = new long[ids.length + lead];
+        out[0] = ids[0];
+        Arrays.fill(out, 1, 1 + lead, pad[0]);
+        System.arraycopy(ids, 1, out, 1 + lead, ids.length - 1);
+        for (int i = 0; i < wordStarts.size(); i++) {
+            wordStarts.set(i, wordStarts.get(i) + lead);
+        }
+        return out;
+    }
+
+    /**
+     * Frames of BOS and the lead-in, which are then zeroed in {@code durations}
+     * so word timing and the first-piece cut count from the audio that stays.
+     */
+    static int cutLeadIn(float[] durations, int lead) {
+        if (lead <= 0 || durations == null) {
+            return 0;
+        }
+        int frames = 0;
+        for (int i = 0; i <= lead && i < durations.length; i++) {
+            frames += Math.round(durations[i]);
+            durations[i] = 0;
+        }
+        return frames;
+    }
+
     /** One chunk's model input, its text's words, and where they start in the ids. */
     private static final class Job {
         final PiperPhonemes.Chunk chunk;
         final long[] ids;
         final List<Integer> wordStarts;
+        /** Blank ids after BOS to cut from the audio ({@link #LEAD_IN} or 0). */
+        final int lead;
         /** Code point span of the chunk in the text, and its words ([start, end) pairs in it). */
         final int chunkStart;
         final int chunkEnd;
         final int[] words;
 
-        Job(PiperPhonemes.Chunk chunk, long[] ids, List<Integer> wordStarts, String text,
+        Job(PiperPhonemes.Chunk chunk, long[] ids, List<Integer> wordStarts, int lead, String text,
             int[] cpToIndex) {
             this.chunk = chunk;
             this.ids = ids;
             this.wordStarts = wordStarts;
+            this.lead = lead;
             chunkStart = Math.max(0, Math.min(chunk.start, cpToIndex.length - 1));
             chunkEnd = Math.max(chunkStart, Math.min(chunk.end, cpToIndex.length - 1));
             words = PiperAudio.findWords(text.substring(cpToIndex[chunkStart], cpToIndex[chunkEnd]));

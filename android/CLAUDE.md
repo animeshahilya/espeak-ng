@@ -180,6 +180,18 @@ voices" does not, so voices can still be deleted to free space.
   so a switch waits for no render. Pixel 8, Hindi/Marathi/English mixes:
   no measurable gap before or after (voices there are fast enough); it is
   for slower phones. `stop()` cancels a run prepared ahead.
+- **Lead-in (SYSPIN only).** The SYSPIN voices garble the first sound of an
+  input, which is exactly what a language switch hands them: one word
+  ("Delhi" -> "E", "battery" -> "vatri" on a Pixel 8). `PiperEngine.LEAD_IN`
+  blank ids go after BOS and are cut at their exact frames (`cutLeadIn`
+  zeroes their durations, so word timing, the phrase cache and the first-piece
+  cut stay consistent; the split path decodes from after them, keeping them
+  as context). Whisper, 20 English words x 3 renders: Priya Compact 10 -> 32
+  of 60, Standard 10 -> 27; Pixel 8 end to end 10 of 20 words (before: 2 of
+  9). Rasa and Piper voices said lone words well already and got worse with
+  it (Mrunal 9 -> 4 of 12, Priyamvada 6 -> 4), so `needsLeadIn` is SYSPIN
+  only (letter voices at 22050 Hz). Harness: lone words through the app's
+  tokenization with the Ceil output exposed, scored by Whisper.
 - **Streaming split** (2026-09-30, from piper1-gpl PR #302 and Sonata's
   "fast"/RT voices). `PiperSplit` cuts each voice into encoder (text
   encoder, durations, flow - the whole chunk, so prosody is unchanged) and

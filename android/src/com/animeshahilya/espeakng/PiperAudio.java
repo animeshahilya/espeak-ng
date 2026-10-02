@@ -36,6 +36,14 @@ final class PiperAudio {
     static final int FRAME_MS = 10;
     /** Kept on each side of trimmed speech so onsets/releases aren't clipped. */
     static final int TRIM_MARGIN_MS = 20;
+
+    /** A 5 ms ramp, so audio cut mid-signal (a lead-in) starts without a click. */
+    static void fadeIn(float[] audio, int sampleRate) {
+        final int n = Math.min(audio.length, sampleRate / 200);
+        for (int i = 0; i < n; i++) {
+            audio[i] *= (float) i / n;
+        }
+    }
     /** Above this the soft limiter bends samples down instead of clipping them. */
     static final float LIMITER_KNEE = 0.7f;
 

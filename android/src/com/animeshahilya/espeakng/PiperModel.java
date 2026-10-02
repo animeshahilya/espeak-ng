@@ -195,6 +195,11 @@ final class PiperModel implements Closeable {
         this.hasDurations = session.getOutputNames().size() > (decoder != null ? boundary.length : 1);
     }
 
+    /** True when runs report each id's frames (see {@link PiperAlignment}). */
+    boolean hasDurations() {
+        return hasDurations;
+    }
+
     /** True when {@link #encode}/{@link #decode} can render a chunk in pieces. */
     boolean streams() {
         return decoder != null;
