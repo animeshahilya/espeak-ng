@@ -79,7 +79,7 @@ final class PiperVoiceStore {
     /**
      * Content-addressed model store: voices sharing one upstream file (all 20
      * Rasa voices share {@code vits-rasa-13-piper-model.onnx}) keep a single
-     * copy here, and each voice directory hardlinks it as {@link #MODEL_FILE}.
+     * copy here, and each voice directory links it as {@link #MODEL_FILE}.
      * Without this, every Rasa voice costs its own ~62 MB download and copy.
      */
     static final String SHARED_DIR = "shared";
@@ -243,6 +243,9 @@ final class PiperVoiceStore {
         final File dir = new File(voicesDir(storageContext), key);
         PiperDownloads.deleteRecursively(dir); // model, config and its optimized copy
         final boolean ok = !dir.exists();
+        // Before the collection below: a cached list still holds this voice,
+        // which kept its shared file alive after the last user was deleted.
+        invalidate();
         // A removed voice's shared bytes stay while another voice uses them.
         PiperDownloads.collectSharedGarbage(storageContext, null);
         // Languages it spoke go back to eSpeak rather than to a missing voice.

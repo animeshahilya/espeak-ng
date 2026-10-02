@@ -395,15 +395,21 @@ final class PiperDownloads {
     }
 
     /**
-     * Hardlink, falling back to a copy when the filesystem forbids links.
-     * Hardlinks keep {@link PiperModel}'s memory-mapped loads working: every
-     * voice directory still holds a real {@code model.onnx} entry, sharing
-     * one inode's bytes. Pure java.nio so JVM unit tests cover it.
+     * Symbolic link, falling back to a copy when links are refused. Not a
+     * hardlink: Android's SELinux policy denies link() in app storage
+     * (AccessDeniedException on a Pixel 8), so every "shared" install was a
+     * full copy. {@link PiperModel} memory-maps through the link and keeps
+     * its optimized copies beside the link, in the voice's own directory.
+     * Pure java.nio so JVM unit tests cover it.
      *
      * @return true when {@code to} now holds {@code from}'s bytes
      */
-    static boolean linkOrCopy(File from, File to) {        try {
-            if (to.exists() && !to.delete()) {
+    static boolean linkOrCopy(File from, File to) {
+        if (!from.isFile()) {
+            return false; // a link would dangle
+        }
+        try {
+            if ((to.exists() || java.nio.file.Files.isSymbolicLink(to.toPath())) && !to.delete()) {
                 return false;
             }
             if (to.getParentFile() != null) {
@@ -411,10 +417,10 @@ final class PiperDownloads {
                 to.getParentFile().mkdirs();
             }
             try {
-                java.nio.file.Files.createLink(to.toPath(), from.toPath());
+                java.nio.file.Files.createSymbolicLink(to.toPath(), from.getAbsoluteFile().toPath());
                 return true;
             } catch (UnsupportedOperationException | IOException | SecurityException e) {
-                logw("Hardlink unavailable, copying " + to, e);
+                logw("Link unavailable, copying " + to, e);
             }
             try (InputStream in = new FileInputStream(from);
                  OutputStream out = new FileOutputStream(to)) {
@@ -451,7 +457,7 @@ final class PiperDownloads {
     /**
      * Installs a voice whose model bytes are already on disk in the shared
      * store (a second Rasa voice once the first downloaded). Writes the
-     * fetched config plus a hardlink to the shared model, so no ~62 MB
+     * fetched config plus a link to the shared model, so no ~62 MB
      * download happens. Callers must still show the voice as installed.
      *
      * @return true when installed from the shared copy (no download needed)
@@ -507,7 +513,7 @@ final class PiperDownloads {
     }
 
     /**
-     * Replaces duplicate on-disk model copies with hardlinks to one shared
+     * Replaces duplicate on-disk model copies with links to one shared
      * file per MD5, then garbage-collects shared files no voice references.
      * This migrates existing installs (20 × 62 MB Rasa copies) and keeps
      * future ones deduplicated. Idempotent; blocking (hashes models).
@@ -591,7 +597,7 @@ final class PiperDownloads {
         return saved;
     }
 
-    /** Same underlying file (hardlink): equal canonical paths. */
+    /** Same underlying file (a link to it): equal canonical paths. */
     static boolean sameFile(File a, File b) {
         try {
             return a.getCanonicalPath().equals(b.getCanonicalPath());
@@ -1134,7 +1140,8 @@ final class PiperDownloads {
     }
 
     static void deleteRecursively(File f) {
-        if (f == null || !f.exists()) {
+        // exists() follows links: a link whose shared file is gone is still deleted.
+        if (f == null || (!f.exists() && !java.nio.file.Files.isSymbolicLink(f.toPath()))) {
             return;
         }
         final File[] children = f.listFiles();

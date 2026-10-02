@@ -272,8 +272,9 @@ voices" does not, so voices can still be deleted to free space.
   deleted with the voice (`PiperVoiceStore`; Direct
   Boot works). Models sharing one upstream file (all 20 Rasa voices share
   `vits-rasa-13-piper-model.onnx`) keep a single content-addressed copy in
-  `files/piper/shared/<md5>.onnx`, hardlinked into each voice directory
-  (`linkOrCopy`, copy fallback); a voice whose bytes are already shared
+  `files/piper/shared/<md5>.onnx`, symlinked into each voice directory
+  (`linkOrCopy`, copy fallback; hardlinks are denied by Android's SELinux
+  policy in app storage, so the first version silently copied everything); a voice whose bytes are already shared
   installs with no download (`tryInstallShared`, `-1` from `start()`),
   `dedupSharedModels` folds older duplicate copies on install and on
   `reconcile()`, and deleting the last voice using bytes garbage-collects
