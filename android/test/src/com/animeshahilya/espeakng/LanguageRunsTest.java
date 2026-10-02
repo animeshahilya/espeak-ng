@@ -111,4 +111,16 @@ public class LanguageRunsTest {
         final LanguageRuns.Run plain = new LanguageRuns.Run(0, "ಬಟನ್", "kan");
         assertEquals("kan@0[ಬಟನ್]", describe(LanguageRuns.splitDigits(plain, "zxx")));
     }
+
+    /** Opening brackets and quotes go with the words they open. */
+    @Test
+    public void openingMarksJoinTheFollowingRun() {
+        assertEquals("eng@0[Song: Tum]hin@9[ हो]eng@12[ (Arijit Singh)]",
+                describe(LanguageRuns.split("Song: Tum हो (Arijit Singh)", "eng")));
+        assertEquals("hin@0[उसने कहा]eng@8[ \"Hello\"]",
+                describe(LanguageRuns.split("उसने कहा \"Hello\"", "hin")));
+        // A quote inside a word (don't) is not an opening mark.
+        assertEquals("hin@0[हाँ]eng@3[ don't]",
+                describe(LanguageRuns.split("हाँ don't", "hin")));
+    }
 }

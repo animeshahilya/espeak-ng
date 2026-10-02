@@ -132,6 +132,13 @@ final class LanguageRuns {
         return script == scriptOf(language);
     }
 
+    /** "(", "[", "“", or a straight quote (callers check it starts a word). */
+    private static boolean isOpening(int c) {
+        final int type = Character.getType(c);
+        return type == Character.START_PUNCTUATION || type == Character.INITIAL_QUOTE_PUNCTUATION
+                || c == '"' || c == '\'';
+    }
+
     /** The language a letter in {@code script} is read in, speaking {@code language}. */
     private static String languageFor(UnicodeScript script, String language,
                                       Map<UnicodeScript, String> chosen) {
@@ -220,15 +227,19 @@ final class LanguageRuns {
                     current = lang;
                 } else if (!lang.equals(current)) {
                     // Break before the whitespace that precedes the new run,
-                    // so each run keeps its own words whole.
+                    // so each run keeps its own words whole, and before an
+                    // opening bracket or quote, which belongs to the words it
+                    // opens: "हो (Arijit" gave Hindi the "(" and English the ")".
                     int cut = i;
                     int cutCp = cp;
                     while (cut > runStart) {
                         final int before = text.codePointBefore(cut);
-                        if (!Character.isWhitespace(before)) {
+                        final int at = cut - Character.charCount(before);
+                        if (!Character.isWhitespace(before) && !(isOpening(before)
+                                && (at == runStart || Character.isWhitespace(text.codePointBefore(at))))) {
                             break;
                         }
-                        cut -= Character.charCount(before);
+                        cut = at;
                         cutCp--;
                     }
                     if (cut == runStart) {
