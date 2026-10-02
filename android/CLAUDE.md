@@ -329,8 +329,12 @@ voices" does not, so voices can still be deleted to free space.
   NFC letters lower-cased, decomposing only letters the voice lacks
   (`PiperPhonemes.textTokens`): plain NFD split Bengali/Tamil vowel signs
   the voices were trained on composed. Digits become words through ICU's
-  spellout for the voice's language (`PiperEngine.numberWords`; skipped
-  where ICU falls back to English). Languages eSpeak lacks (Bhojpuri,
+  spellout for the voice's language (`PiperEngine.numberWords`). ICU has
+  rules for Hindi, Gujarati, Tamil, Nepali and English only (checked on a
+  Pixel 8, 2026-10-02); for the rest (Kannada, Telugu, Bengali, Marathi...) `TtsService.naturalRuns` moves the digits to a run
+  eSpeak reads in the request's language (`LanguageRuns.splitDigits`, run
+  language "zxx", which no natural voice is ever chosen for). Before
+  2026-10-02 the voice skipped them: "ಸಮಯ 10:30" was read as "ಸಮಯ". Languages eSpeak lacks (Bhojpuri,
   Chhattisgarhi, Magahi, Maithili, Sanskrit, Bodo, Dogri) keep their own
   language and, like SherpaVoices, become TTS voices of their own once a
   natural voice is chosen for them (`PiperVoiceStore.naturalOnlyVoices`,
@@ -469,7 +473,7 @@ voices" does not, so voices can still be deleted to free space.
   eng, ...; a script the speaking language is written in stays with it)
   and each run goes to its language's natural voice when one is chosen and
   already loaded - the first use starts loading it and the current voice
-  reads that run meanwhile. Only with the same sample rate, and preloading
+  reads that run meanwhile. Preloading
   only on phones that keep several voices (`keepsSeveralLoaded`), so a
   one-voice phone does not evict and reload on every switch. A run in a
   language with no loaded natural voice (Gujarati with only Hindi and
@@ -478,8 +482,12 @@ voices" does not, so voices can still be deleted to free space.
   sends such a request down the eSpeak path, where `withNaturalRuns` gives
   the voice's own runs back to its natural voice. Before 2026-09-30 such
   runs stayed with the current natural voice (Priyamvada read Gujarati
-  from eSpeak's Gujarati phonemes). Needs the natural voice at eSpeak's
-  22050 Hz (one rate per request); otherwise the old behaviour. Numbers and
+  from eSpeak's Gujarati phonemes). A request has one sample rate, so a
+  voice at another rate is resampled to it (`PcmResampler`, windowed sinc,
+  via `TtsService.synthesizeAt`). Until 2026-10-02 such voices were skipped
+  instead: the 24 kHz Rasa voices (Kannada Spoorthi/Chetan, Tamil Kaveri...)
+  never spoke inside English or Hindi requests - a tester reported them as
+  "not responding" - and a 24 kHz primary voice read English itself. Numbers and
   times (`VoiceSettings.PREF_NUMBERS_LANGUAGE`, on the Mixed-language page,
   replacing the "Numbers in English text" switch, whose "on" reads as
   "around"): automatic (unchanged), the words around them, the voice's
@@ -488,8 +496,8 @@ voices" does not, so voices can still be deleted to free space.
   `NumberReading.englishNumbers`, 10:30 as "ten thirty").
   The same holds when an eSpeak voice is speaking (`withNaturalRuns`):
   English on eSpeak with a Hindi natural voice chosen hands each Devanagari
-  run to it as its own unit, at eSpeak's 22050 Hz (a voice at another rate
-  stays with eSpeak). Before this, only a natural primary voice switched,
+  run to it as its own unit, resampled to eSpeak's 22050 Hz where its rate
+  differs. Before this, only a natural primary voice switched,
   so eSpeak-English users never heard their Hindi voice in mixed text.
   `PiperE2EDeviceTest.j_*` checks it (natural voices peak at full scale).
   A language the user chose for a script (see "Mixed-language text" below)

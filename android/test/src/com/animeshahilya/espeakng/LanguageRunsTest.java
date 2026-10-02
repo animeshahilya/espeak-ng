@@ -101,4 +101,14 @@ public class LanguageRunsTest {
         assertEquals("eng@0[Say]amh@3[ ሰላም]", describe(LanguageRuns.split("Say ሰላም", "eng", chosen)));
         assertEquals("eng@0[Say ሰላም]", describe(LanguageRuns.split("Say ሰላም", "eng")));
     }
+
+    /** A voice without number words: its digits go to eSpeak, offsets stay in the request. */
+    @Test
+    public void digitsSplitOutOfARun() {
+        final LanguageRuns.Run run = new LanguageRuns.Run(4, "ಸಮಯ 10:30 ಆಗಿದೆ", "kan");
+        assertEquals("kan@4[ಸಮಯ]zxx@7[ 10:30]kan@13[ ಆಗಿದೆ]",
+                describe(LanguageRuns.splitDigits(run, "zxx")));
+        final LanguageRuns.Run plain = new LanguageRuns.Run(0, "ಬಟನ್", "kan");
+        assertEquals("kan@0[ಬಟನ್]", describe(LanguageRuns.splitDigits(plain, "zxx")));
+    }
 }

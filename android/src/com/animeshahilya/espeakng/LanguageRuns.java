@@ -165,6 +165,42 @@ final class LanguageRuns {
      */
     static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
                            String numbers) {
+        return split(text, language, c -> {
+            final UnicodeScript script = UnicodeScript.of(c);
+            if (numbers != null && Character.isDigit(c)) {
+                return numbers;
+            }
+            return script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
+                    || script == UnicodeScript.UNKNOWN ? null : languageFor(script, language, chosen);
+        });
+    }
+
+    /**
+     * {@code run} with its digits (and their separators) moved to runs in
+     * {@code numbers}; the rest keeps the run's language. For a voice that
+     * cannot read digits (no number words for its language).
+     */
+    static List<Run> splitDigits(Run run, String numbers) {
+        final List<Run> out = new ArrayList<>();
+        for (Run part : split(run.text, run.language, c -> {
+            if (Character.isDigit(c)) {
+                return numbers;
+            }
+            final UnicodeScript script = UnicodeScript.of(c);
+            return script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
+                    || script == UnicodeScript.UNKNOWN ? null : run.language;
+        })) {
+            out.add(new Run(run.start + part.start, part.text, part.language));
+        }
+        return out;
+    }
+
+    /**
+     * @param languageOf a code point's language, or null for one that never
+     *                   starts a run (spaces, punctuation, combining marks)
+     */
+    private static List<Run> split(String text, String language,
+                                   java.util.function.IntFunction<String> languageOf) {
         final List<Run> runs = new ArrayList<>();
         if (text == null || text.isEmpty()) {
             return runs;
@@ -175,14 +211,11 @@ final class LanguageRuns {
         int cp = 0;
         for (int i = 0; i < text.length(); ) {
             final int c = text.codePointAt(i);
-            final UnicodeScript script = UnicodeScript.of(c);
-            final boolean digit = numbers != null && Character.isDigit(c);
             // Common (digits, spaces, punctuation) and inherited (combining
             // marks) characters never start a new run - digits only when
             // numbers have a language of their own.
-            if (digit || (script != UnicodeScript.COMMON && script != UnicodeScript.INHERITED
-                    && script != UnicodeScript.UNKNOWN)) {
-                final String lang = digit ? numbers : languageFor(script, language, chosen);
+            final String lang = languageOf.apply(c);
+            if (lang != null) {
                 if (current == null) {
                     current = lang;
                 } else if (!lang.equals(current)) {
