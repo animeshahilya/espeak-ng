@@ -102,6 +102,7 @@ final class PiperDownloads {
     /** Download bookkeeping, excluded from settings backups. */
     static boolean isDeviceLocalPref(String key) {
         return key != null && (key.startsWith(PREF_DL_ID_PREFIX) || key.startsWith(PREF_DL_KEY_PREFIX)
+                || key.startsWith(PREF_SWAP_PREFIX)
                 // Crash strikes and suspensions describe this phone, not the user's choices.
                 || key.startsWith("piper_crash_strikes_") || key.startsWith(PiperCrashGuard.PREF_SUSPENDED)
                 // Which voices this phone used lately (startup preloading).
@@ -301,6 +302,55 @@ final class PiperDownloads {
     static String compactKey(String key) {
         final int dash = key.lastIndexOf('-');
         return dash > 0 ? key.substring(0, dash) + "-compact" : key + "-compact";
+    }
+
+    /**
+     * Whether this phone should steer the user to the Compact version of a
+     * heavy voice: heavy SYSPIN/Rasa Standard (or Piper Enhanced) that would
+     * pause here. Pure policy for JVM tests; callers pass
+     * {@code PiperDevice.heavyFit()}.
+     */
+    static boolean preferCompact(boolean heavy, String quality, PiperDevice.Fit heavyFit) {
+        return heavy && !isCompact(quality) && heavyFit == PiperDevice.Fit.SLOW;
+    }
+
+    /**
+     * Orders one language's catalog rows so the Compact twin comes immediately
+     * before its heavy Standard twin where {@link #preferCompact} says so;
+     * every other row keeps catalog order. Pure for JVM tests.
+     */
+    static List<CatalogVoice> orderCatalogForPhone(List<CatalogVoice> voices,
+            PiperDevice.Fit heavyFit) {
+        final java.util.Map<String, CatalogVoice> byKey = new java.util.HashMap<>();
+        for (CatalogVoice v : voices) {
+            byKey.put(v.key, v);
+        }
+        final List<CatalogVoice> out = new ArrayList<>(voices.size());
+        final java.util.Set<String> done = new java.util.HashSet<>();
+        for (CatalogVoice v : voices) {
+            if (done.contains(v.key)) {
+                continue;
+            }
+            if (!isCompact(v.quality) && preferCompact(v.heavy, v.quality, heavyFit)) {
+                final CatalogVoice twin = byKey.get(compactKey(v.key));
+                if (twin != null && !done.contains(twin.key)) {
+                    out.add(twin);
+                    done.add(twin.key);
+                }
+            }
+            out.add(v);
+            done.add(v.key);
+        }
+        return out;
+    }
+
+    /** Swap bookkeeping: compact key -> standard key it replaces ("piper_swap_" + compact). */
+    static final String PREF_SWAP_PREFIX = "piper_swap_";
+
+    /** Records that installing {@code compactKey} should replace {@code standardKey}. */
+    static void requestSwap(Context storageContext, String compactKey, String standardKey) {
+        settingsPrefs(storageContext).edit().putString(PREF_SWAP_PREFIX + compactKey, standardKey)
+                .apply();
     }
 
     static boolean isEnhanced(String quality) {
@@ -503,6 +553,7 @@ final class PiperDownloads {
                 }
             }
             broadcastChanged(appContext, voice.key, assigned);
+            finishSwap(appContext, storageContext, voice.key);
             new Thread(() -> fetchNpuDecoders(appContext, storageContext), "piper-npu-fetch").start();
             return true;
         } catch (IOException | RuntimeException e) {
@@ -847,6 +898,9 @@ final class PiperDownloads {
                 }
             }
             broadcastChanged(appContext, key, assigned);
+            // One-tap Compact swap: the new voice takes over the old voice's
+            // language and the old ~60 MB copy is removed to free the space.
+            finishSwap(appContext, storageContext, key);
             // Snapdragon build: its NPU decoder follows (no-op elsewhere).
             new Thread(() -> fetchNpuDecoders(appContext, storageContext), "piper-npu-fetch").start();
             // Feed the shared store so the next voice with this file skips its
@@ -874,6 +928,37 @@ final class PiperDownloads {
             } catch (RuntimeException e) {
                 Log.w(TAG, "Cannot remove download " + id, e);
             }
+        }
+    }
+
+    /**
+     * Completes a one-tap Compact swap recorded by {@link #requestSwap}: the
+     * freshly installed voice takes over the old voice's language (when the
+     * old one spoke it) and the old copy is deleted. No-op without a record.
+     */
+    private static void finishSwap(Context appContext, Context storageContext, String newKey) {
+        try {
+            final SharedPreferences prefs = prefs(storageContext);
+            final String oldKey = prefs.getString(PREF_SWAP_PREFIX + newKey, null);
+            if (oldKey == null || oldKey.isEmpty()) {
+                return;
+            }
+            prefs.edit().remove(PREF_SWAP_PREFIX + newKey).apply();
+            final PiperVoiceStore.Installed fresh = PiperVoiceStore.find(storageContext, newKey);
+            final PiperVoiceStore.Installed old = PiperVoiceStore.find(storageContext, oldKey);
+            if (fresh == null || old == null) {
+                return;
+            }
+            final SharedPreferences settings = settingsPrefs(storageContext);
+            final String lang = old.languageKey();
+            if (oldKey.equals(PiperVoiceStore.assignedKey(settings, lang))) {
+                PiperVoiceStore.assign(settings, lang, newKey);
+            }
+            PiperVoiceStore.delete(storageContext, settings, oldKey);
+            // The old key: the service unloads the deleted voice's memory.
+            broadcastChanged(appContext, oldKey, lang);
+        } catch (RuntimeException e) {
+            logw("Compact swap for " + newKey + " failed", e);
         }
     }
 
@@ -1061,8 +1146,14 @@ final class PiperDownloads {
         context.sendBroadcast(intent);
     }
 
+    /**
+     * Drops a download's bookkeeping, its swap record too: a swap whose
+     * download was cancelled or failed must not delete the Standard voice
+     * when this Compact voice is installed later for another reason.
+     */
     private static void forget(SharedPreferences prefs, long id, String key) {
-        prefs.edit().remove(PREF_DL_ID_PREFIX + id).remove(PREF_DL_KEY_PREFIX + key).apply();
+        prefs.edit().remove(PREF_DL_ID_PREFIX + id).remove(PREF_DL_KEY_PREFIX + key)
+                .remove(PREF_SWAP_PREFIX + key).apply();
     }
 
     /** Bookkeeping lives with the other settings, in device-protected storage. */

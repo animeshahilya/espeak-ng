@@ -422,6 +422,14 @@ voices" does not, so voices can still be deleted to free space.
   version", quoting the decoder speed measured here when under 2x.
   `PiperSplit` finds the latent as conv_pre's input (INT8 Rasa lists its
   speaker "cond" Conv first; node order alone fed it the speaker vector).
+  On a slow phone (`heavyFit() == SLOW`) Compact is the default path, not an
+  upsell: the catalog lists the Compact twin before its heavy Standard twin
+  (`orderCatalogForPhone`), tapping Standard offers Compact first
+  (`confirmCompactInstead`), and an assigned Standard voice offers a one-tap
+  swap that downloads Compact, reassigns the language and deletes the
+  Standard copy (`confirmSwap` -> `requestSwap` -> `finishSwap` in
+  `complete()`). Downloaded-voices storage totals count shared inodes once
+  (`PiperVoiceStore.diskBytes`).
 - **Phrase cache** (`PiperPhraseCache`, in `PiperEngine.Pass.render`):
   screen readers repeat short phrases ("Button", "Double-tap to activate"),
   so a chunk's raw model output is kept and replayed through the normal

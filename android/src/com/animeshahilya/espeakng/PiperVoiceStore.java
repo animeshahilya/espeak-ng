@@ -118,6 +118,37 @@ final class PiperVoiceStore {
         }
     }
 
+    /**
+     * Disk actually used by all installed voices, counting linked shared
+     * models once (20 Rasa voices share one inode). Falls back to the plain
+     * sum where inode data is unavailable.
+     */
+    static long diskBytes(Context storageContext) {
+        long bytes = 0;
+        final java.util.Set<String> seen = new java.util.HashSet<>();
+        for (Installed v : list(storageContext)) {
+            final File[] files = v.dir.listFiles();
+            if (files == null) {
+                continue;
+            }
+            for (File f : files) {
+                if (!f.isFile()) {
+                    continue;
+                }
+                try {
+                    final android.system.StructStat st =
+                            android.system.Os.stat(f.getAbsolutePath());
+                    if (seen.add(st.st_dev + ":" + st.st_ino)) {
+                        bytes += st.st_size;
+                    }
+                } catch (Exception e) {
+                    bytes += f.length();
+                }
+            }
+        }
+        return bytes;
+    }
+
     private static final Object LOCK = new Object();
     /** Parsed configs by key; the list is re-scanned, the JSON isn't re-parsed. */
     private static final Map<String, Installed> sCache = new HashMap<>();

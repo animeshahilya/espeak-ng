@@ -305,10 +305,7 @@ final class PiperSettings {
 
         final Preference manage = screen.findPreference(KEY_MANAGE);
         if (manage != null) {
-            long bytes = 0;
-            for (PiperVoiceStore.Installed v : installed) {
-                bytes += v.sizeBytes();
-            }
+            final long bytes = PiperVoiceStore.diskBytes(storage(context));
             manage.setSummary(installed.isEmpty()
                     ? context.getString(R.string.piper_manage_summary_none)
                     : context.getResources().getQuantityString(R.plurals.piper_manage_summary,
@@ -475,10 +472,12 @@ final class PiperSettings {
     private static void showVoices(final Context context, final SharedPreferences prefs,
                                    final List<PiperDownloads.CatalogVoice> voices) {
         final Context storage = storage(context);
+        final List<PiperDownloads.CatalogVoice> ordered =
+                PiperDownloads.orderCatalogForPhone(voices, PiperDevice.heavyFit());
         final List<String> pending = PiperDownloads.pendingKeys(storage);
-        final CharSequence[] rows = new CharSequence[voices.size()];
-        for (int i = 0; i < voices.size(); i++) {
-            final PiperDownloads.CatalogVoice v = voices.get(i);
+        final CharSequence[] rows = new CharSequence[ordered.size()];
+        for (int i = 0; i < ordered.size(); i++) {
+            final PiperDownloads.CatalogVoice v = ordered.get(i);
             String row = context.getString(R.string.piper_catalog_voice_row, v.displayName(),
                     v.country, catalogQualityLabel(context, v),
                     Formatter.formatShortFileSize(context, v.modelSize));
@@ -497,19 +496,61 @@ final class PiperSettings {
                 .setTitle(context.getString(R.string.piper_choose_voice,
                         languageName(voices.get(0).family)))
                 .setItems(rows, (d, which) -> {
-                    final PiperDownloads.CatalogVoice v = voices.get(which);
+                    final PiperDownloads.CatalogVoice v = ordered.get(which);
                     final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storage, v.key);
                     if (installed != null) {
                         showVoiceActions(context, prefs, installed);
                     } else if (pending.contains(v.key)) {
                         confirmCancel(context, v);
                     } else {
-                        confirmDownload(context, v);
+                        final PiperDownloads.CatalogVoice compact =
+                                compactInstead(storage, ordered, v);
+                        if (compact != null) {
+                            confirmCompactInstead(context, v, compact);
+                        } else {
+                            confirmDownload(context, v);
+                        }
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
         TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    /**
+     * The Compact twin to offer instead of a heavy Standard voice on a slow
+     * phone: present, and neither installed nor downloading. Null otherwise.
+     */
+    private static PiperDownloads.CatalogVoice compactInstead(Context storage,
+            List<PiperDownloads.CatalogVoice> ordered, PiperDownloads.CatalogVoice v) {
+        if (!PiperDownloads.preferCompact(v.heavy, v.quality, PiperDevice.heavyFit())) {
+            return null;
+        }
+        final String twin = PiperDownloads.compactKey(v.key);
+        for (PiperDownloads.CatalogVoice c : ordered) {
+            if (c.key.equals(twin) && PiperVoiceStore.find(storage, twin) == null
+                    && !PiperDownloads.pendingKeys(storage).contains(twin)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /** Slow phone, heavy Standard tapped: Compact first, Standard still available. */
+    private static void confirmCompactInstead(final Context context,
+            final PiperDownloads.CatalogVoice standard, final PiperDownloads.CatalogVoice compact) {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.piper_compact_choice_title)
+                .setMessage(context.getString(R.string.piper_compact_choice_message,
+                        standard.displayName(),
+                        Formatter.formatShortFileSize(context, standard.modelSize),
+                        Formatter.formatShortFileSize(context, compact.modelSize)))
+                .setPositiveButton(R.string.piper_compact_choice_get,
+                        (d, w) -> confirmDownload(context, compact))
+                .setNeutralButton(R.string.piper_compact_choice_standard,
+                        (d, w) -> confirmDownload(context, standard))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private static void confirmDownload(final Context context, final PiperDownloads.CatalogVoice v) {
@@ -596,6 +637,10 @@ final class PiperSettings {
                 Log.w(TAG, "Download start failed", e);
                 message = R.string.piper_download_start_failed;
             }
+            if (message != 0) {
+                // Nothing is downloading: drop the staging and any swap record.
+                PiperDownloads.cancel(app, storage(context), v.key);
+            }
             if (message == 0 && installed) {
                 toast(app, app.getString(R.string.piper_download_installed, v.displayName()));
                 return;
@@ -676,14 +721,23 @@ final class PiperSettings {
         }
         final PiperDownloads.CatalogVoice compact = compactVersion(context, voice);
         if (compact != null) {
-            final PiperModel loaded = PiperEngine.get().getLoaded(voice.key);
-            final double speed = loaded == null ? 0 : loaded.decodeSpeed();
-            final String size = Formatter.formatShortFileSize(context, compact.modelSize);
-            // The speed this phone measured, when it is too slow to keep up.
-            actions.add(speed > 0 && speed < SLOW_SPEED
-                    ? context.getString(R.string.piper_action_compact_measured, size, speed)
-                    : context.getString(R.string.piper_action_compact, size));
-            handlers.add(() -> confirmDownload(context, compact));
+            final boolean assignedHere = voice.key.equals(
+                    PiperVoiceStore.assignedKey(prefs, voice.languageKey()));
+            if (assignedHere && PiperDevice.heavyFit() == PiperDevice.Fit.SLOW) {
+                // Slow phone speaking this Standard voice: one tap swaps it.
+                actions.add(context.getString(R.string.piper_action_switch_compact,
+                        Formatter.formatShortFileSize(context, compact.modelSize)));
+                handlers.add(() -> confirmSwap(context, voice, compact));
+            } else {
+                final PiperModel loaded = PiperEngine.get().getLoaded(voice.key);
+                final double speed = loaded == null ? 0 : loaded.decodeSpeed();
+                final String size = Formatter.formatShortFileSize(context, compact.modelSize);
+                // The speed this phone measured, when it is too slow to keep up.
+                actions.add(speed > 0 && speed < SLOW_SPEED
+                        ? context.getString(R.string.piper_action_compact_measured, size, speed)
+                        : context.getString(R.string.piper_action_compact, size));
+                handlers.add(() -> confirmDownload(context, compact));
+            }
         }
         actions.add(context.getString(R.string.piper_action_delete));
         handlers.add(() -> confirmDelete(context, prefs, voice));
@@ -693,6 +747,27 @@ final class PiperSettings {
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
         TtsSettingsActivity.markAlertTitleHeading(dialog);
+    }
+
+    /**
+     * One-tap Compact swap: downloads Compact, makes it speak the language,
+     * and removes the Standard copy to free the space (done on install).
+     */
+    private static void confirmSwap(final Context context,
+            final PiperVoiceStore.Installed voice, final PiperDownloads.CatalogVoice compact) {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(context.getString(R.string.piper_confirm_switch_title,
+                        voice.config.displayName()))
+                .setMessage(context.getString(R.string.piper_confirm_switch_message,
+                        Formatter.formatShortFileSize(context, compact.modelSize),
+                        languageName(voice.config.languageFamily),
+                        Formatter.formatShortFileSize(context, voice.sizeBytes())))
+                .setPositiveButton(R.string.piper_confirm_download, (d, w) -> {
+                    PiperDownloads.requestSwap(storage(context), compact.key, voice.key);
+                    startDownload(context, compact);
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     /**

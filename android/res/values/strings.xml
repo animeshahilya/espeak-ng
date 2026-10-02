@@ -573,6 +573,13 @@
   <string name="piper_quality_compact_recommended">Compact, recommended for this phone</string>
   <string name="piper_action_compact">Download the Compact version (%1$s), about twice as fast</string>
   <string name="piper_action_compact_measured">Download the Compact version (%1$s): this voice runs at %2$.1f times real time here, Compact about twice that</string>
+  <string name="piper_action_switch_compact">Switch to Compact (%1$s) and remove Standard</string>
+  <string name="piper_confirm_switch_title">Switch %1$s to Compact?</string>
+  <string name="piper_confirm_switch_message">Downloads Compact (%1$s), makes it speak %2$s, and removes the Standard copy (%3$s) to free the space.</string>
+  <string name="piper_compact_choice_title">Compact is recommended for this phone</string>
+  <string name="piper_compact_choice_message">%1$s Standard (%2$s) may pause on this phone. Compact (%3$s) is the same voice, about twice as fast.</string>
+  <string name="piper_compact_choice_get">Get Compact</string>
+  <string name="piper_compact_choice_standard">Get Standard anyway</string>
   <string name="category_piper_advanced">Advanced</string>
   <string name="setting_piper_nnapi">Use the AI chip</string>
   <string name="setting_piper_nnapi_summary">Experimental. On most phones it is not faster. Voices it can\'t run use the processor, as when this is off.</string>
