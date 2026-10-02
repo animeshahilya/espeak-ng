@@ -270,7 +270,14 @@ voices" does not, so voices can still be deleted to free space.
 - **Storage/download.** Voices live in device-protected
   `files/piper/voices/<key>/model.onnx{,.json}` plus the optimized copy,
   deleted with the voice (`PiperVoiceStore`; Direct
-  Boot works). `PiperDownloads`: catalog = rhasspy/piper-voices `voices.json`
+  Boot works). Models sharing one upstream file (all 20 Rasa voices share
+  `vits-rasa-13-piper-model.onnx`) keep a single content-addressed copy in
+  `files/piper/shared/<md5>.onnx`, hardlinked into each voice directory
+  (`linkOrCopy`, copy fallback); a voice whose bytes are already shared
+  installs with no download (`tryInstallShared`, `-1` from `start()`),
+  `dedupSharedModels` folds older duplicate copies on install and on
+  `reconcile()`, and deleting the last voice using bytes garbage-collects
+  them. `PiperDownloads`: catalog = rhasspy/piper-voices `voices.json`
   (cached 7 days); the small config is fetched first and refused unless
   `phoneme_type` is espeak/text; the model goes through `DownloadManager` to
   app-specific external storage, is MD5-checked, then moved in by

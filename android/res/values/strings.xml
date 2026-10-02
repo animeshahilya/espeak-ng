@@ -590,6 +590,7 @@
   <string name="piper_play_sample">Play sample</string>
   <string name="piper_sample_failed">Could not play the sample</string>
   <string name="piper_download_started">Downloading %1$s. You can leave this screen; you will hear when it is ready.</string>
+  <string name="piper_download_installed">%1$s is ready — it shared the model already on this phone, so nothing was downloaded.</string>
   <string name="piper_download_start_failed">Could not start the download. Check your internet connection and try again.</string>
   <string name="piper_download_unsupported">This voice can\'t be used with this app.</string>
   <string name="piper_download_title">Natural voice: %1$s</string>

@@ -76,6 +76,13 @@ final class PiperVoiceStore {
 
     static final String MODEL_FILE = "model.onnx";
     static final String CONFIG_FILE = "model.onnx.json";
+    /**
+     * Content-addressed model store: voices sharing one upstream file (all 20
+     * Rasa voices share {@code vits-rasa-13-piper-model.onnx}) keep a single
+     * copy here, and each voice directory hardlinks it as {@link #MODEL_FILE}.
+     * Without this, every Rasa voice costs its own ~62 MB download and copy.
+     */
+    static final String SHARED_DIR = "shared";
 
     /** A voice on disk. */
     static final class Installed {
@@ -125,6 +132,21 @@ final class PiperVoiceStore {
 
     static File voicesDir(Context storageContext) {
         return new File(root(storageContext), "voices");
+    }
+
+    /** Content-addressed store dir ({@code files/piper/shared}). */
+    static File sharedDir(Context storageContext) {
+        return new File(root(storageContext), SHARED_DIR);
+    }
+
+    /** File holding the shared copy of a model, keyed by its catalog MD5. */
+    static File sharedModelFile(Context storageContext, String modelMd5) {
+        return new File(sharedDir(storageContext), sharedFileName(modelMd5));
+    }
+
+    /** Pure filename mapping, unit-testable without a Context. */
+    static String sharedFileName(String modelMd5) {
+        return modelMd5 == null ? "unknown.onnx" : modelMd5.toLowerCase(Locale.ROOT) + ".onnx";
     }
 
     /** Installed voices, sorted by language then name. Cached until {@link #invalidate()}. */
@@ -221,6 +243,8 @@ final class PiperVoiceStore {
         final File dir = new File(voicesDir(storageContext), key);
         PiperDownloads.deleteRecursively(dir); // model, config and its optimized copy
         final boolean ok = !dir.exists();
+        // A removed voice's shared bytes stay while another voice uses them.
+        PiperDownloads.collectSharedGarbage(storageContext, null);
         // Languages it spoke go back to eSpeak rather than to a missing voice.
         final SharedPreferences.Editor editor = prefs.edit();
         for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {

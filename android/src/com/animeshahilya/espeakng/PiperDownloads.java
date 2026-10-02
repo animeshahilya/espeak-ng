@@ -61,6 +61,15 @@ import java.util.Map;
 final class PiperDownloads {
     private static final String TAG = "PiperDownloads";
 
+    /** Log that also survives JVM unit tests (android.jar stubs throw). */
+    private static void logw(String message, Throwable e) {
+        try {
+            Log.w(TAG, message, e);
+        } catch (RuntimeException stub) {
+            // android.jar stub on the JVM: ignore, the return value carries the outcome.
+        }
+    }
+
     /** Pinned to the repository's main branch: new voices appear without an app update. */
     static final String REPO_BASE = "https://huggingface.co/rhasspy/piper-voices/resolve/main/";
     static final String CATALOG_URL = REPO_BASE + "voices.json";
@@ -386,10 +395,256 @@ final class PiperDownloads {
     }
 
     /**
+     * Hardlink, falling back to a copy when the filesystem forbids links.
+     * Hardlinks keep {@link PiperModel}'s memory-mapped loads working: every
+     * voice directory still holds a real {@code model.onnx} entry, sharing
+     * one inode's bytes. Pure java.nio so JVM unit tests cover it.
+     *
+     * @return true when {@code to} now holds {@code from}'s bytes
+     */
+    static boolean linkOrCopy(File from, File to) {        try {
+            if (to.exists() && !to.delete()) {
+                return false;
+            }
+            if (to.getParentFile() != null) {
+                //noinspection ResultOfMethodCallIgnored
+                to.getParentFile().mkdirs();
+            }
+            try {
+                java.nio.file.Files.createLink(to.toPath(), from.toPath());
+                return true;
+            } catch (UnsupportedOperationException | IOException | SecurityException e) {
+                logw("Hardlink unavailable, copying " + to, e);
+            }
+            try (InputStream in = new FileInputStream(from);
+                 OutputStream out = new FileOutputStream(to)) {
+                final byte[] buf = new byte[1 << 16];
+                int n;
+                while ((n = in.read(buf)) > 0) {
+                    out.write(buf, 0, n);
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            logw("linkOrCopy failed for " + to, e);
+            return false;
+        }
+    }
+
+    /** Shared copy of this catalog entry's model, when present and intact. */
+    static File verifiedSharedModel(Context storageContext, CatalogVoice voice) {
+        if (voice.modelMd5 == null || voice.modelMd5.isEmpty()) {
+            return null;
+        }
+        final File shared = PiperVoiceStore.sharedModelFile(storageContext, voice.modelMd5);
+        try {
+            if (shared.isFile() && shared.length() == voice.modelSize
+                    && voice.modelMd5.equalsIgnoreCase(md5(shared))) {
+                return shared;
+            }
+        } catch (IOException e) {
+            logw("Cannot hash shared model for " + voice.key, e);
+        }
+        return null;
+    }
+
+    /**
+     * Installs a voice whose model bytes are already on disk in the shared
+     * store (a second Rasa voice once the first downloaded). Writes the
+     * fetched config plus a hardlink to the shared model, so no ~62 MB
+     * download happens. Callers must still show the voice as installed.
+     *
+     * @return true when installed from the shared copy (no download needed)
+     */
+    static boolean tryInstallShared(Context appContext, Context storageContext, CatalogVoice voice,
+            byte[] configBytes) {
+        final File shared = verifiedSharedModel(storageContext, voice);
+        if (shared == null) {
+            return false;
+        }
+        try {
+            final File staging = stagingDir(storageContext, voice.key);
+            deleteRecursively(staging);
+            if (!staging.mkdirs()) {
+                return false;
+            }
+            writeAtomically(new File(staging, PiperVoiceStore.CONFIG_FILE), configBytes);
+            writeAtomically(new File(staging, "expected"),
+                    (voice.modelMd5 + "\n" + voice.modelSize).getBytes(StandardCharsets.UTF_8));
+            writeAtomically(new File(staging, SOURCE_FILE),
+                    (voice.modelMd5 + "\n" + md5(configBytes)).getBytes(StandardCharsets.UTF_8));
+            if (!linkOrCopy(shared, new File(staging, PiperVoiceStore.MODEL_FILE))) {
+                deleteRecursively(staging);
+                return false;
+            }
+            final File dest = new File(PiperVoiceStore.voicesDir(storageContext), voice.key);
+            deleteRecursively(dest);
+            //noinspection ResultOfMethodCallIgnored
+            dest.getParentFile().mkdirs();
+            if (!staging.renameTo(dest)) {
+                deleteRecursively(staging);
+                return false;
+            }
+            PiperVoiceStore.invalidate();
+            String assigned = null;
+            final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storageContext, voice.key);
+            if (installed != null) {
+                final String lang = installed.languageKey();
+                final SharedPreferences settings = settingsPrefs(storageContext);
+                if (PiperVoiceStore.assignedKey(settings, lang) == null) {
+                    PiperVoiceStore.assign(settings, lang, voice.key);
+                    assigned = lang;
+                }
+            }
+            broadcastChanged(appContext, voice.key, assigned);
+            new Thread(() -> fetchNpuDecoders(appContext, storageContext), "piper-npu-fetch").start();
+            return true;
+        } catch (IOException | RuntimeException e) {
+            logw("Shared install of " + voice.key + " failed", e);
+            deleteRecursively(stagingDir(storageContext, voice.key));
+            return false;
+        }
+    }
+
+    /**
+     * Replaces duplicate on-disk model copies with hardlinks to one shared
+     * file per MD5, then garbage-collects shared files no voice references.
+     * This migrates existing installs (20 × 62 MB Rasa copies) and keeps
+     * future ones deduplicated. Idempotent; blocking (hashes models).
+     *
+     * @return bytes of duplicate copies replaced by links
+     */
+    static long dedupSharedModels(Context storageContext) {
+        long saved = 0;
+        try {
+            final List<PiperVoiceStore.Installed> installed = PiperVoiceStore.list(storageContext);
+            final java.util.Map<String, List<PiperVoiceStore.Installed>> byMd5 = new java.util.HashMap<>();
+            final java.util.Map<String, String> md5Of = new java.util.HashMap<>();
+            for (PiperVoiceStore.Installed v : installed) {
+                final String[] source = installedSource(v);
+                final String md5 = source != null ? source[0] : null;
+                if (md5 == null || md5.isEmpty() || "null".equals(md5)) {
+                    continue;
+                }
+                md5Of.put(v.key, md5);
+                java.util.List<PiperVoiceStore.Installed> group = byMd5.get(md5.toLowerCase(Locale.ROOT));
+                if (group == null) {
+                    group = new ArrayList<>();
+                    byMd5.put(md5.toLowerCase(Locale.ROOT), group);
+                }
+                group.add(v);
+            }
+            for (Map.Entry<String, List<PiperVoiceStore.Installed>> e : byMd5.entrySet()) {
+                final List<PiperVoiceStore.Installed> group = e.getValue();
+                if (group.size() < 2) {
+                    continue;
+                }
+                File canonical = null;
+                for (PiperVoiceStore.Installed v : group) {
+                    final File m = v.model();
+                    if (m.isFile()) {
+                        canonical = m;
+                        break;
+                    }
+                }
+                if (canonical == null) {
+                    continue;
+                }
+                final File shared = PiperVoiceStore.sharedModelFile(storageContext, e.getKey());
+                if (!shared.isFile()) {
+                    try {
+                        //noinspection ResultOfMethodCallIgnored
+                        shared.getParentFile().mkdirs();
+                        final File tmp = new File(shared.getPath() + ".tmp");
+                        try (InputStream in = new FileInputStream(canonical);
+                             OutputStream out = new FileOutputStream(tmp)) {
+                            final byte[] buf = new byte[1 << 16];
+                            int n;
+                            while ((n = in.read(buf)) > 0) {
+                                out.write(buf, 0, n);
+                            }
+                        }
+                        if (!tmp.renameTo(shared)) {
+                            //noinspection ResultOfMethodCallIgnored
+                            tmp.delete();
+                            continue;
+                        }
+                    } catch (IOException ex) {
+                        logw("Cannot publish shared model", ex);
+                        continue;
+                    }
+                }
+                for (PiperVoiceStore.Installed v : group) {
+                    final File m = v.model();
+                    if (m.isFile() && !sameFile(m, shared)) {
+                        final long duplicateBytes = m.length();
+                        if (linkOrCopy(shared, m)) {
+                            saved += Math.max(0, duplicateBytes);
+                        }
+                    }
+                }
+            }
+            collectSharedGarbage(storageContext, md5Of);
+        } catch (RuntimeException ex) {
+            logw("Shared-model dedup failed", ex);
+        }
+        return saved;
+    }
+
+    /** Same underlying file (hardlink): equal canonical paths. */
+    static boolean sameFile(File a, File b) {
+        try {
+            return a.getCanonicalPath().equals(b.getCanonicalPath());
+        } catch (IOException e) {
+            return a.getAbsolutePath().equals(b.getAbsolutePath());
+        }
+    }
+
+    /** Deletes shared copies no installed voice references anymore. */
+    static void collectSharedGarbage(Context storageContext,
+            Map<String, String> md5OfKey) {
+        final java.util.Set<String> referenced = new java.util.HashSet<>();
+        if (md5OfKey != null) {
+            for (String md5 : md5OfKey.values()) {
+                if (md5 != null && !md5.isEmpty() && !"null".equals(md5)) {
+                    referenced.add(md5.toLowerCase(Locale.ROOT));
+                }
+            }
+        } else {
+            for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+                final String[] source = installedSource(v);
+                if (source != null && source[0] != null && !source[0].isEmpty()
+                        && !"null".equals(source[0])) {
+                    referenced.add(source[0].toLowerCase(Locale.ROOT));
+                }
+            }
+        }
+        final File dir = PiperVoiceStore.sharedDir(storageContext);
+        final File[] files = dir.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File f : files) {
+            final String name = f.getName().toLowerCase(Locale.ROOT);
+            if (name.endsWith(".tmp") || !name.endsWith(".onnx")) {
+                continue;
+            }
+            if (!referenced.contains(name.substring(0, name.length() - 5))) {
+                //noinspection ResultOfMethodCallIgnored
+                f.delete();
+            }
+        }
+    }
+
+    /**
      * Starts downloading a voice. Blocking for the config fetch (a few KB);
      * the model itself downloads in the background.
      *
-     * @return the DownloadManager id
+     * <p>When the model bytes are already on disk in the shared store (a
+     * second Rasa voice once the first downloaded), the voice is installed
+     * at once and {@code -1} is returned instead of a DownloadManager id.
+     *
+     * @return the DownloadManager id, or -1 when installed from shared bytes
      */
     static long start(Context appContext, Context storageContext, CatalogVoice voice)
             throws IOException, JSONException, UnsupportedVoiceException {
@@ -411,6 +666,11 @@ final class PiperDownloads {
                 new String(configBytes, StandardCharsets.UTF_8));
         if (!config.isSupported()) {
             throw new UnsupportedVoiceException(voice.key);
+        }
+
+        // Second voice sharing one file (all Rasa voices): no ~62 MB download.
+        if (tryInstallShared(appContext, storageContext, voice, configBytes)) {
+            return -1;
         }
 
         final File staging = stagingDir(storageContext, voice.key);
@@ -583,6 +843,13 @@ final class PiperDownloads {
             broadcastChanged(appContext, key, assigned);
             // Snapdragon build: its NPU decoder follows (no-op elsewhere).
             new Thread(() -> fetchNpuDecoders(appContext, storageContext), "piper-npu-fetch").start();
+            // Feed the shared store so the next voice with this file skips its
+            // download, and fold any older duplicate copies into links.
+            try {
+                dedupSharedModels(storageContext);
+            } catch (RuntimeException e) {
+                logw("Shared-model dedup after install failed", e);
+            }
             return Result.INSTALLED;
         } catch (IOException | RuntimeException e) {
             // Runtime too: this runs on bare threads, where anything uncaught
@@ -623,6 +890,12 @@ final class PiperDownloads {
                     || p.status == DownloadManager.STATUS_FAILED) {
                 complete(appContext, storageContext, id);
             }
+        }
+        // Migrates pre-fix installs (20 × 62 MB Rasa copies) to shared links.
+        try {
+            dedupSharedModels(storageContext);
+        } catch (RuntimeException e) {
+            logw("Shared-model dedup on reconcile failed", e);
         }
     }
 
@@ -737,9 +1010,13 @@ final class PiperDownloads {
                 continue;
             }
             try {
-                start(appContext, storageContext, entry, true);
-                started.add(v.key);
-                Log.i(TAG, "Update for " + v.key + " started");
+                final long id = start(appContext, storageContext, entry, true);
+                if (id >= 0) {
+                    started.add(v.key);
+                    Log.i(TAG, "Update for " + v.key + " started");
+                } else {
+                    Log.i(TAG, "Update for " + v.key + " installed from shared bytes");
+                }
             } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
                 Log.w(TAG, "Update of " + v.key + " not started", e);
             }

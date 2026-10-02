@@ -586,14 +586,19 @@ final class PiperSettings {
         final Context app = context.getApplicationContext();
         new Thread(() -> {
             int message;
+            boolean installed = false;
             try {
-                PiperDownloads.start(app, storage(context), v);
+                installed = PiperDownloads.start(app, storage(context), v) < 0;
                 message = 0;
             } catch (PiperDownloads.UnsupportedVoiceException e) {
                 message = R.string.piper_download_unsupported;
             } catch (Exception e) {
                 Log.w(TAG, "Download start failed", e);
                 message = R.string.piper_download_start_failed;
+            }
+            if (message == 0 && installed) {
+                toast(app, app.getString(R.string.piper_download_installed, v.displayName()));
+                return;
             }
             toast(app, message == 0
                     ? app.getString(R.string.piper_download_started, v.displayName())
