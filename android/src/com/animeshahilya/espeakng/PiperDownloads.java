@@ -593,9 +593,9 @@ final class PiperDownloads {
             }
             for (Map.Entry<String, List<PiperVoiceStore.Installed>> e : byMd5.entrySet()) {
                 final List<PiperVoiceStore.Installed> group = e.getValue();
-                if (group.size() < 2) {
-                    continue;
-                }
+                // One voice is enough: its model moves into the store, so the
+                // next voice with this file (a second Rasa voice) installs
+                // without downloading 62 MB again.
                 File canonical = null;
                 for (PiperVoiceStore.Installed v : group) {
                     final File m = v.model();
@@ -609,26 +609,37 @@ final class PiperDownloads {
                 }
                 final File shared = PiperVoiceStore.sharedModelFile(storageContext, e.getKey());
                 if (!shared.isFile()) {
-                    try {
-                        //noinspection ResultOfMethodCallIgnored
-                        shared.getParentFile().mkdirs();
-                        final File tmp = new File(shared.getPath() + ".tmp");
-                        try (InputStream in = new FileInputStream(canonical);
-                             OutputStream out = new FileOutputStream(tmp)) {
-                            final byte[] buf = new byte[1 << 16];
-                            int n;
-                            while ((n = in.read(buf)) > 0) {
-                                out.write(buf, 0, n);
-                            }
-                        }
-                        if (!tmp.renameTo(shared)) {
+                    //noinspection ResultOfMethodCallIgnored
+                    shared.getParentFile().mkdirs();
+                    // Moved, not copied: no extra 62 MB, and a model the engine
+                    // has memory-mapped keeps working (same inode).
+                    if (!java.nio.file.Files.isSymbolicLink(canonical.toPath())
+                            && canonical.renameTo(shared)) {
+                        if (!linkOrCopy(shared, canonical)) {
                             //noinspection ResultOfMethodCallIgnored
-                            tmp.delete();
+                            shared.renameTo(canonical); // put the voice back as it was
                             continue;
                         }
-                    } catch (IOException ex) {
-                        logw("Cannot publish shared model", ex);
-                        continue;
+                    } else {
+                        try {
+                            final File tmp = new File(shared.getPath() + ".tmp");
+                            try (InputStream in = new FileInputStream(canonical);
+                                 OutputStream out = new FileOutputStream(tmp)) {
+                                final byte[] buf = new byte[1 << 16];
+                                int n;
+                                while ((n = in.read(buf)) > 0) {
+                                    out.write(buf, 0, n);
+                                }
+                            }
+                            if (!tmp.renameTo(shared)) {
+                                //noinspection ResultOfMethodCallIgnored
+                                tmp.delete();
+                                continue;
+                            }
+                        } catch (IOException ex) {
+                            logw("Cannot publish shared model", ex);
+                            continue;
+                        }
                     }
                 }
                 for (PiperVoiceStore.Installed v : group) {
