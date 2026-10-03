@@ -1503,6 +1503,16 @@ public class TtsSettingsActivity extends AppCompatActivity {
         speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading");
     }
 
+    private static void playTestVoiceSound(final Context context) {
+        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
+        speakPreview(context, context.getString(R.string.test_voice_tuning_sample), "sample_voice_sound");
+    }
+
+    private static void playTestMixedLanguages(final Context context) {
+        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
+        speakPreview(context, context.getString(R.string.test_mixed_languages_sample), "sample_mixed_languages");
+    }
+
     /**
      * Speaks {@code text} in {@code locale} through the preview engine, then
      * restores the engine's previous voice. Used by the language picker's
@@ -1831,6 +1841,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     LanguageSettings.PREF_SUPPORTED_LANGUAGES, KEY_TEST_VOICE,
                     "action_preview_numbers", "action_preview_pauses",
                     "action_preview_punctuation", "action_preview_reading",
+                    "action_preview_voice_sound", "action_preview_mixed_languages",
                     VoiceSettings.PREF_RATE_BOOST_LEVEL,
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                     VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_SPOKEN_DIACRITICS,
@@ -1875,6 +1886,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
             onClick(screen, "action_preview_pauses", () -> playTestPauses(context));
             onClick(screen, "action_preview_punctuation", () -> playTestPunctuation(context));
             onClick(screen, "action_preview_reading", () -> playTestReading(context));
+            onClick(screen, "action_preview_voice_sound", () -> playTestVoiceSound(context));
+            onClick(screen, "action_preview_mixed_languages", () -> playTestMixedLanguages(context));
             onClick(screen, VoiceSettings.PREF_USER_DICTIONARY, () -> UserDictionaryScreen.show(context));
             onClick(screen, "action_recommended_defaults", () -> applyRecommendedDefaults(context));
             onClick(screen, "action_backup", () -> {

@@ -95,4 +95,16 @@ public class NumberReadingTest {
         assertEquals("PIN: 1, 2, 3",
                 TextPreprocessor.formatDigitGrouping("PIN: 123", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
     }
+
+    @Test
+    public void testReadCodesMultilingualPunctuation() {
+        assertEquals("Your OTP is 4 8 2 9 1 3? Done.",
+                NumberReading.readCodes("Your OTP is 482913? Done."));
+        assertEquals("Your OTP is 4 8 2 9 1 3! Done.",
+                NumberReading.readCodes("Your OTP is 482913! Done."));
+        assertEquals("Your OTP is 4 8 2 9 1 3؟ Done.",
+                NumberReading.readCodes("Your OTP is 482913؟ Done."));
+        assertEquals("Your OTP is 4 8 2 9 1 3‽ Done.",
+                NumberReading.readCodes("Your OTP is 482913‽ Done."));
+    }
 }

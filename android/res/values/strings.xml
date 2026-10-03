@@ -204,6 +204,14 @@
   <string name="test_reading_title">Preview reading style</string>
   <string name="test_reading_summary">Hear how text, questions and URLs are read.</string>
   <string name="test_reading_sample">Is this working? Visit https://example.com/test.</string>
+  <string name="category_voice_preview">Voice preview</string>
+  <string name="test_voice_tuning_title">Preview voice tuning</string>
+  <string name="test_voice_tuning_summary">Hear pitch, intonation and sound adjustments.</string>
+  <string name="test_voice_tuning_sample">This is a sample of eSpeak NG pitch, tone, and sound tuning.</string>
+  <string name="category_mixed_languages_preview">Mixed languages preview</string>
+  <string name="test_mixed_languages_title">Preview multilingual reading</string>
+  <string name="test_mixed_languages_summary">Hear how scripts and multilingual switching sound.</string>
+  <string name="test_mixed_languages_sample">Hello, नमस्ते, مرحبا, 你好, and welcome to eSpeak NG.</string>
   <plurals name="digits_count">
     <item quantity="one">%1$d digit</item>
     <item quantity="other">%1$d digits</item>

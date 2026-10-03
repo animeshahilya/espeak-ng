@@ -264,7 +264,8 @@ public final class NumberReading {
 
     private static boolean isSentenceEnd(String text, int i) {
         char c = text.charAt(i);
-        if (c == '\n' || c == '!' || c == '?' || c == '।') return true;
+        if (c == '\n' || c == '!' || c == '?' || c == '।'
+                || c == '？' || c == '！' || c == '؟' || c == '\u037E' || c == '‽') return true;
         // A full stop ends a sentence only when followed by a space or the end.
         return c == '.' && (i + 1 == text.length() || Character.isWhitespace(text.charAt(i + 1)));
     }
@@ -283,7 +284,7 @@ public final class NumberReading {
 
     private static final Pattern NUMBER = Pattern.compile(
             "(?<![\\p{L}\\p{N}.,])(\\d+(?:,\\d+)*)(\\.\\d+)?(?![\\p{L}\\p{N}]|[.,]\\d)");
-    private static final String SENTENCE_ENDS = ".!?।\n";
+    private static final String SENTENCE_ENDS = ".!?।\n？！؟\u037E‽";
     /** Longer numbers (phone numbers, IDs) are read digit by digit. */
     private static final int MAX_WHOLE_DIGITS = 7;
     /** How far to look for the words either side of a number. */

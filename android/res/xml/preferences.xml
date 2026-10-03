@@ -123,6 +123,15 @@
         android:summary="@string/screen_voice_summary"
         android:icon="@drawable/ic_tune">
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:title="@string/category_voice_preview"
+          app:iconSpaceReserved="false">
+        <Preference
+            android:key="action_preview_voice_sound"
+            android:title="@string/test_voice_tuning_title"
+            android:summary="@string/test_voice_tuning_summary"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:title="@string/category_tone"
           app:iconSpaceReserved="false">
         <com.animeshahilya.espeakng.preference.SeekBarPreference
@@ -418,6 +427,15 @@
         android:title="@string/screen_mixed_languages_title"
         android:summary="@string/screen_mixed_languages_summary"
         android:icon="@drawable/ic_language">
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:title="@string/category_mixed_languages_preview"
+          app:iconSpaceReserved="false">
+        <Preference
+            android:key="action_preview_mixed_languages"
+            android:title="@string/test_mixed_languages_title"
+            android:summary="@string/test_mixed_languages_summary"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:key="category_script_languages"
           android:title="@string/category_script_languages"
