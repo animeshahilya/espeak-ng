@@ -192,4 +192,71 @@ public class PiperAudioTest {
         assertArrayEquals(new int[] {0, 70},
                 PiperAudio.alignedWordFrames(starts, durations, 10, 2, 0, cuts, 170, 170));
     }
+
+    private static double toneDb(float[] audio, int from) {
+        double sum = 0;
+        for (int i = from; i < audio.length; i++) {
+            sum += audio[i] * (double) audio[i];
+        }
+        return 10 * Math.log10(sum / (audio.length - from));
+    }
+
+    private static float[] tone(double hz, int rate, int n) {
+        final float[] out = new float[n];
+        for (int i = 0; i < n; i++) {
+            out[i] = (float) (0.3 * Math.sin(2 * Math.PI * hz * i / rate));
+        }
+        return out;
+    }
+
+    /** Hiss band down by the shelf's 8 dB, speech band untouched. */
+    @Test
+    public void trebleCutLowersOnlyTheTreble() {
+        final int rate = 22050;
+        final float[] low = tone(500, rate, rate / 2);
+        final float[] high = tone(10000, rate, rate / 2);
+        assertEquals(toneDb(low, 1000),
+                toneDb(new PiperAudio.TrebleCut(rate).apply(low), 1000), 0.3);
+        assertEquals(toneDb(high, 1000) + PiperAudio.TrebleCut.GAIN_DB,
+                toneDb(new PiperAudio.TrebleCut(rate).apply(high), 1000), 0.6);
+    }
+
+    /** A chunk filtered in two pieces by one filter equals the chunk filtered whole. */
+    @Test
+    public void trebleCutCarriesItsStateAcrossPieces() {
+        final float[] whole = tone(7000, 22050, 4000);
+        final float[] once = new PiperAudio.TrebleCut(22050).apply(whole);
+        final PiperAudio.TrebleCut cut = new PiperAudio.TrebleCut(22050);
+        final float[] a = cut.apply(java.util.Arrays.copyOfRange(whole, 0, 1500));
+        final float[] b = cut.apply(java.util.Arrays.copyOfRange(whole, 1500, 4000));
+        for (int i = 0; i < whole.length; i++) {
+            assertEquals(once[i], i < 1500 ? a[i] : b[i - 1500], 1e-6);
+        }
+    }
+
+    /**
+     * A hissy voice's breathy lead-in (here 250 ms at -26 dB under speech) is
+     * trimmed with quietStart, kept without it, and the cut starts from zero.
+     */
+    @Test
+    public void quietStartTrimsTheNoisyLeadIn() {
+        final int rate = 22050;
+        final float[] audio = new float[rate];
+        final java.util.Random noise = new java.util.Random(1);
+        final int speechAt = 2205 + rate / 4;
+        for (int i = 2205; i < speechAt; i++) {
+            audio[i] = (float) (noise.nextGaussian() * 0.3 * Math.pow(10, -26 / 20.0) / Math.sqrt(2));
+        }
+        for (int i = speechAt; i < rate - 2205; i++) {
+            audio[i] = (float) (0.3 * Math.sin(i * 0.2));
+        }
+        final PiperAudio.Pcm plain = PiperAudio.process(audio, 1f, rate, true, true, 0, 0, false);
+        final PiperAudio.Pcm quiet = PiperAudio.process(audio, 1f, rate, true, true, 0, 0, true);
+        assertTrue(plain.trimmedLead < 2205);
+        final int margin = rate * PiperAudio.QUIET_START_MARGIN_MS / 1000;
+        assertTrue(quiet.trimmedLead >= speechAt - margin - rate / 100);
+        assertTrue(quiet.trimmedLead <= speechAt);
+        assertEquals(0, quiet.samples[0]);
+        assertEquals(0, plain.samples[0]);
+    }
 }

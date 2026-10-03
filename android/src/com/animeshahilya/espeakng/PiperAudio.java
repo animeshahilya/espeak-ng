@@ -36,6 +36,16 @@ final class PiperAudio {
     static final int FRAME_MS = 10;
     /** Kept on each side of trimmed speech so onsets/releases aren't clipped. */
     static final int TRIM_MARGIN_MS = 20;
+    /**
+     * Hissy voices ({@link PiperVoiceConfig#hissy}) breathe ~250 ms of noise
+     * before the first word, 20-30 dB under speech: their start is trimmed
+     * up to here instead, keeping a longer margin.
+     */
+    static final float QUIET_START_BELOW_SPEECH_DB = 18f;
+    static final int QUIET_START_MARGIN_MS = 30;
+    /** Ramps at trimmed ends, so a cut into low noise does not click. */
+    static final int EDGE_FADE_MS = 5;
+    static final int QUIET_START_FADE_MS = 10;
 
     /** A 5 ms ramp, so audio cut mid-signal (a lead-in) starts without a click. */
     static void fadeIn(float[] audio, int sampleRate) {
@@ -44,6 +54,55 @@ final class PiperAudio {
             audio[i] *= (float) i / n;
         }
     }
+    /** A linear ramp over the first (or last) {@code n} samples. */
+    private static void fade(short[] pcm, int n, boolean in) {
+        n = Math.min(n, pcm.length);
+        for (int i = 0; i < n; i++) {
+            final int at = in ? i : pcm.length - 1 - i;
+            pcm[at] = (short) (pcm[at] * i / n);
+        }
+    }
+
+    /**
+     * An 8 dB high-shelf cut above 6 kHz (RBJ biquad) for hissy voices:
+     * measured 2026-10-03 it brings their treble to the clean voices' level
+     * and Whisper reads them no worse. Stateful, so the pieces of one chunk
+     * filter as one signal: one instance per chunk.
+     */
+    static final class TrebleCut {
+        static final double CORNER_HZ = 6000;
+        static final double GAIN_DB = -8;
+        private final double b0, b1, b2, a1, a2;
+        private double x1, x2, y1, y2;
+
+        TrebleCut(int sampleRate) {
+            final double a = Math.pow(10, GAIN_DB / 40);
+            final double w = 2 * Math.PI * Math.min(CORNER_HZ, 0.45 * sampleRate) / sampleRate;
+            final double cos = Math.cos(w);
+            final double s = 2 * Math.sqrt(a) * Math.sin(w) / (2 * Math.sqrt(0.5));
+            final double a0 = (a + 1) - (a - 1) * cos + s;
+            b0 = a * ((a + 1) + (a - 1) * cos + s) / a0;
+            b1 = -2 * a * ((a - 1) + (a + 1) * cos) / a0;
+            b2 = a * ((a + 1) + (a - 1) * cos - s) / a0;
+            a1 = 2 * ((a - 1) - (a + 1) * cos) / a0;
+            a2 = ((a + 1) - (a - 1) * cos - s) / a0;
+        }
+
+        /** The filtered copy; the input (possibly the phrase cache's) stays as it is. */
+        float[] apply(float[] in) {
+            final float[] out = new float[in.length];
+            for (int i = 0; i < in.length; i++) {
+                final double y = b0 * in[i] + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+                x2 = x1;
+                x1 = in[i];
+                y2 = y1;
+                y1 = y;
+                out[i] = (float) y;
+            }
+            return out;
+        }
+    }
+
     /** Above this the soft limiter bends samples down instead of clipping them. */
     static final float LIMITER_KNEE = 0.7f;
 
@@ -129,6 +188,12 @@ final class PiperAudio {
      */
     static Pcm process(float[] audio, float volume, int sampleRate, boolean trimLead,
                        boolean trimTail, int maxPauseMs, double level) {
+        return process(audio, volume, sampleRate, trimLead, trimTail, maxPauseMs, level, false);
+    }
+
+    /** @param quietStart trim a hissy voice's noisy lead-in too (QUIET_START_BELOW_SPEECH_DB) */
+    static Pcm process(float[] audio, float volume, int sampleRate, boolean trimLead,
+                       boolean trimTail, int maxPauseMs, double level, boolean quietStart) {
         if (audio == null || audio.length == 0) {
             return new Pcm(new short[0], 0, 0);
         }
@@ -149,15 +214,24 @@ final class PiperAudio {
             while (trimLead && first < frames && power[first] < silence) {
                 first++;
             }
+            int start = first;
+            if (trimLead && quietStart) {
+                final double voiced = speech * Math.pow(10, -QUIET_START_BELOW_SPEECH_DB / 10);
+                while (start < frames && power[start] < voiced) {
+                    start++;
+                }
+            }
             int last = frames - 1;
             while (trimTail && last > first && power[last] < silence) {
                 last--;
             }
             final int margin = sampleRate * TRIM_MARGIN_MS / 1000;
-            from = trimLead ? Math.max(0, first * frame - margin) : 0;
+            from = !trimLead ? 0 : start > first
+                    ? Math.max(0, start * frame - sampleRate * QUIET_START_MARGIN_MS / 1000)
+                    : Math.max(0, first * frame - margin);
             to = trimTail ? Math.min(audio.length, (last + 1) * frame + margin) : audio.length;
             if (maxPauseMs > 0) {
-                cuts = pauseCuts(power, silence, first, last, frame, sampleRate * maxPauseMs / 1000);
+                cuts = pauseCuts(power, silence, start, last, frame, sampleRate * maxPauseMs / 1000);
             }
         }
 
@@ -176,6 +250,12 @@ final class PiperAudio {
                 continue;
             }
             out[o++] = (short) Math.round(limit(audio[i] * gain) * 32767);
+        }
+        if (from > 0) {
+            fade(out, sampleRate * (quietStart ? QUIET_START_FADE_MS : EDGE_FADE_MS) / 1000, true);
+        }
+        if (to < audio.length) {
+            fade(out, sampleRate * EDGE_FADE_MS / 1000, false);
         }
         return new Pcm(out, from, out.length, cuts);
     }

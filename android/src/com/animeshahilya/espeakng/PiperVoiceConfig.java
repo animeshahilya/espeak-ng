@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +45,17 @@ final class PiperVoiceConfig {
     static String englishName(String family) {
         return family != null ? ENGLISH_NAMES.get(family) : null;
     }
+
+    /**
+     * Voices trained on hissy recordings (measured 2026-10-03: ~10 dB more
+     * treble than the other voices; the two SYSPIN ones also breathe ~250 ms
+     * of noise before each first word). Their treble is cut and that lead-in
+     * trimmed ({@link PiperAudio.TrebleCut}); each judged better by ear.
+     * Their Compact versions share the recordings.
+     */
+    private static final java.util.Set<String> HISSY = new java.util.HashSet<>(Arrays.asList(
+            "gu_IN-hetal-medium", "gu_IN-hetal-compact", "en_IN-priya-medium", "en_IN-priya-compact",
+            "en_US-ljspeech-high", "en_US-ljspeech-compact"));
 
     static final String PAD = "_";
     static final String BOS = "^";
@@ -79,6 +91,8 @@ final class PiperVoiceConfig {
      * 2023 eSpeak NG rather than a current upstream one.
      */
     final boolean oldEspeak;
+    /** Trained on hissy recordings: see {@link #HISSY}. */
+    final boolean hissy;
     /** Today's IPA -> the spelling the voice was trained on (PiperPhonemes.trainedSpellings). */
     final PiperPhonemes.Spelling[] trainedSpellings;
 
@@ -108,6 +122,7 @@ final class PiperVoiceConfig {
         }
         maxClusterLength = max;
         oldEspeak = b.oldEspeak;
+        hissy = HISSY.contains(key);
         trainedSpellings = PiperPhonemes.trainedSpellings(usesEspeak() ? espeakVoice : null,
                 oldEspeak);
     }

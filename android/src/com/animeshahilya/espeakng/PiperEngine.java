@@ -968,7 +968,7 @@ final class PiperEngine {
             final PiperPhraseCache.Entry cached = mCache.get(cacheKey);
             if (cached != null) {
                 final Rendered r = finish(cached.audio, cached.durations, job.wordStarts, 0, words,
-                        true, true, 0);
+                        true, true, 0, trebleCut());
                 timed(true, started);
                 return r;
             }
@@ -990,7 +990,8 @@ final class PiperEngine {
                     PiperAudio.fadeIn(audio, model.config.sampleRate);
                 }
                 mCache.offer(cacheKey, audio, o.durations); // before finish() alters the audio
-                final Rendered r = finish(audio, o.durations, job.wordStarts, 0, words, true, true, 0);
+                final Rendered r = finish(audio, o.durations, job.wordStarts, 0, words, true, true, 0,
+                        trebleCut());
                 timed(false, started);
                 return r;
             }
@@ -1018,7 +1019,8 @@ final class PiperEngine {
                     return null;
                 }
                 mCache.offer(cacheKey, audio, e.durations);
-                final Rendered r = finish(audio, e.durations, job.wordStarts, 0, words, true, true, 0);
+                final Rendered r = finish(audio, e.durations, job.wordStarts, 0, words, true, true, 0,
+                        trebleCut());
                 timed(false, started);
                 return r;
             }
@@ -1032,8 +1034,9 @@ final class PiperEngine {
                 return null;
             }
             final float[] headRaw = head.clone(); // finish() may alter head; the cache needs it as made
+            final PiperAudio.TrebleCut treble = trebleCut(); // one filter across both pieces
             final Rendered first = finish(head, Arrays.copyOfRange(e.durations, 0, splitId),
-                    job.wordStarts.subList(0, cut), 0, cut, true, false, 0);
+                    job.wordStarts.subList(0, cut), 0, cut, true, false, 0, treble);
             timed(false, started);
             final List<Integer> restStarts = new ArrayList<>();
             for (int w = cut; w < words; w++) {
@@ -1050,7 +1053,7 @@ final class PiperEngine {
                 System.arraycopy(tail, 0, whole, headRaw.length, tail.length);
                 mCache.offer(cacheKey, whole, e.durations);
                 return finish(tail, Arrays.copyOfRange(e.durations, splitId, e.durations.length),
-                        restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate));
+                        restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate), treble);
             });
             return first;
         }
@@ -1064,12 +1067,22 @@ final class PiperEngine {
             }
         }
 
-        /** Level, trim, pause cap, stretch and PCM bytes for one piece of audio. */
+        /** The treble cut for a hissy voice ({@link PiperVoiceConfig#hissy}), else null. */
+        private PiperAudio.TrebleCut trebleCut() {
+            return model.config.hissy ? new PiperAudio.TrebleCut(model.config.sampleRate) : null;
+        }
+
+        /** Treble cut, level, trim, pause cap, stretch and PCM bytes for one piece of audio. */
         private Rendered finish(float[] audio, float[] durations, List<Integer> wordStarts,
-                                int wordFrom, int wordTo, boolean lead, boolean tail, double level) {
+                                int wordFrom, int wordTo, boolean lead, boolean tail, double level,
+                                PiperAudio.TrebleCut treble) {
             final int rate = model.config.sampleRate;
+            if (treble != null) {
+                audio = treble.apply(audio);
+            }
             final PiperAudio.Pcm pcm = PiperAudio.process(audio, params.volume, rate,
-                    params.trimSilence && lead, params.trimSilence && tail, maxPauseMs, level);
+                    params.trimSilence && lead, params.trimSilence && tail, maxPauseMs, level,
+                    model.config.hissy);
             short[] samples = pcm.samples;
             if (stretcher != null && samples.length > 0) {
                 final short[] stretched = stretcher.process(samples, rate, residualSpeed, pitch);
