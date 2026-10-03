@@ -311,7 +311,7 @@ final class PiperPhonemes {
      */
     static List<String> tokenize(String ipa, PiperVoiceConfig config) {
         if (!config.usesEspeak()) {
-            return textTokens(ipa, config);
+            return textTokens(englishChunkEnd(ipa, config), config);
         }
         if (config.trainedSpellings.length > 0) {
             ipa = Normalizer.normalize(ipa, Normalizer.Form.NFC);
@@ -424,6 +424,19 @@ final class PiperPhonemes {
             default:
                 return false;
         }
+    }
+
+    private static final java.util.regex.Pattern FINAL_STOP = java.util.regex.Pattern.compile("\\.\\s*$");
+
+    /**
+     * English text voices (SYSPIN Priya, Rahul) add a syllable after a
+     * chunk-final full stop: "missed call on phone." came out "...phoned".
+     * Measured 2026-10-03 (Whisper, short phrases): ending with a comma
+     * instead, Priya 10/24 phrases misheard -> 0/24, Rahul 6/18 -> 3/18. For
+     * the Indic voices the comma was no better, so their full stop stays.
+     */
+    static String englishChunkEnd(String text, PiperVoiceConfig config) {
+        return "en".equals(config.languageFamily) ? FINAL_STOP.matcher(text).replaceFirst(",") : text;
     }
 
     /**

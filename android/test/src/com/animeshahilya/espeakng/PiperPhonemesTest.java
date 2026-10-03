@@ -296,4 +296,26 @@ public class PiperPhonemesTest {
         assertEquals(35, ids[16]); // w
         assertEquals(41, ids[32]); // ð
     }
+
+    private static PiperVoiceConfig textVoice(String key, String family) throws Exception {
+        return PiperVoiceConfig.parse(key, "{\"phoneme_type\": \"text\", \"language\": {\"family\": \""
+                + family + "\"}, \"phoneme_id_map\": {\"_\": [0]}}");
+    }
+
+    /** English text voices end a chunk on a comma (no "phone" -> "phoned"); others keep theirs. */
+    @Test
+    public void englishTextVoicesEndChunksWithAComma() throws Exception {
+        final PiperVoiceConfig priya = textVoice("en_IN-priya-medium", "en");
+        assertEquals("Hello. Missed call on phone,",
+                PiperPhonemes.englishChunkEnd("Hello. Missed call on phone. ", priya));
+        assertEquals("Is it on?", PiperPhonemes.englishChunkEnd("Is it on?", priya));
+        assertEquals("version 2.8", PiperPhonemes.englishChunkEnd("version 2.8", priya));
+        final PiperVoiceConfig hetal = textVoice("gu_IN-hetal-medium", "gu");
+        assertEquals("ફોન. ", PiperPhonemes.englishChunkEnd("ફોન. ", hetal));
+        assertTrue(hetal.hissy);
+        assertTrue(textVoice("gu_IN-hetal-compact", "gu").hissy);
+        assertFalse(textVoice("hi_IN-kavya-medium", "hi").hissy);
+        assertTrue(textVoice("en_US-ljspeech-compact", "en").hissy);
+        assertFalse(textVoice("en_US-ljspeech-medium", "en").hissy);
+    }
 }
