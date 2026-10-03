@@ -155,15 +155,17 @@ public final class NvdaSymbolProcessor {
         final String replacement;
         final int level;
         final int preserve;
+        final int internalGroups;
         /** Group number of this symbol's own group in the master pattern. */
         int group;
 
-        Complex(String regex, String sample, String replacement, int level, int preserve) {
+        Complex(String regex, String sample, String replacement, int level, int preserve, int internalGroups) {
             this.regex = regex;
             this.sample = sample;
             this.replacement = replacement;
             this.level = level;
             this.preserve = preserve;
+            this.internalGroups = internalGroups;
         }
     }
 
@@ -182,6 +184,7 @@ public final class NvdaSymbolProcessor {
 
     private static volatile DataSource sData;
     private static final Map<String, Table> TABLES = new ConcurrentHashMap<String, Table>();
+    private static final Map<String, Table> TABLES_BY_LANG = new ConcurrentHashMap<String, Table>();
     private static final Map<String, Source> SOURCES = new ConcurrentHashMap<String, Source>();
     private static final Source MISSING = new Source();
 
@@ -705,6 +708,7 @@ public final class NvdaSymbolProcessor {
     public static void setDataSource(DataSource data) {
         sData = data;
         TABLES.clear();
+        TABLES_BY_LANG.clear();
         SOURCES.clear();
     }
 
@@ -749,7 +753,7 @@ public final class NvdaSymbolProcessor {
         if (languageTag == null || languageTag.isEmpty()) {
             return out;
         }
-        final String full = languageTag.toLowerCase(Locale.ROOT).replace('-', '_');
+        final String full = AsciiUtils.normalizeLocaleTag(languageTag);
         final int sep = full.indexOf('_');
         final String base = sep > 0 ? full.substring(0, sep) : full;
         if (EN.equals(base)) {
@@ -767,6 +771,11 @@ public final class NvdaSymbolProcessor {
 
     /** The merged table for a voice language (English for null/unknown). */
     static Table forLanguage(String languageTag) {
+        final String tagKey = languageTag != null ? languageTag : "";
+        Table cached = TABLES_BY_LANG.get(tagKey);
+        if (cached != null) {
+            return cached;
+        }
         final String locale = locale(languageTag);
         Table table = TABLES.get(locale);
         if (table == null) {
@@ -781,6 +790,7 @@ public final class NvdaSymbolProcessor {
             table = new Table(sources);
             TABLES.put(locale, table);
         }
+        TABLES_BY_LANG.put(tagKey, table);
         return table;
     }
 
@@ -806,11 +816,16 @@ public final class NvdaSymbolProcessor {
     /** One language's merged symbols, NVDA's SpeechSymbolProcessor. */
     static final class Table {
         private final Map<String, Symbol> simple = new HashMap<String, Symbol>();
+        private final Symbol[] asciiSimple = new Symbol[128];
         private final List<Complex> complex = new ArrayList<Complex>();
         /** Complex symbols dropped because Java/ICU could not compile them. */
         final List<String> skipped = new ArrayList<String>();
         private final Pattern masterCollapse;
         private final Pattern masterNoCollapse;
+        private final int rstripGroup;
+        private final int repeatedGroup;
+        private final int simpleGroupCollapse;
+        private final int simpleGroupNoCollapse;
         /**
          * Repeat runs only, for the condensing entry point. Whitespace is
          * excluded; emoji never matches (no emoji in the table) and is
@@ -878,12 +893,17 @@ public final class NvdaSymbolProcessor {
                 final String regex = patterns.get(id);
                 if (regex != null) {
                     final String sample = samples.containsKey(id) ? samples.get(id) : sampleOf(id);
-                    complex.add(new Complex(regex, sample, replacement, level, preserve));
+                    complex.add(new Complex(regex, sample, replacement, level, preserve, 0));
                     continue;
                 }
-                simple.put(id, new Symbol(id, replacement, level, preserve));
+                Symbol sym = new Symbol(id, replacement, level, preserve);
+                simple.put(id, sym);
                 if (id.length() == 1) {
                     singles.add(id);
+                    char ch = id.charAt(0);
+                    if (ch < 128) {
+                        asciiSimple[ch] = sym;
+                    }
                 } else {
                     multi.add(id);
                 }
@@ -892,7 +912,9 @@ public final class NvdaSymbolProcessor {
             // dropped on its own rather than losing the whole language.
             for (int i = complex.size() - 1; i >= 0; i--) {
                 try {
-                    Pattern.compile(complex.get(i).regex);
+                    Pattern p = Pattern.compile(complex.get(i).regex);
+                    Complex old = complex.get(i);
+                    complex.set(i, new Complex(old.regex, old.sample, old.replacement, old.level, old.preserve, p.matcher("").groupCount()));
                 } catch (RuntimeException e) {
                     skipped.add(complex.get(i).regex);
                     complex.remove(i);
@@ -940,6 +962,18 @@ public final class NvdaSymbolProcessor {
             }
             repeats.append(")\\k<run>{3,}");
             final String singleClass = singles.isEmpty() ? "(?!)" : cls.toString();
+
+            int grp = 1;
+            for (int i = 0; i < complex.size(); i++) {
+                final Complex c = complex.get(i);
+                c.group = grp;
+                grp += 1 + c.internalGroups;
+            }
+            rstripGroup = grp;
+            repeatedGroup = grp + 1;
+            simpleGroupCollapse = grp + 3;
+            simpleGroupNoCollapse = grp + 1;
+
             masterCollapse = Pattern.compile(master(true, singleClass, alternation.toString()));
             masterNoCollapse = Pattern.compile(master(false, singleClass, alternation.toString()));
             repeatsOnly = Pattern.compile(firstRepeat ? "(?!)" : repeats.toString());
@@ -953,7 +987,6 @@ public final class NvdaSymbolProcessor {
 
         private String master(boolean collapseRepeats, String singleClass, String alternation) {
             final StringBuilder rx = new StringBuilder();
-            int group = 1;
             for (int i = 0; i < complex.size(); i++) {
                 final Complex c = complex.get(i);
                 if (i > 0) {
@@ -961,8 +994,6 @@ public final class NvdaSymbolProcessor {
                 }
                 // Group names must be valid Java identifiers: c0, c1, ...
                 rx.append("(?<c").append(i).append('>').append(c.regex).append(')');
-                c.group = group;
-                group += 1 + Pattern.compile(c.regex).matcher("").groupCount();
             }
             rx.append(complex.isEmpty() ? "" : "|").append("(?<rstrip>  +$)");
             if (collapseRepeats) {
@@ -977,7 +1008,16 @@ public final class NvdaSymbolProcessor {
         }
 
         boolean isAnnounced(String symbol, int userLevel, String customChars) {
-            final Symbol s = simple.get(symbol);
+            Symbol s = null;
+            if (symbol.length() == 1) {
+                char ch = symbol.charAt(0);
+                if (ch < 128) {
+                    s = asciiSimple[ch];
+                }
+            }
+            if (s == null) {
+                s = simple.get(symbol);
+            }
             if (s == null || s.replacement == null || s.replacement.isEmpty()) {
                 return false;
             }
@@ -1006,14 +1046,36 @@ public final class NvdaSymbolProcessor {
 
         private String replaceMatch(Matcher m, int userLevel, boolean collapseRepeats,
                 Set<Integer> custom) {
-            if (m.group("rstrip") != null) {
+            final int simpleGroup = collapseRepeats ? simpleGroupCollapse : simpleGroupNoCollapse;
+            if (m.start(simpleGroup) >= 0) {
+                final String text = m.group(simpleGroup);
+                Symbol symbol = null;
+                if (text.length() == 1) {
+                    char ch = text.charAt(0);
+                    if (ch < 128) {
+                        symbol = asciiSimple[ch];
+                    }
+                }
+                if (symbol == null) {
+                    symbol = simple.get(text);
+                }
+                return symbolOutput(text, text, symbol.replacement, symbol.level, symbol.preserve,
+                        userLevel, custom);
+            }
+
+            if (m.start(rstripGroup) >= 0) {
                 return "";
             }
-            if (collapseRepeats && m.group("repeated") != null) {
-                final String run = m.group("repeated");
-                final Symbol symbol = simple.get(String.valueOf(run.charAt(0)));
+
+            if (collapseRepeats && m.start(repeatedGroup) >= 0) {
+                final String run = m.group(repeatedGroup);
+                char rc = run.charAt(0);
+                Symbol symbol = (rc < 128) ? asciiSimple[rc] : null;
+                if (symbol == null) {
+                    symbol = simple.get(String.valueOf(rc));
+                }
                 final int effective = custom == null ? symbol.level
-                        : (matchesCustom(String.valueOf(run.charAt(0)), custom) ? LEVEL_ALWAYS
+                        : (matchesCustom(String.valueOf(rc), custom) ? LEVEL_ALWAYS
                                 : LEVEL_NEVER);
                 if (userLevel >= effective) {
                     return "  " + run.length() + " " + symbol.replacement + " ";
@@ -1023,17 +1085,16 @@ public final class NvdaSymbolProcessor {
                 }
                 return " ";
             }
+
             for (int i = 0; i < complex.size(); i++) {
-                if (m.group("c" + i) != null) {
-                    final Complex c = complex.get(i);
+                final Complex c = complex.get(i);
+                if (m.start(c.group) >= 0) {
                     return symbolOutput(m.group(), c.sample, replaceGroups(m, c),
                             c.level, c.preserve, userLevel, custom);
                 }
             }
-            final String text = m.group("simple");
-            final Symbol symbol = simple.get(text);
-            return symbolOutput(text, text, symbol.replacement, symbol.level, symbol.preserve,
-                    userLevel, custom);
+
+            return m.group();
         }
 
         /** NVDA's _replaceGroups: \1..\9 are the symbol's own groups, \\ a backslash. */
@@ -1073,7 +1134,11 @@ public final class NvdaSymbolProcessor {
                 // Whole match, not group("run"): the group only holds the first
                 // character, the backreference holds the rest.
                 final String run = m.group();
-                final Symbol symbol = simple.get(String.valueOf(run.charAt(0)));
+                char rc = run.charAt(0);
+                Symbol symbol = (rc < 128) ? asciiSimple[rc] : null;
+                if (symbol == null) {
+                    symbol = simple.get(String.valueOf(rc));
+                }
                 m.appendReplacement(sb, Matcher.quoteReplacement(
                         "  " + run.length() + " " + symbol.replacement + " "));
             } while (m.find());
@@ -1089,7 +1154,16 @@ public final class NvdaSymbolProcessor {
             if (trimmed.isEmpty() || trimmed.codePointCount(0, trimmed.length()) != 1) {
                 return text;
             }
-            final Symbol symbol = simple.get(trimmed);
+            Symbol symbol = null;
+            if (trimmed.length() == 1) {
+                char ch = trimmed.charAt(0);
+                if (ch < 128) {
+                    symbol = asciiSimple[ch];
+                }
+            }
+            if (symbol == null) {
+                symbol = simple.get(trimmed);
+            }
             if (symbol == null || symbol.replacement == null || symbol.replacement.isEmpty()) {
                 return text;
             }

@@ -57,5 +57,10 @@
     <color name="error_container">#FCDCDC</color>
     <color name="error_on_container">#410002</color>
 
-    <!-- Scrim and shadow colors -->
+    <!-- iOS Inset Grouped Settings Styling -->
+    <color name="ios_grouped_background">#F2F2F7</color>
+    <color name="ios_card_background">#FFFFFF</color>
+    <color name="ios_divider">#1E000000</color>
+    <color name="ios_chevron">#8E8E93</color>
+    <color name="ios_ripple">#1A000000</color>
 </resources>

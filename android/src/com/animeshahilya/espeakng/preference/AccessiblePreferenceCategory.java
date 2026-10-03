@@ -40,12 +40,22 @@ public class AccessiblePreferenceCategory extends PreferenceCategory {
     @Override
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
+        View itemView = holder.itemView;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            View itemView = holder.itemView;
             itemView.setAccessibilityHeading(true);
             View titleView = itemView.findViewById(android.R.id.title);
             if (titleView != null) {
                 titleView.setAccessibilityHeading(true);
+            }
+        }
+        View summaryView = itemView.findViewById(android.R.id.summary);
+        if (summaryView instanceof android.widget.TextView) {
+            CharSequence summary = getSummary();
+            if (summary != null && summary.length() > 0) {
+                ((android.widget.TextView) summaryView).setText(summary);
+                summaryView.setVisibility(View.VISIBLE);
+            } else {
+                summaryView.setVisibility(View.GONE);
             }
         }
     }

@@ -183,7 +183,19 @@ public final class UnicodeNormalization {
     }
 
     private static boolean hasSupplementaryMappings(String text) {
-        for (int i = 0; i < text.length(); ) {
+        boolean hasSurrogates = false;
+        final int len = text.length();
+        for (int i = 0; i < len; i++) {
+            final char c = text.charAt(i);
+            if (c >= 0xD800 && c <= 0xDBFF) {
+                hasSurrogates = true;
+                break;
+            }
+        }
+        if (!hasSurrogates) {
+            return false;
+        }
+        for (int i = 0; i < len; ) {
             final int codePoint = text.codePointAt(i);
             if (mapSupplementaryCodePoint(codePoint) != codePoint) {
                 return true;

@@ -61,40 +61,53 @@ public final class Abbreviations {
                     + "|(?<![\\p{L}])(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\\.?(?= \\d)");
     private static final Pattern NUMBER = Pattern.compile("(?<![\\p{L}])([Nn])o\\. ?(?=\\d)");
 
+    private static final java.util.Map<String, String> WORD_MAP = new java.util.HashMap<>(32);
+    private static final java.util.Map<String, String[]> UNIT_MAP = new java.util.HashMap<>(32);
+    private static final java.util.Map<String, String> MONTH_MAP = new java.util.HashMap<>(16);
+    static {
+        for (String[] w : WORDS) {
+            WORD_MAP.put(w[0], w[1]);
+        }
+        for (String[] u : UNITS) {
+            UNIT_MAP.put(u[0], new String[] {u[1], u[2]});
+        }
+        for (String[] m : MONTHS) {
+            MONTH_MAP.put(m[0], m[1]);
+        }
+    }
+
     public static String process(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null || text.isEmpty() || !AsciiUtils.hasAsciiLetter(text)) {
             return text;
         }
         text = replace(WORD, text, m -> {
-            String full = lookup(WORDS, m.group(1));
+            String full = WORD_MAP.get(m.group(1));
+            if (full == null) full = m.group(1);
             return full + (m.group(2) != null && endsClause(m) ? "." : "");
         });
-        text = replace(UNIT, text, m -> {
-            for (String[] u : UNITS) {
-                if (u[0].equals(m.group(2))) {
-                    boolean one = m.group(1).equals("1");
-                    return m.group(1) + " " + (one ? u[1] : u[2]);
+        if (AsciiUtils.hasDigit(text)) {
+            text = replace(UNIT, text, m -> {
+                String[] u = UNIT_MAP.get(m.group(2));
+                if (u != null) {
+                    boolean one = "1".equals(m.group(1));
+                    return m.group(1) + " " + (one ? u[0] : u[1]);
                 }
+                return m.group();
+            });
+            text = replace(MONTH, text, m -> {
+                String full = MONTH_MAP.get(m.group(1) != null ? m.group(1) : m.group(2));
+                return full != null ? full : (m.group(1) != null ? m.group(1) : m.group(2));
+            });
+            if (text.indexOf("o.") != -1 || text.indexOf("O.") != -1) {
+                text = replace(NUMBER, text, m -> "N".equals(m.group(1)) ? "Number " : "number ");
             }
-            return m.group();
-        });
-        text = replace(MONTH, text, m -> lookup(MONTHS, m.group(1) != null ? m.group(1) : m.group(2)));
-        text = replace(NUMBER, text, m -> m.group(1).equals("N") ? "Number " : "number ");
+        }
         return text;
     }
 
     /** A dot at the very end stays, as the pause that ends the text. */
     private static boolean endsClause(Matcher m) {
         return m.end() >= m.regionEnd();
-    }
-
-    private static String lookup(String[][] table, String key) {
-        for (String[] e : table) {
-            if (e[0].equals(key)) {
-                return e[1];
-            }
-        }
-        return key;
     }
 
     private interface Rewrite {

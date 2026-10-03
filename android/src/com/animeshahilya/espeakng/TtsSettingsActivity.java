@@ -721,6 +721,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
          * pages) one level below the current one, so Back returns here.
          */
         void pushScreen(PreferenceScreen screen) {
+            decoratePreferenceScreens(screen);
             final PreferenceScreen current = getPreferenceScreen();
             if (current != null) {
                 mScreenStack.push(current);
@@ -1070,13 +1071,16 @@ public class TtsSettingsActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
+            setDivider(null);
             // AndroidX hosts the list in a RecyclerView, not a ListView.
             final View listView = view.findViewById(androidx.preference.R.id.recycler_view);
-            // androidx.preference's preference_recyclerview.xml hardcodes
-            // clipToPadding="false", which lets rows scroll through the
-            // transparent status bar. Top/bottom padding marks the opaque
-            // system/action bars, so content must stop at those edges.
-            if (listView instanceof ViewGroup) {
+            if (listView instanceof androidx.recyclerview.widget.RecyclerView) {
+                androidx.recyclerview.widget.RecyclerView rv = (androidx.recyclerview.widget.RecyclerView) listView;
+                rv.setClipToPadding(true);
+                rv.setBackgroundColor(androidx.core.content.ContextCompat.getColor(
+                        requireContext(), R.color.ios_grouped_background));
+                rv.addItemDecoration(new com.animeshahilya.espeakng.preference.InsetGroupedItemDecoration(requireContext()));
+            } else if (listView instanceof ViewGroup) {
                 ((ViewGroup) listView).setClipToPadding(true);
             }
             final Context context = getActivity();
@@ -1719,6 +1723,22 @@ public class TtsSettingsActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Recursively attaches iOS-style disclosure chevrons to PreferenceScreen sub-pages.
+     */
+    public static void decoratePreferenceScreens(androidx.preference.PreferenceGroup group) {
+        if (group == null) return;
+        for (int i = 0, n = group.getPreferenceCount(); i < n; i++) {
+            Preference p = group.getPreference(i);
+            if (p instanceof PreferenceScreen) {
+                p.setWidgetLayoutResource(R.layout.preference_widget_chevron);
+                decoratePreferenceScreens((androidx.preference.PreferenceGroup) p);
+            } else if (p instanceof androidx.preference.PreferenceGroup) {
+                decoratePreferenceScreens((androidx.preference.PreferenceGroup) p);
+            }
+        }
+    }
+
     /** Keys of the action rows in res/xml/preferences.xml (no stored value). */
     private static final String KEY_TEST_VOICE = "action_test_voice";
 
@@ -1762,6 +1782,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         seed.commit();
 
         final PreferenceScreen screen = pm.inflateFromResource(context, R.xml.preferences, null);
+        decoratePreferenceScreens(screen);
         configureScriptLanguages(context, screen, voices);
 
         if (isWatch) {

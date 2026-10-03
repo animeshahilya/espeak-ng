@@ -63,7 +63,29 @@ typedef struct {
   size_t len;
   size_t cap;
   int failed;
+  int is_allocated;
 } buf_t;
+
+static void buf_init_stack(buf_t *b, char *stack_buf, size_t stack_cap)
+{
+  b->data = stack_buf;
+  b->len = 0;
+  b->cap = stack_cap;
+  b->failed = 0;
+  b->is_allocated = 0;
+  if (stack_cap > 0) b->data[0] = '\0';
+}
+
+static void buf_free(buf_t *b)
+{
+  if (b->is_allocated && b->data) {
+    free(b->data);
+  }
+  b->data = NULL;
+  b->len = 0;
+  b->cap = 0;
+  b->is_allocated = 0;
+}
 
 static void buf_append(buf_t *b, const char *s, size_t n)
 {
@@ -71,7 +93,16 @@ static void buf_append(buf_t *b, const char *s, size_t n)
   if (b->len + n + 1 > b->cap) {
     size_t cap = b->cap ? b->cap : 256;
     while (b->len + n + 1 > cap) cap *= 2;
-    char *p = (char *)realloc(b->data, cap);
+    char *p;
+    if (b->is_allocated) {
+      p = (char *)realloc(b->data, cap);
+    } else {
+      p = (char *)malloc(cap);
+      if (p && b->len > 0) {
+        memcpy(p, b->data, b->len + 1);
+      }
+      b->is_allocated = 1;
+    }
     if (p == NULL) {
       b->failed = 1;
       return;
@@ -144,6 +175,7 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
   option_phoneme_input = allow_phoneme_input ? 1 : 0;
 
   buf_t out = {0};
+  out.is_allocated = 1;
   buf_append(&out, "", 0);
   const size_t text_len = strlen(text_utf8);
   const void *cursor = text_utf8;
@@ -172,7 +204,9 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
 
     if (ph == NULL) break;
 
-    buf_t clause = {0};
+    char clause_stack[512];
+    buf_t clause;
+    buf_init_stack(&clause, clause_stack, sizeof(clause_stack));
     append_without_language_flags(&clause, ph);
 
     const int punct = terminator & PIPER_TERMINATOR_MASK;
@@ -198,7 +232,7 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
     }
 
     if (clause.failed) {
-      free(clause.data);
+      buf_free(&clause);
       out.failed = 1;
       break;
     }
@@ -212,12 +246,12 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
       buf_append(&out, clause.data, clause.len);
       buf_char(&out, PIPER_RECORD_SEP);
     }
-    free(clause.data);
+    buf_free(&clause);
   }
 
   option_phoneme_input = saved_phoneme_input;
   if (out.failed) {
-    free(out.data);
+    buf_free(&out);
     return NULL;
   }
   return out.data;

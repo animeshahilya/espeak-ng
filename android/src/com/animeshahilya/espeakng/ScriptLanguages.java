@@ -84,7 +84,7 @@ public final class ScriptLanguages {
         Map<String, String> chosen = null;
         for (Script script : SCRIPTS) {
             final String voice = prefs.getString(script.prefKey(), "");
-            if (!voice.isEmpty() && Arrays.asList(script.choices).contains(voice)) {
+            if (!voice.isEmpty() && isChoice(script.choices, voice)) {
                 if (chosen == null) {
                     chosen = new TreeMap<>();
                 }
@@ -93,6 +93,18 @@ public final class ScriptLanguages {
         }
         return chosen != null ? chosen : Collections.emptyMap();
     }
+
+    private static boolean isChoice(String[] choices, String voice) {
+        for (String c : choices) {
+            if (c.equals(voice)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static volatile Map<String, String> sLastChosen = null;
+    private static volatile Map<UnicodeScript, String> sLastRunLanguages = Collections.emptyMap();
 
     /**
      * The chosen language of each Unicode script, from {@link #chosen}, as
@@ -103,19 +115,23 @@ public final class ScriptLanguages {
         if (chosen.isEmpty()) {
             return Collections.emptyMap();
         }
+        if (chosen.equals(sLastChosen)) {
+            return sLastRunLanguages;
+        }
         final Map<UnicodeScript, String> out = new EnumMap<>(UnicodeScript.class);
         for (Script script : SCRIPTS) {
             final String voice = chosen.get(script.key);
             if (voice != null) {
-                // Piper spells Chinese "zh" where eSpeak's voice is "cmn".
-                final String language = PiperVoiceStore.languageKey(
-                        "cmn".equals(voice) ? "zh" : voice.split("-")[0]);
+                final String language = PiperVoiceStore.languageKey(AsciiUtils.baseLanguage(voice));
                 for (UnicodeScript s : script.scripts) {
                     out.put(s, language);
                 }
             }
         }
-        return out;
+        Map<UnicodeScript, String> unmodifiable = Collections.unmodifiableMap(out);
+        sLastChosen = chosen;
+        sLastRunLanguages = unmodifiable;
+        return unmodifiable;
     }
 
     static boolean naturalSwitching(SharedPreferences prefs) {

@@ -76,35 +76,67 @@ final class LanguageRuns {
         SCRIPT_LANGUAGE.put(UnicodeScript.ARMENIAN, "hye");
         SCRIPT_LANGUAGE.put(UnicodeScript.GEORGIAN, "kat");
 
-        for (String lang : new String[] {"hin", "mar", "nep", "san", "kok", "mai", "bho", "sat",
+        for (String lang : new String[] {"hin", "hi", "mar", "mr", "nep", "ne", "san", "sa", "kok", "mai", "bho", "sat",
                 "hne", "mag", "brx", "doi"}) {
             LANGUAGE_SCRIPT.put(lang, UnicodeScript.DEVANAGARI);
         }
         LANGUAGE_SCRIPT.put("ben", UnicodeScript.BENGALI);
+        LANGUAGE_SCRIPT.put("bn", UnicodeScript.BENGALI);
         LANGUAGE_SCRIPT.put("asm", UnicodeScript.BENGALI);
+        LANGUAGE_SCRIPT.put("as", UnicodeScript.BENGALI);
         LANGUAGE_SCRIPT.put("tam", UnicodeScript.TAMIL);
+        LANGUAGE_SCRIPT.put("ta", UnicodeScript.TAMIL);
         LANGUAGE_SCRIPT.put("tel", UnicodeScript.TELUGU);
+        LANGUAGE_SCRIPT.put("te", UnicodeScript.TELUGU);
         LANGUAGE_SCRIPT.put("mal", UnicodeScript.MALAYALAM);
+        LANGUAGE_SCRIPT.put("ml", UnicodeScript.MALAYALAM);
         LANGUAGE_SCRIPT.put("kan", UnicodeScript.KANNADA);
+        LANGUAGE_SCRIPT.put("kn", UnicodeScript.KANNADA);
         LANGUAGE_SCRIPT.put("guj", UnicodeScript.GUJARATI);
+        LANGUAGE_SCRIPT.put("gu", UnicodeScript.GUJARATI);
         LANGUAGE_SCRIPT.put("pan", UnicodeScript.GURMUKHI);
+        LANGUAGE_SCRIPT.put("pa", UnicodeScript.GURMUKHI);
         LANGUAGE_SCRIPT.put("ori", UnicodeScript.ORIYA);
+        LANGUAGE_SCRIPT.put("or", UnicodeScript.ORIYA);
         LANGUAGE_SCRIPT.put("sin", UnicodeScript.SINHALA);
-        for (String lang : new String[] {"ara", "urd", "fas", "pus", "snd", "uig", "kur"}) {
+        LANGUAGE_SCRIPT.put("si", UnicodeScript.SINHALA);
+        for (String lang : new String[] {"ara", "ar", "urd", "ur", "fas", "fa", "pus", "ps", "snd", "sd", "uig", "ug", "kur", "ku", "ckb", "kas"}) {
             LANGUAGE_SCRIPT.put(lang, UnicodeScript.ARABIC);
         }
-        for (String lang : new String[] {"rus", "ukr", "bul", "srp", "mkd", "bel", "kaz", "kir", "tat", "bak", "chv", "mon"}) {
+        for (String lang : new String[] {"rus", "ru", "ukr", "uk", "bul", "bg", "srp", "sr", "mkd", "mk", "bel", "be", "kaz", "kk", "kir", "ky", "tat", "tt", "bak", "ba", "chv", "cv", "mon", "mn"}) {
             LANGUAGE_SCRIPT.put(lang, UnicodeScript.CYRILLIC);
         }
         LANGUAGE_SCRIPT.put("ell", UnicodeScript.GREEK);
+        LANGUAGE_SCRIPT.put("el", UnicodeScript.GREEK);
         LANGUAGE_SCRIPT.put("heb", UnicodeScript.HEBREW);
+        LANGUAGE_SCRIPT.put("he", UnicodeScript.HEBREW);
         LANGUAGE_SCRIPT.put("tha", UnicodeScript.THAI);
+        LANGUAGE_SCRIPT.put("th", UnicodeScript.THAI);
         LANGUAGE_SCRIPT.put("zho", UnicodeScript.HAN);
+        LANGUAGE_SCRIPT.put("zh", UnicodeScript.HAN);
         LANGUAGE_SCRIPT.put("yue", UnicodeScript.HAN);
         LANGUAGE_SCRIPT.put("jpn", UnicodeScript.HAN);
+        LANGUAGE_SCRIPT.put("ja", UnicodeScript.HAN);
         LANGUAGE_SCRIPT.put("kor", UnicodeScript.HANGUL);
+        LANGUAGE_SCRIPT.put("ko", UnicodeScript.HANGUL);
         LANGUAGE_SCRIPT.put("hye", UnicodeScript.ARMENIAN);
+        LANGUAGE_SCRIPT.put("hy", UnicodeScript.ARMENIAN);
         LANGUAGE_SCRIPT.put("kat", UnicodeScript.GEORGIAN);
+        LANGUAGE_SCRIPT.put("ka", UnicodeScript.GEORGIAN);
+        LANGUAGE_SCRIPT.put("amh", UnicodeScript.ETHIOPIC);
+        LANGUAGE_SCRIPT.put("am", UnicodeScript.ETHIOPIC);
+        LANGUAGE_SCRIPT.put("tir", UnicodeScript.ETHIOPIC);
+        LANGUAGE_SCRIPT.put("ti", UnicodeScript.ETHIOPIC);
+        LANGUAGE_SCRIPT.put("bod", UnicodeScript.TIBETAN);
+        LANGUAGE_SCRIPT.put("bo", UnicodeScript.TIBETAN);
+        LANGUAGE_SCRIPT.put("mya", UnicodeScript.MYANMAR);
+        LANGUAGE_SCRIPT.put("my", UnicodeScript.MYANMAR);
+        LANGUAGE_SCRIPT.put("khm", UnicodeScript.KHMER);
+        LANGUAGE_SCRIPT.put("km", UnicodeScript.KHMER);
+        LANGUAGE_SCRIPT.put("lao", UnicodeScript.LAO);
+        LANGUAGE_SCRIPT.put("lo", UnicodeScript.LAO);
+        LANGUAGE_SCRIPT.put("div", UnicodeScript.THAANA);
+        LANGUAGE_SCRIPT.put("dv", UnicodeScript.THAANA);
     }
 
     /**
@@ -125,31 +157,139 @@ final class LanguageRuns {
 
     /** Japanese mixes kana with Han; Chinese is Han alone. */
     private static boolean belongsTo(UnicodeScript script, String language) {
-        if ("jpn".equals(language)) {
+        if ("jpn".equals(language) || "ja".equals(language)) {
             return script == UnicodeScript.HAN || script == UnicodeScript.HIRAGANA
                     || script == UnicodeScript.KATAKANA;
         }
         return script == scriptOf(language);
     }
 
-    /** "(", "[", "“", or a straight quote (callers check it starts a word). */
+    /** "(", "[", "“", "¡", "¿", "«", "‹", or a straight quote (callers check it starts a word). */
     private static boolean isOpening(int c) {
+        if (c == '"' || c == '\'' || c == '¡' || c == '¿' || c == '«' || c == '‹') {
+            return true;
+        }
         final int type = Character.getType(c);
-        return type == Character.START_PUNCTUATION || type == Character.INITIAL_QUOTE_PUNCTUATION
-                || c == '"' || c == '\'';
+        return type == Character.START_PUNCTUATION || type == Character.INITIAL_QUOTE_PUNCTUATION;
     }
 
-    /** The language a letter in {@code script} is read in, speaking {@code language}. */
-    private static String languageFor(UnicodeScript script, String language,
-                                      Map<UnicodeScript, String> chosen) {
-        if (belongsTo(script, language)) {
-            return language;
+    @FunctionalInterface
+    private interface LanguageResolver {
+        String resolve(int codePoint);
+    }
+
+    /**
+     * Resolves the language for code points in a text string.
+     * Precomputes invariant lookups and uses an ASCII fast-path and
+     * single-element cluster cache for maximum throughput and zero GC allocations.
+     */
+    private static final class FastLanguageResolver implements LanguageResolver {
+        private final String ownLanguage;
+        private final UnicodeScript ownScript;
+        private final boolean isJpn;
+        private final Map<UnicodeScript, String> chosen;
+        private final String numbers;
+        private final String latinLanguage;
+
+        private UnicodeScript lastScript = null;
+        private String lastLanguage = null;
+
+        FastLanguageResolver(String language, Map<UnicodeScript, String> chosen, String numbers) {
+            this.ownLanguage = language;
+            this.ownScript = scriptOf(language);
+            this.isJpn = "jpn".equals(language) || "ja".equals(language);
+            this.chosen = (chosen != null && !chosen.isEmpty()) ? chosen : null;
+            this.numbers = numbers;
+            this.latinLanguage = resolveScript(UnicodeScript.LATIN);
         }
-        String other = chosen.get(script);
-        if (other == null) {
-            other = SCRIPT_LANGUAGE.get(script);
+
+        @Override
+        public String resolve(int c) {
+            // Fast path for ASCII (c < 128) - covers >90% of characters in common text
+            if (c < 128) {
+                if (AsciiUtils.isAsciiLetter((char) c)) {
+                    return latinLanguage;
+                }
+                if (AsciiUtils.isAsciiDigit((char) c)) {
+                    return numbers;
+                }
+                // ASCII spaces, control characters, punctuation
+                return null;
+            }
+
+            // Non-ASCII digits
+            if (numbers != null && Character.isDigit(c)) {
+                return numbers;
+            }
+
+            final UnicodeScript script = UnicodeScript.of(c);
+            if (script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
+                    || script == UnicodeScript.UNKNOWN) {
+                return null;
+            }
+
+            // Cache check: contiguous characters of the same script reuse the resolution
+            if (script == lastScript) {
+                return lastLanguage;
+            }
+
+            final String lang = resolveScript(script);
+            lastScript = script;
+            lastLanguage = lang;
+            return lang;
         }
-        return other != null ? other : language;
+
+        private String resolveScript(UnicodeScript script) {
+            if (isJpn) {
+                if (script == UnicodeScript.HAN || script == UnicodeScript.HIRAGANA
+                        || script == UnicodeScript.KATAKANA) {
+                    return ownLanguage;
+                }
+            } else if (script == ownScript) {
+                return ownLanguage;
+            }
+
+            String other = chosen != null ? chosen.get(script) : null;
+            if (other == null) {
+                other = SCRIPT_LANGUAGE.get(script);
+            }
+            return other != null ? other : ownLanguage;
+        }
+    }
+
+    /**
+     * Resolves characters for digit-splitting in voices without number words.
+     */
+    private static final class FastDigitResolver implements LanguageResolver {
+        private final String runLanguage;
+        private final String numbers;
+
+        FastDigitResolver(String runLanguage, String numbers) {
+            this.runLanguage = runLanguage;
+            this.numbers = numbers;
+        }
+
+        @Override
+        public String resolve(int c) {
+            if (c < 128) {
+                if (c >= '0' && c <= '9') {
+                    return numbers;
+                }
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+                    return runLanguage;
+                }
+                return null;
+            }
+            if (Character.isDigit(c)) {
+                return numbers;
+            }
+            final UnicodeScript script = UnicodeScript.of(c);
+            if (script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
+                    || script == UnicodeScript.UNKNOWN) {
+                return null;
+            }
+            return runLanguage;
+        }
     }
 
     static List<Run> split(String text, String language) {
@@ -172,14 +312,10 @@ final class LanguageRuns {
      */
     static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
                            String numbers) {
-        return split(text, language, c -> {
-            final UnicodeScript script = UnicodeScript.of(c);
-            if (numbers != null && Character.isDigit(c)) {
-                return numbers;
-            }
-            return script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
-                    || script == UnicodeScript.UNKNOWN ? null : languageFor(script, language, chosen);
-        });
+        if (text == null || text.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return split(text, language, new FastLanguageResolver(language, chosen, numbers));
     }
 
     /**
@@ -188,26 +324,21 @@ final class LanguageRuns {
      * cannot read digits (no number words for its language).
      */
     static List<Run> splitDigits(Run run, String numbers) {
-        final List<Run> out = new ArrayList<>();
-        for (Run part : split(run.text, run.language, c -> {
-            if (Character.isDigit(c)) {
-                return numbers;
-            }
-            final UnicodeScript script = UnicodeScript.of(c);
-            return script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
-                    || script == UnicodeScript.UNKNOWN ? null : run.language;
-        })) {
+        final List<Run> parts = split(run.text, run.language, new FastDigitResolver(run.language, numbers));
+        if (parts.size() == 1 && run.start == 0) {
+            return parts;
+        }
+        final List<Run> out = new ArrayList<>(parts.size());
+        for (Run part : parts) {
             out.add(new Run(run.start + part.start, part.text, part.language));
         }
         return out;
     }
 
     /**
-     * @param languageOf a code point's language, or null for one that never
-     *                   starts a run (spaces, punctuation, combining marks)
+     * Splits text into language runs using the provided resolver.
      */
-    private static List<Run> split(String text, String language,
-                                   java.util.function.IntFunction<String> languageOf) {
+    private static List<Run> split(String text, String language, LanguageResolver resolver) {
         final List<Run> runs = new ArrayList<>();
         if (text == null || text.isEmpty()) {
             return runs;
@@ -216,12 +347,13 @@ final class LanguageRuns {
         int runStart = 0;      // UTF-16 index
         int runStartCp = 0;    // code point index
         int cp = 0;
-        for (int i = 0; i < text.length(); ) {
+        final int length = text.length();
+        for (int i = 0; i < length; ) {
             final int c = text.codePointAt(i);
             // Common (digits, spaces, punctuation) and inherited (combining
             // marks) characters never start a new run - digits only when
             // numbers have a language of their own.
-            final String lang = languageOf.apply(c);
+            final String lang = resolver.resolve(c);
             if (lang != null) {
                 if (current == null) {
                     current = lang;
@@ -232,6 +364,41 @@ final class LanguageRuns {
                     // opens: "हो (Arijit" gave Hindi the "(" and English the ")".
                     int cut = i;
                     int cutCp = cp;
+                    // If switching from non-Latin to Latin, and digits / currency / numeric compounds
+                    // immediately precede the Latin letter without whitespace (e.g. "1st", "2nd", "4G", "10am",
+                    // "10:30am", "10,000rpm", "$50k", "15%off"), pull the numeric token into the Latin run
+                    // so ordinal and alphanumeric tokens are pronounced whole rather than split across engines.
+                    final int beforeCut = cut > runStart ? text.codePointBefore(cut) : -1;
+                    if (("eng".equals(lang) || "en".equals(lang) || UnicodeScript.LATIN.equals(scriptOf(lang)))
+                            && ((beforeCut >= '0' && beforeCut <= '9') || beforeCut == '%')) {
+                        int probe = cut;
+                        int probeCp = cutCp;
+                        while (probe > runStart) {
+                            final int b = text.codePointBefore(probe);
+                            if (AsciiUtils.isAsciiDigit((char) b)
+                                    || ((b == ':' || b == '.' || b == ',') && probe - 1 > runStart
+                                    && AsciiUtils.isAsciiDigit((char) text.codePointBefore(probe - 1)))
+                                    || (b == '%' && probe - 1 > runStart
+                                    && AsciiUtils.isAsciiDigit((char) text.codePointBefore(probe - 1)))) {
+                                probe -= Character.charCount(b);
+                                probeCp--;
+                            } else {
+                                break;
+                            }
+                        }
+                        if (probe > runStart) {
+                            final int b = text.codePointBefore(probe);
+                            if (Character.getType(b) == Character.CURRENCY_SYMBOL) {
+                                probe -= Character.charCount(b);
+                                probeCp--;
+                            }
+                        }
+                        if (probe < cut && (probe == runStart || Character.isWhitespace(text.codePointBefore(probe))
+                                || isOpening(text.codePointBefore(probe)))) {
+                            cut = probe;
+                            cutCp = probeCp;
+                        }
+                    }
                     while (cut > runStart) {
                         final int before = text.codePointBefore(cut);
                         final int at = cut - Character.charCount(before);

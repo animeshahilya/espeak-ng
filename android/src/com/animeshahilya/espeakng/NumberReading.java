@@ -56,6 +56,9 @@ public final class NumberReading {
     private static final Pattern MONEY_SUFFIX = Pattern.compile(
             SIGN + "(?<![\\p{L}\\d.,])" + AMOUNT + SCALE + "\\s?(€|¥|₹|USD|EUR|GBP|JPY|INR)(?![\\p{L}\\d])");
 
+    private static final java.util.Map<String, Boolean> LATIN_SCRIPT_CACHE =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
     /**
      * Whether the language is written in Latin script. Such a voice reads
      * Latin words as its own language, so its numbers already match; any
@@ -63,15 +66,31 @@ public final class NumberReading {
      */
     public static boolean isLatinScript(String languageTag) {
         if (languageTag == null || languageTag.isEmpty()) return true;
+        Boolean cached = LATIN_SCRIPT_CACHE.get(languageTag);
+        if (cached != null) return cached;
         String script = android.icu.util.ULocale.addLikelySubtags(
                 android.icu.util.ULocale.forLanguageTag(languageTag)).getScript();
-        return script.isEmpty() || "Latn".equals(script);
+        boolean isLatin = script.isEmpty() || "Latn".equals(script);
+        LATIN_SCRIPT_CACHE.put(languageTag, isLatin);
+        return isLatin;
     }
 
     public static boolean isEnglish(String languageTag) {
-        if (languageTag == null) return false;
-        String tag = languageTag.trim().toLowerCase(Locale.ROOT);
-        return tag.equals("en") || tag.startsWith("en-");
+        if (languageTag == null || languageTag.isEmpty()) return false;
+        int len = languageTag.length();
+        int start = 0;
+        while (start < len && languageTag.charAt(start) <= ' ') {
+            start++;
+        }
+        if (start + 2 <= len) {
+            char c0 = languageTag.charAt(start);
+            char c1 = languageTag.charAt(start + 1);
+            if ((c0 == 'e' || c0 == 'E') && (c1 == 'n' || c1 == 'N')) {
+                int end = start + 2;
+                return end == len || languageTag.charAt(end) == '-' || languageTag.charAt(end) == '_' || languageTag.charAt(end) <= ' ';
+            }
+        }
+        return false;
     }
 
     /**
@@ -129,9 +148,9 @@ public final class NumberReading {
             String amount = frac != null ? intPart + "." + frac : intPart;
             return amount + " " + scaleWord(scale) + " " + c.many;
         }
-        String digits = intPart.replace(",", "");
-        boolean zero = digits.matches("0+");
-        if (frac == null || frac.matches("0+")) {
+        String digits = intPart.indexOf(',') >= 0 ? intPart.replace(",", "") : intPart;
+        boolean zero = isAllZeros(digits);
+        if (frac == null || isAllZeros(frac)) {
             return intPart + " " + ("1".equals(digits) ? c.one : c.many);
         }
         if (c.minorOne == null || frac.length() > 2) {
@@ -142,6 +161,14 @@ public final class NumberReading {
         String minorWords = minor + " " + (minor == 1 ? c.minorOne : c.minorMany);
         if (zero) return minorWords;
         return intPart + " " + ("1".equals(digits) ? c.one : c.many) + " " + minorWords;
+    }
+
+    private static boolean isAllZeros(String s) {
+        if (s == null || s.isEmpty()) return false;
+        for (int i = 0, n = s.length(); i < n; i++) {
+            if (s.charAt(i) != '0') return false;
+        }
+        return true;
     }
 
     private static String scaleWord(String s) {

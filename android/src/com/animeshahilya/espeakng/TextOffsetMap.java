@@ -138,16 +138,19 @@ final class TextOffsetMap {
         } else if (nSlice > 0 && mSlice > 0) {
             // Suffix-based LCS length table for the changed middle slice only.
             // Suffix-first so alignment takes the earliest valid match on ties.
-            final int[][] dp = new int[nSlice + 1][mSlice + 1];
+            final int stride = mSlice + 1;
+            final int[] dp = new int[(nSlice + 1) * stride];
             for (int i = nSlice - 1; i >= 0; i--) {
                 final char bi = before.charAt(prefix + i);
-                final int[] dpRow = dp[i];
-                final int[] nextRow = dp[i + 1];
+                final int rowOffset = i * stride;
+                final int nextRowOffset = (i + 1) * stride;
                 for (int j = mSlice - 1; j >= 0; j--) {
                     if (bi == after.charAt(prefix + j)) {
-                        dpRow[j] = nextRow[j + 1] + 1;
+                        dp[rowOffset + j] = dp[nextRowOffset + j + 1] + 1;
                     } else {
-                        dpRow[j] = Math.max(nextRow[j], dpRow[j + 1]);
+                        final int down = dp[nextRowOffset + j];
+                        final int right = dp[rowOffset + j + 1];
+                        dp[rowOffset + j] = down >= right ? down : right;
                     }
                 }
             }
@@ -163,7 +166,7 @@ final class TextOffsetMap {
                     prevNewEnd = prefix + j + 1;
                     i++;
                     j++;
-                } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+                } else if (dp[(i + 1) * stride + j] >= dp[i * stride + j + 1]) {
                     i++;
                 } else {
                     j++;

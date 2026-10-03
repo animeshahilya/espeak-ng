@@ -49,14 +49,46 @@ public final class NvdaEmoji {
     private static final String[] MISSING = new String[0];
 
     private static final class Node {
-        final Map<Character, Node> next = new HashMap<Character, Node>();
+        char[] keys;
+        Node[] children;
         int index = -1;
+
+        Node getChild(char c) {
+            final char[] k = keys;
+            if (k == null) return null;
+            for (int i = 0; i < k.length; i++) {
+                if (k[i] == c) return children[i];
+            }
+            return null;
+        }
+
+        void putChild(char c, Node child) {
+            if (keys == null) {
+                keys = new char[] {c};
+                children = new Node[] {child};
+                return;
+            }
+            for (int i = 0; i < keys.length; i++) {
+                if (keys[i] == c) {
+                    children[i] = child;
+                    return;
+                }
+            }
+            int n = keys.length;
+            char[] newKeys = java.util.Arrays.copyOf(keys, n + 1);
+            Node[] newChildren = java.util.Arrays.copyOf(children, n + 1);
+            newKeys[n] = c;
+            newChildren[n] = child;
+            keys = newKeys;
+            children = newChildren;
+        }
     }
 
     private static volatile AssetManager sAssets;
     private static volatile Node sRoot;
     private static String[] sEnglish;
     private static final Map<String, String[]> sNames = new ConcurrentHashMap<String, String[]>();
+    private static final Map<String, String[]> sNamesByLang = new ConcurrentHashMap<String, String[]>();
 
     private NvdaEmoji() {
     }
@@ -93,10 +125,10 @@ public final class NvdaEmoji {
                         Node node = root;
                         for (int j = 0; j < id.length(); j++) {
                             final char c = id.charAt(j);
-                            Node child = node.next.get(c);
+                            Node child = node.getChild(c);
                             if (child == null) {
                                 child = new Node();
-                                node.next.put(c, child);
+                                node.putChild(c, child);
                             }
                             node = child;
                         }
@@ -138,12 +170,17 @@ public final class NvdaEmoji {
         if (languageTag == null || languageTag.isEmpty()) {
             return null;
         }
-        final String locale = languageTag.toLowerCase(Locale.ROOT).replace('-', '_');
+        String[] cached = sNamesByLang.get(languageTag);
+        if (cached != null) {
+            return cached == MISSING ? null : cached;
+        }
+        final String locale = AsciiUtils.normalizeLocaleTag(languageTag);
         String[] names = namesFile(locale);
         final int sep = locale.indexOf('_');
         if (names == MISSING && sep > 0) {
             names = namesFile(locale.substring(0, sep));
         }
+        sNamesByLang.put(languageTag, names);
         return names == MISSING ? null : names;
     }
 
@@ -179,7 +216,7 @@ public final class NvdaEmoji {
             int best = -1;
             int bestEnd = i;
             while (j < len) {
-                node = node.next.get(cluster.charAt(j));
+                node = node.getChild(cluster.charAt(j));
                 if (node == null) {
                     break;
                 }

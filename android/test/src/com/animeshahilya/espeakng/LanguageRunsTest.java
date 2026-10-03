@@ -122,5 +122,61 @@ public class LanguageRunsTest {
         // A quote inside a word (don't) is not an opening mark.
         assertEquals("hin@0[हाँ]eng@3[ don't]",
                 describe(LanguageRuns.split("हाँ don't", "hin")));
+        // Guillemets and angular quote marks stay with the opened phrase.
+        assertEquals("eng@0[Book:]rus@5[ «Война и мир»]",
+                describe(LanguageRuns.split("Book: «Война и мир»", "eng")));
+    }
+
+    /** Additional non-Latin scripts stay with their speaking language. */
+    @Test
+    public void additionalScriptsStayWithSpeakingLanguage() {
+        assertEquals("kas@0[سلام]", describe(LanguageRuns.split("سلام", "kas")));
+        assertEquals("amh@0[ሰላም]", describe(LanguageRuns.split("ሰላም", "amh")));
+        assertEquals("bod@0[བཀྲ་ཤིས་བདེ་ལེགས།]", describe(LanguageRuns.split("བཀྲ་ཤིས་བདེ་ལེགས།", "bod")));
+    }
+
+    /** Glued alphanumeric tokens like 1st, 4G, 10am join the Latin run as whole units. */
+    @Test
+    public void gluedAlphanumericTokensJoinLatinRun() {
+        // "1st" joins English whole so English pronounces "first"
+        assertEquals("hin@0[आज]eng@2[ 1st]hin@6[ तारीख है]",
+                describe(LanguageRuns.split("आज 1st तारीख है", "hin")));
+        // "4G" joins English whole
+        assertEquals("hin@0[मेरा फ़ोन]eng@9[ 4G]hin@12[ सपोर्ट करता है]",
+                describe(LanguageRuns.split("मेरा फ़ोन 4G सपोर्ट करता है", "hin")));
+        // "10am" joins English whole
+        assertEquals("hin@0[मीटिंग]eng@6[ 10am]hin@11[ को है]",
+                describe(LanguageRuns.split("मीटिंग 10am को है", "hin")));
+        // "10:30am" joins English whole
+        assertEquals("hin@0[मीटिंग]eng@6[ 10:30am]hin@14[ पर है]",
+                describe(LanguageRuns.split("मीटिंग 10:30am पर है", "hin")));
+        // Plain numbers without Latin letters still stay with surrounding text
+        assertEquals("hin@0[आज 1 तारीख है]",
+                describe(LanguageRuns.split("आज 1 तारीख है", "hin")));
+        // Number separated by space from Latin word stays with surrounding text
+        assertEquals("hin@0[फ़ोन 12345]eng@10[ hai]",
+                describe(LanguageRuns.split("फ़ोन 12345 hai", "hin")));
+        // Currency and compound numeric tokens: "$50k", "15%off", "10,000rpm", "3.5GHz"
+        assertEquals("hin@0[यहाँ]eng@4[ $50k]hin@9[ इनाम है]",
+                describe(LanguageRuns.split("यहाँ $50k इनाम है", "hin")));
+        assertEquals("hin@0[फ्लैट]eng@5[ 15%off]hin@12[ डिस्काउंट]",
+                describe(LanguageRuns.split("फ्लैट 15%off डिस्काउंट", "hin")));
+        assertEquals("hin@0[स्पीड]eng@5[ 10,000rpm]hin@15[ है]",
+                describe(LanguageRuns.split("स्पीड 10,000rpm है", "hin")));
+        assertEquals("hin@0[क्लॉक]eng@5[ 3.5GHz]hin@12[ है]",
+                describe(LanguageRuns.split("क्लॉक 3.5GHz है", "hin")));
+    }
+
+    /** Two-letter ISO 639-1 language codes work interchangeably with three-letter codes. */
+    @Test
+    public void twoLetterLanguageCodesSupported() {
+        assertEquals("hi@0[मेरा फ़ोन]eng@9[ Samsung]hi@17[ है।]",
+                describe(LanguageRuns.split("मेरा फ़ोन Samsung है।", "hi")));
+        assertEquals("mr@0[नमस्कार, कसे आहात?]",
+                describe(LanguageRuns.split("नमस्कार, कसे आहात?", "mr")));
+        assertEquals("en@0[Hello,]hin@6[ नमस्ते दोस्त]en@19[ how are you?]",
+                describe(LanguageRuns.split("Hello, नमस्ते दोस्त how are you?", "en")));
+        assertEquals("hin", LanguageRuns.standIn("hi"));
+        assertEquals("hin", LanguageRuns.standIn("mr"));
     }
 }

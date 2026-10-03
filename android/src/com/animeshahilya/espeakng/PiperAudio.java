@@ -47,6 +47,11 @@ final class PiperAudio {
     static final int EDGE_FADE_MS = 5;
     static final int QUIET_START_FADE_MS = 10;
 
+    private static final double TARGET_SPEECH_LINEAR = Math.pow(10, TARGET_SPEECH_DBFS / 20.0);
+    private static final double SPEECH_FLOOR_FACTOR = Math.pow(10, -SPEECH_RANGE_DB / 10.0);
+    private static final double SILENCE_FACTOR = Math.pow(10, -SILENCE_BELOW_SPEECH_DB / 10.0);
+    private static final double QUIET_START_FACTOR = Math.pow(10, -QUIET_START_BELOW_SPEECH_DB / 10.0);
+
     /** A 5 ms ramp, so audio cut mid-signal (a lead-in) starts without a click. */
     static void fadeIn(float[] audio, int sampleRate) {
         final int n = Math.min(audio.length, sampleRate / 200);
@@ -105,6 +110,8 @@ final class PiperAudio {
 
     /** Above this the soft limiter bends samples down instead of clipping them. */
     static final float LIMITER_KNEE = 0.7f;
+    private static final double LIMITER_ROOM = 1.0 - LIMITER_KNEE;
+    private static final double INV_LIMITER_ROOM = 1.0 / (1.0 - LIMITER_KNEE);
 
     /**
      * Longest pause kept inside a chunk at normal reading pace. VITS voices
@@ -209,14 +216,14 @@ final class PiperAudio {
         int to = audio.length;
         int[] cuts = new int[0];
         if (trimLead || trimTail) {
-            final double silence = speech * Math.pow(10, -SILENCE_BELOW_SPEECH_DB / 10);
+            final double silence = speech * SILENCE_FACTOR;
             int first = 0;
             while (trimLead && first < frames && power[first] < silence) {
                 first++;
             }
             int start = first;
             if (trimLead && quietStart) {
-                final double voiced = speech * Math.pow(10, -QUIET_START_BELOW_SPEECH_DB / 10);
+                final double voiced = speech * QUIET_START_FACTOR;
                 while (start < frames && power[start] < voiced) {
                     start++;
                 }
@@ -239,7 +246,7 @@ final class PiperAudio {
         for (int i = 1; i < cuts.length; i += 2) {
             removed += cuts[i];
         }
-        final double gain = Math.pow(10, TARGET_SPEECH_DBFS / 20) / Math.sqrt(speech) * volume;
+        final double gain = TARGET_SPEECH_LINEAR / Math.sqrt(speech) * volume;
         final short[] out = new short[to - from - removed];
         int o = 0;
         int c = 0;
@@ -286,12 +293,12 @@ final class PiperAudio {
     private static double speech(double[] power) {
         double loudest = 0;
         for (double p : power) {
-            loudest = Math.max(loudest, p);
+            if (p > loudest) loudest = p;
         }
         if (loudest < 1e-16) {
             return 0;
         }
-        final double speechFloor = loudest * Math.pow(10, -SPEECH_RANGE_DB / 10);
+        final double speechFloor = loudest * SPEECH_FLOOR_FACTOR;
         double speech = 0;
         int speaking = 0;
         for (double p : power) {
@@ -337,16 +344,16 @@ final class PiperAudio {
         if (a <= LIMITER_KNEE) {
             return s;
         }
-        final double room = 1 - LIMITER_KNEE;
-        return Math.signum(s) * (LIMITER_KNEE + room * Math.tanh((a - LIMITER_KNEE) / room));
+        return Math.signum(s) * (LIMITER_KNEE + LIMITER_ROOM * Math.tanh((a - LIMITER_KNEE) * INV_LIMITER_ROOM));
     }
 
     static byte[] toBytes(short[] samples, int count) {
         final byte[] bytes = new byte[count * 2];
+        int b = 0;
         for (int i = 0; i < count; i++) {
             final short s = samples[i];
-            bytes[2 * i] = (byte) (s & 0xff);
-            bytes[2 * i + 1] = (byte) ((s >> 8) & 0xff);
+            bytes[b++] = (byte) (s & 0xff);
+            bytes[b++] = (byte) ((s >> 8) & 0xff);
         }
         return bytes;
     }
@@ -435,15 +442,25 @@ final class PiperAudio {
 
     /** Code point [start, end) pairs of whitespace-separated words in text. */
     static int[] findWords(String text) {
-        final int cps = text.codePointCount(0, text.length());
+        final int len = text.length();
         int[] spans = new int[16];
         int n = 0;
         int cp = 0;
         int wordStart = -1;
-        for (int i = 0; i < text.length(); ) {
-            final int c = text.codePointAt(i);
-            i += Character.charCount(c);
-            final boolean space = Character.isWhitespace(c) || Character.isSpaceChar(c);
+        for (int i = 0; i < len; ) {
+            final char ch = text.charAt(i);
+            final int c;
+            final int charCount;
+            if (ch < 0xD800 || ch > 0xDFFF) {
+                c = ch;
+                charCount = 1;
+            } else {
+                c = text.codePointAt(i);
+                charCount = Character.charCount(c);
+            }
+            i += charCount;
+            final boolean space = (c <= ' ') ? (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f')
+                    : (Character.isWhitespace(c) || Character.isSpaceChar(c));
             if (!space && wordStart < 0) {
                 wordStart = cp;
             } else if (space && wordStart >= 0) {
@@ -461,7 +478,7 @@ final class PiperAudio {
                 spans = Arrays.copyOf(spans, spans.length + 2);
             }
             spans[n++] = wordStart;
-            spans[n++] = cps;
+            spans[n++] = cp;
         }
         return Arrays.copyOf(spans, n);
     }

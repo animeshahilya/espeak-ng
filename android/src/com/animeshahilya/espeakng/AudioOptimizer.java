@@ -214,7 +214,11 @@ public final class AudioOptimizer {
     private final float gainSmoothAlpha;
     private final float presenceBlend;
     private final float warmthBlend;
+    private final float presenceScaledBlend;
+    private final float warmthScaledBlend;
     private final float levelerMaxGain;
+    private final float presenceDriveFactor;
+    private final float warmthDriveFactor;
 
     private float prevInput = 0f;
     private float prevHighPass = 0f;
@@ -257,6 +261,10 @@ public final class AudioOptimizer {
         }
         presenceBlend = pBlend;
         warmthBlend = wBlend;
+        presenceScaledBlend = 32768f * pBlend;
+        warmthScaledBlend = 32768f * wBlend;
+        presenceDriveFactor = PRESENCE_DRIVE * INV_32768;
+        warmthDriveFactor = WARMTH_DRIVE * INV_32768;
         levelerMaxGain = maxGain;
         // Dynamic Nyquist safety clamping: ensure filter corner frequencies stay strictly
         // below the Nyquist limit (sampleRateHz / 2) even on low-rate voices (e.g. 8kHz or 11.025kHz).
@@ -267,6 +275,11 @@ public final class AudioOptimizer {
         warmthAlpha = onePoleAlpha(WARMTH_HZ, sampleRateHz);
         levelEnvelopeAlpha = scaledEnvelopeAlpha(LEVEL_ENVELOPE_ALPHA_AT_REFERENCE_RATE, sampleRateHz, LEVELER_REFERENCE_RATE_HZ);
         gainSmoothAlpha = scaledEnvelopeAlpha(GAIN_SMOOTH_ALPHA_AT_REFERENCE_RATE, sampleRateHz, LEVELER_REFERENCE_RATE_HZ);
+    }
+
+    private static float oversampledSaturate(float prev, float current, float driveFactor) {
+        float midpoint = (prev + current) * 0.5f;
+        return (fastTanh(midpoint * driveFactor) + fastTanh(current * driveFactor)) * 0.5f;
     }
 
     /**
@@ -296,12 +309,12 @@ public final class AudioOptimizer {
             prevInput = sample;
             prevHighPass = highPass;
             presenceBand += presenceLowpassAlpha * (highPass - presenceBand);
-            sample += oversampledHarmonicSaturate(prevPresenceBand * INV_32768, presenceBand * INV_32768, PRESENCE_DRIVE) * 32768f * presenceBlend;
+            sample += oversampledSaturate(prevPresenceBand, presenceBand, presenceDriveFactor) * presenceScaledBlend;
             prevPresenceBand = presenceBand;
 
             // Warmth: a plain lowpass near the vocal fundamental, for body.
             warmthLowPass += warmthAlpha * (sample - warmthLowPass);
-            sample += oversampledHarmonicSaturate(prevWarmthLowPass * INV_32768, warmthLowPass * INV_32768, WARMTH_DRIVE) * 32768f * warmthBlend;
+            sample += oversampledSaturate(prevWarmthLowPass, warmthLowPass, warmthDriveFactor) * warmthScaledBlend;
             prevWarmthLowPass = warmthLowPass;
 
             float targetGain = limiterGainForSample(Math.abs(sample), CLIP_GUARD_THRESHOLD);

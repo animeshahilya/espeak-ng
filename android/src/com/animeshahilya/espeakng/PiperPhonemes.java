@@ -309,6 +309,13 @@ final class PiperPhonemes {
      * merged back into single symbols. Fork-only spellings are first put
      * back the way the voice learned them ({@link #trainedSpellings}).
      */
+    private static final String[] ASCII_STRINGS = new String[128];
+    static {
+        for (int i = 0; i < 128; i++) {
+            ASCII_STRINGS[i] = String.valueOf((char) i);
+        }
+    }
+
     static List<String> tokenize(String ipa, PiperVoiceConfig config) {
         if (!config.usesEspeak()) {
             return textTokens(englishChunkEnd(ipa, config), config);
@@ -324,7 +331,7 @@ final class PiperPhonemes {
         for (int i = 0; i < nfd.length(); ) {
             final int cp = nfd.codePointAt(i);
             final int n = Character.charCount(cp);
-            phones.add(nfd.substring(i, i + n));
+            phones.add(cp < 128 ? ASCII_STRINGS[cp] : nfd.substring(i, i + n));
             i += n;
         }
         if (config.vowelClusters.isEmpty()) {
@@ -346,11 +353,17 @@ final class PiperPhonemes {
                     }
                 }
                 if (match) {
-                    final StringBuilder sb = new StringBuilder();
-                    for (String part : cluster) {
-                        sb.append(part);
+                    final String mergedCluster;
+                    if (cluster.length == 2) {
+                        mergedCluster = cluster[0] + cluster[1];
+                    } else {
+                        final StringBuilder sb = new StringBuilder();
+                        for (String part : cluster) {
+                            sb.append(part);
+                        }
+                        mergedCluster = sb.toString();
                     }
-                    merged.add(sb.toString());
+                    merged.add(mergedCluster);
                     i += cluster.length;
                     continue outer;
                 }

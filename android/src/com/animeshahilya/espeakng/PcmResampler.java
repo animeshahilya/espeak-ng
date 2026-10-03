@@ -73,12 +73,18 @@ final class PcmResampler {
             final long num = next * down;
             final long base = num / up;
             final float[] c = coef[(int) (num % up)];
-            final long first = base - HALF + 1;
+            final int startJ = (int) (base - HALF + 1 - bufStart);
             double acc = 0;
-            for (int i = 0; i < 2 * HALF; i++) {
-                final long j = first + i - bufStart;
-                if (j >= 0 && j < buffered) {
-                    acc += buf[(int) j] * c[i];
+            if (startJ >= 0 && startJ + (2 * HALF) <= buffered) {
+                for (int i = 0; i < 2 * HALF; i++) {
+                    acc += buf[startJ + i] * c[i];
+                }
+            } else {
+                for (int i = 0; i < 2 * HALF; i++) {
+                    final int j = startJ + i;
+                    if (j >= 0 && j < buffered) {
+                        acc += buf[j] * c[i];
+                    }
                 }
             }
             out[o] = (short) Math.max(Short.MIN_VALUE, Math.min(Short.MAX_VALUE, Math.round(acc)));

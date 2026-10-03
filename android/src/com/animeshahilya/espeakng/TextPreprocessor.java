@@ -349,7 +349,7 @@ public final class TextPreprocessor {
     }
 
     public static TextOffsetMap chainOffset(TextOffsetMap previous, String before, String after) {
-        if (before.equals(after)) {
+        if (before == after || before.equals(after)) {
             return previous;
         }
         return TextOffsetMap.diff(before, after).composeWith(previous);
@@ -376,23 +376,14 @@ public final class TextPreprocessor {
         final int len = text.length();
         for (int i = 0; i < len; i++) {
             char c = text.charAt(i);
-            if ((c < 0x20 && c != '\t' && c != '\n' && c != '\r') || c == 0x7F
-                    || c == 0x200B || c == 0x200E || c == 0x200F || (c >= 0x202A && c <= 0x202E)
-                    || (c >= 0x2060 && c <= 0x2064) || c == 0xFEFF) {
-                return true;
+            if (c < 0x20) {
+                if (c != '\t' && c != '\n' && c != '\r') return true;
+            } else if (c >= 0x7F) {
+                if (c == 0x7F || c == 0x200B || c == 0x200E || c == 0x200F || (c >= 0x202A && c <= 0x202E)
+                        || (c >= 0x2060 && c <= 0x2064) || c == 0xFEFF) {
+                    return true;
+                }
             }
-        }
-        return false;
-    }
-
-    private static boolean containsDigit(String text) {
-        final int len = text.length();
-        for (int i = 0; i < len; ) {
-            final int cp = text.codePointAt(i);
-            if (Character.isDigit(cp)) {
-                return true;
-            }
-            i += Character.charCount(cp);
         }
         return false;
     }
@@ -400,8 +391,7 @@ public final class TextPreprocessor {
     public static boolean containsPotentialEmoji(String text) {
         final int len = text.length();
         for (int i = 0; i < len; i++) {
-            char c = text.charAt(i);
-            if (Character.isHighSurrogate(c) || c >= 0x2600) {
+            if (text.charAt(i) >= 0x2600) {
                 return true;
             }
         }
@@ -415,18 +405,35 @@ public final class TextPreprocessor {
      */
     public static boolean isIndianLanguage(String languageTag) {
         if (languageTag == null || languageTag.isEmpty()) return false;
-        String tag = languageTag.trim().toLowerCase(Locale.ROOT);
-        if (tag.equals("en-in")) return true;
-        int dash = tag.indexOf('-');
-        String base = dash >= 0 ? tag.substring(0, dash) : tag;
-        switch (base) {
-            case "as": case "bn": case "bpy": case "gu": case "hi": case "kok":
-            case "mr": case "ne": case "or": case "pa": case "sd": case "si":
-            case "ur": case "kn": case "ml": case "ta": case "te":
-                return true;
-            default:
-                return false;
+        int len = languageTag.length();
+        if (len >= 5 && languageTag.regionMatches(true, 0, "en-in", 0, 5)
+                && (len == 5 || languageTag.charAt(5) == '-')) {
+            return true;
         }
+        int dash = languageTag.indexOf('-');
+        int baseLen = dash >= 0 ? dash : len;
+        if (baseLen == 2) {
+            char c0 = Character.toLowerCase(languageTag.charAt(0));
+            char c1 = Character.toLowerCase(languageTag.charAt(1));
+            // as, bn, gu, hi, mr, ne, or, pa, sd, si, ur, kn, ml, ta, te
+            if (c0 == 'a' && c1 == 's') return true;
+            if (c0 == 'b' && c1 == 'n') return true;
+            if (c0 == 'g' && c1 == 'u') return true;
+            if (c0 == 'h' && c1 == 'i') return true;
+            if (c0 == 'm' && (c1 == 'r' || c1 == 'l')) return true;
+            if (c0 == 'n' && c1 == 'e') return true;
+            if (c0 == 'o' && c1 == 'r') return true;
+            if (c0 == 'p' && c1 == 'a') return true;
+            if (c0 == 's' && (c1 == 'd' || c1 == 'i')) return true;
+            if (c0 == 'u' && c1 == 'r') return true;
+            if (c0 == 'k' && c1 == 'n') return true;
+            if (c0 == 't' && (c1 == 'a' || c1 == 'e')) return true;
+        } else if (baseLen == 3) {
+            // bpy, kok
+            if (languageTag.regionMatches(true, 0, "bpy", 0, 3)) return true;
+            if (languageTag.regionMatches(true, 0, "kok", 0, 3)) return true;
+        }
+        return false;
     }
 
     /**
@@ -587,21 +594,26 @@ public final class TextPreprocessor {
         int length = text.length();
         for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
-            boolean drop = false;
-            if (Character.isHighSurrogate(c)) {
-                if (i + 1 >= length || !Character.isLowSurrogate(text.charAt(i + 1))) {
-                    drop = true;
+            if (c >= 0xD800 && c <= 0xDFFF) {
+                boolean drop = false;
+                if (Character.isHighSurrogate(c)) {
+                    if (i + 1 >= length || !Character.isLowSurrogate(text.charAt(i + 1))) {
+                        drop = true;
+                    }
+                } else if (Character.isLowSurrogate(c)) {
+                    if (i == 0 || !Character.isHighSurrogate(text.charAt(i - 1))) {
+                        drop = true;
+                    }
                 }
-            } else if (Character.isLowSurrogate(c)) {
-                if (i == 0 || !Character.isHighSurrogate(text.charAt(i - 1))) {
-                    drop = true;
+                if (drop) {
+                    if (sb == null) {
+                        sb = new StringBuilder(length);
+                        sb.append(text, 0, i);
+                    }
+                    continue;
                 }
             }
-            if (drop && sb == null) {
-                sb = new StringBuilder(length);
-                sb.append(text, 0, i);
-            }
-            if (sb != null && !drop) {
+            if (sb != null) {
                 sb.append(c);
             }
         }
@@ -914,7 +926,7 @@ public final class TextPreprocessor {
 
         // CURRENCY_PREFIX, INDIAN_NUMBER_COMMAS and every SHORTHAND_*
         // pattern all require ASCII digits; computed once for all of them.
-        final boolean hasDigit = containsDigit(text);
+        final boolean hasDigit = AsciiUtils.hasDigit(text);
         if (hasDigit) {
             Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
             if (currMatcher.find()) {

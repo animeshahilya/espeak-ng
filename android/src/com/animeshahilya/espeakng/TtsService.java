@@ -1279,6 +1279,7 @@ public class TtsService extends TextToSpeechService {
             final List<LanguageRuns.Run> runs = runLanguages == null
                     ? Collections.singletonList(new LanguageRuns.Run(0, unit.text, natural.languageKey()))
                     : naturalRuns(unit.text, natural.languageKey(), runLanguages, numbers, prefs);
+            SynthUnit currentPiece = null;
             for (LanguageRuns.Run run : runs) {
                 PiperModel runModel = model;
                 String runKey = natural.key;
@@ -1295,7 +1296,15 @@ public class TtsService extends TextToSpeechService {
                         }
                     }
                 }
-                pieces.add(new SynthUnit(run.text, voice, unit.base + run.start, runModel, runKey));
+                if (currentPiece != null && currentPiece.model == runModel
+                        && currentPiece.modelKey.equals(runKey)) {
+                    currentPiece = new SynthUnit(currentPiece.text + run.text, voice,
+                            currentPiece.base, runModel, runKey);
+                    pieces.set(pieces.size() - 1, currentPiece);
+                } else {
+                    currentPiece = new SynthUnit(run.text, voice, unit.base + run.start, runModel, runKey);
+                    pieces.add(currentPiece);
+                }
             }
         }
 
@@ -1548,7 +1557,7 @@ public class TtsService extends TextToSpeechService {
                     PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
             if (natural == null || natural.config.usesEspeak()
                     || PiperEngine.numberWords(natural.config.languageFamily) != null
-                    || !run.text.codePoints().anyMatch(Character::isDigit)) {
+                    || !AsciiUtils.hasDigit(run.text)) {
                 if (out != null) {
                     out.add(run);
                 }

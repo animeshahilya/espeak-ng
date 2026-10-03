@@ -85,7 +85,7 @@ public final class HinglishReader {
     }
 
     public static String process(String text) {
-        if (text == null || text.isEmpty() || !hasAsciiLetter(text)) {
+        if (text == null || text.isEmpty() || !AsciiUtils.hasAsciiLetter(text)) {
             return text;
         }
         load();
@@ -119,16 +119,16 @@ public final class HinglishReader {
         int otherWords = 0;
         int words = 0;
         for (int i = from; i < to; ) {
-            if (!isLatinLetter(text.charAt(i))) {
+            if (!AsciiUtils.isAsciiLetter(text.charAt(i))) {
                 i++;
                 continue;
             }
             int j = i;
-            while (j < to && isLatinLetter(text.charAt(j))) j++;
+            while (j < to && AsciiUtils.isAsciiLetter(text.charAt(j))) j++;
             final String word = text.substring(i, j);
             if (!isAcronym(word)) {
                 words++;
-                final String key = word.toLowerCase(java.util.Locale.ROOT);
+                final String key = AsciiUtils.toAsciiLowerCase(word);
                 if (hindi.containsKey(key)) {
                     hindiWords++;
                 } else if (!shared.containsKey(key)) {
@@ -146,17 +146,17 @@ public final class HinglishReader {
 
         for (int i = from; i < to; ) {
             final char c = text.charAt(i);
-            if (!isLatinLetter(c)) {
+            if (!AsciiUtils.isAsciiLetter(c)) {
                 out.append(c);
                 i++;
                 continue;
             }
             int j = i;
-            while (j < to && isLatinLetter(text.charAt(j))) j++;
+            while (j < to && AsciiUtils.isAsciiLetter(text.charAt(j))) j++;
             final String word = text.substring(i, j);
             String deva = null;
             if (!isAcronym(word) && !touchesDigitOrSymbol(text, i, j)) {
-                final String key = word.toLowerCase(java.util.Locale.ROOT);
+                final String key = AsciiUtils.toAsciiLowerCase(word);
                 deva = hindi.get(key);
                 if (deva == null) {
                     deva = shared.get(key);
@@ -169,11 +169,13 @@ public final class HinglishReader {
 
     /** "OTP", "UPI": spelled-out acronyms stay English. */
     private static boolean isAcronym(String word) {
-        if (word.length() < 2) {
+        final int len = word.length();
+        if (len < 2) {
             return false;
         }
-        for (int k = 0; k < word.length(); k++) {
-            if (!Character.isUpperCase(word.charAt(k))) {
+        for (int k = 0; k < len; k++) {
+            char c = word.charAt(k);
+            if (c < 'A' || c > 'Z') {
                 return false;
             }
         }
@@ -192,18 +194,7 @@ public final class HinglishReader {
                 || c == '#' || c == '=' || c == '&';
     }
 
-    private static boolean isLatinLetter(char c) {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-    }
-
     private static boolean isSentenceEnd(char c) {
         return c == '.' || c == '!' || c == '?' || c == '\n' || c == '।';
-    }
-
-    private static boolean hasAsciiLetter(String text) {
-        for (int i = 0, n = text.length(); i < n; i++) {
-            if (isLatinLetter(text.charAt(i))) return true;
-        }
-        return false;
     }
 }
