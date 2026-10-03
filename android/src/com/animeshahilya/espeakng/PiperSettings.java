@@ -160,6 +160,10 @@ final class PiperSettings {
             });
         }
         refresh(context, screen, prefs);
+        if (row instanceof PreferenceScreen) {
+            // Back from a voice page: a voice may have been given a language there.
+            PAGES.put((PreferenceScreen) row, new Runnable[] {() -> refresh(context, screen, prefs), null});
+        }
 
         // Live while the screen is visible: voices finishing their download
         // appear (and are announced) without leaving the page, and download
