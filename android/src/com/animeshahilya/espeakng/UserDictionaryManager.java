@@ -272,8 +272,11 @@ public class UserDictionaryManager {
                     // Succeeded on delete + rename
                 } else {
                     Log.w(TAG, "Could not atomic rename temp user dictionary");
+                    tempFile.delete();
                 }
             }
+        } else {
+            tempFile.delete();
         }
     }
 

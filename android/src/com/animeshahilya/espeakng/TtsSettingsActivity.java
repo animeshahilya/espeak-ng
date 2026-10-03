@@ -267,6 +267,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PiperSettings.stopPlayback();
+    }
 
     public static int dpToPx(Context context, int dp) {
         return (int) TypedValue.applyDimension(
@@ -376,6 +381,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        PiperSettings.stopPlayback();
         if (sTts != null) {
             try {
                 sTts.stop();

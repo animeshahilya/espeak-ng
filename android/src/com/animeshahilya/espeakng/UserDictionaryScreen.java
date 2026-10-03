@@ -187,8 +187,8 @@ final class UserDictionaryScreen {
         final List<String> lowerPatterns = new ArrayList<>(rules.size());
         final List<String> lowerReplacements = new ArrayList<>(rules.size());
         for (UserDictionary r : rules) {
-            lowerPatterns.add(r.getPattern().toLowerCase(java.util.Locale.ROOT));
-            lowerReplacements.add(r.getReplacement().toLowerCase(java.util.Locale.ROOT));
+            lowerPatterns.add(AsciiUtils.toAsciiLowerCase(r.getPattern()));
+            lowerReplacements.add(AsciiUtils.toAsciiLowerCase(r.getReplacement()));
         }
 
         final BaseAdapter listAdapter = new BaseAdapter() {
@@ -267,7 +267,7 @@ final class UserDictionaryScreen {
         lvRules.setAdapter(listAdapter);
 
         final Runnable updateList = () -> {
-            String q = etSearch.getText() != null ? etSearch.getText().toString().trim().toLowerCase(java.util.Locale.ROOT) : "";
+            String q = etSearch.getText() != null ? AsciiUtils.toAsciiLowerCase(etSearch.getText().toString().trim()) : "";
             String filter = filterValueFor(filterValues, filterPos[0]);
 
             viewToReal.clear();

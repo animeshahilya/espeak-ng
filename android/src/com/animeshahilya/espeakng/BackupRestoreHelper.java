@@ -114,7 +114,7 @@ public final class BackupRestoreHelper {
                 JSONObject obj = dict.optJSONObject(i);
                 if (obj == null) continue;
                 UserDictionary r = UserDictionary.fromJson(obj);
-                if (r != null && !r.getPattern().isEmpty()) rules.add(r);
+                if (r != null && r.isValid()) rules.add(r);
             }
             UserDictionaryManager.getInstance(context).replaceAll(rules);
             restoredRules = rules.size();

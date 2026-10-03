@@ -1156,45 +1156,69 @@ final class PiperSettings {
      */
     private static AudioTrack sTestTrack;
 
-    private static synchronized void play(byte[] pcm, int sampleRate) {
-        if (pcm.length == 0) {
-            return;
-        }
+    /**
+     * Stops any currently playing sample track and releases audio resources.
+     */
+    public static synchronized void stopPlayback() {
         if (sTestTrack != null) {
-            sTestTrack.release();
+            try {
+                if (sTestTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+                    sTestTrack.stop();
+                }
+                sTestTrack.release();
+            } catch (Exception ignored) {
+            }
             sTestTrack = null;
         }
-        final AudioTrack track = new AudioTrack.Builder()
-                .setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                        .build())
-                .setAudioFormat(new AudioFormat.Builder()
-                        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                        .setSampleRate(sampleRate)
-                        .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-                        .build())
-                .setTransferMode(AudioTrack.MODE_STATIC)
-                .setBufferSizeInBytes(pcm.length)
-                .build();
-        track.write(pcm, 0, pcm.length);
-        track.setNotificationMarkerPosition(pcm.length / 2);
-        track.setPlaybackPositionUpdateListener(new AudioTrack.OnPlaybackPositionUpdateListener() {
-            @Override
-            public void onMarkerReached(AudioTrack t) {
-                synchronized (PiperSettings.class) {
-                    t.release();
-                    if (sTestTrack == t) {
-                        sTestTrack = null;
+    }
+
+    private static synchronized void play(byte[] pcm, int sampleRate) {
+        if (pcm == null || pcm.length == 0 || sampleRate <= 0) {
+            return;
+        }
+        stopPlayback();
+        try {
+            final AudioTrack track = new AudioTrack.Builder()
+                    .setAudioAttributes(new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                            .build())
+                    .setAudioFormat(new AudioFormat.Builder()
+                            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                            .setSampleRate(sampleRate)
+                            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                            .build())
+                    .setTransferMode(AudioTrack.MODE_STATIC)
+                    .setBufferSizeInBytes(pcm.length)
+                    .build();
+            if (track.getState() != AudioTrack.STATE_INITIALIZED) {
+                track.release();
+                return;
+            }
+            track.write(pcm, 0, pcm.length);
+            track.setNotificationMarkerPosition(pcm.length / 2);
+            track.setPlaybackPositionUpdateListener(new AudioTrack.OnPlaybackPositionUpdateListener() {
+                @Override
+                public void onMarkerReached(AudioTrack t) {
+                    synchronized (PiperSettings.class) {
+                        try {
+                            t.release();
+                        } catch (Exception ignored) {
+                        }
+                        if (sTestTrack == t) {
+                            sTestTrack = null;
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onPeriodicNotification(AudioTrack t) {
-            }
-        }, new Handler(Looper.getMainLooper()));
-        sTestTrack = track;
-        track.play();
+                @Override
+                public void onPeriodicNotification(AudioTrack t) {
+                }
+            }, new Handler(Looper.getMainLooper()));
+            sTestTrack = track;
+            track.play();
+        } catch (Exception e) {
+            Log.w("PiperSettings", "Sample playback failed", e);
+        }
     }
 }

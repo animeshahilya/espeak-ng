@@ -125,9 +125,9 @@ public final class HinglishReader {
             }
             int j = i;
             while (j < to && AsciiUtils.isAsciiLetter(text.charAt(j))) j++;
-            final String word = text.substring(i, j);
-            if (!isAcronym(word)) {
+            if (!isAcronym(text, i, j)) {
                 words++;
+                final String word = text.substring(i, j);
                 final String key = AsciiUtils.toAsciiLowerCase(word);
                 if (hindi.containsKey(key)) {
                     hindiWords++;
@@ -155,7 +155,7 @@ public final class HinglishReader {
             while (j < to && AsciiUtils.isAsciiLetter(text.charAt(j))) j++;
             final String word = text.substring(i, j);
             String deva = null;
-            if (!isAcronym(word) && !touchesDigitOrSymbol(text, i, j)) {
+            if (!isAcronym(text, i, j) && !touchesDigitOrSymbol(text, i, j)) {
                 final String key = AsciiUtils.toAsciiLowerCase(word);
                 deva = hindi.get(key);
                 if (deva == null) {
@@ -168,13 +168,13 @@ public final class HinglishReader {
     }
 
     /** "OTP", "UPI": spelled-out acronyms stay English. */
-    private static boolean isAcronym(String word) {
-        final int len = word.length();
+    private static boolean isAcronym(String text, int start, int end) {
+        final int len = end - start;
         if (len < 2) {
             return false;
         }
-        for (int k = 0; k < len; k++) {
-            char c = word.charAt(k);
+        for (int k = start; k < end; k++) {
+            char c = text.charAt(k);
             if (c < 'A' || c > 'Z') {
                 return false;
             }

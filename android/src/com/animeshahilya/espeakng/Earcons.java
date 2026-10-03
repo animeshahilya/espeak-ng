@@ -66,6 +66,9 @@ public final class Earcons {
      * word. The quote click plays twice.
      */
     public static byte[] pcm(char marker, int sampleRate, int channels, int volumePercent) {
+        if (!isMarker(marker) || sampleRate <= 0 || channels <= 0) {
+            return new byte[0];
+        }
         int[] t = TONES[marker - FIRST];
         int repeats = t[2] < 40 ? 2 : 1;
         int toneFrames = sampleRate * t[2] / 1000;

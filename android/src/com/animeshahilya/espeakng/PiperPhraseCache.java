@@ -116,7 +116,10 @@ final class PiperPhraseCache {
             final float invScale = 1.0f / scale;
             this.audio = new short[audio.length];
             for (int i = 0; i < audio.length; i++) {
-                this.audio[i] = (short) Math.round(audio[i] * invScale);
+                long rounded = Math.round(audio[i] * invScale);
+                if (rounded > 32767) rounded = 32767;
+                else if (rounded < -32768) rounded = -32768;
+                this.audio[i] = (short) rounded;
             }
             this.durations = durations == null ? null : durations.clone();
         }
