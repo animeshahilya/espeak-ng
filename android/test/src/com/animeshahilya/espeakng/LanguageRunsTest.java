@@ -179,4 +179,32 @@ public class LanguageRunsTest {
         assertEquals("hin", LanguageRuns.standIn("hi"));
         assertEquals("hin", LanguageRuns.standIn("mr"));
     }
+
+    @Test
+    public void handlesAndHashtagsJoinFollowedRun() {
+        assertEquals("hin@0[ट्विटर पर]eng@9[ @alex]hin@15[ को फॉलो करें]",
+                describe(LanguageRuns.split("ट्विटर पर @alex को फॉलो करें", "hin")));
+        assertEquals("hin@0[ट्रेंडिंग]eng@9[ #news]hin@15[ आज का]",
+                describe(LanguageRuns.split("ट्रेंडिंग #news आज का", "hin")));
+    }
+
+    @Test
+    public void hyphenatedAlphanumericCompoundsJoinLatinRun() {
+        assertEquals("hin@0[फ्लैट]eng@5[ 12-A]hin@10[ में]",
+                describe(LanguageRuns.split("फ्लैट 12-A में", "hin")));
+        assertEquals("hin@0[फ़िल्म]eng@6[ 3-D]hin@10[ में]",
+                describe(LanguageRuns.split("फ़िल्म 3-D में", "hin")));
+    }
+
+    @Test
+    public void koreanHanjaStaysWithKorean() {
+        assertEquals("kor@0[大韓民國 대한민국]",
+                describe(LanguageRuns.split("大韓民國 대한민국", "kor")));
+    }
+
+    @Test
+    public void greekScriptSwitchesToGreek() {
+        assertEquals("eng@0[Greek:]ell@6[ Ελληνικά]",
+                describe(LanguageRuns.split("Greek: Ελληνικά", "eng")));
+    }
 }

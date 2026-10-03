@@ -307,6 +307,7 @@
   <string name="setting_script_ar">Arabic script</string>
   <string name="setting_script_cyr">Cyrillic script</string>
   <string name="setting_script_he">Hebrew script</string>
+  <string name="setting_script_el">Greek script</string>
   <string name="setting_script_te">Telugu script</string>
   <string name="setting_script_or">Odia script</string>
   <string name="setting_script_zh">Chinese characters</string>

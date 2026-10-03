@@ -155,18 +155,22 @@ final class LanguageRuns {
         return s != null ? s : UnicodeScript.LATIN;
     }
 
-    /** Japanese mixes kana with Han; Chinese is Han alone. */
+    /** Japanese mixes kana with Han; Korean mixes Hangul with Hanja; Chinese is Han alone. */
     private static boolean belongsTo(UnicodeScript script, String language) {
         if ("jpn".equals(language) || "ja".equals(language)) {
             return script == UnicodeScript.HAN || script == UnicodeScript.HIRAGANA
                     || script == UnicodeScript.KATAKANA;
         }
+        if ("kor".equals(language) || "ko".equals(language)) {
+            return script == UnicodeScript.HANGUL || script == UnicodeScript.HAN;
+        }
         return script == scriptOf(language);
     }
 
-    /** "(", "[", "“", "¡", "¿", "«", "‹", or a straight quote (callers check it starts a word). */
+    /** "(", "[", "“", "¡", "¿", "«", "‹", "@", "#", or a straight quote (callers check it starts a word). */
     private static boolean isOpening(int c) {
-        if (c == '"' || c == '\'' || c == '¡' || c == '¿' || c == '«' || c == '‹') {
+        if (c == '"' || c == '\'' || c == '¡' || c == '¿' || c == '«' || c == '‹'
+                || c == '@' || c == '#') {
             return true;
         }
         final int type = Character.getType(c);
@@ -187,6 +191,7 @@ final class LanguageRuns {
         private final String ownLanguage;
         private final UnicodeScript ownScript;
         private final boolean isJpn;
+        private final boolean isKor;
         private final Map<UnicodeScript, String> chosen;
         private final String numbers;
         private final String latinLanguage;
@@ -198,6 +203,7 @@ final class LanguageRuns {
             this.ownLanguage = language;
             this.ownScript = scriptOf(language);
             this.isJpn = "jpn".equals(language) || "ja".equals(language);
+            this.isKor = "kor".equals(language) || "ko".equals(language);
             this.chosen = (chosen != null && !chosen.isEmpty()) ? chosen : null;
             this.numbers = numbers;
             this.latinLanguage = resolveScript(UnicodeScript.LATIN);
@@ -243,6 +249,10 @@ final class LanguageRuns {
             if (isJpn) {
                 if (script == UnicodeScript.HAN || script == UnicodeScript.HIRAGANA
                         || script == UnicodeScript.KATAKANA) {
+                    return ownLanguage;
+                }
+            } else if (isKor) {
+                if (script == UnicodeScript.HANGUL || script == UnicodeScript.HAN) {
                     return ownLanguage;
                 }
             } else if (script == ownScript) {
@@ -372,14 +382,16 @@ final class LanguageRuns {
                     // "10:30am", "10,000rpm", "$50k", "15%off"), pull the numeric token into the Latin run
                     // so ordinal and alphanumeric tokens are pronounced whole rather than split across engines.
                     final int beforeCut = cut > runStart ? text.codePointBefore(cut) : -1;
+                    final boolean isHyphenAfterDigit = beforeCut == '-' && cut - 1 > runStart
+                            && AsciiUtils.isAsciiDigit((char) text.codePointBefore(cut - 1));
                     if (("eng".equals(lang) || "en".equals(lang) || UnicodeScript.LATIN.equals(scriptOf(lang)))
-                            && ((beforeCut >= '0' && beforeCut <= '9') || beforeCut == '%')) {
+                            && ((beforeCut >= '0' && beforeCut <= '9') || beforeCut == '%' || isHyphenAfterDigit)) {
                         int probe = cut;
                         int probeCp = cutCp;
                         while (probe > runStart) {
                             final int b = text.codePointBefore(probe);
                             if (AsciiUtils.isAsciiDigit((char) b)
-                                    || ((b == ':' || b == '.' || b == ',') && probe - 1 > runStart
+                                    || ((b == ':' || b == '.' || b == ',' || b == '-') && probe - 1 > runStart
                                     && AsciiUtils.isAsciiDigit((char) text.codePointBefore(probe - 1)))
                                     || (b == '%' && probe - 1 > runStart
                                     && AsciiUtils.isAsciiDigit((char) text.codePointBefore(probe - 1)))) {

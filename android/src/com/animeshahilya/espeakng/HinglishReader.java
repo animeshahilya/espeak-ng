@@ -195,6 +195,7 @@ public final class HinglishReader {
     }
 
     private static boolean isSentenceEnd(char c) {
-        return c == '.' || c == '!' || c == '?' || c == '\n' || c == '।';
+        return c == '.' || c == '!' || c == '?' || c == '\n' || c == '।'
+                || c == '؟' || c == '？' || c == '！' || c == '‽';
     }
 }

@@ -478,6 +478,12 @@
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
         <ListPreference
+            android:key="espeak_script_el"
+            android:title="@string/setting_script_el"
+            android:defaultValue=""
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <ListPreference
             android:key="espeak_script_te"
             android:title="@string/setting_script_te"
             android:defaultValue=""

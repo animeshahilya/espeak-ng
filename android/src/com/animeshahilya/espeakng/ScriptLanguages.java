@@ -69,6 +69,7 @@ public final class ScriptLanguages {
             new Script("cyr", null, new String[] {"ru", "uk", "be", "bg", "mk", "sr", "kk", "ky", "tt",
                     "ba", "cv", "mn"}, UnicodeScript.CYRILLIC),
             new Script("he", null, new String[] {"he"}, UnicodeScript.HEBREW),
+            new Script("el", "el", new String[] {"grc"}, UnicodeScript.GREEK),
             new Script("te", null, new String[] {"te"}, UnicodeScript.TELUGU),
             new Script("or", null, new String[] {"or"}, UnicodeScript.ORIYA),
             new Script("zh", null, new String[] {"cmn", "yue"}, UnicodeScript.HAN),
