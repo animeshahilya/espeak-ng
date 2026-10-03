@@ -158,8 +158,11 @@
   <string name="setting_digit_grouping">Number grouping</string>
   <string name="digit_group_off">Off (natural numbers)</string>
   <string name="digit_group_single">Single digits (1 2 3)</string>
+  <string name="digit_group_single_pause">Digits with pause (1… 2… 3)</string>
   <string name="digit_group_double">Double / pairs (12 34 56)</string>
+  <string name="digit_group_double_pause">Pairs with pause (12… 34)</string>
   <string name="digit_group_triple">Triple digits, long numbers only (123 456)</string>
+  <string name="digit_group_triple_pause">Triplets with pause (123… 456)</string>
   <string name="setting_backup">Backup settings and dictionary</string>
   <string name="setting_backup_summary">Save your settings and dictionary to a file.</string>
   <string name="setting_restore">Restore from backup</string>

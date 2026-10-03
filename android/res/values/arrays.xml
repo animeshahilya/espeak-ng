@@ -56,14 +56,20 @@
   <string-array name="digit_grouping_entries" translatable="false">
     <item>@string/digit_group_off</item>
     <item>@string/digit_group_single</item>
+    <item>@string/digit_group_single_pause</item>
     <item>@string/digit_group_double</item>
+    <item>@string/digit_group_double_pause</item>
     <item>@string/digit_group_triple</item>
+    <item>@string/digit_group_triple_pause</item>
   </string-array>
   <string-array name="digit_grouping_values" translatable="false">
     <item>off</item>
     <item>single</item>
+    <item>single_pause</item>
     <item>double</item>
+    <item>double_pause</item>
     <item>triple</item>
+    <item>triple_pause</item>
   </string-array>
 
   <string-array name="reading_mode_entries" translatable="false">

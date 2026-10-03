@@ -146,8 +146,17 @@ public class VoiceSettings {
     /** Digit grouping modes for long numbers. */
     public static final String DIGIT_GROUP_OFF = "off";
     public static final String DIGIT_GROUP_SINGLE = "single";
+    public static final String DIGIT_GROUP_SINGLE_PAUSE = "single_pause";
     public static final String DIGIT_GROUP_DOUBLE = "double";
+    public static final String DIGIT_GROUP_DOUBLE_PAUSE = "double_pause";
     public static final String DIGIT_GROUP_TRIPLE = "triple";
+    public static final String DIGIT_GROUP_TRIPLE_PAUSE = "triple_pause";
+
+    public static boolean isDigitGroupingWithPause(String mode) {
+        return DIGIT_GROUP_SINGLE_PAUSE.equals(mode)
+                || DIGIT_GROUP_DOUBLE_PAUSE.equals(mode)
+                || DIGIT_GROUP_TRIPLE_PAUSE.equals(mode);
+    }
 
     /** Unified reading modes (single-select; migrates legacy booleans). */
     public static final String READING_NORMAL = "normal";

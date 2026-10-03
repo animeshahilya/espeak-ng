@@ -226,14 +226,6 @@ public final class TextPreprocessor {
             text = edits.track(text, preprocessIndianText(text, lang));
         }
 
-        final String digitGrouping = settings.getDigitGroupingMode();
-        final boolean useGrouping = !isSsml && digitGrouping != null
-                && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
-        if (useGrouping) {
-            text = edits.track(text,
-                    formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold()));
-        }
-
         // Phonetic letters "Always" reads every letter as Alfa, Bravo and so
         // on; it replaces spelling (which it already implies) but not code mode.
         if (!isSsml && !isSingleCharacterUtterance
@@ -258,6 +250,18 @@ public final class TextPreprocessor {
                         customSymbols(settings, readingMode), lang));
             }
             text = edits.track(text, processNvdaSymbols(text, settings, readingMode, lang));
+        }
+
+        // Digit grouping (digits/pairs/triplets with space or pause).
+        // Runs after the symbol pass so commas inserted for pauses are never
+        // announced as "comma", but act as clause pauses in the TTS engine.
+        final String digitGrouping = settings.getDigitGroupingMode();
+        final boolean useGrouping = !isSsml && !isSingleCharacterUtterance
+                && digitGrouping != null
+                && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
+        if (useGrouping) {
+            text = edits.track(text,
+                    formatDigitGrouping(text, digitGrouping, settings.getDigitGroupThreshold()));
         }
 
         // After the symbol pass, so the commas it adds are pauses, never
@@ -1110,10 +1114,15 @@ public final class TextPreprocessor {
                 || VoiceSettings.DIGIT_GROUP_OFF.equals(mode)) {
             return text;
         }
-        if (VoiceSettings.DIGIT_GROUP_SINGLE.equals(mode)) {
-            return spaceSeparateDigits(text);
+        final boolean withPause = VoiceSettings.isDigitGroupingWithPause(mode);
+        final String delimiter = withPause ? ", " : " ";
+
+        if (VoiceSettings.DIGIT_GROUP_SINGLE.equals(mode)
+                || VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE.equals(mode)) {
+            return separateDigits(text, delimiter);
         }
-        final int groupSize = VoiceSettings.DIGIT_GROUP_DOUBLE.equals(mode) ? 2 : 3;
+        final int groupSize = (VoiceSettings.DIGIT_GROUP_DOUBLE.equals(mode)
+                || VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE.equals(mode)) ? 2 : 3;
         final int len = text.length();
         StringBuilder out = new StringBuilder(len + 16);
         int i = 0;
@@ -1129,8 +1138,8 @@ public final class TextPreprocessor {
                     i += Character.charCount(c);
                 }
                 int runEnd = i;
-                boolean regroup = digitCount >= 4
-                        && (groupSize == 2 || digitCount >= Math.max(4, threshold));
+                boolean regroup = (groupSize == 2 && digitCount >= 4)
+                        || (groupSize == 3 && digitCount >= Math.min(6, threshold));
                 if (!regroup) {
                     out.append(text, runStart, runEnd);
                 } else {
@@ -1138,7 +1147,7 @@ public final class TextPreprocessor {
                     for (int j = runStart; j < runEnd; ) {
                         int c = text.codePointAt(j);
                         if (groupCount > 0 && groupCount % groupSize == 0) {
-                            out.append(' ');
+                            out.append(delimiter);
                         }
                         out.appendCodePoint(c);
                         groupCount++;
@@ -1154,6 +1163,10 @@ public final class TextPreprocessor {
     }
 
     public static String spaceSeparateDigits(String text) {
+        return separateDigits(text, " ");
+    }
+
+    public static String separateDigits(String text, String delimiter) {
         if (text == null || text.isEmpty()) {
             return text;
         }
@@ -1165,7 +1178,7 @@ public final class TextPreprocessor {
             final int charCount = Character.charCount(c);
             final boolean isDigit = Character.isDigit(c);
             if (isDigit && prevWasDigit) {
-                out.append(' ');
+                out.append(delimiter);
             }
             out.appendCodePoint(c);
             prevWasDigit = isDigit;
