@@ -109,4 +109,26 @@ public class TextOffsetMapTest {
         assertEquals(0, map.toPrevious(0));
         assertEquals(b1.length(), map.toPrevious(b2.length()));
     }
+
+    @Test
+    public void testSurrogatePairHandling() {
+        // Replacing emoji 😀 (\uD83D\uDE00) with 😁 (\uD83D\uDE01) where high surrogate is identical
+        String before = "Hello 😀 world";
+        String after = "Hello 😁 world";
+        TextOffsetMap map = TextOffsetMap.diff(before, after);
+        assertNotNull(map);
+        assertEquals(0, map.toPrevious(0));
+        int worldBefore = before.indexOf("world");
+        int worldAfter = after.indexOf("world");
+        assertEquals(worldBefore, map.toPrevious(worldAfter));
+        assertEquals(before.length(), map.toPrevious(after.length()));
+
+        // Mismatched emoji in middle slice without shared prefix/suffix surrogates
+        String step1 = "Start 😀 mid 😁 end";
+        String step2 = "Start 😃 mid 🎉 end";
+        TextOffsetMap map2 = TextOffsetMap.diff(step1, step2);
+        assertNotNull(map2);
+        assertEquals(step1.indexOf("mid"), map2.toPrevious(step2.indexOf("mid")));
+        assertEquals(step1.indexOf("end"), map2.toPrevious(step2.indexOf("end")));
+    }
 }

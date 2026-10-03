@@ -49,8 +49,8 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
     private final Paint mDividerPaint;
 
     public InsetGroupedItemDecoration(Context context) {
-        mMarginHorizontal = dpToPx(context, 16);
-        mCardCornerRadius = dpToPx(context, 16);
+        mMarginHorizontal = context.getResources().getDimensionPixelSize(R.dimen.screen_padding);
+        mCardCornerRadius = context.getResources().getDimensionPixelSize(R.dimen.corner_radius_medium);
         mGroupBottomSpacing = dpToPx(context, 14);
         mDividerIndentWithIcon = dpToPx(context, 56);
         mDividerIndentWithoutIcon = dpToPx(context, 16);
@@ -158,16 +158,18 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
                 View iconView = child.findViewById(android.R.id.icon);
                 boolean hasIcon = iconView != null && iconView.getVisibility() == View.VISIBLE;
                 boolean isRtl = child.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+                float transX = child.getTranslationX();
+                float transY = child.getTranslationY();
                 float startX;
                 float endX;
                 if (isRtl) {
-                    startX = child.getLeft();
-                    endX = child.getRight() - (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
+                    startX = child.getLeft() + transX;
+                    endX = child.getRight() + transX - (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
                 } else {
-                    startX = child.getLeft() + (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
-                    endX = child.getRight();
+                    startX = child.getLeft() + transX + (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
+                    endX = child.getRight() + transX;
                 }
-                float y = child.getBottom();
+                float y = child.getBottom() + transY;
                 c.drawLine(startX, y, endX, y, mDividerPaint);
             }
         }

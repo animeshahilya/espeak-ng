@@ -29,4 +29,10 @@
     <dimen name="corner_radius_medium">16dp</dimen>
     <dimen name="corner_radius_large">28dp</dimen>
 
+    <!-- Category header insets -->
+    <dimen name="category_header_padding_start">24dp</dimen>
+    <dimen name="category_header_padding_end">20dp</dimen>
+    <dimen name="category_header_padding_top">20dp</dimen>
+    <dimen name="category_header_padding_bottom">6dp</dimen>
+
 </resources>

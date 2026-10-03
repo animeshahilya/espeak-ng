@@ -41,22 +41,42 @@ public class AccessiblePreferenceCategory extends PreferenceCategory {
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         View itemView = holder.itemView;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            itemView.setAccessibilityHeading(true);
-            View titleView = itemView.findViewById(android.R.id.title);
-            if (titleView != null) {
-                titleView.setAccessibilityHeading(true);
-            }
+        CharSequence title = getTitle();
+        boolean hasTitle = title != null && title.length() > 0;
+        CharSequence summary = getSummary();
+        boolean hasSummary = summary != null && summary.length() > 0;
+
+        View titleView = itemView.findViewById(android.R.id.title);
+        if (titleView != null) {
+            titleView.setVisibility(hasTitle ? View.VISIBLE : View.GONE);
         }
+
         View summaryView = itemView.findViewById(android.R.id.summary);
         if (summaryView instanceof android.widget.TextView) {
-            CharSequence summary = getSummary();
-            if (summary != null && summary.length() > 0) {
+            if (hasSummary) {
                 ((android.widget.TextView) summaryView).setText(summary);
                 summaryView.setVisibility(View.VISIBLE);
             } else {
                 summaryView.setVisibility(View.GONE);
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            itemView.setAccessibilityHeading(hasTitle);
+            if (titleView != null) {
+                titleView.setAccessibilityHeading(hasTitle);
+            }
+        }
+
+        if (!hasTitle && !hasSummary) {
+            itemView.setPaddingRelative(0, 0, 0, 0);
+            itemView.setMinimumHeight(0);
+        } else {
+            int pStart = itemView.getResources().getDimensionPixelSize(R.dimen.category_header_padding_start);
+            int pEnd = itemView.getResources().getDimensionPixelSize(R.dimen.category_header_padding_end);
+            int pTop = itemView.getResources().getDimensionPixelSize(R.dimen.category_header_padding_top);
+            int pBottom = itemView.getResources().getDimensionPixelSize(R.dimen.category_header_padding_bottom);
+            itemView.setPaddingRelative(pStart, pTop, pEnd, pBottom);
         }
     }
 }

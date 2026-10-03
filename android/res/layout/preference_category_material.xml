@@ -4,10 +4,10 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@android:color/transparent"
-    android:paddingStart="24dp"
-    android:paddingEnd="20dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="6dp">
+    android:paddingStart="@dimen/category_header_padding_start"
+    android:paddingEnd="@dimen/category_header_padding_end"
+    android:paddingTop="@dimen/category_header_padding_top"
+    android:paddingBottom="@dimen/category_header_padding_bottom">
 
     <TextView
         android:id="@android:id/title"

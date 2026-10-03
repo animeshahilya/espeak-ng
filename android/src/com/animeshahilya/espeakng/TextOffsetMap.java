@@ -110,12 +110,22 @@ final class TextOffsetMap {
         while (prefix < maxPrefix && before.charAt(prefix) == after.charAt(prefix)) {
             prefix++;
         }
+        // Do not split a surrogate pair across the prefix boundary
+        if (prefix > 0 && Character.isHighSurrogate(before.charAt(prefix - 1))
+                && prefix < n && Character.isLowSurrogate(before.charAt(prefix))) {
+            prefix--;
+        }
 
         int suffix = 0;
         final int maxSuffix = Math.min(n, m) - prefix;
         while (suffix < maxSuffix
                 && before.charAt(n - 1 - suffix) == after.charAt(m - 1 - suffix)) {
             suffix++;
+        }
+        // Do not split a surrogate pair across the suffix boundary
+        if (suffix > 0 && Character.isLowSurrogate(before.charAt(n - suffix))
+                && (n - suffix - 1 >= 0) && Character.isHighSurrogate(before.charAt(n - suffix - 1))) {
+            suffix--;
         }
 
         final int[] offsets = new int[m + 1];
@@ -145,7 +155,26 @@ final class TextOffsetMap {
                 final int rowOffset = i * stride;
                 final int nextRowOffset = (i + 1) * stride;
                 for (int j = mSlice - 1; j >= 0; j--) {
-                    if (bi == after.charAt(prefix + j)) {
+                    final char aj = after.charAt(prefix + j);
+                    boolean match = (bi == aj);
+                    if (match && Character.isHighSurrogate(bi)) {
+                        boolean validPair = (i + 1 < nSlice && j + 1 < mSlice
+                                && Character.isLowSurrogate(before.charAt(prefix + i + 1))
+                                && Character.isLowSurrogate(after.charAt(prefix + j + 1))
+                                && before.charAt(prefix + i + 1) == after.charAt(prefix + j + 1));
+                        if (!validPair) {
+                            match = false;
+                        }
+                    } else if (match && Character.isLowSurrogate(bi)) {
+                        boolean validPair = (i > 0 && j > 0
+                                && Character.isHighSurrogate(before.charAt(prefix + i - 1))
+                                && Character.isHighSurrogate(after.charAt(prefix + j - 1))
+                                && before.charAt(prefix + i - 1) == after.charAt(prefix + j - 1));
+                        if (!validPair) {
+                            match = false;
+                        }
+                    }
+                    if (match) {
                         dp[rowOffset + j] = dp[nextRowOffset + j + 1] + 1;
                     } else {
                         final int down = dp[nextRowOffset + j];
@@ -159,7 +188,27 @@ final class TextOffsetMap {
             int prevOldEnd = prefix;
             int prevNewEnd = prefix;
             while (i < nSlice && j < mSlice) {
-                if (before.charAt(prefix + i) == after.charAt(prefix + j)) {
+                final char bi = before.charAt(prefix + i);
+                final char aj = after.charAt(prefix + j);
+                boolean match = (bi == aj);
+                if (match && Character.isHighSurrogate(bi)) {
+                    boolean validPair = (i + 1 < nSlice && j + 1 < mSlice
+                            && Character.isLowSurrogate(before.charAt(prefix + i + 1))
+                            && Character.isLowSurrogate(after.charAt(prefix + j + 1))
+                            && before.charAt(prefix + i + 1) == after.charAt(prefix + j + 1));
+                    if (!validPair) {
+                        match = false;
+                    }
+                } else if (match && Character.isLowSurrogate(bi)) {
+                    boolean validPair = (i > 0 && j > 0
+                            && Character.isHighSurrogate(before.charAt(prefix + i - 1))
+                            && Character.isHighSurrogate(after.charAt(prefix + j - 1))
+                            && before.charAt(prefix + i - 1) == after.charAt(prefix + j - 1));
+                    if (!validPair) {
+                        match = false;
+                    }
+                }
+                if (match) {
                     fillUnmatchedRun(offsets, prevNewEnd, prefix + j, prevOldEnd, prefix + i);
                     offsets[prefix + j] = prefix + i;
                     prevOldEnd = prefix + i + 1;

@@ -63,7 +63,7 @@ public final class TextPreprocessor {
     public static final int MAX_CHUNKS = MAX_REQUEST_CHARS / MAX_CHUNK_CHARS + 1;
 
     private static final Pattern DANDA_BOUNDARY =
-            Pattern.compile("([।॥])([^\\s])");
+            Pattern.compile("([।॥]+)([^\\s\\p{Pe}\\p{Pf}\"\'”’।॥])");
     private static final Pattern BANKING_SLASH_TXN =
             Pattern.compile("(?i)\\b(UPI|TXN|REF|IMPS|NEFT|RTGS)/([A-Za-z0-9/]+)");
     private static final Pattern CURRENCY_PREFIX =

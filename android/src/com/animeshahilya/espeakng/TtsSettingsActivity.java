@@ -762,14 +762,21 @@ public class TtsSettingsActivity extends AppCompatActivity {
             recycler.post(new Runnable() {
                 @Override public void run() {
                     try {
-                        androidx.recyclerview.widget.RecyclerView.ViewHolder holder =
-                                recycler.findViewHolderForAdapterPosition(0);
-                        View row = holder != null ? holder.itemView : null;
-                        if (row == null && recycler.getChildCount() > 0) {
-                            row = recycler.getChildAt(0);
+                        View targetRow = null;
+                        for (int i = 0; i < recycler.getChildCount(); i++) {
+                            View child = recycler.getChildAt(i);
+                            if (child != null && child.getVisibility() == View.VISIBLE && child.getHeight() > 0) {
+                                targetRow = child;
+                                break;
+                            }
                         }
-                        if (row != null) {
-                            row.performAccessibilityAction(
+                        if (targetRow == null) {
+                            androidx.recyclerview.widget.RecyclerView.ViewHolder holder =
+                                    recycler.findViewHolderForAdapterPosition(0);
+                            targetRow = holder != null ? holder.itemView : null;
+                        }
+                        if (targetRow != null) {
+                            targetRow.performAccessibilityAction(
                                     android.view.accessibility.AccessibilityNodeInfo
                                             .ACTION_ACCESSIBILITY_FOCUS, null);
                         }
@@ -1002,16 +1009,24 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         ((AppCompatActivity) activity).getSupportActionBar();
                 if (actionBar != null) {
                     PreferenceScreen screen = getPreferenceScreen();
+                    CharSequence title;
                     if (mScreenStack.isEmpty() || screen == null || screen.getTitle() == null) {
-                        actionBar.setTitle(R.string.app_name);
+                        title = getString(R.string.app_name);
                     } else {
-                        actionBar.setTitle(screen.getTitle());
+                        title = screen.getTitle();
+                    }
+                    actionBar.setTitle(title);
+                    View list = getView() != null
+                            ? getView().findViewById(androidx.preference.R.id.recycler_view)
+                            : null;
+                    if (list != null && title != null) {
+                        androidx.core.view.ViewCompat.setAccessibilityPaneTitle(list, title);
                     }
                     // Re-rooting the fragment swaps the whole list silently;
                     // announce the new screen name so TalkBack users hear
                     // where they landed instead of only seeing the title bar
                     // change under them.
-                    announceScreenTitle(actionBar.getTitle());
+                    announceScreenTitle(title);
                 }
             }
         }

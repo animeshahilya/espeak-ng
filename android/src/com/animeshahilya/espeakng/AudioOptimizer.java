@@ -270,6 +270,9 @@ public final class AudioOptimizer {
         // below the Nyquist limit (sampleRateHz / 2) even on low-rate voices (e.g. 8kHz or 11.025kHz).
         double presenceLowHz = Math.min(PRESENCE_LOW_HZ, sampleRateHz * 0.35);
         double presenceHighHz = Math.min(PRESENCE_HIGH_HZ, sampleRateHz * 0.45);
+        if (presenceHighHz <= presenceLowHz) {
+            presenceHighHz = presenceLowHz + 10.0;
+        }
         presenceHighpassAlpha = onePoleHighpassPole(presenceLowHz, sampleRateHz);
         presenceLowpassAlpha = onePoleAlpha(presenceHighHz, sampleRateHz);
         warmthAlpha = onePoleAlpha(WARMTH_HZ, sampleRateHz);
