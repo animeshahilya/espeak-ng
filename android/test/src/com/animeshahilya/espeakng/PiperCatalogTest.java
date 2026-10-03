@@ -98,11 +98,11 @@ public class PiperCatalogTest {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
                 if (PiperDownloads.isCompact(v.quality)) {
                     assertTrue(v.key, v.key.endsWith("-compact"));
-                    assertTrue(v.key, v.modelPath.matches("compact-v1/[^/]+-compact\\.onnx"));
-                    assertTrue(v.key, v.configPath.matches("compact-v1/[^/]+\\.onnx\\.json"));
+                    assertTrue(v.key, v.modelPath.matches("(compact-v1|syspin-v2|rasa-v2)/[^/]+-compact\\.onnx"));
+                    assertTrue(v.key, v.configPath.matches("(compact-v1|piper-v2)/[^/]+\\.onnx\\.json"));
                 } else {
-                    assertTrue(v.key, v.modelPath.matches("(v1\\.1\\.0-fp16|piper-v1)/[^/]+\\.onnx"));
-                    assertTrue(v.key, v.configPath.matches("piper-v1/[^/]+\\.onnx\\.json"));
+                    assertTrue(v.key, v.modelPath.matches("(syspin-v2|rasa-v2)/[^/]+\\.onnx"));
+                    assertTrue(v.key, v.configPath.matches("piper-v2/[^/]+\\.onnx\\.json"));
                     assertTrue(v.key, v.heavy);
                 }
             } else {
