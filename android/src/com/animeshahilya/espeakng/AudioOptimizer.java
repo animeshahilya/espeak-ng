@@ -293,7 +293,10 @@ public final class AudioOptimizer {
      * untouched. {@code length} is clamped to {@code data}'s actual size.
      */
     void process(byte[] data, int length) {
-        final int end = Math.min(Math.max(length, 0), data.length);
+        if (data == null || length <= 0) {
+            return;
+        }
+        final int end = Math.min(length, data.length);
         int i = 0;
         while (i + 1 < end) {
             float sample = (short) (((data[i + 1] & 0xFF) << 8) | (data[i] & 0xFF));

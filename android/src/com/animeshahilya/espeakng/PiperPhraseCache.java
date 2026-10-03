@@ -422,6 +422,12 @@ final class PiperPhraseCache {
         return bytes;
     }
 
+    synchronized void clear() {
+        entries.clear();
+        seen.clear();
+        bytes = 0;
+    }
+
     synchronized int size() {
         return entries.size();
     }

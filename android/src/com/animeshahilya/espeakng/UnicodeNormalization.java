@@ -86,6 +86,9 @@ public final class UnicodeNormalization {
      * where exact identity of offsets is guaranteed).
      */
     public static Result normalize(String text) {
+        if (text == null || text.isEmpty()) {
+            return null;
+        }
         // ASCII is NFKC-stable (no ASCII character has a compatibility
         // decomposition) and every supplementary mapping lives above
         // U+1F150, so pure-ASCII text - the overwhelmingly common case -
@@ -174,6 +177,9 @@ public final class UnicodeNormalization {
     }
 
     private static boolean isAscii(String text) {
+        if (text == null) {
+            return true;
+        }
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) >= 0x80) {
                 return false;

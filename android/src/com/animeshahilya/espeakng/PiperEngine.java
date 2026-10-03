@@ -467,6 +467,9 @@ final class PiperEngine {
         for (PiperModel m : evicted) {
             m.close();
         }
+        if (all) {
+            mCache.clear();
+        }
     }
 
     /** Cancels the synthesis in progress, if any (framework control thread). */

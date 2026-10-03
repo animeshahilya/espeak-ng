@@ -81,6 +81,9 @@ public final class ScriptLanguages {
      * a language for. Empty when nothing was chosen.
      */
     static Map<String, String> chosen(SharedPreferences prefs) {
+        if (prefs == null) {
+            return Collections.emptyMap();
+        }
         Map<String, String> chosen = null;
         for (Script script : SCRIPTS) {
             final String voice = prefs.getString(script.prefKey(), "");
@@ -95,6 +98,9 @@ public final class ScriptLanguages {
     }
 
     private static boolean isChoice(String[] choices, String voice) {
+        if (choices == null || voice == null) {
+            return false;
+        }
         for (String c : choices) {
             if (c.equals(voice)) {
                 return true;
@@ -112,7 +118,7 @@ public final class ScriptLanguages {
      * en-in -> eng, mr -> mar.
      */
     static Map<UnicodeScript, String> runLanguages(Map<String, String> chosen) {
-        if (chosen.isEmpty()) {
+        if (chosen == null || chosen.isEmpty()) {
             return Collections.emptyMap();
         }
         if (chosen.equals(sLastChosen)) {
@@ -135,6 +141,6 @@ public final class ScriptLanguages {
     }
 
     static boolean naturalSwitching(SharedPreferences prefs) {
-        return prefs.getBoolean(PREF_NATURAL_SWITCHING, true);
+        return prefs != null && prefs.getBoolean(PREF_NATURAL_SWITCHING, true);
     }
 }

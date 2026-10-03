@@ -384,7 +384,10 @@ public class TtsService extends TextToSpeechService {
         // A loaded natural voice is 60-150 MB of native memory. Under pressure
         // keep only the one in use: evicting that too would just mean a
         // reload (and eSpeak in the meantime) on the very next utterance.
-        if (level >= TRIM_MEMORY_RUNNING_LOW) {
+        // Under complete memory exhaustion, free all models and phrase cache to prevent LMK kill.
+        if (level >= TRIM_MEMORY_COMPLETE) {
+            mPiper.trim(true);
+        } else if (level >= TRIM_MEMORY_RUNNING_LOW) {
             mPiper.trim(false);
         }
     }
@@ -392,6 +395,7 @@ public class TtsService extends TextToSpeechService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mPiper.unloadAll();
         if (mEngine != null) {
             mEngine.terminate();
             mEngine = null;
@@ -765,18 +769,19 @@ public class TtsService extends TextToSpeechService {
      * order; the occasional out-of-order event falls back to a full rescan.
      */
     private int codePointToOffset(int codePointIndex) {
-        if (mSynthText == null || codePointIndex <= 0) {
+        final String text = mSynthText;
+        if (text == null || codePointIndex <= 0) {
             return 0;
         }
         if (codePointIndex >= mSynthTextCodePoints) {
-            return mSynthText.length();
+            return text.length();
         }
         try {
-            if (codePointIndex < mAnchorCodePoint || mAnchorOffset > mSynthText.length()) {
+            if (codePointIndex < mAnchorCodePoint || mAnchorOffset > text.length()) {
                 mAnchorCodePoint = 0;
                 mAnchorOffset = 0;
             }
-            mAnchorOffset = mSynthText.offsetByCodePoints(
+            mAnchorOffset = text.offsetByCodePoints(
                     mAnchorOffset, codePointIndex - mAnchorCodePoint);
             mAnchorCodePoint = codePointIndex;
             return mAnchorOffset;
@@ -1692,7 +1697,7 @@ public class TtsService extends TextToSpeechService {
         }
 
         boolean isEarcon() {
-            return text.length() == 1 && Earcons.isMarker(text.charAt(0));
+            return text != null && text.length() == 1 && Earcons.isMarker(text.charAt(0));
         }
     }
 

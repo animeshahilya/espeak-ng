@@ -42,6 +42,9 @@ final class PcmResampler {
 
     /** Feeds input; returns the output samples whose whole window has arrived. */
     short[] process(short[] in) {
+        if (in == null || in.length == 0) {
+            return new short[0];
+        }
         append(in);
         return produce(false);
     }
@@ -132,6 +135,9 @@ final class PcmResampler {
 
         @Override
         public boolean audio(byte[] pcm) {
+            if (pcm == null || pcm.length == 0) {
+                return !target.stopped();
+            }
             final short[] in = new short[pcm.length / 2];
             for (int i = 0; i < in.length; i++) {
                 in[i] = (short) ((pcm[2 * i] & 0xff) | (pcm[2 * i + 1] << 8));

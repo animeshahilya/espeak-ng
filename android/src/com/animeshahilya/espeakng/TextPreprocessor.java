@@ -595,17 +595,24 @@ public final class TextPreprocessor {
         for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
             if (c >= 0xD800 && c <= 0xDFFF) {
-                boolean drop = false;
                 if (Character.isHighSurrogate(c)) {
-                    if (i + 1 >= length || !Character.isLowSurrogate(text.charAt(i + 1))) {
-                        drop = true;
+                    if (i + 1 < length && Character.isLowSurrogate(text.charAt(i + 1))) {
+                        // Valid surrogate pair: keep both and advance past the low surrogate
+                        if (sb != null) {
+                            sb.append(c);
+                            sb.append(text.charAt(i + 1));
+                        }
+                        i++;
+                        continue;
                     }
-                } else if (Character.isLowSurrogate(c)) {
-                    if (i == 0 || !Character.isHighSurrogate(text.charAt(i - 1))) {
-                        drop = true;
+                    // Unpaired high surrogate: drop it
+                    if (sb == null) {
+                        sb = new StringBuilder(length);
+                        sb.append(text, 0, i);
                     }
-                }
-                if (drop) {
+                    continue;
+                } else {
+                    // Stray low surrogate without preceding high surrogate: drop it
                     if (sb == null) {
                         sb = new StringBuilder(length);
                         sb.append(text, 0, i);

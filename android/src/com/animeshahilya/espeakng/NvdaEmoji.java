@@ -228,7 +228,7 @@ public final class NvdaEmoji {
             }
             if (best >= 0) {
                 String name = local != null && best < local.length ? local[best] : "";
-                if (name.isEmpty()) {
+                if (name.isEmpty() && sEnglish != null && best < sEnglish.length) {
                     name = sEnglish[best];
                 }
                 if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {

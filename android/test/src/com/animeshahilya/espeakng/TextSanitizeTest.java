@@ -41,4 +41,13 @@ public class TextSanitizeTest {
         }
         assertEquals(sb.toString(), String.join("", chunks));
     }
+
+    @Test
+    public void stripUnpairedSurrogates() {
+        assertEquals("Valid 😀 text", TextPreprocessor.stripUnpairedSurrogates("Valid 😀 text"));
+        assertEquals("ab", TextPreprocessor.stripUnpairedSurrogates("a\uD800b"));
+        assertEquals("ab", TextPreprocessor.stripUnpairedSurrogates("a\uDC00b"));
+        assertEquals("a😀b", TextPreprocessor.stripUnpairedSurrogates("a\uD800\uD83D\uDE00b"));
+        assertEquals("a😀b", TextPreprocessor.stripUnpairedSurrogates("a\uD83D\uDE00\uDC00b"));
+    }
 }

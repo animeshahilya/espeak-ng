@@ -146,7 +146,7 @@ public class UserDictionaryManager {
         if (text == null || text.isEmpty() || mRules.isEmpty()) {
             return text;
         }
-        final String langKey = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
+        final String langKey = language != null ? AsciiUtils.toAsciiLowerCase(language.trim()) : "";
         List<UserDictionary> matching = mLanguageCache.get(langKey);
         if (matching == null) {
             final List<UserDictionary> filtered = new ArrayList<>();

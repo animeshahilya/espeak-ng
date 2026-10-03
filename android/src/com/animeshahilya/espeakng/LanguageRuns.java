@@ -324,6 +324,9 @@ final class LanguageRuns {
      * cannot read digits (no number words for its language).
      */
     static List<Run> splitDigits(Run run, String numbers) {
+        if (run == null || run.text == null || run.text.isEmpty()) {
+            return Collections.emptyList();
+        }
         final List<Run> parts = split(run.text, run.language, new FastDigitResolver(run.language, numbers));
         if (parts.size() == 1 && run.start == 0) {
             return parts;
