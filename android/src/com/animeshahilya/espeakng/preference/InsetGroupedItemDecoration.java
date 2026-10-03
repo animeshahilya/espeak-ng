@@ -86,9 +86,12 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         PreferenceGroupAdapter pga = (PreferenceGroupAdapter) adapter;
+        if (pos >= pga.getItemCount()) {
+            super.getItemOffsets(outRect, view, parent, state);
+            return;
+        }
         Preference pref = pga.getItem(pos);
-
-        if (pref instanceof PreferenceCategory) {
+        if (pref == null || pref instanceof PreferenceCategory) {
             // Category headers span full width with their own internal padding
             outRect.set(0, 0, 0, 0);
             return;
@@ -100,7 +103,7 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
         outRect.top = 0;
 
         boolean isLastInGroup = (pos == pga.getItemCount() - 1)
-                || (pga.getItem(pos + 1) instanceof PreferenceCategory);
+                || (pos + 1 < pga.getItemCount() && pga.getItem(pos + 1) instanceof PreferenceCategory);
         outRect.bottom = isLastInGroup ? mGroupBottomSpacing : 0;
     }
 
@@ -117,14 +120,14 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
         for (int i = 0; i < childCount; i++) {
             View child = parent.getChildAt(i);
             int pos = parent.getChildAdapterPosition(child);
-            if (pos == RecyclerView.NO_POSITION) continue;
+            if (pos == RecyclerView.NO_POSITION || pos >= pga.getItemCount()) continue;
 
             Preference pref = pga.getItem(pos);
-            if (pref instanceof PreferenceCategory) continue;
+            if (pref == null || pref instanceof PreferenceCategory) continue;
 
-            boolean isFirst = (pos == 0) || (pga.getItem(pos - 1) instanceof PreferenceCategory);
+            boolean isFirst = (pos == 0) || (pos > 0 && pga.getItem(pos - 1) instanceof PreferenceCategory);
             boolean isLast = (pos == pga.getItemCount() - 1)
-                    || (pga.getItem(pos + 1) instanceof PreferenceCategory);
+                    || (pos + 1 < pga.getItemCount() && pga.getItem(pos + 1) instanceof PreferenceCategory);
 
             applyCardStyle(child, isFirst, isLast, pref instanceof PreferenceScreen);
         }
@@ -143,19 +146,27 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
         for (int i = 0; i < childCount; i++) {
             View child = parent.getChildAt(i);
             int pos = parent.getChildAdapterPosition(child);
-            if (pos == RecyclerView.NO_POSITION) continue;
+            if (pos == RecyclerView.NO_POSITION || pos >= pga.getItemCount()) continue;
 
             Preference pref = pga.getItem(pos);
-            if (pref instanceof PreferenceCategory) continue;
+            if (pref == null || pref instanceof PreferenceCategory) continue;
 
             boolean isLast = (pos == pga.getItemCount() - 1)
-                    || (pga.getItem(pos + 1) instanceof PreferenceCategory);
+                    || (pos + 1 < pga.getItemCount() && pga.getItem(pos + 1) instanceof PreferenceCategory);
 
             if (!isLast) {
                 View iconView = child.findViewById(android.R.id.icon);
                 boolean hasIcon = iconView != null && iconView.getVisibility() == View.VISIBLE;
-                float startX = child.getLeft() + (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
-                float endX = child.getRight();
+                boolean isRtl = child.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+                float startX;
+                float endX;
+                if (isRtl) {
+                    startX = child.getLeft();
+                    endX = child.getRight() - (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
+                } else {
+                    startX = child.getLeft() + (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
+                    endX = child.getRight();
+                }
                 float y = child.getBottom();
                 c.drawLine(startX, y, endX, y, mDividerPaint);
             }
@@ -168,7 +179,7 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
             view.setMinimumHeight(mMinItemHeight);
         }
 
-        int shapeKey = (isFirst ? 1 : 0) | (isLast ? 2 : 0);
+        int shapeKey = (isFirst ? 1 : 0) | (isLast ? 2 : 0) | (isScreen ? 4 : 0);
         Object currentTag = view.getTag(R.id.tag_card_shape);
         if (currentTag instanceof Integer && ((Integer) currentTag) == shapeKey) {
             return;
@@ -211,6 +222,8 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
                             host.getContext().getString(R.string.accessibility_action_open)));
                 }
             });
+        } else {
+            ViewCompat.setAccessibilityDelegate(view, null);
         }
     }
 }

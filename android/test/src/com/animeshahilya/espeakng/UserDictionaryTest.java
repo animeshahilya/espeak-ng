@@ -84,12 +84,16 @@ public class UserDictionaryTest {
         assertTrue(englishOnly.appliesToLanguage("en"));
         assertTrue(englishOnly.appliesToLanguage("en-US"));
         assertTrue(englishOnly.appliesToLanguage("en-IN"));
+        assertTrue(englishOnly.appliesToLanguage("en_US"));
+        assertTrue(englishOnly.appliesToLanguage("en_IN"));
         assertFalse(englishOnly.appliesToLanguage("hi"));
         assertFalse(englishOnly.appliesToLanguage(null));
 
         UserDictionary enInOnly = new UserDictionary("crore", "ten million", false, false, false, "en-in");
         assertTrue(enInOnly.appliesToLanguage("en-in"));
+        assertTrue(enInOnly.appliesToLanguage("en_IN"));
         assertFalse(enInOnly.appliesToLanguage("en-us"));
+        assertFalse(enInOnly.appliesToLanguage("en_US"));
         assertFalse(enInOnly.appliesToLanguage("en"));
     }
 

@@ -672,11 +672,15 @@ public class TtsService extends TextToSpeechService {
         mPiper.stop();
     }
 
+    @SuppressWarnings("deprecation")
     private String getRequestString(SynthesisRequest request) {
         if (request == null) {
             return null;
         }
-        final CharSequence cs = request.getCharSequenceText();
+        CharSequence cs = request.getCharSequenceText();
+        if (cs == null) {
+            cs = request.getText();
+        }
         return cs != null ? cs.toString() : null;
     }
 

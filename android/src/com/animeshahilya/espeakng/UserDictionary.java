@@ -184,8 +184,9 @@ public class UserDictionary {
     public boolean appliesToLanguage(String requestLanguage) {
         if (mLanguage.isEmpty()) return true;
         if (requestLanguage == null) return false;
-        String request = requestLanguage.trim().toLowerCase(java.util.Locale.ROOT);
-        return request.equals(mLanguage) || request.startsWith(mLanguage + "-");
+        String request = AsciiUtils.toAsciiLowerCase(requestLanguage.trim().replace('_', '-'));
+        String ruleLang = AsciiUtils.toAsciiLowerCase(mLanguage.trim().replace('_', '-'));
+        return request.equals(ruleLang) || request.startsWith(ruleLang + "-");
     }
 
     /**

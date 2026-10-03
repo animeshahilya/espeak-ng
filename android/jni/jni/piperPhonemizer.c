@@ -101,12 +101,12 @@ static void buf_append(buf_t *b, const char *s, size_t n)
       if (p && b->len > 0) {
         memcpy(p, b->data, b->len + 1);
       }
-      b->is_allocated = 1;
     }
     if (p == NULL) {
       b->failed = 1;
       return;
     }
+    b->is_allocated = 1;
     b->data = p;
     b->cap = cap;
   }
@@ -253,6 +253,9 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
   if (out.failed) {
     buf_free(&out);
     return NULL;
+  }
+  if (out.data == NULL) {
+    return (char *)calloc(1, 1);
   }
   return out.data;
 }

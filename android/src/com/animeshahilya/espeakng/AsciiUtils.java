@@ -95,7 +95,6 @@ public final class AsciiUtils {
      */
     public static String baseLanguage(String languageTag) {
         if (languageTag == null || languageTag.isEmpty()) return "";
-        if ("cmn".equalsIgnoreCase(languageTag)) return "zh";
         int sep = -1;
         for (int i = 0, n = languageTag.length(); i < n; i++) {
             char c = languageTag.charAt(i);
@@ -104,8 +103,10 @@ public final class AsciiUtils {
                 break;
             }
         }
-        return sep > 0 ? toAsciiLowerCase(languageTag.substring(0, sep).trim())
-                       : toAsciiLowerCase(languageTag.trim());
+        String base = sep > 0 ? toAsciiLowerCase(languageTag.substring(0, sep).trim())
+                              : toAsciiLowerCase(languageTag.trim());
+        if ("cmn".equals(base)) return "zh";
+        return base;
     }
 
     /**
