@@ -2,6 +2,7 @@ package com.animeshahilya.espeakng;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -49,5 +50,48 @@ public class TextSanitizeTest {
         assertEquals("ab", TextPreprocessor.stripUnpairedSurrogates("a\uDC00b"));
         assertEquals("a😀b", TextPreprocessor.stripUnpairedSurrogates("a\uD800\uD83D\uDE00b"));
         assertEquals("a😀b", TextPreprocessor.stripUnpairedSurrogates("a\uD83D\uDE00\uDC00b"));
+    }
+
+    @Test
+    public void endsWithQuestionOrExclamationDetection() {
+        // Standard ASCII
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Is this ready?"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Look at that!"));
+
+        // With trailing quotes and brackets
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Really?\""));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Are you sure? )"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Done! ]"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Important! }"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Yes? »"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Right? 』"));
+
+        // Multilingual: Arabic, Greek, fullwidth, interrobang
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("هل هذا صحيح؟"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Τι κάνεις;"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("你好嗎？"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("太好了！"));
+        assertTrue(TextPreprocessor.endsWithQuestionOrExclamation("Really‽"));
+
+        // Negatives
+        assertFalse(TextPreprocessor.endsWithQuestionOrExclamation("Just a sentence."));
+        assertFalse(TextPreprocessor.endsWithQuestionOrExclamation("Thinking..."));
+        assertFalse(TextPreprocessor.endsWithQuestionOrExclamation(""));
+        assertFalse(TextPreprocessor.endsWithQuestionOrExclamation(null));
+    }
+
+    @Test
+    public void simplifyUrlsNoDanglingTrailingSlash() {
+        assertEquals(" link example.com ", TextPreprocessor.simplifyUrls("https://example.com/"));
+        assertEquals(" link example.com slash path ", TextPreprocessor.simplifyUrls("https://example.com/path/"));
+        assertEquals(" link example.com slash path with parameters ",
+                TextPreprocessor.simplifyUrls("https://example.com/path/?tracking_token_123456789"));
+    }
+
+    @Test
+    public void condenseRepeatedEmojisWithSurrogates() {
+        // Mathematical bold capital A is U+1D400 (surrogate pair \uD835\uDC00)
+        String mathText = "\uD835\uDC00\uD835\uDC01";
+        assertEquals(mathText, TextPreprocessor.condenseRepeatedEmojis(mathText, VoiceSettings.REPEATED_CHARS_COUNT));
     }
 }

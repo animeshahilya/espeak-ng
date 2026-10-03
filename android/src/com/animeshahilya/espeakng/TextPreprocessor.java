@@ -533,8 +533,9 @@ public final class TextPreprocessor {
         while (i < len) {
             int clusterLen = getEmojiClusterLength(text, i);
             if (clusterLen == 0) {
-                sb.append(text.charAt(i));
-                i++;
+                int cp = text.codePointAt(i);
+                sb.appendCodePoint(cp);
+                i += Character.charCount(cp);
                 continue;
             }
 
@@ -668,13 +669,24 @@ public final class TextPreprocessor {
             s = s.substring(4);
         }
         int qIdx = s.indexOf('?');
+        boolean hasLongParams = false;
+        String query = "";
         if (qIdx != -1) {
-            String query = s.substring(qIdx);
+            query = s.substring(qIdx);
+            s = s.substring(0, qIdx);
             if (query.length() > 10) {
-                s = s.substring(0, qIdx) + " with parameters";
+                hasLongParams = true;
             }
         }
-        s = s.replace("/", " slash ");
+        while (s.endsWith("/")) {
+            s = s.substring(0, s.length() - 1);
+        }
+        if (hasLongParams) {
+            s = s + " with parameters";
+        } else if (!query.isEmpty()) {
+            s = s + query;
+        }
+        s = s.replaceAll("/+", " slash ");
         return " link " + s.trim() + " ";
     }
 
@@ -1225,7 +1237,8 @@ public final class TextPreprocessor {
         while (end > 0) {
             char c = text.charAt(end - 1);
             if (Character.isWhitespace(c) || c == '"' || c == '\'' || c == ')' || c == ']'
-                    || c == '”' || c == '’') {
+                    || c == '}' || c == '”' || c == '’' || c == '»' || c == '›'
+                    || c == '』' || c == '」' || c == '）' || c == '】') {
                 end--;
                 continue;
             }
@@ -1233,7 +1246,8 @@ public final class TextPreprocessor {
         }
         if (end == 0) return false;
         char last = text.charAt(end - 1);
-        return last == '?' || last == '!' || last == '？' || last == '！';
+        return last == '?' || last == '!' || last == '？' || last == '！'
+                || last == '؟' || last == '\u037E' || last == '‽' || last == '⸘';
     }
 
     public static List<String> chunkForWatchdog(String text) {

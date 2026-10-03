@@ -1488,6 +1488,21 @@ public class TtsSettingsActivity extends AppCompatActivity {
         speakPreview(context, context.getString(R.string.test_numbers_sample), "sample_numbers");
     }
 
+    private static void playTestPauses(final Context context) {
+        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
+        speakPreview(context, context.getString(R.string.test_pauses_sample), "sample_pauses");
+    }
+
+    private static void playTestPunctuation(final Context context) {
+        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
+        speakPreview(context, context.getString(R.string.test_punctuation_sample), "sample_punctuation");
+    }
+
+    private static void playTestReading(final Context context) {
+        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
+        speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading");
+    }
+
     /**
      * Speaks {@code text} in {@code locale} through the preview engine, then
      * restores the engine's previous voice. Used by the language picker's
@@ -1814,7 +1829,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
         if (isWatch) {
             for (String key : new String[] {
                     LanguageSettings.PREF_SUPPORTED_LANGUAGES, KEY_TEST_VOICE,
-                    "action_preview_numbers",
+                    "action_preview_numbers", "action_preview_pauses",
+                    "action_preview_punctuation", "action_preview_reading",
                     VoiceSettings.PREF_RATE_BOOST_LEVEL,
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                     VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_SPOKEN_DIACRITICS,
@@ -1856,6 +1872,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
             onClick(screen, KEY_TEST_VOICE, () -> playTestVoice(context));
             onClick(screen, "action_preview_numbers", () -> playTestNumbers(context));
+            onClick(screen, "action_preview_pauses", () -> playTestPauses(context));
+            onClick(screen, "action_preview_punctuation", () -> playTestPunctuation(context));
+            onClick(screen, "action_preview_reading", () -> playTestReading(context));
             onClick(screen, VoiceSettings.PREF_USER_DICTIONARY, () -> UserDictionaryScreen.show(context));
             onClick(screen, "action_recommended_defaults", () -> applyRecommendedDefaults(context));
             onClick(screen, "action_backup", () -> {
