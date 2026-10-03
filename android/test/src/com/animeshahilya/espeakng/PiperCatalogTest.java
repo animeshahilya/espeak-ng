@@ -80,7 +80,7 @@ public class PiperCatalogTest {
         final PiperDownloads.CatalogVoice bundled = PiperDownloads.parseCatalog(json, true).get(0);
         assertEquals("https://huggingface.co/someone/voice/resolve/abc/", bundled.baseUrl);
         assertEquals("someone", bundled.source);
-        assertEquals(null, bundled.sampleUrl());
+        assertEquals(PiperDownloads.EXTRA_SAMPLES + bundled.key + ".mp3", bundled.sampleUrl());
         // Anything but a Hugging Face repo is dropped.
         assertEquals(0, PiperDownloads.parseCatalog(json.replace("https://huggingface.co/",
                 "http://evil.example/"), true).size());

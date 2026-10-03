@@ -77,6 +77,8 @@ final class PiperDownloads {
     /** SYSPIN + AI4Bharat Rasa character voices, md5-pinned in the extra list. */
     static final String RESPIN_SYSPIN_RELEASES =
             "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/";
+    /** One <key>.mp3 per bundled extra voice (that repo's build_samples.py). */
+    static final String EXTRA_SAMPLES = RESPIN_SYSPIN_RELEASES + "samples-v1/";
     /**
      * Community voices for languages Piper's own catalog lacks (Tamil,
      * Sinhala), in voices.json's format plus base_url, source and license.
@@ -144,7 +146,10 @@ final class PiperDownloads {
 
         String sampleUrl() {
             if (!REPO_BASE.equals(baseUrl)) {
-                return null; // piper-samples only has Piper's own voices
+                // Only the bundled list sets another base_url; each of its
+                // voices has a recording in EXTRA_SAMPLES (piper-samples only
+                // has Piper's own voices).
+                return EXTRA_SAMPLES + key + ".mp3";
             }
             final int slash = modelPath.lastIndexOf('/');
             return slash < 0 ? null : SAMPLES_BASE + modelPath.substring(0, slash) + "/speaker_0.mp3";

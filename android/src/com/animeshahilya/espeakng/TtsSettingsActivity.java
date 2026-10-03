@@ -709,10 +709,25 @@ public class TtsSettingsActivity extends AppCompatActivity {
             if (parent == null) {
                 return false;
             }
+            PiperSettings.onShown(parent); // a natural-voice page refreshes what changed below it
             setPreferenceScreen(parent);
             updateTitle();
             focusFirstRow();
             return true;
+        }
+
+        /**
+         * Opens a page built in code (the natural-voice download and voice
+         * pages) one level below the current one, so Back returns here.
+         */
+        void pushScreen(PreferenceScreen screen) {
+            final PreferenceScreen current = getPreferenceScreen();
+            if (current != null) {
+                mScreenStack.push(current);
+            }
+            setPreferenceScreen(screen);
+            updateTitle();
+            focusFirstRow();
         }
 
         /**
@@ -1080,12 +1095,24 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
                     int topInset = 0;
                     int bottomInset = 0;
+                    // Landscape: the navigation bar and the camera cutout sit
+                    // at the sides. The action bar already avoids them; without
+                    // these the list ran under the navigation bar (switches
+                    // half hidden) and out of line with the title.
+                    int leftInset = 0;
+                    int rightInset = 0;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         topInset = insets.getInsets(WindowInsets.Type.statusBars()).top;
                         bottomInset = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
+                        final android.graphics.Insets sides = insets.getInsets(
+                                WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                        leftInset = sides.left;
+                        rightInset = sides.right;
                     } else {
                         topInset = insets.getSystemWindowInsetTop();
                         bottomInset = insets.getSystemWindowInsetBottom();
+                        leftInset = insets.getSystemWindowInsetLeft();
+                        rightInset = insets.getSystemWindowInsetRight();
                     }
                     int actionBarHeight = 0;
                     Activity activity = getActivity();
@@ -1099,9 +1126,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     }
                     if (listView != null && context != null) {
                         listView.setPadding(
-                                listView.getPaddingLeft(),
+                                leftInset,
                                 topInset + actionBarHeight,
-                                listView.getPaddingRight(),
+                                rightInset,
                                 bottomInset + dpToPx(context, 16)
                         );
                     }

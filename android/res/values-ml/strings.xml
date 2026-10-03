@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The voice sample sentence (Test voice, touch-and-hold, the system's TTS settings "Play"). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="sample_text" tools:ignore="StringFormatCount">ഇത് മലയാളത്തിൽ സംസാരിക്കുന്ന വാചകത്തിന്റെ ഒരു മാതൃകയാണ്.</string>
+</resources>
