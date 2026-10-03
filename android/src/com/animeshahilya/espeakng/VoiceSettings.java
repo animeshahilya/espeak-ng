@@ -528,14 +528,14 @@ public class VoiceSettings {
 
     public int getDigitGroupThreshold() {
         try {
-            String raw = mPreferences.getString(PREF_DIGIT_GROUP_THRESHOLD, "7");
-            if (raw == null) return 7;
+            String raw = mPreferences.getString(PREF_DIGIT_GROUP_THRESHOLD, "6");
+            if (raw == null) return 6;
             int v = Integer.parseInt(raw);
             if (v < 4) return 4;
             if (v > 12) return 12;
             return v;
         } catch (NumberFormatException e) {
-            return 7;
+            return 6;
         }
     }
 

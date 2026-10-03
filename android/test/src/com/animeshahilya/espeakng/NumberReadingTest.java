@@ -51,39 +51,48 @@ public class NumberReadingTest {
     @Test
     public void testDigitGroupingWithPause() {
         // Digits with Pause: 123 -> 1, 2, 3 (One… Two… Three)
-        assertEquals("1, 2, 3", TextPreprocessor.formatDigitGrouping("123", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 7));
-        assertEquals("9", TextPreprocessor.formatDigitGrouping("9", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 7));
-        assertEquals("1, 2", TextPreprocessor.formatDigitGrouping("12", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 7));
-        assertEquals("1, 2, 3, 4, 5, 6", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 7));
+        assertEquals("1, 2, 3", TextPreprocessor.formatDigitGrouping("123", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
+        assertEquals("9", TextPreprocessor.formatDigitGrouping("9", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
+        assertEquals("1, 2", TextPreprocessor.formatDigitGrouping("12", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
+        assertEquals("1, 2, 3, 4, 5, 6", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
+        // Embedded thousands comma normalization in single digits mode
+        assertEquals("1, 2, 3, 4", TextPreprocessor.formatDigitGrouping("1,234", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
+        // Decimal point preservation
+        assertEquals("3. 1, 4", TextPreprocessor.formatDigitGrouping("3.14", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
 
         // Pairs with Pause: 1234 -> 12, 34 (Twelve… Thirty-Four)
-        assertEquals("12, 34", TextPreprocessor.formatDigitGrouping("1234", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 7));
-        assertEquals("12, 34, 56", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 7));
-        assertEquals("123", TextPreprocessor.formatDigitGrouping("123", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 7));
+        assertEquals("12, 34", TextPreprocessor.formatDigitGrouping("1234", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 6));
+        assertEquals("12, 34, 56", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 6));
+        assertEquals("1, 23, 45", TextPreprocessor.formatDigitGrouping("12345", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 6));
+        assertEquals("123", TextPreprocessor.formatDigitGrouping("123", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 6));
 
         // Triplets with Pause: 123456 -> 123, 456 (One Twenty-Three… Four Fifty-Six..)
-        assertEquals("123, 456", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 7));
-        assertEquals("123, 456, 789", TextPreprocessor.formatDigitGrouping("123456789", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 7));
-        assertEquals("12345", TextPreprocessor.formatDigitGrouping("12345", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 7));
+        assertEquals("123, 456", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 6));
+        assertEquals("1, 234, 567", TextPreprocessor.formatDigitGrouping("1234567", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 6));
+        assertEquals("1, 234, 567", TextPreprocessor.formatDigitGrouping("1,234,567", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 6));
+        assertEquals("123, 456, 789", TextPreprocessor.formatDigitGrouping("123456789", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 6));
+        assertEquals("12345", TextPreprocessor.formatDigitGrouping("12345", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 6));
     }
 
     @Test
     public void testDigitGroupingSpace() {
-        assertEquals("1 2 3", TextPreprocessor.formatDigitGrouping("123", VoiceSettings.DIGIT_GROUP_SINGLE, 7));
-        assertEquals("12 34", TextPreprocessor.formatDigitGrouping("1234", VoiceSettings.DIGIT_GROUP_DOUBLE, 7));
-        assertEquals("123 456", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_TRIPLE, 7));
+        assertEquals("1 2 3", TextPreprocessor.formatDigitGrouping("123", VoiceSettings.DIGIT_GROUP_SINGLE, 6));
+        assertEquals("12 34", TextPreprocessor.formatDigitGrouping("1234", VoiceSettings.DIGIT_GROUP_DOUBLE, 6));
+        assertEquals("123 456", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_TRIPLE, 6));
+        assertEquals("1 234 567", TextPreprocessor.formatDigitGrouping("1234567", VoiceSettings.DIGIT_GROUP_TRIPLE, 6));
     }
 
     @Test
     public void testDigitGroupingOff() {
-        assertEquals("123456", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_OFF, 7));
+        assertEquals("123456", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_OFF, 6));
+        assertEquals("1,234,567", TextPreprocessor.formatDigitGrouping("1,234,567", VoiceSettings.DIGIT_GROUP_OFF, 6));
     }
 
     @Test
     public void testDigitGroupingInSentence() {
         assertEquals("Call 12, 34 now",
-                TextPreprocessor.formatDigitGrouping("Call 1234 now", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 7));
+                TextPreprocessor.formatDigitGrouping("Call 1234 now", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 6));
         assertEquals("PIN: 1, 2, 3",
-                TextPreprocessor.formatDigitGrouping("PIN: 123", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 7));
+                TextPreprocessor.formatDigitGrouping("PIN: 123", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
     }
 }

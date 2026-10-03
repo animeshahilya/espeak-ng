@@ -155,14 +155,14 @@
   <string name="setting_recommended_defaults">Apply recommended reading style</string>
   <string name="setting_recommended_defaults_summary" formatted="false">Max variant, 40% pitch, 75% pitch variation and raised pitch for capitals.</string>
   <string name="recommended_defaults_applied" formatted="false">Recommended reading style applied (Max variant, 40% pitch, 75% inflection, capital pitch raise)</string>
-  <string name="setting_digit_grouping">Number grouping</string>
+  <string name="setting_digit_grouping">Number reading mode</string>
   <string name="digit_group_off">Off (natural numbers)</string>
-  <string name="digit_group_single">Single digits (1 2 3)</string>
   <string name="digit_group_single_pause">Digits with pause (1… 2… 3)</string>
-  <string name="digit_group_double">Double / pairs (12 34 56)</string>
   <string name="digit_group_double_pause">Pairs with pause (12… 34)</string>
-  <string name="digit_group_triple">Triple digits, long numbers only (123 456)</string>
   <string name="digit_group_triple_pause">Triplets with pause (123… 456)</string>
+  <string name="digit_group_single">Single digits (1 2 3)</string>
+  <string name="digit_group_double">Pairs (12 34)</string>
+  <string name="digit_group_triple">Triplets (123 456)</string>
   <string name="setting_backup">Backup settings and dictionary</string>
   <string name="setting_backup_summary">Save your settings and dictionary to a file.</string>
   <string name="setting_restore">Restore from backup</string>
@@ -188,6 +188,10 @@
   <string name="reading_spelling">Spelling (letter by letter)</string>
   <string name="reading_code">Code reading (symbols + full punctuation)</string>
   <string name="setting_digit_threshold">Triple-grouping threshold</string>
+  <string name="setting_digit_threshold_shown">Triple-grouping threshold available</string>
+  <string name="test_numbers_title">Preview number sample</string>
+  <string name="test_numbers_summary">Hear how numbers sound with your current number reading mode.</string>
+  <string name="test_numbers_sample">PIN 123, code 1234, reference 123456.</string>
   <plurals name="digits_count">
     <item quantity="one">%1$d digit</item>
     <item quantity="other">%1$d digits</item>

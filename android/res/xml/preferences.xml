@@ -356,13 +356,18 @@
         <ListPreference
             android:key="espeak_digit_group_threshold"
             android:title="@string/setting_digit_threshold"
-            android:defaultValue="7"
+            android:defaultValue="6"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:title="@string/category_number_extras"
           app:iconSpaceReserved="false">
+        <Preference
+            android:key="action_preview_numbers"
+            android:title="@string/test_numbers_title"
+            android:summary="@string/test_numbers_summary"
+            app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             android:key="espeak_read_money"
             android:title="@string/setting_read_money"

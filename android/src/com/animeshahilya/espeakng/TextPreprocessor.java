@@ -1133,25 +1133,45 @@ public final class TextPreprocessor {
                 int digitCount = 0;
                 while (i < len) {
                     int c = text.codePointAt(i);
-                    if (!Character.isDigit(c)) break;
-                    digitCount++;
-                    i += Character.charCount(c);
+                    if (Character.isDigit(c)) {
+                        digitCount++;
+                        i += Character.charCount(c);
+                    } else if (c == ',' && (i + 1) < len && Character.isDigit(text.codePointAt(i + 1))) {
+                        // Formatting comma between digits (e.g. 1,234,567)
+                        i++;
+                    } else {
+                        break;
+                    }
                 }
                 int runEnd = i;
-                boolean regroup = (groupSize == 2 && digitCount >= 4)
-                        || (groupSize == 3 && digitCount >= Math.min(6, threshold));
+                final int effectiveThreshold = (groupSize == 2) ? 4 : Math.max(groupSize, threshold);
+                boolean regroup = digitCount >= effectiveThreshold;
                 if (!regroup) {
                     out.append(text, runStart, runEnd);
                 } else {
-                    int groupCount = 0;
+                    int firstGroupLen = digitCount % groupSize;
+                    if (firstGroupLen == 0) {
+                        firstGroupLen = groupSize;
+                    }
+                    int currentGroupCount = 0;
+                    int targetGroupSize = firstGroupLen;
+                    boolean firstGroupDone = false;
                     for (int j = runStart; j < runEnd; ) {
                         int c = text.codePointAt(j);
-                        if (groupCount > 0 && groupCount % groupSize == 0) {
-                            out.append(delimiter);
+                        int charCount = Character.charCount(c);
+                        if (Character.isDigit(c)) {
+                            if (firstGroupDone && currentGroupCount == 0) {
+                                out.append(delimiter);
+                            }
+                            out.appendCodePoint(c);
+                            currentGroupCount++;
+                            if (currentGroupCount == targetGroupSize) {
+                                firstGroupDone = true;
+                                currentGroupCount = 0;
+                                targetGroupSize = groupSize;
+                            }
                         }
-                        out.appendCodePoint(c);
-                        groupCount++;
-                        j += Character.charCount(c);
+                        j += charCount;
                     }
                 }
             } else {
@@ -1177,11 +1197,23 @@ public final class TextPreprocessor {
             final int c = text.codePointAt(i);
             final int charCount = Character.charCount(c);
             final boolean isDigit = Character.isDigit(c);
-            if (isDigit && prevWasDigit) {
-                out.append(delimiter);
+            if (isDigit) {
+                if (prevWasDigit) {
+                    out.append(delimiter);
+                }
+                out.appendCodePoint(c);
+                prevWasDigit = true;
+            } else if (c == ',' && prevWasDigit && (i + 1) < len && Character.isDigit(text.codePointAt(i + 1))) {
+                // Formatting comma between digits (e.g. 1,234)
+                prevWasDigit = true;
+            } else if (c == '.' && prevWasDigit && (i + 1) < len && Character.isDigit(text.codePointAt(i + 1))) {
+                // Decimal point between digits (e.g. 3.14)
+                out.append(". ");
+                prevWasDigit = false;
+            } else {
+                out.appendCodePoint(c);
+                prevWasDigit = false;
             }
-            out.appendCodePoint(c);
-            prevWasDigit = isDigit;
             i += charCount;
         }
         return out.toString();

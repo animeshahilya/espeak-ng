@@ -1483,6 +1483,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
         speakPreview(context, context.getString(R.string.test_voice_sample), "sample_utterance");
     }
 
+    private static void playTestNumbers(final Context context) {
+        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
+        speakPreview(context, context.getString(R.string.test_numbers_sample), "sample_numbers");
+    }
+
     /**
      * Speaks {@code text} in {@code locale} through the preview engine, then
      * restores the engine's previous voice. Used by the language picker's
@@ -1809,6 +1814,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         if (isWatch) {
             for (String key : new String[] {
                     LanguageSettings.PREF_SUPPORTED_LANGUAGES, KEY_TEST_VOICE,
+                    "action_preview_numbers",
                     VoiceSettings.PREF_RATE_BOOST_LEVEL,
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                     VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_SPOKEN_DIACRITICS,
@@ -1849,6 +1855,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             setEntries(screen, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD, digitEntries, digitValues);
 
             onClick(screen, KEY_TEST_VOICE, () -> playTestVoice(context));
+            onClick(screen, "action_preview_numbers", () -> playTestNumbers(context));
             onClick(screen, VoiceSettings.PREF_USER_DICTIONARY, () -> UserDictionaryScreen.show(context));
             onClick(screen, "action_recommended_defaults", () -> applyRecommendedDefaults(context));
             onClick(screen, "action_backup", () -> {
@@ -1895,6 +1902,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 value -> VoiceSettings.INTONATION_CUSTOM.equals(value),
                 prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL),
                 fragment, context.getString(R.string.setting_intonation_group_shown));
+        showWhile(screen, VoiceSettings.PREF_DIGIT_GROUPING, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
+                value -> VoiceSettings.DIGIT_GROUP_TRIPLE.equals(value)
+                        || VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE.equals(value),
+                prefs.getString(VoiceSettings.PREF_DIGIT_GROUPING, VoiceSettings.DIGIT_GROUP_OFF),
+                fragment, context.getString(R.string.setting_digit_threshold_shown));
 
         // Human-phrase summaries where the entry text alone lacks context.
         setThresholdSummary(screen, context, prefs);
