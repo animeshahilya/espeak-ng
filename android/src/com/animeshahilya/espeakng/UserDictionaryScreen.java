@@ -164,7 +164,7 @@ final class UserDictionaryScreen {
                 UserDictionary.CATEGORY_CHARACTER };
 
         android.widget.ArrayAdapter<String> filterAdapter = new android.widget.ArrayAdapter<>(context,
-                com.google.android.material.R.layout.mtrl_auto_complete_simple_item, filterNames);
+                android.R.layout.simple_dropdown_item_1line, filterNames);
         spFilter.setAdapter(filterAdapter);
 
         int sel = 0;
@@ -490,7 +490,7 @@ final class UserDictionaryScreen {
             return;
         }
         Toast.makeText(context, R.string.dict_share_preparing, Toast.LENGTH_SHORT).show();
-        new Thread(() -> {
+        EspeakApp.runAsync(() -> {
             try {
                 File dir = new File(context.getCacheDir(), "shared_dictionaries");
                 if (!dir.exists()) {
@@ -538,7 +538,7 @@ final class UserDictionaryScreen {
                             Toast.LENGTH_SHORT).show();
                 });
             }
-        }, "dict-share").start();
+        });
     }
 
     /**
@@ -620,7 +620,7 @@ final class UserDictionaryScreen {
         categoryLayout.setHint(context.getString(R.string.dict_label_category));
         final MaterialAutoCompleteTextView spCategory = categoryField.findViewById(R.id.dropdown_field);
         android.widget.ArrayAdapter<String> catAdapter = new android.widget.ArrayAdapter<>(context,
-                com.google.android.material.R.layout.mtrl_auto_complete_simple_item,
+                android.R.layout.simple_dropdown_item_1line,
                 new String[]{context.getString(R.string.dict_filter_main),
                         context.getString(R.string.dict_filter_root),
                         context.getString(R.string.dict_filter_abbrev),

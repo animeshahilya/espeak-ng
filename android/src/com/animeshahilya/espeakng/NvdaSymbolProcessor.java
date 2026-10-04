@@ -648,7 +648,7 @@ public final class NvdaSymbolProcessor {
         int section = 0; // 1 complex, 2 symbols
         boolean first = true;
         for (String line; (line = in.readLine()) != null; ) {
-            if (first && !line.isEmpty() && line.charAt(0) == '﻿') {
+            if (first && !line.isEmpty() && line.charAt(0) == '\uFEFF') {
                 line = line.substring(1);
             }
             first = false;

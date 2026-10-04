@@ -122,7 +122,7 @@ public class VoiceVariantDialogFragment extends ButtonDialogFragment {
 
     private ArrayAdapter<String> spinnerAdapter(String[] labels) {
         return new ArrayAdapter<>(requireContext(),
-                com.google.android.material.R.layout.mtrl_auto_complete_simple_item, labels);
+                android.R.layout.simple_dropdown_item_1line, labels);
     }
 
     @Override

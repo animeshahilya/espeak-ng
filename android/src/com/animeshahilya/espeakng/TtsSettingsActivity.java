@@ -278,34 +278,15 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
-    // System-UI flags were deprecated in API 30, but this whole branch is the
-    // pre-R fallback (the R+ branch above uses WindowInsetsController): on
-    // API 26-29 these calls are the only way to tint the system bars.
-    @SuppressWarnings("deprecation")
     public static void applySystemBarAppearance(Window window, Context context) {
         if (window == null || context == null) return;
         boolean isNight = (context.getResources().getConfiguration().uiMode
                 & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
                 == android.content.res.Configuration.UI_MODE_NIGHT_YES;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowInsetsController controller = window.getInsetsController();
-            if (controller != null) {
-                int appearance = isNight ? 0 : (WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                        | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
-                controller.setSystemBarsAppearance(appearance,
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                        | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
-            }
-        } else {
-            View decorView = window.getDecorView();
-            int flags = decorView.getSystemUiVisibility();
-            if (!isNight) {
-                flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-            } else {
-                flags &= ~(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-            }
-            decorView.setSystemUiVisibility(flags);
-        }
+        androidx.core.view.WindowInsetsControllerCompat controller =
+                new androidx.core.view.WindowInsetsControllerCompat(window, window.getDecorView());
+        controller.setAppearanceLightStatusBars(!isNight);
+        controller.setAppearanceLightNavigationBars(!isNight);
     }
 
     @Override
@@ -1826,7 +1807,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         if (!prefs.contains(VoiceSettings.PREF_DIGIT_GROUPING)) {
             seed.putString(VoiceSettings.PREF_DIGIT_GROUPING, settings.getDigitGroupingMode());
         }
-        seed.commit();
+        seed.apply();
 
         final PreferenceScreen screen = pm.inflateFromResource(context, R.xml.preferences, null);
         decoratePreferenceScreens(screen);
@@ -2245,7 +2226,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
     private static void exportLog(final Context context) {
         final Handler handler = new Handler(Looper.getMainLooper());
         Toast.makeText(context, R.string.export_log_collecting, Toast.LENGTH_SHORT).show();
-        new Thread(() -> {
+        EspeakApp.runAsync(() -> {
             final String log = LogExporter.collect(context);
             handler.post(() -> {
                 if (isGone(context)) return;
@@ -2262,7 +2243,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     Toast.makeText(context, R.string.log_share_failed, Toast.LENGTH_LONG).show();
                 }
             });
-        }, "log-export").start();
+        });
     }
 
     /** A single voice parameter, edited in a dialog of its own. */

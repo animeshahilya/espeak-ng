@@ -211,10 +211,10 @@ final class PiperSettings {
                         ContextCompat.RECEIVER_NOT_EXPORTED);
                 // A completion broadcast can be missed if the process died
                 // mid-download; finish those installs now.
-                new Thread(() -> {
+                EspeakApp.runAsync(() -> {
                     PiperDownloads.reconcile(context.getApplicationContext(), storage(context));
                     handler.post(() -> refresh(context, screen, prefs));
-                }, "piper-reconcile").start();
+                });
                 sPoll = poll;
                 handler.post(poll);
             }
@@ -518,7 +518,7 @@ final class PiperSettings {
         final Context context = f.requireContext();
         screen.removeAll();
         screen.addPreference(row(context, null, context.getString(R.string.piper_loading_catalog), null, null));
-        new Thread(() -> {
+        EspeakApp.runAsync(() -> {
             List<PiperDownloads.CatalogVoice> catalog = null;
             try {
                 catalog = PiperDownloads.loadCatalog(storage(context), refresh);
@@ -540,7 +540,7 @@ final class PiperSettings {
                 sCatalog = result;
                 buildLanguages(f, screen, prefs);
             });
-        }, "piper-catalog").start();
+        });
     }
 
     private static void buildLanguages(final TtsSettingsActivity.PrefsEspeakFragment f,
@@ -929,7 +929,7 @@ final class PiperSettings {
     private static void startDownload(final Context context, final PiperDownloads.CatalogVoice v,
                                       final Runnable then) {
         final Context app = context.getApplicationContext();
-        new Thread(() -> {
+        EspeakApp.runAsync(() -> {
             int message;
             boolean installed = false;
             try {
@@ -958,7 +958,7 @@ final class PiperSettings {
                     then.run();
                 }
             });
-        }, "piper-download").start();
+        });
     }
 
     /** The Compact version of an installed voice, when the app offers one and it isn't installed. */
@@ -1092,7 +1092,7 @@ final class PiperSettings {
         final Context context = f.requireContext();
         final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
                 .setMessage(context.getString(R.string.piper_delete_confirm, voice.config.displayName()))
-                .setPositiveButton(R.string.piper_action_delete, (d, w) -> new Thread(() -> {
+                .setPositiveButton(R.string.piper_action_delete, (d, w) -> EspeakApp.runAsync(() -> {
                     PiperVoiceStore.delete(storage(context), prefs, voice.key);
                     PiperDownloads.broadcastChanged(context.getApplicationContext(), null, null);
                     final String msg = context.getString(R.string.piper_deleted, voice.config.displayName());
@@ -1103,7 +1103,7 @@ final class PiperSettings {
                             f.popToParent();
                         }
                     });
-                }, "piper-delete").start())
+                }))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
         TtsSettingsActivity.markAlertTitleHeading(dialog);
@@ -1130,7 +1130,7 @@ final class PiperSettings {
         } else {
             Toast.makeText(app, app.getString(R.string.test_voice_playing), Toast.LENGTH_SHORT).show();
         }
-        new Thread(() -> {
+        EspeakApp.runAsync(() -> {
             try {
                 final PiperModel model = PiperEngine.get().loadNow(voice.key, voice.model(), voice.config);
                 final SpeechSynthesis espeak = new SpeechSynthesis(storage(context), null);
@@ -1171,7 +1171,7 @@ final class PiperSettings {
                     PiperEngine.get().unload(voice.key);
                 }
             }
-        }, "piper-test").start();
+        });
     }
 
     /**

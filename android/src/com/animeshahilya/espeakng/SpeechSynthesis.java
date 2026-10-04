@@ -552,20 +552,29 @@ public class SpeechSynthesis {
 
     // The rebuilt target keeps a raw variant passthrough, so the legacy
     // constructor is kept (see getLocaleFromLanguageName).
-    @SuppressWarnings("deprecation")
     @SuppressLint("AppBundleLocaleChanges")
     public static String getSampleText(Context context, Locale locale) {
         final String language = getIanaLanguageCode(locale.getLanguage());
         final String country = getIanaCountryCode(locale.getCountry());
-        final Locale target = new Locale(language, country, locale.getVariant());
+        final Locale.Builder builder = new Locale.Builder().setLanguage(language);
+        if (country != null && !country.isEmpty()) {
+            builder.setRegion(country);
+        }
+        if (locale.getVariant() != null && !locale.getVariant().isEmpty()) {
+            builder.setVariant(locale.getVariant());
+        }
+        final Locale target = builder.build();
 
         // Don't mutate the shared Configuration (deprecated config.locale path
         // also raced with concurrent callers); resolve resources against a copy.
         final Configuration config = new Configuration(context.getResources().getConfiguration());
         config.setLocale(target);
         final Context localized = context.createConfigurationContext(config);
-        return localized.getResources().getString(
-                R.string.sample_text, target.getDisplayName(target));
+        final String raw = localized.getResources().getString(R.string.sample_text);
+        if (raw.contains("%s") || raw.contains("%1$s")) {
+            return String.format(raw, target.getDisplayName(target));
+        }
+        return raw;
     }
 
     private static native boolean nativeClassInit();

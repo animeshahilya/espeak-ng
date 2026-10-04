@@ -242,4 +242,25 @@ public class EspeakApp extends Application {
         }
         return null;
     }
+
+    private static final java.util.concurrent.ExecutorService BACKGROUND_EXECUTOR =
+            java.util.concurrent.Executors.newCachedThreadPool(new java.util.concurrent.ThreadFactory() {
+                private final java.util.concurrent.atomic.AtomicInteger count = new java.util.concurrent.atomic.AtomicInteger(1);
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r, "espeak-bg-" + count.getAndIncrement());
+                    t.setDaemon(true);
+                    return t;
+                }
+            });
+
+    /** Shared background executor for one-off and lightweight async app tasks. */
+    public static java.util.concurrent.ExecutorService getBackgroundExecutor() {
+        return BACKGROUND_EXECUTOR;
+    }
+
+    /** Dispatches a task to the shared background worker pool. */
+    public static void runAsync(Runnable task) {
+        BACKGROUND_EXECUTOR.execute(task);
+    }
 }

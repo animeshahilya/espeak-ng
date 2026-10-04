@@ -54,7 +54,7 @@ final class NvdaCharacterDescriptions {
                     data.open(locale + ".dic"), StandardCharsets.UTF_8))) {
                 entries = new HashMap<String, String[]>();
                 for (String line; (line = in.readLine()) != null; ) {
-                    if (!line.isEmpty() && line.charAt(0) == '﻿') {
+                    if (!line.isEmpty() && line.charAt(0) == '\uFEFF') {
                         line = line.substring(1);
                     }
                     if (line.trim().isEmpty() || line.startsWith("#")) {
