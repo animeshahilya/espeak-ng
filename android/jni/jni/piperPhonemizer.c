@@ -188,6 +188,13 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
         &cursor, espeakCHARS_UTF8, espeakPHONEMES_IPA, &terminator);
     const char *after = (const char *)cursor;
 
+    /* Guard against infinite loop if espeak does not advance cursor */
+    if (cursor == (const void *)before) {
+      const char *next = before + 1;
+      cursor = (next < text_utf8 + text_len) ? (const void *)next : NULL;
+      after = (const char *)cursor;
+    }
+
     /* The decoder hands back a pointer into our own buffer while text
      * remains; anything else means we can no longer map clauses back to the
      * text, so the rest is reported as one span. */

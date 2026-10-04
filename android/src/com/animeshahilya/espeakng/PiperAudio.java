@@ -54,6 +54,9 @@ final class PiperAudio {
 
     /** A 5 ms ramp, so audio cut mid-signal (a lead-in) starts without a click. */
     static void fadeIn(float[] audio, int sampleRate) {
+        if (audio == null || audio.length == 0 || sampleRate <= 0) {
+            return;
+        }
         final int n = Math.min(audio.length, sampleRate / 200);
         for (int i = 0; i < n; i++) {
             audio[i] *= (float) i / n;
@@ -81,6 +84,7 @@ final class PiperAudio {
         private double x1, x2, y1, y2;
 
         TrebleCut(int sampleRate) {
+            sampleRate = Math.max(8000, sampleRate);
             final double a = Math.pow(10, GAIN_DB / 40);
             final double w = 2 * Math.PI * Math.min(CORNER_HZ, 0.45 * sampleRate) / sampleRate;
             final double cos = Math.cos(w);
@@ -148,6 +152,9 @@ final class PiperAudio {
     /** Where model sample {@code s} lands in the output, before any time stretch. */
     static double toOutput(double s, int trimmedLead, int[] cuts) {
         double p = s - trimmedLead;
+        if (cuts == null) {
+            return p;
+        }
         for (int i = 0; i + 1 < cuts.length && s > cuts[i]; i += 2) {
             p -= Math.min(cuts[i + 1], s - cuts[i]);
         }
@@ -237,34 +244,51 @@ final class PiperAudio {
                     ? Math.max(0, start * frame - sampleRate * QUIET_START_MARGIN_MS / 1000)
                     : Math.max(0, first * frame - margin);
             to = trimTail ? Math.min(audio.length, (last + 1) * frame + margin) : audio.length;
-            if (maxPauseMs > 0) {
+            if (maxPauseMs > 0 && start <= last) {
                 cuts = pauseCuts(power, silence, start, last, frame, sampleRate * maxPauseMs / 1000);
             }
         }
 
+        if (to <= from) {
+            return new Pcm(new short[0], 0, 0);
+        }
+
         int removed = 0;
-        for (int i = 1; i < cuts.length; i += 2) {
-            removed += cuts[i];
+        for (int i = 0; i + 1 < cuts.length; i += 2) {
+            final int cutStart = Math.max(from, cuts[i]);
+            final int cutEnd = Math.min(to, cuts[i] + cuts[i + 1]);
+            if (cutEnd > cutStart) {
+                removed += (cutEnd - cutStart);
+            }
+        }
+        final int outLen = to - from - removed;
+        if (outLen <= 0) {
+            return new Pcm(new short[0], 0, 0);
         }
         final double gain = TARGET_SPEECH_LINEAR / Math.sqrt(speech) * volume;
-        final short[] out = new short[to - from - removed];
+        final short[] out = new short[outLen];
         int o = 0;
         int c = 0;
-        for (int i = from; i < to; i++) {
-            if (c < cuts.length && i == cuts[c]) {
-                i += cuts[c + 1] - 1;
+        for (int i = from; i < to && o < outLen; i++) {
+            if (c + 1 < cuts.length && i >= cuts[c]) {
+                final int cutEnd = cuts[c] + cuts[c + 1];
+                if (i < cutEnd) {
+                    i = cutEnd - 1;
+                    c += 2;
+                    continue;
+                }
                 c += 2;
-                continue;
             }
             out[o++] = (short) Math.round(limit(audio[i] * gain) * 32767);
         }
-        if (from > 0) {
-            fade(out, sampleRate * (quietStart ? QUIET_START_FADE_MS : EDGE_FADE_MS) / 1000, true);
+        final short[] finalOut = (o == outLen) ? out : Arrays.copyOf(out, o);
+        if (from > 0 && finalOut.length > 0) {
+            fade(finalOut, sampleRate * (quietStart ? QUIET_START_FADE_MS : EDGE_FADE_MS) / 1000, true);
         }
-        if (to < audio.length) {
-            fade(out, sampleRate * EDGE_FADE_MS / 1000, false);
+        if (to < audio.length && finalOut.length > 0) {
+            fade(finalOut, sampleRate * EDGE_FADE_MS / 1000, false);
         }
-        return new Pcm(out, from, out.length, cuts);
+        return new Pcm(finalOut, from, finalOut.length, cuts);
     }
 
     /** Mean power of the speaking 10 ms frames: what the level is set from; 0 for silence. */
@@ -436,12 +460,18 @@ final class PiperAudio {
             final double inSpeech = Math.max(0, Math.min(speechSamples,
                     toOutput(samples, trimmedLead, cuts)));
             out[w] = (int) Math.min(outSamples, Math.round(inSpeech * scale));
+            if (w > 0 && out[w] < out[w - 1]) {
+                out[w] = out[w - 1];
+            }
         }
         return out;
     }
 
     /** Code point [start, end) pairs of whitespace-separated words in text. */
     static int[] findWords(String text) {
+        if (text == null || text.isEmpty()) {
+            return new int[0];
+        }
         final int len = text.length();
         int[] spans = new int[16];
         int n = 0;

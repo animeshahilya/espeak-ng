@@ -728,16 +728,22 @@ final class PiperEngine {
 
         final PiperModel.RunHandle handle = new PiperModel.RunHandle();
         mAhead.add(handle);
-        // Everything but delivery happens on the renderer: model run, level,
-        // trim, pitch/speed stretch and PCM bytes. Measured: libsonic alone
-        // took 200-500 ms per sentence on the synthesis thread while the
-        // model used the fast cores - enough to drain the framework's ~0.5 s
-        // of queued audio and stall playback.
-        final Pass pass = new Pass(model, params, stretch ? stretcher : null, residualSpeed, pitch,
-                lengthScale, speaker, noise, noiseW, maxPauseMs, handle);
-        final Future<Rendered> first = jobs.isEmpty() ? null
-                : mRenderer.submit(() -> pass.render(jobs.get(0), true));
-        return new Prepared(model, pass, jobs, missing, handle, params, speed, first);
+        try {
+            // Everything but delivery happens on the renderer: model run, level,
+            // trim, pitch/speed stretch and PCM bytes. Measured: libsonic alone
+            // took 200-500 ms per sentence on the synthesis thread while the
+            // model used the fast cores - enough to drain the framework's ~0.5 s
+            // of queued audio and stall playback.
+            final Pass pass = new Pass(model, params, stretch ? stretcher : null, residualSpeed, pitch,
+                    lengthScale, speaker, noise, noiseW, maxPauseMs, handle);
+            final Future<Rendered> first = jobs.isEmpty() ? null
+                    : mRenderer.submit(() -> pass.render(jobs.get(0), true));
+            return new Prepared(model, pass, jobs, missing, handle, params, speed, first);
+        } catch (Throwable t) {
+            mAhead.remove(handle);
+            handle.close();
+            throw t;
+        }
     }
 
     /** Drops a prepared run that will not play, ending its render first. */
@@ -778,8 +784,8 @@ final class PiperEngine {
         final float speed = p.speed;
         final int rate = config.sampleRate;
         final PiperModel.RunHandle handle = p.handle;
-        mAhead.remove(handle);
         mCurrentRun = handle;
+        mAhead.remove(handle);
         // A stop() that came before mCurrentRun was set found nothing to
         // cancel; the caller's flag still says so (it is set before stop()).
         if (out.stopped()) {

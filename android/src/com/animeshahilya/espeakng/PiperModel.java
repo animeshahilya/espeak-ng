@@ -603,6 +603,18 @@ final class PiperModel implements Closeable {
                 }
             }
         }
+        if (vowel == null) {
+            // Any speakable symbol if no single ASCII/letter was mapped
+            for (Map.Entry<String, int[]> e : config.phonemeIdMap.entrySet()) {
+                final String k = e.getKey();
+                if (!PiperVoiceConfig.PAD.equals(k) && !PiperVoiceConfig.BOS.equals(k)
+                        && !PiperVoiceConfig.EOS.equals(k) && !" ".equals(k)
+                        && e.getValue() != null && e.getValue().length > 0) {
+                    vowel = e.getValue();
+                    break;
+                }
+            }
+        }
         if (pad == null || bos == null || eos == null || vowel == null) {
             return;
         }

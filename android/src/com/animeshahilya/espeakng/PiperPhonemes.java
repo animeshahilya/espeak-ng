@@ -132,13 +132,14 @@ final class PiperPhonemes {
         final int cps = text.codePointCount(0, text.length());
         final List<Clause> out = new ArrayList<>(clauses.size());
         int prevEnd = 0;
+        int prevIdx = 0;
         for (int i = 0; i < clauses.size(); i++) {
             final Clause c = clauses.get(i);
             // Clauses tile the text: each starts where the previous one ended.
             int start = i == 0 ? Math.min(c.start, cps) : prevEnd;
             int end = Math.max(start, Math.min(c.end, cps));
             if (i + 1 < clauses.size() && end < cps && end > start) {
-                int idx = text.offsetByCodePoints(0, end);
+                int idx = text.offsetByCodePoints(prevIdx, end - prevEnd);
                 int back = end;
                 while (back > start) {
                     final int before = text.codePointBefore(idx);
@@ -153,13 +154,14 @@ final class PiperPhonemes {
                 }
             }
             out.add(new Clause(c.endsSentence, start, end, c.ipa));
+            prevIdx = text.offsetByCodePoints(prevIdx, end - prevEnd);
             prevEnd = end;
         }
         return out;
     }
 
     private static boolean isWordChar(int cp) {
-        if (Character.isLetterOrDigit(cp)) {
+        if (Character.isLetterOrDigit(cp) || cp == 0x200C || cp == 0x200D) {
             return true;
         }
         final int type = Character.getType(cp);
@@ -407,7 +409,7 @@ final class PiperPhonemes {
                 }
                 continue;
             }
-            if (" ".equals(phoneme)) {
+            if (" ".equals(phoneme) || phoneme.trim().isEmpty()) {
                 inWord = false;
             } else if (!inWord && wordStarts != null && !isPunctuation(phoneme)) {
                 wordStarts.add(ids.size);
@@ -439,7 +441,7 @@ final class PiperPhonemes {
         }
     }
 
-    private static final java.util.regex.Pattern FINAL_STOP = java.util.regex.Pattern.compile("\\.\\s*$");
+    private static final java.util.regex.Pattern FINAL_STOP = java.util.regex.Pattern.compile("\\.+\\s*$");
 
     /**
      * English text voices (SYSPIN Priya, Rahul) add a syllable after a
@@ -498,7 +500,7 @@ final class PiperPhonemes {
             i += Character.charCount(c);
             cp++;
             final boolean sentenceEnd = c == '.' || c == '!' || c == '?' || c == '\n'
-                    || c == '।' || c == '。';
+                    || c == '।' || c == '。' || c == '॥' || c == '؟';
             if (sentenceEnd || i >= text.length()) {
                 final String piece = text.substring(start, i);
                 if (!piece.trim().isEmpty()) {

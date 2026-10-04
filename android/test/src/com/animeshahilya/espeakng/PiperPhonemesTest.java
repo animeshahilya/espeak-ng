@@ -318,4 +318,45 @@ public class PiperPhonemesTest {
         assertTrue(textVoice("en_US-ljspeech-compact", "en").hissy);
         assertFalse(textVoice("en_US-ljspeech-medium", "en").hissy);
     }
+
+    @Test
+    public void englishChunkEndHandlesEllipsis() throws Exception {
+        final PiperVoiceConfig priya = textVoice("en_IN-priya-medium", "en");
+        assertEquals("Wait,", PiperPhonemes.englishChunkEnd("Wait...", priya));
+        assertEquals("Call on phone,", PiperPhonemes.englishChunkEnd("Call on phone.. ", priya));
+    }
+
+    @Test
+    public void multilingualSentenceEndsRecognizedInTextClauses() {
+        // Indic double danda (॥) and Arabic/Urdu question mark (؟)
+        final List<PiperPhonemes.Clause> devanagari = PiperPhonemes.textClauses("नमस्ते॥ आप कैसे हैं?");
+        assertEquals(2, devanagari.size());
+        assertEquals("नमस्ते॥ ", devanagari.get(0).ipa);
+
+        final List<PiperPhonemes.Clause> urdu = PiperPhonemes.textClauses("کیا حال ہے؟ ٹھیک ہے.");
+        assertEquals(2, urdu.size());
+        assertEquals("کیا حال ہے؟ ", urdu.get(0).ipa);
+    }
+
+    @Test
+    public void indicLigaturesPreserveJoinersInAlignment() {
+        // Bengali/Hindi word with zero-width joiner (ZWJ U+200D) or non-joiner (ZWNJ U+200C)
+        final String text = "क्\u200Dष और क्\u200Cष";
+        final List<PiperPhonemes.Clause> raw = Arrays.asList(
+                new PiperPhonemes.Clause(false, 0, 4, "ksha"),
+                new PiperPhonemes.Clause(true, 4, 11, "aur ksha")
+        );
+        final List<PiperPhonemes.Clause> aligned = PiperPhonemes.alignToText(raw, text);
+        assertEquals(2, aligned.size());
+        assertTrue(aligned.get(0).end >= 3);
+    }
+
+    @Test
+    public void nonBreakingSpaceResetsWordBoundaryInToIds() throws Exception {
+        final PiperVoiceConfig c = amy();
+        final List<Integer> starts = new ArrayList<>();
+        // "h \u00a0w" - normal space then non-breaking space
+        PiperPhonemes.toIds(Arrays.asList("h", " ", "\u00a0", "w"), c, null, starts);
+        assertEquals(2, starts.size());
+    }
 }

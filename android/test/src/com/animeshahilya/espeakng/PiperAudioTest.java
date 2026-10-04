@@ -259,4 +259,43 @@ public class PiperAudioTest {
         assertEquals(0, quiet.samples[0]);
         assertEquals(0, plain.samples[0]);
     }
+
+    @Test
+    public void processHandlesExtremeTrimsAndNullSafely() {
+        // Null or empty audio returns zero samples
+        assertEquals(0, PiperAudio.process(null, 1f, 22050, true).samples.length);
+        assertEquals(0, PiperAudio.process(new float[0], 1f, 22050, true).samples.length);
+
+        // All-silence audio
+        assertEquals(0, PiperAudio.process(new float[22050], 1f, 22050, true).samples.length);
+
+        // fadeIn edge cases
+        PiperAudio.fadeIn(null, 22050);
+        PiperAudio.fadeIn(new float[0], 22050);
+        float[] singleSample = new float[] {1.0f};
+        PiperAudio.fadeIn(singleSample, 0);
+        assertEquals(1.0f, singleSample[0], 1e-6);
+
+        // toOutput with null cuts
+        assertEquals(50.0, PiperAudio.toOutput(150.0, 100, null), 1e-6);
+
+        // findWords with empty / null text
+        assertEquals(0, PiperAudio.findWords(null).length);
+        assertEquals(0, PiperAudio.findWords("").length);
+        assertEquals(0, PiperAudio.findWords("   \t\n  ").length);
+        int[] words = PiperAudio.findWords("hello world");
+        assertEquals(4, words.length); // 2 words * 2 coords
+    }
+
+    @Test
+    public void alignedWordFramesPreservesMonotonicity() {
+        java.util.List<Integer> starts = java.util.Arrays.asList(0, 1, 2);
+        float[] durations = new float[] {5f, 5f, 5f};
+        int[] frames = PiperAudio.alignedWordFrames(starts, durations, 256, 3, 0, new int[0], 15 * 256, 15 * 256);
+        assertNotNull(frames);
+        assertEquals(3, frames.length);
+        for (int i = 1; i < frames.length; i++) {
+            assertTrue("frames must be non-decreasing", frames[i] >= frames[i - 1]);
+        }
+    }
 }

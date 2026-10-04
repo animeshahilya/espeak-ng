@@ -110,13 +110,21 @@ final class PiperPhraseCache {
         Stored(float[] audio, float[] durations) {
             float peak = 1e-9f;
             for (float x : audio) {
-                peak = Math.max(peak, Math.abs(x));
+                if (!Float.isNaN(x) && !Float.isInfinite(x)) {
+                    peak = Math.max(peak, Math.abs(x));
+                }
             }
             scale = peak / 32767f;
-            final float invScale = 1.0f / scale;
+            final float invScale = (scale > 0 && !Float.isNaN(scale) && !Float.isInfinite(scale))
+                    ? 1.0f / scale : 1.0f;
             this.audio = new short[audio.length];
             for (int i = 0; i < audio.length; i++) {
-                long rounded = Math.round(audio[i] * invScale);
+                final float sample = audio[i];
+                if (Float.isNaN(sample) || Float.isInfinite(sample)) {
+                    this.audio[i] = 0;
+                    continue;
+                }
+                long rounded = Math.round(sample * invScale);
                 if (rounded > 32767) rounded = 32767;
                 else if (rounded < -32768) rounded = -32768;
                 this.audio[i] = (short) rounded;
@@ -131,9 +139,11 @@ final class PiperPhraseCache {
         }
 
         Entry toEntry() {
+            final float s = (!Float.isNaN(scale) && !Float.isInfinite(scale) && scale > 0)
+                    ? scale : 1.0f / 32767f;
             final float[] out = new float[audio.length];
             for (int i = 0; i < out.length; i++) {
-                out[i] = audio[i] * scale;
+                out[i] = audio[i] * s;
             }
             return new Entry(out, durations == null ? null : durations.clone());
         }
