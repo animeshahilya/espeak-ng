@@ -16,6 +16,8 @@ It speaks the way eSpeak speaks in NVDA on Windows, so it sounds familiar if you
 - **Natural voices, if you want them.** Download a Piper neural voice for any language it covers and pick, per language, whether eSpeak or that voice speaks it. Piper voices read through this app's own eSpeak pronunciation rules, including the Indian-language fixes and your own dictionary.
 - **Speaks before unlock.** Works in Direct Boot, so your screen reader talks on the lock screen after a restart.
 - **Fast and light.** Starts speaking at once and handles very high speech rates.
+- **TalkBack accessibility first.** Built specifically for screen reader users with live region announcements, heading semantics, interactive preview buttons, and accurate character-by-character navigation over emojis and supplementary Unicode glyphs.
+- **Modern Android integration.** Full edge-to-edge Material 3 layout, predictive back gestures, and 16 KB page-aligned native binaries supporting Android 8.0 through Android 17+.
 
 ---
 
@@ -76,7 +78,7 @@ On top of that there are a few extras NVDA doesn't have, such as money and code 
 
 ### Numbers
 
-- **Digit grouping**: read long numbers as a whole, or digit by digit, or in pairs, or in threes. You can set the length at which grouping in threes starts.
+- **Digit grouping**: read long numbers as a whole, digit by digit, in pairs, in pairs with pause, in threes, or in threes with pause. You can set the minimum length at which grouping starts and test your configuration with the in-screen sample preview.
 - **Indian numbering**: reads ₹1,00,000, 5L and 2cr in lakh and crore. Applies to Indian voices only.
 - **Money amounts** (off by default, English voices): reads $5.50 as "5 dollars 50 cents". Also euros, pounds, yen and rupees.
 - **Codes digit by digit** (off by default): reads OTPs, PINs and account numbers as single digits.
@@ -89,12 +91,12 @@ On top of that there are a few extras NVDA doesn't have, such as money and code 
 - **Fancy fonts**: reads stylised Unicode text as normal words.
 - **Reading mode**: normal, spelling, or code.
 - **Phonetic letters**: says Alfa, Bravo and so on, either when you move by character or for all text.
-- **Mixed-language text**: choose the language for words in each script. Read Devanagari as Marathi, Nepali or Konkani instead of Hindi, English words in Hindi text with an Indian or American accent, Arabic script as Urdu or Persian, and Russian, Ukrainian, Hebrew, Telugu, Odia, Chinese, Japanese or Amharic as words instead of letter by letter. Every script starts on eSpeak's own choice, so nothing changes until you pick.
+- **Mixed-language text**: choose the language for words in each script. Read Devanagari as Marathi, Nepali or Konkani instead of Hindi, English words in Hindi text with an Indian or American accent, Arabic script as Urdu or Persian, and Russian, Ukrainian, Hebrew, Telugu, Odia, Chinese, Japanese, Korean Hanja, Greek or Amharic as words instead of letter by letter. Every script starts on eSpeak's own choice, so nothing changes until you pick.
 - **Read Hinglish (beta, off by default)**: on English voices, Hindi typed in English letters ("aap kaise ho bhai") is read with Hindi pronunciation. English sentences are left alone.
 - **Matras and signs**: names Indic vowel signs, halant, anusvara and similar marks when you move by character.
-- **Emoji**: read them out or skip them.
+- **Emoji and supplementary characters**: read emojis by their CLDR names or skip them. Moving character-by-character in TalkBack cleanly speaks multi-byte emojis and supplementary Unicode glyphs without clipping or surrogate splitting.
 - **Shorter web links**: drops `https://` and `www.`, and reads long tracking parameters as "with parameters".
-- **Emphasise questions**: raises the pitch more at the end of questions and exclamations.
+- **Emphasise questions**: raises the pitch more at the end of questions and exclamations across multiple languages.
 
 ### Locks
 
@@ -147,8 +149,9 @@ Not every Piper voice can be used: newer Chinese, Japanese, Thai and Hebrew voic
 Your own pronunciations for words, names and abbreviations.
 
 - Rules can match plain text, whole words only, or a regular expression, with or without matching case.
+- Resilient regular expression error handling ensures invalid user patterns are handled gracefully without interrupting speech synthesis.
 - Rules can apply to one language or to all of them.
-- Search and filter make large lists quick to browse.
+- Search and filter make large lists quick to browse with debounced queries.
 - NVDA `.dic` files can be imported and exported, so your NVDA dictionaries carry over.
 
 ---
@@ -168,7 +171,7 @@ The only changes that go beyond NVDA are here, and they apply to Indian voices o
 You need:
 
 - JDK 17
-- the Android SDK (compileSdk 37)
+- the Android SDK (compileSdk 37, minSdk 26)
 - NDK 29.0.14206865
 - CMake 3.22.1
 
@@ -184,7 +187,7 @@ Run these from `android/`:
 
 The release build is signed when `android/keystore.properties` exists. APKs go to `android/build/outputs/apk/`.
 
-The app supports Android 8.0 and newer (minSdk 26), phones and Wear OS. The native library is built with 16 KB page alignment.
+The app supports Android 8.0 and newer (minSdk 26, targetSdk 37), phones and Wear OS. The native library is built with 16 KB page alignment for Android 15+. Edge-to-edge layouts and predictive back gestures are fully supported.
 
 For architecture and contributor notes, see [android/CLAUDE.md](android/CLAUDE.md).
 
@@ -192,7 +195,17 @@ For architecture and contributor notes, see [android/CLAUDE.md](android/CLAUDE.m
 
 ## Testing
 
-There are 117 instrumentation tests in `android/eSpeakTests/`. They cover synthesis, settings, voice data, the text pipeline and the dictionary, and they need a connected device or emulator:
+### Unit tests (JVM)
+
+Fast host-based JVM unit tests run without requiring a connected device or emulator. They cover text preprocessing, character descriptions, dictionary formats, script language caching, Piper phonemizers, and audio processing:
+
+```bash
+./gradlew testDebugUnitTest
+```
+
+### Instrumentation tests (Device / Emulator)
+
+There are 122 instrumentation tests in `android/eSpeakTests/`. They cover synthesis, settings, voice data, the text pipeline, Direct Boot storage, and the dictionary on a connected device or emulator:
 
 ```bash
 ./gradlew connectedAndroidTest

@@ -7,6 +7,29 @@
 
 The espeak-ng project is a fork of the espeak project.
 
+### 2.8 (Android)
+
+*  **TalkBack & Accessibility**:
+   *  Full supplementary Unicode code-point and emoji support for single-character navigation (`TextPreprocessor.isSingleCharacter`) preventing surrogate splitting.
+   *  Screen-reader friendly preferences with heading semantics, live region announcements, and automatic focus management on sub-screen navigation.
+   *  Added Pairs with pause and Triplets with pause number reading modes with in-screen sample preview.
+   *  Interactive voice and number preview test buttons directly within settings screens.
+*  **Platform & Toolchain Modernization**:
+   *  Java 17 toolchain with modern Android Gradle Plugin and build-cache optimizations.
+   *  Edge-to-edge Material 3 layout with `WindowInsetsControllerCompat`.
+   *  Predictive back gesture support (`enableOnBackInvokedCallback="true"`, `OnBackPressedCallback`).
+   *  16 KB ELF page-aligned native shared libraries for Android 15+.
+   *  Removed deprecated APIs and window flag usage across activities and preference fragments.
+*  **Concurrency & Stability**:
+   *  Migrated background threads to managed daemon execution via `EspeakApp.runAsync()`.
+   *  Atomic thread-safe cache (`CacheHolder`) in `ScriptLanguages` eliminating data races during multilingual voice switching.
+   *  Resilient ICU regex error handling in `UserDictionary` protecting against invalid user syntax patterns.
+   *  Safe ISO-3/ISO-2 locale code fallback in `Voice` and `TtsService` preventing missing resource crashes.
+   *  Native punctuation list reset handling when null or empty.
+*  **Multilingual & Audio**:
+   *  Multilingual script switching enhancements for Korean Hanja, Greek script, Indic ligatures, hashtags, handles, and hyphenated compounds.
+   *  Hardened Piper natural voice streaming, memory trimming, and phrase cache management.
+
 ### 1.53.0
 
 new languages:

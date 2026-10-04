@@ -27,7 +27,10 @@ cd android
 
 ### Running Tests
 ```bash
-# Requires connected device or emulator (API 34+)
+# Fast JVM unit tests (no device required, 25 test suites)
+./gradlew testDebugUnitTest
+
+# Instrumentation tests (requires connected device or emulator, API 34+)
 ./gradlew connectedAndroidTest
 ```
 
@@ -50,17 +53,18 @@ cd android
 ## Pull Request Process
 
 1. **Fork** the repository and create a feature branch
-2. **Write tests** for new functionality (instrumentation tests in `android/eSpeakTests/`)
+2. **Write tests** for new functionality (JVM unit tests in `android/test/` or instrumentation tests in `android/eSpeakTests/`)
 3. **Ensure CI passes** - all builds and tests must succeed
-4. **Update documentation** - README, CHANGELOG.md, and relevant docs
+4. **Update documentation** - README, ChangeLog.md, and relevant docs
 5. **Keep commits focused** - one logical change per commit
 6. **Reference issues** - use `Fixes #123` or `Closes #123` in commit messages
 
 ### PR Requirements
 - [ ] Debug and Release builds pass
-- [ ] Instrumentation tests pass on API 34+
+- [ ] Unit tests pass (`./gradlew testDebugUnitTest`)
+- [ ] Instrumentation tests pass on API 34+ (`./gradlew connectedAndroidTest`)
 - [ ] No new warnings in CI
-- [ ] CHANGELOG.md updated (under `## Unreleased`)
+- [ ] ChangeLog.md updated
 - [ ] Documentation updated if user-facing changes
 
 ## NVDA Parity Rule
