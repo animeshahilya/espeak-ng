@@ -344,4 +344,37 @@ public class LanguageSwitchingTest {
         assertEquals("mar@0[भारत]", describe(LanguageRuns.split("भारत", "mar")));
         assertEquals("hin@0[भारत]", describe(LanguageRuns.split("भारत", "eng")));
     }
+
+    @Test
+    public void englishPrimary_NepaliText_RoutesToNepali() {
+        final String text = "Notice: तपाईं कस्तो हुनुहुन्छ? मलाई नेपाली मन पर्छ.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "eng");
+
+        assertEquals("eng@0[Notice:]nep@7[ तपाईं कस्तो हुनुहुन्छ? मलाई नेपाली मन पर्छ.]", describe(runs));
+    }
+
+    @Test
+    public void englishPrimary_SanskritText_RoutesToSanskrit() {
+        final String text = "Quote: शिवोऽहम्, सत्यमेव जयते.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "eng");
+
+        assertEquals("eng@0[Quote:]san@6[ शिवोऽहम्, सत्यमेव जयते.]", describe(runs));
+    }
+
+    @Test
+    public void englishPrimary_BhojpuriText_RoutesToBhojpuri() {
+        final String text = "Greeting: रउआ कइसे बानी? का हाल बा?";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "eng");
+
+        assertEquals("eng@0[Greeting:]bho@9[ रउआ कइसे बानी? का हाल बा?]", describe(runs));
+    }
+
+    @Test
+    public void multiDevanagariSentences_SplitsEachLanguageAccurately() {
+        final String text = "आप कैसे हैं? शाळा सुरू झाली. तपाईं कस्तो हुनुहुन्छ? शिवोऽहम्.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "hin");
+
+        assertEquals("hin@0[आप कैसे हैं?]mar@12[ शाळा सुरू झाली.]nep@28[ तपाईं कस्तो हुनुहुन्छ?]san@51[ शिवोऽहम्.]",
+                describe(runs));
+    }
 }

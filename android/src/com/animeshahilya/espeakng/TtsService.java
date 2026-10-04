@@ -518,8 +518,18 @@ public class TtsService extends TextToSpeechService {
         if (language == null || language.isEmpty()) {
             return fallback;
         }
-        final Pair<Voice, Integer> match = findVoice(language, "", "");
-        return match.first != null ? match.first : fallback;
+        Pair<Voice, Integer> match = findVoice(language, "", "");
+        if (match.first != null) {
+            return match.first;
+        }
+        final String standin = LanguageRuns.standIn(language);
+        if (standin != null && !standin.equals(language)) {
+            match = findVoice(standin, "", "");
+            if (match.first != null) {
+                return match.first;
+            }
+        }
+        return fallback;
     }
 
     private Pair<Voice, Integer> getDefaultVoiceFor(String language, String country, String variant) {

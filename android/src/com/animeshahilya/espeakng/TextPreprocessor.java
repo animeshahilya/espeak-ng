@@ -464,8 +464,9 @@ public final class TextPreprocessor {
         String base = languageTag.trim().toLowerCase(Locale.ROOT);
         int dash = base.indexOf('-');
         if (dash >= 0) base = base.substring(0, dash);
-        return base.equals("hi") || base.equals("mr") || base.equals("ne")
-                || base.equals("sa") || base.equals("kok");
+        return base.equals("hi") || base.equals("hin") || base.equals("mr") || base.equals("mar")
+                || base.equals("ne") || base.equals("nep") || base.equals("sa") || base.equals("san")
+                || base.equals("bho") || base.equals("mai") || base.equals("hne") || base.equals("kok");
     }
 
     public static boolean isMarathi(String languageTag) {
@@ -474,6 +475,14 @@ public final class TextPreprocessor {
         int dash = base.indexOf('-');
         if (dash >= 0) base = base.substring(0, dash);
         return base.equals("mr") || base.equals("mar");
+    }
+
+    public static boolean isNepali(String languageTag) {
+        if (languageTag == null || languageTag.isEmpty()) return false;
+        String base = languageTag.trim().toLowerCase(Locale.ROOT);
+        int dash = base.indexOf('-');
+        if (dash >= 0) base = base.substring(0, dash);
+        return base.equals("ne") || base.equals("nep");
     }
 
     public static boolean isEmojiCodePoint(int codePoint) {
@@ -813,7 +822,8 @@ public final class TextPreprocessor {
         if (trimmed.length() == 1) {
             char c = trimmed.charAt(0);
             final boolean marathi = isMarathi(languageTag);
-            final String matra = marathi ? " ची मात्रा" : " की मात्रा";
+            final boolean nepali = isNepali(languageTag);
+            final String matra = marathi ? " ची मात्रा" : (nepali ? " को मात्रा" : " की मात्रा");
             switch (c) {
                 case '\u093E': return "आ" + matra; // ा
                 case '\u093F': return "इ" + matra; // ि
@@ -958,6 +968,7 @@ public final class TextPreprocessor {
         }
         final boolean devanagari = isDevanagariNumberLang(languageTag);
         final boolean marathi = isMarathi(languageTag);
+        final boolean nepali = isNepali(languageTag);
         // normalizeIndicDigits is already a single allocation-free char scan;
         // every regex below is additionally gated on a trigger its own
         // pattern provably requires (danda chars, '/', ',', ASCII digits),
@@ -1018,9 +1029,11 @@ public final class TextPreprocessor {
 
         if (hasDigit) {
             if (devanagari) {
-                text = SHORTHAND_THOUSAND.matcher(text).replaceAll(marathi ? "$1 हजार" : "$1 हज़ार");
+                final String thousand = (marathi || nepali) ? "$1 हजार" : "$1 हज़ार";
+                final String crore = marathi ? "$1 कोटी" : (nepali ? "$1 करोड" : "$1 करोड़");
+                text = SHORTHAND_THOUSAND.matcher(text).replaceAll(thousand);
                 text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 लाख");
-                text = SHORTHAND_CRORE.matcher(text).replaceAll(marathi ? "$1 कोटी" : "$1 करोड़");
+                text = SHORTHAND_CRORE.matcher(text).replaceAll(crore);
             } else {
                 text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
                 text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");

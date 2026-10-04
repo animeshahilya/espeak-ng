@@ -136,6 +136,11 @@ public class LanguageSwitchingDeviceTest {
         final String ru = ipa("ru", "Привет мир");
         assertNotNull(ru);
         assertTrue("Russian phonemes should not be empty", ru.length() > 0);
+
+        // eSpeak/Piper Nepali target
+        final String ne = ipa("ne", "तपाईं कस्तो हुनुहुन्छ");
+        assertNotNull(ne);
+        assertTrue("Nepali phonemes should not be empty", ne.length() > 0);
     }
 
     // =========================================================================
@@ -325,5 +330,22 @@ public class LanguageSwitchingDeviceTest {
         assertTrue("Speech synthesis of English with Marathi timed out", completed);
         assertTrue("English with Marathi must produce non-empty PCM audio", mAudioBytesReceived.get() > 3000);
         Log.i(TAG, "Synthesized English + Marathi audio bytes: " + mAudioBytesReceived.get());
+    }
+
+    @Test
+    public void testSynthesizeNepaliText() throws InterruptedException {
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+
+        final Voice neVoice = new Voice("ne", "ne", 0, 0, new java.util.Locale("ne", "NP"));
+        mEngine.setVoice(neVoice, null);
+
+        final String text = "तपाईं कस्तो हुनुहुन्छ? मलाई नेपाली बोल्न मन पर्छ.";
+        mEngine.synthesize(text, false);
+
+        final boolean completed = mLatch.await(15, TimeUnit.SECONDS);
+        assertTrue("Speech synthesis of Nepali text timed out", completed);
+        assertTrue("Nepali text must produce non-empty PCM audio", mAudioBytesReceived.get() > 3000);
+        Log.i(TAG, "Synthesized Nepali audio bytes: " + mAudioBytesReceived.get());
     }
 }
