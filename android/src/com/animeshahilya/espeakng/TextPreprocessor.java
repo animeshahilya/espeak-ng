@@ -146,8 +146,7 @@ public final class TextPreprocessor {
             text = edits.track(text, dictManager.applyRules(text, lang));
         }
 
-        final boolean isSingleCharacterUtterance = !isSsml
-                && (text.length() == 1 || trimmedLength(text) == 1);
+        final boolean isSingleCharacterUtterance = !isSsml && isSingleCharacter(text);
 
         if (isSingleCharacterUtterance) {
             boolean characterRuleApplied = false;
@@ -364,16 +363,26 @@ public final class TextPreprocessor {
     // ==========================================
 
     /**
-     * Length of {@code text} after trimming leading/trailing chars
-     * {@code <= ' '} (exactly {@code String.trim()} semantics) without
-     * copying the string.
+     * True if {@code text} contains exactly one Unicode code point after
+     * trimming leading/trailing chars {@code <= ' '} (matching {@code String.trim()} semantics).
+     * Correctly handles supplementary code points (surrogate pairs) such as emoji or astral symbols.
      */
-    private static int trimmedLength(String text) {
+    public static boolean isSingleCharacter(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        int len = text.length();
+        if (len == 1) {
+            return text.charAt(0) > ' ';
+        }
         int start = 0;
-        int end = text.length();
+        int end = len;
         while (start < end && text.charAt(start) <= ' ') start++;
         while (end > start && text.charAt(end - 1) <= ' ') end--;
-        return end - start;
+        if (start >= end) {
+            return false;
+        }
+        return text.codePointCount(start, end) == 1;
     }
 
     private static boolean containsHangControls(String text) {

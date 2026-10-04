@@ -418,7 +418,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
      */
     private static <T> void runInBackground(String threadName,
             final BackgroundWork<T> work, final BackgroundDone<T> done) {
-        new Thread(new Runnable() {
+        EspeakApp.runAsync(new Runnable() {
             @Override public void run() {
                 final T result = work.run();
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -427,7 +427,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     }
                 });
             }
-        }, threadName).start();
+        });
     }
 
     private static void importDictionaryUri(final Activity activity, final Uri uri) {
@@ -1367,58 +1367,55 @@ public class TtsSettingsActivity extends AppCompatActivity {
         final Context storage = EspeakApp.requireStorageContext(context);
         final Handler handler = new Handler(Looper.getMainLooper());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final boolean isWatch = context.getPackageManager()
-                            .hasSystemFeature(PackageManager.FEATURE_WATCH);
+        EspeakApp.runAsync(() -> {
+            try {
+                final boolean isWatch = context.getPackageManager()
+                        .hasSystemFeature(PackageManager.FEATURE_WATCH);
 
-                    // Extract/refresh voice data off the main thread (moved out
-                    // of onCreate; see the comment there). Runs under
-                    // CheckVoiceData's extraction lock, so a concurrent
-                    // TtsService.onCreate() doing the same work serializes
-                    // instead of racing.
-                    CheckVoiceData.ensureVoiceData(storage);
+                // Extract/refresh voice data off the main thread (moved out
+                // of onCreate; see the comment there). Runs under
+                // CheckVoiceData's extraction lock, so a concurrent
+                // TtsService.onCreate() doing the same work serializes
+                // instead of racing.
+                CheckVoiceData.ensureVoiceData(storage);
 
-                    final SpeechSynthesis engine = new SpeechSynthesis(storage, null);
-                    final List<Voice> voices = engine.getAvailableVoices();
+                final SpeechSynthesis engine = new SpeechSynthesis(storage, null);
+                final List<Voice> voices = engine.getAvailableVoices();
 
-                    // Warm the lang/ metadata cache here rather than leaving it to
-                    // the first getVoiceLabel() call, which would drag the whole
-                    // scan back onto the main thread. Skipped on Wear, where the
-                    // supported-languages list is not built at all.
-                    if (!isWatch) {
-                        ensureLangInfoLoaded();
-                    }
-
-                    handler.post(() -> {
-                        if (isGone(context) || !fragment.isAdded()) {
-                            return;
-                        }
-                        final PreferenceScreen root = buildPreferences(context,
-                                (PrefsEspeakFragment) fragment,
-                                fragment.getPreferenceManager(), engine, voices, isWatch);
-                        fragment.setPreferenceScreen(root);
-                        ((PrefsEspeakFragment) fragment).onRootScreenReady(root);
-                        maybeShowWhatsNew(context);
-                    });
-                } catch (Throwable t) {
-                    // The engine probe (native lib load, phondata, JNI voice
-                    // enumeration) used to run unguarded on this worker: any
-                    // failure became an uncaught exception that killed the
-                    // whole process with zero UI feedback.
-                    Log.e(TAG, "Failed to build settings preferences", t);
-                    handler.post(() -> {
-                        if (isGone(context)) {
-                            return;
-                        }
-                        Toast.makeText(context, R.string.settings_load_failed,
-                                Toast.LENGTH_LONG).show();
-                    });
+                // Warm the lang/ metadata cache here rather than leaving it to
+                // the first getVoiceLabel() call, which would drag the whole
+                // scan back onto the main thread. Skipped on Wear, where the
+                // supported-languages list is not built at all.
+                if (!isWatch) {
+                    ensureLangInfoLoaded();
                 }
+
+                handler.post(() -> {
+                    if (isGone(context) || !fragment.isAdded()) {
+                        return;
+                    }
+                    final PreferenceScreen root = buildPreferences(context,
+                            (PrefsEspeakFragment) fragment,
+                            fragment.getPreferenceManager(), engine, voices, isWatch);
+                    fragment.setPreferenceScreen(root);
+                    ((PrefsEspeakFragment) fragment).onRootScreenReady(root);
+                    maybeShowWhatsNew(context);
+                });
+            } catch (Throwable t) {
+                // The engine probe (native lib load, phondata, JNI voice
+                // enumeration) used to run unguarded on this worker: any
+                // failure became an uncaught exception that killed the
+                // whole process with zero UI feedback.
+                Log.e(TAG, "Failed to build settings preferences", t);
+                handler.post(() -> {
+                    if (isGone(context)) {
+                        return;
+                    }
+                    Toast.makeText(context, R.string.settings_load_failed,
+                            Toast.LENGTH_LONG).show();
+                });
             }
-        }, "espeak-settings-load").start();
+        });
     }
 
     /**

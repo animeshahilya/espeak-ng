@@ -110,8 +110,17 @@ public final class ScriptLanguages {
         return false;
     }
 
-    private static volatile Map<String, String> sLastChosen = null;
-    private static volatile Map<UnicodeScript, String> sLastRunLanguages = Collections.emptyMap();
+    private static final class CacheHolder {
+        final Map<String, String> chosen;
+        final Map<UnicodeScript, String> runLanguages;
+
+        CacheHolder(Map<String, String> chosen, Map<UnicodeScript, String> runLanguages) {
+            this.chosen = chosen;
+            this.runLanguages = runLanguages;
+        }
+    }
+
+    private static volatile CacheHolder sCache = null;
 
     /**
      * The chosen language of each Unicode script, from {@link #chosen}, as
@@ -122,8 +131,9 @@ public final class ScriptLanguages {
         if (chosen == null || chosen.isEmpty()) {
             return Collections.emptyMap();
         }
-        if (chosen.equals(sLastChosen)) {
-            return sLastRunLanguages;
+        final CacheHolder cached = sCache;
+        if (cached != null && chosen.equals(cached.chosen)) {
+            return cached.runLanguages;
         }
         final Map<UnicodeScript, String> out = new EnumMap<>(UnicodeScript.class);
         for (Script script : SCRIPTS) {
@@ -136,8 +146,7 @@ public final class ScriptLanguages {
             }
         }
         Map<UnicodeScript, String> unmodifiable = Collections.unmodifiableMap(out);
-        sLastChosen = chosen;
-        sLastRunLanguages = unmodifiable;
+        sCache = new CacheHolder(chosen, unmodifiable);
         return unmodifiable;
     }
 

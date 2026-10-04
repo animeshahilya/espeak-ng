@@ -94,4 +94,23 @@ public class TextSanitizeTest {
         String mathText = "\uD835\uDC00\uD835\uDC01";
         assertEquals(mathText, TextPreprocessor.condenseRepeatedEmojis(mathText, VoiceSettings.REPEATED_CHARS_COUNT));
     }
+
+    @Test
+    public void singleCharacterUtteranceDetection() {
+        assertTrue(TextPreprocessor.isSingleCharacter("a"));
+        assertTrue(TextPreprocessor.isSingleCharacter("  a  "));
+        assertTrue(TextPreprocessor.isSingleCharacter("?"));
+        // Supplementary unicode code points (surrogate pairs: emoji, math symbols)
+        assertTrue(TextPreprocessor.isSingleCharacter("😀"));
+        assertTrue(TextPreprocessor.isSingleCharacter("  😀  "));
+        assertTrue(TextPreprocessor.isSingleCharacter("\uD835\uDC00")); // Mathematical bold A
+        assertTrue(TextPreprocessor.isSingleCharacter("  \uD835\uDC00  "));
+
+        // Multi-character / empty
+        assertFalse(TextPreprocessor.isSingleCharacter(""));
+        assertFalse(TextPreprocessor.isSingleCharacter("   "));
+        assertFalse(TextPreprocessor.isSingleCharacter("ab"));
+        assertFalse(TextPreprocessor.isSingleCharacter("😀😀"));
+        assertFalse(TextPreprocessor.isSingleCharacter("a😀"));
+    }
 }

@@ -309,8 +309,7 @@ public class SpeechSynthesis {
     }
 
     public void setPunctuationCharacters(String characters) {
-        if (characters == null) return;
-        nativeSetPunctuationCharacters(characters);
+        nativeSetPunctuationCharacters(characters != null ? characters : "");
     }
 
     /**

@@ -114,14 +114,23 @@ public class Voice {
 
     @Override
     public String toString() {
-        String ret = locale.getISO3Language();
-        if (locale.getISO3Country() != null && !locale.getISO3Country().isEmpty()) {
-            ret += '-';
-            ret += locale.getISO3Country();
+        String ret;
+        try {
+            ret = locale.getISO3Language();
+        } catch (MissingResourceException e) {
+            ret = locale.getLanguage();
+        }
+        String country;
+        try {
+            country = locale.getISO3Country();
+        } catch (MissingResourceException e) {
+            country = locale.getCountry();
+        }
+        if (country != null && !country.isEmpty()) {
+            ret += '-' + country;
         }
         if (locale.getVariant() != null && !locale.getVariant().isEmpty()) {
-            ret += '-';
-            ret += locale.getVariant();
+            ret += '-' + locale.getVariant();
         }
         return ret;
     }

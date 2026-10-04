@@ -204,7 +204,7 @@ public class TtsService extends TextToSpeechService {
         synchronized (mAvailableVoices) {
             current = mMatchingVoice;
         }
-        new Thread(() -> preloadNaturalVoice(current), "piper-preload").start();
+        EspeakApp.runAsync(() -> preloadNaturalVoice(current));
     }
 
     /**
@@ -276,7 +276,7 @@ public class TtsService extends TextToSpeechService {
             }
             // Off the main thread: resolving rescans the voice folders and
             // parses their configs.
-            new Thread(() -> preloadNaturalVoice(current), "piper-preload").start();
+            EspeakApp.runAsync(() -> preloadNaturalVoice(current));
         }
     };
 
@@ -337,12 +337,18 @@ public class TtsService extends TextToSpeechService {
         // the main/synth threads: without this the first synthesis request after
         // each process start pays that cost on the latency-critical path. Failure
         // is non-fatal - the lazy path will retry if a synthesis actually needs it.
-        new Thread(() -> {
+        EspeakApp.runAsync(() -> {
             try {
                 // Natural voice for the system language first: it takes the
                 // longest, and the first utterance is usually in that language.
-                final Voice systemVoice = findVoice(Locale.getDefault().getISO3Language(),
-                        "", "").first;
+                final Locale defLoc = Locale.getDefault();
+                String defaultLang;
+                try {
+                    defaultLang = defLoc.getISO3Language();
+                } catch (MissingResourceException e) {
+                    defaultLang = defLoc.getLanguage();
+                }
+                final Voice systemVoice = findVoice(defaultLang, "", "").first;
                 preloadNaturalVoice(systemVoice);
                 preloadRecentNaturalVoices();
                 if (mPreferences != null && PiperVoiceStore.isEnabled(TolerantPreferences.of(mPreferences))) {
@@ -362,7 +368,7 @@ public class TtsService extends TextToSpeechService {
             } catch (Throwable t) {
                 Log.w(TAG, "Data warmup failed", t);
             }
-        }, "espeak-data-warmup").start();
+        });
         final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);
         // The 3-arg registerReceiver(..., flags) overload requires API 33 (Tiramisu);
         // this app's minSdk is 26, so it must fall back to the unflagged overload below
@@ -611,8 +617,19 @@ public class TtsService extends TextToSpeechService {
             for (Voice voice : mAvailableVoices.values()) {
                 int quality = android.speech.tts.Voice.QUALITY_NORMAL;
                 int latency = android.speech.tts.Voice.LATENCY_VERY_LOW;
-                Locale locale = legacyLocale(voice.locale.getISO3Language(), voice.locale.getISO3Country(), voice.locale.getVariant());
-                Set<String> features = onGetFeaturesForLanguage(locale.getLanguage(), locale.getCountry(), locale.getVariant());
+                String lang;
+                try {
+                    lang = voice.locale.getISO3Language();
+                } catch (MissingResourceException e) {
+                    lang = voice.locale.getLanguage();
+                }
+                String country;
+                try {
+                    country = voice.locale.getISO3Country();
+                } catch (MissingResourceException e) {
+                    country = voice.locale.getCountry();
+                }
+                Set<String> features = onGetFeaturesForLanguage(lang, country, voice.locale.getVariant());
                 voices.add(new android.speech.tts.Voice(voice.name, voice.locale, quality, latency, false, features));
             }
             // Favorite voices lead (in name order) so clients that present

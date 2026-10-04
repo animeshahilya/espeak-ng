@@ -1,6 +1,7 @@
 package com.animeshahilya.espeakng;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.content.SharedPreferences;
@@ -67,5 +68,41 @@ public class ScriptLanguagesTest {
             assertTrue(s.key, s.choices.length > 0);
             assertTrue(s.key, s.scripts.length > 0);
         }
+    }
+
+    @Test
+    public void runLanguagesConcurrentCacheAccess() throws Exception {
+        final Map<String, String> mapA = new HashMap<>();
+        mapA.put("hi", "mr");
+        final Map<String, String> mapB = new HashMap<>();
+        mapB.put("hi", "hi");
+
+        final int threads = 8;
+        final int iterations = 1000;
+        final java.util.concurrent.atomic.AtomicBoolean failure = new java.util.concurrent.atomic.AtomicBoolean(false);
+        final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(threads);
+        final java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(threads);
+
+        for (int i = 0; i < threads; i++) {
+            final boolean chooseA = (i % 2 == 0);
+            pool.execute(() -> {
+                try {
+                    for (int j = 0; j < iterations; j++) {
+                        Map<String, String> chosen = chooseA ? mapA : mapB;
+                        String expected = chooseA ? "mar" : "hin";
+                        Map<UnicodeScript, String> res = ScriptLanguages.runLanguages(chosen);
+                        if (!expected.equals(res.get(UnicodeScript.DEVANAGARI))) {
+                            failure.set(true);
+                            break;
+                        }
+                    }
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        pool.shutdown();
+        assertFalse("Race condition detected in runLanguages cache!", failure.get());
     }
 }

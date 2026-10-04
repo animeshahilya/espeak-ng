@@ -256,7 +256,7 @@ public class UserDictionary {
             }
 
             mCompiledPattern = Pattern.compile(regexStr, flags);
-        } catch (PatternSyntaxException e) {
+        } catch (Exception e) {
             mCompiledPattern = null;
         }
         if (isPhonemeStringUsable(mPhonemes)) {
