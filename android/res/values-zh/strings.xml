@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="sample_text">这是用%s朗读的一段示例文本</string>
+</resources>

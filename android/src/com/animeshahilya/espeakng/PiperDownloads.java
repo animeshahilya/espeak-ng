@@ -401,6 +401,11 @@ final class PiperDownloads {
                 Log.w(TAG, "Catalog fetch failed; using cached copy", e);
                 return withExtras(storageContext, parseCatalog(PiperVoiceStore.readText(cache)));
             }
+            final List<CatalogVoice> extras = bundledExtras(storageContext);
+            if (!extras.isEmpty()) {
+                Log.w(TAG, "Catalog fetch failed; falling back to bundled extras", e);
+                return extras;
+            }
             throw e;
         }
     }
