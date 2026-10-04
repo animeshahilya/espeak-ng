@@ -31,13 +31,18 @@
       <!-- Off means off: nothing natural-voice is loaded (TtsService frees
            loaded models on the switch) and the rows that only matter while
            on are disabled. Voices stay manageable, to free the space. -->
-      <SwitchPreferenceCompat
-          android:key="piper_enabled"
-          android:title="@string/setting_piper_enabled"
-          android:summaryOn="@string/setting_piper_enabled_summary_on"
-          android:summaryOff="@string/setting_piper_enabled_summary_off"
-          android:defaultValue="false"
-          app:iconSpaceReserved="false" />
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:key="category_piper_master"
+          android:title="@string/category_piper_master"
+          app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="piper_enabled"
+            android:title="@string/setting_piper_enabled"
+            android:summaryOn="@string/setting_piper_enabled_summary_on"
+            android:summaryOff="@string/setting_piper_enabled_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
           android:key="category_piper_languages"
           android:title="@string/category_piper_languages"
@@ -73,6 +78,8 @@
             android:key="piper_espeak_for_characters"
             android:title="@string/setting_piper_espeak_for_characters"
             android:summary="@string/setting_piper_espeak_for_characters_summary"
+            android:summaryOn="@string/setting_piper_espeak_for_characters_summary_on"
+            android:summaryOff="@string/setting_piper_espeak_for_characters_summary_off"
             android:defaultValue="true"
             app:iconSpaceReserved="false" />
         <ListPreference
@@ -103,6 +110,8 @@
             android:key="piper_nnapi"
             android:title="@string/setting_piper_nnapi"
             android:summary="@string/setting_piper_nnapi_summary"
+            android:summaryOn="@string/setting_piper_nnapi_summary_on"
+            android:summaryOff="@string/setting_piper_nnapi_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
@@ -208,6 +217,8 @@
             android:key="espeak_phrase_pauses"
             android:title="@string/setting_phrase_pauses"
             android:summary="@string/setting_phrase_pauses_summary"
+            android:summaryOn="@string/setting_phrase_pauses_summary_on"
+            android:summaryOff="@string/setting_phrase_pauses_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
@@ -229,6 +240,8 @@
             android:key="espeak_punctuation_sounds"
             android:title="@string/setting_punctuation_sounds"
             android:summary="@string/setting_punctuation_sounds_summary"
+            android:summaryOn="@string/setting_punctuation_sounds_summary_on"
+            android:summaryOff="@string/setting_punctuation_sounds_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <ListPreference
@@ -312,6 +325,8 @@
             android:key="espeak_emphasize_questions"
             android:title="@string/setting_emphasize_questions"
             android:summary="@string/setting_emphasize_questions_summary"
+            android:summaryOn="@string/setting_emphasize_questions_summary_on"
+            android:summaryOff="@string/setting_emphasize_questions_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <!-- not on Wear -->
@@ -319,6 +334,8 @@
             android:key="espeak_simplify_urls"
             android:title="@string/setting_simplify_urls"
             android:summary="@string/setting_simplify_urls_summary"
+            android:summaryOn="@string/setting_simplify_urls_summary_on"
+            android:summaryOff="@string/setting_simplify_urls_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <!-- not on Wear -->
@@ -326,6 +343,8 @@
             android:key="espeak_hinglish"
             android:title="@string/setting_hinglish"
             android:summary="@string/setting_hinglish_summary"
+            android:summaryOn="@string/setting_hinglish_summary_on"
+            android:summaryOff="@string/setting_hinglish_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
@@ -346,6 +365,8 @@
             android:key="espeak_spoken_diacritics"
             android:title="@string/setting_spoken_diacritics"
             android:summary="@string/setting_spoken_diacritics_summary"
+            android:summaryOn="@string/setting_spoken_diacritics_summary_on"
+            android:summaryOff="@string/setting_spoken_diacritics_summary_off"
             android:defaultValue="true"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
@@ -357,6 +378,8 @@
             android:key="espeak_unicode_normalization"
             android:title="@string/setting_unicode_normalization"
             android:summary="@string/setting_unicode_normalization_summary"
+            android:summaryOn="@string/setting_unicode_normalization_summary_on"
+            android:summaryOff="@string/setting_unicode_normalization_summary_off"
             android:defaultValue="true"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
@@ -405,18 +428,24 @@
             android:key="espeak_read_money"
             android:title="@string/setting_read_money"
             android:summary="@string/setting_read_money_summary"
+            android:summaryOn="@string/setting_read_money_summary_on"
+            android:summaryOff="@string/setting_read_money_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             android:key="espeak_read_codes"
             android:title="@string/setting_read_codes"
             android:summary="@string/setting_read_codes_summary"
+            android:summaryOn="@string/setting_read_codes_summary_on"
+            android:summaryOff="@string/setting_read_codes_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             android:key="espeak_expand_abbreviations"
             android:title="@string/setting_expand_abbreviations"
             android:summary="@string/setting_expand_abbreviations_summary"
+            android:summaryOn="@string/setting_expand_abbreviations_summary_on"
+            android:summaryOff="@string/setting_expand_abbreviations_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
@@ -532,6 +561,8 @@
             android:key="piper_switch_languages"
             android:title="@string/setting_natural_switching"
             android:summary="@string/setting_natural_switching_summary"
+            android:summaryOn="@string/setting_natural_switching_summary_on"
+            android:summaryOff="@string/setting_natural_switching_summary_off"
             android:defaultValue="true"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
@@ -561,31 +592,46 @@
         android:title="@string/screen_locks_title"
         android:summary="@string/screen_locks_summary"
         android:icon="@drawable/ic_lock">
-      <SwitchPreferenceCompat
-          android:key="espeak_force_rate"
-          android:title="@string/setting_force_rate"
-          android:summary="@string/setting_force_rate_summary"
-          android:defaultValue="false"
-          app:iconSpaceReserved="false" />
-      <SwitchPreferenceCompat
-          android:key="espeak_force_pitch"
-          android:title="@string/setting_force_pitch"
-          android:summary="@string/setting_force_pitch_summary"
-          android:defaultValue="false"
-          app:iconSpaceReserved="false" />
-      <SwitchPreferenceCompat
-          android:key="espeak_force_volume"
-          android:title="@string/setting_force_volume"
-          android:summary="@string/setting_force_volume_summary"
-          android:defaultValue="false"
-          app:iconSpaceReserved="false" />
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:title="@string/category_caller_locks"
+          app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="espeak_force_rate"
+            android:title="@string/setting_force_rate"
+            android:summary="@string/setting_force_rate_summary"
+            android:summaryOn="@string/setting_force_rate_summary_on"
+            android:summaryOff="@string/setting_force_rate_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_force_pitch"
+            android:title="@string/setting_force_pitch"
+            android:summary="@string/setting_force_pitch_summary"
+            android:summaryOn="@string/setting_force_pitch_summary_on"
+            android:summaryOff="@string/setting_force_pitch_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_force_volume"
+            android:title="@string/setting_force_volume"
+            android:summary="@string/setting_force_volume_summary"
+            android:summaryOn="@string/setting_force_volume_summary_on"
+            android:summaryOff="@string/setting_force_volume_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
       <!-- not on Wear -->
-      <ListPreference
-          android:key="espeak_sleep_timer"
-          android:title="@string/setting_sleep_timer"
-          android:summary="@string/setting_sleep_timer_summary"
-          android:defaultValue="off"
-          app:iconSpaceReserved="false" />
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:key="category_sleep_timer"
+          android:title="@string/category_sleep_timer"
+          app:iconSpaceReserved="false">
+        <ListPreference
+            android:key="espeak_sleep_timer"
+            android:title="@string/setting_sleep_timer"
+            android:summary="@string/setting_sleep_timer_summary"
+            android:defaultValue="off"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -644,6 +690,8 @@
             android:key="espeak_reading_history"
             android:title="@string/setting_reading_history"
             android:summary="@string/setting_reading_history_summary"
+            android:summaryOn="@string/setting_reading_history_summary_on"
+            android:summaryOff="@string/setting_reading_history_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <!-- not on Wear -->

@@ -131,6 +131,17 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
                     mListView.setItemChecked(position, mCurrentSelected.contains(item.value));
                     // Update checked state for the custom selector drawable
                     view.setActivated(mCurrentSelected.contains(item.value));
+                    androidx.core.view.ViewCompat.setAccessibilityDelegate(view,
+                            new androidx.core.view.AccessibilityDelegateCompat() {
+                                @Override
+                                public void onInitializeAccessibilityNodeInfo(View host,
+                                        androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                                    super.onInitializeAccessibilityNodeInfo(host, info);
+                                    info.addAction(new androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat(
+                                            androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_LONG_CLICK,
+                                            getContext().getString(R.string.piper_play_sample)));
+                                }
+                            });
                 }
                 return view;
             }

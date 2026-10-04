@@ -92,10 +92,12 @@ public class VoiceVariantDialogFragment extends ButtonDialogFragment {
         mCategory.setOnItemClickListener((parent, view, position, id) -> {
             mCategoryIndex = position;
             rebuildVariants(position, 0);
+            view.announceForAccessibility(categoryNames[position] + ", " + mVariant.getText());
         });
 
         mVariant.setOnItemClickListener((parent, view, position, id) -> {
             mVariantIndex = position;
+            view.announceForAccessibility(mVariant.getText());
         });
 
         rebuildVariants(safeCategory, variant);

@@ -1456,11 +1456,16 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
     /**
      * Speaks {@code text} through the lazily-initialized preview engine.
-     * Unifies the TTS init/speak shape previewText() and playTestVoice()
-     * used to duplicate; only the text and utterance id differ.
+     * If speech is already playing, stops it so the user can easily cancel playback.
      */
     static void speakPreview(final Context context, final String text,
             final String utteranceId) {
+        if (sTts != null && sTts.isSpeaking()) {
+            sTts.stop();
+            Toast.makeText(context, R.string.test_voice_stopped, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         if (sTts == null) {
             sTts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
                 @Override
@@ -1476,40 +1481,30 @@ public class TtsSettingsActivity extends AppCompatActivity {
     }
 
     private static void playTestVoice(final Context context) {
-        // The sample itself is the confirmation once it starts, but there is
-        // a beat of TTS-init silence first; the toast tells TalkBack the tap
-        // registered instead of leaving the user wondering.
-        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         speakPreview(context, context.getString(R.string.test_voice_sample), "sample_utterance");
     }
 
     private static void playTestNumbers(final Context context) {
-        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         speakPreview(context, context.getString(R.string.test_numbers_sample), "sample_numbers");
     }
 
     private static void playTestPauses(final Context context) {
-        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         speakPreview(context, context.getString(R.string.test_pauses_sample), "sample_pauses");
     }
 
     private static void playTestPunctuation(final Context context) {
-        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         speakPreview(context, context.getString(R.string.test_punctuation_sample), "sample_punctuation");
     }
 
     private static void playTestReading(final Context context) {
-        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading");
     }
 
     private static void playTestVoiceSound(final Context context) {
-        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         speakPreview(context, context.getString(R.string.test_voice_tuning_sample), "sample_voice_sound");
     }
 
     private static void playTestMixedLanguages(final Context context) {
-        Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
         speakPreview(context, context.getString(R.string.test_mixed_languages_sample), "sample_mixed_languages");
     }
 
@@ -1846,7 +1841,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                     VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_SPOKEN_DIACRITICS,
                     VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.PREF_SIMPLIFY_URLS,
-                    "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER,
+                    "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER, "category_sleep_timer",
                     "action_save_profile", "action_load_profile",
                     VoiceSettings.PREF_READING_HISTORY, "action_recent_reading",
                     "category_presets", "category_data",

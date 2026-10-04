@@ -122,6 +122,34 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
             title.setText(parameter.title);
         }
 
+        // Discrete increment for TalkBack gestures, volume keys, and D-pad:
+        // jumps by ~4% of range instead of 1 unit out of hundreds.
+        final int range = parameter.max - parameter.min;
+        final int step = Math.max(1, range / 25);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            parameter.mSeekBar.setKeyProgressIncrement(step);
+        }
+
+        androidx.core.view.ViewCompat.setAccessibilityDelegate(parameter.mSeekBar,
+                new androidx.core.view.AccessibilityDelegateCompat() {
+                    @Override
+                    public void onInitializeAccessibilityNodeInfo(View host,
+                            androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                        super.onInitializeAccessibilityNodeInfo(host, info);
+                        String text = String.format(parameter.formatter,
+                                Integer.toString(preference.getDisplayValue(parameter)));
+                        info.setContentDescription(parameter.title + ", " + text);
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                            info.setStateDescription(text);
+                        }
+                        info.setRangeInfo(androidx.core.view.accessibility.AccessibilityNodeInfoCompat.RangeInfoCompat.obtain(
+                                androidx.core.view.accessibility.AccessibilityNodeInfoCompat.RangeInfoCompat.RANGE_TYPE_INT,
+                                parameter.min,
+                                parameter.max,
+                                parameter.current));
+                    }
+                });
+
         final Button reset = (Button) section.findViewById(R.id.resetToDefault);
         // Every section carries an identically labelled button, so name the
         // parameter for anyone who reaches it with a screen reader.

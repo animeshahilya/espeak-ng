@@ -873,13 +873,24 @@ final class PiperSettings {
         return null;
     }
 
-    /** Streams the voice's recorded sample. */
+    /** Streams the voice's recorded sample. Tapping again while playing stops playback. */
     private static void playSample(Context context, PiperDownloads.CatalogVoice v, MediaPlayer[] player) {
-        releasePlayer(player);
+        if (player[0] != null) {
+            try {
+                if (player[0].isPlaying()) {
+                    releasePlayer(player);
+                    toast(context.getApplicationContext(), context.getString(R.string.test_voice_stopped));
+                    return;
+                }
+            } catch (Exception ignored) {
+            }
+            releasePlayer(player);
+        }
         final String url = v.sampleUrl();
         if (url == null) {
             return;
         }
+        toast(context.getApplicationContext(), context.getString(R.string.test_voice_playing));
         try {
             final MediaPlayer mp = new MediaPlayer();
             mp.setAudioAttributes(new AudioAttributes.Builder()
@@ -888,7 +899,9 @@ final class PiperSettings {
                     .build());
             mp.setDataSource(url);
             mp.setOnPreparedListener(MediaPlayer::start);
+            mp.setOnCompletionListener(m -> releasePlayer(player));
             mp.setOnErrorListener((m, what, extra) -> {
+                releasePlayer(player);
                 Toast.makeText(context, R.string.piper_sample_failed, Toast.LENGTH_SHORT).show();
                 return true;
             });
@@ -896,6 +909,7 @@ final class PiperSettings {
             player[0] = mp;
         } catch (Exception e) {
             Log.w(TAG, "Sample playback failed", e);
+            releasePlayer(player);
             Toast.makeText(context, R.string.piper_sample_failed, Toast.LENGTH_SHORT).show();
         }
     }
@@ -1081,10 +1095,11 @@ final class PiperSettings {
                 .setPositiveButton(R.string.piper_action_delete, (d, w) -> new Thread(() -> {
                     PiperVoiceStore.delete(storage(context), prefs, voice.key);
                     PiperDownloads.broadcastChanged(context.getApplicationContext(), null, null);
-                    toast(context.getApplicationContext(),
-                            context.getString(R.string.piper_deleted, voice.config.displayName()));
+                    final String msg = context.getString(R.string.piper_deleted, voice.config.displayName());
+                    toast(context.getApplicationContext(), msg);
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (f.isAdded()) {
+                            f.announce(msg);
                             f.popToParent();
                         }
                     });
@@ -1097,13 +1112,23 @@ final class PiperSettings {
     /**
      * Speaks the sample sentence with this voice directly (loaded here if
      * needed), whether or not it is the voice chosen for its language - so a
-     * voice can be heard before it is picked.
+     * voice can be heard before it is picked. Tapping again while playing stops
+     * playback.
      */
     private static void testVoice(final Context context, final PiperVoiceStore.Installed voice) {
         final Context app = context.getApplicationContext();
+        synchronized (PiperSettings.class) {
+            if (sTestTrack != null && sTestTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+                stopPlayback();
+                toast(app, app.getString(R.string.test_voice_stopped));
+                return;
+            }
+        }
         if (PiperEngine.get().getLoaded(voice.key) == null) {
             Toast.makeText(app, app.getString(R.string.piper_test_loading, voice.config.displayName()),
                     Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(app, app.getString(R.string.test_voice_playing), Toast.LENGTH_SHORT).show();
         }
         new Thread(() -> {
             try {
