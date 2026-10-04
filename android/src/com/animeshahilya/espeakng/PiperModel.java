@@ -125,31 +125,73 @@ final class PiperModel implements Closeable {
     final File file;
     /** True when running through NNAPI (see PiperEngine#setAcceleration). */
     final boolean accelerated;
-    /** The whole model, or the encoder when {@link #decoder} is set. */
-    private final OrtSession session;
-    private final OrtSession decoder;
-    /** The mapped optimized model the session reads its weights from; lives as long. */
-    private final ByteBuffer mapped;
-    /** Same for the decoder (proguard-rules.pro keeps both: never read in Java). */
-    private final ByteBuffer mappedDecoder;
-    /** Encoder outputs that are decoder inputs (latent first); the next one, if any, is durations. */
-    private final String[] boundary;
-    private final boolean hasSpeakerInput;
-    private final boolean hasDurations;
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final SessionGroup group;
     private boolean closed;
-    /** The decoder compiled for Qualcomm's NPU (Snapdragon build), or null for the CPU one. */
-    private volatile OrtSession npuDecoder;
-    /** Why the NPU is not used on a build that has it (for the log), or null. */
-    private volatile String npuProblem;
-    /** Latent frames per NPU run: the INT8 file's window, or NPU_FRAMES for the FP16 graph. */
-    private volatile int npuFrames = NPU_FRAMES;
-    /** "INT8" or "FP16": which NPU graph runs (for the log). */
-    private volatile String npuKind;
-    /** Shapes of the decoder inputs from the first encoder run (warm-up), for the NPU graph. */
-    private volatile long[][] boundaryShapes;
-    /** Decoder throughput, audio seconds per second of work (running average; 0 = unmeasured). */
-    private volatile double decodeSpeed;
+
+    /**
+     * Group of ONNX Runtime sessions and memory-mapped buffers.
+     * Can be shared across multiple PiperModel instances that use the same underlying
+     * ONNX model file (e.g. multi-speaker AI4Bharat Rasa voices).
+     */
+    static final class SessionGroup {
+        final OrtSession session;
+        final OrtSession decoder;
+        final ByteBuffer mapped;
+        final ByteBuffer mappedDecoder;
+        final String[] boundary;
+        final boolean hasSpeakerInput;
+        final boolean hasDurations;
+        final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+        private int refCount = 1;
+        private boolean closed;
+        volatile OrtSession npuDecoder;
+        volatile String npuProblem;
+        volatile int npuFrames = NPU_FRAMES;
+        volatile String npuKind;
+        volatile long[][] boundaryShapes;
+        volatile double decodeSpeed;
+
+        SessionGroup(OrtSession session, ByteBuffer mapped, OrtSession decoder,
+                     ByteBuffer mappedDecoder) {
+            this.session = session;
+            this.mapped = mapped;
+            this.decoder = decoder;
+            this.mappedDecoder = mappedDecoder;
+            this.hasSpeakerInput = session.getInputNames().contains("sid");
+            this.boundary = decoder != null ? decoder.getInputNames().toArray(new String[0]) : new String[0];
+            this.hasDurations = session.getOutputNames().size() > (decoder != null ? boundary.length : 1);
+        }
+
+        synchronized void acquire() {
+            if (!closed) {
+                refCount++;
+            }
+        }
+
+        void release() {
+            synchronized (this) {
+                refCount--;
+                if (refCount > 0 || closed) {
+                    return;
+                }
+                closed = true;
+            }
+            lock.writeLock().lock();
+            try {
+                closeQuietly(session);
+                closeQuietly(decoder);
+                closeQuietly(npuDecoder);
+            } finally {
+                lock.writeLock().unlock();
+            }
+        }
+
+        boolean isClosed() {
+            synchronized (this) {
+                return closed;
+            }
+        }
+    }
 
     /** One model run: audio in about [-1, 1], and frames per phoneme id if known. */
     static final class Output {
@@ -181,33 +223,44 @@ final class PiperModel implements Closeable {
         }
     }
 
-    private PiperModel(PiperVoiceConfig config, File file, OrtSession session, ByteBuffer mapped,
-                       OrtSession decoder, ByteBuffer mappedDecoder, boolean accelerated) {
+    PiperModel(PiperVoiceConfig config, File file, SessionGroup group, boolean accelerated) {
         this.config = config;
         this.file = file;
-        this.session = session;
-        this.mapped = mapped;
-        this.decoder = decoder;
-        this.mappedDecoder = mappedDecoder;
+        this.group = group;
         this.accelerated = accelerated;
-        this.hasSpeakerInput = session.getInputNames().contains("sid");
-        this.boundary = decoder != null ? decoder.getInputNames().toArray(new String[0]) : new String[0];
-        this.hasDurations = session.getOutputNames().size() > (decoder != null ? boundary.length : 1);
+    }
+
+    /**
+     * Creates a new PiperModel sharing the existing ONNX Runtime session and memory-mapped
+     * weights with a new voice configuration (e.g. different speaker id and phoneme map
+     * over the same multi-speaker model).
+     */
+    PiperModel withConfig(PiperVoiceConfig newConfig) {
+        if (newConfig == null) {
+            return null;
+        }
+        synchronized (this) {
+            if (closed || group.isClosed()) {
+                return null;
+            }
+            group.acquire();
+        }
+        return new PiperModel(newConfig, file, group, accelerated);
     }
 
     /** True when runs report each id's frames (see {@link PiperAlignment}). */
     boolean hasDurations() {
-        return hasDurations;
+        return group.hasDurations;
     }
 
     /** True when {@link #encode}/{@link #decode} can render a chunk in pieces. */
     boolean streams() {
-        return decoder != null;
+        return group.decoder != null;
     }
 
     /** How fast {@link #decode} has run on this device: audio seconds per second, 0 if never. */
     double decodeSpeed() {
-        return decodeSpeed;
+        return group.decodeSpeed;
     }
 
     /**
@@ -223,6 +276,17 @@ final class PiperModel implements Closeable {
         final File optimized = derivedFile(onnx, OPTIMIZED_SUFFIX);
         final File encoder = derivedFile(onnx, ENCODER_SUFFIX);
         final File decoderFile = derivedFile(onnx, DECODER_SUFFIX);
+        if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile())) {
+            final File sharedEnc = sharedDerivedFile(onnx, ENCODER_SUFFIX);
+            final File sharedDec = sharedDerivedFile(onnx, DECODER_SUFFIX);
+            final File sharedOpt = sharedDerivedFile(onnx, OPTIMIZED_SUFFIX);
+            if (sharedEnc != null && sharedEnc.isFile() && sharedDec != null && sharedDec.isFile()) {
+                PiperDownloads.linkOrCopy(sharedEnc, encoder);
+                PiperDownloads.linkOrCopy(sharedDec, decoderFile);
+            } else if (sharedOpt != null && sharedOpt.isFile()) {
+                PiperDownloads.linkOrCopy(sharedOpt, optimized);
+            }
+        }
         if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile())) {
             buildOptimized(onnx, optimized, encoder, decoderFile, threads);
         }
@@ -257,15 +321,15 @@ final class PiperModel implements Closeable {
         if (session == null) {
             session = open(onnx, null, threads, nnapi);
         }
-        final PiperModel model = new PiperModel(config, onnx, session, mapped, decoder, mappedDecoder,
-                nnapi);
+        final SessionGroup group = new SessionGroup(session, mapped, decoder, mappedDecoder);
+        final PiperModel model = new PiperModel(config, onnx, group, nnapi);
         try {
             model.warmUp();
         } catch (OrtException | RuntimeException e) {
             model.close();
             throw e;
         }
-        if (!nnapi && model.decoder != null) {
+        if (!nnapi && model.streams()) {
             model.attachNpu(onnx);
         }
         return model;
@@ -289,7 +353,7 @@ final class PiperModel implements Closeable {
      */
     private void attachNpu(File onnx) {
         final File int8 = new File(onnx.getParentFile(), NPU_DECODER_FILE);
-        if (boundaryShapes != null && int8.isFile() && hasNpuRuntime() && attachInt8Npu(onnx, int8)) {
+        if (group.boundaryShapes != null && int8.isFile() && hasNpuRuntime() && attachInt8Npu(onnx, int8)) {
             return;
         }
         attachFp16Npu(onnx);
@@ -325,18 +389,18 @@ final class PiperModel implements Closeable {
             }
             // It must read exactly what this model's encoder hands the decoder.
             final Map<String, ai.onnxruntime.NodeInfo> info = npu.getInputInfo();
-            if (!info.keySet().equals(new java.util.HashSet<>(Arrays.asList(boundary)))) {
-                throw new IOException("inputs " + info.keySet() + " are not " + Arrays.toString(boundary));
+            if (!info.keySet().equals(new java.util.HashSet<>(Arrays.asList(group.boundary)))) {
+                throw new IOException("inputs " + info.keySet() + " are not " + Arrays.toString(group.boundary));
             }
-            final long[] latent = ((ai.onnxruntime.TensorInfo) info.get(boundary[0]).getInfo()).getShape();
-            if (latent.length != 3 || latent[1] != boundaryShapes[0][1] || latent[2] <= 2 * DECODE_OVERLAP) {
+            final long[] latent = ((ai.onnxruntime.TensorInfo) info.get(group.boundary[0]).getInfo()).getShape();
+            if (latent.length != 3 || latent[1] != group.boundaryShapes[0][1] || latent[2] <= 2 * DECODE_OVERLAP) {
                 throw new IOException("latent " + Arrays.toString(latent));
             }
             final Map<String, OnnxTensor> inputs = new HashMap<>();
             try {
-                for (int i = 0; i < boundary.length; i++) {
-                    final long[] shape = i == 0 ? latent : boundaryShapes[i];
-                    inputs.put(boundary[i], OnnxTensor.createTensor(env(),
+                for (int i = 0; i < group.boundary.length; i++) {
+                    final long[] shape = i == 0 ? latent : group.boundaryShapes[i];
+                    inputs.put(group.boundary[i], OnnxTensor.createTensor(env(),
                             FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
                 }
                 npu.run(inputs).close();
@@ -346,9 +410,9 @@ final class PiperModel implements Closeable {
                     t.close();
                 }
             }
-            npuFrames = (int) latent[2];
-            npuKind = "INT8";
-            npuDecoder = npu;
+            group.npuFrames = (int) latent[2];
+            group.npuKind = "INT8";
+            group.npuDecoder = npu;
             return true;
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
@@ -363,7 +427,7 @@ final class PiperModel implements Closeable {
     }
 
     private void attachFp16Npu(File onnx) {
-        final long[][] shapes = boundaryShapes;
+        final long[][] shapes = group.boundaryShapes;
         final File failed = derivedFile(onnx, NPU_FAILED_SUFFIX);
         if (shapes == null || !hasNpuRuntime()) {
             return;
@@ -376,7 +440,7 @@ final class PiperModel implements Closeable {
             } catch (IOException ignored) {
                 // The reason is only for the log.
             }
-            npuProblem = "on the CPU (NPU failed before: " + why + ")";
+            group.npuProblem = "on the CPU (NPU failed before: " + why + ")";
             return;
         }
         final File compiled = derivedFile(onnx, NPU_SUFFIX);
@@ -386,8 +450,8 @@ final class PiperModel implements Closeable {
             final boolean compile = !compiled.isFile();
             if (compile) {
                 final Map<String, long[]> fixed = new HashMap<>();
-                for (int i = 0; i < boundary.length; i++) {
-                    fixed.put(boundary[i], i == 0
+                for (int i = 0; i < group.boundary.length; i++) {
+                    fixed.put(group.boundary[i], i == 0
                             ? new long[] {1, shapes[0][1], NPU_FRAMES} : shapes[i]);
                 }
                 if (!PiperSplit.split(onnx, null, source, fixed)) {
@@ -411,9 +475,9 @@ final class PiperModel implements Closeable {
             // A real window through it before it speaks.
             final Map<String, OnnxTensor> inputs = new HashMap<>();
             try {
-                for (int i = 0; i < boundary.length; i++) {
+                for (int i = 0; i < group.boundary.length; i++) {
                     final long[] shape = i == 0 ? new long[] {1, shapes[0][1], NPU_FRAMES} : shapes[i];
-                    inputs.put(boundary[i], OnnxTensor.createTensor(env(),
+                    inputs.put(group.boundary[i], OnnxTensor.createTensor(env(),
                             FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
                 }
                 npu.run(inputs).close();
@@ -423,15 +487,15 @@ final class PiperModel implements Closeable {
                     t.close();
                 }
             }
-            npuFrames = NPU_FRAMES;
-            npuKind = "FP16";
-            npuDecoder = npu;
+            group.npuFrames = NPU_FRAMES;
+            group.npuKind = "FP16";
+            group.npuDecoder = npu;
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
             compiled.delete();
-            npuProblem = "on the CPU (NPU failed: " + e + ")";
+            group.npuProblem = "on the CPU (NPU failed: " + e + ")";
             try (java.io.FileWriter w = new java.io.FileWriter(failed)) {
-                w.write(npuProblem);
+                w.write(group.npuProblem);
             } catch (IOException ignored) {
                 // Tried again next load.
             }
@@ -442,17 +506,17 @@ final class PiperModel implements Closeable {
 
     /** True when the decoder runs on Qualcomm's NPU. */
     boolean onNpu() {
-        return npuDecoder != null;
+        return group.npuDecoder != null;
     }
 
     /** "INT8" or "FP16" when on the NPU, else null. */
     String npuKind() {
-        return npuDecoder != null ? npuKind : null;
+        return group.npuDecoder != null ? group.npuKind : null;
     }
 
     /** Why a build with the NPU runtime isn't using it for this voice, or null. */
     String npuProblem() {
-        return npuProblem;
+        return group.npuProblem;
     }
 
     private static volatile boolean sTelemetryOff;
@@ -481,6 +545,46 @@ final class PiperModel implements Closeable {
     }
 
     /**
+     * File in the shared directory holding the pre-optimized model, if this
+     * voice shares its model weights with others (e.g. AI4Bharat Rasa voices).
+     */
+    private static File sharedDerivedFile(File onnx, String suffix) {
+        final File dir = onnx.getParentFile();
+        if (dir == null) {
+            return null;
+        }
+        final File source = new File(dir, "source");
+        if (!source.isFile()) {
+            return null;
+        }
+        String md5 = null;
+        try (java.io.BufferedReader r = new java.io.BufferedReader(
+                new java.io.InputStreamReader(new java.io.FileInputStream(source),
+                        java.nio.charset.StandardCharsets.UTF_8))) {
+            md5 = r.readLine();
+        } catch (IOException ignored) {
+        }
+        if (md5 == null || md5.trim().isEmpty() || "null".equals(md5.trim())) {
+            return null;
+        }
+        md5 = md5.trim().toLowerCase(java.util.Locale.ROOT);
+        final File parent = dir.getParentFile();
+        if (parent == null) {
+            return null;
+        }
+        final File sharedDir;
+        if ("voices".equals(parent.getName())) {
+            sharedDir = new File(parent.getParentFile(), "shared");
+        } else {
+            sharedDir = new File(parent, "shared");
+        }
+        if (!sharedDir.isDirectory() && !sharedDir.mkdirs()) {
+            return null;
+        }
+        return new File(sharedDir, md5 + "." + env().getVersion() + suffix);
+    }
+
+    /**
      * Writes the optimized copy: encoder and decoder if the model splits,
      * else one alignment-enabled model. On any failure there is simply none.
      */
@@ -494,12 +598,19 @@ final class PiperModel implements Closeable {
                 f.delete();
             }
         }
+        final File sharedEnc = sharedDerivedFile(onnx, ENCODER_SUFFIX);
+        final File sharedDec = sharedDerivedFile(onnx, DECODER_SUFFIX);
+        final File sharedOpt = sharedDerivedFile(onnx, OPTIMIZED_SUFFIX);
         final File encoderSource = new File(dir, OPTIMIZED_PREFIX + "encoder.tmp");
         final File decoderSource = new File(dir, OPTIMIZED_PREFIX + "decoder.tmp");
         try {
             if (PiperSplit.split(onnx, encoderSource, decoderSource)
                     && saveOptimized(encoderSource, encoder, threads)) {
                 if (saveOptimized(decoderSource, decoder, threads)) {
+                    if (sharedEnc != null && !sharedEnc.isFile()) {
+                        PiperDownloads.linkOrCopy(encoder, sharedEnc);
+                        PiperDownloads.linkOrCopy(decoder, sharedDec);
+                    }
                     return;
                 }
                 encoder.delete();
@@ -512,8 +623,12 @@ final class PiperModel implements Closeable {
         }
         final File aligned = new File(dir, OPTIMIZED_PREFIX + "aligned.tmp");
         try {
-            saveOptimized(PiperAlignment.addDurationOutput(onnx, aligned) ? aligned : onnx, optimized,
-                    threads);
+            if (saveOptimized(PiperAlignment.addDurationOutput(onnx, aligned) ? aligned : onnx, optimized,
+                    threads)) {
+                if (sharedOpt != null && !sharedOpt.isFile()) {
+                    PiperDownloads.linkOrCopy(optimized, sharedOpt);
+                }
+            }
         } catch (IOException | RuntimeException ignored) {
             // No optimized copy: loads read the original.
         } finally {
@@ -678,14 +793,14 @@ final class PiperModel implements Closeable {
      */
     Output infer(long[] ids, float lengthScale, int speakerId, float noise, float noiseW,
                  RunHandle handle) throws OrtException {
-        if (decoder != null) {
+        if (group.decoder != null) {
             final Encoded e = encode(ids, lengthScale, speakerId, noise, noiseW, handle);
             final float[] audio = e == null ? null : decode(e, 0, e.frames, handle);
             return audio == null ? null : new Output(audio, e.durations);
         }
-        lock.readLock().lock();
+        group.lock.readLock().lock();
         try {
-            if (closed || (handle != null && handle.isCancelled())) {
+            if (closed || group.isClosed() || (handle != null && handle.isCancelled())) {
                 return null;
             }
             final OrtEnvironment env = env();
@@ -693,13 +808,13 @@ final class PiperModel implements Closeable {
             final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
             try {
                 putInputs(env, inputs, ids, lengthScale, speakerId, noise, noiseW);
-                try (OrtSession.Result r = session.run(inputs,
+                try (OrtSession.Result r = group.session.run(inputs,
                         handle != null ? handle.options : ownOptions)) {
                     final float[] audio = floats(r.get(0));
                     if (audio == null) {
                         return null;
                     }
-                    final float[] durations = hasDurations ? floats(r.get(1)) : null;
+                    final float[] durations = group.hasDurations ? floats(r.get(1)) : null;
                     return new Output(audio, durations != null && durations.length == ids.length
                             ? durations : null);
                 }
@@ -717,7 +832,7 @@ final class PiperModel implements Closeable {
                 }
             }
         } finally {
-            lock.readLock().unlock();
+            group.lock.readLock().unlock();
         }
     }
 
@@ -729,9 +844,9 @@ final class PiperModel implements Closeable {
      */
     Encoded encode(long[] ids, float lengthScale, int speakerId, float noise, float noiseW,
                    RunHandle handle) throws OrtException {
-        lock.readLock().lock();
+        group.lock.readLock().lock();
         try {
-            if (closed || (handle != null && handle.isCancelled())) {
+            if (closed || group.isClosed() || (handle != null && handle.isCancelled())) {
                 return null;
             }
             final OrtEnvironment env = env();
@@ -739,11 +854,11 @@ final class PiperModel implements Closeable {
             final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
             try {
                 putInputs(env, inputs, ids, lengthScale, speakerId, noise, noiseW);
-                try (OrtSession.Result r = session.run(inputs,
+                try (OrtSession.Result r = group.session.run(inputs,
                         handle != null ? handle.options : ownOptions)) {
-                    final float[][] tensors = new float[boundary.length][];
-                    final long[][] shapes = new long[boundary.length][];
-                    for (int i = 0; i < boundary.length; i++) {
+                    final float[][] tensors = new float[group.boundary.length][];
+                    final long[][] shapes = new long[group.boundary.length][];
+                    for (int i = 0; i < group.boundary.length; i++) {
                         final OnnxValue v = r.get(i);
                         tensors[i] = floats(v);
                         if (tensors[i] == null) {
@@ -754,9 +869,9 @@ final class PiperModel implements Closeable {
                     if (shapes[0].length != 3) {
                         return null;
                     }
-                    final float[] durations = hasDurations ? floats(r.get(boundary.length)) : null;
-                    if (boundaryShapes == null) {
-                        boundaryShapes = shapes;
+                    final float[] durations = group.hasDurations ? floats(r.get(group.boundary.length)) : null;
+                    if (group.boundaryShapes == null) {
+                        group.boundaryShapes = shapes;
                     }
                     return new Encoded(tensors, shapes,
                             durations != null && durations.length == ids.length ? durations : null);
@@ -775,7 +890,7 @@ final class PiperModel implements Closeable {
                 }
             }
         } finally {
-            lock.readLock().unlock();
+            group.lock.readLock().unlock();
         }
     }
 
@@ -787,12 +902,12 @@ final class PiperModel implements Closeable {
      * @return null when the model was closed or the run cancelled
      */
     float[] decode(Encoded e, int from, int to, RunHandle handle) throws OrtException {
-        lock.readLock().lock();
+        group.lock.readLock().lock();
         try {
-            if (closed || (handle != null && handle.isCancelled())) {
+            if (closed || group.isClosed() || (handle != null && handle.isCancelled())) {
                 return null;
             }
-            if (npuDecoder != null) {
+            if (group.npuDecoder != null) {
                 return decodeOnNpu(e, from, to, handle);
             }
             final int start = Math.max(0, from - DECODE_OVERLAP);
@@ -809,14 +924,14 @@ final class PiperModel implements Closeable {
             final Map<String, OnnxTensor> inputs = new HashMap<>();
             final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
             try {
-                inputs.put(boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
+                inputs.put(group.boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
                         new long[] {1, e.channels, span}));
-                for (int i = 1; i < boundary.length; i++) {
-                    inputs.put(boundary[i], OnnxTensor.createTensor(env, FloatBuffer.wrap(e.tensors[i]),
+                for (int i = 1; i < group.boundary.length; i++) {
+                    inputs.put(group.boundary[i], OnnxTensor.createTensor(env, FloatBuffer.wrap(e.tensors[i]),
                             e.shapes[i]));
                 }
                 final long started = System.nanoTime();
-                try (OrtSession.Result r = decoder.run(inputs,
+                try (OrtSession.Result r = group.decoder.run(inputs,
                         handle != null ? handle.options : ownOptions)) {
                     final float[] audio = floats(r.get(0));
                     if (audio == null) {
@@ -824,7 +939,7 @@ final class PiperModel implements Closeable {
                     }
                     final double speed = audio.length / (double) config.sampleRate
                             / Math.max(1e-6, (System.nanoTime() - started) / 1e9);
-                    decodeSpeed = decodeSpeed == 0 ? speed : 0.7 * decodeSpeed + 0.3 * speed;
+                    group.decodeSpeed = group.decodeSpeed == 0 ? speed : 0.7 * group.decodeSpeed + 0.3 * speed;
                     final int hop = Math.max(1, audio.length / span);
                     final int fromIdx = Math.max(0, Math.min(audio.length, (from - start) * hop));
                     final int toIdx = Math.max(fromIdx, Math.min(audio.length, audio.length - (end - to) * hop));
@@ -844,7 +959,7 @@ final class PiperModel implements Closeable {
                 }
             }
         } finally {
-            lock.readLock().unlock();
+            group.lock.readLock().unlock();
         }
     }
 
@@ -856,7 +971,7 @@ final class PiperModel implements Closeable {
      * Caller holds the read lock.
      */
     private float[] decodeOnNpu(Encoded e, int from, int to, RunHandle handle) throws OrtException {
-        final int frames = npuFrames;
+        final int frames = group.npuFrames;
         final int step = frames - 2 * DECODE_OVERLAP;
         final OrtEnvironment env = env();
         final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
@@ -877,13 +992,13 @@ final class PiperModel implements Closeable {
                 }
                 final Map<String, OnnxTensor> inputs = new HashMap<>();
                 try {
-                    inputs.put(boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
+                    inputs.put(group.boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
                             new long[] {1, e.channels, frames}));
-                    for (int i = 1; i < boundary.length; i++) {
-                        inputs.put(boundary[i], OnnxTensor.createTensor(env,
+                    for (int i = 1; i < group.boundary.length; i++) {
+                        inputs.put(group.boundary[i], OnnxTensor.createTensor(env,
                                 FloatBuffer.wrap(e.tensors[i]), e.shapes[i]));
                     }
-                    try (OrtSession.Result r = npuDecoder.run(inputs,
+                    try (OrtSession.Result r = group.npuDecoder.run(inputs,
                             handle != null ? handle.options : ownOptions)) {
                         final float[] audio = floats(r.get(0));
                         if (audio == null) {
@@ -919,7 +1034,7 @@ final class PiperModel implements Closeable {
         }
         final double speed = total / (double) config.sampleRate
                 / Math.max(1e-6, (System.nanoTime() - started) / 1e9);
-        decodeSpeed = decodeSpeed == 0 ? speed : 0.7 * decodeSpeed + 0.3 * speed;
+        group.decodeSpeed = group.decodeSpeed == 0 ? speed : 0.7 * group.decodeSpeed + 0.3 * speed;
         return out;
     }
 
@@ -932,7 +1047,7 @@ final class PiperModel implements Closeable {
                 LongBuffer.wrap(new long[] {ids.length}), new long[] {1}));
         inputs.put("scales", OnnxTensor.createTensor(env, FloatBuffer.wrap(new float[] {
                 config.noiseScale * noise, lengthScale, config.noiseW * noiseW}), new long[] {3}));
-        if (hasSpeakerInput) {
+        if (group.hasSpeakerInput) {
             // A one-voice config over a multi-speaker file (each Rasa voice)
             // names its speaker as the default.
             final int sid = config.numSpeakers > 1 ? speakerId : config.defaultSpeakerId;
@@ -955,27 +1070,19 @@ final class PiperModel implements Closeable {
     }
 
     boolean isClosed() {
-        lock.readLock().lock();
-        try {
-            return closed;
-        } finally {
-            lock.readLock().unlock();
+        synchronized (this) {
+            return closed || group.isClosed();
         }
     }
 
     @Override
     public void close() {
-        lock.writeLock().lock();
-        try {
+        synchronized (this) {
             if (closed) {
                 return;
             }
             closed = true;
-            closeQuietly(session);
-            closeQuietly(decoder);
-            closeQuietly(npuDecoder);
-        } finally {
-            lock.writeLock().unlock();
         }
+        group.release();
     }
 }

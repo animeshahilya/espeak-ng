@@ -685,8 +685,20 @@ final class PiperDownloads {
         return saved;
     }
 
-    /** Same underlying file (a link to it): equal canonical paths. */
+    /** Same underlying file (a hard/symbolic link to it or same path). */
     static boolean sameFile(File a, File b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        if (a.equals(b)) {
+            return true;
+        }
+        try {
+            if (a.exists() && b.exists()) {
+                return java.nio.file.Files.isSameFile(a.toPath(), b.toPath());
+            }
+        } catch (IOException | SecurityException ignored) {
+        }
         try {
             return a.getCanonicalPath().equals(b.getCanonicalPath());
         } catch (IOException e) {
@@ -713,17 +725,27 @@ final class PiperDownloads {
                 }
             }
         }
-        final File dir = PiperVoiceStore.sharedDir(storageContext);
-        final File[] files = dir.listFiles();
+        collectSharedGarbage(PiperVoiceStore.sharedDir(storageContext), referenced);
+    }
+
+    static void collectSharedGarbage(File dir, java.util.Set<String> referenced) {
+        final File[] files = dir != null ? dir.listFiles() : null;
         if (files == null) {
             return;
         }
         for (File f : files) {
-            final String name = f.getName().toLowerCase(Locale.ROOT);
-            if (name.endsWith(".tmp") || !name.endsWith(".onnx")) {
+            if (!f.isFile()) {
                 continue;
             }
-            if (!referenced.contains(name.substring(0, name.length() - 5))) {
+            final String name = f.getName().toLowerCase(Locale.ROOT);
+            if (name.endsWith(".tmp")) {
+                //noinspection ResultOfMethodCallIgnored
+                f.delete();
+                continue;
+            }
+            final int dot = name.indexOf('.');
+            final String md5 = dot > 0 ? name.substring(0, dot) : name;
+            if (!referenced.contains(md5)) {
                 //noinspection ResultOfMethodCallIgnored
                 f.delete();
             }

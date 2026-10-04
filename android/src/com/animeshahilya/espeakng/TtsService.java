@@ -1611,6 +1611,11 @@ public class TtsService extends TextToSpeechService {
     private boolean espeakReadsPart(String text, PiperVoiceStore.Installed natural,
                                     SharedPreferences prefs, VoiceSettings settings,
                                     Map<String, String> scriptLanguages) {
+        final boolean needsDigitHelp = natural != null && !natural.config.usesEspeak()
+                && PiperEngine.numberWords(natural.config.languageFamily) == null;
+        if (needsDigitHelp && AsciiUtils.hasDigit(text)) {
+            return true;
+        }
         if (!ScriptLanguages.naturalSwitching(prefs)) {
             return false;
         }
@@ -1644,13 +1649,21 @@ public class TtsService extends TextToSpeechService {
     private List<SynthUnit> withNaturalRuns(List<SynthUnit> units, Voice voice,
                                             SharedPreferences prefs, VoiceSettings settings,
                                             int sampleRate, Map<String, String> scriptLanguages) {
-        if (!PiperVoiceStore.isEnabled(prefs) || !ScriptLanguages.naturalSwitching(prefs)) {
+        if (!PiperVoiceStore.isEnabled(prefs)) {
             return units;
         }
-        final Map<UnicodeScript, String> runLanguages = ScriptLanguages.runLanguages(scriptLanguages);
-        final String own = PiperVoiceStore.languageKey(voice.locale);
-        final String numbers = numbersRunLanguage(settings, own);
         final PiperVoiceStore.Installed ownNatural = PiperVoiceStore.resolve(mStorageContext, prefs, voice);
+        final boolean naturalSwitching = ScriptLanguages.naturalSwitching(prefs);
+        final boolean needsDigitHelp = ownNatural != null && !ownNatural.config.usesEspeak()
+                && PiperEngine.numberWords(ownNatural.config.languageFamily) == null;
+        if (!naturalSwitching && !needsDigitHelp) {
+            return units;
+        }
+        final Map<UnicodeScript, String> runLanguages = naturalSwitching
+                ? ScriptLanguages.runLanguages(scriptLanguages)
+                : Collections.emptyMap();
+        final String own = PiperVoiceStore.languageKey(voice.locale);
+        final String numbers = naturalSwitching ? numbersRunLanguage(settings, own) : null;
         // A one-voice phone still loading this language's own natural voice
         // must not evict it for another language's.
         final boolean mayPreload = mPiper.keepsSeveralLoaded() || ownNatural == null;

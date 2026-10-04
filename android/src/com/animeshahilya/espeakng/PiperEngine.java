@@ -344,6 +344,17 @@ final class PiperEngine {
     private PiperModel loadModel(String key, File onnx, PiperVoiceConfig config) throws OrtException {
         enterNative(key);
         try {
+            synchronized (mLoaded) {
+                for (PiperModel existing : mLoaded.values()) {
+                    if (existing != null && !existing.isClosed()
+                            && PiperDownloads.sameFile(existing.file, onnx)) {
+                        final PiperModel cloned = existing.withConfig(config);
+                        if (cloned != null) {
+                            return cloned;
+                        }
+                    }
+                }
+            }
             // The Snapdragon build's runtime has no NNAPI; it uses the NPU itself.
             if (mAcceleration && !mNoAcceleration.contains(key) && !PiperModel.hasNpuRuntime()) {
                 try {

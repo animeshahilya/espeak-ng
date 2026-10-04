@@ -49,4 +49,56 @@ public class PiperSharedModelsTest {
         assertTrue(PiperDownloads.sameFile(a, new File(tmp.getRoot(), "sub/../a.onnx")));
         assertFalse(PiperDownloads.sameFile(a, new File(tmp.getRoot(), "b.onnx")));
     }
+
+    @Test
+    public void sameFileDetectsHardLinksAcrossDirectories() throws Exception {
+        final File dirA = new File(tmp.getRoot(), "dirA");
+        final File dirB = new File(tmp.getRoot(), "dirB");
+        assertTrue(dirA.mkdirs() && dirB.mkdirs());
+        final File a = new File(dirA, "model.onnx");
+        Files.write(a.toPath(), new byte[]{1, 2, 3});
+        final File b = new File(dirB, "model.onnx");
+        try {
+            Files.createLink(b.toPath(), a.toPath());
+            // Hard links have different canonical paths but sameFile resolves to the same underlying file
+            assertTrue(PiperDownloads.sameFile(a, b));
+            assertTrue(PiperDownloads.sameFile(b, a));
+        } catch (UnsupportedOperationException | java.io.IOException ignored) {
+            // OS or filesystem doesn't support hard links in tmp
+        }
+        final File different = new File(dirB, "other.onnx");
+        Files.write(different.toPath(), new byte[]{1, 2, 3});
+        assertFalse(PiperDownloads.sameFile(a, different));
+    }
+
+    @Test
+    public void collectSharedGarbageCleansUnreferencedAndTmpFiles() throws Exception {
+        final File sharedDir = tmp.newFolder("shared");
+        final String md5Keep = "0123456789abcdef0123456789abcdef";
+        final String md5Drop = "fedcba9876543210fedcba9876543210";
+
+        final File keepOnnx = new File(sharedDir, md5Keep + ".onnx");
+        final File keepEnc = new File(sharedDir, md5Keep + ".1.20.0.enc.ort");
+        final File keepDec = new File(sharedDir, md5Keep + ".1.20.0.dec.ort");
+
+        final File dropOnnx = new File(sharedDir, md5Drop + ".onnx");
+        final File dropEnc = new File(sharedDir, md5Drop + ".1.20.0.enc.ort");
+        final File tmpFile = new File(sharedDir, "model.onnx.tmp");
+
+        Files.write(keepOnnx.toPath(), new byte[]{1});
+        Files.write(keepEnc.toPath(), new byte[]{2});
+        Files.write(keepDec.toPath(), new byte[]{3});
+        Files.write(dropOnnx.toPath(), new byte[]{4});
+        Files.write(dropEnc.toPath(), new byte[]{5});
+        Files.write(tmpFile.toPath(), new byte[]{6});
+
+        PiperDownloads.collectSharedGarbage(sharedDir, java.util.Collections.singleton(md5Keep));
+
+        assertTrue(keepOnnx.isFile());
+        assertTrue(keepEnc.isFile());
+        assertTrue(keepDec.isFile());
+        assertFalse(dropOnnx.exists());
+        assertFalse(dropEnc.exists());
+        assertFalse(tmpFile.exists());
+    }
 }
