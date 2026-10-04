@@ -159,6 +159,9 @@ final class PiperVoiceConfig {
 
     /** "Libritts R" from "libritts_r": the one name style for voices everywhere. */
     static String titleCase(String name) {
+        if (name == null || name.isEmpty()) {
+            return "";
+        }
         final StringBuilder sb = new StringBuilder(name.length());
         boolean upper = true;
         for (int i = 0; i < name.length(); i++) {
@@ -176,6 +179,9 @@ final class PiperVoiceConfig {
 
     /** piper 1.3 moved from rhasspy's 2023 eSpeak NG to upstream's. */
     static boolean isOldPiper(String version) {
+        if (version == null || version.isEmpty()) {
+            return true;
+        }
         final java.util.regex.Matcher m = java.util.regex.Pattern
                 .compile("^(\\d+)\\.(\\d+)").matcher(version);
         if (!m.find()) {

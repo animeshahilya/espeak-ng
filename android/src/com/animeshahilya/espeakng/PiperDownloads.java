@@ -405,32 +405,44 @@ final class PiperDownloads {
         }
     }
 
-    static byte[] fetch(String url, int maxBytes) throws IOException {
-        final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        conn.setConnectTimeout(15000);
-        conn.setReadTimeout(30000);
-        conn.setInstanceFollowRedirects(true);
-        conn.setRequestProperty("User-Agent", "eSpeakNG-Android/" + BuildConfig.VERSION_NAME);
-        try {
-            final int code = conn.getResponseCode();
-            if (code != HttpURLConnection.HTTP_OK) {
-                throw new IOException("HTTP " + code + " for " + url);
-            }
-            try (InputStream in = conn.getInputStream()) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                final byte[] buf = new byte[16384];
-                int n;
-                while ((n = in.read(buf)) > 0) {
-                    if (out.size() + n > maxBytes) {
-                        throw new IOException("Response too large: " + url);
+    static byte[] fetch(String urlString, int maxBytes) throws IOException {
+        String currentUrl = urlString;
+        for (int redirects = 0; redirects < 5; redirects++) {
+            final HttpURLConnection conn = (HttpURLConnection) new URL(currentUrl).openConnection();
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(30000);
+            conn.setInstanceFollowRedirects(true);
+            conn.setRequestProperty("User-Agent", "eSpeakNG-Android/" + BuildConfig.VERSION_NAME);
+            try {
+                final int code = conn.getResponseCode();
+                if (code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_MOVED_TEMP
+                        || code == HttpURLConnection.HTTP_SEE_OTHER || code == 307 || code == 308) {
+                    final String location = conn.getHeaderField("Location");
+                    if (location != null && !location.isEmpty()) {
+                        currentUrl = new URL(new URL(currentUrl), location).toExternalForm();
+                        continue;
                     }
-                    out.write(buf, 0, n);
                 }
-                return out.toByteArray();
+                if (code != HttpURLConnection.HTTP_OK) {
+                    throw new IOException("HTTP " + code + " for " + currentUrl);
+                }
+                try (InputStream in = conn.getInputStream()) {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    final byte[] buf = new byte[16384];
+                    int n;
+                    while ((n = in.read(buf)) > 0) {
+                        if (out.size() + n > maxBytes) {
+                            throw new IOException("Response too large: " + currentUrl);
+                        }
+                        out.write(buf, 0, n);
+                    }
+                    return out.toByteArray();
+                }
+            } finally {
+                conn.disconnect();
             }
-        } finally {
-            conn.disconnect();
         }
+        throw new IOException("Too many redirects for " + urlString);
     }
 
     /** Thrown when a voice needs a phonemizer other than eSpeak. */
@@ -446,6 +458,10 @@ final class PiperDownloads {
 
     private static File downloadTarget(Context appContext, String key) {
         final File base = appContext.getExternalFilesDir("piper");
+        if (base != null && !base.isDirectory()) {
+            //noinspection ResultOfMethodCallIgnored
+            base.mkdirs();
+        }
         return base == null ? null : new File(base, key + ".onnx.part");
     }
 
@@ -1212,18 +1228,27 @@ final class PiperDownloads {
             throw new IOException(e);
         }
         final File tmp = new File(to.getPath() + ".tmp");
-        try (InputStream in = new FileInputStream(from); OutputStream out = new FileOutputStream(tmp)) {
-            final byte[] buf = new byte[1 << 16];
-            int n;
-            while ((n = in.read(buf)) > 0) {
-                digest.update(buf, 0, n);
-                out.write(buf, 0, n);
+        try {
+            try (InputStream in = new FileInputStream(from); OutputStream out = new FileOutputStream(tmp)) {
+                final byte[] buf = new byte[1 << 16];
+                int n;
+                while ((n = in.read(buf)) > 0) {
+                    digest.update(buf, 0, n);
+                    out.write(buf, 0, n);
+                }
             }
+            if (to.exists()) {
+                to.delete();
+            }
+            if (!tmp.renameTo(to)) {
+                tmp.delete();
+                throw new IOException("Cannot rename " + tmp + " to " + to);
+            }
+            return hex(digest.digest());
+        } catch (IOException | RuntimeException e) {
+            tmp.delete();
+            throw e;
         }
-        if (!tmp.renameTo(to)) {
-            throw new IOException("Cannot rename " + tmp);
-        }
-        return hex(digest.digest());
     }
 
     private static String hex(byte[] bytes) {

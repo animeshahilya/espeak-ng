@@ -825,9 +825,10 @@ final class PiperModel implements Closeable {
                     final double speed = audio.length / (double) config.sampleRate
                             / Math.max(1e-6, (System.nanoTime() - started) / 1e9);
                     decodeSpeed = decodeSpeed == 0 ? speed : 0.7 * decodeSpeed + 0.3 * speed;
-                    final int hop = audio.length / span;
-                    return Arrays.copyOfRange(audio, (from - start) * hop,
-                            audio.length - (end - to) * hop);
+                    final int hop = Math.max(1, audio.length / span);
+                    final int fromIdx = Math.max(0, Math.min(audio.length, (from - start) * hop));
+                    final int toIdx = Math.max(fromIdx, Math.min(audio.length, audio.length - (end - to) * hop));
+                    return Arrays.copyOfRange(audio, fromIdx, toIdx);
                 }
             } catch (OrtException ex) {
                 if (handle != null && handle.isCancelled()) {
@@ -888,9 +889,11 @@ final class PiperModel implements Closeable {
                         if (audio == null) {
                             return null;
                         }
-                        final int hop = audio.length / frames;
-                        parts.add(Arrays.copyOfRange(audio, (s - ws) * hop, (s - ws + len) * hop));
-                        total += len * hop;
+                        final int hop = Math.max(1, audio.length / frames);
+                        final int fromIdx = Math.max(0, Math.min(audio.length, (s - ws) * hop));
+                        final int toIdx = Math.max(fromIdx, Math.min(audio.length, (s - ws + len) * hop));
+                        parts.add(Arrays.copyOfRange(audio, fromIdx, toIdx));
+                        total += toIdx - fromIdx;
                     }
                 } finally {
                     for (OnnxTensor t : inputs.values()) {

@@ -288,12 +288,19 @@ final class PiperPhraseCache {
             return null;
         }
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(f)))) {
-            if (in.readInt() != MAGIC || !key.voice.equals(in.readUTF()) || in.readInt() != key.speaker
+            if (in.readInt() != MAGIC) {
+                throw new IOException("Invalid cache magic in " + f);
+            }
+            if (!key.voice.equals(in.readUTF()) || in.readInt() != key.speaker
                     || in.readFloat() != key.lengthScale || in.readFloat() != key.noise
                     || in.readFloat() != key.noiseW) {
                 return null;
             }
-            final long[] ids = new long[in.readInt()];
+            final int nIds = in.readInt();
+            if (nIds < 0 || nIds > 10_000) {
+                throw new IOException("Corrupt nIds (" + nIds + ") in " + f);
+            }
+            final long[] ids = new long[nIds];
             for (int i = 0; i < ids.length; i++) {
                 ids[i] = in.readLong();
             }
@@ -301,19 +308,28 @@ final class PiperPhraseCache {
                 return null; // a hash collision: never play another phrase
             }
             final int nd = in.readInt();
+            if (nd > 50_000 || nd < -1) {
+                throw new IOException("Corrupt durations count (" + nd + ") in " + f);
+            }
             final float[] durations = nd < 0 ? null : new float[nd];
-            for (int i = 0; i < nd; i++) {
-                durations[i] = in.readFloat();
+            if (durations != null) {
+                for (int i = 0; i < nd; i++) {
+                    durations[i] = in.readFloat();
+                }
             }
             final float scale = in.readFloat();
-            final short[] audio = new short[in.readInt()];
+            final int audioLen = in.readInt();
+            if (audioLen < 0 || audioLen > maxSamplesPerEntry * 2) {
+                throw new IOException("Corrupt audioLen (" + audioLen + ") in " + f);
+            }
+            final short[] audio = new short[audioLen];
             for (int i = 0; i < audio.length; i++) {
                 audio[i] = in.readShort();
             }
             //noinspection ResultOfMethodCallIgnored
             f.setLastModified(System.currentTimeMillis()); // recently used: kept longer
             return new Stored(audio, scale, durations);
-        } catch (IOException | RuntimeException e) {
+        } catch (Throwable e) {
             //noinspection ResultOfMethodCallIgnored
             f.delete(); // damaged
             return null;

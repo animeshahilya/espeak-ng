@@ -66,17 +66,30 @@ final class PiperAlignment {
                 return false;
             }
             final byte[] entry = outputEntry(name);
-            try (FileOutputStream fos = new FileOutputStream(out);
-                 FileChannel dst = fos.getChannel()) {
-                transfer(channel, 0, graph.tagStart, dst);
-                dst.write(ByteBuffer.wrap(tagAndLength(MODEL_GRAPH, graph.length + entry.length)));
-                transfer(channel, graph.start, graph.length, dst);
-                dst.write(ByteBuffer.wrap(entry));
-                final long end = graph.start + graph.length;
-                transfer(channel, end, channel.size() - end, dst);
-                fos.getFD().sync();
+            final File tmp = new File(out.getParentFile(), out.getName() + ".tmp");
+            try {
+                try (FileOutputStream fos = new FileOutputStream(tmp);
+                     FileChannel dst = fos.getChannel()) {
+                    transfer(channel, 0, graph.tagStart, dst);
+                    dst.write(ByteBuffer.wrap(tagAndLength(MODEL_GRAPH, graph.length + entry.length)));
+                    transfer(channel, graph.start, graph.length, dst);
+                    dst.write(ByteBuffer.wrap(entry));
+                    final long end = graph.start + graph.length;
+                    transfer(channel, end, channel.size() - end, dst);
+                    fos.getFD().sync();
+                }
+                if (out.exists()) {
+                    out.delete();
+                }
+                if (!tmp.renameTo(out)) {
+                    tmp.delete();
+                    return false;
+                }
+                return true;
+            } catch (IOException | RuntimeException e) {
+                tmp.delete();
+                throw e;
             }
-            return true;
         }
     }
 
@@ -212,7 +225,8 @@ final class PiperAlignment {
 
     static long readVarint(ByteBuffer buf, int[] pos) {
         long result = 0;
-        for (int shift = 0; shift < 64; shift += 7) {
+        final int limit = buf.limit();
+        for (int shift = 0; shift < 64 && pos[0] < limit; shift += 7) {
             final byte b = buf.get(pos[0]++);
             result |= (long) (b & 0x7F) << shift;
             if ((b & 0x80) == 0) {
@@ -224,6 +238,9 @@ final class PiperAlignment {
 
     static String readString(ByteBuffer buf, int[] pos) {
         final int length = (int) readVarint(buf, pos);
+        if (length < 0 || pos[0] + length > buf.limit()) {
+            throw new IllegalArgumentException("Malformed string length: " + length);
+        }
         final byte[] bytes = new byte[length];
         for (int i = 0; i < length; i++) {
             bytes[i] = buf.get(pos[0] + i);
@@ -242,6 +259,9 @@ final class PiperAlignment {
                 break;
             case WIRE_LEN:
                 final long length = readVarint(buf, pos);
+                if (length < 0 || pos[0] + length > buf.limit()) {
+                    throw new IllegalArgumentException("Malformed wire length: " + length);
+                }
                 pos[0] += (int) length;
                 break;
             case WIRE_32BIT:
@@ -255,8 +275,28 @@ final class PiperAlignment {
     static void transfer(FileChannel src, long from, long count, FileChannel dst)
             throws IOException {
         long done = 0;
+        ByteBuffer fallbackBuf = null;
         while (done < count) {
-            done += src.transferTo(from + done, count - done, dst);
+            long transferred = src.transferTo(from + done, count - done, dst);
+            if (transferred > 0) {
+                done += transferred;
+            } else {
+                if (fallbackBuf == null) {
+                    fallbackBuf = ByteBuffer.allocate((int) Math.min(65536, count - done));
+                }
+                fallbackBuf.clear();
+                if (fallbackBuf.capacity() > count - done) {
+                    fallbackBuf.limit((int) (count - done));
+                }
+                src.position(from + done);
+                int read = src.read(fallbackBuf);
+                if (read <= 0) {
+                    throw new IOException("Premature EOF during transfer, expected " + (count - done) + " more bytes");
+                }
+                fallbackBuf.flip();
+                dst.write(fallbackBuf);
+                done += read;
+            }
         }
     }
 }

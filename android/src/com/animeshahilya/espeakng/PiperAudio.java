@@ -406,14 +406,39 @@ final class PiperAudio {
      * @return one frame offset per word
      */
     static int[] estimateWordFrames(int[] words, int textLength, int frames) {
-        final int count = words.length / 2;
+        if (words == null) {
+            return new int[0];
+        }
+        return estimateWordFrames(words, 0, words.length / 2, textLength, frames);
+    }
+
+    /**
+     * Word starts within a chunk piece, as frame offsets.
+     *
+     * @param words      code point [start, end) pairs of the words, relative to the chunk
+     * @param wordFrom   start word index within chunk (inclusive)
+     * @param wordTo     end word index within chunk (exclusive)
+     * @param textLength chunk length in code points
+     * @param frames     audio frames the piece produced
+     * @return one frame offset per word in [wordFrom, wordTo)
+     */
+    static int[] estimateWordFrames(int[] words, int wordFrom, int wordTo, int textLength, int frames) {
+        if (words == null || textLength <= 0 || frames <= 0 || wordFrom >= wordTo) {
+            return new int[0];
+        }
+        final int safeFrom = Math.max(0, wordFrom);
+        final int safeTo = Math.min(words.length / 2, wordTo);
+        final int count = Math.max(0, safeTo - safeFrom);
         final int[] out = new int[count];
-        if (textLength <= 0) {
+        if (count == 0) {
             return out;
         }
+        final int pieceTextStart = safeFrom == 0 ? 0 : words[2 * safeFrom];
+        final int pieceTextEnd = safeTo == words.length / 2 ? textLength : words[2 * safeTo];
+        final int span = Math.max(1, pieceTextEnd - pieceTextStart);
         for (int w = 0; w < count; w++) {
-            final long pos = words[2 * w];
-            out[w] = (int) Math.min(frames, pos * frames / textLength);
+            final long pos = Math.max(0, words[2 * (safeFrom + w)] - pieceTextStart);
+            out[w] = (int) Math.min(frames, pos * frames / span);
         }
         return out;
     }

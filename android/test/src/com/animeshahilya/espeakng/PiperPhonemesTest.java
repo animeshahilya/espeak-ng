@@ -96,6 +96,14 @@ public class PiperPhonemesTest {
     }
 
     @Test
+    public void titleCaseHandlesNullEmptyAndIdentifiers() {
+        assertEquals("", PiperVoiceConfig.titleCase(null));
+        assertEquals("", PiperVoiceConfig.titleCase(""));
+        assertEquals("Libritts R", PiperVoiceConfig.titleCase("libritts_r"));
+        assertEquals("Amy", PiperVoiceConfig.titleCase("amy"));
+    }
+
+    @Test
     public void matchesPiperIdsExactly() throws Exception {
         final PiperVoiceConfig c = amy();
         final List<PiperPhonemes.Clause> clauses = PiperPhonemes.parseRecords(RECORDS);
@@ -182,6 +190,7 @@ public class PiperPhonemesTest {
                 "{\"espeak\": {\"voice\": \"uk\"}, \"piper_version\": \"1.0.0\"," + map);
         assertEquals("βofk βona prja",
                 String.join("", PiperPhonemes.tokenize("ʋowk ʋona prʲa", uk)));
+        assertTrue(PiperVoiceConfig.isOldPiper(null));
         assertTrue(PiperVoiceConfig.isOldPiper(""));
         assertTrue(PiperVoiceConfig.isOldPiper("1.2.0"));
         assertFalse(PiperVoiceConfig.isOldPiper("1.3.0"));
@@ -254,6 +263,16 @@ public class PiperPhonemesTest {
         assertEquals(3, c.size());
         assertEquals("One. ", c.get(0).ipa);
         assertEquals(15, c.get(2).end);
+
+        // Null and empty safety
+        assertTrue(PiperPhonemes.textClauses(null).isEmpty());
+        assertTrue(PiperPhonemes.textClauses("").isEmpty());
+        assertTrue(PiperPhonemes.textClauses(null, null).isEmpty());
+        assertTrue(PiperPhonemes.textClauses("", null).isEmpty());
+        assertTrue(PiperPhonemes.alignToText(null, "hello").isEmpty());
+        assertTrue(PiperPhonemes.alignToText(Collections.emptyList(), "hello").isEmpty());
+        assertEquals(c, PiperPhonemes.alignToText(c, null));
+        assertEquals(c, PiperPhonemes.alignToText(c, ""));
     }
 
     /** A character voice (SYSPIN/Rasa): composed letters it knows stay whole, others decompose. */

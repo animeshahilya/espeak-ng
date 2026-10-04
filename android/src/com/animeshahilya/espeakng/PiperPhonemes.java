@@ -129,6 +129,9 @@ final class PiperPhonemes {
      * which is what word highlighting needs.
      */
     static List<Clause> alignToText(List<Clause> clauses, String text) {
+        if (clauses == null || clauses.isEmpty() || text == null || text.isEmpty()) {
+            return clauses == null ? Collections.emptyList() : clauses;
+        }
         final int cps = text.codePointCount(0, text.length());
         final List<Clause> out = new ArrayList<>(clauses.size());
         int prevEnd = 0;
@@ -491,6 +494,9 @@ final class PiperPhonemes {
 
     /** @param spell rewrites each sentence before it is read (numbers into words), or null */
     static List<Clause> textClauses(String text, java.util.function.UnaryOperator<String> spell) {
+        if (text == null || text.isEmpty()) {
+            return Collections.emptyList();
+        }
         final List<Clause> clauses = new ArrayList<>();
         int start = 0;
         int cpStart = 0;

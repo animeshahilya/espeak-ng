@@ -621,7 +621,10 @@ final class PiperEngine {
         final StringBuilder sb = new StringBuilder(digits.length());
         for (int i = 0; i < digits.length(); ) {
             final int cp = digits.codePointAt(i);
-            sb.append((char) ('0' + Character.digit(cp, 10)));
+            final int d = Character.digit(cp, 10);
+            if (d >= 0) {
+                sb.append((char) ('0' + d));
+            }
             i += Character.charCount(cp);
         }
         return sb.toString();
@@ -831,10 +834,10 @@ final class PiperEngine {
                             rendered.trimmedLead, rendered.cuts, rendered.speechSamples,
                             rendered.samples);
                     if (wordFrames == null) {
-                        wordFrames = PiperAudio.estimateWordFrames(job.words,
-                                job.chunkEnd - job.chunkStart, rendered.samples);
+                        wordFrames = PiperAudio.estimateWordFrames(job.words, rendered.wordFrom,
+                                rendered.wordTo, job.chunkEnd - job.chunkStart, rendered.samples);
                     }
-                    for (int w = 0; w < wordFrames.length; w++) {
+                    for (int w = 0; w < wordFrames.length && (rendered.wordFrom + w) < (job.words.length / 2); w++) {
                         final int word = 2 * (rendered.wordFrom + w);
                         out.word(job.chunkStart + job.words[word] + 1,
                                 job.words[word + 1] - job.words[word], frames + wordFrames[w]);

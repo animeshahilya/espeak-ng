@@ -135,7 +135,23 @@ public class PiperAudioTest {
         assertArrayEquals(new int[] {1, 6, 8, 11, 12, 17}, words);
         final int[] frames = PiperAudio.estimateWordFrames(words, 17, 1700);
         assertArrayEquals(new int[] {100, 800, 1200}, frames);
+
+        // Slice testing: first piece [0, 1) and second piece [1, 3)
+        final int[] piece1 = PiperAudio.estimateWordFrames(words, 0, 1, 17, 800);
+        assertArrayEquals(new int[] {100}, piece1);
+        final int[] piece2 = PiperAudio.estimateWordFrames(words, 1, 3, 17, 900);
+        assertArrayEquals(new int[] {0, 400}, piece2);
+
+        // Edge cases
+        assertArrayEquals(new int[0], PiperAudio.estimateWordFrames(null, 17, 1700));
+        assertArrayEquals(new int[0], PiperAudio.estimateWordFrames(words, 0, 1700));
+        assertArrayEquals(new int[0], PiperAudio.estimateWordFrames(words, 17, 0));
+        assertArrayEquals(new int[0], PiperAudio.estimateWordFrames(words, 2, 2, 17, 1700));
+        assertArrayEquals(new int[0], PiperAudio.estimateWordFrames(words, 3, 1, 17, 1700));
+        assertArrayEquals(new int[0], PiperAudio.estimateWordFrames(words, -2, -1, 17, 1700));
+        assertArrayEquals(new int[0], PiperAudio.estimateWordFrames(words, 10, 20, 17, 1700));
     }
+
     @Test
     public void alignedWordsFollowTheModelsDurations() {
         // 6 ids of 2 frames each, hop 10: every id is 20 samples.

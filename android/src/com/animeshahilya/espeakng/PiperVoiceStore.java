@@ -458,15 +458,10 @@ final class PiperVoiceStore {
     }
 
     static String readText(File file) throws IOException {
-        try (InputStream in = new FileInputStream(file)) {
-            final byte[] data = new byte[(int) Math.min(file.length(), 4 * 1024 * 1024)];
-            int off = 0;
-            int n;
-            while (off < data.length && (n = in.read(data, off, data.length - off)) > 0) {
-                off += n;
-            }
-            return new String(data, 0, off, StandardCharsets.UTF_8);
+        if (file.length() > 4 * 1024 * 1024) {
+            throw new IOException("File too large: " + file);
         }
+        return new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
     private static final java.util.regex.Pattern VOICE_KEY_LOCALE =

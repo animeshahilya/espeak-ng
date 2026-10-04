@@ -70,4 +70,21 @@ public class PiperAlignmentTest {
         // Graph lengths of real models need 4 bytes.
         assertEquals(4, PiperAlignment.varint(63_000_000).length);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void malformedVarintThrows() {
+        // High bits set for all 10 bytes: exceeds 64 bits without termination
+        final byte[] bad = new byte[] {
+                (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80,
+                (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80
+        };
+        PiperAlignment.readVarint(java.nio.ByteBuffer.wrap(bad), new int[] {0});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void malformedStringLengthThrows() {
+        // Tag saying length 100 on a 4-byte buffer
+        final byte[] bad = new byte[] {100, 1, 2, 3};
+        PiperAlignment.readString(java.nio.ByteBuffer.wrap(bad), new int[] {0});
+    }
 }

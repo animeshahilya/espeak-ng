@@ -155,4 +155,35 @@ public class PiperPhraseCacheTest {
         assertNotNull(c.get(k));              // second sighting, a hit
         assertEquals(1, files(dir));
     }
+
+    @Test
+    public void corruptCacheFileIsIgnoredAndDeleted() throws Exception {
+        final File dir = tmp.newFolder("phrase-cache");
+        final PiperPhraseCache c = new PiperPhraseCache(1 << 20, 1000, 1, 100);
+        c.setDisk(dir, 1 << 20, 1);
+        final PiperPhraseCache.Key k = key("v|1:1", 42);
+        c.offer(k, new float[] {0.5f}, null);
+        assertEquals(1, files(dir));
+
+        // Overwrite the cache file with corrupt contents (e.g. invalid large array length)
+        final File[] list = dir.listFiles((d, n) -> n.endsWith(".pcm"));
+        assertNotNull(list);
+        assertEquals(1, list.length);
+        final File cacheFile = list[0];
+        try (java.io.DataOutputStream out = new java.io.DataOutputStream(new java.io.FileOutputStream(cacheFile))) {
+            out.writeInt(0x50495045); // MAGIC
+            out.writeUTF("v|1:1");
+            out.writeInt(0);
+            out.writeFloat(1f);
+            out.writeFloat(1f);
+            out.writeFloat(1f);
+            out.writeInt(999_999_999); // Excessive nIds
+        }
+
+        // New cache reads from disk and gracefully discards corrupt file
+        final PiperPhraseCache after = new PiperPhraseCache(1 << 20, 1000, 1, 100);
+        after.setDisk(dir, 1 << 20, 1);
+        assertNull(after.get(k));
+        assertEquals(0, files(dir));
+    }
 }
