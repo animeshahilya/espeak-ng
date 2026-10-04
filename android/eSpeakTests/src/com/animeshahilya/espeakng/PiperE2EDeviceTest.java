@@ -275,7 +275,12 @@ public class PiperE2EDeviceTest {
      */
     @Test
     public void j_espeakHandsOtherScriptToNaturalVoice() throws Exception {
-        Assume.assumeTrue("an English natural voice is chosen", warmNaturalEnglish() == ESPEAK_RATE);
+        final android.content.SharedPreferences prefs = androidx.preference.PreferenceManager
+                .getDefaultSharedPreferences(InstrumentationRegistry.getInstrumentation()
+                        .getTargetContext().createDeviceProtectedStorageContext());
+        Assume.assumeTrue("no Hindi natural voice set", prefs.getBoolean("piper_enabled", false)
+                && !prefs.getString("piper_voice_hin", "").isEmpty());
+        Assume.assumeTrue("an English natural voice is not chosen", warmNaturalEnglish() == ESPEAK_RATE);
         final String text = "This is English. नमस्ते, आप कैसे हैं? मैं ठीक हूं। Back to English.";
         long peak = 0;
         for (int i = 0; i < 5 && peak < 27000; i++) {
