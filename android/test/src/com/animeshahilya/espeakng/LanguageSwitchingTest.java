@@ -250,4 +250,98 @@ public class LanguageSwitchingTest {
         assertEquals("ben@0[এই]eng@2[ 4K]ben@5[ ভিডিওটি দেখুন]",
                 describe(LanguageRuns.split("এই 4K ভিডিওটি দেখুন", "ben")));
     }
+
+    // =========================================================================
+    // 8. Devanagari Hindi vs Marathi Dynamic Switching (Priyamvada vs Sneha/Omkar)
+    // =========================================================================
+
+    @Test
+    public void hindiPrimary_MarathiTextWithLla_SwitchesToMarathi() {
+        // Priyamvada (Hindi) must NEVER read Marathi text containing 'ळ'.
+        // It must automatically resolve to 'mar' so Sneha/Omkar speaks it.
+        final String text = "मला वेळ नाही.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "hin");
+
+        assertEquals("mar@0[मला वेळ नाही.]", describe(runs));
+    }
+
+    @Test
+    public void hindiPrimary_MarathiTextWithoutLla_SwitchesToMarathi() {
+        // Marathi sentences without 'ळ' must also be detected via distinctive vocabulary (आहे, नाही, खूप, आवडले)
+        final String text = "कसे आहात तुम्ही? मला हे पुस्तक खूप आवडले.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "hin");
+
+        assertEquals("mar@0[कसे आहात तुम्ही? मला हे पुस्तक खूप आवडले.]", describe(runs));
+    }
+
+    @Test
+    public void hindiPrimary_HindiText_StaysHindi() {
+        // Pure Hindi text spoken by Priyamvada stays Hindi without false positives
+        final String text = "नमस्ते, आप कैसे हैं? आज स्कूल बंद है और हम घर पर हैं.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "hin");
+
+        assertEquals("hin@0[नमस्ते, आप कैसे हैं? आज स्कूल बंद है और हम घर पर हैं.]", describe(runs));
+    }
+
+    @Test
+    public void marathiPrimary_HindiText_SwitchesToHindi() {
+        // Sneha (Marathi) speaking Hindi text switches to Hindi so Priyamvada speaks it
+        final String text = "आज बहुत तेज बारिश हो रही है और मुझे घर जाना है.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "mar");
+
+        assertEquals("hin@0[आज बहुत तेज बारिश हो रही है और मुझे घर जाना है.]", describe(runs));
+    }
+
+    @Test
+    public void englishPrimary_MarathiText_RoutesToMarathi() {
+        // English voice encounters Marathi text: routes to Marathi (Sneha), NOT Hindi (Priyamvada)
+        final String text = "Please note: शाळा सुरू झाली आहे आणि वेळ नाही.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "eng");
+
+        assertEquals("eng@0[Please note:]mar@12[ शाळा सुरू झाली आहे आणि वेळ नाही.]", describe(runs));
+    }
+
+    @Test
+    public void englishPrimary_HindiText_RoutesToHindi() {
+        // English voice encounters Hindi text: routes to Hindi (Priyamvada)
+        final String text = "Please note: आज स्कूल बंद है और परिणाम कल आएगा.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "eng");
+
+        assertEquals("eng@0[Please note:]hin@12[ आज स्कूल बंद है और परिणाम कल आएगा.]", describe(runs));
+    }
+
+    @Test
+    public void englishPrimary_MixedHindiAndMarathi_RoutesBothCorrectly() {
+        // Tri-lingual sentence: English + Hindi + Marathi
+        final String text = "Welcome: आपका स्वागत है आणि तुमचे आभार.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "eng");
+
+        assertEquals("eng@0[Welcome:]hin@8[ आपका स्वागत है]mar@23[ आणि तुमचे आभार.]", describe(runs));
+    }
+
+    @Test
+    public void hindiPrimary_MultiSentenceWithMarathi_SplitsCleanly() {
+        // Hindi sentence followed by Marathi sentence
+        final String text = "नमस्ते, आप कैसे हैं? मला वेळ नाही.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "hin");
+
+        assertEquals("hin@0[नमस्ते, आप कैसे हैं?]mar@20[ मला वेळ नाही.]", describe(runs));
+    }
+
+    @Test
+    public void marathiEyelashReph_RoutesToMarathi() {
+        // ऱ (U+0931) eyelash reph word routes to Marathi
+        final String text = "कऱ्हाड हे एक सुंदर शहर आहे.";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "hin");
+
+        assertEquals("mar@0[कऱ्हाड हे एक सुंदर शहर आहे.]", describe(runs));
+    }
+
+    @Test
+    public void neutralDevanagariWords_PreservePrimaryLanguage() {
+        // Neutral nouns like "भारत" preserve the primary voice's language
+        assertEquals("hin@0[भारत]", describe(LanguageRuns.split("भारत", "hin")));
+        assertEquals("mar@0[भारत]", describe(LanguageRuns.split("भारत", "mar")));
+        assertEquals("hin@0[भारत]", describe(LanguageRuns.split("भारत", "eng")));
+    }
 }

@@ -161,7 +161,7 @@ public final class TextPreprocessor {
                 }
                 // Any voice: it only names Devanagari signs.
                 if (settings.isSpokenDiacriticsEnabled()) {
-                    text = edits.track(text, expandDevanagariDiacritic(text));
+                    text = edits.track(text, expandDevanagariDiacritic(text, lang));
                 }
                 // NVDA processSpeechSymbol: character navigation always names
                 // the character, independent of the symbol level. No-op for
@@ -468,6 +468,14 @@ public final class TextPreprocessor {
                 || base.equals("sa") || base.equals("kok");
     }
 
+    public static boolean isMarathi(String languageTag) {
+        if (languageTag == null || languageTag.isEmpty()) return false;
+        String base = languageTag.trim().toLowerCase(Locale.ROOT);
+        int dash = base.indexOf('-');
+        if (dash >= 0) base = base.substring(0, dash);
+        return base.equals("mr") || base.equals("mar");
+    }
+
     public static boolean isEmojiCodePoint(int codePoint) {
         final int type = Character.getType(codePoint);
         return (type == Character.OTHER_SYMBOL)
@@ -763,10 +771,13 @@ public final class TextPreprocessor {
         String trimmed = text.trim();
         if (trimmed.codePointCount(0, trimmed.length()) == 1) {
             char c = trimmed.charAt(0);
-            // Devanagari: the word every Hindi school primer teaches
-            // ("क से कबूतर"), the way NATO words disambiguate Latin letters.
+            // Devanagari: the word every Hindi/Marathi school primer teaches
+            // ("क से कबूतर" in Hindi, "क कबूतराचा" / "ळ बाळाचा" in Marathi).
             int i = DEVANAGARI_LETTERS.indexOf(c);
             if (i >= 0) {
+                if (isMarathi(languageTag)) {
+                    return c + " " + (c == 'ळ' ? "बाळाचा" : DEVANAGARI_WORDS[i] + "चा");
+                }
                 return c + " से " + DEVANAGARI_WORDS[i];
             }
             final String[] described = NvdaCharacterDescriptions.get(languageTag, trimmed);
@@ -783,31 +794,37 @@ public final class TextPreprocessor {
     }
 
     private static final String DEVANAGARI_LETTERS =
-            "अआइईउऊएऐओऔकखगघचछजझटठडढतथदधनपफबभमयरलवशषसह";
+            "अआइईउऊएऐओऔकखगघचछजझटठडढतथदधनपफबभमयरलवशषसहळ";
     private static final String[] DEVANAGARI_WORDS = {
             "अनार", "आम", "इमली", "ईख", "उल्लू", "ऊन", "एड़ी", "ऐनक", "ओखली", "औरत",
             "कबूतर", "खरगोश", "गमला", "घड़ी", "चम्मच", "छतरी", "जहाज़", "झंडा",
             "टमाटर", "ठठेरा", "डमरू", "ढक्कन", "तरबूज़", "थरमस", "दवात", "धनुष", "नल",
             "पतंग", "फल", "बकरी", "भालू", "मछली", "यज्ञ", "रथ", "लट्टू", "वकील",
-            "शलगम", "षट्कोण", "सपेरा", "हल",
+            "शलगम", "षट्कोण", "सपेरा", "हल", "बाळ",
     };
 
     public static String expandDevanagariDiacritic(String text) {
+        return expandDevanagariDiacritic(text, "");
+    }
+
+    public static String expandDevanagariDiacritic(String text, String languageTag) {
         if (text == null) return text;
         String trimmed = text.trim();
         if (trimmed.length() == 1) {
             char c = trimmed.charAt(0);
+            final boolean marathi = isMarathi(languageTag);
+            final String matra = marathi ? " ची मात्रा" : " की मात्रा";
             switch (c) {
-                case '\u093E': return "आ की मात्रा"; // ा
-                case '\u093F': return "इ की मात्रा"; // ि
-                case '\u0940': return "ई की मात्रा"; // ी
-                case '\u0941': return "उ की मात्रा"; // ु
-                case '\u0942': return "ऊ की मात्रा"; // ू
-                case '\u0943': return "ऋ की मात्रा"; // ृ
-                case '\u0947': return "ए की मात्रा"; // े
-                case '\u0948': return "ऐ की मात्रा"; // ै
-                case '\u094B': return "ओ की मात्रा"; // ो
-                case '\u094C': return "औ की मात्रा"; // ौ
+                case '\u093E': return "आ" + matra; // ा
+                case '\u093F': return "इ" + matra; // ि
+                case '\u0940': return "ई" + matra; // ी
+                case '\u0941': return "उ" + matra; // ु
+                case '\u0942': return "ऊ" + matra; // ू
+                case '\u0943': return "ऋ" + matra; // ृ
+                case '\u0947': return "ए" + matra; // े
+                case '\u0948': return "ऐ" + matra; // ै
+                case '\u094B': return "ओ" + matra; // ो
+                case '\u094C': return "औ" + matra; // ौ
                 case '\u0902': return "अनुस्वार"; // ं
                 case '\u0903': return "विसर्ग"; // ः
                 case '\u0901': return "चन्द्रबिन्दु"; // ँ
@@ -819,12 +836,16 @@ public final class TextPreprocessor {
     }
 
     public static String indianGroupedNumberToWords(String grouped) {
-        return indianGroupedNumberToWords(grouped, false);
+        return indianGroupedNumberToWords(grouped, false, false);
     }
 
     public static String indianGroupedNumberToWords(String grouped, boolean devanagari) {
+        return indianGroupedNumberToWords(grouped, devanagari, false);
+    }
+
+    public static String indianGroupedNumberToWords(String grouped, boolean devanagari, boolean marathi) {
         String lakhWord = devanagari ? "लाख" : "lakh";
-        String croreWord = devanagari ? "करोड़" : "crore";
+        String croreWord = devanagari ? (marathi ? "कोटी" : "करोड़") : "crore";
         if (grouped == null || grouped.isEmpty()) return grouped;
         String digits = grouped.replace(",", "");
         long value;
@@ -910,14 +931,18 @@ public final class TextPreprocessor {
     }
 
     public static String indianRupeeShorthandToWords(String amount, String unit, boolean devanagari) {
+        return indianRupeeShorthandToWords(amount, unit, devanagari, false);
+    }
+
+    public static String indianRupeeShorthandToWords(String amount, String unit, boolean devanagari, boolean marathi) {
         String unitWord;
         char u = Character.toLowerCase(unit.charAt(0));
         if (u == 'k') {
-            unitWord = devanagari ? "हज़ार" : "thousand";
+            unitWord = devanagari ? (marathi ? "हजार" : "हज़ार") : "thousand";
         } else if (u == 'l') {
             unitWord = devanagari ? "लाख" : "lakh";
         } else {
-            unitWord = devanagari ? "करोड़" : "crore";
+            unitWord = devanagari ? (marathi ? "कोटी" : "करोड़") : "crore";
         }
         String rupeesWord = devanagari ? "रुपये" : "rupees";
         return amount + " " + unitWord + " " + rupeesWord;
@@ -932,6 +957,7 @@ public final class TextPreprocessor {
             return text;
         }
         final boolean devanagari = isDevanagariNumberLang(languageTag);
+        final boolean marathi = isMarathi(languageTag);
         // normalizeIndicDigits is already a single allocation-free char scan;
         // every regex below is additionally gated on a trigger its own
         // pattern provably requires (danda chars, '/', ',', ASCII digits),
@@ -967,7 +993,7 @@ public final class TextPreprocessor {
                     String amount = currMatcher.group(1);
                     String unit = currMatcher.group(2);
                     String words = (unit != null && !unit.isEmpty())
-                            ? indianRupeeShorthandToWords(amount, unit, devanagari)
+                            ? indianRupeeShorthandToWords(amount, unit, devanagari, marathi)
                             : indianRupeeAmountToWords(amount, devanagari);
                     currMatcher.appendReplacement(sb, Matcher.quoteReplacement(words));
                 } while (currMatcher.find());
@@ -982,7 +1008,7 @@ public final class TextPreprocessor {
                 StringBuffer sb = new StringBuffer();
                 do {
                     String grouped = numMatcher.group(0);
-                    String words = indianGroupedNumberToWords(grouped, devanagari);
+                    String words = indianGroupedNumberToWords(grouped, devanagari, marathi);
                     numMatcher.appendReplacement(sb, Matcher.quoteReplacement(words));
                 } while (numMatcher.find());
                 numMatcher.appendTail(sb);
@@ -992,9 +1018,9 @@ public final class TextPreprocessor {
 
         if (hasDigit) {
             if (devanagari) {
-                text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 हज़ार");
+                text = SHORTHAND_THOUSAND.matcher(text).replaceAll(marathi ? "$1 हजार" : "$1 हज़ार");
                 text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 लाख");
-                text = SHORTHAND_CRORE.matcher(text).replaceAll("$1 करोड़");
+                text = SHORTHAND_CRORE.matcher(text).replaceAll(marathi ? "$1 कोटी" : "$1 करोड़");
             } else {
                 text = SHORTHAND_THOUSAND.matcher(text).replaceAll("$1 thousand");
                 text = SHORTHAND_LAKH.matcher(text).replaceAll("$1 lakh");

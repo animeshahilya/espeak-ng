@@ -253,4 +253,77 @@ public class LanguageSwitchingDeviceTest {
         assertNotNull(resetPhonemes);
         assertTrue(resetPhonemes.contains("əʊ"));
     }
+
+    // =========================================================================
+    // 5. Hindi (Priyamvada) vs Marathi (Sneha/Omkar/eSpeak mr) Device Verification
+    // =========================================================================
+
+    @Test
+    public void testMarathiVsHindiPhonemizationAndLla() {
+        // Marathi ळ (U+0933) produces retroflex lateral 'ɭ' in Marathi
+        final String marathiPhonemes = ipa("mr", "शाळा");
+        assertNotNull(marathiPhonemes);
+        assertTrue("Marathi शाळा must contain retroflex lateral 'ɭ'", marathiPhonemes.contains("ɭ"));
+
+        // Marathi वेळ
+        final String velPhonemes = ipa("mr", "वेळ");
+        assertNotNull(velPhonemes);
+        assertTrue("Marathi वेळ must contain retroflex lateral 'ɭ'", velPhonemes.contains("ɭ"));
+
+        // Hindi नमस्ते
+        final String hindiPhonemes = ipa("hi", "नमस्ते");
+        assertNotNull(hindiPhonemes);
+        assertTrue("Hindi नमस्ते must phonemize cleanly", hindiPhonemes.length() > 0);
+    }
+
+    @Test
+    public void testSynthesizeMarathiTextWithLla() throws InterruptedException {
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+
+        final Voice mrVoice = new Voice("mr", "mr", 0, 0, new java.util.Locale("mr", "IN"));
+        mEngine.setVoice(mrVoice, null);
+
+        final String text = "शाळा सुरू झाली आहे आणि वेळ नाही.";
+        mEngine.synthesize(text, false);
+
+        final boolean completed = mLatch.await(15, TimeUnit.SECONDS);
+        assertTrue("Speech synthesis of Marathi text timed out", completed);
+        assertTrue("Marathi text must produce non-empty PCM audio", mAudioBytesReceived.get() > 3000);
+        Log.i(TAG, "Synthesized Marathi audio bytes: " + mAudioBytesReceived.get());
+    }
+
+    @Test
+    public void testSynthesizeHindiText_PriyamvadaTarget() throws InterruptedException {
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+
+        final Voice hiVoice = new Voice("hi", "hi", 0, 0, new java.util.Locale("hi", "IN"));
+        mEngine.setVoice(hiVoice, null);
+
+        final String text = "नमस्ते! आप कैसे हैं? आज स्कूल बंद है और हम घर पर हैं.";
+        mEngine.synthesize(text, false);
+
+        final boolean completed = mLatch.await(15, TimeUnit.SECONDS);
+        assertTrue("Speech synthesis of Hindi text timed out", completed);
+        assertTrue("Hindi text must produce non-empty PCM audio", mAudioBytesReceived.get() > 3000);
+        Log.i(TAG, "Synthesized Hindi audio bytes: " + mAudioBytesReceived.get());
+    }
+
+    @Test
+    public void testSynthesizeMixedEnglishWithMarathi() throws InterruptedException {
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+
+        final Voice enVoice = new Voice("en", "en", 0, 0, new java.util.Locale("en", "US"));
+        mEngine.setVoice(enVoice, null);
+
+        final String text = "Please note: शाळा सुरू झाली आहे आणि वेळ नाही.";
+        mEngine.synthesize(text, false);
+
+        final boolean completed = mLatch.await(15, TimeUnit.SECONDS);
+        assertTrue("Speech synthesis of English with Marathi timed out", completed);
+        assertTrue("English with Marathi must produce non-empty PCM audio", mAudioBytesReceived.get() > 3000);
+        Log.i(TAG, "Synthesized English + Marathi audio bytes: " + mAudioBytesReceived.get());
+    }
 }

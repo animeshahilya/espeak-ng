@@ -149,6 +149,10 @@ final class LanguageRuns {
         return s != null ? SCRIPT_LANGUAGE.get(s) : null;
     }
 
+    static boolean isDevanagariLanguage(String language) {
+        return language != null && UnicodeScript.DEVANAGARI.equals(LANGUAGE_SCRIPT.get(language));
+    }
+
     /** The script {@code language} is written in (Latin unless listed). */
     private static UnicodeScript scriptOf(String language) {
         final UnicodeScript s = LANGUAGE_SCRIPT.get(language);
@@ -179,13 +183,14 @@ final class LanguageRuns {
 
     @FunctionalInterface
     private interface LanguageResolver {
-        String resolve(int codePoint);
+        String resolve(int codePoint, int charIndex);
     }
 
     /**
      * Resolves the language for code points in a text string.
-     * Precomputes invariant lookups and uses an ASCII fast-path and
-     * single-element cluster cache for maximum throughput and zero GC allocations.
+     * Precomputes invariant lookups, uses an ASCII fast-path and
+     * single-element cluster cache for maximum throughput, and dynamically
+     * discriminates Marathi (mar) from Hindi (hin) in Devanagari text.
      */
     private static final class FastLanguageResolver implements LanguageResolver {
         private final String ownLanguage;
@@ -195,11 +200,13 @@ final class LanguageRuns {
         private final Map<UnicodeScript, String> chosen;
         private final String numbers;
         private final String latinLanguage;
+        private final DevanagariClassifier.SpanMap devanagariSpans;
+        private final String defaultDevanagari;
 
         private UnicodeScript lastScript = null;
         private String lastLanguage = null;
 
-        FastLanguageResolver(String language, Map<UnicodeScript, String> chosen, String numbers) {
+        FastLanguageResolver(String text, String language, Map<UnicodeScript, String> chosen, String numbers) {
             this.ownLanguage = language;
             this.ownScript = scriptOf(language);
             this.isJpn = "jpn".equals(language) || "ja".equals(language);
@@ -207,10 +214,22 @@ final class LanguageRuns {
             this.chosen = (chosen != null && !chosen.isEmpty()) ? chosen : null;
             this.numbers = numbers;
             this.latinLanguage = resolveScript(UnicodeScript.LATIN);
+
+            final String chosenDev = this.chosen != null ? this.chosen.get(UnicodeScript.DEVANAGARI) : null;
+            if (chosenDev != null) {
+                this.defaultDevanagari = chosenDev;
+            } else if (UnicodeScript.DEVANAGARI.equals(this.ownScript)) {
+                this.defaultDevanagari = this.ownLanguage;
+            } else {
+                final String standin = SCRIPT_LANGUAGE.get(UnicodeScript.DEVANAGARI);
+                this.defaultDevanagari = standin != null ? standin : "hin";
+            }
+
+            this.devanagariSpans = DevanagariClassifier.buildSpans(text, language, chosenDev);
         }
 
         @Override
-        public String resolve(int c) {
+        public String resolve(int c, int charIndex) {
             // Fast path for ASCII (c < 128) - covers >90% of characters in common text
             if (c < 128) {
                 if (AsciiUtils.isAsciiLetter((char) c)) {
@@ -232,6 +251,14 @@ final class LanguageRuns {
             if (script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
                     || script == UnicodeScript.UNKNOWN) {
                 return null;
+            }
+
+            // Special handling for Devanagari: dynamic classification between Marathi and Hindi
+            if (script == UnicodeScript.DEVANAGARI) {
+                final String lang = devanagariSpans.languageAt(charIndex, defaultDevanagari);
+                lastScript = script;
+                lastLanguage = lang;
+                return lang;
             }
 
             // Cache check: contiguous characters of the same script reuse the resolution
@@ -280,7 +307,7 @@ final class LanguageRuns {
         }
 
         @Override
-        public String resolve(int c) {
+        public String resolve(int c, int charIndex) {
             if (c < 128) {
                 if (c >= '0' && c <= '9') {
                     return numbers;
@@ -325,7 +352,7 @@ final class LanguageRuns {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
-        return split(text, language, new FastLanguageResolver(language, chosen, numbers));
+        return split(text, language, new FastLanguageResolver(text, language, chosen, numbers));
     }
 
     /**
@@ -366,7 +393,7 @@ final class LanguageRuns {
             // Common (digits, spaces, punctuation) and inherited (combining
             // marks) characters never start a new run - digits only when
             // numbers have a language of their own.
-            final String lang = resolver.resolve(c);
+            final String lang = resolver.resolve(c, i);
             if (lang != null) {
                 if (current == null) {
                     current = lang;

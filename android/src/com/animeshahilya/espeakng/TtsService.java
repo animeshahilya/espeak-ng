@@ -514,6 +514,14 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
+    private Voice findVoiceForLanguage(String language, Voice fallback) {
+        if (language == null || language.isEmpty()) {
+            return fallback;
+        }
+        final Pair<Voice, Integer> match = findVoice(language, "", "");
+        return match.first != null ? match.first : fallback;
+    }
+
     private Pair<Voice, Integer> getDefaultVoiceFor(String language, String country, String variant) {
         // findVoice() tolerates null codes; the equals() calls below did not.
         language = language != null ? language : "";
@@ -1675,6 +1683,7 @@ public class TtsService extends TextToSpeechService {
             }
             final StringBuilder espeak = new StringBuilder();
             int espeakStart = 0;
+            Voice currentEspeakVoice = voice;
             for (LanguageRuns.Run run : naturalRuns(unit.text, own, runLanguages, numbers, prefs)) {
                 final PiperVoiceStore.Installed natural = run.language.equals(own) ? ownNatural
                         : PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
@@ -1683,20 +1692,27 @@ public class TtsService extends TextToSpeechService {
                     mPiper.preload(natural.key, natural.model(), natural.config);
                 }
                 if (model == null) {
+                    final Voice targetVoice = run.language.equals(own) ? voice
+                            : findVoiceForLanguage(run.language, voice);
+                    if (espeak.length() > 0 && targetVoice != currentEspeakVoice) {
+                        out.add(new SynthUnit(espeak.toString(), currentEspeakVoice, unit.base + espeakStart));
+                        espeak.setLength(0);
+                    }
                     if (espeak.length() == 0) {
                         espeakStart = run.start;
+                        currentEspeakVoice = targetVoice;
                     }
                     espeak.append(run.text);
                     continue;
                 }
                 if (espeak.length() > 0) {
-                    out.add(new SynthUnit(espeak.toString(), voice, unit.base + espeakStart));
+                    out.add(new SynthUnit(espeak.toString(), currentEspeakVoice, unit.base + espeakStart));
                     espeak.setLength(0);
                 }
                 out.add(new SynthUnit(run.text, voice, unit.base + run.start, model, natural.key));
             }
             if (espeak.length() > 0) {
-                out.add(new SynthUnit(espeak.toString(), voice, unit.base + espeakStart));
+                out.add(new SynthUnit(espeak.toString(), currentEspeakVoice, unit.base + espeakStart));
             }
         }
         return out;
