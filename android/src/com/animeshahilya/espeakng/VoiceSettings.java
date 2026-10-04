@@ -45,7 +45,7 @@ public class VoiceSettings {
     @Deprecated
     public static final String PREF_RATE_BOOST_MULTIPLIER = "espeak_rate_boost_multiplier";
     public static final String PREF_UNICODE_NORMALIZATION = "espeak_unicode_normalization";
-    /** @deprecated Legacy eyes-free-era digit toggle; see {@link #isSpeakDigitsEnabled}. */
+    /** @deprecated Legacy eyes-free-era digit toggle; migrated by {@link #getDigitGroupingMode}. */
     @Deprecated
     public static final String PREF_SPEAK_DIGITS = "espeak_speak_digits";
     public static final int RATE_BOOST_MULTIPLIER = 3;
@@ -425,19 +425,6 @@ public class VoiceSettings {
     /** Reading pace: percent multiplier on clause/sentence/paragraph pauses. 100=normal. */
     public int getPauseScale() {
         return clamp(mEngine.PauseScale, getPreferenceValue(PREF_PAUSE_SCALE, mEngine.PauseScale));
-    }
-
-    /**
-     * Whether to read numbers digit-by-digit instead of as whole numbers.
-     *
-     * @deprecated Superseded by {@link #getDigitGroupingMode()} ("single" is
-     *             identical behavior). Kept only as the migration source for
-     *             installs that set this boolean before grouping existed, and
-     *             as the persisted key - do not remove the key.
-     */
-    @Deprecated
-    public boolean isSpeakDigitsEnabled() {
-        return mPreferences.getBoolean(PREF_SPEAK_DIGITS, false);
     }
 
     /** {@link #INDIAN_NUMBERING_OFF}, _INDIAN or _ALL, migrating the old toggle on first read. */

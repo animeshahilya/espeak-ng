@@ -126,9 +126,7 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
         // jumps by ~4% of range instead of 1 unit out of hundreds.
         final int range = parameter.max - parameter.min;
         final int step = Math.max(1, range / 25);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            parameter.mSeekBar.setKeyProgressIncrement(step);
-        }
+        parameter.mSeekBar.setKeyProgressIncrement(step);
 
         androidx.core.view.ViewCompat.setAccessibilityDelegate(parameter.mSeekBar,
                 new androidx.core.view.AccessibilityDelegateCompat() {

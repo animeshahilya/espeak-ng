@@ -69,6 +69,9 @@ public class VoiceVariantDialogFragment extends ButtonDialogFragment {
         return buildDialog(root);
     }
 
+    // announceForAccessibility deprecated in API 36 (live regions preferred for dynamic content);
+    // retained here for immediate one-shot spoken confirmation on user interaction.
+    @SuppressWarnings("deprecation")
     private void bindDialog() {
         final int category = mCategoryIndex;
         final int variant = mVariantIndex;

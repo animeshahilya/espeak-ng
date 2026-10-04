@@ -419,7 +419,7 @@ final class PiperSettings {
         String region = config.languageCode;
         final int us = region == null ? -1 : region.indexOf('_');
         if (us > 0) {
-            region = new Locale("", region.substring(us + 1)).getDisplayCountry();
+            region = new Locale.Builder().setRegion(region.substring(us + 1)).build().getDisplayCountry();
         }
         return context.getString(R.string.piper_voice_entry, config.displayName(),
                 region == null ? "" : region, qualityLabel(context, config.quality));
@@ -647,7 +647,7 @@ final class PiperSettings {
     /** "India" in the phone's language, from the voice's region code. */
     private static String regionName(PiperDownloads.CatalogVoice v) {
         final String name = v.region == null || v.region.isEmpty() ? null
-                : new Locale("", v.region).getDisplayCountry();
+                : new Locale.Builder().setRegion(v.region).build().getDisplayCountry();
         return name == null || name.isEmpty() || name.equals(v.region) ? v.country : name;
     }
 
@@ -1135,7 +1135,7 @@ final class PiperSettings {
                 final PiperModel model = PiperEngine.get().loadNow(voice.key, voice.model(), voice.config);
                 final SpeechSynthesis espeak = new SpeechSynthesis(storage(context), null);
                 final String text = SpeechSynthesis.getSampleText(app,
-                        new Locale(voice.config.languageFamily));
+                        new Locale.Builder().setLanguage(voice.config.languageFamily).build());
                 final ByteArrayOutputStream pcm = new ByteArrayOutputStream();
                 // As it will speak: this voice's speaker and speed, the style.
                 final SharedPreferences prefs = TolerantPreferences.of(

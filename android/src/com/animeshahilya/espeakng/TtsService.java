@@ -378,6 +378,7 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
@@ -575,6 +576,7 @@ public class TtsService extends TextToSpeechService {
         return match.second;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected Set<String> onGetFeaturesForLanguage(String lang, String country, String variant) {
         // eSpeak synthesizes on the device for every language it offers, and never

@@ -1537,6 +1537,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                             restorePreviewVoice(restoreTo);
                         }
 
+                        @SuppressWarnings("deprecation")
                         @Override public void onError(String id) {
                             restorePreviewVoice(restoreTo);
                         }
@@ -1815,7 +1816,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         if (!prefs.contains(VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL)) {
             seed.putString(VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL, settings.getAudioOptimizerLevel());
         }
-        if (VoiceSettings.READING_PHONETIC.equals(prefs.getString(VoiceSettings.PREF_READING_MODE, null))
+        if ("phonetic".equals(prefs.getString(VoiceSettings.PREF_READING_MODE, null))
                 || !prefs.contains(VoiceSettings.PREF_READING_MODE)) {
             seed.putString(VoiceSettings.PREF_READING_MODE, settings.getReadingMode());
         }
@@ -2104,8 +2105,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
         try {
             final int current;
             try {
-                current = context.getPackageManager()
-                        .getPackageInfo(context.getPackageName(), 0).versionCode;
+                current = (int) androidx.core.content.pm.PackageInfoCompat.getLongVersionCode(
+                        context.getPackageManager().getPackageInfo(context.getPackageName(), 0));
             } catch (PackageManager.NameNotFoundException e) {
                 return;
             }
