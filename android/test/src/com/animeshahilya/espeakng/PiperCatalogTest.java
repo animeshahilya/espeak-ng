@@ -92,7 +92,7 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(107, voices.size());
+        assertEquals(108, voices.size());
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.

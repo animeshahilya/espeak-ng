@@ -36,6 +36,11 @@ public class UserDictionaryTest {
         UserDictionary rule = new UserDictionary("भारत", "India", false, false, true);
         assertTrue(rule.isValid());
         assertEquals("यह India का है", rule.apply("यह भारत का है"));
+
+        // Arabic script word boundary test: \p{L}/\p{N}
+        UserDictionary arRule = new UserDictionary("مرحبا", "أهلاً", false, false, true);
+        assertTrue(arRule.isValid());
+        assertEquals("أهلاً بالعالم", arRule.apply("مرحبا بالعالم"));
     }
 
     @Test
@@ -95,6 +100,12 @@ public class UserDictionaryTest {
         assertFalse(enInOnly.appliesToLanguage("en-us"));
         assertFalse(enInOnly.appliesToLanguage("en_US"));
         assertFalse(enInOnly.appliesToLanguage("en"));
+
+        UserDictionary arOnly = new UserDictionary("كتاب", "دفتر", false, false, false, "ar");
+        assertTrue(arOnly.appliesToLanguage("ar"));
+        assertTrue(arOnly.appliesToLanguage("ar-SA"));
+        assertTrue(arOnly.appliesToLanguage("ar_AE"));
+        assertFalse(arOnly.appliesToLanguage("en"));
     }
 
     @Test

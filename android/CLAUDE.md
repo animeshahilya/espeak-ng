@@ -311,7 +311,8 @@ voices" does not, so voices can still be deleted to free space.
   synchronized: the receiver and the page's `reconcile()` can race on it.
 - **Community voices.** `assets/piper/extra_voices.json` (voices.json format
   plus `base_url`, `source`, `license`) adds languages rhasspy lacks: Tamil
-  (tinisoft rasa female/male, CC BY 4.0; Jeyaram-K hemalatha female / valluvar male, Apache-2.0) and Sinhala (chan4lk, MIT); and,
+  (tinisoft rasa female/male, CC BY 4.0; Jeyaram-K hemalatha female / valluvar male, Apache-2.0) and Sinhala (chan4lk, MIT);
+  Emirati Arabic female (vadimbelsky, MIT, 22.05 kHz, eSpeak ar phonemes) providing a premier natural female voice alongside the official Kareem male voice; and,
   added 2026-09-29 from a scan of ~2000 Hugging Face repos, Kurmanji (90 speakers,
   Common Voice 24, MIT, default speaker 54), Latvian Rudolfs (Latvian Library
   for the Blind audiobooks with permission, CC0) and Sinhala Dilu (MIT).

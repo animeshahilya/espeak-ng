@@ -66,4 +66,18 @@ public class ScriptLanguagesDeviceTest {
         assertTrue(indian, indian.contains("oː"));
         assertFalse(indian, indian.contains("əʊ"));
     }
+
+    @Test
+    public void arabicNativeVoiceProducesPhonemes() {
+        final String arabic = ipa("ar", "مرحبا بك في العالم العربي", Collections.emptyMap());
+        assertTrue(arabic, !arabic.isEmpty());
+        assertTrue(arabic, arabic.contains("m"));
+    }
+
+    @Test
+    public void arabicScriptReadAsUrduWhenChosen() {
+        final Map<String, String> chosen = Collections.singletonMap("ar", "ur");
+        final String urdu = ipa("en", "شکریہ", chosen);
+        assertTrue(urdu, !urdu.isEmpty());
+    }
 }

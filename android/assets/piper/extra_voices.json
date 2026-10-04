@@ -194,6 +194,21 @@
       "ne-seto_bagh-medium.onnx.json": {"size_bytes": 7085, "md5_digest": "4f5d43c9de9e7105e6c9873072f5757d"}
     }
   },
+  "ar_AE-emirati_female-medium": {
+    "key": "ar_AE-emirati_female-medium",
+    "name": "emirati_female",
+    "language": {"code": "ar_AE", "family": "ar", "region": "AE",
+      "name_native": "العربية", "name_english": "Arabic", "country_english": "United Arab Emirates"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://huggingface.co/vadimbelsky/arabic-emirati-female-piper/resolve/f89f1aec8e6486871ffdf8d878c5a39eaf918d60/",
+    "source": "vadimbelsky",
+    "license": "MIT",
+    "files": {
+      "arabic-emirati-female-model.onnx": {"size_bytes": 63516686, "md5_digest": "3e99532a508084fffb48dc74355ea040"},
+      "arabic-emirati-female-model.onnx.json": {"size_bytes": 7076, "md5_digest": "3cc9454b68fdd9f4fc504fb93419b5f5"}
+    }
+  },
   "hi_IN-kavya-medium": {
     "key": "hi_IN-kavya-medium",
     "name": "kavya",

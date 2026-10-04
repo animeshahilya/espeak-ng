@@ -178,6 +178,7 @@ public class LanguageRunsTest {
                 describe(LanguageRuns.split("Hello, नमस्ते दोस्त how are you?", "en")));
         assertEquals("hin", LanguageRuns.standIn("hi"));
         assertEquals("hin", LanguageRuns.standIn("mr"));
+        assertEquals("ara", LanguageRuns.standIn("ar"));
     }
 
     @Test
@@ -206,5 +207,23 @@ public class LanguageRunsTest {
     public void greekScriptSwitchesToGreek() {
         assertEquals("eng@0[Greek:]ell@6[ Ελληνικά]",
                 describe(LanguageRuns.split("Greek: Ελληνικά", "eng")));
+    }
+
+    @Test
+    public void arabicInsideEnglishGoesToArabic() {
+        assertEquals("eng@0[Hello,]ara@6[ مرحبا صديقي]eng@18[ how are you?]",
+                describe(LanguageRuns.split("Hello, مرحبا صديقي how are you?", "eng")));
+    }
+
+    @Test
+    public void englishInsideArabicGoesToEnglish() {
+        assertEquals("ara@0[مرحبا]eng@5[ Google]ara@12[ كيف حالك]",
+                describe(LanguageRuns.split("مرحبا Google كيف حالك", "ara")));
+    }
+
+    @Test
+    public void arabicVocalizedTashkeelStaysArabic() {
+        assertEquals("ara@0[مَرْحَبًا بِكَ]",
+                describe(LanguageRuns.split("مَرْحَبًا بِكَ", "ara")));
     }
 }

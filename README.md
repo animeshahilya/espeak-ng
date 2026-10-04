@@ -125,7 +125,7 @@ eSpeak is built for speed: it starts talking instantly and stays clear at very h
 - **Switch natural voices by script** (on by default, in Mixed-language text): Hindi words in English text go to your Hindi natural voice, and so on, following your choices for each script. Turn it off to have one voice read everything.
 - **eSpeak for single letters** (on by default): moving by character and spelling stay on eSpeak, which starts instantly.
 - **Natural voice speed**: natural voices follow your eSpeak rate; this makes them a little slower or faster than it.
-- **Community voices**: besides the Piper catalog, vetted community voices for Tamil, Sinhala, Australian English (10 speakers), Kurdish Kurmanji (90 speakers) and Latvian. Each is pinned to an exact file and checked before use.
+- **Community voices**: besides the Piper catalog, vetted community voices for Arabic (Emirati female), Tamil, Sinhala, Australian English (10 speakers), Kurdish Kurmanji (90 speakers) and Latvian. Each is pinned to an exact file and checked before use.
 - **Speaking style**: Steady (even and clear, fewer glitches), Natural (as the voice was made), or Lively (more varied tone and rhythm).
 - **Downloaded voices**: test or delete a voice, give it its own speed, and pick the speaker of voices that hold several (some English voices hold dozens or hundreds). Every change plays a sample.
 - **Hardware acceleration** (off by default): lets the phone's AI chip (NNAPI) try to run the voices. On the phones tested it made them slower, so it is off; a voice it can't run uses the processor anyway.
