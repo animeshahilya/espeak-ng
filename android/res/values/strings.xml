@@ -436,6 +436,12 @@
   <string name="setting_simplify_urls_summary_on">Reads clean web domain names and strips tracking query parameters.</string>
   <string name="setting_simplify_urls_summary_off">Reads full web addresses as written.</string>
 
+  <!-- Customization: Technology brand and acronym normalization -->
+  <string name="setting_normalize_tech_words">Normalize tech terms and app names</string>
+  <string name="setting_normalize_tech_words_summary">Read ChatGPT, GPay, Gmail, WhatsApp, UPI, OTP and tech acronyms fluently.</string>
+  <string name="setting_normalize_tech_words_summary_on">Reads compound app names and tech acronyms fluently across all voices.</string>
+  <string name="setting_normalize_tech_words_summary_off">Reads tech terms and acronyms strictly as written.</string>
+
   <!-- Customization: Roman numerals -->
 
   <!-- UI/UX Polish: Search and Dialog Enhancements -->

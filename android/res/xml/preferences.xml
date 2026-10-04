@@ -338,6 +338,14 @@
             android:summaryOff="@string/setting_simplify_urls_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_normalize_tech_words"
+            android:title="@string/setting_normalize_tech_words"
+            android:summary="@string/setting_normalize_tech_words_summary"
+            android:summaryOn="@string/setting_normalize_tech_words_summary_on"
+            android:summaryOff="@string/setting_normalize_tech_words_summary_off"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
         <!-- not on Wear -->
         <SwitchPreferenceCompat
             android:key="espeak_hinglish"

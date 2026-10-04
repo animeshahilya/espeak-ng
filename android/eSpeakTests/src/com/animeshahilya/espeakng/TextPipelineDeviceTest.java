@@ -21,6 +21,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import android.content.Context;
+
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -436,5 +438,36 @@ public class TextPipelineDeviceTest {
         // A mixed message: only the Hindi sentence changes.
         assertThat(HinglishReader.process("Meeting is at 5 pm. kal milte hain"),
                 is("Meeting is at 5 pm. कल मिलते हैं"));
+    }
+
+    /** Universal tech words normalizer in full preprocessing pipeline. */
+    @Test
+    public void testTechWordsInFullPipeline() {
+        final Context context = androidx.test.platform.app.InstrumentationRegistry
+                .getInstrumentation().getTargetContext();
+        final SpeechSynthesis engine = new SpeechSynthesis(context, new SpeechSynthesis.SynthReadyCallback() {
+            @Override
+            public void onSynthDataReady(byte[] audioData) {}
+            @Override
+            public void onSynthDataComplete() {}
+            @Override
+            public void onSynthWordBoundary(int textPosition, int textLength, int markerInFrames) {}
+        });
+        try {
+            final Voice voice = new Voice("en", "eng", 0, 0, new java.util.Locale("en", "US"));
+            final android.content.SharedPreferences prefs =
+                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+            final VoiceSettings settings = new VoiceSettings(prefs, engine);
+
+            final String input = "Open ChatGPT, send money via GPay, and check your Gmail.";
+            final TextPreprocessor.Result result = TextPreprocessor.process(
+                    input, voice, settings, false, null, context);
+
+            assertThat(result.text, containsString("Chat G-P-T"));
+            assertThat(result.text, containsString("G-Pay"));
+            assertThat(result.text, containsString("G-mail"));
+        } finally {
+            engine.stop();
+        }
     }
 }

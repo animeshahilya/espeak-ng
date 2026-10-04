@@ -123,6 +123,7 @@ public class VoiceSettings {
     public static final String PREF_INTONATION_STYLE = "espeak_intonation_style";
     public static final String PREF_CAPITALS_SCOPE = "espeak_capitals_scope";
     public static final String PREF_SIMPLIFY_URLS = "espeak_simplify_urls";
+    public static final String PREF_NORMALIZE_TECH_WORDS = "espeak_normalize_tech_words";
     public static final String PREF_INTONATION_GROUP = "espeak_intonation_group";
 
     /** Repeated character handling modes. */
@@ -626,6 +627,10 @@ public class VoiceSettings {
 
     public boolean isSimplifyUrlsEnabled() {
         return mPreferences.getBoolean(PREF_SIMPLIFY_URLS, false);
+    }
+
+    public boolean isNormalizeTechWordsEnabled() {
+        return mPreferences.getBoolean(PREF_NORMALIZE_TECH_WORDS, true);
     }
 
     // Sleep timer: pause all eSpeak speech until a deadline.

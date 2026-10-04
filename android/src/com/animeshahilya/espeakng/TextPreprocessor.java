@@ -184,6 +184,13 @@ public final class TextPreprocessor {
                 || (VoiceSettings.INDIAN_NUMBERING_INDIAN.equals(indianVoices)
                         && isIndianLanguage(lang));
 
+        // Universal tech word, app name & acronym normalization: ensures natural
+        // voices (Piper, SYSPIN, Rasa, Kokoro, eSpeak) pronounce terms like ChatGPT,
+        // GPay, Gmail, WhatsApp, YouTube, UPI, OTP, WiFi, PayTM, PhonePe properly.
+        if (normalReading && settings.isNormalizeTechWordsEnabled()) {
+            text = edits.track(text, TechWordsNormalizer.process(text));
+        }
+
         // Beta extra: Hinglish words become Devanagari, which eSpeak's own
         // script detection then reads with Hindi pronunciation. Before the
         // code pass, so Hindi code words ("pin" -> पिन) still mark a code.
