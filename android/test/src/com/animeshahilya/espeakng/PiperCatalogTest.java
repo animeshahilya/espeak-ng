@@ -106,7 +106,9 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(108, voices.size());
+        assertEquals(68, voices.size());
+        // Only kept voices are bundled: none is filtered out again.
+        assertEquals(voices.size(), PiperDownloads.keptOnly(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
@@ -125,6 +127,34 @@ public class PiperCatalogTest {
             assertEquals(v.key, 32, v.modelMd5.length());
             assertTrue(v.key, v.modelSize > 10_000_000L);
             assertTrue(v.key, v.license != null && v.source != null);
+        }
+    }
+
+    private static java.util.Map<String, java.util.Set<String>> keptAsset() throws Exception {
+        return PiperDownloads.parseKept(new String(java.nio.file.Files.readAllBytes(
+                java.nio.file.Paths.get("assets", PiperDownloads.KEPT_ASSET)), "UTF-8"));
+    }
+
+    @Test
+    public void keptOnlyFiltersTestedLanguages() throws Exception {
+        final java.util.Map<String, java.util.Set<String>> kept =
+                PiperDownloads.parseKept("{\"hi\": [\"hi_IN-rohan-medium\", \"hi_IN-priyamvada-medium\"]}");
+        final List<PiperDownloads.CatalogVoice> in = new java.util.ArrayList<>();
+        for (String key : new String[] {"hi_IN-rohan-medium", "hi_IN-rohan-compact",
+                "hi_IN-pratham-medium", "bho_IN-kajal-medium"}) {
+            final PiperDownloads.CatalogVoice v = new PiperDownloads.CatalogVoice();
+            v.key = key;
+            v.family = key.substring(0, key.indexOf('_'));
+            in.add(v);
+        }
+        final List<PiperDownloads.CatalogVoice> out = PiperDownloads.keptOnly(in, kept);
+        assertEquals(3, out.size());  // a kept voice, its Compact version, an untested language
+        for (PiperDownloads.CatalogVoice v : out) {
+            assertNotEquals("hi_IN-pratham-medium", v.key);
+        }
+        // The shipped list: two voices at most per language.
+        for (java.util.Set<String> keys : keptAsset().values()) {
+            assertTrue(keys.size() <= 4);
         }
     }
 
@@ -156,7 +186,7 @@ public class PiperCatalogTest {
                 java.nio.file.Paths.get("assets", PiperDownloads.NPU_DECODERS_ASSET)), "UTF-8"));
         assertEquals(PiperDownloads.RESPIN_SYSPIN_RELEASES, list.getString("base_url"));
         final org.json.JSONObject voices = list.getJSONObject("voices");
-        assertTrue(voices.length() >= 50);
+        assertTrue(voices.length() >= 30);
         final java.util.Iterator<String> keys = voices.keys();
         while (keys.hasNext()) {
             final String key = keys.next();

@@ -249,7 +249,7 @@ final class PiperDownloads {
         });
     }
 
-    /** Piper's catalog plus the bundled extras it does not have (by key). */
+    /** Piper's catalog plus the bundled extras it does not have (by key), best voices only. */
     private static List<CatalogVoice> withExtras(Context context, List<CatalogVoice> catalog) {
         final List<CatalogVoice> out = new ArrayList<>(catalog);
         final java.util.Set<String> keys = new java.util.HashSet<>();
@@ -262,22 +262,71 @@ final class PiperDownloads {
             }
         }
         sort(out);
+        return keptOnly(out, keptVoices(context));
+    }
+
+    /**
+     * The voices kept per language: the two Whisper large-v3 understood best
+     * (scratch/voice-eval, 2026-10-05). Languages it could not test keep all.
+     */
+    static final String KEPT_ASSET = "piper/kept_voices.json";
+
+    static Map<String, java.util.Set<String>> keptVoices(Context context) {
+        try {
+            return parseKept(readAsset(context, KEPT_ASSET));
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Kept voice list unavailable", e);
+            return Collections.emptyMap();
+        }
+    }
+
+    static Map<String, java.util.Set<String>> parseKept(String json) throws JSONException {
+        final JSONObject root = new JSONObject(json);
+        final Map<String, java.util.Set<String>> out = new java.util.HashMap<>();
+        for (Iterator<String> it = root.keys(); it.hasNext(); ) {
+            final String family = it.next();
+            final org.json.JSONArray keys = root.getJSONArray(family);
+            final java.util.Set<String> set = new java.util.HashSet<>();
+            for (int i = 0; i < keys.length(); i++) {
+                set.add(keys.getString(i));
+                set.add(compactKey(keys.getString(i)));  // its Compact version too
+            }
+            out.put(family, set);
+        }
+        return out;
+    }
+
+    /** Drops the voices a tested language did not keep. Pure for JVM tests. */
+    static List<CatalogVoice> keptOnly(List<CatalogVoice> voices, Map<String, java.util.Set<String>> kept) {
+        final List<CatalogVoice> out = new ArrayList<>(voices.size());
+        for (CatalogVoice v : voices) {
+            final java.util.Set<String> keys = kept.get(v.family);
+            if (keys == null || keys.contains(v.key)) {
+                out.add(v);
+            }
+        }
         return out;
     }
 
     /** The app's own list (assets): needs no network, so also for Compact lookups. */
     static List<CatalogVoice> bundledExtras(Context context) {
-        try (InputStream in = context.getAssets().open(EXTRA_CATALOG_ASSET)) {
+        try {
+            return parseCatalog(readAsset(context, EXTRA_CATALOG_ASSET), true);
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Extra voices unavailable", e);
+            return new ArrayList<>();
+        }
+    }
+
+    private static String readAsset(Context context, String name) throws IOException {
+        try (InputStream in = context.getAssets().open(name)) {
             final ByteArrayOutputStream buf = new ByteArrayOutputStream();
             final byte[] b = new byte[8192];
             int n;
             while ((n = in.read(b)) > 0) {
                 buf.write(b, 0, n);
             }
-            return parseCatalog(buf.toString("UTF-8"), true);
-        } catch (IOException | JSONException e) {
-            Log.w(TAG, "Extra voices unavailable", e);
-            return new ArrayList<>();
+            return buf.toString("UTF-8");
         }
     }
 
@@ -412,7 +461,8 @@ final class PiperDownloads {
                 Log.w(TAG, "Catalog fetch failed; using cached copy", e);
                 return withExtras(storageContext, parseCatalog(PiperVoiceStore.readText(cache)));
             }
-            final List<CatalogVoice> extras = bundledExtras(storageContext);
+            final List<CatalogVoice> extras = keptOnly(bundledExtras(storageContext),
+                    keptVoices(storageContext));
             if (!extras.isEmpty()) {
                 Log.w(TAG, "Catalog fetch failed; falling back to bundled extras", e);
                 return extras;

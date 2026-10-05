@@ -1,0 +1,201 @@
+{
+ "ar": [
+  "ar_JO-kareem-medium",
+  "ar_AE-emirati_female-medium"
+ ],
+ "as": [
+  "as_IN-rituraj-medium",
+  "as_IN-bornali-medium"
+ ],
+ "bg": [
+  "bg_BG-dimitar-medium"
+ ],
+ "bn": [
+  "bn_IN-anirban-medium",
+  "bn_IN-riya-medium"
+ ],
+ "ca": [
+  "ca_ES-upc_ona-medium"
+ ],
+ "cs": [
+  "cs_CZ-kasandra-medium",
+  "cs_CZ-jirka-medium"
+ ],
+ "cy": [
+  "cy_GB-gwryw_gogleddol-medium",
+  "cy_GB-bu_tts-medium"
+ ],
+ "da": [
+  "da_DK-talesyntese-medium"
+ ],
+ "de": [
+  "de_DE-thorsten-high",
+  "de_DE-thorsten-medium"
+ ],
+ "el": [
+  "el_GR-joy-medium",
+  "el_GR-rapunzelina-medium"
+ ],
+ "en": [
+  "en_US-hfc_female-medium",
+  "en_US-amy-medium"
+ ],
+ "es": [
+  "es_MX-claude-high",
+  "es_ES-sharvard-medium"
+ ],
+ "et": [
+  "et_EE-news-medium"
+ ],
+ "eu": [
+  "eu_ES-maider-medium",
+  "eu_ES-antton-medium"
+ ],
+ "fa": [
+  "fa_IR-ganji_adabi-medium",
+  "fa_IR-ganji-medium"
+ ],
+ "fi": [
+  "fi_FI-harri-medium"
+ ],
+ "fr": [
+  "fr_FR-tom-medium",
+  "fr_FR-siwis-medium"
+ ],
+ "gu": [
+  "gu_IN-hetal-medium",
+  "gu_IN-jay-medium"
+ ],
+ "hi": [
+  "hi_IN-rohan-medium",
+  "hi_IN-priyamvada-medium"
+ ],
+ "hu": [
+  "hu_HU-imre-medium",
+  "hu_HU-anna-medium"
+ ],
+ "hy": [
+  "hy_AM-gor-medium"
+ ],
+ "id": [
+  "id_ID-news_tts-medium"
+ ],
+ "is": [
+  "is_IS-salka-medium",
+  "is_IS-ugla-medium"
+ ],
+ "it": [
+  "it_IT-serena-medium",
+  "it_IT-serena-high"
+ ],
+ "ka": [
+  "ka_GE-natia-medium"
+ ],
+ "kk": [
+  "kk_KZ-issai-high"
+ ],
+ "kn": [
+  "kn_IN-spoorthi-medium",
+  "kn_IN-chetan-medium"
+ ],
+ "ko": [
+  "ko_KR-kss-medium"
+ ],
+ "lb": [
+  "lb_LU-marylux-medium"
+ ],
+ "lv": [
+  "lv_LV-aivars-medium",
+  "lv_LV-rudolfs-medium"
+ ],
+ "ml": [
+  "ml_IN-arjun-medium",
+  "ml_IN-aparna-medium"
+ ],
+ "mr": [
+  "mr_IN-mrunal-medium",
+  "mr_IN-tejas-medium"
+ ],
+ "ne": [
+  "ne_NP-prerana-medium",
+  "ne_NP-google-medium"
+ ],
+ "nl": [
+  "nl_BE-nathalie-medium",
+  "nl_NL-pim-medium"
+ ],
+ "no": [
+  "no_NO-talesyntese-medium",
+  "no_NO-nvcc-medium"
+ ],
+ "pa": [
+  "pa_IN-simran-medium",
+  "pa_IN-harpreet-medium"
+ ],
+ "pl": [
+  "pl_PL-mc_speech-medium",
+  "pl_PL-gosia-medium"
+ ],
+ "pt": [
+  "pt_BR-faber-medium",
+  "pt_BR-cadu-medium"
+ ],
+ "ro": [
+  "ro_RO-mihai-medium"
+ ],
+ "ru": [
+  "ru_RU-irina-medium",
+  "ru_RU-ruslan-medium"
+ ],
+ "sa": [
+  "sa_IN-vedant-medium"
+ ],
+ "si": [
+  "si_LK-dilu-medium",
+  "si_LK-sinhala-medium"
+ ],
+ "sk": [
+  "sk_SK-lili-medium"
+ ],
+ "sl": [
+  "sl_SI-artur-medium"
+ ],
+ "sq": [
+  "sq_AL-edon-medium"
+ ],
+ "sr": [
+  "sr_RS-serbski_institut-medium"
+ ],
+ "sv": [
+  "sv_SE-nst-medium",
+  "sv_SE-lisa-medium"
+ ],
+ "sw": [
+  "sw_CD-lanfrica-medium"
+ ],
+ "ta": [
+  "ta_IN-rasa_female-medium",
+  "ta_IN-rasa_male-medium"
+ ],
+ "te": [
+  "te_IN-padmavathi-medium",
+  "te_IN-maya-medium"
+ ],
+ "tr": [
+  "tr_TR-dfki-medium"
+ ],
+ "uk": [
+  "uk_UA-oleksa-high",
+  "uk_UA-mykyta-high"
+ ],
+ "ur": [
+  "ur_PK-aegis_female-medium",
+  "ur_PK-fasih-medium"
+ ],
+ "vi": [
+  "vi_VN-vais1000-medium"
+ ],
+ "zh": [
+  "zh_CN-huayan-medium"
+ ]
+}

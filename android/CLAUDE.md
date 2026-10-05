@@ -342,6 +342,15 @@ voices" does not, so voices can still be deleted to free space.
   `phoneme_type` espeak, not trained on another company's TTS output, and
   listened to. Their configs name things loosely, so `PiperVoiceConfig`
   takes the display name and region from the catalog key.
+- **Kept voices** (2026-10-05). `assets/piper/kept_voices.json` lists, per
+  language Whisper large-v3 can transcribe, the two voices it understood
+  best (character error rate over six levels: lone words, random words,
+  rare words, short and long sentences, a paragraph; close calls rerun on
+  a second corpus; harness and full results in scratch/voice-eval).
+  `PiperDownloads.keptOnly` hides the rest of a tested language's voices,
+  rhasspy's included, plus their Compact versions; untested languages
+  (Bhojpuri, Maithili, Kurmanji...) keep all. Voices already downloaded keep
+  working. The other bundled extras and NPU decoders were removed.
 - **Character voices (SYSPIN + Rasa, 2026-10-01).** 42 voices that read
   script letters, not eSpeak phonemes (`phoneme_type` "text"): 22 SYSPIN
   (IISc, Coqui VITS, MIT, 22050 Hz) and 20 AI4Bharat Rasa (CC BY 4.0,
@@ -425,7 +434,7 @@ voices" does not, so voices can still be deleted to free space.
   vs 11.9 dB, pause noise -48.2 vs -48.9 dBFS); Compact on the NPU gains
   nothing (its float islands - LeakyRelu, last stage - fall back to the CPU),
   and full INT8 is bad on a CPU (pause noise -38 dBFS), so the three stay
-  separate files. Covered: all 42 SYSPIN/Rasa Standard keys and 10 Piper high (52).
+  separate files. Covered: the kept SYSPIN/Rasa Standard keys and Piper high (33).
   Speed is measured, not assumed: an NPU graph is kept only if a timed window
   runs at `MIN_NPU_SPEED` (4x) or more - only the 8 Elite was ever measured.
 - **Compact tier** (quality "compact", keys `<lang>-<name>-compact`, release
