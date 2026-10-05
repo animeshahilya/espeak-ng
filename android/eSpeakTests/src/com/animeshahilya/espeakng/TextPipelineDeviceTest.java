@@ -458,8 +458,14 @@ public class TextPipelineDeviceTest {
             final android.content.SharedPreferences prefs =
                     androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
             final VoiceSettings settings = new VoiceSettings(prefs, engine);
-
             final String input = "Open ChatGPT, send money via GPay, and check your Gmail.";
+
+            // Opt-in (NVDA parity): off by default, the text is left alone.
+            prefs.edit().remove(VoiceSettings.PREF_NORMALIZE_TECH_WORDS).commit();
+            assertThat(TextPreprocessor.process(input, voice, settings, false, null, context).text,
+                    containsString("ChatGPT"));
+
+            prefs.edit().putBoolean(VoiceSettings.PREF_NORMALIZE_TECH_WORDS, true).commit();
             final TextPreprocessor.Result result = TextPreprocessor.process(
                     input, voice, settings, false, null, context);
 
@@ -467,6 +473,8 @@ public class TextPipelineDeviceTest {
             assertThat(result.text, containsString("G-Pay"));
             assertThat(result.text, containsString("G-mail"));
         } finally {
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit()
+                    .remove(VoiceSettings.PREF_NORMALIZE_TECH_WORDS).commit();
             engine.stop();
         }
     }

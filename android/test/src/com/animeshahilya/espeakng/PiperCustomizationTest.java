@@ -105,4 +105,15 @@ public class PiperCustomizationTest {
         org.junit.Assert.assertFalse(PiperSettings.isReadableName("3", 3));
         org.junit.Assert.assertFalse(PiperSettings.isReadableName(null, 0));
     }
+
+    @Test
+    public void malformedRegionCodesNameNoCountry() {
+        // Region codes reach the page from the remote catalog and imported
+        // configs; Locale.Builder throws on a bad one.
+        assertEquals(new java.util.Locale("", "IN").getDisplayCountry(), PiperSettings.countryName("IN"));
+        assertNull(PiperSettings.countryName("US_x"));
+        assertNull(PiperSettings.countryName("india"));
+        assertNull(PiperSettings.countryName(""));
+        assertNull(PiperSettings.countryName(null));
+    }
 }

@@ -56,7 +56,17 @@ public class UserDictionaryManager {
             new java.util.concurrent.ConcurrentHashMap<>();
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
+    /**
+     * Bumped by every edit. A cache entry is stored only if no edit came
+     * while it was being built: otherwise an edit landing between the scan
+     * and the put left a stale list cached (a restored dictionary that never
+     * applied until the next edit).
+     */
+    private final java.util.concurrent.atomic.AtomicInteger mGeneration =
+            new java.util.concurrent.atomic.AtomicInteger();
+
     private void invalidateCache() {
+        mGeneration.incrementAndGet();
         mLanguageCache.clear();
         mCategoryCache.clear();
     }
@@ -149,6 +159,7 @@ public class UserDictionaryManager {
         final String langKey = language != null ? AsciiUtils.toAsciiLowerCase(language.trim()) : "";
         List<UserDictionary> matching = mLanguageCache.get(langKey);
         if (matching == null) {
+            final int generation = mGeneration.get();
             final List<UserDictionary> filtered = new ArrayList<>();
             for (UserDictionary rule : mRules) {
                 if (!UserDictionary.CATEGORY_CHARACTER.equals(rule.getCategory()) && rule.appliesToLanguage(langKey)) {
@@ -156,7 +167,9 @@ public class UserDictionaryManager {
                 }
             }
             matching = filtered;
-            mLanguageCache.put(langKey, matching);
+            if (generation == mGeneration.get()) {
+                mLanguageCache.put(langKey, matching);
+            }
         }
         if (matching.isEmpty()) {
             return text;
@@ -463,24 +476,31 @@ public class UserDictionaryManager {
         if (cached != null) {
             return cached;
         }
+        final int generation = mGeneration.get();
         List<UserDictionary> out = new ArrayList<>();
         for (UserDictionary r : mRules) {
             if (r.getCategory().equals(category)) out.add(r);
         }
         List<UserDictionary> result = Collections.unmodifiableList(out);
-        mCategoryCache.put(category, result);
+        if (generation == mGeneration.get()) {
+            mCategoryCache.put(category, result);
+        }
         return result;
     }
 
     /** Bulk replace, used by restore-from-backup. */
     public synchronized void replaceAll(List<UserDictionary> rules) {
-        mRules.clear();
-        invalidateCache();
+        final List<UserDictionary> valid = new ArrayList<>();
         if (rules != null) {
             for (UserDictionary r : rules) {
-                if (r != null && r.isValid()) mRules.add(r);
+                if (r != null && r.isValid()) valid.add(r);
             }
         }
+        // Invalidated after the swap too, so no list cached mid-swap survives.
+        invalidateCache();
+        mRules.clear();
+        mRules.addAll(valid);
+        invalidateCache();
         save();
     }
 

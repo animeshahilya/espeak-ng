@@ -119,6 +119,16 @@ public class TtsService extends TextToSpeechService {
     private int mChunkBase;
 
     /**
+     * Audio frames handed to the framework so far in this request, and where
+     * the unit being synthesized started. rangeStart() takes frames from the
+     * start of the request, but each unit's word markers count from its own
+     * start (eSpeak resets per synthesis call): without the base, every unit
+     * after the first highlighted its words too early.
+     */
+    private long mRequestFrames;
+    private long mUnitFrameBase;
+
+    /**
      * Piper neural voices (see PiperEngine). Process-wide, like the native
      * eSpeak engine: the settings screen's previews share its loaded models.
      */
@@ -241,18 +251,15 @@ public class TtsService extends TextToSpeechService {
             if (!mVoiceReloadRunning.compareAndSet(false, true)) {
                 return;
             }
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        synchronized (TtsService.this) {
-                            initializeTtsEngine();
-                        }
-                    } finally {
-                        mVoiceReloadRunning.set(false);
+            EspeakApp.runAsync(() -> {
+                try {
+                    synchronized (TtsService.this) {
+                        initializeTtsEngine();
                     }
+                } finally {
+                    mVoiceReloadRunning.set(false);
                 }
-            }, "espeak-voices-reload").start();
+            });
         }
     };
 
@@ -341,14 +348,8 @@ public class TtsService extends TextToSpeechService {
             try {
                 // Natural voice for the system language first: it takes the
                 // longest, and the first utterance is usually in that language.
-                final Locale defLoc = Locale.getDefault();
-                String defaultLang;
-                try {
-                    defaultLang = defLoc.getISO3Language();
-                } catch (MissingResourceException e) {
-                    defaultLang = defLoc.getLanguage();
-                }
-                final Voice systemVoice = findVoice(defaultLang, "", "").first;
+                final Voice systemVoice = findVoice(Voice.iso3Language(Locale.getDefault()),
+                        "", "").first;
                 preloadNaturalVoice(systemVoice);
                 preloadRecentNaturalVoices();
                 if (mPreferences != null && PiperVoiceStore.isEnabled(TolerantPreferences.of(mPreferences))) {
@@ -514,6 +515,24 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
+    /**
+     * The eSpeak voice for a run no natural voice speaks. eSpeak switches
+     * script by itself (Devanagari in an English voice is read as Hindi), so
+     * the request's voice keeps everything except Devanagari text classified
+     * as another Devanagari language (Marathi, Nepali...), which it would
+     * read with Hindi or its own rules. Each switch reloads a dictionary.
+     */
+    private Voice espeakVoiceForRun(String runLanguage, String own, Voice voice) {
+        if (runLanguage.equals(own) || !LanguageRuns.isDevanagariLanguage(runLanguage)) {
+            return voice;
+        }
+        if (("hin".equals(runLanguage) || "hi".equals(runLanguage))
+                && !LanguageRuns.isDevanagariLanguage(own)) {
+            return voice; // what eSpeak picks for Devanagari anyway
+        }
+        return findVoiceForLanguage(runLanguage, voice);
+    }
+
     private Voice findVoiceForLanguage(String language, Voice fallback) {
         if (language == null || language.isEmpty()) {
             return fallback;
@@ -635,19 +654,8 @@ public class TtsService extends TextToSpeechService {
             for (Voice voice : mAvailableVoices.values()) {
                 int quality = android.speech.tts.Voice.QUALITY_NORMAL;
                 int latency = android.speech.tts.Voice.LATENCY_VERY_LOW;
-                String lang;
-                try {
-                    lang = voice.locale.getISO3Language();
-                } catch (MissingResourceException e) {
-                    lang = voice.locale.getLanguage();
-                }
-                String country;
-                try {
-                    country = voice.locale.getISO3Country();
-                } catch (MissingResourceException e) {
-                    country = voice.locale.getCountry();
-                }
-                Set<String> features = onGetFeaturesForLanguage(lang, country, voice.locale.getVariant());
+                Set<String> features = onGetFeaturesForLanguage(Voice.iso3Language(voice.locale),
+                        Voice.iso3Country(voice.locale), voice.locale.getVariant());
                 voices.add(new android.speech.tts.Voice(voice.name, voice.locale, quality, latency, false, features));
             }
             // Favorite voices lead (in name order) so clients that present
@@ -990,6 +998,8 @@ public class TtsService extends TextToSpeechService {
         mAnchorCodePoint = 0;
         mAnchorOffset = 0;
         mChunkBase = 0;
+        mRequestFrames = 0;
+        mUnitFrameBase = 0;
 
         // Natural voice for this language, when the user chose one and it is
         // already in memory. SSML stays with eSpeak (Piper has no markup
@@ -1122,6 +1132,7 @@ public class TtsService extends TextToSpeechService {
                     break;
                 }
                 final SynthUnit unit = units.get(ui);
+                mUnitFrameBase = mRequestFrames;
                 if (unit.isEarcon()) {
                     mSynthCallback.onSynthDataReady(Earcons.pcm(unit.text.charAt(0),
                             sampleRate, engine.getChannelCount(), targetVolume));
@@ -1667,7 +1678,9 @@ public class TtsService extends TextToSpeechService {
     private List<SynthUnit> withNaturalRuns(List<SynthUnit> units, Voice voice,
                                             SharedPreferences prefs, VoiceSettings settings,
                                             int sampleRate, Map<String, String> scriptLanguages) {
-        if (!PiperVoiceStore.isEnabled(prefs)) {
+        // A script-variant voice (fa-latn): its text is not in the script its
+        // language's natural voices, or LanguageRuns, expect.
+        if (!PiperVoiceStore.isEnabled(prefs) || voice.isScriptVariant()) {
             return units;
         }
         final PiperVoiceStore.Installed ownNatural = PiperVoiceStore.resolve(mStorageContext, prefs, voice);
@@ -1678,8 +1691,7 @@ public class TtsService extends TextToSpeechService {
             return units;
         }
         final Map<UnicodeScript, String> runLanguages = naturalSwitching
-                ? ScriptLanguages.runLanguages(scriptLanguages)
-                : Collections.emptyMap();
+                ? ScriptLanguages.runLanguages(scriptLanguages) : null;
         final String own = PiperVoiceStore.languageKey(voice.locale);
         final String numbers = naturalSwitching ? numbersRunLanguage(settings, own) : null;
         // A one-voice phone still loading this language's own natural voice
@@ -1694,7 +1706,11 @@ public class TtsService extends TextToSpeechService {
             final StringBuilder espeak = new StringBuilder();
             int espeakStart = 0;
             Voice currentEspeakVoice = voice;
-            for (LanguageRuns.Run run : naturalRuns(unit.text, own, runLanguages, numbers, prefs)) {
+            // Switching off: only the digits this voice cannot read leave it.
+            final List<LanguageRuns.Run> runs = naturalSwitching
+                    ? naturalRuns(unit.text, own, runLanguages, numbers, prefs)
+                    : LanguageRuns.splitDigits(new LanguageRuns.Run(0, unit.text, own), ESPEAK_ONLY);
+            for (LanguageRuns.Run run : runs) {
                 final PiperVoiceStore.Installed natural = run.language.equals(own) ? ownNatural
                         : PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
                 final PiperModel model = natural == null ? null : mPiper.getLoaded(natural.key);
@@ -1702,8 +1718,7 @@ public class TtsService extends TextToSpeechService {
                     mPiper.preload(natural.key, natural.model(), natural.config);
                 }
                 if (model == null) {
-                    final Voice targetVoice = run.language.equals(own) ? voice
-                            : findVoiceForLanguage(run.language, voice);
+                    final Voice targetVoice = espeakVoiceForRun(run.language, own, voice);
                     if (espeak.length() > 0 && targetVoice != currentEspeakVoice) {
                         out.add(new SynthUnit(espeak.toString(), currentEspeakVoice, unit.base + espeakStart));
                         espeak.setLength(0);
@@ -1877,6 +1892,7 @@ public class TtsService extends TextToSpeechService {
                     return;
                 }
                 offset += bytesToWrite;
+                mRequestFrames += bytesToWrite / 2; // 16-bit mono
             }
         }
 
@@ -1923,7 +1939,7 @@ public class TtsService extends TextToSpeechService {
             }
 
             try {
-                callback.rangeStart(markerInFrames, finalStart, finalEnd);
+                callback.rangeStart((int) (mUnitFrameBase + markerInFrames), finalStart, finalEnd);
             } catch (Throwable ignored) {
             }
         }

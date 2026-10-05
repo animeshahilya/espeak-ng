@@ -162,10 +162,13 @@ final class PiperModel implements Closeable {
             this.hasDurations = session.getOutputNames().size() > (decoder != null ? boundary.length : 1);
         }
 
-        synchronized void acquire() {
-            if (!closed) {
-                refCount++;
+        /** False once the sessions are closed: there is nothing left to share. */
+        synchronized boolean acquire() {
+            if (closed) {
+                return false;
             }
+            refCount++;
+            return true;
         }
 
         void release() {
@@ -240,12 +243,16 @@ final class PiperModel implements Closeable {
             return null;
         }
         synchronized (this) {
-            if (closed || group.isClosed()) {
+            if (closed || !group.acquire()) {
                 return null;
             }
-            group.acquire();
         }
         return new PiperModel(newConfig, file, group, accelerated);
+    }
+
+    /** Whether this and {@code other} run on one shared session (see {@link #withConfig}). */
+    boolean sharesSessionWith(PiperModel other) {
+        return other != null && group == other.group;
     }
 
     /** True when runs report each id's frames (see {@link PiperAlignment}). */
@@ -335,13 +342,27 @@ final class PiperModel implements Closeable {
         return model;
     }
 
-    /** True when this ONNX Runtime has Qualcomm's QNN provider: the Snapdragon build. */
+    private static volatile Boolean sNpuRuntime;
+
+    /**
+     * True when this ONNX Runtime has Qualcomm's QNN provider: the Snapdragon
+     * build. The standard build answers without loading the runtime (the
+     * settings screen asks on the main thread, natural voices on or off).
+     */
     static boolean hasNpuRuntime() {
-        try {
-            return env().getAvailableProviders().contains(ai.onnxruntime.OrtProvider.QNN);
-        } catch (RuntimeException e) {
+        if (!BuildConfig.SNAPDRAGON) {
             return false;
         }
+        Boolean has = sNpuRuntime;
+        if (has == null) {
+            try {
+                has = env().getAvailableProviders().contains(ai.onnxruntime.OrtProvider.QNN);
+            } catch (RuntimeException e) {
+                has = false;
+            }
+            sNpuRuntime = has;
+        }
+        return has;
     }
 
     /**
@@ -608,8 +629,8 @@ final class PiperModel implements Closeable {
                     && saveOptimized(encoderSource, encoder, threads)) {
                 if (saveOptimized(decoderSource, decoder, threads)) {
                     if (sharedEnc != null && !sharedEnc.isFile()) {
-                        PiperDownloads.linkOrCopy(encoder, sharedEnc);
-                        PiperDownloads.linkOrCopy(decoder, sharedDec);
+                        share(encoder, sharedEnc);
+                        share(decoder, sharedDec);
                     }
                     return;
                 }
@@ -626,7 +647,7 @@ final class PiperModel implements Closeable {
             if (saveOptimized(PiperAlignment.addDurationOutput(onnx, aligned) ? aligned : onnx, optimized,
                     threads)) {
                 if (sharedOpt != null && !sharedOpt.isFile()) {
-                    PiperDownloads.linkOrCopy(optimized, sharedOpt);
+                    share(optimized, sharedOpt);
                 }
             }
         } catch (IOException | RuntimeException ignored) {
@@ -637,6 +658,18 @@ final class PiperModel implements Closeable {
     }
 
     /** {@code source} graph-optimized into ONNX Runtime's format at {@code out}. */
+    /**
+     * Moves a freshly built file into the shared store and links it back, so
+     * the real bytes live in the shared dir (kept while any voice of that
+     * model is installed) rather than inside the first voice's dir, where
+     * deleting that voice left every other voice's link dangling.
+     */
+    private static void share(File built, File shared) {
+        if (built.renameTo(shared) && !PiperDownloads.linkOrCopy(shared, built)) {
+            shared.renameTo(built); // keep this voice working without a share
+        }
+    }
+
     private static boolean saveOptimized(File source, File out, int threads) {
         final File partial = new File(out.getParentFile(), out.getName() + ".tmp");
         try (OrtSession.SessionOptions options = options(threads, false)) {

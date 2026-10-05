@@ -21,13 +21,16 @@
 # classes by name and creates some of them from native code.
 -keep class ai.onnxruntime.** { *; }
 
-# PiperModel.mapped is never read in Java: it exists only to keep the
-# memory-mapped optimized model alive while ONNX Runtime reads the weights
+# PiperModel.SessionGroup.mapped is never read in Java: it exists only to keep
+# the memory-mapped optimized model alive while ONNX Runtime reads the weights
 # straight out of it (session.use_ort_model_bytes_for_initializers). R8
 # removed it as a write-only field, so the buffer was garbage-collected and
 # unmapped seconds after a voice loaded, and the next inference read freed
 # memory: SIGSEGV in OrtSession.run, a crash loop on every release build.
--keepclassmembers class com.animeshahilya.espeakng.PiperModel {
+# These fields moved from PiperModel into SessionGroup once already and the
+# rule silently stopped matching: after moving them again, check the release
+# dex still has them (`dexdump -h`; mapping.txt omits kept, unrenamed fields).
+-keepclassmembers class com.animeshahilya.espeakng.PiperModel$SessionGroup {
     java.nio.ByteBuffer mapped;
     java.nio.ByteBuffer mappedDecoder;
 }

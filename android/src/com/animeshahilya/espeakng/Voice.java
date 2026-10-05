@@ -114,24 +114,54 @@ public class Voice {
 
     @Override
     public String toString() {
-        String ret;
-        try {
-            ret = locale.getISO3Language();
-        } catch (MissingResourceException e) {
-            ret = locale.getLanguage();
-        }
-        String country;
-        try {
-            country = locale.getISO3Country();
-        } catch (MissingResourceException e) {
-            country = locale.getCountry();
-        }
-        if (country != null && !country.isEmpty()) {
+        String ret = iso3Language(locale);
+        final String country = iso3Country(locale);
+        if (!country.isEmpty()) {
             ret += '-' + country;
         }
         if (locale.getVariant() != null && !locale.getVariant().isEmpty()) {
             ret += '-' + locale.getVariant();
         }
         return ret;
+    }
+
+    /**
+     * A voice for its language in another script than the usual one: a
+     * four-letter script subtag in its name (fa-latn, cmn-latn-pinyin,
+     * en-shaw, chr-US-Qaaa-x-west). Natural voices of the language were
+     * trained on its usual script, so they must not read for it.
+     */
+    boolean isScriptVariant() {
+        if (name == null) {
+            return false;
+        }
+        final String[] parts = name.split("-");
+        for (int i = 1; i < parts.length; i++) {
+            if ("x".equalsIgnoreCase(parts[i])) {
+                break; // private-use tail: "x-west" is not a script
+            }
+            if (parts[i].length() == 4 && Character.isLetter(parts[i].charAt(0))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** ISO 639-2 code ("hin"), or the locale's own code when it has none. */
+    static String iso3Language(Locale locale) {
+        try {
+            return locale.getISO3Language();
+        } catch (MissingResourceException e) {
+            return locale.getLanguage();
+        }
+    }
+
+    /** ISO 3166 alpha-3 code ("IND"), or the locale's own code when it has none. */
+    static String iso3Country(Locale locale) {
+        try {
+            return locale.getISO3Country();
+        } catch (MissingResourceException e) {
+            return locale.getCountry();
+        }
     }
 }

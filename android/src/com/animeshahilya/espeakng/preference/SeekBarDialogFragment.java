@@ -136,10 +136,10 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
                         super.onInitializeAccessibilityNodeInfo(host, info);
                         String text = String.format(parameter.formatter,
                                 Integer.toString(preference.getDisplayValue(parameter)));
-                        info.setContentDescription(parameter.title + ", " + text);
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                            info.setStateDescription(text);
-                        }
+                        // Label and value apart: TalkBack reads both once
+                        // (the compat state description works before API 30).
+                        info.setContentDescription(parameter.title);
+                        info.setStateDescription(text);
                         info.setRangeInfo(androidx.core.view.accessibility.AccessibilityNodeInfoCompat.RangeInfoCompat.obtain(
                                 androidx.core.view.accessibility.AccessibilityNodeInfoCompat.RangeInfoCompat.RANGE_TYPE_INT,
                                 parameter.min,

@@ -558,6 +558,9 @@ public class TtsSettingsActivity extends AppCompatActivity {
         return result != null ? result : "imported_data";
     }
 
+    /** Voice data is ~30 MB in all; an import far past that is not voice data. */
+    private static final long MAX_VOICE_IMPORT_BYTES = 200L * 1024 * 1024;
+
     private static void importVoiceUri(final Activity activity, final Uri uri) {
         final Context storage = EspeakApp.requireStorageContext(activity);
         runInBackground("voice-import-thread", new BackgroundWork<Boolean>() {
@@ -569,12 +572,15 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     targetDir.mkdirs();
                 }
 
+                // The extraction lock: the engine reads this tree, and a
+                // data refresh may be rewriting it at the same moment.
+                synchronized (CheckVoiceData.EXTRACT_LOCK) {
                 try (InputStream inputStream = activity.getContentResolver().openInputStream(uri)) {
                     if (inputStream != null) {
                         // Locale.ROOT: Turkish-locale devices would map a
                         // capital I in ".ZIP" to a dotless ı and fail the check.
                         if (fileName.toLowerCase(java.util.Locale.ROOT).endsWith(".zip")) {
-                            FileUtils.extractZip(inputStream, targetDir);
+                            FileUtils.extractZip(inputStream, targetDir, MAX_VOICE_IMPORT_BYTES);
                             success = true;
                         } else {
                             File outFile = new File(targetDir, fileName);
@@ -598,6 +604,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.e(TAG, "Error importing voice data from URI", e);
                     success = false;
+                }
                 }
                 return success;
             }
@@ -1444,46 +1451,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
             return;
         }
         Toast.makeText(context, R.string.test_voice_playing, Toast.LENGTH_SHORT).show();
-        if (sTts == null) {
-            sTts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    if (status == TextToSpeech.SUCCESS && sTts != null) {
-                        sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
-                    }
-                }
-            }, context.getPackageName());
-        } else {
-            sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
-        }
-    }
-
-    private static void playTestVoice(final Context context) {
-        speakPreview(context, context.getString(R.string.test_voice_sample), "sample_utterance");
-    }
-
-    private static void playTestNumbers(final Context context) {
-        speakPreview(context, context.getString(R.string.test_numbers_sample), "sample_numbers");
-    }
-
-    private static void playTestPauses(final Context context) {
-        speakPreview(context, context.getString(R.string.test_pauses_sample), "sample_pauses");
-    }
-
-    private static void playTestPunctuation(final Context context) {
-        speakPreview(context, context.getString(R.string.test_punctuation_sample), "sample_punctuation");
-    }
-
-    private static void playTestReading(final Context context) {
-        speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading");
-    }
-
-    private static void playTestVoiceSound(final Context context) {
-        speakPreview(context, context.getString(R.string.test_voice_tuning_sample), "sample_voice_sound");
-    }
-
-    private static void playTestMixedLanguages(final Context context) {
-        speakPreview(context, context.getString(R.string.test_mixed_languages_sample), "sample_mixed_languages");
+        ensurePreviewEngine(context, () -> {
+            if (sTts != null) {
+                sTts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+            }
+        });
     }
 
     /**
@@ -1855,13 +1827,13 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
             setEntries(screen, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD, digitEntries, digitValues);
 
-            onClick(screen, KEY_TEST_VOICE, () -> playTestVoice(context));
-            onClick(screen, "action_preview_numbers", () -> playTestNumbers(context));
-            onClick(screen, "action_preview_pauses", () -> playTestPauses(context));
-            onClick(screen, "action_preview_punctuation", () -> playTestPunctuation(context));
-            onClick(screen, "action_preview_reading", () -> playTestReading(context));
-            onClick(screen, "action_preview_voice_sound", () -> playTestVoiceSound(context));
-            onClick(screen, "action_preview_mixed_languages", () -> playTestMixedLanguages(context));
+            onClick(screen, KEY_TEST_VOICE, () -> speakPreview(context, context.getString(R.string.test_voice_sample), "sample_utterance"));
+            onClick(screen, "action_preview_numbers", () -> speakPreview(context, context.getString(R.string.test_numbers_sample), "sample_numbers"));
+            onClick(screen, "action_preview_pauses", () -> speakPreview(context, context.getString(R.string.test_pauses_sample), "sample_pauses"));
+            onClick(screen, "action_preview_punctuation", () -> speakPreview(context, context.getString(R.string.test_punctuation_sample), "sample_punctuation"));
+            onClick(screen, "action_preview_reading", () -> speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading"));
+            onClick(screen, "action_preview_voice_sound", () -> speakPreview(context, context.getString(R.string.test_voice_tuning_sample), "sample_voice_sound"));
+            onClick(screen, "action_preview_mixed_languages", () -> speakPreview(context, context.getString(R.string.test_mixed_languages_sample), "sample_mixed_languages"));
             onClick(screen, VoiceSettings.PREF_USER_DICTIONARY, () -> UserDictionaryScreen.show(context));
             onClick(screen, "action_recommended_defaults", () -> applyRecommendedDefaults(context));
             onClick(screen, "action_backup", () -> {
@@ -1992,8 +1964,15 @@ public class TtsSettingsActivity extends AppCompatActivity {
         }
         updateBoostSummary(context, pref, prefs.getString(
                 VoiceSettings.PREF_RATE_BOOST_LEVEL, VoiceSettings.RATE_BOOST_OFF));
+        final SeekBarPreference rate = screen.findPreference(VoiceSettings.PREF_RATE);
         pref.setOnPreferenceChangeListener((p, value) -> {
-            updateBoostSummary(context, (ListPreference) p, String.valueOf(value));
+            final String level = String.valueOf(value);
+            updateBoostSummary(context, (ListPreference) p, level);
+            if (rate != null) {
+                // The Rate row shows the boosted rate; it was built with the old level.
+                rate.setRateBoost(!VoiceSettings.RATE_BOOST_OFF.equals(level),
+                        VoiceSettings.boostMultiplier(level));
+            }
             return true;
         });
     }

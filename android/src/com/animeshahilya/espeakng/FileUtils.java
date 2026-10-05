@@ -77,6 +77,16 @@ public class FileUtils {
      * independently-maintained copies of it.
      */
     public static void extractZip(InputStream stream, File outputDir) throws IOException {
+        extractZip(stream, outputDir, Long.MAX_VALUE);
+    }
+
+    /**
+     * As {@link #extractZip(InputStream, File)}, refusing to write more than
+     * {@code maxBytes} in all: a user-picked archive (voice import) must not
+     * be able to fill the phone's storage.
+     */
+    public static void extractZip(InputStream stream, File outputDir, long maxBytes) throws IOException {
+        long written = 0;
         final ZipInputStream zipStream = new ZipInputStream(new BufferedInputStream(stream, 65536));
         try {
             final String canonicalOutputDirPath = outputDir.getCanonicalPath() + File.separator;
@@ -102,6 +112,10 @@ public class FileUtils {
                 }
                 try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file), 65536)) {
                     while ((bytesRead = zipStream.read(buffer)) != -1) {
+                        written += bytesRead;
+                        if (written > maxBytes) {
+                            throw new IOException("Archive expands past " + maxBytes + " bytes");
+                        }
                         outputStream.write(buffer, 0, bytesRead);
                     }
                 }

@@ -1,6 +1,8 @@
 package com.animeshahilya.espeakng;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -18,6 +20,41 @@ public class LanguageRunsTest {
             sb.append(r.language).append('@').append(r.start).append('[').append(r.text).append(']');
         }
         return sb.toString();
+    }
+
+    @Test
+    public void languagesKeepTheirOwnScripts() {
+        // Each language's own script stays with it (one run), never a stand-in
+        assertEquals("srp@0[Dobar dan, kako ste?]", describe(LanguageRuns.split("Dobar dan, kako ste?", "srp")));
+        assertEquals("srp@0[Добар дан]", describe(LanguageRuns.split("Добар дан", "srp")));
+        assertEquals("grc@0[Ἐν ἀρχῇ ἦν ὁ λόγος]", describe(LanguageRuns.split("Ἐν ἀρχῇ ἦν ὁ λόγος", "grc")));
+        assertEquals("hyw@0[Բարեւ]", describe(LanguageRuns.split("Բարեւ", "hyw")));
+        assertEquals("cmn@0[你好]", describe(LanguageRuns.split("你好", "cmn")));
+        assertEquals("nog@0[Салам]", describe(LanguageRuns.split("Салам", "nog")));
+        assertEquals("chr@0[ᎣᏏᏲ]", describe(LanguageRuns.split("ᎣᏏᏲ", "chr")));
+        assertEquals("bpy@0[মণিপুরী]", describe(LanguageRuns.split("মণিপুরী", "bpy")));
+        assertEquals("snd@0[सिंधी]", describe(LanguageRuns.split("सिंधी", "snd")));
+        assertEquals("uzb@0[Салом]", describe(LanguageRuns.split("Салом", "uzb")));
+    }
+
+    @Test
+    public void scriptVariantVoices() {
+        final java.util.Locale l = java.util.Locale.ROOT;
+        assertTrue(new Voice("fa-latn", "ira/fa-Latn", 0, 0, l).isScriptVariant());
+        assertTrue(new Voice("cmn-latn-pinyin", "sit/cmn-Latn-pinyin", 0, 0, l).isScriptVariant());
+        assertTrue(new Voice("en-shaw", "art/en-shaw", 0, 0, l).isScriptVariant());
+        assertTrue(new Voice("chr-US-Qaaa-x-west", "iro/chr", 0, 0, l).isScriptVariant());
+        assertFalse(new Voice("en-us-nyc", "gmw/en-US-nyc", 0, 0, l).isScriptVariant());
+        assertFalse(new Voice("ps-x-northwest", "ira/ps", 0, 0, l).isScriptVariant());
+        assertFalse(new Voice("hy-arevela", "ine/hy", 0, 0, l).isScriptVariant());
+        assertFalse(new Voice("en-gb-scotland", "gmw/en-GB-scotland", 0, 0, l).isScriptVariant());
+    }
+
+    @Test
+    public void kurmanjiIsLatinScript() {
+        // Kurmanji text stays with the Kurmanji voice; it is not "foreign" Latin
+        assertEquals("kur@0[Ez ê sibê biçim malê.]",
+                describe(LanguageRuns.split("Ez ê sibê biçim malê.", "kur")));
     }
 
     @Test

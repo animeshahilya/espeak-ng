@@ -34,7 +34,7 @@ public class PiperDownloadReceiver extends BroadcastReceiver {
         }
         final Context app = context.getApplicationContext();
         final PendingResult pending = goAsync();
-        new Thread(() -> {
+        EspeakApp.runAsync(() -> {
             try {
                 final Context storage = EspeakApp.requireStorageContext(app);
                 final PiperDownloads.Result result = PiperDownloads.complete(app, storage, id);
@@ -47,6 +47,6 @@ public class PiperDownloadReceiver extends BroadcastReceiver {
             } finally {
                 pending.finish();
             }
-        }, "piper-install").start();
+        });
     }
 }

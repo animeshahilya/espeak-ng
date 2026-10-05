@@ -466,29 +466,28 @@ public final class TextPreprocessor {
         return NumberReading.isEnglish(languageTag) || !NumberReading.isLatinScript(languageTag);
     }
 
+    /** Lower-case language subtag of a tag ("mr" for "mr-IN"); "" for null. */
+    private static String baseLanguage(String languageTag) {
+        if (languageTag == null) return "";
+        final String base = languageTag.trim().toLowerCase(Locale.ROOT);
+        final int dash = base.indexOf('-');
+        return dash >= 0 ? base.substring(0, dash) : base;
+    }
+
     public static boolean isDevanagariNumberLang(String languageTag) {
-        if (languageTag == null || languageTag.isEmpty()) return false;
-        String base = languageTag.trim().toLowerCase(Locale.ROOT);
-        int dash = base.indexOf('-');
-        if (dash >= 0) base = base.substring(0, dash);
+        final String base = baseLanguage(languageTag);
         return base.equals("hi") || base.equals("hin") || base.equals("mr") || base.equals("mar")
                 || base.equals("ne") || base.equals("nep") || base.equals("sa") || base.equals("san")
                 || base.equals("bho") || base.equals("mai") || base.equals("hne") || base.equals("kok");
     }
 
     public static boolean isMarathi(String languageTag) {
-        if (languageTag == null || languageTag.isEmpty()) return false;
-        String base = languageTag.trim().toLowerCase(Locale.ROOT);
-        int dash = base.indexOf('-');
-        if (dash >= 0) base = base.substring(0, dash);
+        final String base = baseLanguage(languageTag);
         return base.equals("mr") || base.equals("mar");
     }
 
     public static boolean isNepali(String languageTag) {
-        if (languageTag == null || languageTag.isEmpty()) return false;
-        String base = languageTag.trim().toLowerCase(Locale.ROOT);
-        int dash = base.indexOf('-');
-        if (dash >= 0) base = base.substring(0, dash);
+        final String base = baseLanguage(languageTag);
         return base.equals("ne") || base.equals("nep");
     }
 
@@ -787,13 +786,17 @@ public final class TextPreprocessor {
         String trimmed = text.trim();
         if (trimmed.codePointCount(0, trimmed.length()) == 1) {
             char c = trimmed.charAt(0);
-            // Devanagari: the word every Hindi/Marathi school primer teaches
-            // ("क से कबूतर" in Hindi, "क कबूतराचा" / "ळ बाळाचा" in Marathi).
+            // Devanagari: the word every school primer teaches ("क से कबूतर"
+            // in Hindi, "क, कमळ" in Marathi), the way NATO words disambiguate
+            // Latin letters.
+            if (isMarathi(languageTag)) {
+                final int m = MARATHI_LETTERS.indexOf(c);
+                if (m >= 0) {
+                    return c + ", " + MARATHI_WORDS[m];
+                }
+            }
             int i = DEVANAGARI_LETTERS.indexOf(c);
             if (i >= 0) {
-                if (isMarathi(languageTag)) {
-                    return c + " " + (c == 'ळ' ? "बाळाचा" : DEVANAGARI_WORDS[i] + "चा");
-                }
                 return c + " से " + DEVANAGARI_WORDS[i];
             }
             final String[] described = NvdaCharacterDescriptions.get(languageTag, trimmed);
@@ -810,13 +813,22 @@ public final class TextPreprocessor {
     }
 
     private static final String DEVANAGARI_LETTERS =
-            "अआइईउऊएऐओऔकखगघचछजझटठडढतथदधनपफबभमयरलवशषसहळ";
+            "अआइईउऊएऐओऔकखगघचछजझटठडढतथदधनपफबभमयरलवशषसह";
     private static final String[] DEVANAGARI_WORDS = {
             "अनार", "आम", "इमली", "ईख", "उल्लू", "ऊन", "एड़ी", "ऐनक", "ओखली", "औरत",
             "कबूतर", "खरगोश", "गमला", "घड़ी", "चम्मच", "छतरी", "जहाज़", "झंडा",
             "टमाटर", "ठठेरा", "डमरू", "ढक्कन", "तरबूज़", "थरमस", "दवात", "धनुष", "नल",
             "पतंग", "फल", "बकरी", "भालू", "मछली", "यज्ञ", "रथ", "लट्टू", "वकील",
-            "शलगम", "षट्कोण", "सपेरा", "हल", "बाळ",
+            "शलगम", "षट्कोण", "सपेरा", "हल",
+    };
+    /** Marathi primer (मुळाक्षरे) words; Marathi also has ळ. */
+    private static final String MARATHI_LETTERS = DEVANAGARI_LETTERS + "ळ";
+    private static final String[] MARATHI_WORDS = {
+            "अननस", "आई", "इमारत", "ईडलिंबू", "उखळ", "ऊस", "एडका", "ऐरण", "ओठ", "औषध",
+            "कमळ", "खटारा", "गणपती", "घर", "चमचा", "छत्री", "जहाज", "झबले",
+            "टरबूज", "ठसा", "डमरू", "ढग", "तलवार", "थवा", "दप्तर", "धनुष्य", "नळ",
+            "पतंग", "फणस", "बदक", "भटजी", "मगर", "यज्ञ", "रथ", "लसूण", "वजन",
+            "शहामृग", "षटकोन", "ससा", "हरीण", "बाळ",
     };
 
     public static String expandDevanagariDiacritic(String text) {
@@ -1203,8 +1215,7 @@ public final class TextPreprocessor {
                     if (Character.isDigit(c)) {
                         digitCount++;
                         i += Character.charCount(c);
-                    } else if (c == ',' && (i + 1) < len && Character.isDigit(text.codePointAt(i + 1))) {
-                        // Formatting comma between digits (e.g. 1,234,567)
+                    } else if (isGroupingComma(text, i)) {
                         i++;
                     } else {
                         break;
@@ -1249,6 +1260,22 @@ public final class TextPreprocessor {
         return out.toString();
     }
 
+    /**
+     * A thousands separator, not a decimal comma: followed by exactly three
+     * digits (1,234,567), or two then another comma (Indian 12,34,567).
+     * German "3,14" keeps its comma.
+     */
+    private static boolean isGroupingComma(String text, int i) {
+        if (text.charAt(i) != ',') return false;
+        int j = i + 1;
+        int digits = 0;
+        while (j < text.length() && Character.isDigit(text.charAt(j))) {
+            j++;
+            digits++;
+        }
+        return digits == 3 || (digits == 2 && j < text.length() && text.charAt(j) == ',');
+    }
+
     public static String spaceSeparateDigits(String text) {
         return separateDigits(text, " ");
     }
@@ -1270,14 +1297,11 @@ public final class TextPreprocessor {
                 }
                 out.appendCodePoint(c);
                 prevWasDigit = true;
-            } else if (c == ',' && prevWasDigit && (i + 1) < len && Character.isDigit(text.codePointAt(i + 1))) {
-                // Formatting comma between digits (e.g. 1,234)
-                prevWasDigit = true;
-            } else if (c == '.' && prevWasDigit && (i + 1) < len && Character.isDigit(text.codePointAt(i + 1))) {
-                // Decimal point between digits (e.g. 3.14)
-                out.append(". ");
-                prevWasDigit = false;
+            } else if (prevWasDigit && isGroupingComma(text, i)) {
+                prevWasDigit = true; // dropped: the digits are read one by one anyway
             } else {
+                // A decimal point or comma stays attached ("3.1 4" is read
+                // "three point one four"; "3. 1 4" would lose the point).
                 out.appendCodePoint(c);
                 prevWasDigit = false;
             }

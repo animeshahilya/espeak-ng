@@ -71,6 +71,19 @@ public class DevanagariClassifierTest {
         assertEquals("hin", DevanagariClassifier.classify("कल बहुत तेज बारिश हो रही थी", "mar", "mar"));
     }
 
+    @Test
+    public void classify_everydayHindiStaysHindi() {
+        // Words that once fired other languages' suffix rules: -ें/-ां (Konkani),
+        // -लाह/-थि (Maithili), -लाई/-संग (Nepali), -तानी (Bhojpuri)
+        assertEquals("hin", DevanagariClassifier.classify("किताबें पढ़ें", "eng", "hin"));
+        assertEquals("hin", DevanagariClassifier.classify("यहां आओ", "eng", "hin"));
+        assertEquals("hin", DevanagariClassifier.classify("उसकी सलाह मानो", "eng", "hin"));
+        assertEquals("hin", DevanagariClassifier.classify("अतिथि आए", "eng", "hin"));
+        assertEquals("hin", DevanagariClassifier.classify("जनता की भलाई", "eng", "hin"));
+        assertEquals("hin", DevanagariClassifier.classify("सत्संग में भजन", "eng", "hin"));
+        assertEquals("hin", DevanagariClassifier.classify("बच्चों की शैतानी", "eng", "hin"));
+    }
+
     // =========================================================================
     // 4. Nepali (nep / ne)
     // =========================================================================
@@ -223,9 +236,10 @@ public class DevanagariClassifierTest {
 
     @Test
     public void marathiTextPreprocessing_natoSpellingAndDiacritics() {
-        // In Marathi, ळ is 'बाळाचा' and letters take 'चा'
-        assertEquals("ळ बाळाचा", TextPreprocessor.expandNatoSpelling("ळ", "mr-IN"));
-        assertEquals("क कबूतरचा", TextPreprocessor.expandNatoSpelling("क", "mr-IN"));
+        // Marathi letters take the Marathi primer's words, ळ included
+        assertEquals("ळ, बाळ", TextPreprocessor.expandNatoSpelling("ळ", "mr-IN"));
+        assertEquals("क, कमळ", TextPreprocessor.expandNatoSpelling("क", "mr-IN"));
+        assertEquals("ह, हरीण", TextPreprocessor.expandNatoSpelling("ह", "mr-IN"));
         assertEquals("क से कबूतर", TextPreprocessor.expandNatoSpelling("क", "hi-IN"));
 
         // Diacritics in Marathi use 'ची मात्रा'

@@ -63,6 +63,24 @@ public class VoiceSettingsTest
     // No Settings (New Install)
 
     @Test
+    public void sleepMuteIgnoresImpossibleDeadlines() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        try {
+            VoiceSettings.armSleepMute(prefs, 30);
+            assertThat(VoiceSettings.isSleepMuted(prefs), is(true));
+            // A day out: the clock went back, or a backup carried it. Never silent for that.
+            prefs.edit().putLong(VoiceSettings.PREF_SLEEP_MUTE_UNTIL,
+                    System.currentTimeMillis() + 24 * 60 * 60_000L).commit();
+            assertThat(VoiceSettings.isSleepMuted(prefs), is(false));
+            prefs.edit().putLong(VoiceSettings.PREF_SLEEP_MUTE_UNTIL,
+                    System.currentTimeMillis() - 1000).commit();
+            assertThat(VoiceSettings.isSleepMuted(prefs), is(false));
+        } finally {
+            VoiceSettings.clearSleepMute(prefs);
+        }
+    }
+
+    @Test
     public void testNoPreferences()
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());

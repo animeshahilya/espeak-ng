@@ -151,30 +151,10 @@ final class TextOffsetMap {
             final int stride = mSlice + 1;
             final int[] dp = new int[(nSlice + 1) * stride];
             for (int i = nSlice - 1; i >= 0; i--) {
-                final char bi = before.charAt(prefix + i);
                 final int rowOffset = i * stride;
                 final int nextRowOffset = (i + 1) * stride;
                 for (int j = mSlice - 1; j >= 0; j--) {
-                    final char aj = after.charAt(prefix + j);
-                    boolean match = (bi == aj);
-                    if (match && Character.isHighSurrogate(bi)) {
-                        boolean validPair = (i + 1 < nSlice && j + 1 < mSlice
-                                && Character.isLowSurrogate(before.charAt(prefix + i + 1))
-                                && Character.isLowSurrogate(after.charAt(prefix + j + 1))
-                                && before.charAt(prefix + i + 1) == after.charAt(prefix + j + 1));
-                        if (!validPair) {
-                            match = false;
-                        }
-                    } else if (match && Character.isLowSurrogate(bi)) {
-                        boolean validPair = (i > 0 && j > 0
-                                && Character.isHighSurrogate(before.charAt(prefix + i - 1))
-                                && Character.isHighSurrogate(after.charAt(prefix + j - 1))
-                                && before.charAt(prefix + i - 1) == after.charAt(prefix + j - 1));
-                        if (!validPair) {
-                            match = false;
-                        }
-                    }
-                    if (match) {
+                    if (matches(before, after, prefix, i, j, nSlice, mSlice)) {
                         dp[rowOffset + j] = dp[nextRowOffset + j + 1] + 1;
                     } else {
                         final int down = dp[nextRowOffset + j];
@@ -188,27 +168,7 @@ final class TextOffsetMap {
             int prevOldEnd = prefix;
             int prevNewEnd = prefix;
             while (i < nSlice && j < mSlice) {
-                final char bi = before.charAt(prefix + i);
-                final char aj = after.charAt(prefix + j);
-                boolean match = (bi == aj);
-                if (match && Character.isHighSurrogate(bi)) {
-                    boolean validPair = (i + 1 < nSlice && j + 1 < mSlice
-                            && Character.isLowSurrogate(before.charAt(prefix + i + 1))
-                            && Character.isLowSurrogate(after.charAt(prefix + j + 1))
-                            && before.charAt(prefix + i + 1) == after.charAt(prefix + j + 1));
-                    if (!validPair) {
-                        match = false;
-                    }
-                } else if (match && Character.isLowSurrogate(bi)) {
-                    boolean validPair = (i > 0 && j > 0
-                            && Character.isHighSurrogate(before.charAt(prefix + i - 1))
-                            && Character.isHighSurrogate(after.charAt(prefix + j - 1))
-                            && before.charAt(prefix + i - 1) == after.charAt(prefix + j - 1));
-                    if (!validPair) {
-                        match = false;
-                    }
-                }
-                if (match) {
+                if (matches(before, after, prefix, i, j, nSlice, mSlice)) {
                     fillUnmatchedRun(offsets, prevNewEnd, prefix + j, prevOldEnd, prefix + i);
                     offsets[prefix + j] = prefix + i;
                     prevOldEnd = prefix + i + 1;
@@ -231,6 +191,30 @@ final class TextOffsetMap {
         }
 
         return new TextOffsetMap(offsets);
+    }
+
+    /**
+     * Whether slice chars i (before) and j (after) align: equal, and a
+     * surrogate only together with the same other half, so an emoji is never
+     * matched half-way.
+     */
+    private static boolean matches(String before, String after, int prefix, int i, int j,
+                                   int nSlice, int mSlice) {
+        final char b = before.charAt(prefix + i);
+        if (b != after.charAt(prefix + j)) {
+            return false;
+        }
+        if (Character.isHighSurrogate(b)) {
+            return i + 1 < nSlice && j + 1 < mSlice
+                    && Character.isLowSurrogate(before.charAt(prefix + i + 1))
+                    && before.charAt(prefix + i + 1) == after.charAt(prefix + j + 1);
+        }
+        if (Character.isLowSurrogate(b)) {
+            return i > 0 && j > 0
+                    && Character.isHighSurrogate(before.charAt(prefix + i - 1))
+                    && before.charAt(prefix + i - 1) == after.charAt(prefix + j - 1);
+        }
+        return true;
     }
 
     private static void fillUnmatchedRun(int[] offsets, int newStart, int newEndExclusive,

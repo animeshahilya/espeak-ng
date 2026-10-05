@@ -51,6 +51,12 @@ final class LanguageRuns {
     private static final Map<UnicodeScript, String> SCRIPT_LANGUAGE = new EnumMap<>(UnicodeScript.class);
     /** Scripts a language is written in, where not Latin. */
     private static final Map<String, UnicodeScript> LANGUAGE_SCRIPT = new HashMap<>();
+    /**
+     * Further scripts a language is commonly written in, besides its main
+     * one: its own text in them is not "another language" (Serbian Latin,
+     * Sindhi in Devanagari, Uzbek Cyrillic).
+     */
+    private static final Map<String, UnicodeScript[]> ALSO_WRITTEN_IN = new HashMap<>();
 
     static {
         SCRIPT_LANGUAGE.put(UnicodeScript.LATIN, "eng");
@@ -76,7 +82,7 @@ final class LanguageRuns {
         SCRIPT_LANGUAGE.put(UnicodeScript.ARMENIAN, "hye");
         SCRIPT_LANGUAGE.put(UnicodeScript.GEORGIAN, "kat");
 
-        for (String lang : new String[] {"hin", "hi", "mar", "mr", "nep", "ne", "san", "sa", "kok", "mai", "bho", "sat",
+        for (String lang : new String[] {"hin", "hi", "mar", "mr", "nep", "ne", "san", "sa", "kok", "mai", "bho",
                 "hne", "mag", "brx", "doi"}) {
             LANGUAGE_SCRIPT.put(lang, UnicodeScript.DEVANAGARI);
         }
@@ -84,6 +90,8 @@ final class LanguageRuns {
         LANGUAGE_SCRIPT.put("bn", UnicodeScript.BENGALI);
         LANGUAGE_SCRIPT.put("asm", UnicodeScript.BENGALI);
         LANGUAGE_SCRIPT.put("as", UnicodeScript.BENGALI);
+        LANGUAGE_SCRIPT.put("bpy", UnicodeScript.BENGALI); // Bishnupriya Manipuri
+        LANGUAGE_SCRIPT.put("mni", UnicodeScript.BENGALI); // Manipuri
         LANGUAGE_SCRIPT.put("tam", UnicodeScript.TAMIL);
         LANGUAGE_SCRIPT.put("ta", UnicodeScript.TAMIL);
         LANGUAGE_SCRIPT.put("tel", UnicodeScript.TELUGU);
@@ -100,14 +108,19 @@ final class LanguageRuns {
         LANGUAGE_SCRIPT.put("or", UnicodeScript.ORIYA);
         LANGUAGE_SCRIPT.put("sin", UnicodeScript.SINHALA);
         LANGUAGE_SCRIPT.put("si", UnicodeScript.SINHALA);
-        for (String lang : new String[] {"ara", "ar", "urd", "ur", "fas", "fa", "pus", "ps", "snd", "sd", "uig", "ug", "kur", "ku", "ckb", "kas"}) {
+        // Not "ku"/"kur": that is Kurmanji (eSpeak's and Piper's ku voices),
+        // written in Latin. Only Sorani (ckb) is Arabic script.
+        for (String lang : new String[] {"ara", "ar", "urd", "ur", "fas", "fa", "pus", "ps", "snd", "sd", "uig", "ug", "ckb", "kas"}) {
             LANGUAGE_SCRIPT.put(lang, UnicodeScript.ARABIC);
         }
-        for (String lang : new String[] {"rus", "ru", "ukr", "uk", "bul", "bg", "srp", "sr", "mkd", "mk", "bel", "be", "kaz", "kk", "kir", "ky", "tat", "tt", "bak", "ba", "chv", "cv", "mon", "mn"}) {
+        for (String lang : new String[] {"rus", "ru", "ukr", "uk", "bul", "bg", "srp", "sr", "mkd", "mk", "bel", "be",
+                "kaz", "kk", "kir", "ky", "tat", "tt", "bak", "ba", "chv", "cv", "mon", "mn", "nog", "abk", "ab",
+                "tgk", "tg", "sah"}) {
             LANGUAGE_SCRIPT.put(lang, UnicodeScript.CYRILLIC);
         }
         LANGUAGE_SCRIPT.put("ell", UnicodeScript.GREEK);
         LANGUAGE_SCRIPT.put("el", UnicodeScript.GREEK);
+        LANGUAGE_SCRIPT.put("grc", UnicodeScript.GREEK); // Ancient Greek
         LANGUAGE_SCRIPT.put("heb", UnicodeScript.HEBREW);
         LANGUAGE_SCRIPT.put("he", UnicodeScript.HEBREW);
         LANGUAGE_SCRIPT.put("tha", UnicodeScript.THAI);
@@ -115,12 +128,15 @@ final class LanguageRuns {
         LANGUAGE_SCRIPT.put("zho", UnicodeScript.HAN);
         LANGUAGE_SCRIPT.put("zh", UnicodeScript.HAN);
         LANGUAGE_SCRIPT.put("yue", UnicodeScript.HAN);
+        LANGUAGE_SCRIPT.put("cmn", UnicodeScript.HAN);
+        LANGUAGE_SCRIPT.put("hak", UnicodeScript.HAN); // Hakka
         LANGUAGE_SCRIPT.put("jpn", UnicodeScript.HAN);
         LANGUAGE_SCRIPT.put("ja", UnicodeScript.HAN);
         LANGUAGE_SCRIPT.put("kor", UnicodeScript.HANGUL);
         LANGUAGE_SCRIPT.put("ko", UnicodeScript.HANGUL);
         LANGUAGE_SCRIPT.put("hye", UnicodeScript.ARMENIAN);
         LANGUAGE_SCRIPT.put("hy", UnicodeScript.ARMENIAN);
+        LANGUAGE_SCRIPT.put("hyw", UnicodeScript.ARMENIAN); // Western Armenian
         LANGUAGE_SCRIPT.put("kat", UnicodeScript.GEORGIAN);
         LANGUAGE_SCRIPT.put("ka", UnicodeScript.GEORGIAN);
         LANGUAGE_SCRIPT.put("amh", UnicodeScript.ETHIOPIC);
@@ -131,12 +147,30 @@ final class LanguageRuns {
         LANGUAGE_SCRIPT.put("bo", UnicodeScript.TIBETAN);
         LANGUAGE_SCRIPT.put("mya", UnicodeScript.MYANMAR);
         LANGUAGE_SCRIPT.put("my", UnicodeScript.MYANMAR);
+        LANGUAGE_SCRIPT.put("shn", UnicodeScript.MYANMAR); // Shan
         LANGUAGE_SCRIPT.put("khm", UnicodeScript.KHMER);
         LANGUAGE_SCRIPT.put("km", UnicodeScript.KHMER);
         LANGUAGE_SCRIPT.put("lao", UnicodeScript.LAO);
         LANGUAGE_SCRIPT.put("lo", UnicodeScript.LAO);
         LANGUAGE_SCRIPT.put("div", UnicodeScript.THAANA);
         LANGUAGE_SCRIPT.put("dv", UnicodeScript.THAANA);
+        LANGUAGE_SCRIPT.put("chr", UnicodeScript.CHEROKEE);
+        LANGUAGE_SCRIPT.put("sat", UnicodeScript.OL_CHIKI); // Santali
+
+        for (String lang : new String[] {"srp", "sr", "kaz", "kk"}) {
+            ALSO_WRITTEN_IN.put(lang, new UnicodeScript[] {UnicodeScript.LATIN});
+        }
+        for (String lang : new String[] {"uzb", "uz", "aze", "az", "tuk", "tk", "bos", "bs"}) {
+            ALSO_WRITTEN_IN.put(lang, new UnicodeScript[] {UnicodeScript.CYRILLIC});
+        }
+        for (String lang : new String[] {"snd", "sd", "kas", "ks", "sat"}) {
+            ALSO_WRITTEN_IN.put(lang, new UnicodeScript[] {UnicodeScript.DEVANAGARI});
+        }
+        ALSO_WRITTEN_IN.put("pan", new UnicodeScript[] {UnicodeScript.ARABIC}); // Shahmukhi
+        ALSO_WRITTEN_IN.put("pa", new UnicodeScript[] {UnicodeScript.ARABIC});
+        ALSO_WRITTEN_IN.put("mni", new UnicodeScript[] {UnicodeScript.MEETEI_MAYEK});
+        ALSO_WRITTEN_IN.put("uig", new UnicodeScript[] {UnicodeScript.LATIN, UnicodeScript.CYRILLIC});
+        ALSO_WRITTEN_IN.put("ug", new UnicodeScript[] {UnicodeScript.LATIN, UnicodeScript.CYRILLIC});
     }
 
     /**
@@ -159,8 +193,11 @@ final class LanguageRuns {
         return s != null ? s : UnicodeScript.LATIN;
     }
 
-    /** Japanese mixes kana with Han; Korean mixes Hangul with Hanja; Chinese is Han alone. */
-    private static boolean belongsTo(UnicodeScript script, String language) {
+    /**
+     * Whether {@code language}'s own text can be in {@code script}. Japanese
+     * mixes kana with Han; Korean mixes Hangul with Hanja; Chinese is Han alone.
+     */
+    static boolean writtenIn(String language, UnicodeScript script) {
         if ("jpn".equals(language) || "ja".equals(language)) {
             return script == UnicodeScript.HAN || script == UnicodeScript.HIRAGANA
                     || script == UnicodeScript.KATAKANA;
@@ -168,7 +205,18 @@ final class LanguageRuns {
         if ("kor".equals(language) || "ko".equals(language)) {
             return script == UnicodeScript.HANGUL || script == UnicodeScript.HAN;
         }
-        return script == scriptOf(language);
+        if (script == scriptOf(language)) {
+            return true;
+        }
+        final UnicodeScript[] also = ALSO_WRITTEN_IN.get(language);
+        if (also != null) {
+            for (UnicodeScript s : also) {
+                if (s == script) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /** "(", "[", "“", "¡", "¿", "«", "‹", "@", "#", or a straight quote (callers check it starts a word). */
@@ -195,8 +243,8 @@ final class LanguageRuns {
     private static final class FastLanguageResolver implements LanguageResolver {
         private final String ownLanguage;
         private final UnicodeScript ownScript;
-        private final boolean isJpn;
-        private final boolean isKor;
+        /** Devanagari is one of the language's scripts, not its main one (Sindhi). */
+        private final boolean ownDevanagari;
         private final Map<UnicodeScript, String> chosen;
         private final String numbers;
         private final String latinLanguage;
@@ -209,8 +257,8 @@ final class LanguageRuns {
         FastLanguageResolver(String text, String language, Map<UnicodeScript, String> chosen, String numbers) {
             this.ownLanguage = language;
             this.ownScript = scriptOf(language);
-            this.isJpn = "jpn".equals(language) || "ja".equals(language);
-            this.isKor = "kor".equals(language) || "ko".equals(language);
+            this.ownDevanagari = ownScript != UnicodeScript.DEVANAGARI
+                    && writtenIn(language, UnicodeScript.DEVANAGARI);
             this.chosen = (chosen != null && !chosen.isEmpty()) ? chosen : null;
             this.numbers = numbers;
             this.latinLanguage = resolveScript(UnicodeScript.LATIN);
@@ -254,7 +302,7 @@ final class LanguageRuns {
             }
 
             // Special handling for Devanagari: dynamic classification between Marathi and Hindi
-            if (script == UnicodeScript.DEVANAGARI) {
+            if (script == UnicodeScript.DEVANAGARI && !ownDevanagari) {
                 final String lang = devanagariSpans.languageAt(charIndex, defaultDevanagari);
                 lastScript = script;
                 lastLanguage = lang;
@@ -273,16 +321,7 @@ final class LanguageRuns {
         }
 
         private String resolveScript(UnicodeScript script) {
-            if (isJpn) {
-                if (script == UnicodeScript.HAN || script == UnicodeScript.HIRAGANA
-                        || script == UnicodeScript.KATAKANA) {
-                    return ownLanguage;
-                }
-            } else if (isKor) {
-                if (script == UnicodeScript.HANGUL || script == UnicodeScript.HAN) {
-                    return ownLanguage;
-                }
-            } else if (script == ownScript) {
+            if (writtenIn(ownLanguage, script)) {
                 return ownLanguage;
             }
 

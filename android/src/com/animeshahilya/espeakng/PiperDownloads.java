@@ -108,7 +108,9 @@ final class PiperDownloads {
                 // Crash strikes and suspensions describe this phone, not the user's choices.
                 || key.startsWith("piper_crash_strikes_") || key.startsWith(PiperCrashGuard.PREF_SUSPENDED)
                 // Which voices this phone used lately (startup preloading).
-                || key.equals(PiperVoiceStore.PREF_RECENT));
+                || key.equals(PiperVoiceStore.PREF_RECENT)
+                // A running sleep timer's deadline: a clock time on this phone.
+                || key.equals(VoiceSettings.PREF_SLEEP_MUTE_UNTIL));
     }
 
     /** One entry of voices.json. */
@@ -227,7 +229,8 @@ final class PiperDownloads {
                 }
             }
             if (c.modelPath == null || c.configPath == null || c.family.isEmpty()
-                    || !isSafeKey(c.key) || !isSafePath(c.modelPath) || !isSafePath(c.configPath)) {
+                    || !isSafeKey(c.key) || !isSafePath(c.modelPath) || !isSafePath(c.configPath)
+                    || !isMd5(c.modelMd5) || !isMd5(c.configMd5)) {
                 continue;
             }
             out.add(c);
@@ -362,6 +365,14 @@ final class PiperDownloads {
         return "high".equals(quality);
     }
 
+    /**
+     * A checksum is required (every download is verified against it) and
+     * names the shared copy's file, so it must be exactly 32 hex digits.
+     */
+    static boolean isMd5(String md5) {
+        return md5 != null && md5.matches("[0-9a-fA-F]{32}");
+    }
+
     static boolean isSafeKey(String key) {
         return key != null && key.matches("[A-Za-z0-9_.\\-]{1,128}") && !key.contains("..");
     }
@@ -424,7 +435,13 @@ final class PiperDownloads {
                         || code == HttpURLConnection.HTTP_SEE_OTHER || code == 307 || code == 308) {
                     final String location = conn.getHeaderField("Location");
                     if (location != null && !location.isEmpty()) {
-                        currentUrl = new URL(new URL(currentUrl), location).toExternalForm();
+                        final URL next = new URL(new URL(currentUrl), location);
+                        // The catalog pins every model's MD5: never let a
+                        // redirect move it off TLS.
+                        if (!"https".equalsIgnoreCase(next.getProtocol())) {
+                            throw new IOException("Insecure redirect to " + next);
+                        }
+                        currentUrl = next.toExternalForm();
                         continue;
                     }
                 }
@@ -580,7 +597,7 @@ final class PiperDownloads {
             }
             broadcastChanged(appContext, voice.key, assigned);
             finishSwap(appContext, storageContext, voice.key);
-            new Thread(() -> fetchNpuDecoders(appContext, storageContext), "piper-npu-fetch").start();
+            EspeakApp.runAsync(() -> fetchNpuDecoders(appContext, storageContext));
             return true;
         } catch (IOException | RuntimeException e) {
             logw("Shared install of " + voice.key + " failed", e);
@@ -961,7 +978,7 @@ final class PiperDownloads {
             // language and the old ~60 MB copy is removed to free the space.
             finishSwap(appContext, storageContext, key);
             // Snapdragon build: its NPU decoder follows (no-op elsewhere).
-            new Thread(() -> fetchNpuDecoders(appContext, storageContext), "piper-npu-fetch").start();
+            EspeakApp.runAsync(() -> fetchNpuDecoders(appContext, storageContext));
             // Feed the shared store so the next voice with this file skips its
             // download, and fold any older duplicate copies into links.
             try {

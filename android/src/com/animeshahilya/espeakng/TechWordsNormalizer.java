@@ -66,7 +66,7 @@ public final class TechWordsNormalizer {
                     + "|m[ -]?pin(?:'s)?"
                     + "|neft"
                     + "|rtgs"
-                    + "|imps"
+                    + "|(?-i:IMPS)" // lower case is the English word "imps"
                     + "|atm(?:'s)?"
                     + "|kyc"
                     + "|gps"
@@ -191,7 +191,7 @@ public final class TechWordsNormalizer {
         if (lower.equals("rtgs")) {
             return "R-T-G-S";
         }
-        if (lower.equals("imps")) {
+        if (raw.equals("IMPS")) {
             return "I-M-P-S";
         }
 

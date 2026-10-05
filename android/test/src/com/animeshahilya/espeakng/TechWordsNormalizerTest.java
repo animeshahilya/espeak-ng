@@ -105,7 +105,8 @@ public class TechWordsNormalizerTest {
 
         assertEquals("N-E-F-T", TechWordsNormalizer.process("neft"));
         assertEquals("R-T-G-S", TechWordsNormalizer.process("rtgs"));
-        assertEquals("I-M-P-S", TechWordsNormalizer.process("imps"));
+        assertEquals("I-M-P-S", TechWordsNormalizer.process("IMPS"));
+        assertEquals("little imps", TechWordsNormalizer.process("little imps"));
     }
 
     @Test

@@ -20,13 +20,27 @@ public class PiperCatalogTest {
             + "  \"hi/hi_IN/priyamvada/medium/hi_IN-priyamvada-medium.onnx\": {\"size_bytes\": 63516050,"
             + "   \"md5_digest\": \"7d5e20c2d1e72de8ed772f222e679626\"},"
             + "  \"hi/hi_IN/priyamvada/medium/hi_IN-priyamvada-medium.onnx.json\": {\"size_bytes\": 4973,"
-            + "   \"md5_digest\": \"abc\"},"
+            + "   \"md5_digest\": \"0123456789abcdef0123456789abcdef\"},"
             + "  \"hi/hi_IN/priyamvada/medium/MODEL_CARD\": {\"size_bytes\": 1, \"md5_digest\": \"x\"}},"
             + " \"aliases\": []},"
             + "\"../evil\": {\"key\": \"../evil\", \"name\": \"evil\","
             + " \"language\": {\"code\": \"en_US\", \"family\": \"en\"}, \"quality\": \"medium\","
-            + " \"files\": {\"a.onnx\": {}, \"a.onnx.json\": {}}}"
+            + " \"files\": {\"a.onnx\": {\"md5_digest\": \"0123456789abcdef0123456789abcdef\"}, \"a.onnx.json\": {\"md5_digest\": \"0123456789abcdef0123456789abcdef\"}}}"
             + "}";
+
+    @Test
+    public void rejectsMissingOrPathLikeChecksums() throws Exception {
+        // The MD5 names the shared copy (shared/<md5>.onnx) and every download
+        // is verified against it: no checksum or a path in it, no voice.
+        final String entry = "{\"x\": {\"key\": \"x\", \"name\": \"x\","
+                + " \"language\": {\"code\": \"en_US\", \"family\": \"en\"}, \"quality\": \"medium\","
+                + " \"files\": {\"a.onnx\": {\"md5_digest\": \"%s\"},"
+                + " \"a.onnx.json\": {\"md5_digest\": \"0123456789abcdef0123456789abcdef\"}}}}";
+        assertEquals(0, PiperDownloads.parseCatalog(String.format(entry, "../../files/x")).size());
+        assertEquals(0, PiperDownloads.parseCatalog(entry.replace("\"md5_digest\": \"%s\"", "")).size());
+        assertEquals(1, PiperDownloads.parseCatalog(
+                String.format(entry, "0123456789abcdef0123456789abcdef")).size());
+    }
 
     @Test
     public void parsesEntriesAndRejectsUnsafeKeys() throws Exception {
@@ -48,7 +62,7 @@ public class PiperCatalogTest {
         final String name = key.split("-")[1];
         return "\"" + key + "\": {\"key\": \"" + key + "\", \"name\": \"" + name + "\","
                 + " \"language\": {\"code\": \"en_US\", \"family\": \"en\"}, \"quality\": \""
-                + quality + "\", \"files\": {\"" + key + ".onnx\": {}, \"" + key + ".onnx.json\": {}}}";
+                + quality + "\", \"files\": {\"" + key + ".onnx\": {\"md5_digest\": \"0123456789abcdef0123456789abcdef\"}, \"" + key + ".onnx.json\": {\"md5_digest\": \"0123456789abcdef0123456789abcdef\"}}}";
     }
 
     @Test
@@ -73,7 +87,7 @@ public class PiperCatalogTest {
                 + " \"language\": {\"code\": \"ta_IN\", \"family\": \"ta\"}, \"quality\": \"medium\","
                 + " \"base_url\": \"https://huggingface.co/someone/voice/resolve/abc/\","
                 + " \"source\": \"someone\", \"license\": \"MIT\","
-                + " \"files\": {\"a.onnx\": {}, \"a.onnx.json\": {}}}}";
+                + " \"files\": {\"a.onnx\": {\"md5_digest\": \"0123456789abcdef0123456789abcdef\"}, \"a.onnx.json\": {\"md5_digest\": \"0123456789abcdef0123456789abcdef\"}}}}";
         final PiperDownloads.CatalogVoice remote = PiperDownloads.parseCatalog(json).get(0);
         assertEquals(PiperDownloads.REPO_BASE, remote.baseUrl);
         assertEquals(null, remote.source);

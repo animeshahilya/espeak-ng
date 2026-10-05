@@ -188,11 +188,13 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
         &cursor, espeakCHARS_UTF8, espeakPHONEMES_IPA, &terminator);
     const char *after = (const char *)cursor;
 
-    /* Guard against infinite loop if espeak does not advance cursor */
+    /* A decoder that does not advance would loop forever: step over one
+     * whole code point (never into the middle of a UTF-8 sequence). */
     if (cursor == (const void *)before) {
       const char *next = before + 1;
+      while (next < text_utf8 + text_len && ((unsigned char)*next & 0xC0) == 0x80) next++;
       cursor = (next < text_utf8 + text_len) ? (const void *)next : NULL;
-      after = (const char *)cursor;
+      after = cursor != NULL ? (const char *)cursor : text_utf8 + text_len;
     }
 
     /* The decoder hands back a pointer into our own buffer while text

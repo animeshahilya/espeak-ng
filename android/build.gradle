@@ -109,6 +109,9 @@ android {
         versionCode = 31
         versionName = "2.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // PiperModel.hasNpuRuntime: known here, so the standard build never
+        // loads ONNX Runtime just to ask (it did on every settings open).
+        buildConfigField "boolean", "SNAPDRAGON", project.hasProperty('snapdragon') ? "true" : "false"
 
         ndk {
             abiFilters 'arm64-v8a'

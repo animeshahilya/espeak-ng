@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -78,6 +79,22 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
                 index, 1, 0, 1, false, selected);
     }
 
+    /**
+     * One preset row: its name on the radio, its description under it, and
+     * both in the radio's content description - the description is hidden
+     * from TalkBack, so one swipe reads the whole option.
+     */
+    private RadioButton option(int rowId, int label, int description) {
+        final View row = mRadioGroup.findViewById(rowId);
+        final RadioButton radio = row.findViewById(R.id.radio_button);
+        final String name = textOf(getContext(), label);
+        final String desc = textOf(getContext(), description);
+        radio.setText(name);
+        ((TextView) row.findViewById(android.R.id.summary)).setText(desc);
+        radio.setContentDescription(name + ". " + desc);
+        return radio;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog stale = staleDialogUnless(SpeakPunctuationPreference.class);
@@ -86,23 +103,11 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
                 .inflate(R.layout.speak_punctuation_preference, null);
 
         mRadioGroup = root.findViewById(R.id.punctuation_radio_group);
-        mNone = mRadioGroup.findViewById(R.id.none_option).findViewById(R.id.radio_button);
-        mSome = mRadioGroup.findViewById(R.id.some_option).findViewById(R.id.radio_button);
-        mMost = mRadioGroup.findViewById(R.id.most_option).findViewById(R.id.radio_button);
-        mAll = mRadioGroup.findViewById(R.id.all_option).findViewById(R.id.radio_button);
-        mCustom = mRadioGroup.findViewById(R.id.custom_option).findViewById(R.id.radio_button);
-
-        // Set descriptions
-        mNone.setContentDescription(textOf(getContext(), R.string.punctuation_none)
-                + ". " + textOf(getContext(), R.string.punctuation_none_desc));
-        mSome.setContentDescription(textOf(getContext(), R.string.punctuation_some)
-                + ". " + textOf(getContext(), R.string.punctuation_some_desc));
-        mMost.setContentDescription(textOf(getContext(), R.string.punctuation_most)
-                + ". " + textOf(getContext(), R.string.punctuation_most_desc));
-        mAll.setContentDescription(textOf(getContext(), R.string.punctuation_all)
-                + ". " + textOf(getContext(), R.string.punctuation_all_desc));
-        mCustom.setContentDescription(textOf(getContext(), R.string.punctuation_custom)
-                + ". " + textOf(getContext(), R.string.punctuation_custom_desc));
+        mNone = option(R.id.none_option, R.string.punctuation_none, R.string.punctuation_none_desc);
+        mSome = option(R.id.some_option, R.string.punctuation_some, R.string.punctuation_some_desc);
+        mMost = option(R.id.most_option, R.string.punctuation_most, R.string.punctuation_most_desc);
+        mAll = option(R.id.all_option, R.string.punctuation_all, R.string.punctuation_all_desc);
+        mCustom = option(R.id.custom_option, R.string.punctuation_custom, R.string.punctuation_custom_desc);
 
         mPunctuationCharacters = root.findViewById(R.id.punctuation_characters);
         final TextInputLayout punctuationLayout = root.findViewById(R.id.punctuation_characters_layout);

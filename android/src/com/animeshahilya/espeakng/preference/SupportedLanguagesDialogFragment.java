@@ -73,6 +73,7 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
     private View mDialogView;
     private ListView mListView;
     private ArrayAdapter<LangEntry> mAdapter;
+    private androidx.core.view.AccessibilityDelegateCompat mItemDelegate;
     private final List<LangEntry> mAllEntries = new ArrayList<>();
 
     public static SupportedLanguagesDialogFragment newInstance(String key) {
@@ -131,22 +132,45 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
                     mListView.setItemChecked(position, mCurrentSelected.contains(item.value));
                     // Update checked state for the custom selector drawable
                     view.setActivated(mCurrentSelected.contains(item.value));
-                    androidx.core.view.ViewCompat.setAccessibilityDelegate(view,
-                            new androidx.core.view.AccessibilityDelegateCompat() {
-                                @Override
-                                public void onInitializeAccessibilityNodeInfo(View host,
-                                        androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
-                                    super.onInitializeAccessibilityNodeInfo(host, info);
-                                    info.addAction(new androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat(
-                                            androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_LONG_CLICK,
-                                            getContext().getString(R.string.piper_play_sample)));
-                                }
-                            });
+                    androidx.core.view.ViewCompat.setAccessibilityDelegate(view, mItemDelegate);
                 }
                 return view;
             }
         };
         mListView.setAdapter(mAdapter);
+        // A row with its own delegate doesn't get ListView's, which is what
+        // makes a row clickable for TalkBack and runs its actions; so this one
+        // does both, plus naming the touch-and-hold sample.
+        mItemDelegate = new androidx.core.view.AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host,
+                    androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setClickable(true);
+                info.addAction(androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
+                info.addAction(new androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat(
+                        androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_LONG_CLICK,
+                        getContext().getString(R.string.piper_play_sample)));
+            }
+
+            @Override
+            public boolean performAccessibilityAction(View host, int action, Bundle args) {
+                final int position = mListView.getPositionForView(host);
+                if (position != ListView.INVALID_POSITION) {
+                    if (action == androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_CLICK) {
+                        return mListView.performItemClick(host, position, mAdapter.getItemId(position));
+                    }
+                    if (action == androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_LONG_CLICK) {
+                        final LangEntry item = mAdapter.getItem(position);
+                        if (item != null) {
+                            playLanguageSample(preference, item);
+                            return true;
+                        }
+                    }
+                }
+                return super.performAccessibilityAction(host, action, args);
+            }
+        };
 
         mListView.setOnItemClickListener((parent, view, position, id) -> {
             LangEntry item = mAdapter.getItem(position);

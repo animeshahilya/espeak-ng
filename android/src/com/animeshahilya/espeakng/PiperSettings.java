@@ -230,6 +230,14 @@ final class PiperSettings {
                     // Not registered.
                 }
             }
+
+            @Override
+            public void onDestroy(@NonNull LifecycleOwner owner) {
+                // PAGES values hold their own screen (and this fragment), so the
+                // weak keys never clear: drop this fragment's pages or every
+                // recreation (rotation, theme) leaks the activity.
+                PAGES.keySet().removeIf(s -> s.getPreferenceManager() == fragment.getPreferenceManager());
+            }
         });
     }
 
@@ -419,7 +427,9 @@ final class PiperSettings {
         String region = config.languageCode;
         final int us = region == null ? -1 : region.indexOf('_');
         if (us > 0) {
-            region = new Locale.Builder().setRegion(region.substring(us + 1)).build().getDisplayCountry();
+            final String code = region.substring(us + 1);
+            final String name = countryName(code);
+            region = name != null ? name : code;
         }
         return context.getString(R.string.piper_voice_entry, config.displayName(),
                 region == null ? "" : region, qualityLabel(context, config.quality));
@@ -646,9 +656,25 @@ final class PiperSettings {
 
     /** "India" in the phone's language, from the voice's region code. */
     private static String regionName(PiperDownloads.CatalogVoice v) {
-        final String name = v.region == null || v.region.isEmpty() ? null
-                : new Locale.Builder().setRegion(v.region).build().getDisplayCountry();
-        return name == null || name.isEmpty() || name.equals(v.region) ? v.country : name;
+        final String name = countryName(v.region);
+        return name == null || name.equals(v.region) ? v.country : name;
+    }
+
+    /**
+     * "India" from "IN"; null for an empty or malformed code. Region codes come
+     * from the remote catalog and imported configs, and Locale.Builder throws on
+     * a bad one - which took the whole page down with it.
+     */
+    static String countryName(String region) {
+        if (region == null || region.isEmpty()) {
+            return null;
+        }
+        try {
+            final String name = new Locale.Builder().setRegion(region).build().getDisplayCountry();
+            return name.isEmpty() ? null : name;
+        } catch (java.util.IllformedLocaleException e) {
+            return null;
+        }
     }
 
     /** "India, Standard, 63 MB, 2 speakers, downloaded" for a catalog voice; no country under its heading. */
@@ -699,10 +725,10 @@ final class PiperSettings {
             addSampleRow(context, s, v);
             if (PiperDownloads.pendingKeys(storage).contains(v.key)) {
                 s.addPreference(row(context, KEY_PROGRESS, progressText(context, v.key),
-                        context.getString(R.string.piper_action_cancel_download), () -> new Thread(() -> {
+                        context.getString(R.string.piper_action_cancel_download), () -> EspeakApp.runAsync(() -> {
                             PiperDownloads.cancel(context.getApplicationContext(), storage, v.key);
                             new Handler(Looper.getMainLooper()).post(() -> onShown(s));
-                        }, "piper-cancel").start()));
+                        })));
                 return;
             }
             final PiperDownloads.CatalogVoice compact =
@@ -814,7 +840,7 @@ final class PiperSettings {
                         Formatter.formatShortFileSize(context, voice.sizeBytes()),
                         speaksText(context, prefs, voice)), null));
         s.addPreference(row(context, null, context.getString(R.string.piper_action_test),
-                context.getString(R.string.piper_action_test_summary), () -> testVoice(context, voice)));
+                context.getString(R.string.piper_action_test_summary), () -> testVoice(context, voice, true)));
         if (!voice.key.equals(PiperVoiceStore.assignedKey(prefs, voice.languageKey()))) {
             s.addPreference(row(context, null, context.getString(R.string.piper_use_for, language),
                     context.getString(R.string.piper_use_for_summary), () -> {
@@ -1037,7 +1063,7 @@ final class PiperSettings {
                         ? current : config.defaultSpeakerId, (d, which) -> {
                     prefs.edit().putString(PiperVoiceStore.PREF_SPEAKER_PREFIX + voice.key,
                             String.valueOf(which)).apply();
-                    testVoice(context, voice);
+                    testVoice(context, voice, false);
                 })
                 .setPositiveButton(android.R.string.ok, null)
                 .setOnDismissListener(d -> done.run())
@@ -1078,7 +1104,7 @@ final class PiperSettings {
                     } else {
                         prefs.edit().putString(pref, values[which - 1]).apply();
                     }
-                    testVoice(context, voice);
+                    testVoice(context, voice, false);
                 })
                 .setPositiveButton(android.R.string.ok, null)
                 .setOnDismissListener(d -> done.run())
@@ -1112,16 +1138,22 @@ final class PiperSettings {
     /**
      * Speaks the sample sentence with this voice directly (loaded here if
      * needed), whether or not it is the voice chosen for its language - so a
-     * voice can be heard before it is picked. Tapping again while playing stops
-     * playback.
+     * voice can be heard before it is picked.
+     *
+     * @param toggle true for the Test row: tapping again while playing only
+     *               stops. The speaker and speed pickers pass false, so a new
+     *               choice replaces the sample instead of silencing it.
      */
-    private static void testVoice(final Context context, final PiperVoiceStore.Installed voice) {
+    private static void testVoice(final Context context, final PiperVoiceStore.Installed voice,
+                                  final boolean toggle) {
         final Context app = context.getApplicationContext();
         synchronized (PiperSettings.class) {
             if (sTestTrack != null && sTestTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
                 stopPlayback();
-                toast(app, app.getString(R.string.test_voice_stopped));
-                return;
+                if (toggle) {
+                    toast(app, app.getString(R.string.test_voice_stopped));
+                    return;
+                }
             }
         }
         if (PiperEngine.get().getLoaded(voice.key) == null) {

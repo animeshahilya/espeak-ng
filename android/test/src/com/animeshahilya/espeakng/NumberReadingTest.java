@@ -57,8 +57,11 @@ public class NumberReadingTest {
         assertEquals("1, 2, 3, 4, 5, 6", TextPreprocessor.formatDigitGrouping("123456", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
         // Embedded thousands comma normalization in single digits mode
         assertEquals("1, 2, 3, 4", TextPreprocessor.formatDigitGrouping("1,234", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
-        // Decimal point preservation
-        assertEquals("3. 1, 4", TextPreprocessor.formatDigitGrouping("3.14", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
+        // Decimal marks stay attached, so the point is still spoken
+        assertEquals("3.1, 4", TextPreprocessor.formatDigitGrouping("3.14", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
+        assertEquals("3,1, 4", TextPreprocessor.formatDigitGrouping("3,14", VoiceSettings.DIGIT_GROUP_SINGLE_PAUSE, 6));
+        // Indian grouping commas are separators too
+        assertEquals("1 2 3 4 5 6 7", TextPreprocessor.formatDigitGrouping("12,34,567", VoiceSettings.DIGIT_GROUP_SINGLE, 6));
 
         // Pairs with Pause: 1234 -> 12, 34 (Twelve… Thirty-Four)
         assertEquals("12, 34", TextPreprocessor.formatDigitGrouping("1234", VoiceSettings.DIGIT_GROUP_DOUBLE_PAUSE, 6));
@@ -72,6 +75,8 @@ public class NumberReadingTest {
         assertEquals("1, 234, 567", TextPreprocessor.formatDigitGrouping("1,234,567", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 6));
         assertEquals("123, 456, 789", TextPreprocessor.formatDigitGrouping("123456789", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 6));
         assertEquals("12345", TextPreprocessor.formatDigitGrouping("12345", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 6));
+        // A decimal comma ends the run: German 1234,56 keeps its fraction
+        assertEquals("1, 234,56", TextPreprocessor.formatDigitGrouping("1234,56", VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE, 4));
     }
 
     @Test

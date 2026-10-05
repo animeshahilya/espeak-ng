@@ -212,6 +212,20 @@ public class SeekBarPreference extends PersistingDialogPreference
     }
 
     /**
+     * The standalone Rate boost row changed (phones): the rate shown here and
+     * in the summary is the boosted one, so follow it.
+     */
+    public void setRateBoost(boolean enabled, int multiplier)
+    {
+        for (Parameter parameter : mParameters) {
+            if (parameter.hasRateBoost) {
+                parameter.enableRateBoost(enabled, multiplier);
+            }
+        }
+        setSummary(buildSummary());
+    }
+
+    /**
      * The preference row's summary: the value on its own when the preference
      * owns a single parameter, otherwise each parameter named and listed.
      */

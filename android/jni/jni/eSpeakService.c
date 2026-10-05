@@ -447,8 +447,9 @@ JNIEXPORT jboolean
 JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSetVoiceByName(
     JNIEnv *env, jobject object, jstring name) {
   const char *c_name = name ? (*env)->GetStringUTFChars(env, name, NULL) : NULL;
+  if (c_name == NULL) return JNI_FALSE; /* no name, or OOM with an exception pending */
 
-  if (DEBUG) LOGV("%s(name=%s)", __FUNCTION__, c_name ? c_name : "(null)");
+  if (DEBUG) LOGV("%s(name=%s)", __FUNCTION__, c_name);
 
   const espeak_ERROR result = espeak_SetVoiceByName(c_name);
 
@@ -600,11 +601,22 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSynthesize(
 
   free(c_text);
 
+  const int stopped =
+      atomic_load(&stop_generation) != atomic_load(&current_synthesis_generation);
+  if (stopped) {
+    /* Here rather than in nativeStop: espeak_Cancel() resets every speech
+     * parameter (rate tables, the translator's intonation) from
+     * saved_parameters, which raced the synthesis still running on this
+     * thread when called from the framework's stop thread. On this thread
+     * it restores parameters an aborted SSML <prosody> left behind. */
+    espeak_Cancel();
+  }
+
   if (result == EE_OK) {
     return JNI_TRUE;
   }
 
-  if (atomic_load(&stop_generation) != atomic_load(&current_synthesis_generation)) {
+  if (stopped) {
     if (DEBUG) LOGV("espeak_Synth: stopped early");
     return JNI_TRUE;
   }
@@ -623,8 +635,9 @@ JNIEXPORT jboolean
 JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeStop(
     JNIEnv *env, jobject object) {
   if (DEBUG) LOGV("%s", __FUNCTION__);
+  /* The synthesis callback sees the new generation and aborts; espeak_Cancel()
+   * cannot interrupt a synchronous synthesis (see nativeSynthesize). */
   atomic_fetch_add(&stop_generation, 1);
-  espeak_Cancel();
 
   return JNI_TRUE;
 }

@@ -430,10 +430,13 @@ final class PiperEngine {
             if (old != null && old != model) {
                 evicted.add(old);
             }
+            // Budget in models, not voices: Rasa voices share one session
+            // (PiperModel.withConfig), so a second one costs no memory.
             final Iterator<Map.Entry<String, PiperModel>> it = mLoaded.entrySet().iterator();
-            while (mLoaded.size() > mMaxLoaded && it.hasNext()) {
+            while (distinctModels() > mMaxLoaded && it.hasNext()) {
                 final Map.Entry<String, PiperModel> eldest = it.next();
-                if (!eldest.getKey().equals(key)) {
+                // One sharing the new voice's session frees nothing.
+                if (!eldest.getKey().equals(key) && !eldest.getValue().sharesSessionWith(model)) {
                     evicted.add(eldest.getValue());
                     it.remove();
                 }
@@ -442,6 +445,21 @@ final class PiperEngine {
         for (PiperModel m : evicted) {
             m.close(); // waits for an in-flight inference on it
         }
+    }
+
+    /** Loaded models counting each shared session once; caller holds mLoaded. */
+    private int distinctModels() {
+        final List<PiperModel> seen = new ArrayList<>();
+        outer:
+        for (PiperModel m : mLoaded.values()) {
+            for (PiperModel s : seen) {
+                if (m.sharesSessionWith(s)) {
+                    continue outer;
+                }
+            }
+            seen.add(m);
+        }
+        return seen.size();
     }
 
     void unload(String key) {
@@ -465,14 +483,24 @@ final class PiperEngine {
         mLoader.execute(() -> trim(true));
     }
 
-    /** Memory pressure: keep only the most recently used voice. */
+    /**
+     * Memory pressure: keep only the most recently used voice (and voices on
+     * its shared session, which cost nothing more).
+     */
     void trim(boolean all) {
         final List<PiperModel> evicted = new ArrayList<>();
         synchronized (mLoaded) {
+            PiperModel newest = null;
+            for (PiperModel m : mLoaded.values()) {
+                newest = m; // access order: the last is the most recent
+            }
             final Iterator<Map.Entry<String, PiperModel>> it = mLoaded.entrySet().iterator();
-            while (it.hasNext() && mLoaded.size() > (all ? 0 : 1)) {
-                evicted.add(it.next().getValue());
-                it.remove();
+            while (it.hasNext()) {
+                final PiperModel m = it.next().getValue();
+                if (all || (m != newest && !m.sharesSessionWith(newest))) {
+                    evicted.add(m);
+                    it.remove();
+                }
             }
         }
         for (PiperModel m : evicted) {

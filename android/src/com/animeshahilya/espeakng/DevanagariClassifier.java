@@ -39,8 +39,7 @@ import java.util.Set;
  *           frequent nominal visarga {@code ः} (U+0903, e.g. नमः, बालकः, रामः).</li>
  *       <li><b>Marathi:</b> Unique {@code ऱ} (U+0931, RRA / eyelash reph, e.g. कऱ्हाड, तऱ्हा)
  *           and ubiquitous {@code ळ} (U+0933, LLA, e.g. वेळ, शाळा, काळजी, डोळे).</li>
- *       <li><b>Konkani:</b> Shares {@code ळ} with Marathi; distinctively features frequent
- *           final nasalization ({@code -ां}, {@code -ें}) and Goan lexicon.</li>
+ *       <li><b>Konkani:</b> Shares {@code ळ} with Marathi; told apart by its lexicon.</li>
  *       <li><b>Nepali:</b> Standalone single-letter conjunction {@code "र"} ("and"),
  *           plural suffix {@code -हरू}/{@code -हरु}, and case marker {@code -लाई}.</li>
  *     </ul>
@@ -62,6 +61,14 @@ import java.util.Set;
  *
  * <p>Prevents cross-language voice hijacking (e.g. Hindi Priyamvada reading Marathi,
  * Nepali, Sanskrit, or Bhojpuri text incorrectly).
+ *
+ * <p>The word lists overlap (का, करता, केले, ही, तो are everyday Hindi and
+ * also listed for other languages), so evidence is only trusted in bulk:
+ * a whole sentence is one language, and it leaves the default Devanagari
+ * language only when another one leads by {@link #SWITCH_MARGIN} - a
+ * distinctive letter (ळ, ऱ), a word only one language uses, or two
+ * marker words. A wrong switch moves
+ * text off the user's chosen voice; a missed one reads it as before.
  */
 final class DevanagariClassifier {
 
@@ -478,11 +485,6 @@ final class DevanagariClassifier {
                 || c == ';' || c == '\n' || c == '\r';
     }
 
-    private static boolean isClauseDelimiter(char c) {
-        return c == ',' || c == ':' || c == '\u2014' || c == '-' || c == '(' || c == ')'
-                || c == '"' || c == '\'';
-    }
-
     private static void processSentence(String text, int start, int end,
                                         String ownLanguage, String chosenDevanagari,
                                         List<Span> out) {
@@ -501,146 +503,40 @@ final class DevanagariClassifier {
             return; // No Devanagari in this sentence
         }
 
-        // Check if sentence has conflicting markers from multiple languages
-        final int[] sentenceScores = scoreRange(text, devStart, devEnd);
-        int maxScore = 0;
-        int secondMaxScore = 0;
-        for (int i = 0; i < NUM_LANGS; i++) {
-            final int sc = sentenceScores[i];
-            if (sc > maxScore) {
-                secondMaxScore = maxScore;
-                maxScore = sc;
-            } else if (sc > secondMaxScore) {
-                secondMaxScore = sc;
-            }
-        }
-
-        // Only treat as conflicted if at least 2 languages have substantial conflicting evidence
-        if (secondMaxScore >= 5 && maxScore >= 5) {
-            processConflictedSentence(text, devStart, devEnd, sentenceScores, ownLanguage, chosenDevanagari, out);
-        } else {
-            // Cohesive sentence: determine language for the whole Devanagari span
-            final String lang = decideLanguage(sentenceScores, ownLanguage, chosenDevanagari);
-            out.add(new Span(devStart, devEnd, lang));
-        }
-    }
-
-    private static void processConflictedSentence(String text, int devStart, int devEnd,
-                                                  int[] sentenceScores,
-                                                  String ownLanguage, String chosenDevanagari,
-                                                  List<Span> out) {
-        int spanStart = devStart;
-        int currentLangIdx = -1;
-
-        int sentenceWinner = -1;
-        int maxSc = 0;
-        for (int l = 0; l < NUM_LANGS; l++) {
-            if (sentenceScores[l] > maxSc) {
-                maxSc = sentenceScores[l];
-                sentenceWinner = l;
-            }
-        }
-
-        int tokenStart = -1;
-        for (int i = devStart; i <= devEnd; i++) {
-            final boolean isEnd = (i == devEnd);
-            final int cp = isEnd ? 0 : Character.codePointAt(text, i);
-            final boolean isDevWord = !isEnd && isDevanagariWordChar(cp);
-
-            if (isDevWord) {
-                if (tokenStart < 0) {
-                    tokenStart = i;
-                }
-            } else if (tokenStart >= 0) {
-                final String word = text.subSequence(tokenStart, i).toString();
-                final int wordLangIdx = classifyWord(word, currentLangIdx, sentenceWinner);
-
-                if (wordLangIdx >= 0) {
-                    if (currentLangIdx < 0) {
-                        currentLangIdx = wordLangIdx;
-                    } else if (wordLangIdx != currentLangIdx) {
-                        if (tokenStart > spanStart) {
-                            final String lang = toOutputCode(currentLangIdx, ownLanguage, chosenDevanagari);
-                            out.add(new Span(spanStart, tokenStart, lang));
-                            spanStart = tokenStart;
-                        }
-                        currentLangIdx = wordLangIdx;
-                    }
-                }
-                tokenStart = -1;
-            }
-        }
-
-        if (devEnd > spanStart) {
-            final String lang = currentLangIdx >= 0
-                    ? toOutputCode(currentLangIdx, ownLanguage, chosenDevanagari)
-                    : decideLanguage(sentenceScores, ownLanguage, chosenDevanagari);
-            out.add(new Span(spanStart, devEnd, lang));
-        }
-    }
-
-    private static void processClause(String text, int start, int end,
-                                      String ownLanguage, String chosenDevanagari,
-                                      List<Span> out) {
-        int devStart = -1;
-        int devEnd = -1;
-        for (int i = start; i < end; i++) {
-            if (isDevanagariCodePoint(text.codePointAt(i))) {
-                if (devStart < 0) {
-                    devStart = i;
-                }
-                devEnd = i + 1;
-            }
-        }
-        if (devStart < 0) {
-            return;
-        }
-
         final int[] scores = scoreRange(text, devStart, devEnd);
-        final String lang = decideLanguage(scores, ownLanguage, chosenDevanagari);
-        out.add(new Span(devStart, devEnd, lang));
+        out.add(new Span(devStart, devEnd, decideLanguage(scores, ownLanguage, chosenDevanagari)));
     }
+
+    /** Points another language must lead the default one by to take a sentence. */
+    static final int SWITCH_MARGIN = 4;
 
     private static String decideLanguage(int[] scores, String ownLanguage, String chosenDevanagari) {
-        int bestLang = -1;
-        int maxScore = 0;
-        int secondScore = 0;
+        int defaultIdx = -1;
+        if (ownLanguage != null && LanguageRuns.isDevanagariLanguage(ownLanguage)) {
+            defaultIdx = languageToIndex(ownLanguage);
+        }
+        if (defaultIdx < 0) {
+            defaultIdx = languageToIndex(chosenDevanagari);
+        }
+        int best = -1;
         for (int i = 0; i < NUM_LANGS; i++) {
-            if (scores[i] > maxScore) {
-                secondScore = maxScore;
-                maxScore = scores[i];
-                bestLang = i;
-            } else if (scores[i] > secondScore) {
-                secondScore = scores[i];
+            if (scores[i] > 0 && (best < 0 || scores[i] > scores[best])) {
+                best = i;
             }
         }
-
-        if (maxScore > 0 && maxScore > secondScore) {
-            return toOutputCode(bestLang, ownLanguage, chosenDevanagari);
+        final int defaultScore = defaultIdx >= 0 ? scores[defaultIdx] : scores[IDX_HINDI];
+        if (best >= 0 && best != defaultIdx && scores[best] - defaultScore >= SWITCH_MARGIN) {
+            return toOutputCode(best, ownLanguage, chosenDevanagari);
         }
-
-        // Tied scores: check if ownLanguage or chosenDevanagari is among the winners
-        if (maxScore > 0) {
-            final int ownIdx = languageToIndex(ownLanguage);
-            if (ownIdx >= 0 && scores[ownIdx] == maxScore) {
-                return toOutputCode(ownIdx, ownLanguage, chosenDevanagari);
-            }
-            final int chosenIdx = languageToIndex(chosenDevanagari);
-            if (chosenIdx >= 0 && scores[chosenIdx] == maxScore) {
-                return toOutputCode(chosenIdx, ownLanguage, chosenDevanagari);
-            }
-            return toOutputCode(bestLang, ownLanguage, chosenDevanagari);
-        }
-
-        // Neutral or tied with 0 score (e.g. proper nouns like "भारत"):
-        // If speaking voice is in Devanagari, preserve it.
+        // Not enough evidence: the voice's own Devanagari language, else the
+        // one chosen for the script, else Hindi.
         if (ownLanguage != null && LanguageRuns.isDevanagariLanguage(ownLanguage)) {
             return ownLanguage;
         }
         if (chosenDevanagari != null && !chosenDevanagari.isEmpty()) {
             return chosenDevanagari;
         }
-        return "hi".equals(ownLanguage) ? "hi" : LANG_HINDI;
+        return LANG_HINDI;
     }
 
     /**
@@ -727,12 +623,40 @@ final class DevanagariClassifier {
                 }
             } else if (tokenStart >= 0) {
                 final String word = text.subSequence(tokenStart, i).toString();
-                scoreWord(word, scores);
+                if (!scoreFinalParticle(word, text, i, scores)) {
+                    scoreWord(word, scores);
+                }
                 tokenStart = -1;
             }
         }
 
         return scores;
+    }
+
+    /**
+     * Sentence-final का (yes/no question: "तू जेवलास का?") and ये ("come":
+     * "इकडे ये") are Marathi; in Hindi का is a postposition and ये "these",
+     * neither of which ends a sentence.
+     *
+     * @return true when {@code word} was such a particle (and scored)
+     */
+    private static boolean scoreFinalParticle(String word, CharSequence text, int after,
+                                              int[] scores) {
+        if (!"का".equals(word) && !"ये".equals(word)) {
+            return false;
+        }
+        int i = after;
+        while (i < text.length() && Character.isWhitespace(text.charAt(i))) {
+            i++;
+        }
+        final char next = i < text.length() ? text.charAt(i) : ' ';
+        final boolean finalWord = next == ' ' || next == '?' || next == '!' || next == '.'
+                || next == '।';
+        if (!finalWord || ("का".equals(word) && next != '?')) {
+            return false;
+        }
+        scores[IDX_MARATHI] += 4;
+        return true;
     }
 
     private static void scoreWord(String word, int[] scores) {
@@ -804,39 +728,25 @@ final class DevanagariClassifier {
             scores[IDX_MARATHI] += 4;
         }
 
-        // 4. Suffix and morphological rules
+        // 4. Hindi vs Marathi: the pair most often mixed up (Priyamvada kept
+        // Marathi). Marathi attaches its case markers and auxiliaries to the
+        // word; Hindi writes them apart and has its own verb endings.
+        scoreHindiMarathi(word, scores);
+
+        // 5. Suffix and morphological rules
         if (len > 3) {
-            // Nepali suffixes: -हरू / -हरु, -लाई, -बाट, -सँग, -संग
+            // Nepali suffixes: -हरू / -हरु, -लाई, -बाट
             if (word.endsWith("हरू") || word.endsWith("हरु")) {
                 scores[IDX_NEPALI] += 8;
             } else if (word.endsWith("लाई")) {
                 scores[IDX_NEPALI] += 6;
             } else if (word.endsWith("बाट")) {
                 scores[IDX_NEPALI] += 5;
-            } else if (word.endsWith("सँग") || word.endsWith("संग")) {
-                scores[IDX_NEPALI] += 4;
             }
 
             // Marathi suffix: -मध्ये
             if (len > 5 && word.endsWith("मध्ये")) {
                 scores[IDX_MARATHI] += 5;
-            }
-
-            // Bhojpuri verbal suffix: -तानी
-            if (word.endsWith("तानी")) {
-                scores[IDX_BHOJPURI] += 6;
-            }
-
-            // Maithili honorific verbal suffix: -लाह / -थि
-            if (word.endsWith("लाह") || (len > 4 && word.endsWith("थि"))) {
-                scores[IDX_MAITHILI] += 4;
-            }
-
-            // Chhattisgarhi past -इस or future -बो
-            if (word.endsWith("इस")) {
-                scores[IDX_CHHATTISGARHI] += 4;
-            } else if (word.endsWith("बो")) {
-                scores[IDX_CHHATTISGARHI] += 3;
             }
 
             // Sanskrit nominal endings: -ः (visarga) or -म् (halanta ma)
@@ -846,58 +756,69 @@ final class DevanagariClassifier {
                 scores[IDX_SANSKRIT] += 3;
             }
         }
+    }
 
-        // Konkani anusvara endings: -ां or -ें
-        if (len >= 2 && (word.endsWith("ां") || word.endsWith("ें"))) {
-            scores[IDX_KONKANI] += 2;
+    /** Everyday words only one of the two uses (Marathi पाणी, Hindi पानी). */
+    private static final Set<String> MARATHI_ONLY = createSet(new String[] {
+            "मी", "उद्या", "आत्ता", "इकडे", "तिकडे", "कुठे", "इथे", "तिथे", "किती",
+            "पाणी", "पाऊस", "लवकर", "उशिरा", "हवं", "हवंय", "नको", "होय", "बरं", "दार", "लांब", "टाका",
+            "मुले", "मुलगा", "मुलगी", "जेवण", "चहा", "माहीत", "वाजले", "आवडतो", "आवडते",
+            "आवडली", "आणली", "आणला", "आणले", "झाले", "झाला", "झाली", "झालं", "गेली", "गेलो",
+            "आलो", "आली", "दिलं", "केलं", "घ्या", "द्या", "बघ", "बघा", "सांग", "सांगा",
+            "तुझं", "माझं", "कसं", "काय", "आम्ही", "आपल्याला", "त्यांना",
+            "पुढे", "मागे", "बाहेर", "सगळे", "सगळं", "थोडं",
+    });
+    private static final Set<String> HINDI_ONLY = createSet(new String[] {
+            "है", "हैं", "था", "थे", "हूँ", "हूं", "उसकी", "उसका", "उसके", "उनकी",
+            "मैं", "हम", "भी", "कल", "पानी", "बारिश", "यहाँ", "यहां", "वहाँ", "वहां",
+            "कितने", "कितना", "कितनी", "बजे", "चलो", "खाना", "तैयार", "देर", "हुए", "हुआ",
+            "हुई", "दरवाज़ा", "दरवाजा", "लोग", "लोगों", "अभी", "कभी", "सभी", "वाला", "वाली",
+            "वाले", "लिए", "साथ", "बहुत", "ज़्यादा", "ज्यादा", "थोड़ा", "मैंने", "उसने",
+            "तुमने", "हमने", "आपने", "उन्होंने", "चाहिए", "दोबारा", "करो", "आओ", "जाओ", "लो",
+    });
+
+    private static void scoreHindiMarathi(String word, int[] scores) {
+        if (MARATHI_ONLY.contains(word)) {
+            scores[IDX_MARATHI] += 4;
+        }
+        if (HINDI_ONLY.contains(word)) {
+            scores[IDX_HINDI] += 4;
+        }
+        final int len = word.length();
+        if (len < 4) {
+            return;
+        }
+        // Marathi: genitive/dative/locative/ablative markers and verb forms
+        // fused onto the word (त्यांच्या, निघायला, जाणार, करतात, बाजारातून,
+        // जाऊया, जेवलास, चाललंय, येईल).
+        if (endsWithAny(word, "च्या", "ाचा", "ाची", "ाचे", "ाचं", "ांचा", "ांची", "ांचे", "ांना",
+                "ायला", "ायचं", "ायचे", "ायची", "ायचा", "णार", "णारा", "णारी", "णारे",
+                "ातून", "ाहून", "ाकडे", "ासाठी", "ापर्यंत", "ामुळे", "मध्ये",
+                "ऊया", "ूया", "लास", "लीस", "लेस", "तोय", "तेय", "लंय", "तंय", "ताय", "णारंय")) {
+            scores[IDX_MARATHI] += 4;
+        } else if ((endsWithAny(word, "तात", "ईल", "ाला", "ात", "ेत", "तो")
+                        && !word.endsWith("वाला"))
+                // possessive आमचा/तुमची (not Hindi बच्चा), locative स्टेशनवर
+                || (endsWithAny(word, "चा", "ची", "चे", "चं") && !word.contains("च्च"))
+                || (len >= 5 && word.endsWith("वर"))) {
+            scores[IDX_MARATHI] += 2;
+        }
+        // Hindi: future and plural/oblique forms Marathi does not have
+        // (करेंगे, आएगी, बच्चों, लगाएँ, पढ़ें).
+        if (endsWithAny(word, "ेंगे", "ेगा", "ेगी", "ोगे", "ोगी", "ूँगा", "ूंगा", "ों", "ियों",
+                "ाएँ", "ाएं", "ाइए", "िए", "ें")
+                && !KONKANI_WORDS.contains(word) && !MARATHI_WORDS.contains(word)) {
+            scores[IDX_HINDI] += 3;
         }
     }
 
-    private static int classifyWord(String word, int currentLangIdx, int sentenceWinner) {
-        final int[] wordScores = new int[NUM_LANGS];
-        scoreWord(word, wordScores);
-
-        // Check if word contains character-level indicators
-        for (int i = 0; i < word.length(); i++) {
-            final char c = word.charAt(i);
-            if (c == CHAR_AVAGRAHA) {
-                wordScores[IDX_SANSKRIT] += 15;
-            } else if (c == CHAR_RRA) {
-                wordScores[IDX_MARATHI] += 12;
-            } else if (c == CHAR_LLA) {
-                wordScores[IDX_MARATHI] += 6;
-                wordScores[IDX_KONKANI] += 4;
-            } else if (c == '\u0930' && i + 2 < word.length()
-                    && word.charAt(i + 1) == '\u094D' && word.charAt(i + 2) == '\u200D') {
-                wordScores[IDX_MARATHI] += 12;
-                i += 2;
+    private static boolean endsWithAny(String word, String... endings) {
+        for (String e : endings) {
+            if (word.endsWith(e)) {
+                return true;
             }
         }
-
-        int bestIdx = -1;
-        int maxScore = 0;
-        for (int i = 0; i < NUM_LANGS; i++) {
-            if (wordScores[i] > maxScore) {
-                maxScore = wordScores[i];
-                bestIdx = i;
-            }
-        }
-
-        if (maxScore == 0) {
-            return -1; // Neutral word
-        }
-
-        // Hysteresis: if the current language has positive score on this word and ties for best, stay
-        if (currentLangIdx >= 0 && wordScores[currentLangIdx] == maxScore) {
-            return currentLangIdx;
-        }
-
-        // Initial tie-break: if starting a sentence, prefer the sentence's overall winning language
-        if (currentLangIdx < 0 && sentenceWinner >= 0 && wordScores[sentenceWinner] == maxScore) {
-            return sentenceWinner;
-        }
-
-        return bestIdx;
+        return false;
     }
 
     private static boolean isDevanagariWordChar(int cp) {

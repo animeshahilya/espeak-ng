@@ -344,7 +344,7 @@
             android:summary="@string/setting_normalize_tech_words_summary"
             android:summaryOn="@string/setting_normalize_tech_words_summary_on"
             android:summaryOff="@string/setting_normalize_tech_words_summary_off"
-            android:defaultValue="true"
+            android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <!-- not on Wear -->
         <SwitchPreferenceCompat

@@ -381,8 +381,13 @@ public class VoiceSettings {
      * costing intelligibility rather than just speed.
      */
     public int getRateBoostMultiplier() {
+        return boostMultiplier(getRateBoostLevel());
+    }
+
+    /** The multiplier a stored {@link #PREF_RATE_BOOST_LEVEL} value gives. */
+    static int boostMultiplier(String level) {
         try {
-            return clampBoost(Integer.parseInt(getRateBoostLevel()));
+            return clampBoost(Integer.parseInt(level));
         } catch (NumberFormatException e) {
             return RATE_BOOST_MULTIPLIER; // off, or a malformed value
         }
@@ -630,7 +635,7 @@ public class VoiceSettings {
     }
 
     public boolean isNormalizeTechWordsEnabled() {
-        return mPreferences.getBoolean(PREF_NORMALIZE_TECH_WORDS, true);
+        return mPreferences.getBoolean(PREF_NORMALIZE_TECH_WORDS, false);
     }
 
     // Sleep timer: pause all eSpeak speech until a deadline.
@@ -663,9 +668,15 @@ public class VoiceSettings {
         }
     }
 
-    /** True while the mute window covers now; expired windows read as off. */
+    /**
+     * True while the mute window covers now; expired windows read as off, and
+     * so does a deadline further out than any timer can set (the clock was
+     * moved back, or a restored backup carried it): otherwise eSpeak would
+     * stay silent for days, with no speech left to switch it back on.
+     */
     public static boolean isSleepMuted(SharedPreferences prefs) {
-        return prefs.getLong(PREF_SLEEP_MUTE_UNTIL, 0) > System.currentTimeMillis();
+        final long left = prefs.getLong(PREF_SLEEP_MUTE_UNTIL, 0) - System.currentTimeMillis();
+        return left > 0 && left <= (SLEEP_MAX_MINUTES + 1) * 60000L;
     }
 
     /** Arms a mute window {@code minutes} out; returns the deadline millis. */

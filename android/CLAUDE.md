@@ -84,12 +84,15 @@ silently break every JNI call in the release build with no compile-time
 warning - verify a real release build's TTS synthesis on a real device after
 touching either `proguard-rules.pro` or this class.
 
-The same trap bit natural voices: `PiperModel.mapped` is never read in Java
+The same trap bit natural voices: `PiperModel.SessionGroup.mapped` (and
+`mappedDecoder`) is never read in Java
 (it only keeps the memory-mapped model alive while ONNX Runtime reads weights
 from it), so R8 removed it as write-only; the buffer was collected and
 unmapped seconds after a voice loaded and the next inference crashed natively
 (SIGSEGV in `OrtSession.run`, a crash loop on every release build, first seen
-on a Galaxy S25 Ultra). `proguard-rules.pro` keeps it. Any field that exists
+on a Galaxy S25 Ultra). `proguard-rules.pro` keeps it. It bit twice: moving
+the fields from `PiperModel` into `SessionGroup` (shared Rasa sessions) left
+the rule naming the old class, so it matched nothing. Any field that exists
 only to keep native memory alive needs such a rule; check the release dex
 (`dexdump -h`) rather than trusting that one exists. Debug builds and short
 tests hide this: it takes a garbage collection. A release APK repro: Natural
@@ -533,6 +536,23 @@ voices" does not, so voices can still be deleted to free space.
   differs. Before this, only a natural primary voice switched,
   so eSpeak-English users never heard their Hindi voice in mixed text.
   `PiperE2EDeviceTest.j_*` checks it (natural voices peak at full scale).
+  Script tables (`LanguageRuns.LANGUAGE_SCRIPT` + `ALSO_WRITTEN_IN`) decide
+  what is "another language": a language's text in any of its scripts stays
+  with it. Kurdish `ku` is Kurmanji (Latin) - it was listed as Arabic, so the
+  Kurmanji natural voice never got Kurmanji text (fixed 2026-10-04, with
+  missing grc/hyw/hak/cmn/nog/ab/shn/bpy/chr entries and two-script
+  languages: Serbian, Kazakh, Uzbek, Sindhi, Santali...). eSpeak voices for
+  their language in another script (`fa-latn`, `cmn-latn-pinyin`, `en-shaw`;
+  `Voice.isScriptVariant`) never use natural voices, which were trained on
+  the usual script. Devanagari text is split by sentence among Hindi,
+  Marathi, Nepali, Sanskrit and the SYSPIN/Rasa dialects
+  (`DevanagariClassifier`): one language per sentence (no voice switch
+  mid-sentence), leaving the default Devanagari language only on clear
+  evidence (`SWITCH_MARGIN`); Hindi vs Marathi also uses fused Marathi case
+  endings and each language's own words. `DevanagariCorpusTest` runs
+  `test/resources/devanagari/` (50 Hindi + 50 Marathi tuned, 20 + 20 held
+  out, 1 held-out Marathi miss) with Hindi, Marathi and English voices: keep the tuned set at zero misroutes
+  and add a failing sentence there before changing the rules.
   A language the user chose for a script (see "Mixed-language text" below)
   replaces the script's default here too, and `piper_switch_languages`
   (on by default) turns natural-voice switching off.

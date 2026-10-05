@@ -59,7 +59,6 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
     private ListView mListView;
     private ArrayAdapter<String> mAdapter;
     private final List<String> mValues = new ArrayList<String>();
-    private final Set<String> mChecked = new HashSet<String>();
 
     /**
      * Opens the dialog for the languages currently offered by {@code voices}.
@@ -106,12 +105,9 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
         if (values != null) {
             mValues.addAll(values);
         }
-        mChecked.clear();
-        if (getContext() != null) {
-            mChecked.addAll(LanguageSettings.getFavoriteVoices(prefsOf(getContext())));
-            // Drop stale entries for voices no longer offered.
-            mChecked.retainAll(new HashSet<String>(mValues));
-        }
+        // Favorites for voices no longer offered get no row, so saving drops them.
+        final Set<String> favorites = getContext() != null
+                ? LanguageSettings.getFavoriteVoices(prefsOf(getContext())) : new HashSet<String>();
 
         final View root = LayoutInflater.from(getContext())
                 .inflate(R.layout.favorite_voices_dialog, null);
@@ -120,17 +116,8 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
         mAdapter = new ArrayAdapter<String>(requireContext(), R.layout.item_language, rows);
         mListView.setAdapter(mAdapter);
         for (int i = 0; i < mValues.size() && i < rows.size(); i++) {
-            mListView.setItemChecked(i, mChecked.contains(mValues.get(i)));
+            mListView.setItemChecked(i, favorites.contains(mValues.get(i)));
         }
-        mListView.setOnItemClickListener((parent, view, position, id) -> {
-            if (position < 0 || position >= mValues.size()) return;
-            final String value = mValues.get(position);
-            if (mListView.isItemChecked(position)) {
-                mChecked.add(value);
-            } else {
-                mChecked.remove(value);
-            }
-        });
 
         final AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.setting_favorite_voices)
@@ -146,8 +133,16 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
         if (getContext() == null) {
             return;
         }
+        // Read from the list itself: it keeps its ticks across a rotation,
+        // when this fragment's own state starts over from the saved favorites.
+        final Set<String> checked = new HashSet<String>();
+        for (int i = 0; i < mValues.size() && i < mListView.getCount(); i++) {
+            if (mListView.isItemChecked(i)) {
+                checked.add(mValues.get(i));
+            }
+        }
         prefsOf(getContext()).edit()
-                .putStringSet(LanguageSettings.PREF_FAVORITE_VOICES, new HashSet<String>(mChecked))
+                .putStringSet(LanguageSettings.PREF_FAVORITE_VOICES, checked)
                 .apply();
         // The engine reorders its voice list on this broadcast path: the
         // service rebuilds (and re-sorts) on the favorites key change.

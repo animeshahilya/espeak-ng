@@ -555,25 +555,26 @@ public class SpeechSynthesis {
     public static String getSampleText(Context context, Locale locale) {
         final String language = getIanaLanguageCode(locale.getLanguage());
         final String country = getIanaCountryCode(locale.getCountry());
-        final Locale.Builder builder = new Locale.Builder().setLanguage(language);
-        if (country != null && !country.isEmpty()) {
-            builder.setRegion(country);
+        // No variant: resources never depend on it, and the builder rejects
+        // eSpeak's short ones ("rp") with IllformedLocaleException.
+        Locale target;
+        try {
+            target = new Locale.Builder().setLanguage(language)
+                    .setRegion(country != null ? country : "").build();
+        } catch (java.util.IllformedLocaleException e) {
+            target = Locale.forLanguageTag(language);
         }
-        if (locale.getVariant() != null && !locale.getVariant().isEmpty()) {
-            builder.setVariant(locale.getVariant());
-        }
-        final Locale target = builder.build();
 
         // Don't mutate the shared Configuration (deprecated config.locale path
         // also raced with concurrent callers); resolve resources against a copy.
         final Configuration config = new Configuration(context.getResources().getConfiguration());
         config.setLocale(target);
         final Context localized = context.createConfigurationContext(config);
-        final String raw = localized.getResources().getString(R.string.sample_text);
-        if (raw.contains("%s") || raw.contains("%1$s")) {
-            return String.format(raw, target.getDisplayName(target));
-        }
-        return raw;
+        // The placeholder is replaced as text: String.format would throw on
+        // any other "%" a translation contains ("100%").
+        final String name = target.getDisplayName(target);
+        return localized.getResources().getString(R.string.sample_text)
+                .replace("%1$s", name).replace("%s", name);
     }
 
     private static native boolean nativeClassInit();

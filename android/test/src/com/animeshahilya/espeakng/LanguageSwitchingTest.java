@@ -311,12 +311,13 @@ public class LanguageSwitchingTest {
     }
 
     @Test
-    public void englishPrimary_MixedHindiAndMarathi_RoutesBothCorrectly() {
-        // Tri-lingual sentence: English + Hindi + Marathi
+    public void englishPrimary_MixedHindiAndMarathi_KeepsOneVoicePerSentence() {
+        // Hindi and Marathi inside one sentence: one Devanagari voice for the
+        // sentence (no switch mid-sentence), the one with more evidence
         final String text = "Welcome: आपका स्वागत है आणि तुमचे आभार.";
         final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "eng");
 
-        assertEquals("eng@0[Welcome:]hin@8[ आपका स्वागत है]mar@23[ आणि तुमचे आभार.]", describe(runs));
+        assertEquals("eng@0[Welcome:]hin@8[ आपका स्वागत है आणि तुमचे आभार.]", describe(runs));
     }
 
     @Test

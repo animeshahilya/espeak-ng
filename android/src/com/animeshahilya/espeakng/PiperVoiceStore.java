@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 
 /**
  * Downloaded Piper voices on disk, and which one (if any) speaks each
@@ -307,15 +306,8 @@ final class PiperVoiceStore {
         if (locale == null) {
             return "";
         }
-        try {
-            final String iso3 = locale.getISO3Language();
-            if (iso3 != null && !iso3.isEmpty()) {
-                return iso3;
-            }
-        } catch (MissingResourceException ignored) {
-            // Fall through to the 2-letter code.
-        }
-        return locale.getLanguage();
+        final String iso3 = Voice.iso3Language(locale);
+        return iso3.isEmpty() ? locale.getLanguage() : iso3;
     }
 
     @SuppressWarnings("deprecation")
@@ -353,7 +345,7 @@ final class PiperVoiceStore {
      * voice was deleted).
      */
     static Installed resolve(Context storageContext, SharedPreferences prefs, Voice espeakVoice) {
-        return espeakVoice == null ? null
+        return espeakVoice == null || espeakVoice.isScriptVariant() ? null
                 : assignedFor(storageContext, prefs, languageKey(espeakVoice.locale));
     }
 
