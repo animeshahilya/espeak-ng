@@ -391,7 +391,145 @@ final class LanguageRuns {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
-        return split(text, language, new FastLanguageResolver(text, language, chosen, numbers));
+        return identify(split(text, language, new FastLanguageResolver(text, language, chosen, numbers)),
+                text, chosen);
+    }
+
+    /**
+     * Which language a run in another script is, where the script alone
+     * does not say: Cyrillic is Russian unless letters only Ukrainian,
+     * Serbian, Kazakh... use say otherwise; Arabic script likewise for Urdu,
+     * Persian, Pashto, Sindhi, Sorani and Uyghur; Bengali script for
+     * Assamese. Han is Japanese when the text has kana, Korean when it has
+     * Hangul. A script the user chose a language for keeps it. Runs that end
+     * up in the same language are joined (東京 + タワー).
+     */
+    private static List<Run> identify(List<Run> runs, String text, Map<UnicodeScript, String> chosen) {
+        boolean changed = false;
+        for (int i = 0; i < runs.size(); i++) {
+            final Run run = runs.get(i);
+            final String better = identify(run.language, run.text, text, chosen);
+            if (!better.equals(run.language)) {
+                runs.set(i, new Run(run.start, run.text, better));
+                changed = true;
+            }
+        }
+        if (!changed) {
+            return runs;
+        }
+        final List<Run> out = new ArrayList<>(runs.size());
+        for (Run run : runs) {
+            final Run last = out.isEmpty() ? null : out.get(out.size() - 1);
+            if (last != null && last.language.equals(run.language)) {
+                out.set(out.size() - 1, new Run(last.start, last.text + run.text, last.language));
+            } else {
+                out.add(run);
+            }
+        }
+        return out;
+    }
+
+    private static String identify(String language, String run, String text, Map<UnicodeScript, String> chosen) {
+        final UnicodeScript script;
+        switch (language) {
+            case "rus": script = UnicodeScript.CYRILLIC; break;
+            case "ara": script = UnicodeScript.ARABIC; break;
+            case "ben": script = UnicodeScript.BENGALI; break;
+            case "zho": script = UnicodeScript.HAN; break;
+            default: return language;
+        }
+        if (chosen != null && chosen.containsKey(script)) {
+            return language;
+        }
+        final String found = script == UnicodeScript.HAN ? hanLanguage(text) : byLetters(script, run);
+        return found != null ? found : language;
+    }
+
+    /** Japanese or Korean when the text around the Han has kana or Hangul, else null. */
+    private static String hanLanguage(String text) {
+        boolean hangul = false;
+        for (int i = 0; i < text.length(); ) {
+            final int c = text.codePointAt(i);
+            i += Character.charCount(c);
+            if (c < 0x1100) {
+                continue;
+            }
+            final UnicodeScript s = UnicodeScript.of(c);
+            if (s == UnicodeScript.HIRAGANA || s == UnicodeScript.KATAKANA) {
+                return "jpn";
+            }
+            hangul |= s == UnicodeScript.HANGUL;
+        }
+        return hangul ? "kor" : null;
+    }
+
+    /**
+     * Letters only one language of the script uses, as "language:letters";
+     * the language with the most of them in the run wins. Shared letters
+     * count for each of their languages. A "~" entry counts only when no
+     * other one matched: Urdu and Pashto also write Persian's ی ک پ گ, so a
+     * single ے outweighs them.
+     */
+    private static final String[] CYRILLIC_LETTERS = {
+            "ukr:їєґі", "bel:ўі", "srp:ђћјљњџ", "mkd:ѓќѕјљњџ", "kaz:әғқңөұүһі", "tat:әөүҗңһ", "bak:ҙҫҡғәөүңһ"};
+    private static final String[] ARABIC_LETTERS = {
+            // Persian: ی/ک (not Arabic's ي/ك) and پ چ ژ گ; Arabic: ة ي ك ى.
+            "urd:ٹڈڑںےۓہھ", "pus:ټډړښږځڅۍې", "snd:ٻڀٺٽٿڃڄڇڊڌڍڏڙڦڱڳ", "ckb:ڵۆێڕە",
+            "uig:ۈۋۇېەڭ", "~fas:یکپچژگ", "~ara:ةيكى"};
+    private static final String[] BENGALI_LETTERS = {"asm:ৰৱ"};
+
+    private static String byLetters(UnicodeScript script, String run) {
+        final String[] table = script == UnicodeScript.CYRILLIC ? CYRILLIC_LETTERS
+                : script == UnicodeScript.ARABIC ? ARABIC_LETTERS : BENGALI_LETTERS;
+        String best = null;
+        int bestCount = 0;
+        for (boolean weak : new boolean[] {false, true}) {
+            for (String entry : table) {
+                if ((entry.charAt(0) == '~') != weak) {
+                    continue;
+                }
+                final int colon = entry.indexOf(':');
+                int count = 0;
+                for (int i = 0; i < run.length(); i++) {
+                    if (entry.indexOf(Character.toLowerCase(run.charAt(i)), colon + 1) >= 0) {
+                        count++;
+                    }
+                }
+                if (count > bestCount) {
+                    best = entry.substring(weak ? 1 : 0, colon);
+                    bestCount = count;
+                }
+            }
+            if (best != null) {
+                return best;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Whether eSpeak, speaking {@code own}, reads a run in {@code language}
+     * by itself: the language it switches to for that script (Hindi for
+     * Devanagari, Arabic for Arabic script, English for Latin...) or the one
+     * the user chose for the script. Otherwise (Cyrillic, Telugu, Thai,
+     * Japanese, or a language told apart from its script's default) it would
+     * spell the letters or use the wrong rules, and needs its own voice.
+     * "zxx" (digits for eSpeak) is read in the request's language.
+     */
+    static boolean espeakReadsItself(String language, String own, Map<UnicodeScript, String> chosen) {
+        if (language.equals(own) || "zxx".equals(language)
+                || (chosen != null && chosen.containsValue(language))) {
+            return true;
+        }
+        switch (language) {
+            case "eng": case "hin": case "ben": case "pan": case "guj": case "tam": case "kan":
+            case "mal": case "sin": case "ara": case "ell": case "hye": case "kat": case "kor":
+                // Only from another script: in its own script (Hindi inside
+                // Marathi) eSpeak keeps the speaking voice's rules.
+                return !writtenIn(own, scriptOf(language));
+            default:
+                return false;
+        }
     }
 
     /**

@@ -517,20 +517,16 @@ public class TtsService extends TextToSpeechService {
 
     /**
      * The eSpeak voice for a run no natural voice speaks. eSpeak switches
-     * script by itself (Devanagari in an English voice is read as Hindi), so
-     * the request's voice keeps everything except Devanagari text classified
-     * as another Devanagari language (Marathi, Nepali...), which it would
-     * read with Hindi or its own rules. Each switch reloads a dictionary.
+     * some scripts by itself (Devanagari in an English voice is read as
+     * Hindi), so the request's voice keeps those; a run eSpeak would spell
+     * letter by letter (Cyrillic, Telugu, Thai) or read with the wrong
+     * language's rules (Marathi, Ukrainian, Urdu) gets that language's voice
+     * when there is one. Each switch reloads a dictionary.
      */
-    private Voice espeakVoiceForRun(String runLanguage, String own, Voice voice) {
-        if (runLanguage.equals(own) || !LanguageRuns.isDevanagariLanguage(runLanguage)) {
-            return voice;
-        }
-        if (("hin".equals(runLanguage) || "hi".equals(runLanguage))
-                && !LanguageRuns.isDevanagariLanguage(own)) {
-            return voice; // what eSpeak picks for Devanagari anyway
-        }
-        return findVoiceForLanguage(runLanguage, voice);
+    private Voice espeakVoiceForRun(String runLanguage, String own, Voice voice,
+                                    Map<UnicodeScript, String> chosen) {
+        return LanguageRuns.espeakReadsItself(runLanguage, own, chosen)
+                ? voice : findVoiceForLanguage(runLanguage, voice);
     }
 
     private Voice findVoiceForLanguage(String language, Voice fallback) {
@@ -1125,7 +1121,11 @@ public class TtsService extends TextToSpeechService {
         final NaturalAhead ahead = new NaturalAhead(naturalPhonemizer(engine, voice),
                 naturalParams(settings, request, prefs), settings, request, prefs, naturalUsed);
 
-        if (units.size() > 1 || units.get(0).isEarcon() || units.get(0).model != null) {
+        // One plain unit in the request's own voice takes the direct path; a
+        // whole text in another language (all Marathi, all Ukrainian) is one
+        // unit too, but in that language's voice.
+        if (units.size() > 1 || units.get(0).isEarcon() || units.get(0).model != null
+                || units.get(0).voice != voice) {
             mSegmentsRemaining.set(units.size());
             for (int ui = 0; ui < units.size(); ui++) {
                 if (mIsStopped.get()) {
@@ -1162,6 +1162,11 @@ public class TtsService extends TextToSpeechService {
                 try {
                     mChunkBase = unit.base;
                     engine.setVoice(unit.voice, voiceVariant);
+                    // eSpeak works out speed only when the rate is set: a voice
+                    // file's own "speed" (Ukrainian 80) sticks if the voice is
+                    // loaded after it, and the next voice keeps it too. Set
+                    // after the voice, as a request in that voice is.
+                    engine.Rate.setValue(effectiveRate(settings, request));
                     engine.synthesize(unit.text, false);
                 } catch (Throwable t) {
                     // One bad chunk (mixed-script edge case) must never kill
@@ -1718,7 +1723,7 @@ public class TtsService extends TextToSpeechService {
                     mPiper.preload(natural.key, natural.model(), natural.config);
                 }
                 if (model == null) {
-                    final Voice targetVoice = espeakVoiceForRun(run.language, own, voice);
+                    final Voice targetVoice = espeakVoiceForRun(run.language, own, voice, runLanguages);
                     if (espeak.length() > 0 && targetVoice != currentEspeakVoice) {
                         out.add(new SynthUnit(espeak.toString(), currentEspeakVoice, unit.base + espeakStart));
                         espeak.setLength(0);

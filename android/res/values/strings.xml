@@ -329,8 +329,8 @@
   <string name="setting_script_eth">Ethiopic script</string>
   <string name="category_natural_switching">Natural voices</string>
   <string name="setting_natural_switching">Switch natural voices by script</string>
-  <string name="setting_natural_switching_summary">Words in another script go to that language\'s natural voice, if you have one. Off: the current voice reads everything.</string>
-  <string name="setting_natural_switching_summary_on">Words in another script automatically switch to that language\'s natural voice.</string>
+  <string name="setting_natural_switching_summary">Words in another language go to that language\'s natural voice, or its eSpeak voice if it has none. Off: the current voice reads everything.</string>
+  <string name="setting_natural_switching_summary_on">Words in another language switch to that language\'s natural voice, or its eSpeak voice if it has none.</string>
   <string name="setting_natural_switching_summary_off">Current voice reads all text without switching.</string>
   <string name="category_number_formats">Number formats</string>
   <string name="category_number_extras">Read in full</string>

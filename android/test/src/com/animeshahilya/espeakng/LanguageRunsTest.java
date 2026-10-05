@@ -263,4 +263,62 @@ public class LanguageRunsTest {
         assertEquals("ara@0[مَرْحَبًا بِكَ]",
                 describe(LanguageRuns.split("مَرْحَبًا بِكَ", "ara")));
     }
+
+    @Test
+    public void languageIsToldApartWithinItsScript() {
+        // Letters only one language of the script uses decide it; otherwise
+        // the script's usual language stays.
+        assertEquals("ukr@0[Привіт, як справи?]eng@18[ means hello.]",
+                describe(LanguageRuns.split("Привіт, як справи? means hello.", "eng")));
+        assertEquals("rus@0[Здравствуйте]eng@12[ is Russian.]",
+                describe(LanguageRuns.split("Здравствуйте is Russian.", "eng")));
+        assertEquals("srp@0[Ђорђе]", describe(LanguageRuns.split("Ђорђе", "eng")));
+        assertEquals("kaz@0[Қазақстан]", describe(LanguageRuns.split("Қазақстан", "eng")));
+        assertEquals("bel@0[Мінск, ўсё]", describe(LanguageRuns.split("Мінск, ўсё", "eng")));
+        assertEquals("asm@0[অসমৰ]", describe(LanguageRuns.split("অসমৰ", "eng")));
+        // Urdu also writes Persian's ی ک پ: one ے or ہ outweighs them.
+        assertEquals("eng@0[Urdu:]urd@5[ میں آپ کا شکریہ ادا کرتا ہوں]",
+                describe(LanguageRuns.split("Urdu: میں آپ کا شکریہ ادا کرتا ہوں", "eng")));
+        assertEquals("fas@0[حال شما چطور است]", describe(LanguageRuns.split("حال شما چطور است", "eng")));
+        assertEquals("pus@0[زه ښه یم]", describe(LanguageRuns.split("زه ښه یم", "eng")));
+        assertEquals("ara@0[شكرا جزيلا]", describe(LanguageRuns.split("شكرا جزيلا", "eng")));
+        assertEquals("ara@0[مرحبا]", describe(LanguageRuns.split("مرحبا", "eng")));
+    }
+
+    @Test
+    public void hanFollowsKanaAndHangul() {
+        assertEquals("jpn@0[東京タワー]", describe(LanguageRuns.split("東京タワー", "eng")));
+        assertEquals("jpn@0[東京]eng@2[ and]jpn@6[ すし]",
+                describe(LanguageRuns.split("東京 and すし", "eng")));
+        assertEquals("kor@0[漢字]eng@2[ and]kor@6[ 한국어]",
+                describe(LanguageRuns.split("漢字 and 한국어", "eng")));
+        assertEquals("eng@0[Shop at]zho@7[ 東京]", describe(LanguageRuns.split("Shop at 東京", "eng")));
+    }
+
+    @Test
+    public void aChosenScriptLanguageIsNotSecondGuessed() {
+        final Map<UnicodeScript, String> chosen = new EnumMap<>(UnicodeScript.class);
+        chosen.put(UnicodeScript.CYRILLIC, "rus");
+        assertEquals("rus@0[Привіт]", describe(LanguageRuns.split("Привіт", "eng", chosen)));
+    }
+
+    @Test
+    public void espeakNeedsItsOwnVoiceOnlyWhereItWouldNotSwitch() {
+        // eSpeak switches these scripts itself.
+        assertTrue(LanguageRuns.espeakReadsItself("hin", "eng", null));
+        assertTrue(LanguageRuns.espeakReadsItself("eng", "hin", null));
+        assertTrue(LanguageRuns.espeakReadsItself("ara", "eng", null));
+        assertTrue(LanguageRuns.espeakReadsItself("zxx", "tam", null));
+        // It spells Cyrillic, Telugu and Thai letter by letter, and reads
+        // Marathi, Urdu or Hindi-in-Marathi with the wrong rules.
+        assertFalse(LanguageRuns.espeakReadsItself("rus", "eng", null));
+        assertFalse(LanguageRuns.espeakReadsItself("tel", "eng", null));
+        assertFalse(LanguageRuns.espeakReadsItself("mar", "eng", null));
+        assertFalse(LanguageRuns.espeakReadsItself("urd", "eng", null));
+        assertFalse(LanguageRuns.espeakReadsItself("hin", "mar", null));
+        // A script language the user chose is set in eSpeak itself.
+        final Map<UnicodeScript, String> chosen = new EnumMap<>(UnicodeScript.class);
+        chosen.put(UnicodeScript.CYRILLIC, "ukr");
+        assertTrue(LanguageRuns.espeakReadsItself("ukr", "eng", chosen));
+    }
 }

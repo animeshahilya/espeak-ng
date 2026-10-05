@@ -556,6 +556,24 @@ voices" does not, so voices can still be deleted to free space.
   A language the user chose for a script (see "Mixed-language text" below)
   replaces the script's default here too, and `piper_switch_languages`
   (on by default) turns natural-voice switching off.
+  Within a script, a run's language comes from letters only that language
+  uses (`LanguageRuns.identify`, 2026-10-05): Cyrillic is Russian unless
+  Ukrainian/Belarusian/Serbian/Macedonian/Kazakh/Tatar/Bashkir letters say
+  otherwise; Arabic script is Urdu/Pashto/Sindhi/Sorani/Uyghur by their own
+  letters, else Persian or Arabic by the weaker ی ک پ گ vs ة ي ك markers;
+  Bengali script with ৰ/ৱ is Assamese; Han is Japanese when the text has
+  kana, Korean when it has Hangul. A script the user chose a language for
+  is never second-guessed. On the eSpeak path (natural voices on), a run
+  eSpeak would not switch to by itself (`LanguageRuns.espeakReadsItself`:
+  it spells Cyrillic, Telugu, Thai... letter by letter and reads Marathi or
+  Urdu with the wrong rules) gets that language's eSpeak voice;
+  `ScriptSwitchingDeviceTest` checks a Ukrainian sentence under an English
+  voice reads exactly as long as the Ukrainian voice. Two traps found
+  there: a request that is one unit in another voice took the direct path
+  in the request's voice (fixed), and eSpeak recomputes speed only when the
+  rate is set, so a voice file's `speed` (uk 80) stuck for that unit and the
+  next one - the unit loop sets the rate after each voice. With natural
+  voices off nothing changes (NVDA parity).
 - **Crash guard.** A native crash inside ONNX Runtime kills the process and
   Android restarts the service, which reloads the voice: a crash loop that
   silences TalkBack. `PiperCrashGuard` records voices whose native work is in
