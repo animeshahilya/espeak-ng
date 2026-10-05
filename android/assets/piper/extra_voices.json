@@ -1015,21 +1015,6 @@
       "compact-v1/de_DE-thorsten-compact.onnx.json": {"size_bytes": 3759, "md5_digest": "62d6c13cc9b06ec2129561b0c6be021d"}
     }
   },
-  "it_IT-serena-compact": {
-    "key": "it_IT-serena-compact",
-    "name": "serena",
-    "language": {"code": "it_IT", "family": "it", "region": "IT",
-      "name_native": "Italiano", "name_english": "Italian", "country_english": "Italy"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "rhasspy/piper-voices (Compact: animeshahilya)",
-    "license": "CC-BY-4.0",
-    "files": {
-      "compact-v1/it_IT-serena-compact.onnx": {"size_bytes": 44184207, "md5_digest": "1e7fd0b704feb017d9d461d5fdb32366"},
-      "compact-v1/it_IT-serena-compact.onnx.json": {"size_bytes": 4051, "md5_digest": "b6cebad9f1c106fb84428b6acd73fa79"}
-    }
-  },
   "kk_KZ-issai-compact": {
     "key": "kk_KZ-issai-compact",
     "name": "issai",

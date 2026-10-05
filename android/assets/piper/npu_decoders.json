@@ -76,11 +76,6 @@
    "md5_digest": "6f9429a635de1d3c49acb5ad70abb3cc",
    "path": "npu-v1/vits-syspin-hne-female-npu.onnx"
   },
-  "it_IT-serena-high": {
-   "size_bytes": 14721052,
-   "md5_digest": "78b7e537ee46b3dbf8d788b80006fd88",
-   "path": "npu-v1/it_IT-serena-npu.onnx"
-  },
   "kk_KZ-issai-high": {
    "size_bytes": 14992294,
    "md5_digest": "e681b0e694e0192fa466098262aa95bf",
