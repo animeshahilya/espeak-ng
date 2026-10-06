@@ -121,6 +121,34 @@ public class PiperPhonemesTest {
     }
 
     @Test
+    public void finalStopEndsOnlyUnpunctuatedSentences() {
+        final List<PiperPhonemes.Clause> label = Collections.singletonList(
+                new PiperPhonemes.Clause(true, 0, 5, "kaθˈos"));
+        assertEquals("kaθˈos", PiperPhonemes.chunk(label, 60, 220).get(0).ipa);
+        assertEquals("kaθˈos.", PiperPhonemes.chunk(label, 60, 220, true).get(0).ipa);
+        final List<PiperPhonemes.Clause> asked = Collections.singletonList(
+                new PiperPhonemes.Clause(true, 0, 6, "kaθˈos?"));
+        assertEquals("kaθˈos?", PiperPhonemes.chunk(asked, 60, 220, true).get(0).ipa);
+        // A chunk cut mid-sentence for the budget is not a sentence end.
+        final List<PiperPhonemes.Clause> clauses = PiperPhonemes.parseRecords(RECORDS);
+        final List<PiperPhonemes.Chunk> chunks = PiperPhonemes.chunk(clauses, 10, 1000, true);
+        assertFalse(chunks.get(0).ipa.endsWith("."));
+    }
+
+    @Test
+    public void remapMovesClauseSpansBackToTheOriginalText() {
+        // "ab cd" vowelled as "aXb cXd": each mark belongs to its letter.
+        final int[] toOriginal = {0, 0, 1, 2, 3, 3, 4, 5};
+        final List<PiperPhonemes.Clause> out = PiperPhonemes.remap(Arrays.asList(
+                new PiperPhonemes.Clause(false, 0, 4, "x"),
+                new PiperPhonemes.Clause(true, 4, 7, "y")), toOriginal);
+        assertEquals(0, out.get(0).start);
+        assertEquals(3, out.get(0).end);
+        assertEquals(3, out.get(1).start);
+        assertEquals(5, out.get(1).end);
+    }
+
+    @Test
     public void longFirstSentenceIsCutAtAClauseForLatency() {
         final List<PiperPhonemes.Clause> clauses = PiperPhonemes.parseRecords(RECORDS);
         final List<PiperPhonemes.Chunk> chunks = PiperPhonemes.chunk(clauses, 10, 1000);

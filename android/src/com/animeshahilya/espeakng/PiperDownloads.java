@@ -647,7 +647,7 @@ final class PiperDownloads {
             }
             broadcastChanged(appContext, voice.key, assigned);
             finishSwap(appContext, storageContext, voice.key);
-            EspeakApp.runAsync(() -> fetchNpuDecoders(appContext, storageContext));
+            EspeakApp.runAsync(() -> fetchVoiceExtras(appContext, storageContext));
             return true;
         } catch (IOException | RuntimeException e) {
             logw("Shared install of " + voice.key + " failed", e);
@@ -1027,8 +1027,8 @@ final class PiperDownloads {
             // One-tap Compact swap: the new voice takes over the old voice's
             // language and the old ~60 MB copy is removed to free the space.
             finishSwap(appContext, storageContext, key);
-            // Snapdragon build: its NPU decoder follows (no-op elsewhere).
-            EspeakApp.runAsync(() -> fetchNpuDecoders(appContext, storageContext));
+            // Files that go with some voices: NPU decoders (Snapdragon build), Arabic vowel marks.
+            EspeakApp.runAsync(() -> fetchVoiceExtras(appContext, storageContext));
             // Feed the shared store so the next voice with this file skips its
             // download, and fold any older duplicate copies into links.
             try {
@@ -1113,6 +1113,42 @@ final class PiperDownloads {
             dedupSharedModels(storageContext);
         } catch (RuntimeException e) {
             logw("Shared-model dedup on reconcile failed", e);
+        }
+    }
+
+    /**
+     * Gives installed voices the extra files they use: the Arabic vowel-mark
+     * model ({@link Tashkeel}) and, on the Snapdragon build, NPU decoders.
+     * Cheap when all are present. Blocking; off the main thread.
+     */
+    static void fetchVoiceExtras(Context appContext, Context storageContext) {
+        fetchTashkeel(storageContext);
+        fetchNpuDecoders(appContext, storageContext);
+    }
+
+    /**
+     * The vowel-mark model (~10 MB, any network, MD5-checked) beside each
+     * installed voice that uses it; the next request picks it up.
+     */
+    static void fetchTashkeel(Context storageContext) {
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            if (!PiperVoiceConfig.TASHKEEL.contains(v.key)) {
+                continue;
+            }
+            final File target = new File(v.dir, Tashkeel.MODEL_FILE);
+            try {
+                if (target.isFile() && Tashkeel.MODEL_MD5.equalsIgnoreCase(md5(target))) {
+                    continue;
+                }
+                final byte[] data = fetch(Tashkeel.MODEL_URL, 16 * 1024 * 1024);
+                if (!Tashkeel.MODEL_MD5.equalsIgnoreCase(md5(data))) {
+                    throw new IOException("Tashkeel model checksum mismatch");
+                }
+                writeAtomically(target, data);
+                Log.i(TAG, "Arabic vowel marks for " + v.key + " installed");
+            } catch (IOException | RuntimeException e) {
+                Log.w(TAG, "Arabic vowel marks for " + v.key + " not fetched; tried again later", e);
+            }
         }
     }
 

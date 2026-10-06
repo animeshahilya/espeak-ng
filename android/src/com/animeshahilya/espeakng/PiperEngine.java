@@ -726,16 +726,21 @@ final class PiperEngine {
         final PiperVoiceConfig config = model.config;
         final List<PiperPhonemes.Clause> clauses;
         if (config.usesEspeak()) {
-            final String raw = phonemizer.phonemize(config.espeakVoice, text);
+            final Tashkeel.Result vowelled = config.tashkeel
+                    ? Tashkeel.apply(model.file.getParentFile(), text) : null;
+            final String said = vowelled != null ? vowelled.text : text;
+            final String raw = phonemizer.phonemize(config.espeakVoice, said);
             if (raw == null) {
                 return null;
             }
-            clauses = PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), text);
+            final List<PiperPhonemes.Clause> aligned =
+                    PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), said);
+            clauses = vowelled != null ? PiperPhonemes.remap(aligned, vowelled.toOriginal) : aligned;
         } else {
             clauses = PiperPhonemes.textClauses(text, numberWords(config.languageFamily));
         }
         final List<PiperPhonemes.Chunk> chunks = PiperPhonemes.chunk(clauses,
-                PiperPhonemes.FIRST_CHUNK_PHONEMES, PiperPhonemes.CHUNK_PHONEMES);
+                PiperPhonemes.FIRST_CHUNK_PHONEMES, PiperPhonemes.CHUNK_PHONEMES, config.finalStop);
 
         final float speed = Math.max(0.1f, params.speed);
         final float modelSpeed = Math.max(MIN_MODEL_SPEED, Math.min(MAX_MODEL_SPEED, speed));

@@ -1117,5 +1117,8 @@ final class PiperModel implements Closeable {
             closed = true;
         }
         group.release();
+        if (config.tashkeel) {
+            Tashkeel.close(file.getParentFile());
+        }
     }
 }

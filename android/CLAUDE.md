@@ -351,6 +351,26 @@ voices" does not, so voices can still be deleted to free space.
   rhasspy's included, plus their Compact versions; untested languages
   (Bhojpuri, Maithili, Kurmanji...) keep all. Voices already downloaded keep
   working. The other bundled extras and NPU decoders were removed.
+  2026-10-06: Norwegian keeps only talesyntese (nvcc garbled plain
+  sentences: 171 words only it missed vs 5).
+- **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
+  voice misses that the language's other voices say fine; scratch/voice-eval
+  findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,
+  never globally (a final '.' for every voice moved the average by nothing and
+  broke some voices). `PiperVoiceConfig.FINAL_STOP`: '.' ends an unpunctuated
+  sentence (`PiperPhonemes.chunk`), Rapunzelina 38.6 -> 29.8% (short phrases
+  71 -> 30%). `PiperVoiceConfig.TASHKEEL`: Arabic vowel marks before eSpeak
+  (`Tashkeel`, a port of piper-phonemize's libtashkeel, same output as the
+  Python reference), Kareem 16.6 -> 9.7%; text the writer already vowelled is
+  left alone; clause spans are mapped back (`PiperPhonemes.remap`) so word
+  ranges stay on the caller's text. Its 10 MB model (MIT, rhasspy/piper-
+  phonemize pinned commit, MD5-checked) is fetched beside the voice by
+  `PiperDownloads.fetchVoiceExtras` (with the NPU decoders), so the APK does not
+  grow; without it Kareem reads unvowelled as before. Emirati was trained
+  without vowel marks and gets worse with them (15 -> 19%). Whisper artifacts
+  that looked like voice faults: Gujarati Jay "stopping mid-sentence" (Whisper
+  dropping long audio: the same text per sentence 18%, like Hetal) and lone
+  Gujarati words; Malayalam/Assamese written in Devanagari, Latin or English.
 - **Character voices (SYSPIN + Rasa, 2026-10-01).** 42 voices that read
   script letters, not eSpeak phonemes (`phoneme_type` "text"): 22 SYSPIN
   (IISc, Coqui VITS, MIT, 22050 Hz) and 20 AI4Bharat Rasa (CC BY 4.0,

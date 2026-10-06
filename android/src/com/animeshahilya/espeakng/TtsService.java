@@ -354,7 +354,7 @@ public class TtsService extends TextToSpeechService {
                 preloadRecentNaturalVoices();
                 if (mPreferences != null && PiperVoiceStore.isEnabled(TolerantPreferences.of(mPreferences))) {
                     PiperDownloads.checkForUpdates(getApplicationContext(), mStorageContext);
-                    PiperDownloads.fetchNpuDecoders(getApplicationContext(), mStorageContext);
+                    PiperDownloads.fetchVoiceExtras(getApplicationContext(), mStorageContext);
                 }
             } catch (Throwable t) {
                 Log.w(TAG, "Natural voice warmup failed", t);

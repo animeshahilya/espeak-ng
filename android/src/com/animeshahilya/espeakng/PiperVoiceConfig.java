@@ -57,6 +57,21 @@ final class PiperVoiceConfig {
             "gu_IN-hetal-medium", "gu_IN-hetal-compact", "en_IN-priya-medium", "en_IN-priya-compact",
             "en_US-ljspeech-high", "en_US-ljspeech-compact"));
 
+    /**
+     * Voices that garble a request with no closing punctuation (a label, a
+     * few words): their chunks get a final '.' ({@link PiperPhonemes#chunk}).
+     * Whisper large-v3, 2026-10-06, two renders: Rapunzelina's short phrases
+     * 71% -> 30% character errors, whole corpus 38.6% -> 29.8%. Per voice,
+     * not for all: across the kept voices the average did not move and some
+     * got worse (zh huayan's lone words 22% -> 85%).
+     */
+    private static final java.util.Set<String> FINAL_STOP = new java.util.HashSet<>(Arrays.asList(
+            "el_GR-rapunzelina-medium"));
+
+    /** Arabic voices trained on vowelled text: see {@link Tashkeel}. */
+    static final java.util.Set<String> TASHKEEL = new java.util.HashSet<>(Arrays.asList(
+            "ar_JO-kareem-medium"));
+
     static final String PAD = "_";
     static final String BOS = "^";
     static final String EOS = "$";
@@ -93,6 +108,10 @@ final class PiperVoiceConfig {
     final boolean oldEspeak;
     /** Trained on hissy recordings: see {@link #HISSY}. */
     final boolean hissy;
+    /** Unpunctuated sentences end with '.': see {@link #FINAL_STOP}. */
+    final boolean finalStop;
+    /** Arabic text gets vowel marks first: see {@link #TASHKEEL}. */
+    final boolean tashkeel;
     /** Today's IPA -> the spelling the voice was trained on (PiperPhonemes.trainedSpellings). */
     final PiperPhonemes.Spelling[] trainedSpellings;
 
@@ -123,6 +142,8 @@ final class PiperVoiceConfig {
         maxClusterLength = max;
         oldEspeak = b.oldEspeak;
         hissy = HISSY.contains(key);
+        finalStop = FINAL_STOP.contains(key);
+        tashkeel = TASHKEEL.contains(key);
         trainedSpellings = PiperPhonemes.trainedSpellings(usesEspeak() ? espeakVoice : null,
                 oldEspeak);
     }

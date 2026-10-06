@@ -121,6 +121,22 @@ final class PiperPhonemes {
     }
 
     /**
+     * Clause spans of a rewritten text (vowel marks added) moved back onto
+     * the caller's text, so word ranges point at what the caller sent.
+     *
+     * @param toOriginal code point of the rewritten text -> of the original, plus the end
+     */
+    static List<Clause> remap(List<Clause> clauses, int[] toOriginal) {
+        final List<Clause> out = new ArrayList<>(clauses.size());
+        final int last = toOriginal.length - 1;
+        for (Clause c : clauses) {
+            out.add(new Clause(c.endsSentence, toOriginal[Math.min(c.start, last)],
+                    toOriginal[Math.min(c.end, last)], c.ipa));
+        }
+        return out;
+    }
+
+    /**
      * Pulls each clause boundary back to where the clause really ended.
      * eSpeak's clause reader looks one character ahead ("Hello, t|his"), and
      * the decoder position it leaves behind counts that character as read, so
@@ -178,6 +194,15 @@ final class PiperPhonemes {
      * mid-clause, so prosody only breaks where eSpeak already heard a comma).
      */
     static List<Chunk> chunk(List<Clause> clauses, int firstBudget, int budget) {
+        return chunk(clauses, firstBudget, budget, false);
+    }
+
+    /**
+     * @param finalStop end a sentence that has no closing punctuation (a
+     *        label, a list item, the last words of a request) with '.', for
+     *        voices that garble such input ({@link PiperVoiceConfig#finalStop})
+     */
+    static List<Chunk> chunk(List<Clause> clauses, int firstBudget, int budget, boolean finalStop) {
         final List<Chunk> chunks = new ArrayList<>();
         final StringBuilder ipa = new StringBuilder();
         int start = -1;
@@ -192,21 +217,25 @@ final class PiperPhonemes {
             length += clause.ipa.codePointCount(0, clause.ipa.length());
             final int limit = chunks.isEmpty() ? firstBudget : budget;
             if (clause.endsSentence || length >= limit) {
-                addChunk(chunks, start, end, ipa, clause.endsSentence);
+                addChunk(chunks, start, end, ipa, clause.endsSentence, finalStop);
                 ipa.setLength(0);
                 start = -1;
                 length = 0;
             }
         }
         if (start >= 0) {
-            addChunk(chunks, start, end, ipa, true);
+            addChunk(chunks, start, end, ipa, true, finalStop);
         }
         return chunks;
     }
 
     private static void addChunk(List<Chunk> chunks, int start, int end, StringBuilder ipa,
-                                 boolean endsSentence) {
-        final String text = ipa.toString().trim();
+                                 boolean endsSentence, boolean finalStop) {
+        String text = ipa.toString().trim();
+        if (finalStop && endsSentence && !text.isEmpty()
+                && !isPunctuation(text.substring(text.offsetByCodePoints(text.length(), -1)))) {
+            text += ".";
+        }
         if (!text.isEmpty()) {
             chunks.add(new Chunk(start, end, text, endsSentence));
         }
