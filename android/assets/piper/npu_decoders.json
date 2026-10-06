@@ -26,10 +26,10 @@
    "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
    "path": "npu-v1/vits-rasa-13-npu.onnx"
   },
-  "bn_IN-riya-medium": {
-   "size_bytes": 14759321,
-   "md5_digest": "bf73272d31d1c1f5f009ce9c2d884e11",
-   "path": "npu-v1/vits-syspin-bn-female-npu.onnx"
+  "bn_IN-tithi-medium": {
+   "size_bytes": 14873545,
+   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
+   "path": "npu-v1/vits-rasa-13-npu.onnx"
   },
   "brx_IN-mainao-medium": {
    "size_bytes": 14873545,
@@ -112,11 +112,6 @@
    "path": "npu-v1/vits-syspin-mai-male-npu.onnx"
   },
   "mai_IN-shravan-medium": {
-   "size_bytes": 14873545,
-   "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
-   "path": "npu-v1/vits-rasa-13-npu.onnx"
-  },
-  "ml_IN-aparna-medium": {
    "size_bytes": 14873545,
    "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
    "path": "npu-v1/vits-rasa-13-npu.onnx"

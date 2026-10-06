@@ -104,36 +104,36 @@
       "arabic-emirati-female-model.onnx.json": {"size_bytes": 7076, "md5_digest": "3cc9454b68fdd9f4fc504fb93419b5f5"}
     }
   },
-  "bn_IN-riya-medium": {
-    "key": "bn_IN-riya-medium",
-    "name": "riya",
+  "bn_IN-tithi-medium": {
+    "key": "bn_IN-tithi-medium",
+    "name": "tithi",
     "language": {"code": "bn_IN", "family": "bn", "region": "IN",
       "name_native": "বাংলা", "name_english": "Bengali", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
     "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
+    "source": "AI4Bharat Rasa",
+    "license": "CC-BY-4.0",
     "files": {
-      "syspin-v2/vits-syspin-bn-female-model.onnx": {"size_bytes": 57855735, "md5_digest": "e1a8fb330d77bbbff7cc444815438278"},
-      "piper-v2/bn_IN-riya-medium.onnx.json": {"size_bytes": 2217, "md5_digest": "a0663e20b47bb2901cbb60076cba8828"}
+      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "piper-v2/bn_IN-tithi-medium.onnx.json": {"size_bytes": 28197, "md5_digest": "8a62cd08422a2dec5e4d2e769eaf1a4f"}
     }
   },
-  "bn_IN-riya-compact": {
-    "key": "bn_IN-riya-compact",
-    "name": "riya",
+  "bn_IN-tithi-compact": {
+    "key": "bn_IN-tithi-compact",
+    "name": "tithi",
     "language": {"code": "bn_IN", "family": "bn", "region": "IN",
       "name_native": "বাংলা", "name_english": "Bengali", "country_english": "India"},
     "quality": "compact",
     "num_speakers": 1,
     "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
+    "source": "AI4Bharat Rasa",
+    "license": "CC-BY-4.0",
     "files": {
-      "syspin-v2/vits-syspin-bn-female-compact.onnx": {"size_bytes": 44354605, "md5_digest": "09a8575071c17c088a5fb9328d2b3962"},
-      "piper-v2/bn_IN-riya-compact.onnx.json": {"size_bytes": 2218, "md5_digest": "eb8bbcaf8e11b7914a675960f024954b"}
+      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "piper-v2/bn_IN-tithi-compact.onnx.json": {"size_bytes": 28198, "md5_digest": "79f737fc2191b056b61342032af5b6ab"}
     }
   },
   "bn_IN-anirban-medium": {
@@ -838,38 +838,6 @@
     "files": {
       "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
       "piper-v2/doi_IN-vijay-compact.onnx.json": {"size_bytes": 28198, "md5_digest": "95e708e853f3ac9597a76ec71e06e658"}
-    }
-  },
-  "ml_IN-aparna-medium": {
-    "key": "ml_IN-aparna-medium",
-    "name": "aparna",
-    "language": {"code": "ml_IN", "family": "ml", "region": "IN",
-      "name_native": "മലയാളം", "name_english": "Malayalam", "country_english": "India"},
-    "quality": "medium",
-    "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
-      "piper-v2/ml_IN-aparna-medium.onnx.json": {"size_bytes": 28204, "md5_digest": "902c6ab91a3793bbdaf8e1f58000a6e8"}
-    }
-  },
-  "ml_IN-aparna-compact": {
-    "key": "ml_IN-aparna-compact",
-    "name": "aparna",
-    "language": {"code": "ml_IN", "family": "ml", "region": "IN",
-      "name_native": "മലയാളം", "name_english": "Malayalam", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
-      "piper-v2/ml_IN-aparna-compact.onnx.json": {"size_bytes": 28205, "md5_digest": "df0abb61d6b90d91b45e6622de385d8a"}
     }
   },
   "ne_NP-prerana-medium": {

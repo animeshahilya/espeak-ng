@@ -352,7 +352,15 @@ voices" does not, so voices can still be deleted to free space.
   (Bhojpuri, Maithili, Kurmanji...) keep all. Voices already downloaded keep
   working. The other bundled extras and NPU decoders were removed.
   2026-10-06: Norwegian keeps only talesyntese (nvcc garbled plain
-  sentences: 171 words only it missed vs 5).
+  sentences: 171 words only it missed vs 5). Whisper cannot judge Indian
+  languages (it writes Malayalam in Devanagari or English, Assamese in
+  Devanagari), so the Indian voices were re-judged with AI4Bharat's
+  IndicConformer (59 voices x 30 lone words + 30 sentences; harness
+  scratch/voice-eval big_*.py, big_report.md): Bengali Riya -> Tithi (lone
+  words 13 -> 20 of 30), Malayalam Aparna -> Meera (19 -> 24), Nepali Google
+  -> Chitwan (8 -> 19); the other Indian choices held. SYSPIN voices garble
+  lone words (Telugu Aditya 1/30, Gujarati 4-8/30) and no tried fix helped
+  (final '।', longer lead-in, 30% slower).
 - **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
   voice misses that the language's other voices say fine; scratch/voice-eval
   findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,
