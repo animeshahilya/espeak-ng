@@ -260,4 +260,17 @@ public class DevanagariClassifierTest {
         assertTrue(hinText.contains("हज़ार"));
         assertTrue(hinText.contains("करोड़"));
     }
+
+    @Test
+    public void colonTypedForVisargaIsRead() {
+        // Inside a word, and closing a common visarga word.
+        assertEquals("दुःख और निःशुल्क", TextPreprocessor.preprocessIndianText("दु:ख और नि:शुल्क", "hi-IN"));
+        assertEquals("पुनः स्थापना, अतः हम चले", TextPreprocessor.preprocessIndianText("पुन: स्थापना, अत: हम चले", "hi-IN"));
+        assertEquals("क्रमशः", TextPreprocessor.preprocessIndianText("क्रमश:", "hi-IN"));
+        // A real colon stays: after other words, in times, and inside a longer word.
+        assertEquals("नाम: राम", TextPreprocessor.preprocessIndianText("नाम: राम", "hi-IN"));
+        assertEquals("भारत: एक परिचय", TextPreprocessor.preprocessIndianText("भारत: एक परिचय", "hi-IN"));
+        assertEquals("समय 10:30", TextPreprocessor.preprocessIndianText("समय 10:30", "hi-IN"));
+        assertEquals("अनुपुन: अब", TextPreprocessor.preprocessIndianText("अनुपुन: अब", "hi-IN"));
+    }
 }

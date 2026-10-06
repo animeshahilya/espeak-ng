@@ -62,6 +62,17 @@ public final class TextPreprocessor {
     public static final int MAX_REQUEST_CHARS = 300000;
     public static final int MAX_CHUNKS = MAX_REQUEST_CHARS / MAX_CHUNK_CHARS + 1;
 
+    /**
+     * A colon typed for the visarga (ः), common where keyboards lack it:
+     * eSpeak reads ':' as punctuation, so "पुन:" came out as "pun" and a
+     * pause. Only where the colon cannot be punctuation: inside a word
+     * (दु:ख, नि:शुल्क) or closing a common visarga word (अत:, पुन:). A
+     * colon after any other word ("नाम: राम") stays a pause.
+     */
+    private static final Pattern VISARGA_COLON = Pattern.compile(
+            "(?<=[\\u0900-\\u0963]):(?=[\\u0915-\\u0939\\u0958-\\u095F])"
+            + "|(?<![\\u0900-\\u097F])(अत|पुन|प्रात|प्राय|नम|स्वत|क्रमश|मुख्यत|सामान्यत|विशेषत|अंतत"
+            + "|अन्तत|वस्तुत|संभवत|सम्भवत|पूर्णत|मूलत|अंशत|प्रथमत|फलत|तत):");
     private static final Pattern DANDA_BOUNDARY =
             Pattern.compile("([।॥]+)([^\\s\\p{Pe}\\p{Pf}\"\'”’।॥])");
     private static final Pattern BANKING_SLASH_TXN =
@@ -998,6 +1009,10 @@ public final class TextPreprocessor {
         text = normalizeIndicDigits(text);
         if (text.indexOf('।') >= 0 || text.indexOf('॥') >= 0) {
             text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
+        }
+        if (text.indexOf(':') >= 0) {
+            // $1 is empty for a colon inside a word, the word for a visarga word.
+            text = VISARGA_COLON.matcher(text).replaceAll("$1ः");
         }
         if (text.indexOf('/') >= 0) {
             Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
