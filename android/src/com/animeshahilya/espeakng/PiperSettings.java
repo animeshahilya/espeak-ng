@@ -1248,7 +1248,9 @@ final class PiperSettings {
                     .setTransferMode(AudioTrack.MODE_STATIC)
                     .setBufferSizeInBytes(pcm.length)
                     .build();
-            if (track.getState() != AudioTrack.STATE_INITIALIZED) {
+            // A static track reports STATE_NO_STATIC_DATA until its write:
+            // only a track that never initialized is unusable.
+            if (track.getState() == AudioTrack.STATE_UNINITIALIZED) {
                 track.release();
                 return;
             }
