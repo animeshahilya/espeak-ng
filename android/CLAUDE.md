@@ -360,7 +360,9 @@ voices" does not, so voices can still be deleted to free space.
   words 13 -> 20 of 30), Malayalam Aparna -> Meera (19 -> 24), Nepali Google
   -> Chitwan (8 -> 19); the other Indian choices held. SYSPIN voices garble
   lone words (Telugu Aditya 1/30, Gujarati 4-8/30) and no tried fix helped
-  (final '।', longer lead-in, 30% slower).
+  (final '।', longer lead-in, 30% slower). 2026-10-07: English also keeps
+  Indian English Rahul (user's choice, after the long-sentence fix below),
+  his extras, Compact and NPU entries restored from 8ff10277^.
 - **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
   voice misses that the language's other voices say fine; scratch/voice-eval
   findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,

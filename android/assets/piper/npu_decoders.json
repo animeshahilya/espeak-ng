@@ -1,6 +1,11 @@
 {
  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
  "voices": {
+  "en_IN-rahul-medium": {
+   "size_bytes": 14759316,
+   "md5_digest": "c7419a3308f865a60419688dcb51f757",
+   "path": "npu-v1/vits-syspin-en-male-npu.onnx"
+  },
   "as_IN-bornali-medium": {
    "size_bytes": 14873545,
    "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",

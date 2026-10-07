@@ -1,4 +1,36 @@
 {
+  "en_IN-rahul-medium": {
+    "key": "en_IN-rahul-medium",
+    "name": "rahul",
+    "language": {"code": "en_IN", "family": "en", "region": "IN",
+      "name_native": "English", "name_english": "English", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "heavy": true,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "SYSPIN (IISc SPIRE Lab)",
+    "license": "MIT",
+    "files": {
+      "syspin-v2/vits-syspin-en-male-model.onnx": {"size_bytes": 57862266, "md5_digest": "da43bc1a865d29161ad19a1bc602f53a"},
+      "piper-v2/en_IN-rahul-medium.onnx.json": {"size_bytes": 2386, "md5_digest": "b97549dbc5bcd01653dd61b644ecef63"}
+    }
+  },
+  "en_IN-rahul-compact": {
+    "key": "en_IN-rahul-compact",
+    "name": "rahul",
+    "language": {"code": "en_IN", "family": "en", "region": "IN",
+      "name_native": "English", "name_english": "English", "country_english": "India"},
+    "quality": "compact",
+    "num_speakers": 1,
+    "heavy": true,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "SYSPIN (IISc SPIRE Lab)",
+    "license": "MIT",
+    "files": {
+      "syspin-v2/vits-syspin-en-male-compact.onnx": {"size_bytes": 44361139, "md5_digest": "544f69dea18ae47bb3b97ad96c88be67"},
+      "piper-v2/en_IN-rahul-compact.onnx.json": {"size_bytes": 2387, "md5_digest": "2470993bedd58d8d9426f3bf3cac7cea"}
+    }
+  },
   "ta_IN-rasa_female-medium": {
     "key": "ta_IN-rasa_female-medium",
     "name": "rasa_female",

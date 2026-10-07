@@ -106,7 +106,7 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(65, voices.size());
+        assertEquals(67, voices.size());
         // Only kept voices are bundled: none is filtered out again.
         assertEquals(voices.size(), PiperDownloads.keptOnly(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
@@ -152,10 +152,12 @@ public class PiperCatalogTest {
         for (PiperDownloads.CatalogVoice v : out) {
             assertNotEquals("hi_IN-pratham-medium", v.key);
         }
-        // The shipped list: two voices at most per language.
-        for (java.util.Set<String> keys : keptAsset().values()) {
-            assertTrue(keys.size() <= 4);
+        // The shipped list: two voices at most per language (each with its
+        // Compact key), plus Indian English Rahul for English.
+        for (java.util.Map.Entry<String, java.util.Set<String>> e : keptAsset().entrySet()) {
+            assertTrue(e.getKey(), e.getValue().size() <= ("en".equals(e.getKey()) ? 6 : 4));
         }
+        assertTrue(keptAsset().get("en").contains("en_IN-rahul-medium"));
     }
 
     @Test
