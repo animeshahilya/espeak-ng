@@ -38,9 +38,6 @@ jobs:
           path: android/build/reports/lint-results-debug.html
           retention-days: 30
 
-  gradle-wrapper-validation:
-    uses: ./.github/workflows/gradle-wrapper-validation.yml
-
   check-gradle-properties:
     runs-on: ubuntu-latest
     name: Check gradle.properties
