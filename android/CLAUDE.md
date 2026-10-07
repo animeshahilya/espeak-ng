@@ -159,7 +159,12 @@ voices" does not, so voices can still be deleted to free space.
   held-out ones, e.g. Ukrainian 906 -> 1443, pt-BR 306 -> 1131, Nepali
   540 -> 771; Whisper CER on 15 sentences: pt_BR-faber 28.9% -> 17.9%,
   ne_NP-google 39.8% -> 29.1%). Improvements that only reorder known symbols (schwa
-  deletion, vowel length) are kept, not reverted. `tools/piper_spellings.py`
+  deletion, vowel length) are kept, not reverted. Checked by ear-proxy
+  2026-10-07: Hindi rules undoing them (word-final `iː` -> `i`, no `ˌ` on
+  it, stressed `ə` -> `ʌ`) raised held-out exact spellings 882 -> 1133 of
+  1500, yet IndicConformer understood fewer lone words (Rohan 41 -> 38 of
+  80, Priyamvada 47 -> 29: the short final ई is heard as ि). A spelling
+  gain alone is not enough; confirm a rule with an ASR judge. `tools/piper_spellings.py`
   re-measures (`score`, `residual`) and regenerates
   `test/resources/piper_spellings_cases.tsv`, 480 real-word cases the JVM
   test runs through the Java table - its Python `RULES` mirror the Java
