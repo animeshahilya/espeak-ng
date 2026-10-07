@@ -68,6 +68,18 @@ final class PiperVoiceConfig {
     private static final java.util.Set<String> FINAL_STOP = new java.util.HashSet<>(Arrays.asList(
             "el_GR-rapunzelina-medium"));
 
+    /**
+     * Text voices that collapse on a long sentence: past ~110 letters the
+     * audio stops growing and the rest is mumbled or dropped. Their long
+     * sentences are read in pieces of about {@link PiperPhonemes#SHORT_CHUNK}
+     * letters, split between words. 2026-10-07, Parakeet, 14 sentences and a
+     * paragraph: Rahul 37.7% -> 5.9% character errors (the paragraph 94% ->
+     * 3%), Compact 37.0% -> 6.6%. The other text voices (SYSPIN, Rasa) keep
+     * their length on long sentences, Priya included, and are left alone.
+     */
+    private static final java.util.Set<String> SHORT_CHUNKS = new java.util.HashSet<>(Arrays.asList(
+            "en_IN-rahul-medium", "en_IN-rahul-compact"));
+
     /** Arabic voices trained on vowelled text: see {@link Tashkeel}. */
     static final java.util.Set<String> TASHKEEL = new java.util.HashSet<>(Arrays.asList(
             "ar_JO-kareem-medium"));
@@ -110,6 +122,8 @@ final class PiperVoiceConfig {
     final boolean hissy;
     /** Unpunctuated sentences end with '.': see {@link #FINAL_STOP}. */
     final boolean finalStop;
+    /** Long sentences read in short pieces: see {@link #SHORT_CHUNKS}. */
+    final boolean shortChunks;
     /** Arabic text gets vowel marks first: see {@link #TASHKEEL}. */
     final boolean tashkeel;
     /** Today's IPA -> the spelling the voice was trained on (PiperPhonemes.trainedSpellings). */
@@ -143,6 +157,7 @@ final class PiperVoiceConfig {
         oldEspeak = b.oldEspeak;
         hissy = HISSY.contains(key);
         finalStop = FINAL_STOP.contains(key);
+        shortChunks = SHORT_CHUNKS.contains(key);
         tashkeel = TASHKEEL.contains(key);
         trainedSpellings = PiperPhonemes.trainedSpellings(usesEspeak() ? espeakVoice : null,
                 oldEspeak);

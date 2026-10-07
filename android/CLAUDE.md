@@ -375,7 +375,13 @@ voices" does not, so voices can still be deleted to free space.
   phonemize pinned commit, MD5-checked) is fetched beside the voice by
   `PiperDownloads.fetchVoiceExtras` (with the NPU decoders), so the APK does not
   grow; without it Kareem reads unvowelled as before. Emirati was trained
-  without vowel marks and gets worse with them (15 -> 19%). Whisper artifacts
+  without vowel marks and gets worse with them (15 -> 19%).
+  `PiperVoiceConfig.SHORT_CHUNKS` (2026-10-07): Indian English Rahul collapses
+  past ~110 letters per model run (audio stops growing, the rest mumbled), so
+  its long sentences become one clause per word and `chunk` cuts them at
+  `PiperPhonemes.SHORT_CHUNK` (70) letters: Parakeet 37.7 -> 5.9% (Compact
+  37.0 -> 6.6%). Its 2026-10-05 Whisper score (39.1, paragraph 100%) was this
+  bug. Every other text voice keeps its length on long sentences. Whisper artifacts
   that looked like voice faults: Gujarati Jay "stopping mid-sentence" (Whisper
   dropping long audio: the same text per sentence 18%, like Hetal) and lone
   Gujarati words; Malayalam/Assamese written in Devanagari, Latin or English.

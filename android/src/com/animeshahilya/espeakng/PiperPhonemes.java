@@ -43,6 +43,8 @@ final class PiperPhonemes {
     static final int FIRST_CHUNK_PHONEMES = 60;
     /** Later chunks play while the next one renders; bigger ones sound smoother. */
     static final int CHUNK_PHONEMES = 220;
+    /** Letters per piece for voices that collapse on long input ({@link PiperVoiceConfig#shortChunks}). */
+    static final int SHORT_CHUNK = 70;
 
     /** One eSpeak clause, as piperPhonemizer.c reports it. */
     static final class Clause {
@@ -523,6 +525,16 @@ final class PiperPhonemes {
 
     /** @param spell rewrites each sentence before it is read (numbers into words), or null */
     static List<Clause> textClauses(String text, java.util.function.UnaryOperator<String> spell) {
+        return textClauses(text, spell, false);
+    }
+
+    /**
+     * @param shortChunks a sentence longer than {@link #SHORT_CHUNK} letters
+     *        becomes one clause per word, so {@link #chunk} with that budget
+     *        reads it in pieces ({@link PiperVoiceConfig#shortChunks})
+     */
+    static List<Clause> textClauses(String text, java.util.function.UnaryOperator<String> spell,
+                                    boolean shortChunks) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
@@ -540,7 +552,14 @@ final class PiperPhonemes {
                 final String piece = text.substring(start, i);
                 if (!piece.trim().isEmpty()) {
                     final String said = spell != null ? spell.apply(piece.trim()) : piece.trim();
-                    clauses.add(new Clause(true, cpStart, cp, said + " "));
+                    if (shortChunks && said.length() > SHORT_CHUNK) {
+                        final String[] words = said.split("\\s+");
+                        for (int w = 0; w < words.length; w++) {
+                            clauses.add(new Clause(w == words.length - 1, cpStart, cp, words[w] + " "));
+                        }
+                    } else {
+                        clauses.add(new Clause(true, cpStart, cp, said + " "));
+                    }
                 }
                 start = i;
                 cpStart = cp;

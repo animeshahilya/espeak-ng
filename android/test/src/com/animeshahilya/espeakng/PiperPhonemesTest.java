@@ -321,6 +321,27 @@ public class PiperPhonemesTest {
                 PiperPhonemes.toIds(PiperPhonemes.tokenize("কো", c), c, null));
     }
 
+    /** Rahul collapses past ~110 letters: a long sentence is read in pieces of about 70, between words. */
+    @Test
+    public void shortChunkVoicesReadLongSentencesInPieces() {
+        final String text = "During several days, it confronts and brings together different readings, "
+                + "opinions and recommendations from high level international policymakers. Short one.";
+        final List<PiperPhonemes.Clause> clauses = PiperPhonemes.textClauses(text, null, true);
+        final List<PiperPhonemes.Chunk> chunks = PiperPhonemes.chunk(clauses,
+                PiperPhonemes.FIRST_CHUNK_PHONEMES, PiperPhonemes.SHORT_CHUNK, false);
+        assertEquals(3, chunks.size());
+        assertFalse(chunks.get(0).endsSentence);
+        assertTrue(chunks.get(1).endsSentence);
+        assertEquals("Short one.", chunks.get(2).ipa);
+        for (PiperPhonemes.Chunk chunk : chunks) {
+            assertTrue(chunk.ipa, chunk.ipa.length() <= 100);
+        }
+        // Other voices: one clause per sentence, as before.
+        final List<PiperPhonemes.Clause> whole = PiperPhonemes.textClauses(text, null);
+        assertEquals(2, whole.size());
+        assertTrue(whole.get(0).ipa.length() > 140);
+    }
+
     @Test
     public void textClausesSpellEachSentence() {
         final List<PiperPhonemes.Clause> c = PiperPhonemes.textClauses("A 5. B", t -> t.replace("5", "five"));

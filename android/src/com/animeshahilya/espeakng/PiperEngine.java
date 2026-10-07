@@ -737,10 +737,11 @@ final class PiperEngine {
                     PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), said);
             clauses = vowelled != null ? PiperPhonemes.remap(aligned, vowelled.toOriginal) : aligned;
         } else {
-            clauses = PiperPhonemes.textClauses(text, numberWords(config.languageFamily));
+            clauses = PiperPhonemes.textClauses(text, numberWords(config.languageFamily), config.shortChunks);
         }
         final List<PiperPhonemes.Chunk> chunks = PiperPhonemes.chunk(clauses,
-                PiperPhonemes.FIRST_CHUNK_PHONEMES, PiperPhonemes.CHUNK_PHONEMES, config.finalStop);
+                PiperPhonemes.FIRST_CHUNK_PHONEMES,
+                config.shortChunks ? PiperPhonemes.SHORT_CHUNK : PiperPhonemes.CHUNK_PHONEMES, config.finalStop);
 
         final float speed = Math.max(0.1f, params.speed);
         final float modelSpeed = Math.max(MIN_MODEL_SPEED, Math.min(MAX_MODEL_SPEED, speed));
