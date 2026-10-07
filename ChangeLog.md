@@ -7,6 +7,26 @@
 
 The espeak-ng project is a fork of the espeak project.
 
+### Unreleased (Android)
+
+*  **Natural voices**:
+   *  Indian English Rahul is back in the English list, and no longer mumbles long sentences.
+   *  Rahul reads single words and short labels at normal speed, so they are not rushed.
+   *  English voices say single words and short labels more clearly.
+   *  Each language now offers its two best-sounding voices; voices you already have keep working.
+   *  New voices: Emirati Arabic (female), a second German and a second Italian speaker.
+   *  Better voices picked for Bengali, Malayalam and Nepali.
+   *  Arabic Kareem adds vowel marks before reading, so words come out right more often.
+   *  Greek Rapunzelina reads short labels clearly.
+   *  "Test voice" plays sound again.
+   *  Numbers are no longer skipped by voices that cannot read them themselves.
+*  **Languages**:
+   *  Hindi, Marathi, Nepali, Sanskrit and other Devanagari text is read by the right voice, sentence by sentence.
+   *  Ukrainian, Russian, Serbian, Urdu, Persian, Assamese, Japanese and other languages that share a script are told apart.
+   *  Hindi words typed with a colon instead of the visarga (पुन:, दु:ख) are read correctly.
+   *  App and tech names (WhatsApp, GPay, UPI, OTP...) are pronounced as words. Can be turned off in Settings.
+*  **Fixes**: crashes, word highlighting and several TalkBack and settings fixes.
+
 ### 2.8 (Android)
 
 *  **TalkBack & Accessibility**:
