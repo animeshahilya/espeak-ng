@@ -63,10 +63,15 @@ final class PiperVoiceConfig {
      * Whisper large-v3, 2026-10-06, two renders: Rapunzelina's short phrases
      * 71% -> 30% character errors, whole corpus 38.6% -> 29.8%. Per voice,
      * not for all: across the kept voices the average did not move and some
-     * got worse (zh huayan's lone words 22% -> 85%).
+     * got worse (zh huayan's lone words 22% -> 85%). The English catalog
+     * voices, 2026-10-07, Parakeet, each lone word its own call, two renders
+     * (68 words, 17 screen-reader phrases): lone words right HFC Female
+     * 108 -> 121 of 136, Amy 102 -> 115, Rahul 46 -> 56 (his '.' becomes ','
+     * in {@link PiperPhonemes#englishChunkEnd}); phrases unchanged.
      */
     private static final java.util.Set<String> FINAL_STOP = new java.util.HashSet<>(Arrays.asList(
-            "el_GR-rapunzelina-medium"));
+            "el_GR-rapunzelina-medium", "en_US-hfc_female-medium", "en_US-amy-medium",
+            "en_IN-rahul-medium", "en_IN-rahul-compact"));
 
     /**
      * Text voices that collapse on a long sentence: past ~110 letters the
