@@ -743,7 +743,7 @@ final class PiperEngine {
                 PiperPhonemes.FIRST_CHUNK_PHONEMES,
                 config.shortChunks ? PiperPhonemes.SHORT_CHUNK : PiperPhonemes.CHUNK_PHONEMES, config.finalStop);
 
-        final float speed = Math.max(0.1f, params.speed);
+        final float speed = shortInputSpeed(text, config, Math.max(0.1f, params.speed));
         final float modelSpeed = Math.max(MIN_MODEL_SPEED, Math.min(MAX_MODEL_SPEED, speed));
         final float residualSpeed = speed / modelSpeed;
         final float pitch = params.pitch;
@@ -1195,6 +1195,18 @@ final class PiperEngine {
      * lead-in made them worse (Mrunal 9/12 -> 4/12), so they get none.
      */
     static final int LEAD_IN = 8;
+
+    /** Up to this many words is "short input" ({@link PiperVoiceConfig#normalSpeedShortInput}). */
+    static final int SHORT_INPUT_WORDS = 4;
+
+    /** {@code speed}, capped at normal for a voice that rushes short input when the text is short. */
+    static float shortInputSpeed(String text, PiperVoiceConfig config, float speed) {
+        if (!config.normalSpeedShortInput || speed <= 1f || text == null) {
+            return speed;
+        }
+        final String trimmed = text.trim();
+        return !trimmed.isEmpty() && trimmed.split("\\s+").length <= SHORT_INPUT_WORDS ? 1f : speed;
+    }
 
     /** SYSPIN: a letter-reading voice at 22050 Hz (Rasa's are 24 kHz, Piper's read phonemes). */
     static boolean needsLeadIn(PiperModel model) {

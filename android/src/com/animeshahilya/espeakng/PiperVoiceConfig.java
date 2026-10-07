@@ -85,6 +85,17 @@ final class PiperVoiceConfig {
     private static final java.util.Set<String> SHORT_CHUNKS = new java.util.HashSet<>(Arrays.asList(
             "en_IN-rahul-medium", "en_IN-rahul-compact"));
 
+    /**
+     * Voices that rush a lone word or a short label when read faster than
+     * normal: input of up to {@link PiperEngine#SHORT_INPUT_WORDS} words is
+     * read at no more than normal speed ({@link PiperEngine#shortInputSpeed});
+     * sentences keep the reading speed. 2026-10-07, Rahul at the user's
+     * 1.27x, Parakeet, 3 renders: lone words right 76 -> 85 of 204, phrases
+     * 24 -> 28 of 51; slower than normal (0.87x) gained nothing more.
+     */
+    private static final java.util.Set<String> NORMAL_SPEED_SHORT_INPUT = new java.util.HashSet<>(
+            Arrays.asList("en_IN-rahul-medium", "en_IN-rahul-compact"));
+
     /** Arabic voices trained on vowelled text: see {@link Tashkeel}. */
     static final java.util.Set<String> TASHKEEL = new java.util.HashSet<>(Arrays.asList(
             "ar_JO-kareem-medium"));
@@ -129,6 +140,8 @@ final class PiperVoiceConfig {
     final boolean finalStop;
     /** Long sentences read in short pieces: see {@link #SHORT_CHUNKS}. */
     final boolean shortChunks;
+    /** Short input at no more than normal speed: see {@link #NORMAL_SPEED_SHORT_INPUT}. */
+    final boolean normalSpeedShortInput;
     /** Arabic text gets vowel marks first: see {@link #TASHKEEL}. */
     final boolean tashkeel;
     /** Today's IPA -> the spelling the voice was trained on (PiperPhonemes.trainedSpellings). */
@@ -163,6 +176,7 @@ final class PiperVoiceConfig {
         hissy = HISSY.contains(key);
         finalStop = FINAL_STOP.contains(key);
         shortChunks = SHORT_CHUNKS.contains(key);
+        normalSpeedShortInput = NORMAL_SPEED_SHORT_INPUT.contains(key);
         tashkeel = TASHKEEL.contains(key);
         trainedSpellings = PiperPhonemes.trainedSpellings(usesEspeak() ? espeakVoice : null,
                 oldEspeak);

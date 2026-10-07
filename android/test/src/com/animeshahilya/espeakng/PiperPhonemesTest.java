@@ -342,6 +342,19 @@ public class PiperPhonemesTest {
         assertTrue(whole.get(0).ipa.length() > 140);
     }
 
+    /** Rahul reads a lone word or short label at no more than normal speed; sentences keep the rate. */
+    @Test
+    public void shortInputAtNormalSpeedForRahul() throws Exception {
+        final PiperVoiceConfig rahul = textVoice("en_IN-rahul-medium", "en");
+        assertEquals(1f, PiperEngine.shortInputSpeed("Battery", rahul, 1.27f), 0f);
+        assertEquals(1f, PiperEngine.shortInputSpeed("Double tap to activate", rahul, 1.27f), 0f);
+        assertEquals(1.27f, PiperEngine.shortInputSpeed("The battery is low, please connect the charger.",
+                rahul, 1.27f), 0f);
+        assertEquals(0.8f, PiperEngine.shortInputSpeed("Battery", rahul, 0.8f), 0f);  // never faster
+        assertEquals(1.27f, PiperEngine.shortInputSpeed("Battery",
+                textVoice("en_IN-priya-medium", "en"), 1.27f), 0f);
+    }
+
     @Test
     public void textClausesSpellEachSentence() {
         final List<PiperPhonemes.Clause> c = PiperPhonemes.textClauses("A 5. B", t -> t.replace("5", "five"));
