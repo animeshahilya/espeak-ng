@@ -34,8 +34,10 @@ Note: The app ships 153 languages.
 
 The Gradle build has custom tasks that run automatically:
 1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/` (all ~120 languages)
-2. `createDataArchive` zips the whole tree into `res/raw/espeakdata.zip` -
-   every language ships in the APK, there is no core/extra split
+2. `createDataArchive` zips the tree except the compiled dictionaries into
+   `res/raw/espeakdata.zip` (~0.5 MB); `createDictAssets` puts every
+   `*_dict` in the APK as `assets/espeak-dicts/` (variant API) - every
+   language ships in the APK, there is no core/extra split
 3. `createDataHash` generates SHA256 for upgrade detection
 4. `createDataVersion` writes the hash to `res/raw/espeakdata_version`
 
@@ -744,7 +746,9 @@ redundant aliases or runtime PackageManager modifications.
 
 ### Voice Data Lifecycle
 
-On first launch (or version mismatch), `DownloadVoiceData` extracts `res/raw/espeakdata.zip` (every language, ~30MB) to device-protected storage. `CheckVoiceData` validates required files: `version`, `intonations`, `phondata`, `phonindex`, `phontab`, `en_dict`.
+On first launch (or version mismatch), `DownloadVoiceData` extracts `res/raw/espeakdata.zip` (phoneme data, voices, language files; ~0.8 MB) to device-protected storage. `CheckVoiceData` validates required files: `version`, `intonations`, `phondata`, `phonindex`, `phontab`.
+
+Compiled dictionaries (29.9 of the 30.7 MB) are never extracted (2026-10-08): `LoadDictionary` (dictionary.c), the one place eSpeak opens a `*_dict`, falls back to `espeak_SetDictionaryReader` (fork extension, speak_lib.h) when the file is not on disk, and the JNI layer reads `espeak-dicts/<name>_dict` from the APK with `AAssetManager` (`readDictionaryAsset` in eSpeakService.c, set in `nativeCreate`). Every load goes through it, eSpeak's own mid-sentence language switches included, and eSpeak keeps a loaded dictionary in memory as before (no extra RAM). Pixel 8: user data 452 -> 422 MB; loading from the compressed asset costs Russian 56 ms (9.1 MB), Faroese 37, Pashto 15, Chinese 11, the rest under 8 ms - once per switch into that language. The CLI and desktop builds set no reader: files only. `DictionaryAssetsDeviceTest` checks every voice reads and that no `*_dict` sits in app storage.
 
 All languages are bundled directly in the APK and selectable from first
 launch - there is no core/extra split and no network-fetched language pack

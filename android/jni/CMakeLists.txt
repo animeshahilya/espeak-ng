@@ -48,6 +48,7 @@ add_custom_target(
 message(STATUS "Data: ${CMAKE_CURRENT_SOURCE_DIR}")
 
 find_library(A_LOG log)
+find_library(A_ANDROID android)  # AAssetManager: dictionaries read from the APK
 
 add_library(ttsespeak SHARED
         jni/eSpeakService.c
@@ -62,7 +63,7 @@ target_include_directories(ttsespeak PRIVATE
         "${SONIC_DIR}"
 )
 target_link_libraries(ttsespeak PRIVATE
-        espeak-ng ${A_LOG}
+        espeak-ng ${A_LOG} ${A_ANDROID}
 )
 # Export only the JNI entry points; see ttsespeak.map.
 target_link_options(ttsespeak PRIVATE

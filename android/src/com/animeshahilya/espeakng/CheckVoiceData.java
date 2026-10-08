@@ -51,7 +51,8 @@ public class CheckVoiceData extends Activity {
         "phondata",
         "phonindex",
         "phontab",
-        "en_dict",
+        // No *_dict: compiled dictionaries are read from the APK's
+        // espeak-dicts/ assets (SpeechSynthesis.nativeCreate), not extracted.
     };
 
     public static File getDataPath(Context context) {

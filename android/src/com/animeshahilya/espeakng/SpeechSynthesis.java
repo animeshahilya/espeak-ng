@@ -535,7 +535,7 @@ public class SpeechSynthesis {
                 return;
             }
 
-            mSampleRate = nativeCreate(mDatapath);
+            mSampleRate = nativeCreate(mDatapath, mContext.getAssets());
             if (mSampleRate <= 0) {
                 Log.e(TAG, "Failed to initialize speech synthesis library");
                 mSampleRate = 0;
@@ -579,7 +579,8 @@ public class SpeechSynthesis {
 
     private static native boolean nativeClassInit();
 
-    private native int nativeCreate(String path);
+    /** {@code assets}: the compiled dictionaries come from its espeak-dicts/, not the data path. */
+    private native int nativeCreate(String path, android.content.res.AssetManager assets);
 
     private native String[] nativeGetAvailableVoices();
 

@@ -257,6 +257,44 @@ tasks.register('createDataArchive', Zip) {
 
     from("build/generated/espeak-ng-data/") {
         into "espeak-ng-data"
+        // Compiled dictionaries (~30 MB of the 30.7) are not extracted: the
+        // engine reads them from the APK's assets (createDictAssets).
+        exclude "*_dict"
+    }
+}
+
+// Every compiled dictionary as its own APK asset, espeak-dicts/<name>_dict:
+// the native engine reads one when a language first needs it
+// (espeak_SetDictionaryReader in jni/jni/eSpeakService.c), so they are never
+// copied into app storage. Registered through the variant API, which wires
+// the asset tasks' dependencies.
+abstract class DictAssets extends DefaultTask {
+    @InputDirectory
+    abstract DirectoryProperty getDataDir()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir()
+
+    @javax.inject.Inject
+    abstract FileSystemOperations getFs()
+
+    @TaskAction
+    void run() {
+        fs.sync {
+            from(dataDir) { include "*_dict" }
+            into(outputDir.dir("espeak-dicts"))
+        }
+    }
+}
+
+def dictAssets = tasks.register('createDictAssets', DictAssets) {
+    dependsOn tasks.checkData
+    dataDir = file("build/generated/espeak-ng-data")
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(dictAssets) { it.outputDir }
     }
 }
 

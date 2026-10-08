@@ -507,6 +507,19 @@ ESPEAK_API espeak_ERROR espeak_SetScriptLanguage(const char *script, const char 
 #ifdef __cplusplus
 extern "C"
 #endif
+typedef char *(*espeak_DICTIONARY_READER)(const char *name, int *size);
+ESPEAK_API void espeak_SetDictionaryReader(espeak_DICTIONARY_READER reader);
+/* (eSpeak NG Advanced extension) Where a language's compiled dictionary
+   (<name>_dict) comes from when it is not in the data directory, e.g. the
+   Android APK, so the files need not be copied out (~30 MB for every
+   language). Called with the dictionary's name ("en", "hi"); returns the
+   whole file in memory from malloc() (eSpeak frees it) and sets *size, or
+   NULL if it has none. A file on disk still wins. NULL: files only.
+*/
+
+#ifdef __cplusplus
+extern "C"
+#endif
 ESPEAK_API espeak_ERROR espeak_SetPunctuationList(const wchar_t *punctlist);
 /* Specified a list of punctuation characters whose names are to be spoken when the
    value of the Punctuation parameter is set to "some".

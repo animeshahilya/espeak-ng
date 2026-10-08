@@ -194,6 +194,13 @@ static void InitGroups(Translator *tr)
 	}
 }
 
+static espeak_DICTIONARY_READER dictionary_reader = NULL;
+
+ESPEAK_API void espeak_SetDictionaryReader(espeak_DICTIONARY_READER reader)
+{
+	dictionary_reader = reader;
+}
+
 int LoadDictionary(Translator *tr, const char *name, int no_error)
 {
 	int hash;
@@ -221,20 +228,30 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	}
 
 	f = fopen(fname, "rb");
-	if ((f == NULL) || (size <= 0)) {
-		if (no_error == 0)
-			fprintf(stderr, "Can't read dictionary file: '%s'\n", fname);
-		if (f != NULL)
+	if (((f == NULL) || (size <= 0)) && (dictionary_reader != NULL)) {
+		// Not on disk: the embedding app's copy (espeak_SetDictionaryReader).
+		if (f != NULL) {
 			fclose(f);
-		return 1;
+			f = NULL;
+		}
+		tr->data_dictlist = dictionary_reader(name, &size);
 	}
+	if (tr->data_dictlist == NULL) {
+		if ((f == NULL) || (size <= 0)) {
+			if (no_error == 0)
+				fprintf(stderr, "Can't read dictionary file: '%s'\n", fname);
+			if (f != NULL)
+				fclose(f);
+			return 1;
+		}
 
-	if ((tr->data_dictlist = malloc(size)) == NULL) {
+		if ((tr->data_dictlist = malloc(size)) == NULL) {
+			fclose(f);
+			return 3;
+		}
+		size = fread(tr->data_dictlist, 1, size, f);
 		fclose(f);
-		return 3;
 	}
-	size = fread(tr->data_dictlist, 1, size, f);
-	fclose(f);
 
 	if (size <= (N_HASH_DICT + sizeof(int)*2)) {
 		fprintf(stderr, "Empty _dict file: '%s'\n", fname);

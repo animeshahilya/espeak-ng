@@ -35,6 +35,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <jni.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 
 #include <espeak-ng/speak_lib.h>
 #include <sonic.h>
@@ -352,9 +354,37 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeClassInit(
 
 static atomic_int s_sampleRate = 0;
 
+/* The APK's assets: compiled dictionaries are read from espeak-dicts/ there
+ * instead of being extracted (~30 MB for all languages). The Java object is
+ * held by a global reference so the native pointer stays valid. */
+static AAssetManager *s_assets = NULL;
+
+static char *readDictionaryAsset(const char *name, int *size) {
+  if (s_assets == NULL || name == NULL) return NULL;
+  char path[96];
+  if (snprintf(path, sizeof(path), "espeak-dicts/%s_dict", name) >= (int)sizeof(path)) return NULL;
+  AAsset *asset = AAssetManager_open(s_assets, path, AASSET_MODE_STREAMING);
+  if (asset == NULL) return NULL;
+  const off_t length = AAsset_getLength(asset);
+  char *data = length > 0 ? malloc((size_t)length) : NULL;
+  off_t done = 0;
+  while (data != NULL && done < length) {
+    const int n = AAsset_read(asset, data + done, (size_t)(length - done));
+    if (n <= 0) {
+      free(data);
+      data = NULL;
+    } else {
+      done += n;
+    }
+  }
+  AAsset_close(asset);
+  if (data != NULL) *size = (int)length;
+  return data;
+}
+
 JNIEXPORT jint
 JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeCreate(
-    JNIEnv *env, jobject object, jstring path) {
+    JNIEnv *env, jobject object, jstring path, jobject assets) {
   if (DEBUG) LOGV("%s [env=%p, object=%p]", __FUNCTION__, env, object);
 
   const int cachedRate = atomic_load(&s_sampleRate);
@@ -367,6 +397,13 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeCreate(
   if (path != NULL && c_path == NULL) return 0; // JNI OOM: exception pending
 
   if (DEBUG) LOGV("Initializing with path %s", c_path ? c_path : "(null)");
+  if (assets != NULL && s_assets == NULL) {
+    jobject ref = (*env)->NewGlobalRef(env, assets);
+    if (ref != NULL) {
+      s_assets = AAssetManager_fromJava(env, ref);
+      espeak_SetDictionaryReader(readDictionaryAsset);
+    }
+  }
   const int rate = espeak_Initialize(AUDIO_OUTPUT_SYNCHRONOUS, BUFFER_SIZE_IN_MILLISECONDS, c_path, 0);
 
   if (c_path) (*env)->ReleaseStringUTFChars(env, path, c_path);
