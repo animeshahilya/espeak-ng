@@ -482,13 +482,25 @@ public class SpeechSynthesis {
         return nativeSonicStretch(samples, sampleRate, speed, pitch);
     }
 
-    public void terminate() {
-        synchronized (SpeechSynthesis.class) {
-            nativeTerminate();
-            sSampleRate = 0;
-            mSampleRate = 0;
-            mInitialized = false;
-            clearVoiceCache();
+    /**
+     * Restarts the native engine so it reads its data afresh (after voice
+     * data was extracted again). The engine is one per process and other
+     * instances (settings, Test voice, the natural voices' phonemizer) may be
+     * using it, so it is never left terminated: shut down and set up again
+     * in one step, under the lock every synthesis and phonemization holds.
+     * A plain terminate let a phonemization on another instance run on the
+     * freed engine (SIGSEGV in TranslateClauseWithTerminator, which killed
+     * the TTS process).
+     */
+    public void reload() {
+        synchronized (sSynthLock) {
+            synchronized (SpeechSynthesis.class) {
+                nativeTerminate();
+                sSampleRate = 0;
+                mInitialized = false;
+                clearVoiceCache();
+                attemptInit();
+            }
         }
     }
 

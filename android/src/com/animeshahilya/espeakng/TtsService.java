@@ -405,10 +405,11 @@ public class TtsService extends TextToSpeechService {
     public void onDestroy() {
         super.onDestroy();
         mPiper.unloadAll();
-        if (mEngine != null) {
-            mEngine.terminate();
-            mEngine = null;
-        }
+        // The native engine stays: it is shared with every other
+        // SpeechSynthesis in this process (settings, Test voice, natural
+        // voices), and terminating it under them crashed the process. The
+        // process ending frees it.
+        mEngine = null;
         if (mPreferences != null) {
             mPreferences.unregisterOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         }
@@ -425,14 +426,12 @@ public class TtsService extends TextToSpeechService {
      */
     private void initializeTtsEngine() {
         if (mEngine != null) {
-            mEngine.terminate();
-            mEngine = null;
+            mEngine.reload(); // reads the new voice data; never leaves the engine down
+        } else {
+            // Clear cached voice list since native engine is being reinitialized
+            SpeechSynthesis.clearVoiceCache();
+            mEngine = new SpeechSynthesis(mStorageContext, mSynthCallback);
         }
-
-        // Clear cached voice list since native engine is being reinitialized
-        SpeechSynthesis.clearVoiceCache();
-
-        mEngine = new SpeechSynthesis(mStorageContext, mSynthCallback);
         mMatchingVoice = null;
         List<Voice> voices = mEngine.getAvailableVoices();
         synchronized (mAvailableVoices) {
