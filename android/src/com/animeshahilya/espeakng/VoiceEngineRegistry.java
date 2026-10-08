@@ -52,12 +52,12 @@ public final class VoiceEngineRegistry {
 
     /** Returns all currently registered engines. */
     public Collection<VoiceEngine> getEngines() {
-        return Collections.unmodifiableCollection(mEngines.values());
+        return Collections.unmodifiableCollection(new java.util.ArrayList<>(mEngines.values()));
     }
 
     /** Broadcasts stop to all registered engines. */
     public void stopAll() {
-        for (VoiceEngine engine : mEngines.values()) {
+        for (VoiceEngine engine : new java.util.ArrayList<>(mEngines.values())) {
             try {
                 engine.onStop();
             } catch (Throwable ignored) {
@@ -67,7 +67,7 @@ public final class VoiceEngineRegistry {
 
     /** Broadcasts memory trim to all registered engines. */
     public void trimAll(int level) {
-        for (VoiceEngine engine : mEngines.values()) {
+        for (VoiceEngine engine : new java.util.ArrayList<>(mEngines.values())) {
             try {
                 engine.onTrimMemory(level);
             } catch (Throwable ignored) {
@@ -77,7 +77,7 @@ public final class VoiceEngineRegistry {
 
     /** Unloads all loaded models across all registered engines. */
     public void unloadAll() {
-        for (VoiceEngine engine : mEngines.values()) {
+        for (VoiceEngine engine : new java.util.ArrayList<>(mEngines.values())) {
             try {
                 engine.unloadAll();
             } catch (Throwable ignored) {
@@ -85,7 +85,13 @@ public final class VoiceEngineRegistry {
         }
     }
 
-    /** Clears all registered engines (for testing or tear down). */
+    /**
+     * Clears all registered engines.
+     *
+     * <p>Test-only: production code must {@link #unregister(String)} individual
+     * engines instead. Clearing the process-wide singleton from a unit test
+     * that shares the process with the service would drop live engines.
+     */
     public void clear() {
         mEngines.clear();
     }

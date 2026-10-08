@@ -875,7 +875,11 @@ public final class TextPreprocessor {
     // ==========================================
 
     private static final Pattern CAMEL_CASE_LOWER_UPPER = Pattern.compile("(?<=[\\p{Ll}\\d])(?=[\\p{Lu}])");
-    private static final Pattern CAMEL_CASE_UPPER_RUN = Pattern.compile("(?<=[\\p{Lu}]{2,})(?=[\\p{Lu}][\\p{Ll}])");
+    // Android's ICU regex rejects unbounded look-behind ({2,}, *, +), unlike
+    // desktop JDK: "(?<=[Lu]{2,})" throws PatternSyntaxException on device and
+    // kills TextPreprocessor class init (all synthesis). Exactly-two is
+    // equivalent here: preceded by 2+ uppercase iff the last two are uppercase.
+    private static final Pattern CAMEL_CASE_UPPER_RUN = Pattern.compile("(?<=[\\p{Lu}][\\p{Lu}])(?=[\\p{Lu}][\\p{Ll}])");
 
     public static boolean containsCamelCase(String text) {
         if (text == null || text.length() < 2) return false;

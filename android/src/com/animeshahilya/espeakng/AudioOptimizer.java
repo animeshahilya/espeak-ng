@@ -293,11 +293,28 @@ public final class AudioOptimizer {
      * untouched. {@code length} is clamped to {@code data}'s actual size.
      */
     void process(byte[] data, int length) {
+        process(data, 0, length);
+    }
+
+    /**
+     * Offset-aware variant of {@link #process(byte[], int)} for callers streaming
+     * sub-ranges (e.g. {@link TtsAudioDispatcher#writeAudio(byte[], int, int)}).
+     * Processes {@code length} bytes starting at {@code offset} in place; bytes
+     * outside {@code [offset, offset + length)} are left untouched. Out-of-range
+     * arguments are clamped, never throwing for a bad slice from a synthesizer.
+     */
+    void process(byte[] data, int offset, int length) {
         if (data == null || length <= 0) {
             return;
         }
-        final int end = Math.min(length, data.length);
-        int i = 0;
+        final int start = Math.max(0, offset);
+        final int end = Math.min(data.length, start + Math.max(0, length));
+        int i = start;
+        // Keep 16-bit alignment with the array: an odd slice start would split
+        // a sample, so skip one byte to re-align rather than corrupting it.
+        if ((i & 1) != 0) {
+            i++;
+        }
         while (i + 1 < end) {
             float sample = (short) (((data[i + 1] & 0xFF) << 8) | (data[i] & 0xFF));
 

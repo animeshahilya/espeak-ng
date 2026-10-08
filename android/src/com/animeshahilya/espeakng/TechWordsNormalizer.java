@@ -69,7 +69,7 @@ public final class TechWordsNormalizer {
                     + "|neft"
                     + "|rtgs"
                     + "|(?-i:IMPS)" // lower case is the English word "imps"
-                    + "|atm(?:'s)?"
+                    + "|atms?(?:'s)?"
                     + "|kyc"
                     + "|html"
                     + "|gps"
@@ -352,7 +352,14 @@ public final class TechWordsNormalizer {
             final boolean plural = lower.contains("sims");
             return "e SIM" + (plural ? "s" : "") + apostropheS;
         }
-        if (lower.equals("atm") || lower.equals("atms") || lower.equals("atm's")) {
+        if (lower.equals("atm") || lower.equals("atms") || lower.equals("atm's")
+                || lower.equals("atms's")) {
+            // Plural "ATMs" reads as "A-T M S" (lone S) without the apostrophe;
+            // "A-T M's" keeps the plural audible, same convention as OTPs/FAQs.
+            final boolean plural = lower.startsWith("atms");
+            if (plural && !possessive) {
+                return "A-T M's";
+            }
             return "A-T M" + apostropheS;
         }
         if (lower.equals("kyc")) {

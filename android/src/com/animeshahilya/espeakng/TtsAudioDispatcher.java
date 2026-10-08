@@ -163,25 +163,53 @@ public final class TtsAudioDispatcher {
 
     public boolean writeAudio(byte[] audioData, int offset, int length) {
         if (audioData == null || length <= 0) {
-            return !isStopped();
+            return !isStopped() && !mCallbackDone.get();
         }
         if (mSink == null || mCallbackDone.get() || mIsStopped.get()) {
             return false;
         }
-
-        if (mOptimizer != null) {
-            mOptimizer.process(audioData, length);
+        // Clamp the slice to the array so a bad length from a synthesizer can
+        // never throw here on the latency-critical synthesis thread.
+        final int safeOffset = Math.max(0, Math.min(offset, audioData.length));
+        final int safeEnd = Math.min(audioData.length, safeOffset + Math.max(0, length));
+        if (safeEnd <= safeOffset) {
+            return !isStopped() && !mCallbackDone.get();
         }
 
-        final int maxBytesToCopy = Math.max(mSink.getMaxBufferSize(), 512);
-        int currentOffset = offset;
-        final int endOffset = offset + length;
+        if (mOptimizer != null) {
+            mOptimizer.process(audioData, safeOffset, safeEnd - safeOffset);
+        }
+
+        int maxBytesToCopy = mSink.getMaxBufferSize();
+        if (maxBytesToCopy <= 0) {
+            maxBytesToCopy = 512;
+        }
+        // Keep 16-bit sample alignment across chunks: an odd chunk would split
+        // a sample between two audioAvailable() calls.
+        if ((maxBytesToCopy & 1) != 0) {
+            maxBytesToCopy--;
+        }
+        if (maxBytesToCopy < 2) {
+            maxBytesToCopy = 512;
+        }
+        int currentOffset = safeOffset;
+        int endOffset = safeEnd;
+        // Drop a trailing odd byte: 16-bit PCM never has one, and the
+        // optimizer leaves it untouched. Sending it would split a sample.
+        if (((endOffset - currentOffset) & 1) != 0) {
+            endOffset--;
+        }
 
         while (currentOffset < endOffset) {
             if (mIsStopped.get() || mCallbackDone.get()) {
                 return false;
             }
-            final int bytesToWrite = Math.min(maxBytesToCopy, endOffset - currentOffset);
+            int bytesToWrite = Math.min(maxBytesToCopy, endOffset - currentOffset);
+            // Never split a sample across audioAvailable() calls.
+            if (bytesToWrite > 2 && ((bytesToWrite & 1) != 0)
+                    && endOffset - currentOffset > bytesToWrite) {
+                bytesToWrite--;
+            }
             if (mSink.audioAvailable(audioData, currentOffset, bytesToWrite) != TextToSpeech.SUCCESS) {
                 mIsStopped.set(true);
                 if (mOnAbort != null) {
@@ -225,7 +253,10 @@ public final class TtsAudioDispatcher {
             return;
         }
 
-        sink.rangeStart((int) (mUnitFrameBase + markerInFrames), finalStart, finalEnd);
+        final long marker = mUnitFrameBase + (long) markerInFrames;
+        final int clampedMarker = marker > Integer.MAX_VALUE ? Integer.MAX_VALUE
+                : (marker < 0 ? 0 : (int) marker);
+        sink.rangeStart(clampedMarker, finalStart, finalEnd);
     }
 
     /**

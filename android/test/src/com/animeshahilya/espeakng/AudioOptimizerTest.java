@@ -67,4 +67,22 @@ public class AudioOptimizerTest {
             assertTrue(val >= -32768 && val <= 32767);
         }
     }
+
+    @Test
+    public void testProcessSliceLeavesBytesOutsideSliceUntouched() {
+        AudioOptimizer optimizer = new AudioOptimizer(22050);
+        byte[] pcmData = new byte[100];
+        for (int i = 0; i < pcmData.length; i += 2) {
+            short val = (short) (Math.sin(i * 0.1) * 15000);
+            pcmData[i] = (byte) (val & 0xFF);
+            pcmData[i + 1] = (byte) ((val >> 8) & 0xFF);
+        }
+        byte[] prefix = java.util.Arrays.copyOfRange(pcmData, 0, 20);
+        byte[] suffix = java.util.Arrays.copyOfRange(pcmData, 60, pcmData.length);
+
+        optimizer.process(pcmData, 20, 40);
+
+        assertArrayEquals(prefix, java.util.Arrays.copyOfRange(pcmData, 0, 20));
+        assertArrayEquals(suffix, java.util.Arrays.copyOfRange(pcmData, 60, pcmData.length));
+    }
 }

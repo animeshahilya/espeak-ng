@@ -211,4 +211,41 @@ public class TtsAudioDispatcherTest {
         dispatcher.reportError(-1);
         assertEquals(-1, sink.errorCode);
     }
+
+    @Test
+    public void writeAudioClampsOutOfRangeSliceInsteadOfThrowing() {
+        RecordingSink sink = new RecordingSink(512);
+        TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                sink, null, null, "Hello", 0, 5,
+                null, null, null
+        );
+        byte[] pcm = new byte[100];
+        // Length far beyond the array: clamped, never throws, frames counted once.
+        assertTrue(dispatcher.writeAudio(pcm, 0, 10000));
+        assertEquals(50, dispatcher.getRequestFrames());
+        // Offset beyond the array: empty slice, no audio, no crash.
+        assertTrue(dispatcher.writeAudio(pcm, 1000, 10));
+    }
+
+    @Test
+    public void writeAudioKeepsSixteenBitAlignment() {
+        RecordingSink sink = new RecordingSink(7);
+        TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                sink, null, null, "Hello world", 0, 11,
+                null, null, null
+        );
+        byte[] pcm = new byte[20];
+        for (int i = 0; i < pcm.length; i++) {
+            pcm[i] = (byte) i;
+        }
+        assertTrue(dispatcher.writeAudio(pcm, 0, pcm.length));
+        int total = 0;
+        for (byte[] chunk : sink.writtenChunks) {
+            // No chunk (except possibly the final odd tail, which is dropped)
+            // splits a 16-bit sample.
+            assertEquals(0, chunk.length % 2);
+            total += chunk.length;
+        }
+        assertEquals(20, total);
+    }
 }

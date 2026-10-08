@@ -375,6 +375,12 @@ public class TtsService extends TextToSpeechService {
     public void onDestroy() {
         super.onDestroy();
         mEngineRegistry.unloadAll();
+        // Break the static-registry -> engine -> service chain: the registry
+        // is process-wide, and EspeakVoiceEngine holds this service. Without
+        // this, a destroyed service stays reachable until the process dies.
+        mEngineRegistry.unregister(EspeakVoiceEngine.ID);
+        mEngineRegistry.unregister(PiperVoiceEngine.ID);
+        mCurrentDispatcher = null;
         // The native engine stays: it is shared with every other
         // SpeechSynthesis in this process (settings, Test voice, natural
         // voices), and terminating it under them crashed the process. The
@@ -1733,6 +1739,12 @@ public class TtsService extends TextToSpeechService {
         final TtsAudioDispatcher dispatcher = mCurrentDispatcher;
         if (dispatcher != null) {
             dispatcher.finish();
+            // Drop the stale dispatcher so a late native callback or a
+            // subsequent error path cannot reuse a done dispatcher. Identity
+            // check: a new request may already have installed its own.
+            if (mCurrentDispatcher == dispatcher) {
+                mCurrentDispatcher = null;
+            }
         } else if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
             mCallback.done();
         }

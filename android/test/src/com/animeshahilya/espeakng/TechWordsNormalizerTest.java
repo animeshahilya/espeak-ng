@@ -142,6 +142,8 @@ public class TechWordsNormalizerTest {
         assertEquals("e SIM", TechWordsNormalizer.process("e-sim"));
 
         assertEquals("A-T M", TechWordsNormalizer.process("atm"));
+        assertEquals("A-T M's", TechWordsNormalizer.process("ATMs"));
+        assertEquals("A-T M's", TechWordsNormalizer.process("atms"));
         assertEquals("K Y C", TechWordsNormalizer.process("kyc"));
         assertEquals("G P S", TechWordsNormalizer.process("gps"));
         assertEquals("U S B", TechWordsNormalizer.process("usb"));
