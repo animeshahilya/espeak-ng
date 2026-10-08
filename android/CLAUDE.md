@@ -492,6 +492,21 @@ voices" does not, so voices can still be deleted to free space.
   separate files. Covered: the kept SYSPIN/Rasa Standard keys and Piper high (32).
   Speed is measured, not assumed: an NPU graph is kept only if a timed window
   runs at `MIN_NPU_SPEED` (4x) or more - only the 8 Elite was ever measured.
+  NPU tuning, Galaxy S25 Ultra, 2026-10-08 (native bench, QNN 2.42 / ORT
+  1.29 QNN): Piper decoder fp16 on the NPU 7 ms per 80-frame window (137x
+  raw, ~99x after the 12+12 overlap); 160 frames ~106x, 240 ~77x, so 80
+  stays. SYSPIN INT8 NPU decoder 21 ms per window (44x raw). QNN
+  `htp_graph_finalization_optimization_mode=3`: INT8 unchanged, fp16 slower
+  (137 -> 114x), compile 2.6x longer - not used. With the decoder at ~100x
+  the CPU encoder is about half the time (Priyamvada ~70 ms a sentence, 6
+  threads; 2 threads 10-25% slower, so threads unchanged). INT8-weight
+  voices reach the fp16 NPU graph only with `session.disable_quant_qdq`
+  (folds their DequantizeLinear weights); the fp16-decoder Standards
+  (SYSPIN/Rasa/Piper high) are not accepted by it at all and rely on their
+  INT8 NPU decoder file (all kept ones have one). NNAPI on the S25 is no
+  better: whole Piper models fail in the driver (OP_FAILED), decoders run
+  at CPU speed. The FastRPC "dspqueue"/"open_shell" errors QNN logs are
+  harmless (7 ms per window includes the call).
 - **Compact tier** (quality "compact", keys `<lang>-<name>-compact`, release
   `compact-v1` on sherpa-onnx-respin-syspin, made by its `build_compact.py`):
   the same voice with only its HiFi-GAN decoder in INT8 (static QDQ,
