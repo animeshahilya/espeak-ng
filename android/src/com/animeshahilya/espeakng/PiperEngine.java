@@ -181,9 +181,9 @@ final class PiperEngine {
         mCache.deleteVoice(key);
     }
 
-    /** Cache identity of a loaded voice: its key and model file, so an update never matches. */
+    /** Cache identity of a loaded voice: its key and model bytes, so an update never matches. */
     private static String voiceStamp(PiperModel model) {
-        return model.config.key + "|" + model.file.length() + ":" + model.file.lastModified();
+        return model.config.key + "|" + model.stamp;
     }
 
     private final ExecutorService mRenderer = Executors.newSingleThreadExecutor(r -> {
@@ -347,7 +347,7 @@ final class PiperEngine {
             synchronized (mLoaded) {
                 for (PiperModel existing : mLoaded.values()) {
                     if (existing != null && !existing.isClosed()
-                            && PiperDownloads.sameFile(existing.file, onnx)) {
+                            && existing.stamp.equals(PiperModel.stamp(onnx))) {
                         final PiperModel cloned = existing.withConfig(config);
                         if (cloned != null) {
                             return cloned;

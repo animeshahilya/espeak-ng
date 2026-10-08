@@ -300,7 +300,19 @@ voices" does not, so voices can still be deleted to free space.
   Inference holds `PiperModel`'s read lock; eviction takes the write lock.
 - **Storage/download.** Voices live in device-protected
   `files/piper/voices/<key>/model.onnx{,.json}` plus the optimized copy,
-  deleted with the voice (`PiperVoiceStore`; Direct
+  deleted with the voice (`PiperVoiceStore`). Once the optimized copy has
+  loaded, `PiperModel.dropOriginal` deletes model.onnx (and a shared
+  original): the phone kept both, twice the space (Pixel 8, 2026-10-08:
+  Priyamvada 35 -> 18 MB, Hetal 93 -> 49, Kareem 137 -> 74). `source` (the
+  model MD5) then stands for it: it marks the voice installed, keys the
+  phrase cache and session sharing (`PiperModel.stamp`), and a second Rasa
+  voice installs from the shared optimized copy alone
+  (`PiperModel.hasSharedOptimized`, 28 kB, loads in 2 ms beside the first).
+  After an ONNX Runtime update the older copy is adopted
+  (`adoptOlderOptimized`; ORT format loads in newer runtimes); if it fails
+  it is deleted and `PiperDownloads.restoreMissing` downloads the voice
+  again at the next service start. The Snapdragon build keeps originals
+  (its NPU graphs compile from them). Direct
   Boot works). Models sharing one upstream file (all 20 Rasa voices share
   `vits-rasa-13-piper-model.onnx`) keep a single content-addressed copy in
   `files/piper/shared/<md5>.onnx`, symlinked into each voice directory

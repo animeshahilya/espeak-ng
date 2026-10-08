@@ -608,15 +608,18 @@ final class PiperDownloads {
     /**
      * Installs a voice whose model bytes are already on disk in the shared
      * store (a second Rasa voice once the first downloaded). Writes the
-     * fetched config plus a link to the shared model, so no ~62 MB
-     * download happens. Callers must still show the voice as installed.
+     * fetched config plus a link to the shared model - or, once that was
+     * deleted for its optimized copy, no model at all (the load links the
+     * shared optimized copy) - so no download happens. Callers must still
+     * show the voice as installed.
      *
      * @return true when installed from the shared copy (no download needed)
      */
     static boolean tryInstallShared(Context appContext, Context storageContext, CatalogVoice voice,
             byte[] configBytes) {
         final File shared = verifiedSharedModel(storageContext, voice);
-        if (shared == null) {
+        if (shared == null && (voice.modelMd5 == null
+                || !PiperModel.hasSharedOptimized(PiperVoiceStore.sharedDir(storageContext), voice.modelMd5))) {
             return false;
         }
         try {
@@ -630,7 +633,7 @@ final class PiperDownloads {
                     (voice.modelMd5 + "\n" + voice.modelSize).getBytes(StandardCharsets.UTF_8));
             writeAtomically(new File(staging, SOURCE_FILE),
                     (voice.modelMd5 + "\n" + md5(configBytes)).getBytes(StandardCharsets.UTF_8));
-            if (!linkOrCopy(shared, new File(staging, PiperVoiceStore.MODEL_FILE))) {
+            if (shared != null && !linkOrCopy(shared, new File(staging, PiperVoiceStore.MODEL_FILE))) {
                 deleteRecursively(staging);
                 return false;
             }
@@ -1280,6 +1283,52 @@ final class PiperDownloads {
                 }
             } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
                 Log.w(TAG, "Update of " + v.key + " not started", e);
+            }
+        }
+        return started;
+    }
+
+    /**
+     * Downloads again any installed voice left with nothing to load: its
+     * model is deleted once optimized (PiperModel.dropOriginal), so an
+     * optimized copy that an ONNX Runtime update could not use leaves
+     * nothing behind. Called at service start; loads the catalog only when
+     * such a voice exists. Blocking: call off the main and speech threads.
+     *
+     * @return keys whose download started
+     */
+    static List<String> restoreMissing(Context appContext, Context storageContext) {
+        final List<String> started = new ArrayList<>();
+        final List<PiperVoiceStore.Installed> missing = new ArrayList<>();
+        final List<String> pending = pendingKeys(storageContext);
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            if (!PiperModel.hasModel(v.dir) && !pending.contains(v.key)) {
+                missing.add(v);
+            }
+        }
+        if (missing.isEmpty()) {
+            return started;
+        }
+        final List<CatalogVoice> catalog;
+        try {
+            catalog = loadCatalog(storageContext, false);
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Restore: catalog unavailable", e);
+            return started; // offline: tried again next start
+        }
+        for (PiperVoiceStore.Installed v : missing) {
+            for (CatalogVoice c : catalog) {
+                if (c.key.equals(v.key)) {
+                    try {
+                        if (start(appContext, storageContext, c, true) >= 0) {
+                            started.add(v.key);
+                        }
+                        Log.i(TAG, "Restoring " + v.key + ": no model left to load");
+                    } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
+                        Log.w(TAG, "Restore of " + v.key + " not started", e);
+                    }
+                    break;
+                }
             }
         }
         return started;

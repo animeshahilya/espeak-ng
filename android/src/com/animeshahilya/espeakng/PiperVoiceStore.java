@@ -36,7 +36,9 @@ import java.util.Map;
  *   files/piper/voices/&lt;key&gt;/model.onnx.json
  * </pre>
  * A voice directory only exists once both files are verified and moved in
- * (see {@link PiperDownloads}), so anything listed here is complete.
+ * (see {@link PiperDownloads}), so anything listed here is complete. Once
+ * the model's optimized copy (model.&lt;runtime&gt;.enc.ort ...) has loaded,
+ * model.onnx itself is deleted and {@code source} (its MD5) stands for it.
  *
  * <p>Language choice is per language, not per voice in Android's voice list:
  * eSpeak's voices stay exactly as they are (NVDA parity), and a language the
@@ -239,9 +241,11 @@ final class PiperVoiceStore {
     }
 
     private static Installed load(File dir) {
-        final File model = new File(dir, MODEL_FILE);
         final File json = new File(dir, CONFIG_FILE);
-        if (!dir.isDirectory() || !model.isFile() || !json.isFile()) {
+        // The model itself is deleted once its optimized copy loads
+        // (PiperModel.dropOriginal); its "source" MD5 record stays.
+        if (!dir.isDirectory() || !json.isFile()
+                || !(new File(dir, MODEL_FILE).isFile() || new File(dir, PiperDownloads.SOURCE_FILE).isFile())) {
             return null;
         }
         final String key = dir.getName();

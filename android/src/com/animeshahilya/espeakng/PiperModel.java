@@ -91,6 +91,8 @@ final class PiperModel implements Closeable {
      * accuracy. Used when it matches this model's split; else the FP16 path.
      */
     static final String NPU_DECODER_FILE = "npu.onnx";
+    /** PiperDownloads.SOURCE_FILE: the installed model and config MD5s. */
+    private static final String SOURCE_FILE = "source";
     /**
      * An NPU is used only if it decodes at least this many seconds of audio
      * per second: measured, not assumed, since Snapdragons differ widely
@@ -123,6 +125,8 @@ final class PiperModel implements Closeable {
 
     final PiperVoiceConfig config;
     final File file;
+    /** Which model bytes these are ({@link #stamp(File)}): the original may be gone. */
+    final String stamp;
     /** True when running through NNAPI (see PiperEngine#setAcceleration). */
     final boolean accelerated;
     private final SessionGroup group;
@@ -229,6 +233,7 @@ final class PiperModel implements Closeable {
     PiperModel(PiperVoiceConfig config, File file, SessionGroup group, boolean accelerated) {
         this.config = config;
         this.file = file;
+        this.stamp = stamp(file);
         this.group = group;
         this.accelerated = accelerated;
     }
@@ -294,7 +299,10 @@ final class PiperModel implements Closeable {
                 PiperDownloads.linkOrCopy(sharedOpt, optimized);
             }
         }
-        if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile())) {
+        if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile()) && !onnx.isFile()) {
+            adoptOlderOptimized(onnx, optimized, encoder, decoderFile);
+        }
+        if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile()) && onnx.isFile()) {
             buildOptimized(onnx, optimized, encoder, decoderFile, threads);
         }
         OrtSession session = null;
@@ -326,6 +334,11 @@ final class PiperModel implements Closeable {
             }
         }
         if (session == null) {
+            if (!onnx.isFile()) {
+                // Neither the original nor a working optimized copy: the
+                // service downloads the voice again (PiperDownloads.restoreMissing).
+                throw new OrtException("No model for " + onnx.getParent());
+            }
             session = open(onnx, null, threads, nnapi);
         }
         final SessionGroup group = new SessionGroup(session, mapped, decoder, mappedDecoder);
@@ -339,7 +352,119 @@ final class PiperModel implements Closeable {
         if (!nnapi && model.streams()) {
             model.attachNpu(onnx);
         }
+        if (mapped != null) {
+            dropOriginal(onnx);
+        }
         return model;
+    }
+
+    /**
+     * Deletes the downloaded model once its optimized copy has loaded: the
+     * phone kept both, twice the space (Piper medium 17 + 18 MB). A shared
+     * model (all Rasa voices) goes too; its optimized copy stays in the
+     * shared store. Kept where it is still needed: the Snapdragon build
+     * compiles NPU graphs from it, and a voice without a {@code source}
+     * record could not be matched to its catalog entry again.
+     */
+    private static void dropOriginal(File onnx) {
+        if (hasNpuRuntime() || !new File(onnx.getParentFile(), SOURCE_FILE).isFile()) {
+            return;
+        }
+        try {
+            final java.nio.file.Path path = onnx.toPath();
+            if (java.nio.file.Files.isSymbolicLink(path)) {
+                final java.nio.file.Path target = path.resolveSibling(java.nio.file.Files.readSymbolicLink(path));
+                java.nio.file.Files.deleteIfExists(target);
+            }
+            java.nio.file.Files.deleteIfExists(path);
+        } catch (IOException | RuntimeException ignored) {
+            // Kept; tried again at the next load.
+        }
+    }
+
+    /**
+     * After an ONNX Runtime update, with the original deleted: takes the
+     * optimized copy an older runtime wrote (ORT format loads in newer
+     * runtimes) under the current name. If it fails to load, the caller
+     * deletes it and the voice is downloaded again.
+     */
+    static void adoptOlderOptimized(File onnx, File optimized, File encoder, File decoder) {
+        final File dir = onnx.getParentFile();
+        final File[] old = dir == null ? null : dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
+                && n.endsWith(ENCODER_SUFFIX) && !n.equals(encoder.getName()));
+        if (old != null) {
+            for (File enc : old) {
+                final File dec = new File(dir, enc.getName().replace(ENCODER_SUFFIX, DECODER_SUFFIX));
+                if (dec.isFile() && enc.renameTo(encoder) && dec.renameTo(decoder)) {
+                    return;
+                }
+            }
+        }
+        final File[] whole = dir == null ? null : dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
+                && n.endsWith(OPTIMIZED_SUFFIX) && !n.equals(optimized.getName()));
+        if (whole != null && whole.length > 0) {
+            //noinspection ResultOfMethodCallIgnored
+            whole[0].renameTo(optimized);
+        }
+    }
+
+    /**
+     * Identifies a model's bytes for caches and session sharing: the MD5 the
+     * voice was installed with ({@code source}), else the file's size and
+     * time. Works with the original deleted.
+     */
+    static String stamp(File onnx) {
+        final String md5 = sourceMd5(onnx.getParentFile());
+        return md5 != null ? md5 : onnx.length() + ":" + onnx.lastModified();
+    }
+
+    /** {@code source}'s first line: the installed model's MD5, or null. */
+    static String sourceMd5(File dir) {
+        if (dir == null) {
+            return null;
+        }
+        final File source = new File(dir, SOURCE_FILE);
+        if (!source.isFile()) {
+            return null;
+        }
+        try (java.io.BufferedReader r = new java.io.BufferedReader(
+                new java.io.InputStreamReader(new java.io.FileInputStream(source),
+                        java.nio.charset.StandardCharsets.UTF_8))) {
+            final String md5 = r.readLine();
+            if (md5 == null || md5.trim().isEmpty() || "null".equals(md5.trim())) {
+                return null;
+            }
+            return md5.trim().toLowerCase(java.util.Locale.ROOT);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /** Whether a voice folder still has something to load: the model or an optimized copy of it. */
+    static boolean hasModel(File dir) {
+        if (new File(dir, "model.onnx").isFile()) {
+            return true;
+        }
+        final File[] ort = dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX) && n.endsWith(".ort"));
+        if (ort != null) {
+            for (File f : ort) {
+                if (f.isFile()) { // a link into the shared store counts only while it resolves
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether the shared store holds an optimized copy of the model with
+     * this MD5 for this runtime: enough to install another voice of it
+     * (a second Rasa voice) with no model at all.
+     */
+    static boolean hasSharedOptimized(File sharedDir, String md5) {
+        final String base = md5.toLowerCase(java.util.Locale.ROOT) + "." + env().getVersion();
+        return (new File(sharedDir, base + ENCODER_SUFFIX).isFile() && new File(sharedDir, base + DECODER_SUFFIX).isFile())
+                || new File(sharedDir, base + OPTIMIZED_SUFFIX).isFile();
     }
 
     private static volatile Boolean sNpuRuntime;
@@ -571,24 +696,10 @@ final class PiperModel implements Closeable {
      */
     private static File sharedDerivedFile(File onnx, String suffix) {
         final File dir = onnx.getParentFile();
-        if (dir == null) {
+        final String md5 = sourceMd5(dir);
+        if (md5 == null) {
             return null;
         }
-        final File source = new File(dir, "source");
-        if (!source.isFile()) {
-            return null;
-        }
-        String md5 = null;
-        try (java.io.BufferedReader r = new java.io.BufferedReader(
-                new java.io.InputStreamReader(new java.io.FileInputStream(source),
-                        java.nio.charset.StandardCharsets.UTF_8))) {
-            md5 = r.readLine();
-        } catch (IOException ignored) {
-        }
-        if (md5 == null || md5.trim().isEmpty() || "null".equals(md5.trim())) {
-            return null;
-        }
-        md5 = md5.trim().toLowerCase(java.util.Locale.ROOT);
         final File parent = dir.getParentFile();
         if (parent == null) {
             return null;
