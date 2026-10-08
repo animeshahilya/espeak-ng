@@ -680,9 +680,20 @@ voices" does not, so voices can still be deleted to free space.
   AndroidManifest.xml removes both (`tools:node="remove"`) and
   `PiperModel.env()` calls `setTelemetry(false)`. Recheck the merged
   manifest on every ORT bump.
-- **APK size.** `onnxruntime-android` adds a 32 MB `libonnxruntime.so`;
-  `packaging.jniLibs.useLegacyPackaging` compresses it to ~12 MB in the APK.
-  A custom ORT build with only the VITS operators would shrink it further.
+- **APK size.** ONNX Runtime is this app's own build (2026-10-08,
+  `libs/onnxruntime-voices-1.30.0.aar`, recipe and operator list in
+  `tools/ort-voices/`): arm64 only, only the operators the voices use, no
+  NNAPI/XNNPACK/WebGPU/ML ops/telemetry. `libonnxruntime.so` 16 MB instead
+  of Microsoft's 33 (6 MB compressed in the APK instead of 12; APK 34.7 ->
+  28.4 MB, and 17 MB less unpacked on install). The operator list comes from
+  every kind of voice model the app loads, as published and as ONNX Runtime
+  optimized it on a Pixel 8 - ARM-only fused kernels (NhwcFusedConv,
+  QLinearConv, QLinearLeakyRelu) appear only there; a model kind missing
+  from it fails to load (missing kernel), so regenerate the list (see the
+  script) before shipping a new kind of model or a new runtime version.
+  Pixel 8: same speed as Microsoft's build (SYSPIN fp16 decoder 2.7-3.2x
+  for all; Priyamvada whole equal); a session takes ~80 ms longer to create.
+  The Snapdragon build still uses Microsoft's QNN package.
 - Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
 
 ### Mixed-language text (per-script languages)

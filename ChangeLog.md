@@ -14,6 +14,7 @@ The espeak-ng project is a fork of the espeak project.
    *  Each voice keeps only one copy on the phone, about half the space it used before.
    *  The experimental hardware acceleration switch is gone: it made natural voices slower. The Snapdragon version still runs voices on the NPU.
 *  **Storage**: the app uses about 30 MB less space on the phone; every language still works right away.
+*  **Smaller download**: the app is about 6 MB smaller to download and 17 MB smaller once installed.
    *  The full Indian voices respond faster, and their Compact versions are smaller.
    *  Indian English Rahul is back in the English list, and no longer mumbles long sentences.
    *  Rahul reads single words and short labels at normal speed, so they are not rushed.

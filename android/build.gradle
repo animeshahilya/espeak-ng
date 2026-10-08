@@ -66,9 +66,8 @@ dependencies {
     // (1.14.0 was weeks old when this was added).
     implementation 'com.google.android.material:material:1.13.0'
     // Piper natural voices: ONNX Runtime runs the VITS models on the CPU.
-    // The full (not "mobile") package: Piper models are plain ONNX files
-    // from the voice catalog, not pre-converted ORT-format models. Only the
-    // arm64-v8a library ships (abiFilters below), about 8 MB in the APK.
+    // A full (not "minimal") build: Piper models are plain ONNX files from
+    // the voice catalog, optimized on the phone. Only arm64-v8a ships.
     // -Psnapdragon builds the Snapdragon APK instead: the QNN package (its
     // newest is 1.29) plus Qualcomm's runtime, so natural-voice decoders run
     // on the Hexagon NPU (PiperModel.attachNpu; ~22x real time vs ~4x on a
@@ -76,7 +75,11 @@ dependencies {
     if (project.hasProperty('snapdragon')) {
         implementation 'com.microsoft.onnxruntime:onnxruntime-android-qnn:1.29.0'
     } else {
-        implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.30.0'
+        // ONNX Runtime 1.30.0 built for this app by tools/ort-voices/build.sh:
+        // arm64 only, only the operators the natural voices use, no
+        // NNAPI/XNNPACK/WebGPU/telemetry - libonnxruntime.so 16 MB instead of
+        // Microsoft's 33 (APK 34.7 -> 28.4 MB).
+        implementation files('libs/onnxruntime-voices-1.30.0.aar')
     }
     testImplementation 'junit:junit:4.13.2'
     // Real org.json for the JVM unit tests: android.jar's is a stub, and
