@@ -100,11 +100,6 @@ public class EspeakApp extends Application {
             // for; they are skipped. Logged once per voice per process.
             Log.w(TAG, "Natural voice " + key + " has no ids for phonemes " + phonemes);
         }
-
-        @Override
-        public void onAccelerationFailed(String key, Throwable error) {
-            Log.w(TAG, "Natural voice " + key + " cannot use NNAPI; using the processor", error);
-        }
     };
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -154,7 +149,6 @@ public class EspeakApp extends Application {
         crashGuard.checkPreviousExit(appContext);
         PiperEngine.get().setNativeGuard(crashGuard);
         PiperEngine.get().setMaxLoaded(PiperDevice.voicesKeptLoaded(PiperDevice.tier(appContext)));
-        PiperEngine.get().setAcceleration(PiperVoiceStore.acceleration(settings));
         if (!appContext.getSystemService(UserManager.class).isUserUnlocked()) {
             // Started at boot, for a direct-boot-aware screen reader. The
             // credential-encrypted file cannot be read yet, so run the

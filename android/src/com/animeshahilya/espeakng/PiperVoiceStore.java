@@ -60,8 +60,6 @@ final class PiperVoiceStore {
     static final String PREF_ESPEAK_FOR_CHARACTERS = "piper_espeak_for_characters";
     /** Natural-voice speed relative to the eSpeak rate, percent. */
     static final String PREF_SPEED = "piper_speed";
-    /** Offer models to NNAPI; see PiperEngine#setAcceleration. */
-    static final String PREF_ACCELERATION = "piper_nnapi";
     /** Speaker of multi-speaker voices: "piper_speaker_" + key -> id. */
     static final String PREF_SPEAKER_PREFIX = "piper_speaker_";
     /** A voice's own speed, percent, over {@link #PREF_SPEED}: "piper_speed_" + key. */
@@ -361,10 +359,6 @@ final class PiperVoiceStore {
         final String key = assignedKey(prefs, languageKey);
         return key == null || PiperCrashGuard.isSuspended(prefs, key) ? null
                 : find(storageContext, key);
-    }
-
-    static boolean acceleration(SharedPreferences prefs) {
-        return prefs.getBoolean(PREF_ACCELERATION, false);
     }
 
     static boolean espeakForCharacters(SharedPreferences prefs) {

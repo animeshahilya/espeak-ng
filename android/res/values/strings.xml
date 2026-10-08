@@ -645,11 +645,6 @@
   <string name="piper_confirm_switch_title">Switch %1$s to Compact?</string>
   <string name="piper_confirm_switch_message">Downloads Compact (%1$s), makes it speak %2$s, and removes the Standard copy (%3$s) to free the space.</string>
   <string name="piper_compact_choice_title">Compact is recommended for this phone</string>
-  <string name="category_piper_advanced">Advanced</string>
-  <string name="setting_piper_nnapi">Hardware acceleration (experimental)</string>
-  <string name="setting_piper_nnapi_summary">Uses the device AI processor where supported. Turn off if speech pauses or stutters.</string>
-  <string name="setting_piper_nnapi_summary_on">Uses the device AI processor where supported.</string>
-  <string name="setting_piper_nnapi_summary_off">Uses the standard processor (recommended for stability).</string>
   <string name="piper_catalog_voice_row">%1$s, %2$s</string>
   <string name="piper_catalog_voice_installed">%1$s, downloaded</string>
   <plurals name="piper_speakers_sentence">

@@ -252,7 +252,7 @@ voices" does not, so voices can still be deleted to free space.
   mapped weights did not reproduce. Chunking was checked too: every
   sentence ends a chunk, so render-ahead keeps up without gaps down to 2.5x
   real time (0.3 s of gaps in 135 s at 1.8x, an Enhanced voice here).
-  XNNPACK was 3x slower; NNAPI is an opt-in switch, off by default (see below).
+  XNNPACK was 3x slower; NNAPI was removed (see below).
   ARM session options were measured too (Pixel 8, 2026-09-29), with no gain:
   `mlas.enable_gemm_fastmath_arm64_bfloat16` (same speed, VITS is not
   GEMM-bound), `session.dynamic_block_base` (0-10% slower) and
@@ -275,11 +275,12 @@ voices" does not, so voices can still be deleted to free space.
   2 on a 2+6 phone. The catalog offers Piper "medium" as Standard and "high"
   as Enhanced (low/x_low dropped; every language keeps a voice); Enhanced
   says "recommended" on HIGH tier and "may be slow" on LOW.
-- **NNAPI** (`piper_nnapi`, off): measured on a Pixel 8 it takes ~10 of
-  ~2700 VITS nodes, runs them on Android's reference CPU driver (15% slower)
-  and fails the run outright for the unoptimized graph. A voice it fails
-  for - at load (warm-up run) or mid-speech - is reloaded for the CPU and
-  not offered to NNAPI again until the switch is toggled.
+- **No NNAPI** (removed 2026-10-08 with its opt-in switch, user's call):
+  on a Pixel 8 it took ~10 of ~2700 VITS nodes, ran them on Android's
+  reference CPU driver (15% slower) and failed the run for the unoptimized
+  graph. Snapdragon phones get the NPU directly from the Snapdragon build
+  (QNN) instead. Not yet measured: NNAPI on a Snapdragon too old to be
+  offered that build (below SM8450).
 - **Stop.** `onStop()` -> `PiperEngine.stop()` -> ORT `RunOptions.setTerminate`,
   plus the chunk loop checks between chunks.
 - **Customization.** `piper_style` (Steady/Natural/Lively) multiplies the
@@ -463,8 +464,7 @@ voices" does not, so voices can still be deleted to free space.
   time on the NPU vs ~4x on 6 CPU threads; Piper voices use it too. HTP
   fp16 is not bit-exact (11.9 dB SNR vs CPU for SYSPIN, 22.7 for Rasa;
   PC fp16 is 84 dB, so it is HTP arithmetic) - the user listened: "mostly
-  same". QNN's GPU backend failed (ORT NHWC ConvTranspose bug); NNAPI is
-  skipped in this build (its runtime has none). Threads: up to 6 on chips
+  same". QNN's GPU backend failed (ORT NHWC ConvTranspose bug). Threads: up to 6 on chips
   with no little cores (8 Elite: 6 threads 4.0x vs 4 threads 2.6x, 8
   threads 1.8x); others keep 4. CI builds only the standard APK.
   Two APKs on purpose: Qualcomm's QNN licence allows distributing its
@@ -475,7 +475,7 @@ voices" does not, so voices can still be deleted to free space.
   app on an 8-series Snapdragon from SM8450 (8 Gen 1) on shows "Faster on this
   phone: Snapdragon version" (`PiperSettings.offersSnapdragonBuild`), opening
   the latest release; same package and key, so it installs over and keeps
-  voices. The Snapdragon build hides the NNAPI switch (its runtime has none).
+  voices.
 - **NPU decoders** (Snapdragon build): `assets/piper/npu_decoders.json`
   (voice key -> `npu-v1/<model>-npu.onnx` on sherpa-onnx-respin-syspin, made
   by its `build_npu.py`): each voice's decoder fully INT8 (Conv, ConvTranspose,

@@ -127,8 +127,6 @@ final class PiperModel implements Closeable {
     final File file;
     /** Which model bytes these are ({@link #stamp(File)}): the original may be gone. */
     final String stamp;
-    /** True when running through NNAPI (see PiperEngine#setAcceleration). */
-    final boolean accelerated;
     private final SessionGroup group;
     private boolean closed;
 
@@ -230,12 +228,11 @@ final class PiperModel implements Closeable {
         }
     }
 
-    PiperModel(PiperVoiceConfig config, File file, SessionGroup group, boolean accelerated) {
+    PiperModel(PiperVoiceConfig config, File file, SessionGroup group) {
         this.config = config;
         this.file = file;
         this.stamp = stamp(file);
         this.group = group;
-        this.accelerated = accelerated;
     }
 
     /**
@@ -252,7 +249,7 @@ final class PiperModel implements Closeable {
                 return null;
             }
         }
-        return new PiperModel(newConfig, file, group, accelerated);
+        return new PiperModel(newConfig, file, group);
     }
 
     /** Whether this and {@code other} run on one shared session (see {@link #withConfig}). */
@@ -280,10 +277,8 @@ final class PiperModel implements Closeable {
      * waiting on.
      *
      * @param threads intra-op threads; VITS decoders scale to about 4
-     * @param nnapi   also offer the graph to NNAPI (throws if that fails,
-     *                including on the warm-up run; the caller retries without)
      */
-    static PiperModel load(File onnx, PiperVoiceConfig config, int threads, boolean nnapi)
+    static PiperModel load(File onnx, PiperVoiceConfig config, int threads)
             throws OrtException {
         final File optimized = derivedFile(onnx, OPTIMIZED_SUFFIX);
         final File encoder = derivedFile(onnx, ENCODER_SUFFIX);
@@ -312,9 +307,9 @@ final class PiperModel implements Closeable {
         if (encoder.isFile() && decoderFile.isFile()) {
             try {
                 mapped = map(encoder);
-                session = open(null, mapped, threads, nnapi);
+                session = open(null, mapped, threads);
                 mappedDecoder = map(decoderFile);
-                decoder = open(null, mappedDecoder, threads, nnapi);
+                decoder = open(null, mappedDecoder, threads);
             } catch (IOException | OrtException e) {
                 closeQuietly(session);
                 session = null;
@@ -327,7 +322,7 @@ final class PiperModel implements Closeable {
         if (session == null && optimized.isFile()) {
             try {
                 mapped = map(optimized);
-                session = open(null, mapped, threads, nnapi);
+                session = open(null, mapped, threads);
             } catch (IOException | OrtException e) {
                 mapped = null;
                 optimized.delete(); // stale or damaged: rebuilt at the next load
@@ -339,17 +334,17 @@ final class PiperModel implements Closeable {
                 // service downloads the voice again (PiperDownloads.restoreMissing).
                 throw new OrtException("No model for " + onnx.getParent());
             }
-            session = open(onnx, null, threads, nnapi);
+            session = open(onnx, null, threads);
         }
         final SessionGroup group = new SessionGroup(session, mapped, decoder, mappedDecoder);
-        final PiperModel model = new PiperModel(config, onnx, group, nnapi);
+        final PiperModel model = new PiperModel(config, onnx, group);
         try {
             model.warmUp();
         } catch (OrtException | RuntimeException e) {
             model.close();
             throw e;
         }
-        if (!nnapi && model.streams()) {
+        if (model.streams()) {
             model.attachNpu(onnx);
         }
         if (mapped != null) {
@@ -783,7 +778,7 @@ final class PiperModel implements Closeable {
 
     private static boolean saveOptimized(File source, File out, int threads) {
         final File partial = new File(out.getParentFile(), out.getName() + ".tmp");
-        try (OrtSession.SessionOptions options = options(threads, false)) {
+        try (OrtSession.SessionOptions options = options(threads)) {
             options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
             options.setOptimizedModelFilePath(partial.getAbsolutePath());
             options.addConfigEntry("session.save_model_format", "ORT");
@@ -815,9 +810,9 @@ final class PiperModel implements Closeable {
     }
 
     /** A session over the original .onnx ({@code model}) or the mapped optimized copy. */
-    private static OrtSession open(File model, ByteBuffer mapped, int threads, boolean nnapi)
+    private static OrtSession open(File model, ByteBuffer mapped, int threads)
             throws OrtException {
-        try (OrtSession.SessionOptions options = options(threads, nnapi)) {
+        try (OrtSession.SessionOptions options = options(threads)) {
             if (mapped != null) {
                 // Already optimized; weights read straight from the mapping.
                 options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.NO_OPT);
@@ -830,7 +825,7 @@ final class PiperModel implements Closeable {
         }
     }
 
-    private static OrtSession.SessionOptions options(int threads, boolean nnapi) throws OrtException {
+    private static OrtSession.SessionOptions options(int threads) throws OrtException {
         final OrtSession.SessionOptions options = new OrtSession.SessionOptions();
         options.setExecutionMode(OrtSession.SessionOptions.ExecutionMode.SEQUENTIAL);
         options.setIntraOpNumThreads(Math.max(1, threads));
@@ -838,9 +833,6 @@ final class PiperModel implements Closeable {
         // One utterance at a time, of varying length: the memory
         // pattern planner only helps fixed-shape batch inference.
         options.setMemoryPatternOptimization(false);
-        if (nnapi) {
-            options.addNnapi();
-        }
         return options;
     }
 

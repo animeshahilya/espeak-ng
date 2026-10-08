@@ -192,12 +192,8 @@ final class PiperEngine {
         return t;
     });
     private final Set<String> mMissingLogged = ConcurrentHashMap.newKeySet();
-    /** Offer models to NNAPI (user setting); a voice it fails for runs on the CPU. */
-    private volatile boolean mAcceleration;
     /** Voices kept loaded (least recently used evicted); set per device (PiperDevice). */
     private volatile int mMaxLoaded = 2;
-    /** Voices NNAPI failed for, at load or mid-speech: CPU only from then on. */
-    private final Set<String> mNoAcceleration = ConcurrentHashMap.newKeySet();
     private volatile PiperModel.RunHandle mCurrentRun;
     private volatile Listener mListener;
     private volatile NativeGuard mGuard;
@@ -241,9 +237,6 @@ final class PiperEngine {
         void onLoadFailed(String key, Throwable error);
 
         void onMissingPhonemes(String key, List<String> phonemes);
-
-        /** NNAPI could not run this voice; it was loaded for the CPU instead. */
-        void onAccelerationFailed(String key, Throwable error);
 
         /**
          * Phrase cache counts since the process started (no text): chunks
@@ -355,30 +348,9 @@ final class PiperEngine {
                     }
                 }
             }
-            // The Snapdragon build's runtime has no NNAPI; it uses the NPU itself.
-            if (mAcceleration && !mNoAcceleration.contains(key) && !PiperModel.hasNpuRuntime()) {
-                try {
-                    return PiperModel.load(onnx, config, inferenceThreads(), true);
-                } catch (Throwable t) {
-                    accelerationFailed(key, t);
-                }
-            }
-            return PiperModel.load(onnx, config, inferenceThreads(), false);
+            return PiperModel.load(onnx, config, inferenceThreads());
         } finally {
             exitNative(key);
-        }
-    }
-
-    /**
-     * Measured on a Pixel 8: NNAPI takes ~10 of ~2700 VITS nodes, runs them
-     * on Android's reference CPU driver (15% slower overall), and fails the
-     * run outright for the unoptimized graph - so this is an expected path.
-     */
-    private void accelerationFailed(String key, Throwable t) {
-        mNoAcceleration.add(key);
-        final Listener l = mListener;
-        if (l != null) {
-            l.onAccelerationFailed(key, t);
         }
     }
 
@@ -398,15 +370,6 @@ final class PiperEngine {
 
     int maxLoaded() {
         return mMaxLoaded;
-    }
-
-    /** Takes effect for voices loaded from now on: loaded ones are dropped and reload. */
-    void setAcceleration(boolean enabled) {
-        if (mAcceleration != enabled) {
-            mAcceleration = enabled;
-            mNoAcceleration.clear(); // switched on again: give every voice a new try
-            trim(true);
-        }
     }
 
     private static OrtException asOrt(Throwable t) {
@@ -846,17 +809,7 @@ final class PiperEngine {
         try {
             for (int j = 0; j < jobs.size(); j++) {
                 Rendered rendered;
-                try {
-                    rendered = await(pending);
-                } catch (OrtException e) {
-                    if (model.accelerated) {
-                        // Mid-speech NNAPI failure: this request ends (the
-                        // service reports it), the next loads for the CPU.
-                        accelerationFailed(config.key, e);
-                        mLoader.execute(() -> unload(config.key));
-                    }
-                    throw e;
-                }
+                rendered = await(pending);
                 // The first chunk's second piece was queued ahead of this.
                 pendingRest = rendered != null ? rendered.rest : null;
                 if (j + 1 < jobs.size()) {

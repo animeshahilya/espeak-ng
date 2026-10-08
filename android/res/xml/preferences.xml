@@ -99,22 +99,6 @@
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
-          android:title="@string/category_piper_advanced"
-          android:dependency="piper_enabled"
-          app:iconSpaceReserved="false">
-        <!-- Off by default: on a Pixel 8, NNAPI takes 9 of ~2700 VITS nodes
-             and then fails the run (PiperBenchDeviceTest). A voice it fails
-             for loads for the processor anyway (PiperEngine.loadModel). -->
-        <SwitchPreferenceCompat
-            android:key="piper_nnapi"
-            android:title="@string/setting_piper_nnapi"
-            android:summary="@string/setting_piper_nnapi_summary"
-            android:summaryOn="@string/setting_piper_nnapi_summary_on"
-            android:summaryOff="@string/setting_piper_nnapi_summary_off"
-            android:defaultValue="false"
-            app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
     <!-- not on Wear -->
     <Preference

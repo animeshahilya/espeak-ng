@@ -149,16 +149,6 @@ final class PiperSettings {
                 return true;
             });
         }
-        final Preference acceleration = screen.findPreference(PiperVoiceStore.PREF_ACCELERATION);
-        if (acceleration != null && PiperModel.hasNpuRuntime()) {
-            acceleration.setVisible(false); // this build uses the NPU itself; its runtime has no NNAPI
-        }
-        if (acceleration != null) {
-            acceleration.setOnPreferenceChangeListener((p, value) -> {
-                PiperEngine.get().setAcceleration(Boolean.TRUE.equals(value));
-                return true;
-            });
-        }
         refresh(context, screen, prefs);
         if (row instanceof PreferenceScreen) {
             // Back from a voice page: a voice may have been given a language there.
