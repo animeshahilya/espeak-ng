@@ -315,11 +315,32 @@
             app:iconSpaceReserved="false" />
         <!-- not on Wear -->
         <SwitchPreferenceCompat
-            android:key="espeak_simplify_urls"
-            android:title="@string/setting_simplify_urls"
-            android:summary="@string/setting_simplify_urls_summary"
-            android:summaryOn="@string/setting_simplify_urls_summary_on"
-            android:summaryOff="@string/setting_simplify_urls_summary_off"
+            android:key="espeak_hinglish"
+            android:title="@string/setting_hinglish"
+            android:summary="@string/setting_hinglish_summary"
+            android:summaryOn="@string/setting_hinglish_summary_on"
+            android:summaryOff="@string/setting_hinglish_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:title="@string/category_smart_text"
+          app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="espeak_clean_markdown"
+            android:title="@string/setting_clean_markdown"
+            android:summary="@string/setting_clean_markdown_summary"
+            android:summaryOn="@string/setting_clean_markdown_summary_on"
+            android:summaryOff="@string/setting_clean_markdown_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_split_camel_case"
+            android:title="@string/setting_split_camel_case"
+            android:summary="@string/setting_split_camel_case_summary"
+            android:summaryOn="@string/setting_split_camel_case_summary_on"
+            android:summaryOff="@string/setting_split_camel_case_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
@@ -330,13 +351,21 @@
             android:summaryOff="@string/setting_normalize_tech_words_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_expand_abbreviations"
+            android:title="@string/setting_expand_abbreviations"
+            android:summary="@string/setting_expand_abbreviations_summary"
+            android:summaryOn="@string/setting_expand_abbreviations_summary_on"
+            android:summaryOff="@string/setting_expand_abbreviations_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
         <!-- not on Wear -->
         <SwitchPreferenceCompat
-            android:key="espeak_hinglish"
-            android:title="@string/setting_hinglish"
-            android:summary="@string/setting_hinglish_summary"
-            android:summaryOn="@string/setting_hinglish_summary_on"
-            android:summaryOff="@string/setting_hinglish_summary_off"
+            android:key="espeak_simplify_urls"
+            android:title="@string/setting_simplify_urls"
+            android:summary="@string/setting_simplify_urls_summary"
+            android:summaryOn="@string/setting_simplify_urls_summary_on"
+            android:summaryOff="@string/setting_simplify_urls_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
@@ -409,7 +438,7 @@
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 
       <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
-          android:title="@string/category_number_extras"
+          android:title="@string/category_number_everyday"
           app:iconSpaceReserved="false">
         <Preference
             android:key="action_preview_numbers"
@@ -425,6 +454,14 @@
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
+            android:key="espeak_read_phone_numbers"
+            android:title="@string/setting_read_phone_numbers"
+            android:summary="@string/setting_read_phone_numbers_summary"
+            android:summaryOn="@string/setting_read_phone_numbers_summary_on"
+            android:summaryOff="@string/setting_read_phone_numbers_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
             android:key="espeak_read_codes"
             android:title="@string/setting_read_codes"
             android:summary="@string/setting_read_codes_summary"
@@ -433,11 +470,64 @@
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
-            android:key="espeak_expand_abbreviations"
-            android:title="@string/setting_expand_abbreviations"
-            android:summary="@string/setting_expand_abbreviations_summary"
-            android:summaryOn="@string/setting_expand_abbreviations_summary_on"
-            android:summaryOff="@string/setting_expand_abbreviations_summary_off"
+            android:key="espeak_read_dates"
+            android:title="@string/setting_read_dates"
+            android:summary="@string/setting_read_dates_summary"
+            android:summaryOn="@string/setting_read_dates_summary_on"
+            android:summaryOff="@string/setting_read_dates_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+
+      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          android:title="@string/category_number_stem"
+          app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="espeak_read_math"
+            android:title="@string/setting_read_math"
+            android:summary="@string/setting_read_math_summary"
+            android:summaryOn="@string/setting_read_math_summary_on"
+            android:summaryOff="@string/setting_read_math_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_read_fractions"
+            android:title="@string/setting_read_fractions"
+            android:summary="@string/setting_read_fractions_summary"
+            android:summaryOn="@string/setting_read_fractions_summary_on"
+            android:summaryOff="@string/setting_read_fractions_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_read_sub_super"
+            android:title="@string/setting_read_sub_super"
+            android:summary="@string/setting_read_sub_super_summary"
+            android:summaryOn="@string/setting_read_sub_super_summary_on"
+            android:summaryOff="@string/setting_read_sub_super_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_read_dimensions"
+            android:title="@string/setting_read_dimensions"
+            android:summary="@string/setting_read_dimensions_summary"
+            android:summaryOn="@string/setting_read_dimensions_summary_on"
+            android:summaryOff="@string/setting_read_dimensions_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_read_roman_numerals"
+            android:title="@string/setting_read_roman_numerals"
+            android:summary="@string/setting_read_roman_numerals_summary"
+            android:summaryOn="@string/setting_read_roman_numerals_summary_on"
+            android:summaryOff="@string/setting_read_roman_numerals_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_read_ordinals"
+            android:title="@string/setting_read_ordinals"
+            android:summary="@string/setting_read_ordinals_summary"
+            android:summaryOn="@string/setting_read_ordinals_summary_on"
+            android:summaryOff="@string/setting_read_ordinals_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>

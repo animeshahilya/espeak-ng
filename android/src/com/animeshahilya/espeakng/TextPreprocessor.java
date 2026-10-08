@@ -196,6 +196,11 @@ public final class TextPreprocessor {
                 // letters and whitespace (the lookup trims first).
                 text = edits.track(text, NvdaSymbolProcessor.processSingleSymbol(text, lang));
             }
+            if (containsPotentialEmoji(text)) {
+                text = edits.track(text, settings.isEmojiIgnoreEnabled()
+                        ? filterEmojis(text) : clarifyEmojiAnnouncements(text, lang));
+            }
+            return new Result(text, edits.map, true);
         }
 
         if (!isSsml && settings.isSimplifyUrlsEnabled()) {
@@ -215,6 +220,9 @@ public final class TextPreprocessor {
         // Universal tech word, app name & acronym normalization: ensures natural
         // voices (Piper, SYSPIN, Rasa, Kokoro, eSpeak) pronounce terms like ChatGPT,
         // GPay, Gmail, WhatsApp, YouTube, UPI, OTP, WiFi, PayTM, PhonePe properly.
+        if (normalReading && settings.isCleanMarkdownEnabled()) {
+            text = edits.track(text, cleanMarkdown(text));
+        }
         if (normalReading && (naturalVoice || settings.isNormalizeTechWordsEnabled())) {
             text = edits.track(text, TechWordsNormalizer.process(text));
         }
@@ -233,6 +241,15 @@ public final class TextPreprocessor {
 
         // Opt-in extras, off by default. Codes run first so a code is never
         // read as money; money keeps its digits for the Indian pass below.
+        if (normalReading && settings.isReadDatesEnabled()) {
+            text = edits.track(text, NumberReading.readDates(text));
+        }
+        if (normalReading && settings.isReadDimensionsEnabled()) {
+            text = edits.track(text, NumberReading.readDimensions(text));
+        }
+        if (normalReading && settings.isReadPhoneNumbersEnabled()) {
+            text = edits.track(text, NumberReading.readPhoneNumbers(text));
+        }
         if (normalReading && settings.isReadCodesEnabled()) {
             text = edits.track(text, NumberReading.readCodes(text));
         }
@@ -243,6 +260,30 @@ public final class TextPreprocessor {
         if (normalReading && settings.isReadMoneyEnabled()
                 && readsEnglishText) {
             text = edits.track(text, NumberReading.readMoney(text, !indianNumbers));
+        }
+        if (normalReading && settings.isReadRomanNumeralsEnabled()
+                && readsEnglishText) {
+            text = edits.track(text, NumberReading.readRomanNumerals(text));
+        }
+        if (normalReading && settings.isReadMathEnabled()
+                && readsEnglishText) {
+            text = edits.track(text, NumberReading.readMath(text));
+        }
+        if (normalReading && settings.isReadFractionsEnabled()
+                && readsEnglishText) {
+            text = edits.track(text, NumberReading.readFractions(text));
+        }
+        if (normalReading && settings.isReadSubSuperEnabled()
+                && readsEnglishText) {
+            text = edits.track(text, NumberReading.readSubSuper(text));
+        }
+        if (normalReading && settings.isReadOrdinalsEnabled()
+                && readsEnglishText) {
+            text = edits.track(text, NumberReading.readOrdinals(text));
+        }
+        if (normalReading && readsEnglishText
+                && (VoiceSettings.READING_CODE.equals(readingMode) || settings.isSplitCamelCaseEnabled())) {
+            text = edits.track(text, splitCamelCase(text));
         }
 
         // Opt-in (Mixed-language text -> Numbers and times): non-Latin-script
@@ -266,7 +307,7 @@ public final class TextPreprocessor {
 
         // Phonetic letters "Always" reads every letter as Alfa, Bravo and so
         // on; it replaces spelling (which it already implies) but not code mode.
-        if (!isSsml && !isSingleCharacterUtterance
+        if (!isSsml
                 && VoiceSettings.PHONETIC_ALWAYS.equals(settings.getPhoneticLetters())
                 && !VoiceSettings.READING_CODE.equals(readingMode)) {
             text = edits.track(text, expandPhoneticMode(text, lang));
@@ -277,9 +318,8 @@ public final class TextPreprocessor {
         // NVDA architecture: one symbol pass owns announcement, levels and
         // repeat collapsing. It runs before emoji condensing so the ", "
         // separators the condensing inserts are never mistaken for content
-        // punctuation. Single-character utterances skip this pass - the
-        // single-char branch above already named the character.
-        if (!isSsml && !isSingleCharacterUtterance) {
+        // punctuation. Single-character utterances returned early above.
+        if (!isSsml) {
             // Opt-in: brackets and quotes the level would name become sounds
             // (markers TtsService turns into tones); the pass below then
             // leaves the markers alone, as they are not symbols it knows.
@@ -294,7 +334,7 @@ public final class TextPreprocessor {
         // Runs after the symbol pass so commas inserted for pauses are never
         // announced as "comma", but act as clause pauses in the TTS engine.
         final String digitGrouping = settings.getDigitGroupingMode();
-        final boolean useGrouping = !isSsml && !isSingleCharacterUtterance
+        final boolean useGrouping = !isSsml
                 && digitGrouping != null
                 && !VoiceSettings.DIGIT_GROUP_OFF.equals(digitGrouping);
         if (useGrouping) {
@@ -319,7 +359,7 @@ public final class TextPreprocessor {
                     ? filterEmojis(text) : clarifyEmojiAnnouncements(text, lang));
         }
 
-        return new Result(text, edits.map, isSingleCharacterUtterance);
+        return new Result(text, edits.map, false);
     }
 
     /**
@@ -420,8 +460,16 @@ public final class TextPreprocessor {
         int end = len;
         while (start < end && text.charAt(start) <= ' ') start++;
         while (end > start && text.charAt(end - 1) <= ' ') end--;
-        if (start >= end) {
+        int trimmedLen = end - start;
+        if (trimmedLen <= 0) {
             return false;
+        }
+        if (trimmedLen == 1) {
+            return true;
+        }
+        if (trimmedLen == 2 && Character.isHighSurrogate(text.charAt(start))
+                && Character.isLowSurrogate(text.charAt(start + 1))) {
+            return true;
         }
         return text.codePointCount(start, end) == 1 || isSingleIndicCluster(text, start, end);
     }
@@ -820,6 +868,88 @@ public final class TextPreprocessor {
             processed = condenseRepeatedEmojis(processed, mode);
         }
         return NvdaSymbolProcessor.collapseRepeatRuns(processed);
+    }
+
+    // ==========================================
+    // CamelCase / PascalCase Splitting
+    // ==========================================
+
+    private static final Pattern CAMEL_CASE_LOWER_UPPER = Pattern.compile("(?<=[\\p{Ll}\\d])(?=[\\p{Lu}])");
+    private static final Pattern CAMEL_CASE_UPPER_RUN = Pattern.compile("(?<=[\\p{Lu}]{2,})(?=[\\p{Lu}][\\p{Ll}])");
+
+    public static boolean containsCamelCase(String text) {
+        if (text == null || text.length() < 2) return false;
+        for (int i = 0, n = text.length() - 1; i < n; i++) {
+            char c1 = text.charAt(i);
+            char c2 = text.charAt(i + 1);
+            if (((c1 >= 'a' && c1 <= 'z') || (c1 >= '0' && c1 <= '9')) && (c2 >= 'A' && c2 <= 'Z')) return true;
+            if (i + 2 < text.length() && c1 >= 'A' && c1 <= 'Z' && c2 >= 'A' && c2 <= 'Z') {
+                char c3 = text.charAt(i + 2);
+                if (c3 >= 'a' && c3 <= 'z') return true;
+            }
+        }
+        return false;
+    }
+
+    public static String splitCamelCase(String text) {
+        if (!containsCamelCase(text)) return text;
+        String s = CAMEL_CASE_LOWER_UPPER.matcher(text).replaceAll(" ");
+        s = CAMEL_CASE_UPPER_RUN.matcher(s).replaceAll(" ");
+        return s;
+    }
+
+    // ==========================================
+    // Markdown Formatting Cleaner
+    // ==========================================
+
+    private static final Pattern MD_CHECKBOX_TODO = Pattern.compile("(?m)^[ \\t]*[-*+][ \\t]+\\[[ \\t]*\\][ \\t]+");
+    private static final Pattern MD_CHECKBOX_DONE = Pattern.compile("(?m)^[ \\t]*[-*+][ \\t]+\\[[xX]\\][ \\t]+");
+    private static final Pattern MD_HEADING = Pattern.compile("(?m)^[ \\t]*#{1,6}[ \\t]+");
+    private static final Pattern MD_BLOCKQUOTE = Pattern.compile("(?m)^[ \\t]*>[ \\t]+");
+    private static final Pattern MD_HR = Pattern.compile("(?m)^[ \\t]*[-*_]{3,}[ \\t]*$");
+    private static final Pattern MD_CODE_FENCE = Pattern.compile("(?s)```[a-zA-Z0-9_-]*\\r?\\n?(.*?)\\r?\\n?```");
+    private static final Pattern MD_INLINE_CODE = Pattern.compile("`([^`]+)`");
+    private static final Pattern MD_BOLD = Pattern.compile("\\*\\*([^*\n]+)\\*\\*");
+    private static final Pattern MD_STRIKE = Pattern.compile("~~([^~\n]+)~~");
+    private static final Pattern MD_ITALIC = Pattern.compile("(?<!\\*)\\*(\\S(?:[^*\n]*\\S)?)\\*(?!\\*)");
+
+    public static boolean containsMarkdown(String text) {
+        if (text == null || text.length() < 2) return false;
+        for (int i = 0, n = text.length(); i < n; i++) {
+            char c = text.charAt(i);
+            if (c == '*' || c == '`' || c == '~' || c == '#' || c == '>' || c == '[') return true;
+        }
+        return false;
+    }
+
+    public static String cleanMarkdown(String text) {
+        if (!containsMarkdown(text)) return text;
+
+        if (text.indexOf('[') != -1) {
+            text = MD_CHECKBOX_DONE.matcher(text).replaceAll("done: ");
+            text = MD_CHECKBOX_TODO.matcher(text).replaceAll("todo: ");
+        }
+        if (text.indexOf('#') != -1) {
+            text = MD_HEADING.matcher(text).replaceAll("");
+        }
+        if (text.indexOf('>') != -1) {
+            text = MD_BLOCKQUOTE.matcher(text).replaceAll("quote: ");
+        }
+        if (text.indexOf('`') != -1) {
+            text = MD_CODE_FENCE.matcher(text).replaceAll("$1");
+            text = MD_INLINE_CODE.matcher(text).replaceAll("$1");
+        }
+        if (text.indexOf('*') != -1) {
+            text = MD_BOLD.matcher(text).replaceAll("$1");
+            text = MD_ITALIC.matcher(text).replaceAll("$1");
+        }
+        if (text.indexOf('~') != -1) {
+            text = MD_STRIKE.matcher(text).replaceAll("$1");
+        }
+        if (text.indexOf('-') != -1 || text.indexOf('_') != -1) {
+            text = MD_HR.matcher(text).replaceAll("");
+        }
+        return text;
     }
 
     public static String normalizeIndicDigits(String text) {

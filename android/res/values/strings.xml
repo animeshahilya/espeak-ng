@@ -307,8 +307,8 @@
   <string name="languages_search_hint">Search languages</string>
 
   <!-- Sub-screens and reorganized categories -->
-  <string name="screen_numbers_title">Numbers and abbreviations</string>
-  <string name="screen_numbers_summary">Indian formats, money, codes, abbreviations</string>
+  <string name="screen_numbers_title">Numbers and math</string>
+  <string name="screen_numbers_summary">Indian formats, money, codes, dates, math, fractions</string>
   <string name="screen_mixed_languages_title">Mixed-language text</string>
   <string name="screen_mixed_languages_summary">Which language reads words in another script</string>
   <string name="category_script_languages">Read words in each script as</string>
@@ -332,8 +332,9 @@
   <string name="setting_natural_switching_summary">Words in another language go to that language\'s natural voice, or its eSpeak voice if it has none. Off: the current voice reads everything.</string>
   <string name="setting_natural_switching_summary_on">Words in another language switch to that language\'s natural voice, or its eSpeak voice if it has none.</string>
   <string name="setting_natural_switching_summary_off">Current voice reads all text without switching.</string>
-  <string name="category_number_formats">Number formats</string>
-  <string name="category_number_extras">Read in full</string>
+  <string name="category_number_formats">Number formatting</string>
+  <string name="category_number_everyday">Everyday numbers and contacts</string>
+  <string name="category_number_stem">Technical, math and notation</string>
   <string name="setting_read_money">Read money amounts</string>
   <string name="setting_read_money_summary">Reads $5.50 as 5 dollars 50 cents. Also euros, pounds, yen and rupees.</string>
   <string name="setting_read_money_summary_on">Expands currency symbols into full spoken words (e.g., $5.50 as 5 dollars 50 cents).</string>
@@ -346,6 +347,46 @@
   <string name="setting_read_codes_summary">Reads OTPs, PINs and account numbers as single digits, like 4 8 2 9 1 3.</string>
   <string name="setting_read_codes_summary_on">Reads OTPs, PINs, and verification codes digit by digit.</string>
   <string name="setting_read_codes_summary_off">Reads codes as standard grouped numbers.</string>
+  <string name="setting_read_dates">Read calendar dates</string>
+  <string name="setting_read_dates_summary">Reads dates like 2026-10-08 as 8 October 2026.</string>
+  <string name="setting_read_dates_summary_on">Reads calendar dates in spoken format (e.g., 8 October 2026).</string>
+  <string name="setting_read_dates_summary_off">Reads dates with numbers and hyphens as written.</string>
+  <string name="setting_read_dimensions">Read dimensions and screen resolutions</string>
+  <string name="setting_read_dimensions_summary">Reads 1920x1080 as 1920 by 1080 and 4x4 as 4 by 4.</string>
+  <string name="setting_read_dimensions_summary_on">Reads dimension and resolution x symbols as \"by\".</string>
+  <string name="setting_read_dimensions_summary_off">Reads x or × in dimensions as the letter or symbol.</string>
+  <string name="setting_read_roman_numerals">Read Roman numerals in titles and names</string>
+  <string name="setting_read_roman_numerals_summary">Reads Chapter IV as Chapter 4, World War II as World War 2, and Henry VIII as Henry the Eighth.</string>
+  <string name="setting_read_roman_numerals_summary_on">Reads Roman numerals after headings and monarch names as numbers and ordinals.</string>
+  <string name="setting_read_roman_numerals_summary_off">Reads Roman numerals as individual letters.</string>
+  <string name="setting_read_phone_numbers">Read phone numbers clearly</string>
+  <string name="setting_read_phone_numbers_summary">Reads numbers like +1-800-555-0199 and 10-digit mobile numbers without saying \"minus\" or \"nine billion\".</string>
+  <string name="setting_read_phone_numbers_summary_on">Reads formatted phone numbers without hyphens and long phone numbers digit by digit.</string>
+  <string name="setting_read_phone_numbers_summary_off">Reads numbers as standard hyphenated expressions or large quantities.</string>
+  <string name="setting_read_math">Read math expressions</string>
+  <string name="setting_read_math_summary">Reads basic equations like 5 + 3 = 8 with plus, minus, and equals even when punctuation is off.</string>
+  <string name="setting_read_math_summary_on">Speaks mathematical operators in equations aloud.</string>
+  <string name="setting_read_math_summary_off">Reads math symbols according to your punctuation level.</string>
+  <string name="setting_split_camel_case">Split words by character case</string>
+  <string name="setting_split_camel_case_summary">Reads compound identifiers like getUserName as separate words (get User Name).</string>
+  <string name="setting_split_camel_case_summary_on">Splits camelCase and PascalCase words into separate words.</string>
+  <string name="setting_split_camel_case_summary_off">Reads compound words as written.</string>
+  <string name="setting_clean_markdown">Clean markdown formatting</string>
+  <string name="setting_clean_markdown_summary">Cleans asterisks, backticks, checkboxes (- [ ]), headings, and blockquotes for smooth reading.</string>
+  <string name="setting_clean_markdown_summary_on">Cleans markdown emphasis and translates task checkboxes into spoken status.</string>
+  <string name="setting_clean_markdown_summary_off">Reads markdown formatting symbols according to punctuation level.</string>
+  <string name="setting_read_fractions">Read fractions and mixed numbers</string>
+  <string name="setting_read_fractions_summary">Reads fractions like 1/2, 3/4, and 2 1/2 as \"1 half\", \"3 quarters\", and \"2 and a half\".</string>
+  <string name="setting_read_fractions_summary_on">Reads slash and Unicode fractions naturally as words.</string>
+  <string name="setting_read_fractions_summary_off">Reads fractions as numbers separated by slash.</string>
+  <string name="setting_read_sub_super">Read superscripts and subscripts</string>
+  <string name="setting_read_sub_super_summary">Reads formulas and exponents like x², m³, H₂O, and 10⁵ as \"x squared\", \"cubic meters\", and \"H 2 O\".</string>
+  <string name="setting_read_sub_super_summary_on">Reads superscripts and chemical subscripts as natural words.</string>
+  <string name="setting_read_sub_super_summary_off">Reads superscripts and subscripts according to symbol level.</string>
+  <string name="setting_read_ordinals">Read ordinal numbers</string>
+  <string name="setting_read_ordinals_summary">Reads 1st, 2nd, 3rd, 21st, and symbol ordinals (1º, 1ª) as \"first\", \"second\", \"twenty-first\".</string>
+  <string name="setting_read_ordinals_summary_on">Reads ordinal suffixes and indicators as full words.</string>
+  <string name="setting_read_ordinals_summary_off">Reads numbers and suffix letters as written.</string>
   <string name="setting_punctuation_sounds">Punctuation sounds</string>
   <string name="setting_punctuation_sounds_summary">Plays a short sound instead of naming brackets and quotes, when your punctuation level reads them.</string>
   <string name="setting_punctuation_sounds_summary_on">Plays short chimes for brackets and quotes instead of speaking their names.</string>
@@ -361,6 +402,7 @@
   <string name="screen_text_processing_title">Punctuation and symbols</string>
   <string name="screen_text_processing_summary">Level, sounds, capitals, emoji</string>
   <string name="category_reading_modes">How text is read</string>
+  <string name="category_smart_text">Smart text and code cleanup</string>
   <string name="screen_locks_title">When apps change speech</string>
   <string name="screen_locks_summary">Keep your rate, pitch and volume</string>
   <string name="screen_tools_title">Backup and about</string>
@@ -502,7 +544,7 @@
   <string name="category_capitals">Capital letters</string>
   <string name="category_emoji">Emoji</string>
   <string name="screen_reading_title">Reading</string>
-  <string name="screen_reading_summary">Reading mode, letters, web addresses, Hinglish</string>
+  <string name="screen_reading_summary">Reading mode, smart cleanup, letters, Hinglish</string>
   <string name="category_letters">Letters</string>
   <string name="category_advanced">Advanced</string>
   <string name="setting_numbers_language">Numbers and times</string>

@@ -68,6 +68,16 @@ public class VoiceSettings {
     // Opt-in extras beyond NVDA (new keys: the removed pre-parity toggles defaulted on).
     public static final String PREF_READ_MONEY = "espeak_read_money";
     public static final String PREF_READ_CODES = "espeak_read_codes";
+    public static final String PREF_READ_DATES = "espeak_read_dates";
+    public static final String PREF_READ_DIMENSIONS = "espeak_read_dimensions";
+    public static final String PREF_READ_ROMAN_NUMERALS = "espeak_read_roman_numerals";
+    public static final String PREF_READ_PHONE_NUMBERS = "espeak_read_phone_numbers";
+    public static final String PREF_READ_MATH = "espeak_read_math";
+    public static final String PREF_SPLIT_CAMEL_CASE = "espeak_split_camel_case";
+    public static final String PREF_CLEAN_MARKDOWN = "espeak_clean_markdown";
+    public static final String PREF_READ_FRACTIONS = "espeak_read_fractions";
+    public static final String PREF_READ_SUB_SUPER = "espeak_read_sub_super";
+    public static final String PREF_READ_ORDINALS = "espeak_read_ordinals";
     public static final String PREF_PUNCTUATION_SOUNDS = "espeak_punctuation_sounds";
     public static final String PREF_PHRASE_PAUSES = "espeak_phrase_pauses";
     public static final String PREF_EXPAND_ABBREVIATIONS = "espeak_expand_abbreviations";
@@ -447,6 +457,46 @@ public class VoiceSettings {
 
     public boolean isReadCodesEnabled() {
         return mPreferences.getBoolean(PREF_READ_CODES, false);
+    }
+
+    public boolean isReadDatesEnabled() {
+        return mPreferences.getBoolean(PREF_READ_DATES, false);
+    }
+
+    public boolean isReadDimensionsEnabled() {
+        return mPreferences.getBoolean(PREF_READ_DIMENSIONS, false);
+    }
+
+    public boolean isReadRomanNumeralsEnabled() {
+        return mPreferences.getBoolean(PREF_READ_ROMAN_NUMERALS, false);
+    }
+
+    public boolean isReadPhoneNumbersEnabled() {
+        return mPreferences.getBoolean(PREF_READ_PHONE_NUMBERS, false);
+    }
+
+    public boolean isReadMathEnabled() {
+        return mPreferences.getBoolean(PREF_READ_MATH, false);
+    }
+
+    public boolean isSplitCamelCaseEnabled() {
+        return mPreferences.getBoolean(PREF_SPLIT_CAMEL_CASE, false);
+    }
+
+    public boolean isCleanMarkdownEnabled() {
+        return mPreferences.getBoolean(PREF_CLEAN_MARKDOWN, false);
+    }
+
+    public boolean isReadFractionsEnabled() {
+        return mPreferences.getBoolean(PREF_READ_FRACTIONS, false);
+    }
+
+    public boolean isReadSubSuperEnabled() {
+        return mPreferences.getBoolean(PREF_READ_SUB_SUPER, false);
+    }
+
+    public boolean isReadOrdinalsEnabled() {
+        return mPreferences.getBoolean(PREF_READ_ORDINALS, false);
     }
 
     public boolean isPunctuationSoundsEnabled() {

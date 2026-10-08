@@ -89,50 +89,26 @@ public class TtsService extends TextToSpeechService {
     private final java.util.concurrent.atomic.AtomicInteger mSegmentsRemaining = new java.util.concurrent.atomic.AtomicInteger(1);
     private final AtomicBoolean mIsStopped = new AtomicBoolean(false);
 
-    /** Text handed to eSpeak for the current request. */
-    private String mSynthText;
+    /** Active audio and word boundary dispatcher for the ongoing synthesis. */
+    private volatile TtsAudioDispatcher mCurrentDispatcher;
+
+    /** Central registry for pluggable voice synthesis engines (eSpeak NG, Piper, etc.). */
+    private final VoiceEngineRegistry mEngineRegistry = VoiceEngineRegistry.getInstance();
+
     /** Caller text as handed to the preprocessor: what reading history keeps. */
     private String mHistoryText;
-    /** Where {@link #mSynthText} starts within the text the caller supplied. */
-    private int mSynthTextOffset;
     /** Length of the original text passed by the caller for boundary clamping. */
     private int mOriginalTextLength;
-    /**
-     * Offset map from {@link #mSynthText} back to the text the caller
-     * supplied, accumulated across every preprocessing step that ran (user
-     * dictionary, NATO spelling, Indian numbering, Unicode normalization,
-     * ...); null when {@link #mSynthText} is identical to the caller's text.
-     */
-    private TextOffsetMap mSynthOffsetMap;
-    /** Number of code points in {@link #mSynthText}. */
-    private int mSynthTextCodePoints;
-    /** Anchor for incremental code point to UTF-16 index conversion. */
-    private int mAnchorCodePoint;
-    private int mAnchorOffset;
-    /**
-     * Code-point offset of the chunk currently being synthesized within
-     * {@link #mSynthText}. Synthesis is synchronous, so every word callback
-     * belongs to the chunk whose base is set here; 0 for single-chunk
-     * requests. Without this, word boundaries for chunks after the first
-     * would be reported against the wrong part of the text.
-     */
-    private int mChunkBase;
-
-    /**
-     * Audio frames handed to the framework so far in this request, and where
-     * the unit being synthesized started. rangeStart() takes frames from the
-     * start of the request, but each unit's word markers count from its own
-     * start (eSpeak resets per synthesis call): without the base, every unit
-     * after the first highlighted its words too early.
-     */
-    private long mRequestFrames;
-    private long mUnitFrameBase;
 
     /**
      * Piper neural voices (see PiperEngine). Process-wide, like the native
      * eSpeak engine: the settings screen's previews share its loaded models.
      */
     private final PiperEngine mPiper = PiperEngine.get();
+
+    SpeechSynthesis getEngine() {
+        return mEngine;
+    }
 
     private List<Voice> mAllVoices = new ArrayList<Voice>();
     private final Map<String, Voice> mAvailableVoices = new HashMap<String, Voice>();
@@ -340,6 +316,8 @@ public class TtsService extends TextToSpeechService {
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         CheckVoiceData.ensureVoiceData(mStorageContext);
         initializeTtsEngine();
+        mEngineRegistry.register(new EspeakVoiceEngine(this));
+        mEngineRegistry.register(new PiperVoiceEngine(mPiper));
         // Warm the user-dictionary singleton, emoji trie, and hinglish list off
         // the main/synth threads: without this the first synthesis request after
         // each process start pays that cost on the latency-critical path. Failure
@@ -390,21 +368,13 @@ public class TtsService extends TextToSpeechService {
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-        // A loaded natural voice is 60-150 MB of native memory. Under pressure
-        // keep only the one in use: evicting that too would just mean a
-        // reload (and eSpeak in the meantime) on the very next utterance.
-        // Under complete memory exhaustion, free all models and phrase cache to prevent LMK kill.
-        if (level >= TRIM_MEMORY_COMPLETE) {
-            mPiper.trim(true);
-        } else if (level >= TRIM_MEMORY_RUNNING_LOW) {
-            mPiper.trim(false);
-        }
+        mEngineRegistry.trimAll(level);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPiper.unloadAll();
+        mEngineRegistry.unloadAll();
         // The native engine stays: it is shared with every other
         // SpeechSynthesis in this process (settings, Test voice, natural
         // voices), and terminating it under them crashed the process. The
@@ -705,16 +675,7 @@ public class TtsService extends TextToSpeechService {
     protected void onStop() {
         Log.i(TAG, "Received stop request.");
         mIsStopped.set(true);
-
-        // Local snapshot: mEngine can be briefly reassigned (old engine
-        // stopped, new one not yet in place) by a concurrent
-        // initializeTtsEngine() reload; a null field read here would NPE
-        // instead of just missing that one edge of the reload window.
-        final SpeechSynthesis engine = mEngine;
-        if (engine != null) {
-            engine.stop();
-        }
-        mPiper.stop();
+        mEngineRegistry.stopAll();
     }
 
     @SuppressWarnings("deprecation")
@@ -797,39 +758,11 @@ public class TtsService extends TextToSpeechService {
      * utterance, which hides failures from screen readers.
      */
     private void reportError(SynthesisCallback callback, int errorCode) {
-        if (callback != null && mCallbackDone.compareAndSet(false, true)) {
+        final TtsAudioDispatcher dispatcher = mCurrentDispatcher;
+        if (dispatcher != null) {
+            dispatcher.reportError(errorCode);
+        } else if (callback != null && mCallbackDone.compareAndSet(false, true)) {
             callback.error(errorCode);
-        }
-    }
-
-    /**
-     * Converts a 0-based code point index within {@link #mSynthText} into the
-     * UTF-16 index that {@link SynthesisCallback#rangeStart} expects.
-     *
-     * <p>Walks forward from the previous result, since word events arrive in text
-     * order; the occasional out-of-order event falls back to a full rescan.
-     */
-    private int codePointToOffset(int codePointIndex) {
-        final String text = mSynthText;
-        if (text == null || codePointIndex <= 0) {
-            return 0;
-        }
-        if (codePointIndex >= mSynthTextCodePoints) {
-            return text.length();
-        }
-        try {
-            if (codePointIndex < mAnchorCodePoint || mAnchorOffset > text.length()) {
-                mAnchorCodePoint = 0;
-                mAnchorOffset = 0;
-            }
-            mAnchorOffset = text.offsetByCodePoints(
-                    mAnchorOffset, codePointIndex - mAnchorCodePoint);
-            mAnchorCodePoint = codePointIndex;
-            return mAnchorOffset;
-        } catch (Exception e) {
-            mAnchorCodePoint = 0;
-            mAnchorOffset = 0;
-            return 0;
         }
     }
 
@@ -988,16 +921,7 @@ public class TtsService extends TextToSpeechService {
         offsetMap = prep.offsetMap;
         final boolean isSingleCharacterUtterance = prep.isSingleCharacterUtterance;
 
-        mSynthText = text;
         mHistoryText = text;
-        mSynthTextOffset = textOffset;
-        mSynthOffsetMap = offsetMap;
-        mSynthTextCodePoints = text.codePointCount(0, text.length());
-        mAnchorCodePoint = 0;
-        mAnchorOffset = 0;
-        mChunkBase = 0;
-        mRequestFrames = 0;
-        mUnitFrameBase = 0;
 
         // Natural voice for this language, when the user chose one and it is
         // already in memory. SSML stays with eSpeak (Piper has no markup
@@ -1007,7 +931,7 @@ public class TtsService extends TextToSpeechService {
             final PiperModel model = mPiper.getLoaded(natural.key);
             if (model != null && !espeakReadsPart(text, natural, prefs, settings, scriptLanguages)) {
                 synthesizeNatural(request, callback, engine, settings, prefs, voice, natural,
-                        model, text, scriptLanguages);
+                        model, text, scriptLanguages, offsetMap, textOffset);
                 return;
             }
             // Not loaded yet: eSpeak speaks this one while it loads. Or
@@ -1035,6 +959,18 @@ public class TtsService extends TextToSpeechService {
         mAudioOptimizer = settings.isAudioOptimizerEnabled() && sampleRate > 0
                 ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
                 : null;
+        final TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                TtsAudioDispatcher.fromSynthesisCallback(callback),
+                mAudioOptimizer,
+                offsetMap,
+                text,
+                textOffset,
+                mOriginalTextLength,
+                mIsStopped,
+                mCallbackDone,
+                () -> mEngineRegistry.stopAll()
+        );
+        mCurrentDispatcher = dispatcher;
         // Parsed once: getVoiceVariant() re-reads SharedPreferences and
         // re-splits the stored string, and it was previously called at every
         // setVoice() site below (up to 3x per request, more when chunked).
@@ -1130,21 +1066,20 @@ public class TtsService extends TextToSpeechService {
                     break;
                 }
                 final SynthUnit unit = units.get(ui);
-                mUnitFrameBase = mRequestFrames;
+                dispatcher.setChunkContext(unit.base, dispatcher.getRequestFrames());
                 if (unit.isEarcon()) {
-                    mSynthCallback.onSynthDataReady(Earcons.pcm(unit.text.charAt(0),
+                    dispatcher.writeAudio(Earcons.pcm(unit.text.charAt(0),
                             sampleRate, engine.getChannelCount(), targetVolume));
                     segmentFinished();
                     continue;
                 }
                 if (unit.model != null) {
-                    mChunkBase = unit.base;
                     final int next = ui + 1;
                     int produced;
                     try {
                         final PiperEngine.Prepared prepared = ahead.take(units, ui);
                         produced = prepared == null ? -1 : playAt(prepared,
-                                naturalOutput(new long[] {0}), sampleRate,
+                                dispatcher.asPiperOutput(), sampleRate,
                                 () -> ahead.prepare(units, next));
                     } catch (Throwable t) {
                         Log.e(TAG, "Natural voice " + unit.modelKey + " failed; eSpeak reads it", t);
@@ -1158,7 +1093,6 @@ public class TtsService extends TextToSpeechService {
                 // A natural voice speaking next renders while eSpeak speaks.
                 ahead.prepare(units, ui + 1);
                 try {
-                    mChunkBase = unit.base;
                     engine.setVoice(unit.voice, voiceVariant);
                     // eSpeak works out speed only when the rate is set: a voice
                     // file's own "speed" (Ukrainian 80) sticks if the voice is
@@ -1175,7 +1109,7 @@ public class TtsService extends TextToSpeechService {
             }
         } else {
             mSegmentsRemaining.set(1);
-            mChunkBase = units.isEmpty() ? 0 : units.get(0).base;
+            dispatcher.setChunkContext(units.isEmpty() ? 0 : units.get(0).base, 0);
             try {
                 if (!mIsStopped.get()) {
                     engine.synthesize(text, isSsml);
@@ -1300,7 +1234,8 @@ public class TtsService extends TextToSpeechService {
                                    final SpeechSynthesis engine, VoiceSettings settings,
                                    SharedPreferences prefs, final Voice voice,
                                    PiperVoiceStore.Installed natural, PiperModel model,
-                                   String text, Map<String, String> scriptLanguages) {
+                                   String text, Map<String, String> scriptLanguages,
+                                   TextOffsetMap offsetMap, int textOffset) {
         final int sampleRate = model.config.sampleRate;
         mCallback = callback;
         mCallbackDone.set(false);
@@ -1312,12 +1247,23 @@ public class TtsService extends TextToSpeechService {
         mAudioOptimizer = settings.isAudioOptimizerEnabled()
                 ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
                 : null;
+        final TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                TtsAudioDispatcher.fromSynthesisCallback(callback),
+                mAudioOptimizer,
+                offsetMap,
+                text,
+                textOffset,
+                mOriginalTextLength,
+                mIsStopped,
+                mCallbackDone,
+                () -> mEngineRegistry.stopAll()
+        );
+        mCurrentDispatcher = dispatcher;
 
         final int targetVolume = effectiveVolume(settings, request);
         final PiperEngine.Params params = naturalParams(settings, request, prefs);
         final PiperEngine.Phonemizer phonemizer = naturalPhonemizer(engine, voice);
-        final long[] frames = {0};
-        final PiperEngine.Output output = naturalOutput(frames);
+        final PiperEngine.Output output = dispatcher.asPiperOutput();
         final Map<UnicodeScript, String> runLanguages = ScriptLanguages.naturalSwitching(prefs)
                 ? ScriptLanguages.runLanguages(scriptLanguages) : null;
         final String numbers = numbersRunLanguage(settings, natural.languageKey());
@@ -1375,10 +1321,10 @@ public class TtsService extends TextToSpeechService {
                     break;
                 }
                 final SynthUnit piece = pieces.get(i);
+                dispatcher.setChunkContext(piece.base, dispatcher.getRequestFrames());
                 if (piece.isEarcon()) {
                     final byte[] tone = Earcons.pcm(piece.text.charAt(0), sampleRate, 1, targetVolume);
-                    output.audio(tone);
-                    frames[0] += tone.length / 2;
+                    dispatcher.writeAudio(tone);
                     continue;
                 }
                 final PiperEngine.Prepared prepared = ahead.take(pieces, i);
@@ -1386,15 +1332,14 @@ public class TtsService extends TextToSpeechService {
                     Log.w(TAG, "Natural voice " + piece.modelKey + " could not phonemize; skipped");
                     continue;
                 }
-                mChunkBase = piece.base;
                 final int next = i + 1;
-                frames[0] += playAt(prepared, output, sampleRate, () -> ahead.prepare(pieces, next));
+                playAt(prepared, output, sampleRate, () -> ahead.prepare(pieces, next));
             }
         } catch (Throwable t) {
             // A model failure mid-request: whatever was spoken stands, the
             // request ends cleanly, and the next one retries.
             Log.e(TAG, "Natural voice synthesis failed", t);
-            if (frames[0] == 0) {
+            if (dispatcher.getRequestFrames() == 0) {
                 ahead.discard();
                 reportError(callback, TextToSpeech.ERROR_SYNTHESIS);
                 return;
@@ -1558,29 +1503,7 @@ public class TtsService extends TextToSpeechService {
         };
     }
 
-    /** Natural-voice audio and word ranges into this request; frames[0] is the running offset. */
-    private PiperEngine.Output naturalOutput(final long[] frames) {
-        return new PiperEngine.Output() {
-            @Override
-            public void word(int position, int length, int frame) {
-                mSynthCallback.onSynthWordBoundary(position, length, (int) (frames[0] + frame));
-            }
 
-            @Override
-            public boolean audio(byte[] pcm) {
-                if (pcm.length == 0) {
-                    return !mIsStopped.get(); // empty would read as end-of-stream
-                }
-                mSynthCallback.onSynthDataReady(pcm);
-                return !mIsStopped.get() && !mCallbackDone.get();
-            }
-
-            @Override
-            public boolean stopped() {
-                return mIsStopped.get();
-            }
-        };
-    }
 
     /**
      * The language digits get a run of their own in ({@link LanguageRuns}),
@@ -1807,7 +1730,10 @@ public class TtsService extends TextToSpeechService {
 
     /** Signals done() exactly once per request, whichever path gets there first. */
     private void finishRequest() {
-        if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
+        final TtsAudioDispatcher dispatcher = mCurrentDispatcher;
+        if (dispatcher != null) {
+            dispatcher.finish();
+        } else if (mCallback != null && mCallbackDone.compareAndSet(false, true)) {
             mCallback.done();
         }
     }
@@ -1864,7 +1790,7 @@ public class TtsService extends TextToSpeechService {
     }
 
     /**
-     * Pipes synthesizer output from native eSpeak to an {@link AudioTrack}.
+     * Pipes synthesizer output from native eSpeak to the active audio dispatcher.
      */
     private final SpeechSynthesis.SynthReadyCallback mSynthCallback = new SynthReadyCallback() {
         @Override
@@ -1874,56 +1800,9 @@ public class TtsService extends TextToSpeechService {
                 return;
             }
 
-            if (mCallback == null || mCallbackDone.get() || mIsStopped.get()) {
-                return;
-            }
-
-            if (mAudioOptimizer != null) {
-                mAudioOptimizer.process(audioData, audioData.length);
-            }
-
-            final SynthesisCallback callback = mCallback;
-            if (callback == null) {
-                return;
-            }
-
-            final int maxBytesToCopy = Math.max(callback.getMaxBufferSize(), 512);
-
-            int offset = 0;
-
-            while (offset < audioData.length) {
-                if (mIsStopped.get() || mCallbackDone.get()) {
-                    return;
-                }
-                final int bytesToWrite = Math.min(maxBytesToCopy, (audioData.length - offset));
-                if (callback.audioAvailable(audioData, offset, bytesToWrite)
-                        != TextToSpeech.SUCCESS) {
-                    // The framework has stopped accepting audio for this
-                    // request, so the rest of the buffer has nowhere to go.
-                    // A stop normally reaches the engine through onStop();
-                    // stopping here as well covers a failure that arrives
-                    // without one. Local snapshot: the same brief
-                    // initializeTtsEngine() null window documented in onStop().
-                    //
-                    // Also mark the whole request stopped, not just this
-                    // chunk's native synth: for a multi-chunk request the
-                    // outer loop in onSynthesizeText() only checks
-                    // mIsStopped between chunks, so without this it would
-                    // plow ahead into the next chunk against an audio pipe
-                    // that just rejected data -- silently dropping the rest
-                    // of the request while still reporting done() as if it
-                    // had read everything (the exact "stops reading midway"
-                    // symptom, for the same request that made the pipe fail
-                    // once and then kept trying).
-                    mIsStopped.set(true);
-                    final SpeechSynthesis engine = mEngine;
-                    if (engine != null) {
-                        engine.stop();
-                    }
-                    return;
-                }
-                offset += bytesToWrite;
-                mRequestFrames += bytesToWrite / 2; // 16-bit mono
+            final TtsAudioDispatcher dispatcher = mCurrentDispatcher;
+            if (dispatcher != null) {
+                dispatcher.writeAudio(audioData);
             }
         }
 
@@ -1934,44 +1813,9 @@ public class TtsService extends TextToSpeechService {
 
         @Override
         public void onSynthWordBoundary(int textPosition, int textLength, int markerInFrames) {
-            // Local snapshot: the fields can be swapped by a fresh request on
-            // the synth thread while this callback is in flight, and the
-            // guard-then-use pattern below must observe one consistent pair.
-            final String synthText = mSynthText;
-            final SynthesisCallback callback = mCallback;
-            if (synthText == null || callback == null || mCallbackDone.get() || mIsStopped.get()) {
-                return;
-            }
-
-            // eSpeak counts code points from 1, rangeStart() wants 0-based UTF-16
-            // indices into the text the caller supplied. The engine's position
-            // is relative to the current chunk; mChunkBase re-bases it into
-            // the full request text (0 for single-chunk requests).
-            final int wordStart = textPosition - 1 + mChunkBase;
-            int start = codePointToOffset(wordStart);
-            int end = codePointToOffset(wordStart + Math.max(textLength, 0));
-            final TextOffsetMap offsetMap = mSynthOffsetMap;
-            if (offsetMap != null) {
-                // The engine spoke text that one or more preprocessing steps
-                // changed the length of; report the range against the
-                // original so highlighting tracks the caller's string.
-                start = offsetMap.toPrevious(start);
-                end = offsetMap.toPrevious(end);
-            }
-
-            int finalStart = mSynthTextOffset + start;
-            int finalEnd = mSynthTextOffset + end;
-            if (mOriginalTextLength > 0) {
-                finalStart = Math.max(0, Math.min(mOriginalTextLength, finalStart));
-                finalEnd = Math.max(0, Math.min(mOriginalTextLength, finalEnd));
-            }
-            if (finalEnd <= finalStart) {
-                return;
-            }
-
-            try {
-                callback.rangeStart((int) (mUnitFrameBase + markerInFrames), finalStart, finalEnd);
-            } catch (Throwable ignored) {
+            final TtsAudioDispatcher dispatcher = mCurrentDispatcher;
+            if (dispatcher != null) {
+                dispatcher.dispatchWordBoundary(textPosition, textLength, markerInFrames);
             }
         }
     };

@@ -34,6 +34,17 @@ public class NumberReadingTest {
         assertEquals("500 rupees", NumberReading.readMoney("₹500", true));
     }
 
+    @Test
+    public void testWonAndBitcoinAndCentsReading() {
+        assertEquals("1000 won", NumberReading.readMoney("₩1000", false));
+        assertEquals("1 bitcoin", NumberReading.readMoney("1 BTC", false));
+        assertEquals("2.5 bitcoins", NumberReading.readMoney("2.5 BTC", false));
+        assertEquals("50 cents", NumberReading.readMoney("50¢", false));
+        assertEquals("1 cent", NumberReading.readMoney("1¢", false));
+        assertEquals("25 dollars", NumberReading.readMoney("25 CAD", false));
+        assertEquals("50 dollars", NumberReading.readMoney("50 AUD", false));
+    }
+
     /** Numbers and times -> In the language of the words around them. */
     @Test
     public void numbersNextToEnglishWordsAreEnglish() {
@@ -118,5 +129,170 @@ public class NumberReadingTest {
                 NumberReading.readCodes("Your OTP is 482913؟ Done."));
         assertEquals("Your OTP is 4 8 2 9 1 3‽ Done.",
                 NumberReading.readCodes("Your OTP is 482913‽ Done."));
+    }
+
+    @Test
+    public void testReadDimensions() {
+        assertEquals("1920 by 1080", NumberReading.readDimensions("1920x1080"));
+        assertEquals("3840 by 2160", NumberReading.readDimensions("3840×2160"));
+        assertEquals("4 by 4", NumberReading.readDimensions("4x4"));
+        assertEquals("10 by 20 by 30", NumberReading.readDimensions("10x20x30"));
+        assertEquals("5.5 by 2.5", NumberReading.readDimensions("5.5 x 2.5"));
+        assertEquals("0x1080", NumberReading.readDimensions("0x1080"));
+        assertEquals("0x0", NumberReading.readDimensions("0x0"));
+        assertEquals("x1080", NumberReading.readDimensions("x1080"));
+        assertEquals("hello world", NumberReading.readDimensions("hello world"));
+    }
+
+    @Test
+    public void testReadDates() {
+        assertEquals("8 October 2026", NumberReading.readDates("2026-10-08"));
+        assertEquals("31 December 1999", NumberReading.readDates("1999-12-31"));
+        assertEquals("1 January 2024", NumberReading.readDates("2024-01-01"));
+        assertEquals("date 2026-13-40 invalid", NumberReading.readDates("date 2026-13-40 invalid"));
+        assertEquals("10:00 to 11:30", NumberReading.readDates("10:00-11:30"));
+        assertEquals("10:00 to 11:30", NumberReading.readDates("10:00 - 11:30"));
+        assertEquals("2:00 PM to 4:00 PM", NumberReading.readDates("2:00 PM – 4:00 PM"));
+    }
+
+    @Test
+    public void testReadRomanNumerals() {
+        assertEquals("Chapter 4", NumberReading.readRomanNumerals("Chapter IV"));
+        assertEquals("World War 2", NumberReading.readRomanNumerals("World War II"));
+        assertEquals("Act 3, Scene 1", NumberReading.readRomanNumerals("Act III, Scene I"));
+        assertEquals("Henry the Eighth", NumberReading.readRomanNumerals("Henry VIII"));
+        assertEquals("Charles the Third", NumberReading.readRomanNumerals("Charles III"));
+        assertEquals("Queen Elizabeth the Second", NumberReading.readRomanNumerals("Queen Elizabeth II"));
+        assertEquals("Pope John Paul the Second", NumberReading.readRomanNumerals("Pope John Paul II"));
+        assertEquals("I have a dream", NumberReading.readRomanNumerals("I have a dream"));
+        assertEquals("He went to IV", NumberReading.readRomanNumerals("He went to IV"));
+    }
+
+    @Test
+    public void testReadPhoneNumbers() {
+        assertEquals("Call +1 800 555 0199 now", NumberReading.readPhoneNumbers("Call +1-800-555-0199 now"));
+        assertEquals("Call 800 555 0199", NumberReading.readPhoneNumbers("Call (800) 555-0199"));
+        assertEquals("800 555 0199", NumberReading.readPhoneNumbers("800-555-0199"));
+        assertEquals("9 8 7 6 5 4 3 2 1 0", NumberReading.readPhoneNumbers("9876543210"));
+        assertEquals("100 - 50", NumberReading.readPhoneNumbers("100 - 50"));
+    }
+
+    @Test
+    public void testReadMath() {
+        assertEquals("5 plus 3 equals 8", NumberReading.readMath("5 + 3 = 8"));
+        assertEquals("10 minus 4 equals 6", NumberReading.readMath("10 - 4 = 6"));
+        assertEquals("6 times 7 equals 42", NumberReading.readMath("6 * 7 = 42"));
+        assertEquals("20 divided by 4 equals 5", NumberReading.readMath("20 / 4 = 5"));
+        assertEquals("100 minus 50", NumberReading.readMath("100 - 50"));
+        assertEquals("2026-10-08", NumberReading.readMath("2026-10-08"));
+    }
+
+    @Test
+    public void testSplitCamelCase() {
+        assertEquals("get User Name", TextPreprocessor.splitCamelCase("getUserName"));
+        assertEquals("on Synthesize Text", TextPreprocessor.splitCamelCase("onSynthesizeText"));
+        assertEquals("XML Http Request", TextPreprocessor.splitCamelCase("XMLHttpRequest"));
+        assertEquals("Text Preprocessor", TextPreprocessor.splitCamelCase("TextPreprocessor"));
+        assertEquals("HTML5 Canvas", TextPreprocessor.splitCamelCase("HTML5Canvas"));
+        assertEquals("Hello world", TextPreprocessor.splitCamelCase("Hello world"));
+    }
+
+    @Test
+    public void testFractionsReading() {
+        // Slash fractions
+        assertEquals("1 half", NumberReading.readFractions("1/2"));
+        assertEquals("1 quarter", NumberReading.readFractions("1/4"));
+        assertEquals("3 quarters", NumberReading.readFractions("3/4"));
+        assertEquals("1 third", NumberReading.readFractions("1/3"));
+        assertEquals("2 thirds", NumberReading.readFractions("2/3"));
+        assertEquals("5 eighths", NumberReading.readFractions("5/8"));
+        assertEquals("minus 1 half", NumberReading.readFractions("-1/2"));
+
+        // Mixed numbers
+        assertEquals("2 and a half", NumberReading.readFractions("2 1/2"));
+        assertEquals("1 and 3 quarters", NumberReading.readFractions("1 3/4"));
+        assertEquals("Add 2 and a half cups of flour", NumberReading.readFractions("Add 2 1/2 cups of flour"));
+
+        // Unicode fractions
+        assertEquals("1 half", NumberReading.readFractions("½"));
+        assertEquals("3 quarters", NumberReading.readFractions("¾"));
+        assertEquals("2 and a half", NumberReading.readFractions("2 ½"));
+        assertEquals("2 and a half", NumberReading.readFractions("2½"));
+        assertEquals("1 and 3 quarters", NumberReading.readFractions("1 ¾"));
+
+        // Date protection: calendar dates must NOT be mangled
+        assertEquals("2026/10/08", NumberReading.readFractions("2026/10/08"));
+        assertEquals("10/12/2026", NumberReading.readFractions("10/12/2026"));
+    }
+
+    @Test
+    public void testSubSuperReading() {
+        // Metric area and volume
+        assertEquals("square meters", NumberReading.readSubSuper("m²"));
+        assertEquals("cubic meters", NumberReading.readSubSuper("m³"));
+        assertEquals("square kilometers", NumberReading.readSubSuper("km²"));
+        assertEquals("square centimeters", NumberReading.readSubSuper("cm²"));
+
+        // Algebra and powers
+        assertEquals("x squared + y squared", NumberReading.readSubSuper("x² + y²"));
+        assertEquals("x cubed", NumberReading.readSubSuper("x³"));
+        assertEquals("10 squared", NumberReading.readSubSuper("10²"));
+        assertEquals("10 to the 5th", NumberReading.readSubSuper("10⁵"));
+        assertEquals("x to the n", NumberReading.readSubSuper("xⁿ"));
+
+        // Chemical formulas
+        assertEquals("H 2 O", NumberReading.readSubSuper("H₂O"));
+        assertEquals("CO 2", NumberReading.readSubSuper("CO₂"));
+        assertEquals("CH 4", NumberReading.readSubSuper("CH₄"));
+    }
+
+    @Test
+    public void testOrdinalsReading() {
+        // English ordinals
+        assertEquals("first", NumberReading.readOrdinals("1st"));
+        assertEquals("second", NumberReading.readOrdinals("2nd"));
+        assertEquals("third", NumberReading.readOrdinals("3rd"));
+        assertEquals("fourth", NumberReading.readOrdinals("4th"));
+        assertEquals("twenty-first", NumberReading.readOrdinals("21st"));
+        assertEquals("twenty-second", NumberReading.readOrdinals("22nd"));
+        assertEquals("twenty-third", NumberReading.readOrdinals("23rd"));
+        assertEquals("thirty-first", NumberReading.readOrdinals("31st"));
+        assertEquals("hundredth", NumberReading.readOrdinals("100th"));
+        assertEquals("millionth", NumberReading.readOrdinals("1000000th"));
+
+        // International symbol ordinals
+        assertEquals("first", NumberReading.readOrdinals("1º"));
+        assertEquals("second", NumberReading.readOrdinals("2º"));
+        assertEquals("first", NumberReading.readOrdinals("1ª"));
+    }
+
+    @Test
+    public void testCleanMarkdown() {
+        // Fast bypass on plain text
+        assertEquals("Hello world", TextPreprocessor.cleanMarkdown("Hello world"));
+
+        // Bold and italic
+        assertEquals("Hello world", TextPreprocessor.cleanMarkdown("**Hello world**"));
+        assertEquals("Hello world", TextPreprocessor.cleanMarkdown("*Hello world*"));
+        assertEquals("This is bold and italic text",
+                TextPreprocessor.cleanMarkdown("This is **bold** and *italic* text"));
+
+        // Inline code and code fences
+        assertEquals("status_code", TextPreprocessor.cleanMarkdown("`status_code`"));
+        assertEquals("code block", TextPreprocessor.cleanMarkdown("```python\ncode block\n```"));
+
+        // Strikethrough
+        assertEquals("cancelled", TextPreprocessor.cleanMarkdown("~~cancelled~~"));
+
+        // Headings
+        assertEquals("Main Heading", TextPreprocessor.cleanMarkdown("# Main Heading"));
+        assertEquals("Subheading", TextPreprocessor.cleanMarkdown("### Subheading"));
+
+        // Blockquotes
+        assertEquals("quote: Important notice", TextPreprocessor.cleanMarkdown("> Important notice"));
+
+        // Checkboxes / task lists
+        assertEquals("todo: Buy groceries", TextPreprocessor.cleanMarkdown("- [ ] Buy groceries"));
+        assertEquals("done: Pay electric bill", TextPreprocessor.cleanMarkdown("- [x] Pay electric bill"));
     }
 }

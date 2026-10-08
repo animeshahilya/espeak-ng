@@ -90,6 +90,49 @@ public final class TechWordsNormalizer {
                     + "|ios"
                     + "|mac[ -]?os"
                     + "|gpt(?:-?[0-9]+(?:\\.[0-9]+)?[a-z]*)?"
+                    + "|co[ -]?pilot(?:'s)?"
+                    + "|perplexity(?:'s)?"
+                    + "|anthropic(?:'s)?"
+                    + "|mistral(?:'s)?"
+                    + "|ollama(?:'s)?"
+                    + "|hugging[ -]?face(?:'s)?"
+                    + "|stable[ -]?diffusion(?:'s)?"
+                    + "|json"
+                    + "|yaml"
+                    + "|sql"
+                    + "|nosql"
+                    + "|sdk"
+                    + "|(?-i:IDE|IDEs)"
+                    + "|(?-i:CLI)"
+                    + "|(?-i:GUI)"
+                    + "|ci[ /\\-]?cd"
+                    + "|css"
+                    + "|png"
+                    + "|jpe?g"
+                    + "|svg"
+                    + "|blue[ -]?tooth"
+                    + "|hdmi"
+                    + "|ssd"
+                    + "|oled"
+                    + "|amoled"
+                    + "|lcd"
+                    + "|(?-i:LED|LEDs)"
+                    + "|(?:4|8)k"
+                    + "|(?:4|5)g"
+                    + "|lte"
+                    + "|volte"
+                    + "|vowifi"
+                    + "|insta(?:gram)?(?:'s)?"
+                    + "|telegram(?:'s)?"
+                    + "|reddit(?:'s)?"
+                    + "|spotify(?:'s)?"
+                    + "|netflix(?:'s)?"
+                    + "|flipkart(?:'s)?"
+                    + "|meesho(?:'s)?"
+                    + "|blinkit(?:'s)?"
+                    + "|zepto(?:'s)?"
+                    + "|(?-i:Ola)(?:'s)?"
+                    + "|(?-i:Uber)(?:'s)?"
                     + ")\\b"
     );
 
@@ -276,6 +319,9 @@ public final class TechWordsNormalizer {
         }
 
         // Connectivity & Acronyms
+        if (lower.contains("vowifi") || lower.contains("vo-wifi") || lower.contains("vo wifi")) {
+            return "Vo-Wi-Fi";
+        }
         if (lower.contains("wi") && lower.contains("fi")) {
             return "Wi-Fi";
         }
@@ -332,6 +378,149 @@ public final class TechWordsNormalizer {
         }
         if (lower.equals("gpu")) {
             return "G P U";
+        }
+
+        // AI & Assistant brands
+        if (lower.startsWith("co") && lower.contains("pilot")) {
+            return "Co-pilot" + apostropheS;
+        }
+        if (lower.startsWith("perplexity")) {
+            return "Per-plexity" + apostropheS;
+        }
+        if (lower.startsWith("anthropic")) {
+            return "An-thropic" + apostropheS;
+        }
+        if (lower.startsWith("mistral")) {
+            return "Mis-tral" + apostropheS;
+        }
+        if (lower.startsWith("ollama")) {
+            return "O-llama" + apostropheS;
+        }
+        if (lower.contains("hugging") && lower.contains("face")) {
+            return "Hugging-Face" + apostropheS;
+        }
+        if (lower.contains("stable") && lower.contains("diffusion")) {
+            return "Stable-Diffusion" + apostropheS;
+        }
+
+        // Developer tools, formats & protocols
+        if (lower.equals("json")) {
+            return "JAY-son";
+        }
+        if (lower.equals("yaml")) {
+            return "yam-el";
+        }
+        if (lower.equals("sql")) {
+            return "S-Q-L";
+        }
+        if (lower.equals("nosql")) {
+            return "No-S-Q-L";
+        }
+        if (lower.equals("sdk")) {
+            return "S D K";
+        }
+        if (raw.equals("IDE") || raw.equals("IDEs")) {
+            return "I D E" + (raw.endsWith("s") ? "s" : "");
+        }
+        if (raw.equals("CLI")) {
+            return "C L I";
+        }
+        if (raw.equals("GUI")) {
+            return "G U I";
+        }
+        if (lower.contains("ci") && lower.contains("cd")) {
+            return "C I C D";
+        }
+        if (lower.equals("css")) {
+            return "C S S";
+        }
+        if (lower.equals("png")) {
+            return "P N G";
+        }
+        if (lower.equals("jpeg") || lower.equals("jpg")) {
+            return "J-PEG";
+        }
+        if (lower.equals("svg")) {
+            return "S V G";
+        }
+
+        // Hardware, display & networking
+        if (lower.contains("blue") && lower.contains("tooth")) {
+            return "Blue-tooth";
+        }
+        if (lower.equals("hdmi")) {
+            return "H D M I";
+        }
+        if (lower.equals("ssd")) {
+            return "S S D";
+        }
+        if (lower.equals("oled")) {
+            return "O-LED";
+        }
+        if (lower.equals("amoled")) {
+            return "Am-O-LED";
+        }
+        if (lower.equals("lcd")) {
+            return "L C D";
+        }
+        if (raw.equals("LED") || raw.equals("LEDs")) {
+            return "L E D" + (raw.endsWith("s") ? "s" : "");
+        }
+        if (lower.equals("4k")) {
+            return "4 K";
+        }
+        if (lower.equals("8k")) {
+            return "8 K";
+        }
+        if (lower.equals("4g")) {
+            return "4 G";
+        }
+        if (lower.equals("5g")) {
+            return "5 G";
+        }
+        if (lower.equals("lte")) {
+            return "L T E";
+        }
+        if (lower.equals("volte")) {
+            return "Vo-L T E";
+        }
+        if (lower.equals("vowifi")) {
+            return "Vo-Wi-Fi";
+        }
+
+        // Daily social, entertainment & delivery apps
+        if (lower.startsWith("insta")) {
+            return "Insta-gram" + apostropheS;
+        }
+        if (lower.startsWith("telegram")) {
+            return "Tele-gram" + apostropheS;
+        }
+        if (lower.startsWith("reddit")) {
+            return "Red-dit" + apostropheS;
+        }
+        if (lower.startsWith("spotify")) {
+            return "Spoti-fy" + apostropheS;
+        }
+        if (lower.startsWith("netflix")) {
+            return "Net-flix" + apostropheS;
+        }
+        if (lower.startsWith("flipkart")) {
+            return "Flip-kart" + apostropheS;
+        }
+        if (lower.startsWith("meesho")) {
+            return "Mee-sho" + apostropheS;
+        }
+        if (lower.startsWith("blinkit")) {
+            return "Blink-it" + apostropheS;
+        }
+        if (lower.startsWith("zepto")) {
+            return "Zep-to" + apostropheS;
+        }
+        if (raw.startsWith("Ola")) {
+            return "Oh-la" + apostropheS;
+        }
+        if (raw.startsWith("Uber")) {
+            return "Oo-ber" + apostropheS;
         }
 
         return raw;

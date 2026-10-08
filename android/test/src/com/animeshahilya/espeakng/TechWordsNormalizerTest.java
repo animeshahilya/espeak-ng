@@ -236,5 +236,64 @@ public class TechWordsNormalizerTest {
         assertEquals("Check the postal mail box.", TechWordsNormalizer.process("Check the postal mail box."));
         assertEquals("Safety pin for the shirt.", TechWordsNormalizer.process("Safety pin for the shirt."));
         assertEquals("Freud discussed the id and ego.", TechWordsNormalizer.process("Freud discussed the id and ego."));
+        // "led" as past tense of lead must not become "L E D"
+        assertEquals("He led the team forward.", TechWordsNormalizer.process("He led the team forward."));
+    }
+
+    @Test
+    public void testAiAndDevExpandedVocab() {
+        assertEquals("Co-pilot", TechWordsNormalizer.process("copilot"));
+        assertEquals("Co-pilot", TechWordsNormalizer.process("co-pilot"));
+        assertEquals("Per-plexity", TechWordsNormalizer.process("Perplexity"));
+        assertEquals("An-thropic", TechWordsNormalizer.process("Anthropic"));
+        assertEquals("Mis-tral", TechWordsNormalizer.process("Mistral"));
+        assertEquals("O-llama", TechWordsNormalizer.process("ollama"));
+        assertEquals("Hugging-Face", TechWordsNormalizer.process("HuggingFace"));
+        assertEquals("Stable-Diffusion", TechWordsNormalizer.process("Stable Diffusion"));
+
+        assertEquals("JAY-son", TechWordsNormalizer.process("json"));
+        assertEquals("yam-el", TechWordsNormalizer.process("yaml"));
+        assertEquals("S-Q-L", TechWordsNormalizer.process("sql"));
+        assertEquals("No-S-Q-L", TechWordsNormalizer.process("nosql"));
+        assertEquals("S D K", TechWordsNormalizer.process("sdk"));
+        assertEquals("I D E", TechWordsNormalizer.process("IDE"));
+        assertEquals("C L I", TechWordsNormalizer.process("CLI"));
+        assertEquals("G U I", TechWordsNormalizer.process("GUI"));
+        assertEquals("C I C D", TechWordsNormalizer.process("ci/cd"));
+        assertEquals("C S S", TechWordsNormalizer.process("css"));
+        assertEquals("P N G", TechWordsNormalizer.process("png"));
+        assertEquals("J-PEG", TechWordsNormalizer.process("jpeg"));
+        assertEquals("J-PEG", TechWordsNormalizer.process("jpg"));
+        assertEquals("S V G", TechWordsNormalizer.process("svg"));
+    }
+
+    @Test
+    public void testHardwareAndAppsExpandedVocab() {
+        assertEquals("Blue-tooth", TechWordsNormalizer.process("bluetooth"));
+        assertEquals("H D M I", TechWordsNormalizer.process("hdmi"));
+        assertEquals("S S D", TechWordsNormalizer.process("ssd"));
+        assertEquals("O-LED", TechWordsNormalizer.process("oled"));
+        assertEquals("Am-O-LED", TechWordsNormalizer.process("amoled"));
+        assertEquals("L C D", TechWordsNormalizer.process("lcd"));
+        assertEquals("L E D", TechWordsNormalizer.process("LED"));
+        assertEquals("4 K", TechWordsNormalizer.process("4k"));
+        assertEquals("8 K", TechWordsNormalizer.process("8k"));
+        assertEquals("5 G", TechWordsNormalizer.process("5g"));
+        assertEquals("4 G", TechWordsNormalizer.process("4g"));
+        assertEquals("L T E", TechWordsNormalizer.process("lte"));
+        assertEquals("Vo-L T E", TechWordsNormalizer.process("volte"));
+        assertEquals("Vo-Wi-Fi", TechWordsNormalizer.process("vowifi"));
+
+        assertEquals("Insta-gram", TechWordsNormalizer.process("Instagram"));
+        assertEquals("Tele-gram", TechWordsNormalizer.process("telegram"));
+        assertEquals("Red-dit", TechWordsNormalizer.process("reddit"));
+        assertEquals("Spoti-fy", TechWordsNormalizer.process("spotify"));
+        assertEquals("Net-flix", TechWordsNormalizer.process("netflix"));
+        assertEquals("Flip-kart", TechWordsNormalizer.process("Flipkart"));
+        assertEquals("Mee-sho", TechWordsNormalizer.process("meesho"));
+        assertEquals("Blink-it", TechWordsNormalizer.process("Blinkit"));
+        assertEquals("Zep-to", TechWordsNormalizer.process("Zepto"));
+        assertEquals("Oh-la", TechWordsNormalizer.process("Ola"));
+        assertEquals("Oo-ber", TechWordsNormalizer.process("Uber"));
     }
 }

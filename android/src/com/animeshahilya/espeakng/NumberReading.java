@@ -38,9 +38,12 @@ public final class NumberReading {
     private static final Currency POUND = new Currency("pound", "pounds", "penny", "pence");
     private static final Currency YEN = new Currency("yen", "yen", null, null);
     private static final Currency RUPEE = new Currency("rupee", "rupees", "paisa", "paise");
+    private static final Currency WON = new Currency("won", "won", null, null);
+    private static final Currency BITCOIN = new Currency("bitcoin", "bitcoins", null, null);
+    private static final Currency CENT_ONLY = new Currency("cent", "cents", null, null);
 
     private static final String UNIT =
-            "US\\$|A\\$|C\\$|\\$|€|£|¥|₹|Rs\\.?|USD|EUR|GBP|JPY|INR";
+            "US\\$|A\\$|C\\$|\\$|€|£|¥|₹|Rs\\.?|USD|EUR|GBP|JPY|INR|CAD|AUD|NZD|KRW|₩|BTC|₿";
     // 1,234,567 or 1,23,456 or 1234, with an optional decimal part.
     private static final String AMOUNT = "(\\d{1,3}(?:,\\d{2,3})+|\\d+)(?:\\.(\\d+))?";
     // Words may follow a space; abbreviations must touch ("$5m", not "$5 m").
@@ -54,7 +57,7 @@ public final class NumberReading {
             SIGN + "(?<![\\p{L}\\d])(" + UNIT + ")\\s?" + AMOUNT + SCALE + "(?![\\d.,]\\d)");
     // "20 USD", "5€"; "3,50 €" is left alone (decimal comma is ambiguous)
     private static final Pattern MONEY_SUFFIX = Pattern.compile(
-            SIGN + "(?<![\\p{L}\\d.,])" + AMOUNT + SCALE + "\\s?(€|¥|₹|USD|EUR|GBP|JPY|INR)(?![\\p{L}\\d])");
+            SIGN + "(?<![\\p{L}\\d.,])" + AMOUNT + SCALE + "\\s?(€|¥|₹|USD|EUR|GBP|JPY|INR|CAD|AUD|NZD|KRW|₩|BTC|₿|¢)(?![\\p{L}\\d])");
 
     private static final java.util.Map<String, Boolean> LATIN_SCRIPT_CACHE =
             new java.util.concurrent.ConcurrentHashMap<>();
@@ -126,7 +129,7 @@ public final class NumberReading {
 
     private static Currency currencyFor(String unit) {
         switch (unit) {
-            case "$": case "US$": case "A$": case "C$": case "USD":
+            case "$": case "US$": case "A$": case "C$": case "USD": case "CAD": case "AUD": case "NZD":
                 return DOLLAR;
             case "€": case "EUR":
                 return EURO;
@@ -136,6 +139,12 @@ public final class NumberReading {
                 return YEN;
             case "₹": case "Rs": case "Rs.": case "INR":
                 return RUPEE;
+            case "₩": case "KRW":
+                return WON;
+            case "₿": case "BTC":
+                return BITCOIN;
+            case "¢":
+                return CENT_ONLY;
             default:
                 return null;
         }
@@ -277,6 +286,544 @@ public final class NumberReading {
             }
         }
         return CODE_KEYWORD.matcher(text).region(from, to).find();
+    }
+
+    // ==========================================
+    // Dimensions ("1920x1080" -> "1920 by 1080")
+    // ==========================================
+
+    private static final Pattern DIMENSION = Pattern.compile(
+            "(?<![\\p{L}\\d.,])(\\d+(?:\\.\\d+)?)\\s*[xX×]\\s*(\\d+(?:\\.\\d+)?)(?![\\d.,]|(?!\\s*[xX×]\\s*\\d)[\\p{L}])");
+
+    private static boolean containsDimensionCross(String text) {
+        for (int i = 0, n = text.length(); i < n; i++) {
+            char c = text.charAt(i);
+            if (c == 'x' || c == 'X' || c == '\u00D7') return true;
+        }
+        return false;
+    }
+
+    public static String readDimensions(String text) {
+        if (text == null || text.isEmpty() || !containsDimensionCross(text) || !containsAsciiDigit(text)) return text;
+        Matcher m = DIMENSION.matcher(text);
+        if (!m.find()) return text;
+        StringBuffer sb = new StringBuffer(text.length() + 16);
+        boolean matched = false;
+        do {
+            if ("0".equals(m.group(1))) {
+                m.appendReplacement(sb, Matcher.quoteReplacement(m.group(0)));
+            } else {
+                m.appendReplacement(sb, m.group(1) + " by " + m.group(2));
+                matched = true;
+            }
+        } while (m.find());
+        m.appendTail(sb);
+        String result = sb.toString();
+        if (matched && containsDimensionCross(result) && DIMENSION.matcher(result).find()) {
+            return readDimensions(result);
+        }
+        return result;
+    }
+
+    // ==========================================
+    // ISO Dates ("2026-10-08" -> "8 October 2026") & Time Ranges ("10:00-11:30" -> "10:00 to 11:30")
+    // ==========================================
+
+    private static final Pattern ISO_DATE = Pattern.compile(
+            "(?<![\\d])(19\\d\\d|20\\d\\d)-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])(?![\\d])");
+
+    private static final Pattern TIME_RANGE = Pattern.compile(
+            "(?<![\\p{L}\\d.,:])((?:[01]?\\d|2[0-3]):[0-5]\\d(?:\\s*[aApP][mM])?)\\s*[-–—]\\s*((?:[01]?\\d|2[0-3]):[0-5]\\d(?:\\s*[aApP][mM])?)(?![\\p{L}\\d.,:]|[aApP][mM])");
+
+    private static final String[] ISO_MONTHS = {
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+    };
+
+    public static String readDates(String text) {
+        if (text == null || text.isEmpty() || !containsAsciiDigit(text)) return text;
+        if (text.indexOf('-') != -1) {
+            Matcher m = ISO_DATE.matcher(text);
+            if (m.find()) {
+                StringBuffer sb = new StringBuffer(text.length() + 16);
+                do {
+                    String year = m.group(1);
+                    int monthIdx = Integer.parseInt(m.group(2)) - 1;
+                    int day = Integer.parseInt(m.group(3));
+                    String monthName = (monthIdx >= 0 && monthIdx < ISO_MONTHS.length) ? ISO_MONTHS[monthIdx] : m.group(2);
+                    m.appendReplacement(sb, day + " " + monthName + " " + year);
+                } while (m.find());
+                m.appendTail(sb);
+                text = sb.toString();
+            }
+        }
+        if (text.indexOf(':') != -1 && (text.indexOf('-') != -1 || text.indexOf('–') != -1 || text.indexOf('—') != -1)) {
+            Matcher mTime = TIME_RANGE.matcher(text);
+            if (mTime.find()) {
+                StringBuffer sb = new StringBuffer(text.length() + 16);
+                do {
+                    mTime.appendReplacement(sb, mTime.group(1) + " to " + mTime.group(2));
+                } while (mTime.find());
+                mTime.appendTail(sb);
+                text = sb.toString();
+            }
+        }
+        return text;
+    }
+
+    // ==========================================
+    // Phone numbers ("+1-800-555-0199" -> "+1 800 555 0199", "9876543210" -> "9 8 ...")
+    // ==========================================
+
+    private static final Pattern FORMATTED_PHONE = Pattern.compile(
+            "(?<![\\p{L}\\d.,])(\\+?\\d{1,3}[- ])?(\\(?\\d{3}\\)?[- ])(\\d{3})[- ](\\d{4})(?![\\p{L}\\d.,])");
+
+    public static String readPhoneNumbers(String text) {
+        if (text == null || text.isEmpty() || !containsAsciiDigit(text)) return text;
+        if (text.indexOf('-') != -1 || text.indexOf('(') != -1) {
+            Matcher m = FORMATTED_PHONE.matcher(text);
+            if (m.find()) {
+                StringBuffer sb = new StringBuffer(text.length() + 16);
+                do {
+                    String clean = m.group().replace('-', ' ').replace('(', ' ').replace(')', ' ').replaceAll(" +", " ").trim();
+                    m.appendReplacement(sb, Matcher.quoteReplacement(clean));
+                } while (m.find());
+                m.appendTail(sb);
+                text = sb.toString();
+            }
+        }
+        return spellLongNumbers(text);
+    }
+
+    // ==========================================
+    // Basic Math Expressions ("5 + 3 = 8" -> "5 plus 3 equals 8")
+    // ==========================================
+
+    private static final Pattern MATH_PLUS = Pattern.compile("(?<=\\d)\\s*\\+\\s*(?=\\d)");
+    private static final Pattern MATH_EQUALS = Pattern.compile("(?<=\\d)\\s*=\\s*(?=\\d)");
+    private static final Pattern MATH_TIMES = Pattern.compile("(?<=\\d)\\s*[×*]\\s*(?=\\d)");
+    private static final Pattern MATH_DIVIDE = Pattern.compile("(?<=\\d)\\s*[÷/]\\s*(?=\\d)");
+    private static final Pattern MATH_MINUS = Pattern.compile("(?<=\\d)\\s+-\\s+(?=\\d)");
+
+    public static String readMath(String text) {
+        if (text == null || text.isEmpty() || !containsAsciiDigit(text)) return text;
+        if (text.indexOf('+') != -1) {
+            text = MATH_PLUS.matcher(text).replaceAll(" plus ");
+        }
+        if (text.indexOf('=') != -1) {
+            text = MATH_EQUALS.matcher(text).replaceAll(" equals ");
+        }
+        if (text.indexOf('*') != -1 || text.indexOf('\u00D7') != -1) {
+            text = MATH_TIMES.matcher(text).replaceAll(" times ");
+        }
+        if (text.indexOf('/') != -1 || text.indexOf('\u00F7') != -1) {
+            text = MATH_DIVIDE.matcher(text).replaceAll(" divided by ");
+        }
+        if (text.indexOf('-') != -1) {
+            text = MATH_MINUS.matcher(text).replaceAll(" minus ");
+        }
+        return text;
+    }
+
+    // ==========================================
+    // Roman Numerals in Headings and Names
+    // ==========================================
+
+    private static final String[] ROMAN_ORDINALS = {
+            "the First", "the Second", "the Third", "the Fourth", "the Fifth",
+            "the Sixth", "the Seventh", "the Eighth", "the Ninth", "the Tenth",
+            "the Eleventh", "the Twelfth", "the Thirteenth", "the Fourteenth", "the Fifteenth",
+            "the Sixteenth", "the Seventeenth", "the Eighteenth", "the Nineteenth", "the Twentieth"
+    };
+
+    private static final String[] ROMAN_NUMERALS = {
+            "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+            "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"
+    };
+
+    private static final java.util.Map<String, Integer> ROMAN_VALUES = new java.util.HashMap<>(32);
+    static {
+        for (int i = 0; i < ROMAN_NUMERALS.length; i++) {
+            ROMAN_VALUES.put(ROMAN_NUMERALS[i], i + 1);
+        }
+    }
+
+    // Regnal / monarch / papal titles or names followed by Roman numeral
+    private static final Pattern REGNAL_ROMAN = Pattern.compile(
+            "(?i)(?<![\\p{L}])(King|Queen|Pope|Emperor|Prince|Princess|Henry|George|Charles"
+                    + "|Louis|Edward|James|William|Elizabeth|Richard|Alexander|Nicholas|Philip|Paul)"
+                    + "\\s+(X{0,2}(?:IX|IV|V?I{1,3}|X))(?![\\p{L}\\p{N}])");
+
+    // Headings / chapter / section / wars followed by Roman numeral
+    private static final Pattern HEADING_ROMAN = Pattern.compile(
+            "(?i)(?<![\\p{L}])(Chapter|Part|Section|Volume|Vol|Act|Scene|Book|World War|WW|Grade|Phase|Tier)"
+                    + "\\s+(X{0,2}(?:IX|IV|V?I{1,3}|X))(?![\\p{L}\\p{N}])");
+
+    public static String readRomanNumerals(String text) {
+        if (text == null || text.isEmpty() || !AsciiUtils.hasAsciiLetter(text)) return text;
+        // Check regnal first
+        Matcher mReg = REGNAL_ROMAN.matcher(text);
+        if (mReg.find()) {
+            StringBuffer sb = new StringBuffer(text.length() + 16);
+            do {
+                String roman = mReg.group(2).toUpperCase(Locale.ROOT);
+                Integer val = ROMAN_VALUES.get(roman);
+                if (val != null && val >= 1 && val <= ROMAN_ORDINALS.length) {
+                    mReg.appendReplacement(sb, mReg.group(1) + " " + ROMAN_ORDINALS[val - 1]);
+                } else {
+                    mReg.appendReplacement(sb, Matcher.quoteReplacement(mReg.group(0)));
+                }
+            } while (mReg.find());
+            mReg.appendTail(sb);
+            text = sb.toString();
+        }
+
+        // Check headings
+        Matcher mHead = HEADING_ROMAN.matcher(text);
+        if (mHead.find()) {
+            StringBuffer sb = new StringBuffer(text.length() + 16);
+            do {
+                String roman = mHead.group(2).toUpperCase(Locale.ROOT);
+                Integer val = ROMAN_VALUES.get(roman);
+                if (val != null) {
+                    mHead.appendReplacement(sb, mHead.group(1) + " " + val);
+                } else {
+                    mHead.appendReplacement(sb, Matcher.quoteReplacement(mHead.group(0)));
+                }
+            } while (mHead.find());
+            mHead.appendTail(sb);
+            text = sb.toString();
+        }
+
+        return text;
+    }
+
+    // ==========================================
+    // Fractions & Mixed Numbers
+    // ==========================================
+
+    private static final String UNICODE_FRACTIONS_CHARS = "½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞";
+
+    private static boolean containsUnicodeFraction(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            if (UNICODE_FRACTIONS_CHARS.indexOf(text.charAt(i)) != -1) return true;
+        }
+        return false;
+    }
+
+    private static String unicodeFractionName(char ch, boolean mixed) {
+        switch (ch) {
+            case '½': return mixed ? "a half" : "1 half";
+            case '⅓': return mixed ? "a third" : "1 third";
+            case '⅔': return "2 thirds";
+            case '¼': return mixed ? "a quarter" : "1 quarter";
+            case '¾': return "3 quarters";
+            case '⅕': return mixed ? "a fifth" : "1 fifth";
+            case '⅖': return "2 fifths";
+            case '⅗': return "3 fifths";
+            case '⅘': return "4 fifths";
+            case '⅙': return mixed ? "a sixth" : "1 sixth";
+            case '⅚': return "5 sixths";
+            case '⅛': return mixed ? "an eighth" : "1 eighth";
+            case '⅜': return "3 eighths";
+            case '⅝': return "5 eighths";
+            case '⅞': return "7 eighths";
+            default: return null;
+        }
+    }
+
+    private static String fractionName(int num, int den, boolean mixed) {
+        if (num == 1) {
+            if (den == 2) return mixed ? "a half" : "1 half";
+            if (den == 4) return mixed ? "a quarter" : "1 quarter";
+            if (den == 3) return mixed ? "a third" : "1 third";
+        }
+        String dName;
+        switch (den) {
+            case 2: dName = num == 1 ? "half" : "halves"; break;
+            case 3: dName = num == 1 ? "third" : "thirds"; break;
+            case 4: dName = num == 1 ? "quarter" : "quarters"; break;
+            case 5: dName = num == 1 ? "fifth" : "fifths"; break;
+            case 6: dName = num == 1 ? "sixth" : "sixths"; break;
+            case 7: dName = num == 1 ? "seventh" : "sevenths"; break;
+            case 8: dName = num == 1 ? "eighth" : "eighths"; break;
+            case 9: dName = num == 1 ? "ninth" : "ninths"; break;
+            case 10: dName = num == 1 ? "tenth" : "tenths"; break;
+            case 12: dName = num == 1 ? "twelfth" : "twelfths"; break;
+            case 16: dName = num == 1 ? "sixteenth" : "sixteenths"; break;
+            case 32: dName = num == 1 ? "thirty-second" : "thirty-seconds"; break;
+            case 64: dName = num == 1 ? "sixty-fourth" : "sixty-fourths"; break;
+            case 100: dName = num == 1 ? "hundredth" : "hundredths"; break;
+            default: return null;
+        }
+        return num + " " + dName;
+    }
+
+    private static final Pattern MIXED_UNICODE_FRACTION = Pattern.compile(
+            "(\\b\\d+)\\s*([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])");
+
+    private static final Pattern STANDALONE_UNICODE_FRACTION = Pattern.compile(
+            "([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])");
+
+    private static final Pattern MIXED_SLASH_FRACTION = Pattern.compile(
+            "(\\b\\d+)\\s+(\\d{1,2})/(\\d{1,3})(?![\\d/])");
+
+    private static final Pattern STANDALONE_SLASH_FRACTION = Pattern.compile(
+            "(?<![\\d/])(-)?(\\d{1,2})/(\\d{1,3})(?![\\d/])");
+
+    public static String readFractions(String text) {
+        if (text == null || text.isEmpty()) return text;
+        boolean hasSlash = text.indexOf('/') != -1;
+        boolean hasUnicode = containsUnicodeFraction(text);
+        if (!hasSlash && !hasUnicode) return text;
+
+        if (hasUnicode) {
+            Matcher mMixedU = MIXED_UNICODE_FRACTION.matcher(text);
+            if (mMixedU.find()) {
+                StringBuffer sb = new StringBuffer(text.length() + 16);
+                do {
+                    String whole = mMixedU.group(1);
+                    char fracChar = mMixedU.group(2).charAt(0);
+                    String name = unicodeFractionName(fracChar, true);
+                    if (name != null) {
+                        mMixedU.appendReplacement(sb, whole + " and " + name);
+                    } else {
+                        mMixedU.appendReplacement(sb, Matcher.quoteReplacement(mMixedU.group(0)));
+                    }
+                } while (mMixedU.find());
+                mMixedU.appendTail(sb);
+                text = sb.toString();
+            }
+
+            Matcher mStandU = STANDALONE_UNICODE_FRACTION.matcher(text);
+            if (mStandU.find()) {
+                StringBuffer sb = new StringBuffer(text.length() + 16);
+                do {
+                    char fracChar = mStandU.group(1).charAt(0);
+                    String name = unicodeFractionName(fracChar, false);
+                    if (name != null) {
+                        mStandU.appendReplacement(sb, name);
+                    } else {
+                        mStandU.appendReplacement(sb, Matcher.quoteReplacement(mStandU.group(0)));
+                    }
+                } while (mStandU.find());
+                mStandU.appendTail(sb);
+                text = sb.toString();
+            }
+        }
+
+        if (hasSlash) {
+            Matcher mMixedS = MIXED_SLASH_FRACTION.matcher(text);
+            if (mMixedS.find()) {
+                StringBuffer sb = new StringBuffer(text.length() + 16);
+                do {
+                    String whole = mMixedS.group(1);
+                    int num = Integer.parseInt(mMixedS.group(2));
+                    int den = Integer.parseInt(mMixedS.group(3));
+                    String name = (num < den) ? fractionName(num, den, true) : null;
+                    if (name != null) {
+                        mMixedS.appendReplacement(sb, whole + " and " + name);
+                    } else {
+                        mMixedS.appendReplacement(sb, Matcher.quoteReplacement(mMixedS.group(0)));
+                    }
+                } while (mMixedS.find());
+                mMixedS.appendTail(sb);
+                text = sb.toString();
+            }
+
+            Matcher mStandS = STANDALONE_SLASH_FRACTION.matcher(text);
+            if (mStandS.find()) {
+                StringBuffer sb = new StringBuffer(text.length() + 16);
+                do {
+                    boolean negative = mStandS.group(1) != null;
+                    int num = Integer.parseInt(mStandS.group(2));
+                    int den = Integer.parseInt(mStandS.group(3));
+                    String name = (num < den) ? fractionName(num, den, false) : null;
+                    if (name != null) {
+                        String rep = (negative ? "minus " : "") + name;
+                        mStandS.appendReplacement(sb, rep);
+                    } else {
+                        mStandS.appendReplacement(sb, Matcher.quoteReplacement(mStandS.group(0)));
+                    }
+                } while (mStandS.find());
+                mStandS.appendTail(sb);
+                text = sb.toString();
+            }
+        }
+
+        return text;
+    }
+
+    // ==========================================
+    // Superscripts and Subscripts
+    // ==========================================
+
+    private static boolean containsSubSuper(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '²' || c == '³' || c == '¹' || c == 'ⁿ') return true;
+            if (c >= '\u2070' && c <= '\u209F') return true;
+        }
+        return false;
+    }
+
+    private static final Pattern AREA_VOLUME_UNITS = Pattern.compile(
+            "\\b(mm|cm|m|km|in|ft|yd|mi)([²³])(?![\\p{L}\\d])");
+
+    private static final Pattern SQUARED_CUBED = Pattern.compile(
+            "(?<=[\\p{L}\\d])([²³])");
+
+    public static String readSubSuper(String text) {
+        if (text == null || text.isEmpty() || !containsSubSuper(text)) return text;
+
+        Matcher mUnit = AREA_VOLUME_UNITS.matcher(text);
+        if (mUnit.find()) {
+            StringBuffer sb = new StringBuffer(text.length() + 16);
+            do {
+                String unit = mUnit.group(1);
+                char p = mUnit.group(2).charAt(0);
+                String prefix = (p == '²') ? "square " : "cubic ";
+                String uName;
+                switch (unit) {
+                    case "mm": uName = "millimeters"; break;
+                    case "cm": uName = "centimeters"; break;
+                    case "m": uName = "meters"; break;
+                    case "km": uName = "kilometers"; break;
+                    case "in": uName = "inches"; break;
+                    case "ft": uName = "feet"; break;
+                    case "yd": uName = "yards"; break;
+                    case "mi": uName = "miles"; break;
+                    default: uName = unit; break;
+                }
+                mUnit.appendReplacement(sb, prefix + uName);
+            } while (mUnit.find());
+            mUnit.appendTail(sb);
+            text = sb.toString();
+        }
+
+        Matcher mSq = SQUARED_CUBED.matcher(text);
+        if (mSq.find()) {
+            StringBuffer sb = new StringBuffer(text.length() + 16);
+            do {
+                char p = mSq.group(1).charAt(0);
+                mSq.appendReplacement(sb, p == '²' ? " squared" : " cubed");
+            } while (mSq.find());
+            mSq.appendTail(sb);
+            text = sb.toString();
+        }
+
+        StringBuilder sb = new StringBuilder(text.length() + 16);
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            switch (c) {
+                case '⁰': sb.append(" to the 0"); break;
+                case '¹': sb.append(" to the 1"); break;
+                case '⁴': sb.append(" to the 4th"); break;
+                case '⁵': sb.append(" to the 5th"); break;
+                case '⁶': sb.append(" to the 6th"); break;
+                case '⁷': sb.append(" to the 7th"); break;
+                case '⁸': sb.append(" to the 8th"); break;
+                case '⁹': sb.append(" to the 9th"); break;
+                case 'ⁿ': sb.append(" to the n"); break;
+                case '⁺': sb.append(" plus"); break;
+                case '⁻': sb.append(" minus"); break;
+                case '₀': sb.append(" 0 "); break;
+                case '₁': sb.append(" 1 "); break;
+                case '₂': sb.append(" 2 "); break;
+                case '₃': sb.append(" 3 "); break;
+                case '₄': sb.append(" 4 "); break;
+                case '₅': sb.append(" 5 "); break;
+                case '₆': sb.append(" 6 "); break;
+                case '₇': sb.append(" 7 "); break;
+                case '₈': sb.append(" 8 "); break;
+                case '₉': sb.append(" 9 "); break;
+                default: sb.append(c); break;
+            }
+        }
+        return sb.toString().replaceAll(" +", " ").trim();
+    }
+
+    // ==========================================
+    // Ordinal Numbers
+    // ==========================================
+
+    private static final String[] ORDINALS_1_TO_31 = {
+            "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth",
+            "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth",
+            "eighteenth", "nineteenth", "twentieth", "twenty-first", "twenty-second", "twenty-third",
+            "twenty-fourth", "twenty-fifth", "twenty-sixth", "twenty-seventh", "twenty-eighth",
+            "twenty-ninth", "thirtieth", "thirty-first"
+    };
+
+    private static final Pattern ENGLISH_ORDINALS = Pattern.compile(
+            "\\b(\\d+)(st|nd|rd|th)\\b", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern SYMBOL_ORDINALS = Pattern.compile(
+            "\\b(\\d+)[ºª]\\b");
+
+    private static boolean containsOrdinalIndicator(String text) {
+        if (text == null || text.length() < 2) return false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == 'º' || c == 'ª') return true;
+            if (c >= '0' && c <= '9' && i + 2 < text.length()) {
+                char c1 = Character.toLowerCase(text.charAt(i + 1));
+                char c2 = Character.toLowerCase(text.charAt(i + 2));
+                if ((c1 == 's' && c2 == 't') || (c1 == 'n' && c2 == 'd')
+                        || (c1 == 'r' && c2 == 'd') || (c1 == 't' && c2 == 'h')) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static String readOrdinals(String text) {
+        if (text == null || text.isEmpty() || !containsOrdinalIndicator(text)) return text;
+
+        Matcher mSym = SYMBOL_ORDINALS.matcher(text);
+        if (mSym.find()) {
+            StringBuffer sb = new StringBuffer(text.length() + 8);
+            do {
+                int num = Integer.parseInt(mSym.group(1));
+                String suf = "th";
+                if (num % 100 < 11 || num % 100 > 13) {
+                    if (num % 10 == 1) suf = "st";
+                    else if (num % 10 == 2) suf = "nd";
+                    else if (num % 10 == 3) suf = "rd";
+                }
+                mSym.appendReplacement(sb, num + suf);
+            } while (mSym.find());
+            mSym.appendTail(sb);
+            text = sb.toString();
+        }
+
+        Matcher mOrd = ENGLISH_ORDINALS.matcher(text);
+        if (mOrd.find()) {
+            StringBuffer sb = new StringBuffer(text.length() + 16);
+            do {
+                try {
+                    int num = Integer.parseInt(mOrd.group(1));
+                    if (num >= 1 && num <= 31) {
+                        mOrd.appendReplacement(sb, ORDINALS_1_TO_31[num - 1]);
+                    } else if (num == 100) {
+                        mOrd.appendReplacement(sb, "hundredth");
+                    } else if (num == 1000) {
+                        mOrd.appendReplacement(sb, "thousandth");
+                    } else if (num == 1000000) {
+                        mOrd.appendReplacement(sb, "millionth");
+                    } else {
+                        mOrd.appendReplacement(sb, Matcher.quoteReplacement(mOrd.group(0)));
+                    }
+                } catch (NumberFormatException e) {
+                    mOrd.appendReplacement(sb, Matcher.quoteReplacement(mOrd.group(0)));
+                }
+            } while (mOrd.find());
+            mOrd.appendTail(sb);
+            text = sb.toString();
+        }
+
+        return text;
     }
 
     private static boolean isSentenceEnd(String text, int i) {

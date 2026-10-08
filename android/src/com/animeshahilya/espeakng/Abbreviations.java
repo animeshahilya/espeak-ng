@@ -19,7 +19,10 @@ public final class Abbreviations {
             {"Inc", "Incorporated"}, {"misc", "miscellaneous"}, {"Misc", "Miscellaneous"},
             {"Jr", "Junior"}, {"Sr", "Senior"}, {"Rd", "Road"}, {"Ave", "Avenue"},
             {"Tel", "Telephone"}, {"Asst", "Assistant"}, {"Mgr", "Manager"},
-            {"Hon'ble", "Honourable"},
+            {"Hon'ble", "Honourable"}, {"Fig", "Figure"}, {"Gen", "General"},
+            {"Capt", "Captain"}, {"Lt", "Lieutenant"}, {"Col", "Colonel"},
+            {"Sgt", "Sergeant"}, {"Rev", "Reverend"}, {"Corp", "Corporation"},
+            {"Co", "Company"}, {"e.g", "for example"}, {"i.e", "that is"},
     };
     private static final Pattern WORD;
     static {
@@ -33,6 +36,9 @@ public final class Abbreviations {
     }
 
     private static final String[][] UNITS = {
+            {"km/h", "kilometre per hour", "kilometres per hour"},
+            {"kmph", "kilometre per hour", "kilometres per hour"},
+            {"mph", "mile per hour", "miles per hour"},
             {"km", "kilometre", "kilometres"}, {"kg", "kilogram", "kilograms"},
             {"cm", "centimetre", "centimetres"}, {"mm", "millimetre", "millimetres"},
             {"ft", "foot", "feet"}, {"hr", "hour", "hours"}, {"hrs", "hour", "hours"},
@@ -40,16 +46,28 @@ public final class Abbreviations {
             {"sec", "second", "seconds"}, {"secs", "second", "seconds"},
             {"yr", "year", "years"}, {"yrs", "year", "years"},
             {"mg", "milligram", "milligrams"},
+            {"ml", "millilitre", "millilitres"}, {"mL", "millilitre", "millilitres"},
+            {"KB", "kilobyte", "kilobytes"}, {"MB", "megabyte", "megabytes"},
+            {"GB", "gigabyte", "gigabytes"}, {"TB", "terabyte", "terabytes"},
+            {"GHz", "gigahertz", "gigahertz"}, {"MHz", "megahertz", "megahertz"},
+            {"kHz", "kilohertz", "kilohertz"}, {"Hz", "hertz", "hertz"},
+            {"mAh", "milliampere hour", "milliampere hours"},
+            {"kWh", "kilowatt-hour", "kilowatt-hours"},
+            {"kW", "kilowatt", "kilowatts"}, {"W", "watt", "watts"},
+            {"V", "volt", "volts"}, {"dB", "decibel", "decibels"},
     };
     private static final Pattern UNIT;
     static {
         StringBuilder alt = new StringBuilder();
         for (String[] u : UNITS) {
             if (alt.length() > 0) alt.append('|');
-            alt.append(u[0]);
+            alt.append(Pattern.quote(u[0]));
         }
         UNIT = Pattern.compile("(?<![\\p{L}\\p{N}.])(\\d+(?:[.,]\\d+)?) ?(" + alt + ")\\.?(?![\\p{L}\\p{N}])");
     }
+
+    private static final Pattern TEMPERATURE = Pattern.compile(
+            "(?<![\\p{L}\\p{N}.])(\\d+(?:[.,]\\d+)?) ?° ?([CF])(?![\\p{L}\\p{N}])");
 
     private static final String[][] MONTHS = {
             {"Jan", "January"}, {"Feb", "February"}, {"Mar", "March"}, {"Apr", "April"},
@@ -61,8 +79,8 @@ public final class Abbreviations {
                     + "|(?<![\\p{L}])(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\\.?(?= \\d)");
     private static final Pattern NUMBER = Pattern.compile("(?<![\\p{L}])([Nn])o\\. ?(?=\\d)");
 
-    private static final java.util.Map<String, String> WORD_MAP = new java.util.HashMap<>(32);
-    private static final java.util.Map<String, String[]> UNIT_MAP = new java.util.HashMap<>(32);
+    private static final java.util.Map<String, String> WORD_MAP = new java.util.HashMap<>(64);
+    private static final java.util.Map<String, String[]> UNIT_MAP = new java.util.HashMap<>(64);
     private static final java.util.Map<String, String> MONTH_MAP = new java.util.HashMap<>(16);
     static {
         for (String[] w : WORDS) {
@@ -86,6 +104,15 @@ public final class Abbreviations {
             return full + (m.group(2) != null && endsClause(m) ? "." : "");
         });
         if (AsciiUtils.hasDigit(text)) {
+            if (text.indexOf('°') != -1) {
+                text = replace(TEMPERATURE, text, m -> {
+                    boolean one = "1".equals(m.group(1));
+                    String scale = "C".equalsIgnoreCase(m.group(2))
+                            ? (one ? "degree Celsius" : "degrees Celsius")
+                            : (one ? "degree Fahrenheit" : "degrees Fahrenheit");
+                    return m.group(1) + " " + scale;
+                });
+            }
             text = replace(UNIT, text, m -> {
                 String[] u = UNIT_MAP.get(m.group(2));
                 if (u != null) {

@@ -11,6 +11,9 @@ public class AbbreviationsTest {
         assertEquals("Meet with government officials", Abbreviations.process("Meet with govt officials"));
         assertEquals("Government of India", Abbreviations.process("Govt of India"));
         assertEquals("Private Limited", Abbreviations.process("Pvt Limited"));
+        assertEquals("for example this is a test", Abbreviations.process("e.g. this is a test"));
+        assertEquals("that is the plan", Abbreviations.process("i.e. the plan"));
+        assertEquals("See Figure 1", Abbreviations.process("See Fig. 1"));
     }
 
     @Test
@@ -21,6 +24,29 @@ public class AbbreviationsTest {
         assertEquals("10 kilograms", Abbreviations.process("10 kg"));
         assertEquals("2 hours", Abbreviations.process("2 hrs"));
         assertEquals("1 minute", Abbreviations.process("1 min"));
+        assertEquals("16 gigabytes", Abbreviations.process("16 GB"));
+        assertEquals("1 megabyte", Abbreviations.process("1 MB"));
+        assertEquals("500 kilobytes", Abbreviations.process("500 KB"));
+        assertEquals("2 terabytes", Abbreviations.process("2 TB"));
+        assertEquals("60 kilometres per hour", Abbreviations.process("60 km/h"));
+        assertEquals("100 kilometres per hour", Abbreviations.process("100 kmph"));
+        assertEquals("45 miles per hour", Abbreviations.process("45 mph"));
+        assertEquals("500 millilitres", Abbreviations.process("500 ml"));
+        assertEquals("1 millilitre", Abbreviations.process("1 mL"));
+        assertEquals("120 hertz", Abbreviations.process("120 Hz"));
+        assertEquals("2.4 gigahertz", Abbreviations.process("2.4 GHz"));
+        assertEquals("5000 milliampere hours", Abbreviations.process("5000 mAh"));
+        assertEquals("65 watts", Abbreviations.process("65 W"));
+        assertEquals("1 watt", Abbreviations.process("1 W"));
+        assertEquals("10 decibels", Abbreviations.process("10 dB"));
+    }
+
+    @Test
+    public void testTemperature() {
+        assertEquals("25 degrees Celsius", Abbreviations.process("25°C"));
+        assertEquals("1 degree Celsius", Abbreviations.process("1°C"));
+        assertEquals("77 degrees Fahrenheit", Abbreviations.process("77°F"));
+        assertEquals("1 degree Fahrenheit", Abbreviations.process("1°F"));
     }
 
     @Test

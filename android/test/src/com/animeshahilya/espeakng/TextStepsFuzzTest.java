@@ -58,6 +58,10 @@ public class TextStepsFuzzTest {
         steps.put("nato", t -> TextPreprocessor.expandNatoSpelling(t, "mr"));
         steps.put("diacritic", t -> TextPreprocessor.expandDevanagariDiacritic(t, "hi"));
         steps.put("repeats", t -> TextPreprocessor.condenseRepeatedCharacters(t, VoiceSettings.REPEATED_CHARS_COUNT));
+        steps.put("fractions", NumberReading::readFractions);
+        steps.put("subSuper", NumberReading::readSubSuper);
+        steps.put("ordinals", NumberReading::readOrdinals);
+        steps.put("cleanMarkdown", TextPreprocessor::cleanMarkdown);
         steps.put("runsEng", t -> LanguageRuns.split(t, "eng").toString());
         steps.put("runsHin", t -> LanguageRuns.split(t, "hin").toString());
         steps.put("spans", t -> String.valueOf(DevanagariClassifier.classify(t, "hin", "hin")));
