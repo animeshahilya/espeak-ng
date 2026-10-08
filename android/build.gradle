@@ -109,8 +109,8 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 37
-        versionCode = 31
-        versionName = "2.8"
+        versionCode = 32
+        versionName = "2.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // PiperModel.hasNpuRuntime: known here, so the standard build never
         // loads ONNX Runtime just to ask (it did on every settings open).

@@ -7,32 +7,36 @@
 
 The espeak-ng project is a fork of the espeak project.
 
-### Unreleased (Android)
+### 2.9 (Android)
 
 *  **Natural voices**:
    *  Voices take far less space: most are now about a quarter of the size and sound the same. Voices you already have shrink with the next voice update.
    *  Each voice keeps only one copy on the phone, about half the space it used before.
-   *  Typing, deleting and moving by letter in Hindi and other Indian languages reads each letter clearly, including letters with vowel signs (कि), half letters (क्) and joined letters (क्ष).
-   *  Natural voices read short forms like OTP, UPI, KYC and FAQ letter by letter, phone numbers digit by digit, and say app names like PhonePe, Zomato and Swiggy more clearly.
-   *  The experimental hardware acceleration switch is gone: it made natural voices slower. The Snapdragon version still runs voices on the NPU.
-*  **Storage**: the app uses about 30 MB less space on the phone; every language still works right away.
-*  **Smaller download**: the app is about 6 MB smaller to download and 17 MB smaller once installed.
-   *  The full Indian voices respond faster, and their Compact versions are smaller.
-   *  Indian English Rahul is back in the English list, and no longer mumbles long sentences.
-   *  Rahul reads single words and short labels at normal speed, so they are not rushed.
-   *  English voices say single words and short labels more clearly.
+   *  New voices: a second Catalan voice (Ona, Enhanced), Emirati Arabic (female), and a second German and a second Italian speaker.
    *  Each language now offers its two best-sounding voices; voices you already have keep working.
-   *  New voices: Emirati Arabic (female), a second German and a second Italian speaker.
    *  Better voices picked for Bengali, Malayalam and Nepali.
+   *  Indian English Rahul is back in the English list, no longer mumbles long sentences, and reads single words and short labels at normal speed.
+   *  English voices say single words and short labels more clearly.
+   *  Short forms like OTP, UPI, KYC and FAQ are read letter by letter, phone numbers digit by digit, and app names like PhonePe, Zomato and Swiggy more clearly.
+   *  Typing, deleting and moving by letter in Hindi and other Indian languages reads each letter clearly, including letters with vowel signs (कि), half letters (क्) and joined letters (क्ष).
    *  Arabic Kareem adds vowel marks before reading, so words come out right more often.
    *  Greek Rapunzelina reads short labels clearly.
-   *  "Test voice" plays sound again.
+   *  The full Indian voices respond faster, and their Compact versions are smaller.
    *  Numbers are no longer skipped by voices that cannot read them themselves.
+   *  "Test voice" plays sound again.
+   *  The experimental hardware acceleration switch is gone: it made natural voices slower. The Snapdragon version still runs voices on the NPU.
 *  **Languages**:
    *  Hindi, Marathi, Nepali, Sanskrit and other Devanagari text is read by the right voice, sentence by sentence.
    *  Ukrainian, Russian, Serbian, Urdu, Persian, Assamese, Japanese and other languages that share a script are told apart.
+   *  Greek can now be given its own language in Mixed-language text.
    *  Hindi words typed with a colon instead of the visarga (पुन:, दु:ख) are read correctly.
-   *  App and tech names (WhatsApp, GPay, UPI, OTP...) are pronounced as words. Can be turned off in Settings.
+   *  eSpeak can read app and tech names like WhatsApp, GPay, UPI and OTP clearly: turn it on in Settings.
+*  **Settings**:
+   *  A new look, with settings grouped into cards.
+   *  Preview buttons let you hear voice tuning, pauses, punctuation, numbers and mixed-language reading as you change them.
+   *  Number reading mode can read digits, pairs or groups of three with a short pause between them.
+   *  TalkBack: headings on every page, clear on and off descriptions for every switch, and sliders that move in small steps.
+*  **Smaller app**: about 6 MB smaller to download, 17 MB smaller once installed, and about 30 MB less space used on the phone; every language still works right away.
 *  **Fixes**: crashes, word highlighting and several TalkBack and settings fixes.
 
 ### 2.8 (Android)

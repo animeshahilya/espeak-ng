@@ -392,6 +392,10 @@ voices" does not, so voices can still be deleted to free space.
   (final '।', longer lead-in, 30% slower). 2026-10-07: English also keeps
   Indian English Rahul (user's choice, after the long-sentence fix below),
   his extras, Compact and NPU entries restored from 8ff10277^.
+  2026-10-08: Catalan adds Rviure/ca_ES-ona-high (UPC-FestCat Ona, piper 1.5,
+  CC BY-SA 3.0, pinned 6283b705; INT8 in int8-v1, 114 -> 28 MB, log-mel
+  0.75 dB): Whisper CER 7.3% vs upc_ona-medium 8.8%, user listened. Turkish
+  ozgurguler antalia was rejected (55% CER).
 - **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
   voice misses that the language's other voices say fine; scratch/voice-eval
   findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,

@@ -1105,6 +1105,21 @@
       "int8-v1/ca_ES-upc_ona-medium.onnx.json": {"size_bytes": 4875, "md5_digest": "035e9eb642ab9fa1354f53a77877ae9b"}
     }
   },
+  "ca_ES-ona-high": {
+    "key": "ca_ES-ona-high",
+    "name": "ona",
+    "language": {"code": "ca_ES", "family": "ca", "region": "ES",
+      "name_native": "Català", "name_english": "Catalan", "country_english": "Spain"},
+    "quality": "high",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "Rviure/ca_ES-ona-high, UPC-FestCat via Col·lectivaT (INT8: animeshahilya)",
+    "license": "CC-BY-SA-3.0",
+    "files": {
+      "int8-v1/ca_ES-ona-high.onnx": {"size_bytes": 29700717, "md5_digest": "70a334600e0650ea9f30eb0866e4a670"},
+      "int8-v1/ca_ES-ona-high.onnx.json": {"size_bytes": 5033, "md5_digest": "2527a75a57e89b19e5d705e913a1433c"}
+    }
+  },
   "cs_CZ-jirka-medium": {
     "key": "cs_CZ-jirka-medium",
     "name": "jirka",

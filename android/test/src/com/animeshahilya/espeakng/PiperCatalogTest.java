@@ -106,7 +106,7 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(135, voices.size());
+        assertEquals(136, voices.size());
         // Only kept voices are bundled: none is filtered out again.
         assertEquals(voices.size(), PiperDownloads.keptOnly(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
