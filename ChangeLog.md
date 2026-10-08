@@ -10,6 +10,8 @@ The espeak-ng project is a fork of the espeak project.
 ### Unreleased (Android)
 
 *  **Natural voices**:
+   *  Voices take far less space: most are now about a quarter of the size and sound the same. Voices you already have shrink with the next voice update.
+   *  The full Indian voices respond faster, and their Compact versions are smaller.
    *  Indian English Rahul is back in the English list, and no longer mumbles long sentences.
    *  Rahul reads single words and short labels at normal speed, so they are not rushed.
    *  English voices say single words and short labels more clearly.

@@ -507,6 +507,32 @@ voices" does not, so voices can still be deleted to free space.
   Standard copy (`confirmSwap` -> `requestSwap` -> `finishSwap` in
   `complete()`). Downloaded-voices storage totals count shared inodes once
   (`PiperVoiceStore.diskBytes`).
+- **INT8 weights** (2026-10-08, release `int8-v1` on sherpa-onnx-respin-syspin,
+  its `build_small.py`): every model the app lists is stored with INT8
+  weights - per output channel, the clip with the least squared error,
+  widened back to float by a DequantizeLinear in front of its consumer, so
+  compute stays float (no activation clipping, no noise floor). Piper and
+  community voices are bundled under their own keys (63 -> 17 MB; Piper high
+  114-128 -> 43-47 MB, below); `PiperDownloads.mergeExtras` lets a bundled entry replace
+  rhasspy's of the same key, and `checkForUpdates` moves installed copies to
+  it. There is no second version of these: the user heard them as the same.
+  Heavy voices keep Standard + Compact: Standard computes its HiFi-GAN
+  decoder in fp16 (`_half_decoder`; conv_pre stays float so the split and
+  the NPU decoders still read the float latent) - Pixel 8, SYSPIN decoder
+  2.0 -> 2.4-2.7x real time, 62-78 dB SNR vs float32, 58 -> 43 MB (Rasa
+  62 -> 48.5); Compact keeps its INT8 decoder (4.0-4.6x) and shrinks
+  (SYSPIN 44 -> 30, Rasa 49 -> 34). Measured (scratch/voice-eval/size,
+  compare.py, noise scales 0): log-mel distance to the original 0.74-1.15
+  dB over 11 voices (es_MX-claude 1.64; the first Compact was 1.43); ASR
+  error rates unchanged within noise. Pixel 8, native ORT 1.29 bench
+  (`/data/local/tmp`): whole Priyamvada 10x real time either way, so the
+  per-run DequantizeLinear costs nothing; a Piper medium decoder is 17-18x
+  in float32, INT8 or fp16 alike - nothing left to gain there; fp16 for
+  Compact's float last stage: no clear gain. ONNX Runtime keeps the
+  DequantizeLinear nodes when it optimizes, so the `.ort` copies stay small
+  too. An fp16-stored weight's widening Cast is folded into its
+  DequantizeLinear: through the Cast, `PiperSplit` passed every decoder
+  weight across the split. INT4 (block-wise, opset 21): 4.3 dB, no size gain.
 - **Phrase cache** (`PiperPhraseCache`, in `PiperEngine.Pass.render`):
   screen readers repeat short phrases ("Button", "Double-tap to activate"),
   so a chunk's raw model output is kept and replayed through the normal

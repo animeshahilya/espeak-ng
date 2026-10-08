@@ -106,20 +106,25 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(67, voices.size());
+        assertEquals(135, voices.size());
         // Only kept voices are bundled: none is filtered out again.
         assertEquals(voices.size(), PiperDownloads.keptOnly(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
+                // Every model is the INT8-weight build (int8-v1).
                 if (PiperDownloads.isCompact(v.quality)) {
                     assertTrue(v.key, v.key.endsWith("-compact"));
-                    assertTrue(v.key, v.modelPath.matches("(compact-v1|syspin-v2|rasa-v2)/[^/]+-compact\\.onnx"));
+                    assertTrue(v.key, v.modelPath.matches("int8-v1/[^/]+-compact\\.onnx"));
                     assertTrue(v.key, v.configPath.matches("(compact-v1|piper-v2)/[^/]+\\.onnx\\.json"));
-                } else {
-                    assertTrue(v.key, v.modelPath.matches("(syspin-v2|rasa-v2)/[^/]+\\.onnx"));
+                } else if (v.heavy) {
+                    // SYSPIN / Rasa Standard
+                    assertTrue(v.key, v.modelPath.matches("int8-v1/[^/]+\\.onnx"));
                     assertTrue(v.key, v.configPath.matches("piper-v2/[^/]+\\.onnx\\.json"));
-                    assertTrue(v.key, v.heavy);
+                } else {
+                    // A Piper or community voice under its own key
+                    assertEquals(v.key, "int8-v1/" + v.key + ".onnx", v.modelPath);
+                    assertEquals(v.key, "int8-v1/" + v.key + ".onnx.json", v.configPath);
                 }
             } else {
                 assertTrue(v.key, v.baseUrl.matches("https://huggingface\\.co/[^/]+/[^/]+/resolve/[0-9a-f]{40}/"));
@@ -133,6 +138,26 @@ public class PiperCatalogTest {
     private static java.util.Map<String, java.util.Set<String>> keptAsset() throws Exception {
         return PiperDownloads.parseKept(new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.KEPT_ASSET)), "UTF-8"));
+    }
+
+    /** A bundled entry replaces Piper's of the same key (its INT8 copy); the rest keep their order. */
+    @Test
+    public void bundledEntryReplacesPipersOfTheSameKey() {
+        final List<PiperDownloads.CatalogVoice> piper = new java.util.ArrayList<>();
+        final List<PiperDownloads.CatalogVoice> extras = new java.util.ArrayList<>();
+        for (String key : new String[] {"hi_IN-priyamvada-medium", "hi_IN-pratham-medium"}) {
+            final PiperDownloads.CatalogVoice v = new PiperDownloads.CatalogVoice();
+            v.key = key;
+            piper.add(v);
+        }
+        final PiperDownloads.CatalogVoice small = new PiperDownloads.CatalogVoice();
+        small.key = "hi_IN-priyamvada-medium";
+        small.baseUrl = PiperDownloads.RESPIN_SYSPIN_RELEASES;
+        extras.add(small);
+        final List<PiperDownloads.CatalogVoice> out = PiperDownloads.mergeExtras(piper, extras);
+        assertEquals(2, out.size());
+        assertSame(small, out.get(0));
+        assertEquals("hi_IN-pratham-medium", out.get(1).key);
     }
 
     @Test

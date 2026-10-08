@@ -11,7 +11,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-en-male-model.onnx": {"size_bytes": 57862266, "md5_digest": "da43bc1a865d29161ad19a1bc602f53a"},
+      "int8-v1/vits-syspin-en-male-model.onnx": {"size_bytes": 43399979, "md5_digest": "a5a4f567afd8f09eb53652a9f55ee1e5"},
       "piper-v2/en_IN-rahul-medium.onnx.json": {"size_bytes": 2386, "md5_digest": "b97549dbc5bcd01653dd61b644ecef63"}
     }
   },
@@ -27,7 +27,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-en-male-compact.onnx": {"size_bytes": 44361139, "md5_digest": "544f69dea18ae47bb3b97ad96c88be67"},
+      "int8-v1/vits-syspin-en-male-compact.onnx": {"size_bytes": 30487341, "md5_digest": "d4dbfe0f02c7199467ddbf1539e8f3c3"},
       "piper-v2/en_IN-rahul-compact.onnx.json": {"size_bytes": 2387, "md5_digest": "2470993bedd58d8d9426f3bf3cac7cea"}
     }
   },
@@ -38,12 +38,12 @@
       "name_native": "தமிழ்", "name_english": "Tamil", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "base_url": "https://huggingface.co/tinisoft/piper-ta_IN-rasa_female-medium/resolve/89e15edafc8b31e66ddf25f2adbe3bd3f20a9496/",
-    "source": "tinisoft",
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "tinisoft (INT8: animeshahilya)",
     "license": "CC BY 4.0",
     "files": {
-      "ta_IN-rasa_female-medium.onnx": {"size_bytes": 63511037, "md5_digest": "a6faf2a695645ddccbb2fcb667d729f5"},
-      "ta_IN-rasa_female-medium.onnx.json": {"size_bytes": 7091, "md5_digest": "d796f58a424ede1c112cca38d83e9834"}
+      "int8-v1/ta_IN-rasa_female-medium.onnx": {"size_bytes": 16922031, "md5_digest": "a54b1279f77be55a3a53d352e9d9b3e4"},
+      "int8-v1/ta_IN-rasa_female-medium.onnx.json": {"size_bytes": 7091, "md5_digest": "d796f58a424ede1c112cca38d83e9834"}
     }
   },
   "ta_IN-rasa_male-medium": {
@@ -53,12 +53,12 @@
       "name_native": "தமிழ்", "name_english": "Tamil", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "base_url": "https://huggingface.co/tinisoft/piper-ta_IN-rasa_male-medium/resolve/0b041f8e882b1e6f41f427169be25bcb0e94f352/",
-    "source": "tinisoft",
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "tinisoft (INT8: animeshahilya)",
     "license": "CC BY 4.0",
     "files": {
-      "ta_IN-rasa_male-medium.onnx": {"size_bytes": 63511037, "md5_digest": "7ce5d668a5d2d9e1c842baf4198bded3"},
-      "ta_IN-rasa_male-medium.onnx.json": {"size_bytes": 7089, "md5_digest": "044a786ff28ca84a89c03b4711ce8de7"}
+      "int8-v1/ta_IN-rasa_male-medium.onnx": {"size_bytes": 16922031, "md5_digest": "aaf04a5d370ad0a5c074def268cfc2a0"},
+      "int8-v1/ta_IN-rasa_male-medium.onnx.json": {"size_bytes": 7089, "md5_digest": "044a786ff28ca84a89c03b4711ce8de7"}
     }
   },
   "si_LK-sinhala-medium": {
@@ -68,12 +68,12 @@
       "name_native": "සිංහල", "name_english": "Sinhala", "country_english": "Sri Lanka"},
     "quality": "medium",
     "num_speakers": 1,
-    "base_url": "https://huggingface.co/chan4lk/piper-tts-sinhala/resolve/18cd56d74b4860714193224d8a333ebb6f2958c4/",
-    "source": "chan4lk",
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "chan4lk (INT8: animeshahilya)",
     "license": "MIT",
     "files": {
-      "si_LK-sinhala-medium.onnx": {"size_bytes": 63516050, "md5_digest": "9e72d5083ab7a524d052f9abaa6663eb"},
-      "si_LK-sinhala-medium.onnx.json": {"size_bytes": 4869, "md5_digest": "44353d796d2e3d2458ae65c94964f5c8"}
+      "int8-v1/si_LK-sinhala-medium.onnx": {"size_bytes": 16927044, "md5_digest": "745914b06135324dfd602cb6cd5dda58"},
+      "int8-v1/si_LK-sinhala-medium.onnx.json": {"size_bytes": 4869, "md5_digest": "44353d796d2e3d2458ae65c94964f5c8"}
     }
   },
   "si_LK-dilu-medium": {
@@ -83,12 +83,12 @@
       "name_native": "සිංහල", "name_english": "Sinhala", "country_english": "Sri Lanka"},
     "quality": "medium",
     "num_speakers": 1,
-    "base_url": "https://huggingface.co/chaturadilan/dilu-tts/resolve/437ddc177e948a1626a8a59fd48a4b6650a5cce3/",
-    "source": "chaturadilan",
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "chaturadilan (INT8: animeshahilya)",
     "license": "MIT",
     "files": {
-      "onnx/si_LK-dilu-medium.onnx": {"size_bytes": 63531379, "md5_digest": "adc1b992915906789c950cd83dd00e37"},
-      "onnx/si_LK-dilu-medium.onnx.json": {"size_bytes": 7173, "md5_digest": "82be4a8a931fef27f91bd28158daf783"}
+      "int8-v1/si_LK-dilu-medium.onnx": {"size_bytes": 16942373, "md5_digest": "0107c36449cb51613463fd4424666a04"},
+      "int8-v1/si_LK-dilu-medium.onnx.json": {"size_bytes": 7173, "md5_digest": "82be4a8a931fef27f91bd28158daf783"}
     }
   },
   "ku_TR-kurmanci-medium": {
@@ -113,12 +113,12 @@
       "name_native": "Latviešu", "name_english": "Latvian", "country_english": "Latvia"},
     "quality": "medium",
     "num_speakers": 1,
-    "base_url": "https://huggingface.co/RaivisDejus/Piper-lv_LV-Rudolfs-medium/resolve/cb772d1298610d196593587af1e3105badfc35b2/",
-    "source": "RaivisDejus",
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "RaivisDejus (INT8: animeshahilya)",
     "license": "CC0 1.0",
     "files": {
-      "lv_LV-rudolfs-medium.onnx": {"size_bytes": 63516051, "md5_digest": "23e6d2130cf0885107aeb72866136834"},
-      "lv_LV-rudolfs-medium.onnx.json": {"size_bytes": 5063, "md5_digest": "459227ff625882d09b377b85db0aeb1f"}
+      "int8-v1/lv_LV-rudolfs-medium.onnx": {"size_bytes": 16927045, "md5_digest": "d76e6bbd8a6f7c276a1568fb8eb5c10d"},
+      "int8-v1/lv_LV-rudolfs-medium.onnx.json": {"size_bytes": 5063, "md5_digest": "459227ff625882d09b377b85db0aeb1f"}
     }
   },
   "ar_AE-emirati_female-medium": {
@@ -128,12 +128,12 @@
       "name_native": "العربية", "name_english": "Arabic", "country_english": "United Arab Emirates"},
     "quality": "medium",
     "num_speakers": 1,
-    "base_url": "https://huggingface.co/vadimbelsky/arabic-emirati-female-piper/resolve/f89f1aec8e6486871ffdf8d878c5a39eaf918d60/",
-    "source": "vadimbelsky",
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "vadimbelsky (INT8: animeshahilya)",
     "license": "MIT",
     "files": {
-      "arabic-emirati-female-model.onnx": {"size_bytes": 63516686, "md5_digest": "3e99532a508084fffb48dc74355ea040"},
-      "arabic-emirati-female-model.onnx.json": {"size_bytes": 7076, "md5_digest": "3cc9454b68fdd9f4fc504fb93419b5f5"}
+      "int8-v1/ar_AE-emirati_female-medium.onnx": {"size_bytes": 16927680, "md5_digest": "d3a5a0a07842eea0a22293d2080ed45e"},
+      "int8-v1/ar_AE-emirati_female-medium.onnx.json": {"size_bytes": 7076, "md5_digest": "3cc9454b68fdd9f4fc504fb93419b5f5"}
     }
   },
   "bn_IN-tithi-medium": {
@@ -148,7 +148,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/bn_IN-tithi-medium.onnx.json": {"size_bytes": 28197, "md5_digest": "8a62cd08422a2dec5e4d2e769eaf1a4f"}
     }
   },
@@ -164,7 +164,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/bn_IN-tithi-compact.onnx.json": {"size_bytes": 28198, "md5_digest": "79f737fc2191b056b61342032af5b6ab"}
     }
   },
@@ -180,7 +180,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/bn_IN-anirban-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "f061e0d47c2f4772d5efdaa49a1285cc"}
     }
   },
@@ -196,7 +196,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/bn_IN-anirban-compact.onnx.json": {"size_bytes": 28200, "md5_digest": "7df2c433432ddb0064f7df67a452d905"}
     }
   },
@@ -212,7 +212,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/kn_IN-spoorthi-medium.onnx.json": {"size_bytes": 28200, "md5_digest": "3daa4044ac41c2fe14473588ea9f0d7b"}
     }
   },
@@ -228,7 +228,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/kn_IN-spoorthi-compact.onnx.json": {"size_bytes": 28201, "md5_digest": "f09e96f5786a0dda8756f1a524d65933"}
     }
   },
@@ -244,7 +244,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/kn_IN-chetan-medium.onnx.json": {"size_bytes": 28198, "md5_digest": "904e40eaab464de757be9af0db0faa64"}
     }
   },
@@ -260,7 +260,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/kn_IN-chetan-compact.onnx.json": {"size_bytes": 28199, "md5_digest": "04dcf3191c5f4ebaa102cb607ff3099f"}
     }
   },
@@ -276,7 +276,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/mr_IN-mrunal-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "aa75d25d39bd7388e3085d1c8e7a5ce0"}
     }
   },
@@ -292,7 +292,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/mr_IN-mrunal-compact.onnx.json": {"size_bytes": 28200, "md5_digest": "0bde24a398190f17126dac0dd79d18f4"}
     }
   },
@@ -308,7 +308,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/mr_IN-tejas-medium.onnx.json": {"size_bytes": 28198, "md5_digest": "5e590c5793f917a576bb5dd1453d28d5"}
     }
   },
@@ -324,7 +324,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/mr_IN-tejas-compact.onnx.json": {"size_bytes": 28199, "md5_digest": "d999780763227f8b8f12fcdc34b4ed97"}
     }
   },
@@ -340,7 +340,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-gu-female-model.onnx": {"size_bytes": 57867643, "md5_digest": "6462aba33e1271cc94fb3790d76de49d"},
+      "int8-v1/vits-syspin-gu-female-model.onnx": {"size_bytes": 43402738, "md5_digest": "e98e2769daeb689a1d6f1af1453c2a54"},
       "piper-v2/gu_IN-hetal-medium.onnx.json": {"size_bytes": 2859, "md5_digest": "1e15e87584a6454cbfe24d66728d20de"}
     }
   },
@@ -356,7 +356,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-gu-female-compact.onnx": {"size_bytes": 44366518, "md5_digest": "5fd6481d891950cace6e469aeb3361b0"},
+      "int8-v1/vits-syspin-gu-female-compact.onnx": {"size_bytes": 30490102, "md5_digest": "4870e32dae1d2bce09edfb80d383458a"},
       "piper-v2/gu_IN-hetal-compact.onnx.json": {"size_bytes": 2860, "md5_digest": "a9f2c7e45cf9224c9ef9e288d3d74763"}
     }
   },
@@ -372,7 +372,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-gu-male-model.onnx": {"size_bytes": 57868411, "md5_digest": "2b8444b05c61f535fcb6fc0ba9ae7823"},
+      "int8-v1/vits-syspin-gu-male-model.onnx": {"size_bytes": 43403132, "md5_digest": "9578de84f7b3dc1f66bdb22ec2ec8f2a"},
       "piper-v2/gu_IN-jay-medium.onnx.json": {"size_bytes": 2903, "md5_digest": "402c0fc0c5feb1f1c5fbe1d8089327ce"}
     }
   },
@@ -388,7 +388,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-gu-male-compact.onnx": {"size_bytes": 44367283, "md5_digest": "f4781eb6873bea0a804ab7b96199d9d9"},
+      "int8-v1/vits-syspin-gu-male-compact.onnx": {"size_bytes": 30490493, "md5_digest": "68fc4a4d9f646ccbc67820ae2293339f"},
       "piper-v2/gu_IN-jay-compact.onnx.json": {"size_bytes": 2904, "md5_digest": "9cd9706fa0674568e31a058715e5c043"}
     }
   },
@@ -404,7 +404,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-bho-female-model.onnx": {"size_bytes": 57858040, "md5_digest": "73ea347347f6557baf434275f732513b"},
+      "int8-v1/vits-syspin-bho-female-model.onnx": {"size_bytes": 43397809, "md5_digest": "1b9f640dfb4d097bb2e5ecaa91432e0f"},
       "piper-v2/bho_IN-kajal-medium.onnx.json": {"size_bytes": 2360, "md5_digest": "b6df0dfbc9b19447b66c8fba5816bebd"}
     }
   },
@@ -420,7 +420,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-bho-female-compact.onnx": {"size_bytes": 44356908, "md5_digest": "82d9d8ac70fbd4e95eb5962e28bec9b2"},
+      "int8-v1/vits-syspin-bho-female-compact.onnx": {"size_bytes": 30485167, "md5_digest": "9ad93b4b694f00853238e3c2bf92d7d9"},
       "piper-v2/bho_IN-kajal-compact.onnx.json": {"size_bytes": 2361, "md5_digest": "647030b8d46f2d8a60a6edadf9265da9"}
     }
   },
@@ -436,7 +436,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-bho-male-model.onnx": {"size_bytes": 57856504, "md5_digest": "a25dba3a97e38f0f349a825e7dcdda91"},
+      "int8-v1/vits-syspin-bho-male-model.onnx": {"size_bytes": 43397021, "md5_digest": "aea0616743dd780df89610392a1a40f4"},
       "piper-v2/bho_IN-ranjit-medium.onnx.json": {"size_bytes": 2273, "md5_digest": "72e7798fca6f1e3c730e4015295b0616"}
     }
   },
@@ -452,7 +452,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-bho-male-compact.onnx": {"size_bytes": 44355376, "md5_digest": "9d8c01a1c0ee91ffbda378f90420cb63"},
+      "int8-v1/vits-syspin-bho-male-compact.onnx": {"size_bytes": 30484383, "md5_digest": "89ab659910bdcf0c7de2c2d4486998a4"},
       "piper-v2/bho_IN-ranjit-compact.onnx.json": {"size_bytes": 2274, "md5_digest": "c8be0c77dc014dfc97212bd99bdff4de"}
     }
   },
@@ -468,7 +468,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-hne-female-model.onnx": {"size_bytes": 57866880, "md5_digest": "c86728b2613f59510467573df493923d"},
+      "int8-v1/vits-syspin-hne-female-model.onnx": {"size_bytes": 43402349, "md5_digest": "179f54d438eccfee8ff696a7d454aae9"},
       "piper-v2/hne_IN-mamta-medium.onnx.json": {"size_bytes": 2743, "md5_digest": "8b19bc558f9cbcbd23d6535795ba1e98"}
     }
   },
@@ -484,7 +484,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-hne-female-compact.onnx": {"size_bytes": 44365752, "md5_digest": "d38a8428fac1b21d504eb979f127b59d"},
+      "int8-v1/vits-syspin-hne-female-compact.onnx": {"size_bytes": 30489710, "md5_digest": "386fd4b314685b31ca45077723cd2dc2"},
       "piper-v2/hne_IN-mamta-compact.onnx.json": {"size_bytes": 2744, "md5_digest": "83da945a85c7db4173761e4be898cfce"}
     }
   },
@@ -500,7 +500,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-hne-male-model.onnx": {"size_bytes": 57863808, "md5_digest": "721bbeb3353af847774bf352daf2f8e1"},
+      "int8-v1/vits-syspin-hne-male-model.onnx": {"size_bytes": 43400773, "md5_digest": "105aadd72f9f88bd8f0d85efb2cb35ea"},
       "piper-v2/hne_IN-bhupesh-medium.onnx.json": {"size_bytes": 2628, "md5_digest": "4fcf3e714899d33fa182e6809e793062"}
     }
   },
@@ -516,7 +516,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-hne-male-compact.onnx": {"size_bytes": 44362680, "md5_digest": "ca6bc436cef0d159e9fdbab5c453630a"},
+      "int8-v1/vits-syspin-hne-male-compact.onnx": {"size_bytes": 30488134, "md5_digest": "1237fb161c313e2da183d1c3262f5ff0"},
       "piper-v2/hne_IN-bhupesh-compact.onnx.json": {"size_bytes": 2629, "md5_digest": "b0014271e8a72d0bd132908ca68e282b"}
     }
   },
@@ -532,7 +532,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-mai-female-model.onnx": {"size_bytes": 57876860, "md5_digest": "62dbd0787999cb284f2871d785cc7a23"},
+      "int8-v1/vits-syspin-mai-female-model.onnx": {"size_bytes": 43407470, "md5_digest": "a94e8ea490c84fb05cfa8d098e62cb49"},
       "piper-v2/mai_IN-janaki-medium.onnx.json": {"size_bytes": 3311, "md5_digest": "48b2f776288378fba3e66e3caed5b414"}
     }
   },
@@ -548,7 +548,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-mai-female-compact.onnx": {"size_bytes": 44375730, "md5_digest": "13d93ea4515b816f2d5faeaade8666e8"},
+      "int8-v1/vits-syspin-mai-female-compact.onnx": {"size_bytes": 30494829, "md5_digest": "8e6797cc2bc317d3e538f2389344e571"},
       "piper-v2/mai_IN-janaki-compact.onnx.json": {"size_bytes": 3312, "md5_digest": "bf5f1bce63c8ab94495dc1b32c638247"}
     }
   },
@@ -564,7 +564,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-mai-male-model.onnx": {"size_bytes": 57883388, "md5_digest": "2c255ea8d300625c6bb9de8041bd5a50"},
+      "int8-v1/vits-syspin-mai-male-model.onnx": {"size_bytes": 43410819, "md5_digest": "86c06ec8adf5dfa624b6a8150c353db9"},
       "piper-v2/mai_IN-mithilesh-medium.onnx.json": {"size_bytes": 3686, "md5_digest": "3df35fd9efba426f0053b18b54b3b5a9"}
     }
   },
@@ -580,7 +580,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-mai-male-compact.onnx": {"size_bytes": 44382254, "md5_digest": "ad26d819775d83bf411017a6ed9712a3"},
+      "int8-v1/vits-syspin-mai-male-compact.onnx": {"size_bytes": 30498174, "md5_digest": "0e812f041254acda49eca7562489fbea"},
       "piper-v2/mai_IN-mithilesh-compact.onnx.json": {"size_bytes": 3687, "md5_digest": "8cf10dde2e88f179b3cbb7f2a50417d4"}
     }
   },
@@ -596,7 +596,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/mai_IN-shravan-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "182b827653f22d4b8d68cca2e86faccf"}
     }
   },
@@ -612,7 +612,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/mai_IN-shravan-compact.onnx.json": {"size_bytes": 28207, "md5_digest": "2500e3dd9a3a8ea3c067904a7087d20e"}
     }
   },
@@ -628,7 +628,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-mag-female-model.onnx": {"size_bytes": 57869945, "md5_digest": "3c02d1be7dbb09d711633d1498546178"},
+      "int8-v1/vits-syspin-mag-female-model.onnx": {"size_bytes": 43403918, "md5_digest": "c51be5def82e36041d484fd9ef10150d"},
       "piper-v2/mag_IN-poonam-medium.onnx.json": {"size_bytes": 2985, "md5_digest": "2ee0f9f1ac5cb5f567562654ae7df6a1"}
     }
   },
@@ -644,7 +644,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-mag-female-compact.onnx": {"size_bytes": 44368816, "md5_digest": "c571bc430d88a37b23b888d5b8a9db2a"},
+      "int8-v1/vits-syspin-mag-female-compact.onnx": {"size_bytes": 30491278, "md5_digest": "7a0b73c0316d40b3c8da27a36a410faf"},
       "piper-v2/mag_IN-poonam-compact.onnx.json": {"size_bytes": 2986, "md5_digest": "c7a64131fb493c95a8c090588d77d9a3"}
     }
   },
@@ -660,7 +660,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-mag-male-model.onnx": {"size_bytes": 57868025, "md5_digest": "052c44f5e418b5c143d259ea93037a4f"},
+      "int8-v1/vits-syspin-mag-male-model.onnx": {"size_bytes": 43402933, "md5_digest": "8c1f900e806ff28eb7bf718809f4ced8"},
       "piper-v2/mag_IN-rakesh-medium.onnx.json": {"size_bytes": 2874, "md5_digest": "05a2b3102b83473b22bfccf301a5ca9b"}
     }
   },
@@ -676,7 +676,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-mag-male-compact.onnx": {"size_bytes": 44366899, "md5_digest": "955722bcda086baeb668f6f3fd2c1558"},
+      "int8-v1/vits-syspin-mag-male-compact.onnx": {"size_bytes": 30490296, "md5_digest": "c4f037d0469848b13f87aff27ad4cbdb"},
       "piper-v2/mag_IN-rakesh-compact.onnx.json": {"size_bytes": 2875, "md5_digest": "efe6f9ec115f06ee470fd27f6b503658"}
     }
   },
@@ -692,7 +692,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/as_IN-bornali-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "fcf750141ccbd995a1ddcff357cc9c1c"}
     }
   },
@@ -708,7 +708,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/as_IN-bornali-compact.onnx.json": {"size_bytes": 28207, "md5_digest": "cfd9806d654c340fe572154b5c248fe7"}
     }
   },
@@ -724,7 +724,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/as_IN-rituraj-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "654ed007dc239f2f6daa46ec8e52ead0"}
     }
   },
@@ -740,7 +740,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/as_IN-rituraj-compact.onnx.json": {"size_bytes": 28207, "md5_digest": "ad8695b1fa849458d449fe1a7e3a3578"}
     }
   },
@@ -756,7 +756,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/brx_IN-mainao-medium.onnx.json": {"size_bytes": 28194, "md5_digest": "f7762e8ed0bb6105129d53027f08f404"}
     }
   },
@@ -772,7 +772,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/brx_IN-mainao-compact.onnx.json": {"size_bytes": 28195, "md5_digest": "4ddf8c149cfbd77c631b99e1ba1dd873"}
     }
   },
@@ -788,7 +788,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/brx_IN-sansuma-medium.onnx.json": {"size_bytes": 28195, "md5_digest": "fe1ceb8415e75c582db0beff136e679d"}
     }
   },
@@ -804,7 +804,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/brx_IN-sansuma-compact.onnx.json": {"size_bytes": 28196, "md5_digest": "ce41ff4f89e03cb31012953e6b0e2566"}
     }
   },
@@ -820,7 +820,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/doi_IN-sheetal-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "4ea7807fa45eb65e3e6b412fcfd5f038"}
     }
   },
@@ -836,7 +836,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/doi_IN-sheetal-compact.onnx.json": {"size_bytes": 28200, "md5_digest": "91b81a139ec0f5ac84c6214498ca676e"}
     }
   },
@@ -852,7 +852,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/doi_IN-vijay-medium.onnx.json": {"size_bytes": 28197, "md5_digest": "5d8284f2daa8c8df47422626fabd2a1f"}
     }
   },
@@ -868,7 +868,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/doi_IN-vijay-compact.onnx.json": {"size_bytes": 28198, "md5_digest": "95e708e853f3ac9597a76ec71e06e658"}
     }
   },
@@ -884,7 +884,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/ne_NP-prerana-medium.onnx.json": {"size_bytes": 28202, "md5_digest": "4652ecc53510398836228254eebe5316"}
     }
   },
@@ -900,7 +900,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/ne_NP-prerana-compact.onnx.json": {"size_bytes": 28203, "md5_digest": "ee6ff87b85cb232347068a52835e5ab9"}
     }
   },
@@ -916,7 +916,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/pa_IN-simran-medium.onnx.json": {"size_bytes": 28202, "md5_digest": "d8d33ab537bc374457b1a980dc58d9f0"}
     }
   },
@@ -932,7 +932,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/pa_IN-simran-compact.onnx.json": {"size_bytes": 28203, "md5_digest": "ff0dc404e5a714c919038233c2a536f6"}
     }
   },
@@ -948,7 +948,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/pa_IN-harpreet-medium.onnx.json": {"size_bytes": 28204, "md5_digest": "9fe362576f50fcdd8b26d9cccb67e41a"}
     }
   },
@@ -964,7 +964,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/pa_IN-harpreet-compact.onnx.json": {"size_bytes": 28205, "md5_digest": "c778b0a274a287d88d15be63fcb402e0"}
     }
   },
@@ -980,7 +980,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-piper-model.onnx": {"size_bytes": 62431205, "md5_digest": "53a952cce879de7b2b16d16d1fa83938"},
+      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
       "piper-v2/sa_IN-vedant-medium.onnx.json": {"size_bytes": 28212, "md5_digest": "54e120a65638ffa4d6f818c353533045"}
     }
   },
@@ -996,7 +996,7 @@
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
-      "rasa-v2/vits-rasa-13-compact.onnx": {"size_bytes": 48778450, "md5_digest": "206c579a8ec53c6a32cb728ff889f181"},
+      "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
       "piper-v2/sa_IN-vedant-compact.onnx.json": {"size_bytes": 28213, "md5_digest": "ebf10a3ab4c1f894a04cf96ed57251be"}
     }
   },
@@ -1011,7 +1011,7 @@
     "source": "rhasspy/piper-voices (Compact: animeshahilya)",
     "license": "CC0",
     "files": {
-      "compact-v1/de_DE-thorsten-compact.onnx": {"size_bytes": 43536677, "md5_digest": "0a930db245c16dea840769e4e9ee82f1"},
+      "int8-v1/de_DE-thorsten-compact.onnx": {"size_bytes": 29632978, "md5_digest": "712bfe4410bcd34cc9745e1fed944288"},
       "compact-v1/de_DE-thorsten-compact.onnx.json": {"size_bytes": 3759, "md5_digest": "62d6c13cc9b06ec2129561b0c6be021d"}
     }
   },
@@ -1026,7 +1026,7 @@
     "source": "rhasspy/piper-voices (Compact: animeshahilya)",
     "license": "CC-BY-4.0",
     "files": {
-      "compact-v1/kk_KZ-issai-compact.onnx": {"size_bytes": 50270365, "md5_digest": "e73f8aa0ca656dd063cb3969c437e778"},
+      "int8-v1/kk_KZ-issai-compact.onnx": {"size_bytes": 33175867, "md5_digest": "7709348b804a33769313e3bf7bc5e5c1"},
       "compact-v1/kk_KZ-issai-compact.onnx.json": {"size_bytes": 3398, "md5_digest": "97a761244c5d547d0732e5c3fbe98303"}
     }
   },
@@ -1041,7 +1041,7 @@
     "source": "rhasspy/piper-voices (Compact: animeshahilya)",
     "license": "Apache-2.0",
     "files": {
-      "compact-v1/uk_UA-mykyta-compact.onnx": {"size_bytes": 44184201, "md5_digest": "db95e86ce8a068891db69276386c9ed5"},
+      "int8-v1/uk_UA-mykyta-compact.onnx": {"size_bytes": 30280502, "md5_digest": "ae47b8955b747c335876f49ba74b120e"},
       "compact-v1/uk_UA-mykyta-compact.onnx.json": {"size_bytes": 3775, "md5_digest": "6cd3d4e9963fa9596583989f313f2356"}
     }
   },
@@ -1056,8 +1056,1028 @@
     "source": "rhasspy/piper-voices (Compact: animeshahilya)",
     "license": "Apache-2.0",
     "files": {
-      "compact-v1/uk_UA-oleksa-compact.onnx": {"size_bytes": 44184205, "md5_digest": "0e9f9e8c5e939b544450004c3365e259"},
+      "int8-v1/uk_UA-oleksa-compact.onnx": {"size_bytes": 30280506, "md5_digest": "5f0574f02ab7151c0312886cf90df48e"},
       "compact-v1/uk_UA-oleksa-compact.onnx.json": {"size_bytes": 3775, "md5_digest": "e1040d3f5e0db5cb5b8df31f8cc20154"}
+    }
+  },
+  "ar_JO-kareem-medium": {
+    "key": "ar_JO-kareem-medium",
+    "name": "kareem",
+    "language": {"code": "ar_JO", "family": "ar", "region": "JO",
+      "name_native": "العربية", "name_english": "Arabic", "country_english": "Jordan"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/ar_JO-kareem-medium.onnx": {"size_bytes": 16612288, "md5_digest": "1a07510ee50fe400748859a1ec5b9058"},
+      "int8-v1/ar_JO-kareem-medium.onnx.json": {"size_bytes": 5024, "md5_digest": "dd70b31eb5a395907241b1e5367ace3a"}
+    }
+  },
+  "bg_BG-dimitar-medium": {
+    "key": "bg_BG-dimitar-medium",
+    "name": "dimitar",
+    "language": {"code": "bg_BG", "family": "bg", "region": "BG",
+      "name_native": "български", "name_english": "Bulgarian", "country_english": "Bulgaria"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/bg_BG-dimitar-medium.onnx": {"size_bytes": 16632978, "md5_digest": "311b53c5f9c16c26e46cfe5064df50d3"},
+      "int8-v1/bg_BG-dimitar-medium.onnx.json": {"size_bytes": 5123, "md5_digest": "5fb4aa5e5b20d4ed515d40f0b4ce16f0"}
+    }
+  },
+  "ca_ES-upc_ona-medium": {
+    "key": "ca_ES-upc_ona-medium",
+    "name": "upc_ona",
+    "language": {"code": "ca_ES", "family": "ca", "region": "ES",
+      "name_native": "Català", "name_english": "Catalan", "country_english": "Spain"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-SA-3.0-ES",
+    "files": {
+      "int8-v1/ca_ES-upc_ona-medium.onnx": {"size_bytes": 16612288, "md5_digest": "10b0a3c127dc181a1a63ac2c7bb6bac3"},
+      "int8-v1/ca_ES-upc_ona-medium.onnx.json": {"size_bytes": 4875, "md5_digest": "035e9eb642ab9fa1354f53a77877ae9b"}
+    }
+  },
+  "cs_CZ-jirka-medium": {
+    "key": "cs_CZ-jirka-medium",
+    "name": "jirka",
+    "language": {"code": "cs_CZ", "family": "cs", "region": "CZ",
+      "name_native": "Čeština", "name_english": "Czech", "country_english": "Czech Republic"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/cs_CZ-jirka-medium.onnx": {"size_bytes": 16612288, "md5_digest": "e3b2b8febadda3c0f8f049f56e25044e"},
+      "int8-v1/cs_CZ-jirka-medium.onnx.json": {"size_bytes": 5025, "md5_digest": "2762e45c5b084694093c683a5da7cf94"}
+    }
+  },
+  "cs_CZ-kasandra-medium": {
+    "key": "cs_CZ-kasandra-medium",
+    "name": "kasandra",
+    "language": {"code": "cs_CZ", "family": "cs", "region": "CZ",
+      "name_native": "Čeština", "name_english": "Czech", "country_english": "Czech Republic"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/cs_CZ-kasandra-medium.onnx": {"size_bytes": 16922032, "md5_digest": "62bfb7d1f69d09423cfb637647656afb"},
+      "int8-v1/cs_CZ-kasandra-medium.onnx.json": {"size_bytes": 3232, "md5_digest": "b7c458cdaccfc2709555961b6328087c"}
+    }
+  },
+  "cy_GB-bu_tts-medium": {
+    "key": "cy_GB-bu_tts-medium",
+    "name": "bu_tts",
+    "language": {"code": "cy_GB", "family": "cy", "region": "GB",
+      "name_native": "Cymraeg", "name_english": "Welsh", "country_english": "Great Britain"},
+    "quality": "medium",
+    "num_speakers": 7,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY",
+    "files": {
+      "int8-v1/cy_GB-bu_tts-medium.onnx": {"size_bytes": 20370624, "md5_digest": "e2547ded75435e7e5ca88b563034885a"},
+      "int8-v1/cy_GB-bu_tts-medium.onnx.json": {"size_bytes": 5145, "md5_digest": "410fcba3c88586d4085be2efd8e57505"}
+    }
+  },
+  "cy_GB-gwryw_gogleddol-medium": {
+    "key": "cy_GB-gwryw_gogleddol-medium",
+    "name": "gwryw_gogleddol",
+    "language": {"code": "cy_GB", "family": "cy", "region": "GB",
+      "name_native": "Cymraeg", "name_english": "Welsh", "country_english": "Great Britain"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/cy_GB-gwryw_gogleddol-medium.onnx": {"size_bytes": 16922032, "md5_digest": "c9bedafb326108d4e32d8ad1612e2166"},
+      "int8-v1/cy_GB-gwryw_gogleddol-medium.onnx.json": {"size_bytes": 4975, "md5_digest": "d780e83a324e9ce8c73146b9d066a283"}
+    }
+  },
+  "da_DK-talesyntese-medium": {
+    "key": "da_DK-talesyntese-medium",
+    "name": "talesyntese",
+    "language": {"code": "da_DK", "family": "da", "region": "DK",
+      "name_native": "Dansk", "name_english": "Danish", "country_english": "Denmark"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/da_DK-talesyntese-medium.onnx": {"size_bytes": 16612288, "md5_digest": "f7d4530d122bfb46ab385128dd562c7d"},
+      "int8-v1/da_DK-talesyntese-medium.onnx.json": {"size_bytes": 4878, "md5_digest": "8a56843f52992e490f062e68c14fa193"}
+    }
+  },
+  "de_DE-thorsten-high": {
+    "key": "de_DE-thorsten-high",
+    "name": "thorsten",
+    "language": {"code": "de_DE", "family": "de", "region": "DE",
+      "name_native": "Deutsch", "name_english": "German", "country_english": "Germany"},
+    "quality": "high",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/de_DE-thorsten-high.onnx": {"size_bytes": 42787551, "md5_digest": "b5d86b4624c7507d24d47b9178be7eaa"},
+      "int8-v1/de_DE-thorsten-high.onnx.json": {"size_bytes": 4875, "md5_digest": "e81686e00a9d825e2488ead660bec6fd"}
+    }
+  },
+  "de_DE-thorsten_emotional-medium": {
+    "key": "de_DE-thorsten_emotional-medium",
+    "name": "thorsten_emotional",
+    "language": {"code": "de_DE", "family": "de", "region": "DE",
+      "name_native": "Deutsch", "name_english": "German", "country_english": "Germany"},
+    "quality": "medium",
+    "num_speakers": 8,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/de_DE-thorsten_emotional-medium.onnx": {"size_bytes": 20053670, "md5_digest": "164f4a4603f54b8f727b638ace377d88"},
+      "int8-v1/de_DE-thorsten_emotional-medium.onnx.json": {"size_bytes": 5031, "md5_digest": "1abac7e46522f774217c170da222f2a6"}
+    }
+  },
+  "el_GR-joy-medium": {
+    "key": "el_GR-joy-medium",
+    "name": "joy",
+    "language": {"code": "el_GR", "family": "el", "region": "GR",
+      "name_native": "Ελληνικά", "name_english": "Greek", "country_english": "Greece"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v1/el_GR-joy-medium.onnx": {"size_bytes": 16927044, "md5_digest": "17e3d5fa524796b4c7ae8103571c83d4"},
+      "int8-v1/el_GR-joy-medium.onnx.json": {"size_bytes": 7367, "md5_digest": "775c0b4ac4c12de0dd11df701ab25466"}
+    }
+  },
+  "el_GR-rapunzelina-medium": {
+    "key": "el_GR-rapunzelina-medium",
+    "name": "rapunzelina",
+    "language": {"code": "el_GR", "family": "el", "region": "GR",
+      "name_native": "Ελληνικά", "name_english": "Greek", "country_english": "Greece"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/el_GR-rapunzelina-medium.onnx": {"size_bytes": 16361038, "md5_digest": "fdf11abaaf5eccf6b285549973ea340a"},
+      "int8-v1/el_GR-rapunzelina-medium.onnx.json": {"size_bytes": 4973, "md5_digest": "ba83ba13667e14e2f97fbc9d950f9583"}
+    }
+  },
+  "en_US-amy-medium": {
+    "key": "en_US-amy-medium",
+    "name": "amy",
+    "language": {"code": "en_US", "family": "en", "region": "US",
+      "name_native": "English", "name_english": "English", "country_english": "United States"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/en_US-amy-medium.onnx": {"size_bytes": 16612288, "md5_digest": "37b71191f00977fb322d2bc600558979"},
+      "int8-v1/en_US-amy-medium.onnx.json": {"size_bytes": 4882, "md5_digest": "7f37dadb26340c90ebc8088e0b252310"}
+    }
+  },
+  "en_US-hfc_female-medium": {
+    "key": "en_US-hfc_female-medium",
+    "name": "hfc_female",
+    "language": {"code": "en_US", "family": "en", "region": "US",
+      "name_native": "English", "name_english": "English", "country_english": "United States"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v1/en_US-hfc_female-medium.onnx": {"size_bytes": 16612288, "md5_digest": "d637486e815d7ff014b973514b258e63"},
+      "int8-v1/en_US-hfc_female-medium.onnx.json": {"size_bytes": 5033, "md5_digest": "c3d00f54dac3b4068f2576c15c5da3bc"}
+    }
+  },
+  "es_ES-sharvard-medium": {
+    "key": "es_ES-sharvard-medium",
+    "name": "sharvard",
+    "language": {"code": "es_ES", "family": "es", "region": "ES",
+      "name_native": "Español", "name_english": "Spanish", "country_english": "Spain"},
+    "quality": "medium",
+    "num_speakers": 2,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-3.0",
+    "files": {
+      "int8-v1/es_ES-sharvard-medium.onnx": {"size_bytes": 20050568, "md5_digest": "a975483a6590d9f616460c51347fc6aa"},
+      "int8-v1/es_ES-sharvard-medium.onnx.json": {"size_bytes": 4903, "md5_digest": "e49cab310ce362145f7d94b347c291ff"}
+    }
+  },
+  "es_MX-claude-high": {
+    "key": "es_MX-claude-high",
+    "name": "claude",
+    "language": {"code": "es_MX", "family": "es", "region": "MX",
+      "name_native": "Español", "name_english": "Spanish", "country_english": "Mexico"},
+    "quality": "high",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "Apache-2.0",
+    "files": {
+      "int8-v1/es_MX-claude-high.onnx": {"size_bytes": 16533303, "md5_digest": "97217bed0c4edd7e1fcc3aa1e0294a74"},
+      "int8-v1/es_MX-claude-high.onnx.json": {"size_bytes": 4963, "md5_digest": "36882201922fabb409f18d284af3eddd"}
+    }
+  },
+  "et_EE-news-medium": {
+    "key": "et_EE-news-medium",
+    "name": "news",
+    "language": {"code": "et_EE", "family": "et", "region": "EE",
+      "name_native": "eesti", "name_english": "Estonian", "country_english": "Estonia"},
+    "quality": "medium",
+    "num_speakers": 4,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY",
+    "files": {
+      "int8-v1/et_EE-news-medium.onnx": {"size_bytes": 20071828, "md5_digest": "2d005f2c4c5b591ccfbb7dfe1a295b15"},
+      "int8-v1/et_EE-news-medium.onnx.json": {"size_bytes": 5320, "md5_digest": "28fea16b0e4d26a445906e83d6de7ac6"}
+    }
+  },
+  "eu_ES-antton-medium": {
+    "key": "eu_ES-antton-medium",
+    "name": "antton",
+    "language": {"code": "eu_ES", "family": "eu", "region": "ES",
+      "name_native": "Euskara", "name_english": "Basque", "country_english": "Spain"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/eu_ES-antton-medium.onnx": {"size_bytes": 16942373, "md5_digest": "b41998cdc739d0d9233a84984cb42ce8"},
+      "int8-v1/eu_ES-antton-medium.onnx.json": {"size_bytes": 5076, "md5_digest": "5607c94add68c88560466b0db460dac5"}
+    }
+  },
+  "eu_ES-maider-medium": {
+    "key": "eu_ES-maider-medium",
+    "name": "maider",
+    "language": {"code": "eu_ES", "family": "eu", "region": "ES",
+      "name_native": "Euskara", "name_english": "Basque", "country_english": "Spain"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/eu_ES-maider-medium.onnx": {"size_bytes": 16942373, "md5_digest": "cf9a8b4ffef92d5a47627eaa09d6f903"},
+      "int8-v1/eu_ES-maider-medium.onnx.json": {"size_bytes": 5076, "md5_digest": "5489c9b52ebcbac9a2a7e762b1aaa475"}
+    }
+  },
+  "fa_IR-ganji-medium": {
+    "key": "fa_IR-ganji-medium",
+    "name": "ganji",
+    "language": {"code": "fa_IR", "family": "fa", "region": "IR",
+      "name_native": "فارسی", "name_english": "Farsi", "country_english": "Iran"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/fa_IR-ganji-medium.onnx": {"size_bytes": 16927044, "md5_digest": "54998cfca61fabf79dd8c9f73a70aa11"},
+      "int8-v1/fa_IR-ganji-medium.onnx.json": {"size_bytes": 4958, "md5_digest": "717462455e6abf8a4b8ea2365faaa41c"}
+    }
+  },
+  "fa_IR-ganji_adabi-medium": {
+    "key": "fa_IR-ganji_adabi-medium",
+    "name": "ganji_adabi",
+    "language": {"code": "fa_IR", "family": "fa", "region": "IR",
+      "name_native": "فارسی", "name_english": "Farsi", "country_english": "Iran"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/fa_IR-ganji_adabi-medium.onnx": {"size_bytes": 16927044, "md5_digest": "caab94d270d9151bf781f15d0a2aed2f"},
+      "int8-v1/fa_IR-ganji_adabi-medium.onnx.json": {"size_bytes": 4964, "md5_digest": "4ddbb3131d8bbf33cdc4d441062db6f4"}
+    }
+  },
+  "fi_FI-harri-medium": {
+    "key": "fi_FI-harri-medium",
+    "name": "harri",
+    "language": {"code": "fi_FI", "family": "fi", "region": "FI",
+      "name_native": "Suomi", "name_english": "Finnish", "country_english": "Finland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/fi_FI-harri-medium.onnx": {"size_bytes": 16612288, "md5_digest": "e5f91eda3cfba01f5a8c88021e837775"},
+      "int8-v1/fi_FI-harri-medium.onnx.json": {"size_bytes": 4873, "md5_digest": "d944b7607e545ee3a0d06887c3e4ccc4"}
+    }
+  },
+  "fr_FR-siwis-medium": {
+    "key": "fr_FR-siwis-medium",
+    "name": "siwis",
+    "language": {"code": "fr_FR", "family": "fr", "region": "FR",
+      "name_native": "Français", "name_english": "French", "country_english": "France"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/fr_FR-siwis-medium.onnx": {"size_bytes": 16612288, "md5_digest": "915e53211d71f026da729a3f34c91dd4"},
+      "int8-v1/fr_FR-siwis-medium.onnx.json": {"size_bytes": 4875, "md5_digest": "a407e7e6901feb79c2ea2a5466076cce"}
+    }
+  },
+  "fr_FR-tom-medium": {
+    "key": "fr_FR-tom-medium",
+    "name": "tom",
+    "language": {"code": "fr_FR", "family": "fr", "region": "FR",
+      "name_native": "Français", "name_english": "French", "country_english": "France"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "AGPL-3.0",
+    "files": {
+      "int8-v1/fr_FR-tom-medium.onnx": {"size_bytes": 16922032, "md5_digest": "156376a25b30817f8f1ffbc58a69bc7c"},
+      "int8-v1/fr_FR-tom-medium.onnx.json": {"size_bytes": 4959, "md5_digest": "964d58602df7adf76c2401b070f68ea2"}
+    }
+  },
+  "hi_IN-priyamvada-medium": {
+    "key": "hi_IN-priyamvada-medium",
+    "name": "priyamvada",
+    "language": {"code": "hi_IN", "family": "hi", "region": "IN",
+      "name_native": "हिन्दी", "name_english": "Hindi", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v1/hi_IN-priyamvada-medium.onnx": {"size_bytes": 16927044, "md5_digest": "197c5f1c91809bb1da5a9e107aebf57c"},
+      "int8-v1/hi_IN-priyamvada-medium.onnx.json": {"size_bytes": 4973, "md5_digest": "599ca4dc5d421a9c66692433f618e080"}
+    }
+  },
+  "hi_IN-rohan-medium": {
+    "key": "hi_IN-rohan-medium",
+    "name": "rohan",
+    "language": {"code": "hi_IN", "family": "hi", "region": "IN",
+      "name_native": "हिन्दी", "name_english": "Hindi", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "IIT Madras Indic TTS licence",
+    "files": {
+      "int8-v1/hi_IN-rohan-medium.onnx": {"size_bytes": 16361038, "md5_digest": "0035285f7d2d69bba6259550d8705fca"},
+      "int8-v1/hi_IN-rohan-medium.onnx.json": {"size_bytes": 5041, "md5_digest": "b4aeeef53e2c469def82769aa4ce19eb"}
+    }
+  },
+  "hu_HU-anna-medium": {
+    "key": "hu_HU-anna-medium",
+    "name": "anna",
+    "language": {"code": "hu_HU", "family": "hu", "region": "HU",
+      "name_native": "Magyar", "name_english": "Hungarian", "country_english": "Hungary"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/hu_HU-anna-medium.onnx": {"size_bytes": 16612288, "md5_digest": "778096b9e9d07864de193eae0dfe4055"},
+      "int8-v1/hu_HU-anna-medium.onnx.json": {"size_bytes": 5018, "md5_digest": "ae63867e2c2cb6695555a17bdee8b751"}
+    }
+  },
+  "hu_HU-imre-medium": {
+    "key": "hu_HU-imre-medium",
+    "name": "imre",
+    "language": {"code": "hu_HU", "family": "hu", "region": "HU",
+      "name_native": "Magyar", "name_english": "Hungarian", "country_english": "Hungary"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/hu_HU-imre-medium.onnx": {"size_bytes": 16612288, "md5_digest": "624011a3f9a28c7c9b81a69ee24fa374"},
+      "int8-v1/hu_HU-imre-medium.onnx.json": {"size_bytes": 5019, "md5_digest": "9b6974c685cd8289619660f5e078de06"}
+    }
+  },
+  "hy_AM-gor-medium": {
+    "key": "hy_AM-gor-medium",
+    "name": "gor",
+    "language": {"code": "hy_AM", "family": "hy", "region": "AM",
+      "name_native": "հայերեն", "name_english": "Armenian", "country_english": "Armenia"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "GPL-2.0",
+    "files": {
+      "int8-v1/hy_AM-gor-medium.onnx": {"size_bytes": 16922032, "md5_digest": "2c0e1e9c3992b4067778dead2fdb118e"},
+      "int8-v1/hy_AM-gor-medium.onnx.json": {"size_bytes": 4967, "md5_digest": "fb816fe191dc49a8349b023dd87090f9"}
+    }
+  },
+  "id_ID-news_tts-medium": {
+    "key": "id_ID-news_tts-medium",
+    "name": "news_tts",
+    "language": {"code": "id_ID", "family": "id", "region": "ID",
+      "name_native": "Bahasa Indonesia", "name_english": "Indonesian", "country_english": "Indonesia"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/id_ID-news_tts-medium.onnx": {"size_bytes": 16361038, "md5_digest": "f8e78f412a485c85fd31bc92b0a862c1"},
+      "int8-v1/id_ID-news_tts-medium.onnx.json": {"size_bytes": 5050, "md5_digest": "c023cfa031cc9ed4cf5dd8d2ef1e48ed"}
+    }
+  },
+  "is_IS-salka-medium": {
+    "key": "is_IS-salka-medium",
+    "name": "salka",
+    "language": {"code": "is_IS", "family": "is", "region": "IS",
+      "name_native": "íslenska", "name_english": "Icelandic", "country_english": "Iceland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/is_IS-salka-medium.onnx": {"size_bytes": 29978405, "md5_digest": "add8627dc49e409ebfd7a3d34ed569a5"},
+      "int8-v1/is_IS-salka-medium.onnx.json": {"size_bytes": 4164, "md5_digest": "ce262d355da30218152cbc256b0f2b69"}
+    }
+  },
+  "is_IS-ugla-medium": {
+    "key": "is_IS-ugla-medium",
+    "name": "ugla",
+    "language": {"code": "is_IS", "family": "is", "region": "IS",
+      "name_native": "íslenska", "name_english": "Icelandic", "country_english": "Iceland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/is_IS-ugla-medium.onnx": {"size_bytes": 29978405, "md5_digest": "d4ad443516ac6c1412c611ef67cf78b4"},
+      "int8-v1/is_IS-ugla-medium.onnx.json": {"size_bytes": 4163, "md5_digest": "c8c1aebf00bdc7ae6541ce68e3b83f31"}
+    }
+  },
+  "it_IT-paola-medium": {
+    "key": "it_IT-paola-medium",
+    "name": "paola",
+    "language": {"code": "it_IT", "family": "it", "region": "IT",
+      "name_native": "Italiano", "name_english": "Italian", "country_english": "Italy"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/it_IT-paola-medium.onnx": {"size_bytes": 16922032, "md5_digest": "2958fa68aa015200fef0f8af490f8afe"},
+      "int8-v1/it_IT-paola-medium.onnx.json": {"size_bytes": 7099, "md5_digest": "cd471a3757c88a7a4baee6207248b5d5"}
+    }
+  },
+  "it_IT-serena-medium": {
+    "key": "it_IT-serena-medium",
+    "name": "serena",
+    "language": {"code": "it_IT", "family": "it", "region": "IT",
+      "name_native": "Italiano", "name_english": "Italian", "country_english": "Italy"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/it_IT-serena-medium.onnx": {"size_bytes": 16927045, "md5_digest": "d32344e16980151a4413d8b43bc6719e"},
+      "int8-v1/it_IT-serena-medium.onnx.json": {"size_bytes": 5254, "md5_digest": "a0b3d407bc039d501219857e5aa0e34e"}
+    }
+  },
+  "ka_GE-natia-medium": {
+    "key": "ka_GE-natia-medium",
+    "name": "natia",
+    "language": {"code": "ka_GE", "family": "ka", "region": "GE",
+      "name_native": "ქართული ენა", "name_english": "Georgian", "country_english": "Georgia"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/ka_GE-natia-medium.onnx": {"size_bytes": 16612288, "md5_digest": "016cb98e10b65af4e42db985a43956bf"},
+      "int8-v1/ka_GE-natia-medium.onnx.json": {"size_bytes": 4842, "md5_digest": "f992d9a6887cce43e707119e66c0db55"}
+    }
+  },
+  "kk_KZ-issai-high": {
+    "key": "kk_KZ-issai-high",
+    "name": "issai",
+    "language": {"code": "kk_KZ", "family": "kk", "region": "KZ",
+      "name_native": "қазақша", "name_english": "Kazakh", "country_english": "Kazakhstan"},
+    "quality": "high",
+    "num_speakers": 6,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/kk_KZ-issai-high.onnx": {"size_bytes": 46595269, "md5_digest": "f6538f9df9a3b919ffd864afed329680"},
+      "int8-v1/kk_KZ-issai-high.onnx.json": {"size_bytes": 4358, "md5_digest": "cfef5328137c8a1e4d1e5d3dac0c7056"}
+    }
+  },
+  "ko_KR-kss-medium": {
+    "key": "ko_KR-kss-medium",
+    "name": "kss",
+    "language": {"code": "ko_KR", "family": "ko", "region": "KR",
+      "name_native": "한국어", "name_english": "Korean", "country_english": "South Korea"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v1/ko_KR-kss-medium.onnx": {"size_bytes": 16632978, "md5_digest": "775b853adc62728336d92aab6abf263d"},
+      "int8-v1/ko_KR-kss-medium.onnx.json": {"size_bytes": 5232, "md5_digest": "427c0b8d93211ba2ffea1f565819058a"}
+    }
+  },
+  "lb_LU-marylux-medium": {
+    "key": "lb_LU-marylux-medium",
+    "name": "marylux",
+    "language": {"code": "lb_LU", "family": "lb", "region": "LU",
+      "name_native": "Lëtzebuergesch", "name_english": "Luxembourgish", "country_english": "Luxembourg"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v1/lb_LU-marylux-medium.onnx": {"size_bytes": 16612288, "md5_digest": "053467a6150e29dec8722d53acf94a41"},
+      "int8-v1/lb_LU-marylux-medium.onnx.json": {"size_bytes": 4979, "md5_digest": "aea98b0e4fecaa0b3b7adc2048561095"}
+    }
+  },
+  "lv_LV-aivars-medium": {
+    "key": "lv_LV-aivars-medium",
+    "name": "aivars",
+    "language": {"code": "lv_LV", "family": "lv", "region": "LV",
+      "name_native": "Latviešu", "name_english": "Latvian", "country_english": "Latvia"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/lv_LV-aivars-medium.onnx": {"size_bytes": 16922032, "md5_digest": "2a5b0c2112c6fd49f0f8970e48c92f4d"},
+      "int8-v1/lv_LV-aivars-medium.onnx.json": {"size_bytes": 7242, "md5_digest": "7264f291326a66e8055e3a48fdd0bf55"}
+    }
+  },
+  "ml_IN-arjun-medium": {
+    "key": "ml_IN-arjun-medium",
+    "name": "arjun",
+    "language": {"code": "ml_IN", "family": "ml", "region": "IN",
+      "name_native": "മലയാളം", "name_english": "Malayalam", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/ml_IN-arjun-medium.onnx": {"size_bytes": 16361038, "md5_digest": "006b418f23305d83aa70651caf6d4542"},
+      "int8-v1/ml_IN-arjun-medium.onnx.json": {"size_bytes": 5044, "md5_digest": "18454efcad5bb889ee4cb1cb035993f5"}
+    }
+  },
+  "ml_IN-meera-medium": {
+    "key": "ml_IN-meera-medium",
+    "name": "meera",
+    "language": {"code": "ml_IN", "family": "ml", "region": "IN",
+      "name_native": "മലയാളം", "name_english": "Malayalam", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/ml_IN-meera-medium.onnx": {"size_bytes": 16361038, "md5_digest": "f2839e0adc2aa123506bf5e6e6eca0a7"},
+      "int8-v1/ml_IN-meera-medium.onnx.json": {"size_bytes": 5045, "md5_digest": "64c2eee28c62e3a072ccc2ea3d812748"}
+    }
+  },
+  "ne_NP-chitwan-medium": {
+    "key": "ne_NP-chitwan-medium",
+    "name": "chitwan",
+    "language": {"code": "ne_NP", "family": "ne", "region": "NP",
+      "name_native": "नेपाली", "name_english": "Nepali", "country_english": "Nepal"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/ne_NP-chitwan-medium.onnx": {"size_bytes": 16361038, "md5_digest": "74b9e80625a26d550e961b06454121b3"},
+      "int8-v1/ne_NP-chitwan-medium.onnx.json": {"size_bytes": 5043, "md5_digest": "7ddc520e24a862016f6d22cde4b70ac1"}
+    }
+  },
+  "nl_BE-nathalie-medium": {
+    "key": "nl_BE-nathalie-medium",
+    "name": "nathalie",
+    "language": {"code": "nl_BE", "family": "nl", "region": "BE",
+      "name_native": "Nederlands", "name_english": "Dutch", "country_english": "Belgium"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/nl_BE-nathalie-medium.onnx": {"size_bytes": 16612288, "md5_digest": "5a3843c4ed1cfa2e6730fc1ed67aa682"},
+      "int8-v1/nl_BE-nathalie-medium.onnx.json": {"size_bytes": 4879, "md5_digest": "13c6e6c9511447e1906c25748a93f0bd"}
+    }
+  },
+  "nl_NL-pim-medium": {
+    "key": "nl_NL-pim-medium",
+    "name": "pim",
+    "language": {"code": "nl_NL", "family": "nl", "region": "NL",
+      "name_native": "Nederlands", "name_english": "Dutch", "country_english": "Netherlands"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/nl_NL-pim-medium.onnx": {"size_bytes": 16927044, "md5_digest": "2ffb903527c50642c9b089f87426efb5"},
+      "int8-v1/nl_NL-pim-medium.onnx.json": {"size_bytes": 5037, "md5_digest": "c4d22097fefa2afe275b9bb6ff4db865"}
+    }
+  },
+  "no_NO-talesyntese-medium": {
+    "key": "no_NO-talesyntese-medium",
+    "name": "talesyntese",
+    "language": {"code": "no_NO", "family": "no", "region": "NO",
+      "name_native": "Norsk", "name_english": "Norwegian", "country_english": "Norway"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/no_NO-talesyntese-medium.onnx": {"size_bytes": 16612288, "md5_digest": "e4f81bf10ba56c00fd82cf72e411653f"},
+      "int8-v1/no_NO-talesyntese-medium.onnx.json": {"size_bytes": 4880, "md5_digest": "94b938e1bd319e6a084dc8380fb53619"}
+    }
+  },
+  "pl_PL-gosia-medium": {
+    "key": "pl_PL-gosia-medium",
+    "name": "gosia",
+    "language": {"code": "pl_PL", "family": "pl", "region": "PL",
+      "name_native": "Polski", "name_english": "Polish", "country_english": "Poland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/pl_PL-gosia-medium.onnx": {"size_bytes": 16612288, "md5_digest": "35eeb044a141a3470408ccac38eebd0a"},
+      "int8-v1/pl_PL-gosia-medium.onnx.json": {"size_bytes": 4814, "md5_digest": "e57055b9eec14e570617af2b716bd5c3"}
+    }
+  },
+  "pl_PL-mc_speech-medium": {
+    "key": "pl_PL-mc_speech-medium",
+    "name": "mc_speech",
+    "language": {"code": "pl_PL", "family": "pl", "region": "PL",
+      "name_native": "Polski", "name_english": "Polish", "country_english": "Poland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/pl_PL-mc_speech-medium.onnx": {"size_bytes": 16612288, "md5_digest": "df302217c234a04c01544cf96739192e"},
+      "int8-v1/pl_PL-mc_speech-medium.onnx.json": {"size_bytes": 4961, "md5_digest": "3f506e68bb9531b11e94e5f5dda5dd21"}
+    }
+  },
+  "pt_BR-cadu-medium": {
+    "key": "pt_BR-cadu-medium",
+    "name": "cadu",
+    "language": {"code": "pt_BR", "family": "pt", "region": "BR",
+      "name_native": "Português", "name_english": "Portuguese", "country_english": "Brazil"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/pt_BR-cadu-medium.onnx": {"size_bytes": 16361038, "md5_digest": "49f91b76cc92e0dfa5730dce609ea147"},
+      "int8-v1/pt_BR-cadu-medium.onnx.json": {"size_bytes": 5040, "md5_digest": "3d35f13df6a2f7dc9b7b7924befbe7bb"}
+    }
+  },
+  "pt_BR-faber-medium": {
+    "key": "pt_BR-faber-medium",
+    "name": "faber",
+    "language": {"code": "pt_BR", "family": "pt", "region": "BR",
+      "name_native": "Português", "name_english": "Portuguese", "country_english": "Brazil"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/pt_BR-faber-medium.onnx": {"size_bytes": 16612288, "md5_digest": "eddb121e9b33c8a45e1c3cef59739735"},
+      "int8-v1/pt_BR-faber-medium.onnx.json": {"size_bytes": 4855, "md5_digest": "a1258e1e113c47d9a1486a9bef1daab4"}
+    }
+  },
+  "ro_RO-mihai-medium": {
+    "key": "ro_RO-mihai-medium",
+    "name": "mihai",
+    "language": {"code": "ro_RO", "family": "ro", "region": "RO",
+      "name_native": "Română", "name_english": "Romanian", "country_english": "Romania"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/ro_RO-mihai-medium.onnx": {"size_bytes": 16612288, "md5_digest": "883b2da169d4a21f839cb2e67cde1645"},
+      "int8-v1/ro_RO-mihai-medium.onnx.json": {"size_bytes": 4877, "md5_digest": "f820f8ba65a8646c68792be581b85144"}
+    }
+  },
+  "ru_RU-irina-medium": {
+    "key": "ru_RU-irina-medium",
+    "name": "irina",
+    "language": {"code": "ru_RU", "family": "ru", "region": "RU",
+      "name_native": "Русский", "name_english": "Russian", "country_english": "Russia"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/ru_RU-irina-medium.onnx": {"size_bytes": 16612288, "md5_digest": "b55553ec81b2ba5f1d7bf3c5d5ba19bc"},
+      "int8-v1/ru_RU-irina-medium.onnx.json": {"size_bytes": 4765, "md5_digest": "e239bb7f22d5de4a44ec6b1cb6c06bb5"}
+    }
+  },
+  "ru_RU-ruslan-medium": {
+    "key": "ru_RU-ruslan-medium",
+    "name": "ruslan",
+    "language": {"code": "ru_RU", "family": "ru", "region": "RU",
+      "name_native": "Русский", "name_english": "Russian", "country_english": "Russia"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v1/ru_RU-ruslan-medium.onnx": {"size_bytes": 16612288, "md5_digest": "fb9e9aa383c9cacc622e1fc30296b75f"},
+      "int8-v1/ru_RU-ruslan-medium.onnx.json": {"size_bytes": 4882, "md5_digest": "ae6e273bd38d6ecb05c2d1969b24db0c"}
+    }
+  },
+  "sk_SK-lili-medium": {
+    "key": "sk_SK-lili-medium",
+    "name": "lili",
+    "language": {"code": "sk_SK", "family": "sk", "region": "SK",
+      "name_native": "Slovenčina", "name_english": "Slovak", "country_english": "Slovakia"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/sk_SK-lili-medium.onnx": {"size_bytes": 16612288, "md5_digest": "c8dd247fc91978e84f8c825bfdeff080"},
+      "int8-v1/sk_SK-lili-medium.onnx.json": {"size_bytes": 4963, "md5_digest": "e49cbd13cb5ce5b8f7e1c1479ec2cc91"}
+    }
+  },
+  "sl_SI-artur-medium": {
+    "key": "sl_SI-artur-medium",
+    "name": "artur",
+    "language": {"code": "sl_SI", "family": "sl", "region": "SI",
+      "name_native": "Slovenščina", "name_english": "Slovenian", "country_english": "Slovenia"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/sl_SI-artur-medium.onnx": {"size_bytes": 16611486, "md5_digest": "7f97c0b6723b9296758d31a670a1e503"},
+      "int8-v1/sl_SI-artur-medium.onnx.json": {"size_bytes": 4970, "md5_digest": "8683796803bce4e9131eec00a93251ad"}
+    }
+  },
+  "sq_AL-edon-medium": {
+    "key": "sq_AL-edon-medium",
+    "name": "edon",
+    "language": {"code": "sq_AL", "family": "sq", "region": "AL",
+      "name_native": "shqip", "name_english": "Albanian", "country_english": "Albania"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/sq_AL-edon-medium.onnx": {"size_bytes": 16922032, "md5_digest": "fa1c4fbe89cc6835865473af738f8aa7"},
+      "int8-v1/sq_AL-edon-medium.onnx.json": {"size_bytes": 4961, "md5_digest": "ceae64fc2a4411475ef23ebd307d1c53"}
+    }
+  },
+  "sr_RS-serbski_institut-medium": {
+    "key": "sr_RS-serbski_institut-medium",
+    "name": "serbski_institut",
+    "language": {"code": "sr_RS", "family": "sr", "region": "RS",
+      "name_native": "srpski", "name_english": "Serbian", "country_english": "Serbia"},
+    "quality": "medium",
+    "num_speakers": 2,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v1/sr_RS-serbski_institut-medium.onnx": {"size_bytes": 20050568, "md5_digest": "db0d399e7c276ab7081777035677e79a"},
+      "int8-v1/sr_RS-serbski_institut-medium.onnx.json": {"size_bytes": 4999, "md5_digest": "dacee7595352af9b4d78bb42237bd759"}
+    }
+  },
+  "sv_SE-lisa-medium": {
+    "key": "sv_SE-lisa-medium",
+    "name": "lisa",
+    "language": {"code": "sv_SE", "family": "sv", "region": "SE",
+      "name_native": "Svenska", "name_english": "Swedish", "country_english": "Sweden"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/sv_SE-lisa-medium.onnx": {"size_bytes": 16922032, "md5_digest": "051f513ec6af11d07eccff9d7461483a"},
+      "int8-v1/sv_SE-lisa-medium.onnx.json": {"size_bytes": 7239, "md5_digest": "1a768f208277aa835e203a969df71345"}
+    }
+  },
+  "sv_SE-nst-medium": {
+    "key": "sv_SE-nst-medium",
+    "name": "nst",
+    "language": {"code": "sv_SE", "family": "sv", "region": "SE",
+      "name_native": "Svenska", "name_english": "Swedish", "country_english": "Sweden"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v1/sv_SE-nst-medium.onnx": {"size_bytes": 16587466, "md5_digest": "fdab02aceb9b0f604f5605ddb7783322"},
+      "int8-v1/sv_SE-nst-medium.onnx.json": {"size_bytes": 4157, "md5_digest": "3a95d9b88bb3214bf4d0d7fcf8a1aea9"}
+    }
+  },
+  "sw_CD-lanfrica-medium": {
+    "key": "sw_CD-lanfrica-medium",
+    "name": "lanfrica",
+    "language": {"code": "sw_CD", "family": "sw", "region": "CD",
+      "name_native": "Kiswahili", "name_english": "Swahili", "country_english": "Democratic Republic of the Congo"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/sw_CD-lanfrica-medium.onnx": {"size_bytes": 16612288, "md5_digest": "da87bcd42f383a18deae3e68b1841bf4"},
+      "int8-v1/sw_CD-lanfrica-medium.onnx.json": {"size_bytes": 4905, "md5_digest": "fee67ee6bbb0ad9d9376b0d1cf2923d1"}
+    }
+  },
+  "te_IN-maya-medium": {
+    "key": "te_IN-maya-medium",
+    "name": "maya",
+    "language": {"code": "te_IN", "family": "te", "region": "IN",
+      "name_native": "తెలుగు", "name_english": "Telugu", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "IIT Madras Indic TTS licence",
+    "files": {
+      "int8-v1/te_IN-maya-medium.onnx": {"size_bytes": 16361038, "md5_digest": "8ad6ead33e6d84d28e04d6a4268331c5"},
+      "int8-v1/te_IN-maya-medium.onnx.json": {"size_bytes": 5040, "md5_digest": "58a134cd3f762e9da9d6bdf72bf3d93c"}
+    }
+  },
+  "te_IN-padmavathi-medium": {
+    "key": "te_IN-padmavathi-medium",
+    "name": "padmavathi",
+    "language": {"code": "te_IN", "family": "te", "region": "IN",
+      "name_native": "తెలుగు", "name_english": "Telugu", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/te_IN-padmavathi-medium.onnx": {"size_bytes": 16927044, "md5_digest": "ffb63b13fe53000437d55e9f67e2feef"},
+      "int8-v1/te_IN-padmavathi-medium.onnx.json": {"size_bytes": 4974, "md5_digest": "3f07441340aecc2a8b89987361e8078e"}
+    }
+  },
+  "tr_TR-dfki-medium": {
+    "key": "tr_TR-dfki-medium",
+    "name": "dfki",
+    "language": {"code": "tr_TR", "family": "tr", "region": "TR",
+      "name_native": "Türkçe", "name_english": "Turkish", "country_english": "Turkey"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v1/tr_TR-dfki-medium.onnx": {"size_bytes": 16612288, "md5_digest": "774459933bb99a14af6cd905192b80b6"},
+      "int8-v1/tr_TR-dfki-medium.onnx.json": {"size_bytes": 4960, "md5_digest": "683c97d5bf7588abb4d7b9ff556c9466"}
+    }
+  },
+  "uk_UA-mykyta-high": {
+    "key": "uk_UA-mykyta-high",
+    "name": "mykyta",
+    "language": {"code": "uk_UA", "family": "uk", "region": "UA",
+      "name_native": "украї́нська мо́ва", "name_english": "Ukrainian", "country_english": "Ukraine"},
+    "quality": "high",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "Apache-2.0",
+    "files": {
+      "int8-v1/uk_UA-mykyta-high.onnx": {"size_bytes": 43244099, "md5_digest": "956e3fc9513c210c8fb42e3343248ad4"},
+      "int8-v1/uk_UA-mykyta-high.onnx.json": {"size_bytes": 4904, "md5_digest": "4de596951b9faee6842ccc69a17b38a0"}
+    }
+  },
+  "uk_UA-oleksa-high": {
+    "key": "uk_UA-oleksa-high",
+    "name": "oleksa",
+    "language": {"code": "uk_UA", "family": "uk", "region": "UA",
+      "name_native": "украї́нська мо́ва", "name_english": "Ukrainian", "country_english": "Ukraine"},
+    "quality": "high",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "Apache-2.0",
+    "files": {
+      "int8-v1/uk_UA-oleksa-high.onnx": {"size_bytes": 43244099, "md5_digest": "56eefc3687ec58587860f3f2216668b0"},
+      "int8-v1/uk_UA-oleksa-high.onnx.json": {"size_bytes": 4904, "md5_digest": "4b00c2134ac78e15def386b16a2a3489"}
+    }
+  },
+  "ur_PK-aegis_female-medium": {
+    "key": "ur_PK-aegis_female-medium",
+    "name": "aegis_female",
+    "language": {"code": "ur_PK", "family": "ur", "region": "PK",
+      "name_native": "اردو", "name_english": "Urdu", "country_english": "Pakistan"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "MIT",
+    "files": {
+      "int8-v1/ur_PK-aegis_female-medium.onnx": {"size_bytes": 16924935, "md5_digest": "24a68b8546934fdcd8eba0ce9e8d0eb3"},
+      "int8-v1/ur_PK-aegis_female-medium.onnx.json": {"size_bytes": 5236, "md5_digest": "6ee1b0405998a314c51c6744b714becd"}
+    }
+  },
+  "ur_PK-fasih-medium": {
+    "key": "ur_PK-fasih-medium",
+    "name": "fasih",
+    "language": {"code": "ur_PK", "family": "ur", "region": "PK",
+      "name_native": "اردو", "name_english": "Urdu", "country_english": "Pakistan"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "MIT",
+    "files": {
+      "int8-v1/ur_PK-fasih-medium.onnx": {"size_bytes": 16943009, "md5_digest": "d6e6fb3008956229cf2b2750d6066946"},
+      "int8-v1/ur_PK-fasih-medium.onnx.json": {"size_bytes": 3146, "md5_digest": "e9d386b28cc8da844e6342325e04608b"}
+    }
+  },
+  "vi_VN-vais1000-medium": {
+    "key": "vi_VN-vais1000-medium",
+    "name": "vais1000",
+    "language": {"code": "vi_VN", "family": "vi", "region": "VN",
+      "name_native": "Tiếng Việt", "name_english": "Vietnamese", "country_english": "Vietnam"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "CC-BY-4.0",
+    "files": {
+      "int8-v1/vi_VN-vais1000-medium.onnx": {"size_bytes": 16612288, "md5_digest": "24caeb3326a1390e8920b6007fc8a321"},
+      "int8-v1/vi_VN-vais1000-medium.onnx.json": {"size_bytes": 4860, "md5_digest": "5ec9669253541d64ba97f60e422f1ad0"}
+    }
+  },
+  "zh_CN-huayan-medium": {
+    "key": "zh_CN-huayan-medium",
+    "name": "huayan",
+    "language": {"code": "zh_CN", "family": "zh", "region": "CN",
+      "name_native": "简体中文", "name_english": "Chinese", "country_english": "China"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "rhasspy/piper-voices (INT8: animeshahilya)",
+    "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
+    "files": {
+      "int8-v1/zh_CN-huayan-medium.onnx": {"size_bytes": 16612288, "md5_digest": "af54adb2b2db99dfae5e9b1efd85b7b9"},
+      "int8-v1/zh_CN-huayan-medium.onnx.json": {"size_bytes": 4822, "md5_digest": "1fda3ec1d0d3a5a74064397ea8fe0af0"}
     }
   }
 }

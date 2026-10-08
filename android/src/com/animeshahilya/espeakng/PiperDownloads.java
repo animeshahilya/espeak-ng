@@ -249,20 +249,28 @@ final class PiperDownloads {
         });
     }
 
-    /** Piper's catalog plus the bundled extras it does not have (by key), best voices only. */
+    /** Piper's catalog plus the bundled extras, best voices only. */
     private static List<CatalogVoice> withExtras(Context context, List<CatalogVoice> catalog) {
-        final List<CatalogVoice> out = new ArrayList<>(catalog);
-        final java.util.Set<String> keys = new java.util.HashSet<>();
-        for (CatalogVoice v : catalog) {
-            keys.add(v.key);
-        }
-        for (CatalogVoice v : bundledExtras(context)) {
-            if (keys.add(v.key)) {
-                out.add(v);
-            }
-        }
+        final List<CatalogVoice> out = mergeExtras(catalog, bundledExtras(context));
         sort(out);
         return keptOnly(out, keptVoices(context));
+    }
+
+    /**
+     * A bundled entry replaces Piper's entry of the same key: the kept Piper
+     * voices are bundled as INT8-weight copies (a quarter of the space, same
+     * sound and speed), and installed voices move to them through
+     * {@link #checkForUpdates}. Pure for JVM tests.
+     */
+    static List<CatalogVoice> mergeExtras(List<CatalogVoice> catalog, List<CatalogVoice> extras) {
+        final java.util.Map<String, CatalogVoice> byKey = new java.util.LinkedHashMap<>();
+        for (CatalogVoice v : catalog) {
+            byKey.put(v.key, v);
+        }
+        for (CatalogVoice v : extras) {
+            byKey.put(v.key, v);
+        }
+        return new ArrayList<>(byKey.values());
     }
 
     /**
