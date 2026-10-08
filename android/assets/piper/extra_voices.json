@@ -1236,7 +1236,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/el_GR-rapunzelina-medium.onnx": {"size_bytes": 16361038, "md5_digest": "fdf11abaaf5eccf6b285549973ea340a"},
+      "int8-v1/el_GR-rapunzelina-medium.onnx": {"size_bytes": 16361382, "md5_digest": "793343643a774d81862936a739bc580f"},
       "int8-v1/el_GR-rapunzelina-medium.onnx.json": {"size_bytes": 4973, "md5_digest": "ba83ba13667e14e2f97fbc9d950f9583"}
     }
   },
@@ -1296,7 +1296,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "Apache-2.0",
     "files": {
-      "int8-v1/es_MX-claude-high.onnx": {"size_bytes": 16533303, "md5_digest": "97217bed0c4edd7e1fcc3aa1e0294a74"},
+      "int8-v1/es_MX-claude-high.onnx": {"size_bytes": 16533677, "md5_digest": "1b41b74981036224ece7ac9afc85d1fb"},
       "int8-v1/es_MX-claude-high.onnx.json": {"size_bytes": 4963, "md5_digest": "36882201922fabb409f18d284af3eddd"}
     }
   },
@@ -1446,7 +1446,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "IIT Madras Indic TTS licence",
     "files": {
-      "int8-v1/hi_IN-rohan-medium.onnx": {"size_bytes": 16361038, "md5_digest": "0035285f7d2d69bba6259550d8705fca"},
+      "int8-v1/hi_IN-rohan-medium.onnx": {"size_bytes": 16361382, "md5_digest": "c1d3e31fa518edb2ed22b7fcf44b4c79"},
       "int8-v1/hi_IN-rohan-medium.onnx.json": {"size_bytes": 5041, "md5_digest": "b4aeeef53e2c469def82769aa4ce19eb"}
     }
   },
@@ -1506,7 +1506,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
     "files": {
-      "int8-v1/id_ID-news_tts-medium.onnx": {"size_bytes": 16361038, "md5_digest": "f8e78f412a485c85fd31bc92b0a862c1"},
+      "int8-v1/id_ID-news_tts-medium.onnx": {"size_bytes": 16361382, "md5_digest": "42980b74b92216c6949c476a50d67cfd"},
       "int8-v1/id_ID-news_tts-medium.onnx.json": {"size_bytes": 5050, "md5_digest": "c023cfa031cc9ed4cf5dd8d2ef1e48ed"}
     }
   },
@@ -1521,7 +1521,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
     "files": {
-      "int8-v1/is_IS-salka-medium.onnx": {"size_bytes": 29978405, "md5_digest": "add8627dc49e409ebfd7a3d34ed569a5"},
+      "int8-v1/is_IS-salka-medium.onnx": {"size_bytes": 29978779, "md5_digest": "c7a17a0a1ae9bd9b28a3fd8bb02fb3cd"},
       "int8-v1/is_IS-salka-medium.onnx.json": {"size_bytes": 4164, "md5_digest": "ce262d355da30218152cbc256b0f2b69"}
     }
   },
@@ -1536,7 +1536,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
     "files": {
-      "int8-v1/is_IS-ugla-medium.onnx": {"size_bytes": 29978405, "md5_digest": "d4ad443516ac6c1412c611ef67cf78b4"},
+      "int8-v1/is_IS-ugla-medium.onnx": {"size_bytes": 29978779, "md5_digest": "d240f8b865ca62790cb78e43f0294117"},
       "int8-v1/is_IS-ugla-medium.onnx.json": {"size_bytes": 4163, "md5_digest": "c8c1aebf00bdc7ae6541ce68e3b83f31"}
     }
   },
@@ -1656,7 +1656,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
     "files": {
-      "int8-v1/ml_IN-arjun-medium.onnx": {"size_bytes": 16361038, "md5_digest": "006b418f23305d83aa70651caf6d4542"},
+      "int8-v1/ml_IN-arjun-medium.onnx": {"size_bytes": 16361382, "md5_digest": "22a9528986f499c32e231a831a1004a4"},
       "int8-v1/ml_IN-arjun-medium.onnx.json": {"size_bytes": 5044, "md5_digest": "18454efcad5bb889ee4cb1cb035993f5"}
     }
   },
@@ -1671,7 +1671,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
     "files": {
-      "int8-v1/ml_IN-meera-medium.onnx": {"size_bytes": 16361038, "md5_digest": "f2839e0adc2aa123506bf5e6e6eca0a7"},
+      "int8-v1/ml_IN-meera-medium.onnx": {"size_bytes": 16361382, "md5_digest": "be9b8460f07201895a2dca7eff6aa983"},
       "int8-v1/ml_IN-meera-medium.onnx.json": {"size_bytes": 5045, "md5_digest": "64c2eee28c62e3a072ccc2ea3d812748"}
     }
   },
@@ -1686,7 +1686,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/ne_NP-chitwan-medium.onnx": {"size_bytes": 16361038, "md5_digest": "74b9e80625a26d550e961b06454121b3"},
+      "int8-v1/ne_NP-chitwan-medium.onnx": {"size_bytes": 16361382, "md5_digest": "c591f48443f8b0960dcfcc343a3298be"},
       "int8-v1/ne_NP-chitwan-medium.onnx.json": {"size_bytes": 5043, "md5_digest": "7ddc520e24a862016f6d22cde4b70ac1"}
     }
   },
@@ -1776,7 +1776,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/pt_BR-cadu-medium.onnx": {"size_bytes": 16361038, "md5_digest": "49f91b76cc92e0dfa5730dce609ea147"},
+      "int8-v1/pt_BR-cadu-medium.onnx": {"size_bytes": 16361382, "md5_digest": "b9b3f16ae1ac10c38b719fd1c437ee0d"},
       "int8-v1/pt_BR-cadu-medium.onnx.json": {"size_bytes": 5040, "md5_digest": "3d35f13df6a2f7dc9b7b7924befbe7bb"}
     }
   },
@@ -1956,7 +1956,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "IIT Madras Indic TTS licence",
     "files": {
-      "int8-v1/te_IN-maya-medium.onnx": {"size_bytes": 16361038, "md5_digest": "8ad6ead33e6d84d28e04d6a4268331c5"},
+      "int8-v1/te_IN-maya-medium.onnx": {"size_bytes": 16361382, "md5_digest": "338acac0d28b93f36040a78666d45c58"},
       "int8-v1/te_IN-maya-medium.onnx.json": {"size_bytes": 5040, "md5_digest": "58a134cd3f762e9da9d6bdf72bf3d93c"}
     }
   },
