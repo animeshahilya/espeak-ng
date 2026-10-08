@@ -550,7 +550,12 @@ voices" does not, so voices can still be deleted to free space.
   the NPU decoders still read the float latent) - Pixel 8, SYSPIN decoder
   2.0 -> 2.4-2.7x real time, 62-78 dB SNR vs float32, 58 -> 43 MB (Rasa
   62 -> 48.5); Compact keeps its INT8 decoder (4.0-4.6x) and shrinks
-  (SYSPIN 44 -> 30, Rasa 49 -> 34). Measured (scratch/voice-eval/size,
+  (SYSPIN 44 -> 30, Rasa 49 -> 34). Measured and rejected (2026-10-08, user's call): the
+  fp16 decoder's weights stored INT8 and widened to fp16 per run
+  (com.microsoft DequantizeLinear, fp16 scale; ORT keeps it unfolded, so
+  the phone copy is small too): 43 -> 30 MB, 23 dB SNR, but the Pixel 8
+  CPU decoder 6-7% slower, and it needs that kernel added to the slim
+  runtime. Slow phones get the 30 MB Compact anyway. Measured (scratch/voice-eval/size,
   compare.py, noise scales 0): log-mel distance to the original 0.74-1.15
   dB over 11 voices (es_MX-claude 1.64; the first Compact was 1.43); ASR
   error rates unchanged within noise. Pixel 8, native ORT 1.29 bench
