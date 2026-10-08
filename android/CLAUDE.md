@@ -673,7 +673,7 @@ voices" does not, so voices can still be deleted to free space.
   run to it as its own unit, resampled to eSpeak's 22050 Hz where its rate
   differs. Before this, only a natural primary voice switched,
   so eSpeak-English users never heard their Hindi voice in mixed text.
-  `PiperE2EDeviceTest.j_*` checks it (natural voices peak at full scale).
+  `PiperE2EDeviceTest.j_*` checks it (the render must differ from eSpeak's own with the Hindi voice unset; peaks stopped telling them apart with the INT8 voices).
   Script tables (`LanguageRuns.LANGUAGE_SCRIPT` + `ALSO_WRITTEN_IN`) decide
   what is "another language": a language's text in any of its scripts stays
   with it. Kurdish `ku` is Kurmanji (Latin) - it was listed as Arabic, so the

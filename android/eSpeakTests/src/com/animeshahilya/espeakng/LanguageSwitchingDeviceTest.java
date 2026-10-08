@@ -91,6 +91,11 @@ public class LanguageSwitchingDeviceTest {
         return mEngine.phonemizeForPiper(voice, text);
     }
 
+    private String letters(String voice, String text) {
+        final String ipa = ipa(voice, text);
+        return ipa == null ? null : ipa.replace(" ", "");
+    }
+
     // =========================================================================
     // 1. Native Phonemization across Engines / Languages
     // =========================================================================
@@ -145,45 +150,46 @@ public class LanguageSwitchingDeviceTest {
 
     @Test
     public void testTechWordsPhonemizationAndNormalization() {
+        // Spelled letters are separate words ("O T P"), so phonemes are compared without spaces.
         // 1. English tech word normalization and fluent IPA assertions
         final String chatGpt = TechWordsNormalizer.process("chatgpt");
-        assertEquals("Chat G-P-T", chatGpt);
-        assertTrue("ChatGPT IPA should contain Gee-Pee-Tee", ipa("en", chatGpt).contains("dʒˈiːpˈiːtˈiː"));
+        assertEquals("Chat G P T", chatGpt);
+        assertTrue("ChatGPT IPA should contain Gee-Pee-Tee", letters("en", chatGpt).contains("dʒˈiːpˈiːtˈiː"));
 
         final String gpay = TechWordsNormalizer.process("gpay");
         assertEquals("G-Pay", gpay);
-        assertTrue("GPay IPA should contain Gee-Pay", ipa("en", gpay).contains("dʒˈiːpˈeɪ"));
+        assertTrue("GPay IPA should contain Gee-Pay", letters("en", gpay).contains("dʒˈiːpˈeɪ"));
 
         final String gmail = TechWordsNormalizer.process("gmail");
         assertEquals("G-mail", gmail);
-        assertTrue("Gmail IPA should contain Gee-mail", ipa("en", gmail).contains("dʒˈiːmˈeɪl"));
+        assertTrue("Gmail IPA should contain Gee-mail", letters("en", gmail).contains("dʒˈiːmˈeɪl"));
 
         final String upi = TechWordsNormalizer.process("upi");
-        assertEquals("U-P-I", upi);
-        assertTrue("UPI IPA should contain You-Pee-Eye", ipa("en", upi).contains("jˈuːpˈiːˈaɪ"));
+        assertEquals("U P I", upi);
+        assertTrue("UPI IPA should contain You-Pee-Eye", letters("en", upi).contains("jˈuːpˈiːˈaɪ"));
 
         final String otp = TechWordsNormalizer.process("otp");
-        assertEquals("O-T-P", otp);
-        assertTrue("OTP IPA should contain Oh-Tee-Pee", ipa("en", otp).contains("ˈəʊtˈiːpˈiː"));
+        assertEquals("O T P", otp);
+        assertTrue("OTP IPA should contain Oh-Tee-Pee", letters("en", otp).contains("ˈəʊtˈiːpˈiː"));
 
         final String wifi = TechWordsNormalizer.process("wifi");
         assertEquals("Wi-Fi", wifi);
-        assertTrue("WiFi IPA should contain Wi-Fi diphthongs", ipa("en", wifi).contains("wˈaɪfˌaɪ"));
+        assertTrue("WiFi IPA should contain Wi-Fi diphthongs", letters("en", wifi).contains("wˈaɪfˌaɪ"));
 
         final String paytm = TechWordsNormalizer.process("paytm");
-        assertEquals("Pay-T-M", paytm);
-        assertTrue("PayTM IPA should contain Tee-Em", ipa("en", paytm).contains("tˈiːˈɛm"));
+        assertEquals("Pay T M", paytm);
+        assertTrue("PayTM IPA should contain Tee-Em", letters("en", paytm).contains("tˈiːˈɛm"));
 
         // 2. Multilingual verification: tech words normalized and spoken under other language voices
-        final String hiChat = ipa("hi", TechWordsNormalizer.process("ChatGPT"));
+        final String hiChat = letters("hi", TechWordsNormalizer.process("ChatGPT"));
         assertNotNull(hiChat);
         assertTrue("Hindi voice should pronounce Chat-G-P-T", hiChat.contains("dʒˈiːpˈiːtˈiː"));
 
-        final String mrGpay = ipa("mr", TechWordsNormalizer.process("GPay"));
+        final String mrGpay = letters("mr", TechWordsNormalizer.process("GPay"));
         assertNotNull(mrGpay);
         assertTrue("Marathi voice should pronounce G-Pay", mrGpay.contains("dʒˈiːpˈeɪ"));
 
-        final String arChat = ipa("ar", TechWordsNormalizer.process("chatgpt"));
+        final String arChat = letters("ar", TechWordsNormalizer.process("chatgpt"));
         assertNotNull(arChat);
         assertTrue("Arabic voice should pronounce Chat-G-P-T", arChat.contains("dʒˈiːpˈiːtˈiː"));
     }

@@ -464,12 +464,15 @@ public class TextPipelineDeviceTest {
             prefs.edit().remove(VoiceSettings.PREF_NORMALIZE_TECH_WORDS).commit();
             assertThat(TextPreprocessor.process(input, voice, settings, false, null, context).text,
                     containsString("ChatGPT"));
+            // A natural voice gets it whatever the setting.
+            assertThat(TextPreprocessor.process(input, voice, settings, false, null, context, true).text,
+                    containsString("Chat G P T"));
 
             prefs.edit().putBoolean(VoiceSettings.PREF_NORMALIZE_TECH_WORDS, true).commit();
             final TextPreprocessor.Result result = TextPreprocessor.process(
                     input, voice, settings, false, null, context);
 
-            assertThat(result.text, containsString("Chat G-P-T"));
+            assertThat(result.text, containsString("Chat G P T"));
             assertThat(result.text, containsString("G-Pay"));
             assertThat(result.text, containsString("G-mail"));
         } finally {
