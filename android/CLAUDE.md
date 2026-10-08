@@ -416,6 +416,25 @@ voices" does not, so voices can still be deleted to free space.
   that looked like voice faults: Gujarati Jay "stopping mid-sentence" (Whisper
   dropping long audio: the same text per sentence 18%, like Hetal) and lone
   Gujarati words; Malayalam/Assamese written in Devanagari, Latin or English.
+- **Acronyms, app names, phone numbers** (2026-10-08, US English Amy/HFC
+  diagnosis, scratch/voice-eval/en_diag). The voices were not at fault:
+  eSpeak itself reads OTP "ot-p", UPI "yoopi", KYC "kick", FAQ "fack", and
+  "9876543210" as "nine billion...". When a natural voice reads the
+  request's language, `TextPreprocessor` always runs `TechWordsNormalizer`
+  (the setting now only adds it for eSpeak, which keeps NVDA's reading)
+  and `NumberReading.spellLongNumbers` (10+ digit runs digit by digit).
+  The normalizer spells letters with spaces ("O T P"): its old hyphens
+  joined them into one eSpeak word ("F-A-Q" -> "ɛfɐkjuː", the A lost); a
+  lone "A" is the article to eSpeak, so it is hyphened to the next letter
+  ("A-T M", "F A-Q"), and plurals are "O T P's" ("O T Ps" reads "P S").
+  Parakeet, 4 renders: OTP/UPI/KYC/FAQ 0/16 -> 16/16 per voice; Pixel 8
+  end to end confirmed. PhonePe -> "Phone Pay", Zomato -> "Zo-mato",
+  Swiggy -> "Swig-ee" (small gains); WhatsApp is heard as "What's up"
+  whatever the spelling. Lone short words ("End" -> "And", "All" -> "Oh",
+  "On" -> "Um") were NOT changed: Parakeet mishears eSpeak's lone words
+  the same way, so an ASR cannot judge them; routing them to eSpeak was
+  tried and reverted. Indian names stay anglicized on US voices (Rahul is
+  the Indian English choice).
 - **Character voices (SYSPIN + Rasa, 2026-10-01).** 42 voices that read
   script letters, not eSpeak phonemes (`phoneme_type` "text"): 22 SYSPIN
   (IISc, Coqui VITS, MIT, 22050 Hz) and 20 AI4Bharat Rasa (CC BY 4.0,

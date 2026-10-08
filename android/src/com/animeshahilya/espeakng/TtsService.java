@@ -980,8 +980,10 @@ public class TtsService extends TextToSpeechService {
         // that can change the text's length. See TextOffsetMap.
         TextOffsetMap offsetMap = null;
 
+        final PiperVoiceStore.Installed natural = isSsml ? null
+                : PiperVoiceStore.resolve(mStorageContext, prefs, voice);
         TextPreprocessor.Result prep = TextPreprocessor.process(
-                text, voice, settings, isSsml, offsetMap, mStorageContext);
+                text, voice, settings, isSsml, offsetMap, mStorageContext, natural != null);
         text = prep.text;
         offsetMap = prep.offsetMap;
         final boolean isSingleCharacterUtterance = prep.isSingleCharacterUtterance;
@@ -1001,23 +1003,19 @@ public class TtsService extends TextToSpeechService {
         // already in memory. SSML stays with eSpeak (Piper has no markup
         // support), and so, by default, do single characters: character
         // navigation is where a screen reader user notices latency most.
-        if (!isSsml && !(isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs))) {
-            final PiperVoiceStore.Installed natural =
-                    PiperVoiceStore.resolve(mStorageContext, prefs, voice);
-            if (natural != null) {
-                final PiperModel model = mPiper.getLoaded(natural.key);
-                if (model != null && !espeakReadsPart(text, natural, prefs, settings, scriptLanguages)) {
-                    synthesizeNatural(request, callback, engine, settings, prefs, voice, natural,
-                            model, text, scriptLanguages);
-                    return;
-                }
-                // Not loaded yet: eSpeak speaks this one while it loads. Or
-                // part of it is in a language no natural voice reads: the
-                // eSpeak path below reads that part and hands the rest to
-                // the natural voices (withNaturalRuns).
-                if (model == null) {
-                    mPiper.preload(natural.key, natural.model(), natural.config);
-                }
+        if (natural != null && !(isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs))) {
+            final PiperModel model = mPiper.getLoaded(natural.key);
+            if (model != null && !espeakReadsPart(text, natural, prefs, settings, scriptLanguages)) {
+                synthesizeNatural(request, callback, engine, settings, prefs, voice, natural,
+                        model, text, scriptLanguages);
+                return;
+            }
+            // Not loaded yet: eSpeak speaks this one while it loads. Or
+            // part of it is in a language no natural voice reads: the
+            // eSpeak path below reads that part and hands the rest to
+            // the natural voices (withNaturalRuns).
+            if (model == null) {
+                mPiper.preload(natural.key, natural.model(), natural.config);
             }
         }
 

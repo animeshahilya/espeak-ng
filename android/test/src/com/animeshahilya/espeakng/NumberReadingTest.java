@@ -6,6 +6,13 @@ import static org.junit.Assert.*;
 public class NumberReadingTest {
 
     @Test
+    public void longNumbersAreReadDigitByDigit() {
+        assertEquals("Call 9 8 7 6 5 4 3 2 1 0 now", NumberReading.spellLongNumbers("Call 9876543210 now"));
+        assertEquals("1,250 steps, 123456789 and 3.14159265358",
+                NumberReading.spellLongNumbers("1,250 steps, 123456789 and 3.14159265358"));
+    }
+
+    @Test
     public void testDollarReading() {
         assertEquals("5 dollars 50 cents", NumberReading.readMoney("$5.50", false));
         assertEquals("1 dollar", NumberReading.readMoney("$1", false));

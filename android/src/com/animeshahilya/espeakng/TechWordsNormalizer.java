@@ -49,6 +49,8 @@ public final class TechWordsNormalizer {
                     + "|snap[ -]?chats?(?:'s)?"
                     + "|pay[ -]?tm(?:'s)?"
                     + "|phone[ -]?pe(?:'s)?"
+                    + "|zomato(?:'s)?"
+                    + "|swiggy(?:'s)?"
                     + "|(?:fastag|fast[ -]?tag)s?(?:'s)?"
                     + "|wi[ -]?fi"
                     + "|qr[ -]?codes?|scan[ -]?qr"
@@ -69,6 +71,7 @@ public final class TechWordsNormalizer {
                     + "|(?-i:IMPS)" // lower case is the English word "imps"
                     + "|atm(?:'s)?"
                     + "|kyc"
+                    + "|html"
                     + "|gps"
                     + "|usb"
                     + "|nfc"
@@ -124,45 +127,45 @@ public final class TechWordsNormalizer {
 
         // Compound QR, MPIN, PIN, ID
         if (lower.contains("qr")) {
-            if (lower.contains("code")) return "Q-R code" + apostropheS;
-            if (lower.contains("scan")) return "scan Q-R" + apostropheS;
-            return "Q-R" + apostropheS;
+            if (lower.contains("code")) return "Q R code" + apostropheS;
+            if (lower.contains("scan")) return "scan Q R" + apostropheS;
+            return "Q R" + apostropheS;
         }
         if (lower.startsWith("mpin") || lower.startsWith("m-pin") || lower.startsWith("m pin")) {
-            return "M-PIN" + apostropheS;
+            return "M PIN" + apostropheS;
         }
         if (lower.endsWith(" pin") || lower.endsWith("-pin") || lower.startsWith("pin ") || lower.startsWith("pin-") || lower.equals("pin")) {
-            if (lower.contains("upi")) return "U-P-I PIN" + apostropheS;
-            if (lower.contains("atm")) return "A-T-M PIN" + apostropheS;
+            if (lower.contains("upi")) return "U P I PIN" + apostropheS;
+            if (lower.contains("atm")) return "A-T M PIN" + apostropheS;
             if (lower.contains("code")) return "PIN code" + apostropheS;
             return "PIN" + apostropheS;
         }
         if (lower.endsWith(" id") || lower.endsWith("-id") || lower.startsWith("id ") || lower.startsWith("id-") || lower.equals("id")) {
-            if (lower.contains("card")) return "I-D card" + apostropheS;
-            if (lower.contains("user")) return "user I-D" + apostropheS;
-            if (lower.contains("email")) return "email I-D" + apostropheS;
-            if (lower.contains("voter")) return "voter I-D" + apostropheS;
-            if (lower.contains("caller")) return "caller I-D" + apostropheS;
-            if (lower.contains("upi")) return "U-P-I I-D" + apostropheS;
-            if (lower.contains("face")) return "face I-D" + apostropheS;
-            if (lower.contains("touch")) return "touch I-D" + apostropheS;
-            if (lower.contains("gov")) return "govt I-D" + apostropheS;
-            return "I-D" + apostropheS;
+            if (lower.contains("card")) return "I D card" + apostropheS;
+            if (lower.contains("user")) return "user I D" + apostropheS;
+            if (lower.contains("email")) return "email I D" + apostropheS;
+            if (lower.contains("voter")) return "voter I D" + apostropheS;
+            if (lower.contains("caller")) return "caller I D" + apostropheS;
+            if (lower.contains("upi")) return "U P I I D" + apostropheS;
+            if (lower.contains("face")) return "face I D" + apostropheS;
+            if (lower.contains("touch")) return "touch I D" + apostropheS;
+            if (lower.contains("gov")) return "govt I D" + apostropheS;
+            return "I D" + apostropheS;
         }
 
         // ChatGPT & GPT variations
         if (lower.startsWith("chat")) {
-            return "Chat G-P-T" + apostropheS;
+            return "Chat G P T" + apostropheS;
         }
         if (lower.startsWith("gpt")) {
             final String suffix = raw.substring(3); // e.g. "-4", "4", "-3.5"
             if (suffix.isEmpty()) {
-                return "G-P-T";
+                return "G P T";
             }
             if (suffix.startsWith("-")) {
-                return "G-P-T" + suffix;
+                return "G P T" + suffix;
             }
-            return "G-P-T-" + suffix;
+            return "G P T-" + suffix;
         }
 
         // Payments & Banking apps
@@ -170,29 +173,37 @@ public final class TechWordsNormalizer {
             return "G-Pay" + apostropheS;
         }
         if (lower.startsWith("pay") && lower.contains("tm")) {
-            return "Pay-T-M" + apostropheS;
+            return "Pay T M" + apostropheS;
         }
         if (lower.startsWith("phone") && lower.contains("pe")) {
-            return "Phone-Pe" + apostropheS;
+            return "Phone Pay" + apostropheS;
         }
         if (lower.startsWith("fast") && (lower.contains("tag") || lower.contains("ag"))) {
             final boolean plural = lower.contains("tags") || lower.contains("ags");
             return "Fast-Tag" + (plural ? "s" : "") + apostropheS;
         }
         if (lower.equals("upi") || lower.equals("upi's")) {
-            return "U-P-I" + apostropheS;
+            return "U P I" + apostropheS;
         }
         if (lower.contains("mpin") || lower.contains("m-pin") || lower.contains("m pin")) {
-            return "M-PIN" + apostropheS;
+            return "M PIN" + apostropheS;
         }
         if (lower.equals("neft")) {
-            return "N-E-F-T";
+            return "N E F T";
         }
         if (lower.equals("rtgs")) {
-            return "R-T-G-S";
+            return "R T G S";
         }
         if (raw.equals("IMPS")) {
-            return "I-M-P-S";
+            return "I M P S";
+        }
+
+        // Natural voices say "Samato" and "Sweetie" for the plain names.
+        if (lower.startsWith("zomato")) {
+            return "Zo-mato" + apostropheS;
+        }
+        if (lower.startsWith("swiggy")) {
+            return "Swig-ee" + apostropheS;
         }
 
         // Google & Messaging brands
@@ -244,10 +255,10 @@ public final class TechWordsNormalizer {
             return "i-Watch" + apostropheS;
         }
         if (lower.equals("ios")) {
-            return "i-O-S";
+            return "i O S";
         }
         if (lower.contains("macos") || lower.contains("mac os") || lower.contains("mac-os")) {
-            return "Mac-O-S";
+            return "Mac O S";
         }
 
         // AI Companies
@@ -270,54 +281,57 @@ public final class TechWordsNormalizer {
         }
         if (lower.startsWith("otp")) {
             final boolean plural = lower.contains("otps");
-            return "O-T-P" + (plural ? "s" : "") + apostropheS;
+            return "O T P" + (plural ? "'s" : "") + apostropheS;
         }
         if (lower.startsWith("faq")) {
             final boolean plural = lower.contains("faqs");
-            return "F-A-Q" + (plural ? "s" : "") + apostropheS;
+            return "F A-Q" + (plural ? "'s" : "") + apostropheS;
         }
         if (lower.startsWith("pdf")) {
             final boolean plural = lower.contains("pdfs");
-            return "P-D-F" + (plural ? "s" : "") + apostropheS;
+            return "P D F" + (plural ? "'s" : "") + apostropheS;
         }
         if (lower.equals("sms")) {
-            return "S-M-S";
+            return "S M S";
         }
         if (lower.startsWith("api")) {
             final boolean plural = lower.contains("apis");
-            return "A-P-I" + (plural ? "s" : "") + apostropheS;
+            return "A-P I" + (plural ? "'s" : "") + apostropheS;
         }
         if (lower.startsWith("url")) {
             final boolean plural = lower.contains("urls");
-            return "U-R-L" + (plural ? "s" : "") + apostropheS;
+            return "U R L" + (plural ? "'s" : "") + apostropheS;
         }
         if (lower.contains("esim") || lower.contains("e-sim") || lower.contains("e sim")) {
             final boolean plural = lower.contains("sims");
-            return "e-SIM" + (plural ? "s" : "") + apostropheS;
+            return "e SIM" + (plural ? "s" : "") + apostropheS;
         }
         if (lower.equals("atm") || lower.equals("atms") || lower.equals("atm's")) {
-            return "A-T-M" + apostropheS;
+            return "A-T M" + apostropheS;
         }
         if (lower.equals("kyc")) {
-            return "K-Y-C";
+            return "K Y C";
+        }
+        if (lower.equals("html")) {
+            return "H T M L";
         }
         if (lower.equals("gps")) {
-            return "G-P-S";
+            return "G P S";
         }
         if (lower.equals("usb")) {
-            return "U-S-B";
+            return "U S B";
         }
         if (lower.equals("nfc")) {
-            return "N-F-C";
+            return "N F C";
         }
         if (lower.equals("vpn")) {
-            return "V-P-N";
+            return "V P N";
         }
         if (lower.equals("cpu")) {
-            return "C-P-U";
+            return "C P U";
         }
         if (lower.equals("gpu")) {
-            return "G-P-U";
+            return "G P U";
         }
 
         return raw;

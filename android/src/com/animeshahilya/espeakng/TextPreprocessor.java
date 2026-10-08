@@ -118,6 +118,23 @@ public final class TextPreprocessor {
             boolean isSsml,
             TextOffsetMap initialOffsetMap,
             Context storageContext) {
+        return process(text, voice, settings, isSsml, initialOffsetMap, storageContext, false);
+    }
+
+    /**
+     * @param naturalVoice a natural voice reads this language: acronyms,
+     *        app names and long digit runs are written out for it whatever
+     *        the setting, as these voices misread them (eSpeak keeps NVDA's
+     *        reading unless the user turns the normalizer on)
+     */
+    public static Result process(
+            String text,
+            Voice voice,
+            VoiceSettings settings,
+            boolean isSsml,
+            TextOffsetMap initialOffsetMap,
+            Context storageContext,
+            boolean naturalVoice) {
 
         if (text == null || text.isEmpty()) {
             return new Result(text != null ? text : "", initialOffsetMap, false);
@@ -198,8 +215,12 @@ public final class TextPreprocessor {
         // Universal tech word, app name & acronym normalization: ensures natural
         // voices (Piper, SYSPIN, Rasa, Kokoro, eSpeak) pronounce terms like ChatGPT,
         // GPay, Gmail, WhatsApp, YouTube, UPI, OTP, WiFi, PayTM, PhonePe properly.
-        if (normalReading && settings.isNormalizeTechWordsEnabled()) {
+        if (normalReading && (naturalVoice || settings.isNormalizeTechWordsEnabled())) {
             text = edits.track(text, TechWordsNormalizer.process(text));
+        }
+        // Natural voices read "9876543210" as "nine billion ...".
+        if (normalReading && naturalVoice) {
+            text = edits.track(text, NumberReading.spellLongNumbers(text));
         }
 
         // Beta extra: Hinglish words become Devanagari, which eSpeak's own

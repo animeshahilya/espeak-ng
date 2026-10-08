@@ -130,6 +130,15 @@ public class EnglishVoicesDeviceTest {
             "a|The entrance is at the southern end of the site, from a footpath named Railway Children Walk, part of the South East London Green Chain and is joined with reserve's circular path by a shorter path with a footbridge passing over an unnamed stream which flows westward and empties into a small pond. The nature reserve, which is free to enter is accessed by local primary schools for forest school trips and is also used for dog walking and fruit picking. Several species of tree grow in the woodland including oak, birch, and ash among others, and the northern meadow area is home to numerous wildflowers such as meadow vetchling, and common vetch."
     };
 
+    /** {@code -e set fixes}: what the 2026-10-08 text fixes for these voices touch. */
+    private static final String[] FIX_ITEMS = {
+            "w|On", "w|Off", "w|End", "w|All", "w|Pay", "w|Home", "w|Tab", "w|Call",
+            "w|OTP", "w|UPI", "w|KYC", "w|FAQ", "w|NEFT", "w|HTML", "w|ATM",
+            "w|Zomato", "w|Swiggy", "w|PhonePe",
+            "p|Enter the OTP sent to your phone", "p|Complete your KYC today", "p|Pay using UPI",
+            "p|Read the FAQ", "p|Call 9876543210", "p|Order on Zomato", "p|Turn Wi-Fi off",
+    };
+
     private final ConcurrentHashMap<String, CountDownLatch> mDone = new ConcurrentHashMap<>();
 
     @Test
@@ -137,7 +146,29 @@ public class EnglishVoicesDeviceTest {
         final Bundle args = InstrumentationRegistry.getArguments();
         final Locale locale = Locale.forLanguageTag(args.getString("locale", "en-US"));
         final String tag = args.getString("tag", "run");
+        final String[] items = "fixes".equals(args.getString("set")) ? FIX_ITEMS : ITEMS;
         final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        // -e voice <key>: English assigned to that natural voice for this run only.
+        final android.content.SharedPreferences prefs = androidx.preference.PreferenceManager
+                .getDefaultSharedPreferences(context.createDeviceProtectedStorageContext());
+        final String voice = args.getString("voice");
+        final String oldVoice = prefs.getString("piper_voice_eng", null);
+        final boolean oldEnabled = prefs.getBoolean("piper_enabled", false);
+        if (voice != null) {
+            prefs.edit().putBoolean("piper_enabled", true).putString("piper_voice_eng", voice).commit();
+        }
+        try {
+            render(context, locale, tag, items);
+        } finally {
+            if (voice != null) {
+                final android.content.SharedPreferences.Editor e = prefs.edit()
+                        .putBoolean("piper_enabled", oldEnabled);
+                (oldVoice == null ? e.remove("piper_voice_eng") : e.putString("piper_voice_eng", oldVoice)).commit();
+            }
+        }
+    }
+
+    private void render(Context context, Locale locale, String tag, String[] items) throws Exception {
         final File dir = new File(context.getExternalCacheDir(), "en_check/" + tag);
         dir.mkdirs();
         final CountDownLatch ready = new CountDownLatch(1);
@@ -155,11 +186,11 @@ public class EnglishVoicesDeviceTest {
             Thread.sleep(3000);
         }
         final StringBuilder index = new StringBuilder();
-        for (int i = 0; i < ITEMS.length; i++) {
+        for (int i = 0; i < items.length; i++) {
             final String id = String.format(Locale.ROOT, "%03d", i);
-            final String text = ITEMS[i].substring(2);
+            final String text = items[i].substring(2);
             say(tts, text, new File(dir, id + ".wav"), id);
-            index.append(id).append("\t").append(ITEMS[i].charAt(0)).append("\t").append(text).append("\n");
+            index.append(id).append("\t").append(items[i].charAt(0)).append("\t").append(text).append("\n");
         }
         try (FileOutputStream out = new FileOutputStream(new File(dir, "index.txt"))) {
             out.write(index.toString().getBytes(StandardCharsets.UTF_8));

@@ -204,6 +204,23 @@ public final class NumberReading {
     private static final int LOOK_BEHIND = 40;
     private static final int LOOK_AHEAD = 30;
 
+    // Ten digits or more with nothing joining them to other digits: a phone,
+    // account or card number, never a quantity anyone says as one.
+    private static final Pattern LONG_NUMBER = Pattern.compile("(?<![\\d.,])\\d{10,}(?!\\d|[.,]\\d)");
+
+    /** "9876543210" -> "9 8 7 6 5 4 3 2 1 0". */
+    static String spellLongNumbers(String text) {
+        if (text == null || !containsAsciiDigit(text)) return text;
+        Matcher m = LONG_NUMBER.matcher(text);
+        if (!m.find()) return text;
+        StringBuffer sb = new StringBuffer(text.length() * 2);
+        do {
+            m.appendReplacement(sb,m.group().replaceAll("(?<=\\d)(?=\\d)", " "));
+        } while (m.find());
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
     public static String readCodes(String text) {
         if (text == null || text.isEmpty() || !containsAsciiDigit(text)) return text;
         if (!CODE_KEYWORD.matcher(text).find()) return text;

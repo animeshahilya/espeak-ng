@@ -13,6 +13,7 @@ The espeak-ng project is a fork of the espeak project.
    *  Voices take far less space: most are now about a quarter of the size and sound the same. Voices you already have shrink with the next voice update.
    *  Each voice keeps only one copy on the phone, about half the space it used before.
    *  Typing, deleting and moving by letter in Hindi and other Indian languages reads each letter clearly, including letters with vowel signs (कि), half letters (क्) and joined letters (क्ष).
+   *  Natural voices read short forms like OTP, UPI, KYC and FAQ letter by letter, phone numbers digit by digit, and say app names like PhonePe, Zomato and Swiggy more clearly.
    *  The experimental hardware acceleration switch is gone: it made natural voices slower. The Snapdragon version still runs voices on the NPU.
 *  **Storage**: the app uses about 30 MB less space on the phone; every language still works right away.
 *  **Smaller download**: the app is about 6 MB smaller to download and 17 MB smaller once installed.

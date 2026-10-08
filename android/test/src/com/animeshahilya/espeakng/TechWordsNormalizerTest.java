@@ -39,13 +39,13 @@ public class TechWordsNormalizerTest {
 
     @Test
     public void testChatGptVariations() {
-        assertEquals("Chat G-P-T", TechWordsNormalizer.process("chatgpt"));
-        assertEquals("Chat G-P-T", TechWordsNormalizer.process("ChatGPT"));
-        assertEquals("Chat G-P-T", TechWordsNormalizer.process("chat gpt"));
-        assertEquals("Chat G-P-T", TechWordsNormalizer.process("chat-gpt"));
-        assertEquals("Chat G-P-T's response", TechWordsNormalizer.process("ChatGPT's response"));
-        assertEquals("Chat G-P-T's answer", TechWordsNormalizer.process("chatgpt's answer"));
-        assertEquals("Ask Chat G-P-T about it", TechWordsNormalizer.process("Ask ChatGPT about it"));
+        assertEquals("Chat G P T", TechWordsNormalizer.process("chatgpt"));
+        assertEquals("Chat G P T", TechWordsNormalizer.process("ChatGPT"));
+        assertEquals("Chat G P T", TechWordsNormalizer.process("chat gpt"));
+        assertEquals("Chat G P T", TechWordsNormalizer.process("chat-gpt"));
+        assertEquals("Chat G P T's response", TechWordsNormalizer.process("ChatGPT's response"));
+        assertEquals("Chat G P T's answer", TechWordsNormalizer.process("chatgpt's answer"));
+        assertEquals("Ask Chat G P T about it", TechWordsNormalizer.process("Ask ChatGPT about it"));
     }
 
     @Test
@@ -84,28 +84,28 @@ public class TechWordsNormalizerTest {
 
     @Test
     public void testFintechAndBanking() {
-        assertEquals("Pay-T-M", TechWordsNormalizer.process("paytm"));
-        assertEquals("Pay-T-M", TechWordsNormalizer.process("Paytm"));
-        assertEquals("Pay-T-M", TechWordsNormalizer.process("PayTM"));
-        assertEquals("Pay-T-M", TechWordsNormalizer.process("pay tm"));
+        assertEquals("Pay T M", TechWordsNormalizer.process("paytm"));
+        assertEquals("Pay T M", TechWordsNormalizer.process("Paytm"));
+        assertEquals("Pay T M", TechWordsNormalizer.process("PayTM"));
+        assertEquals("Pay T M", TechWordsNormalizer.process("pay tm"));
 
-        assertEquals("Phone-Pe", TechWordsNormalizer.process("phonepe"));
-        assertEquals("Phone-Pe", TechWordsNormalizer.process("PhonePe"));
-        assertEquals("Phone-Pe", TechWordsNormalizer.process("phone pe"));
+        assertEquals("Phone Pay", TechWordsNormalizer.process("phonepe"));
+        assertEquals("Phone Pay", TechWordsNormalizer.process("PhonePe"));
+        assertEquals("Phone Pay", TechWordsNormalizer.process("phone pe"));
 
         assertEquals("Fast-Tag", TechWordsNormalizer.process("fastag"));
         assertEquals("Fast-Tag", TechWordsNormalizer.process("FASTag"));
         assertEquals("Fast-Tag", TechWordsNormalizer.process("Fastag"));
         assertEquals("Fast-Tags", TechWordsNormalizer.process("fastags"));
 
-        assertEquals("U-P-I", TechWordsNormalizer.process("upi"));
-        assertEquals("U-P-I", TechWordsNormalizer.process("UPI"));
-        assertEquals("M-PIN", TechWordsNormalizer.process("mpin"));
-        assertEquals("M-PIN", TechWordsNormalizer.process("MPIN"));
+        assertEquals("U P I", TechWordsNormalizer.process("upi"));
+        assertEquals("U P I", TechWordsNormalizer.process("UPI"));
+        assertEquals("M PIN", TechWordsNormalizer.process("mpin"));
+        assertEquals("M PIN", TechWordsNormalizer.process("MPIN"));
 
-        assertEquals("N-E-F-T", TechWordsNormalizer.process("neft"));
-        assertEquals("R-T-G-S", TechWordsNormalizer.process("rtgs"));
-        assertEquals("I-M-P-S", TechWordsNormalizer.process("IMPS"));
+        assertEquals("N E F T", TechWordsNormalizer.process("neft"));
+        assertEquals("R T G S", TechWordsNormalizer.process("rtgs"));
+        assertEquals("I M P S", TechWordsNormalizer.process("IMPS"));
         assertEquals("little imps", TechWordsNormalizer.process("little imps"));
     }
 
@@ -116,39 +116,39 @@ public class TechWordsNormalizerTest {
         assertEquals("Wi-Fi", TechWordsNormalizer.process("wi-fi"));
         assertEquals("Wi-Fi", TechWordsNormalizer.process("wi fi"));
 
-        assertEquals("O-T-P", TechWordsNormalizer.process("otp"));
-        assertEquals("O-T-P", TechWordsNormalizer.process("OTP"));
-        assertEquals("O-T-Ps", TechWordsNormalizer.process("otps"));
+        assertEquals("O T P", TechWordsNormalizer.process("otp"));
+        assertEquals("O T P", TechWordsNormalizer.process("OTP"));
+        assertEquals("O T P's", TechWordsNormalizer.process("otps"));
 
-        assertEquals("F-A-Q", TechWordsNormalizer.process("faq"));
-        assertEquals("F-A-Qs", TechWordsNormalizer.process("faqs"));
-        assertEquals("F-A-Q", TechWordsNormalizer.process("FAQ"));
-        assertEquals("F-A-Qs", TechWordsNormalizer.process("FAQs"));
+        assertEquals("F A-Q", TechWordsNormalizer.process("faq"));
+        assertEquals("F A-Q's", TechWordsNormalizer.process("faqs"));
+        assertEquals("F A-Q", TechWordsNormalizer.process("FAQ"));
+        assertEquals("F A-Q's", TechWordsNormalizer.process("FAQs"));
 
-        assertEquals("P-D-F", TechWordsNormalizer.process("pdf"));
-        assertEquals("P-D-Fs", TechWordsNormalizer.process("pdfs"));
+        assertEquals("P D F", TechWordsNormalizer.process("pdf"));
+        assertEquals("P D F's", TechWordsNormalizer.process("pdfs"));
 
-        assertEquals("S-M-S", TechWordsNormalizer.process("sms"));
-        assertEquals("S-M-S", TechWordsNormalizer.process("SMS"));
+        assertEquals("S M S", TechWordsNormalizer.process("sms"));
+        assertEquals("S M S", TechWordsNormalizer.process("SMS"));
 
-        assertEquals("A-P-I", TechWordsNormalizer.process("api"));
-        assertEquals("A-P-Is", TechWordsNormalizer.process("apis"));
+        assertEquals("A-P I", TechWordsNormalizer.process("api"));
+        assertEquals("A-P I's", TechWordsNormalizer.process("apis"));
 
-        assertEquals("U-R-L", TechWordsNormalizer.process("url"));
-        assertEquals("U-R-Ls", TechWordsNormalizer.process("urls"));
+        assertEquals("U R L", TechWordsNormalizer.process("url"));
+        assertEquals("U R L's", TechWordsNormalizer.process("urls"));
 
-        assertEquals("e-SIM", TechWordsNormalizer.process("esim"));
-        assertEquals("e-SIM", TechWordsNormalizer.process("eSIM"));
-        assertEquals("e-SIM", TechWordsNormalizer.process("e-sim"));
+        assertEquals("e SIM", TechWordsNormalizer.process("esim"));
+        assertEquals("e SIM", TechWordsNormalizer.process("eSIM"));
+        assertEquals("e SIM", TechWordsNormalizer.process("e-sim"));
 
-        assertEquals("A-T-M", TechWordsNormalizer.process("atm"));
-        assertEquals("K-Y-C", TechWordsNormalizer.process("kyc"));
-        assertEquals("G-P-S", TechWordsNormalizer.process("gps"));
-        assertEquals("U-S-B", TechWordsNormalizer.process("usb"));
-        assertEquals("N-F-C", TechWordsNormalizer.process("nfc"));
-        assertEquals("V-P-N", TechWordsNormalizer.process("vpn"));
-        assertEquals("C-P-U", TechWordsNormalizer.process("cpu"));
-        assertEquals("G-P-U", TechWordsNormalizer.process("gpu"));
+        assertEquals("A-T M", TechWordsNormalizer.process("atm"));
+        assertEquals("K Y C", TechWordsNormalizer.process("kyc"));
+        assertEquals("G P S", TechWordsNormalizer.process("gps"));
+        assertEquals("U S B", TechWordsNormalizer.process("usb"));
+        assertEquals("N F C", TechWordsNormalizer.process("nfc"));
+        assertEquals("V P N", TechWordsNormalizer.process("vpn"));
+        assertEquals("C P U", TechWordsNormalizer.process("cpu"));
+        assertEquals("G P U", TechWordsNormalizer.process("gpu"));
     }
 
     @Test
@@ -161,9 +161,9 @@ public class TechWordsNormalizerTest {
         assertEquals("i-Mac", TechWordsNormalizer.process("imac"));
         assertEquals("i-Pod", TechWordsNormalizer.process("ipod"));
         assertEquals("i-Watch", TechWordsNormalizer.process("iwatch"));
-        assertEquals("i-O-S", TechWordsNormalizer.process("ios"));
-        assertEquals("Mac-O-S", TechWordsNormalizer.process("macos"));
-        assertEquals("Mac-O-S", TechWordsNormalizer.process("mac os"));
+        assertEquals("i O S", TechWordsNormalizer.process("ios"));
+        assertEquals("Mac O S", TechWordsNormalizer.process("macos"));
+        assertEquals("Mac O S", TechWordsNormalizer.process("mac os"));
     }
 
     @Test
@@ -182,41 +182,50 @@ public class TechWordsNormalizerTest {
         assertEquals("Mid-Journey", TechWordsNormalizer.process("midjourney"));
         assertEquals("Gen-AI", TechWordsNormalizer.process("genai"));
 
-        assertEquals("G-P-T-4", TechWordsNormalizer.process("gpt-4"));
-        assertEquals("G-P-T-4", TechWordsNormalizer.process("gpt4"));
-        assertEquals("G-P-T-3.5", TechWordsNormalizer.process("gpt-3.5"));
+        assertEquals("G P T-4", TechWordsNormalizer.process("gpt-4"));
+        assertEquals("G P T-4", TechWordsNormalizer.process("gpt4"));
+        assertEquals("G P T-3.5", TechWordsNormalizer.process("gpt-3.5"));
     }
 
     @Test
     public void testCompoundPhrases() {
-        assertEquals("Q-R code", TechWordsNormalizer.process("qr code"));
-        assertEquals("scan Q-R", TechWordsNormalizer.process("scan qr"));
-        assertEquals("user I-D", TechWordsNormalizer.process("user id"));
-        assertEquals("email I-D", TechWordsNormalizer.process("email id"));
-        assertEquals("voter I-D", TechWordsNormalizer.process("voter id"));
-        assertEquals("I-D card", TechWordsNormalizer.process("id card"));
-        assertEquals("U-P-I PIN", TechWordsNormalizer.process("upi pin"));
-        assertEquals("A-T-M PIN", TechWordsNormalizer.process("atm pin"));
+        assertEquals("Q R code", TechWordsNormalizer.process("qr code"));
+        assertEquals("scan Q R", TechWordsNormalizer.process("scan qr"));
+        assertEquals("user I D", TechWordsNormalizer.process("user id"));
+        assertEquals("email I D", TechWordsNormalizer.process("email id"));
+        assertEquals("voter I D", TechWordsNormalizer.process("voter id"));
+        assertEquals("I D card", TechWordsNormalizer.process("id card"));
+        assertEquals("U P I PIN", TechWordsNormalizer.process("upi pin"));
+        assertEquals("A-T M PIN", TechWordsNormalizer.process("atm pin"));
         assertEquals("PIN code", TechWordsNormalizer.process("pin code"));
     }
 
     @Test
     public void testMultilingualMixedUtterances() {
         // Hindi mixed with tech words
-        assertEquals("G-Pay से पैसे भेजे और Chat G-P-T से पूछो। अपना O-T-P शेयर मत करना।",
+        assertEquals("G-Pay से पैसे भेजे और Chat G P T से पूछो। अपना O T P शेयर मत करना।",
                 TechWordsNormalizer.process("GPay से पैसे भेजे और ChatGPT से पूछो। अपना OTP शेयर मत करना।"));
 
         // Marathi mixed with tech words
-        assertEquals("माझा G-Pay नंबर आणि G-mail चेक करा, U-P-I PIN टाका.",
+        assertEquals("माझा G-Pay नंबर आणि G-mail चेक करा, U P I PIN टाका.",
                 TechWordsNormalizer.process("माझा GPay नंबर आणि Gmail चेक करा, UPI PIN टाका."));
 
         // Tamil mixed with tech words
-        assertEquals("உங்கள் G-Pay எண்ணை அனுப்பவும், O-T-P பகிர வேண்டாம்.",
+        assertEquals("உங்கள் G-Pay எண்ணை அனுப்பவும், O T P பகிர வேண்டாம்.",
                 TechWordsNormalizer.process("உங்கள் GPay எண்ணை அனுப்பவும், OTP பகிர வேண்டாம்."));
 
         // Arabic mixed with tech words
-        assertEquals("تحقق من بريدك على G-mail واستخدم Chat G-P-T",
+        assertEquals("تحقق من بريدك على G-mail واستخدم Chat G P T",
                 TechWordsNormalizer.process("تحقق من بريدك على Gmail واستخدم ChatGPT"));
+    }
+
+    @Test
+    public void testNamesNaturalVoicesMisread() {
+        assertEquals("Order on Zo-mato or Swig-ee", TechWordsNormalizer.process("Order on Zomato or Swiggy"));
+        assertEquals("Phone Pay", TechWordsNormalizer.process("PhonePe"));
+        assertEquals("H T M L page", TechWordsNormalizer.process("HTML page"));
+        // A lone "A" is the article to eSpeak: joined to the next letter it is a letter name.
+        assertEquals("Read the F A-Q", TechWordsNormalizer.process("Read the FAQ"));
     }
 
     @Test
