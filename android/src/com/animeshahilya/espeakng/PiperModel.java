@@ -121,7 +121,7 @@ final class PiperModel implements Closeable {
     }
     private static final String NPU_SUFFIX = ".npu" + NPU_FRAMES + ".onnx";
     /** Holds why the NPU failed; the revision makes phones retry after NPU code changes. */
-    private static final String NPU_FAILED_SUFFIX = ".npu-r2.failed";
+    private static final String NPU_FAILED_SUFFIX = ".npu-r3.failed";
 
     final PiperVoiceConfig config;
     final File file;
@@ -607,6 +607,11 @@ final class PiperModel implements Closeable {
                 options.addQnn(qnn);
                 // All of it on the NPU or not at all: a half-offloaded graph is slower.
                 options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
+                // INT8-weight voices (int8-v1) widen their weights with
+                // DequantizeLinear, which the fp16 NPU graph cannot run;
+                // without QDQ handling ORT folds those into float weights
+                // first, so the NPU gets the plain float decoder.
+                options.addConfigEntry("session.disable_quant_qdq", "1");
                 if (compile) {
                     options.addConfigEntry("ep.context_enable", "1");
                     options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
