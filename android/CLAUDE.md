@@ -297,7 +297,16 @@ voices" does not, so voices can still be deleted to free space.
 - **Speed/pitch.** Model speed via `length_scale` clamped to 0.5-1.8x; the
   rest (rate boost) and pitch via `SpeechSynthesis.sonicStretch` (the
   libsonic already linked into espeak-ng). SSML stays on eSpeak; single
-  characters too unless `piper_espeak_for_characters` is off.
+  characters too unless `piper_espeak_for_characters` is off. In Indian
+  scripts a "character" is an akshara (`TextPreprocessor.isSingleIndicCluster`:
+  a letter with its vowel signs, nukta, and virama-joined consonants), as
+  TalkBack types, deletes and moves over them; counted as code points,
+  कि/क्ष/क्/ड़ reached the natural voices, which garble a lone syllable
+  (user report, 2026-10-08). A lone letter run inside a mixed request
+  (TalkBack's "क्ष, deleted" with an English UI) stays with eSpeak too
+  (`TtsService.isLoneLetter`), and a half letter is named ("क हलन्त") where
+  eSpeak alone said a 0.07 s click. Verified on a Pixel 8 by logging the
+  route each request took.
 - **Threading.** Phonemizing goes through `sSynthLock` like every other
   espeak_* call and switches the native voice, so it clears `sLastVoiceKey`.
   Inference holds `PiperModel`'s read lock; eviction takes the write lock.

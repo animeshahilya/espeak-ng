@@ -382,7 +382,9 @@ public final class TextPreprocessor {
 
     /**
      * True if {@code text} contains exactly one Unicode code point after
-     * trimming leading/trailing chars {@code <= ' '} (matching {@code String.trim()} semantics).
+     * trimming leading/trailing chars {@code <= ' '} (matching {@code String.trim()} semantics),
+     * or one Indian akshara ({@link #isSingleIndicCluster}): what a screen reader
+     * types or moves over as one character in those scripts.
      * Correctly handles supplementary code points (surrogate pairs) such as emoji or astral symbols.
      */
     public static boolean isSingleCharacter(String text) {
@@ -400,7 +402,55 @@ public final class TextPreprocessor {
         if (start >= end) {
             return false;
         }
-        return text.codePointCount(start, end) == 1;
+        return text.codePointCount(start, end) == 1 || isSingleIndicCluster(text, start, end);
+    }
+
+    /**
+     * One akshara of an Indian (Brahmic) script, U+0900-U+0DFF: a letter
+     * with its vowel signs, nukta and other marks, and consonants joined to
+     * it by a virama (कि, ड़, क्, क्ष, श्र, கி). TalkBack sends these as one
+     * character when typing, deleting and moving by character; counted as
+     * several code points they skipped the character path and reached the
+     * natural voices, which garble a lone syllable. Other scripts still
+     * count code points, as NVDA does.
+     */
+    static boolean isSingleIndicCluster(CharSequence text, int start, int end) {
+        int cp = Character.codePointAt(text, start);
+        if (!isBrahmic(cp) || !Character.isLetter(cp)) {
+            return false;
+        }
+        boolean afterVirama = false;
+        for (int i = start + Character.charCount(cp); i < end; i += Character.charCount(cp)) {
+            cp = Character.codePointAt(text, i);
+            final int type = Character.getType(cp);
+            final boolean mark = type == Character.NON_SPACING_MARK
+                    || type == Character.COMBINING_SPACING_MARK || type == Character.ENCLOSING_MARK;
+            if (cp == 0x200C || cp == 0x200D) {
+                continue; // (non-)joiners keep a half form or conjunct together
+            }
+            if (mark && isBrahmic(cp)) {
+                afterVirama = isVirama(cp);
+            } else if (afterVirama && isBrahmic(cp) && Character.isLetter(cp)) {
+                afterVirama = false;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isBrahmic(int cp) {
+        return cp >= 0x0900 && cp <= 0x0DFF;
+    }
+
+    private static boolean isVirama(int cp) {
+        switch (cp) {
+            case 0x094D: case 0x09CD: case 0x0A4D: case 0x0ACD: case 0x0B4D:
+            case 0x0BCD: case 0x0C4D: case 0x0CCD: case 0x0D4D: case 0x0DCA:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private static boolean containsHangControls(String text) {
@@ -871,6 +921,12 @@ public final class TextPreprocessor {
                 case '\u094D': return "हलन्त"; // ्
                 case '\u093C': return "नुक्ता"; // ़
             }
+        }
+        // A half letter (consonant + virama, क्): eSpeak alone says a bare,
+        // near-silent "k" (0.07 s on a Pixel 8); name the letter and the sign.
+        if (trimmed.length() == 2 && trimmed.charAt(1) == '\u094D'
+                && trimmed.charAt(0) >= '\u0915' && trimmed.charAt(0) <= '\u0939') {
+            return trimmed.charAt(0) + " हलन्त";
         }
         return text;
     }

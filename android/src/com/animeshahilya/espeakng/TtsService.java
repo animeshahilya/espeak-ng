@@ -1702,6 +1702,10 @@ public class TtsService extends TextToSpeechService {
         // A one-voice phone still loading this language's own natural voice
         // must not evict it for another language's.
         final boolean mayPreload = mPiper.keepsSeveralLoaded() || ownNatural == null;
+        // A lone letter in another language ("क deleted" from TalkBack, a
+        // Devanagari letter typed with an English UI) stays with eSpeak, like
+        // a single-character request: natural voices garble a lone syllable.
+        final boolean espeakLetters = PiperVoiceStore.espeakForCharacters(prefs);
         final List<SynthUnit> out = new ArrayList<>();
         for (SynthUnit unit : units) {
             if (unit.isEarcon()) {
@@ -1716,7 +1720,9 @@ public class TtsService extends TextToSpeechService {
                     ? naturalRuns(unit.text, own, runLanguages, numbers, prefs)
                     : LanguageRuns.splitDigits(new LanguageRuns.Run(0, unit.text, own), ESPEAK_ONLY);
             for (LanguageRuns.Run run : runs) {
-                final PiperVoiceStore.Installed natural = run.language.equals(own) ? ownNatural
+                final PiperVoiceStore.Installed natural = espeakLetters && isLoneLetter(run.text)
+                        ? null
+                        : run.language.equals(own) ? ownNatural
                         : PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
                 final PiperModel model = natural == null ? null : mPiper.getLoaded(natural.key);
                 if (natural != null && natural != ownNatural && model == null && mayPreload) {
@@ -1746,6 +1752,28 @@ public class TtsService extends TextToSpeechService {
             }
         }
         return out;
+    }
+
+    /**
+     * One character, ignoring the punctuation and spaces around it: what a
+     * run holds when TalkBack says "क्ष, deleted" with an English UI.
+     */
+    static boolean isLoneLetter(String run) {
+        int start = 0;
+        int end = run.length();
+        while (start < end && !isLetterOrMark(run.codePointAt(start))) {
+            start += Character.charCount(run.codePointAt(start));
+        }
+        while (end > start && !isLetterOrMark(run.codePointBefore(end))) {
+            end -= Character.charCount(run.codePointBefore(end));
+        }
+        return start < end && TextPreprocessor.isSingleCharacter(run.substring(start, end));
+    }
+
+    private static boolean isLetterOrMark(int cp) {
+        final int type = Character.getType(cp);
+        return Character.isLetterOrDigit(cp) || type == Character.NON_SPACING_MARK
+                || type == Character.COMBINING_SPACING_MARK || type == Character.ENCLOSING_MARK;
     }
 
     /**

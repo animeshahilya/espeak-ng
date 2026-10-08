@@ -113,4 +113,29 @@ public class TextSanitizeTest {
         assertFalse(TextPreprocessor.isSingleCharacter("😀😀"));
         assertFalse(TextPreprocessor.isSingleCharacter("a😀"));
     }
+
+    /**
+     * One Indian akshara is one character, as TalkBack types, deletes and
+     * moves over it (kept off the natural voices, which garble a lone
+     * syllable). Other scripts still count code points (NVDA parity).
+     */
+    @Test
+    public void indianAksharaIsOneCharacter() {
+        for (String akshara : new String[] {"कि", "की", "क्", "क्ष",
+                "श्र", "ड़", "कं", "क्‍", " कि ",
+                "கி", "க்", "కి", "કિ", "কি"}) {
+            assertTrue(akshara, TextPreprocessor.isSingleCharacter(akshara));
+        }
+        for (String text : new String[] {"कख", "किख", "क्ष a",
+                "क deleted", "é", "िि"}) {
+            assertFalse(text, TextPreprocessor.isSingleCharacter(text));
+        }
+    }
+
+    @Test
+    public void halfLetterIsNamed() {
+        assertEquals("क हलन्त", TextPreprocessor.expandDevanagariDiacritic("क्"));
+        assertEquals("हलन्त", TextPreprocessor.expandDevanagariDiacritic("्"));
+        assertEquals("कि", TextPreprocessor.expandDevanagariDiacritic("कि"));
+    }
 }
