@@ -9,6 +9,7 @@
 
 package com.animeshahilya.espeakng;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ApplicationExitInfo;
 import android.content.Context;
@@ -93,6 +94,7 @@ final class PiperCrashGuard implements PiperEngine.NativeGuard {
      * At process start, before any voice loads: charges the voices that were
      * mid-inference when the previous process died of a native crash.
      */
+    @SuppressLint("ApplySharedPref")
     void checkPreviousExit(Context appContext) {
         if (!mFile.isFile()) {
             return;

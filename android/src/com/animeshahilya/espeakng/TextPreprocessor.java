@@ -841,7 +841,7 @@ public final class TextPreprocessor {
         } else if (!query.isEmpty()) {
             s = s + query;
         }
-        s = s.replaceAll("/+", " slash ");
+        s = SLASH_RUN.matcher(s).replaceAll(" slash ");
         return " link " + s.trim() + " ";
     }
 

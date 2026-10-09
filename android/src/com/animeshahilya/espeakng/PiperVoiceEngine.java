@@ -52,6 +52,7 @@ public final class PiperVoiceEngine implements VoiceEngine {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onTrimMemory(int level) {
         if (level >= ComponentCallbacks2.TRIM_MEMORY_COMPLETE) {
             mPiper.trim(true);

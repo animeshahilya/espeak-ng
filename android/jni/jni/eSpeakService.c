@@ -189,18 +189,11 @@ static jmethodID METHOD_nativeSynthWordCallback;
  * Reset by nativeSynthesize before each espeak_Synth call. */
 static _Atomic int frames_delivered = 0;
 
-/* Set by nativeStop from the framework's control thread while espeak_Synth is
- * still running on the synthesis thread.  espeak_ng_Cancel() cannot interrupt a
- * synthesis in progress -- its body is entirely #if USE_ASYNC, which this build
- * disables -- so returning SYNTH_ABORT from the callback is the only way to end
- * one early.  Without it a stop has to wait for the whole utterance to be
- * synthesized, which is silence for as long as the text the user just left. */
-static atomic_int stop_requested;
-
 /* Generation counter: each nativeSynthesize call increments this.
  * The callback checks the generation it was started with; if nativeStop()
- * is called, it increments the generation, invalidating the running synthesis.
- * This avoids the race where nativeStop() sets the old boolean flag, then
+ * is called, it increments stop_generation, invalidating the running synthesis
+ * and returning SYNTH_ABORT immediately.
+ * This avoids the race where nativeStop() sets a boolean flag, then
  * a new nativeSynthesize() immediately clears it, leaving the old callback
  * still running without seeing the stop. */
 static atomic_int stop_generation;

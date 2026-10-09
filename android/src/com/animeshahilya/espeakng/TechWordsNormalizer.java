@@ -151,7 +151,7 @@ public final class TechWordsNormalizer {
     }
 
     private static String normalizeTerm(String raw) {
-        final String lower = raw.toLowerCase(Locale.ROOT);
+        final String lower = AsciiUtils.toAsciiLowerCase(raw);
         final boolean possessive = lower.endsWith("'s");
         final String apostropheS = possessive ? "'s" : "";
 

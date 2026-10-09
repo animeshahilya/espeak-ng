@@ -241,9 +241,6 @@ public final class TtsAudioDispatcher {
     public void dispatchWordBoundary(int textPosition, int textLength, int markerInFrames) {
         final String synthText = mSynthText;
         final AudioSink sink = mSink;
-        android.util.Log.d("WBTRACE", "in pos=" + textPosition + " len=" + textLength
-                + " frame=" + markerInFrames + " audioStarted=" + mAudioStarted
-                + " synth=" + synthText);
         if (synthText == null || sink == null || mCallbackDone.get() || mIsStopped.get()) {
             return;
         }
@@ -276,8 +273,6 @@ public final class TtsAudioDispatcher {
                 mPendingRanges = new java.util.ArrayList<>();
             }
             mPendingRanges.add(new int[] {clampedMarker, finalStart, finalEnd});
-            android.util.Log.d("WBTRACE", "stashed f=" + clampedMarker
-                    + " " + finalStart + "-" + finalEnd + " synth=" + synthText);
             return;
         }
         sink.rangeStart(clampedMarker, finalStart, finalEnd);
@@ -290,10 +285,8 @@ public final class TtsAudioDispatcher {
         if (pending == null || pending.isEmpty() || mSink == null) {
             return;
         }
-        android.util.Log.d("WBTRACE", "flushing " + pending.size() + " synth=" + mSynthText);
         for (int[] r : pending) {
             if (mCallbackDone.get() || mIsStopped.get()) {
-                android.util.Log.d("WBTRACE", "flush aborted, rest dropped");
                 return;
             }
             mSink.rangeStart(r[0], r[1], r[2]);
