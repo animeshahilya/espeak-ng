@@ -216,6 +216,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(R.string.app_name);
         }
 
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         View contentView = findViewById(android.R.id.content);
         if (contentView != null) {
             contentView.setFitsSystemWindows(false);
@@ -1083,12 +1084,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
             final View listView = view.findViewById(androidx.preference.R.id.recycler_view);
             if (listView instanceof androidx.recyclerview.widget.RecyclerView) {
                 androidx.recyclerview.widget.RecyclerView rv = (androidx.recyclerview.widget.RecyclerView) listView;
-                rv.setClipToPadding(true);
+                rv.setClipToPadding(false);
                 rv.setBackgroundColor(androidx.core.content.ContextCompat.getColor(
                         requireContext(), R.color.ios_grouped_background));
                 rv.addItemDecoration(new com.animeshahilya.espeakng.preference.InsetGroupedItemDecoration(requireContext()));
             } else if (listView instanceof ViewGroup) {
-                ((ViewGroup) listView).setClipToPadding(true);
+                ((ViewGroup) listView).setClipToPadding(false);
             }
             final Context context = getActivity();
             final View.OnApplyWindowInsetsListener insetsListener = new View.OnApplyWindowInsetsListener() {
@@ -1553,13 +1554,13 @@ public class TtsSettingsActivity extends AppCompatActivity {
      * has no title view yet (called before show()).
      */
     public static void markAlertTitleHeading(AlertDialog dialog) {
-        if (dialog == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+        if (dialog == null) {
             return;
         }
         try {
             View title = dialog.findViewById(androidx.appcompat.R.id.alertTitle);
             if (title != null) {
-                title.setAccessibilityHeading(true);
+                androidx.core.view.ViewCompat.setAccessibilityHeading(title, true);
             }
         } catch (Exception ignored) {
         }
@@ -1660,7 +1661,17 @@ public class TtsSettingsActivity extends AppCompatActivity {
         openOnClick(context, aboutView.findViewById(R.id.btn_about_github),
                 "https://github.com/animeshahilya/espeak-ng");
 
+        View aboutTitle = aboutView.findViewById(R.id.about_title_text);
+        if (aboutTitle != null) {
+            androidx.core.view.ViewCompat.setAccessibilityHeading(aboutTitle, true);
+        }
+        View featuresHeader = aboutView.findViewById(R.id.about_features_header);
+        if (featuresHeader != null) {
+            androidx.core.view.ViewCompat.setAccessibilityHeading(featuresHeader, true);
+        }
+
         dialog.show();
+        markAlertTitleHeading(dialog);
     }
 
     private static final String FEEDBACK_GROUP_URL =

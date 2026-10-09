@@ -128,6 +128,10 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
         final int step = Math.max(1, range / 25);
         parameter.mSeekBar.setKeyProgressIncrement(step);
 
+        final String initialText = String.format(parameter.formatter,
+                Integer.toString(preference.getDisplayValue(parameter)));
+        androidx.core.view.ViewCompat.setStateDescription(parameter.mSeekBar, initialText);
+
         androidx.core.view.ViewCompat.setAccessibilityDelegate(parameter.mSeekBar,
                 new androidx.core.view.AccessibilityDelegateCompat() {
                     @Override
@@ -168,6 +172,7 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
                 preference.persist(parameter);
                 String text = String.format(parameter.formatter,
                         Integer.toString(preference.getDisplayValue(parameter)));
+                androidx.core.view.ViewCompat.setStateDescription(parameter.mSeekBar, text);
                 v.announceForAccessibility(parameter.title + ": " + text);
             }
         });
@@ -178,6 +183,10 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
             {
                 parameter.current = progress + parameter.min;
                 preference.updateValueText(parameter);
+
+                String text = String.format(parameter.formatter,
+                        Integer.toString(preference.getDisplayValue(parameter)));
+                androidx.core.view.ViewCompat.setStateDescription(seekBar, text);
 
                 // TalkBack gestures and D-pad presses arrive here with
                 // fromUser set and no surrounding touch gesture, and they are
@@ -207,6 +216,7 @@ public class SeekBarDialogFragment extends ButtonDialogFragment {
                 // one-shot pattern so the final value is always spoken once.
                 String text = String.format(parameter.formatter,
                         Integer.toString(preference.getDisplayValue(parameter)));
+                androidx.core.view.ViewCompat.setStateDescription(seekBar, text);
                 seekBar.announceForAccessibility(parameter.title + ": " + text);
             }
         });

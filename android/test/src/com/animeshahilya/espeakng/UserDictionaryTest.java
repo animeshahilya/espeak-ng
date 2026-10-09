@@ -142,4 +142,14 @@ public class UserDictionaryTest {
         assertTrue(ruleSigma.isValid());
         assertEquals("sigma", ruleSigma.apply("\u03A3"));
     }
+
+    @Test
+    public void testHighestGroupReference() {
+        assertEquals(1, UserDictionaryScreen.highestGroupReference("$1 kilograms"));
+        assertEquals(5, UserDictionaryScreen.highestGroupReference("$2 and $5"));
+        assertEquals(0, UserDictionaryScreen.highestGroupReference("\\$5 dollars"));
+        assertEquals(0, UserDictionaryScreen.highestGroupReference("no groups"));
+        assertEquals(0, UserDictionaryScreen.highestGroupReference(""));
+        assertEquals(0, UserDictionaryScreen.highestGroupReference("$0"));
+    }
 }

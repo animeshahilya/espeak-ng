@@ -218,6 +218,19 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
         final Runnable[] pendingCount = new Runnable[1];
 
         if (searchInput != null) {
+            searchInput.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+                        || (event != null && event.getKeyCode() == android.view.KeyEvent.KEYCODE_ENTER)) {
+                    android.view.inputmethod.InputMethodManager imm =
+                            (android.view.inputmethod.InputMethodManager) v.getContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                    v.clearFocus();
+                    return true;
+                }
+                return false;
+            });
             searchInput.addTextChangedListener(new TextWatcher() {
                 @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
                 @Override public void onTextChanged(CharSequence s, int start, int before, int count) {

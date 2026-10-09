@@ -61,11 +61,9 @@ public class AccessiblePreferenceCategory extends PreferenceCategory {
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            itemView.setAccessibilityHeading(hasTitle);
-            if (titleView != null) {
-                titleView.setAccessibilityHeading(hasTitle);
-            }
+        androidx.core.view.ViewCompat.setAccessibilityHeading(itemView, hasTitle);
+        if (titleView != null) {
+            androidx.core.view.ViewCompat.setAccessibilityHeading(titleView, hasTitle);
         }
 
         if (!hasTitle && !hasSummary) {

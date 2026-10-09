@@ -92,6 +92,7 @@ public class SpeakPunctuationDialogFragment extends ButtonDialogFragment {
         radio.setText(name);
         ((TextView) row.findViewById(android.R.id.summary)).setText(desc);
         radio.setContentDescription(name + ". " + desc);
+        row.setOnClickListener(v -> radio.performClick());
         return radio;
     }
 

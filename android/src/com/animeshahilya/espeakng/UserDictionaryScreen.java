@@ -87,8 +87,10 @@ final class UserDictionaryScreen {
         final TextInputLayout field = new TextInputLayout(context, null,
                 com.google.android.material.R.attr.textInputOutlinedStyle);
         field.setHint(labelText);
+        if (hintText != null && !hintText.isEmpty()) {
+            field.setPlaceholderText(hintText);
+        }
         final EditText et = new TextInputEditText(context);
-        et.setHint(hintText);
         // Never set contentDescription on EditText: TalkBack needs to read user-typed text!
         if (initial != null && !initial.isEmpty()) et.setText(initial);
         if (inputType != 0) et.setInputType(inputType);
@@ -319,6 +321,20 @@ final class UserDictionaryScreen {
                 filterHandler.postDelayed(updateList, 200);
             }
             @Override public void afterTextChanged(Editable s) {}
+        });
+
+        etSearch.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+                    || (event != null && event.getKeyCode() == android.view.KeyEvent.KEYCODE_ENTER)) {
+                android.view.inputmethod.InputMethodManager imm =
+                        (android.view.inputmethod.InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+                v.clearFocus();
+                return true;
+            }
+            return false;
         });
 
         spFilter.setOnItemClickListener((parent, view, position, id) -> {

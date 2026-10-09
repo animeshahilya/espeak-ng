@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingVertical="@dimen/content_gap"
+    android:clickable="true"
+    android:focusable="false"
     android:background="?attr/selectableItemBackground">
 
     <RadioButton

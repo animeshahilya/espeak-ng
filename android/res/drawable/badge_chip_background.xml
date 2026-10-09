@@ -7,5 +7,5 @@
     <solid android:color="@color/chip_bg_section" />
     <stroke
         android:width="1dp"
-        android:color="?attr/colorOutline" />
+        android:color="?attr/colorOutlineVariant" />
 </shape>
