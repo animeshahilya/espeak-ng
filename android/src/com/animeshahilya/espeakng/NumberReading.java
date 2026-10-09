@@ -109,22 +109,15 @@ public final class NumberReading {
 
     private static String replaceMoney(Pattern pattern, String text, int unitGroup,
                                        int intGroup, int fracGroup, int scaleGroup, boolean withRupee) {
-        Matcher m = pattern.matcher(text);
-        if (!m.find()) return text;
-        StringBuffer sb = new StringBuffer(text.length() + 32);
-        do {
+        return AsciiUtils.replaceMatches(pattern, text, m -> {
             Currency c = currencyFor(m.group(unitGroup));
             String words = (c == null || (c == RUPEE && !withRupee)) ? null
                     : moneyWords(c, m.group(intGroup), m.group(fracGroup), m.group(scaleGroup));
             if (words == null) {
-                m.appendReplacement(sb, Matcher.quoteReplacement(m.group(0)));
-            } else {
-                String sign = m.group(1) != null ? "minus " : "";
-                m.appendReplacement(sb, Matcher.quoteReplacement(sign + words));
+                return m.group(0);
             }
-        } while (m.find());
-        m.appendTail(sb);
-        return sb.toString();
+            return (m.group(1) != null ? "minus " : "") + words;
+        });
     }
 
     private static Currency currencyFor(String unit) {
@@ -160,16 +153,16 @@ public final class NumberReading {
         String digits = intPart.indexOf(',') >= 0 ? intPart.replace(",", "") : intPart;
         boolean zero = isAllZeros(digits);
         if (frac == null || isAllZeros(frac)) {
-            return intPart + " " + ("1".equals(digits) ? c.one : c.many);
+            return intPart + " " + AsciiUtils.singularOrPlural(digits, c.one, c.many);
         }
         if (c.minorOne == null || frac.length() > 2) {
             // "¥1.5", "$3.499": the engine reads the decimal.
             return intPart + "." + frac + " " + c.many;
         }
         int minor = Integer.parseInt(frac.length() == 1 ? frac + "0" : frac);
-        String minorWords = minor + " " + (minor == 1 ? c.minorOne : c.minorMany);
+        String minorWords = minor + " " + AsciiUtils.singularOrPlural(minor, c.minorOne, c.minorMany);
         if (zero) return minorWords;
-        return intPart + " " + ("1".equals(digits) ? c.one : c.many) + " " + minorWords;
+        return intPart + " " + AsciiUtils.singularOrPlural(digits, c.one, c.many) + " " + minorWords;
     }
 
     private static boolean isAllZeros(String s) {
@@ -220,14 +213,8 @@ public final class NumberReading {
     /** "9876543210" -> "9 8 7 6 5 4 3 2 1 0". */
     static String spellLongNumbers(String text) {
         if (text == null || !containsAsciiDigit(text)) return text;
-        Matcher m = LONG_NUMBER.matcher(text);
-        if (!m.find()) return text;
-        StringBuffer sb = new StringBuffer(text.length() * 2);
-        do {
-            m.appendReplacement(sb,m.group().replaceAll("(?<=\\d)(?=\\d)", " "));
-        } while (m.find());
-        m.appendTail(sb);
-        return sb.toString();
+        return AsciiUtils.replaceMatches(LONG_NUMBER, text,
+                m -> m.group().replaceAll("(?<=\\d)(?=\\d)", " "));
     }
 
     public static String readCodes(String text) {
@@ -343,30 +330,16 @@ public final class NumberReading {
     public static String readDates(String text) {
         if (text == null || text.isEmpty() || !containsAsciiDigit(text)) return text;
         if (text.indexOf('-') != -1) {
-            Matcher m = ISO_DATE.matcher(text);
-            if (m.find()) {
-                StringBuffer sb = new StringBuffer(text.length() + 16);
-                do {
-                    String year = m.group(1);
-                    int monthIdx = Integer.parseInt(m.group(2)) - 1;
-                    int day = Integer.parseInt(m.group(3));
-                    String monthName = (monthIdx >= 0 && monthIdx < ISO_MONTHS.length) ? ISO_MONTHS[monthIdx] : m.group(2);
-                    m.appendReplacement(sb, day + " " + monthName + " " + year);
-                } while (m.find());
-                m.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(ISO_DATE, text, m -> {
+                String year = m.group(1);
+                int monthIdx = Integer.parseInt(m.group(2)) - 1;
+                int day = Integer.parseInt(m.group(3));
+                String monthName = (monthIdx >= 0 && monthIdx < ISO_MONTHS.length) ? ISO_MONTHS[monthIdx] : m.group(2);
+                return day + " " + monthName + " " + year;
+            });
         }
         if (text.indexOf(':') != -1 && (text.indexOf('-') != -1 || text.indexOf('–') != -1 || text.indexOf('—') != -1)) {
-            Matcher mTime = TIME_RANGE.matcher(text);
-            if (mTime.find()) {
-                StringBuffer sb = new StringBuffer(text.length() + 16);
-                do {
-                    mTime.appendReplacement(sb, mTime.group(1) + " to " + mTime.group(2));
-                } while (mTime.find());
-                mTime.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(TIME_RANGE, text, m -> m.group(1) + " to " + m.group(2));
         }
         return text;
     }
@@ -381,16 +354,8 @@ public final class NumberReading {
     public static String readPhoneNumbers(String text) {
         if (text == null || text.isEmpty() || !containsAsciiDigit(text)) return text;
         if (text.indexOf('-') != -1 || text.indexOf('(') != -1) {
-            Matcher m = FORMATTED_PHONE.matcher(text);
-            if (m.find()) {
-                StringBuffer sb = new StringBuffer(text.length() + 16);
-                do {
-                    String clean = m.group().replace('-', ' ').replace('(', ' ').replace(')', ' ').replaceAll(" +", " ").trim();
-                    m.appendReplacement(sb, Matcher.quoteReplacement(clean));
-                } while (m.find());
-                m.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(FORMATTED_PHONE, text, m ->
+                    m.group().replace('-', ' ').replace('(', ' ').replace(')', ' ').replaceAll(" +", " ").trim());
         }
         return spellLongNumbers(text);
     }
@@ -462,38 +427,24 @@ public final class NumberReading {
     public static String readRomanNumerals(String text) {
         if (text == null || text.isEmpty() || !AsciiUtils.hasAsciiLetter(text)) return text;
         // Check regnal first
-        Matcher mReg = REGNAL_ROMAN.matcher(text);
-        if (mReg.find()) {
-            StringBuffer sb = new StringBuffer(text.length() + 16);
-            do {
-                String roman = mReg.group(2).toUpperCase(Locale.ROOT);
-                Integer val = ROMAN_VALUES.get(roman);
-                if (val != null && val >= 1 && val <= ROMAN_ORDINALS.length) {
-                    mReg.appendReplacement(sb, mReg.group(1) + " " + ROMAN_ORDINALS[val - 1]);
-                } else {
-                    mReg.appendReplacement(sb, Matcher.quoteReplacement(mReg.group(0)));
-                }
-            } while (mReg.find());
-            mReg.appendTail(sb);
-            text = sb.toString();
-        }
+        text = AsciiUtils.replaceMatches(REGNAL_ROMAN, text, m -> {
+            String roman = m.group(2).toUpperCase(Locale.ROOT);
+            Integer val = ROMAN_VALUES.get(roman);
+            if (val != null && val >= 1 && val <= ROMAN_ORDINALS.length) {
+                return m.group(1) + " " + ROMAN_ORDINALS[val - 1];
+            }
+            return m.group(0);
+        });
 
         // Check headings
-        Matcher mHead = HEADING_ROMAN.matcher(text);
-        if (mHead.find()) {
-            StringBuffer sb = new StringBuffer(text.length() + 16);
-            do {
-                String roman = mHead.group(2).toUpperCase(Locale.ROOT);
-                Integer val = ROMAN_VALUES.get(roman);
-                if (val != null) {
-                    mHead.appendReplacement(sb, mHead.group(1) + " " + val);
-                } else {
-                    mHead.appendReplacement(sb, Matcher.quoteReplacement(mHead.group(0)));
-                }
-            } while (mHead.find());
-            mHead.appendTail(sb);
-            text = sb.toString();
-        }
+        text = AsciiUtils.replaceMatches(HEADING_ROMAN, text, m -> {
+            String roman = m.group(2).toUpperCase(Locale.ROOT);
+            Integer val = ROMAN_VALUES.get(roman);
+            if (val != null) {
+                return m.group(1) + " " + val;
+            }
+            return m.group(0);
+        });
 
         return text;
     }
@@ -578,77 +529,36 @@ public final class NumberReading {
         if (!hasSlash && !hasUnicode) return text;
 
         if (hasUnicode) {
-            Matcher mMixedU = MIXED_UNICODE_FRACTION.matcher(text);
-            if (mMixedU.find()) {
-                StringBuffer sb = new StringBuffer(text.length() + 16);
-                do {
-                    String whole = mMixedU.group(1);
-                    char fracChar = mMixedU.group(2).charAt(0);
-                    String name = unicodeFractionName(fracChar, true);
-                    if (name != null) {
-                        mMixedU.appendReplacement(sb, whole + " and " + name);
-                    } else {
-                        mMixedU.appendReplacement(sb, Matcher.quoteReplacement(mMixedU.group(0)));
-                    }
-                } while (mMixedU.find());
-                mMixedU.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(MIXED_UNICODE_FRACTION, text, m -> {
+                String whole = m.group(1);
+                char fracChar = m.group(2).charAt(0);
+                String name = unicodeFractionName(fracChar, true);
+                return name != null ? whole + " and " + name : m.group(0);
+            });
 
-            Matcher mStandU = STANDALONE_UNICODE_FRACTION.matcher(text);
-            if (mStandU.find()) {
-                StringBuffer sb = new StringBuffer(text.length() + 16);
-                do {
-                    char fracChar = mStandU.group(1).charAt(0);
-                    String name = unicodeFractionName(fracChar, false);
-                    if (name != null) {
-                        mStandU.appendReplacement(sb, name);
-                    } else {
-                        mStandU.appendReplacement(sb, Matcher.quoteReplacement(mStandU.group(0)));
-                    }
-                } while (mStandU.find());
-                mStandU.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(STANDALONE_UNICODE_FRACTION, text, m -> {
+                char fracChar = m.group(1).charAt(0);
+                String name = unicodeFractionName(fracChar, false);
+                return name != null ? name : m.group(0);
+            });
         }
 
         if (hasSlash) {
-            Matcher mMixedS = MIXED_SLASH_FRACTION.matcher(text);
-            if (mMixedS.find()) {
-                StringBuffer sb = new StringBuffer(text.length() + 16);
-                do {
-                    String whole = mMixedS.group(1);
-                    int num = Integer.parseInt(mMixedS.group(2));
-                    int den = Integer.parseInt(mMixedS.group(3));
-                    String name = (num < den) ? fractionName(num, den, true) : null;
-                    if (name != null) {
-                        mMixedS.appendReplacement(sb, whole + " and " + name);
-                    } else {
-                        mMixedS.appendReplacement(sb, Matcher.quoteReplacement(mMixedS.group(0)));
-                    }
-                } while (mMixedS.find());
-                mMixedS.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(MIXED_SLASH_FRACTION, text, m -> {
+                String whole = m.group(1);
+                int num = Integer.parseInt(m.group(2));
+                int den = Integer.parseInt(m.group(3));
+                String name = (num < den) ? fractionName(num, den, true) : null;
+                return name != null ? whole + " and " + name : m.group(0);
+            });
 
-            Matcher mStandS = STANDALONE_SLASH_FRACTION.matcher(text);
-            if (mStandS.find()) {
-                StringBuffer sb = new StringBuffer(text.length() + 16);
-                do {
-                    boolean negative = mStandS.group(1) != null;
-                    int num = Integer.parseInt(mStandS.group(2));
-                    int den = Integer.parseInt(mStandS.group(3));
-                    String name = (num < den) ? fractionName(num, den, false) : null;
-                    if (name != null) {
-                        String rep = (negative ? "minus " : "") + name;
-                        mStandS.appendReplacement(sb, rep);
-                    } else {
-                        mStandS.appendReplacement(sb, Matcher.quoteReplacement(mStandS.group(0)));
-                    }
-                } while (mStandS.find());
-                mStandS.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(STANDALONE_SLASH_FRACTION, text, m -> {
+                boolean negative = m.group(1) != null;
+                int num = Integer.parseInt(m.group(2));
+                int den = Integer.parseInt(m.group(3));
+                String name = (num < den) ? fractionName(num, den, false) : null;
+                return name != null ? (negative ? "minus " : "") + name : m.group(0);
+            });
         }
 
         return text;
@@ -676,41 +586,27 @@ public final class NumberReading {
     public static String readSubSuper(String text) {
         if (text == null || text.isEmpty() || !containsSubSuper(text)) return text;
 
-        Matcher mUnit = AREA_VOLUME_UNITS.matcher(text);
-        if (mUnit.find()) {
-            StringBuffer sb = new StringBuffer(text.length() + 16);
-            do {
-                String unit = mUnit.group(1);
-                char p = mUnit.group(2).charAt(0);
-                String prefix = (p == '²') ? "square " : "cubic ";
-                String uName;
-                switch (unit) {
-                    case "mm": uName = "millimeters"; break;
-                    case "cm": uName = "centimeters"; break;
-                    case "m": uName = "meters"; break;
-                    case "km": uName = "kilometers"; break;
-                    case "in": uName = "inches"; break;
-                    case "ft": uName = "feet"; break;
-                    case "yd": uName = "yards"; break;
-                    case "mi": uName = "miles"; break;
-                    default: uName = unit; break;
-                }
-                mUnit.appendReplacement(sb, prefix + uName);
-            } while (mUnit.find());
-            mUnit.appendTail(sb);
-            text = sb.toString();
-        }
+        text = AsciiUtils.replaceMatches(AREA_VOLUME_UNITS, text, m -> {
+            String unit = m.group(1);
+            char p = m.group(2).charAt(0);
+            String prefix = (p == '²') ? "square " : "cubic ";
+            String uName;
+            switch (unit) {
+                case "mm": uName = "millimeters"; break;
+                case "cm": uName = "centimeters"; break;
+                case "m": uName = "meters"; break;
+                case "km": uName = "kilometers"; break;
+                case "in": uName = "inches"; break;
+                case "ft": uName = "feet"; break;
+                case "yd": uName = "yards"; break;
+                case "mi": uName = "miles"; break;
+                default: uName = unit; break;
+            }
+            return prefix + uName;
+        });
 
-        Matcher mSq = SQUARED_CUBED.matcher(text);
-        if (mSq.find()) {
-            StringBuffer sb = new StringBuffer(text.length() + 16);
-            do {
-                char p = mSq.group(1).charAt(0);
-                mSq.appendReplacement(sb, p == '²' ? " squared" : " cubed");
-            } while (mSq.find());
-            mSq.appendTail(sb);
-            text = sb.toString();
-        }
+        text = AsciiUtils.replaceMatches(SQUARED_CUBED, text,
+                m -> m.group(1).charAt(0) == '²' ? " squared" : " cubed");
 
         StringBuilder sb = new StringBuilder(text.length() + 16);
         for (int i = 0; i < text.length(); i++) {
@@ -781,47 +677,34 @@ public final class NumberReading {
     public static String readOrdinals(String text) {
         if (text == null || text.isEmpty() || !containsOrdinalIndicator(text)) return text;
 
-        Matcher mSym = SYMBOL_ORDINALS.matcher(text);
-        if (mSym.find()) {
-            StringBuffer sb = new StringBuffer(text.length() + 8);
-            do {
-                int num = Integer.parseInt(mSym.group(1));
-                String suf = "th";
-                if (num % 100 < 11 || num % 100 > 13) {
-                    if (num % 10 == 1) suf = "st";
-                    else if (num % 10 == 2) suf = "nd";
-                    else if (num % 10 == 3) suf = "rd";
-                }
-                mSym.appendReplacement(sb, num + suf);
-            } while (mSym.find());
-            mSym.appendTail(sb);
-            text = sb.toString();
-        }
+        text = AsciiUtils.replaceMatches(SYMBOL_ORDINALS, text, m -> {
+            int num = Integer.parseInt(m.group(1));
+            String suf = "th";
+            if (num % 100 < 11 || num % 100 > 13) {
+                if (num % 10 == 1) suf = "st";
+                else if (num % 10 == 2) suf = "nd";
+                else if (num % 10 == 3) suf = "rd";
+            }
+            return num + suf;
+        });
 
-        Matcher mOrd = ENGLISH_ORDINALS.matcher(text);
-        if (mOrd.find()) {
-            StringBuffer sb = new StringBuffer(text.length() + 16);
-            do {
-                try {
-                    int num = Integer.parseInt(mOrd.group(1));
-                    if (num >= 1 && num <= 31) {
-                        mOrd.appendReplacement(sb, ORDINALS_1_TO_31[num - 1]);
-                    } else if (num == 100) {
-                        mOrd.appendReplacement(sb, "hundredth");
-                    } else if (num == 1000) {
-                        mOrd.appendReplacement(sb, "thousandth");
-                    } else if (num == 1000000) {
-                        mOrd.appendReplacement(sb, "millionth");
-                    } else {
-                        mOrd.appendReplacement(sb, Matcher.quoteReplacement(mOrd.group(0)));
-                    }
-                } catch (NumberFormatException e) {
-                    mOrd.appendReplacement(sb, Matcher.quoteReplacement(mOrd.group(0)));
+        text = AsciiUtils.replaceMatches(ENGLISH_ORDINALS, text, m -> {
+            try {
+                int num = Integer.parseInt(m.group(1));
+                if (num >= 1 && num <= 31) {
+                    return ORDINALS_1_TO_31[num - 1];
+                } else if (num == 100) {
+                    return "hundredth";
+                } else if (num == 1000) {
+                    return "thousandth";
+                } else if (num == 1000000) {
+                    return "millionth";
                 }
-            } while (mOrd.find());
-            mOrd.appendTail(sb);
-            text = sb.toString();
-        }
+                return m.group(0);
+            } catch (NumberFormatException e) {
+                return m.group(0);
+            }
+        });
 
         return text;
     }

@@ -1031,17 +1031,9 @@ public final class NvdaSymbolProcessor {
             if (text == null || text.isEmpty()) {
                 return text;
             }
-            final Matcher m = (collapseRepeats ? masterCollapse : masterNoCollapse).matcher(text);
-            if (!m.find()) {
-                return text;
-            }
-            final StringBuffer sb = new StringBuffer(text.length() + 16);
-            do {
-                m.appendReplacement(sb, Matcher.quoteReplacement(
-                        replaceMatch(m, userLevel, collapseRepeats, custom)));
-            } while (m.find());
-            m.appendTail(sb);
-            return sb.toString();
+            return AsciiUtils.replaceMatches(
+                    (collapseRepeats ? masterCollapse : masterNoCollapse), text,
+                    m -> replaceMatch(m, userLevel, collapseRepeats, custom));
         }
 
         private String replaceMatch(Matcher m, int userLevel, boolean collapseRepeats,
@@ -1125,12 +1117,7 @@ public final class NvdaSymbolProcessor {
             if (text == null || text.isEmpty()) {
                 return text;
             }
-            final Matcher m = repeatsOnly.matcher(text);
-            if (!m.find()) {
-                return text;
-            }
-            final StringBuffer sb = new StringBuffer(text.length() + 16);
-            do {
+            return AsciiUtils.replaceMatches(repeatsOnly, text, m -> {
                 // Whole match, not group("run"): the group only holds the first
                 // character, the backreference holds the rest.
                 final String run = m.group();
@@ -1139,11 +1126,8 @@ public final class NvdaSymbolProcessor {
                 if (symbol == null) {
                     symbol = simple.get(String.valueOf(rc));
                 }
-                m.appendReplacement(sb, Matcher.quoteReplacement(
-                        "  " + run.length() + " " + symbol.replacement + " "));
-            } while (m.find());
-            m.appendTail(sb);
-            return sb.toString();
+                return "  " + run.length() + " " + symbol.replacement + " ";
+            });
         }
 
         String processSingleSymbol(String text) {

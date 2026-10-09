@@ -16,10 +16,14 @@
 
 package com.animeshahilya.espeakng;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Unified, zero-allocation ASCII and character utilities.
  * Consolidates character classification, fast ASCII lowercasing,
- * and language tag normalization across the TTS pipeline.
+ * language tag normalization, regex match rewriting and
+ * singular/plural word selection across the TTS pipeline.
  */
 public final class AsciiUtils {
 
@@ -109,13 +113,42 @@ public final class AsciiUtils {
         return base;
     }
 
+    /** Rewrites one regex match into its replacement text. */
+    public interface MatchRewrite {
+        String rewrite(Matcher matcher);
+    }
+
     /**
-     * Trims and normalizes language tag to lowercase without allocating if already clean.
+     * Replaces every match of {@code pattern} in {@code text} with
+     * {@code rewrite}'s output, returning {@code text} unchanged (same
+     * instance) when nothing matches. The replacement is always quoted, so
+     * match-derived text can never be misread as {@code $}-group syntax.
      */
-    public static String normalizeLanguageTag(String languageTag) {
-        if (languageTag == null || languageTag.isEmpty()) return "";
-        String trimmed = languageTag.trim();
-        return toAsciiLowerCase(trimmed);
+    public static String replaceMatches(Pattern pattern, String text, MatchRewrite rewrite) {
+        if (text == null) return null;
+        final Matcher m = pattern.matcher(text);
+        if (!m.find()) {
+            return text;
+        }
+        final StringBuffer sb = new StringBuffer(text.length() + 32);
+        do {
+            m.appendReplacement(sb, Matcher.quoteReplacement(rewrite.rewrite(m)));
+        } while (m.find());
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
+    /**
+     * Singular only for exactly "1" (digits as read, never parsed, so
+     * "01" stays plural like the engine reads it).
+     */
+    public static String singularOrPlural(String digits, String singular, String plural) {
+        return "1".equals(digits) ? singular : plural;
+    }
+
+    /** Singular only for a count of exactly 1. */
+    public static String singularOrPlural(int count, String singular, String plural) {
+        return count == 1 ? singular : plural;
     }
 
     /**

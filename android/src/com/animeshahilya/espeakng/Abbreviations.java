@@ -98,35 +98,33 @@ public final class Abbreviations {
         if (text == null || text.isEmpty() || !AsciiUtils.hasAsciiLetter(text)) {
             return text;
         }
-        text = replace(WORD, text, m -> {
+        text = AsciiUtils.replaceMatches(WORD, text, m -> {
             String full = WORD_MAP.get(m.group(1));
             if (full == null) full = m.group(1);
             return full + (m.group(2) != null && endsClause(m) ? "." : "");
         });
         if (AsciiUtils.hasDigit(text)) {
             if (text.indexOf('°') != -1) {
-                text = replace(TEMPERATURE, text, m -> {
-                    boolean one = "1".equals(m.group(1));
+                text = AsciiUtils.replaceMatches(TEMPERATURE, text, m -> {
                     String scale = "C".equalsIgnoreCase(m.group(2))
-                            ? (one ? "degree Celsius" : "degrees Celsius")
-                            : (one ? "degree Fahrenheit" : "degrees Fahrenheit");
+                            ? AsciiUtils.singularOrPlural(m.group(1), "degree Celsius", "degrees Celsius")
+                            : AsciiUtils.singularOrPlural(m.group(1), "degree Fahrenheit", "degrees Fahrenheit");
                     return m.group(1) + " " + scale;
                 });
             }
-            text = replace(UNIT, text, m -> {
+            text = AsciiUtils.replaceMatches(UNIT, text, m -> {
                 String[] u = UNIT_MAP.get(m.group(2));
                 if (u != null) {
-                    boolean one = "1".equals(m.group(1));
-                    return m.group(1) + " " + (one ? u[0] : u[1]);
+                    return m.group(1) + " " + AsciiUtils.singularOrPlural(m.group(1), u[0], u[1]);
                 }
                 return m.group();
             });
-            text = replace(MONTH, text, m -> {
+            text = AsciiUtils.replaceMatches(MONTH, text, m -> {
                 String full = MONTH_MAP.get(m.group(1) != null ? m.group(1) : m.group(2));
                 return full != null ? full : (m.group(1) != null ? m.group(1) : m.group(2));
             });
             if (text.indexOf("o.") != -1 || text.indexOf("O.") != -1) {
-                text = replace(NUMBER, text, m -> "N".equals(m.group(1)) ? "Number " : "number ");
+                text = AsciiUtils.replaceMatches(NUMBER, text, m -> "N".equals(m.group(1)) ? "Number " : "number ");
             }
         }
         return text;
@@ -135,22 +133,5 @@ public final class Abbreviations {
     /** A dot at the very end stays, as the pause that ends the text. */
     private static boolean endsClause(Matcher m) {
         return m.end() >= m.regionEnd();
-    }
-
-    private interface Rewrite {
-        String apply(Matcher m);
-    }
-
-    private static String replace(Pattern p, String text, Rewrite r) {
-        Matcher m = p.matcher(text);
-        if (!m.find()) {
-            return text;
-        }
-        StringBuffer sb = new StringBuffer(text.length() + 16);
-        do {
-            m.appendReplacement(sb, Matcher.quoteReplacement(r.apply(m)));
-        } while (m.find());
-        m.appendTail(sb);
-        return sb.toString();
     }
 }

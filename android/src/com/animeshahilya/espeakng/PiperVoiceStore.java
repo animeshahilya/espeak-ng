@@ -221,17 +221,6 @@ final class PiperVoiceStore {
         return null;
     }
 
-    /** Installed voices for one language (see {@link #languageKey(Locale)}). */
-    static List<Installed> forLanguage(Context storageContext, String languageKey) {
-        final List<Installed> out = new ArrayList<>();
-        for (Installed v : list(storageContext)) {
-            if (v.languageKey().equals(languageKey)) {
-                out.add(v);
-            }
-        }
-        return out;
-    }
-
     static void invalidate() {
         synchronized (LOCK) {
             sList = null;

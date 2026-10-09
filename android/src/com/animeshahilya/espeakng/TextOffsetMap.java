@@ -58,13 +58,22 @@ final class TextOffsetMap {
 
     /** Maps a UTF-16 offset in the newer text to one in the previous text. */
     int toPrevious(int offset) {
+        return clamp(mToPrevious, offset);
+    }
+
+    /**
+     * Shared boundary-map lookup (also used by
+     * {@link UnicodeNormalization}): interior clamps keep mapped ranges
+     * monotonic so the two maps can never diverge.
+     */
+    static int clamp(int[] toPrevious, int offset) {
         if (offset <= 0) {
             return 0;
         }
-        if (offset >= mToPrevious.length) {
-            return mToPrevious[mToPrevious.length - 1];
+        if (offset >= toPrevious.length) {
+            return toPrevious[toPrevious.length - 1];
         }
-        return mToPrevious[offset];
+        return toPrevious[offset];
     }
 
     /**

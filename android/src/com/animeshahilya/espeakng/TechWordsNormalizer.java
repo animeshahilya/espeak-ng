@@ -147,20 +147,7 @@ public final class TechWordsNormalizer {
         if (text == null || text.isEmpty() || !AsciiUtils.hasAsciiLetter(text)) {
             return text;
         }
-
-        final Matcher matcher = TECH_WORDS_PATTERN.matcher(text);
-        if (!matcher.find()) {
-            return text;
-        }
-
-        final StringBuffer sb = new StringBuffer(text.length() + 32);
-        do {
-            final String match = matcher.group();
-            final String replacement = normalizeTerm(match);
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(replacement));
-        } while (matcher.find());
-        matcher.appendTail(sb);
-        return sb.toString();
+        return AsciiUtils.replaceMatches(TECH_WORDS_PATTERN, text, m -> normalizeTerm(m.group()));
     }
 
     private static String normalizeTerm(String raw) {

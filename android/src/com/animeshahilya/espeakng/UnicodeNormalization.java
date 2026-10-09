@@ -60,13 +60,7 @@ public final class UnicodeNormalization {
 
         /** Maps a UTF-16 offset in {@link #text} to one in the original string. */
         public int toOriginalOffset(int offset) {
-            if (offset <= 0) {
-                return 0;
-            }
-            if (offset >= mOffsets.length) {
-                return mOffsets[mOffsets.length - 1];
-            }
-            return mOffsets[offset];
+            return TextOffsetMap.clamp(mOffsets, offset);
         }
 
         /**

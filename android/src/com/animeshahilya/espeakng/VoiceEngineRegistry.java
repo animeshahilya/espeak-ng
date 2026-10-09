@@ -52,37 +52,37 @@ public final class VoiceEngineRegistry {
 
     /** Returns all currently registered engines. */
     public Collection<VoiceEngine> getEngines() {
-        return Collections.unmodifiableCollection(new java.util.ArrayList<>(mEngines.values()));
+        return Collections.unmodifiableCollection(snapshot());
+    }
+
+    /** Snapshot: an engine callback may register/unregister mid-broadcast. */
+    private java.util.List<VoiceEngine> snapshot() {
+        return new java.util.ArrayList<>(mEngines.values());
+    }
+
+    /** Runs {@code action} on every engine; one engine's failure never stops the rest. */
+    private void forEachEngine(java.util.function.Consumer<VoiceEngine> action) {
+        for (VoiceEngine engine : snapshot()) {
+            try {
+                action.accept(engine);
+            } catch (Throwable ignored) {
+            }
+        }
     }
 
     /** Broadcasts stop to all registered engines. */
     public void stopAll() {
-        for (VoiceEngine engine : new java.util.ArrayList<>(mEngines.values())) {
-            try {
-                engine.onStop();
-            } catch (Throwable ignored) {
-            }
-        }
+        forEachEngine(VoiceEngine::onStop);
     }
 
     /** Broadcasts memory trim to all registered engines. */
     public void trimAll(int level) {
-        for (VoiceEngine engine : new java.util.ArrayList<>(mEngines.values())) {
-            try {
-                engine.onTrimMemory(level);
-            } catch (Throwable ignored) {
-            }
-        }
+        forEachEngine(engine -> engine.onTrimMemory(level));
     }
 
     /** Unloads all loaded models across all registered engines. */
     public void unloadAll() {
-        for (VoiceEngine engine : new java.util.ArrayList<>(mEngines.values())) {
-            try {
-                engine.unloadAll();
-            } catch (Throwable ignored) {
-            }
-        }
+        forEachEngine(VoiceEngine::unloadAll);
     }
 
     /**

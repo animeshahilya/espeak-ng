@@ -806,18 +806,7 @@ public final class TextPreprocessor {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        Matcher matcher = PATTERN_URL.matcher(text);
-        if (!matcher.find()) {
-            return text;
-        }
-        StringBuffer sb = new StringBuffer(text.length());
-        do {
-            String url = matcher.group(0);
-            String simplified = formatSimplifiedUrl(url);
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(simplified));
-        } while (matcher.find());
-        matcher.appendTail(sb);
-        return sb.toString();
+        return AsciiUtils.replaceMatches(PATTERN_URL, text, m -> formatSimplifiedUrl(m.group(0)));
     }
 
     private static String formatSimplifiedUrl(String url) {
@@ -1132,6 +1121,11 @@ public final class TextPreprocessor {
         return indianRupeeAmountToWords(amount, false);
     }
 
+    private static String paiseWord(int paise, boolean devanagari) {
+        return AsciiUtils.singularOrPlural(paise,
+                devanagari ? "पैसा" : "paisa", devanagari ? "पैसे" : "paise");
+    }
+
     public static String indianRupeeAmountToWords(String amount, boolean devanagari) {
         if (amount == null || amount.isEmpty()) return devanagari ? " रुपये" : " rupees";
         int dot = amount.indexOf('.');
@@ -1155,23 +1149,15 @@ public final class TextPreprocessor {
 
         // Fractional-only amount, e.g. "₹0.50" -> "50 paise"
         if ("0".equals(intWords) && paise > 0) {
-            String paiseWord = (paise == 1)
-                    ? (devanagari ? "पैसा" : "paisa")
-                    : (devanagari ? "पैसे" : "paise");
-            return paise + " " + paiseWord;
+            return paise + " " + paiseWord(paise, devanagari);
         }
 
-        boolean isSingularRupee = "1".equals(intWords);
-        String rupeesWord = isSingularRupee
-                ? (devanagari ? "रुपया" : "rupee")
-                : (devanagari ? "रुपये" : "rupees");
+        String rupeesWord = AsciiUtils.singularOrPlural(intWords,
+                devanagari ? "रुपया" : "rupee", devanagari ? "रुपये" : "rupees");
 
         StringBuilder out = new StringBuilder(intWords).append(' ').append(rupeesWord);
         if (paise > 0) {
-            String paiseWord = (paise == 1)
-                    ? (devanagari ? "पैसा" : "paisa")
-                    : (devanagari ? "पैसे" : "paise");
-            out.append(' ').append(paise).append(' ').append(paiseWord);
+            out.append(' ').append(paise).append(' ').append(paiseWord(paise, devanagari));
         } else if (paise < 0 && !fracPart.isEmpty()) {
             out.append('.').append(fracPart);
         } else if (fracPart.length() > 2) {
@@ -1226,50 +1212,26 @@ public final class TextPreprocessor {
             text = VISARGA_COLON.matcher(text).replaceAll("$1ः");
         }
         if (text.indexOf('/') >= 0) {
-            Matcher txnMatcher = BANKING_SLASH_TXN.matcher(text);
-            if (txnMatcher.find()) {
-                StringBuffer sb = new StringBuffer();
-                do {
-                    String expanded = SLASH_RUN.matcher(txnMatcher.group(0)).replaceAll(" / ");
-                    txnMatcher.appendReplacement(sb, Matcher.quoteReplacement(expanded));
-                } while (txnMatcher.find());
-                txnMatcher.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(BANKING_SLASH_TXN, text, txnMatcher ->
+                    SLASH_RUN.matcher(txnMatcher.group(0)).replaceAll(" / "));
         }
 
         // CURRENCY_PREFIX, INDIAN_NUMBER_COMMAS and every SHORTHAND_*
         // pattern all require ASCII digits; computed once for all of them.
         final boolean hasDigit = AsciiUtils.hasDigit(text);
         if (hasDigit) {
-            Matcher currMatcher = CURRENCY_PREFIX.matcher(text);
-            if (currMatcher.find()) {
-                StringBuffer sb = new StringBuffer();
-                do {
-                    String amount = currMatcher.group(1);
-                    String unit = currMatcher.group(2);
-                    String words = (unit != null && !unit.isEmpty())
-                            ? indianRupeeShorthandToWords(amount, unit, devanagari, marathi)
-                            : indianRupeeAmountToWords(amount, devanagari);
-                    currMatcher.appendReplacement(sb, Matcher.quoteReplacement(words));
-                } while (currMatcher.find());
-                currMatcher.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(CURRENCY_PREFIX, text, currMatcher -> {
+                String amount = currMatcher.group(1);
+                String unit = currMatcher.group(2);
+                return (unit != null && !unit.isEmpty())
+                        ? indianRupeeShorthandToWords(amount, unit, devanagari, marathi)
+                        : indianRupeeAmountToWords(amount, devanagari);
+            });
         }
 
         if (text.indexOf(',') >= 0) {
-            Matcher numMatcher = INDIAN_NUMBER_COMMAS.matcher(text);
-            if (numMatcher.find()) {
-                StringBuffer sb = new StringBuffer();
-                do {
-                    String grouped = numMatcher.group(0);
-                    String words = indianGroupedNumberToWords(grouped, devanagari, marathi);
-                    numMatcher.appendReplacement(sb, Matcher.quoteReplacement(words));
-                } while (numMatcher.find());
-                numMatcher.appendTail(sb);
-                text = sb.toString();
-            }
+            text = AsciiUtils.replaceMatches(INDIAN_NUMBER_COMMAS, text, numMatcher ->
+                    indianGroupedNumberToWords(numMatcher.group(0), devanagari, marathi));
         }
 
         if (hasDigit) {
@@ -1500,10 +1462,6 @@ public final class TextPreprocessor {
             digits++;
         }
         return digits == 3 || (digits == 2 && j < text.length() && text.charAt(j) == ',');
-    }
-
-    public static String spaceSeparateDigits(String text) {
-        return separateDigits(text, " ");
     }
 
     public static String separateDigits(String text, String delimiter) {

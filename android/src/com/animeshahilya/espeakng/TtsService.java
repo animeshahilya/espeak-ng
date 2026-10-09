@@ -772,6 +772,65 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
+    /**
+     * Completes a request as a successful empty utterance (the blank-text and
+     * sleep-timer fast paths' shared shape), never an error, so clients keep
+     * working silently.
+     */
+    private void completeAsEmpty(SynthesisCallback callback, SpeechSynthesis engine) {
+        if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
+                != TextToSpeech.SUCCESS) {
+            reportError(callback, TextToSpeech.ERROR_SERVICE);
+        } else {
+            callback.done();
+        }
+    }
+
+    /** Builds the request's audio dispatcher and publishes it for the synth callbacks. */
+    private TtsAudioDispatcher newDispatcher(SynthesisCallback callback, AudioOptimizer optimizer,
+                                             TextOffsetMap offsetMap, String text, int textOffset) {
+        final TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                TtsAudioDispatcher.fromSynthesisCallback(callback),
+                optimizer,
+                offsetMap,
+                text,
+                textOffset,
+                mOriginalTextLength,
+                mIsStopped,
+                mCallbackDone,
+                () -> mEngineRegistry.stopAll()
+        );
+        mCurrentDispatcher = dispatcher;
+        return dispatcher;
+    }
+
+    /**
+     * Shared request tail: record reading history (opt-in, never SSML),
+     * release any render-ahead piece, note used natural voices and signal
+     * completion. The natural path always passes {@code isSsml} false (SSML
+     * stays with eSpeak), so one guard covers both paths.
+     */
+    private void finishWithHistory(SharedPreferences prefs, String voiceName, List<String> used,
+                                   NaturalAhead ahead, boolean isSsml) {
+        if (!mIsStopped.get() && mHistoryText != null && !isSsml) {
+            ReadingHistory.record(prefs, mHistoryText, voiceName);
+        }
+        mHistoryText = null;
+        ahead.discard(); // stopped with the next natural piece still rendering
+        PiperVoiceStore.noteUsed(prefs, used);
+        finishRequest();
+    }
+
+    /**
+     * True when a natural voice cannot read digits itself (its language has
+     * no ICU number words and it is not letter-reading): digit runs must go
+     * to eSpeak instead of being skipped ("ಸಮಯ 10:30" lost its time).
+     */
+    private static boolean needsDigitHelp(PiperVoiceStore.Installed natural) {
+        return natural != null && !natural.config.usesEspeak()
+                && PiperEngine.numberWords(natural.config.languageFamily) == null;
+    }
+
     // BaseBundle.get(String) was deprecated in API 33, but no typed getter
     // preserves these reads: the debug dump takes arbitrary keys, and volume
     // defensively accepts Number or String. Both callers keep exact behavior.
@@ -845,12 +904,7 @@ public class TtsService extends TextToSpeechService {
         // Fast-path empty or whitespace-only utterances: avoid full voice/param setup
         // and JNI overhead for TalkBack spacers, empty lines, and blank elements.
         if (VoiceSettings.isBlank(text)) {
-            if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
-                    != TextToSpeech.SUCCESS) {
-                reportError(callback, TextToSpeech.ERROR_SERVICE);
-            } else {
-                callback.done();
-            }
+            completeAsEmpty(callback, engine);
             return;
         }
 
@@ -894,12 +948,7 @@ public class TtsService extends TextToSpeechService {
         // as a successful empty utterance (the blank-text fast path's shape),
         // never an error, so clients keep working silently until expiry.
         if (VoiceSettings.isSleepMuted(prefs)) {
-            if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
-                    != TextToSpeech.SUCCESS) {
-                reportError(callback, TextToSpeech.ERROR_SERVICE);
-            } else {
-                callback.done();
-            }
+            completeAsEmpty(callback, engine);
             return;
         }
 
@@ -965,18 +1014,8 @@ public class TtsService extends TextToSpeechService {
         mAudioOptimizer = settings.isAudioOptimizerEnabled() && sampleRate > 0
                 ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
                 : null;
-        final TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
-                TtsAudioDispatcher.fromSynthesisCallback(callback),
-                mAudioOptimizer,
-                offsetMap,
-                text,
-                textOffset,
-                mOriginalTextLength,
-                mIsStopped,
-                mCallbackDone,
-                () -> mEngineRegistry.stopAll()
-        );
-        mCurrentDispatcher = dispatcher;
+        final TtsAudioDispatcher dispatcher =
+                newDispatcher(callback, mAudioOptimizer, offsetMap, text, textOffset);
         // Parsed once: getVoiceVariant() re-reads SharedPreferences and
         // re-splits the stored string, and it was previously called at every
         // setVoice() site below (up to 3x per request, more when chunked).
@@ -1134,13 +1173,7 @@ public class TtsService extends TextToSpeechService {
         // Reading history (opt-in): what was spoken, for re-hearing later.
         // Recorded once per completed request; stopped requests and SSML
         // markup are skipped inside, along with short/code-like text.
-        if (!mIsStopped.get() && mHistoryText != null && !isSsml) {
-            ReadingHistory.record(prefs, mHistoryText, voice != null ? voice.name : null);
-        }
-        mHistoryText = null;
-        ahead.discard(); // stopped with the next natural piece still rendering
-        PiperVoiceStore.noteUsed(prefs, naturalUsed);
-        finishRequest();
+        finishWithHistory(prefs, voice != null ? voice.name : null, naturalUsed, ahead, isSsml);
     }
 
     /**
@@ -1253,18 +1286,8 @@ public class TtsService extends TextToSpeechService {
         mAudioOptimizer = settings.isAudioOptimizerEnabled()
                 ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
                 : null;
-        final TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
-                TtsAudioDispatcher.fromSynthesisCallback(callback),
-                mAudioOptimizer,
-                offsetMap,
-                text,
-                textOffset,
-                mOriginalTextLength,
-                mIsStopped,
-                mCallbackDone,
-                () -> mEngineRegistry.stopAll()
-        );
-        mCurrentDispatcher = dispatcher;
+        final TtsAudioDispatcher dispatcher =
+                newDispatcher(callback, mAudioOptimizer, offsetMap, text, textOffset);
 
         final int targetVolume = effectiveVolume(settings, request);
         final PiperEngine.Params params = naturalParams(settings, request, prefs);
@@ -1351,14 +1374,7 @@ public class TtsService extends TextToSpeechService {
                 return;
             }
         }
-        ahead.discard();
-
-        if (!mIsStopped.get() && mHistoryText != null) {
-            ReadingHistory.record(prefs, mHistoryText, voice.name);
-        }
-        mHistoryText = null;
-        PiperVoiceStore.noteUsed(prefs, used);
-        finishRequest();
+        finishWithHistory(prefs, voice.name, used, ahead, false);
     }
 
     /** The speaker and speed of the voice speaking next (both chosen per voice). */
@@ -1367,22 +1383,6 @@ public class TtsService extends TextToSpeechService {
         params.speakerId = PiperVoiceStore.speakerId(prefs, key);
         params.speed = effectiveRate(settings, request) / (float) PiperEngine.NORMAL_RATE
                 * PiperVoiceStore.speedFactor(prefs, key);
-    }
-
-    /**
-     * Runs a natural voice into a request at {@code rate}: a voice at
-     * another rate (the 24 kHz Rasa voices in eSpeak's 22050 Hz output) is
-     * resampled. Before, such a voice was skipped in mixed text, so a
-     * Kannada Rasa voice never spoke inside English or Hindi requests.
-     *
-     * @return frames written at {@code rate}, or -1 as {@link PiperEngine#synthesize}
-     */
-    private int synthesizeAt(PiperModel model, String text, PiperEngine.Phonemizer phonemizer,
-                             PiperEngine.Params params, PiperEngine.Output output, int rate)
-            throws ai.onnxruntime.OrtException {
-        final PiperEngine.Prepared prepared = mPiper.prepare(model, text, phonemizer,
-                SpeechSynthesis::sonicStretch, params);
-        return prepared == null ? -1 : playAt(prepared, output, rate, null);
     }
 
     /** {@link PiperEngine#play} into a request at {@code rate}, resampled where the voice's differs. */
@@ -1544,9 +1544,7 @@ public class TtsService extends TextToSpeechService {
             final LanguageRuns.Run run = runs.get(i);
             final PiperVoiceStore.Installed natural =
                     PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
-            if (natural == null || natural.config.usesEspeak()
-                    || PiperEngine.numberWords(natural.config.languageFamily) != null
-                    || !AsciiUtils.hasDigit(run.text)) {
+            if (!needsDigitHelp(natural) || !AsciiUtils.hasDigit(run.text)) {
                 if (out != null) {
                     out.add(run);
                 }
@@ -1572,9 +1570,8 @@ public class TtsService extends TextToSpeechService {
     private boolean espeakReadsPart(String text, PiperVoiceStore.Installed natural,
                                     SharedPreferences prefs, VoiceSettings settings,
                                     Map<String, String> scriptLanguages) {
-        final boolean needsDigitHelp = natural != null && !natural.config.usesEspeak()
-                && PiperEngine.numberWords(natural.config.languageFamily) == null;
-        if (needsDigitHelp && AsciiUtils.hasDigit(text)) {
+        final boolean digitHelp = needsDigitHelp(natural);
+        if (digitHelp && AsciiUtils.hasDigit(text)) {
             return true;
         }
         if (!ScriptLanguages.naturalSwitching(prefs)) {
@@ -1617,9 +1614,8 @@ public class TtsService extends TextToSpeechService {
         }
         final PiperVoiceStore.Installed ownNatural = PiperVoiceStore.resolve(mStorageContext, prefs, voice);
         final boolean naturalSwitching = ScriptLanguages.naturalSwitching(prefs);
-        final boolean needsDigitHelp = ownNatural != null && !ownNatural.config.usesEspeak()
-                && PiperEngine.numberWords(ownNatural.config.languageFamily) == null;
-        if (!naturalSwitching && !needsDigitHelp) {
+        final boolean digitHelp = needsDigitHelp(ownNatural);
+        if (!naturalSwitching && !digitHelp) {
             return units;
         }
         final Map<UnicodeScript, String> runLanguages = naturalSwitching
