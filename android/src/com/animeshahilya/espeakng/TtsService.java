@@ -1011,7 +1011,7 @@ public class TtsService extends TextToSpeechService {
             final PiperModel model = mPiper.getLoaded(natural.key);
             if (model != null && !espeakReadsPart(text, natural, prefs, settings, scriptLanguages)) {
                 synthesizeNatural(request, callback, engine, settings, prefs, voice, natural,
-                        model, text, scriptLanguages, offsetMap, textOffset);
+                        model, text, scriptLanguages, offsetMap, textOffset, isSingleCharacterUtterance);
                 return;
             }
             // Not loaded yet: eSpeak speaks this one while it loads. Or
@@ -1036,9 +1036,7 @@ public class TtsService extends TextToSpeechService {
             reportError(callback, TextToSpeech.ERROR_SERVICE);
             return;
         }
-        mAudioOptimizer = settings.isAudioOptimizerEnabled() && sampleRate > 0
-                ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
-                : null;
+        mAudioOptimizer = settings.createAudioOptimizer(sampleRate, effectiveRate(settings, request), isSingleCharacterUtterance);
         final TtsAudioDispatcher dispatcher =
                 newDispatcher(callback, mAudioOptimizer, offsetMap, text, textOffset);
         // Parsed once: getVoiceVariant() re-reads SharedPreferences and
@@ -1299,7 +1297,8 @@ public class TtsService extends TextToSpeechService {
                                    SharedPreferences prefs, final Voice voice,
                                    PiperVoiceStore.Installed natural, PiperModel model,
                                    String text, Map<String, String> scriptLanguages,
-                                   TextOffsetMap offsetMap, int textOffset) {
+                                   TextOffsetMap offsetMap, int textOffset,
+                                   boolean isSingleCharacterUtterance) {
         final int sampleRate = model.config.sampleRate;
         mCallback = callback;
         mCallbackDone.set(false);
@@ -1308,9 +1307,7 @@ public class TtsService extends TextToSpeechService {
             reportError(callback, TextToSpeech.ERROR_SERVICE);
             return;
         }
-        mAudioOptimizer = settings.isAudioOptimizerEnabled()
-                ? new AudioOptimizer(sampleRate, settings.getAudioProfile())
-                : null;
+        mAudioOptimizer = settings.createAudioOptimizer(sampleRate, effectiveRate(settings, request), isSingleCharacterUtterance);
         final TtsAudioDispatcher dispatcher =
                 newDispatcher(callback, mAudioOptimizer, offsetMap, text, textOffset);
 

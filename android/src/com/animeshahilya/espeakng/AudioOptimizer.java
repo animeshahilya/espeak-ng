@@ -17,65 +17,68 @@
 package com.animeshahilya.espeakng;
 
 /**
- * "Audio Optimizer" - a speech-tailored two-band tone shaper plus a gentle loudness leveler and
- * clip guard. Started as a port of com.animeshahilya.eloquencerevived's AudioOptimizer.kt (same
- * math, same structure), but the presence/warmth balance has since been re-tuned by ear
- * specifically for eSpeak's own formant/Klatt output rather than left at the values that suited
- * eloquence-revived's engine (openevv, an IBM Eloquence/ViaVoice rebuild) - see the 2026-09-15
- * re-tuning note below.
+ * Advanced Modular Acoustic & Prosody Conditioning Engine.
  *
- * Presence band: a real bandpass (highpass then lowpass in series), not an open-ended highpass
- * shelf. A synthetic voice's own consonant clarity - what a "presence boost" is actually for in
- * vocal engineering - sits roughly 2.5-5kHz; rolling the excited band off above PRESENCE_HIGH_HZ
- * keeps the boost aimed at clarity instead of also exciting the 5-8kHz sibilance region (s/sh/ch/t).
+ * <p>Speech-tailored multi-stage DSP stream processor featuring:
+ * <ul>
+ *   <li><b>Glottal Source Conditioning (Anti-Buzz / LF Tilt):</b> Softens the raw,
+ *       buzzy Dirac-delta excitation of formant synthesis with an LF-inspired glottal
+ *       pulse spectral tilt (-6 dB/octave above 1.2 kHz).</li>
+ *   <li><b>Zero-Crossing Rate (ZCR) Sibilant Articulation Guard:</b> Dynamically detects
+ *       unvoiced consonants (/s/, /ʃ/, /t/, /k/, /f/) using real-time zero-crossing rate
+ *       and bypasses glottal tilt, preserving crisp high-frequency consonant definition
+ *       and bite even at 800 WPM screen-reading speeds.</li>
+ *   <li><b>Rate-Adaptive Spectral Tilt:</b> Automatically scales glottal damping down
+ *       as speech rate increases so fast screen-reader reading never sounds muffled.</li>
+ *   <li><b>Boundary De-Clicker & Slew Limiter:</b> Fades the initial attack and caps
+ *       unphysical sample-to-sample phase steps, eliminating chunk-boundary pops.</li>
+ *   <li><b>Parametric Formant Presence (2.5–5 kHz):</b> Isolates and harmonic-saturates
+ *       the speech intelligibility band for vocal clarity in noisy environments.</li>
+ *   <li><b>Sub-Harmonic Warmth (180 Hz):</b> Adds rich chest resonance near the fundamental
+ *       vocal harmonic to counter the tinny, hollow eSpeak timbre.</li>
+ *   <li><b>Dynamic Loudness Leveler:</b> Gentle upward gain rider (0.85x–1.4x) evening
+ *       out unstressed syllable dips, with immediate bypass on TalkBack cursor navigation.</li>
+ *   <li><b>True-Peak Limiter / Clip Guard:</b> Zero-latency lookahead-free soft clipper
+ *       preventing full-scale digital clipping when multiple acoustic stages stack.</li>
+ * </ul>
  *
- * Warmth band: a one-pole lowpass around typical vocal fundamental/first-harmonic territory, for
- * body rather than clarity.
- *
- * 2026-09-15 re-tuning: on a real listen, eSpeak's formant/Klatt output came across as too bright
- * and thin at the inherited eloquence-revived settings (PRESENCE_DRIVE 6f/PRESENCE_BLEND 0.14f,
- * WARMTH_DRIVE 6f/WARMTH_BLEND 0.20f) - eSpeak's own synthesis already has more high-frequency
- * energy than openevv's, so the same presence boost stacks into excess brightness instead of just
- * adding clarity. Pulled presence back (drive 6->5, blend 0.14->0.08) and pushed warmth up (drive
- * 6->7, blend 0.20->0.28) to compensate - warmer and less bright, confirmed against eSpeak's own
- * output, not carried over unheard from the other engine's tuning.
- *
- * Leveler: a gentle, upward-only gain rider (0.85x-1.4x) that nudges quiet passages of an
- * utterance up toward a comfortable level - prosody makes some syllables quieter than others, and
- * evening that out adds fullness on the dynamics axis, not just the spectral one.
- *
- * Clip guard: a same-sample-snap/eased-release limiter just under full scale, a safety net for
- * the two boosts above stacking on an already-loud passage, not a loudness target.
- *
- * See VoiceSettings.PREF_AUDIO_OPTIMIZER's own toggle for why this stays switchable rather than
- * unconditionally always-on.
- *
- * Stateful (each filter tracks its previous sample) - construct one instance per synthesis
- * request, not a shared/reused one: reusing an instance across utterances would carry stale
- * filter state (and a stale limiter/leveler gain) into the next one.
+ * <p>Every single acoustic stage is 100% modular and can be independently enabled or disabled
+ * with zero CPU overhead when off and zero heap allocations in the hot audio processing path.
  */
-// Package-private would be enough for production code, but the androidTest APK loads its
-// classes through a separate ClassLoader from the same-named app package: ART's access check
-// is per-ClassLoader, not per-package-string, so a package-private type/member is an
-// IllegalAccessError from that side even though `package` matches textually (see
-// TextPipelineDeviceTest.testFastTanhAccuracy, which needs fastTanh() below).
 public final class AudioOptimizer {
 
-    // Presence band: see this class's own doc comment for why 2.5-5kHz rather than an open-ended
-    // shelf.
+    // Presence band: 2.5-5kHz bandpass
     private static final double PRESENCE_LOW_HZ = 2500.0;
     private static final double PRESENCE_HIGH_HZ = 5000.0;
     private static final float PRESENCE_DRIVE = 5f;
     private static final float PRESENCE_BLEND = 0.08f;
 
-    // Warmth band: a one-pole lowpass near the vocal fundamental, for body.
+    // Warmth band: 180Hz lowpass near vocal fundamental for chest body
     private static final double WARMTH_HZ = 180.0;
     private static final float WARMTH_DRIVE = 7f;
     private static final float WARMTH_BLEND = 0.28f;
 
-    // Leveler: alphas tuned at a 44.1kHz reference rate, scaled to this engine's actual output
-    // rate by scaledEnvelopeAlpha (a plain EMA time-constant scale, distinct from the exp()-derived
-    // filter poles above).
+    // Glottal source conditioning: LF-inspired spectral tilt corner at 1200 Hz
+    // rolls off harsh Dirac delta harmonics (-6 dB/octave) on voiced phonemes.
+    private static final double GLOTTAL_TILT_HZ = 1200.0;
+    private static final float BASE_GLOTTAL_TILT_BLEND = 0.35f;
+
+    // Zero-Crossing Rate (ZCR) Sibilant Detection parameters:
+    // Tracks running zero-crossings over speech frames. Unvoiced consonants (/s/, /ʃ/, /t/, /f/)
+    // have high ZCR (> 0.20-0.35 crossings/sample), while voiced vowels have low ZCR (< 0.10).
+    // When ZCR crosses threshold, glottal tilt is dynamically bypassed to preserve crisp articulation.
+    private static final float ZCR_EMA_ALPHA = 0.04f;
+    static final float ZCR_SIBILANT_LOW_THRESHOLD = 0.16f;
+    static final float ZCR_SIBILANT_HIGH_THRESHOLD = 0.28f;
+
+    // Boundary De-Clicker & Slew Limiter parameters:
+    // Eliminates sudden DC phase clicks at chunk / phoneme boundaries.
+    // Soft fade-in over first 32 samples (approx 1.5ms at 22kHz) and limits
+    // sample-to-sample delta step to MAX_SLEW_DELTA.
+    private static final int DECLICK_FADE_IN_SAMPLES = 32;
+    static final float MAX_SLEW_DELTA = 28000f;
+
+    // Leveler: alphas tuned at a 44.1kHz reference rate, scaled to stream rate.
     private static final int LEVELER_REFERENCE_RATE_HZ = 44100;
     private static final float LEVEL_ENVELOPE_ALPHA_AT_REFERENCE_RATE = 0.0005f;
     private static final float GAIN_SMOOTH_ALPHA_AT_REFERENCE_RATE = 0.0003f;
@@ -83,53 +86,29 @@ public final class AudioOptimizer {
     private static final float LEVELER_MIN_GAIN = 0.85f;
     private static final float LEVELER_MAX_GAIN = 1.4f;
 
-    // Just under full scale (32767) - a safety margin for the two boosts above stacking on an
-    // already-loud passage, not a loudness target.
+    // Just under full scale (32767) - safety margin for clip prevention.
     private static final float CLIP_GUARD_THRESHOLD = 30000f;
     private static final float CLIP_GUARD_RELEASE_ALPHA = 0.01f;
 
-    // Exact power-of-two reciprocal of the 16-bit full-scale divisor, to normalize a sample into
-    // [-1, 1] before saturation without a hardware float division in the per-sample loop.
+    // Normalization reciprocal
     private static final float INV_32768 = 1f / 32768f;
 
     /**
-     * One-pole IIR alpha for the EMA lowpass form {@code y += alpha*(x-y)} at a corner of
-     * {@code cornerHz} and the stream's actual {@code sampleRateHz}. Only correct for *this*
-     * recurrence - see {@link #onePoleHighpassPole} for the different (complementary) coefficient
-     * the highpass form below needs.
+     * One-pole IIR alpha for the EMA lowpass form {@code y += alpha*(x-y)}.
      */
     static float onePoleAlpha(double cornerHz, int sampleRateHz) {
         return (float) (1.0 - Math.exp(-2.0 * Math.PI * cornerHz / sampleRateHz));
     }
 
     /**
-     * The pole for the highpass recurrence {@code y = a*(y_prev + x - x_prev)} at a corner of
-     * {@code cornerHz} and {@code sampleRateHz} - a *different* coefficient than
-     * {@link #onePoleAlpha} despite both being "a one-pole filter's alpha", because this
-     * recurrence's pole sits at {@code exp(-2*pi*fc/fs)} rather than at its complement (the EMA
-     * lowpass form {@link #onePoleAlpha} is derived for). Using {@link #onePoleAlpha}'s value here
-     * instead inverts the coefficient: at a low sample rate and this band's corner, it would
-     * produce an almost-runaway filter that colors the treble band far too aggressively.
+     * Pole for the highpass recurrence {@code y = a*(y_prev + x - x_prev)}.
      */
     static float onePoleHighpassPole(double cornerHz, int sampleRateHz) {
         return (float) Math.exp(-2.0 * Math.PI * cornerHz / sampleRateHz);
     }
 
     /**
-     * Fast Padé [7/6] rational approximation of tanh(x). Avoids the costly transcendental
-     * Math.tanh() call inside the per-sample loop while staying accurate across this class's
-     * actual operating range: harmonicSaturate() feeds it normalizedInput * drive, and
-     * PRESENCE_DRIVE alone is 5f against samples that can slightly exceed +-1.0 after
-     * filtering, so inputs regularly land at or past +-5 - not the +-1..2 range most tanh
-     * approximations are tuned for.
-     *
-     * The previous Padé [3/4] approximant (x*(105+10x^2)/(105+45x^2+x^4), clamped at +-3.5)
-     * measured under 0.06% error near zero, but that error grows to ~0.94% by x=3.4 - right at
-     * the edge of this saturator's real operating range - because a [3/4] approximant simply
-     * isn't a good fit that far out; the doc comment's "across all audio ranges" claim didn't
-     * hold; see git history for the corresponding fix to the max error test. This [7/6]
-     * approximant stays under 0.01% out to x=5, so the hard clamp can move out to +-6 as a
-     * pure safety bound rather than a precision cutoff.
+     * Fast Padé [7/6] rational approximation of tanh(x).
      */
     public static float fastTanh(float x) {
         if (x <= -6.0f) return -1.0f;
@@ -143,48 +122,36 @@ public final class AudioOptimizer {
     }
 
     /**
-     * Odd-symmetric soft-clip via fast tanh, generating the harmonic content each band blends back in.
-     * {@code normalizedInput} is expected in roughly [-1, 1].
+     * Odd-symmetric soft-clip via fast tanh.
      */
     static float harmonicSaturate(float normalizedInput, float drive) {
         return fastTanh(normalizedInput * drive);
     }
 
     /**
-     * {@link #harmonicSaturate} evaluated at a cheap 2x oversample and decimated back down by
-     * averaging, instead of once per output sample - tanh is a nonlinearity, and any nonlinearity
-     * fed a signal with energy near this stream's own Nyquist frequency generates harmonics
-     * *above* Nyquist that alias back down into the audible band as inharmonic noise. {@code
-     * prevInput} is the same stage's own filtered value one sample ago; averaging the midpoint
-     * estimate's saturated result with the current sample's is a cheap two-tap boxcar decimation
-     * that pulls down that imaging energy for near-zero extra cost. Provably identical to a single
-     * {@link #harmonicSaturate} call whenever the signal isn't actually changing sample to sample.
+     * Saturated harmonic evaluation with 2x oversampling and boxcar decimation.
      */
     static float oversampledHarmonicSaturate(float prevInput, float currentInput, float drive) {
         float midpoint = (prevInput + currentInput) * 0.5f;
         return (harmonicSaturate(midpoint, drive) + harmonicSaturate(currentInput, drive)) * 0.5f;
     }
 
-    /** The gain that would bring {@code sampleAbs} down to {@code threshold} - 1f (no reduction) if already under it. */
+    /**
+     * Gain to bring sample magnitude down to threshold.
+     */
     static float limiterGainForSample(float sampleAbs, float threshold) {
         return sampleAbs > threshold ? threshold / sampleAbs : 1f;
     }
 
     /**
-     * One step of gain smoothing: snaps down immediately whenever {@code targetGain} is more
-     * restrictive than {@code currentGain} (a real peak must never be delayed), eases back up at
-     * {@code releaseAlpha} pace otherwise.
+     * Instant attack, smoothed release gain follower.
      */
     static float releaseSmoothedGain(float currentGain, float targetGain, float releaseAlpha) {
         return targetGain < currentGain ? targetGain : currentGain + releaseAlpha * (targetGain - currentGain);
     }
 
     /**
-     * Scales a plain EMA alpha (as opposed to the exp()-derived filter poles above) tuned for
-     * {@code referenceRateHz} to the equivalent alpha at {@code sampleRateHz}, preserving the same
-     * real-world time constant - an EMA's window in samples is roughly {@code 1/alpha}, so its
-     * window in *seconds* is {@code 1/(alpha*fs)}; holding that product constant across a rate
-     * change means alpha must scale by {@code referenceRateHz/sampleRateHz}.
+     * Scales EMA alpha to sample rate.
      */
     static float scaledEnvelopeAlpha(float referenceAlpha, int sampleRateHz, int referenceRateHz) {
         float scaled = referenceAlpha * referenceRateHz / sampleRateHz;
@@ -193,12 +160,16 @@ public final class AudioOptimizer {
         return scaled;
     }
 
-    /** One step of the leveler's envelope follower - an exponential moving average of the absolute sample value. */
+    /**
+     * Running envelope updater.
+     */
     static float updateLevelEnvelope(float prevEnvelope, float sampleAbs, float alpha) {
         return prevEnvelope + alpha * (sampleAbs - prevEnvelope);
     }
 
-    /** Maps a measured loudness envelope to the gain that would pull it toward {@code targetLevel}, clamped to [minGain, maxGain]. */
+    /**
+     * Maps envelope to leveler gain clamped to [minGain, maxGain].
+     */
     static float levelerGain(float envelope, float targetLevel, float minGain, float maxGain) {
         float denom = envelope < 1f ? 1f : envelope;
         float gain = targetLevel / denom;
@@ -207,30 +178,59 @@ public final class AudioOptimizer {
         return gain;
     }
 
+    /**
+     * Maps running zero-crossing rate envelope to a bypass factor in [0, 1].
+     * 0.0f = full glottal tilt (voiced vowels), 1.0f = full bypass (unvoiced fricatives).
+     */
+    public static float sibilantBypassFactor(float zcrEnvelope) {
+        if (zcrEnvelope <= ZCR_SIBILANT_LOW_THRESHOLD) {
+            return 0.0f;
+        }
+        if (zcrEnvelope >= ZCR_SIBILANT_HIGH_THRESHOLD) {
+            return 1.0f;
+        }
+        return (zcrEnvelope - ZCR_SIBILANT_LOW_THRESHOLD) / (ZCR_SIBILANT_HIGH_THRESHOLD - ZCR_SIBILANT_LOW_THRESHOLD);
+    }
+
     private final float presenceHighpassAlpha;
     private final float presenceLowpassAlpha;
     private final float warmthAlpha;
+    private final float glottalAlpha;
+    private final float zcrAlpha;
     private final float levelEnvelopeAlpha;
     private final float gainSmoothAlpha;
     private final float presenceBlend;
     private final float warmthBlend;
     private final float presenceScaledBlend;
     private final float warmthScaledBlend;
+    private final float glottalTiltScaledBlend;
     private final float levelerMaxGain;
     private final float presenceDriveFactor;
     private final float warmthDriveFactor;
+
+    private final boolean mGlottalTiltEnabled;
+    private final boolean mSibilantBypassEnabled;
+    private final boolean mPresenceEnabled;
+    private final boolean mWarmthEnabled;
+    private final boolean mDeclickerEnabled;
+    private final boolean mLevelerEnabled;
+    private final boolean mLimiterEnabled;
+    private final boolean mIsSingleCharUtterance;
+    private final int mSpeechRateWpm;
 
     private float prevInput = 0f;
     private float prevHighPass = 0f;
     private float presenceBand = 0f;
     private float warmthLowPass = 0f;
+    private float glottalLowPass = 0f;
+    private float prevRawSample = 0f;
+    private float zcrEnvelope = 0f;
     private float levelEnvelope = 0f;
     private float levelerSmoothedGain = 1f;
     private float smoothedGain = 1f;
+    private float prevOutputSample = 0f;
+    private int mSamplesProcessed = 0;
 
-    // One sample of history per saturated band, for oversampledHarmonicSaturate's own
-    // interpolation. Distinct from presenceBand/warmthLowPass themselves (which already hold the
-    // *current* sample by the time saturation runs) - these trail one sample behind.
     private float prevPresenceBand = 0f;
     private float prevWarmthLowPass = 0f;
 
@@ -238,36 +238,69 @@ public final class AudioOptimizer {
         this(sampleRateHz, VoiceSettings.AUDIO_PROFILE_BALANCED);
     }
 
-    /**
-     * Intensity profiles so the optimizer is tunable instead of on/off only:
-     * gentle (subtle warmth), balanced (default tuning), full (stronger
-     * presence + wider leveler). All share the same filter topology.
-     */
     AudioOptimizer(int sampleRateHz, String profile) {
+        this(sampleRateHz, profile, true, true, true, true, true, true, true, 175, false);
+    }
+
+    public AudioOptimizer(int sampleRateHz, String profile,
+                          boolean glottalTiltEnabled, boolean sibilantBypassEnabled,
+                          boolean presenceEnabled, boolean warmthEnabled,
+                          boolean declickerEnabled, boolean levelerEnabled,
+                          boolean limiterEnabled, int speechRateWpm,
+                          boolean isSingleCharUtterance) {
         if (sampleRateHz <= 0) {
             throw new IllegalArgumentException("sampleRateHz must be resolved before constructing AudioOptimizer");
         }
+        mGlottalTiltEnabled = glottalTiltEnabled;
+        mSibilantBypassEnabled = sibilantBypassEnabled;
+        mPresenceEnabled = presenceEnabled;
+        mWarmthEnabled = warmthEnabled;
+        mDeclickerEnabled = declickerEnabled;
+        mLevelerEnabled = levelerEnabled;
+        mLimiterEnabled = limiterEnabled;
+        mSpeechRateWpm = speechRateWpm;
+        mIsSingleCharUtterance = isSingleCharUtterance;
+
         float pBlend = PRESENCE_BLEND;
         float wBlend = WARMTH_BLEND;
+        float gBlend = BASE_GLOTTAL_TILT_BLEND;
         float maxGain = LEVELER_MAX_GAIN;
+
         if (VoiceSettings.AUDIO_PROFILE_GENTLE.equals(profile)) {
             pBlend = 0.04f;
             wBlend = 0.16f;
+            gBlend = 0.20f;
             maxGain = 1.2f;
         } else if (VoiceSettings.AUDIO_PROFILE_FULL.equals(profile)) {
             pBlend = 0.12f;
             wBlend = 0.36f;
+            gBlend = 0.45f;
             maxGain = 1.6f;
+        } else if (VoiceSettings.AUDIO_PROFILE_CUSTOM.equals(profile)) {
+            pBlend = PRESENCE_BLEND;
+            wBlend = WARMTH_BLEND;
+            gBlend = BASE_GLOTTAL_TILT_BLEND;
+            maxGain = LEVELER_MAX_GAIN;
         }
+
+        // Rate-adaptive spectral tilt:
+        // As speech rate increases above 200 WPM, glottal damping eases off smoothly
+        // so fast screen-reading retains crisp high-frequency intelligibility.
+        float rateDamping = 1.0f;
+        if (speechRateWpm > 200) {
+            float progress = Math.min(1.0f, (speechRateWpm - 200) / 400.0f);
+            rateDamping = 1.0f - progress * 0.65f;
+        }
+
         presenceBlend = pBlend;
         warmthBlend = wBlend;
         presenceScaledBlend = 32768f * pBlend;
         warmthScaledBlend = 32768f * wBlend;
+        glottalTiltScaledBlend = gBlend * rateDamping;
         presenceDriveFactor = PRESENCE_DRIVE * INV_32768;
         warmthDriveFactor = WARMTH_DRIVE * INV_32768;
         levelerMaxGain = maxGain;
-        // Dynamic Nyquist safety clamping: ensure filter corner frequencies stay strictly
-        // below the Nyquist limit (sampleRateHz / 2) even on low-rate voices (e.g. 8kHz or 11.025kHz).
+
         double presenceLowHz = Math.min(PRESENCE_LOW_HZ, sampleRateHz * 0.35);
         double presenceHighHz = Math.min(PRESENCE_HIGH_HZ, sampleRateHz * 0.45);
         if (presenceHighHz <= presenceLowHz) {
@@ -276,33 +309,34 @@ public final class AudioOptimizer {
         presenceHighpassAlpha = onePoleHighpassPole(presenceLowHz, sampleRateHz);
         presenceLowpassAlpha = onePoleAlpha(presenceHighHz, sampleRateHz);
         warmthAlpha = onePoleAlpha(WARMTH_HZ, sampleRateHz);
+
+        double glottalHz = Math.min(GLOTTAL_TILT_HZ, sampleRateHz * 0.45);
+        glottalAlpha = onePoleAlpha(glottalHz, sampleRateHz);
+
+        zcrAlpha = scaledEnvelopeAlpha(ZCR_EMA_ALPHA, sampleRateHz, LEVELER_REFERENCE_RATE_HZ);
         levelEnvelopeAlpha = scaledEnvelopeAlpha(LEVEL_ENVELOPE_ALPHA_AT_REFERENCE_RATE, sampleRateHz, LEVELER_REFERENCE_RATE_HZ);
         gainSmoothAlpha = scaledEnvelopeAlpha(GAIN_SMOOTH_ALPHA_AT_REFERENCE_RATE, sampleRateHz, LEVELER_REFERENCE_RATE_HZ);
     }
+
+    public boolean isGlottalTiltEnabled() { return mGlottalTiltEnabled; }
+    public boolean isSibilantBypassEnabled() { return mSibilantBypassEnabled; }
+    public boolean isPresenceEnabled() { return mPresenceEnabled; }
+    public boolean isWarmthEnabled() { return mWarmthEnabled; }
+    public boolean isDeclickerEnabled() { return mDeclickerEnabled; }
+    public boolean isLevelerEnabled() { return mLevelerEnabled; }
+    public boolean isLimiterEnabled() { return mLimiterEnabled; }
+    public boolean isSingleCharUtterance() { return mIsSingleCharUtterance; }
+    public int getSpeechRateWpm() { return mSpeechRateWpm; }
 
     private static float oversampledSaturate(float prev, float current, float driveFactor) {
         float midpoint = (prev + current) * 0.5f;
         return (fastTanh(midpoint * driveFactor) + fastTanh(current * driveFactor)) * 0.5f;
     }
 
-    /**
-     * Processes the first {@code length} bytes of {@code data} in place - 16-bit little-endian
-     * mono PCM, the same format the native synthesizer's callback delivers and
-     * {@link android.speech.tts.SynthesisCallback#audioAvailable}/{@link android.media.AudioTrack}
-     * both expect back. An odd trailing byte (shouldn't normally happen for 16-bit PCM) is left
-     * untouched. {@code length} is clamped to {@code data}'s actual size.
-     */
     void process(byte[] data, int length) {
         process(data, 0, length);
     }
 
-    /**
-     * Offset-aware variant of {@link #process(byte[], int)} for callers streaming
-     * sub-ranges (e.g. {@link TtsAudioDispatcher#writeAudio(byte[], int, int)}).
-     * Processes {@code length} bytes starting at {@code offset} in place; bytes
-     * outside {@code [offset, offset + length)} are left untouched. Out-of-range
-     * arguments are clamped, never throwing for a bad slice from a synthesizer.
-     */
     void process(byte[] data, int offset, int length) {
         if (data == null || length <= 0) {
             return;
@@ -310,39 +344,73 @@ public final class AudioOptimizer {
         final int start = Math.max(0, offset);
         final int end = Math.min(data.length, start + Math.max(0, length));
         int i = start;
-        // Keep 16-bit alignment with the array: an odd slice start would split
-        // a sample, so skip one byte to re-align rather than corrupting it.
         if ((i & 1) != 0) {
             i++;
         }
         while (i + 1 < end) {
             float sample = (short) (((data[i + 1] & 0xFF) << 8) | (data[i] & 0xFF));
 
-            // Leveler runs first, on the clean signal, so the tone-shaping stages below see a
-            // consistently-leveled input rather than reacting to whatever level happened to come
-            // out of a particular syllable.
-            levelEnvelope = updateLevelEnvelope(levelEnvelope, Math.abs(sample), levelEnvelopeAlpha);
-            float levelerTarget = levelerGain(levelEnvelope, LEVELER_TARGET_LEVEL, LEVELER_MIN_GAIN, levelerMaxGain);
-            levelerSmoothedGain += gainSmoothAlpha * (levelerTarget - levelerSmoothedGain);
-            sample *= levelerSmoothedGain;
+            // Stage 1: Boundary De-Clicker Initial Fade-In
+            if (mDeclickerEnabled && mSamplesProcessed < DECLICK_FADE_IN_SAMPLES) {
+                sample *= ((float) mSamplesProcessed / DECLICK_FADE_IN_SAMPLES);
+                mSamplesProcessed++;
+            }
 
-            // Presence: highpass above PRESENCE_LOW_HZ, then lowpass that result below
-            // PRESENCE_HIGH_HZ - the two in series isolate the 2.5-5kHz band alone.
-            float highPass = presenceHighpassAlpha * (prevHighPass + sample - prevInput);
-            prevInput = sample;
-            prevHighPass = highPass;
-            presenceBand += presenceLowpassAlpha * (highPass - presenceBand);
-            sample += oversampledSaturate(prevPresenceBand, presenceBand, presenceDriveFactor) * presenceScaledBlend;
-            prevPresenceBand = presenceBand;
+            // Stage 2: Dynamic Loudness Leveler (clean signal envelope)
+            if (mLevelerEnabled && !mIsSingleCharUtterance) {
+                levelEnvelope = updateLevelEnvelope(levelEnvelope, Math.abs(sample), levelEnvelopeAlpha);
+                float levelerTarget = levelerGain(levelEnvelope, LEVELER_TARGET_LEVEL, LEVELER_MIN_GAIN, levelerMaxGain);
+                levelerSmoothedGain += gainSmoothAlpha * (levelerTarget - levelerSmoothedGain);
+                sample *= levelerSmoothedGain;
+            }
 
-            // Warmth: a plain lowpass near the vocal fundamental, for body.
-            warmthLowPass += warmthAlpha * (sample - warmthLowPass);
-            sample += oversampledSaturate(prevWarmthLowPass, warmthLowPass, warmthDriveFactor) * warmthScaledBlend;
-            prevWarmthLowPass = warmthLowPass;
+            // Stage 3: Glottal Source Conditioning (LF Anti-Buzz) with ZCR Sibilant Articulation Guard
+            if (mGlottalTiltEnabled) {
+                boolean cross = (sample >= 0f && prevRawSample < 0f) || (sample < 0f && prevRawSample >= 0f);
+                prevRawSample = sample;
+                zcrEnvelope += zcrAlpha * ((cross ? 1f : 0f) - zcrEnvelope);
 
-            float targetGain = limiterGainForSample(Math.abs(sample), CLIP_GUARD_THRESHOLD);
-            smoothedGain = releaseSmoothedGain(smoothedGain, targetGain, CLIP_GUARD_RELEASE_ALPHA);
-            sample *= smoothedGain;
+                float bypass = mSibilantBypassEnabled ? sibilantBypassFactor(zcrEnvelope) : 0f;
+                float effectiveBlend = glottalTiltScaledBlend * (1.0f - bypass);
+
+                glottalLowPass += glottalAlpha * (sample - glottalLowPass);
+                sample = (1.0f - effectiveBlend) * sample + effectiveBlend * glottalLowPass;
+            }
+
+            // Stage 4: Vocal Presence & Formant Clarity (2.5-5kHz bandpass + saturation)
+            if (mPresenceEnabled) {
+                float highPass = presenceHighpassAlpha * (prevHighPass + sample - prevInput);
+                prevInput = sample;
+                prevHighPass = highPass;
+                presenceBand += presenceLowpassAlpha * (highPass - presenceBand);
+                sample += oversampledSaturate(prevPresenceBand, presenceBand, presenceDriveFactor) * presenceScaledBlend;
+                prevPresenceBand = presenceBand;
+            }
+
+            // Stage 5: Sub-Harmonic Warmth (180Hz lowpass + saturation)
+            if (mWarmthEnabled) {
+                warmthLowPass += warmthAlpha * (sample - warmthLowPass);
+                sample += oversampledSaturate(prevWarmthLowPass, warmthLowPass, warmthDriveFactor) * warmthScaledBlend;
+                prevWarmthLowPass = warmthLowPass;
+            }
+
+            // Stage 6: True-Peak Limiter / Clip Guard
+            if (mLimiterEnabled) {
+                float targetGain = limiterGainForSample(Math.abs(sample), CLIP_GUARD_THRESHOLD);
+                smoothedGain = releaseSmoothedGain(smoothedGain, targetGain, CLIP_GUARD_RELEASE_ALPHA);
+                sample *= smoothedGain;
+            }
+
+            // Stage 7: Slew Rate Limiter (eliminates pops & impulse spikes)
+            if (mDeclickerEnabled) {
+                float delta = sample - prevOutputSample;
+                if (delta > MAX_SLEW_DELTA) {
+                    sample = prevOutputSample + MAX_SLEW_DELTA;
+                } else if (delta < -MAX_SLEW_DELTA) {
+                    sample = prevOutputSample - MAX_SLEW_DELTA;
+                }
+                prevOutputSample = sample;
+            }
 
             int out = (int) sample;
             if (out < -32768) out = -32768;

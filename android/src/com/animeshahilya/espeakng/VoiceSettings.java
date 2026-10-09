@@ -112,6 +112,13 @@ public class VoiceSettings {
     public static final String PREF_SPOKEN_DIACRITICS = "espeak_spoken_diacritics";
     /** Audio optimizer as one choice: {@link #AUDIO_PROFILE_OFF} or a profile. */
     public static final String PREF_AUDIO_OPTIMIZER_LEVEL = "espeak_audio_optimizer_level";
+    public static final String PREF_OPTIMIZER_GLOTTAL_TILT = "espeak_opt_glottal_tilt";
+    public static final String PREF_OPTIMIZER_SIBILANT_BYPASS = "espeak_opt_sibilant_bypass";
+    public static final String PREF_OPTIMIZER_WARMTH = "espeak_opt_warmth";
+    public static final String PREF_OPTIMIZER_PRESENCE = "espeak_opt_presence";
+    public static final String PREF_OPTIMIZER_LEVELER = "espeak_opt_leveler";
+    public static final String PREF_OPTIMIZER_LIMITER = "espeak_opt_limiter";
+    public static final String PREF_OPTIMIZER_DECLICKER = "espeak_opt_declicker";
     /** @deprecated Toggle + profile, merged into {@link #PREF_AUDIO_OPTIMIZER_LEVEL}. */
     @Deprecated
     public static final String PREF_AUDIO_OPTIMIZER = "espeak_audio_optimizer";
@@ -188,6 +195,7 @@ public class VoiceSettings {
     public static final String AUDIO_PROFILE_GENTLE = "gentle";
     public static final String AUDIO_PROFILE_BALANCED = "balanced";
     public static final String AUDIO_PROFILE_FULL = "full";
+    public static final String AUDIO_PROFILE_CUSTOM = "custom";
 
     public static final String PRESET_VARIANT = "variant";
     public static final String PRESET_RATE = "rate";
@@ -553,6 +561,55 @@ public class VoiceSettings {
                 : AUDIO_PROFILE_OFF;
     }
 
+    public boolean isOptimizerGlottalTiltEnabled() {
+        return mPreferences.getBoolean(PREF_OPTIMIZER_GLOTTAL_TILT, true);
+    }
+
+    public boolean isOptimizerSibilantBypassEnabled() {
+        return mPreferences.getBoolean(PREF_OPTIMIZER_SIBILANT_BYPASS, true);
+    }
+
+    public boolean isOptimizerWarmthEnabled() {
+        return mPreferences.getBoolean(PREF_OPTIMIZER_WARMTH, true);
+    }
+
+    public boolean isOptimizerPresenceEnabled() {
+        return mPreferences.getBoolean(PREF_OPTIMIZER_PRESENCE, true);
+    }
+
+    public boolean isOptimizerLevelerEnabled() {
+        return mPreferences.getBoolean(PREF_OPTIMIZER_LEVELER, true);
+    }
+
+    public boolean isOptimizerLimiterEnabled() {
+        return mPreferences.getBoolean(PREF_OPTIMIZER_LIMITER, true);
+    }
+
+    public boolean isOptimizerDeclickerEnabled() {
+        return mPreferences.getBoolean(PREF_OPTIMIZER_DECLICKER, true);
+    }
+
+    public AudioOptimizer createAudioOptimizer(int sampleRateHz, int speechRateWpm, boolean isSingleCharUtterance) {
+        if (!isAudioOptimizerEnabled() || sampleRateHz <= 0) {
+            return null;
+        }
+        final String profile = getAudioOptimizerLevel();
+        final boolean glottal = isOptimizerGlottalTiltEnabled();
+        final boolean sibilant = isOptimizerSibilantBypassEnabled();
+        final boolean presence = isOptimizerPresenceEnabled();
+        final boolean warmth = isOptimizerWarmthEnabled();
+        final boolean declicker = isOptimizerDeclickerEnabled();
+        final boolean leveler = isOptimizerLevelerEnabled();
+        final boolean limiter = isOptimizerLimiterEnabled();
+
+        return new AudioOptimizer(sampleRateHz, profile, glottal, sibilant,
+                presence, warmth, declicker, leveler, limiter, speechRateWpm, isSingleCharUtterance);
+    }
+
+    public AudioOptimizer createAudioOptimizer(int sampleRateHz) {
+        return createAudioOptimizer(sampleRateHz, 175, false);
+    }
+
     public boolean isUserDictionaryEnabled() {
         return mPreferences.getBoolean(PREF_USER_DICTIONARY, true);
     }
@@ -640,7 +697,7 @@ public class VoiceSettings {
 
     public String getAudioProfile() {
         String p = getAudioOptimizerLevel();
-        if (AUDIO_PROFILE_GENTLE.equals(p) || AUDIO_PROFILE_FULL.equals(p)) return p;
+        if (AUDIO_PROFILE_GENTLE.equals(p) || AUDIO_PROFILE_FULL.equals(p) || AUDIO_PROFILE_CUSTOM.equals(p)) return p;
         return AUDIO_PROFILE_BALANCED;
     }
 

@@ -165,14 +165,71 @@
             android:key="espeak_volume"
             android:title="@string/espeak_volume"
             app:iconSpaceReserved="false" />
-        <ListPreference
-            android:key="espeak_audio_optimizer_level"
+        <PreferenceScreen
+            android:key="sub_audio_optimizer"
             android:title="@string/setting_audio_optimizer"
-            android:entries="@array/audio_profile_entries"
-            android:entryValues="@array/audio_profile_values"
-            android:defaultValue="off"
-            app:useSimpleSummaryProvider="true"
-            app:iconSpaceReserved="false" />
+            android:summary="@string/setting_audio_optimizer_screen_summary"
+            app:iconSpaceReserved="false">
+          <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+              android:title="@string/category_optimizer_profile"
+              app:iconSpaceReserved="false">
+            <ListPreference
+                android:key="espeak_audio_optimizer_level"
+                android:title="@string/setting_audio_optimizer_profile"
+                android:entries="@array/audio_profile_entries"
+                android:entryValues="@array/audio_profile_values"
+                android:defaultValue="off"
+                app:useSimpleSummaryProvider="true"
+                app:iconSpaceReserved="false" />
+          </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+
+          <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+              android:title="@string/category_optimizer_modules"
+              app:iconSpaceReserved="false">
+            <SwitchPreferenceCompat
+                android:key="espeak_opt_glottal_tilt"
+                android:title="@string/setting_opt_glottal_tilt"
+                android:summary="@string/setting_opt_glottal_tilt_summary"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false" />
+            <SwitchPreferenceCompat
+                android:key="espeak_opt_sibilant_bypass"
+                android:title="@string/setting_opt_sibilant_bypass"
+                android:summary="@string/setting_opt_sibilant_bypass_summary"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false" />
+            <SwitchPreferenceCompat
+                android:key="espeak_opt_warmth"
+                android:title="@string/setting_opt_warmth"
+                android:summary="@string/setting_opt_warmth_summary"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false" />
+            <SwitchPreferenceCompat
+                android:key="espeak_opt_presence"
+                android:title="@string/setting_opt_presence"
+                android:summary="@string/setting_opt_presence_summary"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false" />
+            <SwitchPreferenceCompat
+                android:key="espeak_opt_leveler"
+                android:title="@string/setting_opt_leveler"
+                android:summary="@string/setting_opt_leveler_summary"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false" />
+            <SwitchPreferenceCompat
+                android:key="espeak_opt_limiter"
+                android:title="@string/setting_opt_limiter"
+                android:summary="@string/setting_opt_limiter_summary"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false" />
+            <SwitchPreferenceCompat
+                android:key="espeak_opt_declicker"
+                android:title="@string/setting_opt_declicker"
+                android:summary="@string/setting_opt_declicker_summary"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false" />
+          </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+        </PreferenceScreen>
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
