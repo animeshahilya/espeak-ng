@@ -184,6 +184,16 @@
           </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 
           <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+              android:title="@string/category_optimizer_preview"
+              app:iconSpaceReserved="false">
+            <Preference
+                android:key="action_preview_audio_optimizer"
+                android:title="@string/test_audio_optimizer_title"
+                android:summary="@string/test_audio_optimizer_summary"
+                app:iconSpaceReserved="false" />
+          </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+
+          <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
               android:title="@string/category_optimizer_modules"
               app:iconSpaceReserved="false">
             <SwitchPreferenceCompat

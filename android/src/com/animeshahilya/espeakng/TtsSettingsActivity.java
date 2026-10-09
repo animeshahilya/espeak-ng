@@ -1797,6 +1797,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     "action_preview_numbers", "action_preview_pauses",
                     "action_preview_punctuation", "action_preview_reading",
                     "action_preview_voice_sound", "action_preview_mixed_languages",
+                    "action_preview_audio_optimizer",
                     VoiceSettings.PREF_RATE_BOOST_LEVEL,
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                     VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_SPOKEN_DIACRITICS,
@@ -1843,6 +1844,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             onClick(screen, "action_preview_reading", () -> speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading"));
             onClick(screen, "action_preview_voice_sound", () -> speakPreview(context, context.getString(R.string.test_voice_tuning_sample), "sample_voice_sound"));
             onClick(screen, "action_preview_mixed_languages", () -> speakPreview(context, context.getString(R.string.test_mixed_languages_sample), "sample_mixed_languages"));
+            onClick(screen, "action_preview_audio_optimizer", () -> speakPreview(context, context.getString(R.string.test_audio_optimizer_sample), "sample_audio_optimizer"));
             onClick(screen, VoiceSettings.PREF_USER_DICTIONARY, () -> UserDictionaryScreen.show(context));
             onClick(screen, "action_recommended_defaults", () -> applyRecommendedDefaults(context));
             onClick(screen, "action_backup", () -> {
