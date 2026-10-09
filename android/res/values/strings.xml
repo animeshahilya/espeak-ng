@@ -231,7 +231,7 @@
   <string name="category_optimizer_preview">Acoustic conditioning test</string>
   <string name="test_audio_optimizer_title">Preview acoustic conditioning</string>
   <string name="test_audio_optimizer_summary">Listen to speech processed by your active acoustic modules.</string>
-  <string name="test_audio_optimizer_sample">Testing acoustic conditioning with glottal anti-buzz, crisp sibilants, chest warmth, and dynamic leveling.</string>
+  <string name="test_audio_optimizer_sample">The quick brown fox jumps over the lazy dog. A soft breeze whispers through the trees on a warm sunny morning.</string>
   <string name="category_optimizer_modules">Individual acoustic modules</string>
   <string name="setting_opt_glottal_tilt">Glottal source anti-buzz (LF tilt)</string>
   <string name="setting_opt_glottal_tilt_summary">Softens raw impulse-train buzz with natural vocal cord spectral tilt (-6 dB/octave above 1.2 kHz).</string>
