@@ -173,10 +173,11 @@ final class PiperSettings {
         final BroadcastReceiver changed = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
-                refresh(context, screen, prefs);
-                if (fragment != null && fragment.isAdded()) {
-                    onShown(fragment.getPreferenceScreen()); // the page showing, if it is one of ours
-                }
+                refresh(context, screen, prefs, () -> {
+                    if (fragment != null && fragment.isAdded()) {
+                        onShown(fragment.getPreferenceScreen()); // the page showing, if it is one of ours
+                    }
+                });
                 final String key = intent.getStringExtra(PiperDownloads.EXTRA_KEY);
                 final PiperVoiceStore.Installed voice = key == null ? null
                         : PiperVoiceStore.find(storage(context), key);
@@ -243,12 +244,40 @@ final class PiperSettings {
 
     /** Rebuilds the per-language rows and the Downloaded-voices summary. */
     static void refresh(Context context, PreferenceScreen screen, SharedPreferences prefs) {
+        refresh(context, screen, prefs, null);
+    }
+
+    /**
+     * Disk scan (folder rescan, a config parse per voice, storage totals)
+     * off the main thread - StrictMode fires for it on the UI thread - with
+     * the row rebuild back on it. {@code after} runs on the main thread once
+     * the rows are rebuilt, preserving the old synchronous ordering for
+     * callers that refresh-then-act. Overlapping refreshes are idempotent
+     * (every apply starts with removeAll), so last writer wins consistently.
+     */
+    static void refresh(Context context, PreferenceScreen screen, SharedPreferences prefs,
+                        Runnable after) {
+        final Context app = context.getApplicationContext();
+        EspeakApp.runAsync(() -> {
+            PiperVoiceStore.invalidate();
+            final List<PiperVoiceStore.Installed> installed =
+                    PiperVoiceStore.list(storage(app));
+            final long bytes = PiperVoiceStore.diskBytes(storage(app));
+            new Handler(Looper.getMainLooper()).post(() -> {
+                applyRefresh(context, screen, prefs, installed, bytes);
+                if (after != null) {
+                    after.run();
+                }
+            });
+        });
+    }
+
+    private static void applyRefresh(Context context, PreferenceScreen screen, SharedPreferences prefs,
+                                     List<PiperVoiceStore.Installed> installed, long bytes) {
         final PreferenceCategory languages = screen.findPreference(KEY_LANGUAGES);
         if (languages == null) {
             return;
         }
-        PiperVoiceStore.invalidate();
-        final List<PiperVoiceStore.Installed> installed = PiperVoiceStore.list(storage(context));
 
         // Group by language, in the order of the voices' own language names.
         final Map<String, List<PiperVoiceStore.Installed>> byLanguage = new LinkedHashMap<>();
@@ -330,7 +359,6 @@ final class PiperSettings {
 
         final Preference manage = screen.findPreference(KEY_MANAGE);
         if (manage != null) {
-            final long bytes = PiperVoiceStore.diskBytes(storage(context));
             manage.setSummary(installed.isEmpty()
                     ? context.getString(R.string.piper_manage_summary_none)
                     : context.getResources().getQuantityString(R.plurals.piper_manage_summary,

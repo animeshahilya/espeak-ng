@@ -736,7 +736,11 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 
 			SetBreath();
 		} else if ((samplecount & 0x07) == 0) {
-			for (h = 1; h < N_LOWHARM && h <= maxh2 && h <= maxh; h++)
+			for (h = 1; h + 1 < N_LOWHARM && h + 1 <= maxh2 && h + 1 <= maxh; h += 2) {
+				harmspect[h] += harm_inc[h];
+				harmspect[h + 1] += harm_inc[h + 1];
+			}
+			for (; h < N_LOWHARM && h <= maxh2 && h <= maxh; h++)
 				harmspect[h] += harm_inc[h];
 
 			// bring automatic gain control back towards unity
@@ -828,16 +832,30 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 		}
 
 		// apply main peaks, formants 0 to 5
+		// Both loops are unrolled x2 without reordering: the accumulation
+		// sequence (and so the bit-exact output) is unchanged, only loop
+		// overhead is halved on this hottest path (see profile).
 		theta = waveph;
 
-		for (h = 1; h <= h_switch_sign; h++) {
+		for (h = 1; h + 1 <= h_switch_sign; h += 2) {
+			total += ((int)sin_tab[theta >> 5] * harmspect[h]);
+			theta += waveph;
+			total += ((int)sin_tab[theta >> 5] * harmspect[h + 1]);
+			theta += waveph;
+		}
+		for (; h <= h_switch_sign; h++) {
 			total += ((int)sin_tab[theta >> 5] * harmspect[h]);
 			theta += waveph;
 		}
-		while (h <= maxh) {
+		for (; h + 1 <= maxh; h += 2) {
 			total -= ((int)sin_tab[theta >> 5] * harmspect[h]);
 			theta += waveph;
-			h++;
+			total -= ((int)sin_tab[theta >> 5] * harmspect[h + 1]);
+			theta += waveph;
+		}
+		for (; h <= maxh; h++) {
+			total -= ((int)sin_tab[theta >> 5] * harmspect[h]);
+			theta += waveph;
 		}
 
 		if (voicing != 64)
@@ -867,10 +885,17 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 
 		z1 = z2 + (((total>>8) * amplitude2) >> 13);
 
-		echo = (echo_buf[echo_tail++] * echo_amp);
-		z1 += echo >> 8;
-		if (echo_tail >= N_ECHO_BUF)
-			echo_tail = 0;
+		// Most voices set no echo (echo_amp == 0): the tap contributes
+		// exactly nothing, and WavegenSetEcho() memsets the buffer and
+		// resets both indices whenever echo is (re)configured, so the whole
+		// tap - load, add, index upkeep and the store below - is skipped
+		// bit-exactly. The branch predicts constantly per utterance.
+		if (echo_amp != 0) {
+			echo = (echo_buf[echo_tail++] * echo_amp);
+			z1 += echo >> 8;
+			if (echo_tail >= N_ECHO_BUF)
+				echo_tail = 0;
+		}
 
 		z = (z1 * agc) >> 8;
 
@@ -888,9 +913,11 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 		*out_ptr++ = z >> 8;
 		if(output_hooks && output_hooks->outputVoiced) output_hooks->outputVoiced(z);
 
-		echo_buf[echo_head++] = z;
-		if (echo_head >= N_ECHO_BUF)
-			echo_head = 0;
+		if (echo_amp != 0) {
+			echo_buf[echo_head++] = z;
+			if (echo_head >= N_ECHO_BUF)
+				echo_head = 0;
+		}
 
 		if (out_ptr + 2 > out_end)
 			return 1;

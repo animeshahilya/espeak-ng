@@ -485,11 +485,20 @@ final class PiperEngine {
         }
     }
 
-    private static final int INFERENCE_THREADS = threadsFor(cpuCapacities(),
-            Runtime.getRuntime().availableProcessors());
+    /**
+     * Lazily sized, once per process: reading the kernel's per-core
+     * capacities is sysfs I/O, and class init runs on the main thread at
+     * process start (EspeakApp.onCreate -> PiperEngine.get()). First use is
+     * model load on the loader thread, so sizing happens there instead of
+     * on the TTS bind path.
+     */
+    private static final class InferenceThreads {
+        static final int VALUE = threadsFor(cpuCapacities(),
+                Runtime.getRuntime().availableProcessors());
+    }
 
     static int inferenceThreads() {
-        return INFERENCE_THREADS;
+        return InferenceThreads.VALUE;
     }
 
     /**
@@ -536,8 +545,20 @@ final class PiperEngine {
         return true;
     }
 
+    /** Core capacities never change at runtime: read sysfs once per process. */
+    private static volatile int[] sCapacities;
+
     /** The kernel's relative core performance (EAS, 1024 = fastest); empty if unavailable. */
     private static int[] cpuCapacities() {
+        int[] caps = sCapacities;
+        if (caps == null) {
+            caps = readCpuCapacities();
+            sCapacities = caps;
+        }
+        return caps;
+    }
+
+    private static int[] readCpuCapacities() {
         final List<Integer> caps = new ArrayList<>();
         for (int cpu = 0; cpu < 64; cpu++) {
             final File f = new File("/sys/devices/system/cpu/cpu" + cpu + "/cpu_capacity");
