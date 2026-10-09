@@ -1708,6 +1708,7 @@ public class TtsService extends TextToSpeechService {
      * run holds when TalkBack says "क्ष, deleted" with an English UI.
      */
     static boolean isLoneLetter(String run) {
+        if (run == null || run.isEmpty()) return false;
         int start = 0;
         int end = run.length();
         while (start < end && !isLetterOrMark(run.codePointAt(start))) {

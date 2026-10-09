@@ -133,6 +133,9 @@ public final class BackupRestoreHelper {
                     continue; // download ids, crash strikes: about another phone
                 }
                 Object v = prefsJson.opt(k);
+                if (v == null || JSONObject.NULL.equals(v)) {
+                    continue;
+                }
                 Object cur = existingPrefs.get(k);
                 if (cur instanceof Boolean || (cur == null && v instanceof Boolean)) {
                     ed.putBoolean(k, v instanceof Boolean ? (Boolean) v : Boolean.parseBoolean(String.valueOf(v)));

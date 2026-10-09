@@ -139,4 +139,11 @@ public class AsciiUtilsTest {
         assertEquals("pt_br", AsciiUtils.normalizeLocaleTag("pt-BR"));
         assertEquals("en_gb", AsciiUtils.normalizeLocaleTag("en_gb"));
     }
+
+    @Test
+    public void testReplaceMatchesNullRewrite() {
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile("foo");
+        String res = AsciiUtils.replaceMatches(p, "foo bar foo", m -> null);
+        assertEquals("foo bar foo", res);
+    }
 }

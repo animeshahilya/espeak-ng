@@ -198,10 +198,16 @@ public class TechWordsNormalizerTest {
         assertEquals("user I D", TechWordsNormalizer.process("user id"));
         assertEquals("email I D", TechWordsNormalizer.process("email id"));
         assertEquals("voter I D", TechWordsNormalizer.process("voter id"));
+        assertEquals("user I Ds", TechWordsNormalizer.process("user ids"));
+        assertEquals("email I Ds", TechWordsNormalizer.process("email ids"));
         assertEquals("I D card", TechWordsNormalizer.process("id card"));
+        assertEquals("I D cards", TechWordsNormalizer.process("id cards"));
         assertEquals("U P I PIN", TechWordsNormalizer.process("upi pin"));
+        assertEquals("U P I PINs", TechWordsNormalizer.process("upi pins"));
         assertEquals("A-T M PIN", TechWordsNormalizer.process("atm pin"));
+        assertEquals("A-T M PINs", TechWordsNormalizer.process("atm pins"));
         assertEquals("PIN code", TechWordsNormalizer.process("pin code"));
+        assertEquals("PIN codes", TechWordsNormalizer.process("pin codes"));
     }
 
     @Test

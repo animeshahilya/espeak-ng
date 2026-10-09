@@ -189,7 +189,8 @@ public final class AsciiUtils {
         }
         final StringBuffer sb = new StringBuffer(text.length() + 32);
         do {
-            m.appendReplacement(sb, Matcher.quoteReplacement(rewrite.rewrite(m)));
+            String rep = rewrite.rewrite(m);
+            m.appendReplacement(sb, Matcher.quoteReplacement(rep != null ? rep : m.group()));
         } while (m.find());
         m.appendTail(sb);
         return sb.toString();

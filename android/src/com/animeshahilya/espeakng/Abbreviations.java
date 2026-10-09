@@ -112,10 +112,13 @@ public final class Abbreviations {
                     return m.group(1) + " " + scale;
                 });
             }
-            text = AsciiUtils.replaceMatches(UNIT, text, m -> {
+            final String currentText = text;
+            text = AsciiUtils.replaceMatches(UNIT, currentText, m -> {
                 String[] u = UNIT_MAP.get(m.group(2));
                 if (u != null) {
-                    return m.group(1) + " " + AsciiUtils.singularOrPlural(m.group(1), u[0], u[1]);
+                    boolean hadDot = m.group().endsWith(".");
+                    boolean keepDot = hadDot && (endsClause(m) || isSentenceBoundary(m, currentText));
+                    return m.group(1) + " " + AsciiUtils.singularOrPlural(m.group(1), u[0], u[1]) + (keepDot ? "." : "");
                 }
                 return m.group();
             });
@@ -133,5 +136,24 @@ public final class Abbreviations {
     /** A dot at the very end stays, as the pause that ends the text. */
     private static boolean endsClause(Matcher m) {
         return m.end() >= m.regionEnd();
+    }
+
+    private static boolean isSentenceBoundary(Matcher m, String text) {
+        int end = m.end();
+        if (end >= text.length()) return true;
+        char c = text.charAt(end);
+        if (c == '\n' || c == '\r') return true;
+        if (AsciiUtils.isWhitespace(c)) {
+            int next = end + 1;
+            while (next < text.length() && AsciiUtils.isWhitespace(text.charAt(next))) {
+                next++;
+            }
+            if (next < text.length()) {
+                char nc = text.charAt(next);
+                return Character.isUpperCase(nc) || AsciiUtils.isAsciiDigit(nc) || nc == '"' || nc == '“' || nc == '\'';
+            }
+            return true;
+        }
+        return false;
     }
 }

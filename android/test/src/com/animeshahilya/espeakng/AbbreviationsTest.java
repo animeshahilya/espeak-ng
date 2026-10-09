@@ -39,6 +39,10 @@ public class AbbreviationsTest {
         assertEquals("65 watts", Abbreviations.process("65 W"));
         assertEquals("1 watt", Abbreviations.process("1 W"));
         assertEquals("10 decibels", Abbreviations.process("10 dB"));
+        assertEquals("5 kilometres.", Abbreviations.process("5 km."));
+        assertEquals("Distance is 5 kilometres. Next stop is near.",
+                Abbreviations.process("Distance is 5 km. Next stop is near."));
+        assertEquals("5 kilometres of rope", Abbreviations.process("5 km. of rope"));
     }
 
     @Test

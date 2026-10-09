@@ -88,7 +88,7 @@ public final class ScriptLanguages {
         Map<String, String> chosen = null;
         for (Script script : SCRIPTS) {
             final String voice = prefs.getString(script.prefKey(), "");
-            if (!voice.isEmpty() && isChoice(script.choices, voice)) {
+            if (voice != null && !voice.isEmpty() && isChoice(script.choices, voice)) {
                 if (chosen == null) {
                     chosen = new TreeMap<>();
                 }

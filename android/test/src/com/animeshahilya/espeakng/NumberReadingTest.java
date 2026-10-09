@@ -137,6 +137,7 @@ public class NumberReadingTest {
         assertEquals("3840 by 2160", NumberReading.readDimensions("3840×2160"));
         assertEquals("4 by 4", NumberReading.readDimensions("4x4"));
         assertEquals("10 by 20 by 30", NumberReading.readDimensions("10x20x30"));
+        assertEquals("10 by 20 by 30 by 40", NumberReading.readDimensions("10x20x30x40"));
         assertEquals("5.5 by 2.5", NumberReading.readDimensions("5.5 x 2.5"));
         assertEquals("0x1080", NumberReading.readDimensions("0x1080"));
         assertEquals("0x0", NumberReading.readDimensions("0x0"));
@@ -220,9 +221,11 @@ public class NumberReadingTest {
         assertEquals("2 and a half", NumberReading.readFractions("2½"));
         assertEquals("1 and 3 quarters", NumberReading.readFractions("1 ¾"));
 
-        // Date protection: calendar dates must NOT be mangled
+        // Date and score protection: calendar dates and scores must NOT be mangled
         assertEquals("2026/10/08", NumberReading.readFractions("2026/10/08"));
         assertEquals("10/12/2026", NumberReading.readFractions("10/12/2026"));
+        assertEquals("Score is 0/2", NumberReading.readFractions("Score is 0/2"));
+        assertEquals("0/4", NumberReading.readFractions("0/4"));
     }
 
     @Test
@@ -264,6 +267,11 @@ public class NumberReadingTest {
         assertEquals("first", NumberReading.readOrdinals("1º"));
         assertEquals("second", NumberReading.readOrdinals("2º"));
         assertEquals("first", NumberReading.readOrdinals("1ª"));
+        assertEquals("123456789012345th", NumberReading.readOrdinals("123456789012345º"));
+        assertEquals("123456789012341st", NumberReading.readOrdinals("123456789012341º"));
+        assertEquals("123456789012342nd", NumberReading.readOrdinals("123456789012342º"));
+        assertEquals("123456789012343rd", NumberReading.readOrdinals("123456789012343º"));
+        assertEquals("123456789012311th", NumberReading.readOrdinals("123456789012311º"));
     }
 
     @Test

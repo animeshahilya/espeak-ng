@@ -292,24 +292,26 @@ public final class NumberReading {
 
     public static String readDimensions(String text) {
         if (text == null || text.isEmpty() || !containsDimensionCross(text) || !containsAsciiDigit(text)) return text;
-        Matcher m = DIMENSION.matcher(text);
-        if (!m.find()) return text;
-        StringBuffer sb = new StringBuffer(text.length() + 16);
-        boolean matched = false;
-        do {
-            if ("0".equals(m.group(1))) {
-                m.appendReplacement(sb, Matcher.quoteReplacement(m.group(0)));
-            } else {
-                m.appendReplacement(sb, m.group(1) + " by " + m.group(2));
-                matched = true;
-            }
-        } while (m.find());
-        m.appendTail(sb);
-        String result = sb.toString();
-        if (matched && containsDimensionCross(result) && DIMENSION.matcher(result).find()) {
-            return readDimensions(result);
+        String current = text;
+        for (int pass = 0; pass < 8; pass++) {
+            if (!containsDimensionCross(current)) break;
+            Matcher m = DIMENSION.matcher(current);
+            if (!m.find()) break;
+            StringBuffer sb = new StringBuffer(current.length() + 16);
+            boolean matched = false;
+            do {
+                if ("0".equals(m.group(1))) {
+                    m.appendReplacement(sb, Matcher.quoteReplacement(m.group(0)));
+                } else {
+                    m.appendReplacement(sb, m.group(1) + " by " + m.group(2));
+                    matched = true;
+                }
+            } while (m.find());
+            m.appendTail(sb);
+            current = sb.toString();
+            if (!matched) break;
         }
-        return result;
+        return current;
     }
 
     // ==========================================
@@ -484,6 +486,7 @@ public final class NumberReading {
     }
 
     private static String fractionName(int num, int den, boolean mixed) {
+        if (num <= 0 || den <= 0) return null;
         if (num == 1) {
             if (den == 2) return mixed ? "a half" : "1 half";
             if (den == 4) return mixed ? "a quarter" : "1 quarter";
@@ -548,7 +551,7 @@ public final class NumberReading {
                 String whole = m.group(1);
                 int num = Integer.parseInt(m.group(2));
                 int den = Integer.parseInt(m.group(3));
-                String name = (num < den) ? fractionName(num, den, true) : null;
+                String name = (num > 0 && num < den) ? fractionName(num, den, true) : null;
                 return name != null ? whole + " and " + name : m.group(0);
             });
 
@@ -556,7 +559,7 @@ public final class NumberReading {
                 boolean negative = m.group(1) != null;
                 int num = Integer.parseInt(m.group(2));
                 int den = Integer.parseInt(m.group(3));
-                String name = (num < den) ? fractionName(num, den, false) : null;
+                String name = (num > 0 && num < den) ? fractionName(num, den, false) : null;
                 return name != null ? (negative ? "minus " : "") + name : m.group(0);
             });
         }
@@ -678,14 +681,17 @@ public final class NumberReading {
         if (text == null || text.isEmpty() || !containsOrdinalIndicator(text)) return text;
 
         text = AsciiUtils.replaceMatches(SYMBOL_ORDINALS, text, m -> {
-            int num = Integer.parseInt(m.group(1));
+            String digits = m.group(1);
+            int len = digits.length();
+            char last = digits.charAt(len - 1);
+            char secondLast = len > 1 ? digits.charAt(len - 2) : '0';
             String suf = "th";
-            if (num % 100 < 11 || num % 100 > 13) {
-                if (num % 10 == 1) suf = "st";
-                else if (num % 10 == 2) suf = "nd";
-                else if (num % 10 == 3) suf = "rd";
+            if (secondLast != '1') {
+                if (last == '1') suf = "st";
+                else if (last == '2') suf = "nd";
+                else if (last == '3') suf = "rd";
             }
-            return num + suf;
+            return digits + suf;
         });
 
         text = AsciiUtils.replaceMatches(ENGLISH_ORDINALS, text, m -> {

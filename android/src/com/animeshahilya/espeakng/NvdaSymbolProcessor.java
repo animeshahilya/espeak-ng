@@ -1051,6 +1051,9 @@ public final class NvdaSymbolProcessor {
                 if (symbol == null) {
                     symbol = simple.get(text);
                 }
+                if (symbol == null) {
+                    return text;
+                }
                 return symbolOutput(text, text, symbol.replacement, symbol.level, symbol.preserve,
                         userLevel, custom);
             }
@@ -1065,6 +1068,9 @@ public final class NvdaSymbolProcessor {
                 Symbol symbol = (rc < 128) ? asciiSimple[rc] : null;
                 if (symbol == null) {
                     symbol = simple.get(String.valueOf(rc));
+                }
+                if (symbol == null) {
+                    return run;
                 }
                 final int effective = custom == null ? symbol.level
                         : (matchesCustom(String.valueOf(rc), custom) ? LEVEL_ALWAYS

@@ -55,7 +55,7 @@ public final class TechWordsNormalizer {
                     + "|wi[ -]?fi"
                     + "|qr[ -]?codes?|scan[ -]?qr"
                     + "|(?:upi|atm)[ -]?pins?|pin[ -]codes?"
-                    + "|(?:user|email|voter|caller|upi|face|touch|gov|govt)[ -]?id"
+                    + "|(?:user|email|voter|caller|upi|face|touch|gov|govt)[ -]?ids?"
                     + "|id[ -]cards?"
                     + "|upi(?:['\u2019]s)?"
                     + "|otps?(?:['\u2019]s)?"
@@ -164,23 +164,33 @@ public final class TechWordsNormalizer {
         if (lower.startsWith("mpin") || lower.startsWith("m-pin") || lower.startsWith("m pin")) {
             return "M PIN" + apostropheS;
         }
-        if (lower.endsWith(" pin") || lower.endsWith("-pin") || lower.startsWith("pin ") || lower.startsWith("pin-") || lower.equals("pin")) {
-            if (lower.contains("upi")) return "U P I PIN" + apostropheS;
-            if (lower.contains("atm")) return "A-T M PIN" + apostropheS;
-            if (lower.contains("code")) return "PIN code" + apostropheS;
-            return "PIN" + apostropheS;
+        final boolean isPin = lower.endsWith(" pin") || lower.endsWith("-pin") || lower.startsWith("pin ") || lower.startsWith("pin-") || lower.equals("pin")
+                || lower.endsWith(" pins") || lower.endsWith("-pins") || lower.startsWith("pins ") || lower.startsWith("pins-") || lower.equals("pins");
+        if (isPin) {
+            final boolean plural = (lower.endsWith(" pins") || lower.endsWith("-pins") || lower.equals("pins")
+                    || lower.contains("pin codes") || lower.contains("pin-codes") || lower.contains("pin- codes")) && !possessive;
+            final String pinWord = plural ? "PINs" : "PIN";
+            if (lower.contains("upi")) return "U P I " + pinWord + apostropheS;
+            if (lower.contains("atm")) return "A-T M " + pinWord + apostropheS;
+            if (lower.contains("code")) return "PIN code" + (plural ? "s" : "") + apostropheS;
+            return pinWord + apostropheS;
         }
-        if (lower.endsWith(" id") || lower.endsWith("-id") || lower.startsWith("id ") || lower.startsWith("id-") || lower.equals("id")) {
-            if (lower.contains("card")) return "I D card" + apostropheS;
-            if (lower.contains("user")) return "user I D" + apostropheS;
-            if (lower.contains("email")) return "email I D" + apostropheS;
-            if (lower.contains("voter")) return "voter I D" + apostropheS;
-            if (lower.contains("caller")) return "caller I D" + apostropheS;
-            if (lower.contains("upi")) return "U P I I D" + apostropheS;
-            if (lower.contains("face")) return "face I D" + apostropheS;
-            if (lower.contains("touch")) return "touch I D" + apostropheS;
-            if (lower.contains("gov")) return "govt I D" + apostropheS;
-            return "I D" + apostropheS;
+        final boolean isId = lower.endsWith(" id") || lower.endsWith("-id") || lower.startsWith("id ") || lower.startsWith("id-") || lower.equals("id")
+                || lower.endsWith(" ids") || lower.endsWith("-ids") || lower.startsWith("ids ") || lower.startsWith("ids-") || lower.equals("ids");
+        if (isId) {
+            final boolean cardPlural = lower.contains("cards");
+            final boolean idPlural = (lower.endsWith(" ids") || lower.endsWith("-ids") || lower.equals("ids") || lower.startsWith("ids ")) && !possessive;
+            final String idWord = idPlural ? "I Ds" : "I D";
+            if (lower.contains("card")) return "I D card" + (cardPlural ? "s" : "") + apostropheS;
+            if (lower.contains("user")) return "user " + idWord + apostropheS;
+            if (lower.contains("email")) return "email " + idWord + apostropheS;
+            if (lower.contains("voter")) return "voter " + idWord + apostropheS;
+            if (lower.contains("caller")) return "caller " + idWord + apostropheS;
+            if (lower.contains("upi")) return "U P I " + idWord + apostropheS;
+            if (lower.contains("face")) return "face " + idWord + apostropheS;
+            if (lower.contains("touch")) return "touch " + idWord + apostropheS;
+            if (lower.contains("gov")) return "govt " + idWord + apostropheS;
+            return idWord + apostropheS;
         }
 
         // ChatGPT & GPT variations

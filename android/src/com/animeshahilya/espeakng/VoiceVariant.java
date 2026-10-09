@@ -53,12 +53,12 @@ public class VoiceVariant {
         } else if (gender == SpeechSynthesis.GENDER_FEMALE) {
             ret = FEMALE;
         } else {
-            ret = variant;
+            ret = variant != null ? variant : "";
         }
         if (age == SpeechSynthesis.AGE_YOUNG) {
-            return ret + "-young";
+            return ret.isEmpty() ? "young" : ret + "-young";
         } else if (age == SpeechSynthesis.AGE_OLD) {
-            return ret + "-old";
+            return ret.isEmpty() ? "old" : ret + "-old";
         }
         return ret;
     }

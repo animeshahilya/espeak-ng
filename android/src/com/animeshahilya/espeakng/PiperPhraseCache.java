@@ -247,8 +247,11 @@ final class PiperPhraseCache {
     }
 
     private void put(Key key, Stored e) {
-        if (entries.put(key, e) == null) {
+        final Stored old = entries.put(key, e);
+        if (old == null) {
             bytes += e.bytes();
+        } else {
+            bytes += (e.bytes() - old.bytes());
         }
         final Iterator<Map.Entry<Key, Stored>> it = entries.entrySet().iterator();
         while (bytes > maxBytes && it.hasNext()) {
