@@ -246,7 +246,7 @@ public final class TtsAudioDispatcher {
         }
 
         // textPosition is 1-based code point in current chunk, re-base with mChunkBase:
-        final int wordStart = textPosition - 1 + mChunkBase;
+        final int wordStart = Math.max(0, textPosition - 1 + mChunkBase);
         int start = codePointToOffset(wordStart);
         int end = codePointToOffset(wordStart + Math.max(textLength, 0));
         final TextOffsetMap offsetMap = mOffsetMap;

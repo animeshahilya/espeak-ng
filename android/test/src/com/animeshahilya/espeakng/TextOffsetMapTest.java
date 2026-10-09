@@ -90,6 +90,24 @@ public class TextOffsetMapTest {
         TextOffsetMap emptyMap = TextOffsetMap.diff("", "");
         assertEquals(0, emptyMap.toPrevious(0));
         assertEquals(0, emptyMap.toPrevious(10));
+
+        TextOffsetMap nullMap = TextOffsetMap.diff(null, null);
+        assertNotNull(nullMap);
+        assertEquals(0, nullMap.toPrevious(0));
+
+        TextOffsetMap nullBefore = TextOffsetMap.diff(null, "abc");
+        assertNotNull(nullBefore);
+        assertEquals(0, nullBefore.toPrevious(0));
+        assertEquals(0, nullBefore.toPrevious(2));
+
+        TextOffsetMap nullAfter = TextOffsetMap.diff("abc", null);
+        assertNotNull(nullAfter);
+        assertEquals(0, nullAfter.toPrevious(0));
+
+        assertEquals(0, TextOffsetMap.clamp(null, 5));
+        assertEquals(0, TextOffsetMap.clamp(new int[0], 5));
+
+        assertSame(map, map.composeWith(null));
     }
 
     @Test

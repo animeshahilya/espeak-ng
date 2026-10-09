@@ -68,7 +68,7 @@ public final class HinglishReader {
                     while ((line = in.readLine()) != null) {
                         final int a = line.indexOf('\t');
                         final int b = line.indexOf('\t', a + 1);
-                        if (a <= 0 || b <= a) {
+                        if (a <= 0 || b <= a || b + 1 >= line.length()) {
                             continue;
                         }
                         final String roman = line.substring(0, a);
@@ -207,7 +207,7 @@ public final class HinglishReader {
     }
 
     private static boolean isSentenceEnd(char c) {
-        return c == '.' || c == '!' || c == '?' || c == '\n' || c == '।'
-                || c == '؟' || c == '？' || c == '！' || c == '‽';
+        return c == '.' || c == '!' || c == '?' || c == '\n' || c == '\r' || c == '।'
+                || c == '॥' || c == '؟' || c == '۔' || c == '。' || c == '？' || c == '！' || c == '‽';
     }
 }

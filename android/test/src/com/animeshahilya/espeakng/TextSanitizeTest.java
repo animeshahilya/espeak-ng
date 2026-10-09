@@ -138,4 +138,78 @@ public class TextSanitizeTest {
         assertEquals("हलन्त", TextPreprocessor.expandDevanagariDiacritic("्"));
         assertEquals("कि", TextPreprocessor.expandDevanagariDiacritic("कि"));
     }
+
+    @Test
+    public void testIsIndianLanguage() {
+        // Null & empty
+        assertFalse(TextPreprocessor.isIndianLanguage(null));
+        assertFalse(TextPreprocessor.isIndianLanguage(""));
+
+        // Indian English
+        assertTrue(TextPreprocessor.isIndianLanguage("en-in"));
+        assertTrue(TextPreprocessor.isIndianLanguage("en-IN"));
+        assertTrue(TextPreprocessor.isIndianLanguage("en-IN-variant"));
+
+        // 2-letter ISO 639 codes
+        assertTrue(TextPreprocessor.isIndianLanguage("hi"));
+        assertTrue(TextPreprocessor.isIndianLanguage("hi-IN"));
+        assertTrue(TextPreprocessor.isIndianLanguage("mr"));
+        assertTrue(TextPreprocessor.isIndianLanguage("ta"));
+        assertTrue(TextPreprocessor.isIndianLanguage("te"));
+        assertTrue(TextPreprocessor.isIndianLanguage("kn"));
+        assertTrue(TextPreprocessor.isIndianLanguage("ml"));
+        assertTrue(TextPreprocessor.isIndianLanguage("gu"));
+        assertTrue(TextPreprocessor.isIndianLanguage("bn"));
+        assertTrue(TextPreprocessor.isIndianLanguage("pa"));
+        assertTrue(TextPreprocessor.isIndianLanguage("ur"));
+
+        // 3-letter ISO 639 codes
+        assertTrue(TextPreprocessor.isIndianLanguage("hin"));
+        assertTrue(TextPreprocessor.isIndianLanguage("mar"));
+        assertTrue(TextPreprocessor.isIndianLanguage("tam"));
+        assertTrue(TextPreprocessor.isIndianLanguage("tel"));
+        assertTrue(TextPreprocessor.isIndianLanguage("kan"));
+        assertTrue(TextPreprocessor.isIndianLanguage("mal"));
+        assertTrue(TextPreprocessor.isIndianLanguage("guj"));
+        assertTrue(TextPreprocessor.isIndianLanguage("ben"));
+        assertTrue(TextPreprocessor.isIndianLanguage("pan"));
+        assertTrue(TextPreprocessor.isIndianLanguage("urd"));
+        assertTrue(TextPreprocessor.isIndianLanguage("kok"));
+        assertTrue(TextPreprocessor.isIndianLanguage("bpy"));
+        assertTrue(TextPreprocessor.isIndianLanguage("bho"));
+
+        // Non-Indian languages must be false
+        assertFalse(TextPreprocessor.isIndianLanguage("en"));
+        assertFalse(TextPreprocessor.isIndianLanguage("en-US"));
+        assertFalse(TextPreprocessor.isIndianLanguage("en-GB"));
+        assertFalse(TextPreprocessor.isIndianLanguage("fr"));
+        assertFalse(TextPreprocessor.isIndianLanguage("de"));
+        assertFalse(TextPreprocessor.isIndianLanguage("es"));
+        assertFalse(TextPreprocessor.isIndianLanguage("ja"));
+        assertFalse(TextPreprocessor.isIndianLanguage("zh"));
+    }
+
+    @Test
+    public void testCleanMarkdown() {
+        assertEquals("Visit Google for search",
+                TextPreprocessor.cleanMarkdown("Visit [Google](https://google.com) for search"));
+        assertEquals("Here is Company Logo",
+                TextPreprocessor.cleanMarkdown("Here is ![Company Logo](https://logo.png)"));
+        assertEquals("todo: buy milk",
+                TextPreprocessor.cleanMarkdown("- [ ] buy milk"));
+        assertEquals("done: write tests",
+                TextPreprocessor.cleanMarkdown("- [x] write tests"));
+        assertEquals("Important Title",
+                TextPreprocessor.cleanMarkdown("## Important Title"));
+        assertEquals("quote: famous words",
+                TextPreprocessor.cleanMarkdown("> famous words"));
+        assertEquals("use println here",
+                TextPreprocessor.cleanMarkdown("use `println` here"));
+        assertEquals("code block",
+                TextPreprocessor.cleanMarkdown("```python\ncode block\n```"));
+        assertEquals("bold text and italic text",
+                TextPreprocessor.cleanMarkdown("**bold text** and *italic text*"));
+        assertEquals("strikethrough text",
+                TextPreprocessor.cleanMarkdown("~~strikethrough text~~"));
+    }
 }

@@ -70,6 +70,9 @@ final class TextOffsetMap {
         if (offset <= 0) {
             return 0;
         }
+        if (toPrevious == null || toPrevious.length == 0) {
+            return 0;
+        }
         if (offset >= toPrevious.length) {
             return toPrevious[toPrevious.length - 1];
         }
@@ -85,6 +88,9 @@ final class TextOffsetMap {
     TextOffsetMap composeWith(TextOffsetMap older) {
         if (older == null) {
             return this;
+        }
+        if (mToPrevious == null) {
+            return older;
         }
         final int[] composed = new int[mToPrevious.length];
         for (int i = 0; i < mToPrevious.length; i++) {
@@ -111,6 +117,8 @@ final class TextOffsetMap {
      * for inputs too large to diff exactly.
      */
     static TextOffsetMap diff(String before, String after) {
+        if (before == null) before = "";
+        if (after == null) after = "";
         final int n = before.length();
         final int m = after.length();
 

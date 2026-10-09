@@ -1266,7 +1266,11 @@ public final class NvdaSymbolProcessor {
      * so sentences keep their final punctuation here.
      */
     public static String collapseRepeatRuns(String text) {
-        return forLanguage(EN).collapseRepeatRuns(text);
+        return collapseRepeatRuns(text, EN);
+    }
+
+    public static String collapseRepeatRuns(String text, String languageTag) {
+        return forLanguage(languageTag).collapseRepeatRuns(text);
     }
 
     /**

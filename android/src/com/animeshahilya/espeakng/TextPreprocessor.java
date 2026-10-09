@@ -559,35 +559,35 @@ public final class TextPreprocessor {
      */
     public static boolean isIndianLanguage(String languageTag) {
         if (languageTag == null || languageTag.isEmpty()) return false;
-        int len = languageTag.length();
-        if (len >= 5 && languageTag.regionMatches(true, 0, "en-in", 0, 5)
-                && (len == 5 || languageTag.charAt(5) == '-')) {
+        if (languageTag.regionMatches(true, 0, "en-in", 0, 5)
+                && (languageTag.length() == 5 || languageTag.charAt(5) == '-' || languageTag.charAt(5) == '_')) {
             return true;
         }
-        int dash = languageTag.indexOf('-');
-        int baseLen = dash >= 0 ? dash : len;
-        if (baseLen == 2) {
-            char c0 = Character.toLowerCase(languageTag.charAt(0));
-            char c1 = Character.toLowerCase(languageTag.charAt(1));
-            // as, bn, gu, hi, mr, ne, or, pa, sd, si, ur, kn, ml, ta, te
-            if (c0 == 'a' && c1 == 's') return true;
-            if (c0 == 'b' && c1 == 'n') return true;
-            if (c0 == 'g' && c1 == 'u') return true;
-            if (c0 == 'h' && c1 == 'i') return true;
-            if (c0 == 'm' && (c1 == 'r' || c1 == 'l')) return true;
-            if (c0 == 'n' && c1 == 'e') return true;
-            if (c0 == 'o' && c1 == 'r') return true;
-            if (c0 == 'p' && c1 == 'a') return true;
-            if (c0 == 's' && (c1 == 'd' || c1 == 'i')) return true;
-            if (c0 == 'u' && c1 == 'r') return true;
-            if (c0 == 'k' && c1 == 'n') return true;
-            if (c0 == 't' && (c1 == 'a' || c1 == 'e')) return true;
-        } else if (baseLen == 3) {
-            // bpy, kok
-            if (languageTag.regionMatches(true, 0, "bpy", 0, 3)) return true;
-            if (languageTag.regionMatches(true, 0, "kok", 0, 3)) return true;
+        final String base = AsciiUtils.baseLanguage(languageTag);
+        switch (base) {
+            case "as": case "asm":
+            case "bn": case "ben":
+            case "gu": case "guj":
+            case "hi": case "hin":
+            case "mr": case "mar":
+            case "ml": case "mal":
+            case "ne": case "nep":
+            case "or": case "ori":
+            case "pa": case "pan":
+            case "sd": case "snd":
+            case "si": case "sin":
+            case "ur": case "urd":
+            case "kn": case "kan":
+            case "ta": case "tam":
+            case "te": case "tel":
+            case "sa": case "san":
+            case "ks": case "kas":
+            case "kok": case "bpy":
+            case "bho": case "mai": case "hne": case "mag":
+                return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     /**
@@ -843,6 +843,10 @@ public final class TextPreprocessor {
     }
 
     public static String condenseRepeatedCharacters(String text, String mode) {
+        return condenseRepeatedCharacters(text, mode, null);
+    }
+
+    public static String condenseRepeatedCharacters(String text, String mode, String lang) {
         if (text == null || text.isEmpty() || VoiceSettings.REPEATED_CHARS_OFF.equals(mode)) {
             return text;
         }
@@ -857,7 +861,7 @@ public final class TextPreprocessor {
         if (containsPotentialEmoji(processed)) {
             processed = condenseRepeatedEmojis(processed, mode);
         }
-        return NvdaSymbolProcessor.collapseRepeatRuns(processed);
+        return NvdaSymbolProcessor.collapseRepeatRuns(processed, lang);
     }
 
     // ==========================================
@@ -898,6 +902,8 @@ public final class TextPreprocessor {
 
     private static final Pattern MD_CHECKBOX_TODO = Pattern.compile("(?m)^[ \\t]*[-*+][ \\t]+\\[[ \\t]*\\][ \\t]+");
     private static final Pattern MD_CHECKBOX_DONE = Pattern.compile("(?m)^[ \\t]*[-*+][ \\t]+\\[[xX]\\][ \\t]+");
+    private static final Pattern MD_IMAGE = Pattern.compile("!\\[([^\\]]*)\\]\\([^)]+\\)");
+    private static final Pattern MD_LINK = Pattern.compile("\\[([^\\]]+)\\]\\([^)]+\\)");
     private static final Pattern MD_HEADING = Pattern.compile("(?m)^[ \\t]*#{1,6}[ \\t]+");
     private static final Pattern MD_BLOCKQUOTE = Pattern.compile("(?m)^[ \\t]*>[ \\t]+");
     private static final Pattern MD_HR = Pattern.compile("(?m)^[ \\t]*[-*_]{3,}[ \\t]*$");
@@ -922,6 +928,8 @@ public final class TextPreprocessor {
         if (text.indexOf('[') != -1) {
             text = MD_CHECKBOX_DONE.matcher(text).replaceAll("done: ");
             text = MD_CHECKBOX_TODO.matcher(text).replaceAll("todo: ");
+            text = MD_IMAGE.matcher(text).replaceAll("$1");
+            text = MD_LINK.matcher(text).replaceAll("$1");
         }
         if (text.indexOf('#') != -1) {
             text = MD_HEADING.matcher(text).replaceAll("");

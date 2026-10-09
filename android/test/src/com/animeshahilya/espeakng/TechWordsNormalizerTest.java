@@ -44,6 +44,7 @@ public class TechWordsNormalizerTest {
         assertEquals("Chat G P T", TechWordsNormalizer.process("chat gpt"));
         assertEquals("Chat G P T", TechWordsNormalizer.process("chat-gpt"));
         assertEquals("Chat G P T's response", TechWordsNormalizer.process("ChatGPT's response"));
+        assertEquals("Chat G P T's response", TechWordsNormalizer.process("ChatGPT’s response"));
         assertEquals("Chat G P T's answer", TechWordsNormalizer.process("chatgpt's answer"));
         assertEquals("Ask Chat G P T about it", TechWordsNormalizer.process("Ask ChatGPT about it"));
     }
@@ -55,6 +56,7 @@ public class TechWordsNormalizerTest {
         assertEquals("G-Pay", TechWordsNormalizer.process("g pay"));
         assertEquals("G-Pay", TechWordsNormalizer.process("g-pay"));
         assertEquals("G-Pay's interface", TechWordsNormalizer.process("GPay's interface"));
+        assertEquals("G-Pay's interface", TechWordsNormalizer.process("GPay’s interface"));
         assertEquals("Send ₹500 via G-Pay", TechWordsNormalizer.process("Send ₹500 via GPay"));
     }
 

@@ -140,19 +140,31 @@ public final class BackupRestoreHelper {
                     try {
                         ed.putInt(k, v instanceof Number ? ((Number) v).intValue() : Integer.parseInt(String.valueOf(v)));
                     } catch (NumberFormatException nfe) {
-                        ed.putString(k, String.valueOf(v));
+                        if (cur == null) {
+                            ed.putString(k, String.valueOf(v));
+                        } else {
+                            Log.w(TAG, "Cannot restore pref " + k + " as int: " + v);
+                        }
                     }
                 } else if (cur instanceof Long || (cur == null && v instanceof Long)) {
                     try {
                         ed.putLong(k, v instanceof Number ? ((Number) v).longValue() : Long.parseLong(String.valueOf(v)));
                     } catch (NumberFormatException nfe) {
-                        ed.putString(k, String.valueOf(v));
+                        if (cur == null) {
+                            ed.putString(k, String.valueOf(v));
+                        } else {
+                            Log.w(TAG, "Cannot restore pref " + k + " as long: " + v);
+                        }
                     }
                 } else if (cur instanceof Float || (cur == null && (v instanceof Double || v instanceof Float))) {
                     try {
                         ed.putFloat(k, v instanceof Number ? ((Number) v).floatValue() : Float.parseFloat(String.valueOf(v)));
                     } catch (NumberFormatException nfe) {
-                        ed.putString(k, String.valueOf(v));
+                        if (cur == null) {
+                            ed.putString(k, String.valueOf(v));
+                        } else {
+                            Log.w(TAG, "Cannot restore pref " + k + " as float: " + v);
+                        }
                     }
                 } else if (v instanceof JSONArray) {
                     JSONArray arr = (JSONArray) v;
