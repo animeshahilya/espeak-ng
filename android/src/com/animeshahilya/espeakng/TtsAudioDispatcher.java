@@ -99,6 +99,12 @@ public final class TtsAudioDispatcher {
     private long mRequestFrames = 0;
     private int mAnchorCodePoint = 0;
     private int mAnchorOffset = 0;
+    // Synth thread only (like the fields above): whether any audio reached
+    // the sink yet. Ranges that arrive before the first audio chunk are
+    // stashed and flushed in order then: the framework drops pre-audio
+    // ranges (the first word's highlight never arrives on Android 17).
+    private boolean mAudioStarted = false;
+    private java.util.ArrayList<int[]> mPendingRanges;
 
     public TtsAudioDispatcher(AudioSink sink,
                               AudioOptimizer optimizer,
@@ -143,12 +149,14 @@ public final class TtsAudioDispatcher {
     }
 
     public void reportError(int errorCode) {
+        mPendingRanges = null;
         if (mSink != null && mCallbackDone.compareAndSet(false, true)) {
             mSink.error(errorCode);
         }
     }
 
     public void finish() {
+        mPendingRanges = null;
         if (mSink != null && mCallbackDone.compareAndSet(false, true)) {
             mSink.done();
         }
@@ -220,6 +228,10 @@ public final class TtsAudioDispatcher {
                 }
                 return false;
             }
+            if (!mAudioStarted) {
+                mAudioStarted = true;
+                flushPendingRanges();
+            }
             currentOffset += bytesToWrite;
             mRequestFrames += bytesToWrite / 2; // 16-bit mono
         }
@@ -229,6 +241,9 @@ public final class TtsAudioDispatcher {
     public void dispatchWordBoundary(int textPosition, int textLength, int markerInFrames) {
         final String synthText = mSynthText;
         final AudioSink sink = mSink;
+        android.util.Log.d("WBTRACE", "in pos=" + textPosition + " len=" + textLength
+                + " frame=" + markerInFrames + " audioStarted=" + mAudioStarted
+                + " synth=" + synthText);
         if (synthText == null || sink == null || mCallbackDone.get() || mIsStopped.get()) {
             return;
         }
@@ -256,7 +271,33 @@ public final class TtsAudioDispatcher {
         final long marker = mUnitFrameBase + (long) markerInFrames;
         final int clampedMarker = marker > Integer.MAX_VALUE ? Integer.MAX_VALUE
                 : (marker < 0 ? 0 : (int) marker);
+        if (!mAudioStarted) {
+            if (mPendingRanges == null) {
+                mPendingRanges = new java.util.ArrayList<>();
+            }
+            mPendingRanges.add(new int[] {clampedMarker, finalStart, finalEnd});
+            android.util.Log.d("WBTRACE", "stashed f=" + clampedMarker
+                    + " " + finalStart + "-" + finalEnd + " synth=" + synthText);
+            return;
+        }
         sink.rangeStart(clampedMarker, finalStart, finalEnd);
+    }
+
+    /** Emits stashed pre-audio ranges in order, once audio is flowing. */
+    private void flushPendingRanges() {
+        final java.util.ArrayList<int[]> pending = mPendingRanges;
+        mPendingRanges = null;
+        if (pending == null || pending.isEmpty() || mSink == null) {
+            return;
+        }
+        android.util.Log.d("WBTRACE", "flushing " + pending.size() + " synth=" + mSynthText);
+        for (int[] r : pending) {
+            if (mCallbackDone.get() || mIsStopped.get()) {
+                android.util.Log.d("WBTRACE", "flush aborted, rest dropped");
+                return;
+            }
+            mSink.rangeStart(r[0], r[1], r[2]);
+        }
     }
 
     /**

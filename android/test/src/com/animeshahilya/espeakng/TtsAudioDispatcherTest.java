@@ -139,8 +139,10 @@ public class TtsAudioDispatcherTest {
 
         // eSpeak reports word boundary for "Smith": textPosition 8 (1-based code point in "Doctor Smith")
         // "Doctor " is 7 chars. "Smith" starts at index 7 (0-based code point 7 -> textPosition 8)
-        // Length 5 ("Smith").
+        // Length 5 ("Smith"). Pre-audio ranges wait for the first audio chunk.
         dispatcher.dispatchWordBoundary(8, 5, 100);
+        assertTrue(sink.wordBoundaries.isEmpty());
+        assertTrue(dispatcher.writeAudio(new byte[100]));
 
         assertEquals(1, sink.wordBoundaries.size());
         int[] boundary = sink.wordBoundaries.get(0);
@@ -157,8 +159,11 @@ public class TtsAudioDispatcherTest {
                 null, null, null
         );
 
-        // Word boundary reporting beyond originalTextLength (10)
+        // Word boundary reporting beyond originalTextLength (10).
+        // Pre-audio ranges wait for the first audio chunk.
         dispatcher.dispatchWordBoundary(1, 25, 0);
+        assertTrue(sink.wordBoundaries.isEmpty());
+        assertTrue(dispatcher.writeAudio(new byte[100]));
 
         assertEquals(1, sink.wordBoundaries.size());
         int[] boundary = sink.wordBoundaries.get(0);
@@ -192,6 +197,37 @@ public class TtsAudioDispatcherTest {
         dispatcher.setStopped(true);
         assertTrue(output.stopped());
         assertFalse(output.audio(pcm));
+    }
+
+    @Test
+    public void preAudioRangesAreStashedAndFlushedInOrder() {
+        RecordingSink sink = new RecordingSink(1024);
+        TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                sink, null, null, "Hello world", 0, 11,
+                null, null, null
+        );
+        // Before any audio flows the framework drops ranges: they wait here.
+        dispatcher.dispatchWordBoundary(1, 5, 0); // "Hello" at frame 0
+        dispatcher.dispatchWordBoundary(7, 5, 50); // "world" at frame 50
+        assertTrue(sink.wordBoundaries.isEmpty());
+
+        assertTrue(dispatcher.writeAudio(new byte[200]));
+        assertEquals(2, sink.wordBoundaries.size());
+        assertArrayEquals(new int[] {0, 0, 5}, sink.wordBoundaries.get(0));
+        assertArrayEquals(new int[] {50, 6, 11}, sink.wordBoundaries.get(1));
+    }
+
+    @Test
+    public void rangesWithoutAudioAreDroppedOnFinish() {
+        RecordingSink sink = new RecordingSink(1024);
+        TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                sink, null, null, "Hello", 0, 5,
+                null, null, null
+        );
+        dispatcher.dispatchWordBoundary(1, 5, 0);
+        dispatcher.finish();
+        assertTrue(sink.doneCalled);
+        assertTrue(sink.wordBoundaries.isEmpty());
     }
 
     @Test
