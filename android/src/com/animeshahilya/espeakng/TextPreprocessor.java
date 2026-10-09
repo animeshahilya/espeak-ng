@@ -285,8 +285,9 @@ public final class TextPreprocessor {
                 && readsEnglishText) {
             text = edits.track(text, NumberReading.readOrdinals(text));
         }
-        if (normalReading && readsEnglishText
-                && (VoiceSettings.READING_CODE.equals(readingMode) || settings.isSplitCamelCaseEnabled())) {
+        if (!isSsml && readsEnglishText
+                && (VoiceSettings.READING_CODE.equals(readingMode)
+                        || (normalReading && settings.isSplitCamelCaseEnabled()))) {
             text = edits.track(text, splitCamelCase(text));
         }
 

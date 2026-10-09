@@ -612,9 +612,10 @@ final class DevanagariClassifier {
 
         // 2. Tokenize words and score them against distinctive lexicons & grammar
         int tokenStart = -1;
-        for (int i = start; i <= end; i++) {
+        for (int i = start; i <= end; ) {
             final boolean isEnd = (i == end);
             final int cp = isEnd ? 0 : Character.codePointAt(text, i);
+            final int charCount = isEnd ? 1 : Character.charCount(cp);
             final boolean isDevWordChar = !isEnd && isDevanagariWordChar(cp);
 
             if (isDevWordChar) {
@@ -628,6 +629,8 @@ final class DevanagariClassifier {
                 }
                 tokenStart = -1;
             }
+            if (isEnd) break;
+            i += charCount;
         }
 
         return scores;

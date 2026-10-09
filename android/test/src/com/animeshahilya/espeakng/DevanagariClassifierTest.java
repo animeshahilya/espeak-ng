@@ -273,4 +273,10 @@ public class DevanagariClassifierTest {
         assertEquals("समय 10:30", TextPreprocessor.preprocessIndianText("समय 10:30", "hi-IN"));
         assertEquals("अनुपुन: अब", TextPreprocessor.preprocessIndianText("अनुपुन: अब", "hi-IN"));
     }
+
+    @Test
+    public void classify_surrogatePairsHandledGracefully() {
+        assertEquals("mar", DevanagariClassifier.classify("मला वेळ नाही 😀", "hin", "hin"));
+        assertEquals("hin", DevanagariClassifier.classify("नमस्ते दुनिया 🚀", "hin", "hin"));
+    }
 }

@@ -321,6 +321,9 @@ public class SpeechSynthesis {
         if (!mInitialized) {
             return;
         }
+        if (languages == null) {
+            languages = Collections.emptyMap();
+        }
         synchronized (sSynthLock) {
             if (languages.equals(sScriptLanguages)) {
                 return;

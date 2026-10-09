@@ -91,7 +91,7 @@ public final class HinglishReader {
         load();
         final Map<String, String> hindi = sHindi;
         final Map<String, String> shared = sShared;
-        if (hindi.isEmpty()) {
+        if (hindi == null || hindi.isEmpty()) {
             return text;
         }
         final StringBuilder out = new StringBuilder(text.length() + 16);
