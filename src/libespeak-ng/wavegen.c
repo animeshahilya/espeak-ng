@@ -469,10 +469,20 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 		h = ((p->freq - p->left) / pitch) + 1;
 		if (h <= 0) h = 1;
 
-		for (f = pitch*h; f < fp; f += pitch)
+		for (f = pitch*h; f < fp;) {
 			htab[h++] += pk_shape[(fp-f)/(p->left>>8)] * p->height;
-		for (; f < fhi; f += pitch)
+			f += pitch;
+			if (f >= fp) break;
+			htab[h++] += pk_shape[(fp-f)/(p->left>>8)] * p->height;
+			f += pitch;
+		}
+		for (; f < fhi;) {
 			htab[h++] += pk_shape[(f-fp)/(p->right>>8)] * p->height;
+			f += pitch;
+			if (f >= fhi) break;
+			htab[h++] += pk_shape[(f-fp)/(p->right>>8)] * p->height;
+			f += pitch;
+		}
 	}
 
 	int y;
@@ -505,8 +515,22 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 	}
 
 	// convert from the square-rooted values
+	// Unrolled x2 without reordering: per-harmonic results are independent,
+	// so the output is unchanged by construction.
 	f = 0;
-	for (h = 0; h <= hmax; h++, f += pitch) {
+	for (h = 0; h + 1 <= hmax; h += 2, f += pitch*2) {
+		x = htab[h] >> 15;
+		htab[h] = (x * x) >> 8;
+		int ix;
+		if ((ix = (f >> 19)) < N_TONE_ADJUST)
+			htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13;
+		x = htab[h + 1] >> 15;
+		htab[h + 1] = (x * x) >> 8;
+		int ix2;
+		if ((ix2 = ((f + pitch) >> 19)) < N_TONE_ADJUST)
+			htab[h + 1] = (htab[h + 1] * wvoice->tone_adjust[ix2]) >> 13;
+	}
+	for (; h <= hmax; h++, f += pitch) {
 		x = htab[h] >> 15;
 		htab[h] = (x * x) >> 8;
 
@@ -974,6 +998,8 @@ static int PlayWave(int length, bool resume, unsigned char *data, int scale, int
 	nsamples = 0;
 	samplecount = 0;
 
+	// Set at voice setup only: hoist the product out of the per-sample loop.
+	const int consonant_scale = consonant_amp * general_amplitude; // reduce strength of consonant
 	while (n_samples-- > 0) {
 		if (scale == 0) {
 			// 16 bits data
@@ -984,7 +1010,7 @@ static int PlayWave(int length, bool resume, unsigned char *data, int scale, int
 			// 8 bit data, shift by the specified scale factor
 			value = (signed char)data[ix++] * scale;
 		}
-		value *= (consonant_amp * general_amplitude); // reduce strength of consonant
+		value *= consonant_scale;
 		value = value >> 10;
 		value = (value * amp)/32;
 
