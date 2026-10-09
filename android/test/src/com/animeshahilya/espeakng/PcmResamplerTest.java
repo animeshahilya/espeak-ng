@@ -114,4 +114,50 @@ public class PcmResamplerTest {
         assertEquals(4410, samples[0]);
         assertEquals(Integer.valueOf(22050), frames.get(0));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsInvalidFromRate() {
+        new PcmResampler(0, 22050);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsInvalidToRate() {
+        new PcmResampler(24000, -1);
+    }
+
+    @Test
+    public void handlesOddByteChunksWithoutPhaseShift() {
+        final List<byte[]> chunks = new ArrayList<>();
+        final PiperEngine.Output sink = new PiperEngine.Output() {
+            @Override public void word(int position, int length, int frame) {}
+            @Override public boolean audio(byte[] pcm) { chunks.add(pcm.clone()); return true; }
+        };
+
+        final PcmResampler.Output out = new PcmResampler.Output(sink, 24000, 22050);
+        final short[] s = tone(440, 24000, 2400, 8000);
+        final byte[] pcm = new byte[s.length * 2];
+        for (int i = 0; i < s.length; i++) {
+            pcm[2 * i] = (byte) s[i];
+            pcm[2 * i + 1] = (byte) (s[i] >> 8);
+        }
+
+        // Send in odd slices: 3 bytes, 5 bytes, 7 bytes...
+        int offset = 0;
+        int step = 3;
+        while (offset < pcm.length) {
+            int len = Math.min(step, pcm.length - offset);
+            byte[] slice = new byte[len];
+            System.arraycopy(pcm, offset, slice, 0, len);
+            out.audio(slice);
+            offset += len;
+            step = (step == 3) ? 5 : 3;
+        }
+        int totalFrames = out.finish();
+        assertEquals(2205, totalFrames);
+        int totalReceivedBytes = 0;
+        for (byte[] c : chunks) {
+            totalReceivedBytes += c.length;
+        }
+        assertEquals(2205 * 2, totalReceivedBytes);
+    }
 }

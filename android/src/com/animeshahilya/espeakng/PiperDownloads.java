@@ -1003,12 +1003,12 @@ final class PiperDownloads {
                 throw new IOException("Download " + id + " ended with status " + status);
             }
             final String[] expected = PiperVoiceStore.readText(new File(staging, "expected"))
-                    .trim().split("\n");
+                    .trim().split("\\r?\\n");
             final File model = new File(staging, PiperVoiceStore.MODEL_FILE);
             final String md5 = copyWithMd5(target, model);
-            final boolean md5Known = expected.length > 0 && !"null".equals(expected[0])
-                    && !expected[0].isEmpty();
-            if (md5Known && !expected[0].equalsIgnoreCase(md5)) {
+            final String expectedMd5 = expected.length > 0 ? expected[0].trim() : "";
+            final boolean md5Known = !expectedMd5.isEmpty() && !"null".equalsIgnoreCase(expectedMd5);
+            if (md5Known && !expectedMd5.equalsIgnoreCase(md5)) {
                 throw new IOException("Model checksum mismatch for " + key);
             }
             //noinspection ResultOfMethodCallIgnored

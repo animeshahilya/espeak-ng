@@ -1126,6 +1126,9 @@ public final class NvdaSymbolProcessor {
                 if (symbol == null) {
                     symbol = simple.get(String.valueOf(rc));
                 }
+                if (symbol == null || symbol.replacement == null || symbol.replacement.isEmpty()) {
+                    return run;
+                }
                 return "  " + run.length() + " " + symbol.replacement + " ";
             });
         }

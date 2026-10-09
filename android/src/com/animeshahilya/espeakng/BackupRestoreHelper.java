@@ -166,13 +166,21 @@ public final class BackupRestoreHelper {
                             Log.w(TAG, "Cannot restore pref " + k + " as float: " + v);
                         }
                     }
-                } else if (v instanceof JSONArray) {
-                    JSONArray arr = (JSONArray) v;
-                    java.util.Set<String> set = new java.util.HashSet<>();
-                    for (int i = 0; i < arr.length(); i++) set.add(arr.optString(i));
-                    ed.putStringSet(k, set);
-                } else {
+                } else if (cur instanceof java.util.Set || (cur == null && v instanceof JSONArray)) {
+                    if (v instanceof JSONArray) {
+                        JSONArray arr = (JSONArray) v;
+                        java.util.Set<String> set = new java.util.HashSet<>();
+                        for (int i = 0; i < arr.length(); i++) set.add(arr.optString(i));
+                        ed.putStringSet(k, set);
+                    } else if (cur == null) {
+                        ed.putString(k, String.valueOf(v));
+                    } else {
+                        Log.w(TAG, "Cannot restore pref " + k + " as set: " + v);
+                    }
+                } else if (cur == null || cur instanceof String) {
                     ed.putString(k, String.valueOf(v));
+                } else {
+                    Log.w(TAG, "Cannot restore pref " + k + " of unexpected type: " + v);
                 }
             }
             ed.apply();

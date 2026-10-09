@@ -396,7 +396,7 @@ public class UserDictionaryManager {
     static UserDictionary parseDicLine(String raw) {
         String l = raw.trim();
         if (l.isEmpty() || l.startsWith("#")) return null;
-        String[] parts = raw.split("\t");
+        String[] parts = raw.split("\t", -1);
         String pattern;
         String replacement;
         boolean caseSensitive = false;
@@ -405,7 +405,7 @@ public class UserDictionaryManager {
         JSONObject extras = null;
         if (parts.length >= 2) {
             pattern = parts[0].trim();
-            replacement = parts[1].trim();
+            replacement = parts[1].replace("\r", "").replace("\n", "");
             if (parts.length >= 3) {
                 final String comment = parts[2].trim();
                 final int brace = comment.indexOf('{');
@@ -427,7 +427,7 @@ public class UserDictionaryManager {
             // Tolerate simple "word=replacement" lists too.
             int eq = raw.indexOf('=');
             pattern = raw.substring(0, eq).trim();
-            replacement = raw.substring(eq + 1).trim();
+            replacement = raw.substring(eq + 1).replace("\r", "").replace("\n", "");
         } else {
             return null;
         }
@@ -465,6 +465,7 @@ public class UserDictionaryManager {
     }
 
     private static String field(String s) {
+        if (s == null) return "";
         return s.replace('\t', ' ').replace('\n', ' ').replace('\r', ' ');
     }
 

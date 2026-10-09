@@ -300,18 +300,6 @@ public class UserDictionary {
     private static boolean containsIgnoreCase(String source, String target) {
         final int targetLen = target.length();
         if (targetLen == 0) return true;
-        if (targetLen == 1) {
-            final char t = target.charAt(0);
-            final char lower = Character.toLowerCase(t);
-            final char upper = Character.toUpperCase(t);
-            for (int i = 0, n = source.length(); i < n; i++) {
-                final char c = source.charAt(i);
-                if (c == lower || c == upper) {
-                    return true;
-                }
-            }
-            return false;
-        }
         final int max = source.length() - targetLen;
         for (int i = 0; i <= max; i++) {
             if (source.regionMatches(true, i, target, 0, targetLen)) {

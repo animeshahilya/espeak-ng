@@ -695,7 +695,7 @@ final class UserDictionaryScreen {
             @Override
             public void onClick(View v) {
                 String pattern = etPattern.getText().toString().trim();
-                String replacement = etReplacement.getText().toString().trim();
+                String replacement = etReplacement.getText().toString().replace('\r', ' ').replace('\n', ' ').replace('\t', ' ');
                 String language = etLanguage.getText().toString().trim();
                 String phonemes = etPhonemes.getText().toString().trim();
 

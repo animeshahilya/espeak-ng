@@ -178,8 +178,11 @@ public final class TtsAudioDispatcher {
         }
         // Clamp the slice to the array so a bad length from a synthesizer can
         // never throw here on the latency-critical synthesis thread.
-        final int safeOffset = Math.max(0, Math.min(offset, audioData.length));
-        final int safeEnd = Math.min(audioData.length, safeOffset + Math.max(0, length));
+        int safeOffset = Math.max(0, Math.min(offset, audioData.length));
+        int safeEnd = Math.min(audioData.length, safeOffset + Math.max(0, length));
+        if ((safeOffset & 1) != 0) {
+            safeOffset++;
+        }
         if (safeEnd <= safeOffset) {
             return !isStopped() && !mCallbackDone.get();
         }

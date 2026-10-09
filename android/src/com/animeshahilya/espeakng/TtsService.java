@@ -413,9 +413,12 @@ public class TtsService extends TextToSpeechService {
         }
         try {
             unregisterReceiver(mLanguagesUpdatedReceiver);
-            unregisterReceiver(mPiperVoicesReceiver);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
             // Not registered (onCreate() never completed) - nothing to undo.
+        }
+        try {
+            unregisterReceiver(mPiperVoicesReceiver);
+        } catch (IllegalArgumentException ignored) {
         }
     }
 

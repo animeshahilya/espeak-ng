@@ -89,6 +89,16 @@ public class TextSanitizeTest {
     }
 
     @Test
+    public void simplifyUrlsTrailingPunctuationPreserved() {
+        assertEquals("Check this ( link example.com slash path ).",
+                TextPreprocessor.simplifyUrls("Check this (https://example.com/path)."));
+        assertEquals("Go to  link example.com slash foo , then.",
+                TextPreprocessor.simplifyUrls("Go to https://example.com/foo, then."));
+        assertEquals("Read  link en.wikipedia.org slash wiki slash Rust_(programming_language) .",
+                TextPreprocessor.simplifyUrls("Read https://en.wikipedia.org/wiki/Rust_(programming_language)."));
+    }
+
+    @Test
     public void condenseRepeatedEmojisWithSurrogates() {
         // Mathematical bold capital A is U+1D400 (surrogate pair \uD835\uDC00)
         String mathText = "\uD835\uDC00\uD835\uDC01";

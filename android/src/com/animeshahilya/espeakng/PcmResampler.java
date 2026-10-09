@@ -24,6 +24,9 @@ final class PcmResampler {
     private long next;
 
     PcmResampler(int fromRate, int toRate) {
+        if (fromRate <= 0 || toRate <= 0) {
+            throw new IllegalArgumentException("Sample rates must be positive: from " + fromRate + " to " + toRate);
+        }
         final int g = gcd(fromRate, toRate);
         up = toRate / g;
         down = fromRate / g;
@@ -130,6 +133,7 @@ final class PcmResampler {
         private final double scale;
         private long written;
         private short[] inBuf = new short[512];
+        private int leftoverByte = -1;
 
         Output(PiperEngine.Output target, int fromRate, int toRate) {
             this.target = target;
@@ -147,14 +151,29 @@ final class PcmResampler {
             if (pcm == null || pcm.length == 0) {
                 return !target.stopped();
             }
-            final int inLen = pcm.length / 2;
+            final int totalBytes = (leftoverByte >= 0 ? 1 : 0) + pcm.length;
+            final int inLen = totalBytes / 2;
+            if (inLen == 0) {
+                leftoverByte = pcm[0] & 0xFF;
+                return !target.stopped();
+            }
             short[] in = inBuf;
             if (in.length < inLen) {
                 in = new short[inLen];
                 inBuf = in;
             }
-            for (int i = 0; i < inLen; i++) {
-                in[i] = (short) ((pcm[2 * i] & 0xff) | (pcm[2 * i + 1] << 8));
+            int pcmIdx = 0;
+            int sampleIdx = 0;
+            if (leftoverByte >= 0) {
+                in[sampleIdx++] = (short) (leftoverByte | (pcm[pcmIdx++] << 8));
+                leftoverByte = -1;
+            }
+            while (sampleIdx < inLen) {
+                in[sampleIdx++] = (short) ((pcm[pcmIdx] & 0xFF) | (pcm[pcmIdx + 1] << 8));
+                pcmIdx += 2;
+            }
+            if (pcmIdx < pcm.length) {
+                leftoverByte = pcm[pcmIdx] & 0xFF;
             }
             final short[] out = resampler.process(in, inLen);
             if (out.length == 0) {
@@ -171,6 +190,7 @@ final class PcmResampler {
 
         /** Delivers the tail; returns the frames written at the request's rate. */
         int finish() {
+            leftoverByte = -1;
             final short[] tail = resampler.flush();
             if (tail.length > 0 && !target.stopped()) {
                 written += tail.length;

@@ -129,4 +129,17 @@ public class UserDictionaryTest {
         assertEquals(UserDictionary.CATEGORY_ABBREV, UserDictionary.normalizeCategory("abbreviation"));
         assertEquals(UserDictionary.CATEGORY_CHARACTER, UserDictionary.normalizeCategory("character"));
     }
+
+    @Test
+    public void testCaseInsensitiveUnicodeFolding() {
+        // Kelvin sign \u212A matches 'k'
+        UserDictionary ruleK = new UserDictionary("k", "kay", false, false, false);
+        assertTrue(ruleK.isValid());
+        assertEquals("kay", ruleK.apply("\u212A"));
+
+        // Greek capital sigma \u03A3 and lowercase sigma \u03C3
+        UserDictionary ruleSigma = new UserDictionary("\u03C3", "sigma", false, false, false);
+        assertTrue(ruleSigma.isValid());
+        assertEquals("sigma", ruleSigma.apply("\u03A3"));
+    }
 }

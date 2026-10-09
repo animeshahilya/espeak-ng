@@ -811,6 +811,35 @@ public final class TextPreprocessor {
     }
 
     private static String formatSimplifiedUrl(String url) {
+        String trailing = "";
+        int end = url.length();
+        while (end > 0) {
+            char c = url.charAt(end - 1);
+            if (c == '.' || c == ',' || c == ';' || c == '!' || c == '?' || c == '"' || c == '\'' || c == '>') {
+                end--;
+            } else if (c == ')' || c == ']' || c == '}') {
+                // If closing bracket is unmatched within the URL, it belongs to enclosing text
+                char open = (c == ')') ? '(' : (c == ']' ? '[' : '{');
+                int opens = 0;
+                int closes = 0;
+                for (int k = 0; k < end; k++) {
+                    if (url.charAt(k) == open) opens++;
+                    else if (url.charAt(k) == c) closes++;
+                }
+                if (closes > opens) {
+                    end--;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        if (end < url.length()) {
+            trailing = url.substring(end);
+            url = url.substring(0, end);
+        }
+
         String s = url;
         if (s.regionMatches(true, 0, "https://", 0, 8)) {
             s = s.substring(8);
@@ -839,6 +868,9 @@ public final class TextPreprocessor {
             s = s + query;
         }
         s = SLASH_RUN.matcher(s).replaceAll(" slash ");
+        if (!trailing.isEmpty()) {
+            return " link " + s.trim() + " " + trailing;
+        }
         return " link " + s.trim() + " ";
     }
 
@@ -1014,7 +1046,7 @@ public final class TextPreprocessor {
                 return c + " से " + DEVANAGARI_WORDS[i];
             }
             final String[] described = NvdaCharacterDescriptions.get(languageTag, trimmed);
-            if (described != null) {
+            if (described != null && described.length > 0) {
                 return trimmed + ", " + String.join(" ", described);
             }
             if (c >= 'a' && c <= 'z') {
@@ -1296,7 +1328,7 @@ public final class TextPreprocessor {
             final String[] described = Character.isLetter(cp) && !isCjk(cp)
                     ? NvdaCharacterDescriptions.get(languageTag, new String(Character.toChars(cp)))
                     : null;
-            if (described != null) {
+            if (described != null && described.length > 0) {
                 if (out.length() > 0 && out.charAt(out.length() - 1) != ' ') out.append(' ');
                 out.append(described[0]);
             } else if ((cp >= 'A' && cp <= 'Z') || (cp >= 'a' && cp <= 'z')) {

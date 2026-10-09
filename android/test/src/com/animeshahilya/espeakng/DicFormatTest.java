@@ -2,6 +2,7 @@ package com.animeshahilya.espeakng;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -67,5 +68,31 @@ public class DicFormatTest {
                 new UserDictionary("a\tb", "c\nd", false, false, true));
         assertEquals(5, line.trim().split("\t").length);
         assertEquals(1, line.split("\n").length);
+    }
+
+    @Test
+    public void testEmptyReplacementSupported() {
+        final UserDictionary rule1 = UserDictionaryManager.parseDicLine("foo\t\t\t0\t0");
+        assertNotNull(rule1);
+        assertEquals("foo", rule1.getPattern());
+        assertEquals("", rule1.getReplacement());
+
+        final UserDictionary rule2 = UserDictionaryManager.parseDicLine("bar\t");
+        assertNotNull(rule2);
+        assertEquals("bar", rule2.getPattern());
+        assertEquals("", rule2.getReplacement());
+
+        final UserDictionary rule3 = UserDictionaryManager.parseDicLine("baz=");
+        assertNotNull(rule3);
+        assertEquals("baz", rule3.getPattern());
+        assertEquals("", rule3.getReplacement());
+    }
+
+    @Test
+    public void testPreservesReplacementSpaces() {
+        final UserDictionary rule = UserDictionaryManager.parseDicLine("and\t & \t\t0\t0");
+        assertNotNull(rule);
+        assertEquals("and", rule.getPattern());
+        assertEquals(" & ", rule.getReplacement());
     }
 }

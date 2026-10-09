@@ -180,4 +180,12 @@ public class NvdaSymbolProcessorTest {
         }
         assertEquals("tilde", NvdaSymbolProcessor.processSingleSymbol("~", "en"));
     }
+
+    @Test
+    public void collapseRepeatRunsSafe() {
+        String dashes = NvdaSymbolProcessor.collapseRepeatRuns("----", "en");
+        assertTrue(dashes, dashes.contains("4 dash"));
+        assertEquals("", NvdaSymbolProcessor.collapseRepeatRuns("", "en"));
+        assertNull(NvdaSymbolProcessor.collapseRepeatRuns(null, "en"));
+    }
 }
