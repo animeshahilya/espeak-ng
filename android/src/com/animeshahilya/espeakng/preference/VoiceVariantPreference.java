@@ -391,7 +391,7 @@ public class VoiceVariantPreference extends PersistingDialogPreference {
         String catStr = category.toString().trim();
         String varStr = variant.toString().trim();
         String label;
-        if (varStr.toLowerCase(java.util.Locale.ROOT).startsWith(catStr.toLowerCase(java.util.Locale.ROOT))) {
+        if (varStr.regionMatches(true, 0, catStr, 0, catStr.length())) {
             label = varStr;
         } else {
             label = String.format("%s (%s)", catStr, varStr);

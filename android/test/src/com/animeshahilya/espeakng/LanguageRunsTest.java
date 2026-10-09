@@ -378,4 +378,35 @@ public class LanguageRunsTest {
         assertEquals("hin@0[नमस्ते दोस्त।]eng@13[ Hello my friend!]hin@30[ कैसे हो?]",
                 describe(LanguageRuns.split(fullSentence, "hin", null, null, VoiceSettings.SWITCHING_SENTENCES)));
     }
+
+    @Test
+    public void testCountWordsShortCircuit() {
+        assertEquals(0, LanguageRuns.countWords(null, 5));
+        assertEquals(0, LanguageRuns.countWords("", 5));
+        assertEquals(0, LanguageRuns.countWords("   ", 5));
+        assertEquals(0, LanguageRuns.countWords("one two three", 0));
+        assertEquals(1, LanguageRuns.countWords("one two three", 1));
+        assertEquals(2, LanguageRuns.countWords("one two three", 2));
+        assertEquals(3, LanguageRuns.countWords("one two three", 3));
+        assertEquals(3, LanguageRuns.countWords("one two three", 5));
+    }
+
+    @Test
+    public void testSentenceBoundariesWithUnicodeTerminators() {
+        // Standard ASCII
+        assertTrue(LanguageRuns.hasSentenceBoundary("Hello world."));
+        assertTrue(LanguageRuns.hasSentenceBoundary("Are you sure?"));
+        assertTrue(LanguageRuns.hasSentenceBoundary("Great!"));
+        assertTrue(LanguageRuns.hasSentenceBoundary("Line 1\nLine 2"));
+        // Indic danda and double danda
+        assertTrue(LanguageRuns.hasSentenceBoundary("नमस्ते दोस्त।"));
+        assertTrue(LanguageRuns.hasSentenceBoundary("शांतिः ॥"));
+        // Arabic question mark and Urdu full stop
+        assertTrue(LanguageRuns.hasSentenceBoundary("كيف حالك؟"));
+        assertTrue(LanguageRuns.hasSentenceBoundary("شکریہ۔"));
+        // CJK full stop
+        assertTrue(LanguageRuns.hasSentenceBoundary("こんにちは。"));
+        // No boundary
+        assertFalse(LanguageRuns.hasSentenceBoundary("Hello world"));
+    }
 }

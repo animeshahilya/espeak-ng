@@ -70,6 +70,15 @@ public final class AsciiUtils {
         return false;
     }
 
+    public static boolean hasAsciiDigit(CharSequence text) {
+        if (text == null) return false;
+        for (int i = 0, n = text.length(); i < n; i++) {
+            char c = text.charAt(i);
+            if (c >= '0' && c <= '9') return true;
+        }
+        return false;
+    }
+
     public static String toAsciiLowerCase(String s) {
         if (s == null) return null;
         final int len = s.length();
@@ -89,6 +98,44 @@ public final class AsciiUtils {
         return s;
     }
 
+    public static String toAsciiLowerCase(CharSequence s, int start, int end) {
+        if (s == null) return null;
+        if (start < 0 || end > s.length() || start > end) {
+            throw new IndexOutOfBoundsException();
+        }
+        final int len = end - start;
+        if (len <= 0) return "";
+        boolean hasUpper = false;
+        for (int i = start; i < end; i++) {
+            char c = s.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                hasUpper = true;
+                break;
+            }
+        }
+        if (!hasUpper && s instanceof String) {
+            return ((String) s).substring(start, end);
+        }
+        char[] chars = new char[len];
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(start + i);
+            chars[i] = (c >= 'A' && c <= 'Z') ? (char) (c + 32) : c;
+        }
+        return new String(chars);
+    }
+
+    public static char toAsciiLowerCase(char c) {
+        return (c >= 'A' && c <= 'Z') ? (char) (c + 32) : c;
+    }
+
+    public static boolean endsWithIgnoreCase(String s, String suffix) {
+        if (s == null || suffix == null) return false;
+        int sLen = s.length();
+        int sufLen = suffix.length();
+        if (sLen < sufLen) return false;
+        return s.regionMatches(true, sLen - sufLen, suffix, 0, sufLen);
+    }
+
     public static boolean isWhitespace(char c) {
         return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == 0x0B;
     }
@@ -99,16 +146,26 @@ public final class AsciiUtils {
      */
     public static String baseLanguage(String languageTag) {
         if (languageTag == null || languageTag.isEmpty()) return "";
-        int sep = -1;
-        for (int i = 0, n = languageTag.length(); i < n; i++) {
+        int start = 0;
+        int end = languageTag.length();
+        while (start < end && isWhitespace(languageTag.charAt(start))) {
+            start++;
+        }
+        while (end > start && isWhitespace(languageTag.charAt(end - 1))) {
+            end--;
+        }
+        if (start >= end) return "";
+        for (int i = start; i < end; i++) {
             char c = languageTag.charAt(i);
             if (c == '-' || c == '_') {
-                sep = i;
+                end = i;
+                while (end > start && isWhitespace(languageTag.charAt(end - 1))) {
+                    end--;
+                }
                 break;
             }
         }
-        String base = sep > 0 ? toAsciiLowerCase(languageTag.substring(0, sep).trim())
-                              : toAsciiLowerCase(languageTag.trim());
+        String base = toAsciiLowerCase(languageTag, start, end);
         if ("cmn".equals(base)) return "zh";
         return base;
     }

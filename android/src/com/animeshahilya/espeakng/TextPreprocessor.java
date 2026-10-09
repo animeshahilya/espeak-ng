@@ -602,10 +602,7 @@ public final class TextPreprocessor {
 
     /** Lower-case language subtag of a tag ("mr" for "mr-IN"); "" for null. */
     private static String baseLanguage(String languageTag) {
-        if (languageTag == null) return "";
-        final String base = languageTag.trim().toLowerCase(Locale.ROOT);
-        final int dash = base.indexOf('-');
-        return dash >= 0 ? base.substring(0, dash) : base;
+        return AsciiUtils.baseLanguage(languageTag);
     }
 
     public static boolean isDevanagariNumberLang(String languageTag) {
@@ -1610,7 +1607,7 @@ public final class TextPreprocessor {
             return true;
         }
         if (wordLen >= 2 && wordLen <= 4) {
-            String word = s.substring(wordStart, dotIndex).toLowerCase(Locale.ROOT);
+            String word = AsciiUtils.toAsciiLowerCase(s, wordStart, dotIndex);
             if ("dr".equals(word) || "mr".equals(word) || "mrs".equals(word) || "ms".equals(word)
                     || "prof".equals(word) || "sr".equals(word) || "jr".equals(word) || "vs".equals(word)
                     || "eg".equals(word) || "ie".equals(word) || "etc".equals(word) || "rs".equals(word)
@@ -1623,7 +1620,8 @@ public final class TextPreprocessor {
 
     private static boolean isPunctOrNewline(char c) {
         return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n'
-                || c == '\u0964' || c == '\u0965' || c == '\u3002' || c == '\uFF01' || c == '\uFF1F';
+                || c == '\u0964' || c == '\u0965' || c == '\u3002' || c == '\uFF01' || c == '\uFF1F'
+                || c == '\u061F' || c == '\u06D4';
     }
 
     public static String languageTag(Voice voice) {
@@ -1633,10 +1631,10 @@ public final class TextPreprocessor {
         if (voice == null || voice.locale == null) return "";
         String language = voice.locale.getLanguage();
         if (language == null) return "";
-        language = language.toLowerCase(Locale.ROOT);
+        language = AsciiUtils.toAsciiLowerCase(language);
         String country = voice.locale.getCountry();
         if (country != null && !country.isEmpty()) {
-            language += "-" + country.toLowerCase(Locale.ROOT);
+            language += "-" + AsciiUtils.toAsciiLowerCase(country);
         }
         return language;
     }

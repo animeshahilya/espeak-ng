@@ -662,9 +662,9 @@ public final class NumberReading {
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == 'º' || c == 'ª') return true;
-            if (c >= '0' && c <= '9' && i + 2 < text.length()) {
-                char c1 = Character.toLowerCase(text.charAt(i + 1));
-                char c2 = Character.toLowerCase(text.charAt(i + 2));
+            if (AsciiUtils.isAsciiDigit(c) && i + 2 < text.length()) {
+                char c1 = AsciiUtils.toAsciiLowerCase(text.charAt(i + 1));
+                char c2 = AsciiUtils.toAsciiLowerCase(text.charAt(i + 2));
                 if ((c1 == 's' && c2 == 't') || (c1 == 'n' && c2 == 'd')
                         || (c1 == 'r' && c2 == 'd') || (c1 == 't' && c2 == 'h')) {
                     return true;
@@ -718,11 +718,7 @@ public final class NumberReading {
     }
 
     private static boolean containsAsciiDigit(String text) {
-        for (int i = 0, n = text.length(); i < n; i++) {
-            char c = text.charAt(i);
-            if (c >= '0' && c <= '9') return true;
-        }
-        return false;
+        return AsciiUtils.hasAsciiDigit(text);
     }
 
     // ==========================================

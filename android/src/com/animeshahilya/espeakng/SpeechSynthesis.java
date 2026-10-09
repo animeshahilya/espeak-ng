@@ -180,7 +180,7 @@ public class SpeechSynthesis {
         if (REDUNDANT_VOICE_NAMES.contains(name)) {
             return true;
         }
-        return REDUNDANT_VOICE_NAMES.contains(name.toLowerCase(Locale.ROOT));
+        return REDUNDANT_VOICE_NAMES.contains(AsciiUtils.toAsciiLowerCase(name));
     }
 
     public List<Voice> getAvailableVoices() {

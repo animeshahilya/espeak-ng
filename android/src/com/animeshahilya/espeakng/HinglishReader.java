@@ -127,8 +127,7 @@ public final class HinglishReader {
             while (j < to && AsciiUtils.isAsciiLetter(text.charAt(j))) j++;
             if (!isAcronym(text, i, j)) {
                 words++;
-                final String word = text.substring(i, j);
-                final String key = AsciiUtils.toAsciiLowerCase(word);
+                final String key = AsciiUtils.toAsciiLowerCase(text, i, j);
                 if (hindi.containsKey(key)) {
                     hindiWords++;
                 } else if (!shared.containsKey(key)) {
@@ -153,16 +152,19 @@ public final class HinglishReader {
             }
             int j = i;
             while (j < to && AsciiUtils.isAsciiLetter(text.charAt(j))) j++;
-            final String word = text.substring(i, j);
             String deva = null;
             if (!isAcronym(text, i, j) && !touchesDigitOrSymbol(text, i, j)) {
-                final String key = AsciiUtils.toAsciiLowerCase(word);
+                final String key = AsciiUtils.toAsciiLowerCase(text, i, j);
                 deva = hindi.get(key);
                 if (deva == null) {
                     deva = shared.get(key);
                 }
             }
-            out.append(deva != null ? deva : word);
+            if (deva != null) {
+                out.append(deva);
+            } else {
+                out.append(text, i, j);
+            }
             i = j;
         }
     }

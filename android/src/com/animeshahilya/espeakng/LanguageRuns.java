@@ -348,10 +348,10 @@ final class LanguageRuns {
         @Override
         public String resolve(int c, int charIndex) {
             if (c < 128) {
-                if (c >= '0' && c <= '9') {
+                if (AsciiUtils.isAsciiDigit((char) c)) {
                     return numbers;
                 }
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+                if (AsciiUtils.isAsciiLetter((char) c)) {
                     return runLanguage;
                 }
                 return null;
@@ -422,7 +422,11 @@ final class LanguageRuns {
     }
 
     static int countWords(String text) {
-        if (text == null || text.isEmpty()) {
+        return countWords(text, Integer.MAX_VALUE);
+    }
+
+    static int countWords(String text, int maxCount) {
+        if (text == null || text.isEmpty() || maxCount <= 0) {
             return 0;
         }
         int words = 0;
@@ -434,6 +438,9 @@ final class LanguageRuns {
             if (Character.isLetterOrDigit(cp)) {
                 if (!inWord) {
                     words++;
+                    if (words >= maxCount) {
+                        return words;
+                    }
                     inWord = true;
                 }
             } else {
@@ -443,13 +450,16 @@ final class LanguageRuns {
         return words;
     }
 
-    private static boolean hasSentenceBoundary(String text) {
+    static boolean hasSentenceBoundary(String text) {
         if (text == null) {
             return false;
         }
         for (int i = 0; i < text.length(); i++) {
             final char c = text.charAt(i);
-            if (c == '.' || c == '?' || c == '!' || c == '\n' || c == '\r' || c == '\u0964' /* danda */) {
+            if (c == '.' || c == '?' || c == '!' || c == '\n' || c == '\r'
+                    || c == '\u0964' /* danda */ || c == '\u0965' /* double danda */
+                    || c == '\u061F' /* Arabic ? */ || c == '\u06D4' /* Urdu . */
+                    || c == '\u3002' /* CJK . */) {
                 return true;
             }
         }
@@ -485,17 +495,16 @@ final class LanguageRuns {
                 filtered.add(run);
                 continue;
             }
-            final int wordCount = countWords(run.text);
             boolean keep = true;
             if (phrasesMode) {
                 // Keep alphanumeric compounds (e.g. 1st, 4G, 10am) in Latin engine so ordinals are spoken
                 if (AsciiUtils.hasDigit(run.text) && AsciiUtils.hasAsciiLetter(run.text)) {
                     keep = true;
-                } else if (wordCount < 2) {
+                } else if (countWords(run.text, 2) < 2) {
                     keep = false;
                 }
             } else if (sentencesMode) {
-                if (!hasSentenceBoundary(run.text) && wordCount < 3) {
+                if (!hasSentenceBoundary(run.text) && countWords(run.text, 3) < 3) {
                     keep = false;
                 }
             }

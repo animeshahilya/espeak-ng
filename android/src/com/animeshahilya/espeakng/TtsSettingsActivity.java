@@ -577,9 +577,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 synchronized (CheckVoiceData.EXTRACT_LOCK) {
                 try (InputStream inputStream = activity.getContentResolver().openInputStream(uri)) {
                     if (inputStream != null) {
-                        // Locale.ROOT: Turkish-locale devices would map a
-                        // capital I in ".ZIP" to a dotless ı and fail the check.
-                        if (fileName.toLowerCase(java.util.Locale.ROOT).endsWith(".zip")) {
+                        if (AsciiUtils.endsWithIgnoreCase(fileName, ".zip")) {
                             FileUtils.extractZip(inputStream, targetDir, MAX_VOICE_IMPORT_BYTES);
                             success = true;
                         } else {

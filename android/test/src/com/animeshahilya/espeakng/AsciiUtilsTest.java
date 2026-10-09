@@ -55,12 +55,33 @@ public class AsciiUtilsTest {
     }
 
     @Test
+    public void testHasAsciiDigit() {
+        assertFalse(AsciiUtils.hasAsciiDigit(null));
+        assertFalse(AsciiUtils.hasAsciiDigit(""));
+        assertFalse(AsciiUtils.hasAsciiDigit("abc def !@#"));
+        assertFalse(AsciiUtils.hasAsciiDigit("मूल्य ₹ ५०")); // Indic digit is not ASCII digit
+        assertTrue(AsciiUtils.hasAsciiDigit("abc 123 def"));
+        assertTrue(AsciiUtils.hasAsciiDigit("0"));
+        assertTrue(AsciiUtils.hasAsciiDigit("9"));
+    }
+
+    @Test
     public void testToAsciiLowerCase() {
         assertNull(AsciiUtils.toAsciiLowerCase(null));
         assertEquals("", AsciiUtils.toAsciiLowerCase(""));
         assertEquals("hello world", AsciiUtils.toAsciiLowerCase("HELLO WORLD"));
         assertEquals("hello world 123", AsciiUtils.toAsciiLowerCase("Hello World 123"));
         assertEquals("en-us", AsciiUtils.toAsciiLowerCase("en-US"));
+    }
+
+    @Test
+    public void testToAsciiLowerCaseRange() {
+        assertNull(AsciiUtils.toAsciiLowerCase(null, 0, 0));
+        assertEquals("", AsciiUtils.toAsciiLowerCase("Hello", 2, 2));
+        assertEquals("hel", AsciiUtils.toAsciiLowerCase("HELLO", 0, 3));
+        assertEquals("lo", AsciiUtils.toAsciiLowerCase("HELLO", 3, 5));
+        assertEquals("world", AsciiUtils.toAsciiLowerCase("say World now", 4, 9));
+        assertEquals("already", AsciiUtils.toAsciiLowerCase("already lower", 0, 7));
     }
 
     @Test
@@ -75,10 +96,33 @@ public class AsciiUtilsTest {
     }
 
     @Test
+    public void testToAsciiLowerCaseChar() {
+        assertEquals('a', AsciiUtils.toAsciiLowerCase('A'));
+        assertEquals('z', AsciiUtils.toAsciiLowerCase('Z'));
+        assertEquals('a', AsciiUtils.toAsciiLowerCase('a'));
+        assertEquals('1', AsciiUtils.toAsciiLowerCase('1'));
+        assertEquals(' ', AsciiUtils.toAsciiLowerCase(' '));
+        assertEquals('é', AsciiUtils.toAsciiLowerCase('é'));
+    }
+
+    @Test
+    public void testEndsWithIgnoreCase() {
+        assertFalse(AsciiUtils.endsWithIgnoreCase(null, ".zip"));
+        assertFalse(AsciiUtils.endsWithIgnoreCase("test.zip", null));
+        assertFalse(AsciiUtils.endsWithIgnoreCase("zip", ".zip"));
+        assertTrue(AsciiUtils.endsWithIgnoreCase("archive.zip", ".zip"));
+        assertTrue(AsciiUtils.endsWithIgnoreCase("ARCHIVE.ZIP", ".zip"));
+        assertTrue(AsciiUtils.endsWithIgnoreCase("archive.Zip", ".ZIP"));
+        assertFalse(AsciiUtils.endsWithIgnoreCase("archive.tar.gz", ".zip"));
+    }
+
+    @Test
     public void testBaseLanguage() {
         assertEquals("", AsciiUtils.baseLanguage(null));
         assertEquals("", AsciiUtils.baseLanguage(""));
+        assertEquals("", AsciiUtils.baseLanguage("   "));
         assertEquals("en", AsciiUtils.baseLanguage("en-US"));
+        assertEquals("en", AsciiUtils.baseLanguage(" en-US "));
         assertEquals("en", AsciiUtils.baseLanguage("en_GB"));
         assertEquals("hi", AsciiUtils.baseLanguage("hi-IN"));
         assertEquals("hi", AsciiUtils.baseLanguage("hi"));

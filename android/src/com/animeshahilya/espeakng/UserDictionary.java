@@ -91,7 +91,7 @@ public class UserDictionary {
         mCaseSensitive = caseSensitive;
         mIsRegex = isRegex;
         mWholeWord = wholeWord;
-        mLanguage = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
+        mLanguage = language != null ? AsciiUtils.toAsciiLowerCase(language.trim()) : "";
         mCategory = normalizeCategory(category);
         mPhonemes = phonemes != null ? phonemes.trim() : "";
         compile();
@@ -134,7 +134,7 @@ public class UserDictionary {
 
     public static String normalizeCategory(String category) {
         if (category == null) return CATEGORY_MAIN;
-        String c = category.trim().toLowerCase(java.util.Locale.ROOT);
+        String c = AsciiUtils.toAsciiLowerCase(category.trim());
         if (CATEGORY_ROOT.equals(c)) return CATEGORY_ROOT;
         // "abbreviation" is accepted as a legacy alias of "abbrev".
         if (CATEGORY_ABBREV.equals(c) || "abbreviation".equals(c)) return CATEGORY_ABBREV;
@@ -150,7 +150,7 @@ public class UserDictionary {
     }
 
     public void setLanguage(String language) {
-        mLanguage = language != null ? language.trim().toLowerCase(java.util.Locale.ROOT) : "";
+        mLanguage = language != null ? AsciiUtils.toAsciiLowerCase(language.trim()) : "";
     }
 
     /** "" means this rule has no phoneme override and speaks {@link #getReplacement()} normally. */
