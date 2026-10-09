@@ -640,6 +640,14 @@
             android:defaultValue=""
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
+        <ListPreference
+            android:key="espeak_switching_sensitivity"
+            android:title="@string/setting_switching_sensitivity"
+            android:entries="@array/switching_sensitivity_entries"
+            android:entryValues="@array/switching_sensitivity_values"
+            android:defaultValue="words"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
 
       <!-- not on Wear -->

@@ -321,4 +321,61 @@ public class LanguageRunsTest {
         chosen.put(UnicodeScript.CYRILLIC, "ukr");
         assertTrue(LanguageRuns.espeakReadsItself("ukr", "eng", chosen));
     }
+
+    @Test
+    public void purelyOwnScriptFastPath() {
+        // Purely English / Latin text
+        assertTrue(LanguageRuns.isPurelyOwnScript("Hello world, how are you?", "eng", null, null));
+        assertTrue(LanguageRuns.isPurelyOwnScript("Double-tap to activate. 123!", "eng", null, null));
+        // Purely Tamil
+        assertTrue(LanguageRuns.isPurelyOwnScript("வணக்கம் நண்பா 123!", "tam", null, null));
+        // Purely Greek
+        assertTrue(LanguageRuns.isPurelyOwnScript("Καλημέρα κόσμε", "ell", null, null));
+        // Mixed text must NOT take fast-path
+        assertFalse(LanguageRuns.isPurelyOwnScript("Hello नमस्ते", "eng", null, null));
+        assertFalse(LanguageRuns.isPurelyOwnScript("வணக்கம் Hello", "tam", null, null));
+        // Devanagari has intra-script classification (Hindi vs Marathi etc.), so never fast-path
+        assertFalse(LanguageRuns.isPurelyOwnScript("नमस्ते दोस्त", "hin", null, null));
+        // If numbers have a specific language, do not fast-path
+        assertFalse(LanguageRuns.isPurelyOwnScript("Hello 123", "eng", null, "hin"));
+    }
+
+    @Test
+    public void switchingSensitivity_WordsVsPhrases() {
+        final String singleWord = "कृपया OK दबाइए";
+        final String multiWord = "कृपया Google Chrome डाउनलोड करें";
+
+        // Default 'words' mode switches on every single word
+        assertEquals("hin@0[कृपया]eng@5[ OK]hin@8[ दबाइए]",
+                describe(LanguageRuns.split(singleWord, "hin", null, null, VoiceSettings.SWITCHING_WORDS)));
+        assertEquals("hin@0[कृपया]eng@5[ Google Chrome]hin@19[ डाउनलोड करें]",
+                describe(LanguageRuns.split(multiWord, "hin", null, null, VoiceSettings.SWITCHING_WORDS)));
+
+        // 'phrases' mode absorbs lone 1-word foreign runs into the speaking voice
+        assertEquals("hin@0[कृपया OK दबाइए]",
+                describe(LanguageRuns.split(singleWord, "hin", null, null, VoiceSettings.SWITCHING_PHRASES)));
+        // But switches on 2+ word phrases
+        assertEquals("hin@0[कृपया]eng@5[ Google Chrome]hin@19[ डाउनलोड करें]",
+                describe(LanguageRuns.split(multiWord, "hin", null, null, VoiceSettings.SWITCHING_PHRASES)));
+
+        // Alphanumeric compounds like '1st', '4G', '10am' stay with English even in 'phrases' mode
+        assertEquals("hin@0[आज]eng@2[ 1st]hin@6[ तारीख है]",
+                describe(LanguageRuns.split("आज 1st तारीख है", "hin", null, null, VoiceSettings.SWITCHING_PHRASES)));
+        assertEquals("hin@0[मेरा फ़ोन]eng@9[ 4G]hin@12[ सपोर्ट करता है]",
+                describe(LanguageRuns.split("मेरा फ़ोन 4G सपोर्ट करता है", "hin", null, null, VoiceSettings.SWITCHING_PHRASES)));
+    }
+
+    @Test
+    public void switchingSensitivity_Sentences() {
+        final String mixedInline = "मेरा फ़ोन Samsung है और इसमें 5G है।";
+        final String fullSentence = "नमस्ते दोस्त। Hello my friend! कैसे हो?";
+
+        // Sentences mode absorbs inline words unless forming a clause or sentence
+        assertEquals("hin@0[मेरा फ़ोन Samsung है और इसमें 5G है।]",
+                describe(LanguageRuns.split(mixedInline, "hin", null, null, VoiceSettings.SWITCHING_SENTENCES)));
+
+        // Full sentences with sentence boundaries switch to English cleanly
+        assertEquals("hin@0[नमस्ते दोस्त।]eng@13[ Hello my friend!]hin@30[ कैसे हो?]",
+                describe(LanguageRuns.split(fullSentence, "hin", null, null, VoiceSettings.SWITCHING_SENTENCES)));
+    }
 }

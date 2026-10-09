@@ -304,6 +304,25 @@ public class TtsService extends TextToSpeechService {
                 budget--;
             }
         }
+        // If budget remains, pre-warm assigned natural voices for user's configured
+        // script languages (Settings -> Mixed-language text) so the first mixed utterance
+        // never falls back or hesitates.
+        if (budget > 0 && ScriptLanguages.naturalSwitching(prefs)) {
+            final Map<String, String> scriptLanguages = ScriptLanguages.chosen(prefs);
+            final Map<java.lang.Character.UnicodeScript, String> runLanguages =
+                    ScriptLanguages.runLanguages(scriptLanguages);
+            for (String lang : runLanguages.values()) {
+                if (budget <= 0) {
+                    break;
+                }
+                final PiperVoiceStore.Installed v = PiperVoiceStore.assignedFor(mStorageContext, prefs, lang);
+                if (v != null && !PiperCrashGuard.isSuspended(prefs, v.key)
+                        && !mPiper.isLoading(v.key) && mPiper.getLoaded(v.key) == null) {
+                    mPiper.preload(v.key, v.model(), v.config);
+                    budget--;
+                }
+            }
+        }
     }
 
     @Override
@@ -1541,7 +1560,8 @@ public class TtsService extends TextToSpeechService {
     private List<LanguageRuns.Run> naturalRuns(String text, String own,
                                                Map<UnicodeScript, String> runLanguages,
                                                String numbers, SharedPreferences prefs) {
-        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, own, runLanguages, numbers);
+        final String sensitivity = ScriptLanguages.switchingSensitivity(prefs);
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, own, runLanguages, numbers, sensitivity);
         List<LanguageRuns.Run> out = null;
         for (int i = 0; i < runs.size(); i++) {
             final LanguageRuns.Run run = runs.get(i);

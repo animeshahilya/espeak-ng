@@ -84,6 +84,11 @@ public class VoiceSettings {
     public static final String PREF_EXPAND_ABBREVIATIONS = "espeak_expand_abbreviations";
     /** Language numbers and times are read in: {@link #NUMBERS_AUTO} and the other NUMBERS_ values. */
     public static final String PREF_NUMBERS_LANGUAGE = "espeak_numbers_language";
+    /** Language switching sensitivity: {@link #SWITCHING_WORDS}, {@link #SWITCHING_PHRASES}, or {@link #SWITCHING_SENTENCES}. */
+    public static final String PREF_SWITCHING_SENSITIVITY = "espeak_switching_sensitivity";
+    public static final String SWITCHING_WORDS = "words";
+    public static final String SWITCHING_PHRASES = "phrases";
+    public static final String SWITCHING_SENTENCES = "sentences";
     /** The "Numbers in English text" switch it replaced; on reads as {@link #NUMBERS_AROUND}. */
     private static final String LEGACY_ENGLISH_NUMBERS = "espeak_english_numbers";
     /** As eSpeak reads them (the voice's language), and natural voices (the words around them). */

@@ -556,6 +556,10 @@
   <string name="numbers_language_around">In the language of the words around them</string>
   <string name="numbers_language_voice">Always in the voice\'s language</string>
   <string name="numbers_language_english">Always in English</string>
+  <string name="setting_switching_sensitivity">Language switching sensitivity</string>
+  <string name="switching_sensitivity_words">Every word (default)</string>
+  <string name="switching_sensitivity_phrases">Phrases only (2+ words)</string>
+  <string name="switching_sensitivity_sentences">Full sentences only</string>
 
   <!-- Test voice playback feedback -->
   <string name="test_voice_playing">Playing sample…</string>

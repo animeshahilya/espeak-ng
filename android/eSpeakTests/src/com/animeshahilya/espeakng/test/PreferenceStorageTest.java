@@ -162,6 +162,7 @@ public class PreferenceStorageTest
                 VoiceSettings.PREF_READING_HISTORY,
                 ScriptLanguages.PREF_PREFIX + "latin", ScriptLanguages.PREF_PREFIX + "hi",
                 ScriptLanguages.PREF_PREFIX + "cyr", ScriptLanguages.PREF_NATURAL_SWITCHING,
+                VoiceSettings.PREF_SWITCHING_SENSITIVITY,
         };
         try (ActivityScenario<TtsSettingsActivity> scenario =
                 ActivityScenario.launch(TtsSettingsActivity.class)) {

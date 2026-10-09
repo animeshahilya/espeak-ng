@@ -368,12 +368,176 @@ final class LanguageRuns {
         }
     }
 
+    /**
+     * Fast-path check: returns true if all characters in {@code text} belong to
+     * {@code language}'s own script (or common whitespace/digits/punctuation when
+     * {@code numbers == null}), and the script has no intra-script dialect ambiguity.
+     * When true, {@code text} is guaranteed to produce a single monolingual run,
+     * avoiding resolver and classifier allocations entirely.
+     */
+    static boolean isPurelyOwnScript(String text, String language, Map<UnicodeScript, String> chosen,
+                                     String numbers) {
+        if (text == null || text.isEmpty() || numbers != null) {
+            return false;
+        }
+        final UnicodeScript ownScript = scriptOf(language);
+        // Scripts with intra-script linguistic ambiguity require full classification
+        // or letter-frequency analysis.
+        if (ownScript == UnicodeScript.DEVANAGARI
+                || ownScript == UnicodeScript.CYRILLIC
+                || ownScript == UnicodeScript.ARABIC
+                || ownScript == UnicodeScript.BENGALI
+                || ownScript == UnicodeScript.HAN) {
+            return false;
+        }
+        if (chosen != null && chosen.containsKey(ownScript)) {
+            return false;
+        }
+        final int len = text.length();
+        for (int i = 0; i < len; ) {
+            final int c = text.codePointAt(i);
+            i += Character.charCount(c);
+            if (c < 128) {
+                if (AsciiUtils.isAsciiLetter((char) c)) {
+                    if (ownScript != UnicodeScript.LATIN) {
+                        return false;
+                    }
+                }
+                // ASCII digits, punctuation, and whitespace belong to the run around them.
+                continue;
+            }
+            if (Character.isDigit(c)) {
+                continue;
+            }
+            final UnicodeScript script = UnicodeScript.of(c);
+            if (script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
+                    || script == UnicodeScript.UNKNOWN) {
+                continue;
+            }
+            if (script != ownScript && !writtenIn(language, script)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static int countWords(String text) {
+        if (text == null || text.isEmpty()) {
+            return 0;
+        }
+        int words = 0;
+        boolean inWord = false;
+        final int n = text.length();
+        for (int i = 0; i < n; ) {
+            final int cp = text.codePointAt(i);
+            i += Character.charCount(cp);
+            if (Character.isLetterOrDigit(cp)) {
+                if (!inWord) {
+                    words++;
+                    inWord = true;
+                }
+            } else {
+                inWord = false;
+            }
+        }
+        return words;
+    }
+
+    private static boolean hasSentenceBoundary(String text) {
+        if (text == null) {
+            return false;
+        }
+        for (int i = 0; i < text.length(); i++) {
+            final char c = text.charAt(i);
+            if (c == '.' || c == '?' || c == '!' || c == '\n' || c == '\r' || c == '\u0964' /* danda */) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Applies switching sensitivity to language runs:
+     * <ul>
+     *   <li>{@code "words"} (default): keeps every foreign run.</li>
+     *   <li>{@code "phrases"}: absorbs isolated foreign runs of fewer than 2 words into
+     *       the surrounding base language, preventing jarring voice switches on single words
+     *       like brand names or loanwords.</li>
+     *   <li>{@code "sentences"}: only keeps foreign runs that form complete clauses or sentences.</li>
+     * </ul>
+     */
+    static List<Run> applySensitivity(List<Run> runs, String baseLanguage, String sensitivity) {
+        if (runs == null || runs.size() <= 1 || sensitivity == null
+                || VoiceSettings.SWITCHING_WORDS.equals(sensitivity) || "".equals(sensitivity)) {
+            return runs;
+        }
+        final boolean phrasesMode = VoiceSettings.SWITCHING_PHRASES.equals(sensitivity);
+        final boolean sentencesMode = VoiceSettings.SWITCHING_SENTENCES.equals(sensitivity);
+        if (!phrasesMode && !sentencesMode) {
+            return runs;
+        }
+
+        boolean changed = false;
+        final List<Run> filtered = new ArrayList<>(runs.size());
+        for (int i = 0; i < runs.size(); i++) {
+            final Run run = runs.get(i);
+            if (run.language.equals(baseLanguage) || "zxx".equals(run.language)) {
+                filtered.add(run);
+                continue;
+            }
+            final int wordCount = countWords(run.text);
+            boolean keep = true;
+            if (phrasesMode) {
+                // Keep alphanumeric compounds (e.g. 1st, 4G, 10am) in Latin engine so ordinals are spoken
+                if (AsciiUtils.hasDigit(run.text) && AsciiUtils.hasAsciiLetter(run.text)) {
+                    keep = true;
+                } else if (wordCount < 2) {
+                    keep = false;
+                }
+            } else if (sentencesMode) {
+                if (!hasSentenceBoundary(run.text) && wordCount < 3) {
+                    keep = false;
+                }
+            }
+            if (keep) {
+                filtered.add(run);
+            } else {
+                filtered.add(new Run(run.start, run.text, baseLanguage));
+                changed = true;
+            }
+        }
+
+        if (!changed) {
+            return runs;
+        }
+
+        final List<Run> merged = new ArrayList<>(filtered.size());
+        for (Run r : filtered) {
+            if (merged.isEmpty()) {
+                merged.add(r);
+            } else {
+                final Run prev = merged.get(merged.size() - 1);
+                if (prev.language.equals(r.language)) {
+                    merged.set(merged.size() - 1, new Run(prev.start, prev.text + r.text, prev.language));
+                } else {
+                    merged.add(r);
+                }
+            }
+        }
+        return merged;
+    }
+
     static List<Run> split(String text, String language) {
-        return split(text, language, Collections.emptyMap());
+        return split(text, language, Collections.emptyMap(), null, null);
     }
 
     static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen) {
-        return split(text, language, chosen, null);
+        return split(text, language, chosen, null, null);
+    }
+
+    static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
+                           String numbers) {
+        return split(text, language, chosen, numbers, null);
     }
 
     /**
@@ -385,14 +549,20 @@ final class LanguageRuns {
      * @param numbers language digits are read in (their separators, like the
      *                colon of 10:30, go with them), or null for the language
      *                of the words around them
+     * @param sensitivity switching sensitivity (words, phrases, sentences),
+     *                    or null for default (words)
      */
     static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
-                           String numbers) {
+                           String numbers, String sensitivity) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
-        return identify(split(text, language, new FastLanguageResolver(text, language, chosen, numbers)),
-                text, chosen);
+        if (isPurelyOwnScript(text, language, chosen, numbers)) {
+            return Collections.singletonList(new Run(0, text, language));
+        }
+        final List<Run> runs = identify(split(text, language,
+                new FastLanguageResolver(text, language, chosen, numbers)), text, chosen);
+        return applySensitivity(runs, language, sensitivity);
     }
 
     /**

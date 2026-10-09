@@ -153,4 +153,11 @@ public final class ScriptLanguages {
     static boolean naturalSwitching(SharedPreferences prefs) {
         return prefs != null && prefs.getBoolean(PREF_NATURAL_SWITCHING, true);
     }
+
+    static String switchingSensitivity(SharedPreferences prefs) {
+        if (prefs == null) {
+            return VoiceSettings.SWITCHING_WORDS;
+        }
+        return prefs.getString(VoiceSettings.PREF_SWITCHING_SENSITIVITY, VoiceSettings.SWITCHING_WORDS);
+    }
 }

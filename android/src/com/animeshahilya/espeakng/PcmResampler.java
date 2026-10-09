@@ -42,10 +42,15 @@ final class PcmResampler {
 
     /** Feeds input; returns the output samples whose whole window has arrived. */
     short[] process(short[] in) {
-        if (in == null || in.length == 0) {
+        return process(in, in != null ? in.length : 0);
+    }
+
+    /** Feeds {@code count} samples from {@code in}. */
+    short[] process(short[] in, int count) {
+        if (in == null || count <= 0) {
             return new short[0];
         }
-        append(in);
+        append(in, count);
         return produce(false);
     }
 
@@ -54,15 +59,15 @@ final class PcmResampler {
         return produce(true);
     }
 
-    private void append(short[] in) {
-        if (buffered + in.length > buf.length) {
-            final short[] grown = new short[Math.max(buf.length * 2, buffered + in.length)];
+    private void append(short[] in, int count) {
+        if (buffered + count > buf.length) {
+            final short[] grown = new short[Math.max(buf.length * 2, buffered + count)];
             System.arraycopy(buf, 0, grown, 0, buffered);
             buf = grown;
         }
-        System.arraycopy(in, 0, buf, buffered, in.length);
-        buffered += in.length;
-        inputTotal += in.length;
+        System.arraycopy(in, 0, buf, buffered, count);
+        buffered += count;
+        inputTotal += count;
     }
 
     private short[] produce(boolean end) {
@@ -79,8 +84,11 @@ final class PcmResampler {
             final int startJ = (int) (base - HALF + 1 - bufStart);
             double acc = 0;
             if (startJ >= 0 && startJ + (2 * HALF) <= buffered) {
-                for (int i = 0; i < 2 * HALF; i++) {
-                    acc += buf[startJ + i] * c[i];
+                for (int i = 0; i < 2 * HALF; i += 4) {
+                    acc += buf[startJ + i] * c[i]
+                            + buf[startJ + i + 1] * c[i + 1]
+                            + buf[startJ + i + 2] * c[i + 2]
+                            + buf[startJ + i + 3] * c[i + 3];
                 }
             } else {
                 for (int i = 0; i < 2 * HALF; i++) {
@@ -121,6 +129,7 @@ final class PcmResampler {
         private final PcmResampler resampler;
         private final double scale;
         private long written;
+        private short[] inBuf = new short[512];
 
         Output(PiperEngine.Output target, int fromRate, int toRate) {
             this.target = target;
@@ -138,11 +147,16 @@ final class PcmResampler {
             if (pcm == null || pcm.length == 0) {
                 return !target.stopped();
             }
-            final short[] in = new short[pcm.length / 2];
-            for (int i = 0; i < in.length; i++) {
+            final int inLen = pcm.length / 2;
+            short[] in = inBuf;
+            if (in.length < inLen) {
+                in = new short[inLen];
+                inBuf = in;
+            }
+            for (int i = 0; i < inLen; i++) {
                 in[i] = (short) ((pcm[2 * i] & 0xff) | (pcm[2 * i + 1] << 8));
             }
-            final short[] out = resampler.process(in);
+            final short[] out = resampler.process(in, inLen);
             if (out.length == 0) {
                 return !target.stopped();
             }

@@ -53,6 +53,16 @@
     <item>voice</item>
     <item>en</item>
   </string-array>
+  <string-array name="switching_sensitivity_entries" translatable="false">
+    <item>@string/switching_sensitivity_words</item>
+    <item>@string/switching_sensitivity_phrases</item>
+    <item>@string/switching_sensitivity_sentences</item>
+  </string-array>
+  <string-array name="switching_sensitivity_values" translatable="false">
+    <item>words</item>
+    <item>phrases</item>
+    <item>sentences</item>
+  </string-array>
   <string-array name="digit_grouping_entries" translatable="false">
     <item>@string/digit_group_off</item>
     <item>@string/digit_group_single_pause</item>
