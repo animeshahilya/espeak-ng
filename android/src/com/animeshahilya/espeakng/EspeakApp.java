@@ -135,6 +135,7 @@ public class EspeakApp extends Application {
         NvdaSymbolProcessor.setDataSource(name -> assets.open("symbols/" + name));
         NvdaCharacterDescriptions.setDataSource(name -> assets.open("chardesc/" + name));
         HinglishReader.init(appContext);
+        CompoundSplitter.init(appContext);
         migrateLegacyPreferences(appContext, EspeakApp.storageContext);
         PiperEngine.get().setListener(PIPER_LOG);
         // Phrases survive the speech service restarting (device-protected, not backed up).

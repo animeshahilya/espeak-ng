@@ -167,8 +167,13 @@ public final class HinglishReader {
         }
     }
 
-    /** "OTP", "UPI": spelled-out acronyms stay English. */
-    private static boolean isAcronym(String text, int start, int end) {
+    /**
+     * "OTP", "UPI": spelled-out acronyms stay English.
+     *
+     * <p>Package-visible: shared with {@link CompoundSplitter}, which must
+     * skip acronyms the same way.
+     */
+    static boolean isAcronym(String text, int start, int end) {
         final int len = end - start;
         if (len < 2) {
             return false;
@@ -182,14 +187,19 @@ public final class HinglishReader {
         return true;
     }
 
-    /** Part of "abc123", "user_name" or "a@b.com": not a word to translate. */
-    private static boolean touchesDigitOrSymbol(String text, int start, int end) {
+    /**
+     * Part of "abc123", "user_name" or "a@b.com": not a word to translate.
+     *
+     * <p>Package-visible: shared with {@link CompoundSplitter}.
+     */
+    static boolean touchesDigitOrSymbol(String text, int start, int end) {
         final char before = start > 0 ? text.charAt(start - 1) : ' ';
         final char after = end < text.length() ? text.charAt(end) : ' ';
         return isGlue(before) || isGlue(after);
     }
 
-    private static boolean isGlue(char c) {
+    /** Package-visible: shared with {@link CompoundSplitter}. */
+    static boolean isGlue(char c) {
         return (c >= '0' && c <= '9') || c == '_' || c == '@' || c == '/' || c == '\\'
                 || c == '#' || c == '=' || c == '&';
     }

@@ -344,6 +344,14 @@
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
+            android:key="espeak_split_compounds"
+            android:title="@string/setting_split_compounds"
+            android:summary="@string/setting_split_compounds_summary"
+            android:summaryOn="@string/setting_split_compounds_summary_on"
+            android:summaryOff="@string/setting_split_compounds_summary_off"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
             android:key="espeak_normalize_tech_words"
             android:title="@string/setting_normalize_tech_words"
             android:summary="@string/setting_normalize_tech_words_summary"

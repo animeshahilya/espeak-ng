@@ -371,6 +371,10 @@
   <string name="setting_split_camel_case_summary">Reads compound identifiers like getUserName as separate words (get User Name).</string>
   <string name="setting_split_camel_case_summary_on">Splits camelCase and PascalCase words into separate words.</string>
   <string name="setting_split_camel_case_summary_off">Reads compound words as written.</string>
+  <string name="setting_split_compounds">Split compound words</string>
+  <string name="setting_split_compounds_summary">Reads written-together compounds like aftermath as separate words (after math).</string>
+  <string name="setting_split_compounds_summary_on">Splits compound words into halves with full vowels.</string>
+  <string name="setting_split_compounds_summary_off">Reads compound words as written.</string>
   <string name="setting_clean_markdown">Clean markdown formatting</string>
   <string name="setting_clean_markdown_summary">Cleans asterisks, backticks, checkboxes (- [ ]), headings, and blockquotes for smooth reading.</string>
   <string name="setting_clean_markdown_summary_on">Cleans markdown emphasis and translates task checkboxes into spoken status.</string>

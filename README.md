@@ -96,6 +96,7 @@ On top of that there are a few extras NVDA doesn't have, such as money and code 
 - **Matras and signs**: names Indic vowel signs, halant, anusvara and similar marks when you move by character.
 - **Emoji and supplementary characters**: read emojis by their CLDR names or skip them. Moving character-by-character in TalkBack cleanly speaks multi-byte emojis and supplementary Unicode glyphs without clipping or surrogate splitting.
 - **Shorter web links**: drops `https://` and `www.`, and reads long tracking parameters as "with parameters".
+- **Split compound words (off by default)**: reads written-together compounds like aftermath as "after math" so each half keeps full vowels.
 - **Emphasise questions**: raises the pitch more at the end of questions and exclamations across multiple languages.
 
 ### Locks
@@ -245,6 +246,7 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting and our disclosure po
 - eSpeak NG: [GPL v3 or later](COPYING)
 - getopt compatibility code: [BSD 2-Clause](COPYING.BSD2)
 - Hinglish word list (`android/assets/hinglish/hi.tsv`): built by `android/tools/build_hinglish.py` from Google's [Dakshina dataset](https://github.com/google-research-datasets/dakshina), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). English words were identified with CMUdict.
+- English compound splits (`android/assets/compounds/en.tsv`): vendored from [TGSpeechBox](https://github.com/tgeczy/TGSpeechBox) `packs/dict/en-compounds.tsv`, [MIT](https://github.com/tgeczy/TGSpeechBox/blob/main/LICENSE).
 - Urdu word pronunciations (generated block at the end of `dictsource/ur_list`): built by `android/tools/urdu/ur_from_hindi.py` from the same Dakshina dataset, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
 
 Android is a trademark of Google LLC.

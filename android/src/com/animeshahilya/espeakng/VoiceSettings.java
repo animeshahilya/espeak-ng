@@ -74,6 +74,7 @@ public class VoiceSettings {
     public static final String PREF_READ_PHONE_NUMBERS = "espeak_read_phone_numbers";
     public static final String PREF_READ_MATH = "espeak_read_math";
     public static final String PREF_SPLIT_CAMEL_CASE = "espeak_split_camel_case";
+    public static final String PREF_SPLIT_COMPOUNDS = "espeak_split_compounds";
     public static final String PREF_CLEAN_MARKDOWN = "espeak_clean_markdown";
     public static final String PREF_READ_FRACTIONS = "espeak_read_fractions";
     public static final String PREF_READ_SUB_SUPER = "espeak_read_sub_super";
@@ -481,6 +482,10 @@ public class VoiceSettings {
 
     public boolean isSplitCamelCaseEnabled() {
         return mPreferences.getBoolean(PREF_SPLIT_CAMEL_CASE, false);
+    }
+
+    public boolean isSplitCompoundsEnabled() {
+        return mPreferences.getBoolean(PREF_SPLIT_COMPOUNDS, false);
     }
 
     public boolean isCleanMarkdownEnabled() {

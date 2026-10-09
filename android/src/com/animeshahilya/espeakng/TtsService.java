@@ -345,6 +345,9 @@ public class TtsService extends TextToSpeechService {
                 if (mPreferences.getBoolean(VoiceSettings.PREF_HINGLISH, false)) {
                     HinglishReader.warmup();
                 }
+                if (mPreferences.getBoolean(VoiceSettings.PREF_SPLIT_COMPOUNDS, false)) {
+                    CompoundSplitter.warmup();
+                }
             } catch (Throwable t) {
                 Log.w(TAG, "Data warmup failed", t);
             }

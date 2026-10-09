@@ -257,6 +257,10 @@ public final class TextPreprocessor {
                 && readsEnglishText) {
             text = edits.track(text, Abbreviations.process(text));
         }
+        if (normalReading && settings.isSplitCompoundsEnabled()
+                && readsEnglishText) {
+            text = edits.track(text, CompoundSplitter.process(text));
+        }
         if (normalReading && settings.isReadMoneyEnabled()
                 && readsEnglishText) {
             text = edits.track(text, NumberReading.readMoney(text, !indianNumbers));
