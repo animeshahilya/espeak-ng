@@ -129,11 +129,18 @@ final class PiperPhonemes {
      * @param toOriginal code point of the rewritten text -> of the original, plus the end
      */
     static List<Clause> remap(List<Clause> clauses, int[] toOriginal) {
+        if (clauses == null || clauses.isEmpty()) {
+            return clauses == null ? Collections.emptyList() : clauses;
+        }
+        if (toOriginal == null || toOriginal.length == 0) {
+            return clauses;
+        }
         final List<Clause> out = new ArrayList<>(clauses.size());
         final int last = toOriginal.length - 1;
         for (Clause c : clauses) {
-            out.add(new Clause(c.endsSentence, toOriginal[Math.min(c.start, last)],
-                    toOriginal[Math.min(c.end, last)], c.ipa));
+            final int s = toOriginal[Math.max(0, Math.min(c.start, last))];
+            final int e = toOriginal[Math.max(0, Math.min(c.end, last))];
+            out.add(new Clause(c.endsSentence, s, Math.max(s, e), c.ipa));
         }
         return out;
     }
@@ -205,6 +212,9 @@ final class PiperPhonemes {
      *        voices that garble such input ({@link PiperVoiceConfig#finalStop})
      */
     static List<Chunk> chunk(List<Clause> clauses, int firstBudget, int budget, boolean finalStop) {
+        if (clauses == null || clauses.isEmpty()) {
+            return Collections.emptyList();
+        }
         final List<Chunk> chunks = new ArrayList<>();
         final StringBuilder ipa = new StringBuilder();
         int start = -1;
@@ -421,6 +431,9 @@ final class PiperPhonemes {
      */
     static long[] toIds(List<String> phonemes, PiperVoiceConfig config, List<String> missing,
                         List<Integer> wordStarts) {
+        if (phonemes == null || config == null) {
+            return new long[0];
+        }
         final int[] pad = config.phonemeIdMap.get(PiperVoiceConfig.PAD);
         final int[] bos = config.phonemeIdMap.get(PiperVoiceConfig.BOS);
         final int[] eos = config.phonemeIdMap.get(PiperVoiceConfig.EOS);
@@ -461,6 +474,9 @@ final class PiperPhonemes {
     }
 
     private static boolean isPunctuation(String phoneme) {
+        if (phoneme == null || phoneme.isEmpty()) {
+            return false;
+        }
         switch (Character.getType(phoneme.codePointAt(0))) {
             case Character.CONNECTOR_PUNCTUATION:
             case Character.DASH_PUNCTUATION:

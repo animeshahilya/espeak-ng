@@ -1711,11 +1711,19 @@ public class TtsService extends TextToSpeechService {
         if (run == null || run.isEmpty()) return false;
         int start = 0;
         int end = run.length();
-        while (start < end && !isLetterOrMark(run.codePointAt(start))) {
-            start += Character.charCount(run.codePointAt(start));
+        while (start < end) {
+            final int cp = run.codePointAt(start);
+            if (isLetterOrMark(cp)) {
+                break;
+            }
+            start += Character.charCount(cp);
         }
-        while (end > start && !isLetterOrMark(run.codePointBefore(end))) {
-            end -= Character.charCount(run.codePointBefore(end));
+        while (end > start) {
+            final int cp = run.codePointBefore(end);
+            if (isLetterOrMark(cp)) {
+                break;
+            }
+            end -= Character.charCount(cp);
         }
         return start < end && TextPreprocessor.isSingleCharacter(run.substring(start, end));
     }

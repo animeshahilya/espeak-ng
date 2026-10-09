@@ -93,4 +93,9 @@ public class PiperEngineTest {
         org.junit.Assert.assertArrayEquals(new float[] {0, 0, 0, 0, 3, 4, 1, 0}, durations, 0f);
         org.junit.Assert.assertEquals(0, PiperEngine.cutLeadIn(null, 3));
     }
+
+    @Test
+    public void numberWordsNullLanguageReturnsNull() {
+        org.junit.Assert.assertNull(PiperEngine.numberWords(null));
+    }
 }

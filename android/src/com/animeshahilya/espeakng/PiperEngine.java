@@ -613,6 +613,9 @@ final class PiperEngine {
             return NO_NUMBER_WORDS;
         }
         return s -> {
+            if (s == null) {
+                return null;
+            }
             final java.util.regex.Matcher m = DIGITS.matcher(s);
             if (!m.find()) {
                 return s;
@@ -641,6 +644,9 @@ final class PiperEngine {
 
     /** "१२३" -> "123": Long.parseLong reads only ASCII digits. */
     private static String toAscii(String digits) {
+        if (digits == null) {
+            return "";
+        }
         final StringBuilder sb = new StringBuilder(digits.length());
         for (int i = 0; i < digits.length(); ) {
             final int cp = digits.codePointAt(i);

@@ -158,6 +158,7 @@ public final class ScriptLanguages {
         if (prefs == null) {
             return VoiceSettings.SWITCHING_WORDS;
         }
-        return prefs.getString(VoiceSettings.PREF_SWITCHING_SENSITIVITY, VoiceSettings.SWITCHING_WORDS);
+        final String val = prefs.getString(VoiceSettings.PREF_SWITCHING_SENSITIVITY, VoiceSettings.SWITCHING_WORDS);
+        return val != null ? val : VoiceSettings.SWITCHING_WORDS;
     }
 }

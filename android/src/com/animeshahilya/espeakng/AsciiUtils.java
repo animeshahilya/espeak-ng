@@ -34,8 +34,16 @@ public final class AsciiUtils {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 
+    public static boolean isAsciiLetter(int cp) {
+        return (cp >= 'a' && cp <= 'z') || (cp >= 'A' && cp <= 'Z');
+    }
+
     public static boolean isAsciiDigit(char c) {
         return c >= '0' && c <= '9';
+    }
+
+    public static boolean isAsciiDigit(int cp) {
+        return cp >= '0' && cp <= '9';
     }
 
     public static boolean hasAsciiLetter(CharSequence text) {
@@ -183,6 +191,7 @@ public final class AsciiUtils {
      */
     public static String replaceMatches(Pattern pattern, String text, MatchRewrite rewrite) {
         if (text == null) return null;
+        if (pattern == null || rewrite == null) return text;
         final Matcher m = pattern.matcher(text);
         if (!m.find()) {
             return text;

@@ -440,4 +440,33 @@ public class PiperPhonemesTest {
         PiperPhonemes.toIds(Arrays.asList("h", " ", "\u00a0", "w"), c, null, starts);
         assertEquals(2, starts.size());
     }
+
+    @Test
+    public void remapHandlesNullAndBoundaryArrays() {
+        // Null or empty clauses
+        assertTrue(PiperPhonemes.remap(null, new int[] {0, 1}).isEmpty());
+        assertTrue(PiperPhonemes.remap(Collections.emptyList(), new int[] {0, 1}).isEmpty());
+
+        final List<PiperPhonemes.Clause> clauses = Collections.singletonList(
+                new PiperPhonemes.Clause(true, 0, 5, "test"));
+        // Null or empty toOriginal
+        assertSame(clauses, PiperPhonemes.remap(clauses, null));
+        assertSame(clauses, PiperPhonemes.remap(clauses, new int[0]));
+
+        // Out-of-bounds start/end clamped safely
+        final int[] map = new int[] {10, 20};
+        final List<PiperPhonemes.Clause> remapped = PiperPhonemes.remap(
+                Collections.singletonList(new PiperPhonemes.Clause(true, 5, 10, "test")), map);
+        assertEquals(1, remapped.size());
+        assertEquals(20, remapped.get(0).start);
+        assertEquals(20, remapped.get(0).end);
+    }
+
+    @Test
+    public void chunkAndToIdsNullGuards() throws Exception {
+        assertTrue(PiperPhonemes.chunk(null, 60, 220).isEmpty());
+        assertTrue(PiperPhonemes.chunk(Collections.emptyList(), 60, 220).isEmpty());
+        assertEquals(0, PiperPhonemes.toIds(null, amy(), null).length);
+        assertEquals(0, PiperPhonemes.toIds(Collections.singletonList("a"), null, null).length);
+    }
 }

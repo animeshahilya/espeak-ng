@@ -45,6 +45,9 @@ public final class Earcons {
 
     /** {@link #mark(String, int, String)} with the voice language's symbol levels. */
     public static String mark(String text, int level, String customChars, String languageTag) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
         StringBuilder sb = null;
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);

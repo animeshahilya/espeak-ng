@@ -145,5 +145,20 @@ public class AsciiUtilsTest {
         java.util.regex.Pattern p = java.util.regex.Pattern.compile("foo");
         String res = AsciiUtils.replaceMatches(p, "foo bar foo", m -> null);
         assertEquals("foo bar foo", res);
+        assertEquals("text", AsciiUtils.replaceMatches(null, "text", m -> "bar"));
+        assertEquals("text", AsciiUtils.replaceMatches(p, "text", null));
+    }
+
+    @Test
+    public void testCodePointOverloads() {
+        assertTrue(AsciiUtils.isAsciiLetter((int) 'a'));
+        assertTrue(AsciiUtils.isAsciiLetter((int) 'Z'));
+        assertFalse(AsciiUtils.isAsciiLetter((int) '1'));
+        assertFalse(AsciiUtils.isAsciiLetter(0x10000));
+
+        assertTrue(AsciiUtils.isAsciiDigit((int) '0'));
+        assertTrue(AsciiUtils.isAsciiDigit((int) '9'));
+        assertFalse(AsciiUtils.isAsciiDigit((int) 'a'));
+        assertFalse(AsciiUtils.isAsciiDigit(0x10030)); // SMP codepoint that ends with '0'
     }
 }

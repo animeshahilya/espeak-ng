@@ -467,7 +467,7 @@ final class PiperAudio {
                                    int hopLength, int textWords, int trimmedLead, int[] cuts,
                                    int speechSamples, int outSamples) {
         if (durations == null || wordStartIds == null || wordStartIds.size() != textWords
-                || speechSamples <= 0) {
+                || speechSamples <= 0 || outSamples <= 0) {
             return null;
         }
         final int[] out = new int[textWords];
@@ -476,7 +476,7 @@ final class PiperAudio {
         int id = 0;
         for (int w = 0; w < textWords; w++) {
             final int target = wordStartIds.get(w);
-            if (target > durations.length) {
+            if (target < 0 || target > durations.length) {
                 return null;
             }
             while (id < target) {

@@ -198,6 +198,9 @@ final class LanguageRuns {
      * mixes kana with Han; Korean mixes Hangul with Hanja; Chinese is Han alone.
      */
     static boolean writtenIn(String language, UnicodeScript script) {
+        if (language == null || script == null) {
+            return false;
+        }
         if ("jpn".equals(language) || "ja".equals(language)) {
             return script == UnicodeScript.HAN || script == UnicodeScript.HIRAGANA
                     || script == UnicodeScript.KATAKANA;
@@ -696,6 +699,9 @@ final class LanguageRuns {
      * "zxx" (digits for eSpeak) is read in the request's language.
      */
     static boolean espeakReadsItself(String language, String own, Map<UnicodeScript, String> chosen) {
+        if (language == null) {
+            return false;
+        }
         if (language.equals(own) || "zxx".equals(language)
                 || (chosen != null && chosen.containsValue(language))) {
             return true;
@@ -766,18 +772,18 @@ final class LanguageRuns {
                     // so ordinal and alphanumeric tokens are pronounced whole rather than split across engines.
                     final int beforeCut = cut > runStart ? text.codePointBefore(cut) : -1;
                     final boolean isHyphenAfterDigit = beforeCut == '-' && cut - 1 > runStart
-                            && AsciiUtils.isAsciiDigit((char) text.codePointBefore(cut - 1));
+                            && AsciiUtils.isAsciiDigit(text.codePointBefore(cut - 1));
                     if (("eng".equals(lang) || "en".equals(lang) || UnicodeScript.LATIN.equals(scriptOf(lang)))
                             && ((beforeCut >= '0' && beforeCut <= '9') || beforeCut == '%' || isHyphenAfterDigit)) {
                         int probe = cut;
                         int probeCp = cutCp;
                         while (probe > runStart) {
                             final int b = text.codePointBefore(probe);
-                            if (AsciiUtils.isAsciiDigit((char) b)
+                            if (AsciiUtils.isAsciiDigit(b)
                                     || ((b == ':' || b == '.' || b == ',' || b == '-') && probe - 1 > runStart
-                                    && AsciiUtils.isAsciiDigit((char) text.codePointBefore(probe - 1)))
+                                    && AsciiUtils.isAsciiDigit(text.codePointBefore(probe - 1)))
                                     || (b == '%' && probe - 1 > runStart
-                                    && AsciiUtils.isAsciiDigit((char) text.codePointBefore(probe - 1)))) {
+                                    && AsciiUtils.isAsciiDigit(text.codePointBefore(probe - 1)))) {
                                 probe -= Character.charCount(b);
                                 probeCp--;
                             } else {

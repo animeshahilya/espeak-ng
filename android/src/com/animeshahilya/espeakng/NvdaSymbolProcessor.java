@@ -1008,6 +1008,9 @@ public final class NvdaSymbolProcessor {
         }
 
         boolean isAnnounced(String symbol, int userLevel, String customChars) {
+            if (symbol == null || symbol.isEmpty()) {
+                return false;
+            }
             Symbol s = null;
             if (symbol.length() == 1) {
                 char ch = symbol.charAt(0);
@@ -1110,8 +1113,13 @@ public final class NvdaSymbolProcessor {
                 }
                 final char next = replacement.charAt(++i);
                 if (next >= '0' && next <= '9') {
-                    final String group = m.group(c.group + (next - '0'));
-                    out.append(group != null ? group : "");
+                    final int groupIdx = c.group + (next - '0');
+                    if (groupIdx <= m.groupCount()) {
+                        final String group = m.group(groupIdx);
+                        out.append(group != null ? group : "");
+                    } else {
+                        out.append('\\').append(next);
+                    }
                 } else {
                     out.append(next);
                 }

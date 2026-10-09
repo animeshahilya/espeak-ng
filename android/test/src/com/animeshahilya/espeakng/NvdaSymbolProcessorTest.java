@@ -188,4 +188,12 @@ public class NvdaSymbolProcessorTest {
         assertEquals("", NvdaSymbolProcessor.collapseRepeatRuns("", "en"));
         assertNull(NvdaSymbolProcessor.collapseRepeatRuns(null, "en"));
     }
+
+    @Test
+    public void isAnnouncedNullSymbolSafe() {
+        assertFalse(NvdaSymbolProcessor.isAnnounced(null, NvdaSymbolProcessor.LEVEL_ALL, null));
+        assertFalse(NvdaSymbolProcessor.isAnnounced("", NvdaSymbolProcessor.LEVEL_ALL, null));
+        assertFalse(NvdaSymbolProcessor.isAnnounced(null, NvdaSymbolProcessor.LEVEL_ALL, null, "en"));
+        assertFalse(NvdaSymbolProcessor.isAnnounced("", NvdaSymbolProcessor.LEVEL_ALL, null, "en"));
+    }
 }
