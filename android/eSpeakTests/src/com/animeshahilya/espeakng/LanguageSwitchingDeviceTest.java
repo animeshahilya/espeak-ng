@@ -16,6 +16,9 @@
 
 package com.animeshahilya.espeakng;
 
+import com.animeshahilya.espeakng.text.TechWordsNormalizer;
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

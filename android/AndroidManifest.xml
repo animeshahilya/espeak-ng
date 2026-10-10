@@ -59,7 +59,7 @@
         </service>
 
         <activity
-            android:name=".DownloadVoiceData"
+            android:name=".tts.DownloadVoiceData"
             android:theme="@style/AppTheme"
             android:exported="true">
             <intent-filter>
@@ -69,7 +69,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CheckVoiceData"
+            android:name=".tts.CheckVoiceData"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true">
             <intent-filter>
@@ -79,7 +79,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GetSampleText"
+            android:name=".tts.GetSampleText"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true">
             <intent-filter>
@@ -106,7 +106,7 @@
         <!-- Installs a downloaded natural voice once DownloadManager is done.
              Exported: the system download provider sends it. See the class. -->
         <receiver
-            android:name=".PiperDownloadReceiver"
+            android:name=".tts.PiperDownloadReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />

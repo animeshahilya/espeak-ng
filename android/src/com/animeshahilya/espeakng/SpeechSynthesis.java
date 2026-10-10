@@ -23,6 +23,13 @@
  */
 
 package com.animeshahilya.espeakng;
+import com.animeshahilya.espeakng.R;
+import com.animeshahilya.espeakng.text.AsciiUtils;
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+import com.animeshahilya.espeakng.tts.DownloadVoiceData;
+import com.animeshahilya.espeakng.tts.GetSampleText;
+import com.animeshahilya.espeakng.piper.PiperPhonemes;
+import com.animeshahilya.espeakng.text.ScriptLanguages;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -768,3 +775,5 @@ public class SpeechSynthesis {
         mLocaleFixes.put("yue", Locale.forLanguageTag("zh-HK"));
     }
 }
+
+

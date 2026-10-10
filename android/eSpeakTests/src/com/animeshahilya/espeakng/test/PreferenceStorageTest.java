@@ -16,6 +16,10 @@
 
 package com.animeshahilya.espeakng.test;
 
+import com.animeshahilya.espeakng.text.ScriptLanguages;
+import com.animeshahilya.espeakng.ui.LanguageSettings;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;

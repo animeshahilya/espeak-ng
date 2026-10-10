@@ -16,6 +16,8 @@
 
 package com.animeshahilya.espeakng.test;
 
+import com.animeshahilya.espeakng.ui.LanguageSettings;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;

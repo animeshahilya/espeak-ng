@@ -1,0 +1,1486 @@
+/*
+ * Copyright (C) 2026 Animesh Ahilya
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
+package com.animeshahilya.espeakng.piper;
+import com.animeshahilya.espeakng.BuildConfig;
+import com.animeshahilya.espeakng.R;
+import com.animeshahilya.espeakng.EspeakApp;
+import com.animeshahilya.espeakng.tts.PiperDownloadReceiver;
+import com.animeshahilya.espeakng.text.Tashkeel;
+import com.animeshahilya.espeakng.Voice;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
+
+import android.app.DownloadManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.util.Log;
+
+import androidx.preference.PreferenceManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * Getting Piper voices onto the device: the voice catalog from the official
+ * rhasspy/piper-voices repository, and downloads through the system
+ * DownloadManager (resumes over flaky networks, survives the settings screen
+ * closing, and shows its own accessible progress notification).
+ *
+ * <p>This is the only network access in the app, and it only ever happens
+ * when the user asks for a voice list or a voice. Speech itself stays
+ * offline.
+ *
+ * <p>Install is two-phase so a half-downloaded voice can never be picked:
+ * the small config is fetched first (and checked - voices needing a
+ * phonemizer other than eSpeak are refused before 60 MB are spent), the
+ * model lands in app-specific external storage, and only after its MD5
+ * matches the catalog are both moved into the device-protected voice
+ * directory {@link PiperVoiceStore} lists.
+ */
+public final class PiperDownloads {
+    private static final String TAG = "PiperDownloads";
+
+    /** Log that also survives JVM unit tests (android.jar stubs throw). */
+    private static void logw(String message, Throwable e) {
+        try {
+            Log.w(TAG, message, e);
+        } catch (RuntimeException stub) {
+            // android.jar stub on the JVM: ignore, the return value carries the outcome.
+        }
+    }
+
+    /** Pinned to the repository's main branch: new voices appear without an app update. */
+    static final String REPO_BASE = "https://huggingface.co/rhasspy/piper-voices/resolve/main/";
+    static final String CATALOG_URL = REPO_BASE + "voices.json";
+    static final String SAMPLES_BASE = "https://rhasspy.github.io/piper-samples/samples/";
+    /** SYSPIN + AI4Bharat Rasa character voices, md5-pinned in the extra list. */
+    public static final String RESPIN_SYSPIN_RELEASES =
+            "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/";
+    /** One <key>.mp3 per bundled extra voice (that repo's build_samples.py). */
+    public static final String EXTRA_SAMPLES = RESPIN_SYSPIN_RELEASES + "samples-v1/";
+    /**
+     * Community voices for languages Piper's own catalog lacks (Tamil,
+     * Sinhala), in voices.json's format plus base_url, source and license.
+     * Bundled, and each base_url pinned to a commit, so the checksums here
+     * always match; only this list may point somewhere other than REPO_BASE.
+     */
+    public static final String EXTRA_CATALOG_ASSET = "piper/extra_voices.json";
+    /** Refetch the catalog after a week; a manual refresh is always possible. */
+    public static final long CATALOG_MAX_AGE_MS = 7L * 24 * 60 * 60 * 1000;
+
+    /** Sent (to this package only) when a voice is installed or removed. */
+    public static final String ACTION_VOICES_CHANGED = "com.animeshahilya.espeakng.PIPER_VOICES_CHANGED";
+    public static final String EXTRA_KEY = "key";
+    public static final String EXTRA_ASSIGNED_LANGUAGE = "assigned";
+
+    /** download id -> voice key, and voice key -> download id. */
+    private static final String PREF_DL_ID_PREFIX = "piper_dl_id_";
+    private static final String PREF_DL_KEY_PREFIX = "piper_dl_key_";
+
+    private PiperDownloads() {
+    }
+
+    /** Download bookkeeping, excluded from settings backups. */
+    public static boolean isDeviceLocalPref(String key) {
+        return key != null && (key.startsWith(PREF_DL_ID_PREFIX) || key.startsWith(PREF_DL_KEY_PREFIX)
+                || key.startsWith(PREF_SWAP_PREFIX)
+                // Crash strikes and suspensions describe this phone, not the user's choices.
+                || key.startsWith("piper_crash_strikes_") || key.startsWith(PiperCrashGuard.PREF_SUSPENDED)
+                // Which voices this phone used lately (startup preloading).
+                || key.equals(PiperVoiceStore.PREF_RECENT)
+                // A running sleep timer's deadline: a clock time on this phone.
+                || key.equals(VoiceSettings.PREF_SLEEP_MUTE_UNTIL));
+    }
+
+    /** One entry of voices.json. */
+    public static final class CatalogVoice {
+        public String key;
+        public String name;
+        public String family;
+        public String code;
+        public String region;
+        public String nameNative;
+        public String nameEnglish;
+        public String country;
+        public String quality;
+        public int numSpeakers;
+        /**
+         * Needs Enhanced-class compute whatever its size (SYSPIN/Rasa: HiFi-GAN
+         * decoders 7-15x a Piper medium's work). Only the bundled list sets it.
+         */
+        public boolean heavy;
+        public String modelPath;
+        public long modelSize;
+        public String modelMd5;
+        public String configPath;
+        public long configSize;
+        public String configMd5;
+        /** Where modelPath/configPath live: REPO_BASE, or a bundled extra's pinned repo. */
+        public String baseUrl = REPO_BASE;
+        /** Community voices only: who made it and its license, shown before download. */
+        public String source;
+        public String license;
+
+        public String displayName() {
+            return PiperVoiceConfig.titleCase(name);
+        }
+
+        public String sampleUrl() {
+            if (!REPO_BASE.equals(baseUrl)) {
+                // Only the bundled list sets another base_url; each of its
+                // voices has a recording in EXTRA_SAMPLES (piper-samples only
+                // has Piper's own voices).
+                return EXTRA_SAMPLES + key + ".mp3";
+            }
+            final int slash = modelPath.lastIndexOf('/');
+            return slash < 0 ? null : SAMPLES_BASE + modelPath.substring(0, slash) + "/speaker_0.mp3";
+        }
+
+        public String languageKey() {
+            return PiperVoiceStore.languageKey(family);
+        }
+    }
+
+    /** Parses voices.json; skips malformed entries rather than failing the list. */
+    public static List<CatalogVoice> parseCatalog(String json) throws JSONException {
+        return parseCatalog(json, false);
+    }
+
+    /** @param bundled the app's own extra list: the only one trusted with base_url */
+    public static List<CatalogVoice> parseCatalog(String json, boolean bundled) throws JSONException {
+        final JSONObject root = new JSONObject(json);
+        final List<CatalogVoice> out = new ArrayList<>();
+        final Iterator<String> keys = root.keys();
+        while (keys.hasNext()) {
+            final String key = keys.next();
+            final JSONObject v = root.optJSONObject(key);
+            if (v == null) {
+                continue;
+            }
+            final CatalogVoice c = new CatalogVoice();
+            c.key = v.optString("key", key);
+            c.name = v.optString("name", key);
+            c.quality = v.optString("quality", "");
+            if (!isOffered(c.quality)) {
+                continue;
+            }
+            c.numSpeakers = v.optInt("num_speakers", 1);
+            if (bundled) {
+                c.baseUrl = v.optString("base_url", REPO_BASE);
+                c.source = v.optString("source", null);
+                c.license = v.optString("license", null);
+                c.heavy = v.optBoolean("heavy", false);
+                if (!(c.baseUrl.startsWith("https://huggingface.co/")
+                        || c.baseUrl.equals(RESPIN_SYSPIN_RELEASES)) || !c.baseUrl.endsWith("/")) {
+                    continue;
+                }
+            }
+            final JSONObject lang = v.optJSONObject("language");
+            if (lang == null) {
+                continue;
+            }
+            c.family = lang.optString("family", "");
+            c.code = lang.optString("code", "");
+            c.region = lang.optString("region", "");
+            c.nameNative = lang.optString("name_native", c.family);
+            c.nameEnglish = lang.optString("name_english", c.family);
+            PiperVoiceConfig.rememberName(c.family, c.nameEnglish);
+            c.country = lang.optString("country_english", c.region);
+            final JSONObject files = v.optJSONObject("files");
+            if (files == null) {
+                continue;
+            }
+            final Iterator<String> paths = files.keys();
+            while (paths.hasNext()) {
+                final String path = paths.next();
+                final JSONObject f = files.optJSONObject(path);
+                if (f == null) {
+                    continue;
+                }
+                if (path.endsWith(".onnx")) {
+                    c.modelPath = path;
+                    c.modelSize = f.optLong("size_bytes", 0);
+                    c.modelMd5 = f.optString("md5_digest", null);
+                } else if (path.endsWith(".onnx.json")) {
+                    c.configPath = path;
+                    c.configSize = f.optLong("size_bytes", 0);
+                    c.configMd5 = f.optString("md5_digest", null);
+                }
+            }
+            if (c.modelPath == null || c.configPath == null || c.family.isEmpty()
+                    || !isSafeKey(c.key) || !isSafePath(c.modelPath) || !isSafePath(c.configPath)
+                    || !isMd5(c.modelMd5) || !isMd5(c.configMd5)) {
+                continue;
+            }
+            out.add(c);
+        }
+        sort(out);
+        return out;
+    }
+
+    private static void sort(List<CatalogVoice> out) {
+        Collections.sort(out, (a, b) -> {
+            int d = a.code.compareTo(b.code);
+            if (d != 0) return d;
+            d = a.name.compareTo(b.name);
+            if (d != 0) return d;
+            return Boolean.compare(isEnhanced(a.quality), isEnhanced(b.quality));
+        });
+    }
+
+    /** Piper's catalog plus the bundled extras, best voices only. */
+    private static List<CatalogVoice> withExtras(Context context, List<CatalogVoice> catalog) {
+        final List<CatalogVoice> out = mergeExtras(catalog, bundledExtras(context));
+        sort(out);
+        return keptOnly(out, keptVoices(context));
+    }
+
+    /**
+     * A bundled entry replaces Piper's entry of the same key: the kept Piper
+     * voices are bundled as INT8-weight copies (a quarter of the space, same
+     * sound and speed), and installed voices move to them through
+     * {@link #checkForUpdates}. Pure for JVM tests.
+     */
+    public static List<CatalogVoice> mergeExtras(List<CatalogVoice> catalog, List<CatalogVoice> extras) {
+        final java.util.Map<String, CatalogVoice> byKey = new java.util.LinkedHashMap<>();
+        for (CatalogVoice v : catalog) {
+            byKey.put(v.key, v);
+        }
+        for (CatalogVoice v : extras) {
+            byKey.put(v.key, v);
+        }
+        return new ArrayList<>(byKey.values());
+    }
+
+    /**
+     * The voices kept per language: the two Whisper large-v3 understood best
+     * (scratch/voice-eval, 2026-10-05). Languages it could not test keep all.
+     */
+    public static final String KEPT_ASSET = "piper/kept_voices.json";
+
+    public static Map<String, java.util.Set<String>> keptVoices(Context context) {
+        try {
+            return parseKept(readAsset(context, KEPT_ASSET));
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Kept voice list unavailable", e);
+            return Collections.emptyMap();
+        }
+    }
+
+    public static Map<String, java.util.Set<String>> parseKept(String json) throws JSONException {
+        final JSONObject root = new JSONObject(json);
+        final Map<String, java.util.Set<String>> out = new java.util.HashMap<>();
+        for (Iterator<String> it = root.keys(); it.hasNext(); ) {
+            final String family = it.next();
+            final org.json.JSONArray keys = root.getJSONArray(family);
+            final java.util.Set<String> set = new java.util.HashSet<>();
+            for (int i = 0; i < keys.length(); i++) {
+                set.add(keys.getString(i));
+                set.add(compactKey(keys.getString(i)));  // its Compact version too
+            }
+            out.put(family, set);
+        }
+        return out;
+    }
+
+    /** Drops the voices a tested language did not keep. Pure for JVM tests. */
+    public static List<CatalogVoice> keptOnly(List<CatalogVoice> voices, Map<String, java.util.Set<String>> kept) {
+        final List<CatalogVoice> out = new ArrayList<>(voices.size());
+        for (CatalogVoice v : voices) {
+            final java.util.Set<String> keys = kept.get(v.family);
+            if (keys == null || keys.contains(v.key)) {
+                out.add(v);
+            }
+        }
+        return out;
+    }
+
+    /** The app's own list (assets): needs no network, so also for Compact lookups. */
+    public static List<CatalogVoice> bundledExtras(Context context) {
+        try {
+            return parseCatalog(readAsset(context, EXTRA_CATALOG_ASSET), true);
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Extra voices unavailable", e);
+            return new ArrayList<>();
+        }
+    }
+
+    private static String readAsset(Context context, String name) throws IOException {
+        try (InputStream in = context.getAssets().open(name)) {
+            final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            final byte[] b = new byte[8192];
+            int n;
+            while ((n = in.read(b)) > 0) {
+                buf.write(b, 0, n);
+            }
+            return buf.toString("UTF-8");
+        }
+    }
+
+    /** "Priyamvada" from "hi_IN-priyamvada-medium" (catalog keys are lang-name-quality). */
+    public static String nameFromKey(String key) {
+        final String[] parts = key.split("-");
+        return PiperVoiceConfig.titleCase(parts.length >= 3 ? parts[1] : key);
+    }
+
+    /**
+     * Two tiers are offered: Piper's "medium" as Standard and "high" as
+     * Enhanced. "low"/"x_low" sound clearly worse, every catalog language
+     * has a medium or high voice, and medium already runs 6-12x faster than
+     * real time on a phone - there is no speed left to trade quality for.
+     */
+    public static boolean isOffered(String quality) {
+        return "medium".equals(quality) || isEnhanced(quality) || isCompact(quality);
+    }
+
+    /**
+     * This project's own tier for heavy voices (SYSPIN, Rasa, Piper "high"):
+     * the same voice with its decoder in INT8 (sherpa-onnx-respin-syspin's
+     * build_compact.py). About twice as fast on a CPU, smaller, slightly noisier.
+     */
+    public static boolean isCompact(String quality) {
+        return "compact".equals(quality);
+    }
+
+    /** "hi_IN-kavya-medium" -> "hi_IN-kavya-compact": a voice's Compact version, by key. */
+    public static String compactKey(String key) {
+        final int dash = key.lastIndexOf('-');
+        return dash > 0 ? key.substring(0, dash) + "-compact" : key + "-compact";
+    }
+
+    /**
+     * Whether this phone should steer the user to the Compact version of a
+     * heavy voice: heavy SYSPIN/Rasa Standard (or Piper Enhanced) that would
+     * pause here. Pure policy for JVM tests; callers pass
+     * {@code PiperDevice.heavyFit()}.
+     */
+    public static boolean preferCompact(boolean heavy, String quality, PiperDevice.Fit heavyFit) {
+        return heavy && !isCompact(quality) && heavyFit == PiperDevice.Fit.SLOW;
+    }
+
+    /**
+     * Orders one language's catalog rows so the Compact twin comes immediately
+     * before its heavy Standard twin where {@link #preferCompact} says so;
+     * every other row keeps catalog order. Pure for JVM tests.
+     */
+    public static List<CatalogVoice> orderCatalogForPhone(List<CatalogVoice> voices,
+            PiperDevice.Fit heavyFit) {
+        final java.util.Map<String, CatalogVoice> byKey = new java.util.HashMap<>();
+        for (CatalogVoice v : voices) {
+            byKey.put(v.key, v);
+        }
+        final List<CatalogVoice> out = new ArrayList<>(voices.size());
+        final java.util.Set<String> done = new java.util.HashSet<>();
+        for (CatalogVoice v : voices) {
+            if (done.contains(v.key)) {
+                continue;
+            }
+            if (!isCompact(v.quality) && preferCompact(v.heavy, v.quality, heavyFit)) {
+                final CatalogVoice twin = byKey.get(compactKey(v.key));
+                if (twin != null && !done.contains(twin.key)) {
+                    out.add(twin);
+                    done.add(twin.key);
+                }
+            }
+            out.add(v);
+            done.add(v.key);
+        }
+        return out;
+    }
+
+    /** Swap bookkeeping: compact key -> standard key it replaces ("piper_swap_" + compact). */
+    public static final String PREF_SWAP_PREFIX = "piper_swap_";
+
+    /** Records that installing {@code compactKey} should replace {@code standardKey}. */
+    public static void requestSwap(Context storageContext, String compactKey, String standardKey) {
+        settingsPrefs(storageContext).edit().putString(PREF_SWAP_PREFIX + compactKey, standardKey)
+                .apply();
+    }
+
+    public static boolean isEnhanced(String quality) {
+        return "high".equals(quality);
+    }
+
+    /**
+     * A checksum is required (every download is verified against it) and
+     * names the shared copy's file, so it must be exactly 32 hex digits.
+     */
+    public static boolean isMd5(String md5) {
+        return md5 != null && md5.matches("[0-9a-fA-F]{32}");
+    }
+
+    public static boolean isSafeKey(String key) {
+        return key != null && key.matches("[A-Za-z0-9_.\\-]{1,128}") && !key.contains("..");
+    }
+
+    public static boolean isSafePath(String path) {
+        // "=": NavGurukul's Indian English file is named "...dataset=spicor-...".
+        return path != null && path.matches("[A-Za-z0-9_./=\\-]{1,256}") && !path.contains("..");
+    }
+
+    private static File catalogFile(Context storageContext) {
+        return new File(PiperVoiceStore.root(storageContext), "voices.json");
+    }
+
+    /**
+     * The catalog: the cached copy when fresh, otherwise downloaded (falling
+     * back to a stale cache when offline). Blocking - call off the main thread.
+     */
+    public static List<CatalogVoice> loadCatalog(Context storageContext, boolean refresh)
+            throws IOException, JSONException {
+        final File cache = catalogFile(storageContext);
+        final boolean fresh = cache.isFile()
+                && System.currentTimeMillis() - cache.lastModified() < CATALOG_MAX_AGE_MS;
+        if (!refresh && fresh) {
+            try {
+                return withExtras(storageContext, parseCatalog(PiperVoiceStore.readText(cache)));
+            } catch (JSONException e) {
+                Log.w(TAG, "Cached catalog unreadable; refetching", e);
+            }
+        }
+        try {
+            final byte[] data = fetch(CATALOG_URL, 8 * 1024 * 1024);
+            final List<CatalogVoice> parsed = parseCatalog(new String(data, StandardCharsets.UTF_8));
+            writeAtomically(cache, data);
+            return withExtras(storageContext, parsed);
+        } catch (IOException e) {
+            if (cache.isFile()) {
+                Log.w(TAG, "Catalog fetch failed; using cached copy", e);
+                return withExtras(storageContext, parseCatalog(PiperVoiceStore.readText(cache)));
+            }
+            final List<CatalogVoice> extras = keptOnly(bundledExtras(storageContext),
+                    keptVoices(storageContext));
+            if (!extras.isEmpty()) {
+                Log.w(TAG, "Catalog fetch failed; falling back to bundled extras", e);
+                return extras;
+            }
+            throw e;
+        }
+    }
+
+    static byte[] fetch(String urlString, int maxBytes) throws IOException {
+        String currentUrl = urlString;
+        for (int redirects = 0; redirects < 5; redirects++) {
+            final HttpURLConnection conn = (HttpURLConnection) new URL(currentUrl).openConnection();
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(30000);
+            conn.setInstanceFollowRedirects(true);
+            conn.setRequestProperty("User-Agent", "eSpeakNG-Android/" + BuildConfig.VERSION_NAME);
+            try {
+                final int code = conn.getResponseCode();
+                if (code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_MOVED_TEMP
+                        || code == HttpURLConnection.HTTP_SEE_OTHER || code == 307 || code == 308) {
+                    final String location = conn.getHeaderField("Location");
+                    if (location != null && !location.isEmpty()) {
+                        final URL next = new URL(new URL(currentUrl), location);
+                        // The catalog pins every model's MD5: never let a
+                        // redirect move it off TLS.
+                        if (!"https".equalsIgnoreCase(next.getProtocol())) {
+                            throw new IOException("Insecure redirect to " + next);
+                        }
+                        currentUrl = next.toExternalForm();
+                        continue;
+                    }
+                }
+                if (code != HttpURLConnection.HTTP_OK) {
+                    throw new IOException("HTTP " + code + " for " + currentUrl);
+                }
+                try (InputStream in = conn.getInputStream()) {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    final byte[] buf = new byte[16384];
+                    int n;
+                    while ((n = in.read(buf)) > 0) {
+                        if (out.size() + n > maxBytes) {
+                            throw new IOException("Response too large: " + currentUrl);
+                        }
+                        out.write(buf, 0, n);
+                    }
+                    return out.toByteArray();
+                }
+            } finally {
+                conn.disconnect();
+            }
+        }
+        throw new IOException("Too many redirects for " + urlString);
+    }
+
+    /** Thrown when a voice needs a phonemizer other than eSpeak. */
+    static final class UnsupportedVoiceException extends Exception {
+        UnsupportedVoiceException(String key) {
+            super("Voice " + key + " does not use eSpeak phonemes");
+        }
+    }
+
+    private static File stagingDir(Context storageContext, String key) {
+        return new File(new File(PiperVoiceStore.root(storageContext), "staging"), key);
+    }
+
+    private static File downloadTarget(Context appContext, String key) {
+        final File base = appContext.getExternalFilesDir("piper");
+        if (base != null && !base.isDirectory()) {
+            //noinspection ResultOfMethodCallIgnored
+            base.mkdirs();
+        }
+        return base == null ? null : new File(base, key + ".onnx.part");
+    }
+
+    /**
+     * Symbolic link, falling back to a copy when links are refused. Not a
+     * hardlink: Android's SELinux policy denies link() in app storage
+     * (AccessDeniedException on a Pixel 8), so every "shared" install was a
+     * full copy. {@link PiperModel} memory-maps through the link and keeps
+     * its optimized copies beside the link, in the voice's own directory.
+     * Pure java.nio so JVM unit tests cover it.
+     *
+     * @return true when {@code to} now holds {@code from}'s bytes
+     */
+    public static boolean linkOrCopy(File from, File to) {
+        if (!from.isFile()) {
+            return false; // a link would dangle
+        }
+        try {
+            if ((to.exists() || java.nio.file.Files.isSymbolicLink(to.toPath())) && !to.delete()) {
+                return false;
+            }
+            if (to.getParentFile() != null) {
+                //noinspection ResultOfMethodCallIgnored
+                to.getParentFile().mkdirs();
+            }
+            try {
+                java.nio.file.Files.createSymbolicLink(to.toPath(), from.getAbsoluteFile().toPath());
+                return true;
+            } catch (UnsupportedOperationException | IOException | SecurityException e) {
+                logw("Link unavailable, copying " + to, e);
+            }
+            try (InputStream in = new FileInputStream(from);
+                 OutputStream out = new FileOutputStream(to)) {
+                final byte[] buf = new byte[1 << 16];
+                int n;
+                while ((n = in.read(buf)) > 0) {
+                    out.write(buf, 0, n);
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            logw("linkOrCopy failed for " + to, e);
+            return false;
+        }
+    }
+
+    /** Shared copy of this catalog entry's model, when present and intact. */
+    public static File verifiedSharedModel(Context storageContext, CatalogVoice voice) {
+        if (voice.modelMd5 == null || voice.modelMd5.isEmpty()) {
+            return null;
+        }
+        final File shared = PiperVoiceStore.sharedModelFile(storageContext, voice.modelMd5);
+        try {
+            if (shared.isFile() && shared.length() == voice.modelSize
+                    && voice.modelMd5.equalsIgnoreCase(md5(shared))) {
+                return shared;
+            }
+        } catch (IOException e) {
+            logw("Cannot hash shared model for " + voice.key, e);
+        }
+        return null;
+    }
+
+    /**
+     * Installs a voice whose model bytes are already on disk in the shared
+     * store (a second Rasa voice once the first downloaded). Writes the
+     * fetched config plus a link to the shared model - or, once that was
+     * deleted for its optimized copy, no model at all (the load links the
+     * shared optimized copy) - so no download happens. Callers must still
+     * show the voice as installed.
+     *
+     * @return true when installed from the shared copy (no download needed)
+     */
+    static boolean tryInstallShared(Context appContext, Context storageContext, CatalogVoice voice,
+            byte[] configBytes) {
+        final File shared = verifiedSharedModel(storageContext, voice);
+        if (shared == null && (voice.modelMd5 == null
+                || !PiperModel.hasSharedOptimized(PiperVoiceStore.sharedDir(storageContext), voice.modelMd5))) {
+            return false;
+        }
+        try {
+            final File staging = stagingDir(storageContext, voice.key);
+            deleteRecursively(staging);
+            if (!staging.mkdirs()) {
+                return false;
+            }
+            writeAtomically(new File(staging, PiperVoiceStore.CONFIG_FILE), configBytes);
+            writeAtomically(new File(staging, "expected"),
+                    (voice.modelMd5 + "\n" + voice.modelSize).getBytes(StandardCharsets.UTF_8));
+            writeAtomically(new File(staging, SOURCE_FILE),
+                    (voice.modelMd5 + "\n" + md5(configBytes)).getBytes(StandardCharsets.UTF_8));
+            if (shared != null && !linkOrCopy(shared, new File(staging, PiperVoiceStore.MODEL_FILE))) {
+                deleteRecursively(staging);
+                return false;
+            }
+            final File dest = new File(PiperVoiceStore.voicesDir(storageContext), voice.key);
+            deleteRecursively(dest);
+            //noinspection ResultOfMethodCallIgnored
+            dest.getParentFile().mkdirs();
+            if (!staging.renameTo(dest)) {
+                deleteRecursively(staging);
+                return false;
+            }
+            PiperVoiceStore.invalidate();
+            String assigned = null;
+            final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storageContext, voice.key);
+            if (installed != null) {
+                final String lang = installed.languageKey();
+                final SharedPreferences settings = settingsPrefs(storageContext);
+                if (PiperVoiceStore.assignedKey(settings, lang) == null) {
+                    PiperVoiceStore.assign(settings, lang, voice.key);
+                    assigned = lang;
+                }
+            }
+            broadcastChanged(appContext, voice.key, assigned);
+            finishSwap(appContext, storageContext, voice.key);
+            EspeakApp.runAsync(() -> fetchVoiceExtras(appContext, storageContext));
+            return true;
+        } catch (IOException | RuntimeException e) {
+            logw("Shared install of " + voice.key + " failed", e);
+            deleteRecursively(stagingDir(storageContext, voice.key));
+            return false;
+        }
+    }
+
+    /**
+     * Replaces duplicate on-disk model copies with links to one shared
+     * file per MD5, then garbage-collects shared files no voice references.
+     * This migrates existing installs (20 × 62 MB Rasa copies) and keeps
+     * future ones deduplicated. Idempotent; blocking (hashes models).
+     *
+     * @return bytes of duplicate copies replaced by links
+     */
+    static long dedupSharedModels(Context storageContext) {
+        long saved = 0;
+        try {
+            final List<PiperVoiceStore.Installed> installed = PiperVoiceStore.list(storageContext);
+            final java.util.Map<String, List<PiperVoiceStore.Installed>> byMd5 = new java.util.HashMap<>();
+            final java.util.Map<String, String> md5Of = new java.util.HashMap<>();
+            for (PiperVoiceStore.Installed v : installed) {
+                final String[] source = installedSource(v);
+                final String md5 = source != null ? source[0] : null;
+                if (md5 == null || md5.isEmpty() || "null".equals(md5)) {
+                    continue;
+                }
+                md5Of.put(v.key, md5);
+                java.util.List<PiperVoiceStore.Installed> group = byMd5.get(md5.toLowerCase(Locale.ROOT));
+                if (group == null) {
+                    group = new ArrayList<>();
+                    byMd5.put(md5.toLowerCase(Locale.ROOT), group);
+                }
+                group.add(v);
+            }
+            for (Map.Entry<String, List<PiperVoiceStore.Installed>> e : byMd5.entrySet()) {
+                final List<PiperVoiceStore.Installed> group = e.getValue();
+                // One voice is enough: its model moves into the store, so the
+                // next voice with this file (a second Rasa voice) installs
+                // without downloading 62 MB again.
+                File canonical = null;
+                for (PiperVoiceStore.Installed v : group) {
+                    final File m = v.model();
+                    if (m.isFile()) {
+                        canonical = m;
+                        break;
+                    }
+                }
+                if (canonical == null) {
+                    continue;
+                }
+                final File shared = PiperVoiceStore.sharedModelFile(storageContext, e.getKey());
+                if (!shared.isFile()) {
+                    //noinspection ResultOfMethodCallIgnored
+                    shared.getParentFile().mkdirs();
+                    // Moved, not copied: no extra 62 MB, and a model the engine
+                    // has memory-mapped keeps working (same inode).
+                    if (!java.nio.file.Files.isSymbolicLink(canonical.toPath())
+                            && canonical.renameTo(shared)) {
+                        if (!linkOrCopy(shared, canonical)) {
+                            //noinspection ResultOfMethodCallIgnored
+                            shared.renameTo(canonical); // put the voice back as it was
+                            continue;
+                        }
+                    } else {
+                        try {
+                            final File tmp = new File(shared.getPath() + ".tmp");
+                            try (InputStream in = new FileInputStream(canonical);
+                                 OutputStream out = new FileOutputStream(tmp)) {
+                                final byte[] buf = new byte[1 << 16];
+                                int n;
+                                while ((n = in.read(buf)) > 0) {
+                                    out.write(buf, 0, n);
+                                }
+                            }
+                            if (!tmp.renameTo(shared)) {
+                                //noinspection ResultOfMethodCallIgnored
+                                tmp.delete();
+                                continue;
+                            }
+                        } catch (IOException ex) {
+                            logw("Cannot publish shared model", ex);
+                            continue;
+                        }
+                    }
+                }
+                for (PiperVoiceStore.Installed v : group) {
+                    final File m = v.model();
+                    if (m.isFile() && !sameFile(m, shared)) {
+                        final long duplicateBytes = m.length();
+                        if (linkOrCopy(shared, m)) {
+                            saved += Math.max(0, duplicateBytes);
+                        }
+                    }
+                }
+            }
+            collectSharedGarbage(storageContext, md5Of);
+        } catch (RuntimeException ex) {
+            logw("Shared-model dedup failed", ex);
+        }
+        return saved;
+    }
+
+    /** Same underlying file (a hard/symbolic link to it or same path). */
+    public static boolean sameFile(File a, File b) {
+        if (a == null || b == null) {
+            return a == b;
+        }
+        if (a.equals(b)) {
+            return true;
+        }
+        try {
+            if (a.exists() && b.exists()) {
+                return java.nio.file.Files.isSameFile(a.toPath(), b.toPath());
+            }
+        } catch (IOException | SecurityException ignored) {
+        }
+        try {
+            return a.getCanonicalPath().equals(b.getCanonicalPath());
+        } catch (IOException e) {
+            return a.getAbsolutePath().equals(b.getAbsolutePath());
+        }
+    }
+
+    /** Deletes shared copies no installed voice references anymore. */
+    public static void collectSharedGarbage(Context storageContext,
+            Map<String, String> md5OfKey) {
+        final java.util.Set<String> referenced = new java.util.HashSet<>();
+        if (md5OfKey != null) {
+            for (String md5 : md5OfKey.values()) {
+                if (md5 != null && !md5.isEmpty() && !"null".equals(md5)) {
+                    referenced.add(md5.toLowerCase(Locale.ROOT));
+                }
+            }
+        } else {
+            for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+                final String[] source = installedSource(v);
+                if (source != null && source[0] != null && !source[0].isEmpty()
+                        && !"null".equals(source[0])) {
+                    referenced.add(source[0].toLowerCase(Locale.ROOT));
+                }
+            }
+        }
+        collectSharedGarbage(PiperVoiceStore.sharedDir(storageContext), referenced);
+    }
+
+    public static void collectSharedGarbage(File dir, java.util.Set<String> referenced) {
+        final File[] files = dir != null ? dir.listFiles() : null;
+        if (files == null) {
+            return;
+        }
+        for (File f : files) {
+            if (!f.isFile()) {
+                continue;
+            }
+            final String name = f.getName().toLowerCase(Locale.ROOT);
+            if (name.endsWith(".tmp")) {
+                //noinspection ResultOfMethodCallIgnored
+                f.delete();
+                continue;
+            }
+            final int dot = name.indexOf('.');
+            final String md5 = dot > 0 ? name.substring(0, dot) : name;
+            if (!referenced.contains(md5)) {
+                //noinspection ResultOfMethodCallIgnored
+                f.delete();
+            }
+        }
+    }
+
+    /**
+     * Starts downloading a voice. Blocking for the config fetch (a few KB);
+     * the model itself downloads in the background.
+     *
+     * <p>When the model bytes are already on disk in the shared store (a
+     * second Rasa voice once the first downloaded), the voice is installed
+     * at once and {@code -1} is returned instead of a DownloadManager id.
+     *
+     * @return the DownloadManager id, or -1 when installed from shared bytes
+     */
+    public static long start(Context appContext, Context storageContext, CatalogVoice voice)
+            throws IOException, JSONException, UnsupportedVoiceException {
+        return start(appContext, storageContext, voice, false);
+    }
+
+    /**
+     * @param update a newer version of an installed voice: downloads like any
+     *               other (mobile data too, no charging wait) and replaces the
+     *               old files only once verified
+     */
+    public static long start(Context appContext, Context storageContext, CatalogVoice voice, boolean update)
+            throws IOException, JSONException, UnsupportedVoiceException {
+        final byte[] configBytes = fetch(voice.baseUrl + voice.configPath, 1024 * 1024);
+        if (voice.configMd5 != null && !voice.configMd5.equalsIgnoreCase(md5(configBytes))) {
+            throw new IOException("Config checksum mismatch for " + voice.key);
+        }
+        final PiperVoiceConfig config = PiperVoiceConfig.parse(voice.key,
+                new String(configBytes, StandardCharsets.UTF_8));
+        if (!config.isSupported()) {
+            throw new UnsupportedVoiceException(voice.key);
+        }
+
+        // Second voice sharing one file (all Rasa voices): no ~62 MB download.
+        if (tryInstallShared(appContext, storageContext, voice, configBytes)) {
+            return -1;
+        }
+
+        final File staging = stagingDir(storageContext, voice.key);
+        if (!staging.isDirectory() && !staging.mkdirs()) {
+            throw new IOException("Cannot create " + staging);
+        }
+        writeAtomically(new File(staging, PiperVoiceStore.CONFIG_FILE), configBytes);
+        // Remember what the model must match, for install time.
+        writeAtomically(new File(staging, "expected"), (voice.modelMd5 + "\n" + voice.modelSize)
+                .getBytes(StandardCharsets.UTF_8));
+        // Kept with the voice: which catalog version it is (checkForUpdates).
+        writeAtomically(new File(staging, SOURCE_FILE), (voice.modelMd5 + "\n" + md5(configBytes))
+                .getBytes(StandardCharsets.UTF_8));
+
+        final File target = downloadTarget(appContext, voice.key);
+        if (target == null) {
+            throw new IOException("External app storage unavailable");
+        }
+        if (target.exists() && !target.delete()) {
+            Log.w(TAG, "Could not remove stale " + target);
+        }
+        final DownloadManager dm = appContext.getSystemService(DownloadManager.class);
+        final DownloadManager.Request request = new DownloadManager.Request(
+                Uri.parse(voice.baseUrl + voice.modelPath))
+                .setTitle(appContext.getString(R.string.piper_download_title, voice.displayName()))
+                .setDescription(appContext.getString(R.string.piper_download_description,
+                        voice.nameNative, voice.country))
+                // Progress notification while downloading; completion is announced by
+                // PiperDownloadReceiver once the voice is verified and usable, which
+                // is later than the raw download finishing.
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                .setDestinationUri(Uri.fromFile(target))
+                .setAllowedOverRoaming(false);
+        final long id = dm.enqueue(request);
+        prefs(storageContext).edit()
+                .putString(PREF_DL_ID_PREFIX + id, voice.key)
+                .putLong(PREF_DL_KEY_PREFIX + voice.key, id)
+                .apply();
+        return id;
+    }
+
+    /** Progress of a voice's download, or null when none is running. */
+    public static final class Progress {
+        public final long downloaded;
+        public final long total;
+        public final int status;
+
+        public Progress(long downloaded, long total, int status) {
+            this.downloaded = downloaded;
+            this.total = total;
+            this.status = status;
+        }
+
+        public int percent() {
+            return total > 0 ? (int) Math.min(100, downloaded * 100 / total) : 0;
+        }
+    }
+
+    public static Progress progress(Context appContext, Context storageContext, String key) {
+        final long id = prefs(storageContext).getLong(PREF_DL_KEY_PREFIX + key, -1);
+        if (id < 0) {
+            return null;
+        }
+        final DownloadManager dm = appContext.getSystemService(DownloadManager.class);
+        try (Cursor c = dm.query(new DownloadManager.Query().setFilterById(id))) {
+            if (c == null || !c.moveToFirst()) {
+                return null;
+            }
+            return new Progress(
+                c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)),
+                c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)),
+                c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS)));
+        }
+    }
+
+    /** Keys with a download in flight. */
+    public static List<String> pendingKeys(Context storageContext) {
+        final List<String> keys = new ArrayList<>();
+        for (Map.Entry<String, ?> e : prefs(storageContext).getAll().entrySet()) {
+            if (e.getKey().startsWith(PREF_DL_KEY_PREFIX)) {
+                keys.add(e.getKey().substring(PREF_DL_KEY_PREFIX.length()));
+            }
+        }
+        return keys;
+    }
+
+    public static void cancel(Context appContext, Context storageContext, String key) {
+        final SharedPreferences prefs = prefs(storageContext);
+        final long id = prefs.getLong(PREF_DL_KEY_PREFIX + key, -1);
+        if (id >= 0) {
+            appContext.getSystemService(DownloadManager.class).remove(id);
+        }
+        forget(prefs, id, key);
+        deleteRecursively(stagingDir(storageContext, key));
+        final File target = downloadTarget(appContext, key);
+        if (target != null) {
+            //noinspection ResultOfMethodCallIgnored
+            target.delete();
+        }
+    }
+
+    /** Outcome of {@link #complete}, for the notification/toast. */
+    public enum Result { INSTALLED, FAILED, NOT_OURS }
+
+    /**
+     * Finishes a download: verifies the model against the catalog checksum
+     * and moves it into place. Idempotent; blocking (hashes ~60 MB).
+     * Synchronized: the completion broadcast and the settings screen's
+     * reconcile() can finish the same download on two threads at once, and
+     * both copied into one temp file and moved one staging folder.
+     */
+    public static synchronized Result complete(Context appContext, Context storageContext, long id) {
+        final SharedPreferences prefs = prefs(storageContext);
+        final String key = prefs.getString(PREF_DL_ID_PREFIX + id, null);
+        if (key == null) {
+            return Result.NOT_OURS;
+        }
+        final DownloadManager dm = appContext.getSystemService(DownloadManager.class);
+        int status = DownloadManager.STATUS_FAILED;
+        try (Cursor c = dm.query(new DownloadManager.Query().setFilterById(id))) {
+            if (c != null && c.moveToFirst()) {
+                status = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+            }
+        } catch (RuntimeException e) {
+            Log.w(TAG, "Cannot query download " + id, e);
+            return Result.NOT_OURS; // left pending: reconcile() retries
+        }
+        if (status == DownloadManager.STATUS_RUNNING || status == DownloadManager.STATUS_PENDING
+                || status == DownloadManager.STATUS_PAUSED) {
+            return Result.NOT_OURS; // not finished yet (spurious or early broadcast)
+        }
+        final File target = downloadTarget(appContext, key);
+        final File staging = stagingDir(storageContext, key);
+        try {
+            if (status != DownloadManager.STATUS_SUCCESSFUL || target == null || !target.isFile()) {
+                throw new IOException("Download " + id + " ended with status " + status);
+            }
+            final String[] expected = PiperVoiceStore.readText(new File(staging, "expected"))
+                    .trim().split("\\r?\\n");
+            final File model = new File(staging, PiperVoiceStore.MODEL_FILE);
+            final String md5 = copyWithMd5(target, model);
+            final String expectedMd5 = expected.length > 0 ? expected[0].trim() : "";
+            final boolean md5Known = !expectedMd5.isEmpty() && !"null".equalsIgnoreCase(expectedMd5);
+            if (md5Known && !expectedMd5.equalsIgnoreCase(md5)) {
+                throw new IOException("Model checksum mismatch for " + key);
+            }
+            //noinspection ResultOfMethodCallIgnored
+            new File(staging, "expected").delete();
+            final File dest = new File(PiperVoiceStore.voicesDir(storageContext), key);
+            deleteRecursively(dest);
+            //noinspection ResultOfMethodCallIgnored
+            dest.getParentFile().mkdirs();
+            if (!staging.renameTo(dest)) {
+                throw new IOException("Cannot move " + staging + " to " + dest);
+            }
+            PiperVoiceStore.invalidate();
+
+            // A language's first natural voice starts speaking it right away:
+            // the user just asked for it. Later ones wait to be chosen.
+            String assigned = null;
+            final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storageContext, key);
+            if (installed != null) {
+                final String lang = installed.languageKey();
+                final SharedPreferences settings = settingsPrefs(storageContext);
+                if (PiperVoiceStore.assignedKey(settings, lang) == null) {
+                    PiperVoiceStore.assign(settings, lang, key);
+                    assigned = lang;
+                }
+            }
+            broadcastChanged(appContext, key, assigned);
+            // One-tap Compact swap: the new voice takes over the old voice's
+            // language and the old ~60 MB copy is removed to free the space.
+            finishSwap(appContext, storageContext, key);
+            // Files that go with some voices: NPU decoders (Snapdragon build), Arabic vowel marks.
+            EspeakApp.runAsync(() -> fetchVoiceExtras(appContext, storageContext));
+            // Feed the shared store so the next voice with this file skips its
+            // download, and fold any older duplicate copies into links.
+            try {
+                dedupSharedModels(storageContext);
+            } catch (RuntimeException e) {
+                logw("Shared-model dedup after install failed", e);
+            }
+            return Result.INSTALLED;
+        } catch (IOException | RuntimeException e) {
+            // Runtime too: this runs on bare threads, where anything uncaught
+            // kills the process - and with it the speech service.
+            Log.w(TAG, "Install of " + key + " failed", e);
+            deleteRecursively(staging);
+            return Result.FAILED;
+        } finally {
+            if (target != null) {
+                //noinspection ResultOfMethodCallIgnored
+                target.delete();
+            }
+            forget(prefs, id, key);
+            try {
+                dm.remove(id); // drops the completed-download entry (file already gone)
+            } catch (RuntimeException e) {
+                Log.w(TAG, "Cannot remove download " + id, e);
+            }
+        }
+    }
+
+    /**
+     * Completes a one-tap Compact swap recorded by {@link #requestSwap}: the
+     * freshly installed voice takes over the old voice's language (when the
+     * old one spoke it) and the old copy is deleted. No-op without a record.
+     */
+    private static void finishSwap(Context appContext, Context storageContext, String newKey) {
+        try {
+            final SharedPreferences prefs = prefs(storageContext);
+            final String oldKey = prefs.getString(PREF_SWAP_PREFIX + newKey, null);
+            if (oldKey == null || oldKey.isEmpty()) {
+                return;
+            }
+            prefs.edit().remove(PREF_SWAP_PREFIX + newKey).apply();
+            final PiperVoiceStore.Installed fresh = PiperVoiceStore.find(storageContext, newKey);
+            final PiperVoiceStore.Installed old = PiperVoiceStore.find(storageContext, oldKey);
+            if (fresh == null || old == null) {
+                return;
+            }
+            final SharedPreferences settings = settingsPrefs(storageContext);
+            final String lang = old.languageKey();
+            if (oldKey.equals(PiperVoiceStore.assignedKey(settings, lang))) {
+                PiperVoiceStore.assign(settings, lang, newKey);
+            }
+            PiperVoiceStore.delete(storageContext, settings, oldKey);
+            // The old key: the service unloads the deleted voice's memory.
+            broadcastChanged(appContext, oldKey, lang);
+        } catch (RuntimeException e) {
+            logw("Compact swap for " + newKey + " failed", e);
+        }
+    }
+
+    /** Finishes downloads whose completion broadcast was missed (process death). */
+    /** Finishes downloads whose completion broadcast was missed (process death). */
+    public static void reconcile(Context appContext, Context storageContext) {
+        final SharedPreferences prefs = prefs(storageContext);
+        for (String key : pendingKeys(storageContext)) {
+            final long id = prefs.getLong(PREF_DL_KEY_PREFIX + key, -1);
+            final Progress p;
+            try {
+                p = progress(appContext, storageContext, key);
+            } catch (RuntimeException e) {
+                Log.w(TAG, "Cannot query download of " + key, e);
+                continue;
+            }
+            if (p == null) {
+                forget(prefs, id, key); // the system forgot it; so do we
+                deleteRecursively(stagingDir(storageContext, key));
+            } else if (p.status == DownloadManager.STATUS_SUCCESSFUL
+                    || p.status == DownloadManager.STATUS_FAILED) {
+                complete(appContext, storageContext, id);
+            }
+        }
+        // Migrates pre-fix installs (20 × 62 MB Rasa copies) to shared links.
+        try {
+            dedupSharedModels(storageContext);
+        } catch (RuntimeException e) {
+            logw("Shared-model dedup on reconcile failed", e);
+        }
+    }
+
+    /**
+     * Gives installed voices the extra files they use: the Arabic vowel-mark
+     * model ({@link Tashkeel}) and, on the Snapdragon build, NPU decoders.
+     * Cheap when all are present. Blocking; off the main thread.
+     */
+    public static void fetchVoiceExtras(Context appContext, Context storageContext) {
+        fetchTashkeel(storageContext);
+        fetchNpuDecoders(appContext, storageContext);
+    }
+
+    /**
+     * The vowel-mark model (~10 MB, any network, MD5-checked) beside each
+     * installed voice that uses it; the next request picks it up.
+     */
+    public static void fetchTashkeel(Context storageContext) {
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            if (!PiperVoiceConfig.TASHKEEL.contains(v.key)) {
+                continue;
+            }
+            final File target = new File(v.dir, Tashkeel.MODEL_FILE);
+            try {
+                if (target.isFile() && Tashkeel.MODEL_MD5.equalsIgnoreCase(md5(target))) {
+                    continue;
+                }
+                final byte[] data = fetch(Tashkeel.MODEL_URL, 16 * 1024 * 1024);
+                if (!Tashkeel.MODEL_MD5.equalsIgnoreCase(md5(data))) {
+                    throw new IOException("Tashkeel model checksum mismatch");
+                }
+                writeAtomically(target, data);
+                Log.i(TAG, "Arabic vowel marks for " + v.key + " installed");
+            } catch (IOException | RuntimeException e) {
+                Log.w(TAG, "Arabic vowel marks for " + v.key + " not fetched; tried again later", e);
+            }
+        }
+    }
+
+    /** voice key -> its INT8 NPU decoder (Snapdragon build), from sherpa-onnx-respin-syspin. */
+    public static final String NPU_DECODERS_ASSET = "piper/npu_decoders.json";
+
+    /**
+     * Snapdragon build: gives every installed voice that has one its INT8 NPU
+     * decoder (~15 MB, any network), checksum-verified, then reloads the voice
+     * so PiperModel picks it up. Cheap when all are present: run it at every
+     * service start and after an install. Blocking; off the main thread.
+     */
+    public static void fetchNpuDecoders(Context appContext, Context storageContext) {
+        if (!PiperModel.hasNpuRuntime()) {
+            return;
+        }
+        final JSONObject list;
+        try (InputStream in = appContext.getAssets().open(NPU_DECODERS_ASSET)) {
+            final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            final byte[] b = new byte[8192];
+            int n;
+            while ((n = in.read(b)) > 0) {
+                buf.write(b, 0, n);
+            }
+            list = new JSONObject(buf.toString("UTF-8"));
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "NPU decoder list unavailable", e);
+            return;
+        }
+        final String base = list.optString("base_url", "");
+        final JSONObject voices = list.optJSONObject("voices");
+        if (voices == null || !RESPIN_SYSPIN_RELEASES.equals(base)) {
+            return;
+        }
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            final JSONObject f = voices.optJSONObject(v.key);
+            if (f == null || !isSafePath(f.optString("path", ""))) {
+                continue;
+            }
+            final String md5 = f.optString("md5_digest", "");
+            final File target = new File(v.dir, PiperModel.NPU_DECODER_FILE);
+            final File stamp = new File(v.dir, PiperModel.NPU_DECODER_FILE + ".md5");
+            try {
+                if (target.isFile() && stamp.isFile()
+                        && md5.equalsIgnoreCase(PiperVoiceStore.readText(stamp).trim())) {
+                    continue;
+                }
+                final byte[] data = fetch(base + f.getString("path"), 64 * 1024 * 1024);
+                if (!md5.equalsIgnoreCase(md5(data))) {
+                    throw new IOException("NPU decoder checksum mismatch for " + v.key);
+                }
+                writeAtomically(target, data);
+                writeAtomically(stamp, md5.getBytes(StandardCharsets.UTF_8));
+                Log.i(TAG, "NPU decoder for " + v.key + " installed");
+                broadcastChanged(appContext, v.key, null);
+            } catch (IOException | JSONException | RuntimeException e) {
+                Log.w(TAG, "NPU decoder for " + v.key + " not fetched; tried again later", e);
+            }
+        }
+    }
+
+    /** Model and config MD5s an installed voice came from (one per line). */
+    public static final String SOURCE_FILE = "source";
+    private static final String PREF_UPDATE_CHECKED = "piper_update_checked";
+    private static final long UPDATE_CHECK_INTERVAL_MS = 24L * 60 * 60 * 1000;
+
+    /**
+     * Voice-file auto-update: at most daily, re-downloads every installed
+     * voice whose catalog files changed (a fixed model, a corrected config).
+     * It downloads at once, on any network; complete() swaps the voice
+     * in only after its checksum matches, so the old one keeps speaking until
+     * then. Blocking (catalog fetch, hashing older installs once): call off
+     * the main and speech threads.
+     *
+     * @return keys whose update started
+     */
+    public static List<String> checkForUpdates(Context appContext, Context storageContext) {
+        final List<String> started = new ArrayList<>();
+        final SharedPreferences prefs = prefs(storageContext);
+        final long now = System.currentTimeMillis();
+        if (now - prefs.getLong(PREF_UPDATE_CHECKED, 0) < UPDATE_CHECK_INTERVAL_MS) {
+            return started;
+        }
+        final List<PiperVoiceStore.Installed> installed = PiperVoiceStore.list(storageContext);
+        if (installed.isEmpty()) {
+            return started;
+        }
+        final List<CatalogVoice> catalog;
+        try {
+            catalog = loadCatalog(storageContext, false);
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Update check: catalog unavailable", e);
+            return started; // offline: tried again next start
+        }
+        prefs.edit().putLong(PREF_UPDATE_CHECKED, now).apply();
+        final List<String> pending = pendingKeys(storageContext);
+        for (PiperVoiceStore.Installed v : installed) {
+            CatalogVoice entry = null;
+            for (CatalogVoice c : catalog) {
+                if (c.key.equals(v.key)) {
+                    entry = c;
+                    break;
+                }
+            }
+            if (entry == null || entry.modelMd5 == null || entry.configMd5 == null
+                    || pending.contains(v.key)) {
+                continue; // no longer listed, unpinned, or already downloading
+            }
+            final String[] source = installedSource(v);
+            if (source == null || (entry.modelMd5.equalsIgnoreCase(source[0])
+                    && entry.configMd5.equalsIgnoreCase(source[1]))) {
+                continue;
+            }
+            try {
+                final long id = start(appContext, storageContext, entry, true);
+                if (id >= 0) {
+                    started.add(v.key);
+                    Log.i(TAG, "Update for " + v.key + " started");
+                } else {
+                    Log.i(TAG, "Update for " + v.key + " installed from shared bytes");
+                }
+            } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
+                Log.w(TAG, "Update of " + v.key + " not started", e);
+            }
+        }
+        return started;
+    }
+
+    /**
+     * Downloads again any installed voice left with nothing to load: its
+     * model is deleted once optimized (PiperModel.dropOriginal), so an
+     * optimized copy that an ONNX Runtime update could not use leaves
+     * nothing behind. Called at service start; loads the catalog only when
+     * such a voice exists. Blocking: call off the main and speech threads.
+     *
+     * @return keys whose download started
+     */
+    public static List<String> restoreMissing(Context appContext, Context storageContext) {
+        final List<String> started = new ArrayList<>();
+        final List<PiperVoiceStore.Installed> missing = new ArrayList<>();
+        final List<String> pending = pendingKeys(storageContext);
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            if (!PiperModel.hasModel(v.dir) && !pending.contains(v.key)) {
+                missing.add(v);
+            }
+        }
+        if (missing.isEmpty()) {
+            return started;
+        }
+        final List<CatalogVoice> catalog;
+        try {
+            catalog = loadCatalog(storageContext, false);
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Restore: catalog unavailable", e);
+            return started; // offline: tried again next start
+        }
+        for (PiperVoiceStore.Installed v : missing) {
+            for (CatalogVoice c : catalog) {
+                if (c.key.equals(v.key)) {
+                    try {
+                        if (start(appContext, storageContext, c, true) >= 0) {
+                            started.add(v.key);
+                        }
+                        Log.i(TAG, "Restoring " + v.key + ": no model left to load");
+                    } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
+                        Log.w(TAG, "Restore of " + v.key + " not started", e);
+                    }
+                    break;
+                }
+            }
+        }
+        return started;
+    }
+
+    /** {model MD5, config MD5} of an installed voice; hashed once for voices from before. */
+    private static String[] installedSource(PiperVoiceStore.Installed v) {
+        final File source = new File(v.dir, SOURCE_FILE);
+        try {
+            if (source.isFile()) {
+                final String[] lines = PiperVoiceStore.readText(source).trim().split("\n");
+                if (lines.length == 2) {
+                    return lines;
+                }
+            }
+            final File model = v.model();
+            final String[] computed = {md5(model), md5(new File(v.dir, PiperVoiceStore.CONFIG_FILE))};
+            writeAtomically(source, (computed[0] + "\n" + computed[1]).getBytes(StandardCharsets.UTF_8));
+            return computed;
+        } catch (IOException e) {
+            Log.w(TAG, "Cannot hash " + v.key, e);
+            return null;
+        }
+    }
+
+    public static void broadcastChanged(Context context, String key, String assignedLanguage) {
+        final Intent intent = new Intent(ACTION_VOICES_CHANGED).setPackage(context.getPackageName());
+        if (key != null) {
+            intent.putExtra(EXTRA_KEY, key);
+        }
+        if (assignedLanguage != null) {
+            intent.putExtra(EXTRA_ASSIGNED_LANGUAGE, assignedLanguage);
+        }
+        context.sendBroadcast(intent);
+    }
+
+    /**
+     * Drops a download's bookkeeping, its swap record too: a swap whose
+     * download was cancelled or failed must not delete the Standard voice
+     * when this Compact voice is installed later for another reason.
+     */
+    private static void forget(SharedPreferences prefs, long id, String key) {
+        prefs.edit().remove(PREF_DL_ID_PREFIX + id).remove(PREF_DL_KEY_PREFIX + key)
+                .remove(PREF_SWAP_PREFIX + key).apply();
+    }
+
+    /** Bookkeeping lives with the other settings, in device-protected storage. */
+    private static SharedPreferences prefs(Context storageContext) {
+        return settingsPrefs(storageContext);
+    }
+
+    private static SharedPreferences settingsPrefs(Context storageContext) {
+        return PreferenceManager.getDefaultSharedPreferences(storageContext);
+    }
+
+    /** MD5 of a file, streamed (models are 40-200 MB). */
+    public static String md5(File file) throws IOException {
+        try (InputStream in = new java.io.FileInputStream(file)) {
+            final MessageDigest digest = MessageDigest.getInstance("MD5");
+            final byte[] buf = new byte[1 << 16];
+            int n;
+            while ((n = in.read(buf)) > 0) {
+                digest.update(buf, 0, n);
+            }
+            return hex(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static String md5(byte[] data) {
+        try {
+            return hex(MessageDigest.getInstance("MD5").digest(data));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static String copyWithMd5(File from, File to) throws IOException {
+        final MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IOException(e);
+        }
+        final File tmp = new File(to.getPath() + ".tmp");
+        try {
+            try (InputStream in = new FileInputStream(from); OutputStream out = new FileOutputStream(tmp)) {
+                final byte[] buf = new byte[1 << 16];
+                int n;
+                while ((n = in.read(buf)) > 0) {
+                    digest.update(buf, 0, n);
+                    out.write(buf, 0, n);
+                }
+            }
+            if (to.exists()) {
+                to.delete();
+            }
+            if (!tmp.renameTo(to)) {
+                tmp.delete();
+                throw new IOException("Cannot rename " + tmp + " to " + to);
+            }
+            return hex(digest.digest());
+        } catch (IOException | RuntimeException e) {
+            tmp.delete();
+            throw e;
+        }
+    }
+
+    private static String hex(byte[] bytes) {
+        final StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            sb.append(String.format(Locale.ROOT, "%02x", b));
+        }
+        return sb.toString();
+    }
+
+    private static void writeAtomically(File file, byte[] data) throws IOException {
+        //noinspection ResultOfMethodCallIgnored
+        file.getParentFile().mkdirs();
+        final File tmp = new File(file.getPath() + ".tmp");
+        try (OutputStream out = new FileOutputStream(tmp)) {
+            out.write(data);
+        }
+        if (!tmp.renameTo(file)) {
+            throw new IOException("Cannot write " + file);
+        }
+    }
+
+    public static void deleteRecursively(File f) {
+        // exists() follows links: a link whose shared file is gone is still deleted.
+        if (f == null || (!f.exists() && !java.nio.file.Files.isSymbolicLink(f.toPath()))) {
+            return;
+        }
+        final File[] children = f.listFiles();
+        if (children != null) {
+            for (File c : children) {
+                deleteRecursively(c);
+            }
+        }
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
+    }
+}
+
+
+

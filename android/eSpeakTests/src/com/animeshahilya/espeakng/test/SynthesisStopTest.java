@@ -16,6 +16,8 @@
 
 package com.animeshahilya.espeakng.test;
 
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+
 import java.util.Locale;
 
 import android.content.Context;

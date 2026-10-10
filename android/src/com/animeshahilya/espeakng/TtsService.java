@@ -24,6 +24,35 @@
  */
 
 package com.animeshahilya.espeakng;
+import com.animeshahilya.espeakng.text.AsciiUtils;
+import com.animeshahilya.espeakng.tts.AudioOptimizer;
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+import com.animeshahilya.espeakng.text.CompoundSplitter;
+import com.animeshahilya.espeakng.tts.DownloadVoiceData;
+import com.animeshahilya.espeakng.text.Earcons;
+import com.animeshahilya.espeakng.tts.EspeakVoiceEngine;
+import com.animeshahilya.espeakng.tts.GetSampleText;
+import com.animeshahilya.espeakng.text.HinglishReader;
+import com.animeshahilya.espeakng.text.LanguageRuns;
+import com.animeshahilya.espeakng.ui.LanguageSettings;
+import com.animeshahilya.espeakng.text.NvdaEmoji;
+import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
+import com.animeshahilya.espeakng.tts.PcmResampler;
+import com.animeshahilya.espeakng.piper.PiperCrashGuard;
+import com.animeshahilya.espeakng.piper.PiperDownloads;
+import com.animeshahilya.espeakng.piper.PiperEngine;
+import com.animeshahilya.espeakng.piper.PiperModel;
+import com.animeshahilya.espeakng.tts.PiperVoiceEngine;
+import com.animeshahilya.espeakng.piper.PiperVoiceStore;
+import com.animeshahilya.espeakng.ui.ReadingHistory;
+import com.animeshahilya.espeakng.text.ScriptLanguages;
+import com.animeshahilya.espeakng.text.TextOffsetMap;
+import com.animeshahilya.espeakng.text.TextPreprocessor;
+import com.animeshahilya.espeakng.util.TolerantPreferences;
+import com.animeshahilya.espeakng.tts.TtsAudioDispatcher;
+import com.animeshahilya.espeakng.text.UserDictionaryManager;
+import com.animeshahilya.espeakng.tts.VoiceEngineRegistry;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -106,7 +135,7 @@ public class TtsService extends TextToSpeechService {
      */
     private final PiperEngine mPiper = PiperEngine.get();
 
-    SpeechSynthesis getEngine() {
+    public SpeechSynthesis getEngine() {
         return mEngine;
     }
 
@@ -1860,3 +1889,4 @@ public class TtsService extends TextToSpeechService {
         }
     };
 }
+

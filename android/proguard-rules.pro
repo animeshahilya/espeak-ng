@@ -30,7 +30,7 @@
 # These fields moved from PiperModel into SessionGroup once already and the
 # rule silently stopped matching: after moving them again, check the release
 # dex still has them (`dexdump -h`; mapping.txt omits kept, unrenamed fields).
--keepclassmembers class com.animeshahilya.espeakng.PiperModel$SessionGroup {
+-keepclassmembers class com.animeshahilya.espeakng.piper.PiperModel$SessionGroup {
     java.nio.ByteBuffer mapped;
     java.nio.ByteBuffer mappedDecoder;
 }

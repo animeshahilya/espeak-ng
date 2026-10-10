@@ -14,6 +14,10 @@
 
 package com.animeshahilya.espeakng;
 
+import com.animeshahilya.espeakng.text.TextPreprocessor;
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;

@@ -10,13 +10,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+  <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
       android:title="@string/category_voice">
-    <com.animeshahilya.espeakng.preference.VoiceVariantPreference
+    <com.animeshahilya.espeakng.ui.preference.VoiceVariantPreference
         android:key="espeak_variant"
         android:title="@string/espeak_variant"
         android:icon="@drawable/ic_record_voice_over" />
-    <com.animeshahilya.espeakng.preference.SeekBarPreference
+    <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
         android:key="espeak_rate"
         android:title="@string/setting_default_rate"
         android:icon="@drawable/ic_speed" />
@@ -31,7 +31,7 @@
       <!-- Off means off: nothing natural-voice is loaded (TtsService frees
            loaded models on the switch) and the rows that only matter while
            on are disabled. Voices stay manageable, to free the space. -->
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_piper_master"
           android:title="@string/category_piper_master"
           app:iconSpaceReserved="false">
@@ -42,13 +42,13 @@
             android:summaryOff="@string/setting_piper_enabled_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_piper_languages"
           android:title="@string/category_piper_languages"
           android:dependency="piper_enabled"
           app:iconSpaceReserved="false" />
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_piper_voices"
           android:title="@string/category_piper_voices"
           app:iconSpaceReserved="false">
@@ -69,8 +69,8 @@
             android:key="action_piper_manage"
             android:title="@string/setting_piper_manage"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_piper_screen_reader"
           android:dependency="piper_enabled"
           app:iconSpaceReserved="false">
@@ -98,7 +98,7 @@
             android:defaultValue="natural"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
     <!-- not on Wear -->
     <Preference
@@ -106,16 +106,16 @@
         android:title="@string/test_voice_title"
         android:summary="@string/test_voice_summary"
         android:icon="@drawable/ic_play_circle" />
-  </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+  </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-  <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+  <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
       android:title="@string/category_customize">
     <PreferenceScreen
         android:key="sub_voice_sound"
         android:title="@string/screen_voice_title"
         android:summary="@string/screen_voice_summary"
         android:icon="@drawable/ic_tune">
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_voice_preview"
           app:iconSpaceReserved="false">
         <Preference
@@ -123,15 +123,15 @@
             android:title="@string/test_voice_tuning_title"
             android:summary="@string/test_voice_tuning_summary"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_tone"
           app:iconSpaceReserved="false">
-        <com.animeshahilya.espeakng.preference.SeekBarPreference
+        <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
             android:key="espeak_pitch"
             android:title="@string/setting_default_pitch"
             app:iconSpaceReserved="false" />
-        <com.animeshahilya.espeakng.preference.SeekBarPreference
+        <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
             android:key="espeak_pitch_range"
             android:title="@string/espeak_pitch_range"
             app:iconSpaceReserved="false" />
@@ -151,9 +151,9 @@
             android:defaultValue="0"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_speed_sound"
           app:iconSpaceReserved="false">
         <ListPreference
@@ -161,7 +161,7 @@
             android:title="@string/setting_rate_boost"
             android:defaultValue="off"
             app:iconSpaceReserved="false" />
-        <com.animeshahilya.espeakng.preference.SeekBarPreference
+        <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
             android:key="espeak_volume"
             android:title="@string/espeak_volume"
             app:iconSpaceReserved="false" />
@@ -170,7 +170,7 @@
             android:title="@string/setting_audio_optimizer"
             android:summary="@string/setting_audio_optimizer_screen_summary"
             app:iconSpaceReserved="false">
-          <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
               android:title="@string/category_optimizer_profile"
               app:iconSpaceReserved="false">
             <ListPreference
@@ -181,9 +181,9 @@
                 android:defaultValue="off"
                 app:useSimpleSummaryProvider="true"
                 app:iconSpaceReserved="false" />
-          </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+          </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-          <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
               android:title="@string/category_optimizer_preview"
               app:iconSpaceReserved="false">
             <Preference
@@ -191,9 +191,9 @@
                 android:title="@string/test_audio_optimizer_title"
                 android:summary="@string/test_audio_optimizer_summary"
                 app:iconSpaceReserved="false" />
-          </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+          </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-          <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+          <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
               android:title="@string/category_optimizer_modules"
               app:iconSpaceReserved="false">
             <SwitchPreferenceCompat
@@ -238,9 +238,9 @@
                 android:summary="@string/setting_opt_declicker_summary"
                 android:defaultValue="true"
                 app:iconSpaceReserved="false" />
-          </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+          </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
         </PreferenceScreen>
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -248,7 +248,7 @@
         android:title="@string/screen_pauses_title"
         android:summary="@string/screen_pauses_summary"
         android:icon="@drawable/ic_pause">
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_pauses_timing"
           app:iconSpaceReserved="false">
         <Preference
@@ -256,11 +256,11 @@
             android:title="@string/test_pauses_title"
             android:summary="@string/test_pauses_summary"
             app:iconSpaceReserved="false" />
-        <com.animeshahilya.espeakng.preference.SeekBarPreference
+        <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
             android:key="espeak_pause_scale"
             android:title="@string/setting_pause_scale"
             app:iconSpaceReserved="false" />
-        <com.animeshahilya.espeakng.preference.SeekBarPreference
+        <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
             android:key="espeak_wordgap"
             android:title="@string/setting_wordgap"
             app:iconSpaceReserved="false" />
@@ -272,7 +272,7 @@
             android:summaryOff="@string/setting_phrase_pauses_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -280,10 +280,10 @@
         android:title="@string/screen_text_processing_title"
         android:summary="@string/screen_text_processing_summary"
         android:icon="@drawable/ic_format_quote">
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_punctuation"
           app:iconSpaceReserved="false">
-        <com.animeshahilya.espeakng.preference.SpeakPunctuationPreference
+        <com.animeshahilya.espeakng.ui.preference.SpeakPunctuationPreference
             android:key="espeak_punctuation_level"
             android:title="@string/espeak_speak_punctuation"
             app:iconSpaceReserved="false" />
@@ -303,9 +303,9 @@
             android:defaultValue="off"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_capitals"
           app:iconSpaceReserved="false">
         <ListPreference
@@ -324,9 +324,9 @@
             android:defaultValue="char_only"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_emoji"
           app:iconSpaceReserved="false">
         <!-- not on Wear -->
@@ -338,9 +338,9 @@
             android:defaultValue="announce"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_punctuation_preview"
           app:iconSpaceReserved="false">
         <Preference
@@ -348,7 +348,7 @@
             android:title="@string/test_punctuation_title"
             android:summary="@string/test_punctuation_summary"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -356,7 +356,7 @@
         android:title="@string/screen_reading_title"
         android:summary="@string/screen_reading_summary"
         android:icon="@drawable/ic_article">
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_reading_modes"
           app:iconSpaceReserved="false">
         <Preference
@@ -389,9 +389,9 @@
             android:summaryOff="@string/setting_hinglish_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_smart_text"
           app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
@@ -443,9 +443,9 @@
             android:summaryOff="@string/setting_simplify_urls_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_letters"
           app:iconSpaceReserved="false">
         <ListPreference
@@ -465,9 +465,9 @@
             android:summaryOff="@string/setting_spoken_diacritics_summary_off"
             android:defaultValue="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_advanced"
           app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
@@ -478,7 +478,7 @@
             android:summaryOff="@string/setting_unicode_normalization_summary_off"
             android:defaultValue="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -486,7 +486,7 @@
         android:title="@string/screen_numbers_title"
         android:summary="@string/screen_numbers_summary"
         android:icon="@drawable/ic_pin">
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_number_formats"
           app:iconSpaceReserved="false">
         <ListPreference
@@ -510,9 +510,9 @@
             android:title="@string/setting_digit_threshold"
             android:defaultValue="6"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_number_everyday"
           app:iconSpaceReserved="false">
         <Preference
@@ -552,9 +552,9 @@
             android:summaryOff="@string/setting_read_dates_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_number_stem"
           app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
@@ -605,7 +605,7 @@
             android:summaryOff="@string/setting_read_ordinals_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -613,7 +613,7 @@
         android:title="@string/screen_mixed_languages_title"
         android:summary="@string/screen_mixed_languages_summary"
         android:icon="@drawable/ic_language">
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_mixed_languages_preview"
           app:iconSpaceReserved="false">
         <Preference
@@ -621,8 +621,8 @@
             android:title="@string/test_mixed_languages_title"
             android:summary="@string/test_mixed_languages_summary"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_script_languages"
           android:title="@string/category_script_languages"
           android:summary="@string/category_script_languages_summary"
@@ -715,10 +715,10 @@
             android:defaultValue="words"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
       <!-- not on Wear -->
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_natural_switching"
           android:title="@string/category_natural_switching"
           app:iconSpaceReserved="false">
@@ -730,7 +730,7 @@
             android:summaryOff="@string/setting_natural_switching_summary_off"
             android:defaultValue="true"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
     <Preference
         android:key="espeak_user_dictionary"
@@ -738,7 +738,7 @@
         android:summary="@string/setting_user_dictionary_summary"
         android:icon="@drawable/ic_dictionary" />
     <!-- not on Wear -->
-    <com.animeshahilya.espeakng.preference.SupportedLanguagesPreference
+    <com.animeshahilya.espeakng.ui.preference.SupportedLanguagesPreference
         android:key="espeak_supported_languages"
         android:title="@string/espeak_supported_languages"
         android:icon="@drawable/ic_language" />
@@ -748,16 +748,16 @@
         android:title="@string/setting_favorite_voices"
         android:summary="@string/setting_favorite_voices_summary"
         android:icon="@drawable/ic_star" />
-  </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+  </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-  <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+  <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
       android:title="@string/category_app">
     <PreferenceScreen
         android:key="sub_caller_locks"
         android:title="@string/screen_locks_title"
         android:summary="@string/screen_locks_summary"
         android:icon="@drawable/ic_lock">
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_caller_locks"
           app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
@@ -784,9 +784,9 @@
             android:summaryOff="@string/setting_force_volume_summary_off"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
       <!-- not on Wear -->
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_sleep_timer"
           android:title="@string/category_sleep_timer"
           app:iconSpaceReserved="false">
@@ -796,7 +796,7 @@
             android:summary="@string/setting_sleep_timer_summary"
             android:defaultValue="off"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -804,7 +804,7 @@
         android:title="@string/screen_tools_title"
         android:summary="@string/screen_tools_summary"
         android:icon="@drawable/ic_backup">
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_presets"
           android:title="@string/category_presets"
           app:iconSpaceReserved="false">
@@ -825,9 +825,9 @@
             android:title="@string/setting_load_profile"
             android:summary="@string/setting_load_profile_summary"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_data"
           android:title="@string/category_data_management"
           app:iconSpaceReserved="false">
@@ -841,7 +841,7 @@
             android:title="@string/setting_restore"
             android:summary="@string/setting_restore_summary"
             app:iconSpaceReserved="false" />
-        <com.animeshahilya.espeakng.preference.ImportVoicePreference
+        <com.animeshahilya.espeakng.ui.preference.ImportVoicePreference
             android:key="action_import_voice"
             android:title="@string/import_voice_title"
             app:iconSpaceReserved="false" />
@@ -865,9 +865,9 @@
             android:title="@string/setting_recent_reading"
             android:summary="@string/setting_recent_reading_summary"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 
-      <com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_about"
           app:iconSpaceReserved="false">
         <Preference
@@ -875,7 +875,7 @@
             android:title="@string/about_title"
             android:summary="@string/about_summary"
             app:iconSpaceReserved="false" />
-      </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
-  </com.animeshahilya.espeakng.preference.AccessiblePreferenceCategory>
+  </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
 </PreferenceScreen>

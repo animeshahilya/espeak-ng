@@ -16,6 +16,8 @@
 
 package com.animeshahilya.espeakng.test;
 
+import com.animeshahilya.espeakng.ui.VoiceSettings;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;

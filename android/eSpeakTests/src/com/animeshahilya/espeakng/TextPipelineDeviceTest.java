@@ -16,6 +16,18 @@
 
 package com.animeshahilya.espeakng;
 
+import com.animeshahilya.espeakng.text.Abbreviations;
+import com.animeshahilya.espeakng.text.Earcons;
+import com.animeshahilya.espeakng.text.HinglishReader;
+import com.animeshahilya.espeakng.text.NumberReading;
+import com.animeshahilya.espeakng.text.NvdaEmoji;
+import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
+import com.animeshahilya.espeakng.text.PhrasePauses;
+import com.animeshahilya.espeakng.text.TextPreprocessor;
+import com.animeshahilya.espeakng.text.UserDictionary;
+import com.animeshahilya.espeakng.tts.AudioOptimizer;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;

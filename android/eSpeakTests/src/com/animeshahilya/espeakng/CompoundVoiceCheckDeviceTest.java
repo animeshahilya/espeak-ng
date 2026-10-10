@@ -16,6 +16,9 @@
 
 package com.animeshahilya.espeakng;
 
+import com.animeshahilya.espeakng.piper.PiperVoiceStore;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;

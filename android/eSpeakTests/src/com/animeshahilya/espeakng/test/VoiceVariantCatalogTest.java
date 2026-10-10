@@ -16,6 +16,9 @@
 
 package com.animeshahilya.espeakng.test;
 
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+import com.animeshahilya.espeakng.ui.preference.VoiceVariantPreference;
+
 import android.content.Context;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;

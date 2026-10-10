@@ -16,6 +16,8 @@
 
 package com.animeshahilya.espeakng.test;
 
+import com.animeshahilya.espeakng.text.UnicodeNormalization;
+
 import com.animeshahilya.espeakng.UnicodeNormalization;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;

@@ -9,6 +9,9 @@
 
 package com.animeshahilya.espeakng;
 
+import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
+import com.animeshahilya.espeakng.text.TextPreprocessor;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 

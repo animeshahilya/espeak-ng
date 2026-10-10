@@ -15,6 +15,16 @@
  */
 
 package com.animeshahilya.espeakng;
+import com.animeshahilya.espeakng.text.CompoundSplitter;
+import com.animeshahilya.espeakng.text.HinglishReader;
+import com.animeshahilya.espeakng.text.NvdaCharacterDescriptions;
+import com.animeshahilya.espeakng.text.NvdaEmoji;
+import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
+import com.animeshahilya.espeakng.piper.PiperCrashGuard;
+import com.animeshahilya.espeakng.piper.PiperDevice;
+import com.animeshahilya.espeakng.piper.PiperEngine;
+import com.animeshahilya.espeakng.piper.PiperVoiceStore;
+import com.animeshahilya.espeakng.util.TolerantPreferences;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -259,3 +269,4 @@ public class EspeakApp extends Application {
         BACKGROUND_EXECUTOR.execute(task);
     }
 }
+

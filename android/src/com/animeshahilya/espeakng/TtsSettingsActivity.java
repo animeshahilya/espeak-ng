@@ -17,6 +17,22 @@
  */
 
 package com.animeshahilya.espeakng;
+import com.animeshahilya.espeakng.R;
+import com.animeshahilya.espeakng.text.AsciiUtils;
+import com.animeshahilya.espeakng.util.BackupRestoreHelper;
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+import com.animeshahilya.espeakng.tts.DownloadVoiceData;
+import com.animeshahilya.espeakng.util.FileUtils;
+import com.animeshahilya.espeakng.ui.preference.InsetGroupedItemDecoration;
+import com.animeshahilya.espeakng.ui.LanguageSettings;
+import com.animeshahilya.espeakng.util.LogExporter;
+import com.animeshahilya.espeakng.piper.PiperSettings;
+import com.animeshahilya.espeakng.ui.ReadingHistory;
+import com.animeshahilya.espeakng.text.ScriptLanguages;
+import com.animeshahilya.espeakng.text.UserDictionaryManager;
+import com.animeshahilya.espeakng.ui.UserDictionaryScreen;
+import com.animeshahilya.espeakng.ui.VoiceProfile;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -59,16 +75,16 @@ import androidx.preference.PreferenceScreen;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import com.animeshahilya.espeakng.preference.FavoriteVoicesDialogFragment;
-import com.animeshahilya.espeakng.preference.ImportVoicePreference;
-import com.animeshahilya.espeakng.preference.SeekBarDialogFragment;
-import com.animeshahilya.espeakng.preference.SeekBarPreference;
-import com.animeshahilya.espeakng.preference.SpeakPunctuationDialogFragment;
-import com.animeshahilya.espeakng.preference.SpeakPunctuationPreference;
-import com.animeshahilya.espeakng.preference.SupportedLanguagesDialogFragment;
-import com.animeshahilya.espeakng.preference.SupportedLanguagesPreference;
-import com.animeshahilya.espeakng.preference.VoiceVariantDialogFragment;
-import com.animeshahilya.espeakng.preference.VoiceVariantPreference;
+import com.animeshahilya.espeakng.ui.preference.FavoriteVoicesDialogFragment;
+import com.animeshahilya.espeakng.ui.preference.ImportVoicePreference;
+import com.animeshahilya.espeakng.ui.preference.SeekBarDialogFragment;
+import com.animeshahilya.espeakng.ui.preference.SeekBarPreference;
+import com.animeshahilya.espeakng.ui.preference.SpeakPunctuationDialogFragment;
+import com.animeshahilya.espeakng.ui.preference.SpeakPunctuationPreference;
+import com.animeshahilya.espeakng.ui.preference.SupportedLanguagesDialogFragment;
+import com.animeshahilya.espeakng.ui.preference.SupportedLanguagesPreference;
+import com.animeshahilya.espeakng.ui.preference.VoiceVariantDialogFragment;
+import com.animeshahilya.espeakng.ui.preference.VoiceVariantPreference;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -92,7 +108,7 @@ import java.util.Stack;
 
 public class TtsSettingsActivity extends AppCompatActivity {
 
-    static final String TAG = TtsSettingsActivity.class.getSimpleName();
+    public static final String TAG = TtsSettingsActivity.class.getSimpleName();
 
     /** Single accessor for the device-protected default prefs (see EspeakApp). */
     private static SharedPreferences getPrefs() {
@@ -697,7 +713,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
          *
          * @return true if a sub-screen was showing and the parent restored.
          */
-        boolean popToParent() {
+        public boolean popToParent() {
             PreferenceScreen parent = mScreenStack.poll();
             if (parent == null) {
                 return false;
@@ -713,7 +729,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
          * Opens a page built in code (the natural-voice download and voice
          * pages) one level below the current one, so Back returns here.
          */
-        void pushScreen(PreferenceScreen screen) {
+        public void pushScreen(PreferenceScreen screen) {
             decoratePreferenceScreens(screen);
             final PreferenceScreen current = getPreferenceScreen();
             if (current != null) {
@@ -1036,7 +1052,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
         /** One-shot polite announcement through the preference list view. */
         @SuppressWarnings("deprecation")
-        void announce(CharSequence text) {
+        public void announce(CharSequence text) {
             View list = getView() != null
                     ? getView().findViewById(androidx.preference.R.id.recycler_view)
                     : null;
@@ -1087,7 +1103,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 rv.setClipToPadding(false);
                 rv.setBackgroundColor(androidx.core.content.ContextCompat.getColor(
                         requireContext(), R.color.ios_grouped_background));
-                rv.addItemDecoration(new com.animeshahilya.espeakng.preference.InsetGroupedItemDecoration(requireContext()));
+                rv.addItemDecoration(new com.animeshahilya.espeakng.ui.preference.InsetGroupedItemDecoration(requireContext()));
             } else if (listView instanceof ViewGroup) {
                 ((ViewGroup) listView).setClipToPadding(false);
             }
@@ -1429,7 +1445,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
      * The load outlives a screen the user backed straight out of, and adding
      * preferences to a dead activity's group would leak it.
      */
-    static boolean isGone(Context context) {
+    public static boolean isGone(Context context) {
         if (!(context instanceof Activity)) {
             return false;
         }
@@ -1442,7 +1458,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
      * Speaks {@code text} through the lazily-initialized preview engine.
      * If speech is already playing, stops it so the user can easily cancel playback.
      */
-    static void speakPreview(final Context context, final String text,
+    public static void speakPreview(final Context context, final String text,
             final String utteranceId) {
         if (sTts != null && sTts.isSpeaking()) {
             sTts.stop();
@@ -2186,7 +2202,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
      * Opens the system file picker. Some devices have none (Wear OS, some TV
      * and managed profiles): say so instead of crashing the settings screen.
      */
-    static void startForResult(Context context, Intent intent, int requestCode) {
+    public static void startForResult(Context context, Intent intent, int requestCode) {
         if (!(context instanceof Activity)) {
             return;
         }
@@ -2301,3 +2317,5 @@ public class TtsSettingsActivity extends AppCompatActivity {
         return true;
     };
 }
+
+

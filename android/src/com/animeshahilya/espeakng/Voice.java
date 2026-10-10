@@ -114,7 +114,7 @@ public class Voice {
 
     @Override
     public String toString() {
-        String ret = iso3Language(locale);
+            String ret = iso3Language(locale);
         final String country = iso3Country(locale);
         if (!country.isEmpty()) {
             ret += '-' + country;
@@ -131,7 +131,7 @@ public class Voice {
      * en-shaw, chr-US-Qaaa-x-west). Natural voices of the language were
      * trained on its usual script, so they must not read for it.
      */
-    boolean isScriptVariant() {
+    public boolean isScriptVariant() {
         if (name == null) {
             return false;
         }
@@ -148,7 +148,7 @@ public class Voice {
     }
 
     /** ISO 639-2 code ("hin"), or the locale's own code when it has none. */
-    static String iso3Language(Locale locale) {
+    public static String iso3Language(Locale locale) {
         try {
             return locale.getISO3Language();
         } catch (MissingResourceException e) {
