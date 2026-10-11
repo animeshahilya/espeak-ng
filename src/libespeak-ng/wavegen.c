@@ -246,6 +246,28 @@ void WcmdqStop(void)
 #endif
 }
 
+// eSpeak NG Advanced: for a caller that changes voice without making audio
+// (the Android Piper phonemizer). espeak_SetVoiceByName() queues a
+// WCMD_VOICE with a heap copy of the voice, consumed only by WavegenFill():
+// without this, those entries piled up (DoVoiceChange() does not check for
+// space), the next utterance lost markers - its first word event first -
+// and then replayed stale voice changes, and a wrapped queue leaked the
+// copies it overwrote.
+int WcmdqTail(void)
+{
+	return wcmdq_tail;
+}
+
+// Drops what was queued since WcmdqTail() returned mark, freeing voice copies.
+void WcmdqDropFrom(int mark)
+{
+	while (wcmdq_tail != mark) {
+		wcmdq_tail = (wcmdq_tail == 0 ? N_WCMDQ : wcmdq_tail) - 1;
+		if ((wcmdq[wcmdq_tail][0] & 0xff) == WCMD_VOICE)
+			free((voice_t *)wcmdq[wcmdq_tail][2]);
+	}
+}
+
 int WcmdqFree(void)
 {
 	int i;

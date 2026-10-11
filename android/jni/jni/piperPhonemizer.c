@@ -35,6 +35,12 @@
  * it is set here for the duration of the call and restored afterwards. */
 extern int option_phoneme_input;
 
+/* wavegen.h (internal, fork extension): switching voice queues a wave command
+ * that only audio generation consumes; this phonemizer makes no audio, so it
+ * drops what it queued (see WcmdqDropFrom). */
+int WcmdqTail(void);
+void WcmdqDropFrom(int mark);
+
 /* Clause terminator encoding, translate.h. */
 #define CLAUSE_INTONATION_FULL_STOP   0x00000000
 #define CLAUSE_INTONATION_COMMA       0x00001000
@@ -169,7 +175,11 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
                       int allow_phoneme_input)
 {
   if (espeak_voice == NULL || text_utf8 == NULL) return NULL;
-  if (espeak_SetVoiceByName(espeak_voice) != EE_OK) return NULL;
+  const int queued = WcmdqTail();
+  if (espeak_SetVoiceByName(espeak_voice) != EE_OK) {
+    WcmdqDropFrom(queued);
+    return NULL;
+  }
 
   const int saved_phoneme_input = option_phoneme_input;
   option_phoneme_input = allow_phoneme_input ? 1 : 0;
@@ -259,6 +269,7 @@ char *piper_phonemize(const char *espeak_voice, const char *text_utf8,
   }
 
   option_phoneme_input = saved_phoneme_input;
+  WcmdqDropFrom(queued);
   if (out.failed) {
     buf_free(&out);
     return NULL;

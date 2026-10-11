@@ -67,6 +67,8 @@ int WavegenFill(void);
 void WavegenSetVoice(voice_t *v);
 int WcmdqFree(void);
 void WcmdqStop(void);
+int WcmdqTail(void);
+void WcmdqDropFrom(int mark);
 int WcmdqUsed(void);
 void WcmdqInc(void);
 
