@@ -30,10 +30,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.animeshahilya.espeakng.EspeakApp;
-import com.animeshahilya.espeakng.LanguageSettings;
+import com.animeshahilya.espeakng.ui.LanguageSettings;
 import com.animeshahilya.espeakng.TtsSettingsActivity;
-import com.animeshahilya.espeakng.ScriptLanguages;
-import com.animeshahilya.espeakng.VoiceSettings;
+import com.animeshahilya.espeakng.text.ScriptLanguages;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
 
 import org.junit.After;
 import org.junit.Before;

@@ -26,7 +26,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.animeshahilya.espeakng.SpeechSynthesis;
-import com.animeshahilya.espeakng.VoiceSettings;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
 
 import org.json.JSONException;
 import org.json.JSONObject;

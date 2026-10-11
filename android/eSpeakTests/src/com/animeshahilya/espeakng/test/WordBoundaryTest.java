@@ -24,7 +24,7 @@ import java.util.Locale;
 
 import android.content.Context;
 
-import com.animeshahilya.espeakng.CheckVoiceData;
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.Voice;
 import com.animeshahilya.espeakng.VoiceVariant;

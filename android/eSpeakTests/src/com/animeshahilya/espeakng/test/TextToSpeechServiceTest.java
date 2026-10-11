@@ -27,7 +27,7 @@ import android.speech.tts.TextToSpeech;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.animeshahilya.espeakng.LanguageSettings;
+import com.animeshahilya.espeakng.ui.LanguageSettings;
 import com.animeshahilya.espeakng.TtsService;
 import com.animeshahilya.espeakng.Voice;
 

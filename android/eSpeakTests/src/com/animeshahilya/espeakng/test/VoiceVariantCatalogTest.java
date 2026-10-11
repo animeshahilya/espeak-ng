@@ -24,8 +24,8 @@ import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.animeshahilya.espeakng.CheckVoiceData;
-import com.animeshahilya.espeakng.preference.VoiceVariantPreference;
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+import com.animeshahilya.espeakng.ui.preference.VoiceVariantPreference;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

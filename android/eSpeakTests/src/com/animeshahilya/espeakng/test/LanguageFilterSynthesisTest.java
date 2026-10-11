@@ -29,7 +29,7 @@ import android.util.Log;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.animeshahilya.espeakng.LanguageSettings;
+import com.animeshahilya.espeakng.ui.LanguageSettings;
 import com.animeshahilya.espeakng.SpeechSynthesis;
 
 import org.junit.After;

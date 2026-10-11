@@ -29,8 +29,8 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.animeshahilya.espeakng.CheckVoiceData;
-import com.animeshahilya.espeakng.DownloadVoiceData;
+import com.animeshahilya.espeakng.tts.CheckVoiceData;
+import com.animeshahilya.espeakng.tts.DownloadVoiceData;
 import com.animeshahilya.espeakng.SpeechSynthesis;
 
 import org.junit.Before;
@@ -176,7 +176,7 @@ public class CheckVoiceDataTest
 
         for (int round = 0; round < 5; round++) {
             // A stale version stamp makes the next extraction rebuild the tree.
-            com.animeshahilya.espeakng.FileUtils.write(version, "stale");
+            FileUtils.write(version, "stale");
             final Thread extractor = new Thread(() -> CheckVoiceData.extractVoiceData(context));
             extractor.start();
             while (extractor.isAlive()) {
