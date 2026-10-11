@@ -5,7 +5,7 @@
 # private Java methods invoked FROM native code, with no Java-side call site for R8 to see,
 # so nothing marks them as used without this rule. Renaming, inlining, or stripping any
 # member of this class breaks synthesis at runtime with no compile-time warning. See
-# android/CLAUDE.md's "Release signing" section for why minification was off until this
+# the root CLAUDE.md's "Release signing" section for why minification was off until this
 # rule existed and was verified on a real device.
 -keep class com.animeshahilya.espeakng.SpeechSynthesis {
     *;

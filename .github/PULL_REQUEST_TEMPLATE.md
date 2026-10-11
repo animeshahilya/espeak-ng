@@ -30,7 +30,7 @@ Brief description of changes and motivation.
 - [ ] CHANGELOG.md updated under `## Unreleased`
 - [ ] README.md updated if user-facing change
 - [ ] Code comments added for complex logic
-- [ ] android/CLAUDE.md updated if architecture changed
+- [ ] CLAUDE.md updated if architecture changed
 
 ## Checklist
 - [ ] Commits are focused (one logical change per commit)

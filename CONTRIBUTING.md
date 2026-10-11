@@ -83,7 +83,7 @@ Voice data comes from `dictsource/` and `phsource/`. To update:
 
 ## Architecture Notes
 
-See [android/CLAUDE.md](android/CLAUDE.md) for detailed architecture, build configuration, and common workflows.
+See [CLAUDE.md](CLAUDE.md) for detailed architecture, build configuration, and common workflows.
 
 ## License
 

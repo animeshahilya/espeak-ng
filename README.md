@@ -190,7 +190,7 @@ The release build is signed when `android/keystore.properties` exists. APKs go t
 
 The app supports Android 8.0 and newer (minSdk 26, targetSdk 37), phones and Wear OS. The native library is built with 16 KB page alignment for Android 15+. Edge-to-edge layouts and predictive back gestures are fully supported.
 
-For architecture and contributor notes, see [android/CLAUDE.md](android/CLAUDE.md).
+For architecture and contributor notes, see [CLAUDE.md](CLAUDE.md).
 
 ---
 
