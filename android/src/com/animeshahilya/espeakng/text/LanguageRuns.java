@@ -414,9 +414,8 @@ public final class LanguageRuns {
                 // ASCII digits, punctuation, and whitespace belong to the run around them.
                 continue;
             }
-            if (Character.isDigit(c)) {
-                continue;
-            }
+            // Not every digit is common: ५ is Devanagari, and the full split
+            // gives it to its language, so it goes there.
             final UnicodeScript script = UnicodeScript.of(c);
             if (script == UnicodeScript.COMMON || script == UnicodeScript.INHERITED
                     || script == UnicodeScript.UNKNOWN) {
@@ -483,8 +482,14 @@ public final class LanguageRuns {
      *       like brand names or loanwords.</li>
      *   <li>{@code "sentences"}: only keeps foreign runs that form complete clauses or sentences.</li>
      * </ul>
+     *
+     * @param lettersOnly the base language's voice reads only its own
+     *                    script's letters (a SYSPIN or Rasa natural voice):
+     *                    a run in another script then always switches, as
+     *                    that voice would drop it
      */
-    static List<Run> applySensitivity(List<Run> runs, String baseLanguage, String sensitivity) {
+    static List<Run> applySensitivity(List<Run> runs, String baseLanguage, String sensitivity,
+                                      boolean lettersOnly) {
         if (runs == null || runs.size() <= 1 || sensitivity == null
                 || VoiceSettings.SWITCHING_WORDS.equals(sensitivity) || "".equals(sensitivity)) {
             return runs;
@@ -504,7 +509,9 @@ public final class LanguageRuns {
                 continue;
             }
             boolean keep = true;
-            if (phrasesMode) {
+            if (lettersOnly && !inScriptOf(run.text, baseLanguage)) {
+                keep = true;
+            } else if (phrasesMode) {
                 // Keep alphanumeric compounds (e.g. 1st, 4G, 10am) in Latin engine so ordinals are spoken
                 if (AsciiUtils.hasDigit(run.text) && AsciiUtils.hasAsciiLetter(run.text)) {
                     keep = true;
@@ -544,6 +551,22 @@ public final class LanguageRuns {
         return merged;
     }
 
+    /** Whether every letter of {@code text} is in a script {@code language} is written in. */
+    private static boolean inScriptOf(String text, String language) {
+        for (int i = 0; i < text.length(); ) {
+            final int cp = text.codePointAt(i);
+            i += Character.charCount(cp);
+            if (!Character.isLetter(cp)) {
+                continue;
+            }
+            final UnicodeScript script = UnicodeScript.of(cp);
+            if (script != scriptOf(language) && !writtenIn(language, script)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static List<Run> split(String text, String language) {
         return split(text, language, Collections.emptyMap(), null, null);
     }
@@ -571,6 +594,12 @@ public final class LanguageRuns {
      */
     public static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
                            String numbers, String sensitivity) {
+        return split(text, language, chosen, numbers, sensitivity, false);
+    }
+
+    /** As above; {@code lettersOnly} as in {@link #applySensitivity}. */
+    public static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
+                           String numbers, String sensitivity, boolean lettersOnly) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
@@ -579,7 +608,7 @@ public final class LanguageRuns {
         }
         final List<Run> runs = identify(split(text, language,
                 new FastLanguageResolver(text, language, chosen, numbers)), text, chosen);
-        return applySensitivity(runs, language, sensitivity);
+        return applySensitivity(runs, language, sensitivity, lettersOnly);
     }
 
     /**

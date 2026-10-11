@@ -91,9 +91,11 @@ public final class TechWordsNormalizer {
                     + "|mac[ -]?os"
                     + "|gpt(?:-?[0-9]+(?:\\.[0-9]+)?[a-z]*)?"
                     + "|co[ -]?pilot(?:['\u2019]s)?"
-                    + "|perplexity(?:['\u2019]s)?"
-                    + "|anthropic(?:['\u2019]s)?"
-                    + "|mistral(?:['\u2019]s)?"
+                    // Capitalized only: lower case they are English words
+                    // ("the perplexity of", "a mistral wind").
+                    + "|(?-i:Perplexity)(?:['\u2019]s)?"
+                    + "|(?-i:Anthropic)(?:['\u2019]s)?"
+                    + "|(?-i:Mistral)(?:['\u2019]s)?"
                     + "|ollama(?:['\u2019]s)?"
                     + "|hugging[ -]?face(?:['\u2019]s)?"
                     + "|stable[ -]?diffusion(?:['\u2019]s)?"

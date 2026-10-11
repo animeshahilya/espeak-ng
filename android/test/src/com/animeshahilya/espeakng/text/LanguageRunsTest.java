@@ -342,6 +342,10 @@ public class LanguageRunsTest {
         assertFalse(LanguageRuns.isPurelyOwnScript("नमस्ते दोस्त", "hin", null, null));
         // If numbers have a specific language, do not fast-path
         assertFalse(LanguageRuns.isPurelyOwnScript("Hello 123", "eng", null, "hin"));
+        // A Devanagari digit is Devanagari, not common: the full split decides
+        assertFalse(LanguageRuns.isPurelyOwnScript("Room ५ is free", "eng", null, null));
+        // A script's own digits stay with it
+        assertTrue(LanguageRuns.isPurelyOwnScript("அறை ௫ காலியாக உள்ளது", "tam", null, null));
     }
 
     @Test
@@ -367,6 +371,19 @@ public class LanguageRunsTest {
                 describe(LanguageRuns.split("आज 1st तारीख है", "hin", null, null, VoiceSettings.SWITCHING_PHRASES)));
         assertEquals("hin@0[मेरा फ़ोन]eng@9[ 4G]hin@12[ सपोर्ट करता है]",
                 describe(LanguageRuns.split("मेरा फ़ोन 4G सपोर्ट करता है", "hin", null, null, VoiceSettings.SWITCHING_PHRASES)));
+    }
+
+    /**
+     * A SYSPIN/Rasa voice reads only its own script's letters: words in
+     * another script still switch, or that voice would drop them.
+     */
+    @Test
+    public void switchingSensitivity_letterVoiceKeepsOtherScripts() {
+        assertEquals("hin@0[कृपया]eng@5[ OK]hin@8[ दबाइए]", describe(LanguageRuns.split(
+                "कृपया OK दबाइए", "hin", null, null, VoiceSettings.SWITCHING_PHRASES, true)));
+        assertEquals("hin@0[मेरा फ़ोन]eng@9[ Samsung]hin@17[ है और इसमें]eng@29[ 5G]hin@32[ है।]",
+                describe(LanguageRuns.split("मेरा फ़ोन Samsung है और इसमें 5G है।", "hin", null, null,
+                        VoiceSettings.SWITCHING_SENTENCES, true)));
     }
 
     @Test

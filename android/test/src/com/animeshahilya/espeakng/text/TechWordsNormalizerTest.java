@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TechWordsNormalizerTest {
 
@@ -307,5 +308,15 @@ public class TechWordsNormalizerTest {
         assertEquals("Zep-to", TechWordsNormalizer.process("Zepto"));
         assertEquals("Oh-la", TechWordsNormalizer.process("Ola"));
         assertEquals("Oo-ber", TechWordsNormalizer.process("Uber"));
+    }
+
+    /** Brand names that are also English words are rewritten only when capitalized. */
+    @Test
+    public void testBrandsThatAreEnglishWordsNeedCapitals() {
+        assertEquals("The perplexity grew.", TechWordsNormalizer.process("The perplexity grew."));
+        assertEquals("A mistral wind blew.", TechWordsNormalizer.process("A mistral wind blew."));
+        assertEquals("the anthropic principle", TechWordsNormalizer.process("the anthropic principle"));
+        assertTrue(TechWordsNormalizer.process("Ask Perplexity").contains("Per-plexity"));
+        assertTrue(TechWordsNormalizer.process("Mistral's model").contains("Mis-tral's"));
     }
 }

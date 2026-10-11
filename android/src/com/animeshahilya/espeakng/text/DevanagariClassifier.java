@@ -653,8 +653,8 @@ public final class DevanagariClassifier {
         while (i < text.length() && Character.isWhitespace(text.charAt(i))) {
             i++;
         }
-        final char next = i < text.length() ? text.charAt(i) : ' ';
-        final boolean finalWord = next == ' ' || next == '?' || next == '!' || next == '.'
+        final char next = i < text.length() ? text.charAt(i) : '\0';
+        final boolean finalWord = next == '\0' || next == '?' || next == '!' || next == '.'
                 || next == '।';
         if (!finalWord || ("का".equals(word) && next != '?')) {
             return false;

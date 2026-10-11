@@ -1107,7 +1107,6 @@ public final class PiperDownloads {
     }
 
     /** Finishes downloads whose completion broadcast was missed (process death). */
-    /** Finishes downloads whose completion broadcast was missed (process death). */
     public static void reconcile(Context appContext, Context storageContext) {
         final SharedPreferences prefs = prefs(storageContext);
         for (String key : pendingKeys(storageContext)) {

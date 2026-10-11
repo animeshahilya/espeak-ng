@@ -922,6 +922,12 @@ public class TtsService extends TextToSpeechService {
         // clearing the flag later used to erase it - the whole first chunk
         // then rendered before the next item could speak.
         mIsStopped.set(false);
+        // This request has reported nothing yet, and no earlier request's
+        // dispatcher may answer for it: before, an early error (no voice, no
+        // text) found the last request's done flag still set and was never
+        // sent, and one after an earlier error went to the old callback.
+        mCallbackDone.set(false);
+        mCurrentDispatcher = null;
         if (selectVoice(request) == TextToSpeech.ERROR) {
             reportError(callback, CheckVoiceData.hasBaseResources(mStorageContext)
                     ? TextToSpeech.ERROR_SERVICE : TextToSpeech.ERROR_NOT_INSTALLED_YET);
@@ -1591,7 +1597,12 @@ public class TtsService extends TextToSpeechService {
                                                Map<UnicodeScript, String> runLanguages,
                                                String numbers, SharedPreferences prefs) {
         final String sensitivity = ScriptLanguages.switchingSensitivity(prefs);
-        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, own, runLanguages, numbers, sensitivity);
+        // A SYSPIN/Rasa voice reads only its own script's letters: words in
+        // another script must not be folded into it, or they go unspoken.
+        final PiperVoiceStore.Installed ownNatural = VoiceSettings.SWITCHING_WORDS.equals(sensitivity)
+                ? null : PiperVoiceStore.assignedFor(mStorageContext, prefs, own);
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, own, runLanguages, numbers, sensitivity,
+                ownNatural != null && !ownNatural.config.usesEspeak());
         List<LanguageRuns.Run> out = null;
         for (int i = 0; i < runs.size(); i++) {
             final LanguageRuns.Run run = runs.get(i);

@@ -205,6 +205,17 @@ public final class TextPreprocessor {
                 text = edits.track(text, settings.isEmojiIgnoreEnabled()
                         ? filterEmojis(text) : clarifyEmojiAnnouncements(text, lang));
             }
+            // A lone digit keeps the two number settings the full path applies.
+            if (containsDigit(text)) {
+                if (VoiceSettings.NUMBERS_ENGLISH.equals(settings.getNumbersLanguage())
+                        && VoiceSettings.READING_NORMAL.equals(settings.getReadingMode())
+                        && !english && !NumberReading.isLatinScript(lang)) {
+                    text = edits.track(text, NumberReading.englishNumbers(text, true));
+                }
+                if (indianNumbers(settings, lang)) {
+                    text = edits.track(text, normalizeIndicDigits(text));
+                }
+            }
             return new Result(text, edits.map, true);
         }
 
@@ -217,10 +228,7 @@ public final class TextPreprocessor {
         // branches below and the NVDA pass (code mode selects level ALL there).
         final String readingMode = settings.getReadingMode();
         final boolean normalReading = !isSsml && VoiceSettings.READING_NORMAL.equals(readingMode);
-        final String indianVoices = settings.getIndianNumberingVoices();
-        final boolean indianNumbers = VoiceSettings.INDIAN_NUMBERING_ALL.equals(indianVoices)
-                || (VoiceSettings.INDIAN_NUMBERING_INDIAN.equals(indianVoices)
-                        && isIndianLanguage(lang));
+        final boolean indianNumbers = indianNumbers(settings, lang);
 
         // Universal tech word, app name & acronym normalization: ensures natural
         // voices (Piper, SYSPIN, Rasa, Kokoro, eSpeak) pronounce terms like ChatGPT,
@@ -554,6 +562,24 @@ public final class TextPreprocessor {
             if (text.charAt(i) >= 0x2600) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /** Indian number reading for this voice: Indian voices by default, or every voice. */
+    private static boolean indianNumbers(VoiceSettings settings, String lang) {
+        final String voices = settings.getIndianNumberingVoices();
+        return VoiceSettings.INDIAN_NUMBERING_ALL.equals(voices)
+                || (VoiceSettings.INDIAN_NUMBERING_INDIAN.equals(voices) && isIndianLanguage(lang));
+    }
+
+    private static boolean containsDigit(String text) {
+        for (int i = 0; i < text.length(); ) {
+            final int cp = text.codePointAt(i);
+            if (Character.isDigit(cp)) {
+                return true;
+            }
+            i += Character.charCount(cp);
         }
         return false;
     }
