@@ -292,6 +292,20 @@ public final class PiperAudio {
         return new Pcm(finalOut, from, finalOut.length, cuts);
     }
 
+    /**
+     * The level a chunk is set to inside a passage: halfway, in dB, between
+     * its own and the passage's so far, at most 3 dB from its own. Each chunk
+     * brought to the target alone made long text pump (a soft clause as loud
+     * as an emphatic one); the bound keeps trimming, which follows the level,
+     * where it was. The first chunk (passage 0) keeps its own.
+     */
+    static double passageLevel(double passage, double own) {
+        if (passage <= 0 || own <= 0) {
+            return own;
+        }
+        return Math.max(own / 2, Math.min(own * 2, Math.sqrt(passage * own)));
+    }
+
     /** Mean power of the speaking 10 ms frames: what the level is set from; 0 for silence. */
     static double speechPower(float[] audio, int sampleRate) {
         return audio == null || audio.length == 0 ? 0 : speech(framePowers(audio, frameSize(sampleRate)));
@@ -384,13 +398,15 @@ public final class PiperAudio {
     }
 
     /**
-     * Pause after a chunk, in samples. Piper's default is 0.2 s after a
-     * sentence; clause cuts made for latency get a short comma-sized gap.
+     * Pause after a chunk, in samples: 0.3 s after a sentence (Piper's 0.2 s
+     * ran sentences together when reading; polished voices pause about 0.3-0.5
+     * s), a short comma-sized gap after clause cuts made for latency. Never
+     * after the last chunk, so a screen reader's short items are unchanged.
      * Both follow the reading-pace setting (pauseScale, percent) and shrink
      * with speed like eSpeak's own pauses do.
      */
     static int pauseSamples(int sampleRate, boolean sentence, int pauseScalePercent, float speed) {
-        final float base = sentence ? 0.20f : 0.08f;
+        final float base = sentence ? 0.30f : 0.08f;
         final float scaled = base * Math.max(0, pauseScalePercent) / 100f / Math.max(1f, speed);
         return Math.round(sampleRate * scaled);
     }

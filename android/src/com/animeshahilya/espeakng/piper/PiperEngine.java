@@ -982,6 +982,8 @@ public final class PiperEngine {
         final float noiseW;
         final int maxPauseMs;
         final PiperModel.RunHandle handle;
+        /** Speech power the passage has been set to so far (0 before its first chunk). */
+        private volatile double passageLevel;
 
         Pass(PiperModel model, Params params, TimeStretcher stretcher, float residualSpeed,
              float pitch, float lengthScale, int speaker, float noise, float noiseW, int maxPauseMs,
@@ -1002,6 +1004,7 @@ public final class PiperEngine {
         /** A chunk, in two pieces if {@code split} and the voice allows (see class comment). */
         Rendered render(Job job, boolean split) throws OrtException {
             final long started = System.nanoTime();
+            final double passage = passageLevel;
             final String key = model.config.key;
             final int words = job.words.length / 2;
             // A chunk said before with these settings: its model run, re-processed.
@@ -1010,7 +1013,7 @@ public final class PiperEngine {
             final PiperPhraseCache.Entry cached = mCache.get(cacheKey);
             if (cached != null) {
                 final Rendered r = finish(cached.audio, cached.durations, job.wordStarts, 0, words,
-                        true, true, 0, trebleCut());
+                        true, true, 0, passage, trebleCut());
                 timed(true, started);
                 return r;
             }
@@ -1033,7 +1036,7 @@ public final class PiperEngine {
                 }
                 mCache.offer(cacheKey, audio, o.durations); // before finish() alters the audio
                 final Rendered r = finish(audio, o.durations, job.wordStarts, 0, words, true, true, 0,
-                        trebleCut());
+                        passage, trebleCut());
                 timed(false, started);
                 return r;
             }
@@ -1062,7 +1065,7 @@ public final class PiperEngine {
                 }
                 mCache.offer(cacheKey, audio, e.durations);
                 final Rendered r = finish(audio, e.durations, job.wordStarts, 0, words, true, true, 0,
-                        trebleCut());
+                        passage, trebleCut());
                 timed(false, started);
                 return r;
             }
@@ -1078,7 +1081,7 @@ public final class PiperEngine {
             final float[] headRaw = head.clone(); // finish() may alter head; the cache needs it as made
             final PiperAudio.TrebleCut treble = trebleCut(); // one filter across both pieces
             final Rendered first = finish(head, Arrays.copyOfRange(e.durations, 0, splitId),
-                    job.wordStarts.subList(0, cut), 0, cut, true, false, 0, treble);
+                    job.wordStarts.subList(0, cut), 0, cut, true, false, 0, passage, treble);
             timed(false, started);
             final List<Integer> restStarts = new ArrayList<>();
             for (int w = cut; w < words; w++) {
@@ -1095,7 +1098,8 @@ public final class PiperEngine {
                 System.arraycopy(tail, 0, whole, headRaw.length, tail.length);
                 mCache.offer(cacheKey, whole, e.durations);
                 return finish(tail, Arrays.copyOfRange(e.durations, splitId, e.durations.length),
-                        restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate), treble);
+                        restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate), passage,
+                        treble);
             });
             return first;
         }
@@ -1114,13 +1118,22 @@ public final class PiperEngine {
             return model.config.hissy ? new PiperAudio.TrebleCut(model.config.sampleRate) : null;
         }
 
-        /** Treble cut, level, trim, pause cap, stretch and PCM bytes for one piece of audio. */
+        /**
+         * Treble cut, level, trim, pause cap, stretch and PCM bytes for one piece of audio.
+         *
+         * @param passage the passage's level when this chunk started ({@link #passageLevel});
+         *                the piece that ends the chunk ({@code tail}) moves it on
+         */
         private Rendered finish(float[] audio, float[] durations, List<Integer> wordStarts,
                                 int wordFrom, int wordTo, boolean lead, boolean tail, double level,
-                                PiperAudio.TrebleCut treble) {
+                                double passage, PiperAudio.TrebleCut treble) {
             final int rate = model.config.sampleRate;
             if (treble != null) {
                 audio = treble.apply(audio);
+            }
+            level = PiperAudio.passageLevel(passage, level > 0 ? level : PiperAudio.speechPower(audio, rate));
+            if (tail && level > 0) {
+                passageLevel = level;
             }
             final PiperAudio.Pcm pcm = PiperAudio.process(audio, params.volume, rate,
                     params.trimSilence && lead, params.trimSilence && tail, maxPauseMs, level,

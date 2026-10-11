@@ -123,10 +123,10 @@ public class PiperAudioTest {
 
     @Test
     public void pausesFollowReadingPaceAndSpeed() {
-        assertEquals(4410, PiperAudio.pauseSamples(22050, true, 100, 1f));
-        assertEquals(2205, PiperAudio.pauseSamples(22050, true, 50, 1f));
-        assertEquals(2205, PiperAudio.pauseSamples(22050, true, 100, 2f));
-        assertTrue(PiperAudio.pauseSamples(22050, false, 100, 1f) < 4410);
+        assertEquals(6615, PiperAudio.pauseSamples(22050, true, 100, 1f));
+        assertEquals(3308, PiperAudio.pauseSamples(22050, true, 50, 1f));
+        assertEquals(3308, PiperAudio.pauseSamples(22050, true, 100, 2f));
+        assertTrue(PiperAudio.pauseSamples(22050, false, 100, 1f) < 6615);
     }
 
     @Test
@@ -313,5 +313,14 @@ public class PiperAudioTest {
         for (int i = 1; i < frames.length; i++) {
             assertTrue("frames must be non-decreasing", frames[i] >= frames[i - 1]);
         }
+    }
+    /** A passage keeps one loudness: halfway (dB) to its level, never more than 3 dB off a chunk's own. */
+    @Test
+    public void chunkLevelFollowsThePassage() {
+        assertEquals(0.01, PiperAudio.passageLevel(0, 0.01), 1e-12);      // first chunk: its own
+        assertEquals(0.02, PiperAudio.passageLevel(0.04, 0.01), 1e-12);   // 6 dB apart: 3 dB toward
+        assertEquals(0.02, PiperAudio.passageLevel(1.0, 0.01), 1e-12);    // far louder passage: +3 dB at most
+        assertEquals(0.005, PiperAudio.passageLevel(1e-6, 0.01), 1e-12);  // far quieter: -3 dB at most
+        assertEquals(0, PiperAudio.passageLevel(0.04, 0), 0);             // silence stays silence
     }
 }
