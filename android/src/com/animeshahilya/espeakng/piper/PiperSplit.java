@@ -272,11 +272,46 @@ public final class PiperSplit {
             return null;
         }
         final List<String> out = new ArrayList<>();
-        out.add(latent);
-        final List<String> rest = new ArrayList<>(crossing);
+        out.add(beforeQdq(latent, producers, weights));
+        final List<String> rest = new ArrayList<>();
+        for (String c : crossing) {
+            rest.add(beforeQdq(c, producers, weights));
+        }
         Collections.sort(rest);
         out.addAll(rest);
         return out;
+    }
+
+    /**
+     * A Compact (INT8-decoder) model quantizes the latent and the speaker
+     * conditioning on their way into the decoder (QuantizeLinear then
+     * DequantizeLinear, both outside "/dec/"). The cut goes before that pair,
+     * so the decoder runs it itself (a copy, when the encoder's flow reads
+     * the quantized speaker vector too - two elementwise nodes over fixed
+     * scales): the boundary then has the Standard model's names, which the
+     * INT8 NPU decoders (npu_decoders.json) are built to read.
+     */
+    private static String beforeQdq(String tensor, Map<String, Entry> producers, Set<String> weights) {
+        final Entry dq = producers.get(tensor);
+        if (dq == null || !"DequantizeLinear".equals(dq.opType) || dq.inputs.isEmpty()) {
+            return tensor;
+        }
+        final Entry q = producers.get(dq.inputs.get(0));
+        if (q == null || !"QuantizeLinear".equals(q.opType) || q.inputs.isEmpty()
+                || !onlyWeights(q.inputs.subList(1, q.inputs.size()), weights)
+                || !onlyWeights(dq.inputs.subList(1, dq.inputs.size()), weights)) {
+            return tensor;
+        }
+        return q.inputs.get(0);
+    }
+
+    private static boolean onlyWeights(List<String> names, Set<String> weights) {
+        for (String n : names) {
+            if (!n.isEmpty() && !weights.contains(n)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Nodes the given tensors are computed from, not looking past {@code stop}. */

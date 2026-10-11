@@ -115,6 +115,68 @@ public class PiperSplitTest {
                 Files.readAllBytes(dec.toPath()));
     }
 
+    /**
+     * Compact quantizes the latent on its way into the decoder: the pair goes
+     * with the decoder, so the boundary keeps the Standard name the NPU
+     * decoders read.
+     */
+    @Test
+    public void aCompactLatentsQuantizePairGoesWithTheDecoder() throws Exception {
+        final File in = tmp.newFile("model.onnx");
+        final File enc = tmp.newFile("enc.onnx");
+        final File dec = tmp.newFile("dec.onnx");
+        final byte[] q = node("/Mul_7_output_0_QuantizeLinear", "QuantizeLinear",
+                "/Mul_7_output_0_QuantizeLinear_Output", "/Mul_7_output_0", "s", "z");
+        final byte[] dq = node("/Mul_7_output_0_DequantizeLinear", "DequantizeLinear",
+                "/Mul_7_output_0_DequantizeLinear_Output", "/Mul_7_output_0_QuantizeLinear_Output", "s", "z");
+        final byte[] conv = node("/dec/conv_pre/Conv", "Conv", "/dec/a",
+                "/Mul_7_output_0_DequantizeLinear_Output", "dec.w");
+        Files.write(in.toPath(), model(cat(ENC, CEIL, MASK, q, dq, conv, TANH, ENC_W, DEC_W,
+                initializer("s"), initializer("z"), INPUT, field(12, str(1, "output")))));
+
+        assertTrue(PiperSplit.split(in, enc, dec));
+        assertArrayEquals(model(cat(ENC, CEIL, MASK, ENC_W, INPUT,
+                        PiperAlignment.outputEntry("/Mul_7_output_0"),
+                        PiperAlignment.outputEntry("/Ceil_output_0"))),
+                Files.readAllBytes(enc.toPath()));
+        assertArrayEquals(model(cat(q, dq, conv, TANH, DEC_W, initializer("s"), initializer("z"),
+                        PiperSplit.floatInput("/Mul_7_output_0"), PiperAlignment.outputEntry("output"))),
+                Files.readAllBytes(dec.toPath()));
+    }
+
+    /**
+     * Compact Rasa's quantized speaker vector also feeds the encoder's flow:
+     * both halves get the pair, and the decoder reads the Standard name.
+     */
+    @Test
+    public void aQuantizePairTheEncoderAlsoReadsIsCopiedIntoTheDecoder() throws Exception {
+        final File in = tmp.newFile("model.onnx");
+        final File enc = tmp.newFile("enc.onnx");
+        final File dec = tmp.newFile("dec.onnx");
+        final byte[] g = node("/Add", "Add", "/Add_output_0", "sid", "emb.w");
+        final byte[] q = node("/q", "QuantizeLinear", "/q_out", "/Add_output_0", "s", "z");
+        final byte[] dq = node("/dq", "DequantizeLinear", "/dq_out", "/q_out", "s", "z");
+        final byte[] flow = node("/flow/cond/Conv", "Conv", "/h", "input", "/dq_out");
+        final byte[] cond = node("/dec/cond/Conv", "Conv", "/dec/c", "/dq_out", "cond.w");
+        final byte[] add = node("/dec/Add", "Add", "/dec/x", "/dec/a", "/dec/c");
+        final byte[] tanh = node("/dec/Tanh", "Tanh", "output", "/dec/x");
+        Files.write(in.toPath(), model(cat(g, q, dq, flow, CEIL, MASK, CONV, cond, add, tanh,
+                initializer("emb.w"), initializer("s"), initializer("z"), initializer("cond.w"), DEC_W,
+                INPUT, field(11, str(1, "sid")), field(12, str(1, "output")))));
+
+        assertTrue(PiperSplit.split(in, enc, dec));
+        assertArrayEquals(model(cat(g, q, dq, flow, CEIL, MASK, initializer("emb.w"),
+                        initializer("s"), initializer("z"), INPUT, field(11, str(1, "sid")),
+                        PiperAlignment.outputEntry("/Mul_7_output_0"),
+                        PiperAlignment.outputEntry("/Add_output_0"),
+                        PiperAlignment.outputEntry("/Ceil_output_0"))),
+                Files.readAllBytes(enc.toPath()));
+        assertArrayEquals(model(cat(q, dq, CONV, cond, add, tanh, initializer("s"), initializer("z"),
+                        initializer("cond.w"), DEC_W, PiperSplit.floatInput("/Mul_7_output_0"),
+                        PiperSplit.floatInput("/Add_output_0"), PiperAlignment.outputEntry("output"))),
+                Files.readAllBytes(dec.toPath()));
+    }
+
     @Test
     public void aModelWithoutPipersDecoderIsNotSplit() throws Exception {
         final File in = tmp.newFile("model.onnx");

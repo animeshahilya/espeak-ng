@@ -563,7 +563,8 @@ voices" does not, so voices can still be deleted to free space.
   vs 11.9 dB, pause noise -48.2 vs -48.9 dBFS); Compact on the NPU gains
   nothing (its float islands - LeakyRelu, last stage - fall back to the CPU),
   and full INT8 is bad on a CPU (pause noise -38 dBFS), so the three stay
-  separate files. Covered: the kept SYSPIN/Rasa Standard keys and Piper high (32).
+  separate files. Covered: the kept SYSPIN/Rasa keys (now the Compact model,
+  whose split reads the same names) and Piper high (32).
   Speed is measured, not assumed: an NPU graph is kept only if a timed window
   runs at `MIN_NPU_SPEED` (4x) or more - only the 8 Elite was ever measured.
   NPU tuning, Galaxy S25 Ultra, 2026-10-08 (native bench, QNN 2.42 / ORT
@@ -610,6 +611,27 @@ voices" does not, so voices can still be deleted to free space.
   Standard copy (`confirmSwap` -> `requestSwap` -> `finishSwap` in
   `complete()`). Downloaded-voices storage totals count shared inodes once
   (`PiperVoiceStore.diskBytes`).
+  **SYSPIN/Rasa: one version since 2026-10-11** (user's call - the 2.9
+  INT8 voices were well liked, the big Standard not needed). Each kept
+  SYSPIN/Rasa voice is one catalog entry: the Standard key (`-medium`,
+  quality "medium", its `piper-v2` config) with the Compact model
+  (`int8-v1/...-compact.onnx`); no `-compact` entries, no `heavy` flag (so
+  plain "Standard" labels and no Compact steering). The twin machinery
+  above now serves only the Piper "high" voices. Installed copies move
+  over: an old Standard through `checkForUpdates` (its model MD5 changed),
+  an installed Compact through `PiperDownloads.mergeCompactTwins` at service
+  start - folder renamed to the Standard key, config quality patched (the
+  released configs then match the catalog's byte for byte, checked for all
+  28), assignments/speed/speaker/recent prefs moved, a Standard copy beside
+  it deleted. Its rule: the Compact key is no longer listed and its Standard
+  twin is (`mergedTwin`). For the NPU, `PiperSplit` puts a Compact latent's
+  QuantizeLinear/DequantizeLinear pair (and Rasa's speaker vector's, copied
+  since the flow reads it too) in the decoder, so the boundary keeps the
+  Standard names (`/Mul_7_output_0`, `/Add_output_0`) the INT8 NPU decoders
+  read; checked on PC: enc+dec equals the whole model exactly, and the NPU
+  file fed the Compact latent is as close as with the Standard one.
+  `PiperModel.forgetOptimized` re-splits a migrated voice where the original
+  is still kept (Snapdragon build).
 - **INT8 weights** (2026-10-08, release `int8-v1` on sherpa-onnx-respin-syspin,
   its `build_small.py`): every model the app lists is stored with INT8
   weights - per output channel, the clip with the least squared error,
@@ -619,7 +641,8 @@ voices" does not, so voices can still be deleted to free space.
   114-128 -> 43-47 MB, below); `PiperDownloads.mergeExtras` lets a bundled entry replace
   rhasspy's of the same key, and `checkForUpdates` moves installed copies to
   it. There is no second version of these: the user heard them as the same.
-  Heavy voices keep Standard + Compact: Standard computes its HiFi-GAN
+  Heavy voices kept Standard + Compact until 2026-10-11 (SYSPIN/Rasa now
+  ship only Compact, see above; Piper high keeps both): Standard computes its HiFi-GAN
   decoder in fp16 (`_half_decoder`; conv_pre stays float so the split and
   the NPU decoders still read the float latent) - Pixel 8, SYSPIN decoder
   2.0 -> 2.4-2.7x real time, 62-78 dB SNR vs float32, 58 -> 43 MB (Rasa

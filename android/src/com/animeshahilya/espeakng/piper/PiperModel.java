@@ -465,6 +465,36 @@ public final class PiperModel implements Closeable {
                 || new File(sharedDir, base + OPTIMIZED_SUFFIX).isFile();
     }
 
+    /**
+     * Forgets a voice's optimized copies, and the shared store's for its
+     * model, so the next load splits it again (a Compact voice split before
+     * PiperSplit moved its quantize pair into the decoder, whose boundary no
+     * INT8 NPU decoder reads). Only while the original is here to split
+     * from: the Snapdragon build keeps it, the standard build has no NPU.
+     */
+    static void forgetOptimized(File dir) {
+        if (!new File(dir, "model.onnx").isFile()) {
+            return;
+        }
+        deleteOptimized(dir, OPTIMIZED_PREFIX);
+        final String md5 = sourceMd5(dir);
+        final File voices = dir.getParentFile();
+        if (md5 != null && voices != null && voices.getParentFile() != null) {
+            deleteOptimized(new File(voices.getParentFile(), PiperVoiceStore.SHARED_DIR), md5 + ".");
+        }
+    }
+
+    private static void deleteOptimized(File dir, String prefix) {
+        final File[] files = dir.listFiles((d, n) -> n.startsWith(prefix)
+                && (n.endsWith(".ort") || n.contains(".npu")));
+        if (files != null) {
+            for (File f : files) {
+                //noinspection ResultOfMethodCallIgnored
+                f.delete();
+            }
+        }
+    }
+
     private static volatile Boolean sNpuRuntime;
 
     /**

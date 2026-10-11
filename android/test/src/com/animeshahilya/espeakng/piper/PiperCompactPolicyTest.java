@@ -30,6 +30,19 @@ public class PiperCompactPolicyTest {
         assertFalse(PiperDownloads.preferCompact(false, "medium", PiperDevice.Fit.SLOW));
     }
 
+    /** SYSPIN/Rasa Compact installs move to the Standard key; Piper "high" Compact twins stay. */
+    @Test
+    public void aCompactVoiceMergesOnlyWhenItsKeyIsNoLongerListed() {
+        final List<PiperDownloads.CatalogVoice> catalog = new ArrayList<>();
+        catalog.add(voice("hi_IN-kavya-medium", "medium", false));
+        catalog.add(voice("de_DE-thorsten-high", "high", false));
+        catalog.add(voice("de_DE-thorsten-compact", "compact", false));
+        assertEquals("hi_IN-kavya-medium",
+                PiperDownloads.mergedTwin("hi_IN-kavya-compact", catalog).key);
+        assertNull(PiperDownloads.mergedTwin("de_DE-thorsten-compact", catalog));
+        assertNull(PiperDownloads.mergedTwin("mr_IN-mrunal-compact", catalog));
+    }
+
     @Test
     public void compactComesFirstOnSlowPhones() {
         final List<PiperDownloads.CatalogVoice> in = new ArrayList<>();

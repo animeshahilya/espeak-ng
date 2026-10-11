@@ -372,6 +372,7 @@ public class TtsService extends TextToSpeechService {
         // is non-fatal - the lazy path will retry if a synthesis actually needs it.
         EspeakApp.runAsync(() -> {
             try {
+                PiperDownloads.mergeCompactTwins(mStorageContext);
                 // Natural voice for the system language first: it takes the
                 // longest, and the first utterance is usually in that language.
                 final Voice systemVoice = findVoice(Voice.iso3Language(Locale.getDefault()),

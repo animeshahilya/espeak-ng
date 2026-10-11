@@ -109,21 +109,24 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(136, voices.size());
+        assertEquals(108, voices.size());
         // Only kept voices are bundled: none is filtered out again.
         assertEquals(voices.size(), PiperDownloads.keptOnly(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
                 // Every model is the INT8-weight build (int8-v1).
+                assertFalse(v.key, v.heavy);
                 if (PiperDownloads.isCompact(v.quality)) {
+                    // Piper "high" voices keep a Compact twin
                     assertTrue(v.key, v.key.endsWith("-compact"));
                     assertTrue(v.key, v.modelPath.matches("int8-v1/[^/]+-compact\\.onnx"));
-                    assertTrue(v.key, v.configPath.matches("(compact-v1|piper-v2)/[^/]+\\.onnx\\.json"));
-                } else if (v.heavy) {
-                    // SYSPIN / Rasa Standard
-                    assertTrue(v.key, v.modelPath.matches("int8-v1/[^/]+\\.onnx"));
-                    assertTrue(v.key, v.configPath.matches("piper-v2/[^/]+\\.onnx\\.json"));
+                    assertTrue(v.key, v.configPath.matches("compact-v1/[^/]+\\.onnx\\.json"));
+                } else if (v.modelPath.startsWith("int8-v1/vits-")) {
+                    // SYSPIN / Rasa: one version, the Compact model under the Standard key
+                    assertTrue(v.key, v.key.endsWith("-medium"));
+                    assertTrue(v.key, v.modelPath.matches("int8-v1/vits-[^/]+-compact\\.onnx"));
+                    assertEquals(v.key, "piper-v2/" + v.key + ".onnx.json", v.configPath);
                 } else {
                     // A Piper or community voice under its own key
                     assertEquals(v.key, "int8-v1/" + v.key + ".onnx", v.modelPath);

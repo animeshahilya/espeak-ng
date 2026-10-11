@@ -1229,6 +1229,107 @@ public final class PiperDownloads {
         }
     }
 
+    /**
+     * SYSPIN and Rasa voices come in one version: the Standard key now
+     * downloads the Compact model (the old Standard was larger and slower;
+     * nobody needed the choice). An installed Compact voice takes over that
+     * key with no download - same model bytes: its folder is renamed, its
+     * config gets the Standard quality (the configs differ in nothing else,
+     * so it matches the catalog), and the languages, speed and speaker set
+     * for it follow; a Compact model older than the catalog's is then
+     * replaced by {@link #checkForUpdates}, as is an old Standard copy with
+     * no Compact copy beside it. An old Standard copy beside one goes. Call
+     * before natural voices preload; off the main thread (an install from
+     * before "source" records is hashed once).
+     */
+    public static void mergeCompactTwins(Context storageContext) {
+        final List<CatalogVoice> extras = bundledExtras(storageContext);
+        final List<String> pending = pendingKeys(storageContext);
+        boolean merged = false;
+        for (PiperVoiceStore.Installed compact : PiperVoiceStore.list(storageContext)) {
+            if (!isCompact(compact.config.quality) || pending.contains(compact.key)) {
+                continue;
+            }
+            final CatalogVoice standard = mergedTwin(compact.key, extras);
+            final String[] source = standard == null ? null : installedSource(compact);
+            if (source == null || pending.contains(standard.key)) {
+                continue;
+            }
+            try {
+                mergeInto(storageContext, compact, standard, source[0]);
+                merged = true;
+                Log.i(TAG, compact.key + " is now " + standard.key);
+            } catch (IOException | RuntimeException e) {
+                Log.w(TAG, "Could not move " + compact.key + " to " + standard.key, e);
+            }
+        }
+        if (merged) {
+            PiperVoiceStore.invalidate();
+            collectSharedGarbage(storageContext, null);
+        }
+    }
+
+    /**
+     * The Standard catalog entry a Compact voice now belongs to: the Compact
+     * key is no longer listed, its Standard twin is (Piper "high" voices keep
+     * both). Null otherwise. Pure for JVM tests.
+     */
+    static CatalogVoice mergedTwin(String compactKey, List<CatalogVoice> catalog) {
+        CatalogVoice twin = null;
+        for (CatalogVoice v : catalog) {
+            if (v.key.equals(compactKey)) {
+                return null;
+            }
+            if (!isCompact(v.quality) && compactKey.equals(compactKey(v.key))) {
+                twin = v;
+            }
+        }
+        return twin;
+    }
+
+    private static void mergeInto(Context storageContext, PiperVoiceStore.Installed compact,
+                                  CatalogVoice standard, String modelMd5) throws IOException {
+        final PiperEngine engine = PiperEngine.get();
+        for (String key : new String[] {compact.key, standard.key}) {
+            engine.unload(key);
+            engine.deleteCachedPhrases(key);
+        }
+        final File target = new File(PiperVoiceStore.voicesDir(storageContext), standard.key);
+        deleteRecursively(target); // the old, larger Standard copy
+        if (target.exists() || !compact.dir.renameTo(target)) {
+            throw new IOException("rename failed");
+        }
+        final File config = new File(target, PiperVoiceStore.CONFIG_FILE);
+        final byte[] bytes = PiperVoiceStore.readText(config)
+                .replace("\"quality\": \"compact\"", "\"quality\": \"medium\"").getBytes(StandardCharsets.UTF_8);
+        writeAtomically(config, bytes);
+        writeAtomically(new File(target, SOURCE_FILE), (modelMd5 + "\n" + md5(bytes)).getBytes(StandardCharsets.UTF_8));
+        PiperModel.forgetOptimized(target);
+
+        final SharedPreferences prefs = settingsPrefs(storageContext);
+        final Map<String, ?> all = prefs.getAll();
+        final SharedPreferences.Editor e = prefs.edit();
+        for (Map.Entry<String, ?> p : all.entrySet()) {
+            if (p.getKey().startsWith(PiperVoiceStore.PREF_VOICE_PREFIX) && compact.key.equals(p.getValue())) {
+                e.putString(p.getKey(), standard.key);
+            }
+        }
+        for (String prefix : new String[] {PiperVoiceStore.PREF_SPEAKER_PREFIX, PiperVoiceStore.PREF_VOICE_SPEED_PREFIX}) {
+            final Object own = all.get(prefix + compact.key);
+            if (own instanceof String && !all.containsKey(prefix + standard.key)) {
+                e.putString(prefix + standard.key, (String) own);
+            }
+            e.remove(prefix + compact.key);
+        }
+        final List<String> recent = PiperVoiceStore.recent(prefs);
+        if (recent.contains(compact.key)) {
+            recent.remove(standard.key);
+            recent.set(recent.indexOf(compact.key), standard.key);
+            e.putString(PiperVoiceStore.PREF_RECENT, String.join(",", recent));
+        }
+        e.remove(PiperCrashGuard.PREF_SUSPENDED + compact.key).remove(PREF_SWAP_PREFIX + compact.key).apply();
+    }
+
     /** Model and config MD5s an installed voice came from (one per line). */
     public static final String SOURCE_FILE = "source";
     private static final String PREF_UPDATE_CHECKED = "piper_update_checked";

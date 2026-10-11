@@ -6,29 +6,12 @@
       "name_native": "English", "name_english": "English", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-en-male-model.onnx": {"size_bytes": 43399979, "md5_digest": "a5a4f567afd8f09eb53652a9f55ee1e5"},
-      "piper-v2/en_IN-rahul-medium.onnx.json": {"size_bytes": 2386, "md5_digest": "b97549dbc5bcd01653dd61b644ecef63"}
-    }
-  },
-  "en_IN-rahul-compact": {
-    "key": "en_IN-rahul-compact",
-    "name": "rahul",
-    "language": {"code": "en_IN", "family": "en", "region": "IN",
-      "name_native": "English", "name_english": "English", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-en-male-compact.onnx": {"size_bytes": 30487341, "md5_digest": "d4dbfe0f02c7199467ddbf1539e8f3c3"},
-      "piper-v2/en_IN-rahul-compact.onnx.json": {"size_bytes": 2387, "md5_digest": "2470993bedd58d8d9426f3bf3cac7cea"}
+      "piper-v2/en_IN-rahul-medium.onnx.json": {"size_bytes": 2386, "md5_digest": "b97549dbc5bcd01653dd61b644ecef63"}
     }
   },
   "ta_IN-rasa_female-medium": {
@@ -143,29 +126,12 @@
       "name_native": "বাংলা", "name_english": "Bengali", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/bn_IN-tithi-medium.onnx.json": {"size_bytes": 28197, "md5_digest": "8a62cd08422a2dec5e4d2e769eaf1a4f"}
-    }
-  },
-  "bn_IN-tithi-compact": {
-    "key": "bn_IN-tithi-compact",
-    "name": "tithi",
-    "language": {"code": "bn_IN", "family": "bn", "region": "IN",
-      "name_native": "বাংলা", "name_english": "Bengali", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/bn_IN-tithi-compact.onnx.json": {"size_bytes": 28198, "md5_digest": "79f737fc2191b056b61342032af5b6ab"}
+      "piper-v2/bn_IN-tithi-medium.onnx.json": {"size_bytes": 28197, "md5_digest": "8a62cd08422a2dec5e4d2e769eaf1a4f"}
     }
   },
   "bn_IN-anirban-medium": {
@@ -175,29 +141,12 @@
       "name_native": "বাংলা", "name_english": "Bengali", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/bn_IN-anirban-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "f061e0d47c2f4772d5efdaa49a1285cc"}
-    }
-  },
-  "bn_IN-anirban-compact": {
-    "key": "bn_IN-anirban-compact",
-    "name": "anirban",
-    "language": {"code": "bn_IN", "family": "bn", "region": "IN",
-      "name_native": "বাংলা", "name_english": "Bengali", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/bn_IN-anirban-compact.onnx.json": {"size_bytes": 28200, "md5_digest": "7df2c433432ddb0064f7df67a452d905"}
+      "piper-v2/bn_IN-anirban-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "f061e0d47c2f4772d5efdaa49a1285cc"}
     }
   },
   "kn_IN-spoorthi-medium": {
@@ -207,29 +156,12 @@
       "name_native": "ಕನ್ನಡ", "name_english": "Kannada", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/kn_IN-spoorthi-medium.onnx.json": {"size_bytes": 28200, "md5_digest": "3daa4044ac41c2fe14473588ea9f0d7b"}
-    }
-  },
-  "kn_IN-spoorthi-compact": {
-    "key": "kn_IN-spoorthi-compact",
-    "name": "spoorthi",
-    "language": {"code": "kn_IN", "family": "kn", "region": "IN",
-      "name_native": "ಕನ್ನಡ", "name_english": "Kannada", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/kn_IN-spoorthi-compact.onnx.json": {"size_bytes": 28201, "md5_digest": "f09e96f5786a0dda8756f1a524d65933"}
+      "piper-v2/kn_IN-spoorthi-medium.onnx.json": {"size_bytes": 28200, "md5_digest": "3daa4044ac41c2fe14473588ea9f0d7b"}
     }
   },
   "kn_IN-chetan-medium": {
@@ -239,29 +171,12 @@
       "name_native": "ಕನ್ನಡ", "name_english": "Kannada", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/kn_IN-chetan-medium.onnx.json": {"size_bytes": 28198, "md5_digest": "904e40eaab464de757be9af0db0faa64"}
-    }
-  },
-  "kn_IN-chetan-compact": {
-    "key": "kn_IN-chetan-compact",
-    "name": "chetan",
-    "language": {"code": "kn_IN", "family": "kn", "region": "IN",
-      "name_native": "ಕನ್ನಡ", "name_english": "Kannada", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/kn_IN-chetan-compact.onnx.json": {"size_bytes": 28199, "md5_digest": "04dcf3191c5f4ebaa102cb607ff3099f"}
+      "piper-v2/kn_IN-chetan-medium.onnx.json": {"size_bytes": 28198, "md5_digest": "904e40eaab464de757be9af0db0faa64"}
     }
   },
   "mr_IN-mrunal-medium": {
@@ -271,29 +186,12 @@
       "name_native": "मराठी", "name_english": "Marathi", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/mr_IN-mrunal-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "aa75d25d39bd7388e3085d1c8e7a5ce0"}
-    }
-  },
-  "mr_IN-mrunal-compact": {
-    "key": "mr_IN-mrunal-compact",
-    "name": "mrunal",
-    "language": {"code": "mr_IN", "family": "mr", "region": "IN",
-      "name_native": "मराठी", "name_english": "Marathi", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/mr_IN-mrunal-compact.onnx.json": {"size_bytes": 28200, "md5_digest": "0bde24a398190f17126dac0dd79d18f4"}
+      "piper-v2/mr_IN-mrunal-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "aa75d25d39bd7388e3085d1c8e7a5ce0"}
     }
   },
   "mr_IN-tejas-medium": {
@@ -303,29 +201,12 @@
       "name_native": "मराठी", "name_english": "Marathi", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/mr_IN-tejas-medium.onnx.json": {"size_bytes": 28198, "md5_digest": "5e590c5793f917a576bb5dd1453d28d5"}
-    }
-  },
-  "mr_IN-tejas-compact": {
-    "key": "mr_IN-tejas-compact",
-    "name": "tejas",
-    "language": {"code": "mr_IN", "family": "mr", "region": "IN",
-      "name_native": "मराठी", "name_english": "Marathi", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/mr_IN-tejas-compact.onnx.json": {"size_bytes": 28199, "md5_digest": "d999780763227f8b8f12fcdc34b4ed97"}
+      "piper-v2/mr_IN-tejas-medium.onnx.json": {"size_bytes": 28198, "md5_digest": "5e590c5793f917a576bb5dd1453d28d5"}
     }
   },
   "gu_IN-hetal-medium": {
@@ -335,29 +216,12 @@
       "name_native": "ગુજરાતી", "name_english": "Gujarati", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-gu-female-model.onnx": {"size_bytes": 43402738, "md5_digest": "e98e2769daeb689a1d6f1af1453c2a54"},
-      "piper-v2/gu_IN-hetal-medium.onnx.json": {"size_bytes": 2859, "md5_digest": "1e15e87584a6454cbfe24d66728d20de"}
-    }
-  },
-  "gu_IN-hetal-compact": {
-    "key": "gu_IN-hetal-compact",
-    "name": "hetal",
-    "language": {"code": "gu_IN", "family": "gu", "region": "IN",
-      "name_native": "ગુજરાતી", "name_english": "Gujarati", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-gu-female-compact.onnx": {"size_bytes": 30490102, "md5_digest": "4870e32dae1d2bce09edfb80d383458a"},
-      "piper-v2/gu_IN-hetal-compact.onnx.json": {"size_bytes": 2860, "md5_digest": "a9f2c7e45cf9224c9ef9e288d3d74763"}
+      "piper-v2/gu_IN-hetal-medium.onnx.json": {"size_bytes": 2859, "md5_digest": "1e15e87584a6454cbfe24d66728d20de"}
     }
   },
   "gu_IN-jay-medium": {
@@ -367,29 +231,12 @@
       "name_native": "ગુજરાતી", "name_english": "Gujarati", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-gu-male-model.onnx": {"size_bytes": 43403132, "md5_digest": "9578de84f7b3dc1f66bdb22ec2ec8f2a"},
-      "piper-v2/gu_IN-jay-medium.onnx.json": {"size_bytes": 2903, "md5_digest": "402c0fc0c5feb1f1c5fbe1d8089327ce"}
-    }
-  },
-  "gu_IN-jay-compact": {
-    "key": "gu_IN-jay-compact",
-    "name": "jay",
-    "language": {"code": "gu_IN", "family": "gu", "region": "IN",
-      "name_native": "ગુજરાતી", "name_english": "Gujarati", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-gu-male-compact.onnx": {"size_bytes": 30490493, "md5_digest": "68fc4a4d9f646ccbc67820ae2293339f"},
-      "piper-v2/gu_IN-jay-compact.onnx.json": {"size_bytes": 2904, "md5_digest": "9cd9706fa0674568e31a058715e5c043"}
+      "piper-v2/gu_IN-jay-medium.onnx.json": {"size_bytes": 2903, "md5_digest": "402c0fc0c5feb1f1c5fbe1d8089327ce"}
     }
   },
   "bho_IN-kajal-medium": {
@@ -399,29 +246,12 @@
       "name_native": "भोजपुरी", "name_english": "Bhojpuri", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-bho-female-model.onnx": {"size_bytes": 43397809, "md5_digest": "1b9f640dfb4d097bb2e5ecaa91432e0f"},
-      "piper-v2/bho_IN-kajal-medium.onnx.json": {"size_bytes": 2360, "md5_digest": "b6df0dfbc9b19447b66c8fba5816bebd"}
-    }
-  },
-  "bho_IN-kajal-compact": {
-    "key": "bho_IN-kajal-compact",
-    "name": "kajal",
-    "language": {"code": "bho_IN", "family": "bho", "region": "IN",
-      "name_native": "भोजपुरी", "name_english": "Bhojpuri", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-bho-female-compact.onnx": {"size_bytes": 30485167, "md5_digest": "9ad93b4b694f00853238e3c2bf92d7d9"},
-      "piper-v2/bho_IN-kajal-compact.onnx.json": {"size_bytes": 2361, "md5_digest": "647030b8d46f2d8a60a6edadf9265da9"}
+      "piper-v2/bho_IN-kajal-medium.onnx.json": {"size_bytes": 2360, "md5_digest": "b6df0dfbc9b19447b66c8fba5816bebd"}
     }
   },
   "bho_IN-ranjit-medium": {
@@ -431,29 +261,12 @@
       "name_native": "भोजपुरी", "name_english": "Bhojpuri", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-bho-male-model.onnx": {"size_bytes": 43397021, "md5_digest": "aea0616743dd780df89610392a1a40f4"},
-      "piper-v2/bho_IN-ranjit-medium.onnx.json": {"size_bytes": 2273, "md5_digest": "72e7798fca6f1e3c730e4015295b0616"}
-    }
-  },
-  "bho_IN-ranjit-compact": {
-    "key": "bho_IN-ranjit-compact",
-    "name": "ranjit",
-    "language": {"code": "bho_IN", "family": "bho", "region": "IN",
-      "name_native": "भोजपुरी", "name_english": "Bhojpuri", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-bho-male-compact.onnx": {"size_bytes": 30484383, "md5_digest": "89ab659910bdcf0c7de2c2d4486998a4"},
-      "piper-v2/bho_IN-ranjit-compact.onnx.json": {"size_bytes": 2274, "md5_digest": "c8be0c77dc014dfc97212bd99bdff4de"}
+      "piper-v2/bho_IN-ranjit-medium.onnx.json": {"size_bytes": 2273, "md5_digest": "72e7798fca6f1e3c730e4015295b0616"}
     }
   },
   "hne_IN-mamta-medium": {
@@ -463,29 +276,12 @@
       "name_native": "छत्तीसगढ़ी", "name_english": "Chhattisgarhi", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-hne-female-model.onnx": {"size_bytes": 43402349, "md5_digest": "179f54d438eccfee8ff696a7d454aae9"},
-      "piper-v2/hne_IN-mamta-medium.onnx.json": {"size_bytes": 2743, "md5_digest": "8b19bc558f9cbcbd23d6535795ba1e98"}
-    }
-  },
-  "hne_IN-mamta-compact": {
-    "key": "hne_IN-mamta-compact",
-    "name": "mamta",
-    "language": {"code": "hne_IN", "family": "hne", "region": "IN",
-      "name_native": "छत्तीसगढ़ी", "name_english": "Chhattisgarhi", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-hne-female-compact.onnx": {"size_bytes": 30489710, "md5_digest": "386fd4b314685b31ca45077723cd2dc2"},
-      "piper-v2/hne_IN-mamta-compact.onnx.json": {"size_bytes": 2744, "md5_digest": "83da945a85c7db4173761e4be898cfce"}
+      "piper-v2/hne_IN-mamta-medium.onnx.json": {"size_bytes": 2743, "md5_digest": "8b19bc558f9cbcbd23d6535795ba1e98"}
     }
   },
   "hne_IN-bhupesh-medium": {
@@ -495,29 +291,12 @@
       "name_native": "छत्तीसगढ़ी", "name_english": "Chhattisgarhi", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-hne-male-model.onnx": {"size_bytes": 43400773, "md5_digest": "105aadd72f9f88bd8f0d85efb2cb35ea"},
-      "piper-v2/hne_IN-bhupesh-medium.onnx.json": {"size_bytes": 2628, "md5_digest": "4fcf3e714899d33fa182e6809e793062"}
-    }
-  },
-  "hne_IN-bhupesh-compact": {
-    "key": "hne_IN-bhupesh-compact",
-    "name": "bhupesh",
-    "language": {"code": "hne_IN", "family": "hne", "region": "IN",
-      "name_native": "छत्तीसगढ़ी", "name_english": "Chhattisgarhi", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-hne-male-compact.onnx": {"size_bytes": 30488134, "md5_digest": "1237fb161c313e2da183d1c3262f5ff0"},
-      "piper-v2/hne_IN-bhupesh-compact.onnx.json": {"size_bytes": 2629, "md5_digest": "b0014271e8a72d0bd132908ca68e282b"}
+      "piper-v2/hne_IN-bhupesh-medium.onnx.json": {"size_bytes": 2628, "md5_digest": "4fcf3e714899d33fa182e6809e793062"}
     }
   },
   "mai_IN-janaki-medium": {
@@ -527,29 +306,12 @@
       "name_native": "मैथिली", "name_english": "Maithili", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-mai-female-model.onnx": {"size_bytes": 43407470, "md5_digest": "a94e8ea490c84fb05cfa8d098e62cb49"},
-      "piper-v2/mai_IN-janaki-medium.onnx.json": {"size_bytes": 3311, "md5_digest": "48b2f776288378fba3e66e3caed5b414"}
-    }
-  },
-  "mai_IN-janaki-compact": {
-    "key": "mai_IN-janaki-compact",
-    "name": "janaki",
-    "language": {"code": "mai_IN", "family": "mai", "region": "IN",
-      "name_native": "मैथिली", "name_english": "Maithili", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-mai-female-compact.onnx": {"size_bytes": 30494829, "md5_digest": "8e6797cc2bc317d3e538f2389344e571"},
-      "piper-v2/mai_IN-janaki-compact.onnx.json": {"size_bytes": 3312, "md5_digest": "bf5f1bce63c8ab94495dc1b32c638247"}
+      "piper-v2/mai_IN-janaki-medium.onnx.json": {"size_bytes": 3311, "md5_digest": "48b2f776288378fba3e66e3caed5b414"}
     }
   },
   "mai_IN-mithilesh-medium": {
@@ -559,29 +321,12 @@
       "name_native": "मैथिली", "name_english": "Maithili", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-mai-male-model.onnx": {"size_bytes": 43410819, "md5_digest": "86c06ec8adf5dfa624b6a8150c353db9"},
-      "piper-v2/mai_IN-mithilesh-medium.onnx.json": {"size_bytes": 3686, "md5_digest": "3df35fd9efba426f0053b18b54b3b5a9"}
-    }
-  },
-  "mai_IN-mithilesh-compact": {
-    "key": "mai_IN-mithilesh-compact",
-    "name": "mithilesh",
-    "language": {"code": "mai_IN", "family": "mai", "region": "IN",
-      "name_native": "मैथिली", "name_english": "Maithili", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-mai-male-compact.onnx": {"size_bytes": 30498174, "md5_digest": "0e812f041254acda49eca7562489fbea"},
-      "piper-v2/mai_IN-mithilesh-compact.onnx.json": {"size_bytes": 3687, "md5_digest": "8cf10dde2e88f179b3cbb7f2a50417d4"}
+      "piper-v2/mai_IN-mithilesh-medium.onnx.json": {"size_bytes": 3686, "md5_digest": "3df35fd9efba426f0053b18b54b3b5a9"}
     }
   },
   "mai_IN-shravan-medium": {
@@ -591,29 +336,12 @@
       "name_native": "मैथिली", "name_english": "Maithili", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/mai_IN-shravan-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "182b827653f22d4b8d68cca2e86faccf"}
-    }
-  },
-  "mai_IN-shravan-compact": {
-    "key": "mai_IN-shravan-compact",
-    "name": "shravan",
-    "language": {"code": "mai_IN", "family": "mai", "region": "IN",
-      "name_native": "मैथिली", "name_english": "Maithili", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/mai_IN-shravan-compact.onnx.json": {"size_bytes": 28207, "md5_digest": "2500e3dd9a3a8ea3c067904a7087d20e"}
+      "piper-v2/mai_IN-shravan-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "182b827653f22d4b8d68cca2e86faccf"}
     }
   },
   "mag_IN-poonam-medium": {
@@ -623,29 +351,12 @@
       "name_native": "मगही", "name_english": "Magahi", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-mag-female-model.onnx": {"size_bytes": 43403918, "md5_digest": "c51be5def82e36041d484fd9ef10150d"},
-      "piper-v2/mag_IN-poonam-medium.onnx.json": {"size_bytes": 2985, "md5_digest": "2ee0f9f1ac5cb5f567562654ae7df6a1"}
-    }
-  },
-  "mag_IN-poonam-compact": {
-    "key": "mag_IN-poonam-compact",
-    "name": "poonam",
-    "language": {"code": "mag_IN", "family": "mag", "region": "IN",
-      "name_native": "मगही", "name_english": "Magahi", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-mag-female-compact.onnx": {"size_bytes": 30491278, "md5_digest": "7a0b73c0316d40b3c8da27a36a410faf"},
-      "piper-v2/mag_IN-poonam-compact.onnx.json": {"size_bytes": 2986, "md5_digest": "c7a64131fb493c95a8c090588d77d9a3"}
+      "piper-v2/mag_IN-poonam-medium.onnx.json": {"size_bytes": 2985, "md5_digest": "2ee0f9f1ac5cb5f567562654ae7df6a1"}
     }
   },
   "mag_IN-rakesh-medium": {
@@ -655,29 +366,12 @@
       "name_native": "मगही", "name_english": "Magahi", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "SYSPIN (IISc SPIRE Lab)",
-    "license": "MIT",
-    "files": {
-      "int8-v1/vits-syspin-mag-male-model.onnx": {"size_bytes": 43402933, "md5_digest": "8c1f900e806ff28eb7bf718809f4ced8"},
-      "piper-v2/mag_IN-rakesh-medium.onnx.json": {"size_bytes": 2874, "md5_digest": "05a2b3102b83473b22bfccf301a5ca9b"}
-    }
-  },
-  "mag_IN-rakesh-compact": {
-    "key": "mag_IN-rakesh-compact",
-    "name": "rakesh",
-    "language": {"code": "mag_IN", "family": "mag", "region": "IN",
-      "name_native": "मगही", "name_english": "Magahi", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
       "int8-v1/vits-syspin-mag-male-compact.onnx": {"size_bytes": 30490296, "md5_digest": "c4f037d0469848b13f87aff27ad4cbdb"},
-      "piper-v2/mag_IN-rakesh-compact.onnx.json": {"size_bytes": 2875, "md5_digest": "efe6f9ec115f06ee470fd27f6b503658"}
+      "piper-v2/mag_IN-rakesh-medium.onnx.json": {"size_bytes": 2874, "md5_digest": "05a2b3102b83473b22bfccf301a5ca9b"}
     }
   },
   "as_IN-bornali-medium": {
@@ -687,29 +381,12 @@
       "name_native": "অসমীয়া", "name_english": "Assamese", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/as_IN-bornali-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "fcf750141ccbd995a1ddcff357cc9c1c"}
-    }
-  },
-  "as_IN-bornali-compact": {
-    "key": "as_IN-bornali-compact",
-    "name": "bornali",
-    "language": {"code": "as_IN", "family": "as", "region": "IN",
-      "name_native": "অসমীয়া", "name_english": "Assamese", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/as_IN-bornali-compact.onnx.json": {"size_bytes": 28207, "md5_digest": "cfd9806d654c340fe572154b5c248fe7"}
+      "piper-v2/as_IN-bornali-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "fcf750141ccbd995a1ddcff357cc9c1c"}
     }
   },
   "as_IN-rituraj-medium": {
@@ -719,29 +396,12 @@
       "name_native": "অসমীয়া", "name_english": "Assamese", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/as_IN-rituraj-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "654ed007dc239f2f6daa46ec8e52ead0"}
-    }
-  },
-  "as_IN-rituraj-compact": {
-    "key": "as_IN-rituraj-compact",
-    "name": "rituraj",
-    "language": {"code": "as_IN", "family": "as", "region": "IN",
-      "name_native": "অসমীয়া", "name_english": "Assamese", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/as_IN-rituraj-compact.onnx.json": {"size_bytes": 28207, "md5_digest": "ad8695b1fa849458d449fe1a7e3a3578"}
+      "piper-v2/as_IN-rituraj-medium.onnx.json": {"size_bytes": 28206, "md5_digest": "654ed007dc239f2f6daa46ec8e52ead0"}
     }
   },
   "brx_IN-mainao-medium": {
@@ -751,29 +411,12 @@
       "name_native": "बड़ो", "name_english": "Bodo", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/brx_IN-mainao-medium.onnx.json": {"size_bytes": 28194, "md5_digest": "f7762e8ed0bb6105129d53027f08f404"}
-    }
-  },
-  "brx_IN-mainao-compact": {
-    "key": "brx_IN-mainao-compact",
-    "name": "mainao",
-    "language": {"code": "brx_IN", "family": "brx", "region": "IN",
-      "name_native": "बड़ो", "name_english": "Bodo", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/brx_IN-mainao-compact.onnx.json": {"size_bytes": 28195, "md5_digest": "4ddf8c149cfbd77c631b99e1ba1dd873"}
+      "piper-v2/brx_IN-mainao-medium.onnx.json": {"size_bytes": 28194, "md5_digest": "f7762e8ed0bb6105129d53027f08f404"}
     }
   },
   "brx_IN-sansuma-medium": {
@@ -783,29 +426,12 @@
       "name_native": "बड़ो", "name_english": "Bodo", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/brx_IN-sansuma-medium.onnx.json": {"size_bytes": 28195, "md5_digest": "fe1ceb8415e75c582db0beff136e679d"}
-    }
-  },
-  "brx_IN-sansuma-compact": {
-    "key": "brx_IN-sansuma-compact",
-    "name": "sansuma",
-    "language": {"code": "brx_IN", "family": "brx", "region": "IN",
-      "name_native": "बड़ो", "name_english": "Bodo", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/brx_IN-sansuma-compact.onnx.json": {"size_bytes": 28196, "md5_digest": "ce41ff4f89e03cb31012953e6b0e2566"}
+      "piper-v2/brx_IN-sansuma-medium.onnx.json": {"size_bytes": 28195, "md5_digest": "fe1ceb8415e75c582db0beff136e679d"}
     }
   },
   "doi_IN-sheetal-medium": {
@@ -815,29 +441,12 @@
       "name_native": "डोगरी", "name_english": "Dogri", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/doi_IN-sheetal-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "4ea7807fa45eb65e3e6b412fcfd5f038"}
-    }
-  },
-  "doi_IN-sheetal-compact": {
-    "key": "doi_IN-sheetal-compact",
-    "name": "sheetal",
-    "language": {"code": "doi_IN", "family": "doi", "region": "IN",
-      "name_native": "डोगरी", "name_english": "Dogri", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/doi_IN-sheetal-compact.onnx.json": {"size_bytes": 28200, "md5_digest": "91b81a139ec0f5ac84c6214498ca676e"}
+      "piper-v2/doi_IN-sheetal-medium.onnx.json": {"size_bytes": 28199, "md5_digest": "4ea7807fa45eb65e3e6b412fcfd5f038"}
     }
   },
   "doi_IN-vijay-medium": {
@@ -847,29 +456,12 @@
       "name_native": "डोगरी", "name_english": "Dogri", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/doi_IN-vijay-medium.onnx.json": {"size_bytes": 28197, "md5_digest": "5d8284f2daa8c8df47422626fabd2a1f"}
-    }
-  },
-  "doi_IN-vijay-compact": {
-    "key": "doi_IN-vijay-compact",
-    "name": "vijay",
-    "language": {"code": "doi_IN", "family": "doi", "region": "IN",
-      "name_native": "डोगरी", "name_english": "Dogri", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/doi_IN-vijay-compact.onnx.json": {"size_bytes": 28198, "md5_digest": "95e708e853f3ac9597a76ec71e06e658"}
+      "piper-v2/doi_IN-vijay-medium.onnx.json": {"size_bytes": 28197, "md5_digest": "5d8284f2daa8c8df47422626fabd2a1f"}
     }
   },
   "ne_NP-prerana-medium": {
@@ -879,29 +471,12 @@
       "name_native": "नेपाली", "name_english": "Nepali", "country_english": "Nepal"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/ne_NP-prerana-medium.onnx.json": {"size_bytes": 28202, "md5_digest": "4652ecc53510398836228254eebe5316"}
-    }
-  },
-  "ne_NP-prerana-compact": {
-    "key": "ne_NP-prerana-compact",
-    "name": "prerana",
-    "language": {"code": "ne_NP", "family": "ne", "region": "NP",
-      "name_native": "नेपाली", "name_english": "Nepali", "country_english": "Nepal"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/ne_NP-prerana-compact.onnx.json": {"size_bytes": 28203, "md5_digest": "ee6ff87b85cb232347068a52835e5ab9"}
+      "piper-v2/ne_NP-prerana-medium.onnx.json": {"size_bytes": 28202, "md5_digest": "4652ecc53510398836228254eebe5316"}
     }
   },
   "pa_IN-simran-medium": {
@@ -911,29 +486,12 @@
       "name_native": "ਪੰਜਾਬੀ", "name_english": "Punjabi", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/pa_IN-simran-medium.onnx.json": {"size_bytes": 28202, "md5_digest": "d8d33ab537bc374457b1a980dc58d9f0"}
-    }
-  },
-  "pa_IN-simran-compact": {
-    "key": "pa_IN-simran-compact",
-    "name": "simran",
-    "language": {"code": "pa_IN", "family": "pa", "region": "IN",
-      "name_native": "ਪੰਜਾਬੀ", "name_english": "Punjabi", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/pa_IN-simran-compact.onnx.json": {"size_bytes": 28203, "md5_digest": "ff0dc404e5a714c919038233c2a536f6"}
+      "piper-v2/pa_IN-simran-medium.onnx.json": {"size_bytes": 28202, "md5_digest": "d8d33ab537bc374457b1a980dc58d9f0"}
     }
   },
   "pa_IN-harpreet-medium": {
@@ -943,29 +501,12 @@
       "name_native": "ਪੰਜਾਬੀ", "name_english": "Punjabi", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/pa_IN-harpreet-medium.onnx.json": {"size_bytes": 28204, "md5_digest": "9fe362576f50fcdd8b26d9cccb67e41a"}
-    }
-  },
-  "pa_IN-harpreet-compact": {
-    "key": "pa_IN-harpreet-compact",
-    "name": "harpreet",
-    "language": {"code": "pa_IN", "family": "pa", "region": "IN",
-      "name_native": "ਪੰਜਾਬੀ", "name_english": "Punjabi", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/pa_IN-harpreet-compact.onnx.json": {"size_bytes": 28205, "md5_digest": "c778b0a274a287d88d15be63fcb402e0"}
+      "piper-v2/pa_IN-harpreet-medium.onnx.json": {"size_bytes": 28204, "md5_digest": "9fe362576f50fcdd8b26d9cccb67e41a"}
     }
   },
   "sa_IN-vedant-medium": {
@@ -975,29 +516,12 @@
       "name_native": "संस्कृतम्", "name_english": "Sanskrit", "country_english": "India"},
     "quality": "medium",
     "num_speakers": 1,
-    "heavy": true,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "AI4Bharat Rasa",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/vits-rasa-13-piper-model.onnx": {"size_bytes": 48533277, "md5_digest": "7afbaf2aa2ab8f6d892d0ece79584676"},
-      "piper-v2/sa_IN-vedant-medium.onnx.json": {"size_bytes": 28212, "md5_digest": "54e120a65638ffa4d6f818c353533045"}
-    }
-  },
-  "sa_IN-vedant-compact": {
-    "key": "sa_IN-vedant-compact",
-    "name": "vedant",
-    "language": {"code": "sa_IN", "family": "sa", "region": "IN",
-      "name_native": "संस्कृतम्", "name_english": "Sanskrit", "country_english": "India"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "heavy": true,
     "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
     "source": "AI4Bharat Rasa",
     "license": "CC-BY-4.0",
     "files": {
       "int8-v1/vits-rasa-13-compact.onnx": {"size_bytes": 33690761, "md5_digest": "c4178a50205037bc15e19b88123fec1f"},
-      "piper-v2/sa_IN-vedant-compact.onnx.json": {"size_bytes": 28213, "md5_digest": "ebf10a3ab4c1f894a04cf96ed57251be"}
+      "piper-v2/sa_IN-vedant-medium.onnx.json": {"size_bytes": 28212, "md5_digest": "54e120a65638ffa4d6f818c353533045"}
     }
   },
   "de_DE-thorsten-compact": {
