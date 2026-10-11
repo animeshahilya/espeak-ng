@@ -147,7 +147,7 @@ public final class TextPreprocessor {
 
         final Edits edits = new Edits(initialOffsetMap);
         final String lang = languageTag(voice);
-        final boolean english = NumberReading.isEnglish(lang);
+        final boolean english = isEnglish(lang);
         final boolean readsEnglishText = readsEnglishText(lang);
 
         if (!isSsml) {
@@ -209,7 +209,7 @@ public final class TextPreprocessor {
             if (containsDigit(text)) {
                 if (VoiceSettings.NUMBERS_ENGLISH.equals(settings.getNumbersLanguage())
                         && VoiceSettings.READING_NORMAL.equals(settings.getReadingMode())
-                        && !english && !NumberReading.isLatinScript(lang)) {
+                        && !english && !isLatinScript(lang)) {
                     text = edits.track(text, NumberReading.englishNumbers(text, true));
                 }
                 if (indianNumbers(settings, lang)) {
@@ -309,7 +309,7 @@ public final class TextPreprocessor {
         // language; written out as English words, numbers inside English
         // text follow the English, or all of them are English.
         final String numbers = settings.getNumbersLanguage();
-        if (normalReading && !english && !NumberReading.isLatinScript(lang)
+        if (normalReading && !english && !isLatinScript(lang)
                 && (VoiceSettings.NUMBERS_AROUND.equals(numbers)
                         || VoiceSettings.NUMBERS_ENGLISH.equals(numbers))) {
             text = edits.track(text, NumberReading.englishNumbers(text,
@@ -566,6 +566,45 @@ public final class TextPreprocessor {
         return false;
     }
 
+    // Language helpers every utterance needs: here, not in NumberReading, so its
+    // ~30 regexes (all opt-in features) are compiled only when one is used.
+    private static final java.util.Map<String, Boolean> LATIN_SCRIPT_CACHE =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * Whether the language is written in Latin script. Such a voice reads
+     * Latin words as its own language, so its numbers already match; any
+     * other voice switches to English for Latin words but not for numbers.
+     */
+    public static boolean isLatinScript(String languageTag) {
+        if (languageTag == null || languageTag.isEmpty()) return true;
+        Boolean cached = LATIN_SCRIPT_CACHE.get(languageTag);
+        if (cached != null) return cached;
+        String script = android.icu.util.ULocale.addLikelySubtags(
+                android.icu.util.ULocale.forLanguageTag(languageTag)).getScript();
+        boolean isLatin = script.isEmpty() || "Latn".equals(script);
+        LATIN_SCRIPT_CACHE.put(languageTag, isLatin);
+        return isLatin;
+    }
+
+    public static boolean isEnglish(String languageTag) {
+        if (languageTag == null || languageTag.isEmpty()) return false;
+        int len = languageTag.length();
+        int start = 0;
+        while (start < len && languageTag.charAt(start) <= ' ') {
+            start++;
+        }
+        if (start + 2 <= len) {
+            char c0 = languageTag.charAt(start);
+            char c1 = languageTag.charAt(start + 1);
+            if ((c0 == 'e' || c0 == 'E') && (c1 == 'n' || c1 == 'N')) {
+                int end = start + 2;
+                return end == len || languageTag.charAt(end) == '-' || languageTag.charAt(end) == '_' || languageTag.charAt(end) <= ' ';
+            }
+        }
+        return false;
+    }
+
     /** Indian number reading for this voice: Indian voices by default, or every voice. */
     private static boolean indianNumbers(VoiceSettings settings, String lang) {
         final String voices = settings.getIndianNumberingVoices();
@@ -629,7 +668,7 @@ public final class TextPreprocessor {
      * as French, so it is left out.
      */
     public static boolean readsEnglishText(String languageTag) {
-        return NumberReading.isEnglish(languageTag) || !NumberReading.isLatinScript(languageTag);
+        return isEnglish(languageTag) || !isLatinScript(languageTag);
     }
 
     /** Lower-case language subtag of a tag ("mr" for "mr-IN"); "" for null. */

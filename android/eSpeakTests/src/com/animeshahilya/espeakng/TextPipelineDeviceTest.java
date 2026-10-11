@@ -344,8 +344,8 @@ public class TextPipelineDeviceTest {
         assertThat(NumberReading.readMoney("echo $HOME", true), is("echo $HOME"));
         // Left for the Indian pass when it owns rupee amounts.
         assertThat(NumberReading.readMoney("₹250", false), is("₹250"));
-        assertThat(NumberReading.isEnglish("en-US"), is(true));
-        assertThat(NumberReading.isEnglish("hi"), is(false));
+        assertThat(TextPreprocessor.isEnglish("en-US"), is(true));
+        assertThat(TextPreprocessor.isEnglish("hi"), is(false));
     }
 
     /** Opt-in code reading: only numbers near a code word, never money or quantities. */
@@ -378,12 +378,12 @@ public class TextPipelineDeviceTest {
         assertThat(NumberReading.englishNumbersInEnglishText("У меня 25 яблок"), is("У меня 25 яблок"));
         assertThat(NumberReading.englishNumbersInEnglishText("1,00,000 people"), is("one hundred thousand people"));
         // Which voices need it: Latin-script languages read Latin words as their own.
-        assertThat(NumberReading.isLatinScript("hi"), is(false));
-        assertThat(NumberReading.isLatinScript("ur"), is(false));
-        assertThat(NumberReading.isLatinScript("ru"), is(false));
-        assertThat(NumberReading.isLatinScript("ar"), is(false));
-        assertThat(NumberReading.isLatinScript("fr"), is(true));
-        assertThat(NumberReading.isLatinScript("en-in"), is(true));
+        assertThat(TextPreprocessor.isLatinScript("hi"), is(false));
+        assertThat(TextPreprocessor.isLatinScript("ur"), is(false));
+        assertThat(TextPreprocessor.isLatinScript("ru"), is(false));
+        assertThat(TextPreprocessor.isLatinScript("ar"), is(false));
+        assertThat(TextPreprocessor.isLatinScript("fr"), is(true));
+        assertThat(TextPreprocessor.isLatinScript("en-in"), is(true));
     }
 
     /** Opt-in punctuation sounds: only symbols the level would name become markers. */

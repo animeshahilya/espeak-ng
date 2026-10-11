@@ -176,7 +176,18 @@ public final class NvdaSymbolProcessor {
         InputStream open(String name) throws IOException;
     }
 
-    private static final Source ENGLISH = new Source();
+    /**
+     * The built-in English table, built on first use rather than when the
+     * class loads: registering the data source (EspeakApp, main thread,
+     * while the speech service binds) no longer builds it.
+     */
+    private static final class English {
+        static final Source SOURCE = new Source();
+
+        static {
+            buildTable();
+        }
+    }
     private static final String EN = "en";
     /**
      * eSpeak languages whose NVDA locale is not the language code itself:
@@ -191,18 +202,17 @@ public final class NvdaSymbolProcessor {
     private static final Source MISSING = new Source();
 
     private static void sym(String id, String replacement, int level, int preserve) {
-        ENGLISH.symbols.put(id, new Entry(replacement, level, preserve));
+        English.SOURCE.symbols.put(id, new Entry(replacement, level, preserve));
     }
 
     private static void complex(String id, String regex, String sample, String replacement,
             int level, int preserve) {
-        ENGLISH.complex.put(id, regex);
-        ENGLISH.samples.put(id, sample);
+        English.SOURCE.complex.put(id, regex);
+        English.SOURCE.samples.put(id, sample);
         sym(id, replacement, level, preserve);
     }
 
     static {
-        buildTable();
         LOCALE_ALIASES.put("pt", "pt_pt");
         LOCALE_ALIASES.put("zh", "zh_cn");
         LOCALE_ALIASES.put("cmn", "zh_cn");
@@ -778,20 +788,19 @@ public final class NvdaSymbolProcessor {
         if (cached != null) {
             return cached;
         }
-        final String locale = locale(languageTag);
-        Table table = TABLES.get(locale);
-        if (table == null) {
+        // Built once: a second caller (the first utterance, while the service
+        // start's warmup is building it) waits for that build, not a copy.
+        final Table table = TABLES.computeIfAbsent(locale(languageTag), locale -> {
             final List<Source> sources = new ArrayList<Source>();
             if (!EN.equals(locale)) {
                 addIfPresent(sources, load(locale + ".dic", true));
                 addIfPresent(sources, load(locale + ".cldr.dic", false));
             }
-            sources.add(ENGLISH);
+            sources.add(English.SOURCE);
             addIfPresent(sources, load("en.dic", true));
             addIfPresent(sources, load("en.cldr.dic", false));
-            table = new Table(sources);
-            TABLES.put(locale, table);
-        }
+            return new Table(sources);
+        });
         TABLES_BY_LANG.put(tagKey, table);
         return table;
     }

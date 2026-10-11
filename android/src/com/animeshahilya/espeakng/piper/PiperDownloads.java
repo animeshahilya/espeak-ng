@@ -1242,11 +1242,18 @@ public final class PiperDownloads {
      * before "source" records is hashed once).
      */
     public static void mergeCompactTwins(Context storageContext) {
-        final List<CatalogVoice> extras = bundledExtras(storageContext);
-        final List<String> pending = pendingKeys(storageContext);
+        List<CatalogVoice> extras = null; // parsed (100 kB) only if a Compact voice is installed
+        List<String> pending = null;
         boolean merged = false;
         for (PiperVoiceStore.Installed compact : PiperVoiceStore.list(storageContext)) {
-            if (!isCompact(compact.config.quality) || pending.contains(compact.key)) {
+            if (!isCompact(compact.config.quality)) {
+                continue;
+            }
+            if (extras == null) {
+                extras = bundledExtras(storageContext);
+                pending = pendingKeys(storageContext);
+            }
+            if (pending.contains(compact.key)) {
                 continue;
             }
             final CatalogVoice standard = mergedTwin(compact.key, extras);

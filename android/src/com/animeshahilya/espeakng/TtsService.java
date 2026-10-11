@@ -379,18 +379,18 @@ public class TtsService extends TextToSpeechService {
                         "", "").first;
                 preloadNaturalVoice(systemVoice);
                 preloadRecentNaturalVoices();
-                if (mPreferences != null && PiperVoiceStore.isEnabled(TolerantPreferences.of(mPreferences))) {
-                    PiperDownloads.checkForUpdates(getApplicationContext(), mStorageContext);
-                    PiperDownloads.restoreMissing(getApplicationContext(), mStorageContext);
-                    PiperDownloads.fetchVoiceExtras(getApplicationContext(), mStorageContext);
-                }
             } catch (Throwable t) {
                 Log.w(TAG, "Natural voice warmup failed", t);
             }
+            // Before the update checks below, which can wait on the network
+            // for seconds: until these are built the first utterances build
+            // them on the synthesis thread (a cold start's first words).
             try {
+                // Every utterance needs these two; emoji only text that has one.
+                TextPreprocessor.isSingleCharacter("a"); // compiles its patterns
+                NvdaSymbolProcessor.warmup(Locale.getDefault().toLanguageTag());
                 UserDictionaryManager.getInstance(mStorageContext);
                 NvdaEmoji.warmup();
-                NvdaSymbolProcessor.warmup(Locale.getDefault().toLanguageTag());
                 if (mPreferences.getBoolean(VoiceSettings.PREF_HINGLISH, false)) {
                     HinglishReader.warmup();
                 }
@@ -399,6 +399,15 @@ public class TtsService extends TextToSpeechService {
                 }
             } catch (Throwable t) {
                 Log.w(TAG, "Data warmup failed", t);
+            }
+            try {
+                if (mPreferences != null && PiperVoiceStore.isEnabled(TolerantPreferences.of(mPreferences))) {
+                    PiperDownloads.checkForUpdates(getApplicationContext(), mStorageContext);
+                    PiperDownloads.restoreMissing(getApplicationContext(), mStorageContext);
+                    PiperDownloads.fetchVoiceExtras(getApplicationContext(), mStorageContext);
+                }
+            } catch (Throwable t) {
+                Log.w(TAG, "Natural voice update check failed", t);
             }
         });
         final IntentFilter filter = new IntentFilter(DownloadVoiceData.BROADCAST_LANGUAGES_UPDATED);

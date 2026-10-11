@@ -131,6 +131,18 @@
             android:authorities="${applicationId}.onnxruntime_telemetry_initializer"
             tools:node="remove"
             tools:ignore="MissingClass" />
+        <!-- AppCompat's EmojiCompat initializer: ran at every process start
+             (the speech service's too, ~4 ms on a Pixel 8 cold start) and
+             started a downloadable emoji-font lookup. The app draws no emoji
+             that need it; speech names them from NVDA's tables. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>

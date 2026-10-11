@@ -61,43 +61,6 @@ public final class NumberReading {
     private static final Pattern MONEY_SUFFIX = Pattern.compile(
             SIGN + "(?<![\\p{L}\\d.,])" + AMOUNT + SCALE + "\\s?(€|¥|₹|USD|EUR|GBP|JPY|INR|CAD|AUD|NZD|KRW|₩|BTC|₿|¢)(?![\\p{L}\\d])");
 
-    private static final java.util.Map<String, Boolean> LATIN_SCRIPT_CACHE =
-            new java.util.concurrent.ConcurrentHashMap<>();
-
-    /**
-     * Whether the language is written in Latin script. Such a voice reads
-     * Latin words as its own language, so its numbers already match; any
-     * other voice switches to English for Latin words but not for numbers.
-     */
-    public static boolean isLatinScript(String languageTag) {
-        if (languageTag == null || languageTag.isEmpty()) return true;
-        Boolean cached = LATIN_SCRIPT_CACHE.get(languageTag);
-        if (cached != null) return cached;
-        String script = android.icu.util.ULocale.addLikelySubtags(
-                android.icu.util.ULocale.forLanguageTag(languageTag)).getScript();
-        boolean isLatin = script.isEmpty() || "Latn".equals(script);
-        LATIN_SCRIPT_CACHE.put(languageTag, isLatin);
-        return isLatin;
-    }
-
-    public static boolean isEnglish(String languageTag) {
-        if (languageTag == null || languageTag.isEmpty()) return false;
-        int len = languageTag.length();
-        int start = 0;
-        while (start < len && languageTag.charAt(start) <= ' ') {
-            start++;
-        }
-        if (start + 2 <= len) {
-            char c0 = languageTag.charAt(start);
-            char c1 = languageTag.charAt(start + 1);
-            if ((c0 == 'e' || c0 == 'E') && (c1 == 'n' || c1 == 'N')) {
-                int end = start + 2;
-                return end == len || languageTag.charAt(end) == '-' || languageTag.charAt(end) == '_' || languageTag.charAt(end) <= ' ';
-            }
-        }
-        return false;
-    }
-
     /**
      * @param withRupee false when the Indian pass will read rupee amounts
      *                  itself (Indian voices with Indian numbering on)
