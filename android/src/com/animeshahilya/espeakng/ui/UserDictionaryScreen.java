@@ -698,10 +698,22 @@ public final class UserDictionaryScreen {
                 existing != null ? existing.getLanguage() : null,
                 android.text.InputType.TYPE_CLASS_TEXT);
 
-        // "Read in": the usual voice, or a language's voice (ReadIn), sorted by name.
+        // "Read in": the usual voice, or a language's voice (ReadIn). The
+        // user's own languages come first (Speech by language's, plus those
+        // other entries read in), then the rest; each part sorted by name.
+        final java.util.List<Voice> voices = com.animeshahilya.espeakng.SpeechSynthesis.cachedVoices();
+        final java.util.Set<String> mine = new java.util.HashSet<>(
+                LanguageCards.usedLanguages(EspeakApp.prefs(context), voices));
+        for (UserDictionary r : mgr.getRules()) {
+            mine.add(r.getReadIn());
+        }
         final java.util.List<java.util.Map.Entry<String, String>> readInLanguages = new java.util.ArrayList<>(
-                LanguageCards.languageNames(com.animeshahilya.espeakng.SpeechSynthesis.cachedVoices()).entrySet());
-        java.util.Collections.sort(readInLanguages, (a, b) -> a.getValue().compareToIgnoreCase(b.getValue()));
+                LanguageCards.languageNames(voices).entrySet());
+        java.util.Collections.sort(readInLanguages, (a, b) -> {
+            final boolean aMine = mine.contains(a.getKey());
+            return aMine != mine.contains(b.getKey()) ? (aMine ? -1 : 1)
+                    : a.getValue().compareToIgnoreCase(b.getValue());
+        });
         final String[] readInLabels = new String[readInLanguages.size() + 1];
         readInLabels[0] = context.getString(R.string.dict_read_in_usual);
         final String[] chosenReadIn = {existing != null ? existing.getReadIn() : ""};

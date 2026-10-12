@@ -19,7 +19,9 @@ import com.animeshahilya.espeakng.text.ScriptLanguages;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Per-language speech settings ("language cards", Settings -> Mixed-language
@@ -119,24 +121,7 @@ public final class LanguageCards {
         }
         final TtsSettingsActivity.PrefsEspeakFragment f = (TtsSettingsActivity.PrefsEspeakFragment) fragment;
         final Map<String, String> all = languageNames(voices);
-        final Map<String, String> used = new TreeMap<>();
-        used.put(PiperVoiceStore.languageKey(Locale.getDefault()), "");
-        for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
-            final String k = e.getKey();
-            final String v = String.valueOf(e.getValue());
-            if (k.startsWith(PiperVoiceStore.PREF_VOICE_PREFIX) && !v.isEmpty()) {
-                used.put(k.substring(PiperVoiceStore.PREF_VOICE_PREFIX.length()), "");
-            } else if (k.startsWith(PREF_PREFIX) && !v.isEmpty() && k.lastIndexOf('_') > PREF_PREFIX.length()) {
-                used.put(k.substring(PREF_PREFIX.length(), k.lastIndexOf('_')), "");
-            } else if (k.startsWith(ScriptLanguages.PREF_PREFIX) && !v.isEmpty()) {
-                for (Voice voice : voices) {
-                    if (voice.name.equals(v)) {
-                        used.put(PiperVoiceStore.languageKey(voice.locale), "");
-                    }
-                }
-            }
-        }
-        for (String lang : used.keySet()) {
+        for (String lang : usedLanguages(prefs, voices)) {
             if (all.containsKey(lang)) {
                 category.addPreference(row(context, f, prefs, lang, all.get(lang)));
             }
@@ -155,6 +140,31 @@ public final class LanguageCards {
             return false;
         });
         category.addPreference(add);
+    }
+
+    /**
+     * The languages the user reads (ISO 639-2, sorted): the phone's, those
+     * with a natural voice, a card or a script choice.
+     */
+    public static Set<String> usedLanguages(SharedPreferences prefs, List<Voice> voices) {
+        final Set<String> used = new TreeSet<>();
+        used.add(PiperVoiceStore.languageKey(Locale.getDefault()));
+        for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
+            final String k = e.getKey();
+            final String v = String.valueOf(e.getValue());
+            if (k.startsWith(PiperVoiceStore.PREF_VOICE_PREFIX) && !v.isEmpty()) {
+                used.add(k.substring(PiperVoiceStore.PREF_VOICE_PREFIX.length()));
+            } else if (k.startsWith(PREF_PREFIX) && !v.isEmpty() && k.lastIndexOf('_') > PREF_PREFIX.length()) {
+                used.add(k.substring(PREF_PREFIX.length(), k.lastIndexOf('_')));
+            } else if (k.startsWith(ScriptLanguages.PREF_PREFIX) && !v.isEmpty()) {
+                for (Voice voice : voices) {
+                    if (voice.name.equals(v)) {
+                        used.add(PiperVoiceStore.languageKey(voice.locale));
+                    }
+                }
+            }
+        }
+        return used;
     }
 
     /** The voices' languages (ISO 639-2) and their names, sorted by code. */
