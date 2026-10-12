@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--
         Source: Activity title.
         Description: Title for the Settings activity.
@@ -537,7 +537,7 @@
   <string name="about_feedback">Give feedback</string>
   <string name="about_feedback_description">Give feedback: join the adev ally group on WhatsApp</string>
   <string name="about_features_header">Core Highlights</string>
-  <string name="about_feature_offline">• Speech is 100% offline and works before the phone is unlocked; the internet is used only to download natural voices you ask for</string>
+  <string name="about_feature_offline" tools:ignore="PluralsCandidate">• Speech is 100% offline and works before the phone is unlocked; the internet is used only to download natural voices you ask for</string>
   <string name="about_feature_languages">• Every eSpeak NG language bundled, with regional dialects and voice variants</string>
   <string name="about_feature_indian">• Enhanced Indian English (en-in) and Indic language phonetics</string>
   <string name="about_feature_dsp">• Tone shaping and audio optimizer</string>
@@ -751,7 +751,7 @@
   <string name="piper_test_loading">Loading %1$s…</string>
   <string name="piper_test_failed">Could not play %1$s</string>
   <string name="piper_tap_to_retry">Tap to try again</string>
-  <string name="piper_language_have">%1$s, %2$d downloaded</string>
+  <string name="piper_language_have" tools:ignore="PluralsCandidate">%1$s, %2$d downloaded</string>
   <string name="piper_refresh_summary">Get the newest list of voices</string>
   <string name="piper_download_waiting">Waiting to download</string>
   <string name="piper_download_percent">Downloading, %1$d%%</string>

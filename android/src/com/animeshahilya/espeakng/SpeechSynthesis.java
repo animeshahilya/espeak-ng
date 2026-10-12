@@ -34,7 +34,6 @@ import com.animeshahilya.espeakng.text.ScriptLanguages;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.media.AudioFormat;
 import android.util.Log;
 
 import java.io.File;
@@ -98,7 +97,6 @@ public class SpeechSynthesis {
     public static final int AGE_OLD = 60;
 
     public static final int CHANNEL_COUNT_MONO = 1;
-    public static final int FORMAT_PCM_S16 = AudioFormat.ENCODING_PCM_16BIT;
 
     static {
         System.loadLibrary("ttsespeak");
@@ -138,10 +136,6 @@ public class SpeechSynthesis {
 
     public int getChannelCount() {
         return CHANNEL_COUNT_MONO;
-    }
-
-    public int getAudioFormat() {
-        return FORMAT_PCM_S16;
     }
 
     // Legacy Locale constructors are used deliberately here: engine voice names

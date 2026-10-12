@@ -264,11 +264,6 @@ public class EspeakApp extends Application {
                 }
             });
 
-    /** Shared background executor for one-off and lightweight async app tasks. */
-    public static java.util.concurrent.ExecutorService getBackgroundExecutor() {
-        return BACKGROUND_EXECUTOR;
-    }
-
     /** Dispatches a task to the shared background worker pool. */
     public static void runAsync(Runnable task) {
         BACKGROUND_EXECUTOR.execute(task);

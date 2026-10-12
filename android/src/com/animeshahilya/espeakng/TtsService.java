@@ -363,8 +363,7 @@ public class TtsService extends TextToSpeechService {
 
         mPreferences = EspeakApp.prefs(mStorageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
-        CheckVoiceData.ensureVoiceData(mStorageContext);
-        initializeTtsEngine();
+        initializeTtsEngine(); // new SpeechSynthesis() extracts the voice data when needed
         mEngineRegistry.register(new EspeakVoiceEngine(this));
         mEngineRegistry.register(new PiperVoiceEngine(mPiper));
         // Warm the user-dictionary singleton, emoji trie, and hinglish list off

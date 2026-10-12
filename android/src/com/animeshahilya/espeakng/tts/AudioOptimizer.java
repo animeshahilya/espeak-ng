@@ -131,14 +131,6 @@ public final class AudioOptimizer {
     }
 
     /**
-     * Saturated harmonic evaluation with 2x oversampling and boxcar decimation.
-     */
-    public static float oversampledHarmonicSaturate(float prevInput, float currentInput, float drive) {
-        float midpoint = (prevInput + currentInput) * 0.5f;
-        return (harmonicSaturate(midpoint, drive) + harmonicSaturate(currentInput, drive)) * 0.5f;
-    }
-
-    /**
      * Gain to bring sample magnitude down to threshold.
      */
     public static float limiterGainForSample(float sampleAbs, float threshold) {
@@ -218,7 +210,6 @@ public final class AudioOptimizer {
     private final boolean mLevelerEnabled;
     private final boolean mLimiterEnabled;
     private final boolean mIsSingleCharUtterance;
-    private final int mSpeechRateWpm;
 
     private float prevInput = 0f;
     private float prevHighPass = 0f;
@@ -260,7 +251,6 @@ public final class AudioOptimizer {
         mDeclickerEnabled = declickerEnabled;
         mLevelerEnabled = levelerEnabled;
         mLimiterEnabled = limiterEnabled;
-        mSpeechRateWpm = speechRateWpm;
         mIsSingleCharUtterance = isSingleCharUtterance;
 
         float pBlend = PRESENCE_BLEND;
@@ -320,15 +310,7 @@ public final class AudioOptimizer {
         gainSmoothAlpha = scaledEnvelopeAlpha(GAIN_SMOOTH_ALPHA_AT_REFERENCE_RATE, sampleRateHz, LEVELER_REFERENCE_RATE_HZ);
     }
 
-    public boolean isGlottalTiltEnabled() { return mGlottalTiltEnabled; }
-    public boolean isSibilantBypassEnabled() { return mSibilantBypassEnabled; }
-    public boolean isPresenceEnabled() { return mPresenceEnabled; }
-    public boolean isWarmthEnabled() { return mWarmthEnabled; }
-    public boolean isDeclickerEnabled() { return mDeclickerEnabled; }
-    public boolean isLevelerEnabled() { return mLevelerEnabled; }
-    public boolean isLimiterEnabled() { return mLimiterEnabled; }
     public boolean isSingleCharUtterance() { return mIsSingleCharUtterance; }
-    public int getSpeechRateWpm() { return mSpeechRateWpm; }
 
     private static float oversampledSaturate(float prev, float current, float driveFactor) {
         float midpoint = (prev + current) * 0.5f;

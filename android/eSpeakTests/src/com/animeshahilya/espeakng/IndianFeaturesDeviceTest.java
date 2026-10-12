@@ -85,34 +85,40 @@ public class IndianFeaturesDeviceTest {
         }
     }
 
+    /** Code-reading mode: NVDA's symbol pass at ALL. */
+    private static String codeSymbols(String text) {
+        return com.animeshahilya.espeakng.text.NvdaSymbolProcessor.processText(text,
+                com.animeshahilya.espeakng.text.NvdaSymbolProcessor.LEVEL_ALL, true);
+    }
+
     @Test
     public void testExpandProgrammingSymbols() {
-        assertThat(TextPreprocessor.expandProgrammingSymbols("if (x != y)"), containsString("not equal"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("x ≠ y"), containsString("not equal"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("if (a == b)"), containsString("double equals"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("while (i <= 10)"), containsString("less than or equal to"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("i ≤ 10"), containsString("less than or equal to"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("if (score >= 50)"), containsString("greater than or equal to"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("score ≥ 50"), containsString("greater than or equal to"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("(x) => x * 2"), containsString("implies"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("A ⇒ B"), containsString("implies"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("ptr->value"), containsString("arrow"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("go → right"), containsString("arrow"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("go ← left"), containsString("left arrow"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("go ↑ up"), containsString("up arrow"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("go ↓ down"), containsString("down arrow"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("a && b"), containsString("double ampersand"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("c || d"), containsString("double pipe"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("/* comment */"), containsString("comment start"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("Wait..."), containsString("dot dot dot"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("Wait…"), containsString("dot dot dot"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("± 5"), containsString("plus or minus"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("5 × 10"), containsString("times"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("10 ÷ 2"), containsString("divided by"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("x ≈ y"), containsString("almost equal to"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("Done ✓"), containsString("check"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("• Item"), containsString("bullet"));
-        assertThat(TextPreprocessor.expandProgrammingSymbols("30° C"), containsString("30 degrees"));
+        assertThat(codeSymbols("if (x != y)"), containsString("not equal"));
+        assertThat(codeSymbols("x ≠ y"), containsString("not equal"));
+        assertThat(codeSymbols("if (a == b)"), containsString("double equals"));
+        assertThat(codeSymbols("while (i <= 10)"), containsString("less than or equal to"));
+        assertThat(codeSymbols("i ≤ 10"), containsString("less than or equal to"));
+        assertThat(codeSymbols("if (score >= 50)"), containsString("greater than or equal to"));
+        assertThat(codeSymbols("score ≥ 50"), containsString("greater than or equal to"));
+        assertThat(codeSymbols("(x) => x * 2"), containsString("implies"));
+        assertThat(codeSymbols("A ⇒ B"), containsString("implies"));
+        assertThat(codeSymbols("ptr->value"), containsString("arrow"));
+        assertThat(codeSymbols("go → right"), containsString("arrow"));
+        assertThat(codeSymbols("go ← left"), containsString("left arrow"));
+        assertThat(codeSymbols("go ↑ up"), containsString("up arrow"));
+        assertThat(codeSymbols("go ↓ down"), containsString("down arrow"));
+        assertThat(codeSymbols("a && b"), containsString("double ampersand"));
+        assertThat(codeSymbols("c || d"), containsString("double pipe"));
+        assertThat(codeSymbols("/* comment */"), containsString("comment start"));
+        assertThat(codeSymbols("Wait..."), containsString("dot dot dot"));
+        assertThat(codeSymbols("Wait…"), containsString("dot dot dot"));
+        assertThat(codeSymbols("± 5"), containsString("plus or minus"));
+        assertThat(codeSymbols("5 × 10"), containsString("times"));
+        assertThat(codeSymbols("10 ÷ 2"), containsString("divided by"));
+        assertThat(codeSymbols("x ≈ y"), containsString("almost equal to"));
+        assertThat(codeSymbols("Done ✓"), containsString("check"));
+        assertThat(codeSymbols("• Item"), containsString("bullet"));
+        assertThat(codeSymbols("30° C"), containsString("30 degrees"));
     }
 
     @Test
@@ -327,7 +333,7 @@ public class IndianFeaturesDeviceTest {
         };
 
         for (String phrase : testPhrases) {
-            String expanded = TextPreprocessor.expandProgrammingSymbols(phrase);
+            String expanded = codeSymbols(phrase);
             mAudioBytesReceived.set(0);
             mLatch = new CountDownLatch(1);
             mEngine.synthesize(expanded, false);

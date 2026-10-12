@@ -1022,6 +1022,11 @@ Indian features, natural voices (`PiperE2EDeviceTest` - keep `j_*` passing,
 harnesses (`EnUsProbeDeviceTest`, `CompoundVoiceCheckDeviceTest`,
 `PhraseCacheReplayDeviceTest`).
 
+Lint (`./gradlew lintDebug`) reports 0 errors (2026-10-12); deliberate
+findings (androidx.preference internals, TalkBack focus on sub-screens, the
+startup-provider manifest entry) are suppressed in `android/lint.xml` with
+the reason, so a new error is a real one.
+
 Performance work on the native engine must stay bit-exact: compare
 `PipelineSnapshotTest` hash dumps before and after (18 voices, zero diff).
 Run that class on its own (`am instrument -e class ...PipelineSnapshotTest`),

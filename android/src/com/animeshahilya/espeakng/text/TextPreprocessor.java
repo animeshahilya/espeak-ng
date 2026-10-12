@@ -866,14 +866,6 @@ public final class TextPreprocessor {
         return sb != null ? sb.toString() : text;
     }
 
-    public static String expandProgrammingSymbols(String text) {
-        // Now an NVDA symbol pass at ALL (announce everything known). The
-        // old 37-pattern chain, its trigger index and its collect-then-apply
-        // machinery are gone; the differential fuzz harness that verified
-        // that machinery is retired with them.
-        return NvdaSymbolProcessor.processText(text, NvdaSymbolProcessor.LEVEL_ALL, true);
-    }
-
     public static String simplifyUrls(String text) {
         if (text == null || text.isEmpty()) {
             return text;

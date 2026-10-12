@@ -24,8 +24,6 @@ import com.animeshahilya.espeakng.VoiceVariant;
 
 import android.content.SharedPreferences;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class VoiceSettings {
     private final SharedPreferences mPreferences;
@@ -203,17 +201,6 @@ public class VoiceSettings {
     public static final String AUDIO_PROFILE_FULL = "full";
     public static final String AUDIO_PROFILE_CUSTOM = "custom";
 
-    public static final String PRESET_VARIANT = "variant";
-    public static final String PRESET_RATE = "rate";
-    public static final String PRESET_PITCH = "pitch";
-    public static final String PRESET_PITCH_RANGE = "pitch-range";
-    public static final String PRESET_VOLUME = "volume";
-    public static final String PRESET_PUNCTUATION_LEVEL = "punctuation-level";
-    public static final String PRESET_PUNCTUATION_CHARACTERS = "punctuation-characters";
-
-    public static final String PUNCTUATION_NONE = "none";
-    public static final String PUNCTUATION_SOME = "some";
-    public static final String PUNCTUATION_ALL = "all";
 
     /**
      * UI-facing punctuation presets, shown as the radio choices in the "Speak
@@ -364,28 +351,6 @@ public class VoiceSettings {
     private int getPreferenceValue(String preference, SpeechSynthesis.Parameter parameter) {
         Integer value = parsePreference(preference);
         return value != null ? value : parameter.getDefaultValue();
-    }
-
-    public JSONObject toJSON() throws JSONException {
-        JSONObject settings = new JSONObject();
-        settings.put(PRESET_VARIANT, getVoiceVariant().toString());
-        settings.put(PRESET_RATE, getRate());
-        settings.put(PRESET_PITCH, getPitch());
-        settings.put(PRESET_PITCH_RANGE, getPitchRange());
-        settings.put(PRESET_VOLUME, getVolume());
-        settings.put(PRESET_PUNCTUATION_CHARACTERS, getPunctuationCharacters());
-        switch (getPunctuationLevel()) {
-            case SpeechSynthesis.PUNCT_NONE:
-                settings.put(PRESET_PUNCTUATION_LEVEL, PUNCTUATION_NONE);
-                break;
-            case SpeechSynthesis.PUNCT_SOME:
-                settings.put(PRESET_PUNCTUATION_LEVEL, PUNCTUATION_SOME);
-                break;
-            case SpeechSynthesis.PUNCT_ALL:
-                settings.put(PRESET_PUNCTUATION_LEVEL, PUNCTUATION_ALL);
-                break;
-        }
-        return settings;
     }
 
     /** {@link #RATE_BOOST_OFF} or the multiplier, migrating the old toggle + amount on first read. */
@@ -701,12 +666,6 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_FORCE_VOLUME, false);
     }
 
-    public String getAudioProfile() {
-        String p = getAudioOptimizerLevel();
-        if (AUDIO_PROFILE_GENTLE.equals(p) || AUDIO_PROFILE_FULL.equals(p) || AUDIO_PROFILE_CUSTOM.equals(p)) return p;
-        return AUDIO_PROFILE_BALANCED;
-    }
-
     public String getRepeatedCharactersMode() {
         String mode = mPreferences.getString(PREF_REPEATED_CHARS, REPEATED_CHARS_OFF);
         if (REPEATED_CHARS_COUNT.equals(mode) || REPEATED_CHARS_TRUNCATE.equals(mode)) {
@@ -776,21 +735,6 @@ public class VoiceSettings {
     public static final String PREF_SLEEP_MUTE_UNTIL = "espeak_sleep_mute_until";
     public static final int SLEEP_MAX_MINUTES = 60;
 
-    /** Configured duration in minutes, or 0 for off/malformed. */
-    public int getSleepTimerMinutes() {
-        String raw = mPreferences.getString(PREF_SLEEP_TIMER, SLEEP_OFF);
-        if (raw == null || SLEEP_OFF.equals(raw)) {
-            return 0;
-        }
-        try {
-            int minutes = Integer.parseInt(raw);
-            if (minutes <= 0) return 0;
-            return Math.min(minutes, SLEEP_MAX_MINUTES);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-    }
-
     /**
      * True while the mute window covers now; expired windows read as off, and
      * so does a deadline further out than any timer can set (the clock was
@@ -815,10 +759,6 @@ public class VoiceSettings {
 
     // Reading history (opt-in): keep recently spoken text on this device.
     public static final String PREF_READING_HISTORY = "espeak_reading_history";
-
-    public boolean isReadingHistoryEnabled() {
-        return mPreferences.getBoolean(PREF_READING_HISTORY, false);
-    }
 
     // What's-new dialog: last version code the user has seen. Not a UI row.
     public static final String PREF_WHATS_NEW_SEEN = "espeak_whats_new_seen";

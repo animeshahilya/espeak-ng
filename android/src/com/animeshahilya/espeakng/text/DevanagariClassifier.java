@@ -99,7 +99,6 @@ public final class DevanagariClassifier {
     private static final char CHAR_LLA = '\u0933';      // ळ (Marathi & Konkani)
     private static final char CHAR_RRA = '\u0931';      // ऱ (Marathi)
     private static final char CHAR_AVAGRAHA = '\u093D'; // ऽ (Sanskrit)
-    private static final char CHAR_VISARGA = '\u0903';  // ः (Sanskrit)
 
     // =========================================================================
     // 1. High-Frequency Lexicons

@@ -27,7 +27,6 @@ import android.content.Context;
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.Voice;
 
-import android.media.AudioFormat;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
@@ -189,7 +188,6 @@ import static org.hamcrest.Matchers.*;
         final SpeechSynthesis synth = new SpeechSynthesis(getContext(), mCallback);
         assertThat(synth.getSampleRate(), is(22050));
         assertThat(synth.getChannelCount(), is(1));
-        assertThat(synth.getAudioFormat(), is(AudioFormat.ENCODING_PCM_16BIT));
     }
 
     @Test
