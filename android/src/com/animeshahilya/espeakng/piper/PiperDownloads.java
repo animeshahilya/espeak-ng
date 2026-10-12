@@ -596,18 +596,12 @@ public final class PiperDownloads {
                 return false;
             }
             PiperVoiceStore.invalidate();
-            String assigned = null;
-            final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storageContext, voice.key);
-            if (installed != null) {
-                final String lang = installed.languageKey();
-                final SharedPreferences settings = settingsPrefs(storageContext);
-                if (PiperVoiceStore.assignedKey(settings, lang) == null) {
-                    PiperVoiceStore.assign(settings, lang, voice.key);
-                    assigned = lang;
-                }
-            }
+            final String assigned = assignIfFirst(storageContext, voice.key);
             broadcastChanged(appContext, voice.key, assigned);
-            EspeakApp.runAsync(() -> fetchVoiceExtras(appContext, storageContext));
+            EspeakApp.runAsync(() -> {
+                fetchVoiceExtras(appContext, storageContext);
+                prepare(storageContext, voice.key);
+            });
             return true;
         } catch (IOException | RuntimeException e) {
             logw("Shared install of " + voice.key + " failed", e);
@@ -971,21 +965,13 @@ public final class PiperDownloads {
             }
             PiperVoiceStore.invalidate();
 
-            // A language's first natural voice starts speaking it right away:
-            // the user just asked for it. Later ones wait to be chosen.
-            String assigned = null;
-            final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storageContext, key);
-            if (installed != null) {
-                final String lang = installed.languageKey();
-                final SharedPreferences settings = settingsPrefs(storageContext);
-                if (PiperVoiceStore.assignedKey(settings, lang) == null) {
-                    PiperVoiceStore.assign(settings, lang, key);
-                    assigned = lang;
-                }
-            }
+            final String assigned = assignIfFirst(storageContext, key);
             broadcastChanged(appContext, key, assigned);
             // Files that go with some voices: NPU decoders (Snapdragon build), Arabic vowel marks.
-            EspeakApp.runAsync(() -> fetchVoiceExtras(appContext, storageContext));
+            EspeakApp.runAsync(() -> {
+                fetchVoiceExtras(appContext, storageContext);
+                prepare(storageContext, key);
+            });
             // Feed the shared store so the next voice with this file skips its
             // download, and fold any older duplicate copies into links.
             try {
@@ -1379,6 +1365,44 @@ public final class PiperDownloads {
         } catch (IOException e) {
             Log.w(TAG, "Cannot hash " + v.key, e);
             return null;
+        }
+    }
+
+    /**
+     * A language's first natural voice starts speaking it right away: the
+     * user just asked for it. Only the first: with another voice of the
+     * language installed, "no voice chosen" means the user chose eSpeak, and a
+     * second download must not override that. Returns the language assigned,
+     * or null.
+     */
+    private static String assignIfFirst(Context storageContext, String key) {
+        final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storageContext, key);
+        if (installed == null) {
+            return null;
+        }
+        final String lang = installed.languageKey();
+        final SharedPreferences settings = settingsPrefs(storageContext);
+        if (PiperVoiceStore.assignedKey(settings, lang) != null) {
+            return null;
+        }
+        for (PiperVoiceStore.Installed other : PiperVoiceStore.list(storageContext)) {
+            if (!other.key.equals(key) && lang.equals(other.languageKey())) {
+                return null;
+            }
+        }
+        PiperVoiceStore.assign(settings, lang, key);
+        return lang;
+    }
+
+    /**
+     * Part of the download: the new voice's optimized copy and NPU graph are
+     * built now (after its extras, which include the INT8 NPU decoder), not
+     * at its first use.
+     */
+    private static void prepare(Context storageContext, String key) {
+        final PiperVoiceStore.Installed v = PiperVoiceStore.find(storageContext, key);
+        if (v != null) {
+            PiperEngine.get().prepare(v.key, v.model(), v.config);
         }
     }
 

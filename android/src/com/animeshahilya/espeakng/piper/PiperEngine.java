@@ -322,6 +322,26 @@ public final class PiperEngine {
     }
 
     /**
+     * Builds a just-downloaded voice's phone-specific files - the optimized
+     * CPU copy and, in the Snapdragon build, the compiled NPU graph - without
+     * keeping it loaded, so its first use is as quick as any later one and
+     * the voice in use is not evicted for it. The NPU graph compiles on its
+     * own thread after this returns (PiperModel.attachNpuLater).
+     */
+    public void prepare(String key, File onnx, PiperVoiceConfig config) {
+        mLoader.execute(() -> {
+            if (getLoaded(key) != null) {
+                return;
+            }
+            try {
+                loadModel(key, onnx, config).close();
+            } catch (Throwable t) {
+                // Built at its first use instead.
+            }
+        });
+    }
+
+    /**
      * Loads and waits (the settings screen's test). On the loader thread like
      * preload(), so two loads of one voice never build its optimized copy at
      * the same time.

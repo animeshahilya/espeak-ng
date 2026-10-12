@@ -55,7 +55,7 @@ Output APKs land in `build/outputs/apk/debug/` and `build/outputs/apk/release/`.
 ## Build Configuration
 
 - Package/namespace `com.animeshahilya.espeakng`; app label "eSpeak NG Advanced" (`R.string.app_name`, translatable="false" - single source, no per-locale override)
-- compileSdk 37, minSdk 26 (Android 8.0+), targetSdk 37
+- compileSdk 37, minSdk 26 (Android 8.0+; the Snapdragon APK 27, for Qualcomm's QNN plugin), targetSdk 37
 - NDK 30.0.16248370 (r30), CMake 3.22.1
 - JDK 17 (Temurin) toolchain across dev and CI
 - Native binaries built with 16 KB ELF page alignment for Android 15+ compatibility
@@ -386,7 +386,10 @@ voices" does not, so voices can still be deleted to free space.
   `phoneme_type` is espeak/text; the model goes through `DownloadManager` to
   app-specific external storage, is MD5-checked, then moved in by
   `PiperDownloadReceiver` (exported for the system's DOWNLOAD_COMPLETE; acts
-  only on ids it enqueued). The first voice of a language is auto-assigned.
+  only on ids it enqueued). The first voice of a language is auto-assigned
+  (`assignIfFirst`) - only the first: with another of its voices installed,
+  "none chosen" means the user chose eSpeak, and before 2026-10-12 a second
+  download overrode that.
   `piper_dl_*` bookkeeping prefs are excluded from backups. `complete()` is
   synchronized: the receiver and the page's `reconcile()` can race on it.
 - **Community voices.** `assets/piper/extra_voices.json` (voices.json format
@@ -527,17 +530,36 @@ voices" does not, so voices can still be deleted to free space.
   SYSPIN/Rasa 0.8-1.7x (their HiFi-GAN decoders are 7-15x heavier), so
   long text stalls on CPU-only phones.
 - **Snapdragon build** (`./gradlew assembleRelease -Psnapdragon` ->
-  `espeak-snapdragon-release.apk`, ~90 MB vs 33): onnxruntime-android-qnn
-  (newest 1.29) plus Qualcomm's QNN runtime. `PiperModel.attachNpu` moves
+  `espeak-snapdragon-release.apk`, ~90 MB vs 33): the same slim ONNX Runtime
+  as the standard APK plus Qualcomm's QNN plugin
+  (`com.qualcomm.qti:onnxruntime-android-qnn` 2.6.0, QAIRT 2.50, with
+  `qnn-runtime` 2.50.0; since 2026-10-12 - Microsoft's built-in QNN package
+  stopped at 1.29 / QNN 2.42). `PiperModel.npuDevices` registers the plugin
+  (`libonnxruntime_providers_qnn.so` from the native lib dir) and
+  `addNpu` puts a session on its device; `backend_path` must be the full
+  path of `libQnnHtp.so` (by `backend_type` alone the DSP could not open
+  `libQnnHtpV79Skel.so`: QNN_DEVICE_ERROR_INVALID_CONFIG on a Galaxy S25
+  Ultra). The plugin needs minSdk 27, so the Snapdragon APK has 27 (it is
+  offered from SM8450 on, Android 12+). GPU, DSP and HTP v68 libraries are
+  left out (`packaging.jniLibs.excludes`, -10 MB). Same speed as before on
+  the S25 Ultra (Hindi first audio 123-132 ms). `PiperModel.attachNpu` moves
   the decoder to the Hexagon NPU after warm-up: writes it with fixed input
   shapes (`PiperSplit.split(..., decoderShapes)`, `NPU_FRAMES` = 80 latent
-  frames), lets QNN compile it (2-9 s, once) and keeps the compiled graph
-  as `model.<ort>.npu80.onnx` (0.15 s loads); `decodeOnNpu` runs fixed
-  windows with `DECODE_OVERLAP` context. All of the graph on the NPU or
-  none (`disable_cpu_ep_fallback`); a failure keeps the CPU decoder and
-  writes `model.<ort>.npu-r2.failed` with the reason (bump the revision
-  after NPU code changes so phones retry). The load log says where the
-  decoder runs. Needs `<uses-native-library libcdsprpc.so>` in the
+  frames), lets QNN compile it and keeps the compiled graph as
+  `model.<ort>.npu80.onnx` (0.15 s loads); `decodeOnNpu` runs fixed windows
+  with `DECODE_OVERLAP` context. A compile (FP16 13-17 s on the S25 Ultra,
+  INT8 ~1.6 s) never holds up the voice: `attachNpuLater` speaks with the
+  CPU decoder and switches on the `piper-npu-compile` thread when ready
+  (logged "decoder moved to the NPU"), and `PiperEngine.prepare` builds a
+  voice's optimized copy and NPU graph right after its download
+  (`PiperDownloads.prepare`, after its extras), so even its first use is
+  quick (Rahul: 674 ms, NPU). All of the graph on the NPU or none
+  (`disable_cpu_ep_fallback`); a failure keeps the CPU decoder and writes
+  `model.<ort>.npu-r5.failed` with the reason (bump the revision after NPU
+  code changes so phones retry). The load log says where the decoder runs.
+  Measured on the S25 Ultra, no gain, not used: `rpc_control_latency` 100,
+  `htp_share_resource_optimization` (two voices loaded), ONNX Runtime 1.31
+  (renders the same, loads voices 40-100% slower). Needs `<uses-native-library libcdsprpc.so>` in the
   manifest (Android 12+ hides it otherwise, and QNN silently falls back to
   the CPU); do not set ADSP_LIBRARY_PATH yourself (it made QNN reject 37
   convolutions). Galaxy S25 Ultra (8 Elite, HTP v79): decoders ~22x real

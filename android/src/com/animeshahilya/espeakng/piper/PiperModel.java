@@ -124,7 +124,7 @@ public final class PiperModel implements Closeable {
     }
     private static final String NPU_SUFFIX = ".npu" + NPU_FRAMES + ".onnx";
     /** Holds why the NPU failed; the revision makes phones retry after NPU code changes. */
-    private static final String NPU_FAILED_SUFFIX = ".npu-r3.failed";
+    private static final String NPU_FAILED_SUFFIX = ".npu-r5.failed";
 
     public final PiperVoiceConfig config;
     public final File file;
@@ -348,7 +348,11 @@ public final class PiperModel implements Closeable {
             throw e;
         }
         if (model.streams()) {
-            model.attachNpu(onnx);
+            if (model.npuCompiled(onnx) || !hasNpuRuntime()) {
+                model.attachNpu(onnx); // a compiled graph loads in ~0.15 s
+            } else {
+                model.attachNpuLater(onnx);
+            }
         }
         if (mapped != null) {
             dropOriginal(onnx);
@@ -495,27 +499,113 @@ public final class PiperModel implements Closeable {
         }
     }
 
-    private static volatile Boolean sNpuRuntime;
+    /** Name Qualcomm's QNN plugin registers its NPU device under. */
+    private static final String QNN_EP = "QNNExecutionProvider";
+    private static volatile List<ai.onnxruntime.OrtEpDevice> sNpuDevices;
 
     /**
-     * True when this ONNX Runtime has Qualcomm's QNN provider: the Snapdragon
-     * build. The standard build answers without loading the runtime (the
-     * settings screen asks on the main thread, natural voices on or off).
+     * Qualcomm's QNN plugin (com.qualcomm.qti:onnxruntime-android-qnn, in the
+     * Snapdragon build only) registered with this runtime, and its NPU
+     * devices; empty without one. The standard build answers without
+     * loading the runtime (the settings screen asks on the main thread).
      */
-    static boolean hasNpuRuntime() {
+    private static List<ai.onnxruntime.OrtEpDevice> npuDevices() {
         if (!BuildConfig.SNAPDRAGON) {
-            return false;
+            return java.util.Collections.emptyList();
         }
-        Boolean has = sNpuRuntime;
-        if (has == null) {
-            try {
-                has = env().getAvailableProviders().contains(ai.onnxruntime.OrtProvider.QNN);
-            } catch (RuntimeException e) {
-                has = false;
+        List<ai.onnxruntime.OrtEpDevice> devices = sNpuDevices;
+        if (devices == null) {
+            synchronized (PiperModel.class) {
+                devices = sNpuDevices;
+                if (devices == null) {
+                    devices = new ArrayList<>();
+                    try {
+                        final File lib = new File(com.animeshahilya.espeakng.EspeakApp.getStorageContext()
+                                .getApplicationInfo().nativeLibraryDir, "libonnxruntime_providers_qnn.so");
+                        env().registerExecutionProviderLibrary(QNN_EP, lib.getAbsolutePath());
+                        for (ai.onnxruntime.OrtEpDevice d : env().getEpDevices()) {
+                            if (QNN_EP.equals(d.getEpName())) {
+                                devices.add(d);
+                            }
+                        }
+                    } catch (OrtException | RuntimeException e) {
+                        android.util.Log.w("PiperVoices", "QNN plugin not loaded: " + e);
+                    }
+                    sNpuDevices = devices;
+                }
             }
-            sNpuRuntime = has;
         }
-        return has;
+        return devices;
+    }
+
+    /**
+     * QNN's HTP backend by full path, from the app's native libraries: the
+     * plugin then finds the NPU-side libraries (libQnnHtpV*Skel.so) beside
+     * it; by type alone the DSP could not open them (Galaxy S25 Ultra).
+     */
+    private static String npuBackend() {
+        return new File(com.animeshahilya.espeakng.EspeakApp.getStorageContext()
+                .getApplicationInfo().nativeLibraryDir, "libQnnHtp.so").getAbsolutePath();
+    }
+
+    /** True when the NPU runtime is here: the Snapdragon build on a phone QNN accepts. */
+    static boolean hasNpuRuntime() {
+        return !npuDevices().isEmpty();
+    }
+
+    /** Puts the session on the NPU through the QNN plugin with these options. */
+    private static void addNpu(OrtSession.SessionOptions options, Map<String, String> qnn) throws OrtException {
+        options.addExecutionProvider(npuDevices(), qnn);
+    }
+
+    /** One low-priority thread compiles NPU graphs, one voice at a time. */
+    private static final java.util.concurrent.ExecutorService NPU_COMPILER =
+            java.util.concurrent.Executors.newSingleThreadExecutor(r -> {
+                final Thread t = new Thread(r, "piper-npu-compile");
+                t.setDaemon(true);
+                t.setPriority(Thread.MIN_PRIORITY);
+                return t;
+            });
+
+    /**
+     * True when this voice's NPU graph is already compiled, so attaching it
+     * is quick. Mirrors {@link #attachNpu}'s choice of INT8 or FP16 graph.
+     */
+    private boolean npuCompiled(File onnx) {
+        final File int8 = new File(onnx.getParentFile(), NPU_DECODER_FILE);
+        if (group.boundaryShapes != null && int8.isFile()
+                && !derivedFile(onnx, ".npuq-r3." + int8.length() + ".failed").exists()) {
+            return derivedFile(onnx, ".npuq." + int8.length() + ".onnx").isFile();
+        }
+        return derivedFile(onnx, NPU_SUFFIX).isFile() || derivedFile(onnx, NPU_FAILED_SUFFIX).exists();
+    }
+
+    /**
+     * The first load of a voice (or the first after an update) has to compile
+     * its NPU graph, 2-17 s. The voice speaks with its CPU decoder meanwhile
+     * and moves to the NPU when the graph is ready, instead of the whole voice
+     * waiting (and eSpeak speaking) that long. The compile holds a reference,
+     * so a voice unloaded meanwhile closes the NPU session with the rest.
+     */
+    private void attachNpuLater(File onnx) {
+        group.npuProblem = "on the CPU until its NPU graph is compiled";
+        if (!group.acquire()) {
+            return;
+        }
+        NPU_COMPILER.execute(() -> {
+            try {
+                if (!group.isClosed()) {
+                    final long t0 = System.nanoTime();
+                    attachNpu(onnx);
+                    android.util.Log.i("PiperVoices", "Natural voice " + config.key + " decoder "
+                            + (onNpu() ? "moved to the NPU (" + npuKind() + ") after "
+                                    + (System.nanoTime() - t0) / 1_000_000 + " ms of compiling"
+                                    : npuProblem()));
+                }
+            } finally {
+                group.release();
+            }
+        });
     }
 
     /**
@@ -539,7 +629,7 @@ public final class PiperModel implements Closeable {
      * by the file's size so an updated file recompiles).
      */
     private boolean attachInt8Npu(File onnx, File int8) {
-        final File failed = derivedFile(onnx, ".npuq-r1." + int8.length() + ".failed");
+        final File failed = derivedFile(onnx, ".npuq-r3." + int8.length() + ".failed");
         if (failed.exists()) {
             return false;
         }
@@ -549,11 +639,11 @@ public final class PiperModel implements Closeable {
             final boolean compile = !compiled.isFile();
             try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
                 final Map<String, String> qnn = new HashMap<>();
-                qnn.put("backend_type", "htp");
+                qnn.put("backend_path", npuBackend());
                 qnn.put("htp_performance_mode", "burst");
                 // The latent's own quantize step runs on the NPU too.
                 qnn.put("offload_graph_io_quantization", "1");
-                options.addQnn(qnn);
+                addNpu(options, qnn);
                 options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
                 if (compile) {
                     options.addConfigEntry("ep.context_enable", "1");
@@ -586,6 +676,7 @@ public final class PiperModel implements Closeable {
             }
             group.npuFrames = (int) latent[2];
             group.npuKind = "INT8";
+            group.npuProblem = null;
             group.npuDecoder = npu;
             return true;
         } catch (IOException | OrtException | RuntimeException e) {
@@ -634,10 +725,10 @@ public final class PiperModel implements Closeable {
             }
             try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
                 final Map<String, String> qnn = new HashMap<>();
-                qnn.put("backend_type", "htp");
+                qnn.put("backend_path", npuBackend());
                 qnn.put("enable_htp_fp16_precision", "1");
                 qnn.put("htp_performance_mode", "burst");
-                options.addQnn(qnn);
+                addNpu(options, qnn);
                 // All of it on the NPU or not at all: a half-offloaded graph is slower.
                 options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
                 // INT8-weight voices (int8-v1) widen their weights with
@@ -668,6 +759,7 @@ public final class PiperModel implements Closeable {
             }
             group.npuFrames = NPU_FRAMES;
             group.npuKind = "FP16";
+            group.npuProblem = null;
             group.npuDecoder = npu;
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);

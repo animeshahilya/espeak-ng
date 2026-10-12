@@ -73,18 +73,19 @@ dependencies {
     // Piper natural voices: ONNX Runtime runs the VITS models on the CPU.
     // A full (not "minimal") build: Piper models are plain ONNX files from
     // the voice catalog, optimized on the phone. Only arm64-v8a ships.
-    // -Psnapdragon builds the Snapdragon APK instead: the QNN package (its
-    // newest is 1.29) plus Qualcomm's runtime, so natural-voice decoders run
-    // on the Hexagon NPU (PiperModel.attachNpu; ~22x real time vs ~4x on a
-    // Galaxy S25 Ultra's CPU). It adds ~60 MB, hence a separate APK.
+    // ONNX Runtime 1.30.0 built for this app by tools/ort-voices/build.sh:
+    // arm64 only, only the operators the natural voices use, no
+    // NNAPI/XNNPACK/WebGPU/telemetry - libonnxruntime.so 16 MB instead of
+    // Microsoft's 33 (APK 34.7 -> 28.4 MB). Both APKs use it.
+    implementation files('libs/onnxruntime-voices-1.30.0.aar')
+    // -Psnapdragon builds the Snapdragon APK: Qualcomm's QNN plugin for ONNX
+    // Runtime (loaded at run time, PiperModel.npuDevices) and the QNN runtime
+    // it was built with (QAIRT 2.50), so natural-voice decoders run on the
+    // Hexagon NPU (PiperModel.attachNpu; ~22x real time vs ~4x on a Galaxy
+    // S25 Ultra's CPU). It adds ~60 MB, hence a separate APK.
     if (project.hasProperty('snapdragon')) {
-        implementation 'com.microsoft.onnxruntime:onnxruntime-android-qnn:1.29.0'
-    } else {
-        // ONNX Runtime 1.30.0 built for this app by tools/ort-voices/build.sh:
-        // arm64 only, only the operators the natural voices use, no
-        // NNAPI/XNNPACK/WebGPU/telemetry - libonnxruntime.so 16 MB instead of
-        // Microsoft's 33 (APK 34.7 -> 28.4 MB).
-        implementation files('libs/onnxruntime-voices-1.30.0.aar')
+        implementation 'com.qualcomm.qti:onnxruntime-android-qnn:2.6.0'
+        implementation 'com.qualcomm.qti:qnn-runtime:2.50.0'
     }
     testImplementation 'junit:junit:4.13.2'
     // Real org.json for the JVM unit tests: android.jar's is a stub, and
@@ -112,7 +113,9 @@ android {
     }
 
     defaultConfig {
-        minSdk = 26
+        // The Snapdragon APK: Qualcomm's QNN plugin needs API 27. It is only
+        // offered from the Snapdragon 8 Gen 1 on, which shipped with Android 12.
+        minSdk = project.hasProperty('snapdragon') ? 27 : 26
         targetSdk = 37
         versionCode = 32
         versionName = "2.9"
@@ -207,6 +210,12 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
+            // The Snapdragon APK uses QNN's HTP (NPU) backend only, and is only
+            // offered from the SM8450 (HTP v69) on: drop the GPU and DSP
+            // backends and the v68 NPU libraries (~10 MB of the APK, ~26 MB
+            // installed).
+            excludes += ['**/libQnnGpu.so', '**/libQnnDsp.so', '**/libQnnDspV*.so',
+                         '**/libQnnHtpV68Skel.so', '**/libQnnHtpV68Stub.so']
         }
     }
 
