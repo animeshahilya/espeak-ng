@@ -1,15 +1,9 @@
 package com.animeshahilya.espeakng.text;
-import com.animeshahilya.espeakng.EspeakApp;
-import com.animeshahilya.espeakng.Voice;
 
-import android.content.Context;
-import android.content.res.AssetManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +12,7 @@ import java.util.Map;
  * Hindi pronunciation. Recognised words are rewritten in Devanagari, and
  * eSpeak's own script detection then speaks them with the Hindi voice.
  *
- * The word list (assets/hinglish/hi.tsv, built by tools/build_hinglish.py
+ * The word list (data/hinglish/hi.tsv, built by tools/build_hinglish.py
  * from Google's Dakshina romanization lexicon, CC BY-SA 4.0) maps each
  * Latin spelling to its most attested Devanagari word, flagged when the
  * spelling is also an English word ("main", "to", "ho").
@@ -35,16 +29,10 @@ public final class HinglishReader {
     private static final String TAG = "HinglishReader";
     private static final String FILE = "hinglish/hi.tsv";
 
-    private static volatile AssetManager sAssets;
     private static volatile Map<String, String> sHindi;
     private static volatile Map<String, String> sShared;
 
     private HinglishReader() {
-    }
-
-    /** Called once from {@link EspeakApp#onCreate()}. */
-    public static void init(Context context) {
-        sAssets = context.getApplicationContext().getAssets();
     }
 
     /** Warm up the Hinglish dictionary in background */
@@ -63,9 +51,8 @@ public final class HinglishReader {
             }
             final Map<String, String> hindi = new HashMap<String, String>(32768);
             final Map<String, String> shared = new HashMap<String, String>(4096);
-            if (sAssets != null) {
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                        sAssets.open(FILE), StandardCharsets.UTF_8))) {
+            if (BundledData.ready()) {
+                try (BufferedReader in = BundledData.reader(FILE)) {
                     String line;
                     while ((line = in.readLine()) != null) {
                         final int a = line.indexOf('\t');

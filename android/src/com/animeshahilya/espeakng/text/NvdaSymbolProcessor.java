@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
  * <p>Per language, like NVDA: a voice's table merges, in order, NVDA's
  * {@code symbols.dic} for its locale, that locale's CLDR symbol names, the
  * English table below, NVDA's English {@code symbols.dic} and English CLDR
- * names (assets/symbols/, from tools/update_nvda_symbols.py). For each
+ * names (data/symbols/, from tools/update_nvda_symbols.py). For each
  * symbol the first source that sets a field wins; "-" inherits. So an
  * Arabic voice says "فاصلة" for "،" where it used to get the English word
  * "comma" read with Arabic rules. A language NVDA has no data for uses
@@ -171,7 +171,7 @@ public final class NvdaSymbolProcessor {
         }
     }
 
-    /** Opens a file of assets/symbols/ by name; missing files throw. */
+    /** Opens a file of data/symbols/ by name; missing files throw. */
     public interface DataSource {
         InputStream open(String name) throws IOException;
     }
@@ -716,7 +716,7 @@ public final class NvdaSymbolProcessor {
 
     // ---- Per-language tables --------------------------------------------
 
-    /** Where the per-language data comes from (EspeakApp: assets/symbols/). */
+    /** Where the per-language data comes from (EspeakApp: data/symbols/). */
     public static void setDataSource(DataSource data) {
         sData = data;
         TABLES.clear();

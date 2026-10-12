@@ -353,19 +353,18 @@ static atomic_int s_sampleRate = 0;
  * held by a global reference so the native pointer stays valid. */
 static AAssetManager *s_assets = NULL;
 
-static char *readDictionaryAsset(const char *name, int *size) {
-  if (s_assets == NULL || name == NULL) return NULL;
-  char path[96];
-  if (snprintf(path, sizeof(path), "espeak-dicts/%s_dict.zst", name) >= (int)sizeof(path)) return NULL;
-  /* Stored uncompressed in the APK (noCompress), so the buffer is mapped, not copied. */
-  AAsset *asset = AAssetManager_open(s_assets, path, AASSET_MODE_BUFFER);
+/* Reads a zstd-compressed asset (stored uncompressed in the APK, so the
+ * buffer is mapped, not copied) into a malloc'd buffer the caller frees.
+ * Everything the build packs goes through here: the dictionaries
+ * (espeak-dicts/<name>_dict.zst) and the text data (data/<path>.zst). */
+static char *unpackAsset(AAssetManager *assets, const char *path, size_t *size) {
+  AAsset *asset = AAssetManager_open(assets, path, AASSET_MODE_BUFFER);
   if (asset == NULL) return NULL;
   const void *packed = AAsset_getBuffer(asset);
   const size_t packedSize = (size_t)AAsset_getLength(asset);
   const unsigned long long length = packed ? ZSTD_getFrameContentSize(packed, packedSize) : 0;
   char *data = NULL;
-  if (length > 0 && length <= 0x7fffffff && length != ZSTD_CONTENTSIZE_UNKNOWN
-      && length != ZSTD_CONTENTSIZE_ERROR) {
+  if (length > 0 && length <= 0x7fffffff) { /* also rules out ZSTD_CONTENTSIZE_* */
     data = malloc((size_t)length);
     if (data != NULL && ZSTD_decompress(data, (size_t)length, packed, packedSize) != length) {
       free(data);
@@ -373,8 +372,34 @@ static char *readDictionaryAsset(const char *name, int *size) {
     }
   }
   AAsset_close(asset);
+  if (data != NULL) *size = (size_t)length;
+  return data;
+}
+
+static char *readDictionaryAsset(const char *name, int *size) {
+  if (s_assets == NULL || name == NULL) return NULL;
+  char path[96];
+  if (snprintf(path, sizeof(path), "espeak-dicts/%s_dict.zst", name) >= (int)sizeof(path)) return NULL;
+  size_t length = 0;
+  char *data = unpackAsset(s_assets, path, &length);
   if (data != NULL) *size = (int)length;
   return data;
+}
+
+JNIEXPORT jbyteArray
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeUnpackAsset(
+    JNIEnv *env, jclass clazz, jobject assets, jstring path) {
+  AAssetManager *manager = assets ? AAssetManager_fromJava(env, assets) : NULL;
+  const char *c_path = path ? (*env)->GetStringUTFChars(env, path, NULL) : NULL;
+  if (manager == NULL || c_path == NULL) return NULL;
+  size_t length = 0;
+  char *data = unpackAsset(manager, c_path, &length);
+  (*env)->ReleaseStringUTFChars(env, path, c_path);
+  if (data == NULL) return NULL;
+  jbyteArray out = (*env)->NewByteArray(env, (jsize)length);
+  if (out != NULL) (*env)->SetByteArrayRegion(env, out, 0, (jsize)length, (const jbyte *)data);
+  free(data);
+  return out;
 }
 
 JNIEXPORT jint

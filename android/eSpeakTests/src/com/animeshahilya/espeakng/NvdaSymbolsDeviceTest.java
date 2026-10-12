@@ -34,15 +34,16 @@ public class NvdaSymbolsDeviceTest {
     @Test
     public void everyLanguageCompilesOnIcu() throws Exception {
         final String[] files = InstrumentationRegistry.getInstrumentation().getTargetContext()
-                .getAssets().list("symbols");
+                .getAssets().list("data/symbols");
         assertNotNull(files);
         final List<String> problems = new ArrayList<>();
         int languages = 0;
         for (String file : files) {
-            if (!file.endsWith(".dic") || file.endsWith(".cldr.dic")) {
+            // Packed by the build as <file>.zst (BundledData)
+            if (!file.endsWith(".dic.zst") || file.endsWith(".cldr.dic.zst")) {
                 continue;
             }
-            final String tag = file.substring(0, file.length() - 4);
+            final String tag = file.substring(0, file.length() - 8);
             final List<String> skipped = NvdaSymbolProcessor.skippedPatterns(tag);
             if (!skipped.isEmpty()) {
                 problems.add(tag + ": " + skipped);

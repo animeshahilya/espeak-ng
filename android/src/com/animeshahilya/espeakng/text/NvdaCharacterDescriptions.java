@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Chinese, Japanese and Korean example words for thousands of characters).
  * Looked up like NVDA's getCharacterDescription: the voice's locale, its
  * base language, then English; the character lower-cased. Files come from
- * assets/chardesc/ (tools/update_nvda_symbols.py); without them (JVM
+ * data/chardesc/ (tools/update_nvda_symbols.py); without them (JVM
  * tests) nothing is found.
  */
 public final class NvdaCharacterDescriptions {

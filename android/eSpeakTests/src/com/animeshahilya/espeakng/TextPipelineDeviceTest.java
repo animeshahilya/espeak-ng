@@ -439,8 +439,6 @@ public class TextPipelineDeviceTest {
     /** Beta Hinglish reading: Hindi sentences in Latin letters become Devanagari, English stays. */
     @Test
     public void testHinglish() {
-        HinglishReader.init(androidx.test.platform.app.InstrumentationRegistry
-                .getInstrumentation().getTargetContext());
         assertThat(HinglishReader.process("aap kaise ho bhai"), is("आप कैसे हो भाई"));
         assertThat(HinglishReader.process("main theek hoon, tum batao"), is("मैं ठीक हूं, तुम बताओ"));
         // English, a lone label, and acronyms stay as they are.

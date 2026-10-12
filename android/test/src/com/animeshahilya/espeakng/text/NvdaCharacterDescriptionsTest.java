@@ -12,10 +12,10 @@ import java.io.FileInputStream;
 
 import static org.junit.Assert.*;
 
-/** Phonetic letters in the voice's language, with NVDA's real files (assets/chardesc/). */
+/** Phonetic letters in the voice's language, with NVDA's real files (data/chardesc/). */
 public class NvdaCharacterDescriptionsTest {
 
-    private static final File ASSETS = new File("assets/chardesc");
+    private static final File ASSETS = new File("data/chardesc");
 
     @Before
     public void useAssets() {

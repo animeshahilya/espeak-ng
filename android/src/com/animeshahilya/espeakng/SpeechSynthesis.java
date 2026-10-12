@@ -601,6 +601,13 @@ public class SpeechSynthesis {
 
     private static native boolean nativeClassInit();
 
+    /** An asset the build stored zstd-compressed (see BundledData), unpacked; null if missing. */
+    public static byte[] unpackAsset(android.content.res.AssetManager assets, String path) {
+        return nativeUnpackAsset(assets, path);
+    }
+
+    private static native byte[] nativeUnpackAsset(android.content.res.AssetManager assets, String path);
+
     /** {@code assets}: the compiled dictionaries come from its espeak-dicts/, not the data path. */
     private native int nativeCreate(String path, android.content.res.AssetManager assets);
 

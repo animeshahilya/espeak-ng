@@ -1,15 +1,9 @@
 package com.animeshahilya.espeakng.text;
-import com.animeshahilya.espeakng.EspeakApp;
-import com.animeshahilya.espeakng.Voice;
 
-import android.content.Context;
-import android.content.res.AssetManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +22,7 @@ import java.util.Map;
  * are pruned from the table rather than applied globally. Full harness
  * and report in scratch/voice-eval (compound_ab.py, CompoundVoiceCheck).
  *
- * <p>The table (assets/compounds/en.tsv) is vendored from TGSpeechBox
+ * <p>The table (data/compounds/en.tsv) is vendored from TGSpeechBox
  * packs/dict/en-compounds.tsv (MIT); see its header and the README license
  * section. Loads lazily on first use, so installs with the setting off
  * never pay for it.
@@ -37,15 +31,9 @@ public final class CompoundSplitter {
     private static final String TAG = "CompoundSplitter";
     private static final String FILE = "compounds/en.tsv";
 
-    private static volatile AssetManager sAssets;
     private static volatile Map<String, String> sSplits;
 
     private CompoundSplitter() {
-    }
-
-    /** Called once from {@link EspeakApp#onCreate()}. */
-    public static void init(Context context) {
-        sAssets = context.getApplicationContext().getAssets();
     }
 
     /** Warm up the compound table in background. */
@@ -65,9 +53,8 @@ public final class CompoundSplitter {
                 return splits;
             }
             splits = Collections.emptyMap();
-            if (sAssets != null) {
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                        sAssets.open(FILE), StandardCharsets.UTF_8))) {
+            if (BundledData.ready()) {
+                try (BufferedReader in = BundledData.reader(FILE)) {
                     final Map<String, String> table = new HashMap<>(4096);
                     parseEntries(in, table);
                     splits = table;

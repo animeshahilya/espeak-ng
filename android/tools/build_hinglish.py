@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds assets/hinglish/hi.tsv, the word list HinglishReader uses.
+"""Builds data/hinglish/hi.tsv, the word list HinglishReader uses.
 
 Source: Google's Dakshina dataset (CC BY-SA 4.0),
 https://github.com/google-research-datasets/dakshina - the Hindi

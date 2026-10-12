@@ -15,10 +15,8 @@
  */
 
 package com.animeshahilya.espeakng;
-import com.animeshahilya.espeakng.text.CompoundSplitter;
-import com.animeshahilya.espeakng.text.HinglishReader;
+import com.animeshahilya.espeakng.text.BundledData;
 import com.animeshahilya.espeakng.text.NvdaCharacterDescriptions;
-import com.animeshahilya.espeakng.text.NvdaEmoji;
 import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
 import com.animeshahilya.espeakng.piper.PiperCrashGuard;
 import com.animeshahilya.espeakng.piper.PiperDevice;
@@ -140,12 +138,9 @@ public class EspeakApp extends Application {
         // action bar against blue chips/fields). Ship one consistent palette.
         final Context appContext = getApplicationContext();
         EspeakApp.storageContext = appContext.createDeviceProtectedStorageContext();
-        NvdaEmoji.init(appContext);
-        final android.content.res.AssetManager assets = appContext.getAssets();
-        NvdaSymbolProcessor.setDataSource(name -> assets.open("symbols/" + name));
-        NvdaCharacterDescriptions.setDataSource(name -> assets.open("chardesc/" + name));
-        HinglishReader.init(appContext);
-        CompoundSplitter.init(appContext);
+        BundledData.init(appContext);
+        NvdaSymbolProcessor.setDataSource(name -> BundledData.open("symbols/" + name));
+        NvdaCharacterDescriptions.setDataSource(name -> BundledData.open("chardesc/" + name));
         migrateLegacyPreferences(appContext, EspeakApp.storageContext);
         PiperEngine.get().setListener(PIPER_LOG);
         // Phrases survive the speech service restarting (device-protected, not backed up).

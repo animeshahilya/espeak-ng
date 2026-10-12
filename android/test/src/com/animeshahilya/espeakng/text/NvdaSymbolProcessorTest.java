@@ -18,11 +18,11 @@ import static org.junit.Assert.*;
 
 /**
  * Per-language symbols, off-device, with the real NVDA data from
- * assets/symbols/ (tools/update_nvda_symbols.py).
+ * data/symbols/ (tools/update_nvda_symbols.py).
  */
 public class NvdaSymbolProcessorTest {
 
-    private static final File ASSETS = new File("assets/symbols");
+    private static final File ASSETS = new File("data/symbols");
 
     @Before
     public void useAssets() {

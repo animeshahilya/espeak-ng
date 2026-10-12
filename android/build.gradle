@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:9.3.0'
-        // createDictAssets: zstd-compresses the dictionaries put in the APK
+        // createPackedAssets: zstd-compresses the dictionaries and data/ put in the APK
         classpath 'com.github.luben:zstd-jni:1.5.7-6'
     }
 }
@@ -206,8 +206,8 @@ android {
         }
     }
 
-    // Already compressed (espeakdata.zip, the zstd dictionaries); .zst is
-    // also kept stored so the engine maps it instead of inflating a copy
+    // Already compressed (espeakdata.zip, the zstd assets of createPackedAssets);
+    // .zst is also kept stored so the engine maps it instead of inflating a copy
     androidResources {
         noCompress += ["espeakdata.zip", "zst"]
     }
@@ -264,19 +264,29 @@ tasks.register('createDataArchive', Zip) {
     from("build/generated/espeak-ng-data/") {
         into "espeak-ng-data"
         // Compiled dictionaries (~30 MB of the 30.7) are not extracted: the
-        // engine reads them from the APK's assets (createDictAssets).
+        // engine reads them from the APK's assets (createPackedAssets).
         exclude "*_dict"
     }
 }
 
-// Every compiled dictionary as its own APK asset, espeak-dicts/<name>_dict.zst
-// (zstd level 19: 14.1 MB of deflate in the APK -> 11.0 MB): the native engine
-// decompresses one when a language first needs it (espeak_SetDictionaryReader
-// in jni/jni/eSpeakService.c), so they are never copied into app storage.
-// Registered through the variant API, which wires the asset tasks' dependencies.
-abstract class DictAssets extends DefaultTask {
+// Everything the app reads but never changes is stored zstd-compressed (level
+// 19) in the APK and unpacked by the engine's zstd decoder, through one path:
+// - every compiled dictionary, espeak-dicts/<name>_dict.zst (14.1 MB of zip
+//   deflate -> 11.0 MB), read when a language first needs it
+//   (espeak_SetDictionaryReader in jni/jni/eSpeakService.c), never copied into
+//   app storage;
+// - the text data in android/data/ (NVDA symbols, character descriptions and
+//   emoji names, Hinglish, compounds), data/<path>.zst, read by
+//   text/BundledData.
+// .zst is kept stored (noCompress), so the engine maps it instead of inflating
+// a copy. Registered through the variant API, which wires the asset tasks'
+// dependencies.
+abstract class PackedAssets extends DefaultTask {
     @InputDirectory
-    abstract DirectoryProperty getDataDir()
+    abstract DirectoryProperty getDictDir()
+
+    @InputDirectory
+    abstract DirectoryProperty getTextDir()
 
     @OutputDirectory
     abstract DirectoryProperty getOutputDir()
@@ -286,23 +296,34 @@ abstract class DictAssets extends DefaultTask {
 
     @TaskAction
     void run() {
-        def out = outputDir.dir("espeak-dicts").get().asFile
+        def out = outputDir.get().asFile
         fs.delete { delete out }
-        out.mkdirs()
-        dataDir.get().asFile.listFiles().findAll { it.name.endsWith("_dict") }.each { f ->
-            new File(out, f.name + ".zst").bytes = com.github.luben.zstd.Zstd.compress(f.bytes, 19)
+        def pack = { File from, File to ->
+            to.parentFile.mkdirs()
+            to.bytes = com.github.luben.zstd.Zstd.compress(from.bytes, 19)
+        }
+        def dicts = new File(out, "espeak-dicts")
+        dicts.mkdirs()
+        dictDir.get().asFile.listFiles().findAll { it.name.endsWith("_dict") }.each { f ->
+            pack(f, new File(dicts, f.name + ".zst"))
+        }
+        def text = textDir.get().asFile
+        text.eachFileRecurse(groovy.io.FileType.FILES) { f ->
+            def rel = text.toPath().relativize(f.toPath()).toString().replace(File.separatorChar, (char) '/')
+            pack(f, new File(out, "data/" + rel + ".zst"))
         }
     }
 }
 
-def dictAssets = tasks.register('createDictAssets', DictAssets) {
+def packedAssets = tasks.register('createPackedAssets', PackedAssets) {
     dependsOn tasks.checkData
-    dataDir = file("build/generated/espeak-ng-data")
+    dictDir = file("build/generated/espeak-ng-data")
+    textDir = file("data")
 }
 
 androidComponents {
     onVariants(selector().all()) { variant ->
-        variant.sources.assets?.addGeneratedSourceDirectory(dictAssets) { it.outputDir }
+        variant.sources.assets?.addGeneratedSourceDirectory(packedAssets) { it.outputDir }
     }
 }
 

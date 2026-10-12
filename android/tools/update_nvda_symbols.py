@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate android/assets/symbols/ and chardesc/ from NVDA's per-language data.
+"""Regenerate android/data/symbols/ and chardesc/ from NVDA's per-language data.
 
 NVDA reads punctuation and symbols with its locale's symbols.dic, then the
 locale's CLDR names, then English (characterProcessing.py). This copies the
@@ -15,7 +15,7 @@ Output, with lower-cased NVDA locale names (pt_br, zh_cn):
   <locale>.dic       NVDA's symbols.dic, unchanged (GPL v2 or later, NV Access
                      and translators; the header of each file says so)
   <locale>.cldr.dic  the non-emoji lines of nvda-cldr's cldr.dic (Unicode
-                     license); emoji names already live in assets/emoji/
+                     license); emoji names already live in data/emoji/
   SOURCE.txt         the commits both came from
   ../chardesc/<locale>.dic  NVDA's characterDescriptions.dic, unchanged: the
                      words "phonetic letters" say for a character
@@ -35,7 +35,7 @@ def commit(repo):
 
 def main():
     nvda, cldr = sys.argv[1], sys.argv[2]
-    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", "symbols")
+    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "symbols")
     os.makedirs(out, exist_ok=True)
     for old in os.listdir(out):
         os.remove(os.path.join(out, old))
