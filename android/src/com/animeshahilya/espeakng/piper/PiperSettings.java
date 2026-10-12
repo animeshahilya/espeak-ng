@@ -416,26 +416,11 @@ public final class PiperSettings {
 
     private static String qualityLabel(Context context, String quality) {
         return context.getString(PiperDownloads.isEnhanced(quality) ? R.string.piper_quality_enhanced
-                : PiperDownloads.isCompact(quality) ? R.string.piper_quality_compact
                 : R.string.piper_quality_standard);
     }
 
     /** In the catalog, Enhanced also says whether this phone suits it (PiperDevice). */
     private static String catalogQualityLabel(Context context, PiperDownloads.CatalogVoice v) {
-        // Heavy voices and their Compact versions: by what this phone can run.
-        // Compact is recommended exactly where its original would pause: a
-        // heavy SYSPIN/Rasa voice by heavyFit, a Piper Enhanced one by enhancedFit.
-        if (PiperDownloads.isCompact(v.quality)) {
-            final PiperDevice.Fit original = v.heavy ? PiperDevice.heavyFit()
-                    : PiperDevice.enhancedFit(PiperDevice.tier(context), PiperDevice.performanceClass(),
-                            PiperDevice.HEAVY_MODEL_BYTES);
-            return context.getString(original == PiperDevice.Fit.SLOW
-                    ? R.string.piper_quality_compact_recommended : R.string.piper_quality_compact);
-        }
-        if (v.heavy && PiperDevice.heavyFit() == PiperDevice.Fit.SLOW) {
-            return context.getString(PiperDownloads.isEnhanced(v.quality)
-                    ? R.string.piper_quality_enhanced_slow : R.string.piper_quality_standard_slow);
-        }
         if (PiperDownloads.isEnhanced(v.quality)) {
             switch (PiperDevice.enhancedFit(PiperDevice.tier(context),
                     PiperDevice.performanceClass(), v.modelSize)) {
@@ -630,15 +615,13 @@ public final class PiperSettings {
                                      final SharedPreferences prefs,
                                      final List<PiperDownloads.CatalogVoice> voices) {
         final Context context = f.requireContext();
-        final List<PiperDownloads.CatalogVoice> ordered =
-                PiperDownloads.orderCatalogForPhone(voices, PiperDevice.heavyFit());
         open(f, newPage(f, context.getString(R.string.piper_choose_voice, languageName(voices.get(0).family)),
                 s -> {
                     s.removeAll();
                     // Grouped by country under headings, the phone's country
                     // first: English alone has 40 voices.
                     final Map<String, List<PiperDownloads.CatalogVoice>> byRegion = new LinkedHashMap<>();
-                    for (PiperDownloads.CatalogVoice v : ordered) {
+                    for (PiperDownloads.CatalogVoice v : voices) {
                         final String region = v.region != null ? v.region : "";
                         List<PiperDownloads.CatalogVoice> list = byRegion.get(region);
                         if (list == null) {
@@ -665,12 +648,12 @@ public final class PiperSettings {
                         }
                         for (PiperDownloads.CatalogVoice v : list) {
                             group.addPreference(row(context, v.key, v.displayName(),
-                                    voiceSummary(context, v, !grouped), () -> openVoice(f, prefs, v, ordered)));
+                                    voiceSummary(context, v, !grouped), () -> openVoice(f, prefs, v)));
                         }
                     }
                 },
                 s -> {
-                    for (PiperDownloads.CatalogVoice v : ordered) {
+                    for (PiperDownloads.CatalogVoice v : voices) {
                         final Preference p = s.findPreference(v.key);
                         if (p != null) {
                             p.setSummary(voiceSummary(context, v, p.getParent() == s));
@@ -734,8 +717,7 @@ public final class PiperSettings {
 
     /** A catalog voice: about, sample, download (or its installed actions). */
     private static void openVoice(final TtsSettingsActivity.PrefsEspeakFragment f,
-                                  final SharedPreferences prefs, final PiperDownloads.CatalogVoice v,
-                                  final List<PiperDownloads.CatalogVoice> siblings) {
+                                  final SharedPreferences prefs, final PiperDownloads.CatalogVoice v) {
         final Context context = f.requireContext();
         final Context storage = storage(context);
         open(f, newPage(f, v.displayName(), s -> {
@@ -755,15 +737,6 @@ public final class PiperSettings {
                             new Handler(Looper.getMainLooper()).post(() -> onShown(s));
                         })));
                 return;
-            }
-            final PiperDownloads.CatalogVoice compact =
-                    siblings == null ? null : compactInstead(storage, siblings, v);
-            if (compact != null) {
-                // Slow phone, heavy Standard: its Compact twin first, one level down.
-                s.addPreference(row(context, null, context.getString(R.string.piper_compact_choice_title),
-                        context.getString(R.string.piper_compact_row_summary,
-                                Formatter.formatShortFileSize(context, compact.modelSize)),
-                        () -> openVoice(f, prefs, compact, siblings)));
             }
             s.addPreference(row(context, null, context.getString(R.string.piper_download_row,
                     Formatter.formatShortFileSize(context, v.modelSize)),
@@ -851,10 +824,7 @@ public final class PiperSettings {
                 : context.getString(R.string.piper_speaks_none);
     }
 
-    /** Below this many seconds of audio per second of decoding, long text pauses. */
-    private static final double SLOW_SPEED = 2.0;
-
-    /** Test, use, speed, speaker, Compact and delete for an installed voice. */
+    /** Test, use, speed, speaker and delete for an installed voice. */
     private static void addInstalledRows(final TtsSettingsActivity.PrefsEspeakFragment f,
                                          final PreferenceScreen s, final SharedPreferences prefs,
                                          final PiperVoiceStore.Installed voice) {
@@ -882,46 +852,8 @@ public final class PiperSettings {
                     speakerLabel(context, voice.config, PiperVoiceStore.speakerId(prefs, voice.key)),
                     () -> chooseSpeaker(context, prefs, voice, () -> onShown(s))));
         }
-        final PiperDownloads.CatalogVoice compact = compactVersion(context, voice);
-        if (compact != null) {
-            final String size = Formatter.formatShortFileSize(context, compact.modelSize);
-            final boolean assignedHere = voice.key.equals(
-                    PiperVoiceStore.assignedKey(prefs, voice.languageKey()));
-            if (assignedHere && PiperDevice.heavyFit() == PiperDevice.Fit.SLOW) {
-                // Slow phone speaking this Standard voice: one tap swaps it.
-                s.addPreference(row(context, null, context.getString(R.string.piper_action_switch_compact, size),
-                        null, () -> confirmSwap(context, voice, compact)));
-            } else {
-                final PiperModel loaded = PiperEngine.get().getLoaded(voice.key);
-                final double speed = loaded == null ? 0 : loaded.decodeSpeed();
-                // The speed this phone measured, when it is too slow to keep up.
-                s.addPreference(row(context, null, context.getString(R.string.piper_action_compact, size),
-                        speed > 0 && speed < SLOW_SPEED
-                                ? context.getString(R.string.piper_action_compact_measured, speed) : null,
-                        () -> openVoice(f, prefs, compact, null)));
-            }
-        }
         s.addPreference(row(context, null, context.getString(R.string.piper_action_delete),
                 null, () -> confirmDelete(f, prefs, voice)));
-    }
-
-    /**
-     * The Compact twin to offer instead of a heavy Standard voice on a slow
-     * phone: present, and neither installed nor downloading. Null otherwise.
-     */
-    private static PiperDownloads.CatalogVoice compactInstead(Context storage,
-            List<PiperDownloads.CatalogVoice> ordered, PiperDownloads.CatalogVoice v) {
-        if (!PiperDownloads.preferCompact(v.heavy, v.quality, PiperDevice.heavyFit())) {
-            return null;
-        }
-        final String twin = PiperDownloads.compactKey(v.key);
-        for (PiperDownloads.CatalogVoice c : ordered) {
-            if (c.key.equals(twin) && PiperVoiceStore.find(storage, twin) == null
-                    && !PiperDownloads.pendingKeys(storage).contains(twin)) {
-                return c;
-            }
-        }
-        return null;
     }
 
     /** Streams the voice's recorded sample. Tapping again while playing stops playback. */
@@ -1010,45 +942,6 @@ public final class PiperSettings {
                 }
             });
         });
-    }
-
-    /** The Compact version of an installed voice, when the app offers one and it isn't installed. */
-    private static PiperDownloads.CatalogVoice compactVersion(Context context,
-                                                              PiperVoiceStore.Installed voice) {
-        if (PiperDownloads.isCompact(voice.config.quality)) {
-            return null;
-        }
-        final String key = PiperDownloads.compactKey(voice.key);
-        if (PiperVoiceStore.find(storage(context), key) != null) {
-            return null;
-        }
-        for (PiperDownloads.CatalogVoice v : PiperDownloads.bundledExtras(context)) {
-            if (v.key.equals(key)) {
-                return v;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * One-tap Compact swap: downloads Compact, makes it speak the language,
-     * and removes the Standard copy to free the space (done on install).
-     */
-    private static void confirmSwap(final Context context,
-            final PiperVoiceStore.Installed voice, final PiperDownloads.CatalogVoice compact) {
-        new MaterialAlertDialogBuilder(context)
-                .setTitle(context.getString(R.string.piper_confirm_switch_title,
-                        voice.config.displayName()))
-                .setMessage(context.getString(R.string.piper_confirm_switch_message,
-                        Formatter.formatShortFileSize(context, compact.modelSize),
-                        languageName(voice.config.languageFamily),
-                        Formatter.formatShortFileSize(context, voice.sizeBytes())))
-                .setPositiveButton(R.string.piper_confirm_download, (d, w) -> {
-                    PiperDownloads.requestSwap(storage(context), compact.key, voice.key);
-                    startDownload(context, compact, null);
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
     }
 
     /**

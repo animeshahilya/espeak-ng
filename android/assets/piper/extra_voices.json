@@ -524,66 +524,6 @@
       "piper-v2/sa_IN-vedant-medium.onnx.json": {"size_bytes": 28212, "md5_digest": "54e120a65638ffa4d6f818c353533045"}
     }
   },
-  "de_DE-thorsten-compact": {
-    "key": "de_DE-thorsten-compact",
-    "name": "thorsten",
-    "language": {"code": "de_DE", "family": "de", "region": "DE",
-      "name_native": "Deutsch", "name_english": "German", "country_english": "Germany"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "rhasspy/piper-voices (Compact: animeshahilya)",
-    "license": "CC0",
-    "files": {
-      "int8-v1/de_DE-thorsten-compact.onnx": {"size_bytes": 29632978, "md5_digest": "712bfe4410bcd34cc9745e1fed944288"},
-      "compact-v1/de_DE-thorsten-compact.onnx.json": {"size_bytes": 3759, "md5_digest": "62d6c13cc9b06ec2129561b0c6be021d"}
-    }
-  },
-  "kk_KZ-issai-compact": {
-    "key": "kk_KZ-issai-compact",
-    "name": "issai",
-    "language": {"code": "kk_KZ", "family": "kk", "region": "KZ",
-      "name_native": "қазақша", "name_english": "Kazakh", "country_english": "Kazakhstan"},
-    "quality": "compact",
-    "num_speakers": 6,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "rhasspy/piper-voices (Compact: animeshahilya)",
-    "license": "CC-BY-4.0",
-    "files": {
-      "int8-v1/kk_KZ-issai-compact.onnx": {"size_bytes": 33175867, "md5_digest": "7709348b804a33769313e3bf7bc5e5c1"},
-      "compact-v1/kk_KZ-issai-compact.onnx.json": {"size_bytes": 3398, "md5_digest": "97a761244c5d547d0732e5c3fbe98303"}
-    }
-  },
-  "uk_UA-mykyta-compact": {
-    "key": "uk_UA-mykyta-compact",
-    "name": "mykyta",
-    "language": {"code": "uk_UA", "family": "uk", "region": "UA",
-      "name_native": "украї́нська мо́ва", "name_english": "Ukrainian", "country_english": "Ukraine"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "rhasspy/piper-voices (Compact: animeshahilya)",
-    "license": "Apache-2.0",
-    "files": {
-      "int8-v1/uk_UA-mykyta-compact.onnx": {"size_bytes": 30280502, "md5_digest": "ae47b8955b747c335876f49ba74b120e"},
-      "compact-v1/uk_UA-mykyta-compact.onnx.json": {"size_bytes": 3775, "md5_digest": "6cd3d4e9963fa9596583989f313f2356"}
-    }
-  },
-  "uk_UA-oleksa-compact": {
-    "key": "uk_UA-oleksa-compact",
-    "name": "oleksa",
-    "language": {"code": "uk_UA", "family": "uk", "region": "UA",
-      "name_native": "украї́нська мо́ва", "name_english": "Ukrainian", "country_english": "Ukraine"},
-    "quality": "compact",
-    "num_speakers": 1,
-    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
-    "source": "rhasspy/piper-voices (Compact: animeshahilya)",
-    "license": "Apache-2.0",
-    "files": {
-      "int8-v1/uk_UA-oleksa-compact.onnx": {"size_bytes": 30280506, "md5_digest": "5f0574f02ab7151c0312886cf90df48e"},
-      "compact-v1/uk_UA-oleksa-compact.onnx.json": {"size_bytes": 3775, "md5_digest": "e1040d3f5e0db5cb5b8df31f8cc20154"}
-    }
-  },
   "ar_JO-kareem-medium": {
     "key": "ar_JO-kareem-medium",
     "name": "kareem",
@@ -730,7 +670,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/de_DE-thorsten-high.onnx": {"size_bytes": 42787551, "md5_digest": "b5d86b4624c7507d24d47b9178be7eaa"},
+      "int8-v1/de_DE-thorsten-compact.onnx": {"size_bytes": 29632978, "md5_digest": "712bfe4410bcd34cc9745e1fed944288"},
       "int8-v1/de_DE-thorsten-high.onnx.json": {"size_bytes": 4875, "md5_digest": "e81686e00a9d825e2488ead660bec6fd"}
     }
   },
@@ -1135,7 +1075,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC-BY-4.0",
     "files": {
-      "int8-v1/kk_KZ-issai-high.onnx": {"size_bytes": 46595269, "md5_digest": "f6538f9df9a3b919ffd864afed329680"},
+      "int8-v1/kk_KZ-issai-compact.onnx": {"size_bytes": 33175867, "md5_digest": "7709348b804a33769313e3bf7bc5e5c1"},
       "int8-v1/kk_KZ-issai-high.onnx.json": {"size_bytes": 4358, "md5_digest": "cfef5328137c8a1e4d1e5d3dac0c7056"}
     }
   },
@@ -1540,7 +1480,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "Apache-2.0",
     "files": {
-      "int8-v1/uk_UA-mykyta-high.onnx": {"size_bytes": 43244099, "md5_digest": "956e3fc9513c210c8fb42e3343248ad4"},
+      "int8-v1/uk_UA-mykyta-compact.onnx": {"size_bytes": 30280502, "md5_digest": "ae47b8955b747c335876f49ba74b120e"},
       "int8-v1/uk_UA-mykyta-high.onnx.json": {"size_bytes": 4904, "md5_digest": "4de596951b9faee6842ccc69a17b38a0"}
     }
   },
@@ -1555,7 +1495,7 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "Apache-2.0",
     "files": {
-      "int8-v1/uk_UA-oleksa-high.onnx": {"size_bytes": 43244099, "md5_digest": "56eefc3687ec58587860f3f2216668b0"},
+      "int8-v1/uk_UA-oleksa-compact.onnx": {"size_bytes": 30280506, "md5_digest": "5f0574f02ab7151c0312886cf90df48e"},
       "int8-v1/uk_UA-oleksa-high.onnx.json": {"size_bytes": 4904, "md5_digest": "4b00c2134ac78e15def386b16a2a3489"}
     }
   },

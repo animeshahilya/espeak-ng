@@ -58,17 +58,6 @@ public class PiperEngineTest {
     }
 
     @Test
-    public void heavyVoicesNeedTheNpuOrAnAllBigCoreChip() {
-        // Pixel 8: performance class 34 but little cores, SYSPIN/Rasa 1.2-1.9x real time.
-        assertEquals(PiperDevice.Fit.SLOW, PiperDevice.heavyFit(false, 34, false));
-        // Galaxy S25 Ultra CPU: no little cores, ~4x with 6 threads.
-        assertEquals(PiperDevice.Fit.NEUTRAL, PiperDevice.heavyFit(false, 35, true));
-        // Its NPU (Snapdragon build): ~22x.
-        assertEquals(PiperDevice.Fit.RECOMMENDED, PiperDevice.heavyFit(true, 35, true));
-        assertEquals(PiperDevice.Fit.SLOW, PiperDevice.heavyFit(false, 0, true));
-    }
-
-    @Test
     public void snapdragonBuildIsOfferedOnlyForModernNpus() {
         assertTrue(PiperSettings.hasModernNpu("SM8750"));   // 8 Elite (measured: ~22x)
         assertTrue(PiperSettings.hasModernNpu("SM8450"));   // 8 Gen 1

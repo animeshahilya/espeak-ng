@@ -532,24 +532,6 @@ public final class PiperEngine {
         return Math.max(1, Math.min(fast == capacities.length ? 6 : 4, fast));
     }
 
-    /** True when every core is a fast one (Snapdragon 8 Elite), false if unknown. */
-    static boolean noLittleCores() {
-        final int[] capacities = cpuCapacities();
-        if (capacities.length == 0) {
-            return false;
-        }
-        int top = 0;
-        for (int c : capacities) {
-            top = Math.max(top, c);
-        }
-        for (int c : capacities) {
-            if (c * 2 < top) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /** Core capacities never change at runtime: read sysfs once per process. */
     private static volatile int[] sCapacities;
 

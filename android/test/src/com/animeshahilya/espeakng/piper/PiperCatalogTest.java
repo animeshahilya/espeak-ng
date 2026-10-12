@@ -109,24 +109,25 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(108, voices.size());
+        assertEquals(104, voices.size());
         // Only kept voices are bundled: none is filtered out again.
         assertEquals(voices.size(), PiperDownloads.keptOnly(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
                 // Every model is the INT8-weight build (int8-v1).
-                assertFalse(v.key, v.heavy);
-                if (PiperDownloads.isCompact(v.quality)) {
-                    // Piper "high" voices keep a Compact twin
-                    assertTrue(v.key, v.key.endsWith("-compact"));
-                    assertTrue(v.key, v.modelPath.matches("int8-v1/[^/]+-compact\\.onnx"));
-                    assertTrue(v.key, v.configPath.matches("compact-v1/[^/]+\\.onnx\\.json"));
-                } else if (v.modelPath.startsWith("int8-v1/vits-")) {
+                // One version of every voice: no Compact twins listed
+                assertFalse(v.key, PiperDownloads.isCompact(v.quality));
+                if (v.modelPath.startsWith("int8-v1/vits-")) {
                     // SYSPIN / Rasa: one version, the Compact model under the Standard key
                     assertTrue(v.key, v.key.endsWith("-medium"));
                     assertTrue(v.key, v.modelPath.matches("int8-v1/vits-[^/]+-compact\\.onnx"));
                     assertEquals(v.key, "piper-v2/" + v.key + ".onnx.json", v.configPath);
+                } else if (v.modelPath.endsWith("-compact.onnx")) {
+                    // Piper "high": the Compact model under the Standard key and config
+                    assertTrue(v.key, v.key.endsWith("-high"));
+                    assertEquals(v.key, "int8-v1/" + v.key.replace("-high", "-compact") + ".onnx", v.modelPath);
+                    assertEquals(v.key, "int8-v1/" + v.key + ".onnx.json", v.configPath);
                 } else {
                     // A Piper or community voice under its own key
                     assertEquals(v.key, "int8-v1/" + v.key + ".onnx", v.modelPath);
@@ -171,22 +172,22 @@ public class PiperCatalogTest {
         final java.util.Map<String, java.util.Set<String>> kept =
                 PiperDownloads.parseKept("{\"hi\": [\"hi_IN-rohan-medium\", \"hi_IN-priyamvada-medium\"]}");
         final List<PiperDownloads.CatalogVoice> in = new java.util.ArrayList<>();
-        for (String key : new String[] {"hi_IN-rohan-medium", "hi_IN-rohan-compact",
-                "hi_IN-pratham-medium", "bho_IN-kajal-medium"}) {
+        for (String key : new String[] {"hi_IN-rohan-medium", "hi_IN-pratham-medium",
+                "bho_IN-kajal-medium"}) {
             final PiperDownloads.CatalogVoice v = new PiperDownloads.CatalogVoice();
             v.key = key;
             v.family = key.substring(0, key.indexOf('_'));
             in.add(v);
         }
         final List<PiperDownloads.CatalogVoice> out = PiperDownloads.keptOnly(in, kept);
-        assertEquals(3, out.size());  // a kept voice, its Compact version, an untested language
+        assertEquals(2, out.size());  // a kept voice and an untested language
         for (PiperDownloads.CatalogVoice v : out) {
             assertNotEquals("hi_IN-pratham-medium", v.key);
         }
-        // The shipped list: two voices at most per language (each with its
-        // Compact key), plus Indian English Rahul for English.
+        // The shipped list: two voices at most per language, plus Indian
+        // English Rahul for English.
         for (java.util.Map.Entry<String, java.util.Set<String>> e : keptAsset().entrySet()) {
-            assertTrue(e.getKey(), e.getValue().size() <= ("en".equals(e.getKey()) ? 6 : 4));
+            assertTrue(e.getKey(), e.getValue().size() <= ("en".equals(e.getKey()) ? 3 : 2));
         }
         assertTrue(keptAsset().get("en").contains("en_IN-rahul-medium"));
     }

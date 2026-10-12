@@ -709,15 +709,6 @@
   <string name="piper_quality_enhanced_slow">Enhanced, may pause on this phone</string>
   <string name="setting_piper_snapdragon">Faster on this phone: Snapdragon version</string>
   <string name="setting_piper_snapdragon_summary">This phone has a Qualcomm NPU. The Snapdragon version of this app can run natural voices on it, often much faster; it checks the speed and keeps using the processor where the NPU isn\'t faster. Opens the download page; it installs over this app and keeps your voices and settings.</string>
-  <string name="piper_quality_standard_slow">Standard, may pause on this phone</string>
-  <string name="piper_quality_compact">Compact</string>
-  <string name="piper_quality_compact_recommended">Compact, recommended for this phone</string>
-  <string name="piper_action_compact">Download the Compact version (%1$s), about twice as fast</string>
-  <string name="piper_action_compact_measured">This voice runs at %1$.1f times real time here; Compact is about twice that</string>
-  <string name="piper_action_switch_compact">Switch to Compact (%1$s) and remove Standard</string>
-  <string name="piper_confirm_switch_title">Switch %1$s to Compact?</string>
-  <string name="piper_confirm_switch_message">Downloads Compact (%1$s), makes it speak %2$s, and removes the Standard copy (%3$s) to free the space.</string>
-  <string name="piper_compact_choice_title">Compact is recommended for this phone</string>
   <string name="piper_catalog_voice_row">%1$s, %2$s</string>
   <string name="piper_catalog_voice_installed">%1$s, downloaded</string>
   <plurals name="piper_speakers_sentence">
@@ -728,7 +719,6 @@
     <item quantity="one">%d speaker</item>
     <item quantity="other">%d speakers</item>
   </plurals>
-  <string name="piper_confirm_download">Download</string>
   <string name="piper_play_sample">Play sample</string>
   <string name="piper_sample_failed">Could not play the sample</string>
   <string name="piper_download_started">Downloading %1$s. You can leave this screen; you will hear when it is ready.</string>
@@ -768,7 +758,6 @@
   <string name="piper_voice_about_title">%1$s, %2$s</string>
   <string name="piper_voice_about">%1$s. Size %2$s, best downloaded on Wi-Fi. Natural voices take a moment to start each sentence; eSpeak stays the fastest for quick navigation.</string>
   <string name="piper_voice_source">Made by %1$s, license %2$s. Not from Piper\'s main voice collection.</string>
-  <string name="piper_compact_row_summary">The same voice, about twice as fast (%1$s)</string>
   <string name="piper_download_row">Download (%1$s)</string>
   <string name="piper_download_row_summary">Uses the internet only for this download. Speech stays offline.</string>
   <string name="piper_play_sample_summary">A recording of this voice</string>

@@ -596,29 +596,24 @@ voices" does not, so voices can still be deleted to free space.
   voices and 10 Piper "high" voices whose licences allow re-hosting (not
   lessac: Blizzard licence; ryan: NC; es_MX-claude and en_US-libritts:
   older exports with unnamed graph nodes, so no decoder to find - they
-  don't stream-split either). Labels: `heavy` catalog entries (SYSPIN/Rasa Standard)
-  and Compact follow `PiperDevice.heavyFit` (NPU runtime, or a fast CPU with
-  no little cores, else "may pause"); Compact of a Piper Enhanced voice is
-  "recommended" exactly where its original's `enhancedFit` says SLOW. A
-  downloaded voice with a Compact version offers "Download the Compact
-  version", quoting the decoder speed measured here when under 2x.
+  don't stream-split either).
   `PiperSplit` finds the latent as conv_pre's input (INT8 Rasa lists its
   speaker "cond" Conv first; node order alone fed it the speaker vector).
-  On a slow phone (`heavyFit() == SLOW`) Compact is the default path, not an
-  upsell: the catalog lists the Compact twin before its heavy Standard twin
-  (`orderCatalogForPhone`), tapping Standard offers Compact first
-  (`confirmCompactInstead`), and an assigned Standard voice offers a one-tap
-  swap that downloads Compact, reassigns the language and deletes the
-  Standard copy (`confirmSwap` -> `requestSwap` -> `finishSwap` in
-  `complete()`). Downloaded-voices storage totals count shared inodes once
+  Downloaded-voices storage totals count shared inodes once
   (`PiperVoiceStore.diskBytes`).
   **SYSPIN/Rasa: one version since 2026-10-11** (user's call - the 2.9
   INT8 voices were well liked, the big Standard not needed). Each kept
   SYSPIN/Rasa voice is one catalog entry: the Standard key (`-medium`,
   quality "medium", its `piper-v2` config) with the Compact model
   (`int8-v1/...-compact.onnx`); no `-compact` entries, no `heavy` flag (so
-  plain "Standard" labels and no Compact steering). The twin machinery
-  above now serves only the Piper "high" voices. Installed copies move
+  plain "Standard" labels and no Compact steering).
+  **Piper "high" too since 2026-10-12** (user: "everything should be more
+  unified"): de thorsten, kk issai, uk mykyta/oleksa are their `-high` key
+  and config with the Compact model; the twin machinery (Compact-first
+  catalog order, swap offers, `heavy` flag, `PiperDevice.heavyFit`) is
+  gone. Their configs differ from Compact's in quality and indentation, so
+  `mergeInto` patches the quality to the Standard's own and records the
+  catalog's config MD5 (no second download). Installed copies move
   over: an old Standard through `checkForUpdates` (its model MD5 changed),
   an installed Compact through `PiperDownloads.mergeCompactTwins` at service
   start - folder renamed to the Standard key, config quality patched (the
@@ -643,7 +638,7 @@ voices" does not, so voices can still be deleted to free space.
   rhasspy's of the same key, and `checkForUpdates` moves installed copies to
   it. There is no second version of these: the user heard them as the same.
   Heavy voices kept Standard + Compact until 2026-10-11 (SYSPIN/Rasa now
-  ship only Compact, see above; Piper high keeps both): Standard computes its HiFi-GAN
+  ship only Compact, see above; Piper high since 2026-10-12): Standard computes its HiFi-GAN
   decoder in fp16 (`_half_decoder`; conv_pre stays float so the split and
   the NPU decoders still read the float latent) - Pixel 8, SYSPIN decoder
   2.0 -> 2.4-2.7x real time, 62-78 dB SNR vs float32, 58 -> 43 MB (Rasa
