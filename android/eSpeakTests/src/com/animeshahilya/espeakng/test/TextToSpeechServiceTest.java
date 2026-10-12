@@ -47,6 +47,11 @@ import static org.hamcrest.Matchers.*;
 @RunWith(AndroidJUnit4.class)
 public class TextToSpeechServiceTest
 {
+    // Sets and clears the "Supported languages" filter: the phone's own is restored afterwards.
+    @org.junit.ClassRule
+    public static final KeepUserSettings KEEP =
+            new KeepUserSettings(com.animeshahilya.espeakng.ui.LanguageSettings.PREF_SUPPORTED_LANGUAGES);
+
     public class TtsServiceTest extends TtsService
     {
         public TtsServiceTest(Context context)

@@ -66,6 +66,11 @@ import static org.hamcrest.Matchers.notNullValue;
     @SuppressWarnings("deprecation")
     @RunWith(AndroidJUnit4.class)
     public class LanguageFilterSynthesisTest {
+    // Sets and clears the "Supported languages" filter: the phone's own is restored afterwards.
+    @org.junit.ClassRule
+    public static final KeepUserSettings KEEP =
+            new KeepUserSettings(com.animeshahilya.espeakng.ui.LanguageSettings.PREF_SUPPORTED_LANGUAGES);
+
     private static final String TAG = "LangFilterTest";
     private static final String ENGINE = "com.animeshahilya.espeakng";
 
