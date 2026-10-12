@@ -888,8 +888,16 @@ when the request's natural voice reads letters only (SYSPIN/Rasa would drop
 the words), a deleted or crash-suspended voice likewise. Test: English
 "meeting" inside Hindi, natural pieces 3 (usual) / 2 (eSpeak) / 1
 (surrounding).
-Plan for later steps (agreed 2026-10-12): per-language switch sensitivity
-and numbers, routing preview, dictionary "read in language X".
+Step 4: `lang_<lang>_switch` (words/phrases/sentences, "" = the main
+`espeak_switching_sensitivity`) applies to that language's runs inside
+other text (`LanguageRuns.split` takes a per-language lookup; the one-value
+form wraps it), and `lang_<lang>_numbers` ("" = main, "auto" = automatic,
+else the `VoiceSettings.NUMBERS_*` values) to numbers in that language's
+text, through `VoiceSettings.getNumbersLanguage(language)` in both
+`TextPreprocessor` and `TtsService`. Tests: English set to phrases, 1
+natural piece instead of 3; Hindi numbers in English, "10:30" 1.79 -> 1.93 s.
+Plan for later steps (agreed 2026-10-12): routing preview, dictionary "read
+in language X".
 
 ### Key Classes (`src/com/animeshahilya/espeakng/`)
 

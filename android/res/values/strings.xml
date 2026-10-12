@@ -789,4 +789,7 @@
   <string name="language_card_mixed_espeak">eSpeak</string>
   <string name="language_card_mixed_surrounding">The surrounding voice (no switch)</string>
   <string name="language_card_summary_mixed_only">Own voice choice inside other text</string>
+  <string name="language_card_switch_at">Switch into this language for</string>
+  <string name="language_card_numbers">Numbers and times in this language\'s text</string>
+  <string name="language_card_main_setting">Same as main setting</string>
 </resources>

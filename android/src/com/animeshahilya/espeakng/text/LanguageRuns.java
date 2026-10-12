@@ -490,16 +490,19 @@ public final class LanguageRuns {
      */
     static List<Run> applySensitivity(List<Run> runs, String baseLanguage, String sensitivity,
                                       boolean lettersOnly) {
-        if (runs == null || runs.size() <= 1 || sensitivity == null
-                || VoiceSettings.SWITCHING_WORDS.equals(sensitivity) || "".equals(sensitivity)) {
-            return runs;
-        }
-        final boolean phrasesMode = VoiceSettings.SWITCHING_PHRASES.equals(sensitivity);
-        final boolean sentencesMode = VoiceSettings.SWITCHING_SENTENCES.equals(sensitivity);
-        if (!phrasesMode && !sentencesMode) {
-            return runs;
-        }
+        return applySensitivity(runs, baseLanguage, language -> sensitivity, lettersOnly);
+    }
 
+    /**
+     * As above, with the sensitivity of each foreign run's language (its
+     * language card, else the main setting).
+     */
+    static List<Run> applySensitivity(List<Run> runs, String baseLanguage,
+                                      java.util.function.Function<String, String> sensitivityFor,
+                                      boolean lettersOnly) {
+        if (runs == null || runs.size() <= 1) {
+            return runs;
+        }
         boolean changed = false;
         final List<Run> filtered = new ArrayList<>(runs.size());
         for (int i = 0; i < runs.size(); i++) {
@@ -508,6 +511,9 @@ public final class LanguageRuns {
                 filtered.add(run);
                 continue;
             }
+            final String sensitivity = sensitivityFor.apply(run.language);
+            final boolean phrasesMode = VoiceSettings.SWITCHING_PHRASES.equals(sensitivity);
+            final boolean sentencesMode = VoiceSettings.SWITCHING_SENTENCES.equals(sensitivity);
             boolean keep = true;
             if (lettersOnly && !inScriptOf(run.text, baseLanguage)) {
                 keep = true;
@@ -600,6 +606,13 @@ public final class LanguageRuns {
     /** As above; {@code lettersOnly} as in {@link #applySensitivity}. */
     public static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
                            String numbers, String sensitivity, boolean lettersOnly) {
+        return split(text, language, chosen, numbers, l -> sensitivity, lettersOnly);
+    }
+
+    /** As above, with each foreign language's own sensitivity (its language card). */
+    public static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
+                           String numbers, java.util.function.Function<String, String> sensitivityFor,
+                           boolean lettersOnly) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
@@ -608,7 +621,7 @@ public final class LanguageRuns {
         }
         final List<Run> runs = identify(split(text, language,
                 new FastLanguageResolver(text, language, chosen, numbers)), text, chosen);
-        return applySensitivity(runs, language, sensitivity, lettersOnly);
+        return applySensitivity(runs, language, sensitivityFor, lettersOnly);
     }
 
     /**

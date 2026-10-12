@@ -38,6 +38,12 @@ public final class LanguageCards {
     public static final String SWITCH_CUE = "cue";
     /** RunPlan.MIXED_* or a natural voice key: who reads the language inside other text. */
     public static final String WHEN_MIXED = "mixed";
+    /** VoiceSettings.SWITCHING_*: how much of the language switches voice; "" = the main setting. */
+    public static final String SWITCH_AT = "switch";
+    /** VoiceSettings.NUMBERS_* ({@link #NUMBERS_AUTO} for automatic) in its text; "" = the main setting. */
+    public static final String NUMBERS = "numbers";
+    /** Stored for an explicit "automatic", which is "" in the main setting. */
+    public static final String NUMBERS_AUTO = "auto";
     private static final String[] FIELDS = {SPEED, PITCH, VOLUME};
     private static final int MIN_PERCENT = 50;
     private static final int MAX_PERCENT = 200;
@@ -70,6 +76,16 @@ public final class LanguageCards {
     /** Who reads this language inside other text: RunPlan.MIXED_DEFAULT unless set. */
     public static String whenMixed(SharedPreferences prefs, String language) {
         return string(prefs, language, WHEN_MIXED);
+    }
+
+    /** The language's switching sensitivity: "" for the main setting. */
+    public static String switchAt(SharedPreferences prefs, String language) {
+        return string(prefs, language, SWITCH_AT);
+    }
+
+    /** The language's numbers choice: "" for the main setting. */
+    public static String numbers(SharedPreferences prefs, String language) {
+        return string(prefs, language, NUMBERS);
     }
 
     private static String string(SharedPreferences prefs, String language, String field) {
@@ -243,6 +259,10 @@ public final class LanguageCards {
         mixed.setIconSpaceReserved(false);
         mixed.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
         page.addPreference(mixed);
+        page.addPreference(choice(context, key(lang, SWITCH_AT), R.string.language_card_switch_at,
+                R.array.switching_sensitivity_entries, R.array.switching_sensitivity_values, ""));
+        page.addPreference(choice(context, key(lang, NUMBERS), R.string.language_card_numbers,
+                R.array.numbers_language_entries, R.array.numbers_language_values, NUMBERS_AUTO));
         final ListPreference cue = new ListPreference(context);
         cue.setKey(key(lang, SWITCH_CUE));
         cue.setTitle(R.string.language_card_cue);
@@ -258,5 +278,34 @@ public final class LanguageCards {
         cue.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
         page.addPreference(cue);
         f.pushScreen(page);
+    }
+
+    /**
+     * A choice that defaults to the main setting: "Same as main setting"
+     * first, then the main setting's own entries ({@code auto} stands in for
+     * an entry whose value is "", which here means "same as main").
+     */
+    private static ListPreference choice(Context context, String key, int title, int entriesRes,
+                                         int valuesRes, String auto) {
+        final CharSequence[] mainEntries = context.getResources().getTextArray(entriesRes);
+        final CharSequence[] mainValues = context.getResources().getTextArray(valuesRes);
+        final CharSequence[] entries = new CharSequence[mainEntries.length + 1];
+        final CharSequence[] values = new CharSequence[mainValues.length + 1];
+        entries[0] = context.getString(R.string.language_card_main_setting);
+        values[0] = "";
+        for (int i = 0; i < mainEntries.length; i++) {
+            entries[i + 1] = mainEntries[i];
+            values[i + 1] = mainValues[i].length() == 0 ? auto : mainValues[i];
+        }
+        final ListPreference p = new ListPreference(context);
+        p.setKey(key);
+        p.setTitle(title);
+        p.setDialogTitle(title);
+        p.setEntries(entries);
+        p.setEntryValues(values);
+        p.setDefaultValue("");
+        p.setIconSpaceReserved(false);
+        p.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
+        return p;
     }
 }

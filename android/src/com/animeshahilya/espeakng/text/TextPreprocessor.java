@@ -147,6 +147,8 @@ public final class TextPreprocessor {
 
         final Edits edits = new Edits(initialOffsetMap);
         final String lang = languageTag(voice);
+        // Numbers follow the voice language's card (Speech by language), else the main setting.
+        final String numbersKey = voice == null ? null : com.animeshahilya.espeakng.Voice.iso3Language(voice.locale);
         final boolean english = isEnglish(lang);
         final boolean readsEnglishText = readsEnglishText(lang);
 
@@ -207,7 +209,7 @@ public final class TextPreprocessor {
             }
             // A lone digit keeps the two number settings the full path applies.
             if (containsDigit(text)) {
-                if (VoiceSettings.NUMBERS_ENGLISH.equals(settings.getNumbersLanguage())
+                if (VoiceSettings.NUMBERS_ENGLISH.equals(settings.getNumbersLanguage(numbersKey))
                         && VoiceSettings.READING_NORMAL.equals(settings.getReadingMode())
                         && !english && !isLatinScript(lang)) {
                     text = edits.track(text, NumberReading.englishNumbers(text, true));
@@ -308,7 +310,7 @@ public final class TextPreprocessor {
         // voices read English words in English but numbers in their own
         // language; written out as English words, numbers inside English
         // text follow the English, or all of them are English.
-        final String numbers = settings.getNumbersLanguage();
+        final String numbers = settings.getNumbersLanguage(numbersKey);
         if (normalReading && !english && !isLatinScript(lang)
                 && (VoiceSettings.NUMBERS_AROUND.equals(numbers)
                         || VoiceSettings.NUMBERS_ENGLISH.equals(numbers))) {

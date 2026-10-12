@@ -500,6 +500,18 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_EXPAND_ABBREVIATIONS, false);
     }
 
+    /**
+     * The numbers setting for text in {@code language} (ISO 639-2): its
+     * language card's choice (Speech by language), else the main one.
+     */
+    public String getNumbersLanguage(String language) {
+        final String card = LanguageCards.numbers(mPreferences, language);
+        if (card.isEmpty()) {
+            return getNumbersLanguage();
+        }
+        return LanguageCards.NUMBERS_AUTO.equals(card) ? NUMBERS_AUTO : card;
+    }
+
     /** See {@link #PREF_NUMBERS_LANGUAGE}. */
     public String getNumbersLanguage() {
         final String value = mPreferences.getString(PREF_NUMBERS_LANGUAGE, null);

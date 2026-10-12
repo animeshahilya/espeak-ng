@@ -1602,7 +1602,7 @@ public class TtsService extends TextToSpeechService {
      * TextPreprocessor for non-Latin voices).
      */
     private static String numbersRunLanguage(VoiceSettings settings, String own) {
-        final String numbers = settings.getNumbersLanguage();
+        final String numbers = settings.getNumbersLanguage(own);
         if (VoiceSettings.NUMBERS_VOICE.equals(numbers)) {
             return own;
         }
@@ -1625,10 +1625,12 @@ public class TtsService extends TextToSpeechService {
         final String sensitivity = ScriptLanguages.switchingSensitivity(prefs);
         // A SYSPIN/Rasa voice reads only its own script's letters: words in
         // another script must not be folded into it, or they go unspoken.
-        final PiperVoiceStore.Installed ownNatural = VoiceSettings.SWITCHING_WORDS.equals(sensitivity)
-                ? null : PiperVoiceStore.assignedFor(mStorageContext, prefs, own);
-        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, own, runLanguages, numbers, sensitivity,
-                ownNatural != null && !ownNatural.config.usesEspeak());
+        final PiperVoiceStore.Installed ownNatural = PiperVoiceStore.assignedFor(mStorageContext, prefs, own);
+        // Each foreign language's card can set its own sensitivity.
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, own, runLanguages, numbers, language -> {
+            final String card = LanguageCards.switchAt(prefs, language);
+            return card.isEmpty() ? sensitivity : card;
+        }, ownNatural != null && !ownNatural.config.usesEspeak());
         List<LanguageRuns.Run> out = null;
         for (int i = 0; i < runs.size(); i++) {
             final LanguageRuns.Run run = runs.get(i);

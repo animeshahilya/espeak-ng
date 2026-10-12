@@ -231,4 +231,45 @@ public class LanguageCardsDeviceTest {
         assertEquals("eSpeak reads the English word", usual - 1, espeak);
         assertTrue("one voice, fewer pieces: " + surrounding, surrounding >= 1 && surrounding < usual);
     }
+
+    /** A language card's numbers choice: Hindi text reads its time in English words when set. */
+    @Test
+    public void numbersFollowTheLanguagesCard() throws Exception {
+        mPrefs.edit().putBoolean("piper_enabled", false).commit();
+        final String text = "बैठक सुबह 10:30 बजे है।";
+        final String hindiNumbers = LanguageCards.key("hin", LanguageCards.NUMBERS);
+        warmUp();
+        final double plain = seconds("num_plain", text, new Locale("hi"));
+        mPrefs.edit().putString(hindiNumbers, "en").commit();
+        final double english = seconds("num_english", text, new Locale("hi"));
+        mPrefs.edit().remove(hindiNumbers).commit();
+        final double cleared = seconds("num_cleared", text, new Locale("hi"));
+        assertTrue("English number words: " + english + " vs " + plain, Math.abs(english - plain) > 0.1);
+        assertEquals("cleared: as before", plain, cleared, EPSILON);
+    }
+
+    /** A language card's sensitivity: one English word in Hindi stays with the Hindi voice at "phrases". */
+    @Test
+    public void switchAtFollowsTheLanguagesCard() throws Exception {
+        Assume.assumeTrue("needs Hindi and English natural voices",
+                !mPrefs.getString("piper_voice_hin", "").isEmpty()
+                        && !mPrefs.getString("piper_voice_eng", "").isEmpty());
+        mPrefs.edit().putBoolean("piper_enabled", true).putBoolean("piper_switch_languages", true).commit();
+        final String text = "आज मेरी meeting कल सुबह दस बजे है।";
+        final String englishSwitch = LanguageCards.key("eng", LanguageCards.SWITCH_AT);
+        for (int i = 0; i < 6; i++) {
+            if (naturalChunks("sw_warm" + i, text, new Locale("hi")) >= 3) {
+                break;
+            }
+            seconds("sw_en_warm" + i, ENGLISH, Locale.US);
+            Thread.sleep(1500);
+        }
+        final long words = naturalChunks("sw_words", text, new Locale("hi"));
+        Assume.assumeTrue("both natural voices did not load: " + words, words >= 3);
+        mPrefs.edit().putString(englishSwitch, "phrases").commit();
+        final long phrases = naturalChunks("sw_phrases", text, new Locale("hi"));
+        mPrefs.edit().remove(englishSwitch).commit();
+        Log.i(TAG, "natural chunks: words " + words + ", phrases " + phrases);
+        assertEquals("the lone English word stays with Hindi", 1, phrases);
+    }
 }

@@ -430,4 +430,19 @@ public class LanguageRunsTest {
         // No boundary
         assertFalse(LanguageRuns.hasSentenceBoundary("Hello world"));
     }
+
+    /** A language card's sensitivity applies to that language's runs only (Speech by language). */
+    @Test
+    public void sensitivityPerLanguage() {
+        final String text = "कृपया OK दबाइए, Привет мир";
+        // Main setting "words": every run switches.
+        assertEquals("hin@0[कृपया]eng@5[ OK]hin@8[ दबाइए,]rus@15[ Привет мир]",
+                describe(LanguageRuns.split(text, "hin", null, null,
+                        l -> VoiceSettings.SWITCHING_WORDS, false)));
+        // English set to "phrases": its lone word stays with Hindi; Russian keeps the main setting.
+        assertEquals("hin@0[कृपया OK दबाइए,]rus@15[ Привет мир]",
+                describe(LanguageRuns.split(text, "hin", null, null,
+                        l -> "eng".equals(l) ? VoiceSettings.SWITCHING_PHRASES : VoiceSettings.SWITCHING_WORDS,
+                        false)));
+    }
 }
