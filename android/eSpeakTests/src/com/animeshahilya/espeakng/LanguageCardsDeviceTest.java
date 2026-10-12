@@ -165,8 +165,18 @@ public class LanguageCardsDeviceTest {
     @Test
     public void switchCuePlaysWhereSpeechSwitchesIntoTheLanguage() throws Exception {
         Assume.assumeTrue("a natural voice is chosen for Ukrainian", mPrefs.getString("piper_voice_ukr", "").isEmpty());
+        final String english = mPrefs.getString("piper_voice_eng", "");
         mPrefs.edit().putBoolean("piper_enabled", true).putBoolean("piper_switch_languages", true)
                 .remove("piper_voice_eng").commit();
+        try {
+            checkSwitchCues();
+        } finally {
+            // Other tests of this class need it (the class rule restores only at the end).
+            mPrefs.edit().putString("piper_voice_eng", english).commit();
+        }
+    }
+
+    private void checkSwitchCues() throws Exception {
         final String text = "Hello there. Привіт, як справи? Thank you very much.";
         final String ukrainianCue = LanguageCards.key("ukr", LanguageCards.SWITCH_CUE);
         final String englishCue = LanguageCards.key("eng", LanguageCards.SWITCH_CUE);
@@ -180,5 +190,45 @@ public class LanguageCardsDeviceTest {
         assertEquals("and a pause back into English", plain + 0.35, seconds("cue_both", text, Locale.US), EPSILON);
         mPrefs.edit().remove(ukrainianCue).remove(englishCue).commit();
         assertEquals("cleared: as before", plain, seconds("cue_none", text, Locale.US), EPSILON);
+    }
+
+    /** Natural-voice chunks spoken for {@code text}: how many pieces natural voices read. */
+    private long naturalChunks(String id, String text, Locale locale) throws Exception {
+        final long before = PiperEngine.renderedChunks();
+        seconds(id, text, locale);
+        return PiperEngine.renderedChunks() - before;
+    }
+
+    /**
+     * "Voice when inside other text": English inside Hindi, Hindi and English
+     * natural voices loaded. eSpeak for the English word leaves one natural
+     * piece fewer; the surrounding voice reads the sentence as one piece.
+     */
+    @Test
+    public void voiceWhenMixedPicksWhoReadsTheEnglishWord() throws Exception {
+        Assume.assumeTrue("needs Hindi and English natural voices",
+                !mPrefs.getString("piper_voice_hin", "").isEmpty()
+                        && !mPrefs.getString("piper_voice_eng", "").isEmpty());
+        mPrefs.edit().putBoolean("piper_enabled", true).putBoolean("piper_switch_languages", true).commit();
+        final String text = "आज मेरी meeting कल सुबह दस बजे है।";
+        final String englishMixed = LanguageCards.key("eng", LanguageCards.WHEN_MIXED);
+        // Both voices loaded (the first requests can go to eSpeak meanwhile).
+        for (int i = 0; i < 6; i++) {
+            if (naturalChunks("mix_warm" + i, text, new Locale("hi")) >= 3) {
+                break;
+            }
+            seconds("en_warm" + i, ENGLISH, Locale.US);
+            Thread.sleep(1500);
+        }
+        final long usual = naturalChunks("mix_usual", text, new Locale("hi"));
+        Assume.assumeTrue("both natural voices did not load: " + usual, usual >= 3);
+        mPrefs.edit().putString(englishMixed, "espeak").commit();
+        final long espeak = naturalChunks("mix_espeak", text, new Locale("hi"));
+        mPrefs.edit().putString(englishMixed, "surrounding").commit();
+        final long surrounding = naturalChunks("mix_surrounding", text, new Locale("hi"));
+        mPrefs.edit().remove(englishMixed).commit();
+        Log.i(TAG, "natural chunks: usual " + usual + ", eSpeak " + espeak + ", surrounding " + surrounding);
+        assertEquals("eSpeak reads the English word", usual - 1, espeak);
+        assertTrue("one voice, fewer pieces: " + surrounding, surrounding >= 1 && surrounding < usual);
     }
 }

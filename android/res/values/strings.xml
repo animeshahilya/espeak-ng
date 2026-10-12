@@ -784,4 +784,9 @@
   <string name="language_card_cue_pause">Short pause</string>
   <string name="language_card_cue_tone">Soft tone</string>
   <string name="language_card_summary_cue">%1$s; switching: %2$s</string>
+  <string name="language_card_mixed">Voice when inside other text</string>
+  <string name="language_card_mixed_default">Its usual voice</string>
+  <string name="language_card_mixed_espeak">eSpeak</string>
+  <string name="language_card_mixed_surrounding">The surrounding voice (no switch)</string>
+  <string name="language_card_summary_mixed_only">Own voice choice inside other text</string>
 </resources>

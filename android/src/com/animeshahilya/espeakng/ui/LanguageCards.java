@@ -36,6 +36,8 @@ public final class LanguageCards {
     public static final String VOLUME = "volume";
     /** Earcons.CUE_*: what plays where speech switches into the language. */
     public static final String SWITCH_CUE = "cue";
+    /** RunPlan.MIXED_* or a natural voice key: who reads the language inside other text. */
+    public static final String WHEN_MIXED = "mixed";
     private static final String[] FIELDS = {SPEED, PITCH, VOLUME};
     private static final int MIN_PERCENT = 50;
     private static final int MAX_PERCENT = 200;
@@ -65,18 +67,28 @@ public final class LanguageCards {
         return Math.max(MIN_PERCENT, Math.min(MAX_PERCENT, percent)) / 100f;
     }
 
-    /** The cue where speech switches into this language: Earcons.CUE_NONE unless set. */
-    public static String switchCue(SharedPreferences prefs, String language) {
+    /** Who reads this language inside other text: RunPlan.MIXED_DEFAULT unless set. */
+    public static String whenMixed(SharedPreferences prefs, String language) {
+        return string(prefs, language, WHEN_MIXED);
+    }
+
+    private static String string(SharedPreferences prefs, String language, String field) {
         if (prefs == null || language == null || language.isEmpty()) {
-            return com.animeshahilya.espeakng.text.Earcons.CUE_NONE;
+            return "";
         }
         try {
-            final String v = prefs.getString(key(language, SWITCH_CUE), null);
-            return v == null ? com.animeshahilya.espeakng.text.Earcons.CUE_NONE : v;
+            final String v = prefs.getString(key(language, field), null);
+            return v == null ? "" : v;
         } catch (ClassCastException e) {
-            return com.animeshahilya.espeakng.text.Earcons.CUE_NONE;
+            return "";
         }
     }
+
+    /** The cue where speech switches into this language: Earcons.CUE_NONE unless set. */
+    public static String switchCue(SharedPreferences prefs, String language) {
+        return string(prefs, language, SWITCH_CUE);
+    }
+
 
     /**
      * Fills the "Speech by language" category: the languages the user reads
@@ -152,10 +164,14 @@ public final class LanguageCards {
 
     private static CharSequence summary(Context context, SharedPreferences prefs, String lang) {
         final String cue = switchCue(prefs, lang);
+        final boolean mixedSet = !whenMixed(prefs, lang).isEmpty();
         final boolean sameProsody = factor(prefs, lang, SPEED) == 1f && factor(prefs, lang, PITCH) == 1f
                 && factor(prefs, lang, VOLUME) == 1f;
-        if (sameProsody && cue.isEmpty()) {
+        if (sameProsody && cue.isEmpty() && !mixedSet) {
             return context.getString(R.string.language_card_summary_same);
+        }
+        if (mixedSet && sameProsody && cue.isEmpty()) {
+            return context.getString(R.string.language_card_summary_mixed_only);
         }
         final String prosody = sameProsody ? context.getString(R.string.language_card_summary_same)
                 : context.getString(R.string.language_card_summary,
@@ -202,6 +218,31 @@ public final class LanguageCards {
             setting.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
             page.addPreference(setting);
         }
+        final java.util.List<CharSequence> mixedEntries = new java.util.ArrayList<>();
+        final java.util.List<CharSequence> mixedValues = new java.util.ArrayList<>();
+        mixedEntries.add(context.getString(R.string.language_card_mixed_default));
+        mixedValues.add(com.animeshahilya.espeakng.tts.RunPlan.MIXED_DEFAULT);
+        mixedEntries.add(context.getString(R.string.language_card_mixed_espeak));
+        mixedValues.add(com.animeshahilya.espeakng.tts.RunPlan.MIXED_ESPEAK);
+        mixedEntries.add(context.getString(R.string.language_card_mixed_surrounding));
+        mixedValues.add(com.animeshahilya.espeakng.tts.RunPlan.MIXED_SURROUNDING);
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(
+                com.animeshahilya.espeakng.EspeakApp.requireStorageContext(context))) {
+            if (lang.equals(v.languageKey())) {
+                mixedEntries.add(v.config.displayName());
+                mixedValues.add(v.key);
+            }
+        }
+        final ListPreference mixed = new ListPreference(context);
+        mixed.setKey(key(lang, WHEN_MIXED));
+        mixed.setTitle(R.string.language_card_mixed);
+        mixed.setDialogTitle(R.string.language_card_mixed);
+        mixed.setEntries(mixedEntries.toArray(new CharSequence[0]));
+        mixed.setEntryValues(mixedValues.toArray(new CharSequence[0]));
+        mixed.setDefaultValue(com.animeshahilya.espeakng.tts.RunPlan.MIXED_DEFAULT);
+        mixed.setIconSpaceReserved(false);
+        mixed.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
+        page.addPreference(mixed);
         final ListPreference cue = new ListPreference(context);
         cue.setKey(key(lang, SWITCH_CUE));
         cue.setTitle(R.string.language_card_cue);

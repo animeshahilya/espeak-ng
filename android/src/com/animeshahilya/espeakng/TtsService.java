@@ -1696,6 +1696,27 @@ public class TtsService extends TextToSpeechService {
             public Voice espeakVoiceFor(String language) {
                 return espeakVoiceForRun(language, own, voice, runLanguages);
             }
+
+            @Override
+            public String whenMixed(String language) {
+                final String mixed = LanguageCards.whenMixed(prefs, language);
+                if (mixed.isEmpty() || RunPlan.MIXED_ESPEAK.equals(mixed)) {
+                    return mixed;
+                }
+                if (RunPlan.MIXED_SURROUNDING.equals(mixed)) {
+                    // A letter-reading voice (SYSPIN/Rasa) cannot read another
+                    // script: its words would go unspoken.
+                    return ownNatural == null || ownNatural.config.usesEspeak()
+                            ? mixed : RunPlan.MIXED_DEFAULT;
+                }
+                final PiperVoiceStore.Installed v = PiperCrashGuard.isSuspended(prefs, mixed) ? null
+                        : PiperVoiceStore.find(mStorageContext, mixed);
+                if (v == null) {
+                    return RunPlan.MIXED_DEFAULT; // deleted or suspended since it was chosen
+                }
+                chosen.put(v.key, v);
+                return v.key;
+            }
         };
         // A one-voice phone still loading this language's own natural voice
         // must not evict it for another language's.

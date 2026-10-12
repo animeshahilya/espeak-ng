@@ -880,9 +880,16 @@ the next unit's chunk context so word ranges stay aligned
 each way. Test: Ukrainian inside English +0.25 s pause, +0.11 s tone.
 eSpeak lengths drift ~15 ms with the utterances before them (its generator
 keeps state): device tests warm up once and compare within 25 ms.
-Plan for later steps (agreed 2026-10-12): voice when mixed, per-language
-switch sensitivity and numbers, routing preview, dictionary "read in
-language X".
+Step 3: `lang_<lang>_mixed` = "" (its usual voice) / "espeak" /
+"surrounding" (no switch: the request's voice reads it) / a natural voice
+key, for that language's runs inside another language's text only
+(`RunPlan.Readers.whenMixed`); "surrounding" falls back to the usual rule
+when the request's natural voice reads letters only (SYSPIN/Rasa would drop
+the words), a deleted or crash-suspended voice likewise. Test: English
+"meeting" inside Hindi, natural pieces 3 (usual) / 2 (eSpeak) / 1
+(surrounding).
+Plan for later steps (agreed 2026-10-12): per-language switch sensitivity
+and numbers, routing preview, dictionary "read in language X".
 
 ### Key Classes (`src/com/animeshahilya/espeakng/`)
 

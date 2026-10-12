@@ -13,7 +13,9 @@ import java.util.List;
  * voice when one is chosen and already loaded, else to the eSpeak voice that
  * reads that language; neighbouring runs with the same reader are one
  * segment. A lone letter stays with eSpeak (natural voices garble a lone
- * syllable: TalkBack's "क्ष, deleted" with an English UI).
+ * syllable: TalkBack's "क्ष, deleted" with an English UI). A language's card
+ * can choose another reader for its runs inside other text
+ * ({@link Readers#whenMixed}).
  *
  * <p>Android-free: the voices come in through {@link Readers}, so the rules
  * are tested on the JVM. {@code V} is the eSpeak voice type.
@@ -34,7 +36,22 @@ public final class RunPlan {
 
         /** The eSpeak voice that reads this language when no natural voice does. */
         V espeakVoiceFor(String language);
+
+        /**
+         * Who reads a run of this language inside another language's text
+         * (its card, "Voice when inside other text"): {@link #MIXED_DEFAULT},
+         * {@link #MIXED_ESPEAK}, {@link #MIXED_SURROUNDING} or a natural
+         * voice's key.
+         */
+        String whenMixed(String language);
     }
+
+    /** The usual rule: the language's natural voice if chosen and loaded, else eSpeak. */
+    public static final String MIXED_DEFAULT = "";
+    /** Always eSpeak for this language inside other text. */
+    public static final String MIXED_ESPEAK = "espeak";
+    /** No switch: the voice reading the request's own language reads it too. */
+    public static final String MIXED_SURROUNDING = "surrounding";
 
     /** A part of the text and its reader: {@code naturalKey} when a natural voice reads it, else {@code espeakVoice}. */
     public static final class Segment<V> {
@@ -56,7 +73,7 @@ public final class RunPlan {
         }
 
         boolean sameReader(String key, V voice) {
-            return key != null ? key.equals(naturalKey) : naturalKey == null && voice == espeakVoice;
+            return key != null ? key.equals(naturalKey) : naturalKey == null && java.util.Objects.equals(voice, espeakVoice);
         }
     }
 
@@ -73,14 +90,31 @@ public final class RunPlan {
         final String ownKey = readers.naturalFor(own);
         final List<Segment<V>> out = new ArrayList<>();
         for (LanguageRuns.Run run : runs) {
-            final String chosen = espeakLetters && isLoneLetter(run.text) ? null
-                    : run.language.equals(own) ? ownKey : readers.naturalFor(run.language);
+            String language = run.language;
+            final String chosen;
+            if (espeakLetters && isLoneLetter(run.text)) {
+                chosen = null;
+            } else if (language.equals(own)) {
+                chosen = ownKey;
+            } else {
+                final String mixed = readers.whenMixed(language);
+                if (MIXED_SURROUNDING.equals(mixed)) {
+                    language = own;
+                    chosen = ownKey;
+                } else if (MIXED_ESPEAK.equals(mixed)) {
+                    chosen = null;
+                } else if (!mixed.isEmpty()) {
+                    chosen = mixed;
+                } else {
+                    chosen = readers.naturalFor(language);
+                }
+            }
             final boolean loaded = chosen != null && readers.isLoaded(chosen);
             if (chosen != null && !loaded && !chosen.equals(ownKey) && mayPreload) {
                 readers.preload(chosen);
             }
             final String key = loaded ? chosen : null;
-            final V voice = loaded ? null : readers.espeakVoiceFor(run.language);
+            final V voice = loaded ? null : readers.espeakVoiceFor(language);
             final int last = out.size() - 1;
             if (last >= 0 && out.get(last).sameReader(key, voice)) {
                 final Segment<V> prev = out.get(last);

@@ -27,6 +27,10 @@ public class RunPlanTest {
         @Override public boolean isLoaded(String key) { return loaded.contains(key); }
         @Override public void preload(String key) { preloaded.add(key); }
         @Override public String espeakVoiceFor(String language) { return "espeak-" + language; }
+        final Map<String, String> mixed = new HashMap<>();
+        @Override public String whenMixed(String language) {
+            return mixed.containsKey(language) ? mixed.get(language) : RunPlan.MIXED_DEFAULT;
+        }
     }
 
     private static List<LanguageRuns.Run> runs(String... langAndText) {
@@ -129,5 +133,58 @@ public class RunPlanTest {
         assertFalse(RunPlan.isLoneLetter("ab"));
         assertFalse(RunPlan.isLoneLetter(" , "));
         assertFalse(RunPlan.isLoneLetter(""));
+    }
+
+    /** English inside Hindi, with natural voices for both: the card decides who reads the English. */
+    private static Fake hindiAndEnglish() {
+        final Fake f = new Fake();
+        f.chosen.put("hin", "priya");
+        f.chosen.put("eng", "amy");
+        f.chosen.put("eng2", "rahul");
+        f.loaded.add("priya");
+        f.loaded.add("amy");
+        f.loaded.add("rahul");
+        return f;
+    }
+
+    private static final List<LanguageRuns.Run> MIXED = runs("hin", "मेरा ", "eng", "meeting ", "hin", "है ना");
+
+    @Test
+    public void mixedDefaultIsTheLanguagesOwnVoice() {
+        assertEquals("N:priya@0[मेरा ] N:amy@5[meeting ] N:priya@13[है ना]",
+                describe(RunPlan.plan(MIXED, "hin", hindiAndEnglish(), true, true)));
+    }
+
+    @Test
+    public void mixedEspeakKeepsTheLanguageWithEspeak() {
+        final Fake f = hindiAndEnglish();
+        f.mixed.put("eng", RunPlan.MIXED_ESPEAK);
+        assertEquals("N:priya@0[मेरा ] E:espeak-eng@5[meeting ] N:priya@13[है ना]",
+                describe(RunPlan.plan(MIXED, "hin", f, true, true)));
+        // Its own text is untouched: English requests still go to Amy.
+        assertEquals("N:amy@0[hello]", describe(RunPlan.plan(runs("eng", "hello"), "eng", f, true, true)));
+    }
+
+    @Test
+    public void mixedSurroundingIsReadByTheRequestsVoice() {
+        final Fake f = hindiAndEnglish();
+        f.mixed.put("eng", RunPlan.MIXED_SURROUNDING);
+        assertEquals("N:priya@0[मेरा meeting है ना]", describe(RunPlan.plan(MIXED, "hin", f, true, true)));
+        // Its natural voice not loaded yet: eSpeak in the request's language, still one piece.
+        f.loaded.remove("priya");
+        assertEquals("E:espeak-hin@0[मेरा meeting है ना]", describe(RunPlan.plan(MIXED, "hin", f, true, true)));
+    }
+
+    @Test
+    public void mixedCanNameAnotherVoice() {
+        final Fake f = hindiAndEnglish();
+        f.mixed.put("eng", "rahul");
+        assertEquals("N:priya@0[मेरा ] N:rahul@5[meeting ] N:priya@13[है ना]",
+                describe(RunPlan.plan(MIXED, "hin", f, true, true)));
+        // Not loaded: eSpeak reads it meanwhile, and the voice starts loading.
+        f.loaded.remove("rahul");
+        assertEquals("N:priya@0[मेरा ] E:espeak-eng@5[meeting ] N:priya@13[है ना]",
+                describe(RunPlan.plan(MIXED, "hin", f, true, true)));
+        assertTrue(f.preloaded.contains("rahul"));
     }
 }
