@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import com.animeshahilya.espeakng.util.FileUtils;
 
 /**
  * Downloaded Piper voices on disk, and which one (if any) speaks each
@@ -246,7 +247,7 @@ public final class PiperVoiceStore {
             }
         }
         try {
-            final PiperVoiceConfig config = PiperVoiceConfig.parse(key, readText(json));
+            final PiperVoiceConfig config = PiperVoiceConfig.parse(key, FileUtils.readText(json));
             if (!config.isSupported()) {
                 return null;
             }
@@ -265,7 +266,7 @@ public final class PiperVoiceStore {
         PiperEngine.get().unload(key);
         PiperEngine.get().deleteCachedPhrases(key);
         final File dir = new File(voicesDir(storageContext), key);
-        PiperDownloads.deleteRecursively(dir); // model, config and its optimized copy
+        FileUtils.deleteRecursively(dir); // model, config and its optimized copy
         final boolean ok = !dir.exists();
         // Before the collection below: a cached list still holds this voice,
         // which kept its shared file alive after the last user was deleted.
@@ -437,13 +438,6 @@ public final class PiperVoiceStore {
         } catch (NumberFormatException | ClassCastException e) {
             return -1;
         }
-    }
-
-    public static String readText(File file) throws IOException {
-        if (file.length() > 4 * 1024 * 1024) {
-            throw new IOException("File too large: " + file);
-        }
-        return new String(java.nio.file.Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
     private static final java.util.regex.Pattern VOICE_KEY_LOCALE =

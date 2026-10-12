@@ -157,7 +157,7 @@ public class CheckVoiceData extends Activity {
             // disappears, so concurrent readers don't trust stale stats.
             sHasBaseResources = null;
             SpeechSynthesis.clearVoiceCache();
-            FileUtils.rmdir(dataPath);
+            FileUtils.deleteRecursively(dataPath);
 
             try (java.io.InputStream dataStream = context.getResources().openRawResource(R.raw.espeakdata)) {
                 FileUtils.extractZip(dataStream, dataPath.getParentFile());

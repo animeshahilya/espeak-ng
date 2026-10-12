@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import com.animeshahilya.espeakng.util.FileUtils;
 
 /**
  * Keeps one bad natural voice from crash-looping the screen reader. A native
@@ -104,7 +105,7 @@ public final class PiperCrashGuard implements PiperEngine.NativeGuard {
         }
         final String[] keys;
         try {
-            keys = PiperVoiceStore.readText(mFile).split("\n");
+            keys = FileUtils.readText(mFile).split("\n");
         } catch (IOException e) {
             return;
         } finally {

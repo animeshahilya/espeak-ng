@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import com.animeshahilya.espeakng.util.FileUtils;
 
 /**
  * Getting Piper voices onto the device: the voice catalog from the official
@@ -404,7 +405,7 @@ public final class PiperDownloads {
                 && System.currentTimeMillis() - cache.lastModified() < CATALOG_MAX_AGE_MS;
         if (!refresh && fresh) {
             try {
-                return withExtras(storageContext, parseCatalog(PiperVoiceStore.readText(cache)));
+                return withExtras(storageContext, parseCatalog(FileUtils.readText(cache)));
             } catch (JSONException e) {
                 Log.w(TAG, "Cached catalog unreadable; refetching", e);
             }
@@ -412,12 +413,12 @@ public final class PiperDownloads {
         try {
             final byte[] data = fetch(CATALOG_URL, 8 * 1024 * 1024);
             final List<CatalogVoice> parsed = parseCatalog(new String(data, StandardCharsets.UTF_8));
-            writeAtomically(cache, data);
+            FileUtils.write(cache, data);
             return withExtras(storageContext, parsed);
         } catch (IOException e) {
             if (cache.isFile()) {
                 Log.w(TAG, "Catalog fetch failed; using cached copy", e);
-                return withExtras(storageContext, parseCatalog(PiperVoiceStore.readText(cache)));
+                return withExtras(storageContext, parseCatalog(FileUtils.readText(cache)));
             }
             final List<CatalogVoice> extras = keptOnly(bundledExtras(storageContext),
                     keptVoices(storageContext));
@@ -574,25 +575,25 @@ public final class PiperDownloads {
         }
         try {
             final File staging = stagingDir(storageContext, voice.key);
-            deleteRecursively(staging);
+            FileUtils.deleteRecursively(staging);
             if (!staging.mkdirs()) {
                 return false;
             }
-            writeAtomically(new File(staging, PiperVoiceStore.CONFIG_FILE), configBytes);
-            writeAtomically(new File(staging, "expected"),
+            FileUtils.write(new File(staging, PiperVoiceStore.CONFIG_FILE), configBytes);
+            FileUtils.write(new File(staging, "expected"),
                     (voice.modelMd5 + "\n" + voice.modelSize).getBytes(StandardCharsets.UTF_8));
-            writeAtomically(new File(staging, SOURCE_FILE),
+            FileUtils.write(new File(staging, SOURCE_FILE),
                     (voice.modelMd5 + "\n" + md5(configBytes)).getBytes(StandardCharsets.UTF_8));
             if (shared != null && !linkOrCopy(shared, new File(staging, PiperVoiceStore.MODEL_FILE))) {
-                deleteRecursively(staging);
+                FileUtils.deleteRecursively(staging);
                 return false;
             }
             final File dest = new File(PiperVoiceStore.voicesDir(storageContext), voice.key);
-            deleteRecursively(dest);
+            FileUtils.deleteRecursively(dest);
             //noinspection ResultOfMethodCallIgnored
             dest.getParentFile().mkdirs();
             if (!staging.renameTo(dest)) {
-                deleteRecursively(staging);
+                FileUtils.deleteRecursively(staging);
                 return false;
             }
             PiperVoiceStore.invalidate();
@@ -611,7 +612,7 @@ public final class PiperDownloads {
             return true;
         } catch (IOException | RuntimeException e) {
             logw("Shared install of " + voice.key + " failed", e);
-            deleteRecursively(stagingDir(storageContext, voice.key));
+            FileUtils.deleteRecursively(stagingDir(storageContext, voice.key));
             return false;
         }
     }
@@ -820,12 +821,12 @@ public final class PiperDownloads {
         if (!staging.isDirectory() && !staging.mkdirs()) {
             throw new IOException("Cannot create " + staging);
         }
-        writeAtomically(new File(staging, PiperVoiceStore.CONFIG_FILE), configBytes);
+        FileUtils.write(new File(staging, PiperVoiceStore.CONFIG_FILE), configBytes);
         // Remember what the model must match, for install time.
-        writeAtomically(new File(staging, "expected"), (voice.modelMd5 + "\n" + voice.modelSize)
+        FileUtils.write(new File(staging, "expected"), (voice.modelMd5 + "\n" + voice.modelSize)
                 .getBytes(StandardCharsets.UTF_8));
         // Kept with the voice: which catalog version it is (checkForUpdates).
-        writeAtomically(new File(staging, SOURCE_FILE), (voice.modelMd5 + "\n" + md5(configBytes))
+        FileUtils.write(new File(staging, SOURCE_FILE), (voice.modelMd5 + "\n" + md5(configBytes))
                 .getBytes(StandardCharsets.UTF_8));
 
         final File target = downloadTarget(appContext, voice.key);
@@ -907,7 +908,7 @@ public final class PiperDownloads {
             appContext.getSystemService(DownloadManager.class).remove(id);
         }
         forget(prefs, id, key);
-        deleteRecursively(stagingDir(storageContext, key));
+        FileUtils.deleteRecursively(stagingDir(storageContext, key));
         final File target = downloadTarget(appContext, key);
         if (target != null) {
             //noinspection ResultOfMethodCallIgnored
@@ -951,7 +952,7 @@ public final class PiperDownloads {
             if (status != DownloadManager.STATUS_SUCCESSFUL || target == null || !target.isFile()) {
                 throw new IOException("Download " + id + " ended with status " + status);
             }
-            final String[] expected = PiperVoiceStore.readText(new File(staging, "expected"))
+            final String[] expected = FileUtils.readText(new File(staging, "expected"))
                     .trim().split("\\r?\\n");
             final File model = new File(staging, PiperVoiceStore.MODEL_FILE);
             final String md5 = copyWithMd5(target, model);
@@ -963,7 +964,7 @@ public final class PiperDownloads {
             //noinspection ResultOfMethodCallIgnored
             new File(staging, "expected").delete();
             final File dest = new File(PiperVoiceStore.voicesDir(storageContext), key);
-            deleteRecursively(dest);
+            FileUtils.deleteRecursively(dest);
             //noinspection ResultOfMethodCallIgnored
             dest.getParentFile().mkdirs();
             if (!staging.renameTo(dest)) {
@@ -998,7 +999,7 @@ public final class PiperDownloads {
             // Runtime too: this runs on bare threads, where anything uncaught
             // kills the process - and with it the speech service.
             Log.w(TAG, "Install of " + key + " failed", e);
-            deleteRecursively(staging);
+            FileUtils.deleteRecursively(staging);
             return Result.FAILED;
         } finally {
             if (target != null) {
@@ -1028,7 +1029,7 @@ public final class PiperDownloads {
             }
             if (p == null) {
                 forget(prefs, id, key); // the system forgot it; so do we
-                deleteRecursively(stagingDir(storageContext, key));
+                FileUtils.deleteRecursively(stagingDir(storageContext, key));
             } else if (p.status == DownloadManager.STATUS_SUCCESSFUL
                     || p.status == DownloadManager.STATUS_FAILED) {
                 complete(appContext, storageContext, id);
@@ -1070,7 +1071,7 @@ public final class PiperDownloads {
                 if (!Tashkeel.MODEL_MD5.equalsIgnoreCase(md5(data))) {
                     throw new IOException("Tashkeel model checksum mismatch");
                 }
-                writeAtomically(target, data);
+                FileUtils.write(target, data);
                 Log.i(TAG, "Arabic vowel marks for " + v.key + " installed");
             } catch (IOException | RuntimeException e) {
                 Log.w(TAG, "Arabic vowel marks for " + v.key + " not fetched; tried again later", e);
@@ -1119,15 +1120,15 @@ public final class PiperDownloads {
             final File stamp = new File(v.dir, PiperModel.NPU_DECODER_FILE + ".md5");
             try {
                 if (target.isFile() && stamp.isFile()
-                        && md5.equalsIgnoreCase(PiperVoiceStore.readText(stamp).trim())) {
+                        && md5.equalsIgnoreCase(FileUtils.readText(stamp).trim())) {
                     continue;
                 }
                 final byte[] data = fetch(base + f.getString("path"), 64 * 1024 * 1024);
                 if (!md5.equalsIgnoreCase(md5(data))) {
                     throw new IOException("NPU decoder checksum mismatch for " + v.key);
                 }
-                writeAtomically(target, data);
-                writeAtomically(stamp, md5.getBytes(StandardCharsets.UTF_8));
+                FileUtils.write(target, data);
+                FileUtils.write(stamp, md5.getBytes(StandardCharsets.UTF_8));
                 Log.i(TAG, "NPU decoder for " + v.key + " installed");
                 broadcastChanged(appContext, v.key, null);
             } catch (IOException | JSONException | RuntimeException e) {
@@ -1209,20 +1210,20 @@ public final class PiperDownloads {
             engine.deleteCachedPhrases(key);
         }
         final File target = new File(PiperVoiceStore.voicesDir(storageContext), standard.key);
-        deleteRecursively(target); // the old, larger Standard copy
+        FileUtils.deleteRecursively(target); // the old, larger Standard copy
         if (target.exists() || !compact.dir.renameTo(target)) {
             throw new IOException("rename failed");
         }
         final File config = new File(target, PiperVoiceStore.CONFIG_FILE);
-        final byte[] bytes = PiperVoiceStore.readText(config)
+        final byte[] bytes = FileUtils.readText(config)
                 .replace("\"quality\": \"compact\"", "\"quality\": \"" + standard.quality + "\"")
                 .getBytes(StandardCharsets.UTF_8);
-        writeAtomically(config, bytes);
+        FileUtils.write(config, bytes);
         // The catalog's config differs from the patched one at most in layout
         // (Piper "high" configs are indented differently): record its MD5 so
         // checkForUpdates does not download the same voice again.
         final String configMd5 = standard.configMd5 != null ? standard.configMd5 : md5(bytes);
-        writeAtomically(new File(target, SOURCE_FILE), (modelMd5 + "\n" + configMd5).getBytes(StandardCharsets.UTF_8));
+        FileUtils.write(new File(target, SOURCE_FILE), (modelMd5 + "\n" + configMd5).getBytes(StandardCharsets.UTF_8));
         PiperModel.forgetOptimized(target);
 
         final SharedPreferences prefs = settingsPrefs(storageContext);
@@ -1367,14 +1368,14 @@ public final class PiperDownloads {
         final File source = new File(v.dir, SOURCE_FILE);
         try {
             if (source.isFile()) {
-                final String[] lines = PiperVoiceStore.readText(source).trim().split("\n");
+                final String[] lines = FileUtils.readText(source).trim().split("\n");
                 if (lines.length == 2) {
                     return lines;
                 }
             }
             final File model = v.model();
             final String[] computed = {md5(model), md5(new File(v.dir, PiperVoiceStore.CONFIG_FILE))};
-            writeAtomically(source, (computed[0] + "\n" + computed[1]).getBytes(StandardCharsets.UTF_8));
+            FileUtils.write(source, (computed[0] + "\n" + computed[1]).getBytes(StandardCharsets.UTF_8));
             return computed;
         } catch (IOException e) {
             Log.w(TAG, "Cannot hash " + v.key, e);
@@ -1467,33 +1468,6 @@ public final class PiperDownloads {
             sb.append(String.format(Locale.ROOT, "%02x", b));
         }
         return sb.toString();
-    }
-
-    private static void writeAtomically(File file, byte[] data) throws IOException {
-        //noinspection ResultOfMethodCallIgnored
-        file.getParentFile().mkdirs();
-        final File tmp = new File(file.getPath() + ".tmp");
-        try (OutputStream out = new FileOutputStream(tmp)) {
-            out.write(data);
-        }
-        if (!tmp.renameTo(file)) {
-            throw new IOException("Cannot write " + file);
-        }
-    }
-
-    public static void deleteRecursively(File f) {
-        // exists() follows links: a link whose shared file is gone is still deleted.
-        if (f == null || (!f.exists() && !java.nio.file.Files.isSymbolicLink(f.toPath()))) {
-            return;
-        }
-        final File[] children = f.listFiles();
-        if (children != null) {
-            for (File c : children) {
-                deleteRecursively(c);
-            }
-        }
-        //noinspection ResultOfMethodCallIgnored
-        f.delete();
     }
 }
 

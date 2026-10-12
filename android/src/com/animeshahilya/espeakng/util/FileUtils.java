@@ -42,6 +42,14 @@ public class FileUtils {
         }
     }
 
+    /** A small text file (a config, a record): refused past 4 MB. */
+    public static String readText(File file) throws IOException {
+        if (file.length() > 4 * 1024 * 1024) {
+            throw new IOException("File too large: " + file);
+        }
+        return read(file);
+    }
+
     public static String read(InputStream stream) throws IOException {
         return readByteArray(stream, stream.available()).toString(StandardCharsets.UTF_8.name());
     }
@@ -65,9 +73,16 @@ public class FileUtils {
         write(outputFile, contents.getBytes(StandardCharsets.UTF_8));
     }
 
+    /** Writes through a temporary file and a rename, so a reader never sees half a file. */
     public static void write(File outputFile, byte[] contents) throws IOException {
-        try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+        //noinspection ResultOfMethodCallIgnored
+        outputFile.getParentFile().mkdirs();
+        final File tmp = new File(outputFile.getPath() + ".tmp");
+        try (FileOutputStream outputStream = new FileOutputStream(tmp)) {
             outputStream.write(contents, 0, contents.length);
+        }
+        if (!tmp.renameTo(outputFile)) {
+            throw new IOException("Cannot write " + outputFile);
         }
     }
 
@@ -129,24 +144,20 @@ public class FileUtils {
         }
     }
 
-    public static void rmdir(File directory) {
-        if (directory == null || !directory.exists() || !directory.isDirectory()) {
+    /** Deletes a file or a whole tree; best effort. */
+    public static void deleteRecursively(File f) {
+        // exists() follows links: a link whose target is gone is still deleted.
+        if (f == null || (!f.exists() && !java.nio.file.Files.isSymbolicLink(f.toPath()))) {
             return;
         }
-
-        final File[] children = directory.listFiles();
-        if (children == null) {
-            return;
-        }
-        for (File child : children) {
-            if (child.isDirectory()) {
-                rmdir(child);
-            }
-
-            if (!child.delete()) {
-                // Best effort: a stale file here is retried on next launch.
+        final File[] children = f.listFiles();
+        if (children != null) {
+            for (File c : children) {
+                deleteRecursively(c);
             }
         }
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
     }
 }
 
