@@ -25,6 +25,7 @@
 
 package com.animeshahilya.espeakng;
 import com.animeshahilya.espeakng.text.AsciiUtils;
+import com.animeshahilya.espeakng.tts.RunPlan;
 import com.animeshahilya.espeakng.tts.AudioOptimizer;
 import com.animeshahilya.espeakng.tts.CheckVoiceData;
 import com.animeshahilya.espeakng.text.CompoundSplitter;
@@ -1048,21 +1049,26 @@ public class TtsService extends TextToSpeechService {
 
         mHistoryText = text;
 
-        // Natural voice for this language, when the user chose one and it is
-        // already in memory. SSML stays with eSpeak (Piper has no markup
-        // support), and so, by default, do single characters: character
-        // navigation is where a screen reader user notices latency most.
-        if (natural != null && !(isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs))) {
+        // Who reads each part (RunPlan): natural voices where the user chose
+        // one and it is in memory, eSpeak for the rest. SSML stays with
+        // eSpeak (Piper has no markup support), and so, by default, do single
+        // characters: character navigation is where a screen reader user
+        // notices latency most.
+        final boolean espeakOnly = isSsml || !PiperVoiceStore.isEnabled(prefs) || voice.isScriptVariant()
+                || (isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs));
+        final List<SynthUnit> units = espeakOnly ? buildUnits(text, voice, isSsml)
+                : planUnits(buildUnits(text, voice, false), voice, natural, prefs, settings, scriptLanguages);
+        if (natural != null && !espeakOnly) {
             final PiperModel model = mPiper.getLoaded(natural.key);
-            if (model != null && !espeakReadsPart(text, natural, prefs, settings, scriptLanguages)) {
-                synthesizeNatural(request, callback, engine, settings, prefs, voice, natural,
-                        model, text, scriptLanguages, offsetMap, textOffset, isSingleCharacterUtterance);
+            // All of it natural: the request's own voice speaks, at its rate.
+            // Otherwise the eSpeak path below reads the rest and hands the
+            // natural parts to their voices (resampled to eSpeak's rate).
+            if (model != null && allNatural(units)) {
+                synthesizeNatural(request, callback, engine, settings, prefs, voice, model, units, text,
+                        offsetMap, textOffset, isSingleCharacterUtterance);
                 return;
             }
-            // Not loaded yet: eSpeak speaks this one while it loads. Or
-            // part of it is in a language no natural voice reads: the
-            // eSpeak path below reads that part and hands the rest to
-            // the natural voices (withNaturalRuns).
+            // Not loaded yet: eSpeak speaks this one while it loads.
             if (model == null) {
                 mPiper.preload(natural.key, natural.model(), natural.config);
             }
@@ -1159,11 +1165,6 @@ public class TtsService extends TextToSpeechService {
         // No setVoice() for the units: the call at the top of setup already
         // applied this exact voice+variant (SpeechSynthesis memoizes it),
         // and re-applying cost a full native dictionary reload per call.
-        final List<SynthUnit> units =
-                !isSsml && !(isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs))
-                        ? withNaturalRuns(buildUnits(text, voice, isSsml), voice, prefs, settings,
-                                sampleRate, scriptLanguages)
-                        : buildUnits(text, voice, isSsml);
         final List<String> naturalUsed = new ArrayList<>();
         final NaturalAhead ahead = new NaturalAhead(naturalPhonemizer(engine, voice),
                 naturalParams(settings, request, prefs), settings, request, prefs, naturalUsed);
@@ -1340,8 +1341,7 @@ public class TtsService extends TextToSpeechService {
     private void synthesizeNatural(SynthesisRequest request, SynthesisCallback callback,
                                    final SpeechSynthesis engine, VoiceSettings settings,
                                    SharedPreferences prefs, final Voice voice,
-                                   PiperVoiceStore.Installed natural, PiperModel model,
-                                   String text, Map<String, String> scriptLanguages,
+                                   PiperModel model, List<SynthUnit> units, String text,
                                    TextOffsetMap offsetMap, int textOffset,
                                    boolean isSingleCharacterUtterance) {
         final int sampleRate = model.config.sampleRate;
@@ -1360,53 +1360,12 @@ public class TtsService extends TextToSpeechService {
         final PiperEngine.Params params = naturalParams(settings, request, prefs);
         final PiperEngine.Phonemizer phonemizer = naturalPhonemizer(engine, voice);
         final PiperEngine.Output output = dispatcher.asPiperOutput();
-        final Map<UnicodeScript, String> runLanguages = ScriptLanguages.naturalSwitching(prefs)
-                ? ScriptLanguages.runLanguages(scriptLanguages) : null;
-        final String numbers = numbersRunLanguage(settings, natural.languageKey());
         final List<String> used = new ArrayList<>();
-
-        // Like eSpeak switching language by alphabet: a Hindi run in English
-        // text goes to the Hindi natural voice, when one is chosen and loaded
-        // (it starts loading on first use; until then this voice reads it, as
-        // before). Switched off, this voice reads everything.
+        // Blank pieces (spacing between units) have nothing to say.
         final List<SynthUnit> pieces = new ArrayList<>();
-        for (SynthUnit unit : buildUnits(text, voice, false)) {
-            if (unit.isEarcon()) {
+        for (SynthUnit unit : units) {
+            if (!VoiceSettings.isBlank(unit.text)) {
                 pieces.add(unit);
-                continue;
-            }
-            if (VoiceSettings.isBlank(unit.text)) {
-                continue;
-            }
-            final List<LanguageRuns.Run> runs = runLanguages == null
-                    ? Collections.singletonList(new LanguageRuns.Run(0, unit.text, natural.languageKey()))
-                    : naturalRuns(unit.text, natural.languageKey(), runLanguages, numbers, prefs);
-            SynthUnit currentPiece = null;
-            for (LanguageRuns.Run run : runs) {
-                PiperModel runModel = model;
-                String runKey = natural.key;
-                if (!run.language.equals(natural.languageKey())) {
-                    final PiperVoiceStore.Installed other =
-                            PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
-                    if (other != null && !other.key.equals(natural.key)) {
-                        final PiperModel loaded = mPiper.getLoaded(other.key);
-                        if (loaded != null) {
-                            runModel = loaded;
-                            runKey = other.key;
-                        } else if (mPiper.keepsSeveralLoaded()) {
-                            mPiper.preload(other.key, other.model(), other.config);
-                        }
-                    }
-                }
-                if (currentPiece != null && currentPiece.model == runModel
-                        && currentPiece.modelKey.equals(runKey)) {
-                    currentPiece = new SynthUnit(currentPiece.text + run.text, voice,
-                            currentPiece.base, runModel, runKey);
-                    pieces.set(pieces.size() - 1, currentPiece);
-                } else {
-                    currentPiece = new SynthUnit(run.text, voice, unit.base + run.start, runModel, runKey);
-                    pieces.add(currentPiece);
-                }
             }
         }
 
@@ -1632,75 +1591,57 @@ public class TtsService extends TextToSpeechService {
     }
 
     /**
-     * True when part of the text, spoken with this natural voice, is in a
-     * language without a loaded natural voice (a
-     * Gujarati word while Hindi and English have natural voices, or an
-     * English one while only Hindi has): the eSpeak path then reads that
-     * part in its language instead of this voice mangling it, and hands the
-     * rest to the natural voices (resampled to eSpeak's rate where theirs
-     * differs). Only when switching is on.
+     * The units with each part given its reader ({@link RunPlan}): a run in
+     * another language (Hindi inside English) goes to that language's
+     * natural voice when one is chosen and loaded, and so does one in the
+     * request's own language; the rest stays with eSpeak in the voice that
+     * reads its language (eSpeak switches by alphabet itself, but not into
+     * every language: {@link LanguageRuns#espeakReadsItself}). The first use
+     * of a voice starts loading it and eSpeak reads that run meanwhile.
+     * Natural-voice switching off: only the digits a letter-reading voice
+     * cannot read leave it.
      */
-    private boolean espeakReadsPart(String text, PiperVoiceStore.Installed natural,
-                                    SharedPreferences prefs, VoiceSettings settings,
-                                    Map<String, String> scriptLanguages) {
-        final boolean digitHelp = needsDigitHelp(natural);
-        if (digitHelp && AsciiUtils.hasDigit(text)) {
-            return true;
-        }
-        if (!ScriptLanguages.naturalSwitching(prefs)) {
-            return false;
-        }
-        final String own = natural.languageKey();
-        for (LanguageRuns.Run run : naturalRuns(text, own,
-                ScriptLanguages.runLanguages(scriptLanguages), numbersRunLanguage(settings, own), prefs)) {
-            if (run.language.equals(own) || VoiceSettings.isBlank(run.text)) {
-                continue;
-            }
-            final PiperVoiceStore.Installed other =
-                    PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
-            final PiperModel loaded = other == null ? null : mPiper.getLoaded(other.key);
-            if (loaded == null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * eSpeak speaking, natural voices where there are some: like eSpeak
-     * switching language by alphabet, a run in another script (Hindi inside
-     * English) becomes a unit of its own for that language's natural voice,
-     * when one is chosen and loaded (resampled to eSpeak's rate), and so does a
-     * run in the voice's own language when its natural voice is loaded (the
-     * request came here for a part only eSpeak reads, see espeakReadsPart).
-     * The first use starts loading a voice and eSpeak reads that run
-     * meanwhile. Everything else stays together for eSpeak, which switches
-     * language by itself.
-     */
-    private List<SynthUnit> withNaturalRuns(List<SynthUnit> units, Voice voice,
-                                            SharedPreferences prefs, VoiceSettings settings,
-                                            int sampleRate, Map<String, String> scriptLanguages) {
-        // A script-variant voice (fa-latn): its text is not in the script its
-        // language's natural voices, or LanguageRuns, expect.
-        if (!PiperVoiceStore.isEnabled(prefs) || voice.isScriptVariant()) {
-            return units;
-        }
-        final PiperVoiceStore.Installed ownNatural = PiperVoiceStore.resolve(mStorageContext, prefs, voice);
+    private List<SynthUnit> planUnits(List<SynthUnit> units, final Voice voice,
+                                      final PiperVoiceStore.Installed ownNatural, final SharedPreferences prefs,
+                                      VoiceSettings settings, Map<String, String> scriptLanguages) {
         final boolean naturalSwitching = ScriptLanguages.naturalSwitching(prefs);
-        final boolean digitHelp = needsDigitHelp(ownNatural);
-        if (!naturalSwitching && !digitHelp) {
-            return units;
-        }
         final Map<UnicodeScript, String> runLanguages = naturalSwitching
                 ? ScriptLanguages.runLanguages(scriptLanguages) : null;
         final String own = PiperVoiceStore.languageKey(voice.locale);
         final String numbers = naturalSwitching ? numbersRunLanguage(settings, own) : null;
+        final boolean digitHelp = needsDigitHelp(ownNatural);
+        final Map<String, PiperVoiceStore.Installed> chosen = new HashMap<>();
+        final RunPlan.Readers<Voice> readers = new RunPlan.Readers<Voice>() {
+            @Override
+            public String naturalFor(String language) {
+                final PiperVoiceStore.Installed v = language.equals(own) ? ownNatural
+                        : PiperVoiceStore.assignedFor(mStorageContext, prefs, language);
+                if (v == null) {
+                    return null;
+                }
+                chosen.put(v.key, v);
+                return v.key;
+            }
+
+            @Override
+            public boolean isLoaded(String key) {
+                return mPiper.getLoaded(key) != null;
+            }
+
+            @Override
+            public void preload(String key) {
+                final PiperVoiceStore.Installed v = chosen.get(key);
+                mPiper.preload(v.key, v.model(), v.config);
+            }
+
+            @Override
+            public Voice espeakVoiceFor(String language) {
+                return espeakVoiceForRun(language, own, voice, runLanguages);
+            }
+        };
         // A one-voice phone still loading this language's own natural voice
         // must not evict it for another language's.
         final boolean mayPreload = mPiper.keepsSeveralLoaded() || ownNatural == null;
-        // A lone letter in another language ("क deleted" from TalkBack, a
-        // Devanagari letter typed with an English UI) stays with eSpeak, like
-        // a single-character request: natural voices garble a lone syllable.
         final boolean espeakLetters = PiperVoiceStore.espeakForCharacters(prefs);
         final List<SynthUnit> out = new ArrayList<>();
         for (SynthUnit unit : units) {
@@ -1708,77 +1649,29 @@ public class TtsService extends TextToSpeechService {
                 out.add(unit);
                 continue;
             }
-            final StringBuilder espeak = new StringBuilder();
-            int espeakStart = 0;
-            Voice currentEspeakVoice = voice;
-            // Switching off: only the digits this voice cannot read leave it.
+            final LanguageRuns.Run whole = new LanguageRuns.Run(0, unit.text, own);
             final List<LanguageRuns.Run> runs = naturalSwitching
                     ? naturalRuns(unit.text, own, runLanguages, numbers, prefs)
-                    : LanguageRuns.splitDigits(new LanguageRuns.Run(0, unit.text, own), ESPEAK_ONLY);
-            for (LanguageRuns.Run run : runs) {
-                final PiperVoiceStore.Installed natural = espeakLetters && isLoneLetter(run.text)
-                        ? null
-                        : run.language.equals(own) ? ownNatural
-                        : PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
-                final PiperModel model = natural == null ? null : mPiper.getLoaded(natural.key);
-                if (natural != null && natural != ownNatural && model == null && mayPreload) {
-                    mPiper.preload(natural.key, natural.model(), natural.config);
-                }
-                if (model == null) {
-                    final Voice targetVoice = espeakVoiceForRun(run.language, own, voice, runLanguages);
-                    if (espeak.length() > 0 && targetVoice != currentEspeakVoice) {
-                        out.add(new SynthUnit(espeak.toString(), currentEspeakVoice, unit.base + espeakStart));
-                        espeak.setLength(0);
-                    }
-                    if (espeak.length() == 0) {
-                        espeakStart = run.start;
-                        currentEspeakVoice = targetVoice;
-                    }
-                    espeak.append(run.text);
-                    continue;
-                }
-                if (espeak.length() > 0) {
-                    out.add(new SynthUnit(espeak.toString(), currentEspeakVoice, unit.base + espeakStart));
-                    espeak.setLength(0);
-                }
-                out.add(new SynthUnit(run.text, voice, unit.base + run.start, model, natural.key));
-            }
-            if (espeak.length() > 0) {
-                out.add(new SynthUnit(espeak.toString(), currentEspeakVoice, unit.base + espeakStart));
+                    : digitHelp ? LanguageRuns.splitDigits(whole, ESPEAK_ONLY)
+                    : Collections.singletonList(whole);
+            for (RunPlan.Segment<Voice> seg : RunPlan.plan(runs, own, readers, espeakLetters, mayPreload)) {
+                out.add(seg.isNatural()
+                        ? new SynthUnit(seg.text, voice, unit.base + seg.start,
+                                mPiper.getLoaded(seg.naturalKey), seg.naturalKey)
+                        : new SynthUnit(seg.text, seg.espeakVoice, unit.base + seg.start));
             }
         }
         return out;
     }
 
-    /**
-     * One character, ignoring the punctuation and spaces around it: what a
-     * run holds when TalkBack says "क्ष, deleted" with an English UI.
-     */
-    static boolean isLoneLetter(String run) {
-        if (run == null || run.isEmpty()) return false;
-        int start = 0;
-        int end = run.length();
-        while (start < end) {
-            final int cp = run.codePointAt(start);
-            if (isLetterOrMark(cp)) {
-                break;
+    /** True when natural voices read every unit (earcons aside). */
+    private static boolean allNatural(List<SynthUnit> units) {
+        for (SynthUnit unit : units) {
+            if (!unit.isEarcon() && unit.model == null) {
+                return false;
             }
-            start += Character.charCount(cp);
         }
-        while (end > start) {
-            final int cp = run.codePointBefore(end);
-            if (isLetterOrMark(cp)) {
-                break;
-            }
-            end -= Character.charCount(cp);
-        }
-        return start < end && TextPreprocessor.isSingleCharacter(run.substring(start, end));
-    }
-
-    private static boolean isLetterOrMark(int cp) {
-        final int type = Character.getType(cp);
-        return Character.isLetterOrDigit(cp) || type == Character.NON_SPACING_MARK
-                || type == Character.COMBINING_SPACING_MARK || type == Character.ENCLOSING_MARK;
+        return true;
     }
 
     /**
