@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:9.3.0'
+        classpath 'com.android.tools.build:gradle:9.4.1'
         // createPackedAssets: zstd-compresses the dictionaries and data/ put in the APK
         classpath 'com.github.luben:zstd-jni:1.5.7-6'
     }
