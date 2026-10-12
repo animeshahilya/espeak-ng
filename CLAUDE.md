@@ -56,7 +56,7 @@ Output APKs land in `build/outputs/apk/debug/` and `build/outputs/apk/release/`.
 
 - Package/namespace `com.animeshahilya.espeakng`; app label "eSpeak NG Advanced" (`R.string.app_name`, translatable="false" - single source, no per-locale override)
 - compileSdk 37, minSdk 26 (Android 8.0+), targetSdk 37
-- NDK 29.0.14206865, CMake 3.22.1
+- NDK 30.0.16248370 (r30), CMake 3.22.1
 - JDK 17 (Temurin) toolchain across dev and CI
 - Native binaries built with 16 KB ELF page alignment for Android 15+ compatibility
 - Edge-to-edge Material 3 UI with `WindowInsetsControllerCompat` and predictive back gesture support (`enableOnBackInvokedCallback="true"`, `OnBackPressedCallback`)
@@ -957,7 +957,7 @@ android/
 ├── assets/                           # Bundled as-is: piper catalog JSON
 ├── data/                             # Packed (zstd) by the build: symbols, chardesc, emoji, hinglish, compounds
 ├── tools/                            # Data regenerators (NVDA symbols, emoji, piper spellings, ort-voices)
-├── build.gradle                      # Gradle config (AGP 9.3.0, Java 17 toolchain)
+├── build.gradle                      # Gradle config (AGP 9.4.1, Gradle 9.8.1, Java 17 toolchain)
 └── AndroidManifest.xml               # Services, activities, intents
 ```
 

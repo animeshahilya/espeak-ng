@@ -61,12 +61,15 @@ dependencies {
     // OnBackInvokedDispatcher: at targetSdk 36+ the Back key then bypasses
     // TtsSettingsActivity's OnBackPressedCallback, so Back in a sub-screen
     // left the app instead of returning to the main list. 1.6+ bridges it.
-    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.activity:activity:1.13.0'
+    // Preference 1.2.1 (its last release) still pulls Fragment 1.5.4 from
+    // 2022; the settings dialogs are DialogFragments, so take 1.8's fixes.
+    implementation 'androidx.fragment:fragment:1.8.9'
     // Material 3 (Material You) styling for the settings UI: M3 theme parent,
     // MaterialAlertDialogBuilder dialogs, TextInputLayout fields and dynamic
-    // color. Pinned 1.13.0: latest proven stable on the targetSdk 37 line
-    // (1.14.0 was weeks old when this was added).
-    implementation 'com.google.android.material:material:1.13.0'
+    // color. 1.14.0 adds keyboard support to the exposed dropdowns (voice
+    // variant and user dictionary dialogs).
+    implementation 'com.google.android.material:material:1.14.0'
     // Piper natural voices: ONNX Runtime runs the VITS models on the CPU.
     // A full (not "minimal") build: Piper models are plain ONNX files from
     // the voice catalog, optimized on the phone. Only arm64-v8a ships.
@@ -196,10 +199,11 @@ android {
     }
 
     // Compressed native libraries: ONNX Runtime (Piper natural voices) is a
-    // 32 MB .so, stored uncompressed it would more than double the APK that
-    // people download from Releases. Compressed it costs ~12 MB; the price
-    // is one extraction at install time. Revisit if the app moves to app
-    // bundles (Play splits and compresses per device anyway).
+    // 16 MB .so (our own slim build); stored uncompressed the APK people
+    // download from Releases would grow ~10 MB (23 -> 33 MB). Compressed it
+    // costs ~6 MB; the price is one extraction at install time (~17 MB on
+    // the phone). Revisit if the app moves to app bundles (Play splits and
+    // compresses per device anyway).
     packaging {
         jniLibs {
             useLegacyPackaging = true
