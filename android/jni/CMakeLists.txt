@@ -58,6 +58,9 @@ add_library(zstddec OBJECT "${ZSTD_DIR}/zstddeclib.c")
 set_property(TARGET zstddec PROPERTY POSITION_INDEPENDENT_CODE ON)
 target_compile_definitions(zstddec PRIVATE
         HUF_FORCE_DECOMPRESS_X1 ZSTD_STRIP_ERROR_STRINGS ZSTD_DISABLE_ASM)
+# Optimized in every build: debug builds otherwise decode dictionaries ~4x
+# slower (Russian 225 ms on a Pixel 8), and nobody debugs inside zstd.
+target_compile_options(zstddec PRIVATE -O2)
 
 add_library(ttsespeak SHARED
         jni/eSpeakService.c

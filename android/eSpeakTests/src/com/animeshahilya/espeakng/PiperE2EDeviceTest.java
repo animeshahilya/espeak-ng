@@ -3,6 +3,7 @@ package com.animeshahilya.espeakng;
 import com.animeshahilya.espeakng.piper.PiperAudio;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -33,7 +34,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * End-to-end check of Piper natural voices through the real TTS framework.
  * Needs a downloaded English natural voice chosen for English; skipped
- * otherwise. Which engine spoke is read from the WAV sample rate.
+ * otherwise. Which engine spoke is read from PiperEngine.renderedChunks()
+ * (the service runs in this process): the sample rate cannot tell, most
+ * Piper voices are 22050 Hz like eSpeak.
  */
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -42,6 +45,8 @@ public class PiperE2EDeviceTest {
     private static final int ESPEAK_RATE = 22050;
 
     private TextToSpeech mTts;
+    /** Whether a natural voice spoke (part of) the last toFile() request. */
+    private volatile boolean mNatural;
     private File mDir;
     private final ConcurrentHashMap<String, CountDownLatch> mDone = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> mOutcome = new ConcurrentHashMap<>();
@@ -98,11 +103,13 @@ public class PiperE2EDeviceTest {
         out.delete();
         final CountDownLatch latch = expect(id);
         final long start = System.nanoTime();
+        final long chunks = com.animeshahilya.espeakng.piper.PiperEngine.renderedChunks();
         assertEquals(TextToSpeech.SUCCESS, mTts.synthesizeToFile(text, new Bundle(), out, id));
         assertTrue(id + " timed out", latch.await(60, TimeUnit.SECONDS));
         final long ms = (System.nanoTime() - start) / 1_000_000;
         assertEquals(id, "done", mOutcome.get(id));
         final long[] stats = wavStats(out);
+        mNatural = com.animeshahilya.espeakng.piper.PiperEngine.renderedChunks() > chunks;
         Log.i(TAG, String.format(Locale.ROOT, "%s rate=%d samples=%d (%.2fs) peak=%d rms=%.1f wall=%dms",
                 id, stats[0], stats[1], stats[1] / (double) stats[0], stats[2], stats[3] / 1000.0, ms));
         return stats;
@@ -126,34 +133,33 @@ public class PiperE2EDeviceTest {
         }
     }
 
-    private int warmNaturalEnglish() throws Exception {
-        // The first request can go to eSpeak while the model loads.
+    /** True once a natural voice speaks English (the first request can go to eSpeak while it loads). */
+    private boolean warmNaturalEnglish() throws Exception {
         for (int i = 0; i < 5; i++) {
-            final long[] s = toFile("warm" + i, "Warming up.", Locale.US, 1f);
-            if (s[0] != ESPEAK_RATE) {
-                return (int) s[0];
+            toFile("warm" + i, "Warming up.", Locale.US, 1f);
+            if (mNatural) {
+                return true;
             }
             Thread.sleep(2000);
         }
-        return ESPEAK_RATE;
+        return false;
     }
 
     @Test
     public void a_englishSpeaksWithNaturalVoice() throws Exception {
-        final int rate = warmNaturalEnglish();
-        Assume.assumeTrue("no English natural voice installed/chosen", rate != ESPEAK_RATE);
+        Assume.assumeTrue("no English natural voice installed/chosen", warmNaturalEnglish());
         final long[] s = toFile("en_natural",
                 "Hello! This is a natural voice test. It costs $42.50 on 27 September 2026, "
                         + "and the URL is example.com. Does it sound right?", Locale.US, 1f);
-        assertEquals(rate, s[0]);
-        assertTrue("too short", s[1] > rate * 3L);
+        assertTrue("spoken by eSpeak", mNatural);
+        assertTrue("too short", s[1] > s[0] * 3L);
         // PiperAudio brings speech to -20 dBFS, its peaks limited just under full scale.
         assertTrue("silent", s[2] > 2000 && s[3] > 200_000);
     }
 
     @Test
     public void b_speechRateChangesDuration() throws Exception {
-        Assume.assumeTrue(warmNaturalEnglish() != ESPEAK_RATE);
+        Assume.assumeTrue(warmNaturalEnglish());
         final String text = "The quick brown fox jumps over the lazy dog, again and again.";
         final long normal = toFile("rate1", text, Locale.US, 1f)[1];
         final long fast = toFile("rate2", text, Locale.US, 2f)[1];
@@ -162,24 +168,28 @@ public class PiperE2EDeviceTest {
 
     @Test
     public void c_singleCharacterAndSsmlStayWithEspeak() throws Exception {
-        Assume.assumeTrue(warmNaturalEnglish() != ESPEAK_RATE);
-        assertEquals(ESPEAK_RATE, toFile("char", "a", Locale.US, 1f)[0]);
+        Assume.assumeTrue(warmNaturalEnglish());
+        toFile("char", "a", Locale.US, 1f);
+        assertFalse("a single letter went to the natural voice", mNatural);
         final long[] ssml = toFile("ssml",
                 "<speak>Hello <break time=\"300ms\"/> world</speak>", Locale.US, 1f);
+        assertFalse("SSML went to the natural voice", mNatural);
         assertEquals(ESPEAK_RATE, ssml[0]);
         assertTrue(ssml[2] > 1000);
     }
 
     @Test
     public void d_languageWithoutNaturalVoiceUsesEspeak() throws Exception {
-        final long[] s = toFile("hi", "नमस्ते, आप कैसे हैं?", new Locale("hi", "IN"), 1f);
+        // Esperanto: no natural voice exists for it.
+        final long[] s = toFile("eo", "Saluton, kiel vi fartas?", new Locale("eo"), 1f);
+        assertFalse(mNatural);
         assertEquals(ESPEAK_RATE, s[0]);
         assertTrue(s[2] > 1000);
     }
 
     @Test
     public void e_stopMidUtteranceThenSpeakAgain() throws Exception {
-        Assume.assumeTrue(warmNaturalEnglish() != ESPEAK_RATE);
+        Assume.assumeTrue(warmNaturalEnglish());
         final StringBuilder longText = new StringBuilder();
         for (int i = 0; i < 20; i++) {
             longText.append("This is sentence number ").append(i).append(" of a long paragraph. ");
@@ -198,7 +208,7 @@ public class PiperE2EDeviceTest {
 
     @Test
     public void f_rapidFlushesStayResponsive() throws Exception {
-        Assume.assumeTrue(warmNaturalEnglish() != ESPEAK_RATE);
+        Assume.assumeTrue(warmNaturalEnglish());
         for (int i = 0; i < 30; i++) {
             mTts.speak("Item " + i + ", moving on quickly.", TextToSpeech.QUEUE_FLUSH, null, "r" + i);
             Thread.sleep(40);
@@ -211,7 +221,7 @@ public class PiperE2EDeviceTest {
 
     @Test
     public void g_queuedUtterancesAllComplete() throws Exception {
-        Assume.assumeTrue(warmNaturalEnglish() != ESPEAK_RATE);
+        Assume.assumeTrue(warmNaturalEnglish());
         final CountDownLatch[] latches = new CountDownLatch[5];
         for (int i = 0; i < 5; i++) {
             latches[i] = expect("q" + i);
@@ -271,10 +281,8 @@ public class PiperE2EDeviceTest {
 
     /**
      * An eSpeak English voice hands Hindi runs to the Hindi natural voice
-     * (the first request may read them with eSpeak while it loads): the
-     * render differs from eSpeak's own, taken with the Hindi voice unset.
-     * Peaks no longer tell them apart (INT8 voices stay under the limiter
-     * knee). Needs a Hindi natural voice chosen and no English one.
+     * (the first request may read them with eSpeak while it loads). Needs a
+     * Hindi natural voice; English is unset for the test.
      */
     @Test
     public void j_espeakHandsOtherScriptToNaturalVoice() throws Exception {
@@ -283,22 +291,22 @@ public class PiperE2EDeviceTest {
                         .getTargetContext().createDeviceProtectedStorageContext());
         Assume.assumeTrue("no Hindi natural voice set", prefs.getBoolean("piper_enabled", false)
                 && !prefs.getString("piper_voice_hin", "").isEmpty());
-        Assume.assumeTrue("an English natural voice is not chosen", warmNaturalEnglish() == ESPEAK_RATE);
-        final String text = "This is English. नमस्ते, आप कैसे हैं? मैं ठीक हूं। Back to English.";
-        final String hindi = prefs.getString("piper_voice_hin", "");
-        final long espeak;
-        prefs.edit().remove("piper_voice_hin").commit();
+        // English on eSpeak for this test, whatever the phone has chosen.
+        final String english = prefs.getString("piper_voice_eng", null);
+        prefs.edit().remove("piper_voice_eng").commit();
         try {
-            espeak = toFile("mix_espeak", text, Locale.US, 1f)[1];
+            final String text = "This is English. नमस्ते, आप कैसे हैं? मैं ठीक हूं। Back to English.";
+            toFile("mix0", text, Locale.US, 1f);
+            for (int i = 1; i < 5 && !mNatural; i++) {
+                Thread.sleep(2000); // the Hindi voice may still be loading
+                toFile("mix" + i, text, Locale.US, 1f);
+            }
+            assertTrue("Hindi run stayed with eSpeak", mNatural);
         } finally {
-            prefs.edit().putString("piper_voice_hin", hindi).commit();
+            if (english != null) {
+                prefs.edit().putString("piper_voice_eng", english).commit();
+            }
         }
-        long samples = espeak;
-        for (int i = 0; i < 5 && samples == espeak; i++) {
-            Thread.sleep(2000);
-            samples = toFile("mix" + i, text, Locale.US, 1f)[1];
-        }
-        assertTrue("Hindi run stayed with eSpeak (" + samples + " samples)", samples != espeak);
     }
 
     @Test

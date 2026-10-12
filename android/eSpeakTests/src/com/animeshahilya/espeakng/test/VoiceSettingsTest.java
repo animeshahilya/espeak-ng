@@ -30,6 +30,7 @@ import com.animeshahilya.espeakng.ui.VoiceSettings;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,6 +40,9 @@ import static org.hamcrest.Matchers.*;
 @RunWith(AndroidJUnit4.class)
 public class VoiceSettingsTest
 {
+    @ClassRule
+    public static final KeepUserSettings KEEP = new KeepUserSettings();
+
     private Context getContext() {
         return InstrumentationRegistry.getInstrumentation().getTargetContext()
                 .createDeviceProtectedStorageContext();

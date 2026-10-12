@@ -59,6 +59,29 @@ public class DictionaryAssetsDeviceTest {
         assertEquals("voices with no phonemes: " + failed, 0, failed.size());
     }
 
+    /**
+     * A switch into a language reloads its dictionary from the APK
+     * (zstd-compressed since 2026-10-12). Median of 5 switches from English,
+     * logged; the bound only catches a pathological regression.
+     */
+    @Test
+    public void dictionaryLoadTimes() {
+        final StringBuilder log = new StringBuilder();
+        for (String lang : new String[] {"ru", "fo", "ps", "cmn", "hi"}) {
+            final long[] ms = new long[5];
+            for (int i = 0; i < ms.length; i++) {
+                mEngine.phonemizeForPiper("en", "a");
+                final long t = System.nanoTime();
+                mEngine.phonemizeForPiper(lang, "a");
+                ms[i] = (System.nanoTime() - t) / 1_000_000;
+            }
+            java.util.Arrays.sort(ms);
+            log.append(lang).append(' ').append(ms[2]).append(" ms, ");
+            assertTrue(lang + " took " + ms[2] + " ms", ms[2] < 400);
+        }
+        android.util.Log.i("DictionaryAssets", "dictionary load (median): " + log);
+    }
+
     @Test
     public void noDictionaryIsCopiedIntoAppStorage() {
         final File[] dicts = CheckVoiceData.getDataPath(mContext).listFiles((d, n) -> n.endsWith("_dict"));

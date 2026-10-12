@@ -99,6 +99,27 @@ public final class PiperSettings {
     private static final Handler POLL_HANDLER = new Handler(Looper.getMainLooper());
     /** The visible screen's progress poll; null while the screen is paused. */
     private static Runnable sPoll;
+    /**
+     * Download progress by voice key, read by the poll off the main thread:
+     * a DownloadManager query is a binder call that reads the provider's
+     * database (29-53 ms on a Pixel 8, every 1.5 s during a download).
+     */
+    private static final Map<String, PiperDownloads.Progress> PROGRESS =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static void readProgress(Context context) {
+        final Context storage = storage(context);
+        final List<String> keys = PiperDownloads.pendingKeys(storage);
+        PROGRESS.keySet().retainAll(keys);
+        for (String key : keys) {
+            final PiperDownloads.Progress p = PiperDownloads.progress(context.getApplicationContext(), storage, key);
+            if (p != null) {
+                PROGRESS.put(key, p);
+            } else {
+                PROGRESS.remove(key);
+            }
+        }
+    }
 
     /** A download just started from a page: tick its progress (the poll stops when idle). */
     private static void startPolling() {
@@ -169,11 +190,20 @@ public final class PiperSettings {
             @Override
             public void run() {
                 handler.removeCallbacks(this);
-                final boolean running = updateProgress(context, screen);
-                tick(fragment);
-                if (running) {
-                    handler.postDelayed(this, PROGRESS_POLL_MS);
-                }
+                final Runnable self = this;
+                EspeakApp.runAsync(() -> {
+                    readProgress(context);
+                    handler.post(() -> {
+                        if (sPoll != self) {
+                            return; // paused meanwhile
+                        }
+                        final boolean running = updateProgress(context, screen);
+                        tick(fragment);
+                        if (running) {
+                            handler.postDelayed(self, PROGRESS_POLL_MS);
+                        }
+                    });
+                });
             }
         };
         final BroadcastReceiver changed = new BroadcastReceiver() {
@@ -379,9 +409,8 @@ public final class PiperSettings {
         if (download == null) {
             return false;
         }
-        final Context app = context.getApplicationContext();
         for (String key : PiperDownloads.pendingKeys(storage(context))) {
-            final PiperDownloads.Progress p = PiperDownloads.progress(app, storage(context), key);
+            final PiperDownloads.Progress p = PROGRESS.get(key);
             if (p != null && p.status != DownloadManager.STATUS_SUCCESSFUL
                     && p.status != DownloadManager.STATUS_FAILED) {
                 download.setSummary(context.getString(R.string.piper_downloading_summary,
@@ -708,8 +737,7 @@ public final class PiperSettings {
         if (!PiperDownloads.pendingKeys(storage(context)).contains(key)) {
             return null;
         }
-        final PiperDownloads.Progress p = PiperDownloads.progress(context.getApplicationContext(),
-                storage(context), key);
+        final PiperDownloads.Progress p = PROGRESS.get(key);
         return p == null || p.percent() <= 0 ? context.getString(R.string.piper_download_waiting)
                 : context.getString(R.string.piper_download_percent, p.percent());
     }

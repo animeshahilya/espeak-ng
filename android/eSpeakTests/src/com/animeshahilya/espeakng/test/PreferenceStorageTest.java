@@ -37,6 +37,7 @@ import com.animeshahilya.espeakng.ui.VoiceSettings;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,6 +57,9 @@ import static org.junit.Assume.assumeTrue;
 @RunWith(AndroidJUnit4.class)
 public class PreferenceStorageTest
 {
+    @ClassRule
+    public static final KeepUserSettings KEEP = new KeepUserSettings();
+
     private Context mAppContext;
     private Context mStorageContext;
     private String mName;

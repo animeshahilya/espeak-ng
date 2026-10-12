@@ -124,6 +124,18 @@ public final class PiperEngine {
 
     private static final PiperEngine INSTANCE = new PiperEngine();
 
+    private static final java.util.concurrent.atomic.AtomicLong RENDERED_CHUNKS =
+            new java.util.concurrent.atomic.AtomicLong();
+
+    /**
+     * Chunks a natural voice has spoken (rendered or from the phrase cache)
+     * in this process. Device tests read it to tell which engine spoke: the
+     * sample rate cannot, most Piper voices are 22050 Hz like eSpeak.
+     */
+    public static long renderedChunks() {
+        return RENDERED_CHUNKS.get();
+    }
+
     public static PiperEngine get() {
         return INSTANCE;
     }
@@ -986,6 +998,7 @@ public final class PiperEngine {
         /** A chunk, in two pieces if {@code split} and the voice allows (see class comment). */
         Rendered render(Job job, boolean split) throws OrtException {
             final long started = System.nanoTime();
+            RENDERED_CHUNKS.incrementAndGet();
             final double passage = passageLevel;
             final String key = model.config.key;
             final int words = job.words.length / 2;
