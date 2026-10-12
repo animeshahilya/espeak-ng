@@ -1024,6 +1024,12 @@ harnesses (`EnUsProbeDeviceTest`, `CompoundVoiceCheckDeviceTest`,
 
 Performance work on the native engine must stay bit-exact: compare
 `PipelineSnapshotTest` hash dumps before and after (18 voices, zero diff).
+Run that class on its own (`am instrument -e class ...PipelineSnapshotTest`),
+never inside the full suite: eSpeak's audio generator carries state from one
+utterance to the next, so after any earlier synthesis in the same process
+every hash differs (checked 2026-10-12: resetting all parameters, script
+languages and the voice did not help; only test classes that synthesize
+affect it). Stock eSpeak behaves the same, so it is not a parity issue.
 
 Tests that clear the app's settings carry `@ClassRule KeepUserSettings` (eSpeakTests `test/`), which puts the phone's own settings back afterwards: before 2026-10-12 a suite run switched natural voices off and dropped every voice assignment on the tester's phone, and later `PiperE2EDeviceTest` runs skipped. Run single classes with `adb shell am instrument` to keep app data. Note `connectedAndroidTest` reinstalls the app (wiping extracted data), so data-dependent tests must ensure extraction first - see `CheckVoiceDataTest.ensureVoiceData()` and the `ensureVoiceData()` calls in the direct-engine test setups. CI runs API 34; also run on API 35+ when possible (Locale canonicalizes legacy codes like `in`&#8594;`id` there - see `VoiceData.expectedEngineLanguage()`).
 
