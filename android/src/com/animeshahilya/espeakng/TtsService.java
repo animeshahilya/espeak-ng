@@ -1175,11 +1175,17 @@ public class TtsService extends TextToSpeechService {
         if (units.size() > 1 || units.get(0).isEarcon() || units.get(0).model != null
                 || units.get(0).voice != voice) {
             mSegmentsRemaining.set(units.size());
+            String lastLanguage = null;
             for (int ui = 0; ui < units.size(); ui++) {
                 if (mIsStopped.get()) {
                     break;
                 }
                 final SynthUnit unit = units.get(ui);
+                if (!unit.isEarcon()) {
+                    writeSwitchCue(dispatcher, prefs, lastLanguage, unit.language, sampleRate,
+                            engine.getChannelCount(), targetVolume);
+                    lastLanguage = unit.language;
+                }
                 dispatcher.setChunkContext(unit.base, dispatcher.getRequestFrames());
                 if (unit.isEarcon()) {
                     dispatcher.writeAudio(Earcons.pcm(unit.text.charAt(0),
@@ -1245,6 +1251,23 @@ public class TtsService extends TextToSpeechService {
         // Recorded once per completed request; stopped requests and SSML
         // markup are skipped inside, along with short/code-like text.
         finishWithHistory(prefs, voice != null ? voice.name : null, naturalUsed, ahead, isSsml);
+    }
+
+    /**
+     * The cue the new language's card asks for where speech switches into it
+     * from another language (Settings -> Mixed-language text -> Speech by
+     * language). Written before the next unit's chunk context is set, so its
+     * word ranges still line up. Nothing at the start, or within a language.
+     */
+    private static void writeSwitchCue(TtsAudioDispatcher dispatcher, SharedPreferences prefs, String from,
+                                       String to, int sampleRate, int channels, int volume) {
+        if (from == null || from.equals(to)) {
+            return;
+        }
+        final byte[] cue = Earcons.switchCue(LanguageCards.switchCue(prefs, to), sampleRate, channels, volume);
+        if (cue.length > 0) {
+            dispatcher.writeAudio(cue);
+        }
     }
 
     /**
@@ -1392,11 +1415,16 @@ public class TtsService extends TextToSpeechService {
 
         final NaturalAhead ahead = new NaturalAhead(phonemizer, params, settings, request, prefs, used);
         try {
+            String lastLanguage = null;
             for (int i = 0; i < pieces.size(); i++) {
                 if (mIsStopped.get()) {
                     break;
                 }
                 final SynthUnit piece = pieces.get(i);
+                if (!piece.isEarcon()) {
+                    writeSwitchCue(dispatcher, prefs, lastLanguage, piece.language, sampleRate, 1, targetVolume);
+                    lastLanguage = piece.language;
+                }
                 dispatcher.setChunkContext(piece.base, dispatcher.getRequestFrames());
                 if (piece.isEarcon()) {
                     final byte[] tone = Earcons.pcm(piece.text.charAt(0), sampleRate, 1, targetVolume);

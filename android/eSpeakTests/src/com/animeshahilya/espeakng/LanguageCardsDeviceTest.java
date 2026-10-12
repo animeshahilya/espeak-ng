@@ -47,6 +47,7 @@ public class LanguageCardsDeviceTest {
     private static final String HINDI = "आज मौसम बहुत अच्छा है और हम सब बाज़ार जा रहे हैं।";
     private static final String ENGLISH = "The weather is lovely today and we are all going to the market.";
     private static final String HINDI_SPEED = LanguageCards.key("hin", LanguageCards.SPEED);
+    private static final double EPSILON = 0.025;
 
     private TextToSpeech mTts;
     private File mDir;
@@ -108,9 +109,20 @@ public class LanguageCardsDeviceTest {
         }
     }
 
+    /**
+     * eSpeak's audio generator carries state from one utterance to the next:
+     * the first after the service starts comes out ~15 ms longer, and later
+     * ones can differ by about as much. One throwaway utterance first, and
+     * lengths compared within {@link #EPSILON} (a cue is 100 ms or more).
+     */
+    private void warmUp() throws Exception {
+        seconds("warm_up", ENGLISH, Locale.US);
+    }
+
     @Test
     public void espeakHindiFollowsItsCardAndEnglishDoesNot() throws Exception {
         mPrefs.edit().putBoolean("piper_enabled", false).commit();
+        warmUp();
         final double hindi = seconds("hi_plain", HINDI, new Locale("hi"));
         final double english = seconds("en_plain", ENGLISH, Locale.US);
 
@@ -118,11 +130,10 @@ public class LanguageCardsDeviceTest {
         final double slower = seconds("hi_slow", HINDI, new Locale("hi"));
         final double englishAfter = seconds("en_after", ENGLISH, Locale.US);
         assertTrue("Hindi at 50%: " + slower + " vs " + hindi, slower > hindi * 1.5);
-        // eSpeak is deterministic in rate: English is untouched to the sample.
-        assertEquals("English unchanged", english, englishAfter, 0.001);
+        assertEquals("English unchanged", english, englishAfter, EPSILON);
 
         mPrefs.edit().putString(HINDI_SPEED, "").commit();
-        assertEquals("cleared: as before", hindi, seconds("hi_again", HINDI, new Locale("hi")), 0.001);
+        assertEquals("cleared: as before", hindi, seconds("hi_again", HINDI, new Locale("hi")), EPSILON);
     }
 
     @Test
@@ -144,5 +155,30 @@ public class LanguageCardsDeviceTest {
         mPrefs.edit().putString(HINDI_SPEED, "150").commit();
         final double faster = seconds("hi_nat_fast", HINDI, new Locale("hi"));
         assertTrue("Hindi natural voice at 150%: " + faster + " vs " + plain, faster < plain * 0.8);
+    }
+
+    /**
+     * A card's switch cue plays where speech switches into its language:
+     * Ukrainian inside English (always its own eSpeak unit), so the length
+     * grows by exactly the cue. No English or Ukrainian natural voice for it.
+     */
+    @Test
+    public void switchCuePlaysWhereSpeechSwitchesIntoTheLanguage() throws Exception {
+        Assume.assumeTrue("a natural voice is chosen for Ukrainian", mPrefs.getString("piper_voice_ukr", "").isEmpty());
+        mPrefs.edit().putBoolean("piper_enabled", true).putBoolean("piper_switch_languages", true)
+                .remove("piper_voice_eng").commit();
+        final String text = "Hello there. Привіт, як справи? Thank you very much.";
+        final String ukrainianCue = LanguageCards.key("ukr", LanguageCards.SWITCH_CUE);
+        final String englishCue = LanguageCards.key("eng", LanguageCards.SWITCH_CUE);
+        warmUp();
+        final double plain = seconds("cue_plain", text, Locale.US);
+        mPrefs.edit().putString(ukrainianCue, "pause").commit();
+        assertEquals("pause into Ukrainian", plain + 0.25, seconds("cue_pause", text, Locale.US), EPSILON);
+        mPrefs.edit().putString(ukrainianCue, "tone").commit();
+        assertEquals("tone into Ukrainian", plain + 0.10, seconds("cue_tone", text, Locale.US), EPSILON);
+        mPrefs.edit().putString(englishCue, "pause").commit();
+        assertEquals("and a pause back into English", plain + 0.35, seconds("cue_both", text, Locale.US), EPSILON);
+        mPrefs.edit().remove(ukrainianCue).remove(englishCue).commit();
+        assertEquals("cleared: as before", plain, seconds("cue_none", text, Locale.US), EPSILON);
     }
 }

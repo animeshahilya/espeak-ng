@@ -34,6 +34,8 @@ public final class LanguageCards {
     public static final String SPEED = "speed";
     public static final String PITCH = "pitch";
     public static final String VOLUME = "volume";
+    /** Earcons.CUE_*: what plays where speech switches into the language. */
+    public static final String SWITCH_CUE = "cue";
     private static final String[] FIELDS = {SPEED, PITCH, VOLUME};
     private static final int MIN_PERCENT = 50;
     private static final int MAX_PERCENT = 200;
@@ -61,6 +63,19 @@ public final class LanguageCards {
             percent = 100; // a mistyped value never changes speech
         }
         return Math.max(MIN_PERCENT, Math.min(MAX_PERCENT, percent)) / 100f;
+    }
+
+    /** The cue where speech switches into this language: Earcons.CUE_NONE unless set. */
+    public static String switchCue(SharedPreferences prefs, String language) {
+        if (prefs == null || language == null || language.isEmpty()) {
+            return com.animeshahilya.espeakng.text.Earcons.CUE_NONE;
+        }
+        try {
+            final String v = prefs.getString(key(language, SWITCH_CUE), null);
+            return v == null ? com.animeshahilya.espeakng.text.Earcons.CUE_NONE : v;
+        } catch (ClassCastException e) {
+            return com.animeshahilya.espeakng.text.Earcons.CUE_NONE;
+        }
     }
 
     /**
@@ -136,13 +151,19 @@ public final class LanguageCards {
     }
 
     private static CharSequence summary(Context context, SharedPreferences prefs, String lang) {
-        if (factor(prefs, lang, SPEED) == 1f && factor(prefs, lang, PITCH) == 1f
-                && factor(prefs, lang, VOLUME) == 1f) {
+        final String cue = switchCue(prefs, lang);
+        final boolean sameProsody = factor(prefs, lang, SPEED) == 1f && factor(prefs, lang, PITCH) == 1f
+                && factor(prefs, lang, VOLUME) == 1f;
+        if (sameProsody && cue.isEmpty()) {
             return context.getString(R.string.language_card_summary_same);
         }
-        return context.getString(R.string.language_card_summary,
-                percent(context, prefs, lang, SPEED), percent(context, prefs, lang, PITCH),
-                percent(context, prefs, lang, VOLUME));
+        final String prosody = sameProsody ? context.getString(R.string.language_card_summary_same)
+                : context.getString(R.string.language_card_summary,
+                        percent(context, prefs, lang, SPEED), percent(context, prefs, lang, PITCH),
+                        percent(context, prefs, lang, VOLUME));
+        return cue.isEmpty() ? prosody : context.getString(R.string.language_card_summary_cue, prosody,
+                context.getString(com.animeshahilya.espeakng.text.Earcons.CUE_TONE.equals(cue)
+                        ? R.string.language_card_cue_tone : R.string.language_card_cue_pause));
     }
 
     private static String percent(Context context, SharedPreferences prefs, String lang, String field) {
@@ -181,6 +202,20 @@ public final class LanguageCards {
             setting.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
             page.addPreference(setting);
         }
+        final ListPreference cue = new ListPreference(context);
+        cue.setKey(key(lang, SWITCH_CUE));
+        cue.setTitle(R.string.language_card_cue);
+        cue.setDialogTitle(R.string.language_card_cue);
+        cue.setEntries(new CharSequence[] {context.getString(R.string.language_card_cue_none),
+                context.getString(R.string.language_card_cue_pause),
+                context.getString(R.string.language_card_cue_tone)});
+        cue.setEntryValues(new CharSequence[] {com.animeshahilya.espeakng.text.Earcons.CUE_NONE,
+                com.animeshahilya.espeakng.text.Earcons.CUE_PAUSE,
+                com.animeshahilya.espeakng.text.Earcons.CUE_TONE});
+        cue.setDefaultValue(com.animeshahilya.espeakng.text.Earcons.CUE_NONE);
+        cue.setIconSpaceReserved(false);
+        cue.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
+        page.addPreference(cue);
         f.pushScreen(page);
     }
 }

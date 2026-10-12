@@ -779,4 +779,9 @@
   <string name="language_card_summary_same">Same as main settings</string>
   <string name="language_card_summary">Speed %1$s, pitch %2$s, volume %3$s</string>
   <string name="language_card_percent">%1$d%%</string>
+  <string name="language_card_cue">When speech switches into this language</string>
+  <string name="language_card_cue_none">Nothing</string>
+  <string name="language_card_cue_pause">Short pause</string>
+  <string name="language_card_cue_tone">Soft tone</string>
+  <string name="language_card_summary_cue">%1$s; switching: %2$s</string>
 </resources>

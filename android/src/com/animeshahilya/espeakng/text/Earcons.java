@@ -76,8 +76,36 @@ public final class Earcons {
             return new byte[0];
         }
         int[] t = TONES[marker - FIRST];
-        int repeats = t[2] < 40 ? 2 : 1;
-        int toneFrames = sampleRate * t[2] / 1000;
+        return sweep(t[0], t[1], t[2], t[2] < 40 ? 2 : 1, sampleRate, channels, volumePercent);
+    }
+
+    /** No cue where speech switches into a language (the default). */
+    public static final String CUE_NONE = "";
+    public static final String CUE_PAUSE = "pause";
+    public static final String CUE_TONE = "tone";
+    private static final int CUE_PAUSE_MS = 250;
+
+    /**
+     * PCM for the cue a language card plays where speech switches into that
+     * language: a soft rising tone, or a short silence; empty for none.
+     */
+    public static byte[] switchCue(String kind, int sampleRate, int channels, int volumePercent) {
+        if (sampleRate <= 0 || channels <= 0) {
+            return new byte[0];
+        }
+        if (CUE_TONE.equals(kind)) {
+            return sweep(600, 900, 60, 1, sampleRate, channels, volumePercent);
+        }
+        if (CUE_PAUSE.equals(kind)) {
+            return new byte[sampleRate * CUE_PAUSE_MS / 1000 * channels * 2];
+        }
+        return new byte[0];
+    }
+
+    /** {@code repeats} sweeps from {@code fromHz} to {@code toHz}, each followed by 40 ms of silence. */
+    private static byte[] sweep(int fromHz, int toHz, int ms, int repeats, int sampleRate, int channels,
+                                int volumePercent) {
+        int toneFrames = sampleRate * ms / 1000;
         int gapFrames = sampleRate * 40 / 1000;
         int frames = repeats * (toneFrames + gapFrames);
         byte[] out = new byte[frames * channels * 2];
@@ -87,7 +115,7 @@ public final class Earcons {
         for (int r = 0; r < repeats; r++) {
             double phase = 0;
             for (int f = 0; f < toneFrames; f++) {
-                double hz = t[0] + (t[1] - t[0]) * (double) f / toneFrames;
+                double hz = fromHz + (toHz - fromHz) * (double) f / toneFrames;
                 phase += 2 * Math.PI * hz / sampleRate;
                 double env = Math.min(1.0, Math.min(f, toneFrames - 1 - f) / (double) fade);
                 short s = (short) Math.round(Math.sin(phase) * amp * env);
@@ -101,5 +129,3 @@ public final class Earcons {
         return out;
     }
 }
-
-

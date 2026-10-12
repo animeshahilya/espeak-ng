@@ -872,10 +872,17 @@ request's own language included. Who reads which part is one decision,
 Limit: a run eSpeak switches into by itself inside one unit (Hindi words in
 an English eSpeak unit, natural voices off) keeps the unit's settings.
 `LanguageCardsDeviceTest`: Hindi at 50% on eSpeak 3.22 -> 6.48 s with
-English unchanged to the sample; Priyamvada at 150% 3.97 -> 3.06 s.
-Plan for later steps (agreed 2026-10-12): transition pause/tone, voice when
-mixed, per-language switch sensitivity and numbers, routing preview,
-dictionary "read in language X".
+English unchanged; Priyamvada at 150% 3.97 -> 3.06 s.
+Step 2: `lang_<lang>_cue` ("" / "pause" 250 ms / "tone", `Earcons.switchCue`)
+plays where speech switches into the language from another, written before
+the next unit's chunk context so word ranges stay aligned
+(`TtsService.writeSwitchCue`, both paths); a cue on both languages gives one
+each way. Test: Ukrainian inside English +0.25 s pause, +0.11 s tone.
+eSpeak lengths drift ~15 ms with the utterances before them (its generator
+keeps state): device tests warm up once and compare within 25 ms.
+Plan for later steps (agreed 2026-10-12): voice when mixed, per-language
+switch sensitivity and numbers, routing preview, dictionary "read in
+language X".
 
 ### Key Classes (`src/com/animeshahilya/espeakng/`)
 
