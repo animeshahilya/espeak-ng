@@ -26,7 +26,11 @@ public class RunPlanTest {
         @Override public String naturalFor(String language) { return chosen.get(language); }
         @Override public boolean isLoaded(String key) { return loaded.contains(key); }
         @Override public void preload(String key) { preloaded.add(key); }
-        @Override public String espeakVoiceFor(String language) { return "espeak-" + language; }
+        /** eSpeak voices that read another language too (English reads Devanagari itself). */
+        final Map<String, String> espeak = new HashMap<>();
+        @Override public String espeakVoiceFor(String language) {
+            return espeak.containsKey(language) ? espeak.get(language) : "espeak-" + language;
+        }
         final Map<String, String> mixed = new HashMap<>();
         @Override public String whenMixed(String language) {
             return mixed.containsKey(language) ? mixed.get(language) : RunPlan.MIXED_DEFAULT;
@@ -186,5 +190,29 @@ public class RunPlanTest {
         assertEquals("N:priya@0[मेरा ] E:espeak-eng@5[meeting ] N:priya@13[है ना]",
                 describe(RunPlan.plan(MIXED, "hin", f, true, true)));
         assertTrue(f.preloaded.contains("rahul"));
+    }
+
+    @Test
+    public void segmentsKnowTheirTextsLanguage() {
+        final Fake f = hindiAndEnglish();
+        f.mixed.put("eng", RunPlan.MIXED_ESPEAK);
+        assertEquals("[eng]", languages(RunPlan.plan(MIXED, "hin", f, true, true).get(1)));
+        // Read by the request's voice: as its language, in one segment.
+        f.mixed.put("eng", RunPlan.MIXED_SURROUNDING);
+        assertEquals("[hin, hin, hin]", languages(RunPlan.plan(MIXED, "hin", f, true, true).get(0)));
+        // One eSpeak voice reading two languages: one segment, both languages.
+        final Fake e = new Fake();
+        e.espeak.put("hin", "espeak-eng");
+        final List<RunPlan.Segment<String>> one = RunPlan.plan(runs("eng", "Hello ", "hin", "नमस्ते"), "eng", e, true, true);
+        assertEquals("E:espeak-eng@0[Hello नमस्ते]", describe(one));
+        assertEquals("[eng, hin]", languages(one.get(0)));
+    }
+
+    private static String languages(RunPlan.Segment<String> segment) {
+        final List<String> out = new java.util.ArrayList<>();
+        for (LanguageRuns.Run run : segment.runs) {
+            out.add(run.language);
+        }
+        return out.toString();
     }
 }

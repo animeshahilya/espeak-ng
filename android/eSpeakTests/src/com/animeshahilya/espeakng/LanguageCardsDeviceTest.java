@@ -22,12 +22,14 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -91,13 +93,17 @@ public class LanguageCardsDeviceTest {
 
     /** Seconds of audio the service writes for {@code text}. */
     private double seconds(String id, String text, Locale locale) throws Exception {
+        return seconds(id, text, locale, new Bundle());
+    }
+
+    private double seconds(String id, String text, Locale locale, Bundle params) throws Exception {
         mTts.setLanguage(locale);
         mTts.setSpeechRate(1f);
         final File out = new File(mDir, id + ".wav");
         out.delete();
         final CountDownLatch latch = new CountDownLatch(1);
         mDone.put(id, latch);
-        assertEquals(TextToSpeech.SUCCESS, mTts.synthesizeToFile(text, new Bundle(), out, id));
+        assertEquals(TextToSpeech.SUCCESS, mTts.synthesizeToFile(text, params, out, id));
         assertTrue(id + " timed out", latch.await(60, TimeUnit.SECONDS));
         try (RandomAccessFile raf = new RandomAccessFile(out, "r")) {
             final byte[] header = new byte[44];
@@ -271,5 +277,53 @@ public class LanguageCardsDeviceTest {
         mPrefs.edit().remove(englishSwitch).commit();
         Log.i(TAG, "natural chunks: words " + words + ", phrases " + phrases);
         assertEquals("the lone English word stays with Hindi", 1, phrases);
+    }
+
+    /**
+     * The routing preview (Try your own text) shows the plan speech used:
+     * Hindi, the English word, Hindi - and the English word's eSpeak reader
+     * once its card says so. Requests without the param record nothing.
+     */
+    @Test
+    public void routingPreviewShowsWhoReadEachPart() throws Exception {
+        final String hindiKey = mPrefs.getString("piper_voice_hin", "");
+        final String englishKey = mPrefs.getString("piper_voice_eng", "");
+        Assume.assumeTrue("needs Hindi and English natural voices", !hindiKey.isEmpty() && !englishKey.isEmpty());
+        mPrefs.edit().putBoolean("piper_enabled", true).putBoolean("piper_switch_languages", true).commit();
+        final String text = "आज मेरी meeting कल सुबह दस बजे है।";
+        final String englishMixed = LanguageCards.key("eng", LanguageCards.WHEN_MIXED);
+        for (int i = 0; i < 6; i++) {
+            if (naturalChunks("plan_warm" + i, text, new Locale("hi")) >= 3) {
+                break;
+            }
+            seconds("plan_en_warm" + i, ENGLISH, Locale.US);
+            Thread.sleep(1500);
+        }
+        TtsService.takeShownPlan();
+        seconds("plan_plain", text, new Locale("hi"));
+        assertNull("only a preview request records", TtsService.takeShownPlan());
+
+        final Bundle show = new Bundle();
+        show.putBoolean(TtsService.PARAM_SHOW_PLAN, true);
+        seconds("plan_usual", text, new Locale("hi"), show);
+        final List<TtsService.PlanPart> usual = TtsService.takeShownPlan();
+        Assume.assumeTrue("both natural voices did not load", usual != null && usual.size() == 3
+                && usual.get(1).naturalKey != null);
+        assertPart(usual.get(0), "hin", hindiKey, "आज मेरी");
+        assertPart(usual.get(1), "eng", englishKey, "meeting");
+        assertPart(usual.get(2), "hin", hindiKey, "कल सुबह दस बजे है।");
+
+        mPrefs.edit().putString(englishMixed, "espeak").commit();
+        seconds("plan_espeak", text, new Locale("hi"), show);
+        mPrefs.edit().remove(englishMixed).commit();
+        final List<TtsService.PlanPart> espeak = TtsService.takeShownPlan();
+        assertEquals(3, espeak.size());
+        assertPart(espeak.get(1), "eng", null, "meeting");
+    }
+
+    private static void assertPart(TtsService.PlanPart part, String language, String naturalKey, String text) {
+        assertEquals(language, part.language);
+        assertEquals(naturalKey, part.naturalKey);
+        assertEquals(text, part.text);
     }
 }

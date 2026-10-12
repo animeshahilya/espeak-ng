@@ -60,12 +60,18 @@ public final class RunPlan {
         public final String text;
         public final String naturalKey;
         public final V espeakVoice;
+        /**
+         * The runs it reads, each in the language it is read as (the
+         * request's for "surrounding"): the routing preview shows them.
+         */
+        public final List<LanguageRuns.Run> runs;
 
-        Segment(int start, String text, String naturalKey, V espeakVoice) {
+        Segment(int start, String text, String naturalKey, V espeakVoice, List<LanguageRuns.Run> runs) {
             this.start = start;
             this.text = text;
             this.naturalKey = naturalKey;
             this.espeakVoice = espeakVoice;
+            this.runs = runs;
         }
 
         public boolean isNatural() {
@@ -115,12 +121,17 @@ public final class RunPlan {
             }
             final String key = loaded ? chosen : null;
             final V voice = loaded ? null : readers.espeakVoiceFor(language);
+            final LanguageRuns.Run read = language.equals(run.language) ? run
+                    : new LanguageRuns.Run(run.start, run.text, language);
             final int last = out.size() - 1;
             if (last >= 0 && out.get(last).sameReader(key, voice)) {
                 final Segment<V> prev = out.get(last);
-                out.set(last, new Segment<>(prev.start, prev.text + run.text, key, voice));
+                prev.runs.add(read);
+                out.set(last, new Segment<>(prev.start, prev.text + run.text, key, voice, prev.runs));
             } else {
-                out.add(new Segment<>(run.start, run.text, key, voice));
+                final List<LanguageRuns.Run> read1 = new ArrayList<>();
+                read1.add(read);
+                out.add(new Segment<>(run.start, run.text, key, voice, read1));
             }
         }
         return out;

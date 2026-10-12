@@ -792,4 +792,14 @@
   <string name="language_card_switch_at">Switch into this language for</string>
   <string name="language_card_numbers">Numbers and times in this language\'s text</string>
   <string name="language_card_main_setting">Same as main setting</string>
+  <string name="test_routing_title">Try your own text</string>
+  <string name="test_routing_summary">Type a sentence, hear it, then see which voice read each part.</string>
+  <string name="test_routing_hint">Text to read</string>
+  <string name="test_routing_play">Play</string>
+  <string name="test_routing_result_title">How it was read</string>
+  <string name="test_routing_part">%1$s\n%2$s, %3$s</string>
+  <string name="test_routing_espeak">eSpeak</string>
+  <string name="test_routing_nothing">Nothing was read. Type some text and try again.</string>
+  <string name="test_routing_edit">Try other text</string>
+  <string name="test_routing_close">Close</string>
 </resources>

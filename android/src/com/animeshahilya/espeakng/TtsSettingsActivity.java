@@ -27,6 +27,7 @@ import com.animeshahilya.espeakng.ui.preference.InsetGroupedItemDecoration;
 import com.animeshahilya.espeakng.ui.LanguageSettings;
 import com.animeshahilya.espeakng.util.LogExporter;
 import com.animeshahilya.espeakng.piper.PiperSettings;
+import com.animeshahilya.espeakng.piper.PiperVoiceStore;
 import com.animeshahilya.espeakng.ui.ReadingHistory;
 import com.animeshahilya.espeakng.text.ScriptLanguages;
 import com.animeshahilya.espeakng.text.UserDictionaryManager;
@@ -58,6 +59,8 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -1549,6 +1552,98 @@ public class TtsSettingsActivity extends AppCompatActivity {
     }
 
     /** Runs {@code after} once the lazily-initialized preview engine exists. */
+    private static final String ROUTING_UTTERANCE = "routing_preview";
+    /** The routing preview's last text, offered again for the next try. */
+    private static String sRoutingText;
+
+    /**
+     * Routing preview (Mixed-language text -> Try your own text): speaks
+     * the user's text through this engine with TtsService.PARAM_SHOW_PLAN,
+     * then lists the plan speech used - each part, its language and reader.
+     */
+    private static void previewRouting(final Context context) {
+        final float density = context.getResources().getDisplayMetrics().density;
+        final LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        final int pad = (int) (24 * density + 0.5f);
+        layout.setPadding(pad, (int) (8 * density + 0.5f), pad, 0);
+        final EditText input = UserDictionaryScreen.labeledInput(context, layout,
+                context.getString(R.string.test_routing_hint), null,
+                sRoutingText != null ? sRoutingText : context.getString(R.string.test_mixed_languages_sample),
+                android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.test_routing_title)
+                .setView(layout)
+                .setPositiveButton(R.string.test_routing_play, (d, w) -> {
+                    sRoutingText = input.getText().toString();
+                    playRouting(context, sRoutingText);
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        dialog.setOnShowListener(d -> markAlertTitleHeading(dialog));
+        dialog.show();
+    }
+
+    private static void playRouting(final Context context, final String text) {
+        if (VoiceSettings.isBlank(text)) {
+            showRouting(context, null);
+            return;
+        }
+        ensurePreviewEngine(context, () -> {
+            if (sTts == null) return;
+            TtsService.takeShownPlan(); // a plan left by an earlier, stopped preview
+            final Handler main = new Handler(Looper.getMainLooper());
+            sTts.setOnUtteranceProgressListener(new android.speech.tts.UtteranceProgressListener() {
+                @Override public void onStart(String id) {
+                }
+
+                @Override public void onDone(String id) {
+                    if (ROUTING_UTTERANCE.equals(id)) {
+                        main.post(() -> showRouting(context, TtsService.takeShownPlan()));
+                    }
+                }
+
+                @SuppressWarnings("deprecation")
+                @Override public void onError(String id) {
+                    onDone(id);
+                }
+            });
+            final Bundle params = new Bundle();
+            params.putBoolean(TtsService.PARAM_SHOW_PLAN, true);
+            sTts.speak(text, TextToSpeech.QUEUE_FLUSH, params, ROUTING_UTTERANCE);
+        });
+    }
+
+    private static void showRouting(final Context context, List<TtsService.PlanPart> plan) {
+        if (context instanceof Activity && ((Activity) context).isFinishing()) {
+            return;
+        }
+        final StringBuilder message = new StringBuilder();
+        if (plan != null) {
+            for (TtsService.PlanPart part : plan) {
+                String reader = context.getString(R.string.test_routing_espeak);
+                if (part.naturalKey != null) {
+                    final PiperVoiceStore.Installed v =
+                            PiperVoiceStore.find(EspeakApp.getStorageContext(), part.naturalKey);
+                    reader = v != null ? v.config.displayName() : part.naturalKey;
+                }
+                if (message.length() > 0) {
+                    message.append("\n\n");
+                }
+                message.append(context.getString(R.string.test_routing_part, part.text,
+                        PiperSettings.languageName(part.language), reader));
+            }
+        }
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.test_routing_result_title)
+                .setMessage(message.length() > 0 ? message : context.getString(R.string.test_routing_nothing))
+                .setPositiveButton(R.string.test_routing_edit, (d, w) -> previewRouting(context))
+                .setNegativeButton(R.string.test_routing_close, null)
+                .create();
+        dialog.setOnShowListener(d -> markAlertTitleHeading(dialog));
+        dialog.show();
+    }
+
     private static void ensurePreviewEngine(final Context context, final Runnable after) {
         if (sTts != null) {
             after.run();
@@ -1813,7 +1908,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     LanguageSettings.PREF_SUPPORTED_LANGUAGES, KEY_TEST_VOICE,
                     "action_preview_numbers", "action_preview_pauses",
                     "action_preview_punctuation", "action_preview_reading",
-                    "action_preview_voice_sound", "action_preview_mixed_languages",
+                    "action_preview_voice_sound", "action_preview_mixed_languages", "action_preview_routing",
                     "action_preview_audio_optimizer",
                     VoiceSettings.PREF_RATE_BOOST_LEVEL,
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
@@ -1861,6 +1956,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             onClick(screen, "action_preview_reading", () -> speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading"));
             onClick(screen, "action_preview_voice_sound", () -> speakPreview(context, context.getString(R.string.test_voice_tuning_sample), "sample_voice_sound"));
             onClick(screen, "action_preview_mixed_languages", () -> speakPreview(context, context.getString(R.string.test_mixed_languages_sample), "sample_mixed_languages"));
+            onClick(screen, "action_preview_routing", () -> previewRouting(context));
             onClick(screen, "action_preview_audio_optimizer", () -> speakPreview(context, context.getString(R.string.test_audio_optimizer_sample), "sample_audio_optimizer"));
             onClick(screen, VoiceSettings.PREF_USER_DICTIONARY, () -> UserDictionaryScreen.show(context));
             onClick(screen, "action_recommended_defaults", () -> applyRecommendedDefaults(context));

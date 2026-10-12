@@ -621,6 +621,11 @@
             android:title="@string/test_mixed_languages_title"
             android:summary="@string/test_mixed_languages_summary"
             app:iconSpaceReserved="false" />
+        <Preference
+            android:key="action_preview_routing"
+            android:title="@string/test_routing_title"
+            android:summary="@string/test_routing_summary"
+            app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_script_languages"

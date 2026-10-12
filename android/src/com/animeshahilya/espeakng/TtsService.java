@@ -137,6 +137,66 @@ public class TtsService extends TextToSpeechService {
      */
     private final PiperEngine mPiper = PiperEngine.get();
 
+    /**
+     * A request whose params carry this (true) records who read each part,
+     * for the routing preview (Settings -> Mixed-language text -> Try your
+     * own text): the plan shown is the one speech used, not a copy of it.
+     */
+    public static final String PARAM_SHOW_PLAN = "com.animeshahilya.espeakng.SHOW_PLAN";
+
+    /** One part of a recorded plan: its text, the text's language (ISO 639-2) and its natural voice (null = eSpeak). */
+    public static final class PlanPart {
+        public final String text;
+        public final String language;
+        public final String naturalKey;
+
+        PlanPart(String text, String language, String naturalKey) {
+            this.text = text;
+            this.language = language;
+            this.naturalKey = naturalKey;
+        }
+    }
+
+    private static volatile List<PlanPart> sShownPlan;
+
+    /** The plan the last {@link #PARAM_SHOW_PLAN} request recorded, then forgets it; null if none. */
+    public static List<PlanPart> takeShownPlan() {
+        final List<PlanPart> plan = sShownPlan;
+        sShownPlan = null;
+        return plan;
+    }
+
+    /**
+     * Keeps the units' runs and readers for {@link #takeShownPlan}: one part
+     * per language and reader, neighbours with both the same joined.
+     */
+    private static void recordPlan(List<SynthUnit> units) {
+        final List<PlanPart> plan = new ArrayList<>();
+        for (SynthUnit unit : units) {
+            if (unit.isEarcon()) {
+                continue;
+            }
+            final List<LanguageRuns.Run> runs = unit.runs != null ? unit.runs
+                    : Collections.singletonList(new LanguageRuns.Run(0, unit.text, unit.language));
+            for (LanguageRuns.Run run : runs) {
+                final String text = run.text.trim();
+                if (text.isEmpty()) {
+                    continue;
+                }
+                // Digits moved out for eSpeak are read in its voice's language.
+                final String language = ESPEAK_ONLY.equals(run.language) ? unit.language : run.language;
+                final int last = plan.size() - 1;
+                if (last >= 0 && plan.get(last).language.equals(language)
+                        && java.util.Objects.equals(plan.get(last).naturalKey, unit.modelKey)) {
+                    plan.set(last, new PlanPart(plan.get(last).text + " " + text, language, unit.modelKey));
+                } else {
+                    plan.add(new PlanPart(text, language, unit.modelKey));
+                }
+            }
+        }
+        sShownPlan = plan;
+    }
+
     public SpeechSynthesis getEngine() {
         return mEngine;
     }
@@ -1058,6 +1118,10 @@ public class TtsService extends TextToSpeechService {
                 || (isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs));
         final List<SynthUnit> units = espeakOnly ? buildUnits(text, voice, isSsml)
                 : planUnits(buildUnits(text, voice, false), voice, natural, prefs, settings, scriptLanguages);
+        final Bundle requestParams = request.getParams();
+        if (requestParams != null && requestParams.getBoolean(PARAM_SHOW_PLAN)) {
+            recordPlan(units);
+        }
         if (natural != null && !espeakOnly) {
             final PiperModel model = mPiper.getLoaded(natural.key);
             // All of it natural: the request's own voice speaks, at its rate.
@@ -1739,8 +1803,9 @@ public class TtsService extends TextToSpeechService {
                 out.add(seg.isNatural()
                         ? new SynthUnit(seg.text, voice, unit.base + seg.start,
                                 mPiper.getLoaded(seg.naturalKey), seg.naturalKey,
-                                chosen.get(seg.naturalKey).languageKey())
-                        : new SynthUnit(seg.text, seg.espeakVoice, unit.base + seg.start));
+                                chosen.get(seg.naturalKey).languageKey(), seg.runs)
+                        : new SynthUnit(seg.text, seg.espeakVoice, unit.base + seg.start, null, null,
+                                PiperVoiceStore.languageKey(seg.espeakVoice.locale), seg.runs));
             }
         }
         return out;
@@ -1771,18 +1836,25 @@ public class TtsService extends TextToSpeechService {
         final String modelKey;
         /** Language of its reader (eSpeak voice or natural voice): its card's settings apply. */
         final String language;
+        /**
+         * Its language runs (RunPlan.Segment.runs), for the routing preview:
+         * eSpeak's English voice reads Hindi words in Hindi. Null: all in {@link #language}.
+         */
+        final List<LanguageRuns.Run> runs;
 
         SynthUnit(String text, Voice voice, int base) {
-            this(text, voice, base, null, null, PiperVoiceStore.languageKey(voice.locale));
+            this(text, voice, base, null, null, PiperVoiceStore.languageKey(voice.locale), null);
         }
 
-        SynthUnit(String text, Voice voice, int base, PiperModel model, String modelKey, String language) {
+        SynthUnit(String text, Voice voice, int base, PiperModel model, String modelKey, String language,
+                  List<LanguageRuns.Run> runs) {
             this.text = text;
             this.voice = voice;
             this.base = base;
             this.model = model;
             this.modelKey = modelKey;
             this.language = language;
+            this.runs = runs;
         }
 
         boolean isEarcon() {

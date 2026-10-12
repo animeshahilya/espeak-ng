@@ -896,8 +896,17 @@ else the `VoiceSettings.NUMBERS_*` values) to numbers in that language's
 text, through `VoiceSettings.getNumbersLanguage(language)` in both
 `TextPreprocessor` and `TtsService`. Tests: English set to phrases, 1
 natural piece instead of 3; Hindi numbers in English, "10:30" 1.79 -> 1.93 s.
-Plan for later steps (agreed 2026-10-12): routing preview, dictionary "read
-in language X".
+Step 5, routing preview (Mixed-language text -> Try your own text): the
+user's text is spoken through the engine with `TtsService.PARAM_SHOW_PLAN`
+in the request params; that request records its units
+(`TtsService.takeShownPlan`) and the dialog lists each part's text,
+language and reader. It shows the plan speech used, not a re-computation.
+Parts follow the language runs (`RunPlan.Segment.runs`, kept per merged
+segment), so eSpeak's English voice reading a Hindi word shows "Hindi,
+eSpeak"; a natural voice still loading shows eSpeak (true for that play).
+Display only: cards still apply by the reader's language. Test:
+`routingPreviewShowsWhoReadEachPart`.
+Plan for the next step (agreed 2026-10-12): dictionary "read in language X".
 
 ### Key Classes (`src/com/animeshahilya/espeakng/`)
 

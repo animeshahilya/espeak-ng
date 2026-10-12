@@ -81,7 +81,7 @@ public final class UserDictionaryScreen {
      * owns accessibility: hint, error text and the field role are announced
      * together as one control.
      */
-    private static EditText labeledInput(Context context, LinearLayout layout,
+    public static EditText labeledInput(Context context, LinearLayout layout,
                                          String labelText, String hintText, String initial,
                                          int inputType) {
         float density = context.getResources().getDisplayMetrics().density;
