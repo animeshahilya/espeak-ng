@@ -50,9 +50,19 @@ message(STATUS "Data: ${CMAKE_CURRENT_SOURCE_DIR}")
 find_library(A_LOG log)
 find_library(A_ANDROID android)  # AAssetManager: dictionaries read from the APK
 
+# zstd decoder (vendored single-file build, src/zstd): the dictionaries are
+# stored zstd-compressed in the APK (createDictAssets). Decode-only, with the
+# smaller single-symbol Huffman decoder and no error strings.
+set(ZSTD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../src/zstd")
+add_library(zstddec OBJECT "${ZSTD_DIR}/zstddeclib.c")
+set_property(TARGET zstddec PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(zstddec PRIVATE
+        HUF_FORCE_DECOMPRESS_X1 ZSTD_STRIP_ERROR_STRINGS ZSTD_DISABLE_ASM)
+
 add_library(ttsespeak SHARED
         jni/eSpeakService.c
         jni/piperPhonemizer.c
+        $<TARGET_OBJECTS:zstddec>
         )
 # SONIC_DIR: the Piper path time-stretches its audio with the libsonic that
 # is already linked into espeak-ng (see nativeSonicStretch), so only the
@@ -61,6 +71,7 @@ target_include_directories(ttsespeak PRIVATE
         include
         jni
         "${SONIC_DIR}"
+        "${ZSTD_DIR}"
 )
 target_link_libraries(ttsespeak PRIVATE
         espeak-ng ${A_LOG} ${A_ANDROID}

@@ -68,7 +68,8 @@ The Gradle build has custom tasks that run automatically:
 1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/` (all ~120 languages)
 2. `createDataArchive` zips the tree except the compiled dictionaries into
    `res/raw/espeakdata.zip` (~0.5 MB); `createDictAssets` puts every
-   `*_dict` in the APK as `assets/espeak-dicts/` (variant API) - every
+   `*_dict` in the APK as `assets/espeak-dicts/<name>_dict.zst` (zstd 19,
+   zstd-jni at build time, stored uncompressed; variant API) - every
    language ships in the APK, there is no core/extra split
 3. `createDataHash` generates SHA256 for upgrade detection
 4. `createDataVersion` writes the hash to `res/raw/espeakdata_version`
@@ -896,7 +897,7 @@ redundant aliases or runtime PackageManager modifications.
 
 On first launch (or version mismatch), `DownloadVoiceData` extracts `res/raw/espeakdata.zip` (phoneme data, voices, language files; ~0.8 MB) to device-protected storage. `CheckVoiceData` validates required files: `version`, `intonations`, `phondata`, `phonindex`, `phontab`.
 
-Compiled dictionaries (29.9 of the 30.7 MB) are never extracted (2026-10-08): `LoadDictionary` (dictionary.c), the one place eSpeak opens a `*_dict`, falls back to `espeak_SetDictionaryReader` (fork extension, speak_lib.h) when the file is not on disk, and the JNI layer reads `espeak-dicts/<name>_dict` from the APK with `AAssetManager` (`readDictionaryAsset` in eSpeakService.c, set in `nativeCreate`). Every load goes through it, eSpeak's own mid-sentence language switches included, and eSpeak keeps a loaded dictionary in memory as before (no extra RAM). Pixel 8: user data 452 -> 422 MB; loading from the compressed asset costs Russian 56 ms (9.1 MB), Faroese 37, Pashto 15, Chinese 11, the rest under 8 ms - once per switch into that language. The CLI and desktop builds set no reader: files only. `DictionaryAssetsDeviceTest` checks every voice reads and that no `*_dict` sits in app storage.
+Compiled dictionaries (29.9 of the 30.7 MB) are never extracted (2026-10-08): `LoadDictionary` (dictionary.c), the one place eSpeak opens a `*_dict`, falls back to `espeak_SetDictionaryReader` (fork extension, speak_lib.h) when the file is not on disk, and the JNI layer maps `espeak-dicts/<name>_dict.zst` from the APK with `AAssetManager` and decompresses it (`readDictionaryAsset` in eSpeakService.c, set in `nativeCreate`; zstd's vendored single-file decoder, `src/zstd/`). zstd since 2026-10-12: dictionaries 14.1 MB (APK deflate) -> 11.0 MB; xz was 10.3 MB but decodes 9x slower (PC, Russian 146 ms). Every load goes through it, eSpeak's own mid-sentence language switches included, and eSpeak keeps a loaded dictionary in memory as before (no extra RAM). Pixel 8: user data 452 -> 422 MB; loading from the compressed asset costs Russian 56 ms (9.1 MB), Faroese 37, Pashto 15, Chinese 11, the rest under 8 ms - once per switch into that language. The CLI and desktop builds set no reader: files only. `DictionaryAssetsDeviceTest` checks every voice reads and that no `*_dict` sits in app storage.
 
 All languages are bundled directly in the APK and selectable from first
 launch - there is no core/extra split and no network-fetched language pack

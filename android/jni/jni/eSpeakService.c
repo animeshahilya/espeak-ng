@@ -40,6 +40,7 @@
 
 #include <espeak-ng/speak_lib.h>
 #include <sonic.h>
+#include <zstd.h>
 #include <Log.h>
 
 #include "piperPhonemizer.h"
@@ -355,19 +356,20 @@ static AAssetManager *s_assets = NULL;
 static char *readDictionaryAsset(const char *name, int *size) {
   if (s_assets == NULL || name == NULL) return NULL;
   char path[96];
-  if (snprintf(path, sizeof(path), "espeak-dicts/%s_dict", name) >= (int)sizeof(path)) return NULL;
-  AAsset *asset = AAssetManager_open(s_assets, path, AASSET_MODE_STREAMING);
+  if (snprintf(path, sizeof(path), "espeak-dicts/%s_dict.zst", name) >= (int)sizeof(path)) return NULL;
+  /* Stored uncompressed in the APK (noCompress), so the buffer is mapped, not copied. */
+  AAsset *asset = AAssetManager_open(s_assets, path, AASSET_MODE_BUFFER);
   if (asset == NULL) return NULL;
-  const off_t length = AAsset_getLength(asset);
-  char *data = length > 0 ? malloc((size_t)length) : NULL;
-  off_t done = 0;
-  while (data != NULL && done < length) {
-    const int n = AAsset_read(asset, data + done, (size_t)(length - done));
-    if (n <= 0) {
+  const void *packed = AAsset_getBuffer(asset);
+  const size_t packedSize = (size_t)AAsset_getLength(asset);
+  const unsigned long long length = packed ? ZSTD_getFrameContentSize(packed, packedSize) : 0;
+  char *data = NULL;
+  if (length > 0 && length <= 0x7fffffff && length != ZSTD_CONTENTSIZE_UNKNOWN
+      && length != ZSTD_CONTENTSIZE_ERROR) {
+    data = malloc((size_t)length);
+    if (data != NULL && ZSTD_decompress(data, (size_t)length, packed, packedSize) != length) {
       free(data);
       data = NULL;
-    } else {
-      done += n;
     }
   }
   AAsset_close(asset);

@@ -1,0 +1,4 @@
+zstd 1.5.7 decompressor (BSD, see LICENSE), for the compressed dictionaries in the APK.
+zstddeclib.c is upstream build/single_file_libs, generated with:
+  python combine.py -r ../../lib -x legacy/zstd_legacy.h -o zstddeclib.c zstddeclib-in.c
+zstd.h and zstd_errors.h are upstream lib/ unchanged.

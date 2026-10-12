@@ -5,6 +5,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:9.3.0'
+        // createDictAssets: zstd-compresses the dictionaries put in the APK
+        classpath 'com.github.luben:zstd-jni:1.5.7-6'
     }
 }
 plugins {
@@ -204,9 +206,10 @@ android {
         }
     }
 
-    // espeakdata.zip is already compressed; don't double-compress in APK
+    // Already compressed (espeakdata.zip, the zstd dictionaries); .zst is
+    // also kept stored so the engine maps it instead of inflating a copy
     androidResources {
-        noCompress += "espeakdata.zip"
+        noCompress += ["espeakdata.zip", "zst"]
     }
 
     bundle {
@@ -266,11 +269,11 @@ tasks.register('createDataArchive', Zip) {
     }
 }
 
-// Every compiled dictionary as its own APK asset, espeak-dicts/<name>_dict:
-// the native engine reads one when a language first needs it
-// (espeak_SetDictionaryReader in jni/jni/eSpeakService.c), so they are never
-// copied into app storage. Registered through the variant API, which wires
-// the asset tasks' dependencies.
+// Every compiled dictionary as its own APK asset, espeak-dicts/<name>_dict.zst
+// (zstd level 19: 14.1 MB of deflate in the APK -> 11.0 MB): the native engine
+// decompresses one when a language first needs it (espeak_SetDictionaryReader
+// in jni/jni/eSpeakService.c), so they are never copied into app storage.
+// Registered through the variant API, which wires the asset tasks' dependencies.
 abstract class DictAssets extends DefaultTask {
     @InputDirectory
     abstract DirectoryProperty getDataDir()
@@ -283,9 +286,11 @@ abstract class DictAssets extends DefaultTask {
 
     @TaskAction
     void run() {
-        fs.sync {
-            from(dataDir) { include "*_dict" }
-            into(outputDir.dir("espeak-dicts"))
+        def out = outputDir.dir("espeak-dicts").get().asFile
+        fs.delete { delete out }
+        out.mkdirs()
+        dataDir.get().asFile.listFiles().findAll { it.name.endsWith("_dict") }.each { f ->
+            new File(out, f.name + ".zst").bytes = com.github.luben.zstd.Zstd.compress(f.bytes, 19)
         }
     }
 }
