@@ -975,8 +975,10 @@ mirroring the source subpackages:
 They read `data/` from the source tree, declared as the test task's input
 (build.gradle `unitTests.all`) so a data-only change reruns them;
 `NvdaCharacterDescriptionsTest.everyBundledFileIsUtf8` guards the encoding
-(NVDA's de_CH characterDescriptions.dic is Windows-1252: Swiss German read
-"C�sar" until 2026-10-12; `tools/update_nvda_symbols.py` re-encodes).
+(the 2026-09-29 import left de_CH characterDescriptions.dic in
+Windows-1252 although NVDA's is UTF-8, so Swiss German read "C�sar"
+until 2026-10-12; all 128 NVDA files were then checked byte for byte
+against NVDA 72601bf3).
 These run on the desktop JDK, not Android's ICU/platform classes: a regex the
 JDK accepts can still be rejected on a device (an unbounded look-behind did
 exactly that and silenced all synthesis, d56ba251). Anything touching
