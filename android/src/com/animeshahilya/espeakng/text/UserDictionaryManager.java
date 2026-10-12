@@ -436,11 +436,15 @@ public class UserDictionaryManager {
             return null;
         }
         if (pattern.isEmpty()) return null;
-        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord,
+        final UserDictionary rule = new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord,
                 extras != null ? extras.optString("language", "") : "",
                 extras != null ? extras.optString("category", UserDictionary.CATEGORY_MAIN)
                         : UserDictionary.CATEGORY_MAIN,
                 extras != null ? extras.optString("phonemes", "") : "");
+        if (extras != null) {
+            rule.setReadIn(extras.optString("readIn", ""));
+        }
+        return rule;
     }
 
     /** One rule as a .dic line; tabs and line breaks inside it would split the line. */
@@ -456,6 +460,9 @@ public class UserDictionaryManager {
             }
             if (!rule.getPhonemes().isEmpty()) {
                 extras.put("phonemes", rule.getPhonemes());
+            }
+            if (!rule.getReadIn().isEmpty()) {
+                extras.put("readIn", rule.getReadIn());
             }
             if (extras.length() > 0) {
                 comment += " " + extras;

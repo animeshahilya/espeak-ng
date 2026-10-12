@@ -802,4 +802,7 @@
   <string name="test_routing_nothing">Nothing was read. Type some text and try again.</string>
   <string name="test_routing_edit">Try other text</string>
   <string name="test_routing_close">Close</string>
+  <string name="dict_label_read_in">Read in</string>
+  <string name="dict_read_in_usual">The usual voice</string>
+  <string name="dict_rule_read_in">%1$s, read in %2$s</string>
 </resources>

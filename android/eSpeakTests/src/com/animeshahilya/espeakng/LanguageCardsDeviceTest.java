@@ -12,6 +12,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.animeshahilya.espeakng.piper.PiperEngine;
+import com.animeshahilya.espeakng.text.UserDictionary;
+import com.animeshahilya.espeakng.text.UserDictionaryManager;
 import com.animeshahilya.espeakng.ui.LanguageCards;
 
 import org.junit.After;
@@ -319,6 +321,51 @@ public class LanguageCardsDeviceTest {
         final List<TtsService.PlanPart> espeak = TtsService.takeShownPlan();
         assertEquals(3, espeak.size());
         assertPart(espeak.get(1), "eng", null, "meeting");
+    }
+
+    /**
+     * Dictionary "Read in": an entry reads "Paris" in French inside English,
+     * as its own part (eSpeak's French voice), and English is read as before
+     * around it - even with English's card set to keep words with the
+     * surrounding voice, which the entry overrides.
+     */
+    @Test
+    public void dictionaryEntryReadsItsWordInItsLanguage() throws Exception {
+        mPrefs.edit().putBoolean("piper_enabled", false).commit();
+        final UserDictionaryManager dictionary = UserDictionaryManager.getInstance(
+                InstrumentationRegistry.getInstrumentation().getTargetContext().createDeviceProtectedStorageContext());
+        final UserDictionary paris = new UserDictionary("Paris", "", false, false, true);
+        paris.setReadIn("fra");
+        final String frenchMixed = LanguageCards.key("fra", LanguageCards.WHEN_MIXED);
+        final Bundle show = new Bundle();
+        show.putBoolean(TtsService.PARAM_SHOW_PLAN, true);
+        dictionary.addRule(paris);
+        try {
+            mPrefs.edit().putString(frenchMixed, "surrounding").commit();
+            seconds("readin", "We met in Paris today.", Locale.US, show);
+            final List<TtsService.PlanPart> plan = TtsService.takeShownPlan();
+            assertEquals(3, plan.size());
+            assertPart(plan.get(0), "eng", null, "We met in");
+            assertPart(plan.get(1), "fra", null, "Paris");
+            assertPart(plan.get(2), "eng", null, "today.");
+        } finally {
+            mPrefs.edit().remove(frenchMixed).commit();
+            dictionary.removeRule(dictionary.getRules().indexOf(paris));
+        }
+        seconds("readin_gone", "We met in Paris today.", Locale.US, show);
+        assertEquals("entry removed: one English part", 1, TtsService.takeShownPlan().size());
+
+        // The whole text, read in the voice's own language: the marks are not spoken.
+        warmUp();
+        final double plain = seconds("readin_own_plain", "Paris", Locale.US);
+        final UserDictionary own = new UserDictionary("Paris", "", false, false, true);
+        own.setReadIn("eng");
+        dictionary.addRule(own);
+        try {
+            assertEquals("same as without the entry", plain, seconds("readin_own", "Paris", Locale.US), EPSILON);
+        } finally {
+            dictionary.removeRule(dictionary.getRules().indexOf(own));
+        }
     }
 
     private static void assertPart(TtsService.PlanPart part, String language, String naturalKey, String text) {

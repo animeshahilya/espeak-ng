@@ -1107,7 +1107,7 @@ public class TtsService extends TextToSpeechService {
         offsetMap = prep.offsetMap;
         final boolean isSingleCharacterUtterance = prep.isSingleCharacterUtterance;
 
-        mHistoryText = text;
+        mHistoryText = com.animeshahilya.espeakng.text.ReadIn.strip(text);
 
         // Who reads each part (RunPlan): natural voices where the user chose
         // one and it is in memory, eSpeak for the rest. SSML stays with
@@ -1235,9 +1235,10 @@ public class TtsService extends TextToSpeechService {
 
         // One plain unit in the request's own voice takes the direct path; a
         // whole text in another language (all Marathi, all Ukrainian) is one
-        // unit too, but in that language's voice.
+        // unit too, but in that language's voice. A unit after a dictionary
+        // entry's marks (ReadIn, own language) does not start the text.
         if (units.size() > 1 || units.get(0).isEarcon() || units.get(0).model != null
-                || units.get(0).voice != voice) {
+                || units.get(0).voice != voice || units.get(0).base != 0) {
             mSegmentsRemaining.set(units.size());
             String lastLanguage = null;
             for (int ui = 0; ui < units.size(); ui++) {
@@ -1298,7 +1299,8 @@ public class TtsService extends TextToSpeechService {
             dispatcher.setChunkContext(units.isEmpty() ? 0 : units.get(0).base, 0);
             try {
                 if (!mIsStopped.get()) {
-                    engine.synthesize(text, isSsml);
+                    // Marks left only after the text (an empty match) shift no word.
+                    engine.synthesize(com.animeshahilya.espeakng.text.ReadIn.strip(text), isSsml);
                 }
             } catch (Throwable t) {
                 if (DEBUG) Log.w(TAG, "Synth failed", t);
@@ -1406,31 +1408,52 @@ public class TtsService extends TextToSpeechService {
      * just queue short bounded units instead of one unbounded synth call.
      * SSML is never chunked: splitting markup across units would corrupt
      * it. Punctuation sounds: each marker becomes a unit of its own, played
-     * as a tone between the pieces of speech around it.
+     * as a tone between the pieces of speech around it. Text a dictionary
+     * entry reads in another language ({@link com.animeshahilya.espeakng.text.ReadIn})
+     * is a unit of its own in that language's eSpeak voice, its marks dropped.
      */
-    private static List<SynthUnit> buildUnits(String text, Voice voice, boolean isSsml) {
+    private List<SynthUnit> buildUnits(String text, Voice voice, boolean isSsml) {
         final List<SynthUnit> units = new ArrayList<>();
         if (isSsml) {
             units.add(new SynthUnit(text, voice, 0));
             return units;
         }
+        final String own = PiperVoiceStore.languageKey(voice.locale);
+        String readIn = null; // a marked span can cross a watchdog chunk
         int base = 0;
         for (String chunk : TextPreprocessor.chunkForWatchdog(text)) {
             int start = 0;
             for (int i = 0; i <= chunk.length(); i++) {
-                if (i < chunk.length() && !Earcons.isMarker(chunk.charAt(i))) {
+                final char c = i < chunk.length() ? chunk.charAt(i) : 0;
+                if (i < chunk.length() && !Earcons.isMarker(c)
+                        && !com.animeshahilya.espeakng.text.ReadIn.isMark(c)) {
                     continue;
                 }
                 if (i > start) {
                     String piece = chunk.substring(start, i);
-                    units.add(new SynthUnit(piece, voice, base));
+                    units.add(readIn == null ? new SynthUnit(piece, voice, base)
+                            : new SynthUnit(piece, findVoiceForLanguage(readIn, voice), base, readIn));
                     base += piece.codePointCount(0, piece.length());
                 }
-                if (i < chunk.length()) {
-                    units.add(new SynthUnit(chunk.substring(i, i + 1), voice, base));
-                    base++;
-                }
                 start = i + 1;
+                if (i == chunk.length()) {
+                    break;
+                }
+                if (Earcons.isMarker(c)) {
+                    units.add(new SynthUnit(chunk.substring(i, i + 1), voice, base));
+                } else if (com.animeshahilya.espeakng.text.ReadIn.isOpen(c)) {
+                    final String language = com.animeshahilya.espeakng.text.ReadIn.languageAt(chunk, i);
+                    if (language != null) {
+                        // Its own language: nothing to switch.
+                        readIn = language.equals(own) ? null : language;
+                        i += com.animeshahilya.espeakng.text.ReadIn.OPEN_LENGTH - 1;
+                        base += com.animeshahilya.espeakng.text.ReadIn.OPEN_LENGTH - 1;
+                        start = i + 1;
+                    }
+                } else if (com.animeshahilya.espeakng.text.ReadIn.isClose(c)) {
+                    readIn = null;
+                }
+                base++;
             }
         }
         if (units.isEmpty()) {
@@ -1735,6 +1758,12 @@ public class TtsService extends TextToSpeechService {
         final String numbers = naturalSwitching ? numbersRunLanguage(settings, own) : null;
         final boolean digitHelp = needsDigitHelp(ownNatural);
         final Map<String, PiperVoiceStore.Installed> chosen = new HashMap<>();
+        // The language a dictionary entry asked for in the unit being planned:
+        // its own voice reads it, whatever the language's card says for text
+        // inside other text, and eSpeak in that language even where eSpeak
+        // would read it by itself (French words in English).
+        final String[] readIn = {null};
+        final Voice[] unitVoice = {null};
         final RunPlan.Readers<Voice> readers = new RunPlan.Readers<Voice>() {
             @Override
             public String naturalFor(String language) {
@@ -1760,11 +1789,15 @@ public class TtsService extends TextToSpeechService {
 
             @Override
             public Voice espeakVoiceFor(String language) {
-                return espeakVoiceForRun(language, own, voice, runLanguages);
+                return language.equals(readIn[0]) ? unitVoice[0]
+                        : espeakVoiceForRun(language, own, voice, runLanguages);
             }
 
             @Override
             public String whenMixed(String language) {
+                if (language.equals(readIn[0])) {
+                    return RunPlan.MIXED_DEFAULT;
+                }
                 final String mixed = LanguageCards.whenMixed(prefs, language);
                 if (mixed.isEmpty() || RunPlan.MIXED_ESPEAK.equals(mixed)) {
                     return mixed;
@@ -1794,8 +1827,12 @@ public class TtsService extends TextToSpeechService {
                 out.add(unit);
                 continue;
             }
+            readIn[0] = unit.readIn;
+            unitVoice[0] = unit.voice;
             final LanguageRuns.Run whole = new LanguageRuns.Run(0, unit.text, own);
-            final List<LanguageRuns.Run> runs = naturalSwitching
+            final List<LanguageRuns.Run> runs = unit.readIn != null
+                    ? Collections.singletonList(new LanguageRuns.Run(0, unit.text, unit.readIn))
+                    : naturalSwitching
                     ? naturalRuns(unit.text, own, runLanguages, numbers, prefs)
                     : digitHelp ? LanguageRuns.splitDigits(whole, ESPEAK_ONLY)
                     : Collections.singletonList(whole);
@@ -1836,6 +1873,8 @@ public class TtsService extends TextToSpeechService {
         final String modelKey;
         /** Language of its reader (eSpeak voice or natural voice): its card's settings apply. */
         final String language;
+        /** Language a dictionary entry reads it in ({@link com.animeshahilya.espeakng.text.ReadIn}), or null. */
+        final String readIn;
         /**
          * Its language runs (RunPlan.Segment.runs), for the routing preview:
          * eSpeak's English voice reads Hindi words in Hindi. Null: all in {@link #language}.
@@ -1843,11 +1882,21 @@ public class TtsService extends TextToSpeechService {
         final List<LanguageRuns.Run> runs;
 
         SynthUnit(String text, Voice voice, int base) {
-            this(text, voice, base, null, null, PiperVoiceStore.languageKey(voice.locale), null);
+            this(text, voice, base, null);
+        }
+
+        SynthUnit(String text, Voice voice, int base, String readIn) {
+            this(text, voice, base, null, null, PiperVoiceStore.languageKey(voice.locale), null, readIn);
         }
 
         SynthUnit(String text, Voice voice, int base, PiperModel model, String modelKey, String language,
                   List<LanguageRuns.Run> runs) {
+            this(text, voice, base, model, modelKey, language, runs, null);
+        }
+
+        private SynthUnit(String text, Voice voice, int base, PiperModel model, String modelKey, String language,
+                          List<LanguageRuns.Run> runs, String readIn) {
+            this.readIn = readIn;
             this.text = text;
             this.voice = voice;
             this.base = base;

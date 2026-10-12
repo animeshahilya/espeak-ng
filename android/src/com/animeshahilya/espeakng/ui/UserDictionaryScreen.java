@@ -238,7 +238,7 @@ public final class UserDictionaryScreen {
                 UserDictionary r = displayedRules.get(position);
                 holder.index.setText(context.getString(R.string.dict_rule_index, position + 1));
                 holder.pattern.setText(r.getPattern());
-                holder.replacement.setText(r.getReplacement());
+                holder.replacement.setText(spokenAs(context, r));
                 holder.chipCategory.setText(UserDictionary.categoryLabelRes(r.getCategory()));
                 final int modeRes = r.isRegex() ? R.string.dict_mode_regex
                         : (r.isWholeWord() ? R.string.dict_mode_word : R.string.dict_mode_substring);
@@ -259,7 +259,7 @@ public final class UserDictionaryScreen {
                 }
 
                 String a11y = context.getString(R.string.dict_a11y_rule,
-                        position + 1, r.getPattern(), r.getReplacement(),
+                        position + 1, r.getPattern(), spokenAs(context, r),
                         context.getString(UserDictionary.categoryLabelRes(r.getCategory())),
                         context.getString(modeRes));
                 if (!r.getLanguage().isEmpty()) {
@@ -395,11 +395,21 @@ public final class UserDictionaryScreen {
      * built lazily on tap: the list filter used to build one per visible
      * row per keystroke, each costing several resource lookups.
      */
+    /** The replacement, plus the language it is read in ("meeting, read in English"). */
+    private static String spokenAs(Context context, UserDictionary r) {
+        if (r.getReadIn().isEmpty()) {
+            return r.getReplacement();
+        }
+        return context.getString(R.string.dict_rule_read_in,
+                r.getReplacement().isEmpty() ? r.getPattern() : r.getReplacement(),
+                com.animeshahilya.espeakng.piper.PiperSettings.languageName(r.getReadIn()));
+    }
+
     private static String ruleLabel(Context context, UserDictionary r, int position) {
         final int rowModeRes = r.isRegex() ? R.string.dict_mode_regex
                 : (r.isWholeWord() ? R.string.dict_mode_word : R.string.dict_mode_substring);
         return (position + 1) + ". [" + context.getString(UserDictionary.categoryLabelRes(r.getCategory())) + "] \""
-                + r.getPattern() + "\" → \"" + r.getReplacement() + "\""
+                + r.getPattern() + "\" → \"" + spokenAs(context, r) + "\""
                 + ((r.isRegex() || r.isWholeWord()) ? " [" + context.getString(rowModeRes) + "]" : "")
                 + (r.hasPhonemeOverride() ? " [" + context.getString(R.string.dict_label_phoneme_tag) + "]" : "")
                 + (r.getLanguage().isEmpty() ? "" : " [" + r.getLanguage() + "]");
@@ -688,6 +698,33 @@ public final class UserDictionaryScreen {
                 existing != null ? existing.getLanguage() : null,
                 android.text.InputType.TYPE_CLASS_TEXT);
 
+        // "Read in": the usual voice, or a language's voice (ReadIn), sorted by name.
+        final java.util.List<java.util.Map.Entry<String, String>> readInLanguages = new java.util.ArrayList<>(
+                LanguageCards.languageNames(com.animeshahilya.espeakng.SpeechSynthesis.cachedVoices()).entrySet());
+        java.util.Collections.sort(readInLanguages, (a, b) -> a.getValue().compareToIgnoreCase(b.getValue()));
+        final String[] readInLabels = new String[readInLanguages.size() + 1];
+        readInLabels[0] = context.getString(R.string.dict_read_in_usual);
+        final String[] chosenReadIn = {existing != null ? existing.getReadIn() : ""};
+        String readInText = readInLabels[0];
+        for (int i = 0; i < readInLanguages.size(); i++) {
+            readInLabels[i + 1] = readInLanguages.get(i).getValue();
+            if (readInLanguages.get(i).getKey().equals(chosenReadIn[0])) {
+                readInText = readInLabels[i + 1];
+            }
+        }
+        final View readInField = LayoutInflater.from(context)
+                .inflate(R.layout.field_exposed_dropdown, layout, false);
+        ((TextInputLayout) readInField.findViewById(R.id.dropdown_layout))
+                .setHint(context.getString(R.string.dict_label_read_in));
+        final MaterialAutoCompleteTextView spReadIn = readInField.findViewById(R.id.dropdown_field);
+        spReadIn.setAdapter(new android.widget.ArrayAdapter<>(context,
+                android.R.layout.simple_dropdown_item_1line, readInLabels));
+        spReadIn.setText(readInText, false);
+        spReadIn.setOnItemClickListener((parent, view, pos, id) ->
+                chosenReadIn[0] = pos > 0 ? readInLanguages.get(pos - 1).getKey() : "");
+        readInField.setLayoutParams(new LinearLayout.LayoutParams(spLp));
+        layout.addView(readInField);
+
         final String[] chosenCategory = new String[]{editCategoryValues[preCatIndex]};
         spCategory.setOnItemClickListener((parent, view, pos, id) -> {
             chosenCategory[0] = (pos >= 0 && pos < editCategoryValues.length)
@@ -768,6 +805,7 @@ public final class UserDictionaryScreen {
                         chosenCategory[0],
                         phonemes
                 );
+                rule.setReadIn(chosenReadIn[0]);
 
                 if (!rule.isValid()) {
                     // It compiled above: this is UserDictionary's guard against

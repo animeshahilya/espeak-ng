@@ -906,7 +906,20 @@ segment), so eSpeak's English voice reading a Hindi word shows "Hindi,
 eSpeak"; a natural voice still loading shows eSpeak (true for that play).
 Display only: cards still apply by the reader's language. Test:
 `routingPreviewShowsWhoReadEachPart`.
-Plan for the next step (agreed 2026-10-12): dictionary "read in language X".
+Step 6, dictionary "Read in" (`UserDictionary.setReadIn`, ISO 639-2,
+"" = the usual voice, JSON/.dic extra `readIn`): a match is wrapped in
+private-use marks naming the language (`text/ReadIn`: U+E110, three letter
+marks U+E120+, the word, U+E111; with no replacement the match itself is
+kept, where an empty replacement otherwise deletes). `TtsService.buildUnits`
+makes the span a unit of its own in that language's eSpeak voice
+(`findVoiceForLanguage`, even where eSpeak would read it itself: French in
+English) and drops the marks while counting them in `base`, so word ranges
+stay aligned; a span can cross watchdog chunks. On the natural path the
+unit is one forced run of that language: its natural voice when loaded,
+its card's prosody/cue, and its card's "Voice when inside other text" is
+ignored (the entry is the more specific choice). Reading history gets the
+text with marks stripped. Tests: `ReadInTest`,
+`dictionaryEntryReadsItsWordInItsLanguage`. All six planned steps are done.
 
 ### Key Classes (`src/com/animeshahilya/espeakng/`)
 

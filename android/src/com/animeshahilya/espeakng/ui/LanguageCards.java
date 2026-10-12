@@ -118,13 +118,7 @@ public final class LanguageCards {
             return;
         }
         final TtsSettingsActivity.PrefsEspeakFragment f = (TtsSettingsActivity.PrefsEspeakFragment) fragment;
-        final Map<String, String> all = new TreeMap<>();
-        for (Voice v : voices) {
-            final String lang = PiperVoiceStore.languageKey(v.locale);
-            if (!lang.isEmpty()) {
-                all.put(lang, PiperSettings.languageName(lang));
-            }
-        }
+        final Map<String, String> all = languageNames(voices);
         final Map<String, String> used = new TreeMap<>();
         used.put(PiperVoiceStore.languageKey(Locale.getDefault()), "");
         for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
@@ -161,6 +155,18 @@ public final class LanguageCards {
             return false;
         });
         category.addPreference(add);
+    }
+
+    /** The voices' languages (ISO 639-2) and their names, sorted by code. */
+    public static Map<String, String> languageNames(List<Voice> voices) {
+        final Map<String, String> all = new TreeMap<>();
+        for (Voice v : voices) {
+            final String lang = PiperVoiceStore.languageKey(v.locale);
+            if (!lang.isEmpty()) {
+                all.put(lang, PiperSettings.languageName(lang));
+            }
+        }
+        return all;
     }
 
     private static Preference row(Context context, TtsSettingsActivity.PrefsEspeakFragment f,

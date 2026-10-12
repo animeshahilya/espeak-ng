@@ -55,6 +55,8 @@ public class UserDictionary {
     private String mLanguage;
     private String mCategory;
     private String mPhonemes;
+    /** ISO 639-2 language its matches are read in ("" = the usual voice): {@link ReadIn}. */
+    private String mReadIn = "";
 
     private Pattern mCompiledPattern = null;
     private String mPreparedReplacement = "";
@@ -149,6 +151,17 @@ public class UserDictionary {
         if (CATEGORY_ABBREV.equals(category)) return R.string.dict_category_abbrev;
         if (CATEGORY_CHARACTER.equals(category)) return R.string.dict_category_character;
         return R.string.dict_category_main;
+    }
+
+    /** "" means matches are read by the usual voice; else that language's (ISO 639-2). */
+    public String getReadIn() {
+        return mReadIn;
+    }
+
+    /** Matches are read in this language (ISO 639-2), "" for the usual voice. */
+    public void setReadIn(String language) {
+        mReadIn = ReadIn.open(language) != null ? language : "";
+        compile();
     }
 
     public void setLanguage(String language) {
@@ -271,6 +284,12 @@ public class UserDictionary {
                     ? mReplacement
                     : java.util.regex.Matcher.quoteReplacement(mReplacement != null ? mReplacement : "");
         }
+        final String open = ReadIn.open(mReadIn);
+        if (open != null) {
+            // Read in another language: the match itself when there is no replacement.
+            mPreparedReplacement = open + (mPreparedReplacement.isEmpty() ? "$0" : mPreparedReplacement)
+                    + ReadIn.close();
+        }
     }
 
     public String apply(String text) {
@@ -381,6 +400,9 @@ public class UserDictionary {
         if (!mPhonemes.isEmpty()) {
             obj.put("phonemes", mPhonemes);
         }
+        if (!mReadIn.isEmpty()) {
+            obj.put("readIn", mReadIn);
+        }
         return obj;
     }
 
@@ -394,7 +416,10 @@ public class UserDictionary {
         String language = obj.optString("language", "");
         String category = obj.optString("category", CATEGORY_MAIN);
         String phonemes = obj.optString("phonemes", "");
-        return new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord, language, category, phonemes);
+        final UserDictionary rule = new UserDictionary(pattern, replacement, caseSensitive, isRegex, wholeWord,
+                language, category, phonemes);
+        rule.setReadIn(obj.optString("readIn", ""));
+        return rule;
     }
 }
 

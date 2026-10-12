@@ -184,6 +184,12 @@ public class SpeechSynthesis {
         return REDUNDANT_VOICE_NAMES.contains(AsciiUtils.toAsciiLowerCase(name));
     }
 
+    /** The voice list if it has been read already, else empty (never blocks on the engine). */
+    public static List<Voice> cachedVoices() {
+        final List<Voice> cached = sCachedVoices;
+        return cached != null ? cached : Collections.<Voice>emptyList();
+    }
+
     public List<Voice> getAvailableVoices() {
         // Return a copy of the cached voices if available.
         List<Voice> cached = sCachedVoices;
