@@ -220,6 +220,9 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+        // JVM tests read data/ straight from the source tree: without this a
+        // data-only change left them UP-TO-DATE, never rerun.
+        unitTests.all { it.inputs.dir("data").withPathSensitivity(PathSensitivity.RELATIVE) }
     }
 
     lint {

@@ -68,7 +68,7 @@ The Gradle build has custom tasks that run automatically:
 1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/` (all ~120 languages)
 2. `createDataArchive` zips the tree except the compiled dictionaries into
    `res/raw/espeakdata.zip` (~0.5 MB); `createPackedAssets` puts every
-   `*_dict` in the APK as `assets/espeak-dicts/<name>_dict.zst` (zstd 19,
+   `*_dict` in the APK as `assets/espeak-dicts/<name>_dict.zst` (zstd 19 - 20/22 measured, no smaller,
    zstd-jni at build time, stored uncompressed; variant API) - every
    language ships in the APK, there is no core/extra split; it packs the
    text data in `android/data/` (symbols, chardesc, emoji, hinglish,
@@ -972,6 +972,11 @@ mirroring the source subpackages:
 - `piper/`: phonemes/id encoding, split, alignment, audio, catalog, compact policy, phrase cache, shared models, model files
 - `ui/`: `DicFormatTest`
 
+They read `data/` from the source tree, declared as the test task's input
+(build.gradle `unitTests.all`) so a data-only change reruns them;
+`NvdaCharacterDescriptionsTest.everyBundledFileIsUtf8` guards the encoding
+(NVDA's de_CH characterDescriptions.dic is Windows-1252: Swiss German read
+"C�sar" until 2026-10-12; `tools/update_nvda_symbols.py` re-encodes).
 These run on the desktop JDK, not Android's ICU/platform classes: a regex the
 JDK accepts can still be rejected on a device (an unbounded look-behind did
 exactly that and silenced all synthesis, d56ba251). Anything touching
@@ -991,9 +996,7 @@ Indian features, natural voices (`PiperE2EDeviceTest` - keep `j_*` passing,
 `PiperLatencyDeviceTest`, `PiperBenchDeviceTest`), latency
 (`EspeakLatencyDeviceTest`), word ranges (`RangeFramesDeviceTest`) and A/B
 harnesses (`EnUsProbeDeviceTest`, `CompoundVoiceCheckDeviceTest`,
-`PhraseCacheReplayDeviceTest`). As of 2026-10-10 one word-boundary test
-fails on a Pixel 8 both before and after the latest changes - known, not a
-regression signal.
+`PhraseCacheReplayDeviceTest`).
 
 Performance work on the native engine must stay bit-exact: compare
 `PipelineSnapshotTest` hash dumps before and after (18 voices, zero diff).
