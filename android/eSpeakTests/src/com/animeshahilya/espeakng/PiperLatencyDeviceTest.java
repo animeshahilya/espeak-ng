@@ -148,7 +148,7 @@ public class PiperLatencyDeviceTest {
         assertTrue(mTts.setLanguage(new Locale("hi", "IN")) >= TextToSpeech.LANG_AVAILABLE);
         synth("stop_warm0", HI);
         Thread.sleep(2000);
-        synth("stop_warm1", HI);
+        final long[] before = synth("stop_warm1", HI);
         final Bundle quiet = new Bundle();
         quiet.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 0f);
         for (int i = 0; i < 30; i++) {
@@ -157,7 +157,10 @@ public class PiperLatencyDeviceTest {
             assertEquals(TextToSpeech.SUCCESS, mTts.stop());
         }
         final long[] after = synth("stop_after", HI);
-        assertTrue("speech still works", after[3] > after[2] * 5L);
+        // Compared with the same text before the stops, not a fixed length:
+        // its duration depends on the phone's voice style and speed.
+        assertTrue("speech still works: " + after[3] + " vs " + before[3] + " samples",
+                after[3] > before[3] * 7 / 10);
         Log.i(TAG, "stops done, then " + after[3] / (double) after[2] + " s of audio");
     }
 

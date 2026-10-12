@@ -41,6 +41,12 @@ import java.util.concurrent.TimeUnit;
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PiperE2EDeviceTest {
+    // Needs every language: the phone's "Supported languages" filter is lifted, then restored.
+    @org.junit.ClassRule
+    public static final com.animeshahilya.espeakng.test.KeepUserSettings KEEP =
+            new com.animeshahilya.espeakng.test.KeepUserSettings(
+                    com.animeshahilya.espeakng.ui.LanguageSettings.PREF_SUPPORTED_LANGUAGES);
+
     private static final String TAG = "PiperE2E";
     private static final int ESPEAK_RATE = 22050;
 

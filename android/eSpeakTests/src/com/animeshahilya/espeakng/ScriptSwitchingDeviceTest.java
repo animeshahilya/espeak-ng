@@ -35,6 +35,12 @@ import java.util.concurrent.TimeUnit;
  */
 @RunWith(AndroidJUnit4.class)
 public class ScriptSwitchingDeviceTest {
+    // Needs every language: the phone's "Supported languages" filter is lifted, then restored.
+    @org.junit.ClassRule
+    public static final com.animeshahilya.espeakng.test.KeepUserSettings KEEP =
+            new com.animeshahilya.espeakng.test.KeepUserSettings(
+                    com.animeshahilya.espeakng.ui.LanguageSettings.PREF_SUPPORTED_LANGUAGES);
+
     private static final String TAG = "ScriptSwitching";
     private static final String TEXT = "Привіт, як справи? Дякую, добре. Сьогодні гарна погода.";
 

@@ -47,6 +47,12 @@ import static org.hamcrest.Matchers.*;
 @RunWith(AndroidJUnit4.class)
 public class CheckVoiceDataTest
 {
+    // Needs every language: the phone's "Supported languages" filter is lifted, then restored.
+    @org.junit.ClassRule
+    public static final com.animeshahilya.espeakng.test.KeepUserSettings KEEP =
+            new com.animeshahilya.espeakng.test.KeepUserSettings(
+                    com.animeshahilya.espeakng.ui.LanguageSettings.PREF_SUPPORTED_LANGUAGES);
+
     @Before
     public void ensureVoiceData()
     {
