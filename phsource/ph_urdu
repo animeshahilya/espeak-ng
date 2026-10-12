@@ -62,6 +62,12 @@ phoneme s.
   ChangePhoneme(s)
 endphoneme
 
+// ظ is plain [z] too (WikiPron urd: اظہار [ɪzhaːɾ], ظہور [zʊhuːɾ]).
+phoneme z.
+  vcd alv frc sib
+  ChangePhoneme(z)
+endphoneme
+
 
 // Word-final ہ is an open [ɑ] (WikiPron urd: چودہ [tʃɔːdɑ], تیرہ [teːɾɑ]) - the
 // real open vowel "a" had before it became schwa above.

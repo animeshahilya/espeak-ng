@@ -112,7 +112,6 @@
         ए          e:
         एँ          e~:
         एं          e~:
-    ा) एँ (_       j
 
 .group ऐ
         ऐ          E:        // ?? [aI] [E:] [&:]
@@ -133,8 +132,6 @@
         ओ          o:
         ओं          o~        // +anusvara
         ओँ         o~        // +candrabindu
-    ा) ओं (_       w        // +anusvara
-    ा) ओँ (_       w
     
 
 .group औ
@@ -2139,6 +2136,7 @@ C)        ॣ          l-:
         य (_       j
         य (B       j
      C) य (_       Ej     // [Ej] not [@j]
+    _C) य (_       j      // one syllable: लय, जय, भय
      ्) य (_       j@
 
 .group र

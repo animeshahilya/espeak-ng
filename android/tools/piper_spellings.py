@@ -48,7 +48,7 @@ def pt_r(cluster_r):
 RULES = {lang: FLAP for lang in "pa gu mr or as sd bn kn ta si kok bpy".split()}
 RULES.update({
     "hi": FLAP + [("æ", "ɛ")],
-    "ur": FLAP + [("ɾ", "r"), ("ɑ", "a"), ("ɳ", "n")],
+    "ur": FLAP + [("ɾ", "r"), ("ɑ", "a"), ("ɳ", "n"), ("ŋ", "n")],
     "ml": [("ɻ", "r.")] + FLAP,
     "ne": [("ɽʱ", "ɖʰ"), ("ɽ", "ɖ"), ("dzʱ", "ɟʰ"), ("dz", "ɟ"), ("tsʰ", "cʰ"), ("ts", "c"),
            ("ʱ", "ʰ")],

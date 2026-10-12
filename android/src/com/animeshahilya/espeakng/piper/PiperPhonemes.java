@@ -316,7 +316,7 @@ public final class PiperPhonemes {
             put(lang, FLAP);
         }
         put("hi", FLAP, new String[] {"æ", "ɛ"});                    // बैंक
-        put("ur", FLAP, new String[] {"ɾ", "r", "ɑ", "a", "ɳ", "n"});
+        put("ur", FLAP, new String[] {"ɾ", "r", "ɑ", "a", "ɳ", "n", "ŋ", "n"}); // ŋ: upstream Urdu never wrote it
         put("ml", new String[] {"ɻ", "r."}, FLAP);                    // ഴ
         put("ne", new String[] {"ɽʱ", "ɖʰ", "ɽ", "ɖ", "dzʱ", "ɟʰ", "dz", "ɟ", "tsʰ", "cʰ",
                 "ts", "c", "ʱ", "ʰ"});
