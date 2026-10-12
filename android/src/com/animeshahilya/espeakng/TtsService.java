@@ -35,6 +35,7 @@ import com.animeshahilya.espeakng.tts.EspeakVoiceEngine;
 import com.animeshahilya.espeakng.tts.GetSampleText;
 import com.animeshahilya.espeakng.text.HinglishReader;
 import com.animeshahilya.espeakng.text.LanguageRuns;
+import com.animeshahilya.espeakng.ui.LanguageCards;
 import com.animeshahilya.espeakng.ui.LanguageSettings;
 import com.animeshahilya.espeakng.text.NvdaEmoji;
 import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
@@ -1095,8 +1096,6 @@ public class TtsService extends TextToSpeechService {
         final VoiceVariant voiceVariant = settings.getVoiceVariant();
         engine.setVoice(voice, voiceVariant);
 
-        engine.Rate.setValue(effectiveRate(settings, request));
-
         int pitchScale = request.getPitch();
         if (pitchScale <= 0) {
             pitchScale = 100;
@@ -1104,7 +1103,7 @@ public class TtsService extends TextToSpeechService {
         if (settings.isForcePitchEnabled()) {
             pitchScale = 100;
         }
-        engine.Pitch.setValue(settings.getPitch(), pitchScale);
+        final int pitch = settings.getPitch() * pitchScale / 100;
 
         // Optional accessibility aid (espeak-ng community issue #1658): widen
         // the pitch rise on questions/exclamations for hard-of-hearing
@@ -1141,7 +1140,9 @@ public class TtsService extends TextToSpeechService {
         engine.PitchRange.setValue(pitchRange);
 
         final int targetVolume = effectiveVolume(settings, request);
-        engine.Volume.setValue(targetVolume);
+        final int rate = effectiveRate(settings, request);
+        setProsody(engine, prefs, PiperVoiceStore.languageKey(voice.locale), rate, pitch, targetVolume,
+                settings.isRateBoostEnabled());
 
         if (isSsml) {
             engine.Punctuation.setValue(settings.getPunctuationLevel());
@@ -1210,8 +1211,10 @@ public class TtsService extends TextToSpeechService {
                     // eSpeak works out speed only when the rate is set: a voice
                     // file's own "speed" (Ukrainian 80) sticks if the voice is
                     // loaded after it, and the next voice keeps it too. Set
-                    // after the voice, as a request in that voice is.
-                    engine.Rate.setValue(effectiveRate(settings, request));
+                    // after the voice, as a request in that voice is, with
+                    // the unit's language card.
+                    setProsody(engine, prefs, unit.language, rate, pitch, targetVolume,
+                            settings.isRateBoostEnabled());
                     engine.synthesize(unit.text, false);
                 } catch (Throwable t) {
                     // One bad chunk (mixed-script edge case) must never kill
@@ -1242,6 +1245,25 @@ public class TtsService extends TextToSpeechService {
         // Recorded once per completed request; stopped requests and SSML
         // markup are skipped inside, along with short/code-like text.
         finishWithHistory(prefs, voice != null ? voice.name : null, naturalUsed, ahead, isSsml);
+    }
+
+    /**
+     * eSpeak's rate, pitch and volume for speech in {@code language}: the
+     * request's own, times that language's card (Settings -> Mixed-language
+     * text -> Speech by language). No card: exactly the request's values.
+     */
+    private static void setProsody(SpeechSynthesis engine, SharedPreferences prefs, String language,
+                                   int rate, int pitch, int volume, boolean rateBoost) {
+        final float speed = LanguageCards.factor(prefs, language, LanguageCards.SPEED);
+        final float pitchFactor = LanguageCards.factor(prefs, language, LanguageCards.PITCH);
+        final float volumeFactor = LanguageCards.factor(prefs, language, LanguageCards.VOLUME);
+        int r = speed == 1f ? rate : Math.round(rate * speed);
+        if (!rateBoost && r > 450) {
+            r = 450;
+        }
+        engine.Rate.setValue(r);
+        engine.Pitch.setValue(pitchFactor == 1f ? pitch : Math.min(100, Math.round(pitch * pitchFactor)));
+        engine.Volume.setValue(volumeFactor == 1f ? volume : Math.min(200, Math.round(volume * volumeFactor)));
     }
 
     /**
@@ -1435,12 +1457,17 @@ public class TtsService extends TextToSpeechService {
         private final List<String> used;
         private PiperEngine.Prepared prepared;
         private int preparedIndex = -1;
+        /** The request's pitch and volume; each piece scales its own copy by its language card. */
+        private final float basePitch;
+        private final float baseVolume;
 
         NaturalAhead(PiperEngine.Phonemizer phonemizer, PiperEngine.Params params,
                      VoiceSettings settings, SynthesisRequest request, SharedPreferences prefs,
                      List<String> used) {
             this.phonemizer = phonemizer;
             this.params = params;
+            this.basePitch = params.pitch;
+            this.baseVolume = params.volume;
             this.settings = settings;
             this.request = request;
             this.prefs = prefs;
@@ -1483,6 +1510,10 @@ public class TtsService extends TextToSpeechService {
 
         private PiperEngine.Prepared start(SynthUnit unit) throws ai.onnxruntime.OrtException {
             forVoice(params, settings, request, prefs, unit.modelKey);
+            params.speed *= LanguageCards.factor(prefs, unit.language, LanguageCards.SPEED);
+            params.pitch = Math.max(0.5f, Math.min(2.0f,
+                    basePitch * LanguageCards.factor(prefs, unit.language, LanguageCards.PITCH)));
+            params.volume = baseVolume * LanguageCards.factor(prefs, unit.language, LanguageCards.VOLUME);
             if (!used.contains(unit.modelKey)) {
                 used.add(unit.modelKey);
             }
@@ -1656,7 +1687,8 @@ public class TtsService extends TextToSpeechService {
             for (RunPlan.Segment<Voice> seg : RunPlan.plan(runs, own, readers, espeakLetters, mayPreload)) {
                 out.add(seg.isNatural()
                         ? new SynthUnit(seg.text, voice, unit.base + seg.start,
-                                mPiper.getLoaded(seg.naturalKey), seg.naturalKey)
+                                mPiper.getLoaded(seg.naturalKey), seg.naturalKey,
+                                chosen.get(seg.naturalKey).languageKey())
                         : new SynthUnit(seg.text, seg.espeakVoice, unit.base + seg.start));
             }
         }
@@ -1686,17 +1718,20 @@ public class TtsService extends TextToSpeechService {
         /** Natural voice for this unit, or null for eSpeak. */
         final PiperModel model;
         final String modelKey;
+        /** Language of its reader (eSpeak voice or natural voice): its card's settings apply. */
+        final String language;
 
         SynthUnit(String text, Voice voice, int base) {
-            this(text, voice, base, null, null);
+            this(text, voice, base, null, null, PiperVoiceStore.languageKey(voice.locale));
         }
 
-        SynthUnit(String text, Voice voice, int base, PiperModel model, String modelKey) {
+        SynthUnit(String text, Voice voice, int base, PiperModel model, String modelKey, String language) {
             this.text = text;
             this.voice = voice;
             this.base = base;
             this.model = model;
             this.modelKey = modelKey;
+            this.language = language;
         }
 
         boolean isEarcon() {

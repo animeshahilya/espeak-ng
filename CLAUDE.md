@@ -858,6 +858,25 @@ Ancient Greek and Western Armenian did not, so they are not offered).
 `SpeechSynthesis.setScriptLanguages`. `ScriptLanguagesDeviceTest` checks the
 engine end to end.
 
+### Per-language speech (language cards)
+
+Settings -> Mixed-language text -> Speech by language (`ui/LanguageCards`):
+per language (ISO 639-2, the `piper_voice_<lang>` key space) a speed,
+pitch and volume as 50-200% of the main settings, stored as
+`lang_<lang>_<field>` = "80"; unset or empty is 100%, so output is
+unchanged until a user sets one (NVDA parity). Each `SynthUnit` carries its
+reader's language (the eSpeak voice's, or the natural voice's) and
+`TtsService.setProsody` / `NaturalAhead.start` apply its card - the
+request's own language included. Who reads which part is one decision,
+`tts/RunPlan` (JVM-tested), for both the natural-voice and eSpeak paths.
+Limit: a run eSpeak switches into by itself inside one unit (Hindi words in
+an English eSpeak unit, natural voices off) keeps the unit's settings.
+`LanguageCardsDeviceTest`: Hindi at 50% on eSpeak 3.22 -> 6.48 s with
+English unchanged to the sample; Priyamvada at 150% 3.97 -> 3.06 s.
+Plan for later steps (agreed 2026-10-12): transition pause/tone, voice when
+mixed, per-language switch sensitivity and numbers, routing preview,
+dictionary "read in language X".
+
 ### Key Classes (`src/com/animeshahilya/espeakng/`)
 
 Packages (split 2026-10-10, 89c1dcaa; tests mirror them so package-private

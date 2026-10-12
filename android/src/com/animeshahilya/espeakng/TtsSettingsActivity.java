@@ -1879,6 +1879,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             });
             onClick(screen, "action_export_log", () -> exportLog(context));
             PiperSettings.configure(context, screen, fragment, prefs);
+            com.animeshahilya.espeakng.ui.LanguageCards.configure(context, screen, fragment, prefs, voices);
             final ImportVoicePreference importVoice = screen.findPreference("action_import_voice");
             importVoice.setOnPreferenceChangeListener(mOnPreferenceChanged);
             importVoice.setDescription(R.string.import_voice_description);

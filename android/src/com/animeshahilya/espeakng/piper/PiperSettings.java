@@ -429,7 +429,7 @@ public final class PiperSettings {
 
     /** "Hindi" in the phone's language, from Piper's "hi". */
     @SuppressWarnings("deprecation")
-    static String languageName(String family) {
+    public static String languageName(String family) {
         if (family == null) {
             return "";
         }

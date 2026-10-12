@@ -716,6 +716,11 @@
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
+          android:key="category_language_cards"
+          android:title="@string/category_language_cards"
+          android:summary="@string/category_language_cards_summary"
+          app:iconSpaceReserved="false" />
 
       <!-- not on Wear -->
       <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory

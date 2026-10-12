@@ -769,4 +769,14 @@
   <string name="piper_speaker_title">Speaker</string>
   <string name="piper_refresh">Refresh list</string>
   <string name="accessibility_action_open">Open</string>
+  <string name="category_language_cards">Speech by language</string>
+  <string name="category_language_cards_summary">Speed, pitch and volume for each language, as a share of the main settings</string>
+  <string name="language_card_add">Add language</string>
+  <string name="language_card_same">Same as main</string>
+  <string name="language_card_speed">Speed</string>
+  <string name="language_card_pitch">Pitch</string>
+  <string name="language_card_volume">Volume</string>
+  <string name="language_card_summary_same">Same as main settings</string>
+  <string name="language_card_summary">Speed %1$s, pitch %2$s, volume %3$s</string>
+  <string name="language_card_percent">%1$d%%</string>
 </resources>
