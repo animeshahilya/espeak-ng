@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.preference.PreferenceManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1405,7 +1404,7 @@ public final class PiperDownloads {
     }
 
     private static SharedPreferences settingsPrefs(Context storageContext) {
-        return PreferenceManager.getDefaultSharedPreferences(storageContext);
+        return EspeakApp.prefs(storageContext);
     }
 
     /** MD5 of a file, streamed (models are 40-200 MB). */

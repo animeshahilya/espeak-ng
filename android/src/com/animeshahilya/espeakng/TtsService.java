@@ -64,7 +64,6 @@ import android.media.AudioFormat;
 import android.media.AudioTrack;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.preference.PreferenceManager;
 import android.speech.tts.SynthesisCallback;
 import android.speech.tts.SynthesisRequest;
 import android.speech.tts.TextToSpeech;
@@ -84,6 +83,7 @@ import java.util.Map;
 import java.util.Set;
 import java.lang.Character.UnicodeScript;
 import java.util.concurrent.atomic.AtomicBoolean;
+import com.animeshahilya.espeakng.EspeakApp;
 
 /**
  * Implements the eSpeak engine as a {@link TextToSpeechService}.
@@ -360,7 +360,7 @@ public class TtsService extends TextToSpeechService {
         super.onCreate();
         mStorageContext = EspeakApp.requireStorageContext(getApplicationContext());
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(mStorageContext);
+        mPreferences = EspeakApp.prefs(mStorageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         CheckVoiceData.ensureVoiceData(mStorageContext);
         initializeTtsEngine();
@@ -1011,7 +1011,7 @@ public class TtsService extends TextToSpeechService {
         // Tolerant: one setting stored with the wrong type must not silence speech.
         final SharedPreferences prefs = TolerantPreferences.of(mPreferences != null
                 ? mPreferences
-                : PreferenceManager.getDefaultSharedPreferences(mStorageContext));
+                : EspeakApp.prefs(mStorageContext));
         final VoiceSettings settings = new VoiceSettings(prefs, engine);
 
         // Sleep timer: while the mute window covers now, complete the request

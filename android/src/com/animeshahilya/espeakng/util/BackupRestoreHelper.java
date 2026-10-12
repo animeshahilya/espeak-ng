@@ -26,7 +26,6 @@ import com.animeshahilya.espeakng.Voice;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -57,8 +56,7 @@ public final class BackupRestoreHelper {
     }
 
     public static void exportToStream(Context context, OutputStream os) throws Exception {
-        Context storage = EspeakApp.requireStorageContext(context);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
+        SharedPreferences prefs = EspeakApp.prefs(context);
         JSONObject root = new JSONObject();
         root.put("version", BACKUP_VERSION);
         root.put("package", context.getPackageName());
@@ -130,8 +128,7 @@ public final class BackupRestoreHelper {
 
         JSONObject prefsJson = root.optJSONObject("prefs");
         if (prefsJson != null) {
-            Context storage = EspeakApp.requireStorageContext(context);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
+            SharedPreferences prefs = EspeakApp.prefs(context);
             Map<String, ?> existingPrefs = prefs.getAll();
             SharedPreferences.Editor ed = prefs.edit();
             java.util.Iterator<String> keys = prefsJson.keys();

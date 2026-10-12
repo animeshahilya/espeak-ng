@@ -42,7 +42,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -1089,7 +1088,7 @@ public final class PiperSettings {
                 final ByteArrayOutputStream pcm = new ByteArrayOutputStream();
                 // As it will speak: this voice's speaker and speed, the style.
                 final SharedPreferences prefs = TolerantPreferences.of(
-                        PreferenceManager.getDefaultSharedPreferences(storage(context)));
+                        EspeakApp.prefs(storage(context)));
                 final PiperEngine.Params params = new PiperEngine.Params();
                 params.speakerId = PiperVoiceStore.speakerId(prefs, voice.key);
                 params.speed = PiperVoiceStore.speedFactor(prefs, voice.key);
@@ -1116,7 +1115,7 @@ public final class PiperSettings {
             } finally {
                 // Testing works with natural voices off; it must not leave a
                 // model (100+ MB) in memory that nothing will speak with.
-                if (!PiperVoiceStore.isEnabled(PreferenceManager.getDefaultSharedPreferences(
+                if (!PiperVoiceStore.isEnabled(EspeakApp.prefs(
                         storage(context)))) {
                     PiperEngine.get().unload(voice.key);
                 }

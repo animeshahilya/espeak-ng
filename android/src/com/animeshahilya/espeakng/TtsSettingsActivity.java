@@ -105,6 +105,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
+import com.animeshahilya.espeakng.EspeakApp;
 
 public class TtsSettingsActivity extends AppCompatActivity {
 
@@ -123,7 +124,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
             // fail with the actual reason instead.
             throw new IllegalStateException("EspeakApp storage context not initialized");
         }
-        return PreferenceManager.getDefaultSharedPreferences(storage);
+        return EspeakApp.prefs(storage);
     }
 
     private static final java.util.HashMap<String, LangInfo> sLangInfo = new java.util.HashMap<String, LangInfo>();

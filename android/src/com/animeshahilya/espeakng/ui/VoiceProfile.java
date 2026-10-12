@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.preference.PreferenceManager;
 
 import org.json.JSONObject;
 
@@ -67,8 +66,7 @@ public final class VoiceProfile {
     };
 
     public static void saveToStream(Context context, OutputStream os) throws Exception {
-        Context storage = EspeakApp.requireStorageContext(context);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
+        SharedPreferences prefs = EspeakApp.prefs(context);
         JSONObject profile = new JSONObject();
         for (String key : STRING_KEYS) {
             String value = prefs.getString(key, null);
@@ -122,8 +120,7 @@ public final class VoiceProfile {
             if (profile == null) {
                 return false;
             }
-            Context storage = EspeakApp.requireStorageContext(context);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
+            SharedPreferences prefs = EspeakApp.prefs(context);
             SharedPreferences.Editor ed = prefs.edit();
             boolean applied = false;
             for (String key : STRING_KEYS) {

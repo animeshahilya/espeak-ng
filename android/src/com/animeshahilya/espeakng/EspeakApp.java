@@ -28,6 +28,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -83,7 +84,7 @@ public class EspeakApp extends Application {
             if (storage != null) {
                 // Across service restarts: add what this process counted since its last report.
                 final android.content.SharedPreferences prefs =
-                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(storage);
+                        prefs(storage);
                 synchronized (this) {
                     totalHits = prefs.getLong(PREF_CACHE_HITS, 0) + hits - sReportedHits;
                     totalChunks = prefs.getLong(PREF_CACHE_CHUNKS, 0) + hits + misses - sReportedChunks;
@@ -150,7 +151,7 @@ public class EspeakApp extends Application {
         // twice in a row is suspended instead of crash-looping TalkBack.
         // Tolerant: a wrongly typed setting must not crash every process start.
         final android.content.SharedPreferences settings = TolerantPreferences.of(
-                androidx.preference.PreferenceManager.getDefaultSharedPreferences(EspeakApp.storageContext));
+                prefs(EspeakApp.storageContext));
         final PiperCrashGuard crashGuard = new PiperCrashGuard(EspeakApp.storageContext, settings);
         crashGuard.checkPreviousExit(appContext);
         PiperEngine.get().setNativeGuard(crashGuard);
@@ -222,6 +223,15 @@ public class EspeakApp extends Application {
 
     public static Context getStorageContext() {
         return EspeakApp.storageContext;
+    }
+
+    /**
+     * The app's settings: always the device-protected file, whatever context
+     * is passed (a plain one would read a credential-encrypted copy that is
+     * discarded at the next start, #2536).
+     */
+    public static SharedPreferences prefs(Context context) {
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireStorageContext(context));
     }
 
     /**

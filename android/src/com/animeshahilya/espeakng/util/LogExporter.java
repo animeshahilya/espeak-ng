@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -83,8 +82,7 @@ public final class LogExporter {
         sb.append("Time: ").append(new java.util.Date()).append("\n\n");
 
         try {
-            Context storage = EspeakApp.requireStorageContext(context);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storage);
+            SharedPreferences prefs = EspeakApp.prefs(context);
             sb.append("--- Preferences ---\n");
             for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
                 if (ReadingHistory.PREF_HISTORY_ITEMS.equals(e.getKey())) {

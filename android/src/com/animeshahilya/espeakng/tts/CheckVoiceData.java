@@ -40,7 +40,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech.Engine;
 import android.util.Log;
 
@@ -194,7 +193,7 @@ public class CheckVoiceData extends Activity {
         super.onCreate(savedInstanceState);
 
         Context storageContext = EspeakApp.requireStorageContext(this);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(storageContext);
+        final SharedPreferences prefs = EspeakApp.prefs(storageContext);
         ArrayList<String> availableLanguages = new ArrayList<String>();
         ArrayList<String> unavailableLanguages = new ArrayList<String>();
 

@@ -32,8 +32,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceFragmentCompat;
 
-import androidx.preference.PreferenceManager;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import com.animeshahilya.espeakng.EspeakApp;
@@ -90,11 +88,6 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
         dialog.show(activity.getSupportFragmentManager(), "favorites");
     }
 
-    private static SharedPreferences prefsOf(Context context) {
-        final Context storage = EspeakApp.requireStorageContext(context);
-        return PreferenceManager.getDefaultSharedPreferences(storage);
-    }
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle args = getArguments();
@@ -108,7 +101,7 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
         }
         // Favorites for voices no longer offered get no row, so saving drops them.
         final Set<String> favorites = getContext() != null
-                ? LanguageSettings.getFavoriteVoices(prefsOf(getContext())) : new HashSet<String>();
+                ? LanguageSettings.getFavoriteVoices(EspeakApp.prefs(getContext())) : new HashSet<String>();
 
         final View root = LayoutInflater.from(getContext())
                 .inflate(R.layout.favorite_voices_dialog, null);
@@ -142,7 +135,7 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
                 checked.add(mValues.get(i));
             }
         }
-        prefsOf(getContext()).edit()
+        EspeakApp.prefs(getContext()).edit()
                 .putStringSet(LanguageSettings.PREF_FAVORITE_VOICES, checked)
                 .apply();
         // The engine reorders its voice list on this broadcast path: the
@@ -162,10 +155,9 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
         final PreferenceFragmentCompat fragment = (PreferenceFragmentCompat) f;
         if (fragment.getPreferenceScreen() != null && getContext() != null) {
             TtsSettingsActivity.refreshFavoritesSummary(
-                    fragment.getPreferenceScreen(), prefsOf(getContext()));
+                    fragment.getPreferenceScreen(), EspeakApp.prefs(getContext()));
         }
     }
 
 }
-
 
