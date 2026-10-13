@@ -363,6 +363,9 @@
   <string name="setting_read_money_summary_on">Expands currency symbols into full spoken words (e.g., $5.50 as 5 dollars 50 cents).</string>
   <string name="setting_read_money_summary_off">Reads currency amounts as standard numbers.</string>
   <string name="setting_hinglish">Read Hinglish (beta)</string>
+  <string name="setting_piper_supertonic_beta">Supertonic voices (beta)</string>
+  <string name="setting_piper_supertonic_beta_summary_on">Supertonic voices are listed under Download voices: 10 voices in each of 31 languages. They can sometimes sound rough or misread words.</string>
+  <string name="setting_piper_supertonic_beta_summary_off">Off. Turn on to try Supertonic voices: 10 voices in each of 31 languages, still in testing.</string>
   <string name="setting_hinglish_summary">Reads Hindi typed in English letters, like \"aap kaise ho\", with Hindi pronunciation.</string>
   <string name="setting_hinglish_summary_on">Reads Hindi typed in English letters with natural Hindi pronunciation.</string>
   <string name="setting_hinglish_summary_off">Reads English letters using standard English pronunciation.</string>

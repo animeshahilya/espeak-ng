@@ -58,6 +58,15 @@
             android:summary="@string/setting_piper_download_summary"
             android:dependency="piper_enabled"
             app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="piper_supertonic_beta"
+            android:title="@string/setting_piper_supertonic_beta"
+            android:summaryOn="@string/setting_piper_supertonic_beta_summary_on"
+            android:summaryOff="@string/setting_piper_supertonic_beta_summary_off"
+            android:defaultValue="false"
+            android:dependency="piper_enabled"
+            app:isPreferenceVisible="false"
+            app:iconSpaceReserved="false" />
         <Preference
             android:key="action_piper_snapdragon"
             android:title="@string/setting_piper_snapdragon"

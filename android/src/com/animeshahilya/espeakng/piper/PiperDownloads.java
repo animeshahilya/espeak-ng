@@ -95,10 +95,19 @@ public final class PiperDownloads {
     public static final String EXTRA_CATALOG_ASSET = "piper/extra_voices.json";
     /**
      * Supertonic 3 voices (build_supertonic_catalog.py): every style in every
-     * language, all on one shared model. Listed only where they run well
-     * (the Snapdragon build on a phone with a modern NPU, {@link #supertonicOffered}).
+     * language, all on one shared model. A beta: listed only where they run
+     * well (the Snapdragon build on a phone with a modern NPU,
+     * {@link #supertonicCapable}) and only once the user turns on
+     * {@link #PREF_SUPERTONIC_BETA}.
      */
     public static final String SUPERTONIC_CATALOG_ASSET = "piper/supertonic_voices.json";
+    /**
+     * Opt-in, off by default (user's call, 2026-10-13: it sometimes makes a
+     * jarring sound and misreads, fine as a beta, not for everyone). Off
+     * hides Supertonic from the download list; voices already downloaded
+     * keep working and can be deleted as usual.
+     */
+    public static final String PREF_SUPERTONIC_BETA = "piper_supertonic_beta";
     /** Release folders a Supertonic voice's companion files may come from. */
     static final String SUPERTONIC_RELEASE_PREFIX = "supertonic-v";
     /** Refetch the catalog after a week; a manual refresh is always possible. */
@@ -334,7 +343,7 @@ public final class PiperDownloads {
         } catch (IOException | JSONException e) {
             Log.w(TAG, "Extra voices unavailable", e);
         }
-        if (supertonicOffered()) {
+        if (supertonicOffered(context)) {
             try {
                 out.addAll(parseCatalog(readAsset(context, SUPERTONIC_CATALOG_ASSET), true));
             } catch (IOException | JSONException e) {
@@ -354,7 +363,14 @@ public final class PiperDownloads {
      * build on an 8-series Snapdragon from SM8450 on (its NPU; on a Pixel 8
      * CPU they ran 1.0-1.5x real time, so a screen reader would pause).
      */
-    public static boolean supertonicOffered() {
+    public static boolean supertonicOffered(Context context) {
+        return supertonicCapable() && com.animeshahilya.espeakng.EspeakApp.prefs(
+                com.animeshahilya.espeakng.EspeakApp.requireStorageContext(context))
+                .getBoolean(PREF_SUPERTONIC_BETA, false);
+    }
+
+    /** The phone can run Supertonic well (whether or not the beta is on). */
+    public static boolean supertonicCapable() {
         return com.animeshahilya.espeakng.BuildConfig.SNAPDRAGON
                 && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
                 && "QTI".equalsIgnoreCase(android.os.Build.SOC_MANUFACTURER)

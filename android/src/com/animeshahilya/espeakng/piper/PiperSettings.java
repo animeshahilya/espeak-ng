@@ -161,6 +161,11 @@ public final class PiperSettings {
                 return true;
             });
         }
+        final Preference supertonic = screen.findPreference(PiperDownloads.PREF_SUPERTONIC_BETA);
+        if (supertonic != null) {
+            // Beta, and only where it runs well (Snapdragon build, modern NPU).
+            supertonic.setVisible(PiperDownloads.supertonicCapable());
+        }
         final Preference snapdragon = screen.findPreference(KEY_SNAPDRAGON);
         if (snapdragon != null) {
             // The standard app on a Snapdragon phone: point to the faster build

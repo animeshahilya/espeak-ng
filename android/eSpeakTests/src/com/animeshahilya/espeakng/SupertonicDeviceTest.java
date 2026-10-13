@@ -163,8 +163,9 @@ public class SupertonicDeviceTest {
 
     @Test
     public void a_hindiDownloadsAndSpeaks() throws Exception {
-        Assume.assumeTrue("Supertonic is offered only on the Snapdragon build with a modern NPU",
-                PiperDownloads.supertonicOffered());
+        Assume.assumeTrue("Supertonic runs only on the Snapdragon build with a modern NPU",
+                PiperDownloads.supertonicCapable());
+        prefs().edit().putBoolean(PiperDownloads.PREF_SUPERTONIC_BETA, true).commit();
         normalRate();
         install(HINDI);
         prefs().edit().putBoolean(PiperVoiceStore.PREF_ENABLED, true).commit();
@@ -184,7 +185,8 @@ public class SupertonicDeviceTest {
 
     @Test
     public void b_secondVoiceInstallsFromTheSharedModel() throws Exception {
-        Assume.assumeTrue(PiperDownloads.supertonicOffered());
+        Assume.assumeTrue(PiperDownloads.supertonicCapable());
+        prefs().edit().putBoolean(PiperDownloads.PREF_SUPERTONIC_BETA, true).commit();
         normalRate();
         install(ENGLISH);
         prefs().edit().putBoolean(PiperVoiceStore.PREF_ENABLED, true).commit();

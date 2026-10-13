@@ -578,8 +578,12 @@ voices" does not, so voices can still be deleted to free space.
   phone: Snapdragon version" (`PiperSettings.offersSnapdragonBuild`), opening
   the latest release; same package and key, so it installs over and keeps
   voices.
-- **Supertonic 3** (2026-10-13, Snapdragon build only: `PiperDownloads.supertonicOffered`
-  = SNAPDRAGON && 8-series from SM8450). Supertone's flow-matching TTS
+- **Supertonic 3** (2026-10-13), a BETA: Snapdragon build on an 8-series from
+  SM8450 (`PiperDownloads.supertonicCapable`) and only with the opt-in switch
+  `piper_supertonic_beta` on (off by default; user, after testing the release
+  build on the S25: "sometimes a jarring sound, does not read well - fine as a
+  beta, not for stable users"). Off hides it from the download list;
+  downloaded voices keep working. Supertone's flow-matching TTS
   (OpenRAIL-M), 31 languages x 10 styles (F1-F5, M1-M5) = 310 voices, all
   listed (user's call; exempt from `kept_voices`). Like the Rasa speakers each
   is its own catalog entry (`assets/piper/supertonic_voices.json`, keys
