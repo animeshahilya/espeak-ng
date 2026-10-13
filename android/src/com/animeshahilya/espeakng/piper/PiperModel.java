@@ -790,24 +790,9 @@ public final class PiperModel implements Closeable {
         return group.npuProblem;
     }
 
-    private static volatile boolean sTelemetryOff;
-
-    /**
-     * The process's ONNX Runtime environment, with the runtime's own
-     * telemetry off: speech never touches the network (its startup
-     * provider is removed in AndroidManifest.xml for the same reason).
-     */
+    /** The process's ONNX Runtime environment. */
     private static OrtEnvironment env() {
-        final OrtEnvironment env = OrtEnvironment.getEnvironment();
-        if (!sTelemetryOff) {
-            try {
-                env.setTelemetry(false);
-            } catch (OrtException | RuntimeException ignored) {
-                // Builds without telemetry support: nothing to turn off.
-            }
-            sTelemetryOff = true;
-        }
-        return env;
+        return OrtEnvironment.getEnvironment();
     }
 
     /** model.onnx -> model.<ONNX Runtime version><suffix>: a runtime update re-optimizes. */

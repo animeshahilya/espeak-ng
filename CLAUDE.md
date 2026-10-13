@@ -813,13 +813,12 @@ voices" does not, so voices can still be deleted to free space.
   its language row says so, and choosing it again clears it. Deliberately not
   "reset on success": GC-timed crashes let several inferences succeed first.
 - **Network.** `INTERNET` exists only for the catalog, samples and voice
-  downloads - never on the speech path. Keep it that way. onnxruntime-android
-  (1.29, still in 1.30) merges in a `TelemetryInitializer` content provider
-  and `ACCESS_NETWORK_STATE`: the provider ran at every process start,
-  loaded the runtime (~7.5 MB) and set up Microsoft telemetry networking.
-  AndroidManifest.xml removes both (`tools:node="remove"`) and
-  `PiperModel.env()` calls `setTelemetry(false)`. Recheck the merged
-  manifest on every ORT bump.
+  downloads - never on the speech path. Keep it that way. Microsoft's
+  onnxruntime-android merged in a `TelemetryInitializer` content provider
+  and `ACCESS_NETWORK_STATE` (the provider ran at every process start and
+  set up telemetry networking); our own ORT build and Qualcomm's QNN plugin
+  merge in neither, so the manifest no longer removes them (2026-10-13).
+  Check the merged manifest on every ORT or QNN bump.
 - **APK size.** ONNX Runtime is this app's own build (2026-10-08,
   `libs/onnxruntime-voices-1.30.0.aar`, recipe and operator list in
   `tools/ort-voices/`): arm64 only, only the operators the voices use, no
@@ -833,7 +832,6 @@ voices" does not, so voices can still be deleted to free space.
   script) before shipping a new kind of model or a new runtime version.
   Pixel 8: same speed as Microsoft's build (SYSPIN fp16 decoder 2.7-3.2x
   for all; Priyamvada whole equal); a session takes ~80 ms longer to create.
-  The Snapdragon build still uses Microsoft's QNN package.
 - Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
 
 ### Mixed-language text (per-script languages)
