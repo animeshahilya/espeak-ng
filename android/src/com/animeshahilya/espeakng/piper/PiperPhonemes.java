@@ -552,6 +552,16 @@ public final class PiperPhonemes {
      */
     static List<Clause> textClauses(String text, java.util.function.UnaryOperator<String> spell,
                                     boolean shortChunks) {
+        return textClauses(text, spell, shortChunks ? SHORT_CHUNK : 0);
+    }
+
+    /**
+     * @param splitOver a sentence longer than this many letters becomes one
+     *        clause per word, so {@link #chunk} can cut it at its budgets
+     *        (0: never)
+     */
+    static List<Clause> textClauses(String text, java.util.function.UnaryOperator<String> spell,
+                                    int splitOver) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
@@ -569,7 +579,7 @@ public final class PiperPhonemes {
                 final String piece = text.substring(start, i);
                 if (!piece.trim().isEmpty()) {
                     final String said = spell != null ? spell.apply(piece.trim()) : piece.trim();
-                    if (shortChunks && said.length() > SHORT_CHUNK) {
+                    if (splitOver > 0 && said.length() > splitOver) {
                         final String[] words = said.split("\\s+");
                         for (int w = 0; w < words.length; w++) {
                             clauses.add(new Clause(w == words.length - 1, cpStart, cp, words[w] + " "));

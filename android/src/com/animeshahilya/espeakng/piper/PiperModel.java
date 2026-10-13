@@ -132,6 +132,8 @@ public final class PiperModel implements Closeable {
     public final String stamp;
     private final SessionGroup group;
     private boolean closed;
+    /** A Supertonic voice's style (each voice of the shared runtime has its own); null otherwise. */
+    volatile Supertonic.Style style;
 
     /**
      * Group of ONNX Runtime sessions and memory-mapped buffers.
@@ -155,9 +157,23 @@ public final class PiperModel implements Closeable {
         volatile String npuKind;
         volatile long[][] boundaryShapes;
         volatile double decodeSpeed;
+        /** Supertonic voices: their runtime instead of the VITS sessions (all of these null). */
+        final Supertonic supertonic;
+
+        SessionGroup(Supertonic supertonic) {
+            this.supertonic = supertonic;
+            this.session = null;
+            this.mapped = null;
+            this.decoder = null;
+            this.mappedDecoder = null;
+            this.hasSpeakerInput = false;
+            this.boundary = new String[0];
+            this.hasDurations = false;
+        }
 
         SessionGroup(OrtSession session, ByteBuffer mapped, OrtSession decoder,
                      ByteBuffer mappedDecoder) {
+            this.supertonic = null;
             this.session = session;
             this.mapped = mapped;
             this.decoder = decoder;
@@ -189,6 +205,9 @@ public final class PiperModel implements Closeable {
                 closeQuietly(session);
                 closeQuietly(decoder);
                 closeQuietly(npuDecoder);
+                if (supertonic != null) {
+                    supertonic.close();
+                }
             } finally {
                 lock.writeLock().unlock();
             }
@@ -244,15 +263,45 @@ public final class PiperModel implements Closeable {
      * over the same multi-speaker model).
      */
     PiperModel withConfig(PiperVoiceConfig newConfig) {
+        return withConfig(newConfig, null);
+    }
+
+    /** @param voiceFile the new voice's own model.onnx: a Supertonic voice's style is read beside it */
+    PiperModel withConfig(PiperVoiceConfig newConfig, File voiceFile) {
         if (newConfig == null) {
             return null;
+        }
+        Supertonic.Style newStyle = null;
+        if (group.supertonic != null) {
+            try {
+                newStyle = Supertonic.Style.load((voiceFile != null ? voiceFile : file).getParentFile());
+            } catch (IOException e) {
+                return null; // its style is missing: loaded on its own, which reports why
+            }
         }
         synchronized (this) {
             if (closed || !group.acquire()) {
                 return null;
             }
         }
-        return new PiperModel(newConfig, file, group);
+        final PiperModel m = new PiperModel(newConfig, file, group);
+        m.style = newStyle;
+        return m;
+    }
+
+    /** True for a Supertonic voice (text in, its own runtime). */
+    boolean isSupertonic() {
+        return group.supertonic != null;
+    }
+
+    /** Supertonic text ids for a chunk of this voice's language. */
+    long[] supertonicIds(String text) {
+        return group.supertonic.textIds(text, config.supertonicLang);
+    }
+
+    /** Why a Supertonic voice runs on the CPU, or null. */
+    String supertonicNpuProblem() {
+        return group.supertonic != null ? group.supertonic.npuProblem : null;
     }
 
     /** Whether this and {@code other} run on one shared session (see {@link #withConfig}). */
@@ -283,6 +332,23 @@ public final class PiperModel implements Closeable {
      */
     static PiperModel load(File onnx, PiperVoiceConfig config, int threads)
             throws OrtException {
+        if (config.isSupertonic()) {
+            final Supertonic.Style style;
+            try {
+                style = Supertonic.Style.load(onnx.getParentFile());
+            } catch (IOException e) {
+                throw new OrtException("No style for " + onnx.getParent() + ": " + e);
+            }
+            final PiperModel model = new PiperModel(config, onnx, new SessionGroup(Supertonic.load(onnx, threads)));
+            model.style = style;
+            try {
+                model.warmUp();
+            } catch (OrtException | RuntimeException e) {
+                model.close();
+                throw e;
+            }
+            return model;
+        }
         final File optimized = derivedFile(onnx, OPTIMIZED_SUFFIX);
         final File encoder = derivedFile(onnx, ENCODER_SUFFIX);
         final File decoderFile = derivedFile(onnx, DECODER_SUFFIX);
@@ -543,7 +609,7 @@ public final class PiperModel implements Closeable {
      * plugin then finds the NPU-side libraries (libQnnHtpV*Skel.so) beside
      * it; by type alone the DSP could not open them (Galaxy S25 Ultra).
      */
-    private static String npuBackend() {
+    static String npuBackend() {
         return new File(com.animeshahilya.espeakng.EspeakApp.getStorageContext()
                 .getApplicationInfo().nativeLibraryDir, "libQnnHtp.so").getAbsolutePath();
     }
@@ -554,7 +620,7 @@ public final class PiperModel implements Closeable {
     }
 
     /** Puts the session on the NPU through the QNN plugin with these options. */
-    private static void addNpu(OrtSession.SessionOptions options, Map<String, String> qnn) throws OrtException {
+    static void addNpu(OrtSession.SessionOptions options, Map<String, String> qnn) throws OrtException {
         options.addExecutionProvider(npuDevices(), qnn);
     }
 
@@ -804,7 +870,7 @@ public final class PiperModel implements Closeable {
      * File in the shared directory holding the pre-optimized model, if this
      * voice shares its model weights with others (e.g. AI4Bharat Rasa voices).
      */
-    private static File sharedDerivedFile(File onnx, String suffix) {
+    static File sharedDerivedFile(File onnx, String suffix) {
         final File dir = onnx.getParentFile();
         final String md5 = sourceMd5(dir);
         if (md5 == null) {
@@ -908,7 +974,7 @@ public final class PiperModel implements Closeable {
         return false;
     }
 
-    private static void closeQuietly(OrtSession s) {
+    static void closeQuietly(OrtSession s) {
         if (s != null) {
             try {
                 s.close();
@@ -940,7 +1006,7 @@ public final class PiperModel implements Closeable {
         }
     }
 
-    private static OrtSession.SessionOptions options(int threads) throws OrtException {
+    static OrtSession.SessionOptions options(int threads) throws OrtException {
         final OrtSession.SessionOptions options = new OrtSession.SessionOptions();
         options.setExecutionMode(OrtSession.SessionOptions.ExecutionMode.SEQUENTIAL);
         options.setIntraOpNumThreads(Math.max(1, threads));
@@ -953,6 +1019,10 @@ public final class PiperModel implements Closeable {
 
     /** A few phonemes through the model: first-run setup off the speech path, and a real test. */
     private void warmUp() throws OrtException {
+        if (group.supertonic != null) {
+            infer(supertonicIds("a"), config.lengthScale, 0, 1f, 1f, null);
+            return;
+        }
         final int[] pad = config.phonemeIdMap.get(PiperVoiceConfig.PAD);
         final int[] bos = config.phonemeIdMap.get(PiperVoiceConfig.BOS);
         final int[] eos = config.phonemeIdMap.get(PiperVoiceConfig.EOS);
@@ -1044,6 +1114,9 @@ public final class PiperModel implements Closeable {
      */
     Output infer(long[] ids, float lengthScale, int speakerId, float noise, float noiseW,
                  RunHandle handle) throws OrtException {
+        if (group.supertonic != null) {
+            return inferSupertonic(ids, lengthScale, handle);
+        }
         if (group.decoder != null) {
             final Encoded e = encode(ids, lengthScale, speakerId, noise, noiseW, handle);
             final float[] audio = e == null ? null : decode(e, 0, e.frames, handle);
@@ -1078,6 +1151,38 @@ public final class PiperModel implements Closeable {
                 for (OnnxTensor t : inputs.values()) {
                     t.close();
                 }
+                if (ownOptions != null) {
+                    ownOptions.close();
+                }
+            }
+        } finally {
+            group.lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * A Supertonic chunk: speed from the length scale, noise seeded by the
+     * text (the same chunk reads the same way each time).
+     */
+    private Output inferSupertonic(long[] ids, float lengthScale, RunHandle handle) throws OrtException {
+        group.lock.readLock().lock();
+        try {
+            final Supertonic.Style s = style;
+            if (closed || group.isClosed() || s == null || (handle != null && handle.isCancelled())) {
+                return null;
+            }
+            final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
+            try {
+                final float speed = config.lengthScale / Math.max(0.05f, lengthScale);
+                final float[] audio = group.supertonic.synthesize(ids, s, config.supertonicSteps, speed,
+                        Arrays.hashCode(ids), handle != null ? handle.options : ownOptions);
+                return audio == null ? null : new Output(audio, null);
+            } catch (OrtException e) {
+                if (handle != null && handle.isCancelled()) {
+                    return null;
+                }
+                throw e;
+            } finally {
                 if (ownOptions != null) {
                     ownOptions.close();
                 }

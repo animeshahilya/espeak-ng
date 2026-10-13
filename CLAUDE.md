@@ -578,6 +578,46 @@ voices" does not, so voices can still be deleted to free space.
   phone: Snapdragon version" (`PiperSettings.offersSnapdragonBuild`), opening
   the latest release; same package and key, so it installs over and keeps
   voices.
+- **Supertonic 3** (2026-10-13, Snapdragon build only: `PiperDownloads.supertonicOffered`
+  = SNAPDRAGON && 8-series from SM8450). Supertone's flow-matching TTS
+  (OpenRAIL-M), 31 languages x 10 styles (F1-F5, M1-M5) = 310 voices, all
+  listed (user's call; exempt from `kept_voices`). Like the Rasa speakers each
+  is its own catalog entry (`assets/piper/supertonic_voices.json`, keys
+  `<code>-supertonic_<female|male>_<n>-medium`) over ONE shared model.onnx
+  (the vector estimator); its per-voice `.onnx.json` (`phoneme_type`
+  "supertonic") names language, style, 8 steps and the companion files
+  (duration predictor, text encoder, vocoder, `unicode_indexer.json`,
+  `tts.json`, `style.json`) that `PiperDownloads.fetchSupertonicFiles` puts in
+  the shared store (MD5-named, kept by `collectSharedGarbage`) and links into
+  the voice folder. All from release `supertonic-v1` on
+  sherpa-onnx-respin-syspin (its `build_supertonic.py` / `_catalog.py`;
+  samples in samples-v1). Files are INT8-weight (381 -> 110 MB; log-mel
+  2.3-2.8 dB vs 10 dB between two random draws of the original). Runtime
+  `Supertonic` (shared by `PiperModel.SessionGroup`, style per voice):
+  duration predictor + text encoder on the CPU, unpadded; flow (8 steps) and
+  vocoder on the NPU in two size buckets (`Supertonic.BUCKETS`, 96/192 latent
+  frames, 3072 samples each at 44.1 kHz), padded with masks, each compiled
+  once into the shared store (`<md5>.<ort>.st-flow96.ctx.onnx` ...); the
+  phone pins `latent_length`/`text_length` at load
+  (`setSymbolicDimensionValue`) and ORT folds the shape arithmetic, so one
+  hosted file serves every bucket; `session.disable_quant_qdq` widens the
+  INT8 weights for the fp16 graph. NPU-readiness rewrites done on the PC
+  (both CPU-exact): Softplus -> log(1+exp) (QNN has none) and the 4-D
+  attention MatMuls -> 3-D (the 4-D form crashed the HTP: DSP restart,
+  error 1003). Text: `Supertonic.preprocess` ports Supertone's py/helper.py
+  exactly (`SupertonicTest` checks it against cases their code wrote);
+  numbers stay digits (Supertonic reads them, currency and units itself);
+  sentences over 60 letters (30 Korean/Japanese) become word clauses so
+  chunks fit the buckets (first chunk 60, later 160). Word timing is
+  estimated (no per-id durations); noise is seeded per chunk. Galaxy S25
+  Ultra (bench): 13x real time at 8 steps (CPU alone 4.3x; Pixel 8 CPU
+  1.0-1.5x, hence Snapdragon only), short TalkBack phrase ~0.4 s, ~460 MB
+  RSS; flow per step 54 ms (96) / 111 ms (192). The user listened: NPU and
+  CPU sound the same; fewer steps (4, 2) sound worse - keep 8. The slim ORT
+  needed opset-19 kernels and Sin/Cos/Log/PRelu/Tile/BatchNormalization/
+  LayerNormalization/MatMulNBits (`tools/ort-voices/voices_ops.config`).
+  Kokoro (Apache-2.0) is next but only ~2.3x on the S25 NPU after six QNN
+  fixes (see the user's memory notes); not added.
 - **NPU decoders** (Snapdragon build): `assets/piper/npu_decoders.json`
   (voice key -> `npu-v1/<model>-npu.onnx` on sherpa-onnx-respin-syspin, made
   by its `build_npu.py`): each voice's decoder fully INT8 (Conv, ConvTranspose,

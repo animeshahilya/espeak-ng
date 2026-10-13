@@ -31,6 +31,8 @@ import java.util.Map;
 public final class PiperVoiceConfig {
     static final String PHONEME_TYPE_ESPEAK = "espeak";
     static final String PHONEME_TYPE_TEXT = "text";
+    /** Supertone Supertonic 3: plain text through its own tokenizer ({@link Supertonic}). */
+    static final String PHONEME_TYPE_SUPERTONIC = "supertonic";
 
     /**
      * English language names from catalogs and configs, for languages the
@@ -148,6 +150,17 @@ public final class PiperVoiceConfig {
     public final boolean tashkeel;
     /** Today's IPA -> the spelling the voice was trained on (PiperPhonemes.trainedSpellings). */
     public final PiperPhonemes.Spelling[] trainedSpellings;
+    /** Supertonic: its language tag ("hi"), style ("F1") and flow steps; null/0 for other voices. */
+    public final String supertonicLang;
+    public final String supertonicStyle;
+    public final int supertonicSteps;
+    /**
+     * Supertonic: the files that go beside model.onnx, by name in the voice
+     * folder ("vocoder.onnx", "style.json"...), each {path, size, md5} on
+     * the release the catalog points at. Fetched into the shared store by
+     * PiperDownloads.fetchVoiceExtras.
+     */
+    public final Map<String, String[]> supertonicFiles;
 
     private PiperVoiceConfig(Builder b) {
         key = b.key;
@@ -182,6 +195,14 @@ public final class PiperVoiceConfig {
         tashkeel = TASHKEEL.contains(key);
         trainedSpellings = PiperPhonemes.trainedSpellings(usesEspeak() ? espeakVoice : null,
                 oldEspeak);
+        supertonicLang = b.supertonicLang;
+        supertonicStyle = b.supertonicStyle;
+        supertonicSteps = b.supertonicSteps;
+        supertonicFiles = Collections.unmodifiableMap(b.supertonicFiles);
+    }
+
+    public boolean isSupertonic() {
+        return PHONEME_TYPE_SUPERTONIC.equals(phonemeType);
     }
 
     /**
@@ -191,6 +212,13 @@ public final class PiperVoiceConfig {
      * are refused before the model is downloaded.
      */
     public boolean isSupported() {
+        if (isSupertonic()) {
+            return sampleRate > 0 && supertonicSteps > 0 && supertonicLang != null
+                    && Supertonic.LANGUAGES.contains(supertonicLang)
+                    && supertonicFiles.keySet().containsAll(Arrays.asList(Supertonic.DURATION_PREDICTOR,
+                            Supertonic.TEXT_ENCODER, Supertonic.VOCODER, Supertonic.INDEXER,
+                            Supertonic.TTS_JSON, Supertonic.STYLE));
+        }
         return (PHONEME_TYPE_ESPEAK.equals(phonemeType) || PHONEME_TYPE_TEXT.equals(phonemeType))
                 && sampleRate > 0
                 && phonemeIdMap.containsKey(PAD)
@@ -339,6 +367,24 @@ public final class PiperVoiceConfig {
             // Longest first, so a greedy scan prefers the longest match.
             Collections.sort(b.vowelClusters, (x, y) -> y.length - x.length);
         }
+        final JSONObject st = root.optJSONObject("supertonic");
+        if (st != null) {
+            b.supertonicLang = st.optString("lang", null);
+            b.supertonicStyle = st.optString("style", null);
+            b.supertonicSteps = st.optInt("steps", 8);
+            final JSONObject files = st.optJSONObject("files");
+            if (files != null) {
+                final Iterator<String> names = files.keys();
+                while (names.hasNext()) {
+                    final String name = names.next();
+                    final JSONObject f = files.optJSONObject(name);
+                    if (f != null && name.matches("[a-z_]+\\.(onnx|json)")) {
+                        b.supertonicFiles.put(name, new String[] {f.optString("path", ""),
+                                String.valueOf(f.optLong("size_bytes", 0)), f.optString("md5_digest", "")});
+                    }
+                }
+            }
+        }
         return new PiperVoiceConfig(b);
     }
 
@@ -363,6 +409,10 @@ public final class PiperVoiceConfig {
         int hopLength;
         final Map<String, int[]> phonemeIdMap = new HashMap<>();
         final List<String[]> vowelClusters = new ArrayList<>();
+        String supertonicLang;
+        String supertonicStyle;
+        int supertonicSteps;
+        final Map<String, String[]> supertonicFiles = new HashMap<>();
     }
 }
 

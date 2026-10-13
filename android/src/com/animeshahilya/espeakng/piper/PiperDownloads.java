@@ -93,6 +93,14 @@ public final class PiperDownloads {
      * always match; only this list may point somewhere other than REPO_BASE.
      */
     public static final String EXTRA_CATALOG_ASSET = "piper/extra_voices.json";
+    /**
+     * Supertonic 3 voices (build_supertonic_catalog.py): every style in every
+     * language, all on one shared model. Listed only where they run well
+     * (the Snapdragon build on a phone with a modern NPU, {@link #supertonicOffered}).
+     */
+    public static final String SUPERTONIC_CATALOG_ASSET = "piper/supertonic_voices.json";
+    /** Release folders a Supertonic voice's companion files may come from. */
+    static final String SUPERTONIC_RELEASE_PREFIX = "supertonic-v";
     /** Refetch the catalog after a week; a manual refresh is always possible. */
     public static final long CATALOG_MAX_AGE_MS = 7L * 24 * 60 * 60 * 1000;
 
@@ -303,12 +311,15 @@ public final class PiperDownloads {
         return out;
     }
 
-    /** Drops the voices a tested language did not keep. Pure for JVM tests. */
+    /**
+     * Drops the voices a tested language did not keep. Supertonic voices all
+     * stay (the user's choice: every style in every language). Pure for JVM tests.
+     */
     public static List<CatalogVoice> keptOnly(List<CatalogVoice> voices, Map<String, java.util.Set<String>> kept) {
         final List<CatalogVoice> out = new ArrayList<>(voices.size());
         for (CatalogVoice v : voices) {
             final java.util.Set<String> keys = kept.get(v.family);
-            if (keys == null || keys.contains(v.key)) {
+            if (keys == null || keys.contains(v.key) || isSupertonic(v)) {
                 out.add(v);
             }
         }
@@ -317,12 +328,37 @@ public final class PiperDownloads {
 
     /** The app's own list (assets): needs no network, so also for Compact lookups. */
     public static List<CatalogVoice> bundledExtras(Context context) {
+        final List<CatalogVoice> out = new ArrayList<>();
         try {
-            return parseCatalog(readAsset(context, EXTRA_CATALOG_ASSET), true);
+            out.addAll(parseCatalog(readAsset(context, EXTRA_CATALOG_ASSET), true));
         } catch (IOException | JSONException e) {
             Log.w(TAG, "Extra voices unavailable", e);
-            return new ArrayList<>();
         }
+        if (supertonicOffered()) {
+            try {
+                out.addAll(parseCatalog(readAsset(context, SUPERTONIC_CATALOG_ASSET), true));
+            } catch (IOException | JSONException e) {
+                Log.w(TAG, "Supertonic voices unavailable", e);
+            }
+        }
+        return out;
+    }
+
+    /** A Supertonic catalog entry (its key names it). */
+    static boolean isSupertonic(CatalogVoice v) {
+        return v.key != null && v.key.contains("-supertonic_");
+    }
+
+    /**
+     * Supertonic voices are offered only where they keep up: the Snapdragon
+     * build on an 8-series Snapdragon from SM8450 on (its NPU; on a Pixel 8
+     * CPU they ran 1.0-1.5x real time, so a screen reader would pause).
+     */
+    public static boolean supertonicOffered() {
+        return com.animeshahilya.espeakng.BuildConfig.SNAPDRAGON
+                && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+                && "QTI".equalsIgnoreCase(android.os.Build.SOC_MANUFACTURER)
+                && PiperSettings.hasModernNpu(android.os.Build.SOC_MODEL);
     }
 
     private static String readAsset(Context context, String name) throws IOException {
@@ -746,6 +782,16 @@ public final class PiperDownloads {
                 }
             }
         }
+        // Supertonic voices' companion files (vocoder, text encoder...) live in the store too.
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            if (v.config != null && v.config.isSupertonic()) {
+                for (String[] f : v.config.supertonicFiles.values()) {
+                    if (isMd5(f[2])) {
+                        referenced.add(f[2].toLowerCase(Locale.ROOT));
+                    }
+                }
+            }
+        }
         collectSharedGarbage(PiperVoiceStore.sharedDir(storageContext), referenced);
     }
 
@@ -1036,6 +1082,68 @@ public final class PiperDownloads {
     public static void fetchVoiceExtras(Context appContext, Context storageContext) {
         fetchTashkeel(storageContext);
         fetchNpuDecoders(appContext, storageContext);
+        fetchSupertonicFiles(appContext, storageContext);
+    }
+
+    /**
+     * Each installed Supertonic voice's companion files (duration predictor,
+     * text encoder, vocoder, tokenizer table, tts.json, its style), listed
+     * with their MD5s in its catalog-pinned config: fetched once into the
+     * shared store (any network, MD5-checked) and linked into the voice
+     * folder, so the second and every later Supertonic voice downloads only
+     * its ~290 KB style. A voice with a file missing does not load (eSpeak
+     * speaks); the service start retries.
+     */
+    public static void fetchSupertonicFiles(Context appContext, Context storageContext) {
+        final File sharedDir = PiperVoiceStore.sharedDir(storageContext);
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            if (v.config == null || !v.config.isSupertonic()) {
+                continue;
+            }
+            boolean added = false;
+            try {
+                for (Map.Entry<String, String[]> e : v.config.supertonicFiles.entrySet()) {
+                    final String path = e.getValue()[0];
+                    final long size = Long.parseLong(e.getValue()[1]);
+                    final String md5 = e.getValue()[2].toLowerCase(Locale.ROOT);
+                    final File target = new File(v.dir, e.getKey());
+                    if (target.isFile() && target.length() == size) {
+                        continue;
+                    }
+                    if (!isMd5(md5) || !isSafePath(path) || !path.startsWith(SUPERTONIC_RELEASE_PREFIX)) {
+                        throw new IOException("Bad Supertonic file entry " + e.getKey());
+                    }
+                    final String ext = e.getKey().substring(e.getKey().lastIndexOf('.'));
+                    final File shared = new File(sharedDir, md5 + ext);
+                    if (!shared.isFile() || shared.length() != size) {
+                        final byte[] data = fetch(RESPIN_SYSPIN_RELEASES + path, 64 * 1024 * 1024);
+                        if (!md5.equalsIgnoreCase(md5(data))) {
+                            throw new IOException("Supertonic file checksum mismatch: " + path);
+                        }
+                        //noinspection ResultOfMethodCallIgnored
+                        sharedDir.mkdirs();
+                        final File tmp = new File(sharedDir, md5 + ext + ".tmp");
+                        FileUtils.write(tmp, data);
+                        if (!tmp.renameTo(shared)) {
+                            //noinspection ResultOfMethodCallIgnored
+                            tmp.delete();
+                            throw new IOException("Cannot store " + shared);
+                        }
+                    }
+                    //noinspection ResultOfMethodCallIgnored
+                    target.delete();
+                    if (!linkOrCopy(shared, target)) {
+                        throw new IOException("Cannot link " + target);
+                    }
+                    added = true;
+                }
+            } catch (IOException | RuntimeException e) {
+                Log.w(TAG, "Supertonic files for " + v.key + " not fetched; tried again later", e);
+            }
+            if (added) {
+                broadcastChanged(appContext, v.key, null);
+            }
+        }
     }
 
     /**

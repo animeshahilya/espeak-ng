@@ -952,7 +952,7 @@ public class TtsService extends TextToSpeechService {
      * to eSpeak instead of being skipped ("ಸಮಯ 10:30" lost its time).
      */
     private static boolean needsDigitHelp(PiperVoiceStore.Installed natural) {
-        return natural != null && !natural.config.usesEspeak()
+        return natural != null && !natural.config.usesEspeak() && !natural.config.isSupertonic()
                 && PiperEngine.numberWords(natural.config.languageFamily) == null;
     }
 

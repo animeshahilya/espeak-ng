@@ -153,9 +153,10 @@ public final class PiperEngine {
     /** Renders the chunk after the one being delivered (see class comment). */
     /**
      * Repeated chunks (screen-reader UI words): 8 MB of 16-bit audio, chunks
-     * up to 3 s, kept from their first sighting (PiperPhraseCache).
+     * up to 3 s (at Supertonic's 44.1 kHz; longer at the others' 22-24 kHz),
+     * kept from their first sighting (PiperPhraseCache).
      */
-    private final PiperPhraseCache mCache = new PiperPhraseCache(8L * 1024 * 1024, 3 * 24000, 1, 1024);
+    private final PiperPhraseCache mCache = new PiperPhraseCache(8L * 1024 * 1024, 3 * 44100, 1, 1024);
     private long mHitNanos;
     private long mMissNanos;
     private long mHitCount;
@@ -378,7 +379,7 @@ public final class PiperEngine {
                 for (PiperModel existing : mLoaded.values()) {
                     if (existing != null && !existing.isClosed()
                             && existing.stamp.equals(PiperModel.stamp(onnx))) {
-                        final PiperModel cloned = existing.withConfig(config);
+                        final PiperModel cloned = existing.withConfig(config, onnx);
                         if (cloned != null) {
                             return cloned;
                         }
@@ -745,11 +746,17 @@ public final class PiperEngine {
             final List<PiperPhonemes.Clause> aligned =
                     PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), said);
             clauses = vowelled != null ? PiperPhonemes.remap(aligned, vowelled.toOriginal) : aligned;
+        } else if (config.isSupertonic()) {
+            // Supertonic reads numbers, currency and units itself; long
+            // sentences are cut at words so chunks fit its NPU size buckets.
+            clauses = PiperPhonemes.textClauses(text, null, Supertonic.firstChunk(config.supertonicLang));
         } else {
             clauses = PiperPhonemes.textClauses(text, numberWords(config.languageFamily), config.shortChunks);
         }
-        final List<PiperPhonemes.Chunk> chunks = PiperPhonemes.chunk(clauses,
-                PiperPhonemes.FIRST_CHUNK_PHONEMES,
+        final List<PiperPhonemes.Chunk> chunks = config.isSupertonic()
+                ? PiperPhonemes.chunk(clauses, Supertonic.firstChunk(config.supertonicLang),
+                        Supertonic.chunk(config.supertonicLang), false)
+                : PiperPhonemes.chunk(clauses, PiperPhonemes.FIRST_CHUNK_PHONEMES,
                 config.shortChunks ? PiperPhonemes.SHORT_CHUNK : PiperPhonemes.CHUNK_PHONEMES, config.finalStop);
 
         final float speed = shortInputSpeed(text, config, Math.max(0.1f, params.speed));
@@ -774,7 +781,10 @@ public final class PiperEngine {
         final List<Job> jobs = new ArrayList<>(chunks.size());
         for (PiperPhonemes.Chunk chunk : chunks) {
             final List<Integer> wordStarts = new ArrayList<>();
-            final long[] ids = PiperPhonemes.toIds(PiperPhonemes.tokenize(chunk.ipa, config),
+            // Supertonic: its own text ids; no per-id durations, so word
+            // timing is estimated over the chunk (PiperAudio.estimateWordFrames).
+            final long[] ids = model.isSupertonic() ? model.supertonicIds(chunk.ipa)
+                    : PiperPhonemes.toIds(PiperPhonemes.tokenize(chunk.ipa, config),
                     config, missing, wordStarts);
             if (ids.length > 3) { // more than BOS PAD EOS: something to say
                 final int lead = needsLeadIn(model) ? LEAD_IN : 0;
