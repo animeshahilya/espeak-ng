@@ -20,9 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.LongBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -91,6 +93,283 @@ final class Supertonic implements Closeable {
 
     private static boolean isCjk(String lang) {
         return "ko".equals(lang) || "ja".equals(lang);
+    }
+
+    /**
+     * Fastest speed asked of the model; libsonic does the rest
+     * (PiperEngine.maxModelSpeed). Flow matching squeezes speech far worse
+     * than VITS: Parakeet word errors on long sentences and a paragraph (PC,
+     * INT8 files, 2 styles x 2 draws): x1.0 0.9%, x1.25 2.2%, x1.5 11.0%.
+     * At the old cap of 1.8 (a 450 wpm screen reader) words were lost.
+     */
+    static final float MAX_SPEED = 1.25f;
+    /**
+     * The model's own pace is 154 wpm (same measure) where the app's normal
+     * rate is 175: without this Supertonic spoke 12% slower than the rate set.
+     */
+    static final float RATE_FACTOR = 175f / 154f;
+
+    // --- Chunks: where the text is cut into model runs ---
+
+    /** Words a '.' follows without ending the sentence (their helper's list, plus a few). */
+    private static final java.util.Set<String> ABBREVIATIONS = new java.util.HashSet<>(Arrays.asList(
+            "mr", "mrs", "ms", "dr", "prof", "sr", "jr", "st", "vs", "etc", "inc", "ltd", "co", "corp",
+            "ave", "blvd", "no", "rs", "fig", "vol", "approx", "dept", "govt", "mt"));
+    /** Closing marks that stay with the sentence they close. */
+    private static final String CLOSERS = "\"')]}»”’」』";
+
+    /**
+     * The text cut into model runs, as Supertone's helper reads it: whole
+     * sentences, several to a run up to the budget. Before, every '.' ended
+     * a sentence ("3.5", "Dr.", "1.9.7" and "U.S." each became two or three
+     * runs, each read as a sentence of its own) and a long sentence was cut
+     * at whatever word reached the budget, with a full stop added there.
+     *
+     * <p>A sentence past the budget is cut at its commas, semicolons and
+     * colons, at a word (with a comma, so the voice keeps a continuing tone)
+     * only where a clause is itself too long, into pieces of even length.
+     * The first run is cut short for quick first audio, at a clause if one
+     * ends in time. Budgets grow with the model speed: a faster voice says
+     * more letters in a bucket's frames, a slower one fewer (else a run
+     * outgrew the largest bucket and fell back to the CPU).
+     *
+     * @param modelSpeed the speed asked of the model (1 = its own)
+     */
+    static List<PiperPhonemes.Chunk> chunks(String text, String lang, float modelSpeed) {
+        final float grow = Math.max(0.5f, modelSpeed); // slower speech: fewer letters fit a bucket
+        final int first = Math.min(MAX_FIRST_CHUNK, Math.round(firstChunk(lang) * grow));
+        final int later = Math.min(MAX_CHUNK, Math.round(chunk(lang) * grow));
+        final List<PiperPhonemes.Chunk> out = new ArrayList<>();
+        if (text == null) {
+            return out;
+        }
+        final int[] cps = text.codePoints().toArray();
+        int curStart = -1;
+        int curEnd = -1;
+        for (int[] s : sentences(cps)) {
+            if (out.isEmpty() && curStart >= 0 && s[1] - curStart <= first) {
+                curEnd = s[1]; // short sentences share the first run too
+                continue;
+            }
+            if (out.isEmpty() && curStart < 0 && s[1] - s[0] <= first) {
+                curStart = s[0];
+                curEnd = s[1];
+                continue;
+            }
+            if (out.isEmpty() && curStart < 0) {
+                final int head = firstPiece(cps, s[0], s[1], first);
+                add(out, cps, s[0], head, head == s[1]);
+                if (head < s[1]) {
+                    final List<int[]> pieces = splitSentence(cps, skipSpaces(cps, head), s[1], later);
+                    for (int i = 0; i < pieces.size() - 1; i++) {
+                        add(out, cps, pieces.get(i)[0], pieces.get(i)[1], false);
+                    }
+                    curStart = pieces.get(pieces.size() - 1)[0];
+                    curEnd = s[1];
+                }
+                continue;
+            }
+            if (!out.isEmpty() && curStart >= 0 && s[1] - curStart <= later) {
+                curEnd = s[1];
+                continue;
+            }
+            if (curStart >= 0) {
+                add(out, cps, curStart, curEnd, true);
+            }
+            final List<int[]> pieces = splitSentence(cps, s[0], s[1], later);
+            for (int i = 0; i < pieces.size() - 1; i++) {
+                add(out, cps, pieces.get(i)[0], pieces.get(i)[1], false);
+            }
+            curStart = pieces.get(pieces.size() - 1)[0];
+            curEnd = s[1];
+        }
+        if (curStart >= 0) {
+            add(out, cps, curStart, curEnd, true);
+        }
+        return out;
+    }
+
+    /** Longest runs in letters: they must fit the largest bucket's text ids with the tags. */
+    static final int MAX_FIRST_CHUNK = 130;
+    static final int MAX_CHUNK = 270;
+
+    /** A chunk of [from, to); a piece that ends mid-sentence gets a comma (not preprocess's '.'). */
+    private static void add(List<PiperPhonemes.Chunk> out, int[] cps, int from, int to, boolean endsSentence) {
+        while (to > from && isSpace(cps[to - 1])) {
+            to--;
+        }
+        from = skipSpaces(cps, from);
+        if (to <= from) {
+            return;
+        }
+        String said = new String(cps, from, to - from);
+        if (!endsSentence && !isClauseMark(cps[to - 1]) && !isSentenceMark(cps[to - 1])) {
+            said += ",";
+        }
+        out.add(new PiperPhonemes.Chunk(from, to, said, endsSentence));
+    }
+
+    /** Sentence spans [start, end) in code points, each ending after its mark and closers. */
+    static List<int[]> sentences(int[] cps) {
+        final List<int[]> out = new ArrayList<>();
+        int start = 0;
+        for (int i = 0; i < cps.length; i++) {
+            final int c = cps[i];
+            boolean end = c == '\n' || c == '।' || c == '॥' || c == '。' || c == '！' || c == '？' || c == '؟';
+            if (!end && (c == '.' || c == '!' || c == '?' || c == '…')) {
+                final int next = i + 1 < cps.length ? cps[i + 1] : ' ';
+                end = (isSpace(next) || CLOSERS.indexOf(next) >= 0) && !(c == '.' && abbreviationBefore(cps, start, i));
+            }
+            if (end) {
+                int j = i + 1;
+                while (j < cps.length && CLOSERS.indexOf(cps[j]) >= 0) {
+                    j++;
+                }
+                addSpan(out, cps, start, j);
+                start = j;
+                i = j - 1;
+            }
+        }
+        addSpan(out, cps, start, cps.length);
+        return out;
+    }
+
+    private static void addSpan(List<int[]> out, int[] cps, int from, int to) {
+        from = skipSpaces(cps, from);
+        if (from < to) {
+            out.add(new int[] {from, to});
+        }
+    }
+
+    /** "Dr." "Mr." "U.S." "J." - a '.' at {@code dot} that does not end the sentence. */
+    private static boolean abbreviationBefore(int[] cps, int sentenceStart, int dot) {
+        int w = dot;
+        while (w > sentenceStart && (Character.isLetterOrDigit(cps[w - 1]) || cps[w - 1] == '.')) {
+            w--;
+        }
+        final String word = new String(cps, w, dot - w);
+        if (word.isEmpty()) {
+            return false;
+        }
+        if (ABBREVIATIONS.contains(word.toLowerCase(java.util.Locale.ROOT))) {
+            return true;
+        }
+        // One letter ("J.") or dotted initials ("U.S", "e.g"): letters only, each one long.
+        for (String part : word.split("\\.", -1)) {
+            if (part.codePointCount(0, part.length()) != 1 || !Character.isLetter(part.codePointAt(0))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Where the first run stops: whole clauses up to the budget, else the word nearest it. */
+    private static int firstPiece(int[] cps, int from, int to, int budget) {
+        if (to - from <= budget) {
+            return to;
+        }
+        int end = from;
+        for (int[] c : clauses(cps, from, to)) {
+            if (c[1] - from > budget) {
+                break;
+            }
+            end = c[1];
+        }
+        if (end > from) {
+            return end;
+        }
+        return wordCut(cps, from, from + budget, to);
+    }
+
+    /** A sentence as runs of at most {@code budget} letters: whole clauses, long clauses cut evenly at words. */
+    private static List<int[]> splitSentence(int[] cps, int from, int to, int budget) {
+        final List<int[]> out = new ArrayList<>();
+        if (to - from <= budget) {
+            out.add(new int[] {from, to});
+            return out;
+        }
+        int curStart = -1;
+        int curEnd = -1;
+        for (int[] c : clauses(cps, from, to)) {
+            if (c[1] - c[0] > budget) {
+                if (curStart >= 0) {
+                    out.add(new int[] {curStart, curEnd});
+                    curStart = -1;
+                }
+                final int parts = (c[1] - c[0] + budget - 1) / budget;
+                int at = c[0];
+                for (int p = 1; p < parts; p++) {
+                    final int cut = wordCut(cps, at, c[0] + (c[1] - c[0]) * p / parts, c[1]);
+                    out.add(new int[] {at, cut});
+                    at = skipSpaces(cps, cut);
+                }
+                out.add(new int[] {at, c[1]});
+            } else if (curStart >= 0 && c[1] - curStart > budget) {
+                out.add(new int[] {curStart, curEnd});
+                curStart = c[0];
+                curEnd = c[1];
+            } else {
+                if (curStart < 0) {
+                    curStart = c[0];
+                }
+                curEnd = c[1];
+            }
+        }
+        if (curStart >= 0) {
+            out.add(new int[] {curStart, curEnd});
+        }
+        return out;
+    }
+
+    /** Clause spans: cut after , ; : – — that a space follows. */
+    private static List<int[]> clauses(int[] cps, int from, int to) {
+        final List<int[]> out = new ArrayList<>();
+        int start = from;
+        for (int i = from; i < to; i++) {
+            if (isClauseMark(cps[i]) && i + 1 < to && isSpace(cps[i + 1])) {
+                out.add(new int[] {start, i + 1});
+                start = skipSpaces(cps, i + 1);
+            }
+        }
+        if (start < to) {
+            out.add(new int[] {start, to});
+        }
+        return out;
+    }
+
+    /** The word boundary (a space) nearest {@code target}, strictly inside (from, to); else {@code to}. */
+    private static int wordCut(int[] cps, int from, int target, int to) {
+        for (int d = 0; d < to - from; d++) {
+            final int before = target - d;
+            if (before > from && before < to && isSpace(cps[before])) {
+                return before;
+            }
+            final int after = target + d;
+            if (after > from && after < to && isSpace(cps[after])) {
+                return after;
+            }
+        }
+        return to;
+    }
+
+    private static int skipSpaces(int[] cps, int i) {
+        while (i < cps.length && isSpace(cps[i])) {
+            i++;
+        }
+        return i;
+    }
+
+    private static boolean isSpace(int c) {
+        return Character.isWhitespace(c) || Character.isSpaceChar(c);
+    }
+
+    private static boolean isClauseMark(int c) {
+        return c == ',' || c == ';' || c == ':' || c == '–' || c == '—' || c == '،' || c == '、' || c == '，';
+    }
+
+    private static boolean isSentenceMark(int c) {
+        return c == '.' || c == '!' || c == '?' || c == '…' || c == '।' || c == '॥' || c == '。' || c == '؟'
+                || c == '！' || c == '？' || CLOSERS.indexOf(c) >= 0;
     }
 
     // --- Text (a port of Supertone's py/helper.py UnicodeProcessor, pinned in build_supertonic.py) ---
@@ -165,7 +444,63 @@ final class Supertonic implements Closeable {
     }
 
     long[] textIds(String text, String lang) {
-        return textIds(preprocess(text, lang), indexer);
+        return textIds(known(preprocess(text, lang), indexer), indexer);
+    }
+
+    /** Stand-ins for letters the table lacks but the languages use (Hindi). */
+    private static final Map<Integer, String> REPAIRS = new HashMap<>();
+    static {
+        REPAIRS.put((int) 'ऋ', "रि");
+        REPAIRS.put((int) 'ॠ', "री");
+        REPAIRS.put((int) 'ऌ', "लृ");
+        REPAIRS.put((int) 'ॐ', "ओम्");
+        REPAIRS.put((int) '॥', "।");
+        REPAIRS.put((int) '٫', ".");
+        REPAIRS.put((int) '٬', ",");
+        for (int d = 0; d <= 9; d++) {
+            REPAIRS.put(0x0966 + d, String.valueOf(d)); // Devanagari digits
+        }
+    }
+
+    /**
+     * {@link #preprocess}ed text with only characters the model has an id
+     * for: a few stand-ins ({@link #REPAIRS}), anything else becomes a space.
+     * Their table maps a missing character to -1, which ONNX's Gather reads
+     * as its last row - some unrelated sound in the middle of the speech
+     * (Hindi ऋ, ॐ, ॥ and Devanagari digits, arrows, stars and check marks).
+     */
+    static String known(String processed, int[] indexer) {
+        StringBuilder out = null;
+        for (int i = 0; i < processed.length(); ) {
+            final int cp = processed.codePointAt(i);
+            final int n = Character.charCount(cp);
+            if (indexer[cp & 0xFFFF] >= 0 && cp <= 0xFFFF) {
+                if (out != null) {
+                    out.appendCodePoint(cp);
+                }
+            } else {
+                if (out == null) {
+                    out = new StringBuilder(processed.length()).append(processed, 0, i);
+                }
+                final String repair = REPAIRS.get(cp);
+                if (repair != null && isKnown(repair, indexer)) {
+                    out.append(repair);
+                } else if (out.length() > 0 && out.charAt(out.length() - 1) != ' ') {
+                    out.append(' ');
+                }
+            }
+            i += n;
+        }
+        return out == null ? processed : out.toString();
+    }
+
+    private static boolean isKnown(String s, int[] indexer) {
+        for (int i = 0; i < s.length(); i++) {
+            if (indexer[s.charAt(i)] < 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     static int[] readIndexer(String json) throws JSONException {

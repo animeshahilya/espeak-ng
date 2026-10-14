@@ -127,17 +127,131 @@ public class SupertonicTest {
         assertEquals(voices.size(), PiperDownloads.keptOnly(voices, kept).size());
     }
 
+    private static java.util.List<String> said(String text, float speed) {
+        final java.util.List<String> out = new java.util.ArrayList<>();
+        for (PiperPhonemes.Chunk c : Supertonic.chunks(text, "en", speed)) {
+            out.add(c.ipa);
+        }
+        return out;
+    }
+
     @Test
-    public void longSentencesSplitAtWordsForTheBuckets() {
-        final String text = "This sentence is clearly much longer than sixty letters, so it is cut into words.";
-        final java.util.List<PiperPhonemes.Clause> clauses = PiperPhonemes.textClauses(text, null, Supertonic.FIRST_CHUNK);
-        assertTrue(clauses.size() > 5);
-        final java.util.List<PiperPhonemes.Chunk> chunks = PiperPhonemes.chunk(clauses, Supertonic.FIRST_CHUNK,
-                Supertonic.CHUNK, false);
-        assertTrue(chunks.get(0).ipa.length() <= Supertonic.FIRST_CHUNK + 15);
+    public void dotsInsideASentenceDoNotEndIt() {
+        for (String s : new String[] {"The price rose by 3.5 percent on Monday.",
+                "Dr. Sharma met Mr. Gupta at the station.", "Version 1.9.7 fixes the keyboard layout.",
+                "The U.S. team won the final in New York.", "Call me at 10.30 tomorrow, not at 9."}) {
+            assertEquals(java.util.Collections.singletonList(s), said(s, 1f));
+        }
+    }
+
+    @Test
+    public void shortSentencesShareARun() {
+        final String text = "The museum opens at nine in the morning. Visitors can buy tickets at the door. "
+                + "Children enter free! Is it open on Sunday? Yes.";
+        assertEquals(java.util.Arrays.asList("The museum opens at nine in the morning.",
+                "Visitors can buy tickets at the door. Children enter free! Is it open on Sunday? Yes."),
+                said(text, 1f));
+    }
+
+    @Test
+    public void longSentencesSplitAtClausesFirst() {
+        final String text = "When the train finally pulled into the crowded station, the passengers gathered "
+                + "their bags, said goodbye to the friends they had made on the journey, and stepped out into "
+                + "the warm evening air, tired but happy, and walked slowly home through the quiet streets.";
+        final java.util.List<PiperPhonemes.Chunk> chunks = Supertonic.chunks(text, "en", 1f);
+        assertEquals("When the train finally pulled into the crowded station,", chunks.get(0).ipa);
+        assertFalse(chunks.get(0).endsSentence);
+        for (PiperPhonemes.Chunk c : chunks) {
+            assertTrue(c.ipa, c.ipa.length() <= Supertonic.CHUNK + 1);
+            assertTrue(c.ipa, c.ipa.endsWith(",") || c.ipa.endsWith("."));
+            // Spans point at the text the chunk says.
+            assertTrue(text.startsWith(c.ipa.substring(0, 10), c.start));
+        }
         assertTrue(chunks.get(chunks.size() - 1).endsSentence);
-        final java.util.List<PiperPhonemes.Clause> shortOnes = PiperPhonemes.textClauses("Short one. Two.", null,
-                Supertonic.FIRST_CHUNK);
-        assertEquals(2, shortOnes.size());
+        assertEquals(text.length(), chunks.get(chunks.size() - 1).end);
+    }
+
+    @Test
+    public void aClauseTooLongIsCutEvenlyAtWordsWithAComma() {
+        final String text = "Natural voices should start speaking quickly and keep going without gaps even when "
+                + "a screen reader reads a long paragraph like this one from the beginning to the very end "
+                + "of the page and then reads the next page in the same way without stopping at all.";
+        final java.util.List<String> s = said(text, 1f);
+        assertEquals("Natural voices should start speaking quickly and keep going,", s.get(0));
+        for (int i = 0; i < s.size() - 1; i++) {
+            assertTrue(s.get(i), s.get(i).endsWith(","));
+        }
+        // The rest in even pieces, not one full piece and a scrap.
+        final int a = s.get(1).length();
+        final int b = s.get(s.size() - 1).length();
+        assertTrue(a + " vs " + b, Math.abs(a - b) < 30);
+    }
+
+    @Test
+    public void fasterSpeechTakesLongerRuns() {
+        final String text = "If you turn on the battery saver the phone limits background activity and lowers "
+                + "the screen brightness.";
+        assertEquals(2, said(text, 1f).size());
+        assertEquals(1, said(text, 2f).size());
+    }
+
+    @Test
+    public void screenReaderPhrasesStayWhole() {
+        assertEquals(java.util.Collections.singletonList("Settings"), said("Settings", 1f));
+        assertEquals(java.util.Collections.singletonList("Wi-Fi, on"), said("  Wi-Fi, on ", 1f));
+        assertTrue(said("   ", 1f).isEmpty());
+    }
+
+    @Test
+    public void hindiSentencesEndAtDanda() {
+        final java.util.List<PiperPhonemes.Chunk> c = Supertonic.chunks("नमस्ते। आप कैसे हैं?", "hi", 1f);
+        assertEquals(1, c.size());
+        assertEquals("नमस्ते। आप कैसे हैं?", c.get(0).ipa);
+    }
+
+    @Test
+    public void charactersWithoutAnIdAreRepairedOrDropped() {
+        final int[] indexer = new int[0x10000];
+        Arrays.fill(indexer, -1);
+        for (char c : "<>/hi रिओम्।ष 5.".toCharArray()) {
+            indexer[c] = 1;
+        }
+        // ऋषि: the vowel ऋ has no id, रि stands in; ॥ -> ।; ५ -> 5; a star is dropped.
+        assertEquals("<hi>रिषि । 5 </hi>",
+                Supertonic.known("<hi>ऋषि ॥ ५ ★</hi>", fill(indexer, 'ि')));
+        final String plain = "<hi>रि</hi>";
+        assertSame(plain, Supertonic.known(plain, indexer));
+    }
+
+    private static int[] fill(int[] indexer, char c) {
+        indexer[c] = 1;
+        return indexer;
+    }
+
+    @Test
+    public void downloadSizeCountsOnlyWhatThePhoneLacks() throws Exception {
+        final String json = new String(java.nio.file.Files.readAllBytes(
+                java.nio.file.Paths.get("assets", "piper", "supertonic_voices.json")), StandardCharsets.UTF_8);
+        final java.util.List<PiperDownloads.CatalogVoice> all = PiperDownloads.parseCatalog(json, true);
+        final PiperDownloads.CatalogVoice v = all.get(0);
+        assertEquals(6, v.extraFiles.size());
+        final java.util.Map<String, Long> none = new java.util.HashMap<>();
+        final long first = v.downloadBytes(none);
+        // Every model and companion file: about 110 MB, not the 66 MB model alone.
+        assertTrue(first + " bytes", first > 105_000_000L && first < 115_000_000L);
+        // A second voice: the shared model and companions are there; its style and config are not.
+        final java.util.Map<String, Long> shared = new java.util.HashMap<>();
+        shared.put(v.modelMd5 + ".onnx", v.modelSize);
+        for (java.util.Map.Entry<String, String[]> e : v.extraFiles.entrySet()) {
+            if (!e.getKey().equals(Supertonic.STYLE)) {
+                final String name = e.getKey();
+                shared.put(e.getValue()[1] + name.substring(name.lastIndexOf('.')), Long.parseLong(e.getValue()[0]));
+            }
+        }
+        final long second = v.downloadBytes(shared);
+        assertTrue(second + " bytes", second < 400_000L);
+        // A partly written shared file does not count as there.
+        shared.put(v.modelMd5 + ".onnx", v.modelSize - 1);
+        assertTrue(v.downloadBytes(shared) > v.modelSize);
     }
 }

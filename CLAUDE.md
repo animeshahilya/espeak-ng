@@ -611,8 +611,23 @@ voices" does not, so voices can still be deleted to free space.
   error 1003). Text: `Supertonic.preprocess` ports Supertone's py/helper.py
   exactly (`SupertonicTest` checks it against cases their code wrote);
   numbers stay digits (Supertonic reads them, currency and units itself);
-  sentences over 60 letters (30 Korean/Japanese) become word clauses so
-  chunks fit the buckets (first chunk 60, later 160). Word timing is
+  characters its table lacks are repaired or dropped (`Supertonic.known`:
+  their table gives -1, which Gather reads as its last row - an unrelated
+  sound; Hindi ऋ -> रि, ॐ, ॥, Devanagari digits, arrows, stars).
+  Runs (`Supertonic.chunks`, 2026-10-14): whole sentences, several to a run
+  up to the budget, as Supertone's helper; a '.' ends a sentence only before
+  a space and not after an abbreviation or initial (before, "3.5", "Dr.",
+  "1.9.7", "U.S." were each cut into separately read runs - Parakeet 19.8%
+  vs 10.3% on such sentences); a long sentence is cut at , ; : first, at
+  a word only inside a too-long clause (evenly, ending in ',' so the voice
+  keeps a continuing tone instead of the '.' preprocess adds). Budgets
+  (first 60, later 160 letters; 30/80 Korean/Japanese) scale with the model
+  speed. Speed: Supertonic's own pace is 154 wpm (x `RATE_FACTOR` to reach
+  the set rate) and it garbles squeezed (Parakeet, long sentences: x1.0
+  0.9%, x1.25 2.2%, x1.5 11%, x1.8 32%), so the model stops at
+  `Supertonic.MAX_SPEED` 1.25 and libsonic does the rest (VITS keeps 1.8).
+  Harness: scratch/supertonic3-eval/harness (PC CPU, INT8 files, the app's
+  libsonic built for Windows). Word timing is
   estimated (no per-id durations); noise is seeded per chunk. Galaxy S25
   Ultra (bench): 13x real time at 8 steps (CPU alone 4.3x; Pixel 8 CPU
   1.0-1.5x, hence Snapdragon only), short TalkBack phrase ~0.4 s, ~460 MB
@@ -671,7 +686,13 @@ voices" does not, so voices can still be deleted to free space.
   `PiperSplit` finds the latent as conv_pre's input (INT8 Rasa lists its
   speaker "cond" Conv first; node order alone fed it the speaker vector).
   Downloaded-voices storage totals count shared inodes once
-  (`PiperVoiceStore.diskBytes`).
+  (`PiperVoiceStore.diskBytes`), plus the shared store's files derived
+  from a voice's model (Supertonic's NPU graphs, linked from no voice
+  folder). A downloaded voice shows its whole size and "shared with N
+  other voices"; a catalog row shows what downloading it would add now
+  (`CatalogVoice.downloadBytes`: model and Supertonic companions - listed
+  as `extra_files` in its catalog entry - only where the shared store
+  lacks them; a second Rasa or Supertonic voice is well under 1 MB).
   **SYSPIN/Rasa: one version since 2026-10-11** (user's call - the 2.9
   INT8 voices were well liked, the big Standard not needed). Each kept
   SYSPIN/Rasa voice is one catalog entry: the Standard key (`-medium`,

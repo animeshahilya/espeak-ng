@@ -69,8 +69,8 @@ import ai.onnxruntime.OrtSession;
 public final class PiperModel implements Closeable {
     private static final String OPTIMIZED_PREFIX = "model.";
     /** One whole model, for a voice that can't be split (".opt.ort" before the split: rebuilt). */
-    private static final String OPTIMIZED_SUFFIX = ".whole.ort";
-    private static final String ENCODER_SUFFIX = ".enc.ort";
+    static final String OPTIMIZED_SUFFIX = ".whole.ort";
+    static final String ENCODER_SUFFIX = ".enc.ort";
     private static final String DECODER_SUFFIX = ".dec.ort";
     /**
      * Latent frames of context decoded on each side of a piece and cropped:

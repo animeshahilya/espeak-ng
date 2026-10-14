@@ -737,6 +737,11 @@
   <string name="piper_manage_title">Downloaded voices</string>
   <string name="piper_manage_empty">No natural voices downloaded yet.</string>
   <string name="piper_manage_row">%1$s, %2$s, %3$s</string>
+  <!-- A voice's size when other downloaded voices use the same model file (it is stored once) -->
+  <plurals name="piper_size_shared">
+    <item quantity="one">%1$s, shared with 1 other voice</item>
+    <item quantity="other">%1$s, shared with %2$d other voices</item>
+  </plurals>
   <string name="piper_action_test">Test voice</string>
   <string name="piper_action_delete">Delete</string>
   <string name="piper_speed_shared">Same as other natural voices</string>

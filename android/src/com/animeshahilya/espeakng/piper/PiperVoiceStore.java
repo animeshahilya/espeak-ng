@@ -103,16 +103,47 @@ public final class PiperVoiceStore {
             return new File(dir, MODEL_FILE);
         }
 
-        /** Space on the phone: model, config and PiperModel's optimized copy. */
+        /**
+         * Space the voice needs on the phone: its folder (model, config,
+         * optimized copy, companion files - most of them links into the shared
+         * store) and the files derived from its model there (Supertonic's
+         * compiled NPU graphs, ~180 MB each, linked from no voice folder and
+         * so never counted before). A file linked twice counts once. Voices
+         * sharing a model each show the whole: see {@link #sharedWith}.
+         */
         public long sizeBytes() {
             long bytes = 0;
-            final File[] files = dir.listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    bytes += f.length();
-                }
+            final java.util.Set<String> seen = new java.util.HashSet<>();
+            for (File f : files()) {
+                bytes += countOnce(f, seen);
             }
             return bytes;
+        }
+
+        /** The folder's files and the shared store's files derived from this voice's model. */
+        List<File> files() {
+            final List<File> out = new ArrayList<>();
+            final File[] own = dir.listFiles();
+            if (own != null) {
+                for (File f : own) {
+                    if (f.isFile()) {
+                        out.add(f);
+                    }
+                }
+            }
+            final String md5 = PiperModel.sourceMd5(dir);
+            final File parent = dir.getParentFile();
+            final File[] shared = md5 == null || parent == null ? null
+                    : new File(parent.getParentFile(), SHARED_DIR).listFiles();
+            if (shared != null) {
+                final String prefix = md5.toLowerCase(Locale.ROOT) + ".";
+                for (File f : shared) {
+                    if (f.isFile() && f.getName().startsWith(prefix)) {
+                        out.add(f);
+                    }
+                }
+            }
+            return out;
         }
 
         /** Language key of the voice, comparable with {@link #languageKey(Locale)}. */
@@ -123,33 +154,44 @@ public final class PiperVoiceStore {
 
     /**
      * Disk actually used by all installed voices, counting linked shared
-     * models once (20 Rasa voices share one inode). Falls back to the plain
-     * sum where inode data is unavailable.
+     * files once (20 Rasa voices share one inode) and the shared store's
+     * derived files (Supertonic's NPU graphs). Falls back to plain lengths
+     * where inode data is unavailable.
      */
     public static long diskBytes(Context storageContext) {
         long bytes = 0;
         final java.util.Set<String> seen = new java.util.HashSet<>();
         for (Installed v : list(storageContext)) {
-            final File[] files = v.dir.listFiles();
-            if (files == null) {
-                continue;
-            }
-            for (File f : files) {
-                if (!f.isFile()) {
-                    continue;
-                }
-                try {
-                    final android.system.StructStat st =
-                            android.system.Os.stat(f.getAbsolutePath());
-                    if (seen.add(st.st_dev + ":" + st.st_ino)) {
-                        bytes += st.st_size;
-                    }
-                } catch (Exception e) {
-                    bytes += f.length();
-                }
+            for (File f : v.files()) {
+                bytes += countOnce(f, seen);
             }
         }
         return bytes;
+    }
+
+    /** Other installed voices on the same model file (Rasa speakers, Supertonic styles). */
+    public static int sharedWith(Context storageContext, Installed voice) {
+        final String md5 = PiperModel.sourceMd5(voice.dir);
+        if (md5 == null) {
+            return 0;
+        }
+        int n = 0;
+        for (Installed v : list(storageContext)) {
+            if (v != voice && !v.key.equals(voice.key) && md5.equalsIgnoreCase(PiperModel.sourceMd5(v.dir))) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /** {@code f}'s length unless a link to the same file was counted already. */
+    private static long countOnce(File f, java.util.Set<String> seen) {
+        try {
+            final android.system.StructStat st = android.system.Os.stat(f.getAbsolutePath());
+            return seen.add(st.st_dev + ":" + st.st_ino) ? st.st_size : 0;
+        } catch (Exception | LinkageError e) { // JVM tests have no android.system
+            return seen.add(f.getAbsolutePath()) ? f.length() : 0;
+        }
     }
 
     private static final Object LOCK = new Object();

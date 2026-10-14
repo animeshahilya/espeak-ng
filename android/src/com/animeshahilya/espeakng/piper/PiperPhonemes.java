@@ -573,7 +573,10 @@ public final class PiperPhonemes {
             final int c = text.codePointAt(i);
             i += Character.charCount(c);
             cp++;
-            final boolean sentenceEnd = c == '.' || c == '!' || c == '?' || c == '\n'
+            // '.' '!' '?' end a sentence only before a space: "3.5" and "10.30" stay one
+            // number, not "3." and "5" spelled out as two.
+            final boolean spaceNext = i >= text.length() || Character.isWhitespace(text.codePointAt(i));
+            final boolean sentenceEnd = ((c == '.' || c == '!' || c == '?') && spaceNext) || c == '\n'
                     || c == '।' || c == '。' || c == '॥' || c == '؟';
             if (sentenceEnd || i >= text.length()) {
                 final String piece = text.substring(start, i);

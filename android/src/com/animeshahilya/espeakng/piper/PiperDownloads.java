@@ -42,6 +42,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -136,6 +137,18 @@ public final class PiperDownloads {
                 || key.equals(VoiceSettings.PREF_SLEEP_MUTE_UNTIL));
     }
 
+    /** The shared store's files and their lengths, for {@link CatalogVoice#downloadBytes}. */
+    public static Map<String, Long> sharedFiles(Context storageContext) {
+        final Map<String, Long> out = new HashMap<>();
+        final File[] files = PiperVoiceStore.sharedDir(storageContext).listFiles();
+        if (files != null) {
+            for (File f : files) {
+                out.put(f.getName(), f.length());
+            }
+        }
+        return out;
+    }
+
     /** One entry of voices.json. */
     public static final class CatalogVoice {
         public String key;
@@ -159,6 +172,54 @@ public final class PiperDownloads {
         /** Community voices only: who made it and its license, shown before download. */
         public String source;
         public String license;
+        /**
+         * Files fetched beside model and config (Supertonic's companions), name
+         * -> {size, md5}: part of the download where the phone lacks them.
+         */
+        public final Map<String, String[]> extraFiles = new java.util.LinkedHashMap<>();
+
+        /**
+         * What downloading this voice adds to the phone: its config, plus the
+         * model and companion files the shared store does not already hold.
+         * A second Rasa or Supertonic voice downloads almost nothing; its row
+         * used to say the whole model (and a first Supertonic voice only the
+         * model, 66 of its 110 MB).
+         */
+        public long downloadBytes(Map<String, Long> shared) {
+            long bytes = configSize;
+            if (!isShared(shared, modelMd5, ".onnx", modelSize) && !hasOptimized(shared, modelMd5)) {
+                bytes += modelSize;
+            }
+            for (Map.Entry<String, String[]> e : extraFiles.entrySet()) {
+                final long size = Long.parseLong(e.getValue()[0]);
+                final String name = e.getKey();
+                final int dot = name.lastIndexOf('.');
+                if (!isShared(shared, e.getValue()[1], dot >= 0 ? name.substring(dot) : "", size)) {
+                    bytes += size;
+                }
+            }
+            return bytes;
+        }
+
+        private static boolean isShared(Map<String, Long> shared, String md5, String ext, long size) {
+            final Long length = md5 == null ? null : shared.get(md5.toLowerCase(Locale.ROOT) + ext);
+            return length != null && length == size;
+        }
+
+        /** An optimized copy of the model, from this runtime or an older one (adopted on load). */
+        private static boolean hasOptimized(Map<String, Long> shared, String md5) {
+            if (md5 == null) {
+                return false;
+            }
+            final String prefix = md5.toLowerCase(Locale.ROOT) + ".";
+            for (String name : shared.keySet()) {
+                if (name.startsWith(prefix) && (name.endsWith(PiperModel.ENCODER_SUFFIX)
+                        || name.endsWith(PiperModel.OPTIMIZED_SUFFIX))) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public String displayName() {
             return PiperVoiceConfig.titleCase(name);
@@ -243,6 +304,18 @@ public final class PiperDownloads {
                     c.configPath = path;
                     c.configSize = f.optLong("size_bytes", 0);
                     c.configMd5 = f.optString("md5_digest", null);
+                }
+            }
+            final JSONObject extra = v.optJSONObject("extra_files");
+            if (extra != null) {
+                final Iterator<String> names = extra.keys();
+                while (names.hasNext()) {
+                    final String name = names.next();
+                    final JSONObject f = extra.optJSONObject(name);
+                    if (f != null && isMd5(f.optString("md5_digest", null))) {
+                        c.extraFiles.put(name, new String[] {String.valueOf(Math.max(0, f.optLong("size_bytes", 0))),
+                                f.optString("md5_digest")});
+                    }
                 }
             }
             if (c.modelPath == null || c.configPath == null || c.family.isEmpty()

@@ -718,11 +718,37 @@ public final class PiperSettings {
         }
     }
 
+    /** "110 MB" or "110 MB, shared with 9 other voices" for a downloaded voice. */
+    private static String sizeText(Context context, PiperVoiceStore.Installed v) {
+        final String size = Formatter.formatShortFileSize(context, v.sizeBytes());
+        final int others = PiperVoiceStore.sharedWith(storage(context), v);
+        return others == 0 ? size
+                : context.getResources().getQuantityString(R.plurals.piper_size_shared, others, size, others);
+    }
+
+    private static Map<String, Long> sSharedFiles;
+    private static long sSharedFilesAt;
+
+    /**
+     * What downloading {@code v} would take now ({@link PiperDownloads.CatalogVoice#downloadBytes}):
+     * the shared store is listed once for a whole list of rows, not per row.
+     */
+    private static long downloadBytes(Context context, PiperDownloads.CatalogVoice v) {
+        final long now = android.os.SystemClock.elapsedRealtime();
+        if (sSharedFiles == null || now - sSharedFilesAt > 2000) {
+            sSharedFiles = PiperDownloads.sharedFiles(storage(context));
+            sSharedFilesAt = now;
+        }
+        return v.downloadBytes(sSharedFiles);
+    }
+
     /** "India, Standard, 63 MB, 2 speakers, downloaded" for a catalog voice; no country under its heading. */
     private static String voiceSummary(Context context, PiperDownloads.CatalogVoice v, boolean country) {
         final Context storage = storage(context);
+        final PiperVoiceStore.Installed installed = PiperVoiceStore.find(storage, v.key);
         String s = context.getString(R.string.piper_catalog_voice_row, catalogQualityLabel(context, v),
-                Formatter.formatShortFileSize(context, v.modelSize));
+                Formatter.formatShortFileSize(context, installed != null ? installed.sizeBytes()
+                        : downloadBytes(context, v)));
         if (country) {
             s = regionName(v) + ", " + s;
         }
@@ -730,7 +756,7 @@ public final class PiperSettings {
             s += ", " + context.getResources().getQuantityString(
                     R.plurals.piper_speakers, v.numSpeakers, v.numSpeakers);
         }
-        if (PiperVoiceStore.find(storage, v.key) != null) {
+        if (installed != null) {
             return context.getString(R.string.piper_catalog_voice_installed, s);
         }
         final String progress = progressText(context, v.key);
@@ -771,7 +797,7 @@ public final class PiperSettings {
                 return;
             }
             s.addPreference(row(context, null, context.getString(R.string.piper_download_row,
-                    Formatter.formatShortFileSize(context, v.modelSize)),
+                    Formatter.formatShortFileSize(context, downloadBytes(context, v))),
                     context.getString(R.string.piper_download_row_summary),
                     () -> startDownload(context, v, () -> onShown(s))));
         }, s -> {
@@ -791,7 +817,7 @@ public final class PiperSettings {
     /** Language, country, quality and size; who made a community voice and its license. */
     private static String aboutText(Context context, PiperDownloads.CatalogVoice v) {
         String text = context.getString(R.string.piper_voice_about, catalogQualityLabel(context, v),
-                Formatter.formatShortFileSize(context, v.modelSize));
+                Formatter.formatShortFileSize(context, downloadBytes(context, v)));
         if (v.numSpeakers > 1) {
             text += " " + context.getResources().getQuantityString(
                     R.plurals.piper_speakers_sentence, v.numSpeakers, v.numSpeakers);
@@ -826,7 +852,7 @@ public final class PiperSettings {
             for (PiperVoiceStore.Installed v : installed) {
                 s.addPreference(row(context, v.key, voiceLabel(context, v.config),
                         context.getString(R.string.piper_manage_row, languageName(v.config.languageFamily),
-                                Formatter.formatShortFileSize(context, v.sizeBytes()),
+                                sizeText(context, v),
                                 speaksText(context, prefs, v)),
                         () -> openInstalled(f, prefs, v.key)));
             }
@@ -864,7 +890,7 @@ public final class PiperSettings {
         final String language = languageName(voice.config.languageFamily);
         s.addPreference(row(context, null, voiceLabel(context, voice.config),
                 context.getString(R.string.piper_manage_row, language,
-                        Formatter.formatShortFileSize(context, voice.sizeBytes()),
+                        sizeText(context, voice),
                         speaksText(context, prefs, voice)), null));
         s.addPreference(row(context, null, context.getString(R.string.piper_action_test),
                 context.getString(R.string.piper_action_test_summary), () -> testVoice(context, voice, true)));

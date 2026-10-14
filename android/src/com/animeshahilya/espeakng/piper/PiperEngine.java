@@ -69,6 +69,11 @@ public final class PiperEngine {
     public static final float MAX_MODEL_SPEED = 1.8f;
     public static final float MIN_MODEL_SPEED = 0.5f;
 
+    /** {@link #MAX_MODEL_SPEED}, or Supertonic's own limit ({@link Supertonic#MAX_SPEED}). */
+    static float maxModelSpeed(PiperVoiceConfig config) {
+        return config.isSupertonic() ? Supertonic.MAX_SPEED : MAX_MODEL_SPEED;
+    }
+
     /** This fork's eSpeak NG as Piper's phonemizer (piperPhonemizer.c records). */
     public interface Phonemizer {
         String phonemize(String espeakVoice, String text);
@@ -747,20 +752,19 @@ public final class PiperEngine {
                     PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), said);
             clauses = vowelled != null ? PiperPhonemes.remap(aligned, vowelled.toOriginal) : aligned;
         } else if (config.isSupertonic()) {
-            // Supertonic reads numbers, currency and units itself; long
-            // sentences are cut at words so chunks fit its NPU size buckets.
-            clauses = PiperPhonemes.textClauses(text, null, Supertonic.firstChunk(config.supertonicLang));
+            clauses = null; // Supertonic.chunks below
         } else {
             clauses = PiperPhonemes.textClauses(text, numberWords(config.languageFamily), config.shortChunks);
         }
+        final float speed = shortInputSpeed(text, config, Math.max(0.1f, params.speed))
+                * (config.isSupertonic() ? Supertonic.RATE_FACTOR : 1f);
+        final float modelSpeed = Math.max(MIN_MODEL_SPEED, Math.min(maxModelSpeed(config), speed));
+        // Supertonic reads numbers, currency and units itself, from whole sentences.
         final List<PiperPhonemes.Chunk> chunks = config.isSupertonic()
-                ? PiperPhonemes.chunk(clauses, Supertonic.firstChunk(config.supertonicLang),
-                        Supertonic.chunk(config.supertonicLang), false)
+                ? Supertonic.chunks(text, config.supertonicLang, modelSpeed)
                 : PiperPhonemes.chunk(clauses, PiperPhonemes.FIRST_CHUNK_PHONEMES,
                 config.shortChunks ? PiperPhonemes.SHORT_CHUNK : PiperPhonemes.CHUNK_PHONEMES, config.finalStop);
 
-        final float speed = shortInputSpeed(text, config, Math.max(0.1f, params.speed));
-        final float modelSpeed = Math.max(MIN_MODEL_SPEED, Math.min(MAX_MODEL_SPEED, speed));
         final float residualSpeed = speed / modelSpeed;
         final float pitch = params.pitch;
         final boolean stretch = stretcher != null

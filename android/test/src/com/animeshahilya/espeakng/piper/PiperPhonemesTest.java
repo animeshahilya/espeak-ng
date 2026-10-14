@@ -360,6 +360,14 @@ public class PiperPhonemesTest {
     }
 
     @Test
+    public void textClausesKeepDecimalsAndTimesWhole() {
+        final List<PiperPhonemes.Clause> c = PiperPhonemes.textClauses("It is 3.5 km at 10.30. Next!");
+        assertEquals(2, c.size());
+        assertEquals("It is 3.5 km at 10.30. ", c.get(0).ipa);
+        assertEquals("Next! ", c.get(1).ipa);
+    }
+
+    @Test
     public void textClausesSpellEachSentence() {
         final List<PiperPhonemes.Clause> c = PiperPhonemes.textClauses("A 5. B", t -> t.replace("5", "five"));
         assertEquals("A five. ", c.get(0).ipa);
