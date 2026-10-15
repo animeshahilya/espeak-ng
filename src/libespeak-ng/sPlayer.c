@@ -1,6 +1,7 @@
 #include <espeak-ng/espeak_ng.h>
 #include <espeak-ng/speak_lib.h>
 #include "sPlayer.h"
+#include "wavegen.h"
 
 extern unsigned char *out_ptr;
 extern unsigned char *out_end;
@@ -20,9 +21,15 @@ static bool needsMixWaveFile(WGEN_DATA *wdata) {
 // @param maxNumSamples the maximum number of samples that can be mixed into the sample buffer.
 // @param sampleBuf the buffer of existing samples.
 static void mixWaveFile(WGEN_DATA *wdata, unsigned int maxNumSamples, sample* sampleBuf) {
+	if (wdata == NULL || sampleBuf == NULL || maxNumSamples == 0)
+		return;
+	if (!needsMixWaveFile(wdata) || wdata->mix_wavefile == NULL)
+		return;
 	unsigned int i=0;
 	for(;wdata->mix_wavefile_ix<wdata->n_mix_wavefile;++wdata->mix_wavefile_ix) {
 		if(i>=maxNumSamples) break;
+		if ((wdata->mix_wavefile_ix+wdata->mix_wavefile_offset) >= wdata->mix_wavefile_max)
+			break;
 		int val;
 		if(wdata->mix_wave_scale==0) {
 			val=wdata->mix_wavefile[wdata->mix_wavefile_ix+wdata->mix_wavefile_offset];
@@ -45,6 +52,8 @@ static void mixWaveFile(WGEN_DATA *wdata, unsigned int maxNumSamples, sample* sa
 static bool isKlattFrameFollowing(void) {
 	// eSpeak implements its command queue with a circular buffer.
 	// Thus to walk it, we start from the head, walking to the tail, which may wrap around to the beginning of the buffer as it is circular.
+	if (WcmdqUsed() <= 0)
+		return false;
 	for(int i=(wcmdq_head+1)%N_WCMDQ;i!=wcmdq_tail;i=(i+1)%N_WCMDQ) {
 		int cmd=wcmdq[i][0];
 		if(cmd==WCMD_PAUSE||cmd==WCMD_WAVE) {

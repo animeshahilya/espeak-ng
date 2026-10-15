@@ -270,12 +270,16 @@ tasks.register('checkData') {
 // costs roughly 30MB versus the ~3MB a previous English/Indic/Dravidian-only
 // bundle used, traded for every language working offline immediately with
 // no "download more languages" step.
+//
+// Generated res/ files live under build/generated/ and reach aapt through
+// the sourceSets roots above - never written into the source tree, so builds
+// leave `git status` clean and cannot accidentally commit a stale 0.5 MB zip.
 tasks.register('createDataArchive', Zip) {
     dependsOn tasks.checkData
     preserveFileTimestamps = false
     reproducibleFileOrder = true
     archiveFileName = "espeakdata.zip"
-    destinationDirectory = file("res/raw")
+    destinationDirectory.set(layout.buildDirectory.dir("generated/espeak-res/raw"))
 
     from("build/generated/espeak-ng-data/") {
         into "espeak-ng-data"
@@ -340,13 +344,18 @@ def packedAssets = tasks.register('createPackedAssets', PackedAssets) {
 androidComponents {
     onVariants(selector().all()) { variant ->
         variant.sources.assets?.addGeneratedSourceDirectory(packedAssets) { it.outputDir }
+        // Build-generated raw resources (createDataArchive, createDataVersion):
+        // static roots (they only ever hold generated files) with ordering
+        // from the explicit edges below.
+        variant.sources.res?.addStaticSourceDirectory("build/generated/espeak-res")
+        variant.sources.res?.addStaticSourceDirectory("build/generated/espeak-version")
     }
 }
 
 tasks.register('createDataHash', Checksum) {
     dependsOn tasks.createDataArchive
     checksumAlgorithm.set(Checksum.Algorithm.SHA256)
-    inputFiles.setFrom(file("./res/raw/espeakdata.zip"))
+    inputFiles.setFrom(layout.buildDirectory.file("generated/espeak-res/raw/espeakdata.zip"))
     outputDirectory.set(layout.buildDirectory.dir('intermediates/datahash'))
 }
 
@@ -354,54 +363,34 @@ tasks.register('createDataVersion', Copy) {
     dependsOn tasks.createDataHash
     from layout.buildDirectory.file('intermediates/datahash/espeakdata.zip.sha256')
     rename { return 'espeakdata_version' }
-    into file("./res/raw")
+    into layout.buildDirectory.dir("generated/espeak-version/raw")
 }
-
-tasks.whenTaskAdded { task ->
-    if (task.name == 'assembleDebug' || task.name == 'assembleRelease') {
-        task.dependsOn createDataVersion
-    }
-}
-
-createDataVersion.mustRunAfter 'externalNativeBuildDebug'
-createDataVersion.mustRunAfter 'externalNativeBuildRelease'
 
 project.afterEvaluate {
-    def isRelease = gradle.startParameter.taskNames.any { it.toLowerCase().contains("release") }
-    def nativeBuildTask = (isRelease && tasks.findByName('externalNativeBuildRelease') != null)
-            ? 'externalNativeBuildRelease'
-            : 'externalNativeBuildDebug'
-    tasks.checkData.dependsOn(nativeBuildTask)
-    tasks.createDataArchive.dependsOn(nativeBuildTask)
-    tasks.named('mapDebugSourceSetPaths') {
-        dependsOn ':createDataVersion', ':createDataArchive'
+    // build/generated/espeak-ng-data/ is produced by the native build's
+    // espeak-data target (always re-run: it declares no outputs), so the
+    // data tasks follow the native build of every variant being built.
+    // checkData carries the edge; createDataArchive and createPackedAssets
+    // follow it transitively. The old single-heuristic pick built the wrong
+    // variant for `assembleDebug assembleRelease` and for release testing.
+    def names = gradle.startParameter.taskNames.join(' ').toLowerCase()
+    if (names.contains("release") && tasks.findByName('externalNativeBuildRelease') != null) {
+        tasks.checkData.dependsOn('externalNativeBuildRelease')
     }
-    tasks.named('generateDebugResources') {
-        dependsOn ':createDataVersion', ':createDataArchive'
+    if (!names.contains("release") || names.contains("debug")) {
+        tasks.checkData.dependsOn('externalNativeBuildDebug')
     }
-    tasks.named('processDebugNavigationResources') {
-        dependsOn ':createDataVersion', ':createDataArchive'
-    }
-    tasks.named('mergeDebugResources') {
-        dependsOn ':createDataVersion', ':createDataArchive'
-    }
-    tasks.named('packageDebugResources') {
-        dependsOn ':createDataVersion', ':createDataArchive'
-    }
-    tasks.named('mapReleaseSourceSetPaths') {
-        dependsOn ':createDataVersion', ':createDataArchive'
-    }
-    tasks.named('generateReleaseResources') {
-        dependsOn ':createDataVersion', ':createDataArchive'
-    }
-    tasks.named('processReleaseNavigationResources') {
-        dependsOn ':createDataVersion', ':createDataArchive'
-    }
-    tasks.named('mergeReleaseResources') {
-        dependsOn ':createDataVersion', ':createDataArchive'
-    }
-    tasks.named('packageReleaseResources') {
-        dependsOn ':createDataVersion', ':createDataArchive'
+    // Ordering for the generated res/ roots above (visibility comes from the
+    // sourceSets): every task that reads or packages resources runs after
+    // the files exist. One list, debug and release alike - the old
+    // whenTaskAdded twin of this (assemble -> createDataVersion) is gone.
+    ['mapDebugSourceSetPaths', 'generateDebugResources', 'processDebugNavigationResources',
+     'mergeDebugResources', 'packageDebugResources',
+     'mapReleaseSourceSetPaths', 'generateReleaseResources', 'processReleaseNavigationResources',
+     'mergeReleaseResources', 'packageReleaseResources'].each { name ->
+        tasks.named(name) {
+            dependsOn ':createDataVersion', ':createDataArchive'
+        }
     }
 }
 

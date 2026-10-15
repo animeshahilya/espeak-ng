@@ -131,7 +131,7 @@ static void buf_int(buf_t *b, long v)
   char tmp[24];
   int i = (int)sizeof(tmp);
   int neg = v < 0;
-  unsigned long u = neg ? (unsigned long)(-v) : (unsigned long)v;
+  unsigned long u = neg ? 0UL - (unsigned long)v : (unsigned long)v;
   do {
     tmp[--i] = (char)('0' + (u % 10));
     u /= 10;
@@ -166,9 +166,14 @@ static void append_without_language_flags(buf_t *b, const char *ph)
     } else if (*p == '(') {
       buf_append(b, run, (size_t)(p - run));
       in_flag = 1;
+      run = p + 1;
     }
   }
-  if (!in_flag) buf_append(b, run, strlen(run));
+  /* Always flush: an unterminated '(' (stray flag) must not drop the tail. */
+  if (in_flag) {
+    buf_append(b, "(", 1);
+  }
+  buf_append(b, run, strlen(run));
 }
 
 char *piper_phonemize(const char *espeak_voice, const char *text_utf8,

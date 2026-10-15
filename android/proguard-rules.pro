@@ -1,5 +1,5 @@
 # jni/jni/eSpeakService.c binds to com.animeshahilya.espeakng.SpeechSynthesis by exact
-# class and member name: the 12 `native` methods via JNI's Java_com_animeshahilya_espeakng_
+# class and member name: the 15 `native` methods via JNI's Java_com_animeshahilya_espeakng_
 # SpeechSynthesis_* symbol naming, plus nativeSynthCallback(byte[])/nativeSynthWordCallback
 # (int,int,int) via explicit GetMethodID() lookups in nativeClassInit() - those two are
 # private Java methods invoked FROM native code, with no Java-side call site for R8 to see,
@@ -20,6 +20,9 @@
 # ONNX Runtime (Piper natural voices): its JNI library binds to the Java API
 # classes by name and creates some of them from native code.
 -keep class ai.onnxruntime.** { *; }
+
+# Snapdragon build (-Psnapdragon): Qualcomm's QNN provider, same reason.
+-keep class com.qualcomm.qti.** { *; }
 
 # PiperModel.SessionGroup.mapped is never read in Java: it exists only to keep
 # the memory-mapped optimized model alive while ONNX Runtime reads the weights

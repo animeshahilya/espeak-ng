@@ -34,10 +34,14 @@ public final class TolerantPreferences implements SharedPreferences {
         return prefs instanceof TolerantPreferences ? prefs : new TolerantPreferences(prefs);
     }
 
-    /** Warned once per setting: this runs several times per utterance. */
+    /** Warned once per setting: this runs several times per utterance. Bounded to avoid leaks. */
+    private static final int MAX_WARNED_KEYS = 128;
     private static final Set<String> sWarned = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     private static void wrongType(String key, ClassCastException e) {
+        if (sWarned.size() >= MAX_WARNED_KEYS) {
+            return;
+        }
         if (sWarned.add(key)) {
             Log.w(TAG, "Setting " + key + " has the wrong type; using its default", e);
         }
@@ -56,7 +60,8 @@ public final class TolerantPreferences implements SharedPreferences {
     @Override
     public Set<String> getStringSet(String key, Set<String> defValues) {
         try {
-            return mPrefs.getStringSet(key, defValues);
+            Set<String> v = mPrefs.getStringSet(key, defValues);
+            return v == null ? defValues : new java.util.HashSet<String>(v);
         } catch (ClassCastException e) {
             wrongType(key, e);
             return defValues;
@@ -105,12 +110,24 @@ public final class TolerantPreferences implements SharedPreferences {
 
     @Override
     public Map<String, ?> getAll() {
-        return mPrefs.getAll();
+        try {
+            Map<String, ?> all = mPrefs.getAll();
+            return all == null ? java.util.Collections.<String, Object>emptyMap()
+                    : new java.util.HashMap<String, Object>(all);
+        } catch (ClassCastException | NullPointerException e) {
+            Log.w(TAG, "Settings store unreadable; using empty defaults", e);
+            return java.util.Collections.<String, Object>emptyMap();
+        }
     }
 
     @Override
     public boolean contains(String key) {
-        return mPrefs.contains(key);
+        try {
+            return mPrefs.contains(key);
+        } catch (ClassCastException e) {
+            wrongType(key, e);
+            return false;
+        }
     }
 
     @Override

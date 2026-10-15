@@ -1060,6 +1060,8 @@ espeak_ng_STATUS DoVoiceChange(voice_t *v)
 {
 	// allocate memory for a copy of the voice data, and free it in wavegenfill()
 	voice_t *v2;
+	if (WcmdqFree() < 2)
+		return ENS_FIFO_BUFFER_FULL;
 	if ((v2 = (voice_t *)malloc(sizeof(voice_t))) == NULL)
 		return ENOMEM;
 	memcpy(v2, v, sizeof(voice_t));

@@ -62,28 +62,32 @@ public final class VoiceEngineRegistry {
     }
 
     /** Runs {@code action} on every engine; one engine's failure never stops the rest. */
-    private void forEachEngine(java.util.function.Consumer<VoiceEngine> action) {
+    private void forEachEngine(String what, java.util.function.Consumer<VoiceEngine> action) {
         for (VoiceEngine engine : snapshot()) {
             try {
                 action.accept(engine);
-            } catch (Throwable ignored) {
+            } catch (Throwable t) {
+                // A partial stop/trim/unload used to vanish here: one engine's
+                // failure left the others' state unknown with nothing in logcat.
+                android.util.Log.w("VoiceEngineRegistry",
+                        what + " failed for engine " + engine.getId(), t);
             }
         }
     }
 
     /** Broadcasts stop to all registered engines. */
     public void stopAll() {
-        forEachEngine(VoiceEngine::onStop);
+        forEachEngine("stop", VoiceEngine::onStop);
     }
 
     /** Broadcasts memory trim to all registered engines. */
     public void trimAll(int level) {
-        forEachEngine(engine -> engine.onTrimMemory(level));
+        forEachEngine("trim", engine -> engine.onTrimMemory(level));
     }
 
     /** Unloads all loaded models across all registered engines. */
     public void unloadAll() {
-        forEachEngine(VoiceEngine::unloadAll);
+        forEachEngine("unload", VoiceEngine::unloadAll);
     }
 
     /**

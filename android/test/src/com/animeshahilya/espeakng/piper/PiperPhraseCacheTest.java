@@ -101,6 +101,7 @@ public class PiperPhraseCacheTest {
         c.offer(k, new float[] {0.25f, -0.5f}, new float[] {1, 2, 3});
         assertEquals("heard once: memory only", 0, files(dir));
         c.offer(k, new float[] {0.25f, -0.5f}, new float[] {1, 2, 3});
+        PiperPhraseCache.awaitDisk();
         assertEquals(1, files(dir));
 
         // A new process: empty memory, same folder.
@@ -121,8 +122,10 @@ public class PiperPhraseCacheTest {
         c.setDisk(dir, 1 << 20, 1);
         c.offer(key("hi_IN-kavya-medium|1:1", 1), new float[] {0.1f}, null);
         c.offer(key("ta_IN-kaveri-medium|1:1", 1), new float[] {0.1f}, null);
+        PiperPhraseCache.awaitDisk();
         assertEquals(2, files(dir));
         c.deleteVoice("hi_IN-kavya-medium");
+        PiperPhraseCache.awaitDisk();
         assertEquals(1, files(dir));
         assertNull(c.get(key("hi_IN-kavya-medium|1:1", 1)));
         assertNotNull(c.get(key("ta_IN-kaveri-medium|1:1", 1)));
@@ -136,6 +139,7 @@ public class PiperPhraseCacheTest {
         for (int i = 0; i < 25; i++) {
             c.offer(key("v|1:1", i), new float[10_000], null);
         }
+        PiperPhraseCache.awaitDisk();
         long total = 0;
         for (File f : dir.listFiles((d, n) -> n.endsWith(".pcm"))) {
             total += f.length();
@@ -155,6 +159,7 @@ public class PiperPhraseCacheTest {
         c.offer(k, new float[] {0.3f}, null); // first sighting: memory
         assertEquals(0, files(dir));
         assertNotNull(c.get(k));              // second sighting, a hit
+        PiperPhraseCache.awaitDisk();
         assertEquals(1, files(dir));
     }
 
@@ -165,6 +170,7 @@ public class PiperPhraseCacheTest {
         c.setDisk(dir, 1 << 20, 1);
         final PiperPhraseCache.Key k = key("v|1:1", 42);
         c.offer(k, new float[] {0.5f}, null);
+        PiperPhraseCache.awaitDisk();
         assertEquals(1, files(dir));
 
         // Overwrite the cache file with corrupt contents (e.g. invalid large array length)

@@ -139,7 +139,10 @@ int utf8_in2(int *c, const char *buf, int backwards)
 	static const unsigned char mask[4] = { 0xff, 0x1f, 0x0f, 0x07 };
 
 	// find the start of the next/previous character
-	while ((*buf & 0xc0) == 0x80) {
+	// Backwards walks are bounded: at most 3 continuation bytes precede
+	// a lead byte in valid UTF-8, so a corrupt buffer cannot walk
+	// arbitrarily far before the buffer start.
+	for (int i = 0; i < 4 && (*buf & 0xc0) == 0x80; i++) {
 		// skip over non-initial bytes of a multi-byte utf8 character
 		if (backwards)
 			buf--;

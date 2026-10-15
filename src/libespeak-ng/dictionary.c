@@ -181,6 +181,8 @@ static void InitGroups(Translator *tr)
 				if (tr->groups2_start[c] == 255)
 					tr->groups2_start[c] = tr->n_groups2;
 
+				if (tr->n_groups2 >= N_RULE_GROUP2)
+					break;
 				tr->groups2_count[c]++;
 				tr->groups2[tr->n_groups2] = p;
 				tr->groups2_name[tr->n_groups2++] = (c + (c2 << 8));
@@ -210,10 +212,14 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	FILE *f;
 	int size;
 	char fname[N_PATH_BUF];
+	char *new_dictlist = NULL;
+	char *old_dictlist = NULL;
 
-	if (dictionary_name != name)
+	if (name == NULL || tr == NULL)
+		return 1;
+	if (strcmp(dictionary_name, name) != 0)
 		snprintf(dictionary_name, sizeof(dictionary_name), "%s", name); // currently loaded dictionary name
-	if (tr->dictionary_name != name)
+	if (strcmp(tr->dictionary_name, name) != 0)
 		snprintf(tr->dictionary_name, sizeof(tr->dictionary_name), "%s", name);
 
 	// Load a pronunciation data file into memory
@@ -222,10 +228,11 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	snprintf(fname, sizeof(fname), "%s%c%s_dict", path_home, PATHSEP, name);
 	size = GetFileLength(fname);
 
-	if (tr->data_dictlist != NULL) {
-		free(tr->data_dictlist);
-		tr->data_dictlist = NULL;
-	}
+	/* Keep the old dictionary until the replacement is known good:
+	 * a missing/corrupt file must not leave a NULL data_dictlist
+	 * with a stale data_dictrules behind it. */
+	old_dictlist = tr->data_dictlist;
+	tr->data_dictlist = NULL;
 
 	f = fopen(fname, "rb");
 	if (((f == NULL) || (size <= 0)) && (dictionary_reader != NULL)) {
@@ -234,42 +241,46 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 			fclose(f);
 			f = NULL;
 		}
-		tr->data_dictlist = dictionary_reader(name, &size);
+		new_dictlist = dictionary_reader(name, &size);
 	}
-	if (tr->data_dictlist == NULL) {
+	if (new_dictlist == NULL) {
 		if ((f == NULL) || (size <= 0)) {
 			if (no_error == 0)
 				fprintf(stderr, "Can't read dictionary file: '%s'\n", fname);
 			if (f != NULL)
 				fclose(f);
+			tr->data_dictlist = old_dictlist;
 			return 1;
 		}
 
-		if ((tr->data_dictlist = malloc(size)) == NULL) {
+		if ((new_dictlist = malloc(size)) == NULL) {
 			fclose(f);
+			tr->data_dictlist = old_dictlist;
 			return 3;
 		}
-		size = fread(tr->data_dictlist, 1, size, f);
+		size = fread(new_dictlist, 1, size, f);
 		fclose(f);
 	}
 
 	if (size <= (N_HASH_DICT + sizeof(int)*2)) {
 		fprintf(stderr, "Empty _dict file: '%s'\n", fname);
-		free(tr->data_dictlist);
-		tr->data_dictlist = NULL;
+		free(new_dictlist);
+		tr->data_dictlist = old_dictlist;
 		return 2;
 	}
 
-	pw = (int *)(tr->data_dictlist);
+	pw = (int *)(new_dictlist);
 	length = Reverse4Bytes(pw[1]);
 
 	if ((Reverse4Bytes(pw[0]) != N_HASH_DICT) ||
 	    (length <= 0) || (length >= size)) {
 		fprintf(stderr, "Bad data: '%s' (%x length=%x)\n", fname, Reverse4Bytes(pw[0]), length);
-		free(tr->data_dictlist);
-		tr->data_dictlist = NULL;
+		free(new_dictlist);
+		tr->data_dictlist = old_dictlist;
 		return 2;
 	}
+	free(old_dictlist);
+	tr->data_dictlist = new_dictlist;
 	tr->data_dictrules = &(tr->data_dictlist[length]);
 
 	// set up indices into data_dictrules

@@ -133,6 +133,10 @@ public final class PiperDownloads {
                 || key.startsWith("piper_crash_strikes_") || key.startsWith(PiperCrashGuard.PREF_SUSPENDED)
                 // Which voices this phone used lately (startup preloading).
                 || key.equals(PiperVoiceStore.PREF_RECENT)
+                // Phrase-cache totals since install: counters, not choices.
+                || key.equals("piper_cache_hits_total") || key.equals("piper_cache_chunks_total")
+                // Last auto-update check time: a clock time on this phone.
+                || key.equals(PREF_UPDATE_CHECKED)
                 // A running sleep timer's deadline: a clock time on this phone.
                 || key.equals(VoiceSettings.PREF_SLEEP_MUTE_UNTIL));
     }

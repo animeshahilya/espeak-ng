@@ -174,12 +174,14 @@ public final class NumberReading {
     // Ten digits or more with nothing joining them to other digits: a phone,
     // account or card number, never a quantity anyone says as one.
     private static final Pattern LONG_NUMBER = Pattern.compile("(?<![\\d.,])\\d{10,}(?!\\d|[.,]\\d)");
+    private static final Pattern DIGIT_BOUNDARY = Pattern.compile("(?<=\\d)(?=\\d)");
+    private static final Pattern MULTI_SPACE = Pattern.compile(" +");
 
     /** "9876543210" -> "9 8 7 6 5 4 3 2 1 0". */
     static String spellLongNumbers(String text) {
         if (text == null || !containsAsciiDigit(text)) return text;
         return AsciiUtils.replaceMatches(LONG_NUMBER, text,
-                m -> m.group().replaceAll("(?<=\\d)(?=\\d)", " "));
+                m -> DIGIT_BOUNDARY.matcher(m.group()).replaceAll(" "));
     }
 
     public static String readCodes(String text) {
@@ -322,7 +324,7 @@ public final class NumberReading {
         if (text == null || text.isEmpty() || !containsAsciiDigit(text)) return text;
         if (text.indexOf('-') != -1 || text.indexOf('(') != -1) {
             text = AsciiUtils.replaceMatches(FORMATTED_PHONE, text, m ->
-                    m.group().replace('-', ' ').replace('(', ' ').replace(')', ' ').replaceAll(" +", " ").trim());
+                    MULTI_SPACE.matcher(m.group().replace('-', ' ').replace('(', ' ').replace(')', ' ')).replaceAll(" ").trim());
         }
         return spellLongNumbers(text);
     }
@@ -604,7 +606,7 @@ public final class NumberReading {
                 default: sb.append(c); break;
             }
         }
-        return sb.toString().replaceAll(" +", " ").trim();
+        return MULTI_SPACE.matcher(sb.toString()).replaceAll(" ").trim();
     }
 
     // ==========================================

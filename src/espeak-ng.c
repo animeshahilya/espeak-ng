@@ -730,7 +730,7 @@ int main(int argc, char **argv)
 			// line by line input on stdin or from FIFO
 			while (fgets(p_text, max, f_text) != NULL) {
 				p_text[max-1] = 0;
-				espeak_Synth(p_text, max, 0, POS_CHARACTER, 0, synth_flags, NULL, NULL);
+				espeak_Synth(p_text, strlen(p_text)+1, 0, POS_CHARACTER, 0, synth_flags, NULL, NULL);
 				// Allow subprocesses to use the audio data through pipes.
 				fflush(stdout);
 			}

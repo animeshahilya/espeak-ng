@@ -119,8 +119,14 @@ static espeak_EVENT *event_copy(espeak_EVENT *event)
 		{
 		case espeakEVENT_MARK:
 		case espeakEVENT_PLAY:
-			if (event->id.name)
-				a_event->id.name = strdup(event->id.name);
+			if (event->id.name) {
+				char *copy = strdup(event->id.name);
+				if (copy == NULL) {
+					free(a_event);
+					return NULL;
+				}
+				a_event->id.name = copy;
+			}
 			break;
 
 		default:

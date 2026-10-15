@@ -605,6 +605,12 @@ public final class PiperEngine {
 
     private static final java.util.regex.Pattern DIGITS =
             java.util.regex.Pattern.compile("\\p{Nd}+(?:,\\p{Nd}{2,3})*");
+    private static final java.util.regex.Pattern HAS_DIGIT =
+            java.util.regex.Pattern.compile(".*\\d.*");
+    private static final java.util.regex.Pattern HAS_SEVEN =
+            java.util.regex.Pattern.compile("(?i).*seven.*");
+    private static final java.util.regex.Pattern WHITESPACE_RUN =
+            java.util.regex.Pattern.compile("\\s+");
 
     /**
      * "Text" voices read letters, and their alphabets have no digits: numbers
@@ -631,7 +637,7 @@ public final class PiperEngine {
                     new android.icu.util.ULocale(language));
             // Without rules for the language ICU falls back to English words (or digits).
             final String seven = format.format(new Object[] {7L});
-            if (seven.matches(".*\\d.*") || (!"en".equals(language) && seven.matches("(?i).*seven.*"))) {
+            if (HAS_DIGIT.matcher(seven).matches() || (!"en".equals(language) && HAS_SEVEN.matcher(seven).matches())) {
                 return NO_NUMBER_WORDS;
             }
         } catch (RuntimeException e) { // no ICU data for it: digits stay
@@ -663,25 +669,13 @@ public final class PiperEngine {
                 m.appendReplacement(out, java.util.regex.Matcher.quoteReplacement(" " + words + " "));
             } while (m.find());
             m.appendTail(out);
-            return out.toString().replaceAll("\\s+", " ").trim();
+            return WHITESPACE_RUN.matcher(out.toString()).replaceAll(" ").trim();
         };
     }
 
     /** "१२३" -> "123": Long.parseLong reads only ASCII digits. */
     private static String toAscii(String digits) {
-        if (digits == null) {
-            return "";
-        }
-        final StringBuilder sb = new StringBuilder(digits.length());
-        for (int i = 0; i < digits.length(); ) {
-            final int cp = digits.codePointAt(i);
-            final int d = Character.digit(cp, 10);
-            if (d >= 0) {
-                sb.append((char) ('0' + d));
-            }
-            i += Character.charCount(cp);
-        }
-        return sb.toString();
+        return com.animeshahilya.espeakng.text.AsciiUtils.toAsciiDigits(digits);
     }
 
     /**

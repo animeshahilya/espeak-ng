@@ -108,6 +108,17 @@ public class TtsService extends TextToSpeechService {
      * instead of only ever during the single-threaded onCreate() it used to.
      */
     private volatile SpeechSynthesis mEngine;
+    /**
+     * Serializes synthesis requests with each other (the per-request fields
+     * below - mCallback, mCurrentDispatcher, mAudioOptimizer, chunk counters -
+     * belong to exactly one request at a time), and nothing else. It is
+     * deliberately NOT the service monitor: the voices-reload path used to
+     * take {@code synchronized(TtsService.this)} around seconds of re-init,
+     * which queued TalkBack syntheses behind it. Reload now coordinates
+     * through finer-grained locks (see mLanguagesUpdatedReceiver), so a
+     * request only ever waits on another request.
+     */
+    private final Object mSynthLock = new Object();
     private SynthesisCallback mCallback;
     /**
      * Post-synthesis tone shaping for the current request only - null when the setting is off,
@@ -144,34 +155,52 @@ public class TtsService extends TextToSpeechService {
      */
     public static final String PARAM_SHOW_PLAN = "com.animeshahilya.espeakng.SHOW_PLAN";
 
-    /** One part of a recorded plan: its text, the text's language (ISO 639-2) and its natural voice (null = eSpeak). */
+    /**
+     * One part of a recorded plan: its text, the text's language (ISO 639-2) and its natural voice
+     * (null = eSpeak). The runs it reads ({@link RunPlan.Segment#runs}, each in the language it is
+     * read as) are kept too: neighbouring segments with the same reader are one part, so the text
+     * alone cannot show where eSpeak switched by itself inside it.
+     */
     public static final class PlanPart {
         public final String text;
         public final String language;
         public final String naturalKey;
+        public final List<LanguageRuns.Run> runs;
 
-        PlanPart(String text, String language, String naturalKey) {
+        PlanPart(String text, String language, String naturalKey, List<LanguageRuns.Run> runs) {
             this.text = text;
             this.language = language;
             this.naturalKey = naturalKey;
+            this.runs = runs != null
+                    ? Collections.unmodifiableList(new ArrayList<>(runs))
+                    : Collections.<LanguageRuns.Run>emptyList();
         }
     }
 
     private static volatile List<PlanPart> sShownPlan;
+    private static final Object SHOWN_PLAN_LOCK = new Object();
 
     /** The plan the last {@link #PARAM_SHOW_PLAN} request recorded, then forgets it; null if none. */
     public static List<PlanPart> takeShownPlan() {
-        final List<PlanPart> plan = sShownPlan;
-        sShownPlan = null;
-        return plan;
+        synchronized (SHOWN_PLAN_LOCK) {
+            final List<PlanPart> plan = sShownPlan;
+            sShownPlan = null;
+            return plan;
+        }
     }
 
     /**
      * Keeps the units' runs and readers for {@link #takeShownPlan}: one part
-     * per language and reader, neighbours with both the same joined.
+     * per language and reader, neighbours with both the same joined. The text
+     * stays display-normalized (trimmed runs joined with a space); the runs
+     * underneath are what speech used.
      */
     private static void recordPlan(List<SynthUnit> units) {
         final List<PlanPart> plan = new ArrayList<>();
+        String pendingText = null;
+        String pendingLanguage = null;
+        String pendingKey = null;
+        List<LanguageRuns.Run> pendingRuns = null;
         for (SynthUnit unit : units) {
             if (unit.isEarcon()) {
                 continue;
@@ -185,16 +214,28 @@ public class TtsService extends TextToSpeechService {
                 }
                 // Digits moved out for eSpeak are read in its voice's language.
                 final String language = ESPEAK_ONLY.equals(run.language) ? unit.language : run.language;
-                final int last = plan.size() - 1;
-                if (last >= 0 && plan.get(last).language.equals(language)
-                        && java.util.Objects.equals(plan.get(last).naturalKey, unit.modelKey)) {
-                    plan.set(last, new PlanPart(plan.get(last).text + " " + text, language, unit.modelKey));
+                if (pendingText != null && pendingLanguage.equals(language)
+                        && java.util.Objects.equals(pendingKey, unit.modelKey)) {
+                    pendingText = pendingText + " " + text;
+                    pendingRuns.add(run);
                 } else {
-                    plan.add(new PlanPart(text, language, unit.modelKey));
+                    if (pendingText != null) {
+                        plan.add(new PlanPart(pendingText, pendingLanguage, pendingKey, pendingRuns));
+                    }
+                    pendingText = text;
+                    pendingLanguage = language;
+                    pendingKey = unit.modelKey;
+                    pendingRuns = new ArrayList<>();
+                    pendingRuns.add(run);
                 }
             }
         }
-        sShownPlan = plan;
+        if (pendingText != null) {
+            plan.add(new PlanPart(pendingText, pendingLanguage, pendingKey, pendingRuns));
+        }
+        synchronized (SHOWN_PLAN_LOCK) {
+            sShownPlan = plan;
+        }
     }
 
     public SpeechSynthesis getEngine() {
@@ -291,20 +332,21 @@ public class TtsService extends TextToSpeechService {
      * voice list it enumerated at onCreate() until the process happens to be
      * killed and restarted, so an imported voice never becomes selectable.
      *
-     * initializeTtsEngine() re-runs native JNI init (the same seconds-long
-     * disk/JNI cost documented on TtsSettingsActivity.createPreferences()),
-     * so it is pushed off this receiver's main-thread callback. It still
-     * needs to serialize with onSynthesizeText() -- both touch mEngine
-     * without their own lock -- so the background thread takes the same
-     * monitor onSynthesizeText() is synchronized on, rather than racing it.
-     */
-    /**
-     * Guards {@link #mLanguagesUpdatedReceiver}: initializeTtsEngine() costs
-     * seconds of disk/JNI work, and broadcasts can arrive back-to-back (bulk
-     * voice import, restore, reinstall). Without this each broadcast spawns a
-     * thread and they queue on the TtsService monitor re-running the same
-     * re-init. A concurrent invalidation degrades to one redundant reload at
-     * most: the loser re-checks the flag after the winner finishes.
+     * <p>Concurrency protocol: the heavy work (native reload, voice listing,
+     * map rebuild) runs on a background thread with NO service-level lock.
+     * It is safe against an in-flight synthesis because every shared touch
+     * is already guarded at a finer grain: the native engine serializes on
+     * {@code SpeechSynthesis.sSynthLock}, the voice maps swap atomically
+     * under the {@code mAvailableVoices} monitor, and synthesis snapshots its
+     * engine reference up front. Previously this took
+     * {@code synchronized(TtsService.this)} - the same monitor
+     * onSynthesizeText() held for the whole utterance - so a TalkBack request
+     * arriving mid-reload queued behind seconds of re-init and spoke late.
+     * Guards {@link #mLanguagesUpdatedReceiver}: broadcasts can arrive
+     * back-to-back (bulk voice import, restore, reinstall). Without this each
+     * broadcast spawns a thread and they re-run the same re-init in turn. A
+     * concurrent invalidation degrades to one redundant reload at most: the
+     * loser re-checks the flag after the winner finishes.
      */
     private final AtomicBoolean mVoiceReloadRunning = new AtomicBoolean(false);
 
@@ -320,9 +362,7 @@ public class TtsService extends TextToSpeechService {
             }
             EspeakApp.runAsync(() -> {
                 try {
-                    synchronized (TtsService.this) {
-                        initializeTtsEngine();
-                    }
+                    initializeTtsEngine();
                 } finally {
                     mVoiceReloadRunning.set(false);
                 }
@@ -533,9 +573,9 @@ public class TtsService extends TextToSpeechService {
             SpeechSynthesis.clearVoiceCache();
             mEngine = new SpeechSynthesis(mStorageContext, mSynthCallback);
         }
-        mMatchingVoice = null;
         List<Voice> voices = mEngine.getAvailableVoices();
         synchronized (mAvailableVoices) {
+            mMatchingVoice = null;
             mAllVoices = new ArrayList<Voice>(voices);
             if (DEBUG) Log.i(TAG, "initializeTtsEngine(): loaded voices=" + mAllVoices.size());
         }
@@ -986,7 +1026,14 @@ public class TtsService extends TextToSpeechService {
     }
 
     @Override
-    protected synchronized void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
+    protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
+        // One request at a time (see mSynthLock); the reload path never takes it.
+        synchronized (mSynthLock) {
+            onSynthesizeTextLocked(request, callback);
+        }
+    }
+
+    private void onSynthesizeTextLocked(SynthesisRequest request, SynthesisCallback callback) {
         // Cleared here, not after preprocessing: a stop (screen-reader swipe)
         // arriving while the text is prepared belongs to this request, and
         // clearing the flag later used to erase it - the whole first chunk

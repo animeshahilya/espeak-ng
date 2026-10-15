@@ -200,6 +200,12 @@ static _Atomic int frames_delivered = 0;
 static atomic_int stop_generation;
 static atomic_int current_synthesis_generation;
 
+/* The APK's assets: compiled dictionaries are read from espeak-dicts/ there
+ * instead of being extracted (~30 MB for all languages). The Java object is
+ * held by a global reference so the native pointer stays valid. */
+static AAssetManager *s_assets = NULL;
+static jobject s_assetRef = NULL;
+
 static JNIEnv *getJniEnv() {
   JNIEnv *env = NULL;
   if ((*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_6) == JNI_OK) {
@@ -330,6 +336,14 @@ JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
   // Cleanup global references if any
   METHOD_nativeSynthCallback = NULL;
   METHOD_nativeSynthWordCallback = NULL;
+  JNIEnv *env = NULL;
+  if ((*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_6) == JNI_OK && env != NULL) {
+    if (s_assetRef != NULL) {
+      (*env)->DeleteGlobalRef(env, s_assetRef);
+    }
+  }
+  s_assetRef = NULL;
+  s_assets = NULL;
 }
 
 JNIEXPORT jboolean
@@ -347,11 +361,6 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeClassInit(
 }
 
 static atomic_int s_sampleRate = 0;
-
-/* The APK's assets: compiled dictionaries are read from espeak-dicts/ there
- * instead of being extracted (~30 MB for all languages). The Java object is
- * held by a global reference so the native pointer stays valid. */
-static AAssetManager *s_assets = NULL;
 
 /* Reads a zstd-compressed asset (stored uncompressed in the APK, so the
  * buffer is mapped, not copied) into a malloc'd buffer the caller frees.
@@ -397,7 +406,13 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeUnpackAsset(
   (*env)->ReleaseStringUTFChars(env, path, c_path);
   if (data == NULL) return NULL;
   jbyteArray out = (*env)->NewByteArray(env, (jsize)length);
-  if (out != NULL) (*env)->SetByteArrayRegion(env, out, 0, (jsize)length, (const jbyte *)data);
+  if (out != NULL) {
+    (*env)->SetByteArrayRegion(env, out, 0, (jsize)length, (const jbyte *)data);
+    if (check_jni_exception(env)) {
+      (*env)->DeleteLocalRef(env, out);
+      out = NULL;
+    }
+  }
   free(data);
   return out;
 }
@@ -410,6 +425,15 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeCreate(
   const int cachedRate = atomic_load(&s_sampleRate);
   if (cachedRate > 0) {
     if (DEBUG) LOGV("Already initialized with sample rate %d", cachedRate);
+    /* A second create with assets still installs the dictionary reader. */
+    if (assets != NULL && s_assets == NULL) {
+      jobject ref = (*env)->NewGlobalRef(env, assets);
+      if (ref != NULL) {
+        s_assetRef = ref;
+        s_assets = AAssetManager_fromJava(env, ref);
+        espeak_SetDictionaryReader(readDictionaryAsset);
+      }
+    }
     return cachedRate;
   }
 
@@ -420,6 +444,7 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeCreate(
   if (assets != NULL && s_assets == NULL) {
     jobject ref = (*env)->NewGlobalRef(env, assets);
     if (ref != NULL) {
+      s_assetRef = ref;
       s_assets = AAssetManager_fromJava(env, ref);
       espeak_SetDictionaryReader(readDictionaryAsset);
     }
@@ -479,21 +504,37 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeGetAvailableVoices
     jstring lang = (*env)->NewStringUTF(env, lang_name);
     if (check_jni_exception(env)) return NULL;
     (*env)->SetObjectArrayElement(env, voicesArray, voicesIndex++, lang);
+    if (check_jni_exception(env)) {
+      if (lang != NULL) (*env)->DeleteLocalRef(env, lang);
+      return NULL;
+    }
     if (lang != NULL) (*env)->DeleteLocalRef(env, lang);
 
     jstring ident = (*env)->NewStringUTF(env, identifier);
     if (check_jni_exception(env)) return NULL;
     (*env)->SetObjectArrayElement(env, voicesArray, voicesIndex++, ident);
+    if (check_jni_exception(env)) {
+      if (ident != NULL) (*env)->DeleteLocalRef(env, ident);
+      return NULL;
+    }
     if (ident != NULL) (*env)->DeleteLocalRef(env, ident);
 
     jstring gender = (*env)->NewStringUTF(env, gender_buf);
     if (check_jni_exception(env)) return NULL;
     (*env)->SetObjectArrayElement(env, voicesArray, voicesIndex++, gender);
+    if (check_jni_exception(env)) {
+      if (gender != NULL) (*env)->DeleteLocalRef(env, gender);
+      return NULL;
+    }
     if (gender != NULL) (*env)->DeleteLocalRef(env, gender);
 
     jstring age = (*env)->NewStringUTF(env, age_buf);
     if (check_jni_exception(env)) return NULL;
     (*env)->SetObjectArrayElement(env, voicesArray, voicesIndex++, age);
+    if (check_jni_exception(env)) {
+      if (age != NULL) (*env)->DeleteLocalRef(env, age);
+      return NULL;
+    }
     if (age != NULL) (*env)->DeleteLocalRef(env, age);
   }
 
@@ -704,6 +745,12 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeTerminate(
     JNIEnv *env, jobject object) {
   if (DEBUG) LOGV("%s", __FUNCTION__);
   espeak_Terminate();
+  espeak_SetDictionaryReader(NULL);
+  if (s_assetRef != NULL) {
+    (*env)->DeleteGlobalRef(env, s_assetRef);
+    s_assetRef = NULL;
+  }
+  s_assets = NULL;
   atomic_store(&s_sampleRate, 0);
 }
 
@@ -775,6 +822,10 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSonicStretch(
         result = (*env)->NewShortArray(env, got);
         if (result != NULL) {
           (*env)->SetShortArrayRegion(env, result, 0, got, out);
+          if (check_jni_exception(env)) {
+            (*env)->DeleteLocalRef(env, result);
+            result = NULL;
+          }
         }
       }
       free(out);

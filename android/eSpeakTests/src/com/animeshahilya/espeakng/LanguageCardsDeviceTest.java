@@ -31,6 +31,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -314,6 +315,11 @@ public class LanguageCardsDeviceTest {
         assertPart(usual.get(0), "hin", hindiKey, "आज मेरी");
         assertPart(usual.get(1), "eng", englishKey, "meeting");
         assertPart(usual.get(2), "hin", hindiKey, "कल सुबह दस बजे है।");
+        // The parts are views over the planned runs, not re-computed text.
+        assertFalse("merged Hindi part keeps its runs", usual.get(0).runs.isEmpty());
+        assertEquals("the English part is one run", 1, usual.get(1).runs.size());
+        assertEquals("meeting", usual.get(1).runs.get(0).text.trim());
+        assertFalse(usual.get(2).runs.isEmpty());
 
         mPrefs.edit().putString(englishMixed, "espeak").commit();
         seconds("plan_espeak", text, new Locale("hi"), show);

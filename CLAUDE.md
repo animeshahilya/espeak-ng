@@ -43,7 +43,7 @@ All from `android/`:
 # Build release APK (signed if android/keystore.properties exists, unsigned otherwise)
 ./gradlew assembleRelease
 
-# Run JVM unit tests (no device required, 36 test classes)
+# Run JVM unit tests (no device required, 40 test classes)
 ./gradlew testDebugUnitTest
 
 # Run on-device instrumentation tests (requires connected device/emulator, 32 classes / ~180 tests)
@@ -1090,7 +1090,7 @@ notes, not user-facing branding.
 android/
 ├── src/com/animeshahilya/espeakng/   # Java: 6 root classes + text/ tts/ piper/ ui/ util/ (see Key Classes)
 │   └── ui/preference/                # Custom preference widgets (14 classes)
-├── test/                             # Host JVM unit tests (36 classes)
+├── test/                             # Host JVM unit tests (40 classes)
 │   ├── src/                          # Same subpackages as the sources
 │   └── resources/                    # Fixtures (TSV cases, Devanagari corpus)
 ├── eSpeakTests/                      # On-device instrumentation tests (32 classes, ~180 tests)
@@ -1113,8 +1113,9 @@ android/
 
 ### JVM Unit Tests
 
-`./gradlew testDebugUnitTest` - 36 classes (~650 tests) in `test/src/`,
+`./gradlew testDebugUnitTest` - 40 classes (~650 tests) in `test/src/`,
 mirroring the source subpackages:
+- root: `TtsRoutingPreviewTest` (routing preview merge over the planned runs)
 - `text/`: pipeline steps and fuzzing (`TextSanitizeTest`, `TextStepsFuzzTest`, `TextOffsetMapTest`), NVDA symbols/character descriptions, `NumberReadingTest`, `AbbreviationsTest`, `TechWordsNormalizerTest`, `CompoundSplitterTest`, `EarconsTest`, `PhrasePausesTest`, language runs/switching, `DevanagariClassifierTest` + `DevanagariCorpusTest`, `ScriptLanguagesTest`, `UserDictionaryTest`, `AsciiUtilsTest`
 - `tts/`: `TtsAudioDispatcherTest` (slice clamping, sample alignment), `VoiceEngineRegistryTest`, `AudioOptimizerTest`, `AcousticSampleGeneratorTest`, `PcmResamplerTest`
 - `piper/`: phonemes/id encoding, split, alignment, audio, catalog, compact policy, phrase cache, shared models, model files

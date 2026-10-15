@@ -23,6 +23,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Natural-voice audio for chunks a screen reader repeats ("Button",
@@ -160,12 +165,30 @@ public final class PiperPhraseCache {
     private final Map<Key, Stored> entries = new LinkedHashMap<>(64, 0.75f, true);
     /** How often recent chunks were seen; bounded, access-ordered. */
     private final Map<Key, Integer> seen;
+    private static final java.util.regex.Pattern SANITIZE =
+            java.util.regex.Pattern.compile("[^A-Za-z0-9_.\\-]");
+    /**
+     * One process-wide writer for the storage tier: a write is a file stream
+     * plus rename (and every 20th a folder scan), none of which may stall the
+     * render thread that found the miss. Reads stay synchronous - ~8 ms from
+     * storage still beats re-rendering the chunk by 10-50x, which is the
+     * whole point of the second tier. Stored entries are immutable, so
+     * handing them across is safe.
+     */
+    private static final ExecutorService DISK_WRITER = Executors.newSingleThreadExecutor(r -> {
+        final Thread t = new Thread(r, "piper-cache-disk");
+        t.setDaemon(true);
+        return t;
+    });
+    /** File names with a write already queued or running: same bytes, no second write. */
+    private static final Set<String> PENDING_DISK_WRITES = ConcurrentHashMap.newKeySet();
     private long bytes;
     private long hits;
     private long misses;
     private File diskDir;
     private long diskMaxBytes;
     private int diskAdmitAfter;
+    /** Completions only (touched on the disk writer alone): every 20th trims. */
     private int diskWrites;
     private long diskHits;
     private static final int MAGIC = 0x50435031; // "PCP1"
@@ -223,7 +246,7 @@ public final class PiperPhraseCache {
             final int count = n == null ? 1 : n + 1;
             seen.put(key, count);
             if (count >= diskAdmitAfter) {
-                writeDisk(key, e);
+                writeDiskAsync(key, e);
             }
         }
         return e.toEntry();
@@ -243,8 +266,34 @@ public final class PiperPhraseCache {
             put(key, e);
         }
         if (diskDir != null && count >= diskAdmitAfter) {
-            writeDisk(key, e);
+            writeDiskAsync(key, e);
         }
+    }
+
+    /** Queues the storage write; the caller (often the render thread) never waits on it. */
+    private void writeDiskAsync(Key key, Stored e) {
+        final File dir = diskDir;
+        final long maxBytes = diskMaxBytes;
+        if (dir == null) {
+            return;
+        }
+        final String name = diskFile(dir, key).getName();
+        if (!PENDING_DISK_WRITES.add(name)) {
+            return;
+        }
+        DISK_WRITER.execute(() -> {
+            try {
+                writeDisk(dir, maxBytes, key, e);
+            } finally {
+                PENDING_DISK_WRITES.remove(name);
+            }
+        });
+    }
+
+    /** Test hook: waits until previously queued disk writes and deletes complete. */
+    static void awaitDisk() throws Exception {
+        DISK_WRITER.submit(() -> {
+        }).get(30, TimeUnit.SECONDS);
     }
 
     private void put(Key key, Stored e) {
@@ -262,7 +311,7 @@ public final class PiperPhraseCache {
     }
 
     /** "<voice key>-<hash of the whole key>.pcm": a voice's files share its key's prefix. */
-    private File diskFile(Key key) {
+    private static File diskFile(File dir, Key key) {
         final String voiceKey = key.voice.indexOf('|') > 0 ? key.voice.substring(0, key.voice.indexOf('|'))
                 : key.voice;
         try {
@@ -280,14 +329,14 @@ public final class PiperPhraseCache {
             for (int i = 0; i < 10; i++) {
                 hex.append(String.format(java.util.Locale.ROOT, "%02x", d[i]));
             }
-            return new File(diskDir, voiceKey.replaceAll("[^A-Za-z0-9_.\\-]", "_") + "-" + hex + ".pcm");
+            return new File(dir, SANITIZE.matcher(voiceKey).replaceAll("_") + "-" + hex + ".pcm");
         } catch (java.security.NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
     }
 
     private Stored readDisk(Key key) {
-        final File f = diskFile(key);
+        final File f = diskFile(diskDir, key);
         if (!f.isFile()) {
             return null;
         }
@@ -340,12 +389,13 @@ public final class PiperPhraseCache {
         }
     }
 
-    private void writeDisk(Key key, Stored e) {
-        final File f = diskFile(key);
+    /** Runs on the disk writer: stream + rename, then the periodic cap trim. */
+    private void writeDisk(File dir, long maxBytes, Key key, Stored e) {
+        final File f = diskFile(dir, key);
         if (f.isFile()) {
             return;
         }
-        final File tmp = new File(diskDir, f.getName() + ".tmp");
+        final File tmp = new File(dir, f.getName() + ".tmp");
         try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tmp)))) {
             out.writeInt(MAGIC);
             out.writeUTF(key.voice);
@@ -379,13 +429,13 @@ public final class PiperPhraseCache {
             return;
         }
         if (++diskWrites % 20 == 1) {
-            trimDisk();
+            trimDisk(dir, maxBytes);
         }
     }
 
-    /** Oldest files out until the folder is under its cap. */
-    private void trimDisk() {
-        final File[] files = diskDir.listFiles((d, n) -> n.endsWith(".pcm"));
+    /** Oldest files out until the folder is under its cap. Runs on the disk writer. */
+    private static void trimDisk(File dir, long maxBytes) {
+        final File[] files = dir.listFiles((d, n) -> n.endsWith(".pcm"));
         if (files == null) {
             return;
         }
@@ -393,12 +443,12 @@ public final class PiperPhraseCache {
         for (File f : files) {
             total += f.length();
         }
-        if (total <= diskMaxBytes) {
+        if (total <= maxBytes) {
             return;
         }
         Arrays.sort(files, (a, b) -> Long.compare(a.lastModified(), b.lastModified()));
         for (File f : files) {
-            if (total <= diskMaxBytes) {
+            if (total <= maxBytes) {
                 break;
             }
             total -= f.length();
@@ -407,20 +457,24 @@ public final class PiperPhraseCache {
         }
     }
 
-    /** A deleted voice: its phrases leave storage too. */
+    /** A deleted voice: its phrases leave storage too (files, on the disk writer). */
     public synchronized void deleteVoice(String voiceKey) {
         forget(voiceKey + "|");
-        if (diskDir == null) {
+        final File dir = diskDir;
+        if (dir == null) {
             return;
         }
-        final String prefix = voiceKey.replaceAll("[^A-Za-z0-9_.\\-]", "_") + "-";
-        final File[] files = diskDir.listFiles((d, n) -> n.startsWith(prefix));
-        if (files != null) {
+        final String prefix = SANITIZE.matcher(voiceKey).replaceAll("_") + "-";
+        final File[] files = dir.listFiles((d, n) -> n.startsWith(prefix));
+        if (files == null || files.length == 0) {
+            return;
+        }
+        DISK_WRITER.execute(() -> {
             for (File f : files) {
                 //noinspection ResultOfMethodCallIgnored
                 f.delete();
             }
-        }
+        });
     }
 
     public synchronized long diskHits() {

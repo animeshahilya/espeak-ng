@@ -13,9 +13,39 @@ public final class PcmResampler {
     /** Taps on each side of the output position. */
     private static final int HALF = 16;
 
+    /** Coefficients are pure function of (from,to): shared across runs. */
+    private static final java.util.Map<Long, float[][]> COEF_CACHE =
+            new java.util.LinkedHashMap<Long, float[][]>(8, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(java.util.Map.Entry<Long, float[][]> e) {
+                    return size() > 8;
+                }
+            };
+
+    private static synchronized float[][] cachedCoef(int up, int down) {
+        final long key = (((long) up) << 32) | (down & 0xffffffffL);
+        float[][] c = COEF_CACHE.get(key);
+        if (c != null) {
+            return c;
+        }
+        // Cut-off at the lower Nyquist, a little under it for the window's skirt.
+        final double cutoff = Math.min(1.0, (double) up / down) * 0.94;
+        c = new float[up][2 * HALF];
+        for (int p = 0; p < up; p++) {
+            for (int i = 0; i < 2 * HALF; i++) {
+                final double x = (double) p / up + HALF - 1 - i; // input distance from the output point
+                final double w = 0.42 + 0.5 * Math.cos(Math.PI * x / HALF) + 0.08 * Math.cos(2 * Math.PI * x / HALF);
+                final double s = x == 0 ? 1.0 : Math.sin(Math.PI * cutoff * x) / (Math.PI * cutoff * x);
+                c[p][i] = Math.abs(x) >= HALF ? 0f : (float) (cutoff * s * w);
+            }
+        }
+        COEF_CACHE.put(key, c);
+        return c;
+    }
+
     private final int up;
     private final int down;
-    /** coef[phase][tap], see {@link #process}. */
+    /** coef[phase][tap], see {@link #process}. Shared, never mutated. */
     private final float[][] coef;
 
     private short[] buf = new short[0];
@@ -33,17 +63,7 @@ public final class PcmResampler {
         final int g = gcd(fromRate, toRate);
         up = toRate / g;
         down = fromRate / g;
-        // Cut-off at the lower Nyquist, a little under it for the window's skirt.
-        final double cutoff = Math.min(1.0, (double) up / down) * 0.94;
-        coef = new float[up][2 * HALF];
-        for (int p = 0; p < up; p++) {
-            for (int i = 0; i < 2 * HALF; i++) {
-                final double x = (double) p / up + HALF - 1 - i; // input distance from the output point
-                final double w = 0.42 + 0.5 * Math.cos(Math.PI * x / HALF) + 0.08 * Math.cos(2 * Math.PI * x / HALF);
-                final double s = x == 0 ? 1.0 : Math.sin(Math.PI * cutoff * x) / (Math.PI * cutoff * x);
-                coef[p][i] = Math.abs(x) >= HALF ? 0f : (float) (cutoff * s * w);
-            }
-        }
+        coef = cachedCoef(up, down);
     }
 
     /** Feeds input; returns the output samples whose whole window has arrived. */

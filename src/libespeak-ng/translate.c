@@ -381,7 +381,7 @@ static int SetAlternateTranslator(const char *new_language, Translator **transla
 		// eSpeak NG Advanced: a voice the user chose for a script, made from
 		// its voice file; "*" keeps it apart from eSpeak's own translator for
 		// the same name
-		char key[20];
+		char key[24];
 		snprintf(key, sizeof(key), "*%s", new_language);
 		if ((*translator != NULL) && (strcmp(key, translator_language) == 0)) {
 			SelectPhonemeTable((*translator)->phoneme_tab_ix);
@@ -403,7 +403,7 @@ static int SetAlternateTranslator(const char *new_language, Translator **transla
 	if ((new_phoneme_tab = SelectPhonemeTableName(new_language)) >= 0) {
 		if ((*translator != NULL) && (strcmp(new_language, translator_language) != 0)) {
 			// we already have an alternative translator, but not for the required language, delete it
-			if ((translator == &translator2) && (translator_language[0] == '*'))
+			if (translator_language[0] == '*')
 				n_switch_replace_phonemes = 0; // it was a chosen voice's, see above
 			DeleteTranslator(*translator);
 			*translator = NULL;

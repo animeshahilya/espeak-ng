@@ -903,8 +903,17 @@ ESPEAK_API const char* espeak_TextToPhonemesWithTerminator(const void** textptr,
 	    bits 8-23:  separator character, between phoneme names
 	 */
 
+	if (textptr == NULL || *textptr == NULL)
+		return NULL;
+
+	if (translator == NULL)
+		return NULL;
+
 	if (p_decoder == NULL)
 		p_decoder = create_text_decoder();
+
+	if (p_decoder == NULL)
+		return NULL;
 
 	if (text_decoder_decode_string_multibyte(p_decoder, *textptr, translator->encoding, textmode) != ENS_OK)
 		return NULL;
@@ -987,6 +996,15 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Terminate(void)
 
 	DeleteTranslator(translator);
 	translator = NULL;
+
+	if (translator2 != NULL) {
+		DeleteTranslator(translator2);
+		translator2 = NULL;
+	}
+	if (translator3 != NULL) {
+		DeleteTranslator(translator3);
+		translator3 = NULL;
+	}
 
 	if (p_decoder != NULL) {
 		destroy_text_decoder(p_decoder);

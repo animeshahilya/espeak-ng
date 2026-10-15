@@ -142,6 +142,8 @@ ESPEAK_API espeak_ERROR espeak_SetScriptLanguage(const char *script, const char 
 const char *ScriptLanguage(const ALPHABET *alphabet)
 {
 	// alphabet NULL: Latin
+	if (alphabet != NULL && (alphabet < alphabets || alphabet >= alphabets + N_ALPHABETS))
+		return NULL;
 	const char *language = script_languages[(alphabet != NULL) ? (unsigned int)(alphabet - alphabets) : N_ALPHABETS];
 	return (language[0] != 0) ? language : NULL;
 }

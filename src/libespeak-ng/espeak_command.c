@@ -101,6 +101,11 @@ t_espeak_command *create_espeak_mark(const void *text, size_t size, const char *
 	memcpy(a_text, text, size);
 
 	a_index_mark = strdup(index_mark);
+	if (index_mark != NULL && a_index_mark == NULL) {
+		free(a_text);
+		free(a_command);
+		return NULL;
+	}
 
 	a_command->type = ET_MARK;
 	a_command->state = CS_UNDEFINED;
@@ -129,6 +134,10 @@ t_espeak_command *create_espeak_key(const char *key_name, void *user_data)
 	a_command->u.my_key.user_data = user_data;
 	a_command->u.my_key.unique_identifier = ++my_current_text_id;
 	a_command->u.my_key.key_name = strdup(key_name);
+	if (a_command->u.my_key.key_name == NULL) {
+		free(a_command);
+		return NULL;
+	}
 
 	return a_command;
 }
