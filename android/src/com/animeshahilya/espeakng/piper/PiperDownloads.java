@@ -885,15 +885,44 @@ public final class PiperDownloads {
                 }
             }
         }
-        collectSharedGarbage(PiperVoiceStore.sharedDir(storageContext), referenced);
+        collectSharedGarbage(PiperVoiceStore.sharedDir(storageContext), referenced,
+                PiperModel.loadedRuntimeVersion());
     }
 
     public static void collectSharedGarbage(File dir, java.util.Set<String> referenced) {
+        collectSharedGarbage(dir, referenced, null);
+    }
+
+    /**
+     * Also, with {@code runtime} known: a copy another ONNX Runtime version
+     * wrote ({@code <md5>.<version>.enc.ort}, {@code ...st-flow96.ctx.onnx})
+     * goes once this runtime's copy of it exists. The Snapdragon build keeps
+     * originals, so a runtime update re-optimizes instead of adopting the old
+     * copy, and the old one stayed (Galaxy S25 Ultra: 1.29 and 1.31 copies
+     * beside 1.30's).
+     */
+    private static final java.util.regex.Pattern VERSIONED =
+            java.util.regex.Pattern.compile("([0-9a-f]{32})\\.(\\d+\\.\\d+\\.\\d+)\\.(.+)");
+
+    static void collectSharedGarbage(File dir, java.util.Set<String> referenced, String runtime) {
         final File[] files = dir != null ? dir.listFiles() : null;
         if (files == null) {
             return;
         }
+        final java.util.Set<String> names = new java.util.HashSet<>();
         for (File f : files) {
+            names.add(f.getName());
+        }
+        for (File f : files) {
+            if (runtime != null) {
+                final java.util.regex.Matcher m = VERSIONED.matcher(f.getName());
+                if (m.matches() && !runtime.equals(m.group(2))
+                        && names.contains(m.group(1) + "." + runtime + "." + m.group(3))) {
+                    //noinspection ResultOfMethodCallIgnored
+                    f.delete();
+                    continue;
+                }
+            }
             if (!f.isFile()) {
                 continue;
             }

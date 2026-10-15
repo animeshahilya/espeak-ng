@@ -858,7 +858,20 @@ public final class PiperModel implements Closeable {
 
     /** The process's ONNX Runtime environment. */
     private static OrtEnvironment env() {
-        return OrtEnvironment.getEnvironment();
+        final OrtEnvironment env = OrtEnvironment.getEnvironment();
+        sRuntimeVersion = env.getVersion();
+        return env;
+    }
+
+    private static volatile String sRuntimeVersion;
+
+    /**
+     * The ONNX Runtime version, once a voice has loaded it in this process;
+     * null before (asking would load the runtime, which natural voices off
+     * must never do).
+     */
+    static String loadedRuntimeVersion() {
+        return sRuntimeVersion;
     }
 
     /** model.onnx -> model.<ONNX Runtime version><suffix>: a runtime update re-optimizes. */

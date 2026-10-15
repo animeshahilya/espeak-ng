@@ -103,5 +103,21 @@ public class PiperSharedModelsTest {
         assertFalse(dropOnnx.exists());
         assertFalse(dropEnc.exists());
         assertFalse(tmpFile.exists());
+
+        // Other runtimes' copies go once this runtime's exists (newer ones too:
+        // a test build may have run); a copy with no current twin stays.
+        final File older = new File(sharedDir, md5Keep + ".1.19.0.enc.ort");
+        final File newer = new File(sharedDir, md5Keep + ".1.21.0.enc.ort");
+        final File lone = new File(sharedDir, md5Keep + ".1.19.0.st-flow96.ctx.onnx");
+        Files.write(older.toPath(), new byte[]{7});
+        Files.write(newer.toPath(), new byte[]{8});
+        Files.write(lone.toPath(), new byte[]{9});
+        PiperDownloads.collectSharedGarbage(sharedDir, java.util.Collections.singleton(md5Keep), "1.20.0");
+        assertFalse(older.exists());
+        assertFalse(newer.exists());
+        assertTrue(keepEnc.isFile());
+        assertTrue(keepDec.isFile());
+        assertTrue(lone.isFile());
+        assertTrue(keepOnnx.isFile());
     }
 }
