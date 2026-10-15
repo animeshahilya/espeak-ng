@@ -7,6 +7,42 @@
 
 The espeak-ng project is a fork of the espeak project.
 
+### 2.10 beta 1 (Android)
+
+*  **Natural voices**:
+   *  Voices start speaking sooner: the Indian voices about twice as fast on phones without a Snapdragon NPU, and short screen reader phrases faster on all phones.
+   *  The Indian voices read numbers themselves in Bengali, Gujarati, Hindi, Kannada, Malayalam, Marathi, Nepali, Punjabi, Tamil and Telugu, and in Bhojpuri, Chhattisgarhi, Magahi, Maithili, Sanskrit, Dogri and Bodo, instead of switching to eSpeak for them.
+   *  Each SYSPIN and Rasa voice now comes in one version, the smaller and faster one. Voices you already have move over by themselves.
+   *  Long text keeps a steadier loudness, with a slightly longer pause between sentences.
+   *  Speech no longer stops partway when another voice loads in the background.
+   *  The first words after speech restarts come faster.
+*  **Snapdragon version**:
+   *  Voices get ready for the NPU right after they download, using Qualcomm's newer NPU software.
+   *  New, off by default: Supertonic voices (beta), 10 voices in each of 31 languages, on Snapdragon 8 Gen 1 and newer. Turn them on in Natural voices.
+   *  Leftover voice files from older versions are removed, freeing space.
+*  **Speech by language** (Mixed-language text):
+   *  Give each language its own speed, pitch and volume.
+   *  Play a short pause or tone where speech switches language.
+   *  Choose who reads a language inside other text: its own voice, eSpeak, or the voice around it.
+   *  Choose per language how readily speech switches language and how numbers are read.
+   *  Try your own text to hear and see which voice reads each part.
+   *  User dictionary entries can be read in a chosen language.
+   *  How readily speech switches language: word by word, by phrase or by sentence.
+*  **Reading** (new options, all off by default):
+   *  A Numbers and math page: dates, phone numbers, math expressions, fractions, superscripts and subscripts, dimensions like 1920x1080, Roman numerals and ordinals.
+   *  Split English compound words (aftermath as after math) and words joined by capitals (getUserName).
+   *  Acoustic conditioning: optional sound shaping with a preview.
+*  **Languages**:
+   *  Numbers like 1,00,000 and ₹500 in Bengali, Kannada, Tamil and other Indian scripts are read in the language, without English words in between.
+   *  Hindi plurals and some short words, and several Urdu sounds, are pronounced better.
+   *  Swiss German phonetic letters read correctly again.
+   *  Punctuation names for Taiwanese Chinese updated from NVDA.
+*  **App**:
+   *  Updates from inside the app: Backup and about, Check for updates. The app also checks once a day while settings are open.
+   *  About 3 MB smaller to download.
+   *  Settings headings work better with TalkBack.
+   *  Many stability fixes, including crashes and missing word highlighting at the start of speech.
+
 ### 2.9 (Android)
 
 *  **Natural voices**:
