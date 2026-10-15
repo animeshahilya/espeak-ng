@@ -94,6 +94,18 @@ public final class PiperModel implements Closeable {
      * accuracy. Used when it matches this model's split; else the FP16 path.
      */
     static final String NPU_DECODER_FILE = "npu.onnx";
+    /**
+     * Hosted NPU files (sherpa-onnx-respin-syspin's build_npu_enc.py, release
+     * npu-v2, fetched by PiperDownloads.fetchNpuDecoders): the decoder with its
+     * latent fixed to 80 frames for voices with no INT8 one (fp16 on the NPU),
+     * and the encoder in three parts - text encoder (NPU, fixed ids), the
+     * duration predictor and length regulator between (CPU), flow (NPU, fixed
+     * frames). The phone only compiles them; it no longer cuts models itself.
+     */
+    static final String NPU_DECODER16_FILE = "npudec.onnx";
+    static final String NPU_ENC_FILE = "npuenc.onnx";
+    static final String NPU_MID_FILE = "npumid.onnx";
+    static final String NPU_FLOW_FILE = "npuflow.onnx";
     /** PiperDownloads.SOURCE_FILE: the installed model and config MD5s. */
     private static final String SOURCE_FILE = "source";
     /**
@@ -122,9 +134,7 @@ public final class PiperModel implements Closeable {
                     "NPU too slow here: %.1fx real time over %d frames", speed, frames));
         }
     }
-    private static final String NPU_SUFFIX = ".npu" + NPU_FRAMES + ".onnx";
     /** Holds why the NPU failed; the revision makes phones retry after NPU code changes. */
-    private static final String NPU_FAILED_SUFFIX = ".npu-r5.failed";
 
     public final PiperVoiceConfig config;
     public final File file;
@@ -152,6 +162,14 @@ public final class PiperModel implements Closeable {
         private int refCount = 1;
         private boolean closed;
         volatile OrtSession npuDecoder;
+        /** The hosted encoder parts ({@link #NPU_ENC_FILE}...), all set or all null. */
+        volatile OrtSession npuEnc;
+        volatile OrtSession npuMid;
+        volatile OrtSession npuFlow;
+        volatile int npuEncIds;
+        volatile int npuFlowFrames;
+        /** Intra-op threads of this voice's CPU sessions (the encoder's middle part uses them too). */
+        volatile int threads = 2;
         volatile String npuProblem;
         volatile int npuFrames = NPU_FRAMES;
         volatile String npuKind;
@@ -205,6 +223,9 @@ public final class PiperModel implements Closeable {
                 closeQuietly(session);
                 closeQuietly(decoder);
                 closeQuietly(npuDecoder);
+                closeQuietly(npuEnc);
+                closeQuietly(npuMid);
+                closeQuietly(npuFlow);
                 if (supertonic != null) {
                     supertonic.close();
                 }
@@ -406,6 +427,7 @@ public final class PiperModel implements Closeable {
             session = open(onnx, null, threads);
         }
         final SessionGroup group = new SessionGroup(session, mapped, decoder, mappedDecoder);
+        group.threads = threads;
         final PiperModel model = new PiperModel(config, onnx, group);
         try {
             model.warmUp();
@@ -430,12 +452,12 @@ public final class PiperModel implements Closeable {
      * Deletes the downloaded model once its optimized copy has loaded: the
      * phone kept both, twice the space (Piper medium 17 + 18 MB). A shared
      * model (all Rasa voices) goes too; its optimized copy stays in the
-     * shared store. Kept where it is still needed: the Snapdragon build
-     * compiles NPU graphs from it, and a voice without a {@code source}
-     * record could not be matched to its catalog entry again.
+     * shared store. Kept where a voice has no {@code source} record: it could
+     * not be matched to its catalog entry again. (The Snapdragon build kept
+     * originals to cut NPU graphs from until its NPU files came hosted.)
      */
     private static void dropOriginal(File onnx) {
-        if (hasNpuRuntime() || !new File(onnx.getParentFile(), SOURCE_FILE).isFile()) {
+        if (!new File(onnx.getParentFile(), SOURCE_FILE).isFile()) {
             return;
         }
         try {
@@ -638,12 +660,31 @@ public final class PiperModel implements Closeable {
      * is quick. Mirrors {@link #attachNpu}'s choice of INT8 or FP16 graph.
      */
     private boolean npuCompiled(File onnx) {
-        final File int8 = new File(onnx.getParentFile(), NPU_DECODER_FILE);
+        final File dir = onnx.getParentFile();
+        final File int8 = new File(dir, NPU_DECODER_FILE);
         if (group.boundaryShapes != null && int8.isFile()
-                && !derivedFile(onnx, ".npuq-r3." + int8.length() + ".failed").exists()) {
-            return derivedFile(onnx, ".npuq." + int8.length() + ".onnx").isFile();
+                && !derivedFile(onnx, ".npuq-r3." + int8.length() + ".failed").exists()
+                && !derivedFile(onnx, ".npuq." + int8.length() + ".onnx").isFile()) {
+            return false;
         }
-        return derivedFile(onnx, NPU_SUFFIX).isFile() || derivedFile(onnx, NPU_FAILED_SUFFIX).exists();
+        if (!int8.isFile() && !hostedReady(onnx, new File(dir, NPU_DECODER16_FILE))) {
+            return false;
+        }
+        return hostedReady(onnx, new File(dir, NPU_ENC_FILE)) && hostedReady(onnx, new File(dir, NPU_FLOW_FILE));
+    }
+
+    /** A hosted NPU file compiled already, failed before, or absent: nothing to wait for. */
+    private static boolean hostedReady(File onnx, File hosted) {
+        return !hosted.isFile() || compiledFile(onnx, hosted).isFile() || failedFile(onnx, hosted).exists();
+    }
+
+    /** Where a hosted NPU file's compiled graph is kept: keyed by its size, so an update recompiles. */
+    private static File compiledFile(File onnx, File hosted) {
+        return derivedFile(onnx, "." + hosted.getName().replace(".onnx", "") + "." + hosted.length() + ".ctx.onnx");
+    }
+
+    private static File failedFile(File onnx, File hosted) {
+        return derivedFile(onnx, "." + hosted.getName().replace(".onnx", "") + "-r1." + hosted.length() + ".failed");
     }
 
     /**
@@ -666,7 +707,8 @@ public final class PiperModel implements Closeable {
                     android.util.Log.i("PiperVoices", "Natural voice " + config.key + " decoder "
                             + (onNpu() ? "moved to the NPU (" + npuKind() + ") after "
                                     + (System.nanoTime() - t0) / 1_000_000 + " ms of compiling"
-                                    : npuProblem()));
+                                    : npuProblem())
+                            + (group.npuEnc != null ? ", encoder on the NPU" : ", encoder on the CPU"));
                 }
             } finally {
                 group.release();
@@ -682,11 +724,170 @@ public final class PiperModel implements Closeable {
      * and is remembered, so a phone without the NPU pays for it once.
      */
     private void attachNpu(File onnx) {
-        final File int8 = new File(onnx.getParentFile(), NPU_DECODER_FILE);
-        if (group.boundaryShapes != null && int8.isFile() && hasNpuRuntime() && attachInt8Npu(onnx, int8)) {
+        if (!hasNpuRuntime() || group.boundaryShapes == null) {
             return;
         }
-        attachFp16Npu(onnx);
+        final File dir = onnx.getParentFile();
+        // Graphs the phone used to cut and compile itself (before hosted files):
+        // model.<runtime>.npu80.onnx and its _qnn.bin, and their failure markers.
+        final File[] legacy = dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
+                && (n.contains(".npu80") || n.contains(".npu-r")));
+        if (legacy != null) {
+            for (File f : legacy) {
+                //noinspection ResultOfMethodCallIgnored
+                f.delete();
+            }
+        }
+        final File int8 = new File(dir, NPU_DECODER_FILE);
+        if (!(int8.isFile() && attachInt8Npu(onnx, int8))) {
+            attachHostedDecoder(onnx, new File(dir, NPU_DECODER16_FILE));
+        }
+        attachNpuEncoder(onnx);
+    }
+
+    /**
+     * An NPU session over a hosted fixed-shape graph (fp16 on the HTP; its INT8
+     * weights widened), compiled once into {@link #compiledFile}. Null, with the
+     * reason remembered, when it fails.
+     */
+    private static OrtSession hostedNpuSession(File onnx, File hosted) throws IOException, OrtException {
+        final File compiled = compiledFile(onnx, hosted);
+        final boolean compile = !compiled.isFile();
+        try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
+            final Map<String, String> qnn = new HashMap<>();
+            qnn.put("backend_path", npuBackend());
+            qnn.put("enable_htp_fp16_precision", "1");
+            qnn.put("htp_performance_mode", "burst");
+            addNpu(options, qnn);
+            // All of it on the NPU or not at all: a half-offloaded graph is slower.
+            options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
+            // The hosted files keep INT8 weights behind DequantizeLinear, which the
+            // fp16 NPU graph cannot run; ORT folds them into float weights first.
+            options.addConfigEntry("session.disable_quant_qdq", "1");
+            if (compile) {
+                options.addConfigEntry("ep.context_enable", "1");
+                options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
+            }
+            return env().createSession((compile ? hosted : compiled).getAbsolutePath(), options);
+        } catch (OrtException | RuntimeException e) {
+            compiled.delete();
+            throw e;
+        }
+    }
+
+    private static void remember(File failed, Exception e) {
+        try (java.io.FileWriter w = new java.io.FileWriter(failed)) {
+            w.write(String.valueOf(e));
+        } catch (IOException ignored) {
+            // Tried again next load.
+        }
+    }
+
+    /** The hosted fixed-window decoder for voices with no INT8 one. */
+    private void attachHostedDecoder(File onnx, File hosted) {
+        if (!hosted.isFile()) {
+            group.npuProblem = "on the CPU (no NPU decoder for this voice)";
+            return;
+        }
+        final File failed = failedFile(onnx, hosted);
+        if (failed.exists()) {
+            group.npuProblem = "on the CPU (NPU decoder failed before)";
+            return;
+        }
+        OrtSession npu = null;
+        try {
+            npu = hostedNpuSession(onnx, hosted);
+            final Map<String, ai.onnxruntime.NodeInfo> info = npu.getInputInfo();
+            if (!info.keySet().equals(new java.util.HashSet<>(Arrays.asList(group.boundary)))) {
+                throw new IOException("inputs " + info.keySet() + " are not " + Arrays.toString(group.boundary));
+            }
+            final long[] latent = ((ai.onnxruntime.TensorInfo) info.get(group.boundary[0]).getInfo()).getShape();
+            if (latent.length != 3 || latent[1] != group.boundaryShapes[0][1] || latent[2] <= 2 * DECODE_OVERLAP) {
+                throw new IOException("latent " + Arrays.toString(latent));
+            }
+            final Map<String, OnnxTensor> inputs = new HashMap<>();
+            try {
+                for (int i = 0; i < group.boundary.length; i++) {
+                    final long[] shape = i == 0 ? latent : group.boundaryShapes[i];
+                    inputs.put(group.boundary[i], OnnxTensor.createTensor(env(),
+                            FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
+                }
+                npu.run(inputs).close();
+                checkNpuSpeed(npu, inputs, (int) latent[2]);
+            } finally {
+                for (OnnxTensor t : inputs.values()) {
+                    t.close();
+                }
+            }
+            group.npuFrames = (int) latent[2];
+            group.npuKind = "FP16";
+            group.npuProblem = null;
+            group.npuDecoder = npu;
+        } catch (IOException | OrtException | RuntimeException e) {
+            closeQuietly(npu);
+            group.npuProblem = "on the CPU (NPU failed: " + e + ")";
+            remember(failed, e);
+        }
+    }
+
+    /**
+     * The hosted encoder parts: text encoder and flow on the NPU, the middle on
+     * the CPU. Used only if they hand the decoder exactly what this voice's own
+     * encoder does (names checked); else the CPU encoder stays, remembered.
+     */
+    private void attachNpuEncoder(File onnx) {
+        final File dir = onnx.getParentFile();
+        final File encFile = new File(dir, NPU_ENC_FILE);
+        final File midFile = new File(dir, NPU_MID_FILE);
+        final File flowFile = new File(dir, NPU_FLOW_FILE);
+        if (!encFile.isFile() || !midFile.isFile() || !flowFile.isFile()) {
+            return;
+        }
+        final File failed = failedFile(onnx, encFile);
+        if (failed.exists()) {
+            return;
+        }
+        OrtSession enc = null;
+        OrtSession mid = null;
+        OrtSession flow = null;
+        try {
+            enc = hostedNpuSession(onnx, encFile);
+            flow = hostedNpuSession(onnx, flowFile);
+            try (OrtSession.SessionOptions o = options(group.threads)) {
+                o.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.BASIC_OPT);
+                mid = env().createSession(midFile.getAbsolutePath(), o);
+            }
+            final java.util.Set<String> midOut = mid.getOutputNames();
+            if (!flow.getOutputNames().contains(group.boundary[0])) {
+                throw new IOException("flow makes " + flow.getOutputNames() + ", not " + group.boundary[0]);
+            }
+            for (int i = 1; i < group.boundary.length; i++) {
+                if (!midOut.contains(group.boundary[i])) {
+                    throw new IOException("no " + group.boundary[i] + " from " + midOut);
+                }
+            }
+            if (!mid.getInputNames().containsAll(enc.getOutputNames())
+                    || !midOut.containsAll(flow.getInputNames())) {
+                throw new IOException("parts do not join");
+            }
+            final long[] ids = ((ai.onnxruntime.TensorInfo) enc.getInputInfo().get("input").getInfo()).getShape();
+            int frames = 0;
+            for (ai.onnxruntime.NodeInfo n : flow.getInputInfo().values()) {
+                final long[] shape = ((ai.onnxruntime.TensorInfo) n.getInfo()).getShape();
+                frames = Math.max(frames, (int) shape[shape.length - 1]);
+            }
+            group.npuEncIds = (int) ids[1];
+            group.npuFlowFrames = frames;
+            group.npuMid = mid;
+            group.npuFlow = flow;
+            group.npuEnc = enc;
+        } catch (IOException | OrtException | RuntimeException e) {
+            closeQuietly(enc);
+            closeQuietly(mid);
+            closeQuietly(flow);
+            android.util.Log.w("PiperVoices", "Natural voice " + config.key + " encoder stays on the CPU: " + e);
+            remember(failed, e);
+        }
     }
 
     /**
@@ -757,90 +958,6 @@ public final class PiperModel implements Closeable {
         }
     }
 
-    private void attachFp16Npu(File onnx) {
-        final long[][] shapes = group.boundaryShapes;
-        final File failed = derivedFile(onnx, NPU_FAILED_SUFFIX);
-        if (shapes == null || !hasNpuRuntime()) {
-            return;
-        }
-        if (failed.exists()) {
-            String why = "";
-            try {
-                why = new String(java.nio.file.Files.readAllBytes(failed.toPath()),
-                        java.nio.charset.StandardCharsets.UTF_8);
-            } catch (IOException ignored) {
-                // The reason is only for the log.
-            }
-            group.npuProblem = "on the CPU (NPU failed before: " + why + ")";
-            return;
-        }
-        final File compiled = derivedFile(onnx, NPU_SUFFIX);
-        final File source = derivedFile(onnx, ".npu.tmp");
-        OrtSession npu = null;
-        try {
-            final boolean compile = !compiled.isFile();
-            if (compile) {
-                final Map<String, long[]> fixed = new HashMap<>();
-                for (int i = 0; i < group.boundary.length; i++) {
-                    fixed.put(group.boundary[i], i == 0
-                            ? new long[] {1, shapes[0][1], NPU_FRAMES} : shapes[i]);
-                }
-                if (!PiperSplit.split(onnx, null, source, fixed)) {
-                    throw new IOException("not splittable");
-                }
-            }
-            try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
-                final Map<String, String> qnn = new HashMap<>();
-                qnn.put("backend_path", npuBackend());
-                qnn.put("enable_htp_fp16_precision", "1");
-                qnn.put("htp_performance_mode", "burst");
-                addNpu(options, qnn);
-                // All of it on the NPU or not at all: a half-offloaded graph is slower.
-                options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
-                // INT8-weight voices (int8-v1) widen their weights with
-                // DequantizeLinear, which the fp16 NPU graph cannot run;
-                // without QDQ handling ORT folds those into float weights
-                // first, so the NPU gets the plain float decoder.
-                options.addConfigEntry("session.disable_quant_qdq", "1");
-                if (compile) {
-                    options.addConfigEntry("ep.context_enable", "1");
-                    options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
-                }
-                npu = env().createSession((compile ? source : compiled).getAbsolutePath(), options);
-            }
-            // A real window through it before it speaks.
-            final Map<String, OnnxTensor> inputs = new HashMap<>();
-            try {
-                for (int i = 0; i < group.boundary.length; i++) {
-                    final long[] shape = i == 0 ? new long[] {1, shapes[0][1], NPU_FRAMES} : shapes[i];
-                    inputs.put(group.boundary[i], OnnxTensor.createTensor(env(),
-                            FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
-                }
-                npu.run(inputs).close();
-                checkNpuSpeed(npu, inputs, NPU_FRAMES);
-            } finally {
-                for (OnnxTensor t : inputs.values()) {
-                    t.close();
-                }
-            }
-            group.npuFrames = NPU_FRAMES;
-            group.npuKind = "FP16";
-            group.npuProblem = null;
-            group.npuDecoder = npu;
-        } catch (IOException | OrtException | RuntimeException e) {
-            closeQuietly(npu);
-            compiled.delete();
-            group.npuProblem = "on the CPU (NPU failed: " + e + ")";
-            try (java.io.FileWriter w = new java.io.FileWriter(failed)) {
-                w.write(group.npuProblem);
-            } catch (IOException ignored) {
-                // Tried again next load.
-            }
-        } finally {
-            source.delete();
-        }
-    }
-
     /** True when the decoder runs on Qualcomm's NPU. */
     boolean onNpu() {
         return group.npuDecoder != null;
@@ -849,6 +966,12 @@ public final class PiperModel implements Closeable {
     /** "INT8" or "FP16" when on the NPU, else null. */
     String npuKind() {
         return group.npuDecoder != null ? group.npuKind : null;
+    }
+
+    /** For the load log: where the decoder (and encoder) run, or why not on the NPU. */
+    String npuState() {
+        return onNpu() ? "on the NPU (" + npuKind() + ")" + (group.npuEnc != null ? ", encoder too" : "")
+                : npuProblem();
     }
 
     /** Why a build with the NPU runtime isn't using it for this voice, or null. */
@@ -1219,6 +1342,15 @@ public final class PiperModel implements Closeable {
                 return null;
             }
             final OrtEnvironment env = env();
+            if (group.npuEnc != null && ids.length <= group.npuEncIds && group.boundaryShapes != null) {
+                final Encoded e = encodeOnNpu(ids, lengthScale, speakerId, noise, noiseW, handle);
+                if (e != null) {
+                    return e;
+                }
+                if (handle != null && handle.isCancelled()) {
+                    return null;
+                }
+            }
             final Map<String, OnnxTensor> inputs = new HashMap<>();
             final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
             try {
@@ -1261,6 +1393,156 @@ public final class PiperModel implements Closeable {
         } finally {
             group.lock.readLock().unlock();
         }
+    }
+
+    /** A float tensor's values and shape. */
+    private static final class Tensor {
+        final float[] data;
+        final long[] shape;
+
+        Tensor(float[] data, long[] shape) {
+            this.data = data;
+            this.shape = shape;
+        }
+
+        /** The first {@code n} along the last axis (or along axis 1 when that one is {@code from} long). */
+        Tensor crop(int from, int n) {
+            final int axis = shape[shape.length - 1] == from ? shape.length - 1
+                    : shape.length > 1 && shape[1] == from ? 1 : -1;
+            if (axis < 0) {
+                return this;
+            }
+            long outer = 1;
+            for (int i = 0; i < axis; i++) {
+                outer *= shape[i];
+            }
+            long inner = 1;
+            for (int i = axis + 1; i < shape.length; i++) {
+                inner *= shape[i];
+            }
+            final long[] s = shape.clone();
+            s[axis] = n;
+            final float[] out = new float[(int) (outer * n * inner)];
+            for (int o = 0; o < outer; o++) {
+                System.arraycopy(data, (int) (o * from * inner), out, (int) (o * n * inner), (int) (n * inner));
+            }
+            return new Tensor(out, s);
+        }
+
+        /** Zero-padded along the last axis to {@code to}. */
+        Tensor pad(int to) {
+            final int last = (int) shape[shape.length - 1];
+            final long[] s = shape.clone();
+            s[s.length - 1] = to;
+            final int rows = data.length / last;
+            final float[] out = new float[rows * to];
+            for (int r = 0; r < rows; r++) {
+                System.arraycopy(data, r * last, out, r * to, last);
+            }
+            return new Tensor(out, s);
+        }
+    }
+
+    private static Map<String, Tensor> results(OrtSession.Result r) throws OrtException {
+        final Map<String, Tensor> out = new HashMap<>();
+        for (Map.Entry<String, OnnxValue> e : r) {
+            final float[] f = floats(e.getValue());
+            if (f == null) {
+                throw new OrtException("not a float tensor: " + e.getKey());
+            }
+            out.put(e.getKey(), new Tensor(f, ((OnnxTensor) e.getValue()).getInfo().getShape()));
+        }
+        return out;
+    }
+
+    /**
+     * The encoder as the hosted parts run it: ids padded to the text encoder's
+     * size, its outputs cropped back, the middle part on the CPU (durations,
+     * length regulator, noise), the latent padded to the flow's size and
+     * cropped back. Null when the chunk's frames outgrow the flow (the CPU
+     * encoder then takes the chunk).
+     */
+    private Encoded encodeOnNpu(long[] ids, float lengthScale, int speakerId, float noise, float noiseW,
+                                RunHandle handle) throws OrtException {
+        final OrtEnvironment env = env();
+        final int n = ids.length;
+        final int bucket = group.npuEncIds;
+        final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
+        final OrtSession.RunOptions run = handle != null ? handle.options : ownOptions;
+        final Map<String, OnnxTensor> in = new HashMap<>();
+        try {
+            final long[] padded = Arrays.copyOf(ids, bucket);
+            in.put("input", OnnxTensor.createTensor(env, LongBuffer.wrap(padded), new long[] {1, bucket}));
+            in.put("input_lengths", OnnxTensor.createTensor(env, LongBuffer.wrap(new long[] {n}), new long[] {1}));
+            final Map<String, Tensor> enc;
+            try (OrtSession.Result r = group.npuEnc.run(in, run)) {
+                enc = results(r);
+            }
+            closeAll(in);
+            putInputs(env, in, ids, lengthScale, speakerId, noise, noiseW);
+            final java.util.Set<String> midNames = group.npuMid.getInputNames();
+            in.keySet().retainAll(midNames); // inputs it does not read are dropped (and closed below)
+            for (Map.Entry<String, Tensor> e : enc.entrySet()) {
+                final Tensor t = e.getValue().crop(bucket, n);
+                in.put(e.getKey(), OnnxTensor.createTensor(env, FloatBuffer.wrap(t.data), t.shape));
+            }
+            final Map<String, Tensor> mid;
+            try (OrtSession.Result r = group.npuMid.run(in, run)) {
+                mid = results(r);
+            }
+            closeAll(in);
+            int frames = 0;
+            for (String name : group.npuFlow.getInputNames()) {
+                final long[] shape = mid.get(name).shape;
+                frames = Math.max(frames, (int) shape[shape.length - 1]);
+            }
+            if (frames > group.npuFlowFrames) {
+                return null;
+            }
+            for (String name : group.npuFlow.getInputNames()) {
+                Tensor t = mid.get(name);
+                if (t.shape[t.shape.length - 1] == frames && frames > 1) {
+                    t = t.pad(group.npuFlowFrames);
+                }
+                in.put(name, OnnxTensor.createTensor(env, FloatBuffer.wrap(t.data), t.shape));
+            }
+            final Tensor latent;
+            try (OrtSession.Result r = group.npuFlow.run(in, run)) {
+                final Map<String, Tensor> out = results(r);
+                latent = out.get(group.boundary[0]).crop(group.npuFlowFrames, frames);
+            }
+            final float[][] tensors = new float[group.boundary.length][];
+            final long[][] shapes = new long[group.boundary.length][];
+            tensors[0] = latent.data;
+            shapes[0] = latent.shape;
+            for (int i = 1; i < group.boundary.length; i++) {
+                final Tensor t = mid.get(group.boundary[i]);
+                tensors[i] = t.data;
+                shapes[i] = t.shape;
+            }
+            // The durations are the middle part's last output (build_npu_enc.py).
+            final String[] midOut = group.npuMid.getOutputNames().toArray(new String[0]);
+            final Tensor durations = mid.get(midOut[midOut.length - 1]);
+            return new Encoded(tensors, shapes,
+                    durations != null && durations.data.length == n ? durations.data : null);
+        } catch (OrtException e) {
+            if (handle != null && handle.isCancelled()) {
+                return null;
+            }
+            throw e;
+        } finally {
+            closeAll(in);
+            if (ownOptions != null) {
+                ownOptions.close();
+            }
+        }
+    }
+
+    private static void closeAll(Map<String, OnnxTensor> tensors) {
+        for (OnnxTensor t : tensors.values()) {
+            t.close();
+        }
+        tensors.clear();
     }
 
     /**

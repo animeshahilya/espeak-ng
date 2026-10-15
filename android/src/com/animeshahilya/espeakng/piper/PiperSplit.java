@@ -97,16 +97,6 @@ public final class PiperSplit {
      *         decoder
      */
     static boolean split(File in, File encoderOut, File decoderOut) throws IOException {
-        return split(in, encoderOut, decoderOut, null);
-    }
-
-    /**
-     * @param decoderShapes fixed shapes for the decoder's inputs by name, for
-     *                      accelerators that need them (Qualcomm's NPU), or
-     *                      null; with them, {@code encoderOut} may be null
-     */
-    static boolean split(File in, File encoderOut, File decoderOut, Map<String, long[]> decoderShapes)
-            throws IOException {
         try (RandomAccessFile raf = new RandomAccessFile(in, "r");
              FileChannel channel = raf.getChannel()) {
             final MappedByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
@@ -147,13 +137,11 @@ public final class PiperSplit {
             }
             final List<byte[]> decoderExtra = new ArrayList<>();
             for (String name : boundary) {
-                decoderExtra.add(floatInput(name, decoderShapes == null ? null : decoderShapes.get(name)));
+                decoderExtra.add(floatInput(name));
             }
             decoderExtra.add(PiperAlignment.outputEntry(AUDIO_OUTPUT));
 
-            if (encoderOut != null) {
-                write(channel, graph, entries, encoderNodes, true, encoderExtra, encoderOut);
-            }
+            write(channel, graph, entries, encoderNodes, true, encoderExtra, encoderOut);
             write(channel, graph, entries, decoderNodes, false, decoderExtra, decoderOut);
             return true;
         }
@@ -339,23 +327,8 @@ public final class PiperSplit {
 
     /** GraphProto.input entry: a float tensor of any shape. */
     static byte[] floatInput(String name) {
-        return floatInput(name, null);
-    }
-
-    /** As {@link #floatInput(String)}, with a fixed shape when {@code dims} is given. */
-    static byte[] floatInput(String name, long[] dims) {
         final byte[] utf8 = name.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        byte[] elem = {(byte) (TENSOR_TYPE_ELEM << 3), ELEM_FLOAT};
-        if (dims != null) {
-            byte[] shape = new byte[0];
-            for (long d : dims) {
-                final byte[] value = PiperAlignment.concat(new byte[] {DIM_VALUE << 3}, PiperAlignment.varint(d));
-                shape = PiperAlignment.concat(shape, PiperAlignment.concat(
-                        PiperAlignment.tagAndLength(SHAPE_DIM, value.length), value));
-            }
-            elem = PiperAlignment.concat(elem, PiperAlignment.concat(
-                    PiperAlignment.tagAndLength(TENSOR_TYPE_SHAPE, shape.length), shape));
-        }
+        final byte[] elem = {(byte) (TENSOR_TYPE_ELEM << 3), ELEM_FLOAT};
         final byte[] tensorType = PiperAlignment.concat(PiperAlignment.tagAndLength(TYPE_TENSOR, elem.length), elem);
         final byte[] info = PiperAlignment.concat(
                 PiperAlignment.concat(PiperAlignment.tagAndLength(VALUE_INFO_NAME, utf8.length), utf8),

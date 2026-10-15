@@ -394,8 +394,8 @@ voices" does not, so voices can still be deleted to free space.
   After an ONNX Runtime update the older copy is adopted
   (`adoptOlderOptimized`; ORT format loads in newer runtimes); if it fails
   it is deleted and `PiperDownloads.restoreMissing` downloads the voice
-  again at the next service start. The Snapdragon build keeps originals
-  (its NPU graphs compile from them). Direct
+  again at the next service start. Since 2026-10-15 the Snapdragon build
+  drops originals too: its NPU graphs come hosted, not cut from them. Direct
   Boot works). Models sharing one upstream file (all 20 Rasa voices share
   `vits-rasa-13-piper-model.onnx`) keep a single content-addressed copy in
   `files/piper/shared/<md5>.onnx`, symlinked into each voice directory
@@ -577,21 +577,38 @@ voices" does not, so voices can still be deleted to free space.
   Ultra). The plugin needs minSdk 27, so the Snapdragon APK has 27 (it is
   offered from SM8450 on, Android 12+). GPU, DSP and HTP v68 libraries are
   left out (`packaging.jniLibs.excludes`, -10 MB). Same speed as before on
-  the S25 Ultra (Hindi first audio 123-132 ms). `PiperModel.attachNpu` moves
-  the decoder to the Hexagon NPU after warm-up: writes it with fixed input
-  shapes (`PiperSplit.split(..., decoderShapes)`, `NPU_FRAMES` = 80 latent
-  frames), lets QNN compile it and keeps the compiled graph as
-  `model.<ort>.npu80.onnx` (0.15 s loads); `decodeOnNpu` runs fixed windows
-  with `DECODE_OVERLAP` context. A compile (FP16 13-17 s on the S25 Ultra,
+  the S25 Ultra (Hindi first audio 123-132 ms). **Hosted NPU files, no
+  graph cutting on the phone (2026-10-15):** every voice we host has its NPU
+  graphs built on the PC (sherpa-onnx-respin-syspin `build_npu_enc.py` /
+  `build_npu_set.py`, release `npu-v2`, list `assets/piper/npu_files.json`,
+  fetched with the INT8 decoders by `PiperDownloads.fetchNpuDecoders`):
+  the text encoder fixed to 256 ids (`npuenc.onnx`), the duration
+  predictor + length regulator + noise as a CPU graph (`npumid.onnx`; the
+  NPU cannot run its data-dependent NonZero), the flow fixed to 512 frames
+  (SYSPIN 2048, ~6.8 frames per id; `npuflow.onnx`) and, for voices with no
+  INT8 decoder (`npu.onnx`, npu_decoders.json), the decoder with its latent
+  fixed to 80 frames (`npudec.onnx`). `PiperModel.attachNpu` only compiles
+  them (fp16 HTP, `session.disable_quant_qdq` for their INT8 weights,
+  cached as `model.<ort>.<file>.<size>.ctx.onnx`, failures as `-r1` markers)
+  and checks they hand the decoder exactly this voice's boundary tensors;
+  `encode()` runs text encoder (NPU) -> middle (CPU) -> flow (NPU) for a
+  chunk within the buckets, else the CPU encoder. Older exports that name
+  only their weights (Rohan, Arjun/Meera, Chitwan...) get the decoder file
+  only. Galaxy S25 Ultra, Priyamvada fresh text: first audio phrases 54 ->
+  39-44 ms, sentences 80 -> 54-58 ms (bench: text encoder 24 -> 2.8 ms, flow
+  36 -> 1.8 ms; SNR 65-71 / 45-65 dB vs the CPU); loads 0.5 -> 0.8-1.2 s
+  (three compiled graphs), compiled graphs ~33 MB per voice. Voices from
+  rhasspy we cannot re-host (lessac, ryan) run on the CPU on Snapdragon.
+  `decodeOnNpu` runs fixed windows with `DECODE_OVERLAP` context. A compile (FP16 13-17 s on the S25 Ultra,
   INT8 ~1.6 s) never holds up the voice: `attachNpuLater` speaks with the
   CPU decoder and switches on the `piper-npu-compile` thread when ready
   (logged "decoder moved to the NPU"), and `PiperEngine.prepare` builds a
   voice's optimized copy and NPU graph right after its download
   (`PiperDownloads.prepare`, after its extras), so even its first use is
   quick (Rahul: 674 ms, NPU). All of the graph on the NPU or none
-  (`disable_cpu_ep_fallback`); a failure keeps the CPU decoder and writes
-  `model.<ort>.npu-r5.failed` with the reason (bump the revision after NPU
-  code changes so phones retry). The load log says where the decoder runs.
+  (`disable_cpu_ep_fallback`); a failure keeps the CPU part and writes a
+  `.failed` marker with the reason (bump the revision after NPU code changes
+  so phones retry). The load log says where the decoder and encoder run.
   Measured on the S25 Ultra, no gain, not used: `rpc_control_latency` 100,
   `htp_share_resource_optimization` (two voices loaded), ONNX Runtime 1.31
   (renders the same, loads voices 40-100% slower). Needs `<uses-native-library libcdsprpc.so>` in the

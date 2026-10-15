@@ -312,8 +312,7 @@ public final class PiperEngine {
                 final Listener l = mListener;
                 if (l != null) {
                     final PiperModel loaded = getLoaded(key);
-                    l.onLoaded(key, System.currentTimeMillis() - t0, loaded == null ? null
-                            : loaded.onNpu() ? "on the NPU (" + loaded.npuKind() + ")" : loaded.npuProblem());
+                    l.onLoaded(key, System.currentTimeMillis() - t0, loaded == null ? null : loaded.npuState());
                 }
             } catch (Throwable t) {
                 mFailed.put(key, System.currentTimeMillis());
@@ -361,8 +360,7 @@ public final class PiperEngine {
                 install(key, model);
                 final Listener l = mListener;
                 if (l != null) { // the settings screen's Test voice is logged too
-                    l.onLoaded(key, System.currentTimeMillis() - t0, model.onNpu()
-                            ? "on the NPU (" + model.npuKind() + ")" : model.npuProblem());
+                    l.onLoaded(key, System.currentTimeMillis() - t0, model.npuState());
                 }
             }
             return model;

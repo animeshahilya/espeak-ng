@@ -1307,17 +1307,33 @@ public final class PiperDownloads {
         if (!PiperModel.hasNpuRuntime()) {
             return;
         }
+        fetchNpuList(appContext, storageContext, NPU_DECODERS_ASSET, false);
+        fetchNpuList(appContext, storageContext, NPU_FILES_ASSET, true);
+    }
+
+    /**
+     * Hosted NPU files for the rest of each voice (build_npu_enc.py, release
+     * npu-v2): the encoder's three parts and, for voices with no INT8 decoder,
+     * a fixed-window decoder. The phone only compiles them.
+     */
+    public static final String NPU_FILES_ASSET = "piper/npu_files.json";
+    /** npu_files.json entry -> the file it becomes in the voice folder. */
+    private static final String[][] NPU_FILE_NAMES = {
+            {"enc", PiperModel.NPU_ENC_FILE}, {"mid", PiperModel.NPU_MID_FILE},
+            {"flow", PiperModel.NPU_FLOW_FILE}, {"dec", PiperModel.NPU_DECODER16_FILE}};
+
+    /**
+     * Fetches the files a bundled list names for each installed voice: in
+     * npu_decoders.json one decoder per voice ({@code sets} false), in
+     * npu_files.json a set per voice. MD5-checked, stamped, skipped when the
+     * stamp already matches; a voice that got a file is reloaded.
+     */
+    private static void fetchNpuList(Context appContext, Context storageContext, String asset, boolean sets) {
         final JSONObject list;
-        try (InputStream in = appContext.getAssets().open(NPU_DECODERS_ASSET)) {
-            final ByteArrayOutputStream buf = new ByteArrayOutputStream();
-            final byte[] b = new byte[8192];
-            int n;
-            while ((n = in.read(b)) > 0) {
-                buf.write(b, 0, n);
-            }
-            list = new JSONObject(buf.toString("UTF-8"));
+        try (InputStream in = appContext.getAssets().open(asset)) {
+            list = new JSONObject(FileUtils.read(in));
         } catch (IOException | JSONException e) {
-            Log.w(TAG, "NPU decoder list unavailable", e);
+            Log.w(TAG, "NPU list " + asset + " unavailable", e);
             return;
         }
         final String base = list.optString("base_url", "");
@@ -1326,30 +1342,50 @@ public final class PiperDownloads {
             return;
         }
         for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
-            final JSONObject f = voices.optJSONObject(v.key);
-            if (f == null || !isSafePath(f.optString("path", ""))) {
+            final JSONObject entry = voices.optJSONObject(v.key);
+            if (entry == null) {
                 continue;
             }
-            final String md5 = f.optString("md5_digest", "");
-            final File target = new File(v.dir, PiperModel.NPU_DECODER_FILE);
-            final File stamp = new File(v.dir, PiperModel.NPU_DECODER_FILE + ".md5");
+            boolean changed = false;
             try {
-                if (target.isFile() && stamp.isFile()
-                        && md5.equalsIgnoreCase(FileUtils.readText(stamp).trim())) {
-                    continue;
+                if (!sets) {
+                    changed = fetchNpuFile(base, entry, new File(v.dir, PiperModel.NPU_DECODER_FILE));
+                } else {
+                    for (String[] f : NPU_FILE_NAMES) {
+                        final JSONObject file = entry.optJSONObject(f[0]);
+                        if (file != null) {
+                            changed |= fetchNpuFile(base, file, new File(v.dir, f[1]));
+                        }
+                    }
                 }
-                final byte[] data = fetch(base + f.getString("path"), 64 * 1024 * 1024);
-                if (!md5.equalsIgnoreCase(md5(data))) {
-                    throw new IOException("NPU decoder checksum mismatch for " + v.key);
-                }
-                FileUtils.write(target, data);
-                FileUtils.write(stamp, md5.getBytes(StandardCharsets.UTF_8));
-                Log.i(TAG, "NPU decoder for " + v.key + " installed");
-                broadcastChanged(appContext, v.key, null);
             } catch (IOException | JSONException | RuntimeException e) {
-                Log.w(TAG, "NPU decoder for " + v.key + " not fetched; tried again later", e);
+                Log.w(TAG, "NPU files for " + v.key + " not fetched; tried again later", e);
+            }
+            if (changed) {
+                Log.i(TAG, "NPU files for " + v.key + " installed");
+                broadcastChanged(appContext, v.key, null);
             }
         }
+    }
+
+    /** One hosted file into {@code target} unless its MD5 stamp already matches; true when written. */
+    private static boolean fetchNpuFile(String base, JSONObject f, File target) throws IOException, JSONException {
+        final String path = f.optString("path", "");
+        if (!isSafePath(path)) {
+            return false;
+        }
+        final String md5 = f.optString("md5_digest", "");
+        final File stamp = new File(target.getParentFile(), target.getName() + ".md5");
+        if (target.isFile() && stamp.isFile() && md5.equalsIgnoreCase(FileUtils.readText(stamp).trim())) {
+            return false;
+        }
+        final byte[] data = fetch(base + path, 64 * 1024 * 1024);
+        if (!md5.equalsIgnoreCase(md5(data))) {
+            throw new IOException("NPU file checksum mismatch: " + path);
+        }
+        FileUtils.write(target, data);
+        FileUtils.write(stamp, md5.getBytes(StandardCharsets.UTF_8));
+        return true;
     }
 
     /**
