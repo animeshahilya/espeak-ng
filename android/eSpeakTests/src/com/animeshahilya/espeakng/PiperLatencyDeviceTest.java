@@ -36,6 +36,11 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(AndroidJUnit4.class)
 public class PiperLatencyDeviceTest {
+    @org.junit.ClassRule
+    public static final com.animeshahilya.espeakng.test.KeepUserSettings KEEP =
+            new com.animeshahilya.espeakng.test.KeepUserSettings(
+                    com.animeshahilya.espeakng.ui.LanguageSettings.PREF_SUPPORTED_LANGUAGES);
+
     private static final String TAG = "PiperLatency";
     private static final int RUNS = 5;
 
@@ -162,6 +167,122 @@ public class PiperLatencyDeviceTest {
         assertTrue("speech still works: " + after[3] + " vs " + before[3] + " samples",
                 after[3] > before[3] * 7 / 10);
         Log.i(TAG, "stops done, then " + after[3] / (double) after[2] + " s of audio");
+    }
+
+    private static final String[] KN_PHRASES = {"ಹೊಸ ಸಂದೇಶ ಬಂದಿದೆ", "ಬ್ಯಾಟರಿ ಶೇಕಡಾ ಎಂಬತ್ತು",
+            "ವೈಫೈ ಸಂಪರ್ಕ ಕಡಿತಗೊಂಡಿದೆ", "ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ", "ಕರೆ ಮಾಡಲು ಎರಡು ಬಾರಿ ತಟ್ಟಿ",
+            "ನಿಮ್ಮ ಗುಪ್ತಪದ ನಮೂದಿಸಿ", "ಇಂದಿನ ಹವಾಮಾನ ಬಿಸಿಲು", "ಸಂಗೀತ ಕೇಳುತ್ತಿದ್ದೀರಿ"};
+    private static final String[] KN_SENTENCES = {
+            "ನಾಳೆ ಬೆಳಿಗ್ಗೆ ನಾವು ಎಲ್ಲರೂ ಸೇರಿ ಹಳೆಯ ಮಾರುಕಟ್ಟೆಗೆ ಹೋಗಿ ತಾಜಾ ತರಕಾರಿಗಳನ್ನು ಖರೀದಿಸುತ್ತೇವೆ.",
+            "ನಮ್ಮ ಊರಿನ ಶಾಲೆಯಲ್ಲಿ ಈ ವರ್ಷ ಹೊಸ ಗ್ರಂಥಾಲಯವನ್ನು ಮಕ್ಕಳಿಗಾಗಿ ತೆರೆಯಲಾಗಿದೆ.",
+            "ಮಳೆಗಾಲದಲ್ಲಿ ರಸ್ತೆಗಳು ಒದ್ದೆಯಾಗಿರುವುದರಿಂದ ವಾಹನಗಳನ್ನು ನಿಧಾನವಾಗಿ ಓಡಿಸಬೇಕು.",
+            "ಅಜ್ಜಿ ಪ್ರತಿದಿನ ಸಂಜೆ ತೋಟದಲ್ಲಿ ಹೂವಿನ ಗಿಡಗಳಿಗೆ ನೀರು ಹಾಕುತ್ತಾರೆ.",
+            "ರೈಲು ನಿಲ್ದಾಣದಲ್ಲಿ ಜನರು ಟಿಕೆಟ್ ಪಡೆಯಲು ಉದ್ದನೆಯ ಸಾಲಿನಲ್ಲಿ ನಿಂತಿದ್ದರು."};
+    private static final String[] HI_PHRASES = {"नया संदेश आया है", "बैटरी अस्सी प्रतिशत",
+            "वाईफ़ाई कनेक्शन टूट गया", "होम स्क्रीन पर वापस जाएँ", "कॉल करने के लिए दो बार टैप करें",
+            "अपना पासवर्ड डालें", "आज का मौसम धूप वाला", "गाना चल रहा है"};
+    private static final String[] HI_SENTENCES = {
+            "कल सुबह हम सब मिलकर पुराने बाज़ार से ताज़ी सब्ज़ियाँ ख़रीदने के लिए जाएँगे।",
+            "हमारे गाँव के स्कूल में इस साल बच्चों के लिए नया पुस्तकालय खोला गया है।",
+            "बारिश के मौसम में सड़कें गीली रहती हैं इसलिए गाड़ी धीरे चलानी चाहिए।",
+            "दादी हर शाम बगीचे में फूलों के पौधों को पानी देती हैं।",
+            "रेलवे स्टेशन पर लोग टिकट लेने के लिए लंबी कतार में खड़े थे।"};
+
+    /** Median first audio over texts said once each, so the phrase cache never answers. */
+    private void measureFresh(String name, Locale locale, String[] texts) throws Exception {
+        assertTrue(mTts.setLanguage(locale) >= TextToSpeech.LANG_AVAILABLE);
+        mTts.setSpeechRate(1f);
+        final List<Long> firsts = new ArrayList<>();
+        for (int i = 0; i < texts.length; i++) {
+            Thread.sleep(2000);
+            firsts.add(synth(name + "_" + i, texts[i])[0]);
+        }
+        Collections.sort(firsts);
+        Log.i(TAG, String.format(Locale.ROOT, "%s fresh firstAudio median=%dms (min %d, max %d) n=%d",
+                name, firsts.get(firsts.size() / 2), firsts.get(0), firsts.get(firsts.size() - 1),
+                firsts.size()));
+    }
+
+    /**
+     * Texts the voice has not said before: short screen-reader phrases and
+     * sentences, on the voices the phone has for Kannada (a Rasa voice,
+     * slowest), Chhattisgarhi (SYSPIN) and Hindi. Warmed up first, so the
+     * voice is loaded and its level known.
+     */
+    @Test
+    public void freshTextFirstAudio() throws Exception {
+        final Object[][] cases = {
+                {"kn", new Locale("kn", "IN"), KN_PHRASES, KN_SENTENCES, "ಇದು ಪರೀಕ್ಷೆಗಾಗಿ ಒಂದು ವಾಕ್ಯ ಮಾತ್ರ."},
+                {"hne", new Locale("hne", "IN"), HI_PHRASES, HI_SENTENCES, "यह केवल जाँच के लिए एक वाक्य है।"},
+                {"hi", new Locale("hi", "IN"), HI_PHRASES, HI_SENTENCES, "यह केवल जाँच के लिए एक वाक्य है।"}};
+        for (Object[] c : cases) {
+            final String name = (String) c[0];
+            final Locale locale = (Locale) c[1];
+            if (mTts.setLanguage(locale) < TextToSpeech.LANG_AVAILABLE) {
+                continue;
+            }
+            for (int i = 0; i < 4; i++) {
+                synth(name + "_warm" + i, (String) c[4]);
+                Thread.sleep(1500);
+            }
+            measureFresh(name + "_phrase", locale, (String[]) c[2]);
+            measureFresh(name + "_sentence", locale, (String[]) c[3]);
+        }
+    }
+
+    private static final String[] EN_PHRASES = {"Settings", "Navigate up", "Double tap to activate",
+            "Wi-Fi, on", "Battery 85 percent", "12 notifications", "Search", "More options", "Back",
+            "Send message"};
+    private static final String[] EN_SENTENCES = {
+            "When the train pulled into the station, the passengers gathered their bags and stepped out.",
+            "If you turn on the battery saver, the phone limits background activity to last longer.",
+            "The museum opens at nine in the morning, and children under twelve enter free.",
+            "Natural voices should start speaking quickly and keep going without any gaps.",
+            "Guided tours start every hour, and the last one leaves at four in the afternoon."};
+
+    /**
+     * Supertonic (beta, Snapdragon NPU) on English text said once each,
+     * through the installed Supertonic English voice (skipped without one),
+     * plus the process's memory after. A long warm-up lets a newly added
+     * NPU bucket compile first.
+     */
+    @Test
+    public void supertonicFirstAudio() throws Exception {
+        final Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        final Context storage = ctx.createDeviceProtectedStorageContext();
+        String key = null;
+        for (com.animeshahilya.espeakng.piper.PiperVoiceStore.Installed v
+                : com.animeshahilya.espeakng.piper.PiperVoiceStore.list(storage)) {
+            if (v.config.isSupertonic() && "en".equals(v.config.languageFamily)) {
+                key = v.key;
+            }
+        }
+        org.junit.Assume.assumeTrue("no Supertonic English voice", key != null);
+        final android.content.SharedPreferences prefs =
+                androidx.preference.PreferenceManager.getDefaultSharedPreferences(storage);
+        prefs.edit().putBoolean("piper_enabled", true).putString("espeak_rate", "175").commit();
+        com.animeshahilya.espeakng.piper.PiperVoiceStore.assign(prefs, "eng", key);
+        Thread.sleep(500);
+        assertTrue(mTts.setLanguage(Locale.US) >= TextToSpeech.LANG_AVAILABLE);
+        for (int i = 0; i < 12; i++) {
+            synth("st_warm" + i, "This sentence is only here to warm the voice up.");
+            Thread.sleep(4000);
+        }
+        measureFresh("supertonic_phrase", Locale.US, EN_PHRASES);
+        logPss("after phrases");
+        measureFresh("supertonic_sentence", Locale.US, EN_SENTENCES);
+        logPss("after sentences");
+        // Long reading: later chunks need the largest bucket, loaded at first use.
+        final long[] r = synth("supertonic_long", String.join(" ", EN_SENTENCES) + " " + EN);
+        Log.i(TAG, String.format(Locale.ROOT, "supertonic long: first audio %d ms, wall %d ms for %.1f s of audio",
+                r[0], r[1], r[3] / (double) r[2]));
+        logPss("after long text");
+    }
+
+    private static void logPss(String when) {
+        final android.os.Debug.MemoryInfo mem = new android.os.Debug.MemoryInfo();
+        android.os.Debug.getMemoryInfo(mem);
+        Log.i(TAG, "supertonic process PSS " + when + " " + mem.getTotalPss() / 1024 + " MB");
     }
 
     @Test

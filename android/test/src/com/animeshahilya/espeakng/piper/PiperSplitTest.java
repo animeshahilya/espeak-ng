@@ -201,4 +201,38 @@ public class PiperSplitTest {
         // A cut that leaves less than the decoder's overlap isn't worth it.
         assertEquals(-1, PiperEngine.firstPieceEnd(Arrays.asList(2, 38), durations, 80, 1000, 5));
     }
+
+    @Test
+    public void growingPiecesStartEarlyAndNeverLeaveAGap() {
+        // 100 ids of 2 frames (200 frames), a word every 5 ids (10 frames).
+        final float[] durations = new float[100];
+        Arrays.fill(durations, 2f);
+        final List<Integer> words = new java.util.ArrayList<>();
+        for (int id = 0; id < 100; id += 5) {
+            words.add(id);
+        }
+        for (double speed : new double[] {1.5, 3, 10}) {
+            final int[] ends = PiperEngine.pieceEnds(words, durations, 200, speed, 8);
+            assertTrue(speed + "x: split", ends.length > 0);
+            if (speed >= 10) { // slower: a later first cut, so the context decoding keeps up
+                assertEquals(speed + "x: first piece is the first word past 8 frames", 1, ends[0]);
+            }
+            // Each piece decodes (with 12 frames of context each side) while
+            // the ones before it play.
+            final double s = speed * PiperEngine.DECODE_SPEED_MARGIN;
+            double decoding = 0;
+            for (int i = 0; i < ends.length; i++) {
+                final int from = ends[i] * 10;
+                final int to = i + 1 < ends.length ? ends[i + 1] * 10 : 200;
+                decoding += (to - from + (i + 1 < ends.length ? 24 : 12)) / s;
+                assertTrue(speed + "x: piece " + (i + 2) + " in time", decoding <= from + 1e-9);
+                if (i > 0 && i + 1 < ends.length) { // the last piece is whatever is left
+                    assertTrue(speed + "x: pieces grow", to - from >= ends[i] * 10 - ends[i - 1] * 10);
+                }
+            }
+        }
+        // A decoder too slow for it (with the margin), or a chunk too short: no split.
+        assertEquals(0, PiperEngine.pieceEnds(words, durations, 200, 1.2, 8).length);
+        assertEquals(0, PiperEngine.pieceEnds(Arrays.asList(0, 5), durations, 14, 10, 8).length);
+    }
 }

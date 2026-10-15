@@ -428,6 +428,30 @@ public final class PiperEngine {
         return new OrtException(String.valueOf(t));
     }
 
+    /**
+     * Models a run is playing, with how many runs: never evicted, as closing
+     * one ends the run's later pieces and chunks - the rest of the text went
+     * silent when a voice loading in the background (startup preload) pushed
+     * out the one speaking. Guarded by mLoaded.
+     */
+    private final Map<PiperModel, Integer> mPlaying = new java.util.IdentityHashMap<>();
+
+    private void playing(PiperModel model, boolean start) {
+        synchronized (mLoaded) {
+            mPlaying.merge(model, start ? 1 : -1, (a, b) -> a + b == 0 ? null : a + b);
+        }
+    }
+
+    /** True when a playing run uses the model or its shared session; caller holds mLoaded. */
+    private boolean isPlaying(PiperModel model) {
+        for (PiperModel p : mPlaying.keySet()) {
+            if (p == model || p.sharesSessionWith(model)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Makes a freshly loaded model current, evicting beyond {@link #setMaxLoaded}. */
     private void install(String key, PiperModel model) {
         final List<PiperModel> evicted = new ArrayList<>();
@@ -442,7 +466,8 @@ public final class PiperEngine {
             while (distinctModels() > mMaxLoaded && it.hasNext()) {
                 final Map.Entry<String, PiperModel> eldest = it.next();
                 // One sharing the new voice's session frees nothing.
-                if (!eldest.getKey().equals(key) && !eldest.getValue().sharesSessionWith(model)) {
+                if (!eldest.getKey().equals(key) && !eldest.getValue().sharesSessionWith(model)
+                        && !isPlaying(eldest.getValue())) {
                     evicted.add(eldest.getValue());
                     it.remove();
                 }
@@ -503,7 +528,7 @@ public final class PiperEngine {
             final Iterator<Map.Entry<String, PiperModel>> it = mLoaded.entrySet().iterator();
             while (it.hasNext()) {
                 final PiperModel m = it.next().getValue();
-                if (all || (m != newest && !m.sharesSessionWith(newest))) {
+                if (all || (m != newest && !m.sharesSessionWith(newest) && !isPlaying(m))) {
                     evicted.add(m);
                     it.remove();
                 }
@@ -873,8 +898,8 @@ public final class PiperEngine {
         if (p.first != null) {
             try {
                 final Rendered r = p.first.get();
-                if (r != null && r.rest != null) {
-                    awaitQuietly(r.rest);
+                if (r != null && r.restTask != null) {
+                    awaitQuietly(r.restTask);
                 }
             } catch (Exception ignored) {
                 // Cancelled or failed: nothing left in flight.
@@ -904,6 +929,7 @@ public final class PiperEngine {
         final PiperModel.RunHandle handle = p.handle;
         mCurrentRun = handle;
         mAhead.remove(handle);
+        playing(model, true);
         // A stop() that came before mCurrentRun was set found nothing to
         // cancel; the caller's flag still says so (it is set before stop()).
         if (out.stopped()) {
@@ -911,14 +937,14 @@ public final class PiperEngine {
         }
         int frames = 0;
         Future<Rendered> pending = p.first;
-        Future<Rendered> pendingRest = null;
+        Future<?> pendingRest = null;
         boolean announced = false;
         try {
             for (int j = 0; j < jobs.size(); j++) {
                 Rendered rendered;
                 rendered = await(pending);
-                // The first chunk's second piece was queued ahead of this.
-                pendingRest = rendered != null ? rendered.rest : null;
+                // The chunk's later pieces were queued ahead of this.
+                pendingRest = rendered != null ? rendered.restTask : null;
                 if (j + 1 < jobs.size()) {
                     final Job next = jobs.get(j + 1);
                     pending = mRenderer.submit(() -> pass.render(next, false));
@@ -956,7 +982,9 @@ public final class PiperEngine {
                         break;
                     }
                     rendered = await(rendered.rest);
-                    pendingRest = null;
+                }
+                if (rendered != null && rendered.rest == null) {
+                    pendingRest = null; // every piece delivered: nothing left in flight
                 }
                 if (rendered == null || handle.isCancelled() || !delivered) {
                     break;
@@ -991,6 +1019,7 @@ public final class PiperEngine {
                 mCurrentRun = null;
             }
             handle.close();
+            playing(model, false);
         }
         if (!announced && lastRendered != null) {
             lastRendered.run(); // nothing said, stopped or failed: the caller still moves on
@@ -1013,6 +1042,12 @@ public final class PiperEngine {
     static final float MIN_PIECE_S = 1f;
     /** Share of the measured decoder speed counted on when placing the cut. */
     static final float DECODE_SPEED_MARGIN = 0.7f;
+    /**
+     * Shortest first piece once the voice's usual level is known
+     * ({@link #pieceEnds}): its level then comes from the voice, not from
+     * the piece, so a short piece is not a loudness risk.
+     */
+    static final float FIRST_PIECE_S = 0.3f;
 
     /**
      * Where to cut a chunk of {@code frames} latent frames so the rest decodes
@@ -1042,6 +1077,90 @@ public final class PiperEngine {
             }
         }
         return -1;
+    }
+
+    /**
+     * Growing pieces for a chunk: the first ends at the first word start at
+     * least {@code firstFrames} in, and each later piece is as long as can
+     * still decode while the ones before it play (the decoder runs at
+     * {@code speed}, with a margin, plus {@link PiperModel#DECODE_OVERLAP}
+     * context each side). First audio then waits for a fraction of a second
+     * of speech, not a second or the whole chunk. Only for a decoder faster
+     * than real time; a slower one keeps {@link #firstPieceEnd}.
+     *
+     * @return the word index each piece after the first starts at; empty for
+     *         no split
+     */
+    static int[] pieceEnds(List<Integer> wordStarts, float[] durations, int frames, double speed,
+                           int firstFrames) {
+        final double s = Math.max(0, speed) * DECODE_SPEED_MARGIN;
+        final int n = wordStarts.size();
+        if (s < 1 || n < 2) {
+            return new int[0];
+        }
+        final double[] pos = new double[n];
+        int id = 0;
+        double at = 0;
+        for (int w = 1; w < n; w++) {
+            while (id < wordStarts.get(w)) {
+                at += durations[id++];
+            }
+            pos[w] = at;
+        }
+        // The earliest first cut from which every later piece is in time.
+        for (int first = 1; first < n; first++) {
+            if (pos[first] < firstFrames) {
+                continue;
+            }
+            if (frames - pos[first] < firstFrames) {
+                break;
+            }
+            final int[] plan = laterPieces(pos, frames, s, first);
+            if (plan != null) {
+                return plan;
+            }
+        }
+        return new int[0];
+    }
+
+    /** {@link #pieceEnds} from a first cut: each next piece the longest still in time; null if none is. */
+    private static int[] laterPieces(double[] pos, int frames, double s, int first) {
+        final int n = pos.length;
+        final int ov = PiperModel.DECODE_OVERLAP;
+        final List<Integer> ends = new ArrayList<>();
+        ends.add(first);
+        int cur = first;
+        double decoding = 0; // frames of play the later pieces' decoding has taken so far
+        while (decoding + (frames - pos[cur] + ov) / s > pos[cur]) {
+            int next = -1;
+            for (int w = cur + 1; w < n && decoding + (pos[w] - pos[cur] + 2 * ov) / s <= pos[cur]; w++) {
+                next = w;
+            }
+            if (next < 0) {
+                return null; // even the next word would arrive late
+            }
+            decoding += (pos[next] - pos[cur] + 2 * ov) / s;
+            cur = next;
+            ends.add(cur);
+        }
+        final int[] out = new int[ends.size()];
+        for (int i = 0; i < out.length; i++) {
+            out[i] = ends.get(i);
+        }
+        return out;
+    }
+
+    /**
+     * Each voice's usual speech power (log-average of its recent chunks):
+     * the level for pieces too short to measure their own.
+     */
+    private final Map<String, Double> mVoiceLevel = new ConcurrentHashMap<>();
+
+    private void noteLevel(String key, float[] whole, int rate) {
+        final double p = PiperAudio.speechPower(whole, rate);
+        if (p > 0) {
+            mVoiceLevel.merge(key, p, (old, now) -> Math.exp(0.7 * Math.log(old) + 0.3 * Math.log(now)));
+        }
     }
 
     /** Everything one synthesize() call renders with; runs on the renderer thread. */
@@ -1088,6 +1207,7 @@ public final class PiperEngine {
                     speaker, lengthScale, noise, noiseW);
             final PiperPhraseCache.Entry cached = mCache.get(cacheKey);
             if (cached != null) {
+                noteLevel(key, cached.audio, model.config.sampleRate);
                 final Rendered r = finish(cached.audio, cached.durations, job.wordStarts, 0, words,
                         true, true, 0, passage, trebleCut());
                 timed(true, started);
@@ -1111,6 +1231,7 @@ public final class PiperEngine {
                     PiperAudio.fadeIn(audio, model.config.sampleRate);
                 }
                 mCache.offer(cacheKey, audio, o.durations); // before finish() alters the audio
+                noteLevel(key, audio, model.config.sampleRate);
                 final Rendered r = finish(audio, o.durations, job.wordStarts, 0, words, true, true, 0,
                         passage, trebleCut());
                 timed(false, started);
@@ -1132,14 +1253,23 @@ public final class PiperEngine {
             final int lead = cutLeadIn(e.durations, job.lead);
             // Played faster by the time stretch: less time to decode the rest in.
             final double speed = model.decodeSpeed() / (stretcher != null ? residualSpeed : 1f);
-            final int cut = e.durations == null ? -1 : firstPieceEnd(job.wordStarts, e.durations,
-                    e.frames - lead, speed, (int) Math.ceil(MIN_PIECE_S * rate / hop));
+            final Double voiceLevel = mVoiceLevel.get(key);
+            if (voiceLevel != null && e.durations != null) {
+                final int[] ends = pieceEnds(job.wordStarts, e.durations, e.frames - lead, speed,
+                        (int) Math.ceil(FIRST_PIECE_S * rate / hop));
+                if (ends.length > 0) {
+                    return renderPieces(job, e, lead, ends, voiceLevel, passage, cacheKey, started);
+                }
+            }
+            final int cut = voiceLevel != null || e.durations == null ? -1 : firstPieceEnd(job.wordStarts,
+                    e.durations, e.frames - lead, speed, (int) Math.ceil(MIN_PIECE_S * rate / hop));
             if (cut < 0) {
                 final float[] audio = decode(e, lead, e.frames);
                 if (audio == null) {
                     return null;
                 }
                 mCache.offer(cacheKey, audio, e.durations);
+                noteLevel(key, audio, rate);
                 final Rendered r = finish(audio, e.durations, job.wordStarts, 0, words, true, true, 0,
                         passage, trebleCut());
                 timed(false, started);
@@ -1173,11 +1303,110 @@ public final class PiperEngine {
                 final float[] whole = Arrays.copyOf(headRaw, headRaw.length + tail.length);
                 System.arraycopy(tail, 0, whole, headRaw.length, tail.length);
                 mCache.offer(cacheKey, whole, e.durations);
+                noteLevel(key, whole, rate);
                 return finish(tail, Arrays.copyOfRange(e.durations, splitId, e.durations.length),
                         restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate), passage,
                         treble);
             });
+            first.restTask = first.rest;
             return first;
+        }
+
+        /**
+         * A chunk in growing pieces ({@link #pieceEnds}), all at the voice's
+         * usual level: the first decoded here, the rest by one renderer task
+         * queued now (so before the next chunk's render), each handed over as
+         * soon as it is ready.
+         */
+        private Rendered renderPieces(Job job, PiperModel.Encoded e, int lead, int[] ends, double level,
+                                      double passage, PiperPhraseCache.Key cacheKey, long started)
+                throws OrtException {
+            final int rate = model.config.sampleRate;
+            final int words = job.words.length / 2;
+            final int n = ends.length + 1;
+            final int[] wordAt = new int[n + 1]; // piece i: words [wordAt[i], wordAt[i + 1])
+            final int[] idAt = new int[n + 1];
+            final int[] frameAt = new int[n + 1];
+            wordAt[n] = words;
+            idAt[n] = e.durations.length;
+            frameAt[0] = lead;
+            frameAt[n] = e.frames;
+            for (int i = 1; i < n; i++) {
+                wordAt[i] = ends[i - 1];
+                idAt[i] = job.wordStarts.get(wordAt[i]);
+                int f = lead;
+                for (int k = 0; k < idAt[i]; k++) {
+                    f += Math.round(e.durations[k]);
+                }
+                frameAt[i] = f;
+            }
+            final PiperAudio.TrebleCut treble = trebleCut(); // one filter across all pieces
+            final float[] head = decode(e, frameAt[0], frameAt[1]);
+            if (head == null) {
+                return null;
+            }
+            final List<float[]> raws = new ArrayList<>();
+            raws.add(head.clone()); // finish() may alter head; the cache needs it as made
+            final Rendered first = piece(job, e, wordAt, idAt, 0, head, level, passage, treble);
+            timed(false, started);
+            final List<java.util.concurrent.CompletableFuture<Rendered>> next = new ArrayList<>();
+            for (int i = 1; i < n; i++) {
+                next.add(new java.util.concurrent.CompletableFuture<>());
+            }
+            first.rest = next.get(0);
+            first.restTask = mRenderer.submit(() -> {
+                int i = 1;
+                try {
+                    for (; i < n; i++) {
+                        final float[] audio = decode(e, frameAt[i], frameAt[i + 1]);
+                        if (audio == null) {
+                            break;
+                        }
+                        raws.add(audio.clone());
+                        final Rendered r = piece(job, e, wordAt, idAt, i, audio, level, passage, treble);
+                        if (i + 1 < n) {
+                            r.rest = next.get(i);
+                        }
+                        next.get(i - 1).complete(r);
+                    }
+                    if (i == n) {
+                        int length = 0;
+                        for (float[] raw : raws) {
+                            length += raw.length;
+                        }
+                        final float[] whole = new float[length];
+                        int at = 0;
+                        for (float[] raw : raws) {
+                            System.arraycopy(raw, 0, whole, at, raw.length);
+                            at += raw.length;
+                        }
+                        mCache.offer(cacheKey, whole, e.durations);
+                        noteLevel(model.config.key, whole, rate);
+                    }
+                } catch (Throwable t) {
+                    for (int k = i; k < n; k++) {
+                        next.get(k - 1).completeExceptionally(t);
+                    }
+                    throw t;
+                }
+                for (int k = i; k < n; k++) {
+                    next.get(k - 1).complete(null); // stopped: nothing more to play
+                }
+                return null;
+            });
+            return first;
+        }
+
+        /** Piece {@code i} of {@link #renderPieces}, post-processed. */
+        private Rendered piece(Job job, PiperModel.Encoded e, int[] wordAt, int[] idAt, int i,
+                               float[] audio, double level, double passage, PiperAudio.TrebleCut treble) {
+            final List<Integer> starts = new ArrayList<>();
+            for (int w = wordAt[i]; w < wordAt[i + 1]; w++) {
+                starts.add(job.wordStarts.get(w) - idAt[i]);
+            }
+            final int last = wordAt.length - 2;
+            return finish(audio, Arrays.copyOfRange(e.durations, idAt[i], idAt[i + 1]), starts,
+                    wordAt[i], wordAt[i + 1], i == 0, i == last, level, passage, treble);
         }
 
         private float[] decode(PiperModel.Encoded e, int from, int to) throws OrtException {
@@ -1242,6 +1471,8 @@ public final class PiperEngine {
         final int wordTo;
         /** The chunk's next piece, being rendered; null for the last. */
         volatile Future<Rendered> rest;
+        /** First piece only: the task rendering the later pieces, awaited before a stop closes the run. */
+        volatile Future<?> restTask;
 
         Rendered(byte[] pcm, int samples, int trimmedLead, int[] cuts, int speechSamples,
                  float[] durations, List<Integer> wordStarts, int wordFrom, int wordTo) {

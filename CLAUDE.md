@@ -283,6 +283,29 @@ voices" does not, so voices can still be deleted to free space.
   medium voices, ~5% for high, so Enhanced gains most (PC sim at the
   Pixel's ~2x: 1377 -> 706 ms, no gap). Compare builds with the same
   random draw: two runs of one build already differ audibly.
+  **Growing pieces (2026-10-15).** Once a voice has rendered a chunk in
+  this process its usual level is known (`PiperEngine.mVoiceLevel`, a
+  log-average of whole chunks), and the first chunk is cut into growing
+  pieces instead (`pieceEnds`): the first ends at the first word start
+  0.3 s in (`FIRST_PIECE_S`) from which every later piece, each as long as
+  possible, still decodes - with its 12+12 frames of context - while the
+  ones before it play; all pieces take the voice's level, so a short first
+  piece is no loudness risk. Later pieces decode in one renderer task
+  queued at once (before the next chunk), handed over through
+  CompletableFutures; `Rendered.restTask` is what a stop awaits. Only for
+  a decoder faster than real time with the margin; otherwise the 1 s
+  two-piece rule above. Fresh text (said once, so the phrase cache never
+  answers; `PiperLatencyDeviceTest.freshTextFirstAudio`), median first
+  audio, two runs each: Pixel 8 Kannada Chetan (Rasa, CPU) phrases
+  496/521 -> 253/235 ms, sentences 624/513 -> 280/266 ms; Mamta (SYSPIN)
+  sentences 254/234 -> 224/232; Priyamvada 73-84/128-139 -> 80-90/144-148
+  (noise). Galaxy S25 Ultra (NPU decoder) Priyamvada phrases 69 -> 54 ms,
+  sentences 93 -> 80 ms.
+  **A playing voice is never evicted** (`PiperEngine.mPlaying`): a voice
+  loading in the background (startup preload of recent voices) evicted the
+  LRU voice even while it spoke, closing it, and the rest of the text went
+  silent (found by `PiperE2EDeviceTest.b_*` in the full suite: 0.5 s of a
+  sentence). It goes at a later load instead.
 - **Model loading** (`PiperModel`, numbers from `PiperBenchDeviceTest` on a
   Pixel 8): the first load writes `model.<ORT version>.enc.ort` and
   `.dec.ort` beside the model (`.whole.ort` for a voice that doesn't split;
@@ -381,7 +404,12 @@ voices" does not, so voices can still be deleted to free space.
   installs with no download (`tryInstallShared`, `-1` from `start()`),
   `dedupSharedModels` folds older duplicate copies on install and on
   `reconcile()`, and deleting the last voice using bytes garbage-collects
-  them. `PiperDownloads`: catalog = rhasspy/piper-voices `voices.json`
+  them. Copies another ONNX Runtime version wrote (`<md5>.<version>.*`) go
+  once the current runtime's copy exists - the Snapdragon build keeps
+  originals, so a runtime update re-optimized and left the old copies (S25:
+  1.29 and 1.31 beside 1.30, ~50 MB); the version comes from
+  `PiperModel.loadedRuntimeVersion()`, null until a voice loaded the runtime
+  (asking would load it). `PiperDownloads`: catalog = rhasspy/piper-voices `voices.json`
   (cached 7 days); the small config is fetched first and refused unless
   `phoneme_type` is espeak/text; the model goes through `DownloadManager` to
   app-specific external storage, is MD5-checked, then moved in by
@@ -606,8 +634,15 @@ voices" does not, so voices can still be deleted to free space.
   2.3-2.8 dB vs 10 dB between two random draws of the original). Runtime
   `Supertonic` (shared by `PiperModel.SessionGroup`, style per voice):
   duration predictor + text encoder on the CPU, unpadded; flow (8 steps) and
-  vocoder on the NPU in two size buckets (`Supertonic.BUCKETS`, 96/192 latent
-  frames, 3072 samples each at 44.1 kHz), padded with masks, each compiled
+  vocoder on the NPU in size buckets (`Supertonic.BUCKETS`, 32/96/192 latent
+  frames, 3072 samples each at 44.1 kHz; 32 since 2026-10-15 for screen-reader
+  phrases, which are 20-35 frames with the model's silence and filled a
+  quarter of the 96 bucket: S25 phrase first audio 517 -> 316-344 ms,
+  sentences unchanged; the 192 bucket loads at first use
+  (`Supertonic.LAZY_BUCKET`), so screen-reader use stays at two buckets'
+  memory - PSS 564 MB before, 545-553 with three buckets lazily, 742 with
+  all three loaded; long text loads it while its first chunk plays, 30 s
+  of audio in 4.5 s), padded with masks, each compiled
   once into the shared store (`<md5>.<ort>.st-flow96.ctx.onnx` ...); the
   phone pins `latent_length`/`text_length` at load
   (`setSymbolicDimensionValue`) and ORT folds the shape arithmetic, so one
