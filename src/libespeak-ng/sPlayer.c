@@ -28,8 +28,8 @@ static void mixWaveFile(WGEN_DATA *wdata, unsigned int maxNumSamples, sample* sa
 	unsigned int i=0;
 	for(;wdata->mix_wavefile_ix<wdata->n_mix_wavefile;++wdata->mix_wavefile_ix) {
 		if(i>=maxNumSamples) break;
-		if ((wdata->mix_wavefile_ix+wdata->mix_wavefile_offset) >= wdata->mix_wavefile_max)
-			break;
+		// No stop at mix_wavefile_max: the wrap below loops the wave like
+		// klatt.c does, so long voiced fricatives keep their noise.
 		int val;
 		if(wdata->mix_wave_scale==0) {
 			val=wdata->mix_wavefile[wdata->mix_wavefile_ix+wdata->mix_wavefile_offset];

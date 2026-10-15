@@ -90,6 +90,13 @@ public class PiperEngineTest {
     }
 
     @Test
+    public void groupedNumbersParseAsOneNumber() {
+        // DIGITS matches group commas; Long.parseLong must never see them.
+        org.junit.Assert.assertEquals("100000", PiperEngine.toAscii("1,00,000"));
+        org.junit.Assert.assertEquals("1234", PiperEngine.toAscii("१,२३४"));
+    }
+
+    @Test
     public void numberWordsNullLanguageReturnsNull() {
         org.junit.Assert.assertNull(PiperEngine.numberWords(null));
     }

@@ -115,8 +115,8 @@ public class TtsService extends TextToSpeechService {
      * deliberately NOT the service monitor: the voices-reload path used to
      * take {@code synchronized(TtsService.this)} around seconds of re-init,
      * which queued TalkBack syntheses behind it. Reload now coordinates
-     * through finer-grained locks (see mLanguagesUpdatedReceiver), so a
-     * request only ever waits on another request.
+     * through finer-grained locks (see mLanguagesUpdatedReceiver); only its
+     * native restart takes this lock, between requests.
      */
     private final Object mSynthLock = new Object();
     private SynthesisCallback mCallback;
@@ -333,10 +333,10 @@ public class TtsService extends TextToSpeechService {
      * killed and restarted, so an imported voice never becomes selectable.
      *
      * <p>Concurrency protocol: the heavy work (native reload, voice listing,
-     * map rebuild) runs on a background thread with NO service-level lock.
-     * It is safe against an in-flight synthesis because every shared touch
-     * is already guarded at a finer grain: the native engine serializes on
-     * {@code SpeechSynthesis.sSynthLock}, the voice maps swap atomically
+     * map rebuild) runs on a background thread. The native reload waits for
+     * the request in progress (mSynthLock; a request's prosody is set once,
+     * see initializeTtsEngine) and serializes on
+     * {@code SpeechSynthesis.sSynthLock}; the voice maps swap atomically
      * under the {@code mAvailableVoices} monitor, and synthesis snapshots its
      * engine reference up front. Previously this took
      * {@code synchronized(TtsService.this)} - the same monitor
@@ -566,12 +566,18 @@ public class TtsService extends TextToSpeechService {
      * Sets up the native eSpeak engine.
      */
     private void initializeTtsEngine() {
-        if (mEngine != null) {
-            mEngine.reload(); // reads the new voice data; never leaves the engine down
-        } else {
-            // Clear cached voice list since native engine is being reinitialized
-            SpeechSynthesis.clearVoiceCache();
-            mEngine = new SpeechSynthesis(mStorageContext, mSynthCallback);
+        // Between requests only: a request sets rate, pitch and the rest once,
+        // so a native restart between two of its units would read the rest at
+        // the defaults. Speech waits no longer for it - the restart holds the
+        // native lock anyway; only the restart waits for the utterance.
+        synchronized (mSynthLock) {
+            if (mEngine != null) {
+                mEngine.reload(); // reads the new voice data; never leaves the engine down
+            } else {
+                // Clear cached voice list since native engine is being reinitialized
+                SpeechSynthesis.clearVoiceCache();
+                mEngine = new SpeechSynthesis(mStorageContext, mSynthCallback);
+            }
         }
         List<Voice> voices = mEngine.getAvailableVoices();
         synchronized (mAvailableVoices) {

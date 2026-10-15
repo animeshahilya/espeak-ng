@@ -254,11 +254,7 @@ public class EspeakApp extends Application {
     }
 
     private static final java.util.concurrent.ExecutorService BACKGROUND_EXECUTOR =
-            new java.util.concurrent.ThreadPoolExecutor(
-                    2, 4,
-                    60L, java.util.concurrent.TimeUnit.SECONDS,
-                    new java.util.concurrent.LinkedBlockingQueue<Runnable>(),
-                    new java.util.concurrent.ThreadFactory() {
+            java.util.concurrent.Executors.newCachedThreadPool(new java.util.concurrent.ThreadFactory() {
                 private final java.util.concurrent.atomic.AtomicInteger count = new java.util.concurrent.atomic.AtomicInteger(1);
                 @Override
                 public Thread newThread(Runnable r) {
@@ -270,12 +266,9 @@ public class EspeakApp extends Application {
 
     /** Dispatches a task to the shared background worker pool. */
     public static void runAsync(Runnable task) {
-        try {
-            BACKGROUND_EXECUTOR.execute(task);
-        } catch (java.util.concurrent.RejectedExecutionException e) {
-            android.util.Log.w(TAG, "Background pool saturated; running inline", e);
-            task.run();
-        }
+        // Unbounded on purpose: tasks include NPU compiles (~30 s) and network
+        // checks, and a voice reload or download receiver must not queue behind them.
+        BACKGROUND_EXECUTOR.execute(task);
     }
 }
 

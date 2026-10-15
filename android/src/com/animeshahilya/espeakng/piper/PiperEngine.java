@@ -673,9 +673,21 @@ public final class PiperEngine {
         };
     }
 
-    /** "१२३" -> "123": Long.parseLong reads only ASCII digits. */
-    private static String toAscii(String digits) {
-        return com.animeshahilya.espeakng.text.AsciiUtils.toAsciiDigits(digits);
+    /**
+     * "१,००,०००" -> "100000": Long.parseLong reads only ASCII digits, so the
+     * group commas DIGITS matches are dropped along with the conversion.
+     */
+    static String toAscii(String digits) {
+        final StringBuilder sb = new StringBuilder(digits.length());
+        for (int i = 0; i < digits.length(); ) {
+            final int cp = digits.codePointAt(i);
+            final int d = Character.digit(cp, 10);
+            if (d >= 0) {
+                sb.append((char) ('0' + d));
+            }
+            i += Character.charCount(cp);
+        }
+        return sb.toString();
     }
 
     /**

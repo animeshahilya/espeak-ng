@@ -178,14 +178,15 @@ static void InitGroups(Translator *tr)
 				// index by offset from letter base
 				tr->groups3[c2 - 1] = p;
 			} else {
-				if (tr->groups2_start[c] == 255)
-					tr->groups2_start[c] = tr->n_groups2;
-
-				if (tr->n_groups2 >= N_RULE_GROUP2)
-					break;
-				tr->groups2_count[c]++;
-				tr->groups2[tr->n_groups2] = p;
-				tr->groups2_name[tr->n_groups2++] = (c + (c2 << 8));
+				// Past the table's size a group is left out, not the rest of
+				// the rules: they are still skipped over below.
+				if (tr->n_groups2 < N_RULE_GROUP2) {
+					if (tr->groups2_start[c] == 255)
+						tr->groups2_start[c] = tr->n_groups2;
+					tr->groups2_count[c]++;
+					tr->groups2[tr->n_groups2] = p;
+					tr->groups2_name[tr->n_groups2++] = (c + (c2 << 8));
+				}
 			}
 		}
 
@@ -217,10 +218,6 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 
 	if (name == NULL || tr == NULL)
 		return 1;
-	if (strcmp(dictionary_name, name) != 0)
-		snprintf(dictionary_name, sizeof(dictionary_name), "%s", name); // currently loaded dictionary name
-	if (strcmp(tr->dictionary_name, name) != 0)
-		snprintf(tr->dictionary_name, sizeof(tr->dictionary_name), "%s", name);
 
 	// Load a pronunciation data file into memory
 	// bytes 0-3:  offset to rules data
@@ -281,6 +278,12 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	}
 	free(old_dictlist);
 	tr->data_dictlist = new_dictlist;
+	// Named only once loaded: a failed load keeps the old dictionary under
+	// its own name, so the next voice change still sees it needs a reload.
+	if (strcmp(dictionary_name, name) != 0)
+		snprintf(dictionary_name, sizeof(dictionary_name), "%s", name); // currently loaded dictionary name
+	if (strcmp(tr->dictionary_name, name) != 0)
+		snprintf(tr->dictionary_name, sizeof(tr->dictionary_name), "%s", name);
 	tr->data_dictrules = &(tr->data_dictlist[length]);
 
 	// set up indices into data_dictrules

@@ -136,40 +136,6 @@ public final class AsciiUtils {
         return (c >= 'A' && c <= 'Z') ? (char) (c + 32) : c;
     }
 
-    /**
-     * "१२३" -> "123": folds any Unicode decimal digits to ASCII.
-     * Shared by the text pipeline and the natural-voice number words,
-     * so both read the same digits the same way.
-     */
-    public static String toAsciiDigits(String digits) {
-        if (digits == null) {
-            return "";
-        }
-        final int len = digits.length();
-        for (int i = 0; i < len; ) {
-            final int cp = digits.codePointAt(i);
-            if (cp < '0' || cp > '9') {
-                break;
-            }
-            i += Character.charCount(cp);
-            if (i >= len) {
-                return digits;
-            }
-        }
-        final StringBuilder sb = new StringBuilder(len);
-        for (int i = 0; i < len; ) {
-            final int cp = digits.codePointAt(i);
-            final int d = Character.digit(cp, 10);
-            if (d >= 0) {
-                sb.append((char) ('0' + d));
-            } else {
-                sb.appendCodePoint(cp);
-            }
-            i += Character.charCount(cp);
-        }
-        return sb.toString();
-    }
-
     public static boolean endsWithIgnoreCase(String s, String suffix) {
         if (s == null || suffix == null) return false;
         int sLen = s.length();
