@@ -35,7 +35,7 @@ public class NvdaCharacterDescriptionsTest {
         // Upper case looks up the lower-case entry, as NVDA does.
         assertEquals("B, Berlin", TextPreprocessor.expandNatoSpelling("B", "de-at"));
         assertEquals("б, Борис", TextPreprocessor.expandNatoSpelling("б", "ru"));
-        // Imported as Windows-1252 once (NVDA's is UTF-8); read as UTF-8 it said "C�sar".
+        // NVDA ships this one as Windows-1252; read as UTF-8 it said "C�sar".
         assertEquals("c, Cäsar", TextPreprocessor.expandNatoSpelling("c", "de-ch"));
         // A language without a file of its own uses English.
         assertEquals("b, Bravo", TextPreprocessor.expandNatoSpelling("b", "xx"));

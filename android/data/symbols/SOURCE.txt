@@ -1,2 +1,2 @@
-symbols.dic: https://github.com/nvaccess/nvda 72601bf3297af63e596942d12b34b5ed8ec203ae 2026-09-29
+symbols.dic: https://github.com/nvaccess/nvda 7e3f7955b76f4af0dbb912347ac45eb748d2dea3 2026-10-15
 cldr.dic: https://github.com/nvaccess/nvda-cldr (main-out) 98f615984e19cfe94909ee414986e146982c2a79 2026-05-20

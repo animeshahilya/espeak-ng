@@ -17,12 +17,23 @@ Output, with lower-cased NVDA locale names (pt_br, zh_cn):
   <locale>.cldr.dic  the non-emoji lines of nvda-cldr's cldr.dic (Unicode
                      license); emoji names already live in data/emoji/
   SOURCE.txt         the commits both came from
-  ../chardesc/<locale>.dic  NVDA's characterDescriptions.dic, unchanged: the
+  ../chardesc/<locale>.dic  NVDA's characterDescriptions.dic, unchanged but
+                     re-encoded to UTF-8 where NVDA's is not: the
                      words "phonetic letters" say for a character
 """
 import os
 import subprocess
 import sys
+
+
+def utf8(data):
+    """NVDA's files are UTF-8, except de_CH characterDescriptions.dic, which
+    is Windows-1252 (checked at NVDA 7e3f795, 2026-10-15)."""
+    try:
+        data.decode("utf-8")
+        return data
+    except UnicodeDecodeError:
+        return data.decode("cp1252").encode("utf-8")
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from update_emoji_names import is_emoji  # noqa: E402
@@ -45,7 +56,7 @@ def main():
         src = os.path.join(locales, locale, "symbols.dic")
         if os.path.isfile(src):
             data = open(src, "rb").read()
-            open(os.path.join(out, locale.lower() + ".dic"), "wb").write(data)
+            open(os.path.join(out, locale.lower() + ".dic"), "wb").write(utf8(data))
             count += 1
     chardesc = os.path.join(out, "..", "chardesc")
     os.makedirs(chardesc, exist_ok=True)
@@ -56,7 +67,7 @@ def main():
         src = os.path.join(locales, locale, "characterDescriptions.dic")
         if os.path.isfile(src):
             data = open(src, "rb").read()
-            open(os.path.join(chardesc, locale.lower() + ".dic"), "wb").write(data)
+            open(os.path.join(chardesc, locale.lower() + ".dic"), "wb").write(utf8(data))
             desc_count += 1
     cldr_count = 0
     for locale in sorted(os.listdir(os.path.join(cldr, "locale"))):
