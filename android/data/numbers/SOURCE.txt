@@ -1,0 +1,1 @@
+Unicode CLDR 8ed394566f9364759a772179b76056b9f31c08ae common/rbnf (SpelloutRules), Unicode License v3

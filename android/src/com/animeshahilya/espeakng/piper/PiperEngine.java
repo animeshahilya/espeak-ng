@@ -614,8 +614,10 @@ public final class PiperEngine {
 
     /**
      * "Text" voices read letters, and their alphabets have no digits: numbers
-     * become words in the voice's language, where ICU has spell-out rules
-     * for it (Hindi, Bengali, Tamil...). Otherwise digits stay and are skipped.
+     * become words in the voice's language. Indian languages use CLDR's rules
+     * bundled in {@code data/numbers/} (Android's ICU has only a few of them);
+     * other languages use the phone's ICU. Null when neither has rules: the
+     * digits then go to eSpeak (TtsService.needsDigitHelp).
      */
     public static java.util.function.UnaryOperator<String> numberWords(String language) {
         if (language == null) {
@@ -630,14 +632,22 @@ public final class PiperEngine {
             new ConcurrentHashMap<>();
     private static final java.util.function.UnaryOperator<String> NO_NUMBER_WORDS = s -> s;
 
+    /**
+     * Devanagari languages eSpeak has no voice for: its Hindi stand-in
+     * already read their digits as Hindi words, so their natural voices get
+     * the same words (every letter checked against their alphabets).
+     */
+    private static final java.util.Set<String> HINDI_NUMBERS = new java.util.HashSet<>(
+            java.util.Arrays.asList("bho", "brx", "doi", "hne", "mag", "mai", "sa"));
+
     private static java.util.function.UnaryOperator<String> buildNumberWords(String language) {
-        final android.icu.text.MessageFormat format;
+        final java.util.function.LongFunction<String> format;
         try {
-            format = new android.icu.text.MessageFormat("{0,spellout}",
-                    new android.icu.util.ULocale(language));
+            format = spellout(language);
             // Without rules for the language ICU falls back to English words (or digits).
-            final String seven = format.format(new Object[] {7L});
-            if (HAS_DIGIT.matcher(seven).matches() || (!"en".equals(language) && HAS_SEVEN.matcher(seven).matches())) {
+            final String seven = format == null ? null : format.apply(7L);
+            if (seven == null || HAS_DIGIT.matcher(seven).matches()
+                    || (!"en".equals(language) && HAS_SEVEN.matcher(seven).matches())) {
                 return NO_NUMBER_WORDS;
             }
         } catch (RuntimeException e) { // no ICU data for it: digits stay
@@ -659,9 +669,7 @@ public final class PiperEngine {
                     if (digits.length() > 15) {
                         words = m.group();
                     } else {
-                        synchronized (format) { // MessageFormat is not thread-safe
-                            words = format.format(new Object[] {Long.parseLong(toAscii(digits))});
-                        }
+                        words = format.apply(Long.parseLong(toAscii(digits)));
                     }
                 } catch (RuntimeException e) {
                     words = m.group();
@@ -671,6 +679,39 @@ public final class PiperEngine {
             m.appendTail(out);
             return WHITESPACE_RUN.matcher(out.toString()).replaceAll(" ").trim();
         };
+    }
+
+    /** The bundled CLDR rules for the language, else the phone's ICU; null if neither loads. */
+    private static java.util.function.LongFunction<String> spellout(String language) {
+        final String rules = bundledRules(HINDI_NUMBERS.contains(language) ? "hi" : language);
+        if (rules != null) {
+            final Spellout f = new Spellout(rules); // immutable, thread-safe
+            return n -> f.format(n, "%spellout-numbering");
+        }
+        final android.icu.text.MessageFormat f = new android.icu.text.MessageFormat("{0,spellout}",
+                new android.icu.util.ULocale(language));
+        return n -> {
+            synchronized (f) {
+                return f.format(new Object[] {n});
+            }
+        };
+    }
+
+    /** data/numbers/&lt;language&gt;.txt (tools/update_number_words.py), or null. */
+    static String bundledRules(String language) {
+        if (!com.animeshahilya.espeakng.text.BundledData.ready()) {
+            return null;
+        }
+        try (java.io.BufferedReader in =
+                     com.animeshahilya.espeakng.text.BundledData.reader("numbers/" + language + ".txt")) {
+            final StringBuilder sb = new StringBuilder();
+            for (String line; (line = in.readLine()) != null; ) {
+                sb.append(line).append('\n');
+            }
+            return sb.toString();
+        } catch (java.io.IOException e) {
+            return null;
+        }
     }
 
     /**

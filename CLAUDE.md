@@ -72,7 +72,7 @@ The Gradle build has custom tasks that run automatically:
    zstd-jni at build time, stored uncompressed; variant API) - every
    language ships in the APK, there is no core/extra split; it packs the
    text data in `android/data/` (symbols, chardesc, emoji, hinglish,
-   compounds - plain text in git, written by `tools/`) the same way, as
+   compounds, numbers - plain text in git, written by `tools/`) the same way, as
    `assets/data/<path>.zst`, which `text/BundledData` opens for every
    loader (`SpeechSynthesis.unpackAsset`, the same native decoder). JVM
    tests read `android/data/` directly
@@ -504,10 +504,17 @@ voices" does not, so voices can still be deleted to free space.
   training input (one extra blank at each end). Text voices tokenize as
   NFC letters lower-cased, decomposing only letters the voice lacks
   (`PiperPhonemes.textTokens`): plain NFD split Bengali/Tamil vowel signs
-  the voices were trained on composed. Digits become words through ICU's
-  spellout for the voice's language (`PiperEngine.numberWords`). ICU has
-  rules for Hindi, Gujarati, Tamil, Nepali and English only (checked on a
-  Pixel 8, 2026-10-02); for the rest (Kannada, Telugu, Bengali, Marathi...) `TtsService.naturalRuns` moves the digits to a run
+  the voices were trained on composed. Digits become words in the voice's
+  language (`PiperEngine.numberWords`): Indian languages through CLDR's
+  spell-out rules bundled in `data/numbers/` (bn gu hi kn ml mr ne pa ta te;
+  `tools/update_number_words.py`, CLDR main 8ed39456 - the Indian rules came
+  after release 48.2; read by `RuleBasedNumberFormat`, checked by
+  `NumberWordsTest` with desktop icu4j), the Devanagari languages eSpeak
+  lacks (bho brx doi hne mag mai sa) with Hindi's, as eSpeak's Hindi
+  stand-in already read them; other languages through the phone's ICU
+  (Android's own had only hi/gu/ta/ne/en, Pixel 8, 2026-10-02). Since
+  2026-10-15 only Assamese is left: where there are no rules
+  `TtsService.naturalRuns` moves the digits to a run
   eSpeak reads in the request's language (`LanguageRuns.splitDigits`, run
   language "zxx", which no natural voice is ever chosen for). Before
   2026-10-02 the voice skipped them: "ಸಮಯ 10:30" was read as "ಸಮಯ". Languages eSpeak lacks (Bhojpuri,
@@ -1103,7 +1110,7 @@ android/
 │   └── include/                      # config.h, Log.h
 ├── res/                              # Resources (75 locale translations, plus night/v29/watch)
 ├── assets/                           # Bundled as-is: piper catalog JSON
-├── data/                             # Packed (zstd) by the build: symbols, chardesc, emoji, hinglish, compounds
+├── data/                             # Packed (zstd) by the build: symbols, chardesc, emoji, hinglish, compounds, numbers
 ├── tools/                            # Data regenerators (NVDA symbols, emoji, piper spellings, ort-voices)
 ├── build.gradle                      # Gradle config (AGP 9.4.1, Gradle 9.8.1, Java 17 toolchain)
 └── AndroidManifest.xml               # Services, activities, intents
@@ -1124,10 +1131,9 @@ mirroring the source subpackages:
 They read `data/` from the source tree, declared as the test task's input
 (build.gradle `unitTests.all`) so a data-only change reruns them;
 `NvdaCharacterDescriptionsTest.everyBundledFileIsUtf8` guards the encoding
-(the 2026-09-29 import left de_CH characterDescriptions.dic in
-Windows-1252 although NVDA's is UTF-8, so Swiss German read "C�sar"
-until 2026-10-12; all 128 NVDA files were then checked byte for byte
-against NVDA 72601bf3).
+(NVDA's de_CH characterDescriptions.dic is Windows-1252 - its git blob,
+checked at 7e3f795; Swiss German read "C�sar" until 2026-10-12, and
+`tools/update_nvda_symbols.py` re-encodes it).
 These run on the desktop JDK, not Android's ICU/platform classes: a regex the
 JDK accepts can still be rejected on a device (an unbounded look-behind did
 exactly that and silenced all synthesis, d56ba251). Anything touching

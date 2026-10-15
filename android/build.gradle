@@ -91,6 +91,9 @@ dependencies {
     // Real org.json for the JVM unit tests: android.jar's is a stub, and
     // returnDefaultValues would make every Piper config parse come back empty.
     testImplementation 'org.json:json:20250517'
+    // Desktop ICU: checks the bundled CLDR number rules (data/numbers/) parse
+    // and read right; android.jar's android.icu is a stub on the JVM.
+    testImplementation 'com.ibm.icu:icu4j:78.3'
     androidTestImplementation 'org.hamcrest:hamcrest:2.2'
     androidTestImplementation 'org.hamcrest:hamcrest-core:2.2'
     androidTestImplementation 'androidx.test:runner:1.6.2'
