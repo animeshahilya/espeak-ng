@@ -262,6 +262,13 @@ public class DevanagariClassifierTest {
         final String hinText = TextPreprocessor.preprocessIndianText("कीमत 15k है और 2cr है", "hi-IN");
         assertTrue(hinText.contains("हज़ार"));
         assertTrue(hinText.contains("करोड़"));
+
+        // Other Indian scripts keep their numbers (no English "lakh"/"rupees"):
+        // eSpeak and the natural voices read them in the language itself.
+        assertEquals("দাম ₹1,00,000", TextPreprocessor.preprocessIndianText("দাম ₹1,00,000", "bn-IN"));
+        assertEquals("ಬೆಲೆ 12,34,567", TextPreprocessor.preprocessIndianText("ಬೆಲೆ 12,34,567", "kn-IN"));
+        // Indian English still gets its words.
+        assertEquals("price 1 lakh", TextPreprocessor.preprocessIndianText("price 1,00,000", "en-IN"));
     }
 
     @Test

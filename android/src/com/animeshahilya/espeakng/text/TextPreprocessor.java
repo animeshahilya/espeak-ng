@@ -1322,6 +1322,15 @@ public final class TextPreprocessor {
                     SLASH_RUN.matcher(txnMatcher.group(0)).replaceAll(" / "));
         }
 
+        // The rewrites below write English (or Devanagari) words. Other Indian
+        // scripts keep their numbers: eSpeak reads "12,34,567" in lakhs in
+        // each of them and names ₹ from the language's symbols, and natural
+        // voices have their own number words - "1 lakh" in Bengali text made
+        // eSpeak (and the natural voices) switch to English for "lakh".
+        if (!devanagari && isIndianLanguage(languageTag) && !isEnglish(languageTag)) {
+            return text;
+        }
+
         // CURRENCY_PREFIX, INDIAN_NUMBER_COMMAS and every SHORTHAND_*
         // pattern all require ASCII digits; computed once for all of them.
         final boolean hasDigit = AsciiUtils.hasDigit(text);
