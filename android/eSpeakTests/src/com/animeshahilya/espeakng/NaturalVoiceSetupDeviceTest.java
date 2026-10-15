@@ -23,9 +23,22 @@ import static org.junit.Assert.*;
  * chooses each for its language. Run it on its own, e.g.
  * {@code am instrument -w -e class ...NaturalVoiceSetupDeviceTest -e voices en_US-amy-medium ...};
  * skipped without the argument, so the full suite never changes a phone.
+ * "remove" (comma-separated keys) deletes voices again, as Downloaded voices does.
  */
 @RunWith(AndroidJUnit4.class)
 public class NaturalVoiceSetupDeviceTest {
+    @Test
+    public void remove() {
+        final String voices = InstrumentationRegistry.getArguments().getString("remove");
+        Assume.assumeTrue("no remove argument", voices != null && !voices.isEmpty());
+        final Context storage = EspeakApp.requireStorageContext(
+                InstrumentationRegistry.getInstrumentation().getTargetContext());
+        final SharedPreferences prefs = EspeakApp.prefs(storage);
+        for (String key : voices.split(",")) {
+            assertTrue(key + " not deleted", PiperVoiceStore.delete(storage, prefs, key));
+        }
+    }
+
     @Test
     public void installAndChoose() throws Exception {
         final Bundle args = InstrumentationRegistry.getArguments();

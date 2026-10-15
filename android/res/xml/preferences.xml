@@ -894,6 +894,10 @@
             android:title="@string/about_title"
             android:summary="@string/about_summary"
             app:iconSpaceReserved="false" />
+        <Preference
+            android:key="action_check_updates"
+            android:title="@string/update_check_title"
+            app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>
   </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>

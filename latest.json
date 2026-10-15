@@ -1,0 +1,9 @@
+{
+  "versionCode": 32,
+  "versionName": "2.9",
+  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.9/espeak-ng-2.9.apk",
+  "sha256": "628105c03f3b0a20a60f2e147d3bac718720e46cbdc305818fabf4e1fe9f52d5",
+  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.9/espeak-ng-2.9-snapdragon.apk",
+  "snapdragonSha256": "647b55807f0f798352248f934c47e39b3b41400b5ecb0b2f59fa75e29ae5f2d8",
+  "notes": "Natural voices take far less space, new natural voices, short forms and phone numbers read clearly, and a refreshed settings design."
+}

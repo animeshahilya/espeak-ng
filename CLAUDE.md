@@ -608,7 +608,12 @@ voices" does not, so voices can still be deleted to free space.
   runtime only "as incorporated in Your software application", never "on a
   standalone basis", so a downloadable NPU pack for one app is not allowed
   (user chose two APKs over one 85 MB APK). Releases are signed locally: attach
-  both `espeak-release.apk` and `espeak-snapdragon-release.apk`. The standard
+  both `espeak-release.apk` and `espeak-snapdragon-release.apk` (named
+  `espeak-ng-<version>.apk` / `espeak-ng-<version>-snapdragon.apk` on the
+  release), then update the repo-root `latest.json` (versionCode, versionName,
+  both URLs, both SHA-256s, one plain-text `notes` line) and push it: that file
+  is what the in-app updater reads (`util/AppUpdater`, below), so a release
+  without it is invisible to installed apps. The standard
   app on an 8-series Snapdragon from SM8450 (8 Gen 1) on shows "Faster on this
   phone: Snapdragon version" (`PiperSettings.offersSnapdragonBuild`), opening
   the latest release; same package and key, so it installs over and keeps
@@ -920,7 +925,18 @@ voices" does not, so voices can still be deleted to free space.
   its language row says so, and choosing it again clears it. Deliberately not
   "reset on success": GC-timed crashes let several inferences succeed first.
 - **Network.** `INTERNET` exists only for the catalog, samples and voice
-  downloads - never on the speech path. Keep it that way. Microsoft's
+  downloads, and app updates - never on the speech path. Keep it that way.
+  **App updates** (`util/AppUpdater`, 2026-10-15, modelled on Tarang's): the
+  settings screen fetches `latest.json` from raw.githubusercontent.com at most
+  daily (and About -> Check for updates on demand), offers a newer versionCode
+  with its notes (Update / Later / Skip this version), downloads the APK of the
+  running build's kind (`BuildConfig.SNAPDRAGON`) with DownloadManager into
+  `getExternalFilesDir("updates")` (no storage permission; FileProvider path
+  `updates`), refuses hosts other than GitHub's and any SHA-256 mismatch, and
+  hands it to the installer after a "ready to install" step
+  (`REQUEST_INSTALL_PACKAGES`; Android asks the user every time). Only one
+  update APK is kept; it is deleted once that version is installed. Never from
+  the speech service. Microsoft's
   onnxruntime-android merged in a `TelemetryInitializer` content provider
   and `ACCESS_NETWORK_STATE` (the provider ran at every process start and
   set up telemetry networking); our own ORT build and Qualcomm's QNN plugin

@@ -1426,6 +1426,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     fragment.setPreferenceScreen(root);
                     ((PrefsEspeakFragment) fragment).onRootScreenReady(root);
                     maybeShowWhatsNew(context);
+                    com.animeshahilya.espeakng.util.AppUpdater.checkIfDue(context);
                 });
             } catch (Throwable t) {
                 // The engine probe (native lib load, phondata, JNI voice
@@ -1981,6 +1982,12 @@ public class TtsSettingsActivity extends AppCompatActivity {
             importVoice.setDescription(R.string.import_voice_description);
         }
         onClick(screen, "action_about", () -> showAboutDialog(context));
+        onClick(screen, "action_check_updates",
+                () -> com.animeshahilya.espeakng.util.AppUpdater.checkNow(context));
+        final Preference checkUpdates = screen.findPreference("action_check_updates");
+        if (checkUpdates != null) {
+            checkUpdates.setSummary(context.getString(R.string.update_check_summary, BuildConfig.VERSION_NAME));
+        }
 
         // Listener first: these two report their summary through it.
         final VoiceVariantPreference variant = screen.findPreference(VoiceSettings.PREF_VARIANT);

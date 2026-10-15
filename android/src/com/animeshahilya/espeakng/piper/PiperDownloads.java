@@ -558,7 +558,7 @@ public final class PiperDownloads {
         }
     }
 
-    static byte[] fetch(String urlString, int maxBytes) throws IOException {
+    public static byte[] fetch(String urlString, int maxBytes) throws IOException {
         String currentUrl = urlString;
         for (int redirects = 0; redirects < 5; redirects++) {
             final HttpURLConnection conn = (HttpURLConnection) new URL(currentUrl).openConnection();
