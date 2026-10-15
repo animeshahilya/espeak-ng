@@ -70,9 +70,15 @@ final class Supertonic implements Closeable {
      * reader phrases) and 192 = 13.4 s (later chunks); text ids run about one
      * per frame plus the language tags. Galaxy S25 Ultra, per flow step: 96
      * frames 54 ms, 192 frames 111 ms. Each bucket is a compiled graph of
-     * ~180 MB, so two.
+     * ~180 MB. The 32-frame bucket (2.2 s) is for screen-reader phrases: the
+     * model pads speech with silence, so even "Back" is 20 frames and the
+     * phrases of a TalkBack session are 20-35; in the 96 bucket they filled
+     * a quarter of it and paid 6.7 s of flow (PC, INT8 duration model,
+     * supertonic3-eval/harness/fill.py).
      */
-    static final int[][] BUCKETS = {{96, 144}, {192, 288}};
+    static final int[][] BUCKETS = {{32, 48}, {96, 144}, {192, 288}};
+    /** The bucket only long text needs: loaded at its first use ({@link #npu}). */
+    static final int LAZY_BUCKET = BUCKETS.length - 1;
     /** Chunk sizes in letters ({@link PiperPhonemes#chunk}) that fit the buckets at normal speed. */
     static final int FIRST_CHUNK = 60;
     static final int CHUNK = 160;
@@ -583,20 +589,25 @@ final class Supertonic implements Closeable {
     final int[] indexer;
     private final OrtSession durations;
     private final OrtSession encoder;
-    /** Per bucket; null where its NPU graph is not available. */
+    /** Per bucket; null where its NPU graph is not available (or, for {@link #LAZY_BUCKET}, not loaded yet). */
     private final OrtSession[] npuFlow;
     private final OrtSession[] npuVocoder;
+    private final File modelFile;
     private final File dir;
+    /** {@link #LAZY_BUCKET} waits for its first use; false once loaded or failed. */
+    private boolean largePending;
     private final int threads;
     private OrtSession cpuFlow;
     private OrtSession cpuVocoder;
     /** Why the NPU is not used, or null. */
     final String npuProblem;
 
-    private Supertonic(File dir, int threads, JSONObject cfg, int[] indexer, OrtSession durations,
+    private Supertonic(File modelFile, int threads, JSONObject cfg, int[] indexer, OrtSession durations,
                        OrtSession encoder, OrtSession[] npuFlow, OrtSession[] npuVocoder, String npuProblem)
             throws JSONException {
-        this.dir = dir;
+        this.modelFile = modelFile;
+        this.dir = modelFile.getParentFile();
+        largePending = npuProblem == null && npuFlow[LAZY_BUCKET] == null;
         this.threads = threads;
         final JSONObject ae = cfg.getJSONObject("ae");
         final JSONObject ttl = cfg.getJSONObject("ttl");
@@ -635,6 +646,10 @@ final class Supertonic implements Closeable {
                     problem = "no NPU runtime";
                 } else {
                     for (int b = 0; b < BUCKETS.length; b++) {
+                        if (b == LAZY_BUCKET && compiled(modelFile, BUCKETS[b], "flow")
+                                && compiled(new File(dir, VOCODER), BUCKETS[b], "voc")) {
+                            continue; // loaded at its first use (largeOnNpu)
+                        }
                         flow[b] = npuSession(modelFile, BUCKETS[b], "flow");
                         voc[b] = npuSession(new File(dir, VOCODER), BUCKETS[b], "voc");
                     }
@@ -656,10 +671,16 @@ final class Supertonic implements Closeable {
             if (problem != null) {
                 android.util.Log.w("PiperVoices", "Supertonic on the CPU: " + problem);
             }
-            return new Supertonic(dir, threads, cfg, indexer, dp, te, flow, voc, problem);
+            return new Supertonic(modelFile, threads, cfg, indexer, dp, te, flow, voc, problem);
         } catch (IOException | JSONException e) {
             throw new OrtException("Supertonic files missing in " + dir + ": " + e);
         }
+    }
+
+    /** True when the bucket's graph is compiled in the shared store (loads in well under a second). */
+    private static boolean compiled(File model, int[] bucket, String what) {
+        final File f = PiperModel.sharedDerivedFile(model, ".st-" + what + bucket[0] + ".ctx.onnx");
+        return f != null && f.isFile();
     }
 
     private static OrtSession cpuSession(File model, int threads) throws OrtException {
@@ -724,10 +745,33 @@ final class Supertonic implements Closeable {
         return cpuVocoder;
     }
 
-    /** True when every bucket has its NPU graph. */
-    boolean onNpu() {
-        for (OrtSession s : npuFlow) {
-            if (s == null) {
+    /**
+     * A bucket's NPU {flow, vocoder}, or null. The largest loads at its first
+     * use: screen-reader phrases and first chunks never need it, and each
+     * bucket holds ~180 MB (Galaxy S25 Ultra: 742 MB with all three loaded,
+     * 564 MB with two); loading a compiled one takes well under a second,
+     * while the chunk before it plays.
+     */
+    private synchronized OrtSession[] npu(int b) {
+        if (b == LAZY_BUCKET && largePending) {
+            largePending = false;
+            try {
+                npuFlow[b] = npuSession(modelFile, BUCKETS[b], "flow");
+                npuVocoder[b] = npuSession(new File(dir, VOCODER), BUCKETS[b], "voc");
+            } catch (OrtException | IOException | RuntimeException e) {
+                PiperModel.closeQuietly(npuFlow[b]);
+                npuFlow[b] = null;
+                npuVocoder[b] = null;
+                android.util.Log.w("PiperVoices", "Supertonic bucket " + BUCKETS[b][0] + " on the CPU: " + e);
+            }
+        }
+        return npuFlow[b] != null ? new OrtSession[] {npuFlow[b], npuVocoder[b]} : null;
+    }
+
+    /** True when every bucket has its NPU graph (the largest maybe not loaded yet). */
+    synchronized boolean onNpu() {
+        for (int b = 0; b < BUCKETS.length; b++) {
+            if (npuFlow[b] == null && !(b == LAZY_BUCKET && largePending)) {
                 return false;
             }
         }
@@ -774,16 +818,24 @@ final class Supertonic implements Closeable {
         final int frames = (samples + frameSamples - 1) / frameSamples;
 
         int bucket = -1;
-        for (int b = 0; b < BUCKETS.length; b++) {
-            if (npuFlow[b] != null && BUCKETS[b][0] >= frames && BUCKETS[b][1] >= textLen) {
-                bucket = b;
-                break;
+        OrtSession flow = null;
+        OrtSession vocoder = null;
+        for (int b = 0; b < BUCKETS.length && bucket < 0; b++) {
+            if (BUCKETS[b][0] >= frames && BUCKETS[b][1] >= textLen) {
+                final OrtSession[] npu = npu(b);
+                if (npu != null) {
+                    bucket = b;
+                    flow = npu[0];
+                    vocoder = npu[1];
+                }
             }
         }
         final int lenL = bucket >= 0 ? BUCKETS[bucket][0] : frames;
         final int lenT = bucket >= 0 ? BUCKETS[bucket][1] : textLen;
-        final OrtSession flow = bucket >= 0 ? npuFlow[bucket] : cpuFlow();
-        final OrtSession vocoder = bucket >= 0 ? npuVocoder[bucket] : cpuVocoder();
+        if (bucket < 0) {
+            flow = cpuFlow();
+            vocoder = cpuVocoder();
+        }
 
         final float[] emb = new float[embChannels * lenT];
         for (int c = 0; c < embChannels; c++) {
