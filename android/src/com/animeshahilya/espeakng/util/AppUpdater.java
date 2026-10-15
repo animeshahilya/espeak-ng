@@ -229,8 +229,27 @@ public final class AppUpdater {
                         prefs(activity).edit().putInt(KEY_SKIPPED, r.versionCode).apply()));
     }
 
+    /**
+     * The release the user chose Update for while the app could not install
+     * apps: going to Android's setting closes every dialog, so coming back
+     * would leave nothing to tap (found on a Galaxy S25 Ultra). {@link #onResume}
+     * carries on once the permission is there. Process memory only: if Android
+     * drops the process meanwhile, the next check offers it again.
+     */
+    private static volatile Release sAwaitingPermission;
+
+    /** The settings screen came back to the front: an update waiting for the permission goes on. */
+    public static void onResume(Context activity) {
+        final Release r = sAwaitingPermission;
+        if (r != null && activity.getPackageManager().canRequestPackageInstalls()) {
+            sAwaitingPermission = null;
+            startUpdate(activity, r);
+        }
+    }
+
     private static void startUpdate(Context activity, Release r) {
         if (!activity.getPackageManager().canRequestPackageInstalls()) {
+            sAwaitingPermission = r;
             show(new MaterialAlertDialogBuilder(activity)
                     .setTitle(R.string.update_title)
                     .setMessage(R.string.update_permission_body)

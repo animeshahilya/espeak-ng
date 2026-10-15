@@ -636,7 +636,7 @@
   <string name="update_action_open_settings">Open settings</string>
   <string name="update_up_to_date">You have the latest version, %1$s.</string>
   <string name="update_check_failed">Could not check for updates. Check your internet connection and try again.</string>
-  <string name="update_permission_body">To install updates, allow this app to install apps. Open settings, turn on Allow from this source, then come back and tap Update again.</string>
+  <string name="update_permission_body">To install updates, allow this app to install apps. Open settings, turn on Allow from this source, then come back: the update continues by itself.</string>
   <string name="update_permission_missing">This phone has no setting to allow installing apps from this app.</string>
   <string name="update_download_title">eSpeak NG Advanced %1$s</string>
   <string name="update_downloading_title">Downloading version %1$s</string>
