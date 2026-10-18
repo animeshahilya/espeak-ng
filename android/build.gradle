@@ -102,7 +102,7 @@ dependencies {
 }
 
 android {
-    compileSdk = 37
+    compileSdk = 36
     ndkVersion = "30.0.16248370"
     namespace = "com.animeshahilya.espeakng"
 
@@ -119,7 +119,7 @@ android {
         // The Snapdragon APK: Qualcomm's QNN plugin needs API 27. It is only
         // offered from the Snapdragon 8 Gen 1 on, which shipped with Android 12.
         minSdk = project.hasProperty('snapdragon') ? 27 : 26
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 33
         versionName = "2.10 beta 1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -151,6 +151,10 @@ android {
                 storePassword keystoreProperties['storePassword']
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
+                v1SigningEnabled true
+                v2SigningEnabled true
+                enableV3Signing = true
+                enableV4Signing = true
             }
         }
     }

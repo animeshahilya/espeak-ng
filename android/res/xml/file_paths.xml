@@ -2,4 +2,5 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <cache-path name="shared_dictionaries" path="shared_dictionaries/" />
     <external-files-path name="updates" path="updates/" />
+    <files-path name="internal_updates" path="updates/" />
 </paths>

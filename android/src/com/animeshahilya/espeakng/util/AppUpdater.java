@@ -272,14 +272,40 @@ public final class AppUpdater {
         download(activity, r);
     }
 
+    private static File getUpdatesDir(Context context) {
+        File dir = context.getExternalFilesDir(DIR);
+        if (dir == null) {
+            dir = new File(context.getFilesDir(), DIR);
+        }
+        if (!dir.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            dir.mkdirs();
+        }
+        return dir;
+    }
+
     private static File apkFile(Context context, Release r) {
-        return new File(context.getExternalFilesDir(DIR), "espeak-ng-" + r.versionCode + ".apk");
+        return new File(getUpdatesDir(context), "espeak-ng-" + r.versionCode + ".apk");
     }
 
     /** A copy of this release downloaded earlier and still intact, or null. */
     private static File verifiedDownload(Context context, Release r) {
         final File f = apkFile(context, r);
-        return f.isFile() && r.sha256.equals(sha256(f)) ? f : null;
+        if (f.isFile() && r.sha256.equals(sha256(f))) {
+            return f;
+        }
+        final File extDir = context.getExternalFilesDir(DIR);
+        if (extDir != null) {
+            final File extFile = new File(extDir, f.getName());
+            if (extFile.isFile() && r.sha256.equals(sha256(extFile))) {
+                return extFile;
+            }
+        }
+        final File intFile = new File(new File(context.getFilesDir(), DIR), f.getName());
+        if (intFile.isFile() && r.sha256.equals(sha256(intFile))) {
+            return intFile;
+        }
+        return null;
     }
 
     private static void download(Context activity, Release r) {
@@ -386,7 +412,7 @@ public final class AppUpdater {
                     activity.getPackageName() + ".fileprovider", apk);
             activity.startActivity(new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "application/vnd.android.package-archive")
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK));
         } catch (ActivityNotFoundException | IllegalArgumentException e) {
             message(activity, activity.getString(R.string.update_install_failed));
         }
@@ -412,8 +438,13 @@ public final class AppUpdater {
             }
         }
         prefs.edit().remove(KEY_DOWNLOAD_ID).remove(KEY_DOWNLOAD_VERSION).apply();
-        final File dir = context.getExternalFilesDir(DIR);
-        final File[] files = dir != null ? dir.listFiles() : null;
+        final File extDir = context.getExternalFilesDir(DIR);
+        deleteFiles(extDir != null ? extDir.listFiles() : null);
+        final File intDir = new File(context.getFilesDir(), DIR);
+        deleteFiles(intDir.listFiles());
+    }
+
+    private static void deleteFiles(File[] files) {
         if (files != null) {
             for (File f : files) {
                 //noinspection ResultOfMethodCallIgnored
