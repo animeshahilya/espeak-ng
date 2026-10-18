@@ -53,6 +53,7 @@ import com.animeshahilya.espeakng.text.TextPreprocessor;
 import com.animeshahilya.espeakng.util.TolerantPreferences;
 import com.animeshahilya.espeakng.tts.TtsAudioDispatcher;
 import com.animeshahilya.espeakng.text.KeyboardLanguage;
+import com.animeshahilya.espeakng.text.LatinLanguageDetector;
 import com.animeshahilya.espeakng.text.UserDictionaryManager;
 import com.animeshahilya.espeakng.tts.VoiceEngineRegistry;
 import com.animeshahilya.espeakng.ui.VoiceSettings;
@@ -284,35 +285,60 @@ public class TtsService extends TextToSpeechService {
     private volatile VoiceSelection mLastSelection = null;
 
     private String voiceRequestKey(SynthesisRequest request, SharedPreferences prefs) {
-        // '\u0001' separators: engine voice names never contain it, so two
+        // '' separators: engine voice names never contain it, so two
         // different requests cannot fold into the same key.
-        String spanTag = "";
+        final Locale span = wholeTextLocale(request);
+        final String keyboard = keyboardLanguage(request, prefs);
+        return String.valueOf(request.getVoiceName()) + ''
+                + String.valueOf(request.getLanguage()) + ''
+                + String.valueOf(request.getCountry()) + ''
+                + String.valueOf(request.getVariant()) + ''
+                + (span != null ? span.toLanguageTag() : "") + ''
+                + (keyboard != null ? keyboard : "");
+    }
+
+    /**
+     * The locale of a {@link LocaleSpan} covering all of the request's text
+     * (TalkBack's language menu, an app's whole-label locale), or null. A
+     * span over only part of it (one French word in a web page) is left to
+     * the per-run language switching instead of taking the whole utterance.
+     */
+    private static Locale wholeTextLocale(SynthesisRequest request) {
         final CharSequence cs = request.getCharSequenceText();
-        if (cs instanceof Spanned) {
-            final Spanned spanned = (Spanned) cs;
-            final LocaleSpan[] spans = spanned.getSpans(0, spanned.length(), LocaleSpan.class);
-            if (spans != null && spans.length > 0 && spans[0] != null) {
-                final Locale l = spans[0].getLocale();
-                if (l != null) {
-                    spanTag = l.toLanguageTag();
-                }
+        if (!(cs instanceof Spanned)) {
+            return null;
+        }
+        final Spanned spanned = (Spanned) cs;
+        int first = 0;
+        int last = spanned.length();
+        while (first < last && Character.isWhitespace(spanned.charAt(first))) {
+            first++;
+        }
+        while (last > first && Character.isWhitespace(spanned.charAt(last - 1))) {
+            last--;
+        }
+        if (first == last) {
+            return null;
+        }
+        for (LocaleSpan span : spanned.getSpans(0, spanned.length(), LocaleSpan.class)) {
+            if (span != null && span.getLocale() != null
+                    && spanned.getSpanStart(span) <= first && spanned.getSpanEnd(span) >= last) {
+                return span.getLocale();
             }
         }
-        String kbTag = "";
-        if (VoiceSettings.isFollowKeyboardLanguage(prefs)) {
-            final String reqText = getRequestString(request);
-            if (reqText != null && !reqText.isEmpty() && reqText.codePointCount(0, reqText.length()) == 1) {
-                final String kbLang = KeyboardLanguage.read(this);
-                if (kbLang != null) {
-                    kbTag = kbLang;
-                }
-            }
+        return null;
+    }
+
+    /** The active keyboard's language for a single typed character, when the user asked for that. */
+    private String keyboardLanguage(SynthesisRequest request, SharedPreferences prefs) {
+        if (!VoiceSettings.isFollowKeyboardLanguage(prefs)) {
+            return null;
         }
-        return String.valueOf(request.getVoiceName()) + '\u0001'
-                + String.valueOf(request.getLanguage()) + '\u0001'
-                + String.valueOf(request.getCountry()) + '\u0001'
-                + String.valueOf(request.getVariant()) + '\u0001'
-                + spanTag + '\u0001' + kbTag;
+        final String text = getRequestString(request);
+        if (text == null || text.isEmpty() || text.codePointCount(0, text.length()) != 1) {
+            return null;
+        }
+        return KeyboardLanguage.read(this);
     }
 
     private SharedPreferences mPreferences;
@@ -941,33 +967,14 @@ public class TtsService extends TextToSpeechService {
     }
 
     private int selectVoiceUncached(SynthesisRequest request, SharedPreferences prefs) {
-        final CharSequence cs = request.getCharSequenceText();
-        if (cs instanceof Spanned) {
-            final Spanned spanned = (Spanned) cs;
-            final LocaleSpan[] spans = spanned.getSpans(0, spanned.length(), LocaleSpan.class);
-            if (spans != null && spans.length > 0 && spans[0] != null) {
-                final Locale spanLocale = spans[0].getLocale();
-                if (spanLocale != null) {
-                    final int res = selectLanguageWithFallback(
-                            spanLocale.getLanguage(), spanLocale.getCountry(), spanLocale.getVariant());
-                    if (res == TextToSpeech.SUCCESS) {
-                        return TextToSpeech.SUCCESS;
-                    }
-                }
-            }
+        final Locale span = wholeTextLocale(request);
+        if (span != null && selectLanguageWithFallback(span.getLanguage(), span.getCountry(),
+                span.getVariant()) == TextToSpeech.SUCCESS) {
+            return TextToSpeech.SUCCESS;
         }
-
-        if (VoiceSettings.isFollowKeyboardLanguage(prefs)) {
-            final String reqText = getRequestString(request);
-            if (reqText != null && !reqText.isEmpty() && reqText.codePointCount(0, reqText.length()) == 1) {
-                final String kbLang = KeyboardLanguage.read(this);
-                if (kbLang != null && !kbLang.isEmpty()) {
-                    final int res = selectLanguageWithFallback(kbLang, "", "");
-                    if (res == TextToSpeech.SUCCESS) {
-                        return TextToSpeech.SUCCESS;
-                    }
-                }
-            }
+        final String keyboard = keyboardLanguage(request, prefs);
+        if (keyboard != null && selectLanguageWithFallback(keyboard, "", "") == TextToSpeech.SUCCESS) {
+            return TextToSpeech.SUCCESS;
         }
 
         final String name = request.getVoiceName();
@@ -1821,6 +1828,7 @@ public class TtsService extends TextToSpeechService {
                                                Map<UnicodeScript, String> runLanguages,
                                                String numbers, SharedPreferences prefs) {
         final String sensitivity = ScriptLanguages.switchingSensitivity(prefs);
+        LatinLanguageDetector.setEnabled(VoiceSettings.isDetectLatinLanguages(prefs));
         // A SYSPIN/Rasa voice reads only its own script's letters: words in
         // another script must not be folded into it, or they go unspoken.
         final PiperVoiceStore.Installed ownNatural = PiperVoiceStore.assignedFor(mStorageContext, prefs, own);

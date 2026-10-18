@@ -42,38 +42,13 @@ public final class KeyboardLanguage {
     private static volatile String sCachedLanguage = null;
     private static volatile long sLastCheckTime = 0;
 
-    private static final Map<String, String> ISO_MAP = new HashMap<>();
+    /** Old codes Android's Locale still reports; everything else maps through Locale. */
+    private static final Map<String, String> LEGACY_CODES = new HashMap<>();
 
     static {
-        // Pre-populate canonical 2-letter to 3-letter mappings
-        for (String lang : Locale.getISOLanguages()) {
-            try {
-                final String iso3 = new Locale(lang).getISO3Language();
-                ISO_MAP.put(lang, iso3);
-                ISO_MAP.put(iso3, iso3);
-            } catch (MissingResourceException ignored) {
-            }
-        }
-        // Legacy Android locale code mappings
-        ISO_MAP.put("in", "ind");
-        ISO_MAP.put("iw", "heb");
-        ISO_MAP.put("ji", "yid");
-        // Indic language mappings
-        ISO_MAP.put("hi", "hin");
-        ISO_MAP.put("bn", "ben");
-        ISO_MAP.put("ta", "tam");
-        ISO_MAP.put("te", "tel");
-        ISO_MAP.put("mr", "mar");
-        ISO_MAP.put("gu", "guj");
-        ISO_MAP.put("kn", "kan");
-        ISO_MAP.put("ml", "mal");
-        ISO_MAP.put("pa", "pan");
-        ISO_MAP.put("ur", "urd");
-        ISO_MAP.put("ne", "nep");
-        ISO_MAP.put("sa", "san");
-        ISO_MAP.put("uk", "ukr");
-        ISO_MAP.put("ru", "rus");
-        ISO_MAP.put("be", "bel");
+        LEGACY_CODES.put("in", "ind");
+        LEGACY_CODES.put("iw", "heb");
+        LEGACY_CODES.put("ji", "yid");
     }
 
     private KeyboardLanguage() {
@@ -99,12 +74,6 @@ public final class KeyboardLanguage {
         return detected;
     }
 
-    /** Clears the cache so the next call queries the system. */
-    public static void invalidate() {
-        sLastCheckTime = 0;
-        sCachedLanguage = null;
-    }
-
     private static String readUncached(Context context) {
         try {
             final InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -119,26 +88,31 @@ public final class KeyboardLanguage {
                 Log.w(TAG, "Failed to get current subtype", e);
             }
 
-            final ContentResolver cr = context.getContentResolver();
-            final String defaultIme = Settings.Secure.getString(cr, "default_input_method");
-            final int selectedSubtypeId = Settings.Secure.getInt(cr, "selected_input_method_subtype", -1);
+            // The selected subtype's id is a hidden setting: where reading
+            // it is refused, the subtype above is still the answer.
+            String defaultIme = null;
+            int selectedSubtypeId = -1;
+            try {
+                final ContentResolver cr = context.getContentResolver();
+                defaultIme = Settings.Secure.getString(cr, Settings.Secure.DEFAULT_INPUT_METHOD);
+                selectedSubtypeId = Settings.Secure.getInt(cr, "selected_input_method_subtype", -1);
+            } catch (RuntimeException e) {
+                // SecurityException on newer platforms; keep `current`
+            }
 
             InputMethodSubtype resolved = null;
-            if (defaultIme != null && selectedSubtypeId != -1) {
-                if (current != null && current.hashCode() == selectedSubtypeId) {
-                    resolved = current;
-                } else {
-                    for (InputMethodInfo info : imm.getInputMethodList()) {
-                        if (defaultIme.equals(info.getId())) {
-                            for (int i = 0; i < info.getSubtypeCount(); i++) {
-                                final InputMethodSubtype sub = info.getSubtypeAt(i);
-                                if (sub.hashCode() == selectedSubtypeId) {
-                                    resolved = sub;
-                                    break;
-                                }
+            if (defaultIme != null && selectedSubtypeId != -1
+                    && (current == null || current.hashCode() != selectedSubtypeId)) {
+                for (InputMethodInfo info : imm.getInputMethodList()) {
+                    if (defaultIme.equals(info.getId())) {
+                        for (int i = 0; i < info.getSubtypeCount(); i++) {
+                            final InputMethodSubtype sub = info.getSubtypeAt(i);
+                            if (sub.hashCode() == selectedSubtypeId) {
+                                resolved = sub;
+                                break;
                             }
-                            break;
                         }
+                        break;
                     }
                 }
             }
@@ -189,7 +163,7 @@ public final class KeyboardLanguage {
             lang = (dash > 0 ? clean.substring(0, dash) : clean).toLowerCase(Locale.ROOT);
         }
 
-        final String mapped = ISO_MAP.get(lang);
+        final String mapped = LEGACY_CODES.get(lang);
         if (mapped != null) {
             return mapped;
         }

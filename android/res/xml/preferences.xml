@@ -730,6 +730,12 @@
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
+            android:key="espeak_detect_latin_languages"
+            android:title="@string/setting_detect_latin_languages"
+            android:summary="@string/setting_detect_latin_languages_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
             android:key="espeak_follow_keyboard_language"
             android:title="@string/setting_follow_keyboard_language"
             android:summary="@string/setting_follow_keyboard_language_summary"

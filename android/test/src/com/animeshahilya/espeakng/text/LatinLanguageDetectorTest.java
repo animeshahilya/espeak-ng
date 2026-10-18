@@ -12,9 +12,41 @@ package com.animeshahilya.espeakng.text;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class LatinLanguageDetectorTest {
+
+    @Before
+    public void enable() {
+        LatinLanguageDetector.setEnabled(true);
+    }
+
+    @After
+    public void disable() {
+        LatinLanguageDetector.setEnabled(false);
+    }
+
+    @Test
+    public void offByDefault() {
+        LatinLanguageDetector.setEnabled(false);
+        assertNull(LatinLanguageDetector.detect("Das ist ein sehr gutes Buch.", "eng"));
+    }
+
+    @Test
+    public void englishAndHinglishThatShareWordsStayUndetected() {
+        assertNull(LatinLanguageDetector.detect("Do as I say, not as I do", "eng"));
+        assertNull(LatinLanguageDetector.detect("I live on Sur Avenue, plus a con", "eng"));
+        assertNull(LatinLanguageDetector.detect("El Paso and La Jolla", "eng"));
+        assertNull(LatinLanguageDetector.detect("The da Vinci code has a boa", "eng"));
+        assertNull(LatinLanguageDetector.detect("mujhe do minute de do, le lo yaar", "eng"));
+    }
+
+    @Test
+    public void detectsPortuguesePhrases() {
+        assertEquals("por", LatinLanguageDetector.detect("Muito obrigado por tudo, você é bom", "eng"));
+    }
 
     @Test
     public void detectsGermanPhrases() {

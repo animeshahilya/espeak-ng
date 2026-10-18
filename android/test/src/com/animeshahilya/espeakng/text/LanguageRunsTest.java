@@ -464,13 +464,20 @@ public class LanguageRunsTest {
     public void latinToLatinLanguageDetectionInMixedText() {
         // Spanish phrase inside Hindi text detected as Spanish rather than generic English
         final String spanishInHindi = "कृपया esta es una prueba para todos सुनिए";
-        assertEquals("hin@0[कृपया]spa@5[ esta es una prueba para todos]hin@35[ सुनिए]",
+        assertEquals("hin@0[कृपया]eng@5[ esta es una prueba para todos]hin@35[ सुनिए]",
                 describe(LanguageRuns.split(spanishInHindi, "hin")));
+        LatinLanguageDetector.setEnabled(true);
+        try {
+            assertEquals("hin@0[कृपया]spa@5[ esta es una prueba para todos]hin@35[ सुनिए]",
+                    describe(LanguageRuns.split(spanishInHindi, "hin")));
 
-        // German phrase inside Russian text detected as German
-        final String germanInRussian = "Пожалуйста, das ist ein test für alle спасибо";
-        assertEquals("rus@0[Пожалуйста,]deu@11[ das ist ein test für alle]rus@37[ спасибо]",
-                describe(LanguageRuns.split(germanInRussian, "rus")));
+            // German phrase inside Russian text detected as German
+            final String germanInRussian = "Пожалуйста, das ist ein test für alle спасибо";
+            assertEquals("rus@0[Пожалуйста,]deu@11[ das ist ein test für alle]rus@37[ спасибо]",
+                    describe(LanguageRuns.split(germanInRussian, "rus")));
+        } finally {
+            LatinLanguageDetector.setEnabled(false);
+        }
     }
 
     @Test

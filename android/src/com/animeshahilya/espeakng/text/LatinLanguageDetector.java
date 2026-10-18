@@ -16,53 +16,65 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Ultra-fast, zero-allocation stopword-based language detector for Latin-script text.
+ * Stopword-based language detector for Latin-script text: Spanish, French,
+ * German, Italian and Portuguese phrases inside text in another script.
  *
- * <p>Standard eSpeak NG routes all Latin-script text to English ("eng"). This
- * detector inspects multi-word Latin runs for closed-class function words
- * (articles, prepositions, conjunctions) to identify Spanish, French, German,
- * Italian, and Portuguese without requiring heavy ML libraries or external assets.
+ * <p>Opt-in ({@link #setEnabled}): eSpeak NG and NVDA read all Latin text as
+ * the voice's Latin language. Words that are also everyday English or
+ * Hinglish ("do", "as", "plus", "par", "lo", "todo") are left out, English
+ * function words compete, and the winner needs a real share of the run, so
+ * "Do as I say" or "El Paso and La Jolla" stay English.
  */
 public final class LatinLanguageDetector {
     private LatinLanguageDetector() {
     }
 
+    private static volatile boolean sEnabled = false;
+
+    /** Whether {@link #detect} looks at all (the user's setting). */
+    public static void setEnabled(boolean enabled) {
+        sEnabled = enabled;
+    }
+
+    private static final String ENGLISH = "eng";
     private static final Map<String, Set<String>> STOPWORDS = new HashMap<>();
 
     static {
-        // German (deu)
+        addWords(ENGLISH, new String[] {
+                "the", "and", "of", "to", "is", "are", "was", "were", "in", "on", "at", "for", "with",
+                "this", "that", "it", "you", "i", "my", "your", "not", "have", "has", "be", "from",
+                "or", "by", "we", "they", "he", "she", "a", "an", "what", "how", "will", "can"
+        });
+
         addWords("deu", new String[] {
-                "der", "die", "das", "den", "dem", "des", "ein", "eine", "einer", "einem", "einen", "eines",
-                "und", "oder", "aber", "nicht", "ich", "wir", "sie", "ist", "sind", "mit", "nach", "fuer",
-                "für", "auch", "dass", "wenn", "doch", "haben", "hat", "danke", "bitte"
+                "der", "die", "das", "des", "ein", "eine", "einer", "einem", "einen", "eines",
+                "und", "oder", "aber", "nicht", "ich", "wir", "sie", "ist", "sind", "nach", "fuer",
+                "für", "auch", "dass", "wenn", "doch", "haben", "danke", "bitte", "wie", "geht",
+                "dir", "sehr", "guten", "morgen", "mich", "noch"
         });
 
-        // French (fra)
         addWords("fra", new String[] {
-                "le", "la", "les", "du", "des", "un", "une", "avec", "pour", "dans", "sur", "sous",
-                "nous", "vous", "ils", "elles", "mais", "cette", "sont", "est", "pas", "merci", "tres",
-                "très", "par", "chez", "tout", "tous", "faire", "plus", "bien"
+                "le", "la", "les", "du", "un", "une", "avec", "pour", "dans", "sous",
+                "nous", "vous", "ils", "elles", "mais", "cette", "sont", "merci", "tres",
+                "très", "chez", "tout", "tous", "faire", "bien", "votre", "notre", "beaucoup", "aussi"
         });
 
-        // Spanish (spa)
         addWords("spa", new String[] {
-                "el", "la", "los", "las", "un", "una", "unos", "unas", "del", "por", "para", "con",
-                "sin", "pero", "este", "esta", "estos", "estas", "como", "bien", "muy", "gracias", "hacer",
-                "todo", "todos", "estoy", "esta", "está", "están", "estan", "hola", "amigo", "amiga"
+                "el", "la", "los", "las", "un", "una", "unos", "unas", "del", "por", "para",
+                "pero", "este", "esta", "estos", "estas", "como", "bien", "muy", "gracias", "hacer",
+                "todos", "estoy", "está", "están", "estan", "hola", "amigo", "amiga", "es", "hasta"
         });
 
-        // Italian (ita)
         addWords("ita", new String[] {
-                "il", "lo", "la", "gli", "le", "un", "uno", "una", "del", "della", "dei", "delle",
-                "con", "senza", "questo", "questa", "anche", "molto", "sono", "grazie", "tutto", "tutti",
-                "perche", "perché", "ciao", "bene", "dove", "quando", "cosa"
+                "il", "gli", "un", "uno", "una", "del", "della", "dei", "delle", "per", "tuo",
+                "senza", "questo", "questa", "anche", "molto", "sono", "grazie", "tutto", "tutti",
+                "perche", "perché", "ciao", "bene", "quando", "cosa", "mille"
         });
 
-        // Portuguese (por)
         addWords("por", new String[] {
-                "os", "as", "um", "uma", "do", "da", "dos", "das", "com", "para", "por", "sem",
+                "uma", "dos", "das", "com", "para", "por",
                 "este", "esta", "estes", "estas", "muito", "mais", "obrigado", "obrigada", "voce", "você",
-                "tudo", "todos", "estou", "está", "esta", "estao", "estão", "fazer", "bom", "boa"
+                "tudo", "todos", "estou", "está", "estao", "estão", "fazer", "bom", "nao", "não"
         });
     }
 
@@ -73,19 +85,19 @@ public final class LatinLanguageDetector {
     }
 
     /**
-     * Detects if the Latin-script text {@code run} belongs to a specific non-English
-     * language (Spanish, French, German, Italian, Portuguese).
+     * The language of the Latin-script text {@code run} when it is clearly
+     * Spanish, French, German, Italian or Portuguese, else null (also while
+     * detection is off).
      *
      * @param run the text of the Latin run
-     * @param speakingLanguage the active base language (if already that language, returns null)
-     * @return the ISO 639-2 code (e.g. "spa", "fra", "deu", "ita", "por"), or null if inconclusive
+     * @param speakingLanguage the language the run is read in now; never returned
+     * @return the ISO 639-2 code (e.g. "spa", "fra", "deu", "ita", "por"), or null
      */
     public static String detect(String run, String speakingLanguage) {
-        if (run == null || run.length() < 8) {
+        if (!sEnabled || run == null || run.length() < 8) {
             return null;
         }
 
-        // Must have at least 2 distinct words to be considered a phrase
         int wordCount = 0;
         final int len = run.length();
         int inWordStart = -1;
@@ -107,42 +119,39 @@ public final class LatinLanguageDetector {
                 wordCount++;
 
                 for (Map.Entry<String, Set<String>> entry : STOPWORDS.entrySet()) {
-                    final String lang = entry.getKey();
-                    if (lang.equals(speakingLanguage)) {
-                        continue;
-                    }
                     if (entry.getValue().contains(word)) {
-                        scores.put(lang, scores.getOrDefault(lang, 0) + 1);
+                        scores.merge(entry.getKey(), 1, Integer::sum);
                     }
                 }
             }
         }
 
-        // Require at least 2 words and at least 2 stopword matches
-        if (wordCount < 2 || scores.isEmpty()) {
-            return null;
-        }
-
+        final int english = scores.getOrDefault(ENGLISH, 0);
         String bestLang = null;
         int bestScore = 0;
         int secondScore = 0;
 
         for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+            final String lang = entry.getKey();
+            if (lang.equals(ENGLISH) || lang.equals(speakingLanguage)) {
+                continue;
+            }
             final int score = entry.getValue();
             if (score > bestScore) {
                 secondScore = bestScore;
                 bestScore = score;
-                bestLang = entry.getKey();
+                bestLang = lang;
             } else if (score > secondScore) {
                 secondScore = score;
             }
         }
 
-        // High confidence threshold: at least 2 matches and strict winner
-        if (bestScore >= 2 && bestScore > secondScore) {
+        // A strict winner with 2+ hits, a quarter of the words, and well
+        // ahead of English (names like "El Paso and La Jolla" stay English).
+        if (bestScore >= 2 && bestScore > secondScore
+                && bestScore * 4 >= wordCount && bestScore > 2 * english) {
             return bestLang;
         }
-
         return null;
     }
 }

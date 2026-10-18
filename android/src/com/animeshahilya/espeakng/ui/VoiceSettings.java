@@ -95,6 +95,8 @@ public class VoiceSettings {
     public static final String SWITCHING_SENTENCES = "sentences";
     /** Follow active IME keyboard subtype language for single-character typing echo. */
     public static final String PREF_FOLLOW_KEYBOARD_LANGUAGE = "espeak_follow_keyboard_language";
+    /** Spanish, French, German, Italian and Portuguese phrases inside other text get their own voice. */
+    public static final String PREF_DETECT_LATIN_LANGUAGES = "espeak_detect_latin_languages";
     /** The "Numbers in English text" switch it replaced; on reads as {@link #NUMBERS_AROUND}. */
     private static final String LEGACY_ENGLISH_NUMBERS = "espeak_english_numbers";
     /** As eSpeak reads them (the voice's language), and natural voices (the words around them). */
@@ -740,6 +742,10 @@ public class VoiceSettings {
 
     public static boolean isFollowKeyboardLanguage(SharedPreferences prefs) {
         return prefs != null && prefs.getBoolean(PREF_FOLLOW_KEYBOARD_LANGUAGE, false);
+    }
+
+    public static boolean isDetectLatinLanguages(SharedPreferences prefs) {
+        return prefs != null && prefs.getBoolean(PREF_DETECT_LATIN_LANGUAGES, false);
     }
 
     // Sleep timer: pause all eSpeak speech until a deadline.

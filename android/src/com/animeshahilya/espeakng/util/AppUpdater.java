@@ -272,40 +272,14 @@ public final class AppUpdater {
         download(activity, r);
     }
 
-    private static File getUpdatesDir(Context context) {
-        File dir = context.getExternalFilesDir(DIR);
-        if (dir == null) {
-            dir = new File(context.getFilesDir(), DIR);
-        }
-        if (!dir.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            dir.mkdirs();
-        }
-        return dir;
-    }
-
     private static File apkFile(Context context, Release r) {
-        return new File(getUpdatesDir(context), "espeak-ng-" + r.versionCode + ".apk");
+        return new File(context.getExternalFilesDir(DIR), "espeak-ng-" + r.versionCode + ".apk");
     }
 
     /** A copy of this release downloaded earlier and still intact, or null. */
     private static File verifiedDownload(Context context, Release r) {
         final File f = apkFile(context, r);
-        if (f.isFile() && r.sha256.equals(sha256(f))) {
-            return f;
-        }
-        final File extDir = context.getExternalFilesDir(DIR);
-        if (extDir != null) {
-            final File extFile = new File(extDir, f.getName());
-            if (extFile.isFile() && r.sha256.equals(sha256(extFile))) {
-                return extFile;
-            }
-        }
-        final File intFile = new File(new File(context.getFilesDir(), DIR), f.getName());
-        if (intFile.isFile() && r.sha256.equals(sha256(intFile))) {
-            return intFile;
-        }
-        return null;
+        return f.isFile() && r.sha256.equals(sha256(f)) ? f : null;
     }
 
     private static void download(Context activity, Release r) {
@@ -438,13 +412,8 @@ public final class AppUpdater {
             }
         }
         prefs.edit().remove(KEY_DOWNLOAD_ID).remove(KEY_DOWNLOAD_VERSION).apply();
-        final File extDir = context.getExternalFilesDir(DIR);
-        deleteFiles(extDir != null ? extDir.listFiles() : null);
-        final File intDir = new File(context.getFilesDir(), DIR);
-        deleteFiles(intDir.listFiles());
-    }
-
-    private static void deleteFiles(File[] files) {
+        final File dir = context.getExternalFilesDir(DIR);
+        final File[] files = dir != null ? dir.listFiles() : null;
         if (files != null) {
             for (File f : files) {
                 //noinspection ResultOfMethodCallIgnored
