@@ -7,6 +7,23 @@
 
 The espeak-ng project is a fork of the espeak project.
 
+### 2.10 beta 2 (Android)
+
+*  **Settings**:
+   *  Simpler settings: the first page has the voice, speed, rate boost, pitch and punctuation, and everything people rarely change is under Advanced.
+   *  Short, plain descriptions with examples, like "$5.50 as 5 dollars 50 cents".
+   *  Punctuation and symbols and Reading are one page now, Text and symbols. Acoustic conditioning is now Sound enhancement, under Advanced.
+   *  Settings search works again and takes you straight to the setting.
+   *  Clearer icons on the first page.
+*  **Languages**:
+   *  Web links and email addresses stay in one piece when text mixes languages.
+   *  When an app or TalkBack marks text as a language, that language's voice reads it.
+   *  New, off by default (Advanced): recognise Spanish, French, German, Italian and Portuguese phrases inside other text, and read typed letters in the keyboard's language.
+*  **Snapdragon version**:
+   *  Natural voices start faster on the NPU and take less space: their NPU files now come ready-made.
+*  **App**:
+   *  Installing an app update opens more reliably.
+
 ### 2.10 beta 1 (Android)
 
 *  **Natural voices**:

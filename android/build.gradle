@@ -120,8 +120,8 @@ android {
         // offered from the Snapdragon 8 Gen 1 on, which shipped with Android 12.
         minSdk = project.hasProperty('snapdragon') ? 27 : 26
         targetSdk = 36
-        versionCode = 33
-        versionName = "2.10 beta 1"
+        versionCode = 34
+        versionName = "2.10 beta 2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // PiperModel.hasNpuRuntime: known here, so the standard build never
         // loads ONNX Runtime just to ask (it did on every settings open).
