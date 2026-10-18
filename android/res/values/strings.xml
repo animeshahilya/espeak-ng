@@ -586,6 +586,8 @@
   <string name="switching_sensitivity_words">Every word (default)</string>
   <string name="switching_sensitivity_phrases">Phrases only (2+ words)</string>
   <string name="switching_sensitivity_sentences">Full sentences only</string>
+  <string name="setting_follow_keyboard_language">Follow keyboard language</string>
+  <string name="setting_follow_keyboard_language_summary">Speak typing echo and single characters in the active keyboard\'s language.</string>
 
   <!-- Test voice playback feedback -->
   <string name="test_voice_playing">Playing sample…</string>

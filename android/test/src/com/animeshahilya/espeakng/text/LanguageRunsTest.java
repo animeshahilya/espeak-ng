@@ -445,4 +445,44 @@ public class LanguageRunsTest {
                         l -> "eng".equals(l) ? VoiceSettings.SWITCHING_PHRASES : VoiceSettings.SWITCHING_WORDS,
                         false)));
     }
+
+    @Test
+    public void urlsAndEmailsStayUnifiedEvenWithNumberRouting() {
+        // Digits inside URLs (like /2026/) must not split the URL when a number language is active
+        final String text = "यहाँ देखें https://example.com/2026/update.html धन्यवाद";
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, "hin", null, "hin");
+        assertEquals("hin@0[यहाँ देखें]eng@10[ https://example.com/2026/update.html]hin@47[ धन्यवाद]",
+                describe(runs));
+
+        final String emailText = "संपर्क support123@google.com पर करें";
+        final List<LanguageRuns.Run> emailRuns = LanguageRuns.split(emailText, "hin", null, "hin");
+        assertEquals("hin@0[संपर्क]eng@6[ support123@google.com]hin@28[ पर करें]",
+                describe(emailRuns));
+    }
+
+    @Test
+    public void latinToLatinLanguageDetectionInMixedText() {
+        // Spanish phrase inside Hindi text detected as Spanish rather than generic English
+        final String spanishInHindi = "कृपया esta es una prueba para todos सुनिए";
+        assertEquals("hin@0[कृपया]spa@5[ esta es una prueba para todos]hin@35[ सुनिए]",
+                describe(LanguageRuns.split(spanishInHindi, "hin")));
+
+        // German phrase inside Russian text detected as German
+        final String germanInRussian = "Пожалуйста, das ist ein test für alle спасибо";
+        assertEquals("rus@0[Пожалуйста,]deu@11[ das ist ein test für alle]rus@37[ спасибо]",
+                describe(LanguageRuns.split(germanInRussian, "rus")));
+    }
+
+    @Test
+    public void cyrillicLetterMarkersAndWeakTieBreaker() {
+        // Strong Ukrainian marker 'ї' triggers ukr
+        assertEquals("ukr@0[Київ]", describe(LanguageRuns.split("Київ", "eng")));
+
+        // Strong Belarusian marker 'ў' triggers bel even in presence of shared 'і'
+        assertEquals("bel@0[Мінск і Брэст, поўны дзень]",
+                describe(LanguageRuns.split("Мінск і Брэст, поўны дзень", "eng")));
+
+        // Shared 'і' alone falls back to ukr tie-breaker
+        assertEquals("ukr@0[Мінск і Гродна]", describe(LanguageRuns.split("Мінск і Гродна", "eng")));
+    }
 }

@@ -729,6 +729,12 @@
             android:defaultValue="words"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_follow_keyboard_language"
+            android:title="@string/setting_follow_keyboard_language"
+            android:summary="@string/setting_follow_keyboard_language_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_language_cards"

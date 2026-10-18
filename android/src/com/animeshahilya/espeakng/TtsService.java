@@ -52,6 +52,7 @@ import com.animeshahilya.espeakng.text.TextOffsetMap;
 import com.animeshahilya.espeakng.text.TextPreprocessor;
 import com.animeshahilya.espeakng.util.TolerantPreferences;
 import com.animeshahilya.espeakng.tts.TtsAudioDispatcher;
+import com.animeshahilya.espeakng.text.KeyboardLanguage;
 import com.animeshahilya.espeakng.text.UserDictionaryManager;
 import com.animeshahilya.espeakng.tts.VoiceEngineRegistry;
 import com.animeshahilya.espeakng.ui.VoiceSettings;
@@ -62,6 +63,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.text.Spanned;
+import android.text.style.LocaleSpan;
 import android.media.AudioFormat;
 import android.media.AudioTrack;
 import android.os.Build;
@@ -280,13 +283,36 @@ public class TtsService extends TextToSpeechService {
 
     private volatile VoiceSelection mLastSelection = null;
 
-    private static String voiceRequestKey(SynthesisRequest request) {
+    private String voiceRequestKey(SynthesisRequest request, SharedPreferences prefs) {
         // '\u0001' separators: engine voice names never contain it, so two
         // different requests cannot fold into the same key.
+        String spanTag = "";
+        final CharSequence cs = request.getCharSequenceText();
+        if (cs instanceof Spanned) {
+            final Spanned spanned = (Spanned) cs;
+            final LocaleSpan[] spans = spanned.getSpans(0, spanned.length(), LocaleSpan.class);
+            if (spans != null && spans.length > 0 && spans[0] != null) {
+                final Locale l = spans[0].getLocale();
+                if (l != null) {
+                    spanTag = l.toLanguageTag();
+                }
+            }
+        }
+        String kbTag = "";
+        if (VoiceSettings.isFollowKeyboardLanguage(prefs)) {
+            final String reqText = getRequestString(request);
+            if (reqText != null && !reqText.isEmpty() && reqText.codePointCount(0, reqText.length()) == 1) {
+                final String kbLang = KeyboardLanguage.read(this);
+                if (kbLang != null) {
+                    kbTag = kbLang;
+                }
+            }
+        }
         return String.valueOf(request.getVoiceName()) + '\u0001'
                 + String.valueOf(request.getLanguage()) + '\u0001'
                 + String.valueOf(request.getCountry()) + '\u0001'
-                + String.valueOf(request.getVariant());
+                + String.valueOf(request.getVariant()) + '\u0001'
+                + spanTag + '\u0001' + kbTag;
     }
 
     private SharedPreferences mPreferences;
@@ -894,7 +920,10 @@ public class TtsService extends TextToSpeechService {
     }
 
     private int selectVoice(SynthesisRequest request) {
-        final String key = voiceRequestKey(request);
+        final SharedPreferences prefs = TolerantPreferences.of(mPreferences != null
+                ? mPreferences
+                : EspeakApp.prefs(mStorageContext));
+        final String key = voiceRequestKey(request, prefs);
         final VoiceSelection memo = mLastSelection;
         if (memo != null && memo.key.equals(key)) {
             synchronized (mAvailableVoices) {
@@ -902,7 +931,7 @@ public class TtsService extends TextToSpeechService {
             }
             return memo.result;
         }
-        final int result = selectVoiceUncached(request);
+        final int result = selectVoiceUncached(request, prefs);
         final Voice selected;
         synchronized (mAvailableVoices) {
             selected = mMatchingVoice;
@@ -911,7 +940,36 @@ public class TtsService extends TextToSpeechService {
         return result;
     }
 
-    private int selectVoiceUncached(SynthesisRequest request) {
+    private int selectVoiceUncached(SynthesisRequest request, SharedPreferences prefs) {
+        final CharSequence cs = request.getCharSequenceText();
+        if (cs instanceof Spanned) {
+            final Spanned spanned = (Spanned) cs;
+            final LocaleSpan[] spans = spanned.getSpans(0, spanned.length(), LocaleSpan.class);
+            if (spans != null && spans.length > 0 && spans[0] != null) {
+                final Locale spanLocale = spans[0].getLocale();
+                if (spanLocale != null) {
+                    final int res = selectLanguageWithFallback(
+                            spanLocale.getLanguage(), spanLocale.getCountry(), spanLocale.getVariant());
+                    if (res == TextToSpeech.SUCCESS) {
+                        return TextToSpeech.SUCCESS;
+                    }
+                }
+            }
+        }
+
+        if (VoiceSettings.isFollowKeyboardLanguage(prefs)) {
+            final String reqText = getRequestString(request);
+            if (reqText != null && !reqText.isEmpty() && reqText.codePointCount(0, reqText.length()) == 1) {
+                final String kbLang = KeyboardLanguage.read(this);
+                if (kbLang != null && !kbLang.isEmpty()) {
+                    final int res = selectLanguageWithFallback(kbLang, "", "");
+                    if (res == TextToSpeech.SUCCESS) {
+                        return TextToSpeech.SUCCESS;
+                    }
+                }
+            }
+        }
+
         final String name = request.getVoiceName();
         if (name != null && !name.isEmpty()
                 && onLoadVoice(name) == TextToSpeech.SUCCESS) {

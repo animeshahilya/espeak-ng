@@ -258,6 +258,7 @@ public final class LanguageRuns {
         private final String latinLanguage;
         private final DevanagariClassifier.SpanMap devanagariSpans;
         private final String defaultDevanagari;
+        private final List<SpeechLinks.Range> links;
 
         private UnicodeScript lastScript = null;
         private String lastLanguage = null;
@@ -270,6 +271,7 @@ public final class LanguageRuns {
             this.chosen = (chosen != null && !chosen.isEmpty()) ? chosen : null;
             this.numbers = numbers;
             this.latinLanguage = resolveScript(UnicodeScript.LATIN);
+            this.links = SpeechLinks.find(text);
 
             final String chosenDev = this.chosen != null ? this.chosen.get(UnicodeScript.DEVANAGARI) : null;
             if (chosenDev != null) {
@@ -286,6 +288,11 @@ public final class LanguageRuns {
 
         @Override
         public String resolve(int c, int charIndex) {
+            // Web links and emails stay unbroken in Latin script
+            if (SpeechLinks.isInLink(links, charIndex)) {
+                return latinLanguage;
+            }
+
             // Fast path for ASCII (c < 128) - covers >90% of characters in common text
             if (c < 128) {
                 if (AsciiUtils.isAsciiLetter((char) c)) {
@@ -665,10 +672,15 @@ public final class LanguageRuns {
             case "ara": script = UnicodeScript.ARABIC; break;
             case "ben": script = UnicodeScript.BENGALI; break;
             case "zho": script = UnicodeScript.HAN; break;
+            case "eng": script = UnicodeScript.LATIN; break;
             default: return language;
         }
         if (chosen != null && chosen.containsKey(script)) {
             return language;
+        }
+        if (script == UnicodeScript.LATIN) {
+            final String found = LatinLanguageDetector.detect(run, language);
+            return found != null ? found : language;
         }
         final String found = script == UnicodeScript.HAN ? hanLanguage(text) : byLetters(script, run);
         return found != null ? found : language;
@@ -700,7 +712,8 @@ public final class LanguageRuns {
      * single ے outweighs them.
      */
     private static final String[] CYRILLIC_LETTERS = {
-            "ukr:їєґі", "bel:ўі", "srp:ђћјљњџ", "mkd:ѓќѕјљњџ", "kaz:әғқңөұүһі", "tat:әөүҗңһ", "bak:ҙҫҡғәөүңһ"};
+            "ukr:їєґ", "bel:ў", "srp:ђћјљњџ", "mkd:ѓќѕјљњџ", "kaz:әғқңөұүһ", "tat:әөүҗңһ", "bak:ҙҫҡғәөүңһ",
+            "~ukr:і", "~bel:і"};
     private static final String[] ARABIC_LETTERS = {
             // Persian: ی/ک (not Arabic's ي/ك) and پ چ ژ گ; Arabic: ة ي ك ى.
             "urd:ٹڈڑںےۓہھ", "pus:ټډړښږځڅۍې", "snd:ٻڀٺٽٿڃڄڇڊڌڍڏڙڦڱڳ", "ckb:ڵۆێڕە",
