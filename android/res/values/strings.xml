@@ -52,14 +52,12 @@
         Description: When enabled, stylized Unicode text is converted to plain
         letters (Unicode NFKC normalization) before being spoken.
     -->
-  <string name="setting_unicode_normalization">Unicode normalization</string>
+  <string name="setting_unicode_normalization">Read fancy fonts</string>
   <!--
         Source: Checkbox summary.
         Description: Explains the Unicode normalization setting.
     -->
-  <string name="setting_unicode_normalization_summary">Read stylized Unicode (fancy fonts) as normal words</string>
-  <string name="setting_unicode_normalization_summary_on">Converts decorative Unicode and fancy fonts into standard readable words.</string>
-  <string name="setting_unicode_normalization_summary_off">Reads stylized Unicode characters literally.</string>
+  <string name="setting_unicode_normalization_summary">Styled letters read as normal text</string>
   <string name="punctuation_all">All</string>
   <string name="punctuation_custom">Custom</string>
   <string name="punctuation_custom_fmt">Custom: %s</string>
@@ -110,26 +108,24 @@
   <string name="variant_fast">Fast</string>
   <string name="import_voice_title">Import voice or dictionary</string>
   <string name="import_voice_description">Import an eSpeak voice dictionary (*_dict) or voice archive (*.zip).</string>
-  <string name="setting_emoji_processing">Emoji processing</string>
+  <string name="setting_emoji_processing">Emoji</string>
   <string name="emoji_announce">Announce emojis</string>
-  <string name="emoji_ignore">Ignore / skip emojis</string>
-  <string name="setting_audio_optimizer">Audio optimizer</string>
+  <string name="emoji_ignore">Skip emojis</string>
+  <string name="setting_audio_optimizer">Sound enhancement</string>
   <string name="import_voice_success">Successfully imported voice data.</string>
   <string name="import_voice_error">Could not import that file. It may be damaged, or not an eSpeak voice or dictionary.</string>
-  <string name="setting_capitals">Capital letters</string>
+  <string name="setting_capitals">How capitals sound</string>
   <string name="capitals_none">None</string>
   <string name="capitals_sound">Play a beep</string>
   <string name="capitals_pitch">Raise pitch, subtle</string>
   <string name="capitals_pitch_moderate">Raise pitch, moderate</string>
   <string name="capitals_pitch_strong">Raise pitch, strong</string>
   <string name="capitals_say">Say \"capital\"</string>
-  <string name="setting_emphasize_questions">Emphasize questions and exclamations</string>
-  <string name="setting_emphasize_questions_summary">Raises the pitch more at the end of questions and exclamations.</string>
-  <string name="setting_emphasize_questions_summary_on">Raises pitch at the end of questions and exclamations.</string>
-  <string name="setting_emphasize_questions_summary_off">Uses standard sentence intonation.</string>
+  <string name="setting_emphasize_questions">Emphasize questions</string>
+  <string name="setting_emphasize_questions_summary">Higher pitch at the end of questions and exclamations</string>
   <string name="setting_wordgap">Pause between words</string>
   <string name="formatter_gap_ms">%s ms</string>
-  <string name="setting_pause_scale">Reading pace</string>
+  <string name="setting_pause_scale">Pause length</string>
   <string name="variant_klatt_1">Klatt 1 (Impulsive)</string>
   <string name="variant_klatt_2">Klatt 2 (Natural)</string>
   <string name="variant_klatt_3">Klatt 3 (Sampled pulse 1)</string>
@@ -147,34 +143,32 @@
   <string name="indian_numbering_indian">Indian voices</string>
   <string name="indian_numbering_all">All voices</string>
   <string name="setting_user_dictionary">User dictionary</string>
-  <string name="setting_user_dictionary_summary">Your own pronunciations for words and names</string>
-  <string name="setting_nato_spelling">Phonetic letters</string>
+  <string name="setting_user_dictionary_summary">How words and names are said</string>
+  <string name="setting_nato_spelling">Phonetic letters (Alfa, Bravo)</string>
   <string name="phonetic_letters_character">When moving by character</string>
   <string name="phonetic_letters_always">Always</string>
-  <string name="setting_spoken_diacritics">Devanagari matras in exploration</string>
-  <string name="setting_spoken_diacritics_summary">When reading character by character, names matras and signs such as halant and anusvara.</string>
-  <string name="setting_spoken_diacritics_summary_on">Names Devanagari matras and signs during character exploration.</string>
-  <string name="setting_spoken_diacritics_summary_off">Reads letters without announcing individual matra signs.</string>
-  <string name="test_voice_title">Preview voice sample</string>
-  <string name="test_voice_summary">Plays a short sample with your current settings.</string>
+  <string name="setting_spoken_diacritics">Name Devanagari matras</string>
+  <string name="setting_spoken_diacritics_summary">When moving by character, says signs like halant and anusvara</string>
+  <string name="test_voice_title">Test voice</string>
+  <string name="test_voice_summary">Plays a sample with your settings</string>
   <string name="test_voice_sample">This is a sample of eSpeak NG speech synthesis.</string>
   <string name="setting_recommended_defaults">Apply recommended reading style</string>
   <string name="setting_recommended_defaults_summary" formatted="false">Max variant, 40% pitch, 75% pitch variation and raised pitch for capitals.</string>
   <string name="recommended_defaults_applied" formatted="false">Recommended reading style applied (Max variant, 40% pitch, 75% inflection, capital pitch raise)</string>
-  <string name="setting_digit_grouping">Number reading mode</string>
-  <string name="digit_group_off">Off (natural numbers)</string>
+  <string name="setting_digit_grouping">Read digits</string>
+  <string name="digit_group_off">Off</string>
   <string name="digit_group_single_pause">Digits with pause (1… 2… 3)</string>
   <string name="digit_group_double_pause">Pairs with pause (12… 34)</string>
   <string name="digit_group_triple_pause">Triplets with pause (123… 456)</string>
   <string name="digit_group_single">Single digits (1 2 3)</string>
   <string name="digit_group_double">Pairs (12 34)</string>
   <string name="digit_group_triple">Triplets (123 456)</string>
-  <string name="setting_backup">Backup settings and dictionary</string>
-  <string name="setting_backup_summary">Save your settings and dictionary to a file.</string>
+  <string name="setting_backup">Back up settings</string>
+  <string name="setting_backup_summary">Settings and dictionary, to a file</string>
   <string name="setting_restore">Restore from backup</string>
-  <string name="setting_restore_summary">Load settings and dictionary from a backup file.</string>
+  <string name="setting_restore_summary">From a backup file</string>
   <string name="setting_export_log">Export activity log</string>
-  <string name="setting_export_log_summary">Share a log to help with troubleshooting.</string>
+  <string name="setting_export_log_summary">Share a log for troubleshooting</string>
   <string name="export_log_collecting">Collecting log…</string>
   <string name="dict_import_started">Importing dictionary…</string>
   <string name="dict_import_none">No rules found in that file. Use an NVDA dictionary (.dic), a list of word=replacement lines, or a file exported from this app.</string>
@@ -193,29 +187,18 @@
   <string name="reading_normal">Normal reading</string>
   <string name="reading_spelling">Spelling (letter by letter)</string>
   <string name="reading_code">Code reading (symbols + full punctuation)</string>
-  <string name="setting_digit_threshold">Triple-grouping threshold</string>
+  <string name="setting_digit_threshold">Group in threes from</string>
   <string name="setting_digit_threshold_shown">Triple-grouping threshold available</string>
-  <string name="test_numbers_title">Preview number sample</string>
-  <string name="test_numbers_summary">Hear how numbers sound with your current number reading mode.</string>
+  <string name="test_numbers_title">Hear numbers</string>
   <string name="test_numbers_sample">PIN 123, code 1234, reference 123456.</string>
-  <string name="category_pauses_timing">Pause duration and rhythm</string>
-  <string name="test_pauses_title">Preview pause rhythm</string>
-  <string name="test_pauses_summary">Hear how pauses and word spacing sound.</string>
+  <string name="test_pauses_title">Hear pauses</string>
   <string name="test_pauses_sample">A short pause, followed by another; then, a clear rest.</string>
-  <string name="category_punctuation_preview">Punctuation preview</string>
-  <string name="test_punctuation_title">Preview punctuation sample</string>
-  <string name="test_punctuation_summary">Hear how punctuation, brackets and symbols are announced.</string>
+  <string name="test_punctuation_title">Hear punctuation</string>
   <string name="test_punctuation_sample">(Notice) [Update #1]: \"Hello, world!\"</string>
-  <string name="test_reading_title">Preview reading style</string>
-  <string name="test_reading_summary">Hear how text, questions and URLs are read.</string>
+  <string name="test_reading_title">Hear reading</string>
   <string name="test_reading_sample">Is this working? Visit https://example.com/test.</string>
-  <string name="category_voice_preview">Voice preview</string>
-  <string name="test_voice_tuning_title">Preview voice tuning</string>
-  <string name="test_voice_tuning_summary">Hear pitch, intonation and sound adjustments.</string>
-  <string name="test_voice_tuning_sample">This is a sample of eSpeak NG pitch, tone, and sound tuning.</string>
-  <string name="category_mixed_languages_preview">Mixed languages preview</string>
-  <string name="test_mixed_languages_title">Preview multilingual reading</string>
-  <string name="test_mixed_languages_summary">Hear how scripts and multilingual switching sound.</string>
+  <string name="category_mixed_languages_preview">Try it</string>
+  <string name="test_mixed_languages_title">Hear an example</string>
   <string name="test_mixed_languages_sample">Hello, नमस्ते, مرحبا, 你好, and welcome to eSpeak NG.</string>
   <plurals name="digits_count">
     <item quantity="one">%1$d digit</item>
@@ -225,42 +208,32 @@
   <string name="audio_profile_balanced">Balanced (recommended)</string>
   <string name="audio_profile_full">Full richness</string>
   <string name="audio_profile_custom">Custom (individual modules)</string>
-  <string name="setting_audio_optimizer_screen_summary">Glottal anti-buzz, sibilant guard, formant presence, warmth, leveling, and de-clicking.</string>
-  <string name="setting_audio_optimizer_profile">Conditioning preset</string>
-  <string name="category_optimizer_profile">Acoustic conditioning preset</string>
-  <string name="category_optimizer_preview">Acoustic conditioning test</string>
-  <string name="test_audio_optimizer_title">Preview acoustic conditioning</string>
-  <string name="test_audio_optimizer_summary">Listen to speech processed by your active acoustic modules.</string>
+  <string name="setting_audio_optimizer_screen_summary">Warmer, clearer sound. Off by default.</string>
+  <string name="setting_audio_optimizer_profile">Preset</string>
+  <string name="category_optimizer_profile">Enhancement</string>
+  <string name="test_audio_optimizer_title">Hear it</string>
   <string name="test_audio_optimizer_sample">The quick brown fox jumps over the lazy dog. A soft breeze whispers through the trees on a warm sunny morning.</string>
-  <string name="category_optimizer_modules">Individual acoustic modules</string>
-  <string name="setting_opt_glottal_tilt">Glottal source anti-buzz (LF tilt)</string>
-  <string name="setting_opt_glottal_tilt_summary">Softens raw impulse-train buzz with natural vocal cord spectral tilt (-6 dB/octave above 1.2 kHz).</string>
-  <string name="setting_opt_sibilant_bypass">ZCR sibilant articulation guard</string>
-  <string name="setting_opt_sibilant_bypass_summary">Detects unvoiced consonants (s, sh, t, k) using zero-crossing rate and bypasses glottal tilt to preserve crisp high-speed clarity.</string>
-  <string name="setting_opt_warmth">Sub-harmonic warmth (180 Hz)</string>
-  <string name="setting_opt_warmth_summary">Adds resonant chest body near the fundamental pitch frequency to eliminate tinny timbre.</string>
-  <string name="setting_opt_presence">Formant presence (2.5–5 kHz)</string>
-  <string name="setting_opt_presence_summary">Isolates and saturates speech formant clarity band for intelligibility in noisy environments.</string>
-  <string name="setting_opt_leveler">Dynamic loudness leveler</string>
-  <string name="setting_opt_leveler_summary">Smoothly lifts quiet syllables and evens out prosodic dips without latency on TalkBack cursor navigation.</string>
-  <string name="setting_opt_limiter">True-peak limiter &amp; clip guard</string>
-  <string name="setting_opt_limiter_summary">Zero-latency soft-clipping limiter preventing digital clipping when multiple acoustic stages stack.</string>
-  <string name="setting_opt_declicker">Boundary de-clicker &amp; slew limiter</string>
-  <string name="setting_opt_declicker_summary">Fades initial attack and limits sample-to-sample slew rate to eliminate chunk and phoneme boundary clicks.</string>
-  <string name="category_caller_locks">App speech locks</string>
-  <string name="category_sleep_timer">Sleep timer</string>
-  <string name="setting_force_rate">Lock speech rate</string>
-  <string name="setting_force_rate_summary">Ignore caller app rate requests, always use your saved rate.</string>
-  <string name="setting_force_rate_summary_on">Speech rate is locked to your saved setting.</string>
-  <string name="setting_force_rate_summary_off">Other apps can adjust speech rate.</string>
-  <string name="setting_force_pitch">Lock pitch</string>
-  <string name="setting_force_pitch_summary">Ignore caller app pitch requests, always use your saved pitch.</string>
-  <string name="setting_force_pitch_summary_on">Pitch is locked to your saved setting.</string>
-  <string name="setting_force_pitch_summary_off">Other apps can adjust pitch.</string>
-  <string name="setting_force_volume">Lock volume</string>
-  <string name="setting_force_volume_summary">Ignore caller app volume ducking, always use your saved volume.</string>
-  <string name="setting_force_volume_summary_on">Volume is locked to your saved setting.</string>
-  <string name="setting_force_volume_summary_off">Other apps can adjust volume.</string>
+  <string name="category_optimizer_modules">Parts</string>
+  <string name="setting_opt_glottal_tilt">Soften buzz</string>
+  <string name="setting_opt_glottal_tilt_summary">Takes the harsh edge off the voice</string>
+  <string name="setting_opt_sibilant_bypass">Keep s and sh crisp</string>
+  <string name="setting_opt_sibilant_bypass_summary">Softening skips s, sh, t and k</string>
+  <string name="setting_opt_warmth">Warmth</string>
+  <string name="setting_opt_warmth_summary">More body, less thin</string>
+  <string name="setting_opt_presence">Clarity</string>
+  <string name="setting_opt_presence_summary">Lifts the speech band, helps in noise</string>
+  <string name="setting_opt_leveler">Even loudness</string>
+  <string name="setting_opt_leveler_summary">Lifts quiet syllables</string>
+  <string name="setting_opt_limiter">Prevent distortion</string>
+  <string name="setting_opt_limiter_summary">Stops loud peaks from clipping</string>
+  <string name="setting_opt_declicker">Remove clicks</string>
+  <string name="setting_opt_declicker_summary">Smooths clicks between sounds</string>
+  <string name="setting_force_rate">Keep my speech rate</string>
+  <string name="setting_force_rate_summary">Apps can\'t change it</string>
+  <string name="setting_force_pitch">Keep my pitch</string>
+  <string name="setting_force_pitch_summary">Apps can\'t change it</string>
+  <string name="setting_force_volume">Keep my volume</string>
+  <string name="setting_force_volume_summary">Apps can\'t change it</string>
   <string name="test_voice_stopped">Sample stopped</string>
   <string name="dict_rule_index" translatable="false">%1$d.</string>
   <string name="dict_rule_phonemes" translatable="false">[[%1$s]]</string>
@@ -330,12 +303,11 @@
   <string name="languages_search_hint">Search languages</string>
 
   <!-- Sub-screens and reorganized categories -->
-  <string name="screen_numbers_title">Numbers and math</string>
-  <string name="screen_numbers_summary">Indian formats, money, codes, dates, math, fractions</string>
-  <string name="screen_mixed_languages_title">Mixed-language text</string>
-  <string name="screen_mixed_languages_summary">Which language reads words in another script</string>
+  <string name="screen_numbers_title">Numbers</string>
+  <string name="screen_numbers_summary">Money, phone numbers, codes, dates, math</string>
+  <string name="screen_mixed_languages_title">Mixed languages</string>
+  <string name="screen_mixed_languages_summary">Words in another language or script</string>
   <string name="category_script_languages">Read words in each script as</string>
-  <string name="category_script_languages_summary">For text in a script the current voice does not use, like Hindi words in English text.</string>
   <string name="script_language_default">eSpeak default: %1$s</string>
   <string name="script_language_spell">eSpeak default: spell letter by letter</string>
   <string name="setting_script_latin">Latin script (English words in other text)</string>
@@ -351,101 +323,63 @@
   <string name="setting_script_ja">Japanese kana</string>
   <string name="setting_script_eth">Ethiopic script</string>
   <string name="category_natural_switching">Natural voices</string>
-  <string name="setting_natural_switching">Switch natural voices by script</string>
-  <string name="setting_natural_switching_summary">Words in another language go to that language\'s natural voice, or its eSpeak voice if it has none. Off: the current voice reads everything.</string>
-  <string name="setting_natural_switching_summary_on">Words in another language switch to that language\'s natural voice, or its eSpeak voice if it has none.</string>
-  <string name="setting_natural_switching_summary_off">Current voice reads all text without switching.</string>
-  <string name="category_number_formats">Number formatting</string>
-  <string name="category_number_everyday">Everyday numbers and contacts</string>
-  <string name="category_number_stem">Technical, math and notation</string>
+  <string name="setting_natural_switching">Switch natural voices</string>
+  <string name="setting_natural_switching_summary">Words in another language use its natural voice</string>
+  <string name="category_number_formats">Format</string>
+  <string name="category_number_everyday">Everyday</string>
+  <string name="category_number_stem">Math and notation</string>
   <string name="setting_read_money">Read money amounts</string>
-  <string name="setting_read_money_summary">Reads $5.50 as 5 dollars 50 cents. Also euros, pounds, yen and rupees.</string>
-  <string name="setting_read_money_summary_on">Expands currency symbols into full spoken words (e.g., $5.50 as 5 dollars 50 cents).</string>
-  <string name="setting_read_money_summary_off">Reads currency amounts as standard numbers.</string>
+  <string name="setting_read_money_summary">$5.50 as 5 dollars 50 cents</string>
   <string name="setting_hinglish">Read Hinglish (beta)</string>
   <string name="setting_piper_supertonic_beta">Supertonic voices (beta)</string>
-  <string name="setting_piper_supertonic_beta_summary_on">Supertonic voices are listed under Download voices: 10 voices in each of 31 languages. They can sometimes sound rough or misread words.</string>
-  <string name="setting_piper_supertonic_beta_summary_off">Off. Turn on to try Supertonic voices: 10 voices in each of 31 languages, still in testing.</string>
-  <string name="setting_hinglish_summary">Reads Hindi typed in English letters, like \"aap kaise ho\", with Hindi pronunciation.</string>
-  <string name="setting_hinglish_summary_on">Reads Hindi typed in English letters with natural Hindi pronunciation.</string>
-  <string name="setting_hinglish_summary_off">Reads English letters using standard English pronunciation.</string>
+  <string name="setting_piper_supertonic_beta_summary_on">Listed under Download. May sound rough or misread words.</string>
+  <string name="setting_piper_supertonic_beta_summary_off">310 voices in 31 languages, still in testing</string>
+  <string name="setting_hinglish_summary">Hindi typed in English letters, like \"aap kaise ho\"</string>
   <string name="setting_read_codes">Read codes digit by digit</string>
-  <string name="setting_read_codes_summary">Reads OTPs, PINs and account numbers as single digits, like 4 8 2 9 1 3.</string>
-  <string name="setting_read_codes_summary_on">Reads OTPs, PINs, and verification codes digit by digit.</string>
-  <string name="setting_read_codes_summary_off">Reads codes as standard grouped numbers.</string>
-  <string name="setting_read_dates">Read calendar dates</string>
-  <string name="setting_read_dates_summary">Reads dates like 2026-10-08 as 8 October 2026.</string>
-  <string name="setting_read_dates_summary_on">Reads calendar dates in spoken format (e.g., 8 October 2026).</string>
-  <string name="setting_read_dates_summary_off">Reads dates with numbers and hyphens as written.</string>
-  <string name="setting_read_dimensions">Read dimensions and screen resolutions</string>
-  <string name="setting_read_dimensions_summary">Reads 1920x1080 as 1920 by 1080 and 4x4 as 4 by 4.</string>
-  <string name="setting_read_dimensions_summary_on">Reads dimension and resolution x symbols as \"by\".</string>
-  <string name="setting_read_dimensions_summary_off">Reads x or × in dimensions as the letter or symbol.</string>
-  <string name="setting_read_roman_numerals">Read Roman numerals in titles and names</string>
-  <string name="setting_read_roman_numerals_summary">Reads Chapter IV as Chapter 4, World War II as World War 2, and Henry VIII as Henry the Eighth.</string>
-  <string name="setting_read_roman_numerals_summary_on">Reads Roman numerals after headings and monarch names as numbers and ordinals.</string>
-  <string name="setting_read_roman_numerals_summary_off">Reads Roman numerals as individual letters.</string>
-  <string name="setting_read_phone_numbers">Read phone numbers clearly</string>
-  <string name="setting_read_phone_numbers_summary">Reads numbers like +1-800-555-0199 and 10-digit mobile numbers without saying \"minus\" or \"nine billion\".</string>
-  <string name="setting_read_phone_numbers_summary_on">Reads formatted phone numbers without hyphens and long phone numbers digit by digit.</string>
-  <string name="setting_read_phone_numbers_summary_off">Reads numbers as standard hyphenated expressions or large quantities.</string>
-  <string name="setting_read_math">Read math expressions</string>
-  <string name="setting_read_math_summary">Reads basic equations like 5 + 3 = 8 with plus, minus, and equals even when punctuation is off.</string>
-  <string name="setting_read_math_summary_on">Speaks mathematical operators in equations aloud.</string>
-  <string name="setting_read_math_summary_off">Reads math symbols according to your punctuation level.</string>
-  <string name="setting_split_camel_case">Split words by character case</string>
-  <string name="setting_split_camel_case_summary">Reads compound identifiers like getUserName as separate words (get User Name).</string>
-  <string name="setting_split_camel_case_summary_on">Splits camelCase and PascalCase words into separate words.</string>
-  <string name="setting_split_camel_case_summary_off">Reads compound words as written.</string>
+  <string name="setting_read_codes_summary">OTPs and PINs as 4 8 2 9</string>
+  <string name="setting_read_dates">Read dates</string>
+  <string name="setting_read_dates_summary">2026-10-08 as 8 October 2026</string>
+  <string name="setting_read_dimensions">Read dimensions</string>
+  <string name="setting_read_dimensions_summary">1920x1080 as 1920 by 1080</string>
+  <string name="setting_read_roman_numerals">Read Roman numerals</string>
+  <string name="setting_read_roman_numerals_summary">Chapter IV as Chapter 4, Henry VIII as Henry the Eighth</string>
+  <string name="setting_read_phone_numbers">Read phone numbers</string>
+  <string name="setting_read_phone_numbers_summary">+1-800-555-0199 without \"minus\"</string>
+  <string name="setting_read_math">Read math</string>
+  <string name="setting_read_math_summary">5 + 3 = 8 with plus and equals</string>
+  <string name="setting_split_camel_case">Split joined words</string>
+  <string name="setting_split_camel_case_summary">getUserName as get User Name</string>
   <string name="setting_split_compounds">Split compound words</string>
-  <string name="setting_split_compounds_summary">Reads written-together compounds like aftermath as separate words (after math).</string>
-  <string name="setting_split_compounds_summary_on">Splits compound words into halves with full vowels.</string>
-  <string name="setting_split_compounds_summary_off">Reads compound words as written.</string>
-  <string name="setting_clean_markdown">Clean markdown formatting</string>
-  <string name="setting_clean_markdown_summary">Cleans asterisks, backticks, checkboxes (- [ ]), headings, and blockquotes for smooth reading.</string>
-  <string name="setting_clean_markdown_summary_on">Cleans markdown emphasis and translates task checkboxes into spoken status.</string>
-  <string name="setting_clean_markdown_summary_off">Reads markdown formatting symbols according to punctuation level.</string>
-  <string name="setting_read_fractions">Read fractions and mixed numbers</string>
-  <string name="setting_read_fractions_summary">Reads fractions like 1/2, 3/4, and 2 1/2 as \"1 half\", \"3 quarters\", and \"2 and a half\".</string>
-  <string name="setting_read_fractions_summary_on">Reads slash and Unicode fractions naturally as words.</string>
-  <string name="setting_read_fractions_summary_off">Reads fractions as numbers separated by slash.</string>
+  <string name="setting_split_compounds_summary">aftermath as after math. English.</string>
+  <string name="setting_clean_markdown">Clean up Markdown</string>
+  <string name="setting_clean_markdown_summary">Skips *, ` and #, reads checkboxes as checked or not</string>
+  <string name="setting_read_fractions">Read fractions</string>
+  <string name="setting_read_fractions_summary">1/2 as one half, 2 1/2 as two and a half</string>
   <string name="setting_read_sub_super">Read superscripts and subscripts</string>
-  <string name="setting_read_sub_super_summary">Reads formulas and exponents like x², m³, H₂O, and 10⁵ as \"x squared\", \"cubic meters\", and \"H 2 O\".</string>
-  <string name="setting_read_sub_super_summary_on">Reads superscripts and chemical subscripts as natural words.</string>
-  <string name="setting_read_sub_super_summary_off">Reads superscripts and subscripts according to symbol level.</string>
-  <string name="setting_read_ordinals">Read ordinal numbers</string>
-  <string name="setting_read_ordinals_summary">Reads 1st, 2nd, 3rd, 21st, and symbol ordinals (1º, 1ª) as \"first\", \"second\", \"twenty-first\".</string>
-  <string name="setting_read_ordinals_summary_on">Reads ordinal suffixes and indicators as full words.</string>
-  <string name="setting_read_ordinals_summary_off">Reads numbers and suffix letters as written.</string>
-  <string name="setting_punctuation_sounds">Punctuation sounds</string>
-  <string name="setting_punctuation_sounds_summary">Plays a short sound instead of naming brackets and quotes, when your punctuation level reads them.</string>
-  <string name="setting_punctuation_sounds_summary_on">Plays short chimes for brackets and quotes instead of speaking their names.</string>
-  <string name="setting_punctuation_sounds_summary_off">Speaks punctuation and symbol names aloud.</string>
+  <string name="setting_read_sub_super_summary">x² as x squared, H₂O as H 2 O</string>
+  <string name="setting_read_ordinals">Read ordinals</string>
+  <string name="setting_read_ordinals_summary">1st, 2nd as first, second</string>
+  <string name="setting_punctuation_sounds">Sounds for brackets and quotes</string>
+  <string name="setting_punctuation_sounds_summary">A short tone instead of the name</string>
   <string name="setting_phrase_pauses">Pauses in long sentences</string>
-  <string name="setting_phrase_pauses_summary">A short pause before words like \"and\" or \"because\" in long sentences without commas. English and Hindi.</string>
-  <string name="setting_phrase_pauses_summary_on">Adds natural breath pauses before conjunctions in long sentences.</string>
-  <string name="setting_phrase_pauses_summary_off">Pauses only at explicit punctuation marks.</string>
+  <string name="setting_phrase_pauses_summary">A short pause before \"and\" or \"because\" when there are no commas. English and Hindi.</string>
   <string name="setting_expand_abbreviations">Expand abbreviations</string>
-  <string name="setting_expand_abbreviations_summary">Reads Prof, vs, approx, govt, 5 km, 12 Jan and No. 7 in full.</string>
-  <string name="setting_expand_abbreviations_summary_on">Expands common abbreviations in full (e.g., Doctor, kilometre, January).</string>
-  <string name="setting_expand_abbreviations_summary_off">Speaks abbreviations as written.</string>
-  <string name="screen_text_processing_title">Punctuation and symbols</string>
-  <string name="screen_text_processing_summary">Level, sounds, capitals, emoji</string>
-  <string name="category_reading_modes">How text is read</string>
-  <string name="category_smart_text">Smart text and code cleanup</string>
-  <string name="screen_locks_title">When apps change speech</string>
-  <string name="screen_locks_summary">Keep your rate, pitch and volume</string>
+  <string name="setting_expand_abbreviations_summary">Prof, govt, km, Jan in full. English.</string>
+  <string name="screen_text_processing_title">Text and symbols</string>
+  <string name="screen_text_processing_summary">Capitals, emoji, letters, cleanup</string>
+  <string name="category_reading_modes">Reading</string>
+  <string name="category_smart_text">Cleanup</string>
   <string name="screen_tools_title">Backup and about</string>
-  <string name="screen_tools_summary">Backup, restore, activity log, version</string>
+  <string name="screen_tools_summary">Presets, backup, updates</string>
   <string name="category_presets">Reading style</string>
   <string name="category_data_management">Backup and data</string>
 
   <!-- Customization: Repeated characters -->
-  <string name="setting_repeated_chars">Condense repeated characters</string>
+  <string name="setting_repeated_chars">Repeated characters</string>
   <string-array name="repeated_chars_entries">
-    <item>Off (speak all repetitions)</item>
-    <item>Count repetitions (e.g. 5 dashes)</item>
-    <item>Truncate (speak at most 3)</item>
+    <item>Off</item>
+    <item>Count them (5 dashes)</item>
+    <item>At most 3</item>
   </string-array>
   <string-array name="repeated_chars_values">
     <item>off</item>
@@ -454,12 +388,12 @@
   </string-array>
 
   <!-- Customization: Intonation style -->
-  <string name="setting_intonation_style">Intonation style</string>
+  <string name="setting_intonation_style">Intonation</string>
   <string-array name="intonation_style_entries">
-    <item>Natural (standard language melody)</item>
-    <item>Flat / High-speed (monotone, clearer at fast rates)</item>
-    <item>Expressive (enhanced pitch inflection)</item>
-    <item>Custom (advanced - pick a raw intonation group)</item>
+    <item>Natural</item>
+    <item>Flat, clearer when fast</item>
+    <item>Expressive</item>
+    <item>Custom group</item>
   </string-array>
   <string-array name="intonation_style_values">
     <item>natural</item>
@@ -492,7 +426,7 @@
   </string-array>
 
   <!-- Customization: Capital letter announcement scope -->
-  <string name="setting_capitals_scope">Announce capitals</string>
+  <string name="setting_capitals_scope">When</string>
   <string-array name="capitals_scope_entries">
     <item>When moving by character</item>
     <item>Always</item>
@@ -503,16 +437,12 @@
   </string-array>
 
   <!-- Customization: Web address simplification -->
-  <string name="setting_simplify_urls">Simplify web addresses</string>
-  <string name="setting_simplify_urls_summary">Shorten web links and strip tracking query parameters.</string>
-  <string name="setting_simplify_urls_summary_on">Reads clean web domain names and strips tracking query parameters.</string>
-  <string name="setting_simplify_urls_summary_off">Reads full web addresses as written.</string>
+  <string name="setting_simplify_urls">Shorten web addresses</string>
+  <string name="setting_simplify_urls_summary">Reads the site name, drops tracking parts</string>
 
   <!-- Customization: Technology brand and acronym normalization -->
-  <string name="setting_normalize_tech_words">Normalize tech terms and app names</string>
-  <string name="setting_normalize_tech_words_summary">Read ChatGPT, GPay, Gmail, WhatsApp, UPI, OTP and tech acronyms fluently.</string>
-  <string name="setting_normalize_tech_words_summary_on">Reads compound app names and tech acronyms fluently across all voices.</string>
-  <string name="setting_normalize_tech_words_summary_off">eSpeak reads tech terms and acronyms as written. Natural voices always read them clearly.</string>
+  <string name="setting_normalize_tech_words">Read app names and acronyms</string>
+  <string name="setting_normalize_tech_words_summary">ChatGPT, GPay, UPI, OTP read clearly. Natural voices always do.</string>
 
   <!-- Customization: Roman numerals -->
 
@@ -562,34 +492,25 @@
   <string name="no_file_picker">This device has no file picker, so files can not be opened or saved here.</string>
   <string name="log_share_failed">Could not share the log from this device.</string>
   <string name="category_voice">Voice</string>
-  <string name="category_customize">Customize</string>
-  <string name="category_app">App</string>
-  <string name="screen_voice_title">Voice and sound</string>
-  <string name="screen_voice_summary">Pitch, intonation, volume, rate boost</string>
-  <string name="category_tone">Tone</string>
-  <string name="category_speed_sound">Speed and sound</string>
-  <string name="screen_pauses_title">Pauses</string>
-  <string name="screen_pauses_summary">Sentences, words, long sentences</string>
+  <string name="category_app">More</string>
   <string name="category_punctuation">Punctuation</string>
   <string name="category_capitals">Capital letters</string>
   <string name="category_emoji">Emoji</string>
-  <string name="screen_reading_title">Reading</string>
-  <string name="screen_reading_summary">Reading mode, smart cleanup, letters, Hinglish</string>
   <string name="category_letters">Letters</string>
   <string name="category_advanced">Advanced</string>
   <string name="setting_numbers_language">Numbers and times</string>
-  <string name="numbers_language_auto">Automatic: eSpeak in the voice\'s language, natural voices with the words around them</string>
+  <string name="numbers_language_auto">Automatic</string>
   <string name="numbers_language_around">In the language of the words around them</string>
   <string name="numbers_language_voice">Always in the voice\'s language</string>
   <string name="numbers_language_english">Always in English</string>
-  <string name="setting_switching_sensitivity">Language switching sensitivity</string>
+  <string name="setting_switching_sensitivity">Switch language for</string>
   <string name="switching_sensitivity_words">Every word (default)</string>
-  <string name="switching_sensitivity_phrases">Phrases only (2+ words)</string>
-  <string name="switching_sensitivity_sentences">Full sentences only</string>
+  <string name="switching_sensitivity_phrases">Phrases (2+ words)</string>
+  <string name="switching_sensitivity_sentences">Whole sentences</string>
   <string name="setting_detect_latin_languages">Recognise European languages</string>
-  <string name="setting_detect_latin_languages_summary">Spanish, French, German, Italian and Portuguese phrases inside other text are read in their own language.</string>
+  <string name="setting_detect_latin_languages_summary">Spanish, French, German, Italian, Portuguese phrases in their own voice</string>
   <string name="setting_follow_keyboard_language">Follow keyboard language</string>
-  <string name="setting_follow_keyboard_language_summary">Speak typing echo and single characters in the active keyboard\'s language.</string>
+  <string name="setting_follow_keyboard_language_summary">Typed letters use the keyboard\'s language</string>
 
   <!-- Test voice playback feedback -->
   <string name="test_voice_playing">Playing sample…</string>
@@ -618,9 +539,9 @@
 
   <!-- Voice profiles: named preset files (variant, rate, pitch, punctuation) -->
   <string name="setting_save_profile">Save voice profile</string>
-  <string name="setting_save_profile_summary">Save variant, rate, pitch and punctuation as a named file.</string>
+  <string name="setting_save_profile_summary">Variant, rate, pitch and punctuation, to a file</string>
   <string name="setting_load_profile">Load voice profile</string>
-  <string name="setting_load_profile_summary">Apply a saved voice profile file.</string>
+  <string name="setting_load_profile_summary">From a saved file</string>
   <string name="profile_saved">Voice profile saved.</string>
   <string name="profile_save_failed">Could not save the voice profile. Try another location.</string>
   <string name="profile_applied">Voice profile applied.</string>
@@ -655,7 +576,7 @@
 
   <!-- Favorite voices: pinned to the top of the system voice list -->
   <string name="setting_favorite_voices">Favorite voices</string>
-  <string name="setting_favorite_voices_summary">Pin voices to the top of the voice list.</string>
+  <string name="setting_favorite_voices_summary">Shown first in voice lists</string>
   <string name="favorites_summary_none">No favorites. Pinned voices appear first in the voice list.</string>
 
   <plurals name="favorites_summary">
@@ -665,7 +586,7 @@
 
   <!-- Sleep timer: pause all eSpeak speech until a deadline -->
   <string name="setting_sleep_timer">Sleep timer</string>
-  <string name="setting_sleep_timer_summary">Pause all speech after a while.</string>
+  <string name="setting_sleep_timer_summary">Pause all speech after a set time</string>
   <plurals name="sleep_minutes">
     <item quantity="one">%1$d minute</item>
     <item quantity="other">%1$d minutes</item>
@@ -676,11 +597,9 @@
 
   <!-- Reading history (opt-in): re-hear recently spoken text -->
   <string name="setting_reading_history">Reading history</string>
-  <string name="setting_reading_history_summary">Keep recently spoken text on this device to re-hear it.</string>
-  <string name="setting_reading_history_summary_on">Saves recently spoken text so you can review or replay it in Recent reading.</string>
-  <string name="setting_reading_history_summary_off">Spoken text is not saved.</string>
+  <string name="setting_reading_history_summary">Keep recent speech on this device to hear again</string>
   <string name="setting_recent_reading">Recent reading</string>
-  <string name="setting_recent_reading_summary">Re-hear recently spoken text.</string>
+  <string name="setting_recent_reading_summary">Hear recent speech again</string>
   <string name="history_empty">Nothing here yet. Turn on Reading history to keep recent speech.</string>
   <string name="history_clear">Clear history</string>
   <string name="history_cleared">Reading history cleared.</string>
@@ -690,10 +609,10 @@
   <string name="note_wear_limited_summary">Rate boost, dictionary, languages and other phone-only settings are hidden here.</string>
   <!-- Natural voices (Piper) -->
   <string name="screen_natural_voices_title">Natural voices</string>
-  <string name="screen_natural_voices_summary">On, human-sounding voices for the languages you choose</string>
+  <string name="screen_natural_voices_summary">On, human-sounding voices</string>
   <string name="setting_piper_enabled">Use natural voices</string>
-  <string name="setting_piper_enabled_summary_on">Languages you choose below speak with a natural voice. The rest use eSpeak.</string>
-  <string name="setting_piper_enabled_summary_off">Off: every language uses eSpeak and nothing else is loaded. Turn on to download and use natural voices.</string>
+  <string name="setting_piper_enabled_summary_on">Chosen languages use a natural voice, the rest eSpeak</string>
+  <string name="setting_piper_enabled_summary_off">eSpeak reads everything</string>
   <string name="screen_natural_voices_off">Off, eSpeak only</string>
   <string name="category_piper_master">Natural speech</string>
   <string name="category_piper_languages">Voice for each language</string>
@@ -714,9 +633,7 @@
   </plurals>
   <string name="piper_downloading_summary">Downloading %1$s, %2$d%%</string>
   <string name="setting_piper_espeak_for_characters">eSpeak for single letters</string>
-  <string name="setting_piper_espeak_for_characters_summary">Letters and characters you move through are read by eSpeak, which starts instantly</string>
-  <string name="setting_piper_espeak_for_characters_summary_on">Single letters are read instantly by eSpeak during character navigation.</string>
-  <string name="setting_piper_espeak_for_characters_summary_off">Single letters are read by natural voices.</string>
+  <string name="setting_piper_espeak_for_characters_summary">Instant letters when moving by character</string>
   <string name="setting_piper_speed">Natural voice speed</string>
   <string name="piper_speed_60">Much slower than eSpeak</string>
   <string name="piper_speed_75">Slower than eSpeak</string>
@@ -738,7 +655,7 @@
   <string name="piper_quality_enhanced_recommended">Enhanced, recommended for this phone</string>
   <string name="piper_quality_enhanced_slow">Enhanced, may pause on this phone</string>
   <string name="setting_piper_snapdragon">Faster on this phone: Snapdragon version</string>
-  <string name="setting_piper_snapdragon_summary">This phone has a Qualcomm NPU. The Snapdragon version of this app can run natural voices on it, often much faster; it checks the speed and keeps using the processor where the NPU isn\'t faster. Opens the download page; it installs over this app and keeps your voices and settings.</string>
+  <string name="setting_piper_snapdragon_summary">This phone\'s NPU can run natural voices much faster. Installs over this app and keeps your voices.</string>
   <string name="piper_catalog_voice_row">%1$s, %2$s</string>
   <string name="piper_catalog_voice_installed">%1$s, downloaded</string>
   <plurals name="piper_speakers_sentence">
@@ -805,7 +722,7 @@
   <string name="piper_refresh">Refresh list</string>
   <string name="accessibility_action_open">Open</string>
   <string name="category_language_cards">Speech by language</string>
-  <string name="category_language_cards_summary">Speed, pitch and volume for each language, as a share of the main settings</string>
+  <string name="category_language_cards_summary">Speed, pitch and volume for each language</string>
   <string name="language_card_add">Add language</string>
   <string name="language_card_same">Same as main</string>
   <string name="language_card_speed">Speed</string>
@@ -828,7 +745,7 @@
   <string name="language_card_numbers">Numbers and times in this language\'s text</string>
   <string name="language_card_main_setting">Same as main setting</string>
   <string name="test_routing_title">Try your own text</string>
-  <string name="test_routing_summary">Type a sentence, hear it, then see which voice read each part.</string>
+  <string name="test_routing_summary">Then shows which voice read each part</string>
   <string name="test_routing_hint">Text to read</string>
   <string name="test_routing_play">Play</string>
   <string name="test_routing_result_title">How it was read</string>
@@ -840,4 +757,14 @@
   <string name="dict_label_read_in">Read in</string>
   <string name="dict_read_in_usual">The usual voice</string>
   <string name="dict_rule_read_in">%1$s, read in %2$s</string>
+  <string name="category_reading">Reading</string>
+  <string name="screen_advanced_summary">Sound, pauses, languages, app control</string>
+  <string name="screen_script_languages_title">Language for each script</string>
+  <string name="screen_script_languages_summary">Like Hindi words in English text</string>
+  <string name="category_sound">Sound</string>
+  <string name="setting_optimizer_modules_shown">Parts are now shown.</string>
+  <string name="category_pauses">Pauses</string>
+  <string name="category_text">Text</string>
+  <string name="category_languages">Languages</string>
+  <string name="category_speech_control">Speech control</string>
 </resources>

@@ -306,7 +306,7 @@ public final class TextPreprocessor {
             text = edits.track(text, splitCamelCase(text));
         }
 
-        // Opt-in (Mixed-language text -> Numbers and times): non-Latin-script
+        // Opt-in (Mixed languages -> Numbers and times): non-Latin-script
         // voices read English words in English but numbers in their own
         // language; written out as English words, numbers inside English
         // text follow the English, or all of them are English.

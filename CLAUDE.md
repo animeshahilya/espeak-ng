@@ -912,7 +912,7 @@ voices" does not, so voices can still be deleted to free space.
   `test/resources/devanagari/` (50 Hindi + 50 Marathi tuned, 20 + 20 held
   out, 1 held-out Marathi miss) with Hindi, Marathi and English voices: keep the tuned set at zero misroutes
   and add a failing sentence there before changing the rules.
-  A language the user chose for a script (see "Mixed-language text" below)
+  A language the user chose for a script (see "Mixed languages" below)
   replaces the script's default here too, and `piper_switch_languages`
   (on by default) turns natural-voice switching off.
   Within a script, a run's language comes from letters only that language
@@ -974,7 +974,7 @@ voices" does not, so voices can still be deleted to free space.
   for all; Priyamvada whole equal); a session takes ~80 ms longer to create.
 - Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
 
-### Mixed-language text (per-script languages)
+### Mixed languages (per-script languages)
 
 eSpeak switches language by alphabet with fixed choices
 (`alphabets[]` in `tr_languages.c`): Devanagari -> hi, Latin inside a
@@ -998,7 +998,7 @@ engine end to end.
 
 ### Per-language speech (language cards)
 
-Settings -> Mixed-language text -> Speech by language (`ui/LanguageCards`):
+Settings -> Mixed languages -> Speech by language (`ui/LanguageCards`):
 per language (ISO 639-2, the `piper_voice_<lang>` key space) a speed,
 pitch and volume as 50-200% of the main settings, stored as
 `lang_<lang>_<field>` = "80"; unset or empty is 100%, so output is
@@ -1034,7 +1034,7 @@ else the `VoiceSettings.NUMBERS_*` values) to numbers in that language's
 text, through `VoiceSettings.getNumbersLanguage(language)` in both
 `TextPreprocessor` and `TtsService`. Tests: English set to phrases, 1
 natural piece instead of 3; Hindi numbers in English, "10:30" 1.79 -> 1.93 s.
-Step 5, routing preview (Mixed-language text -> Try your own text): the
+Step 5, routing preview (Mixed languages -> Try your own text): the
 user's text is spoken through the engine with `TtsService.PARAM_SHOW_PLAN`
 in the request params; that request records its units
 (`TtsService.takeShownPlan`) and the dialog lists each part's text,
@@ -1254,7 +1254,8 @@ Voice data comes from the parent project's `dictsource/` and `phsource/`. The Gr
 ### Adding a new preference/setting
 
 1. Add preference key constant in `VoiceSettings.java`
-2. Add it to `res/xml/preferences.xml` (the key must match the constant; `PreferenceStorageTest.settingsScreenHasEverySetting` checks)
+2. Add it to `res/xml/preferences.xml` (the key must match the constant; `PreferenceStorageTest.settingsScreenHasEverySetting` checks).
+   Placement (simplified 2026-10-18): the first page is only for what most people change (voice, speed, rate boost, pitch, punctuation, one row per topic page); a topic page (Natural voices, Text and symbols, Numbers, Mixed languages) holds what its users reach for; anything expert goes under Advanced, in the category of the same topic (Sound, Pauses, Text, Languages, Speech control). A switch gets ONE short `android:summary`, an example where it helps ("$5.50 as 5 dollars 50 cents") - no `summaryOn`/`summaryOff` (TalkBack already says on or off; only the natural-voices and Supertonic switches keep them, where off changes what the page does). Rows that only matter under another choice are hidden with `showWhile`, not greyed out
 3. Wire it through `TtsService.onSynthesizeText()` to the appropriate `SpeechSynthesis` parameter
 
 Settings and data paths strictly live in device-protected storage so that `TtsService` can read them

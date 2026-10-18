@@ -154,7 +154,7 @@ public class TtsService extends TextToSpeechService {
 
     /**
      * A request whose params carry this (true) records who read each part,
-     * for the routing preview (Settings -> Mixed-language text -> Try your
+     * for the routing preview (Settings -> Mixed languages -> Try your
      * own text): the plan shown is the one speech used, not a copy of it.
      */
     public static final String PARAM_SHOW_PLAN = "com.animeshahilya.espeakng.SHOW_PLAN";
@@ -488,7 +488,7 @@ public class TtsService extends TextToSpeechService {
             }
         }
         // If budget remains, pre-warm assigned natural voices for user's configured
-        // script languages (Settings -> Mixed-language text) so the first mixed utterance
+        // script languages (Settings -> Mixed languages) so the first mixed utterance
         // never falls back or hesitates.
         if (budget > 0 && ScriptLanguages.naturalSwitching(prefs)) {
             final Map<String, String> scriptLanguages = ScriptLanguages.chosen(prefs);
@@ -1202,7 +1202,7 @@ public class TtsService extends TextToSpeechService {
         }
 
         // Languages the user chose for words in other scripts (Settings ->
-        // Mixed-language text). None chosen leaves eSpeak's own switching.
+        // Mixed languages). None chosen leaves eSpeak's own switching.
         final Map<String, String> scriptLanguages = ScriptLanguages.chosen(prefs);
         engine.setScriptLanguages(scriptLanguages);
 
@@ -1439,7 +1439,7 @@ public class TtsService extends TextToSpeechService {
 
     /**
      * The cue the new language's card asks for where speech switches into it
-     * from another language (Settings -> Mixed-language text -> Speech by
+     * from another language (Settings -> Mixed languages -> Speech by
      * language). Written before the next unit's chunk context is set, so its
      * word ranges still line up. Nothing at the start, or within a language.
      */
@@ -1802,7 +1802,7 @@ public class TtsService extends TextToSpeechService {
 
     /**
      * The language digits get a run of their own in ({@link LanguageRuns}),
-     * or null for the words around them (Mixed-language text -> Numbers and
+     * or null for the words around them (Mixed languages -> Numbers and
      * times; English and "around" are also written out as English words by
      * TextPreprocessor for non-Latin voices).
      */

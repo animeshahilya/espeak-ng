@@ -1559,7 +1559,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
     private static String sRoutingText;
 
     /**
-     * Routing preview (Mixed-language text -> Try your own text): speaks
+     * Routing preview (Mixed languages -> Try your own text): speaks
      * the user's text through this engine with TtsService.PARAM_SHOW_PLAN,
      * then lists the plan speech used - each part, its language and reader.
      */
@@ -1910,13 +1910,13 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     LanguageSettings.PREF_SUPPORTED_LANGUAGES, KEY_TEST_VOICE,
                     "action_preview_numbers", "action_preview_pauses",
                     "action_preview_punctuation", "action_preview_reading",
-                    "action_preview_voice_sound", "action_preview_mixed_languages", "action_preview_routing",
+                    "action_preview_mixed_languages", "action_preview_routing",
                     "action_preview_audio_optimizer",
                     VoiceSettings.PREF_RATE_BOOST_LEVEL,
                     VoiceSettings.PREF_USER_DICTIONARY, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                     VoiceSettings.PREF_PHONETIC_LETTERS, VoiceSettings.PREF_SPOKEN_DIACRITICS,
                     VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.PREF_SIMPLIFY_URLS,
-                    "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER, "category_sleep_timer",
+                    "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER,
                     "action_save_profile", "action_load_profile",
                     VoiceSettings.PREF_READING_HISTORY, "action_recent_reading",
                     "category_presets", "category_data",
@@ -1956,7 +1956,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
             onClick(screen, "action_preview_pauses", () -> speakPreview(context, context.getString(R.string.test_pauses_sample), "sample_pauses"));
             onClick(screen, "action_preview_punctuation", () -> speakPreview(context, context.getString(R.string.test_punctuation_sample), "sample_punctuation"));
             onClick(screen, "action_preview_reading", () -> speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading"));
-            onClick(screen, "action_preview_voice_sound", () -> speakPreview(context, context.getString(R.string.test_voice_tuning_sample), "sample_voice_sound"));
             onClick(screen, "action_preview_mixed_languages", () -> speakPreview(context, context.getString(R.string.test_mixed_languages_sample), "sample_mixed_languages"));
             onClick(screen, "action_preview_routing", () -> previewRouting(context));
             onClick(screen, "action_preview_audio_optimizer", () -> speakPreview(context, context.getString(R.string.test_audio_optimizer_sample), "sample_audio_optimizer"));
@@ -2013,6 +2012,10 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 value -> VoiceSettings.INTONATION_CUSTOM.equals(value),
                 prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL),
                 fragment, context.getString(R.string.setting_intonation_group_shown));
+        showWhile(screen, VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL, "category_optimizer_modules",
+                value -> VoiceSettings.AUDIO_PROFILE_CUSTOM.equals(value),
+                prefs.getString(VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL, VoiceSettings.AUDIO_PROFILE_OFF),
+                fragment, context.getString(R.string.setting_optimizer_modules_shown));
         showWhile(screen, VoiceSettings.PREF_DIGIT_GROUPING, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD,
                 value -> VoiceSettings.DIGIT_GROUP_TRIPLE.equals(value)
                         || VoiceSettings.DIGIT_GROUP_TRIPLE_PAUSE.equals(value),
@@ -2266,7 +2269,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * Mixed-language text: each script's list offers eSpeak's own choice
+     * Mixed languages: each script's list offers eSpeak's own choice
      * first (stored as "", so nothing changes until a user picks), then the
      * voices of {@link ScriptLanguages}, named as in the voice picker.
      */
