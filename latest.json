@@ -1,9 +1,9 @@
 {
-  "versionCode": 32,
-  "versionName": "2.9",
-  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.9/espeak-ng-2.9.apk",
-  "sha256": "628105c03f3b0a20a60f2e147d3bac718720e46cbdc305818fabf4e1fe9f52d5",
-  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.9/espeak-ng-2.9-snapdragon.apk",
-  "snapdragonSha256": "647b55807f0f798352248f934c47e39b3b41400b5ecb0b2f59fa75e29ae5f2d8",
-  "notes": "Natural voices take far less space, new natural voices, short forms and phone numbers read clearly, and a refreshed settings design."
+  "versionCode": 34,
+  "versionName": "2.10 beta 2",
+  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.10-beta.2/espeak-ng-2.10-beta.2.apk",
+  "sha256": "12146f259d817290d7e6250f7bb7e619d111212fa0223f629130502ff9a5e7be",
+  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.10-beta.2/espeak-ng-2.10-beta.2-snapdragon.apk",
+  "snapdragonSha256": "542be1a4e3929b6e422b201fcf036797d4249c86d278474519b38c43ff215b02",
+  "notes": "Simpler settings with rare options under Advanced, settings search works again, web links stay whole in mixed-language text, and faster natural voices on Snapdragon."
 }
