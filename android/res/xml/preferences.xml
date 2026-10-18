@@ -29,7 +29,7 @@
         android:key="espeak_rate_boost_level"
         android:title="@string/setting_rate_boost"
         android:defaultValue="off"
-        android:icon="@drawable/ic_speed" />
+        android:icon="@drawable/ic_fast_forward" />
     <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
         android:key="espeak_pitch"
         android:title="@string/setting_default_pitch"
@@ -393,6 +393,10 @@
             android:title="@string/test_routing_title"
             android:summary="@string/test_routing_summary"
             app:iconSpaceReserved="false" />
+      </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+      <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
+          android:title="@string/category_reading"
+          app:iconSpaceReserved="false">
         <ListPreference
             android:key="espeak_numbers_language"
             android:title="@string/setting_numbers_language"
@@ -406,83 +410,78 @@
             android:title="@string/screen_script_languages_title"
             android:summary="@string/screen_script_languages_summary"
             app:iconSpaceReserved="false">
-          <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
-              android:key="category_script_languages"
-              android:title="@string/category_script_languages"
-              app:iconSpaceReserved="false">
-            <ListPreference
-                android:key="espeak_script_latin"
-                android:title="@string/setting_script_latin"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_hi"
-                android:title="@string/setting_script_hi"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_bn"
-                android:title="@string/setting_script_bn"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_ar"
-                android:title="@string/setting_script_ar"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_cyr"
-                android:title="@string/setting_script_cyr"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_he"
-                android:title="@string/setting_script_he"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_el"
-                android:title="@string/setting_script_el"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_te"
-                android:title="@string/setting_script_te"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_or"
-                android:title="@string/setting_script_or"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_zh"
-                android:title="@string/setting_script_zh"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_ja"
-                android:title="@string/setting_script_ja"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-            <ListPreference
-                android:key="espeak_script_eth"
-                android:title="@string/setting_script_eth"
-                android:defaultValue=""
-                app:useSimpleSummaryProvider="true"
-                app:iconSpaceReserved="false" />
-          </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+          <ListPreference
+              android:key="espeak_script_latin"
+              android:title="@string/setting_script_latin"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_hi"
+              android:title="@string/setting_script_hi"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_bn"
+              android:title="@string/setting_script_bn"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_ar"
+              android:title="@string/setting_script_ar"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_cyr"
+              android:title="@string/setting_script_cyr"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_he"
+              android:title="@string/setting_script_he"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_el"
+              android:title="@string/setting_script_el"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_te"
+              android:title="@string/setting_script_te"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_or"
+              android:title="@string/setting_script_or"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_zh"
+              android:title="@string/setting_script_zh"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_ja"
+              android:title="@string/setting_script_ja"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
+          <ListPreference
+              android:key="espeak_script_eth"
+              android:title="@string/setting_script_eth"
+              android:defaultValue=""
+              app:useSimpleSummaryProvider="true"
+              app:iconSpaceReserved="false" />
         </PreferenceScreen>
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
       <!-- not on Wear -->

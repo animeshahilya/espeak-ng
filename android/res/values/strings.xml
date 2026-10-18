@@ -38,7 +38,7 @@
   <string name="espeak_pitch_range">Pitch variation</string>
   <string name="espeak_variant">Voice variant</string>
   <string name="espeak_supported_languages">Supported languages</string>
-  <string name="espeak_supported_languages_all">Every bundled language is available.</string>
+  <string name="espeak_supported_languages_all">All languages</string>
   <plurals name="espeak_supported_languages_summary">
     <item quantity="one">%1$d of %2$d language selected.</item>
     <item quantity="other">%1$d of %2$d languages selected.</item>
@@ -107,7 +107,7 @@
   <string name="variant_character">Character voices</string>
   <string name="variant_fast">Fast</string>
   <string name="import_voice_title">Import voice or dictionary</string>
-  <string name="import_voice_description">Import an eSpeak voice dictionary (*_dict) or voice archive (*.zip).</string>
+  <string name="import_voice_description">An eSpeak dictionary (_dict) or voice archive (.zip)</string>
   <string name="setting_emoji_processing">Emoji</string>
   <string name="emoji_announce">Announce emojis</string>
   <string name="emoji_ignore">Skip emojis</string>
@@ -153,7 +153,7 @@
   <string name="test_voice_summary">Plays a sample with your settings</string>
   <string name="test_voice_sample">This is a sample of eSpeak NG speech synthesis.</string>
   <string name="setting_recommended_defaults">Apply recommended reading style</string>
-  <string name="setting_recommended_defaults_summary" formatted="false">Max variant, 40% pitch, 75% pitch variation and raised pitch for capitals.</string>
+  <string name="setting_recommended_defaults_summary" formatted="false">Max variant, 40% pitch, 75% variation, higher pitch for capitals</string>
   <string name="recommended_defaults_applied" formatted="false">Recommended reading style applied (Max variant, 40% pitch, 75% inflection, capital pitch raise)</string>
   <string name="setting_digit_grouping">Read digits</string>
   <string name="digit_group_off">Off</string>
@@ -207,7 +207,7 @@
   <string name="audio_profile_gentle">Gentle warmth</string>
   <string name="audio_profile_balanced">Balanced (recommended)</string>
   <string name="audio_profile_full">Full richness</string>
-  <string name="audio_profile_custom">Custom (individual modules)</string>
+  <string name="audio_profile_custom">Custom (choose parts)</string>
   <string name="setting_audio_optimizer_screen_summary">Warmer, clearer sound. Off by default.</string>
   <string name="setting_audio_optimizer_profile">Preset</string>
   <string name="category_optimizer_profile">Enhancement</string>
@@ -307,7 +307,6 @@
   <string name="screen_numbers_summary">Money, phone numbers, codes, dates, math</string>
   <string name="screen_mixed_languages_title">Mixed languages</string>
   <string name="screen_mixed_languages_summary">Words in another language or script</string>
-  <string name="category_script_languages">Read words in each script as</string>
   <string name="script_language_default">eSpeak default: %1$s</string>
   <string name="script_language_spell">eSpeak default: spell letter by letter</string>
   <string name="setting_script_latin">Latin script (English words in other text)</string>
@@ -549,7 +548,7 @@
 
   <!-- What's new after an update -->
   <string name="update_check_title">Check for updates</string>
-  <string name="update_check_summary">Version %1$s. The app also checks once a day while settings are open.</string>
+  <string name="update_check_summary">Version %1$s. Also checked daily.</string>
   <string name="update_title">App update</string>
   <string name="update_available_title">Version %1$s is available</string>
   <string name="update_available_body">You have version %1$s.</string>
@@ -577,7 +576,7 @@
   <!-- Favorite voices: pinned to the top of the system voice list -->
   <string name="setting_favorite_voices">Favorite voices</string>
   <string name="setting_favorite_voices_summary">Shown first in voice lists</string>
-  <string name="favorites_summary_none">No favorites. Pinned voices appear first in the voice list.</string>
+  <string name="favorites_summary_none">None. Pinned voices are listed first.</string>
 
   <plurals name="favorites_summary">
     <item quantity="one">%1$d favorite pinned to the top.</item>

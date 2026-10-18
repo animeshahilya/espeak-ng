@@ -896,7 +896,15 @@ public class TtsSettingsActivity extends AppCompatActivity {
                 List<String> chain, CharSequence crumb) {
             for (int i = 0; i < group.getPreferenceCount(); i++) {
                 final Preference p = group.getPreference(i);
-                if (p == null || !p.isVisible() || p.getTitle() == null) {
+                if (p == null || !p.isVisible()) {
+                    continue;
+                }
+                if (!(p instanceof PreferenceScreen) && p instanceof androidx.preference.PreferenceGroup) {
+                    // A category: its rows belong to the page it is on.
+                    walkSearchTree((androidx.preference.PreferenceGroup) p, chain, crumb);
+                    continue;
+                }
+                if (p.getTitle() == null) {
                     continue;
                 }
                 if (p instanceof PreferenceScreen) {
@@ -1013,7 +1021,11 @@ public class TtsSettingsActivity extends AppCompatActivity {
             }
             setPreferenceScreen(current);
             updateTitle();
-            scrollToKey(targetKey);
+            // The list binds the new screen on a posted message; scroll after it.
+            final View view = getView();
+            if (view != null) {
+                view.post(() -> scrollToKey(targetKey));
+            }
         }
 
         private void updateTitle() {
