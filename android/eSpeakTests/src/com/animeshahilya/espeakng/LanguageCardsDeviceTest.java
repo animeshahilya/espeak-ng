@@ -253,7 +253,9 @@ public class LanguageCardsDeviceTest {
         final double english = seconds("num_english", text, new Locale("hi"));
         mPrefs.edit().remove(hindiNumbers).commit();
         final double cleared = seconds("num_cleared", text, new Locale("hi"));
-        assertTrue("English number words: " + english + " vs " + plain, Math.abs(english - plain) > 0.1);
+        // Relative: the phone's own rate applies (+8% at 175 wpm, 1.79 -> 1.93 s,
+        // and at 450 wpm, 0.66 -> 0.72 s, where a fixed 0.1 s never held).
+        assertTrue("English number words: " + english + " vs " + plain, Math.abs(english / plain - 1) > 0.04);
         assertEquals("cleared: as before", plain, cleared, EPSILON);
     }
 

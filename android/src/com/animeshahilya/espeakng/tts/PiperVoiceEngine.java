@@ -62,11 +62,6 @@ public final class PiperVoiceEngine implements VoiceEngine {
             mPiper.trim(false);
         }
     }
-
-    @Override
-    public void unloadAll() {
-        mPiper.unloadAll();
-    }
 }
 
 

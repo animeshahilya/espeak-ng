@@ -61,11 +61,6 @@ public final class EspeakVoiceEngine implements VoiceEngine {
     public void onTrimMemory(int level) {
         // eSpeak dictionaries and native heap are lean; no trimming necessary
     }
-
-    @Override
-    public void unloadAll() {
-        // Native engine is shared process-wide
-    }
 }
 
 

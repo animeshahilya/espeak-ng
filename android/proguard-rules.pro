@@ -36,4 +36,5 @@
 -keepclassmembers class com.animeshahilya.espeakng.piper.PiperModel$SessionGroup {
     java.nio.ByteBuffer mapped;
     java.nio.ByteBuffer mappedDecoder;
+    java.nio.ByteBuffer mappedMid;
 }

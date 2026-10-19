@@ -124,7 +124,7 @@ silently break every JNI call in the release build with no compile-time
 warning - verify a real release build's TTS synthesis on a real device after
 touching either `proguard-rules.pro` or this class.
 
-The same trap bit natural voices: `PiperModel.SessionGroup.mapped` (and
+The same trap bit natural voices: `PiperModel.SessionGroup.mapped` (and `mappedMid`,
 `mappedDecoder`) is never read in Java
 (it only keeps the memory-mapped model alive while ONNX Runtime reads weights
 from it), so R8 removed it as write-only; the buffer was collected and
@@ -161,8 +161,8 @@ Both engines write audio through one `TtsAudioDispatcher` per request
 runs the optional `AudioOptimizer` DSP, and maps synthesizer code-point
 positions back through `TextOffsetMap` to the caller's UTF-16 text for word
 ranges. `VoiceEngineRegistry` holds `EspeakVoiceEngine` and
-`PiperVoiceEngine` (`VoiceEngine` SPI) for lifecycle fan-out only - stop,
-trim memory, unload; synthesis routing stays in `TtsService`. The service
+`PiperVoiceEngine` (`VoiceEngine` SPI) for lifecycle fan-out only - stop
+and trim memory; synthesis routing stays in `TtsService`. The service
 registers them in `onCreate` and must unregister them in `onDestroy` (the
 registry is process-wide and would otherwise leak the service).
 
@@ -306,6 +306,13 @@ voices" does not, so voices can still be deleted to free space.
   LRU voice even while it spoke, closing it, and the rest of the text went
   silent (found by `PiperE2EDeviceTest.b_*` in the full suite: 0.5 s of a
   sentence). It goes at a later load instead.
+  **Service rebinds** (2026-10-19): the engine is process-wide, so only the
+  last `TtsService` instance frees the voices, and its unload re-checks when
+  it runs (`PiperEngine.unloadAllUnless`): a client that rebound right after
+  the last one left got a new instance whose preload found the voices still
+  loading and skipped them, and the old instance's queued unload then emptied
+  them - its requests were read by eSpeak (`PiperE2EDeviceTest.i_*` in the
+  full suite on the S25). `onDestroy` unregisters only its own engines.
 - **Model loading** (`PiperModel`, numbers from `PiperBenchDeviceTest` on a
   Pixel 8): the first load writes `model.<ORT version>.enc.ort` and
   `.dec.ort` beside the model (`.whole.ort` for a voice that doesn't split;
@@ -599,6 +606,33 @@ voices" does not, so voices can still be deleted to free space.
   36 -> 1.8 ms; SNR 65-71 / 45-65 dB vs the CPU); loads 0.5 -> 0.8-1.2 s
   (three compiled graphs), compiled graphs ~33 MB per voice. Voices from
   rhasspy we cannot re-host (lessac, ryan) run on the CPU on Snapdragon.
+  **NPU-first loads** (2026-10-19): once a voice's NPU parts are compiled
+  (`npuReady`) and its boundary shapes are known (`model.<ort>.boundary`,
+  written at the first load, tied to the encoder file's size and time), it
+  loads without its CPU encoder: that session was 0.4-0.6 s of every load
+  (a graph of thousands of nodes; prepacking off changed nothing). It opens
+  on first need (`SessionGroup.cpuSession`: a chunk over the 256-id bucket or
+  the flow's frames, or an NPU failure). The middle part keeps an ORT-format
+  copy (`.npumid.<size>.ort`, its mapping held in `mappedMid`, see Release
+  signing). S25 Ultra loads: Priyamvada 975 -> ~505 ms, Amy 620 -> ~235 ms.
+  **Run-time NPU failure** (a DSP restart...): `retireNpu` takes that part
+  out of use and the call is redone on the CPU; before, every request of the
+  voice failed until the process restarted. Checked by injecting a fault
+  into every NPU run: full E2E suite passed on the CPU.
+  **Hosted sources go once compiled** (`dropHostedSources`, ~16 MB a voice):
+  their size, which names the compiled files, stays in `<name>.size`
+  (`hostedSize`); `fetchNpuFile` fetches a file again only when this runtime
+  has nothing compiled from it (`compiledAvailable`, e.g. after an ORT
+  update), and a voice waits on the CPU meanwhile (no failure marker). A
+  replaced hosted file deletes what was compiled from it (`forgetCompiled`:
+  compiled names are size-keyed, so a same-size rebuild kept the old graph).
+  Voice folders also lose dangling links and copies another runtime made
+  once this runtime's exist (`PiperDownloads.collectVoiceGarbage`, service
+  start).
+  **APK size:** `libQnnHtpPrepare.so` (QNN's on-phone graph compiler) is
+  85 MB of the ~225 MB unpacked (35 of 88 MB in the APK). It can go only if
+  every NPU graph comes pre-compiled per HTP generation (v69/v73/v75/v79/v81),
+  which needs an offline QNN context-binary toolchain on the PC - not done.
   `decodeOnNpu` runs fixed windows with `DECODE_OVERLAP` context. A compile (FP16 13-17 s on the S25 Ultra,
   INT8 ~1.6 s) never holds up the voice: `attachNpuLater` speaks with the
   CPU decoder and switches on the `piper-npu-compile` thread when ready

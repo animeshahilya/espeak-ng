@@ -885,8 +885,54 @@ public final class PiperDownloads {
                 }
             }
         }
-        collectSharedGarbage(PiperVoiceStore.sharedDir(storageContext), referenced,
-                PiperModel.loadedRuntimeVersion());
+        final String runtime = PiperModel.loadedRuntimeVersion();
+        collectSharedGarbage(PiperVoiceStore.sharedDir(storageContext), referenced, runtime);
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            collectVoiceGarbage(v.dir, runtime);
+        }
+    }
+
+    /** {@link #collectVoiceGarbage(File, String)} for every installed voice (service start). */
+    public static void collectVoiceGarbage(Context storageContext) {
+        final String runtime = PiperModel.loadedRuntimeVersion();
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            collectVoiceGarbage(v.dir, runtime);
+        }
+    }
+
+    private static final java.util.regex.Pattern VOICE_VERSIONED =
+            java.util.regex.Pattern.compile("model\\.(\\d+\\.\\d+\\.\\d+)\\.(.+)");
+
+    /**
+     * A voice folder's leftovers: links into the shared store whose target
+     * went (a Galaxy S25 Ultra kept 1.29 links in every voice after the
+     * store dropped those copies), and what another ONNX Runtime version made
+     * here (optimized copies, compiled NPU graphs - ~33 MB a voice) once this
+     * runtime's own copy exists. Older copies alone stay: they are adopted
+     * when the original model is gone.
+     */
+    static void collectVoiceGarbage(File dir, String runtime) {
+        final File[] files = dir != null ? dir.listFiles() : null;
+        if (files == null) {
+            return;
+        }
+        final java.util.Set<String> names = new java.util.HashSet<>();
+        for (File f : files) {
+            names.add(f.getName());
+        }
+        for (File f : files) {
+            final boolean danglingLink = java.nio.file.Files.isSymbolicLink(f.toPath()) && !f.exists();
+            boolean superseded = false;
+            if (runtime != null) {
+                final java.util.regex.Matcher m = VOICE_VERSIONED.matcher(f.getName());
+                superseded = m.matches() && !runtime.equals(m.group(1))
+                        && names.contains("model." + runtime + "." + m.group(2));
+            }
+            if (danglingLink || superseded) {
+                //noinspection ResultOfMethodCallIgnored
+                f.delete();
+            }
+        }
     }
 
     public static void collectSharedGarbage(File dir, java.util.Set<String> referenced) {
@@ -1202,10 +1248,17 @@ public final class PiperDownloads {
      * Cheap when all are present. Blocking; off the main thread.
      */
     public static void fetchVoiceExtras(Context appContext, Context storageContext) {
-        fetchTashkeel(storageContext);
-        fetchNpuDecoders(appContext, storageContext);
-        fetchSupertonicFiles(appContext, storageContext);
+        // One at a time: an install's fetch and the service start's could run
+        // together, download the same files twice and collide on their .tmp
+        // ("Cannot write ...json.tmp"); the second now finds them stamped.
+        synchronized (EXTRAS_LOCK) {
+            fetchTashkeel(storageContext);
+            fetchNpuDecoders(appContext, storageContext);
+            fetchSupertonicFiles(appContext, storageContext);
+        }
     }
+
+    private static final Object EXTRAS_LOCK = new Object();
 
     /**
      * Each installed Supertonic voice's companion files (duration predictor,
@@ -1307,8 +1360,15 @@ public final class PiperDownloads {
         if (!PiperModel.hasNpuRuntime()) {
             return;
         }
-        fetchNpuList(appContext, storageContext, NPU_DECODERS_ASSET, false);
-        fetchNpuList(appContext, storageContext, NPU_FILES_ASSET, true);
+        // One reload per voice that got files, after both lists: each list
+        // reloading on its own loaded a new SYSPIN/Rasa voice twice.
+        final java.util.Set<String> changed = new java.util.LinkedHashSet<>();
+        fetchNpuList(appContext, storageContext, NPU_DECODERS_ASSET, false, changed);
+        fetchNpuList(appContext, storageContext, NPU_FILES_ASSET, true, changed);
+        for (String key : changed) {
+            Log.i(TAG, "NPU files for " + key + " installed");
+            broadcastChanged(appContext, key, null);
+        }
     }
 
     /**
@@ -1328,7 +1388,8 @@ public final class PiperDownloads {
      * npu_files.json a set per voice. MD5-checked, stamped, skipped when the
      * stamp already matches; a voice that got a file is reloaded.
      */
-    private static void fetchNpuList(Context appContext, Context storageContext, String asset, boolean sets) {
+    private static void fetchNpuList(Context appContext, Context storageContext, String asset, boolean sets,
+                                     java.util.Set<String> changedKeys) {
         final JSONObject list;
         try (InputStream in = appContext.getAssets().open(asset)) {
             list = new JSONObject(FileUtils.read(in));
@@ -1362,8 +1423,7 @@ public final class PiperDownloads {
                 Log.w(TAG, "NPU files for " + v.key + " not fetched; tried again later", e);
             }
             if (changed) {
-                Log.i(TAG, "NPU files for " + v.key + " installed");
-                broadcastChanged(appContext, v.key, null);
+                changedKeys.add(v.key);
             }
         }
     }
@@ -1376,7 +1436,10 @@ public final class PiperDownloads {
         }
         final String md5 = f.optString("md5_digest", "");
         final File stamp = new File(target.getParentFile(), target.getName() + ".md5");
-        if (target.isFile() && stamp.isFile() && md5.equalsIgnoreCase(FileUtils.readText(stamp).trim())) {
+        // Once compiled the file itself is deleted (PiperModel.hostedSize); it
+        // is fetched again only when this runtime has nothing compiled from it.
+        if (stamp.isFile() && md5.equalsIgnoreCase(FileUtils.readText(stamp).trim())
+                && (target.isFile() || PiperModel.compiledAvailable(target))) {
             return false;
         }
         final byte[] data = fetch(base + path, 64 * 1024 * 1024);
@@ -1385,6 +1448,7 @@ public final class PiperDownloads {
         }
         FileUtils.write(target, data);
         FileUtils.write(stamp, md5.getBytes(StandardCharsets.UTF_8));
+        PiperModel.forgetCompiled(target);
         return true;
     }
 

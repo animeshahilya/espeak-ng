@@ -513,6 +513,21 @@ public final class PiperEngine {
     }
 
     /**
+     * As {@link #unloadAll}, unless {@code stillNeeded} says otherwise when
+     * the unload's turn comes: a client that rebinds right after the last one
+     * left starts a new service whose preload finds the voices still loading
+     * and skips them, and the unload queued behind those loads then emptied
+     * them (its first requests went to eSpeak).
+     */
+    public void unloadAllUnless(java.util.function.BooleanSupplier stillNeeded) {
+        mLoader.execute(() -> {
+            if (!stillNeeded.getAsBoolean()) {
+                trim(true);
+            }
+        });
+    }
+
+    /**
      * Memory pressure: keep only the most recently used voice (and voices on
      * its shared session, which cost nothing more).
      */

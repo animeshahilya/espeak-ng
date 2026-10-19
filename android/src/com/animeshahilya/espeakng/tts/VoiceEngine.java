@@ -39,9 +39,6 @@ public interface VoiceEngine {
 
     /** Evicts in-memory caches or models under system memory pressure. */
     void onTrimMemory(int level);
-
-    /** Unloads all in-memory neural models or dictionaries held by this engine. */
-    void unloadAll();
 }
 
 

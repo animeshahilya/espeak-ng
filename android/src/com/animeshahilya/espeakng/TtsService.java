@@ -140,6 +140,11 @@ public class TtsService extends TextToSpeechService {
 
     /** Central registry for pluggable voice synthesis engines (eSpeak NG, Piper, etc.). */
     private final VoiceEngineRegistry mEngineRegistry = VoiceEngineRegistry.getInstance();
+    /** TtsService instances alive in this process (see onDestroy). */
+    private static final java.util.concurrent.atomic.AtomicInteger sLiveServices =
+            new java.util.concurrent.atomic.AtomicInteger();
+    private EspeakVoiceEngine mEspeakVoiceEngine;
+    private PiperVoiceEngine mPiperVoiceEngine;
 
     /** Caller text as handed to the preprocessor: what reading history keeps. */
     private String mHistoryText;
@@ -367,7 +372,9 @@ public class TtsService extends TextToSpeechService {
      */
     private void naturalVoicesChanged(SharedPreferences prefs) {
         if (!PiperVoiceStore.isEnabled(prefs)) {
-            mPiper.unloadAll();
+            // Re-checked when the unload runs: switched back on meanwhile,
+            // the preload that follows must keep its voices.
+            mPiper.unloadAllUnless(() -> PiperVoiceStore.isEnabled(prefs));
             return;
         }
         final Voice current;
@@ -512,13 +519,16 @@ public class TtsService extends TextToSpeechService {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onCreate() {
         super.onCreate();
+        sLiveServices.incrementAndGet();
         mStorageContext = EspeakApp.requireStorageContext(getApplicationContext());
 
         mPreferences = EspeakApp.prefs(mStorageContext);
         mPreferences.registerOnSharedPreferenceChangeListener(mOnPreferencesChanged);
         initializeTtsEngine(); // new SpeechSynthesis() extracts the voice data when needed
-        mEngineRegistry.register(new EspeakVoiceEngine(this));
-        mEngineRegistry.register(new PiperVoiceEngine(mPiper));
+        mEspeakVoiceEngine = new EspeakVoiceEngine(this);
+        mPiperVoiceEngine = new PiperVoiceEngine(mPiper);
+        mEngineRegistry.register(mEspeakVoiceEngine);
+        mEngineRegistry.register(mPiperVoiceEngine);
         // Warm the user-dictionary singleton, emoji trie, and hinglish list off
         // the main/synth threads: without this the first synthesis request after
         // each process start pays that cost on the latency-critical path. Failure
@@ -558,6 +568,7 @@ public class TtsService extends TextToSpeechService {
                     PiperDownloads.checkForUpdates(getApplicationContext(), mStorageContext);
                     PiperDownloads.restoreMissing(getApplicationContext(), mStorageContext);
                     PiperDownloads.fetchVoiceExtras(getApplicationContext(), mStorageContext);
+                    PiperDownloads.collectVoiceGarbage(mStorageContext);
                 }
             } catch (Throwable t) {
                 Log.w(TAG, "Natural voice update check failed", t);
@@ -588,12 +599,18 @@ public class TtsService extends TextToSpeechService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mEngineRegistry.unloadAll();
+        // The natural voices are process-wide: only the last instance frees
+        // them, and not if a new one has started by the time the unload runs
+        // (a client rebinding; see PiperEngine.unloadAllUnless).
+        if (sLiveServices.decrementAndGet() == 0) {
+            mPiper.unloadAllUnless(() -> sLiveServices.get() > 0);
+        }
         // Break the static-registry -> engine -> service chain: the registry
         // is process-wide, and EspeakVoiceEngine holds this service. Without
         // this, a destroyed service stays reachable until the process dies.
-        mEngineRegistry.unregister(EspeakVoiceEngine.ID);
-        mEngineRegistry.unregister(PiperVoiceEngine.ID);
+        // Only this instance's own engines: a newer one registered its own.
+        mEngineRegistry.unregister(mEspeakVoiceEngine);
+        mEngineRegistry.unregister(mPiperVoiceEngine);
         mCurrentDispatcher = null;
         // The native engine stays: it is shared with every other
         // SpeechSynthesis in this process (settings, Test voice, natural

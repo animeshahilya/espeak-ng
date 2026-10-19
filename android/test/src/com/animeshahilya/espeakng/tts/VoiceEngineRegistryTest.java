@@ -30,7 +30,6 @@ public class VoiceEngineRegistryTest {
         final String name;
         final AtomicBoolean stopped = new AtomicBoolean(false);
         final AtomicInteger trimmedLevel = new AtomicInteger(-1);
-        final AtomicBoolean unloaded = new AtomicBoolean(false);
 
         TestEngine(String id, String name) {
             this.id = id;
@@ -66,11 +65,6 @@ public class VoiceEngineRegistryTest {
         public void onTrimMemory(int level) {
             trimmedLevel.set(level);
         }
-
-        @Override
-        public void unloadAll() {
-            unloaded.set(true);
-        }
     }
 
     private final VoiceEngineRegistry registry = VoiceEngineRegistry.getInstance();
@@ -100,7 +94,20 @@ public class VoiceEngineRegistryTest {
     }
 
     @Test
-    public void broadcastsStopTrimAndUnloadToAllRegisteredEngines() {
+    public void unregisteringAnOldInstanceKeepsTheNewOne() {
+        TestEngine old = new TestEngine("e", "Old service's");
+        TestEngine current = new TestEngine("e", "New service's");
+        registry.register(old);
+        registry.register(current); // a new service instance, same id
+
+        assertFalse(registry.unregister(old));
+        assertSame(current, registry.getEngine("e"));
+        assertTrue(registry.unregister(current));
+        assertNull(registry.getEngine("e"));
+    }
+
+    @Test
+    public void broadcastsStopAndTrimToAllRegisteredEngines() {
         TestEngine engine1 = new TestEngine("e1", "E1");
         TestEngine engine2 = new TestEngine("e2", "E2");
 
@@ -114,9 +121,5 @@ public class VoiceEngineRegistryTest {
         registry.trimAll(80);
         assertEquals(80, engine1.trimmedLevel.get());
         assertEquals(80, engine2.trimmedLevel.get());
-
-        registry.unloadAll();
-        assertTrue(engine1.unloaded.get());
-        assertTrue(engine2.unloaded.get());
     }
 }

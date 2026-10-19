@@ -120,4 +120,29 @@ public class PiperSharedModelsTest {
         assertTrue(lone.isFile());
         assertTrue(keepOnnx.isFile());
     }
+
+    @Test
+    public void collectVoiceGarbageDropsOtherRuntimesCopiesWithACurrentTwin() throws Exception {
+        final File voice = tmp.newFolder("voice");
+        final String[] names = {
+                "model.1.30.0.enc.ort", "model.1.29.0.enc.ort", // superseded
+                "model.1.30.0.npuenc.6739950.ctx.onnx", "model.1.29.0.npuenc.6739950.ctx.onnx", // superseded
+                "model.1.29.0.dec.ort", // no current twin: adopted when the original is gone
+                "model.onnx.json", "npuenc.onnx"};
+        for (String n : names) {
+            Files.write(new File(voice, n).toPath(), new byte[]{1});
+        }
+        PiperDownloads.collectVoiceGarbage(voice, "1.30.0");
+        assertFalse(new File(voice, "model.1.29.0.enc.ort").exists());
+        assertFalse(new File(voice, "model.1.29.0.npuenc.6739950.ctx.onnx").exists());
+        assertTrue(new File(voice, "model.1.29.0.dec.ort").isFile());
+        assertTrue(new File(voice, "model.1.30.0.enc.ort").isFile());
+        assertTrue(new File(voice, "model.1.30.0.npuenc.6739950.ctx.onnx").isFile());
+        assertTrue(new File(voice, "model.onnx.json").isFile());
+        assertTrue(new File(voice, "npuenc.onnx").isFile());
+        // Runtime not loaded yet: nothing is judged superseded.
+        Files.write(new File(voice, "model.1.29.0.enc.ort").toPath(), new byte[]{1});
+        PiperDownloads.collectVoiceGarbage(voice, null);
+        assertTrue(new File(voice, "model.1.29.0.enc.ort").isFile());
+    }
 }

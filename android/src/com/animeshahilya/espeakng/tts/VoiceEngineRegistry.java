@@ -46,6 +46,15 @@ public final class VoiceEngineRegistry {
         return id != null ? mEngines.remove(id) : null;
     }
 
+    /**
+     * Unregisters {@code engine} only if it is still the one under its id: a
+     * service instance being destroyed must not remove the engines a newer
+     * instance (bound while the old one was still going) registered.
+     */
+    public boolean unregister(VoiceEngine engine) {
+        return engine != null && engine.getId() != null && mEngines.remove(engine.getId(), engine);
+    }
+
     /** Returns the engine registered with {@code id}, or null if not found. */
     public VoiceEngine getEngine(String id) {
         return id != null ? mEngines.get(id) : null;
@@ -67,7 +76,7 @@ public final class VoiceEngineRegistry {
             try {
                 action.accept(engine);
             } catch (Throwable t) {
-                // A partial stop/trim/unload used to vanish here: one engine's
+                // A partial stop/trim used to vanish here: one engine's
                 // failure left the others' state unknown with nothing in logcat.
                 android.util.Log.w("VoiceEngineRegistry",
                         what + " failed for engine " + engine.getId(), t);
@@ -83,11 +92,6 @@ public final class VoiceEngineRegistry {
     /** Broadcasts memory trim to all registered engines. */
     public void trimAll(int level) {
         forEachEngine("trim", engine -> engine.onTrimMemory(level));
-    }
-
-    /** Unloads all loaded models across all registered engines. */
-    public void unloadAll() {
-        forEachEngine("unload", VoiceEngine::unloadAll);
     }
 
     /**
