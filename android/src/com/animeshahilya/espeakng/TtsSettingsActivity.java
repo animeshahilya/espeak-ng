@@ -232,7 +232,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
         // window on every start (AppCompat getInsetsController() throws on a
         // decor-less window where the framework one happened to survive).
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(!openedFromLauncher(this));
             getSupportActionBar().setTitle(R.string.app_name);
         }
 
@@ -293,6 +293,56 @@ public class TtsSettingsActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         PiperSettings.stopPlayback();
+    }
+
+    /**
+     * Opened from the launcher, the main page is the app's root: an up arrow
+     * there only closed the app (TalkBack read "Navigate up" first on every
+     * open). From the system's text-to-speech settings it returns there.
+     */
+    static boolean openedFromLauncher(Activity activity) {
+        return Intent.ACTION_MAIN.equals(activity.getIntent().getAction());
+    }
+
+    private static final String STATUS_BAR_BACKING = "status_bar_backing";
+
+    /**
+     * Paints the status bar strip with the action bar's background. The
+     * window is edge-to-edge (enforced from targetSdk 35, where
+     * statusBarColor is ignored) and the list scrolls under its top padding,
+     * so rows scrolled up showed through above the action bar.
+     */
+    static void backStatusBar(Activity activity, View actionBar, int height) {
+        if (activity == null) return;
+        final View decorView = activity.getWindow().getDecorView();
+        if (!(decorView instanceof android.widget.FrameLayout)
+                || actionBar.getBackground() == null) {
+            return;
+        }
+        final android.widget.FrameLayout decor = (android.widget.FrameLayout) decorView;
+        // Insets are being dispatched: change the hierarchy after the pass.
+        decor.post(() -> {
+            View strip = decor.findViewWithTag(STATUS_BAR_BACKING);
+            if (strip == null) {
+                strip = new View(activity) {
+                    // AppCompat's action bar background has no constant
+                    // state to copy; draw its top (a flat colour) instead.
+                    @Override
+                    protected void onDraw(android.graphics.Canvas canvas) {
+                        final android.graphics.drawable.Drawable bg = actionBar.getBackground();
+                        if (bg != null) bg.draw(canvas);
+                    }
+                };
+                strip.setWillNotDraw(false);
+                strip.setTag(STATUS_BAR_BACKING);
+                strip.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+                decor.addView(strip, new android.widget.FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, height, android.view.Gravity.TOP));
+            } else if (strip.getLayoutParams().height != height) {
+                strip.getLayoutParams().height = height;
+                strip.requestLayout();
+            }
+        });
     }
 
     public static int dpToPx(Context context, int dp) {
@@ -1042,6 +1092,8 @@ public class TtsSettingsActivity extends AppCompatActivity {
                         title = screen.getTitle();
                     }
                     actionBar.setTitle(title);
+                    actionBar.setDisplayHomeAsUpEnabled(
+                            !mScreenStack.isEmpty() || !openedFromLauncher(activity));
                     View list = getView() != null
                             ? getView().findViewById(androidx.preference.R.id.recycler_view)
                             : null;
@@ -1191,6 +1243,13 @@ public class TtsSettingsActivity extends AppCompatActivity {
                     ? getActivity().findViewById(androidx.appcompat.R.id.action_bar_container)
                     : null;
             if (abContainer != null) {
+                // Its top is the status bar's height (the insets the list
+                // gets already include the action bar).
+                abContainer.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) ->
+                        backStatusBar(getActivity(), v, t));
+                if (abContainer.getHeight() > 0) {
+                    backStatusBar(getActivity(), abContainer, abContainer.getTop());
+                }
                 abContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                     @Override
                     public void onLayoutChange(View v, int l, int t, int r, int b,

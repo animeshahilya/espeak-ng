@@ -494,8 +494,6 @@
   <string name="category_app">More</string>
   <string name="category_punctuation">Punctuation</string>
   <string name="category_capitals">Capital letters</string>
-  <string name="category_emoji">Emoji</string>
-  <string name="category_letters">Letters</string>
   <string name="category_advanced">Advanced</string>
   <string name="setting_numbers_language">Numbers and times</string>
   <string name="numbers_language_auto">Automatic</string>

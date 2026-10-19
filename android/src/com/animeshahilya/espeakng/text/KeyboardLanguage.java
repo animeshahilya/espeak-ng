@@ -11,7 +11,6 @@ package com.animeshahilya.espeakng.text;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.os.Build;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
@@ -130,10 +129,7 @@ public final class KeyboardLanguage {
                 return null;
             }
 
-            String tag = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                tag = resolved.getLanguageTag();
-            }
+            String tag = resolved.getLanguageTag();
             if (tag == null || tag.isEmpty()) {
                 tag = resolved.getLocale();
             }
