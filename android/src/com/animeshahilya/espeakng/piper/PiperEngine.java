@@ -14,7 +14,6 @@ import com.animeshahilya.espeakng.tts.RequestSettings;
 import com.animeshahilya.espeakng.EspeakApp;
 import com.animeshahilya.espeakng.text.Tashkeel;
 import com.animeshahilya.espeakng.TtsService;
-import com.animeshahilya.espeakng.Voice;
 
 import java.io.File;
 import java.io.IOException;
@@ -383,7 +382,7 @@ public final class PiperEngine {
             synchronized (mLoaded) {
                 for (PiperModel existing : mLoaded.values()) {
                     if (existing != null && !existing.isClosed()
-                            && existing.stamp.equals(PiperModel.stamp(onnx))) {
+                            && existing.stamp.equals(ModelFiles.stamp(onnx))) {
                         final PiperModel cloned = existing.withConfig(config, onnx);
                         if (cloned != null) {
                             return cloned;

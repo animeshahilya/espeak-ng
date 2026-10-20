@@ -639,7 +639,7 @@ final class Supertonic implements Closeable {
             try {
                 dp = cpuSession(new File(dir, DURATION_PREDICTOR), threads);
                 te = cpuSession(new File(dir, TEXT_ENCODER), threads);
-                if (!PiperModel.hasNpuRuntime()) {
+                if (!NpuFiles.hasNpuRuntime()) {
                     problem = "no NPU runtime";
                 } else {
                     for (int b = 0; b < BUCKETS.length; b++) {
@@ -676,7 +676,7 @@ final class Supertonic implements Closeable {
 
     /** True when the bucket's graph is compiled in the shared store (loads in well under a second). */
     private static boolean compiled(File model, int[] bucket, String what) {
-        final File f = PiperModel.sharedDerivedFile(model, ".st-" + what + bucket[0] + ".ctx.onnx");
+        final File f = ModelFiles.sharedDerivedFile(model, ".st-" + what + bucket[0] + ".ctx.onnx");
         return f != null && f.isFile();
     }
 
@@ -694,7 +694,7 @@ final class Supertonic implements Closeable {
      * into the shared store, next to the shared model.
      */
     private static OrtSession npuSession(File model, int[] bucket, String what) throws OrtException, IOException {
-        final File compiled = PiperModel.sharedDerivedFile(model,
+        final File compiled = ModelFiles.sharedDerivedFile(model,
                 ".st-" + what + bucket[0] + ".ctx.onnx");
         if (compiled == null) {
             throw new IOException("no shared store for " + model);
@@ -704,10 +704,10 @@ final class Supertonic implements Closeable {
             o.addConfigEntry("session.disable_cpu_ep_fallback", "1");
             o.addConfigEntry("session.disable_quant_qdq", "1");
             final Map<String, String> qnn = new HashMap<>();
-            qnn.put("backend_path", PiperModel.npuBackend());
+            qnn.put("backend_path", NpuFiles.npuBackend());
             qnn.put("enable_htp_fp16_precision", "1");
             qnn.put("htp_performance_mode", "burst");
-            PiperModel.addNpu(o, qnn);
+            NpuFiles.addNpu(o, qnn);
             if (compiled.isFile()) {
                 try {
                     return env().createSession(compiled.getAbsolutePath(), o);

@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -696,7 +695,7 @@ public final class PiperDownloads {
             byte[] configBytes) {
         final File shared = verifiedSharedModel(storageContext, voice);
         if (shared == null && (voice.modelMd5 == null
-                || !PiperModel.hasSharedOptimized(PiperVoiceStore.sharedDir(storageContext), voice.modelMd5))) {
+                || !ModelFiles.hasSharedOptimized(PiperVoiceStore.sharedDir(storageContext), voice.modelMd5))) {
             return false;
         }
         try {
@@ -1357,7 +1356,7 @@ public final class PiperDownloads {
      * service start and after an install. Blocking; off the main thread.
      */
     public static void fetchNpuDecoders(Context appContext, Context storageContext) {
-        if (!PiperModel.hasNpuRuntime()) {
+        if (!NpuFiles.hasNpuRuntime()) {
             return;
         }
         // One reload per voice that got files, after both lists: each list
@@ -1436,10 +1435,10 @@ public final class PiperDownloads {
         }
         final String md5 = f.optString("md5_digest", "");
         final File stamp = new File(target.getParentFile(), target.getName() + ".md5");
-        // Once compiled the file itself is deleted (PiperModel.hostedSize); it
+        // Once compiled the file itself is deleted (NpuFiles.hostedSize); it
         // is fetched again only when this runtime has nothing compiled from it.
         if (stamp.isFile() && md5.equalsIgnoreCase(FileUtils.readText(stamp).trim())
-                && (target.isFile() || PiperModel.compiledAvailable(target))) {
+                && (target.isFile() || NpuFiles.compiledAvailable(target))) {
             return false;
         }
         final byte[] data = fetch(base + path, 64 * 1024 * 1024);
@@ -1448,7 +1447,7 @@ public final class PiperDownloads {
         }
         FileUtils.write(target, data);
         FileUtils.write(stamp, md5.getBytes(StandardCharsets.UTF_8));
-        PiperModel.forgetCompiled(target);
+        NpuFiles.forgetCompiled(target);
         return true;
     }
 
@@ -1539,7 +1538,7 @@ public final class PiperDownloads {
         // checkForUpdates does not download the same voice again.
         final String configMd5 = standard.configMd5 != null ? standard.configMd5 : md5(bytes);
         FileUtils.write(new File(target, SOURCE_FILE), (modelMd5 + "\n" + configMd5).getBytes(StandardCharsets.UTF_8));
-        PiperModel.forgetOptimized(target);
+        ModelFiles.forgetOptimized(target);
 
         final SharedPreferences prefs = settingsPrefs(storageContext);
         final Map<String, ?> all = prefs.getAll();
@@ -1647,7 +1646,7 @@ public final class PiperDownloads {
 
     /**
      * Downloads again any installed voice left with nothing to load: its
-     * model is deleted once optimized (PiperModel.dropOriginal), so an
+     * model is deleted once optimized (ModelFiles.dropOriginal), so an
      * optimized copy that an ONNX Runtime update could not use leaves
      * nothing behind. Called at service start; loads the catalog only when
      * such a voice exists. Blocking: call off the main and speech threads.
@@ -1659,7 +1658,7 @@ public final class PiperDownloads {
         final List<PiperVoiceStore.Installed> missing = new ArrayList<>();
         final List<String> pending = pendingKeys(storageContext);
         for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
-            if (!PiperModel.hasModel(v.dir) && !pending.contains(v.key)) {
+            if (!ModelFiles.hasModel(v.dir) && !pending.contains(v.key)) {
                 missing.add(v);
             }
         }

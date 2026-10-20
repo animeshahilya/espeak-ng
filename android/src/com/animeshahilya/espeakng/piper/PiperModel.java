@@ -8,18 +8,14 @@
  */
 
 package com.animeshahilya.espeakng.piper;
-import com.animeshahilya.espeakng.BuildConfig;
 import com.animeshahilya.espeakng.text.Tashkeel;
-import com.animeshahilya.espeakng.Voice;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.LongBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -67,11 +63,11 @@ import ai.onnxruntime.OrtSession;
  * </ul>
  */
 public final class PiperModel implements Closeable {
-    private static final String OPTIMIZED_PREFIX = "model.";
+    static final String OPTIMIZED_PREFIX = "model.";
     /** One whole model, for a voice that can't be split (".opt.ort" before the split: rebuilt). */
     static final String OPTIMIZED_SUFFIX = ".whole.ort";
     static final String ENCODER_SUFFIX = ".enc.ort";
-    private static final String DECODER_SUFFIX = ".dec.ort";
+    static final String DECODER_SUFFIX = ".dec.ort";
     /**
      * Latent frames of context decoded on each side of a piece and cropped:
      * enough for the decoder's receptive field. Measured (Priyamvada, Daniela
@@ -107,7 +103,7 @@ public final class PiperModel implements Closeable {
     static final String NPU_MID_FILE = "npumid.onnx";
     static final String NPU_FLOW_FILE = "npuflow.onnx";
     /** PiperDownloads.SOURCE_FILE: the installed model and config MD5s. */
-    private static final String SOURCE_FILE = "source";
+    static final String SOURCE_FILE = "source";
     /**
      * An NPU is used only if it decodes at least this many seconds of audio
      * per second: measured, not assumed, since Snapdragons differ widely
@@ -138,7 +134,7 @@ public final class PiperModel implements Closeable {
 
     public final PiperVoiceConfig config;
     public final File file;
-    /** Which model bytes these are ({@link #stamp(File)}): the original may be gone. */
+    /** Which model bytes these are ({@link #ModelFiles.stamp(File)}): the original may be gone. */
     public final String stamp;
     private final SessionGroup group;
     private boolean closed;
@@ -318,7 +314,7 @@ public final class PiperModel implements Closeable {
     PiperModel(PiperVoiceConfig config, File file, SessionGroup group) {
         this.config = config;
         this.file = file;
-        this.stamp = stamp(file);
+        this.stamp = ModelFiles.stamp(file);
         this.group = group;
     }
 
@@ -409,13 +405,13 @@ public final class PiperModel implements Closeable {
             }
             return model;
         }
-        final File optimized = derivedFile(onnx, OPTIMIZED_SUFFIX);
-        final File encoder = derivedFile(onnx, ENCODER_SUFFIX);
-        final File decoderFile = derivedFile(onnx, DECODER_SUFFIX);
+        final File optimized = ModelFiles.derivedFile(onnx, OPTIMIZED_SUFFIX);
+        final File encoder = ModelFiles.derivedFile(onnx, ENCODER_SUFFIX);
+        final File decoderFile = ModelFiles.derivedFile(onnx, DECODER_SUFFIX);
         if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile())) {
-            final File sharedEnc = sharedDerivedFile(onnx, ENCODER_SUFFIX);
-            final File sharedDec = sharedDerivedFile(onnx, DECODER_SUFFIX);
-            final File sharedOpt = sharedDerivedFile(onnx, OPTIMIZED_SUFFIX);
+            final File sharedEnc = ModelFiles.sharedDerivedFile(onnx, ENCODER_SUFFIX);
+            final File sharedDec = ModelFiles.sharedDerivedFile(onnx, DECODER_SUFFIX);
+            final File sharedOpt = ModelFiles.sharedDerivedFile(onnx, OPTIMIZED_SUFFIX);
             if (sharedEnc != null && sharedEnc.isFile() && sharedDec != null && sharedDec.isFile()) {
                 PiperDownloads.linkOrCopy(sharedEnc, encoder);
                 PiperDownloads.linkOrCopy(sharedDec, decoderFile);
@@ -424,10 +420,10 @@ public final class PiperModel implements Closeable {
             }
         }
         if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile()) && !onnx.isFile()) {
-            adoptOlderOptimized(onnx, optimized, encoder, decoderFile);
+            ModelFiles.adoptOlderOptimized(onnx, optimized, encoder, decoderFile);
         }
         if (!optimized.isFile() && !(encoder.isFile() && decoderFile.isFile()) && onnx.isFile()) {
-            buildOptimized(onnx, optimized, encoder, decoderFile, threads);
+            ModelFiles.buildOptimized(onnx, optimized, encoder, decoderFile, threads);
         }
         OrtSession session = null;
         ByteBuffer mapped = null;
@@ -435,15 +431,15 @@ public final class PiperModel implements Closeable {
         ByteBuffer mappedDecoder = null;
         // NPU parts compiled and shapes known: the NPU encoder warms the voice
         // up and the CPU encoder opens only when a chunk needs it.
-        final Boundary known = encoder.isFile() && decoderFile.isFile() && npuReady(onnx)
-                ? Boundary.read(boundaryFile(onnx), encoder) : null;
+        final NpuFiles.Boundary known = encoder.isFile() && decoderFile.isFile() && NpuFiles.npuReady(onnx)
+                ? NpuFiles.Boundary.read(NpuFiles.boundaryFile(onnx), encoder) : null;
         if (encoder.isFile() && decoderFile.isFile()) {
             try {
-                mapped = map(encoder);
+                mapped = ModelFiles.map(encoder);
                 if (known == null) {
                     session = open(null, mapped, threads);
                 }
-                mappedDecoder = map(decoderFile);
+                mappedDecoder = ModelFiles.map(decoderFile);
                 decoder = open(null, mappedDecoder, threads);
             } catch (IOException | OrtException e) {
                 closeQuietly(session);
@@ -457,7 +453,7 @@ public final class PiperModel implements Closeable {
         final boolean npuFirst = known != null && decoder != null;
         if (session == null && !npuFirst && optimized.isFile()) {
             try {
-                mapped = map(optimized);
+                mapped = ModelFiles.map(optimized);
                 session = open(null, mapped, threads);
             } catch (IOException | OrtException e) {
                 mapped = null;
@@ -490,217 +486,19 @@ public final class PiperModel implements Closeable {
             throw e;
         }
         if (model.streams() && !npuFirst) {
-            if (hasNpuRuntime() && group.boundaryShapes != null) {
-                Boundary.write(boundaryFile(onnx), encoder, group);
+            if (NpuFiles.hasNpuRuntime() && group.boundaryShapes != null) {
+                NpuFiles.Boundary.write(NpuFiles.boundaryFile(onnx), encoder, group);
             }
-            if (model.npuCompiled(onnx) || !hasNpuRuntime()) {
+            if (model.npuCompiled(onnx) || !NpuFiles.hasNpuRuntime()) {
                 model.attachNpu(onnx); // a compiled graph loads in ~0.15 s
             } else {
                 model.attachNpuLater(onnx);
             }
         }
         if (mapped != null) {
-            dropOriginal(onnx);
+            ModelFiles.dropOriginal(onnx);
         }
         return model;
-    }
-
-    /**
-     * Deletes the downloaded model once its optimized copy has loaded: the
-     * phone kept both, twice the space (Piper medium 17 + 18 MB). A shared
-     * model (all Rasa voices) goes too; its optimized copy stays in the
-     * shared store. Kept where a voice has no {@code source} record: it could
-     * not be matched to its catalog entry again. (The Snapdragon build kept
-     * originals to cut NPU graphs from until its NPU files came hosted.)
-     */
-    private static void dropOriginal(File onnx) {
-        if (!new File(onnx.getParentFile(), SOURCE_FILE).isFile()) {
-            return;
-        }
-        try {
-            final java.nio.file.Path path = onnx.toPath();
-            if (java.nio.file.Files.isSymbolicLink(path)) {
-                final java.nio.file.Path target = path.resolveSibling(java.nio.file.Files.readSymbolicLink(path));
-                java.nio.file.Files.deleteIfExists(target);
-            }
-            java.nio.file.Files.deleteIfExists(path);
-        } catch (IOException | RuntimeException ignored) {
-            // Kept; tried again at the next load.
-        }
-    }
-
-    /**
-     * After an ONNX Runtime update, with the original deleted: takes the
-     * optimized copy an older runtime wrote (ORT format loads in newer
-     * runtimes) under the current name. If it fails to load, the caller
-     * deletes it and the voice is downloaded again.
-     */
-    static void adoptOlderOptimized(File onnx, File optimized, File encoder, File decoder) {
-        final File dir = onnx.getParentFile();
-        final File[] old = dir == null ? null : dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
-                && n.endsWith(ENCODER_SUFFIX) && !n.equals(encoder.getName()));
-        if (old != null) {
-            for (File enc : old) {
-                final File dec = new File(dir, enc.getName().replace(ENCODER_SUFFIX, DECODER_SUFFIX));
-                if (dec.isFile() && enc.renameTo(encoder) && dec.renameTo(decoder)) {
-                    return;
-                }
-            }
-        }
-        final File[] whole = dir == null ? null : dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
-                && n.endsWith(OPTIMIZED_SUFFIX) && !n.equals(optimized.getName()));
-        if (whole != null && whole.length > 0) {
-            //noinspection ResultOfMethodCallIgnored
-            whole[0].renameTo(optimized);
-        }
-    }
-
-    /**
-     * Identifies a model's bytes for caches and session sharing: the MD5 the
-     * voice was installed with ({@code source}), else the file's size and
-     * time. Works with the original deleted.
-     */
-    static String stamp(File onnx) {
-        final String md5 = sourceMd5(onnx.getParentFile());
-        return md5 != null ? md5 : onnx.length() + ":" + onnx.lastModified();
-    }
-
-    /** {@code source}'s first line: the installed model's MD5, or null. */
-    static String sourceMd5(File dir) {
-        if (dir == null) {
-            return null;
-        }
-        final File source = new File(dir, SOURCE_FILE);
-        if (!source.isFile()) {
-            return null;
-        }
-        try (java.io.BufferedReader r = new java.io.BufferedReader(
-                new java.io.InputStreamReader(new java.io.FileInputStream(source),
-                        java.nio.charset.StandardCharsets.UTF_8))) {
-            final String md5 = r.readLine();
-            if (md5 == null || md5.trim().isEmpty() || "null".equals(md5.trim())) {
-                return null;
-            }
-            return md5.trim().toLowerCase(java.util.Locale.ROOT);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    /** Whether a voice folder still has something to load: the model or an optimized copy of it. */
-    static boolean hasModel(File dir) {
-        if (new File(dir, "model.onnx").isFile()) {
-            return true;
-        }
-        final File[] ort = dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX) && n.endsWith(".ort"));
-        if (ort != null) {
-            for (File f : ort) {
-                if (f.isFile()) { // a link into the shared store counts only while it resolves
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Whether the shared store holds an optimized copy of the model with
-     * this MD5 for this runtime: enough to install another voice of it
-     * (a second Rasa voice) with no model at all.
-     */
-    static boolean hasSharedOptimized(File sharedDir, String md5) {
-        final String base = md5.toLowerCase(java.util.Locale.ROOT) + "." + env().getVersion();
-        return (new File(sharedDir, base + ENCODER_SUFFIX).isFile() && new File(sharedDir, base + DECODER_SUFFIX).isFile())
-                || new File(sharedDir, base + OPTIMIZED_SUFFIX).isFile();
-    }
-
-    /**
-     * Forgets a voice's optimized copies, and the shared store's for its
-     * model, so the next load splits it again (a Compact voice split before
-     * PiperSplit moved its quantize pair into the decoder, whose boundary no
-     * INT8 NPU decoder reads). Only while the original is here to split
-     * from: the Snapdragon build keeps it, the standard build has no NPU.
-     */
-    static void forgetOptimized(File dir) {
-        if (!new File(dir, "model.onnx").isFile()) {
-            return;
-        }
-        deleteOptimized(dir, OPTIMIZED_PREFIX);
-        final String md5 = sourceMd5(dir);
-        final File voices = dir.getParentFile();
-        if (md5 != null && voices != null && voices.getParentFile() != null) {
-            deleteOptimized(new File(voices.getParentFile(), PiperVoiceStore.SHARED_DIR), md5 + ".");
-        }
-    }
-
-    private static void deleteOptimized(File dir, String prefix) {
-        final File[] files = dir.listFiles((d, n) -> n.startsWith(prefix)
-                && (n.endsWith(".ort") || n.contains(".npu")));
-        if (files != null) {
-            for (File f : files) {
-                //noinspection ResultOfMethodCallIgnored
-                f.delete();
-            }
-        }
-    }
-
-    /** Name Qualcomm's QNN plugin registers its NPU device under. */
-    private static final String QNN_EP = "QNNExecutionProvider";
-    private static volatile List<ai.onnxruntime.OrtEpDevice> sNpuDevices;
-
-    /**
-     * Qualcomm's QNN plugin (com.qualcomm.qti:onnxruntime-android-qnn, in the
-     * Snapdragon build only) registered with this runtime, and its NPU
-     * devices; empty without one. The standard build answers without
-     * loading the runtime (the settings screen asks on the main thread).
-     */
-    private static List<ai.onnxruntime.OrtEpDevice> npuDevices() {
-        if (!BuildConfig.SNAPDRAGON) {
-            return java.util.Collections.emptyList();
-        }
-        List<ai.onnxruntime.OrtEpDevice> devices = sNpuDevices;
-        if (devices == null) {
-            synchronized (PiperModel.class) {
-                devices = sNpuDevices;
-                if (devices == null) {
-                    devices = new ArrayList<>();
-                    try {
-                        final File lib = new File(com.animeshahilya.espeakng.EspeakApp.getStorageContext()
-                                .getApplicationInfo().nativeLibraryDir, "libonnxruntime_providers_qnn.so");
-                        env().registerExecutionProviderLibrary(QNN_EP, lib.getAbsolutePath());
-                        for (ai.onnxruntime.OrtEpDevice d : env().getEpDevices()) {
-                            if (QNN_EP.equals(d.getEpName())) {
-                                devices.add(d);
-                            }
-                        }
-                    } catch (OrtException | RuntimeException e) {
-                        android.util.Log.w("PiperVoices", "QNN plugin not loaded: " + e);
-                    }
-                    sNpuDevices = devices;
-                }
-            }
-        }
-        return devices;
-    }
-
-    /**
-     * QNN's HTP backend by full path, from the app's native libraries: the
-     * plugin then finds the NPU-side libraries (libQnnHtpV*Skel.so) beside
-     * it; by type alone the DSP could not open them (Galaxy S25 Ultra).
-     */
-    static String npuBackend() {
-        return new File(com.animeshahilya.espeakng.EspeakApp.getStorageContext()
-                .getApplicationInfo().nativeLibraryDir, "libQnnHtp.so").getAbsolutePath();
-    }
-
-    /** True when the NPU runtime is here: the Snapdragon build on a phone QNN accepts. */
-    static boolean hasNpuRuntime() {
-        return !npuDevices().isEmpty();
-    }
-
-    /** Puts the session on the NPU through the QNN plugin with these options. */
-    static void addNpu(OrtSession.SessionOptions options, Map<String, String> qnn) throws OrtException {
-        options.addExecutionProvider(npuDevices(), qnn);
     }
 
     /** One low-priority thread compiles NPU graphs, one voice at a time. */
@@ -719,215 +517,19 @@ public final class PiperModel implements Closeable {
     private boolean npuCompiled(File onnx) {
         final File dir = onnx.getParentFile();
         final File int8 = new File(dir, NPU_DECODER_FILE);
-        if (group.boundaryShapes != null && hasHosted(int8)
-                && !derivedFile(onnx, ".npuq-r3." + hostedSize(int8) + ".failed").exists()
-                && !derivedFile(onnx, ".npuq." + hostedSize(int8) + ".onnx").isFile()) {
+        if (group.boundaryShapes != null && NpuFiles.hasHosted(int8)
+                && !ModelFiles.derivedFile(onnx, ".npuq-r3." + NpuFiles.hostedSize(int8) + ".failed").exists()
+                && !ModelFiles.derivedFile(onnx, ".npuq." + NpuFiles.hostedSize(int8) + ".onnx").isFile()) {
             return false;
         }
-        if (!hasHosted(int8) && !hostedReady(onnx, new File(dir, NPU_DECODER16_FILE))) {
+        if (!NpuFiles.hasHosted(int8) && !NpuFiles.hostedReady(onnx, new File(dir, NPU_DECODER16_FILE))) {
             return false;
         }
         // One failure marker (the text encoder's) stands for all three parts:
         // a flow that never compiled because its encoder failed is not waited on.
         final File enc = new File(dir, NPU_ENC_FILE);
-        return failedFile(onnx, enc).exists()
-                || hostedReady(onnx, enc) && hostedReady(onnx, new File(dir, NPU_FLOW_FILE));
-    }
-
-    /**
-     * True when every hosted NPU part of the voice is there and compiled, with
-     * no failure marked: it can load without opening its CPU encoder.
-     */
-    private static boolean npuReady(File onnx) {
-        if (!hasNpuRuntime()) {
-            return false;
-        }
-        final File dir = onnx.getParentFile();
-        final File enc = new File(dir, NPU_ENC_FILE);
-        final File flow = new File(dir, NPU_FLOW_FILE);
-        final File mid = new File(dir, NPU_MID_FILE);
-        if (!hasHosted(mid) || !hasHosted(enc) || !hasHosted(flow)
-                || failedFile(onnx, enc).exists() || !compiledAvailable(mid)
-                || !compiledFile(onnx, enc).isFile() || !compiledFile(onnx, flow).isFile()) {
-            return false;
-        }
-        final File int8 = new File(dir, NPU_DECODER_FILE);
-        if (hasHosted(int8)) {
-            return compiledAvailable(int8)
-                    && !derivedFile(onnx, ".npuq-r3." + hostedSize(int8) + ".failed").exists();
-        }
-        final File dec = new File(dir, NPU_DECODER16_FILE);
-        return compiledAvailable(dec) && !failedFile(onnx, dec).exists();
-    }
-
-    private static File boundaryFile(File onnx) {
-        return derivedFile(onnx, ".boundary");
-    }
-
-    /**
-     * What the CPU encoder tells about a voice that the NPU path needs: the
-     * shapes it hands the decoder and whether it reads a speaker and reports
-     * durations. Kept beside the voice after the first load, tied to the
-     * encoder file it came from (size and time), so a later load can skip
-     * opening that encoder.
-     */
-    static final class Boundary {
-        final long[][] shapes;
-        final boolean speaker;
-        final boolean durations;
-
-        private Boundary(long[][] shapes, boolean speaker, boolean durations) {
-            this.shapes = shapes;
-            this.speaker = speaker;
-            this.durations = durations;
-        }
-
-        static void write(File file, File encoder, SessionGroup g) {
-            final StringBuilder b = new StringBuilder();
-            b.append(encoder.length()).append(' ').append(encoder.lastModified()).append('\n');
-            b.append(g.hasSpeakerInput).append(' ').append(g.hasDurations).append('\n');
-            for (long[] shape : g.boundaryShapes) {
-                for (int i = 0; i < shape.length; i++) {
-                    b.append(i > 0 ? "," : "").append(shape[i]);
-                }
-                b.append('\n');
-            }
-            try {
-                java.nio.file.Files.write(file.toPath(), b.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            } catch (IOException ignored) {
-                // The next load opens the CPU encoder again and retries.
-            }
-        }
-
-        /** Null when missing, unreadable or written for another encoder file. */
-        static Boundary read(File file, File encoder) {
-            if (!file.isFile()) {
-                return null;
-            }
-            try {
-                final String[] lines = new String(java.nio.file.Files.readAllBytes(file.toPath()),
-                        java.nio.charset.StandardCharsets.UTF_8).split("\n");
-                if (lines.length < 3 || !lines[0].equals(encoder.length() + " " + encoder.lastModified())) {
-                    return null;
-                }
-                final String[] flags = lines[1].split(" ");
-                final long[][] shapes = new long[lines.length - 2][];
-                for (int i = 2; i < lines.length; i++) {
-                    final String[] dims = lines[i].split(",");
-                    shapes[i - 2] = new long[dims.length];
-                    for (int d = 0; d < dims.length; d++) {
-                        shapes[i - 2][d] = Long.parseLong(dims[d].trim());
-                    }
-                }
-                return new Boundary(shapes, Boolean.parseBoolean(flags[0]), Boolean.parseBoolean(flags[1]));
-            } catch (IOException | RuntimeException e) {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * Deletes what the phone made from a hosted NPU file that is being
-     * replaced: its compiled graphs (any runtime, any size) and failure
-     * markers. They are named by the file's size, so a rebuilt file of the
-     * same size would otherwise keep running the old graph, and one of a new
-     * size left the old graph behind (~10 MB a part).
-     */
-    static void forgetCompiled(File hosted) {
-        final String stem = NPU_DECODER_FILE.equals(hosted.getName()) ? "npuq"
-                : hosted.getName().replace(".onnx", "");
-        //noinspection ResultOfMethodCallIgnored
-        sizeFile(hosted).delete();
-        final File[] made = hosted.getParentFile().listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
-                && (n.contains("." + stem + ".") || n.contains("." + stem + "-r")));
-        if (made != null) {
-            for (File f : made) {
-                //noinspection ResultOfMethodCallIgnored
-                f.delete();
-            }
-        }
-    }
-
-    /** A hosted NPU file compiled already, failed before, or absent: nothing to wait for. */
-    private static boolean hostedReady(File onnx, File hosted) {
-        return !hasHosted(hosted) || compiledFile(onnx, hosted).isFile() || failedFile(onnx, hosted).exists();
-    }
-
-    /** Where a hosted NPU file's compiled graph is kept: keyed by its size, so an update recompiles. */
-    private static File compiledFile(File onnx, File hosted) {
-        return derivedFile(onnx, "." + hosted.getName().replace(".onnx", "") + "." + hostedSize(hosted) + ".ctx.onnx");
-    }
-
-    private static File failedFile(File onnx, File hosted) {
-        return derivedFile(onnx, "." + hosted.getName().replace(".onnx", "") + "-r1." + hostedSize(hosted) + ".failed");
-    }
-
-    /**
-     * A hosted NPU file's size: its compiled forms are named by it. Once they
-     * are made the file itself is deleted (~16 MB a voice; it is needed again
-     * only to recompile, after a runtime update, and then downloads again) and
-     * its size is kept in {@code <name>.size}. -1 when the voice has no such file.
-     */
-    static long hostedSize(File hosted) {
-        if (hosted.isFile()) {
-            return hosted.length();
-        }
-        try {
-            return Long.parseLong(new String(java.nio.file.Files.readAllBytes(sizeFile(hosted).toPath()),
-                    java.nio.charset.StandardCharsets.UTF_8).trim());
-        } catch (IOException | RuntimeException e) {
-            return -1;
-        }
-    }
-
-    static boolean hasHosted(File hosted) {
-        return hostedSize(hosted) >= 0;
-    }
-
-    private static File sizeFile(File hosted) {
-        return new File(hosted.getParentFile(), hosted.getName() + ".size");
-    }
-
-    /** What this runtime made from a hosted NPU file: compiled graph, INT8 context or ORT copy. */
-    private static File compiledOf(File hosted) {
-        final File onnx = new File(hosted.getParentFile(), "model.onnx");
-        if (NPU_DECODER_FILE.equals(hosted.getName())) {
-            return derivedFile(onnx, ".npuq." + hostedSize(hosted) + ".onnx");
-        }
-        if (NPU_MID_FILE.equals(hosted.getName())) {
-            return derivedFile(onnx, ".npumid." + hostedSize(hosted) + ".ort");
-        }
-        return compiledFile(onnx, hosted);
-    }
-
-    /**
-     * True when this runtime's compiled form of a hosted file is here, so the
-     * file itself is not needed (PiperDownloads fetches it again otherwise).
-     */
-    static boolean compiledAvailable(File hosted) {
-        return hasHosted(hosted) && compiledOf(hosted).isFile();
-    }
-
-    /** Deletes hosted files whose compiled forms loaded, keeping their sizes. */
-    private static void dropHostedSources(File... hosted) {
-        for (File h : hosted) {
-            if (!h.isFile() || !compiledOf(h).isFile()) {
-                continue;
-            }
-            try {
-                java.nio.file.Files.write(sizeFile(h).toPath(),
-                        String.valueOf(h.length()).getBytes(java.nio.charset.StandardCharsets.UTF_8));
-                //noinspection ResultOfMethodCallIgnored
-                h.delete();
-            } catch (IOException ignored) {
-                // Kept: it costs space, nothing else.
-            }
-        }
-    }
-
-    /** No compiled form for this runtime and the file to make one from is gone: it downloads again. */
-    private static boolean awaitingSource(File onnx, File hosted, File compiled) {
-        return !compiled.isFile() && !hosted.isFile();
+        return NpuFiles.failedFile(onnx, enc).exists()
+                || NpuFiles.hostedReady(onnx, enc) && NpuFiles.hostedReady(onnx, new File(dir, NPU_FLOW_FILE));
     }
 
     /**
@@ -967,7 +569,7 @@ public final class PiperModel implements Closeable {
      * and is remembered, so a phone without the NPU pays for it once.
      */
     private void attachNpu(File onnx) {
-        if (!hasNpuRuntime() || group.boundaryShapes == null) {
+        if (!NpuFiles.hasNpuRuntime() || group.boundaryShapes == null) {
             return;
         }
         final File dir = onnx.getParentFile();
@@ -983,50 +585,16 @@ public final class PiperModel implements Closeable {
         }
         final File int8 = new File(dir, NPU_DECODER_FILE);
         final File dec16 = new File(dir, NPU_DECODER16_FILE);
-        if (!(hasHosted(int8) && attachInt8Npu(onnx, int8))) {
+        if (!(NpuFiles.hasHosted(int8) && attachInt8Npu(onnx, int8))) {
             attachHostedDecoder(onnx, dec16);
         }
         attachNpuEncoder(onnx);
         if (group.npuDecoder != null) {
-            dropHostedSources(int8, dec16);
+            NpuFiles.dropHostedSources(int8, dec16);
         }
         if (group.npuEnc != null) {
-            dropHostedSources(new File(dir, NPU_ENC_FILE), new File(dir, NPU_MID_FILE),
+            NpuFiles.dropHostedSources(new File(dir, NPU_ENC_FILE), new File(dir, NPU_MID_FILE),
                     new File(dir, NPU_FLOW_FILE));
-        }
-    }
-
-    /**
-     * An NPU session over a fixed-shape graph, compiled once into
-     * {@code compiled}: fp16 on the HTP (a hosted graph, its INT8 weights
-     * widened) or fully INT8 (a downloaded decoder).
-     */
-    private static OrtSession npuSession(File source, File compiled, boolean fp16) throws OrtException {
-        final boolean compile = !compiled.isFile();
-        try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
-            final Map<String, String> qnn = new HashMap<>();
-            qnn.put("backend_path", npuBackend());
-            qnn.put("htp_performance_mode", "burst");
-            if (fp16) {
-                qnn.put("enable_htp_fp16_precision", "1");
-                // The hosted files keep INT8 weights behind DequantizeLinear, which the
-                // fp16 NPU graph cannot run; ORT folds them into float weights first.
-                options.addConfigEntry("session.disable_quant_qdq", "1");
-            } else {
-                // The latent's own quantize step runs on the NPU too.
-                qnn.put("offload_graph_io_quantization", "1");
-            }
-            addNpu(options, qnn);
-            // All of it on the NPU or not at all: a half-offloaded graph is slower.
-            options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
-            if (compile) {
-                options.addConfigEntry("ep.context_enable", "1");
-                options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
-            }
-            return env().createSession((compile ? source : compiled).getAbsolutePath(), options);
-        } catch (OrtException | RuntimeException e) {
-            compiled.delete();
-            throw e;
         }
     }
 
@@ -1061,37 +629,29 @@ public final class PiperModel implements Closeable {
         group.npuDecoder = npu;
     }
 
-    private static void remember(File failed, Exception e) {
-        try (java.io.FileWriter w = new java.io.FileWriter(failed)) {
-            w.write(String.valueOf(e));
-        } catch (IOException ignored) {
-            // Tried again next load.
-        }
-    }
-
     /** The hosted fixed-window decoder for voices with no INT8 one. */
     private void attachHostedDecoder(File onnx, File hosted) {
-        if (!hasHosted(hosted)) {
+        if (!NpuFiles.hasHosted(hosted)) {
             group.npuProblem = "on the CPU (no NPU decoder for this voice)";
             return;
         }
-        if (awaitingSource(onnx, hosted, compiledFile(onnx, hosted))) {
+        if (NpuFiles.awaitingSource(onnx, hosted, NpuFiles.compiledFile(onnx, hosted))) {
             group.npuProblem = "on the CPU until its NPU file downloads again";
             return;
         }
-        final File failed = failedFile(onnx, hosted);
+        final File failed = NpuFiles.failedFile(onnx, hosted);
         if (failed.exists()) {
             group.npuProblem = "on the CPU (NPU decoder failed before)";
             return;
         }
         OrtSession npu = null;
         try {
-            npu = npuSession(hosted, compiledFile(onnx, hosted), true);
+            npu = NpuFiles.npuSession(hosted, NpuFiles.compiledFile(onnx, hosted), true);
             useNpuDecoder(npu, "FP16");
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
             group.npuProblem = "on the CPU (NPU failed: " + e + ")";
-            remember(failed, e);
+            NpuFiles.remember(failed, e);
         }
     }
 
@@ -1105,29 +665,29 @@ public final class PiperModel implements Closeable {
         final File encFile = new File(dir, NPU_ENC_FILE);
         final File midFile = new File(dir, NPU_MID_FILE);
         final File flowFile = new File(dir, NPU_FLOW_FILE);
-        if (!hasHosted(encFile) || !hasHosted(midFile) || !hasHosted(flowFile)) {
+        if (!NpuFiles.hasHosted(encFile) || !NpuFiles.hasHosted(midFile) || !NpuFiles.hasHosted(flowFile)) {
             return;
         }
-        final File failed = failedFile(onnx, encFile);
+        final File failed = NpuFiles.failedFile(onnx, encFile);
         if (failed.exists()) {
             return;
         }
-        if (awaitingSource(onnx, encFile, compiledFile(onnx, encFile))
-                || awaitingSource(onnx, flowFile, compiledFile(onnx, flowFile))
-                || awaitingSource(onnx, midFile, compiledOf(midFile))) {
+        if (NpuFiles.awaitingSource(onnx, encFile, NpuFiles.compiledFile(onnx, encFile))
+                || NpuFiles.awaitingSource(onnx, flowFile, NpuFiles.compiledFile(onnx, flowFile))
+                || NpuFiles.awaitingSource(onnx, midFile, NpuFiles.compiledOf(midFile))) {
             return; // the CPU encoder speaks until the files download again
         }
         OrtSession enc = null;
         OrtSession mid = null;
         OrtSession flow = null;
         try {
-            enc = npuSession(encFile, compiledFile(onnx, encFile), true);
-            flow = npuSession(flowFile, compiledFile(onnx, flowFile), true);
+            enc = NpuFiles.npuSession(encFile, NpuFiles.compiledFile(onnx, encFile), true);
+            flow = NpuFiles.npuSession(flowFile, NpuFiles.compiledFile(onnx, flowFile), true);
             // Its optimized ORT-format copy, made at the first load, opens in a
             // fraction of the time (the .onnx took 110-260 ms every load).
-            final File midOrt = compiledOf(midFile);
+            final File midOrt = NpuFiles.compiledOf(midFile);
             if (midOrt.isFile()) {
-                final ByteBuffer midBytes = map(midOrt);
+                final ByteBuffer midBytes = ModelFiles.map(midOrt);
                 mid = open(null, midBytes, group.threads);
                 group.mappedMid = midBytes; // ONNX Runtime reads the weights from it
             } else {
@@ -1172,7 +732,7 @@ public final class PiperModel implements Closeable {
             closeQuietly(mid);
             closeQuietly(flow);
             android.util.Log.w("PiperVoices", "Natural voice " + config.key + " encoder stays on the CPU: " + e);
-            remember(failed, e);
+            NpuFiles.remember(failed, e);
         }
     }
 
@@ -1182,24 +742,24 @@ public final class PiperModel implements Closeable {
      * by the file's size so an updated file recompiles).
      */
     private boolean attachInt8Npu(File onnx, File int8) {
-        final File failed = derivedFile(onnx, ".npuq-r3." + hostedSize(int8) + ".failed");
+        final File failed = ModelFiles.derivedFile(onnx, ".npuq-r3." + NpuFiles.hostedSize(int8) + ".failed");
         if (failed.exists()) {
             return false;
         }
-        final File compiled = compiledOf(int8);
-        if (awaitingSource(onnx, int8, compiled)) {
+        final File compiled = NpuFiles.compiledOf(int8);
+        if (NpuFiles.awaitingSource(onnx, int8, compiled)) {
             group.npuProblem = "on the CPU until its NPU file downloads again";
             return false;
         }
         OrtSession npu = null;
         try {
-            npu = npuSession(int8, compiled, false);
+            npu = NpuFiles.npuSession(int8, compiled, false);
             useNpuDecoder(npu, "INT8");
             return true;
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
             compiled.delete();
-            remember(failed, e);
+            NpuFiles.remember(failed, e);
             return false;
         }
     }
@@ -1226,7 +786,7 @@ public final class PiperModel implements Closeable {
     }
 
     /** The process's ONNX Runtime environment. */
-    private static OrtEnvironment env() {
+    static OrtEnvironment env() {
         final OrtEnvironment env = OrtEnvironment.getEnvironment();
         sRuntimeVersion = env.getVersion();
         return env;
@@ -1243,119 +803,6 @@ public final class PiperModel implements Closeable {
         return sRuntimeVersion;
     }
 
-    /** model.onnx -> model.<ONNX Runtime version><suffix>: a runtime update re-optimizes. */
-    private static File derivedFile(File onnx, String suffix) {
-        return new File(onnx.getParentFile(), OPTIMIZED_PREFIX + env().getVersion() + suffix);
-    }
-
-    /**
-     * File in the shared directory holding the pre-optimized model, if this
-     * voice shares its model weights with others (e.g. AI4Bharat Rasa voices).
-     */
-    static File sharedDerivedFile(File onnx, String suffix) {
-        final File dir = onnx.getParentFile();
-        final String md5 = sourceMd5(dir);
-        if (md5 == null) {
-            return null;
-        }
-        final File parent = dir.getParentFile();
-        if (parent == null) {
-            return null;
-        }
-        final File sharedDir;
-        if ("voices".equals(parent.getName())) {
-            sharedDir = new File(parent.getParentFile(), "shared");
-        } else {
-            sharedDir = new File(parent, "shared");
-        }
-        if (!sharedDir.isDirectory() && !sharedDir.mkdirs()) {
-            return null;
-        }
-        return new File(sharedDir, md5 + "." + env().getVersion() + suffix);
-    }
-
-    /**
-     * Writes the optimized copy: encoder and decoder if the model splits,
-     * else one alignment-enabled model. On any failure there is simply none.
-     */
-    private static void buildOptimized(File onnx, File optimized, File encoder, File decoder,
-                                       int threads) {
-        final File dir = onnx.getParentFile();
-        final File[] stale = dir.listFiles((d, n) -> n.startsWith(OPTIMIZED_PREFIX)
-                && (n.endsWith(".ort") || n.endsWith(".tmp") || n.contains(".npu")) && !n.equals(NPU_DECODER_FILE));
-        if (stale != null) {
-            for (File f : stale) {
-                f.delete();
-            }
-        }
-        final File sharedEnc = sharedDerivedFile(onnx, ENCODER_SUFFIX);
-        final File sharedDec = sharedDerivedFile(onnx, DECODER_SUFFIX);
-        final File sharedOpt = sharedDerivedFile(onnx, OPTIMIZED_SUFFIX);
-        final File encoderSource = new File(dir, OPTIMIZED_PREFIX + "encoder.tmp");
-        final File decoderSource = new File(dir, OPTIMIZED_PREFIX + "decoder.tmp");
-        try {
-            if (PiperSplit.split(onnx, encoderSource, decoderSource)
-                    && saveOptimized(encoderSource, encoder, threads)) {
-                if (saveOptimized(decoderSource, decoder, threads)) {
-                    if (sharedEnc != null && !sharedEnc.isFile()) {
-                        share(encoder, sharedEnc);
-                        share(decoder, sharedDec);
-                    }
-                    return;
-                }
-                encoder.delete();
-            }
-        } catch (IOException | RuntimeException ignored) {
-            // Not splittable: one model below.
-        } finally {
-            encoderSource.delete();
-            decoderSource.delete();
-        }
-        final File aligned = new File(dir, OPTIMIZED_PREFIX + "aligned.tmp");
-        try {
-            if (saveOptimized(PiperAlignment.addDurationOutput(onnx, aligned) ? aligned : onnx, optimized,
-                    threads)) {
-                if (sharedOpt != null && !sharedOpt.isFile()) {
-                    share(optimized, sharedOpt);
-                }
-            }
-        } catch (IOException | RuntimeException ignored) {
-            // No optimized copy: loads read the original.
-        } finally {
-            aligned.delete();
-        }
-    }
-
-    /** {@code source} graph-optimized into ONNX Runtime's format at {@code out}. */
-    /**
-     * Moves a freshly built file into the shared store and links it back, so
-     * the real bytes live in the shared dir (kept while any voice of that
-     * model is installed) rather than inside the first voice's dir, where
-     * deleting that voice left every other voice's link dangling.
-     */
-    private static void share(File built, File shared) {
-        if (built.renameTo(shared) && !PiperDownloads.linkOrCopy(shared, built)) {
-            shared.renameTo(built); // keep this voice working without a share
-        }
-    }
-
-    private static boolean saveOptimized(File source, File out, int threads) {
-        final File partial = new File(out.getParentFile(), out.getName() + ".tmp");
-        try (OrtSession.SessionOptions options = options(threads)) {
-            options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
-            options.setOptimizedModelFilePath(partial.getAbsolutePath());
-            options.addConfigEntry("session.save_model_format", "ORT");
-            env().createSession(source.getAbsolutePath(), options).close();
-            if (partial.renameTo(out)) {
-                return true;
-            }
-        } catch (OrtException | RuntimeException ignored) {
-            // Falls through: no copy.
-        }
-        partial.delete();
-        return false;
-    }
-
     static void closeQuietly(OrtSession s) {
         if (s != null) {
             try {
@@ -1363,12 +810,6 @@ public final class PiperModel implements Closeable {
             } catch (OrtException ignored) {
                 // Nothing more to release.
             }
-        }
-    }
-
-    private static ByteBuffer map(File file) throws IOException {
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
-            return raf.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, raf.length());
         }
     }
 
@@ -1982,5 +1423,4 @@ public final class PiperModel implements Closeable {
         }
     }
 }
-
 

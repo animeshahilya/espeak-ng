@@ -17,10 +17,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -131,7 +127,7 @@ public final class PiperVoiceStore {
                     }
                 }
             }
-            final String md5 = PiperModel.sourceMd5(dir);
+            final String md5 = ModelFiles.sourceMd5(dir);
             final File parent = dir.getParentFile();
             final File[] shared = md5 == null || parent == null ? null
                     : new File(parent.getParentFile(), SHARED_DIR).listFiles();
@@ -171,13 +167,13 @@ public final class PiperVoiceStore {
 
     /** Other installed voices on the same model file (Rasa speakers, Supertonic styles). */
     public static int sharedWith(Context storageContext, Installed voice) {
-        final String md5 = PiperModel.sourceMd5(voice.dir);
+        final String md5 = ModelFiles.sourceMd5(voice.dir);
         if (md5 == null) {
             return 0;
         }
         int n = 0;
         for (Installed v : list(storageContext)) {
-            if (v != voice && !v.key.equals(voice.key) && md5.equalsIgnoreCase(PiperModel.sourceMd5(v.dir))) {
+            if (v != voice && !v.key.equals(voice.key) && md5.equalsIgnoreCase(ModelFiles.sourceMd5(v.dir))) {
                 n++;
             }
         }
@@ -276,7 +272,7 @@ public final class PiperVoiceStore {
     private static Installed load(File dir) {
         final File json = new File(dir, CONFIG_FILE);
         // The model itself is deleted once its optimized copy loads
-        // (PiperModel.dropOriginal); its "source" MD5 record stays.
+        // (ModelFiles.dropOriginal); its "source" MD5 record stays.
         if (!dir.isDirectory() || !json.isFile()
                 || !(new File(dir, MODEL_FILE).isFile() || new File(dir, PiperDownloads.SOURCE_FILE).isFile())) {
             return null;

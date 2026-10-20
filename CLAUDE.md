@@ -391,13 +391,13 @@ voices" does not, so voices can still be deleted to free space.
 - **Storage/download.** Voices live in device-protected
   `files/piper/voices/<key>/model.onnx{,.json}` plus the optimized copy,
   deleted with the voice (`PiperVoiceStore`). Once the optimized copy has
-  loaded, `PiperModel.dropOriginal` deletes model.onnx (and a shared
+  loaded, `ModelFiles.dropOriginal` deletes model.onnx (and a shared
   original): the phone kept both, twice the space (Pixel 8, 2026-10-08:
   Priyamvada 35 -> 18 MB, Hetal 93 -> 49, Kareem 137 -> 74). `source` (the
   model MD5) then stands for it: it marks the voice installed, keys the
-  phrase cache and session sharing (`PiperModel.stamp`), and a second Rasa
+  phrase cache and session sharing (`ModelFiles.stamp`), and a second Rasa
   voice installs from the shared optimized copy alone
-  (`PiperModel.hasSharedOptimized`, 28 kB, loads in 2 ms beside the first).
+  (`ModelFiles.hasSharedOptimized`, 28 kB, loads in 2 ms beside the first).
   After an ONNX Runtime update the older copy is adopted
   (`adoptOlderOptimized`; ORT format loads in newer runtimes); if it fails
   it is deleted and `PiperDownloads.restoreMissing` downloads the voice
@@ -576,7 +576,7 @@ voices" does not, so voices can still be deleted to free space.
   as the standard APK plus Qualcomm's QNN plugin
   (`com.qualcomm.qti:onnxruntime-android-qnn` 2.6.0, QAIRT 2.50, with
   `qnn-runtime` 2.50.0; since 2026-10-12 - Microsoft's built-in QNN package
-  stopped at 1.29 / QNN 2.42). `PiperModel.npuDevices` registers the plugin
+  stopped at 1.29 / QNN 2.42). `NpuFiles.npuDevices` registers the plugin
   (`libonnxruntime_providers_qnn.so` from the native lib dir) and
   `addNpu` puts a session on its device; `backend_path` must be the full
   path of `libQnnHtp.so` (by `backend_type` alone the DSP could not open
@@ -816,7 +816,7 @@ voices" does not, so voices can still be deleted to free space.
   Standard names (`/Mul_7_output_0`, `/Add_output_0`) the INT8 NPU decoders
   read; checked on PC: enc+dec equals the whole model exactly, and the NPU
   file fed the Compact latent is as close as with the Standard one.
-  `PiperModel.forgetOptimized` re-splits a migrated voice where the original
+  `ModelFiles.forgetOptimized` re-splits a migrated voice where the original
   is still kept (Snapdragon build).
 - **INT8 weights** (2026-10-08, release `int8-v1` on sherpa-onnx-respin-syspin,
   its `build_small.py`): every model the app lists is stored with INT8
@@ -1038,7 +1038,7 @@ pitch and volume as 50-200% of the main settings, stored as
 `lang_<lang>_<field>` = "80"; unset or empty is 100%, so output is
 unchanged until a user sets one (NVDA parity). Each `SynthUnit` carries its
 reader's language (the eSpeak voice's, or the natural voice's) and
-`TtsService.setProsody` / `NaturalAhead.start` apply its card - the
+`RequestSettings.setProsody` / `NaturalAhead.start` apply its card - the
 request's own language included. Who reads which part is one decision,
 `tts/RunPlan` (JVM-tested), for both the natural-voice and eSpeak paths.
 Limit: a run eSpeak switches into by itself inside one unit (Hindi words in
@@ -1048,7 +1048,7 @@ English unchanged; Priyamvada at 150% 3.97 -> 3.06 s.
 Step 2: `lang_<lang>_cue` ("" / "pause" 250 ms / "tone", `Earcons.switchCue`)
 plays where speech switches into the language from another, written before
 the next unit's chunk context so word ranges stay aligned
-(`TtsService.writeSwitchCue`, both paths); a cue on both languages gives one
+(`RequestSettings.writeSwitchCue`, both paths); a cue on both languages gives one
 each way. Test: Ukrainian inside English +0.25 s pause, +0.11 s tone.
 eSpeak lengths drift ~15 ms with the utterances before them (its generator
 keeps state): device tests warm up once and compare within 25 ms.
@@ -1099,7 +1099,7 @@ Packages (split 2026-10-10, 89c1dcaa; tests mirror them so package-private
 access still works):
 - root: `EspeakApp`, `SpeechSynthesis`, `TtsService`, `TtsSettingsActivity`, `Voice`, `VoiceVariant`
 - `text/`: the text pipeline - `TextPreprocessor`, `TextOffsetMap`, `UnicodeNormalization`, `Nvda*`, `NumberReading`, `Abbreviations`, `PhrasePauses`, `Earcons`, `TechWordsNormalizer`, `CompoundSplitter`, `HinglishReader`, `LanguageRuns`, `DevanagariClassifier`, `ScriptLanguages`, `Tashkeel`, `UserDictionary`/`UserDictionaryManager`, `AsciiUtils`
-- `tts/`: audio and framework entry points - `VoiceEngine`/`VoiceEngineRegistry`/`EspeakVoiceEngine`/`PiperVoiceEngine`, `TtsAudioDispatcher`, `AudioOptimizer`, `PcmResampler`, `CheckVoiceData`, `DownloadVoiceData`, `GetSampleText`, `PiperDownloadReceiver`
+- `tts/`: audio and framework entry points - `VoiceEngine`/`VoiceEngineRegistry`/`EspeakVoiceEngine`/`PiperVoiceEngine`, `TtsAudioDispatcher`, `AudioOptimizer`, `PcmResampler`, `RequestSettings` (rate, volume, per-language prosody and natural-voice parameters of one request), `CheckVoiceData`, `DownloadVoiceData`, `GetSampleText`, `PiperDownloadReceiver`
 - `piper/`: natural voices (see above)
 - `ui/`: `VoiceSettings`, `LanguageSettings`, `ReadingHistory`, `VoiceProfile`, `UserDictionaryScreen`, and the settings screen's parts (`SettingsFragment`, `SettingsBuilder`, `SettingsDialogs`, `SpeechPreview`, `PickedFiles`, `LanguageLabels`, split out of `TtsSettingsActivity` 2026-10-20); `ui/preference/`: custom preference widgets (14, incl. `AccessiblePreferenceCategory`, `VoiceVariantPreference`)
 - `util/`: `TolerantPreferences`, `BackupRestoreHelper`, `LogExporter`, `FileUtils`
@@ -1130,7 +1130,7 @@ words would replace running text). The native engine is forced to `PUNCT_NONE` o
 - **DownloadVoiceData** — Extracts `espeakdata.zip` (every bundled language) to device-protected storage on a single-thread executor (~1 s on a Pixel 8 for the ~14 MB archive; runs on the caller's behalf via `CheckVoiceData.ensureVoiceData()`, which also re-verifies the tree before reporting success)
 - **TtsSettingsActivity** — the settings host: edge-to-edge window insets, predictive back, the menu's SearchView, file-picker results, and the `CONFIGURE_ENGINE` target (on Wear, the launcher entry point). The screen itself is `ui/SettingsFragment` (screen stack, sub-screen focus, the whole-tree settings search with scroll+focus to a result, the status-bar backing). `ui/SettingsBuilder` gathers engine data off the main thread, inflates `res/xml/preferences.xml` (list choices in `res/values/arrays.xml`) and wires every row (`buildPreferences()`: engine-dependent rows, Wear-hidden rows dropped, summaries, `showWhile`, sleep-timer arming - delayed mute so the arming toast is still spoken). `ui/SpeechPreview` plays samples through the preview engine (per-language touch-and-hold samples retarget it per locale and restore the voice after; the routing preview). `ui/SettingsDialogs`: About, recent reading, what's new, and `markAlertTitleHeading()` (dialog titles are TalkBack headings; also `ButtonDialogFragment.onStart()`). `ui/PickedFiles`: dictionary/backup/profile/voice-data import and export off the main thread. `ui/LanguageLabels`: voice-picker labels - the system-language name first (`Locale.getDisplayName()`), the voice data's English name in parentheses. `UserDictionaryScreen` holds the user dictionary editor. Sub-screen navigation moves TalkBack focus to the first row (announcement alone leaves focus behind); conditionally revealed rows (e.g. custom intonation group) announce on reveal
 - **Voice / VoiceVariant** — Data models for voice metadata and variant parsing, with robust locale resolution
-- **Piper\*** — natural voices (see "Natural voices (Piper)" above): `PiperEngine` (model cache + text->audio), `PiperModel` (ORT session), `PiperPhonemes` (records -> chunks -> ids), `PiperAudio` (PCM post-processing, word timing), `PiperVoiceConfig` (`.onnx.json`), `PiperVoiceStore` (installed voices + per-language prefs), `PiperDownloads`/`PiperDownloadReceiver` (catalog, DownloadManager, verify/install), `PiperSettings` (the settings page). Everything except the store/downloads/settings is Android-free and unit-tested on the JVM.
+- **Piper\*** — natural voices (see "Natural voices (Piper)" above): `PiperEngine` (model cache + text->audio), `PiperModel` (ORT sessions and inference), `NpuFiles` (QNN plugin, NPU sessions, hosted NPU files and what they compile into), `ModelFiles` (optimized and shared model copies on disk), `PiperPhonemes` (records -> chunks -> ids), `PiperAudio` (PCM post-processing, word timing), `PiperVoiceConfig` (`.onnx.json`), `PiperVoiceStore` (installed voices + per-language prefs), `PiperDownloads`/`PiperDownloadReceiver` (catalog, DownloadManager, verify/install), `PiperSettings` (the settings page). Everything except the store/downloads/settings is Android-free and unit-tested on the JVM.
 - **NumberReading (everyday + STEM)** — besides money/digit grouping/codes, opt-in rows for phone numbers, dates, maths, fractions, sub/superscripts, dimensions and Roman numerals (`espeak_read_*`, all default false, on the Numbers page with a live preview)
 - **TechWordsNormalizer** — spells tech acronyms and brand names (OTP -> "O T P", ATMs -> "A-T M's", PhonePe -> "Phone Pay"); always on for natural voices, opt-in for eSpeak (see "Acronyms, app names, phone numbers")
 - **CompoundSplitter** — opt-in (`espeak_split_compounds`, default off) English whole-word compound splits from TGSpeechBox's MIT table (`data/compounds/en.tsv`, 3676 entries); blanket splitting measured net-zero on Whisper, so entries that read worse split (cowboy, pitchman, undergarment) were pruned - A/B any change with `CompoundVoiceCheckDeviceTest`

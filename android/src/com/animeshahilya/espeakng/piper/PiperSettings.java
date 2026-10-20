@@ -88,7 +88,7 @@ public final class PiperSettings {
         return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
                 && "QTI".equalsIgnoreCase(android.os.Build.SOC_MANUFACTURER)
                 && hasModernNpu(android.os.Build.SOC_MODEL)
-                && !PiperModel.hasNpuRuntime();
+                && !NpuFiles.hasNpuRuntime();
     }
 
     /** SM8450 and later 8-series ("SM8450", "SM8550", "SM8650", "SM8750", ...). */
