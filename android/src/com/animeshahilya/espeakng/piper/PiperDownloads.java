@@ -1163,9 +1163,10 @@ public final class PiperDownloads {
                     .trim().split("\\r?\\n");
             final File model = new File(staging, PiperVoiceStore.MODEL_FILE);
             final String md5 = copyWithMd5(target, model);
+            // The catalog only lists voices with an MD5, so a missing one is
+            // damage: refuse it rather than install unchecked bytes.
             final String expectedMd5 = expected.length > 0 ? expected[0].trim() : "";
-            final boolean md5Known = !expectedMd5.isEmpty() && !"null".equalsIgnoreCase(expectedMd5);
-            if (md5Known && !expectedMd5.equalsIgnoreCase(md5)) {
+            if (!isMd5(expectedMd5) || !expectedMd5.equalsIgnoreCase(md5)) {
                 throw new IOException("Model checksum mismatch for " + key);
             }
             //noinspection ResultOfMethodCallIgnored
@@ -1285,7 +1286,8 @@ public final class PiperDownloads {
                     if (target.isFile() && target.length() == size) {
                         continue;
                     }
-                    if (!isMd5(md5) || !isSafePath(path) || !path.startsWith(SUPERTONIC_RELEASE_PREFIX)) {
+                    if (!isMd5(md5) || !isSafePath(path) || !path.startsWith(SUPERTONIC_RELEASE_PREFIX)
+                            || !isSafeKey(e.getKey()) || e.getKey().indexOf('.') < 0) {
                         throw new IOException("Bad Supertonic file entry " + e.getKey());
                     }
                     final String ext = e.getKey().substring(e.getKey().lastIndexOf('.'));
