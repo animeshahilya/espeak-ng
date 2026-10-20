@@ -38,8 +38,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1765,43 +1763,19 @@ public final class PiperDownloads {
 
     /** MD5 of a file, streamed (models are 40-200 MB). */
     public static String md5(File file) throws IOException {
-        try (InputStream in = new java.io.FileInputStream(file)) {
-            final MessageDigest digest = MessageDigest.getInstance("MD5");
-            final byte[] buf = new byte[1 << 16];
-            int n;
-            while ((n = in.read(buf)) > 0) {
-                digest.update(buf, 0, n);
-            }
-            return hex(digest.digest());
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
+        return FileUtils.hash(file, "MD5");
     }
 
     public static String md5(byte[] data) {
-        try {
-            return hex(MessageDigest.getInstance("MD5").digest(data));
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
+        return FileUtils.hash(data, "MD5");
     }
 
     private static String copyWithMd5(File from, File to) throws IOException {
-        final MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IOException(e);
-        }
         final File tmp = new File(to.getPath() + ".tmp");
         try {
+            final String md5;
             try (InputStream in = new FileInputStream(from); OutputStream out = new FileOutputStream(tmp)) {
-                final byte[] buf = new byte[1 << 16];
-                int n;
-                while ((n = in.read(buf)) > 0) {
-                    digest.update(buf, 0, n);
-                    out.write(buf, 0, n);
-                }
+                md5 = FileUtils.hash(in, "MD5", out);
             }
             if (to.exists()) {
                 to.delete();
@@ -1810,19 +1784,11 @@ public final class PiperDownloads {
                 tmp.delete();
                 throw new IOException("Cannot rename " + tmp + " to " + to);
             }
-            return hex(digest.digest());
+            return md5;
         } catch (IOException | RuntimeException e) {
             tmp.delete();
             throw e;
         }
-    }
-
-    private static String hex(byte[] bytes) {
-        final StringBuilder sb = new StringBuilder(bytes.length * 2);
-        for (byte b : bytes) {
-            sb.append(String.format(Locale.ROOT, "%02x", b));
-        }
-        return sb.toString();
     }
 }
 

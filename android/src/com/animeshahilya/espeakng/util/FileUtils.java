@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -67,6 +69,47 @@ public class FileUtils {
             content.write(buffer, 0, bytesRead);
         }
         return content;
+    }
+
+    /** Hex digest ("MD5", "SHA-256"...) of a stream, copied into {@code out} as it is read unless null. */
+    public static String hash(InputStream in, String algorithm, OutputStream out) throws IOException {
+        final MessageDigest digest = digest(algorithm);
+        final byte[] buf = new byte[1 << 16];
+        for (int n; (n = in.read(buf)) > 0; ) {
+            digest.update(buf, 0, n);
+            if (out != null) {
+                out.write(buf, 0, n);
+            }
+        }
+        return hex(digest.digest());
+    }
+
+    /** Hex digest of a file, streamed (voice models are 40-200 MB). */
+    public static String hash(File file, String algorithm) throws IOException {
+        try (InputStream in = new FileInputStream(file)) {
+            return hash(in, algorithm, null);
+        }
+    }
+
+    public static String hash(byte[] data, String algorithm) {
+        return hex(digest(algorithm).digest(data));
+    }
+
+    /** Every Android has MD5, SHA-1 and SHA-256. */
+    public static MessageDigest digest(String algorithm) {
+        try {
+            return MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static String hex(byte[] bytes) {
+        final StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            sb.append(Character.forDigit((b >> 4) & 0xf, 16)).append(Character.forDigit(b & 0xf, 16));
+        }
+        return sb.toString();
     }
 
     public static void write(File outputFile, String contents) throws IOException {

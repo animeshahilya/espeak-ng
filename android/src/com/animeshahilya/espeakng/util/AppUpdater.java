@@ -37,11 +37,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
@@ -423,18 +420,9 @@ public final class AppUpdater {
     }
 
     static String sha256(File f) {
-        try (InputStream in = new FileInputStream(f)) {
-            final MessageDigest md = MessageDigest.getInstance("SHA-256");
-            final byte[] buf = new byte[65536];
-            for (int n; (n = in.read(buf)) > 0; ) {
-                md.update(buf, 0, n);
-            }
-            final StringBuilder sb = new StringBuilder(64);
-            for (byte b : md.digest()) {
-                sb.append(String.format(Locale.ROOT, "%02x", b));
-            }
-            return sb.toString();
-        } catch (Exception e) {
+        try {
+            return FileUtils.hash(f, "SHA-256");
+        } catch (IOException e) {
             return null;
         }
     }

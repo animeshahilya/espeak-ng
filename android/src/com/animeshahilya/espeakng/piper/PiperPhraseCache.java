@@ -9,6 +9,7 @@
 
 package com.animeshahilya.espeakng.piper;
 import com.animeshahilya.espeakng.Voice;
+import com.animeshahilya.espeakng.util.FileUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -314,25 +315,17 @@ public final class PiperPhraseCache {
     private static File diskFile(File dir, Key key) {
         final String voiceKey = key.voice.indexOf('|') > 0 ? key.voice.substring(0, key.voice.indexOf('|'))
                 : key.voice;
-        try {
-            final MessageDigest md = MessageDigest.getInstance("SHA-1");
-            md.update(key.voice.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            for (long id : key.ids) {
-                for (int b = 0; b < 8; b++) {
-                    md.update((byte) (id >>> (8 * b)));
-                }
+        final MessageDigest md = FileUtils.digest("SHA-1");
+        md.update(key.voice.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        for (long id : key.ids) {
+            for (int b = 0; b < 8; b++) {
+                md.update((byte) (id >>> (8 * b)));
             }
-            md.update((key.speaker + ":" + key.lengthScale + ":" + key.noise + ":" + key.noiseW)
-                    .getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            final StringBuilder hex = new StringBuilder();
-            final byte[] d = md.digest();
-            for (int i = 0; i < 10; i++) {
-                hex.append(String.format(java.util.Locale.ROOT, "%02x", d[i]));
-            }
-            return new File(dir, SANITIZE.matcher(voiceKey).replaceAll("_") + "-" + hex + ".pcm");
-        } catch (java.security.NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
         }
+        md.update((key.speaker + ":" + key.lengthScale + ":" + key.noise + ":" + key.noiseW)
+                .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        final String hex = FileUtils.hex(md.digest()).substring(0, 20);
+        return new File(dir, SANITIZE.matcher(voiceKey).replaceAll("_") + "-" + hex + ".pcm");
     }
 
     private Stored readDisk(Key key) {
