@@ -319,4 +319,15 @@ public class TechWordsNormalizerTest {
         assertTrue(TechWordsNormalizer.process("Ask Perplexity").contains("Per-plexity"));
         assertTrue(TechWordsNormalizer.process("Mistral's model").contains("Mis-tral's"));
     }
+
+    /** Written as one word or with a curly apostrophe, a term reads the same. */
+    @Test
+    public void testJoinedSpellingsAndCurlyApostrophes() {
+        assertEquals("face I D", TechWordsNormalizer.process("faceid")); // was "Facebook"
+        assertEquals("A-T M PIN", TechWordsNormalizer.process("ATMPIN")); // was "M PIN"
+        assertEquals("user I Ds", TechWordsNormalizer.process("userids"));
+        assertEquals("U P I's app", TechWordsNormalizer.process("UPI’s app"));
+        assertEquals("A-T M's", TechWordsNormalizer.process("ATM’s"));
+        assertEquals("Q R codes", TechWordsNormalizer.process("QR codes"));
+    }
 }
