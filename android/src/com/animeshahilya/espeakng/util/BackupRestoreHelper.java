@@ -19,6 +19,7 @@ import com.animeshahilya.espeakng.tts.DownloadVoiceData;
 import com.animeshahilya.espeakng.EspeakApp;
 import com.animeshahilya.espeakng.piper.PiperDownloads;
 import com.animeshahilya.espeakng.ui.ReadingHistory;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
 import com.animeshahilya.espeakng.TtsService;
 import com.animeshahilya.espeakng.text.UserDictionary;
 import com.animeshahilya.espeakng.text.UserDictionaryManager;
@@ -65,11 +66,8 @@ public final class BackupRestoreHelper {
         JSONObject prefsJson = new JSONObject();
         Map<String, ?> all = prefs.getAll();
         for (Map.Entry<String, ?> e : all.entrySet()) {
-            if (PiperDownloads.isDeviceLocalPref(e.getKey())) {
-                continue; // download ids mean nothing on another device
-            }
-            if (ReadingHistory.PREF_HISTORY_ITEMS.equals(e.getKey())) {
-                continue; // what was read aloud is not a setting, and backups get shared
+            if (!isSetting(e.getKey())) {
+                continue;
             }
             Object v = e.getValue();
             if (v instanceof String || v instanceof Boolean || v instanceof Integer
@@ -94,15 +92,34 @@ public final class BackupRestoreHelper {
         }
     }
 
+    /**
+     * A user's choice, as opposed to this app's own state: exported, and the
+     * only kind of key a restore writes. Backups get shared, so a restored
+     * file must not reach download bookkeeping, crash guards, migration
+     * flags or reading history (what the phone read aloud).
+     */
+    static boolean isSetting(String key) {
+        return key != null && !PiperDownloads.isDeviceLocalPref(key)
+                && !ReadingHistory.PREF_HISTORY_ITEMS.equals(key)
+                && !EspeakApp.PREF_PREFERENCES_MIGRATED.equals(key)
+                && !VoiceSettings.PREF_WHATS_NEW_SEEN.equals(key);
+    }
+
+    /** Far above any real backup (settings plus a large dictionary), small enough to parse on any phone. */
+    static final int MAX_BACKUP_CHARS = 5 * 1024 * 1024;
+    private static final int MAX_KEYS = 2000;
+    private static final int MAX_VALUE_CHARS = 64 * 1024;
+
     public static int importFromStream(Context context, InputStream is) throws Exception {
         StringBuilder sb = new StringBuilder(65536);
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(is, StandardCharsets.UTF_8), 32768)) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-                if (sb.length() > 50 * 1024 * 1024) {
-                    throw new IllegalArgumentException("Backup file too large (>50MB)");
+            final char[] buf = new char[32768];
+            int n;
+            while ((n = br.read(buf)) > 0) {
+                sb.append(buf, 0, n);
+                if (sb.length() > MAX_BACKUP_CHARS) {
+                    throw new IllegalArgumentException("Backup file too large (>5 MB)");
                 }
             }
         }
@@ -131,14 +148,18 @@ public final class BackupRestoreHelper {
             SharedPreferences prefs = EspeakApp.prefs(context);
             Map<String, ?> existingPrefs = prefs.getAll();
             SharedPreferences.Editor ed = prefs.edit();
+            if (prefsJson.length() > MAX_KEYS) {
+                throw new IllegalArgumentException("Backup has too many settings");
+            }
             java.util.Iterator<String> keys = prefsJson.keys();
             while (keys.hasNext()) {
                 String k = keys.next();
-                if (PiperDownloads.isDeviceLocalPref(k)) {
-                    continue; // download ids, crash strikes: about another phone
+                if (!isSetting(k)) {
+                    continue;
                 }
                 Object v = prefsJson.opt(k);
-                if (v == null || JSONObject.NULL.equals(v)) {
+                if (v == null || JSONObject.NULL.equals(v)
+                        || String.valueOf(v).length() > MAX_VALUE_CHARS) {
                     continue;
                 }
                 Object cur = existingPrefs.get(k);
