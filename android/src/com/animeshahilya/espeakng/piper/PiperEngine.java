@@ -9,6 +9,8 @@
 
 package com.animeshahilya.espeakng.piper;
 
+import com.animeshahilya.espeakng.tts.RequestSettings;
+
 import com.animeshahilya.espeakng.EspeakApp;
 import com.animeshahilya.espeakng.text.Tashkeel;
 import com.animeshahilya.espeakng.TtsService;
@@ -648,7 +650,7 @@ public final class PiperEngine {
      * become words in the voice's language. Indian languages use CLDR's rules
      * bundled in {@code data/numbers/} (Android's ICU has only a few of them);
      * other languages use the phone's ICU. Null when neither has rules: the
-     * digits then go to eSpeak (TtsService.needsDigitHelp).
+     * digits then go to eSpeak (RequestSettings.needsDigitHelp).
      */
     public static java.util.function.UnaryOperator<String> numberWords(String language) {
         if (language == null) {

@@ -24,6 +24,8 @@
  */
 
 package com.animeshahilya.espeakng;
+
+import com.animeshahilya.espeakng.tts.RequestSettings;
 import com.animeshahilya.espeakng.text.AsciiUtils;
 import com.animeshahilya.espeakng.tts.RunPlan;
 import com.animeshahilya.espeakng.tts.AudioOptimizer;
@@ -32,7 +34,6 @@ import com.animeshahilya.espeakng.text.CompoundSplitter;
 import com.animeshahilya.espeakng.tts.DownloadVoiceData;
 import com.animeshahilya.espeakng.text.Earcons;
 import com.animeshahilya.espeakng.tts.EspeakVoiceEngine;
-import com.animeshahilya.espeakng.tts.GetSampleText;
 import com.animeshahilya.espeakng.text.HinglishReader;
 import com.animeshahilya.espeakng.text.LanguageRuns;
 import com.animeshahilya.espeakng.ui.LanguageCards;
@@ -67,7 +68,6 @@ import android.content.SharedPreferences;
 import android.text.Spanned;
 import android.text.style.LocaleSpan;
 import android.media.AudioFormat;
-import android.media.AudioTrack;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.SynthesisCallback;
@@ -452,7 +452,6 @@ public class TtsService extends TextToSpeechService {
             EspeakApp.runAsync(() -> preloadNaturalVoice(current));
         }
     };
-
 
     /**
      * Starts loading the natural voice that speaks this eSpeak voice's
@@ -1074,45 +1073,6 @@ public class TtsService extends TextToSpeechService {
         finishRequest();
     }
 
-    /**
-     * True when a natural voice cannot read digits itself (its language has
-     * no ICU number words and it is not letter-reading): digit runs must go
-     * to eSpeak instead of being skipped ("ಸಮಯ 10:30" lost its time).
-     */
-    private static boolean needsDigitHelp(PiperVoiceStore.Installed natural) {
-        return natural != null && !natural.config.usesEspeak() && !natural.config.isSupertonic()
-                && PiperEngine.numberWords(natural.config.languageFamily) == null;
-    }
-
-    // BaseBundle.get(String) was deprecated in API 33, but no typed getter
-    // preserves these reads: the debug dump takes arbitrary keys, and volume
-    // defensively accepts Number or String. Both callers keep exact behavior.
-    @SuppressWarnings("deprecation")
-    private static void logSynthesisParams(Bundle params) {
-        if (params == null) {
-            return;
-        }
-        for (String key : params.keySet()) {
-            Log.v(TAG,
-                    "Synthesis request contained param {" + key + ", " + params.get(key) + "}");
-        }
-    }
-
-    // See logSynthesisParams for why Bundle.get() stays here.
-    @SuppressWarnings("deprecation")
-    private static float getVolumeScale(Bundle params) {
-        Object volObj = params.get(TextToSpeech.Engine.KEY_PARAM_VOLUME);
-        if (volObj instanceof Number) {
-            return ((Number) volObj).floatValue();
-        } else if (volObj instanceof String) {
-            try {
-                return Float.parseFloat((String) volObj);
-            } catch (NumberFormatException ignored) {
-            }
-        }
-        return 1.0f;
-    }
-
     @Override
     protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
         // One request at a time (see mSynthLock); the reload path never takes it.
@@ -1179,7 +1139,7 @@ public class TtsService extends TextToSpeechService {
         if (DEBUG) {
             Log.i(TAG, "Received synthesis request: {language=\"" + voice.name + "\"}");
 
-            logSynthesisParams(request.getParams());
+            RequestSettings.logSynthesisParams(request.getParams());
         }
 
         int textOffset = 0;
@@ -1286,7 +1246,7 @@ public class TtsService extends TextToSpeechService {
             reportError(callback, TextToSpeech.ERROR_SERVICE);
             return;
         }
-        mAudioOptimizer = settings.createAudioOptimizer(sampleRate, effectiveRate(settings, request), isSingleCharacterUtterance);
+        mAudioOptimizer = settings.createAudioOptimizer(sampleRate, RequestSettings.effectiveRate(settings, request), isSingleCharacterUtterance);
         final TtsAudioDispatcher dispatcher =
                 newDispatcher(callback, mAudioOptimizer, offsetMap, text, textOffset);
         // Parsed once: getVoiceVariant() re-reads SharedPreferences and
@@ -1338,9 +1298,9 @@ public class TtsService extends TextToSpeechService {
         }
         engine.PitchRange.setValue(pitchRange);
 
-        final int targetVolume = effectiveVolume(settings, request);
-        final int rate = effectiveRate(settings, request);
-        setProsody(engine, prefs, PiperVoiceStore.languageKey(voice.locale), rate, pitch, targetVolume,
+        final int targetVolume = RequestSettings.effectiveVolume(settings, request);
+        final int rate = RequestSettings.effectiveRate(settings, request);
+        RequestSettings.setProsody(engine, prefs, PiperVoiceStore.languageKey(voice.locale), rate, pitch, targetVolume,
                 settings.isRateBoostEnabled());
 
         if (isSsml) {
@@ -1366,7 +1326,7 @@ public class TtsService extends TextToSpeechService {
         // and re-applying cost a full native dictionary reload per call.
         final List<String> naturalUsed = new ArrayList<>();
         final NaturalAhead ahead = new NaturalAhead(naturalPhonemizer(engine, voice),
-                naturalParams(settings, request, prefs), settings, request, prefs, naturalUsed);
+                RequestSettings.naturalParams(settings, request, prefs), settings, request, prefs, naturalUsed);
 
         // One plain unit in the request's own voice takes the direct path; a
         // whole text in another language (all Marathi, all Ukrainian) is one
@@ -1382,7 +1342,7 @@ public class TtsService extends TextToSpeechService {
                 }
                 final SynthUnit unit = units.get(ui);
                 if (!unit.isEarcon()) {
-                    writeSwitchCue(dispatcher, prefs, lastLanguage, unit.language, sampleRate,
+                    RequestSettings.writeSwitchCue(dispatcher, prefs, lastLanguage, unit.language, sampleRate,
                             engine.getChannelCount(), targetVolume);
                     lastLanguage = unit.language;
                 }
@@ -1419,7 +1379,7 @@ public class TtsService extends TextToSpeechService {
                     // loaded after it, and the next voice keeps it too. Set
                     // after the voice, as a request in that voice is, with
                     // the unit's language card.
-                    setProsody(engine, prefs, unit.language, rate, pitch, targetVolume,
+                    RequestSettings.setProsody(engine, prefs, unit.language, rate, pitch, targetVolume,
                             settings.isRateBoostEnabled());
                     engine.synthesize(unit.text, false);
                 } catch (Throwable t) {
@@ -1452,89 +1412,6 @@ public class TtsService extends TextToSpeechService {
         // Recorded once per completed request; stopped requests and SSML
         // markup are skipped inside, along with short/code-like text.
         finishWithHistory(prefs, voice != null ? voice.name : null, naturalUsed, ahead, isSsml);
-    }
-
-    /**
-     * The cue the new language's card asks for where speech switches into it
-     * from another language (Settings -> Mixed languages -> Speech by
-     * language). Written before the next unit's chunk context is set, so its
-     * word ranges still line up. Nothing at the start, or within a language.
-     */
-    private static void writeSwitchCue(TtsAudioDispatcher dispatcher, SharedPreferences prefs, String from,
-                                       String to, int sampleRate, int channels, int volume) {
-        if (from == null || from.equals(to)) {
-            return;
-        }
-        final byte[] cue = Earcons.switchCue(LanguageCards.switchCue(prefs, to), sampleRate, channels, volume);
-        if (cue.length > 0) {
-            dispatcher.writeAudio(cue);
-        }
-    }
-
-    /**
-     * eSpeak's rate, pitch and volume for speech in {@code language}: the
-     * request's own, times that language's card (Settings -> Mixed-language
-     * text -> Speech by language). No card: exactly the request's values.
-     */
-    private static void setProsody(SpeechSynthesis engine, SharedPreferences prefs, String language,
-                                   int rate, int pitch, int volume, boolean rateBoost) {
-        final float speed = LanguageCards.factor(prefs, language, LanguageCards.SPEED);
-        final float pitchFactor = LanguageCards.factor(prefs, language, LanguageCards.PITCH);
-        final float volumeFactor = LanguageCards.factor(prefs, language, LanguageCards.VOLUME);
-        int r = speed == 1f ? rate : Math.round(rate * speed);
-        if (!rateBoost && r > 450) {
-            r = 450;
-        }
-        engine.Rate.setValue(r);
-        engine.Pitch.setValue(pitchFactor == 1f ? pitch : Math.min(100, Math.round(pitch * pitchFactor)));
-        engine.Volume.setValue(volumeFactor == 1f ? volume : Math.min(200, Math.round(volume * volumeFactor)));
-    }
-
-    /**
-     * The request's speaking rate in wpm: the saved rate scaled by the
-     * caller's rate unless locked, capped at the engine maximum unless rate
-     * boost is on.
-     *
-     * <p>The cap used to be 449 per NVDA issue #131, to avoid unintended
-     * Sonic engagement at 450 WPM - but upstream #2165 moved Sonic
-     * engagement strictly above 450, and #2355 made 450 the engine max,
-     * so exactly 450 never engages Sonic (no shipped voice lowers
-     * fast_settings below the 450 default either). NVDA still caps at
-     * 449 out of caution for engines predating #2165; this app always
-     * ships its own engine, so it follows the engine it ships.
-     */
-    private static int effectiveRate(VoiceSettings settings, SynthesisRequest request) {
-        int rate = settings.getRate();
-        int rateScale = request.getSpeechRate();
-        if (rateScale <= 0) {
-            rateScale = 100;
-        }
-        // Force override: lock to the saved rate regardless of caller requests.
-        if (!settings.isForceRateEnabled()) {
-            rate = (int)(((long)rate * rateScale) / 100);
-        }
-        if (!settings.isRateBoostEnabled() && rate > 450) {
-            rate = 450;
-        }
-        return rate;
-    }
-
-    /**
-     * Volume, 0-200 (100 = normal): the saved volume times the caller's
-     * KEY_PARAM_VOLUME (accessibility ducking) unless volume is locked.
-     */
-    private static int effectiveVolume(VoiceSettings settings, SynthesisRequest request) {
-        float volumeScale = 1.0f;
-        final Bundle params = request.getParams();
-        if (!settings.isForceVolumeEnabled() && params != null) {
-            volumeScale = getVolumeScale(params);
-        }
-        if (volumeScale < 0.0f) {
-            volumeScale = 0.0f;
-        } else if (volumeScale > 1.0f) {
-            volumeScale = 1.0f;
-        }
-        return Math.round(settings.getVolume() * volumeScale);
     }
 
     /**
@@ -1618,12 +1495,12 @@ public class TtsService extends TextToSpeechService {
             reportError(callback, TextToSpeech.ERROR_SERVICE);
             return;
         }
-        mAudioOptimizer = settings.createAudioOptimizer(sampleRate, effectiveRate(settings, request), isSingleCharacterUtterance);
+        mAudioOptimizer = settings.createAudioOptimizer(sampleRate, RequestSettings.effectiveRate(settings, request), isSingleCharacterUtterance);
         final TtsAudioDispatcher dispatcher =
                 newDispatcher(callback, mAudioOptimizer, offsetMap, text, textOffset);
 
-        final int targetVolume = effectiveVolume(settings, request);
-        final PiperEngine.Params params = naturalParams(settings, request, prefs);
+        final int targetVolume = RequestSettings.effectiveVolume(settings, request);
+        final PiperEngine.Params params = RequestSettings.naturalParams(settings, request, prefs);
         final PiperEngine.Phonemizer phonemizer = naturalPhonemizer(engine, voice);
         final PiperEngine.Output output = dispatcher.asPiperOutput();
         final List<String> used = new ArrayList<>();
@@ -1644,7 +1521,7 @@ public class TtsService extends TextToSpeechService {
                 }
                 final SynthUnit piece = pieces.get(i);
                 if (!piece.isEarcon()) {
-                    writeSwitchCue(dispatcher, prefs, lastLanguage, piece.language, sampleRate, 1, targetVolume);
+                    RequestSettings.writeSwitchCue(dispatcher, prefs, lastLanguage, piece.language, sampleRate, 1, targetVolume);
                     lastLanguage = piece.language;
                 }
                 dispatcher.setChunkContext(piece.base, dispatcher.getRequestFrames());
@@ -1672,14 +1549,6 @@ public class TtsService extends TextToSpeechService {
             }
         }
         finishWithHistory(prefs, voice.name, used, ahead, false);
-    }
-
-    /** The speaker and speed of the voice speaking next (both chosen per voice). */
-    private static void forVoice(PiperEngine.Params params, VoiceSettings settings,
-                                 SynthesisRequest request, SharedPreferences prefs, String key) {
-        params.speakerId = PiperVoiceStore.speakerId(prefs, key);
-        params.speed = effectiveRate(settings, request) / (float) PiperEngine.NORMAL_RATE
-                * PiperVoiceStore.speedFactor(prefs, key);
     }
 
     /** {@link PiperEngine#play} into a request at {@code rate}, resampled where the voice's differs. */
@@ -1759,7 +1628,7 @@ public class TtsService extends TextToSpeechService {
         }
 
         private PiperEngine.Prepared start(SynthUnit unit) throws ai.onnxruntime.OrtException {
-            forVoice(params, settings, request, prefs, unit.modelKey);
+            RequestSettings.forVoice(params, settings, request, prefs, unit.modelKey);
             params.speed *= LanguageCards.factor(prefs, unit.language, LanguageCards.SPEED);
             params.pitch = Math.max(0.5f, Math.min(2.0f,
                     basePitch * LanguageCards.factor(prefs, unit.language, LanguageCards.PITCH)));
@@ -1779,28 +1648,6 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
-    private static PiperEngine.Params naturalParams(VoiceSettings settings, SynthesisRequest request,
-                                                    SharedPreferences prefs) {
-        final PiperEngine.Params params = new PiperEngine.Params();
-        params.speed = effectiveRate(settings, request) / (float) PiperEngine.NORMAL_RATE
-                * PiperVoiceStore.speedFactor(prefs);
-        final float[] style = PiperVoiceStore.styleScales(prefs);
-        params.noiseScale = style[0];
-        params.noiseW = style[1];
-        int pitchScale = request.getPitch();
-        if (pitchScale <= 0 || settings.isForcePitchEnabled()) {
-            pitchScale = 100;
-        }
-        // eSpeak pitch 0-100 around 50 -> about half an octave down/up,
-        // times the caller's pitch. A neural voice has its own natural
-        // pitch; this only shifts it, it never flattens intonation.
-        final float userPitch = (float) Math.pow(2.0, (settings.getPitch() - 50) / 100.0);
-        params.pitch = Math.max(0.5f, Math.min(2.0f, userPitch * pitchScale / 100f));
-        params.volume = effectiveVolume(settings, request) / 100f;
-        params.pauseScale = settings.getPauseScale();
-        return params;
-    }
-
     /**
      * The config's eSpeak voice first (what the model was trained on); if
      * this fork lacks it, the eSpeak voice of the same language.
@@ -1813,22 +1660,6 @@ public class TtsService extends TextToSpeechService {
             }
             return raw;
         };
-    }
-
-
-
-    /**
-     * The language digits get a run of their own in ({@link LanguageRuns}),
-     * or null for the words around them (Mixed languages -> Numbers and
-     * times; English and "around" are also written out as English words by
-     * TextPreprocessor for non-Latin voices).
-     */
-    private static String numbersRunLanguage(VoiceSettings settings, String own) {
-        final String numbers = settings.getNumbersLanguage(own);
-        if (VoiceSettings.NUMBERS_VOICE.equals(numbers)) {
-            return own;
-        }
-        return VoiceSettings.NUMBERS_ENGLISH.equals(numbers) ? "eng" : null;
     }
 
     /** No natural voice is ever chosen for it ("no linguistic content"): eSpeak reads such runs. */
@@ -1859,7 +1690,7 @@ public class TtsService extends TextToSpeechService {
             final LanguageRuns.Run run = runs.get(i);
             final PiperVoiceStore.Installed natural =
                     PiperVoiceStore.assignedFor(mStorageContext, prefs, run.language);
-            if (!needsDigitHelp(natural) || !AsciiUtils.hasDigit(run.text)) {
+            if (!RequestSettings.needsDigitHelp(natural) || !AsciiUtils.hasDigit(run.text)) {
                 if (out != null) {
                     out.add(run);
                 }
@@ -1891,8 +1722,8 @@ public class TtsService extends TextToSpeechService {
         final Map<UnicodeScript, String> runLanguages = naturalSwitching
                 ? ScriptLanguages.runLanguages(scriptLanguages) : null;
         final String own = PiperVoiceStore.languageKey(voice.locale);
-        final String numbers = naturalSwitching ? numbersRunLanguage(settings, own) : null;
-        final boolean digitHelp = needsDigitHelp(ownNatural);
+        final String numbers = naturalSwitching ? RequestSettings.numbersRunLanguage(settings, own) : null;
+        final boolean digitHelp = RequestSettings.needsDigitHelp(ownNatural);
         final Map<String, PiperVoiceStore.Installed> chosen = new HashMap<>();
         // The language a dictionary entry asked for in the unit being planned:
         // its own voice reads it, whatever the language's card says for text
