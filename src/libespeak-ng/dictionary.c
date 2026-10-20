@@ -218,6 +218,12 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 
 	if (name == NULL || tr == NULL)
 		return 1;
+	// The global name is the voice's dictionary even if it cannot be read
+	// yet: LoadVoice needs it set, and `espeak-ng --compile` compiles it
+	// (a clean build has no *_dict yet). tr->dictionary_name, set below
+	// only on success, is what keeps a failed load retried.
+	if (strcmp(dictionary_name, name) != 0)
+		snprintf(dictionary_name, sizeof(dictionary_name), "%s", name);
 
 	// Load a pronunciation data file into memory
 	// bytes 0-3:  offset to rules data
@@ -280,8 +286,6 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	tr->data_dictlist = new_dictlist;
 	// Named only once loaded: a failed load keeps the old dictionary under
 	// its own name, so the next voice change still sees it needs a reload.
-	if (strcmp(dictionary_name, name) != 0)
-		snprintf(dictionary_name, sizeof(dictionary_name), "%s", name); // currently loaded dictionary name
 	if (strcmp(tr->dictionary_name, name) != 0)
 		snprintf(tr->dictionary_name, sizeof(tr->dictionary_name), "%s", name);
 	tr->data_dictrules = &(tr->data_dictlist[length]);
