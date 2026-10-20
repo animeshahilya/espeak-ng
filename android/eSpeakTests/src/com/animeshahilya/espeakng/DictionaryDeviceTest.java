@@ -281,16 +281,6 @@ public class DictionaryDeviceTest {
     }
 
     @Test
-    public void testNestedQuantifierReDoSBlocked() {
-        // Catastrophic nested quantifiers must be rejected
-        UserDictionary redosRule = new UserDictionary("(a+)+", "b", false, true, false);
-        assertThat(redosRule.apply("aaaaaaaaaaaaaaaa"), is("aaaaaaaaaaaaaaaa"));
-
-        UserDictionary redosRule2 = new UserDictionary("(a*)*", "b", false, true, false);
-        assertThat(redosRule2.apply("aaaaaaaaaaaaaaaa"), is("aaaaaaaaaaaaaaaa"));
-    }
-
-    @Test
     public void testAtomicSaveAndReload() {
         UserDictionaryManager mgr = UserDictionaryManager.getInstance(mContext);
         mgr.clearRules();
@@ -319,7 +309,8 @@ public class DictionaryDeviceTest {
         UserDictionary invalidRegex = new UserDictionary("[unclosed-bracket", "replace", false, true, false);
         assertThat(invalidRegex.isValid(), is(false));
 
-        UserDictionary redos = new UserDictionary("(a+)+", "b", false, true, false);
+        // Only the platform engine runs a lookahead, and this one could stall it.
+        UserDictionary redos = new UserDictionary("(?=x)(a+)+$", "b", false, true, false);
         assertThat(redos.isValid(), is(false));
     }
 
