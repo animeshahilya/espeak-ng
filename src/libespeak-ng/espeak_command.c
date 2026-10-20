@@ -211,6 +211,10 @@ t_espeak_command *create_espeak_voice_name(const char *name)
 	a_command->type = ET_VOICE_NAME;
 	a_command->state = CS_UNDEFINED;
 	a_command->u.my_voice_name = strdup(name);
+	if (a_command->u.my_voice_name == NULL) {
+		free(a_command);
+		return NULL;
+	}
 
 	return a_command;
 }
@@ -230,14 +234,32 @@ t_espeak_command *create_espeak_voice_spec(espeak_VOICE *voice)
 	espeak_VOICE *data = &(a_command->u.my_voice_spec);
 	memcpy(data, voice, sizeof(espeak_VOICE));
 
-	if (voice->name)
+	if (voice->name) {
 		data->name = strdup(voice->name);
+		if (data->name == NULL) {
+			free(a_command);
+			return NULL;
+		}
+	}
 
-	if (voice->languages)
+	if (voice->languages) {
 		data->languages = strdup(voice->languages);
+		if (data->languages == NULL) {
+			free(data->name);
+			free(a_command);
+			return NULL;
+		}
+	}
 
-	if (voice->identifier)
+	if (voice->identifier) {
 		data->identifier = strdup(voice->identifier);
+		if (data->identifier == NULL) {
+			free(data->name);
+			free(data->languages);
+			free(a_command);
+			return NULL;
+		}
+	}
 
 	return a_command;
 }

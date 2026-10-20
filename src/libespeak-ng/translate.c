@@ -295,8 +295,8 @@ static int TranslateWordWithBounds(Translator *tr, char *word_start, WORD_TAB *w
 
 			// skip to the next word in a multi-word replacement. Always skip at least one word.
 			for (dictionary_skipwords++; dictionary_skipwords > 0; dictionary_skipwords--) {
-				while (!isspace(*word_out)) ++word_out;
-				while (isspace(*word_out))  ++word_out;
+				while (*word_out && !isspace((unsigned char)*word_out)) ++word_out;
+				while (*word_out && isspace((unsigned char)*word_out))  ++word_out;
 			}
 			dictionary_skipwords = skipwords;
 		}
@@ -411,6 +411,11 @@ static int SetAlternateTranslator(const char *new_language, Translator **transla
 
 		if (*translator == NULL) {
 			*translator = SelectTranslator(new_language);
+			if (*translator == NULL) {
+				// malloc failure: cannot create translator for this language
+				translator_language[0] = 0;
+				return -1;
+			}
 			snprintf(translator_language, 20, "%s", new_language);
 
 			if (LoadDictionary(*translator, (*translator)->dictionary_name, 0) != 0) {

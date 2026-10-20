@@ -1041,7 +1041,10 @@ void DoPhonemeMarker(int type, int char_posn, int length, char *name)
 	if (WcmdqFree() > 5) {
 		wcmdq[wcmdq_tail][0] = WCMD_MARKER + (type << 8);
 		wcmdq[wcmdq_tail][1] = (char_posn & 0xffffff) | (length << 24);
-		memcpy(&wcmdq[wcmdq_tail][2], name, 8); // up to 8 bytes of UTF8 characters
+		// copy up to 8 bytes of UTF8 characters, never reading past the
+		// end of a short (e.g. single-character) name string
+		memset(&wcmdq[wcmdq_tail][2], 0, 8);
+		memcpy(&wcmdq[wcmdq_tail][2], name, strnlen(name, 8));
 		WcmdqInc();
 	}
 }
@@ -1182,7 +1185,9 @@ if (resume == false) {
 			//WritePhMnemonic(buf, p->ph, p, 0, &dummy);
 			WritePhMnemonicWithStress(buf, p->ph, p, 0, &dummy);
 
-			DoPhonemeAlignment(strdup(buf),p->type);
+			char *aligned = strdup(buf);
+			if (aligned != NULL)
+				DoPhonemeAlignment(aligned, p->type);
 		}
 
 		if (p->type == phPAUSE)
