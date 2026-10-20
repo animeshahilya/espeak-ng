@@ -456,20 +456,58 @@ public class TtsSettingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_IMPORT_VOICE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            importVoiceUri(this, data.getData());
-        } else if (requestCode == REQUEST_CODE_IMPORT_DICT && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            importDictionaryUri(this, data.getData());
-        } else if (requestCode == REQUEST_CODE_EXPORT_DICT && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            exportDictionaryUri(this, data.getData());
-        } else if (requestCode == REQUEST_CODE_EXPORT_BACKUP && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            exportBackupUri(this, data.getData());
-        } else if (requestCode == REQUEST_CODE_IMPORT_BACKUP && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            importBackupUri(this, data.getData());
-        } else if (requestCode == REQUEST_CODE_EXPORT_PROFILE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            exportProfileUri(this, data.getData());
-        } else if (requestCode == REQUEST_CODE_IMPORT_PROFILE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            importProfileUri(this, data.getData());
+        if (resultCode != RESULT_OK || data == null || data.getData() == null) {
+            return;
+        }
+        final Uri uri = data.getData();
+        switch (requestCode) {
+            case REQUEST_CODE_IMPORT_VOICE:
+                importVoiceUri(this, uri);
+                break;
+            case REQUEST_CODE_IMPORT_DICT:
+                Toast.makeText(this, R.string.dict_import_started, Toast.LENGTH_SHORT).show();
+                readPicked(this, uri, "Dictionary", 0,
+                        in -> UserDictionaryManager.getInstance(this).importFromStream(in),
+                        count -> Toast.makeText(this, count > 0
+                                ? getResources().getQuantityString(R.plurals.dict_import_done, count, count)
+                                : getString(R.string.dict_import_none), Toast.LENGTH_LONG).show());
+                break;
+            case REQUEST_CODE_EXPORT_DICT:
+                writePicked(this, uri, "Dictionary",
+                        out -> UserDictionaryManager.getInstance(this).exportToStream(out),
+                        R.string.dict_export_done, R.string.dict_export_failed);
+                break;
+            case REQUEST_CODE_IMPORT_BACKUP:
+                Toast.makeText(this, R.string.restore_started, Toast.LENGTH_SHORT).show();
+                // Rule counts are never negative, so -1 marks failure.
+                readPicked(this, uri, "Backup", -1, in -> BackupRestoreHelper.importFromStream(this, in), count -> {
+                    Toast.makeText(this, count >= 0
+                            ? getResources().getQuantityString(R.plurals.restore_done, count, count)
+                            : getString(R.string.backup_restore_failed), Toast.LENGTH_LONG).show();
+                    if (count >= 0) {
+                        recreate();
+                    }
+                });
+                break;
+            case REQUEST_CODE_EXPORT_BACKUP:
+                writePicked(this, uri, "Backup", out -> BackupRestoreHelper.exportToStream(this, out),
+                        R.string.backup_done, R.string.backup_export_failed);
+                break;
+            case REQUEST_CODE_IMPORT_PROFILE:
+                readPicked(this, uri, "Profile", false, in -> VoiceProfile.loadFromStream(this, in), ok -> {
+                    Toast.makeText(this, ok ? R.string.profile_applied : R.string.profile_load_failed,
+                            Toast.LENGTH_SHORT).show();
+                    if (ok) {
+                        recreate();
+                    }
+                });
+                break;
+            case REQUEST_CODE_EXPORT_PROFILE:
+                writePicked(this, uri, "Profile", out -> VoiceProfile.saveToStream(this, out),
+                        R.string.profile_saved, R.string.profile_save_failed);
+                break;
+            default:
+                break;
         }
     }
 
@@ -483,123 +521,59 @@ public class TtsSettingsActivity extends AppCompatActivity {
         void done(T result);
     }
 
+    /** Runs {@code work} on a worker thread, then {@code done} on the main thread. */
+    private static <T> void runInBackground(final BackgroundWork<T> work, final BackgroundDone<T> done) {
+        EspeakApp.runAsync(() -> {
+            final T result = work.run();
+            new Handler(Looper.getMainLooper()).post(() -> done.done(result));
+        });
+    }
+
+    private interface ReadPicked<T> {
+        T from(InputStream in) throws Exception;
+    }
+
+    private interface WritePicked {
+        void to(OutputStream out) throws Exception;
+    }
+
     /**
-     * Runs {@code work} on a named worker thread, then posts {@code done} to
-     * the main thread. Unifies the thread + Handler shape every
-     * import/export block used to hand-roll.
+     * Reads the file the user picked off the main thread; {@code done} gets
+     * {@code failed} when it cannot be read, and is skipped once the screen is gone.
      */
-    private static <T> void runInBackground(String threadName,
-            final BackgroundWork<T> work, final BackgroundDone<T> done) {
-        EspeakApp.runAsync(new Runnable() {
-            @Override public void run() {
-                final T result = work.run();
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override public void run() {
-                        done.done(result);
-                    }
-                });
+    private static <T> void readPicked(Activity activity, Uri uri, String what, T failed, ReadPicked<T> read,
+                                       BackgroundDone<T> done) {
+        runInBackground(() -> {
+            try (InputStream in = activity.getContentResolver().openInputStream(uri)) {
+                return in != null ? read.from(in) : failed;
+            } catch (Exception e) {
+                Log.e(TAG, what + " import failed", e);
+                return failed;
+            }
+        }, result -> {
+            if (!isGone(activity)) {
+                done.done(result);
             }
         });
     }
 
-    private static void importDictionaryUri(final Activity activity, final Uri uri) {
-        Toast.makeText(activity, R.string.dict_import_started, Toast.LENGTH_SHORT).show();
-        runInBackground("dict-import", new BackgroundWork<Integer>() {
-            @Override public Integer run() {
-                int added = 0;
-                try (InputStream is = activity.getContentResolver().openInputStream(uri)) {
-                    if (is != null) {
-                        added = UserDictionaryManager.getInstance(activity).importFromStream(is);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Dictionary import failed", e);
+    /** Writes the file the user picked off the main thread, then says whether it worked. */
+    private static void writePicked(Activity activity, Uri uri, String what, WritePicked write,
+                                    int doneRes, int failedRes) {
+        runInBackground(() -> {
+            try (OutputStream out = activity.getContentResolver().openOutputStream(uri)) {
+                if (out == null) {
+                    return false;
                 }
-                return added;
+                write.to(out);
+                return true;
+            } catch (Exception e) {
+                Log.e(TAG, what + " export failed", e);
+                return false;
             }
-        }, new BackgroundDone<Integer>() {
-            @Override public void done(Integer count) {
-                if (isGone(activity)) return;
-                Toast.makeText(activity, count > 0
-                                ? activity.getResources().getQuantityString(R.plurals.dict_import_done, count, count)
-                                : activity.getString(R.string.dict_import_none),
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private static void exportDictionaryUri(final Activity activity, final Uri uri) {
-        runInBackground("dict-export", new BackgroundWork<Boolean>() {
-            @Override public Boolean run() {
-                boolean ok = false;
-                try (OutputStream os = activity.getContentResolver().openOutputStream(uri)) {
-                    if (os != null) {
-                        UserDictionaryManager.getInstance(activity).exportToStream(os);
-                        ok = true;
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Dictionary export failed", e);
-                }
-                return ok;
-            }
-        }, new BackgroundDone<Boolean>() {
-            @Override public void done(Boolean done) {
-                if (isGone(activity)) return;
-                Toast.makeText(activity,
-                        done ? R.string.dict_export_done : R.string.dict_export_failed,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private static void exportBackupUri(final Activity activity, final Uri uri) {
-        runInBackground("backup-export", new BackgroundWork<Boolean>() {
-            @Override public Boolean run() {
-                boolean ok = false;
-                try (OutputStream os = activity.getContentResolver().openOutputStream(uri)) {
-                    if (os != null) {
-                        BackupRestoreHelper.exportToStream(activity, os);
-                        ok = true;
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Backup export failed", e);
-                }
-                return ok;
-            }
-        }, new BackgroundDone<Boolean>() {
-            @Override public void done(Boolean done) {
-                if (isGone(activity)) return;
-                Toast.makeText(activity,
-                        done ? R.string.backup_done : R.string.backup_export_failed,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private static void importBackupUri(final Activity activity, final Uri uri) {
-        Toast.makeText(activity, R.string.restore_started, Toast.LENGTH_SHORT).show();
-        runInBackground("backup-import", new BackgroundWork<Integer>() {
-            @Override public Integer run() {
-                try (InputStream is = activity.getContentResolver().openInputStream(uri)) {
-                    if (is != null) {
-                        // Rule counts are never negative, so -1 marks failure.
-                        return BackupRestoreHelper.importFromStream(activity, is);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Backup import failed", e);
-                }
-                return -1;
-            }
-        }, new BackgroundDone<Integer>() {
-            @Override public void done(Integer count) {
-                if (isGone(activity)) return;
-                final boolean done = count >= 0;
-                Toast.makeText(activity,
-                        done ? activity.getResources().getQuantityString(R.plurals.restore_done, count, count)
-                                : activity.getString(R.string.backup_restore_failed),
-                        Toast.LENGTH_LONG).show();
-                if (done) {
-                    activity.recreate();
-                }
+        }, ok -> {
+            if (!isGone(activity)) {
+                Toast.makeText(activity, ok ? doneRes : failedRes, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -635,7 +609,7 @@ public class TtsSettingsActivity extends AppCompatActivity {
 
     private static void importVoiceUri(final Activity activity, final Uri uri) {
         final Context storage = EspeakApp.requireStorageContext(activity);
-        runInBackground("voice-import-thread", new BackgroundWork<Boolean>() {
+        runInBackground(new BackgroundWork<Boolean>() {
             @Override public Boolean run() {
                 boolean success = false;
                 String fileName = getFileNameFromUri(activity, uri);
@@ -1756,55 +1730,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
     // Full settings stay in backup/restore; profiles are the small sharable
     // slice. Unknown keys in a profile are ignored, so old profiles load on
     // newer app versions and newer profiles degrade on older ones.
-
-    private static void exportProfileUri(final Activity activity, final Uri uri) {
-        runInBackground("profile-export", new BackgroundWork<Boolean>() {
-            @Override public Boolean run() {
-                boolean ok = false;
-                try (OutputStream os = activity.getContentResolver().openOutputStream(uri)) {
-                    if (os != null) {
-                        VoiceProfile.saveToStream(activity, os);
-                        ok = true;
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Profile export failed", e);
-                }
-                return ok;
-            }
-        }, new BackgroundDone<Boolean>() {
-            @Override public void done(Boolean done) {
-                if (isGone(activity)) return;
-                Toast.makeText(activity,
-                        done ? R.string.profile_saved : R.string.profile_save_failed,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private static void importProfileUri(final Activity activity, final Uri uri) {
-        runInBackground("profile-import", new BackgroundWork<Boolean>() {
-            @Override public Boolean run() {
-                try (InputStream is = activity.getContentResolver().openInputStream(uri)) {
-                    if (is != null) {
-                        return VoiceProfile.loadFromStream(activity, is);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Profile import failed", e);
-                }
-                return false;
-            }
-        }, new BackgroundDone<Boolean>() {
-            @Override public void done(Boolean done) {
-                if (isGone(activity)) return;
-                Toast.makeText(activity,
-                        done ? R.string.profile_applied : R.string.profile_load_failed,
-                        Toast.LENGTH_SHORT).show();
-                if (done) {
-                    activity.recreate();
-                }
-            }
-        });
-    }
 
     private static void showAboutDialog(final Context context) {
         String versionName;

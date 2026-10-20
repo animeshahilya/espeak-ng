@@ -1591,45 +1591,58 @@ public final class PiperDownloads {
         if (installed.isEmpty()) {
             return started;
         }
-        final List<CatalogVoice> catalog;
-        try {
-            catalog = loadCatalog(storageContext, false);
-        } catch (IOException | JSONException e) {
-            Log.w(TAG, "Update check: catalog unavailable", e);
+        final List<CatalogVoice> catalog = catalogOrNull(storageContext, "Update check");
+        if (catalog == null) {
             return started; // offline: tried again next start
         }
         prefs.edit().putLong(PREF_UPDATE_CHECKED, now).apply();
         final List<String> pending = pendingKeys(storageContext);
         for (PiperVoiceStore.Installed v : installed) {
-            CatalogVoice entry = null;
-            for (CatalogVoice c : catalog) {
-                if (c.key.equals(v.key)) {
-                    entry = c;
-                    break;
-                }
-            }
+            final CatalogVoice entry = byKey(catalog, v.key);
             if (entry == null || entry.modelMd5 == null || entry.configMd5 == null
                     || pending.contains(v.key)) {
                 continue; // no longer listed, unpinned, or already downloading
             }
             final String[] source = installedSource(v);
-            if (source == null || (entry.modelMd5.equalsIgnoreCase(source[0])
+            if (source != null && !(entry.modelMd5.equalsIgnoreCase(source[0])
                     && entry.configMd5.equalsIgnoreCase(source[1]))) {
-                continue;
-            }
-            try {
-                final long id = start(appContext, storageContext, entry, true);
-                if (id >= 0) {
-                    started.add(v.key);
-                    Log.i(TAG, "Update for " + v.key + " started");
-                } else {
-                    Log.i(TAG, "Update for " + v.key + " installed from shared bytes");
-                }
-            } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
-                Log.w(TAG, "Update of " + v.key + " not started", e);
+                downloadAgain(appContext, storageContext, entry, "Update", started);
             }
         }
         return started;
+    }
+
+    private static List<CatalogVoice> catalogOrNull(Context storageContext, String why) {
+        try {
+            return loadCatalog(storageContext, false);
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, why + ": catalog unavailable", e);
+            return null;
+        }
+    }
+
+    private static CatalogVoice byKey(List<CatalogVoice> catalog, String key) {
+        for (CatalogVoice c : catalog) {
+            if (c.key.equals(key)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /** Downloads an installed voice again (replacing it once verified); its key joins {@code started}. */
+    private static void downloadAgain(Context appContext, Context storageContext, CatalogVoice entry, String why,
+                                      List<String> started) {
+        try {
+            if (start(appContext, storageContext, entry, true) >= 0) {
+                started.add(entry.key);
+                Log.i(TAG, why + " of " + entry.key + " started");
+            } else {
+                Log.i(TAG, why + " of " + entry.key + " installed from shared bytes");
+            }
+        } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
+            Log.w(TAG, why + " of " + entry.key + " not started", e);
+        }
     }
 
     /**
@@ -1653,26 +1666,14 @@ public final class PiperDownloads {
         if (missing.isEmpty()) {
             return started;
         }
-        final List<CatalogVoice> catalog;
-        try {
-            catalog = loadCatalog(storageContext, false);
-        } catch (IOException | JSONException e) {
-            Log.w(TAG, "Restore: catalog unavailable", e);
+        final List<CatalogVoice> catalog = catalogOrNull(storageContext, "Restore");
+        if (catalog == null) {
             return started; // offline: tried again next start
         }
         for (PiperVoiceStore.Installed v : missing) {
-            for (CatalogVoice c : catalog) {
-                if (c.key.equals(v.key)) {
-                    try {
-                        if (start(appContext, storageContext, c, true) >= 0) {
-                            started.add(v.key);
-                        }
-                        Log.i(TAG, "Restoring " + v.key + ": no model left to load");
-                    } catch (IOException | JSONException | UnsupportedVoiceException | RuntimeException e) {
-                        Log.w(TAG, "Restore of " + v.key + " not started", e);
-                    }
-                    break;
-                }
+            final CatalogVoice entry = byKey(catalog, v.key);
+            if (entry != null) {
+                downloadAgain(appContext, storageContext, entry, "Restore (no model left to load)", started);
             }
         }
         return started;

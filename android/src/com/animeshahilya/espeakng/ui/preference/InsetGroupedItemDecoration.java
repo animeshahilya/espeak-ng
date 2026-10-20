@@ -102,77 +102,57 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
         outRect.right = mMarginHorizontal;
         outRect.top = 0;
 
-        boolean isLastInGroup = (pos == pga.getItemCount() - 1)
-                || (pos + 1 < pga.getItemCount() && pga.getItem(pos + 1) instanceof PreferenceCategory);
-        outRect.bottom = isLastInGroup ? mGroupBottomSpacing : 0;
+        outRect.bottom = endsGroup(pga, pos) ? mGroupBottomSpacing : 0;
+    }
+
+    /** True when the row at {@code pos} is the last of its card (the list ends or a header follows). */
+    private static boolean endsGroup(PreferenceGroupAdapter pga, int pos) {
+        return pos == pga.getItemCount() - 1 || pga.getItem(pos + 1) instanceof PreferenceCategory;
+    }
+
+    private interface Row {
+        void at(View child, int pos, Preference pref, PreferenceGroupAdapter pga);
+    }
+
+    /** Every visible row that sits in a card (not a category header). */
+    private static void forEachRow(RecyclerView parent, Row row) {
+        final RecyclerView.Adapter<?> adapter = parent.getAdapter();
+        if (!(adapter instanceof PreferenceGroupAdapter)) {
+            return;
+        }
+        final PreferenceGroupAdapter pga = (PreferenceGroupAdapter) adapter;
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            final View child = parent.getChildAt(i);
+            final int pos = parent.getChildAdapterPosition(child);
+            if (pos == RecyclerView.NO_POSITION || pos >= pga.getItemCount()) continue;
+            final Preference pref = pga.getItem(pos);
+            if (pref == null || pref instanceof PreferenceCategory) continue;
+            row.at(child, pos, pref, pga);
+        }
     }
 
     @Override
     public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-        RecyclerView.Adapter<?> adapter = parent.getAdapter();
-        if (!(adapter instanceof PreferenceGroupAdapter)) {
-            return;
-        }
-
-        PreferenceGroupAdapter pga = (PreferenceGroupAdapter) adapter;
-        int childCount = parent.getChildCount();
-
-        for (int i = 0; i < childCount; i++) {
-            View child = parent.getChildAt(i);
-            int pos = parent.getChildAdapterPosition(child);
-            if (pos == RecyclerView.NO_POSITION || pos >= pga.getItemCount()) continue;
-
-            Preference pref = pga.getItem(pos);
-            if (pref == null || pref instanceof PreferenceCategory) continue;
-
-            boolean isFirst = (pos == 0) || (pos > 0 && pga.getItem(pos - 1) instanceof PreferenceCategory);
-            boolean isLast = (pos == pga.getItemCount() - 1)
-                    || (pos + 1 < pga.getItemCount() && pga.getItem(pos + 1) instanceof PreferenceCategory);
-
-            applyCardStyle(child, isFirst, isLast, pref instanceof PreferenceScreen);
-        }
+        forEachRow(parent, (child, pos, pref, pga) -> applyCardStyle(child,
+                pos == 0 || pga.getItem(pos - 1) instanceof PreferenceCategory,
+                endsGroup(pga, pos), pref instanceof PreferenceScreen));
     }
 
     @Override
     public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-        RecyclerView.Adapter<?> adapter = parent.getAdapter();
-        if (!(adapter instanceof PreferenceGroupAdapter)) {
-            return;
-        }
-
-        PreferenceGroupAdapter pga = (PreferenceGroupAdapter) adapter;
-        int childCount = parent.getChildCount();
-
-        for (int i = 0; i < childCount; i++) {
-            View child = parent.getChildAt(i);
-            int pos = parent.getChildAdapterPosition(child);
-            if (pos == RecyclerView.NO_POSITION || pos >= pga.getItemCount()) continue;
-
-            Preference pref = pga.getItem(pos);
-            if (pref == null || pref instanceof PreferenceCategory) continue;
-
-            boolean isLast = (pos == pga.getItemCount() - 1)
-                    || (pos + 1 < pga.getItemCount() && pga.getItem(pos + 1) instanceof PreferenceCategory);
-
-            if (!isLast) {
-                View iconView = child.findViewById(android.R.id.icon);
-                boolean hasIcon = iconView != null && iconView.getVisibility() == View.VISIBLE;
-                boolean isRtl = child.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-                float transX = child.getTranslationX();
-                float transY = child.getTranslationY();
-                float startX;
-                float endX;
-                if (isRtl) {
-                    startX = child.getLeft() + transX;
-                    endX = child.getRight() + transX - (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
-                } else {
-                    startX = child.getLeft() + transX + (hasIcon ? mDividerIndentWithIcon : mDividerIndentWithoutIcon);
-                    endX = child.getRight() + transX;
-                }
-                float y = child.getBottom() + transY;
-                c.drawLine(startX, y, endX, y, mDividerPaint);
+        forEachRow(parent, (child, pos, pref, pga) -> {
+            if (endsGroup(pga, pos)) {
+                return;
             }
-        }
+            final View iconView = child.findViewById(android.R.id.icon);
+            final float indent = iconView != null && iconView.getVisibility() == View.VISIBLE
+                    ? mDividerIndentWithIcon : mDividerIndentWithoutIcon;
+            final boolean rtl = child.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            final float x = child.getTranslationX();
+            final float y = child.getBottom() + child.getTranslationY();
+            c.drawLine(child.getLeft() + x + (rtl ? 0 : indent), y,
+                    child.getRight() + x - (rtl ? indent : 0), y, mDividerPaint);
+        });
     }
 
     private void applyCardStyle(View view, boolean isFirst, boolean isLast, boolean isScreen) {
