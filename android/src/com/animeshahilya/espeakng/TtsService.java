@@ -30,15 +30,12 @@ import com.animeshahilya.espeakng.text.AsciiUtils;
 import com.animeshahilya.espeakng.tts.RunPlan;
 import com.animeshahilya.espeakng.tts.AudioOptimizer;
 import com.animeshahilya.espeakng.tts.CheckVoiceData;
-import com.animeshahilya.espeakng.text.CompoundSplitter;
 import com.animeshahilya.espeakng.tts.DownloadVoiceData;
 import com.animeshahilya.espeakng.text.Earcons;
 import com.animeshahilya.espeakng.tts.EspeakVoiceEngine;
-import com.animeshahilya.espeakng.text.HinglishReader;
 import com.animeshahilya.espeakng.text.LanguageRuns;
 import com.animeshahilya.espeakng.ui.LanguageCards;
 import com.animeshahilya.espeakng.ui.LanguageSettings;
-import com.animeshahilya.espeakng.text.NvdaEmoji;
 import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
 import com.animeshahilya.espeakng.tts.PcmResampler;
 import com.animeshahilya.espeakng.piper.PiperCrashGuard;
@@ -55,7 +52,6 @@ import com.animeshahilya.espeakng.util.TolerantPreferences;
 import com.animeshahilya.espeakng.tts.TtsAudioDispatcher;
 import com.animeshahilya.espeakng.text.KeyboardLanguage;
 import com.animeshahilya.espeakng.text.LatinLanguageDetector;
-import com.animeshahilya.espeakng.text.UserDictionaryManager;
 import com.animeshahilya.espeakng.tts.VoiceEngineRegistry;
 import com.animeshahilya.espeakng.ui.VoiceSettings;
 
@@ -544,24 +540,8 @@ public class TtsService extends TextToSpeechService {
             } catch (Throwable t) {
                 Log.w(TAG, "Natural voice warmup failed", t);
             }
-            // Before the update checks below, which can wait on the network
-            // for seconds: until these are built the first utterances build
-            // them on the synthesis thread (a cold start's first words).
-            try {
-                // Every utterance needs these two; emoji only text that has one.
-                TextPreprocessor.isSingleCharacter("a"); // compiles its patterns
-                NvdaSymbolProcessor.warmup(Locale.getDefault().toLanguageTag());
-                UserDictionaryManager.getInstance(mStorageContext);
-                NvdaEmoji.warmup();
-                if (mPreferences.getBoolean(VoiceSettings.PREF_HINGLISH, false)) {
-                    HinglishReader.warmup();
-                }
-                if (mPreferences.getBoolean(VoiceSettings.PREF_SPLIT_COMPOUNDS, false)) {
-                    CompoundSplitter.warmup();
-                }
-            } catch (Throwable t) {
-                Log.w(TAG, "Data warmup failed", t);
-            }
+            // The text tables every utterance needs warm up from process
+            // start (EspeakApp.warmUpText), not here.
             try {
                 if (mPreferences != null && PiperVoiceStore.isEnabled(TolerantPreferences.of(mPreferences))) {
                     PiperDownloads.checkForUpdates(getApplicationContext(), mStorageContext);
@@ -642,8 +622,8 @@ public class TtsService extends TextToSpeechService {
             if (mEngine != null) {
                 mEngine.reload(); // reads the new voice data; never leaves the engine down
             } else {
-                // Clear cached voice list since native engine is being reinitialized
-                SpeechSynthesis.clearVoiceCache();
+                // The voice list may already be cached (SpeechSynthesis.prewarm
+                // at process start): every change to the voice data clears it.
                 mEngine = new SpeechSynthesis(mStorageContext, mSynthCallback);
             }
         }

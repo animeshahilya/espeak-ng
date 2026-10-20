@@ -17,7 +17,13 @@
 package com.animeshahilya.espeakng;
 import com.animeshahilya.espeakng.text.BundledData;
 import com.animeshahilya.espeakng.text.NvdaCharacterDescriptions;
+import com.animeshahilya.espeakng.text.CompoundSplitter;
+import com.animeshahilya.espeakng.text.HinglishReader;
+import com.animeshahilya.espeakng.text.NvdaEmoji;
 import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
+import com.animeshahilya.espeakng.text.TextPreprocessor;
+import com.animeshahilya.espeakng.text.UserDictionaryManager;
+import com.animeshahilya.espeakng.ui.VoiceSettings;
 import com.animeshahilya.espeakng.piper.PiperCrashGuard;
 import com.animeshahilya.espeakng.piper.PiperDevice;
 import com.animeshahilya.espeakng.piper.PiperEngine;
@@ -156,6 +162,12 @@ public class EspeakApp extends Application {
         crashGuard.checkPreviousExit(appContext);
         PiperEngine.get().setNativeGuard(crashGuard);
         PiperEngine.get().setMaxLoaded(PiperDevice.voicesKeptLoaded(PiperDevice.tier(appContext)));
+        // Built now, beside the speech service's own start (engine and voice
+        // list, ~45 ms on a Pixel 8): its first request otherwise waited for
+        // them behind the natural-voice housekeeping - ~30 ms of a cold
+        // start's first words.
+        runAsync(() -> warmUpText(settings));
+        runAsync(() -> SpeechSynthesis.prewarm(EspeakApp.storageContext));
         if (!appContext.getSystemService(UserManager.class).isUserUnlocked()) {
             // Started at boot, for a direct-boot-aware screen reader. The
             // credential-encrypted file cannot be read yet, so run the
@@ -265,6 +277,29 @@ public class EspeakApp extends Application {
             });
 
     /** Dispatches a task to the shared background worker pool. */
+    /**
+     * The text tables every utterance needs (preprocessor patterns, the
+     * system language's symbols, the user dictionary; emoji, Hinglish and
+     * compounds when used). Each builds once; a request that comes first
+     * waits for the build in progress rather than repeating it.
+     */
+    private static void warmUpText(android.content.SharedPreferences settings) {
+        try {
+            TextPreprocessor.isSingleCharacter("a"); // compiles its patterns
+            NvdaSymbolProcessor.warmup(java.util.Locale.getDefault().toLanguageTag());
+            UserDictionaryManager.getInstance(storageContext);
+            NvdaEmoji.warmup();
+            if (settings.getBoolean(VoiceSettings.PREF_HINGLISH, false)) {
+                HinglishReader.warmup();
+            }
+            if (settings.getBoolean(VoiceSettings.PREF_SPLIT_COMPOUNDS, false)) {
+                CompoundSplitter.warmup();
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "Text warm-up failed", t);
+        }
+    }
+
     public static void runAsync(Runnable task) {
         // Unbounded on purpose: tasks include NPU compiles (~30 s) and network
         // checks, and a voice reload or download receiver must not queue behind them.
