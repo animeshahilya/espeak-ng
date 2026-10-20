@@ -10,7 +10,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.animeshahilya.espeakng.R;
-import com.animeshahilya.espeakng.TtsSettingsActivity;
 import com.animeshahilya.espeakng.Voice;
 import com.animeshahilya.espeakng.piper.PiperSettings;
 import com.animeshahilya.espeakng.piper.PiperVoiceStore;
@@ -116,10 +115,10 @@ public final class LanguageCards {
     public static void configure(Context context, PreferenceScreen screen, PreferenceFragmentCompat fragment,
                                  SharedPreferences prefs, List<Voice> voices) {
         final PreferenceCategory category = screen.findPreference(KEY_CATEGORY);
-        if (category == null || !(fragment instanceof TtsSettingsActivity.PrefsEspeakFragment)) {
+        if (category == null || !(fragment instanceof SettingsFragment)) {
             return;
         }
-        final TtsSettingsActivity.PrefsEspeakFragment f = (TtsSettingsActivity.PrefsEspeakFragment) fragment;
+        final SettingsFragment f = (SettingsFragment) fragment;
         final Map<String, String> all = languageNames(voices);
         for (String lang : usedLanguages(prefs, voices)) {
             if (all.containsKey(lang)) {
@@ -179,7 +178,7 @@ public final class LanguageCards {
         return all;
     }
 
-    private static Preference row(Context context, TtsSettingsActivity.PrefsEspeakFragment f,
+    private static Preference row(Context context, SettingsFragment f,
                                   SharedPreferences prefs, String lang, String name) {
         final Preference row = new Preference(context);
         row.setKey("language_card_" + lang);
@@ -219,7 +218,7 @@ public final class LanguageCards {
     }
 
     /** The language's page: speed, pitch and volume, each "same as main" or 50-200%. */
-    private static void open(Context context, TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void open(Context context, SettingsFragment f,
                              SharedPreferences prefs, String lang, String name) {
         final PreferenceScreen page = f.getPreferenceManager().createPreferenceScreen(context);
         page.setTitle(name);

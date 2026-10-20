@@ -15,11 +15,14 @@
  */
 
 package com.animeshahilya.espeakng.ui.preference;
+
+import com.animeshahilya.espeakng.ui.SettingsBuilder;
+
+import com.animeshahilya.espeakng.ui.SettingsDialogs;
 import com.animeshahilya.espeakng.Voice;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +40,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.animeshahilya.espeakng.EspeakApp;
 import com.animeshahilya.espeakng.ui.LanguageSettings;
 import com.animeshahilya.espeakng.R;
-import com.animeshahilya.espeakng.TtsSettingsActivity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -119,7 +121,7 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
                 .setPositiveButton(android.R.string.ok, (d, which) -> save())
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
-        dialog.setOnShowListener(d -> TtsSettingsActivity.markAlertTitleHeading(dialog));
+        dialog.setOnShowListener(d -> SettingsDialogs.markAlertTitleHeading(dialog));
         return dialog;
     }
 
@@ -154,7 +156,7 @@ public class FavoriteVoicesDialogFragment extends DialogFragment {
         }
         final PreferenceFragmentCompat fragment = (PreferenceFragmentCompat) f;
         if (fragment.getPreferenceScreen() != null && getContext() != null) {
-            TtsSettingsActivity.refreshFavoritesSummary(
+            SettingsBuilder.refreshFavoritesSummary(
                     fragment.getPreferenceScreen(), EspeakApp.prefs(getContext()));
         }
     }

@@ -8,12 +8,16 @@
  */
 
 package com.animeshahilya.espeakng.piper;
+
+import com.animeshahilya.espeakng.ui.SettingsFragment;
+
+import com.animeshahilya.espeakng.ui.SettingsBuilder;
+
+import com.animeshahilya.espeakng.ui.SettingsDialogs;
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.EspeakApp;
-import com.animeshahilya.espeakng.tts.GetSampleText;
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.util.TolerantPreferences;
-import com.animeshahilya.espeakng.TtsSettingsActivity;
 import com.animeshahilya.espeakng.Voice;
 
 import android.app.DownloadManager;
@@ -30,7 +34,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.format.Formatter;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -131,7 +134,7 @@ public final class PiperSettings {
     private PiperSettings() {
     }
 
-    /** Wires the page. Called from TtsSettingsActivity.buildPreferences (not on Wear). */
+    /** Wires the page. Called from SettingsBuilder.buildPreferences (not on Wear). */
     public static void configure(final Context context, final PreferenceScreen screen,
                                  final PreferenceFragmentCompat fragment, final SharedPreferences prefs) {
         final Preference download = screen.findPreference(KEY_DOWNLOAD);
@@ -139,8 +142,8 @@ public final class PiperSettings {
         if (download == null || manage == null) {
             return;
         }
-        if (fragment instanceof TtsSettingsActivity.PrefsEspeakFragment) {
-            final TtsSettingsActivity.PrefsEspeakFragment f = (TtsSettingsActivity.PrefsEspeakFragment) fragment;
+        if (fragment instanceof SettingsFragment) {
+            final SettingsFragment f = (SettingsFragment) fragment;
             download.setOnPreferenceClickListener(p -> {
                 openDownloads(f, prefs);
                 return true;
@@ -222,10 +225,10 @@ public final class PiperSettings {
                 final String key = intent.getStringExtra(PiperDownloads.EXTRA_KEY);
                 final PiperVoiceStore.Installed voice = key == null ? null
                         : PiperVoiceStore.find(storage(context), key);
-                if (voice != null && fragment instanceof TtsSettingsActivity.PrefsEspeakFragment
+                if (voice != null && fragment instanceof SettingsFragment
                         && fragment.isAdded()) {
                     final String lang = intent.getStringExtra(PiperDownloads.EXTRA_ASSIGNED_LANGUAGE);
-                    ((TtsSettingsActivity.PrefsEspeakFragment) fragment).announce(lang != null
+                    ((SettingsFragment) fragment).announce(lang != null
                             ? context.getString(R.string.piper_voice_ready_assigned,
                                     voice.config.displayName(), languageName(voice.config.languageFamily))
                             : context.getString(R.string.piper_voice_ready, voice.config.displayName()));
@@ -510,7 +513,7 @@ public final class PiperSettings {
         }
     }
 
-    private static PreferenceScreen newPage(TtsSettingsActivity.PrefsEspeakFragment f, CharSequence title,
+    private static PreferenceScreen newPage(SettingsFragment f, CharSequence title,
                                             java.util.function.Consumer<PreferenceScreen> build,
                                             java.util.function.Consumer<PreferenceScreen> tick) {
         final PreferenceScreen screen = f.getPreferenceManager().createPreferenceScreen(f.requireContext());
@@ -523,7 +526,7 @@ public final class PiperSettings {
         return screen;
     }
 
-    private static void open(TtsSettingsActivity.PrefsEspeakFragment f, PreferenceScreen screen) {
+    private static void open(SettingsFragment f, PreferenceScreen screen) {
         releasePlayer(SAMPLE);
         onShown(screen);
         f.pushScreen(screen);
@@ -550,7 +553,7 @@ public final class PiperSettings {
         return p;
     }
 
-    private static void openDownloads(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void openDownloads(final SettingsFragment f,
                                       final SharedPreferences prefs) {
         final Context context = f.requireContext();
         final PreferenceScreen screen = newPage(f, context.getString(R.string.setting_piper_download),
@@ -565,7 +568,7 @@ public final class PiperSettings {
     }
 
     /** Loads the catalog into the Download page: a loading row, then the languages. */
-    private static void loadCatalog(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void loadCatalog(final SettingsFragment f,
                                     final PreferenceScreen screen, final SharedPreferences prefs,
                                     final boolean refresh) {
         final Context context = f.requireContext();
@@ -596,7 +599,7 @@ public final class PiperSettings {
         });
     }
 
-    private static void buildLanguages(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void buildLanguages(final SettingsFragment f,
                                        final PreferenceScreen screen, final SharedPreferences prefs) {
         final Context context = f.requireContext();
         final Context storage = storage(context);
@@ -644,7 +647,7 @@ public final class PiperSettings {
                 context.getString(R.string.piper_refresh_summary), () -> loadCatalog(f, screen, prefs, true)));
     }
 
-    private static void openLanguage(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void openLanguage(final SettingsFragment f,
                                      final SharedPreferences prefs,
                                      final List<PiperDownloads.CatalogVoice> voices) {
         final Context context = f.requireContext();
@@ -774,7 +777,7 @@ public final class PiperSettings {
     }
 
     /** A catalog voice: about, sample, download (or its installed actions). */
-    private static void openVoice(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void openVoice(final SettingsFragment f,
                                   final SharedPreferences prefs, final PiperDownloads.CatalogVoice v) {
         final Context context = f.requireContext();
         final Context storage = storage(context);
@@ -837,7 +840,7 @@ public final class PiperSettings {
         }
     }
 
-    private static void openManage(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void openManage(final SettingsFragment f,
                                    final SharedPreferences prefs) {
         final Context context = f.requireContext();
         open(f, newPage(f, context.getString(R.string.piper_manage_title), s -> {
@@ -859,7 +862,7 @@ public final class PiperSettings {
         }, null));
     }
 
-    private static void openInstalled(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void openInstalled(final SettingsFragment f,
                                       final SharedPreferences prefs, final String key) {
         final Context context = f.requireContext();
         final PiperVoiceStore.Installed voice = PiperVoiceStore.find(storage(context), key);
@@ -883,7 +886,7 @@ public final class PiperSettings {
     }
 
     /** Test, use, speed, speaker and delete for an installed voice. */
-    private static void addInstalledRows(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void addInstalledRows(final SettingsFragment f,
                                          final PreferenceScreen s, final SharedPreferences prefs,
                                          final PiperVoiceStore.Installed voice) {
         final Context context = f.requireContext();
@@ -1044,7 +1047,7 @@ public final class PiperSettings {
                 .setPositiveButton(android.R.string.ok, null)
                 .setOnDismissListener(d -> done.run())
                 .show();
-        TtsSettingsActivity.markAlertTitleHeading(dialog);
+        SettingsDialogs.markAlertTitleHeading(dialog);
     }
 
     private static String speedLabel(Context context, SharedPreferences prefs, String key) {
@@ -1085,11 +1088,11 @@ public final class PiperSettings {
                 .setPositiveButton(android.R.string.ok, null)
                 .setOnDismissListener(d -> done.run())
                 .show();
-        TtsSettingsActivity.markAlertTitleHeading(dialog);
+        SettingsDialogs.markAlertTitleHeading(dialog);
     }
 
     /** Deletes after a confirm, then goes back one page: this voice's page is gone. */
-    private static void confirmDelete(final TtsSettingsActivity.PrefsEspeakFragment f,
+    private static void confirmDelete(final SettingsFragment f,
                                       final SharedPreferences prefs, final PiperVoiceStore.Installed voice) {
         final Context context = f.requireContext();
         final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
@@ -1108,7 +1111,7 @@ public final class PiperSettings {
                 }))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
-        TtsSettingsActivity.markAlertTitleHeading(dialog);
+        SettingsDialogs.markAlertTitleHeading(dialog);
     }
 
     /**

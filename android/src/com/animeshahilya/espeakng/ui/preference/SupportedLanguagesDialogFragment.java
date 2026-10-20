@@ -15,8 +15,8 @@
  */
 
 package com.animeshahilya.espeakng.ui.preference;
-import com.animeshahilya.espeakng.tts.GetSampleText;
-import com.animeshahilya.espeakng.Voice;
+
+import com.animeshahilya.espeakng.ui.SpeechPreview;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -35,10 +35,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.SpeechSynthesis;
-import com.animeshahilya.espeakng.TtsSettingsActivity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -340,7 +338,7 @@ public class SupportedLanguagesDialogFragment extends ButtonDialogFragment {
         Toast.makeText(getContext(),
                 getContext().getString(R.string.language_sample_playing, label),
                 Toast.LENGTH_SHORT).show();
-        TtsSettingsActivity.speakPreviewInLanguage(getContext(), sample,
+        SpeechPreview.speakPreviewInLanguage(getContext(), sample,
                 locale != null ? locale : Locale.getDefault(), "language_sample");
     }
 

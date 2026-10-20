@@ -9,6 +9,8 @@
 
 package com.animeshahilya.espeakng.util;
 
+import com.animeshahilya.espeakng.ui.SettingsDialogs;
+
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -204,7 +206,7 @@ public final class AppUpdater {
 
     private static AlertDialog show(MaterialAlertDialogBuilder b) {
         final AlertDialog d = b.show();
-        TtsSettingsActivity.markAlertTitleHeading(d);
+        SettingsDialogs.markAlertTitleHeading(d);
         return d;
     }
 

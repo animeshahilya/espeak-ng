@@ -25,7 +25,6 @@ import com.animeshahilya.espeakng.text.UserDictionary;
 import com.animeshahilya.espeakng.text.UserDictionaryManager;
 import com.animeshahilya.espeakng.Voice;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,7 +39,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -387,7 +385,7 @@ public final class UserDictionaryScreen {
         // run against detached views.
         dialog.setOnDismissListener(d -> filterHandler.removeCallbacks(updateList));
         dialog.show();
-        TtsSettingsActivity.markAlertTitleHeading(dialog);
+        SettingsDialogs.markAlertTitleHeading(dialog);
     }
 
     /**
@@ -463,7 +461,7 @@ public final class UserDictionaryScreen {
                                     })
                                     .create();
                             confirmDialog.show();
-                            TtsSettingsActivity.markAlertTitleHeading(confirmDialog);
+                            SettingsDialogs.markAlertTitleHeading(confirmDialog);
                         }
                     }
                 })
@@ -474,7 +472,7 @@ public final class UserDictionaryScreen {
                 })
                 .create();
         actionsDialog.show();
-        TtsSettingsActivity.markAlertTitleHeading(actionsDialog);
+        SettingsDialogs.markAlertTitleHeading(actionsDialog);
     }
 
     private static void showDictionaryImportExportDialog(final Context context, final String searchQuery, final String categoryFilter) {
@@ -494,13 +492,13 @@ public final class UserDictionaryScreen {
                             i.addCategory(Intent.CATEGORY_OPENABLE);
                             i.setType("text/plain");
                             i.putExtra(Intent.EXTRA_TITLE, "espeak_dictionary.dic");
-                            TtsSettingsActivity.startForResult(context, i,
+                            SettingsBuilder.startForResult(context, i,
                                     TtsSettingsActivity.REQUEST_CODE_EXPORT_DICT);
                         } else if (which == 2) {
                             Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                             i.addCategory(Intent.CATEGORY_OPENABLE);
                             i.setType("*/*");
-                            TtsSettingsActivity.startForResult(context, i,
+                            SettingsBuilder.startForResult(context, i,
                                     TtsSettingsActivity.REQUEST_CODE_IMPORT_DICT);
                         }
                     }
@@ -512,7 +510,7 @@ public final class UserDictionaryScreen {
                 })
                 .create();
         toolsDialog.show();
-        TtsSettingsActivity.markAlertTitleHeading(toolsDialog);
+        SettingsDialogs.markAlertTitleHeading(toolsDialog);
     }
 
     private static void shareDictionary(final Context context) {
@@ -593,7 +591,7 @@ public final class UserDictionaryScreen {
     }
 
     private static void previewText(final Context context, final String text) {
-        TtsSettingsActivity.speakPreview(context, text, "dict_preview");
+        SpeechPreview.speakPreview(context, text, "dict_preview");
     }
 
     private static void showAddRuleDialog(final Context context) {
@@ -761,7 +759,7 @@ public final class UserDictionaryScreen {
                 .create();
 
         dialog.show();
-        TtsSettingsActivity.markAlertTitleHeading(dialog);
+        SettingsDialogs.markAlertTitleHeading(dialog);
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
