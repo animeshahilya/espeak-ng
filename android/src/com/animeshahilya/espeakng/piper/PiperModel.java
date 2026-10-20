@@ -1487,6 +1487,47 @@ public final class PiperModel implements Closeable {
         return options;
     }
 
+    private static boolean cancelled(RunHandle handle) {
+        return handle != null && handle.isCancelled();
+    }
+
+    /** ONNX Runtime work, given the options to run with. */
+    private interface Run<T> {
+        T with(OrtSession.RunOptions options) throws OrtException;
+    }
+
+    /**
+     * Runs with the handle's options, so stop() can end it, or with options of
+     * its own when nobody can stop it; work stop() ended comes back null.
+     * Closes {@code inputs} (if any) afterwards.
+     */
+    private static <T> T cancellable(RunHandle handle, Map<String, OnnxTensor> inputs, Run<T> run)
+            throws OrtException {
+        final OrtSession.RunOptions own = handle == null ? runOptions() : null;
+        try {
+            return run.with(handle != null ? handle.options : own);
+        } catch (OrtException e) {
+            if (cancelled(handle)) {
+                return null; // RunOptions.setTerminate() surfaces as an exception
+            }
+            throw e;
+        } finally {
+            if (inputs != null) {
+                closeAll(inputs);
+            }
+            if (own != null) {
+                own.close();
+            }
+        }
+    }
+
+    /** Folds a decode's real-time factor into the voice's running estimate. */
+    private void noteDecodeSpeed(int samples, long startedNanos) {
+        final double speed = samples / (double) config.sampleRate
+                / Math.max(1e-6, (System.nanoTime() - startedNanos) / 1e9);
+        group.decodeSpeed = group.decodeSpeed == 0 ? speed : 0.7 * group.decodeSpeed + 0.3 * speed;
+    }
+
     /**
      * Phoneme ids to audio (at config.sampleRate).
      *
@@ -1506,16 +1547,13 @@ public final class PiperModel implements Closeable {
         }
         group.lock.readLock().lock();
         try {
-            if (closed || group.isClosed() || (handle != null && handle.isCancelled())) {
+            if (closed || group.isClosed() || cancelled(handle)) {
                 return null;
             }
-            final OrtEnvironment env = env();
             final Map<String, OnnxTensor> inputs = new HashMap<>();
-            final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
-            try {
-                putInputs(env, inputs, ids, lengthScale, speakerId, noise, noiseW);
-                try (OrtSession.Result r = group.cpuSession().run(inputs,
-                        handle != null ? handle.options : ownOptions)) {
+            return cancellable(handle, inputs, run -> {
+                putInputs(env(), inputs, ids, lengthScale, speakerId, noise, noiseW);
+                try (OrtSession.Result r = group.cpuSession().run(inputs, run)) {
                     final float[] audio = floats(r.get(0));
                     if (audio == null) {
                         return null;
@@ -1524,17 +1562,7 @@ public final class PiperModel implements Closeable {
                     return new Output(audio, durations != null && durations.length == ids.length
                             ? durations : null);
                 }
-            } catch (OrtException e) {
-                if (handle != null && handle.isCancelled()) {
-                    return null; // RunOptions.setTerminate() surfaces as an exception
-                }
-                throw e;
-            } finally {
-                closeAll(inputs);
-                if (ownOptions != null) {
-                    ownOptions.close();
-                }
-            }
+            });
         } finally {
             group.lock.readLock().unlock();
         }
@@ -1548,25 +1576,15 @@ public final class PiperModel implements Closeable {
         group.lock.readLock().lock();
         try {
             final Supertonic.Style s = style;
-            if (closed || group.isClosed() || s == null || (handle != null && handle.isCancelled())) {
+            if (closed || group.isClosed() || s == null || cancelled(handle)) {
                 return null;
             }
-            final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
-            try {
-                final float speed = config.lengthScale / Math.max(0.05f, lengthScale);
+            final float speed = config.lengthScale / Math.max(0.05f, lengthScale);
+            return cancellable(handle, null, run -> {
                 final float[] audio = group.supertonic.synthesize(ids, s, config.supertonicSteps, speed,
-                        Arrays.hashCode(ids), handle != null ? handle.options : ownOptions);
+                        Arrays.hashCode(ids), run);
                 return audio == null ? null : new Output(audio, null);
-            } catch (OrtException e) {
-                if (handle != null && handle.isCancelled()) {
-                    return null;
-                }
-                throw e;
-            } finally {
-                if (ownOptions != null) {
-                    ownOptions.close();
-                }
-            }
+            });
         } finally {
             group.lock.readLock().unlock();
         }
@@ -1582,10 +1600,9 @@ public final class PiperModel implements Closeable {
                    RunHandle handle) throws OrtException {
         group.lock.readLock().lock();
         try {
-            if (closed || group.isClosed() || (handle != null && handle.isCancelled())) {
+            if (closed || group.isClosed() || cancelled(handle)) {
                 return null;
             }
-            final OrtEnvironment env = env();
             final OrtSession npuEnc = group.npuEnc;
             if (npuEnc != null && ids.length <= group.npuEncIds && group.boundaryShapes != null) {
                 try {
@@ -1594,20 +1611,18 @@ public final class PiperModel implements Closeable {
                         return e;
                     }
                 } catch (OrtException | RuntimeException ex) {
-                    if (handle == null || !handle.isCancelled()) {
+                    if (!cancelled(handle)) {
                         retireNpu(npuEnc, ex);
                     }
                 }
-                if (handle != null && handle.isCancelled()) {
+                if (cancelled(handle)) {
                     return null;
                 }
             }
             final Map<String, OnnxTensor> inputs = new HashMap<>();
-            final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
-            try {
-                putInputs(env, inputs, ids, lengthScale, speakerId, noise, noiseW);
-                try (OrtSession.Result r = group.cpuSession().run(inputs,
-                        handle != null ? handle.options : ownOptions)) {
+            return cancellable(handle, inputs, run -> {
+                putInputs(env(), inputs, ids, lengthScale, speakerId, noise, noiseW);
+                try (OrtSession.Result r = group.cpuSession().run(inputs, run)) {
                     final float[][] tensors = new float[group.boundary.length][];
                     final long[][] shapes = new long[group.boundary.length][];
                     for (int i = 0; i < group.boundary.length; i++) {
@@ -1628,17 +1643,7 @@ public final class PiperModel implements Closeable {
                     return new Encoded(tensors, shapes,
                             durations != null && durations.length == ids.length ? durations : null);
                 }
-            } catch (OrtException e) {
-                if (handle != null && handle.isCancelled()) {
-                    return null;
-                }
-                throw e;
-            } finally {
-                closeAll(inputs);
-                if (ownOptions != null) {
-                    ownOptions.close();
-                }
-            }
+            });
         } finally {
             group.lock.readLock().unlock();
         }
@@ -1739,10 +1744,8 @@ public final class PiperModel implements Closeable {
         final OrtEnvironment env = env();
         final int n = ids.length;
         final int bucket = group.npuEncIds;
-        final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
-        final OrtSession.RunOptions run = handle != null ? handle.options : ownOptions;
         final Map<String, OnnxTensor> in = new HashMap<>();
-        try {
+        return cancellable(handle, in, run -> {
             final long[] padded = Arrays.copyOf(ids, bucket);
             in.put("input", OnnxTensor.createTensor(env, LongBuffer.wrap(padded), new long[] {1, bucket}));
             in.put("input_lengths", OnnxTensor.createTensor(env, LongBuffer.wrap(new long[] {n}), new long[] {1}));
@@ -1797,17 +1800,7 @@ public final class PiperModel implements Closeable {
             final Tensor durations = mid.get(midOut[midOut.length - 1]);
             return new Encoded(tensors, shapes,
                     durations != null && durations.data.length == n ? durations.data : null);
-        } catch (OrtException e) {
-            if (handle != null && handle.isCancelled()) {
-                return null;
-            }
-            throw e;
-        } finally {
-            closeAll(in);
-            if (ownOptions != null) {
-                ownOptions.close();
-            }
-        }
+        });
     }
 
     private static void closeAll(Map<String, OnnxTensor> tensors) {
@@ -1827,7 +1820,7 @@ public final class PiperModel implements Closeable {
     float[] decode(Encoded e, int from, int to, RunHandle handle) throws OrtException {
         group.lock.readLock().lock();
         try {
-            if (closed || group.isClosed() || (handle != null && handle.isCancelled())) {
+            if (closed || group.isClosed() || cancelled(handle)) {
                 return null;
             }
             final OrtSession npuDecoder = group.npuDecoder;
@@ -1835,7 +1828,7 @@ public final class PiperModel implements Closeable {
                 try {
                     return decodeOnNpu(npuDecoder, e, from, to, handle);
                 } catch (OrtException | RuntimeException ex) {
-                    if (handle != null && handle.isCancelled()) {
+                    if (cancelled(handle)) {
                         return null;
                     }
                     retireNpu(npuDecoder, ex);
@@ -1847,48 +1840,44 @@ public final class PiperModel implements Closeable {
             if (span <= 0) {
                 return new float[0];
             }
-            final float[] latent = new float[e.channels * span];
-            for (int c = 0; c < e.channels; c++) {
-                System.arraycopy(e.tensors[0], c * e.frames + start, latent, c * span, span);
-            }
-            final OrtEnvironment env = env();
             final Map<String, OnnxTensor> inputs = new HashMap<>();
-            final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
-            try {
-                inputs.put(group.boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
-                        new long[] {1, e.channels, span}));
-                for (int i = 1; i < group.boundary.length; i++) {
-                    inputs.put(group.boundary[i], OnnxTensor.createTensor(env, FloatBuffer.wrap(e.tensors[i]),
-                            e.shapes[i]));
-                }
+            return cancellable(handle, inputs, run -> {
+                putDecoderInputs(inputs, e, start, span);
                 final long started = System.nanoTime();
-                try (OrtSession.Result r = group.decoder.run(inputs,
-                        handle != null ? handle.options : ownOptions)) {
+                try (OrtSession.Result r = group.decoder.run(inputs, run)) {
                     final float[] audio = floats(r.get(0));
                     if (audio == null) {
                         return null;
                     }
-                    final double speed = audio.length / (double) config.sampleRate
-                            / Math.max(1e-6, (System.nanoTime() - started) / 1e9);
-                    group.decodeSpeed = group.decodeSpeed == 0 ? speed : 0.7 * group.decodeSpeed + 0.3 * speed;
+                    noteDecodeSpeed(audio.length, started);
                     final int hop = Math.max(1, audio.length / span);
                     final int fromIdx = Math.max(0, Math.min(audio.length, (from - start) * hop));
                     final int toIdx = Math.max(fromIdx, Math.min(audio.length, audio.length - (end - to) * hop));
                     return Arrays.copyOfRange(audio, fromIdx, toIdx);
                 }
-            } catch (OrtException ex) {
-                if (handle != null && handle.isCancelled()) {
-                    return null;
-                }
-                throw ex;
-            } finally {
-                closeAll(inputs);
-                if (ownOptions != null) {
-                    ownOptions.close();
-                }
-            }
+            });
         } finally {
             group.lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * The decoder's inputs: latent frames [start, start+span) (zeros past the
+     * chunk's end) and the encoder's other outputs as they are.
+     */
+    private void putDecoderInputs(Map<String, OnnxTensor> inputs, Encoded e, int start, int span)
+            throws OrtException {
+        final int have = Math.min(span, e.frames - start);
+        final float[] latent = new float[e.channels * span];
+        for (int c = 0; c < e.channels; c++) {
+            System.arraycopy(e.tensors[0], c * e.frames + start, latent, c * span, have);
+        }
+        final OrtEnvironment env = env();
+        inputs.put(group.boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
+                new long[] {1, e.channels, span}));
+        for (int i = 1; i < group.boundary.length; i++) {
+            inputs.put(group.boundary[i], OnnxTensor.createTensor(env, FloatBuffer.wrap(e.tensors[i]),
+                    e.shapes[i]));
         }
     }
 
@@ -1903,33 +1892,20 @@ public final class PiperModel implements Closeable {
             throws OrtException {
         final int frames = group.npuFrames;
         final int step = frames - 2 * DECODE_OVERLAP;
-        final OrtEnvironment env = env();
-        final OrtSession.RunOptions ownOptions = handle == null ? runOptions() : null;
-        final List<float[]> parts = new ArrayList<>();
-        int total = 0;
-        final long started = System.nanoTime();
-        try {
+        return cancellable(handle, null, run -> {
+            final List<float[]> parts = new ArrayList<>();
+            int total = 0;
+            final long started = System.nanoTime();
             for (int s = from; s < to; s += step) {
-                if (handle != null && handle.isCancelled()) {
+                if (cancelled(handle)) {
                     return null;
                 }
                 final int len = Math.min(step, to - s);
                 final int ws = Math.max(0, Math.min(s - DECODE_OVERLAP, e.frames - frames));
-                final int have = Math.min(frames, e.frames - ws);
-                final float[] latent = new float[e.channels * frames];
-                for (int c = 0; c < e.channels; c++) {
-                    System.arraycopy(e.tensors[0], c * e.frames + ws, latent, c * frames, have);
-                }
                 final Map<String, OnnxTensor> inputs = new HashMap<>();
                 try {
-                    inputs.put(group.boundary[0], OnnxTensor.createTensor(env, FloatBuffer.wrap(latent),
-                            new long[] {1, e.channels, frames}));
-                    for (int i = 1; i < group.boundary.length; i++) {
-                        inputs.put(group.boundary[i], OnnxTensor.createTensor(env,
-                                FloatBuffer.wrap(e.tensors[i]), e.shapes[i]));
-                    }
-                    try (OrtSession.Result r = npuDecoder.run(inputs,
-                            handle != null ? handle.options : ownOptions)) {
+                    putDecoderInputs(inputs, e, ws, frames);
+                    try (OrtSession.Result r = npuDecoder.run(inputs, run)) {
                         final float[] audio = floats(r.get(0));
                         if (audio == null) {
                             return null;
@@ -1944,26 +1920,15 @@ public final class PiperModel implements Closeable {
                     closeAll(inputs);
                 }
             }
-        } catch (OrtException ex) {
-            if (handle != null && handle.isCancelled()) {
-                return null;
+            final float[] out = new float[total];
+            int at = 0;
+            for (float[] p : parts) {
+                System.arraycopy(p, 0, out, at, p.length);
+                at += p.length;
             }
-            throw ex;
-        } finally {
-            if (ownOptions != null) {
-                ownOptions.close();
-            }
-        }
-        final float[] out = new float[total];
-        int at = 0;
-        for (float[] p : parts) {
-            System.arraycopy(p, 0, out, at, p.length);
-            at += p.length;
-        }
-        final double speed = total / (double) config.sampleRate
-                / Math.max(1e-6, (System.nanoTime() - started) / 1e9);
-        group.decodeSpeed = group.decodeSpeed == 0 ? speed : 0.7 * group.decodeSpeed + 0.3 * speed;
-        return out;
+            noteDecodeSpeed(total, started);
+            return out;
+        });
     }
 
     private void putInputs(OrtEnvironment env, Map<String, OnnxTensor> inputs, long[] ids,
