@@ -997,33 +997,68 @@ public final class PiperModel implements Closeable {
     }
 
     /**
-     * An NPU session over a hosted fixed-shape graph (fp16 on the HTP; its INT8
-     * weights widened), compiled once into {@link #compiledFile}. Null, with the
-     * reason remembered, when it fails.
+     * An NPU session over a fixed-shape graph, compiled once into
+     * {@code compiled}: fp16 on the HTP (a hosted graph, its INT8 weights
+     * widened) or fully INT8 (a downloaded decoder).
      */
-    private static OrtSession hostedNpuSession(File onnx, File hosted) throws IOException, OrtException {
-        final File compiled = compiledFile(onnx, hosted);
+    private static OrtSession npuSession(File source, File compiled, boolean fp16) throws OrtException {
         final boolean compile = !compiled.isFile();
         try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
             final Map<String, String> qnn = new HashMap<>();
             qnn.put("backend_path", npuBackend());
-            qnn.put("enable_htp_fp16_precision", "1");
             qnn.put("htp_performance_mode", "burst");
+            if (fp16) {
+                qnn.put("enable_htp_fp16_precision", "1");
+                // The hosted files keep INT8 weights behind DequantizeLinear, which the
+                // fp16 NPU graph cannot run; ORT folds them into float weights first.
+                options.addConfigEntry("session.disable_quant_qdq", "1");
+            } else {
+                // The latent's own quantize step runs on the NPU too.
+                qnn.put("offload_graph_io_quantization", "1");
+            }
             addNpu(options, qnn);
             // All of it on the NPU or not at all: a half-offloaded graph is slower.
             options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
-            // The hosted files keep INT8 weights behind DequantizeLinear, which the
-            // fp16 NPU graph cannot run; ORT folds them into float weights first.
-            options.addConfigEntry("session.disable_quant_qdq", "1");
             if (compile) {
                 options.addConfigEntry("ep.context_enable", "1");
                 options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
             }
-            return env().createSession((compile ? hosted : compiled).getAbsolutePath(), options);
+            return env().createSession((compile ? source : compiled).getAbsolutePath(), options);
         } catch (OrtException | RuntimeException e) {
             compiled.delete();
             throw e;
         }
+    }
+
+    /**
+     * Takes {@code npu} as the decoder once it reads exactly what this model's
+     * encoder hands the decoder, runs, and is fast enough.
+     */
+    private void useNpuDecoder(OrtSession npu, String kind) throws IOException, OrtException {
+        final Map<String, ai.onnxruntime.NodeInfo> info = npu.getInputInfo();
+        if (!info.keySet().equals(new java.util.HashSet<>(Arrays.asList(group.boundary)))) {
+            throw new IOException("inputs " + info.keySet() + " are not " + Arrays.toString(group.boundary));
+        }
+        final long[] latent = ((ai.onnxruntime.TensorInfo) info.get(group.boundary[0]).getInfo()).getShape();
+        if (latent.length != 3 || latent[1] != group.boundaryShapes[0][1] || latent[2] <= 2 * DECODE_OVERLAP) {
+            throw new IOException("latent " + Arrays.toString(latent));
+        }
+        final Map<String, OnnxTensor> inputs = new HashMap<>();
+        try {
+            for (int i = 0; i < group.boundary.length; i++) {
+                final long[] shape = i == 0 ? latent : group.boundaryShapes[i];
+                inputs.put(group.boundary[i], OnnxTensor.createTensor(env(),
+                        FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
+            }
+            npu.run(inputs).close();
+            checkNpuSpeed(npu, inputs, (int) latent[2]);
+        } finally {
+            closeAll(inputs);
+        }
+        group.npuFrames = (int) latent[2];
+        group.npuKind = kind;
+        group.npuProblem = null;
+        group.npuDecoder = npu;
     }
 
     private static void remember(File failed, Exception e) {
@@ -1051,33 +1086,8 @@ public final class PiperModel implements Closeable {
         }
         OrtSession npu = null;
         try {
-            npu = hostedNpuSession(onnx, hosted);
-            final Map<String, ai.onnxruntime.NodeInfo> info = npu.getInputInfo();
-            if (!info.keySet().equals(new java.util.HashSet<>(Arrays.asList(group.boundary)))) {
-                throw new IOException("inputs " + info.keySet() + " are not " + Arrays.toString(group.boundary));
-            }
-            final long[] latent = ((ai.onnxruntime.TensorInfo) info.get(group.boundary[0]).getInfo()).getShape();
-            if (latent.length != 3 || latent[1] != group.boundaryShapes[0][1] || latent[2] <= 2 * DECODE_OVERLAP) {
-                throw new IOException("latent " + Arrays.toString(latent));
-            }
-            final Map<String, OnnxTensor> inputs = new HashMap<>();
-            try {
-                for (int i = 0; i < group.boundary.length; i++) {
-                    final long[] shape = i == 0 ? latent : group.boundaryShapes[i];
-                    inputs.put(group.boundary[i], OnnxTensor.createTensor(env(),
-                            FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
-                }
-                npu.run(inputs).close();
-                checkNpuSpeed(npu, inputs, (int) latent[2]);
-            } finally {
-                for (OnnxTensor t : inputs.values()) {
-                    t.close();
-                }
-            }
-            group.npuFrames = (int) latent[2];
-            group.npuKind = "FP16";
-            group.npuProblem = null;
-            group.npuDecoder = npu;
+            npu = npuSession(hosted, compiledFile(onnx, hosted), true);
+            useNpuDecoder(npu, "FP16");
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
             group.npuProblem = "on the CPU (NPU failed: " + e + ")";
@@ -1111,8 +1121,8 @@ public final class PiperModel implements Closeable {
         OrtSession mid = null;
         OrtSession flow = null;
         try {
-            enc = hostedNpuSession(onnx, encFile);
-            flow = hostedNpuSession(onnx, flowFile);
+            enc = npuSession(encFile, compiledFile(onnx, encFile), true);
+            flow = npuSession(flowFile, compiledFile(onnx, flowFile), true);
             // Its optimized ORT-format copy, made at the first load, opens in a
             // fraction of the time (the .onnx took 110-260 ms every load).
             final File midOrt = compiledOf(midFile);
@@ -1183,57 +1193,13 @@ public final class PiperModel implements Closeable {
         }
         OrtSession npu = null;
         try {
-            final boolean compile = !compiled.isFile();
-            try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
-                final Map<String, String> qnn = new HashMap<>();
-                qnn.put("backend_path", npuBackend());
-                qnn.put("htp_performance_mode", "burst");
-                // The latent's own quantize step runs on the NPU too.
-                qnn.put("offload_graph_io_quantization", "1");
-                addNpu(options, qnn);
-                options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
-                if (compile) {
-                    options.addConfigEntry("ep.context_enable", "1");
-                    options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
-                }
-                npu = env().createSession((compile ? int8 : compiled).getAbsolutePath(), options);
-            }
-            // It must read exactly what this model's encoder hands the decoder.
-            final Map<String, ai.onnxruntime.NodeInfo> info = npu.getInputInfo();
-            if (!info.keySet().equals(new java.util.HashSet<>(Arrays.asList(group.boundary)))) {
-                throw new IOException("inputs " + info.keySet() + " are not " + Arrays.toString(group.boundary));
-            }
-            final long[] latent = ((ai.onnxruntime.TensorInfo) info.get(group.boundary[0]).getInfo()).getShape();
-            if (latent.length != 3 || latent[1] != group.boundaryShapes[0][1] || latent[2] <= 2 * DECODE_OVERLAP) {
-                throw new IOException("latent " + Arrays.toString(latent));
-            }
-            final Map<String, OnnxTensor> inputs = new HashMap<>();
-            try {
-                for (int i = 0; i < group.boundary.length; i++) {
-                    final long[] shape = i == 0 ? latent : group.boundaryShapes[i];
-                    inputs.put(group.boundary[i], OnnxTensor.createTensor(env(),
-                            FloatBuffer.wrap(new float[(int) (shape[1] * shape[2])]), shape));
-                }
-                npu.run(inputs).close();
-                checkNpuSpeed(npu, inputs, (int) latent[2]);
-            } finally {
-                for (OnnxTensor t : inputs.values()) {
-                    t.close();
-                }
-            }
-            group.npuFrames = (int) latent[2];
-            group.npuKind = "INT8";
-            group.npuProblem = null;
-            group.npuDecoder = npu;
+            npu = npuSession(int8, compiled, false);
+            useNpuDecoder(npu, "INT8");
             return true;
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
             compiled.delete();
-            try (java.io.FileWriter w = new java.io.FileWriter(failed)) {
-                w.write(String.valueOf(e));
-            } catch (IOException ignored) {
-                // Tried again next load.
-            }
+            remember(failed, e);
             return false;
         }
     }
@@ -1564,9 +1530,7 @@ public final class PiperModel implements Closeable {
                 }
                 throw e;
             } finally {
-                for (OnnxTensor t : inputs.values()) {
-                    t.close();
-                }
+                closeAll(inputs);
                 if (ownOptions != null) {
                     ownOptions.close();
                 }
@@ -1670,9 +1634,7 @@ public final class PiperModel implements Closeable {
                 }
                 throw e;
             } finally {
-                for (OnnxTensor t : inputs.values()) {
-                    t.close();
-                }
+                closeAll(inputs);
                 if (ownOptions != null) {
                     ownOptions.close();
                 }
@@ -1920,9 +1882,7 @@ public final class PiperModel implements Closeable {
                 }
                 throw ex;
             } finally {
-                for (OnnxTensor t : inputs.values()) {
-                    t.close();
-                }
+                closeAll(inputs);
                 if (ownOptions != null) {
                     ownOptions.close();
                 }
@@ -1981,9 +1941,7 @@ public final class PiperModel implements Closeable {
                         total += toIdx - fromIdx;
                     }
                 } finally {
-                    for (OnnxTensor t : inputs.values()) {
-                        t.close();
-                    }
+                    closeAll(inputs);
                 }
             }
         } catch (OrtException ex) {
