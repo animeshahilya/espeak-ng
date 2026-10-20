@@ -61,9 +61,6 @@ public final class PiperSplit {
     private static final int VALUE_INFO_TYPE = 2;
     private static final int TYPE_TENSOR = 1;
     private static final int TENSOR_TYPE_ELEM = 1;
-    private static final int TENSOR_TYPE_SHAPE = 2;
-    private static final int SHAPE_DIM = 1;
-    private static final int DIM_VALUE = 1;
     private static final int ELEM_FLOAT = 1;
     private static final int WIRE_LEN = 2;
 

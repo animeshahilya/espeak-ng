@@ -124,13 +124,6 @@ public final class AudioOptimizer {
     }
 
     /**
-     * Odd-symmetric soft-clip via fast tanh.
-     */
-    public static float harmonicSaturate(float normalizedInput, float drive) {
-        return fastTanh(normalizedInput * drive);
-    }
-
-    /**
      * Gain to bring sample magnitude down to threshold.
      */
     public static float limiterGainForSample(float sampleAbs, float threshold) {

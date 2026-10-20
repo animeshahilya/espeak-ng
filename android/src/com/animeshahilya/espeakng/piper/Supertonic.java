@@ -599,8 +599,6 @@ final class Supertonic implements Closeable {
     private final int threads;
     private OrtSession cpuFlow;
     private OrtSession cpuVocoder;
-    /** Why the NPU is not used, or null. */
-    final String npuProblem;
 
     private Supertonic(File modelFile, int threads, JSONObject cfg, int[] indexer, OrtSession durations,
                        OrtSession encoder, OrtSession[] npuFlow, OrtSession[] npuVocoder, String npuProblem)
@@ -619,7 +617,6 @@ final class Supertonic implements Closeable {
         this.encoder = encoder;
         this.npuFlow = npuFlow;
         this.npuVocoder = npuVocoder;
-        this.npuProblem = npuProblem;
     }
 
     /**

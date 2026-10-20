@@ -364,11 +364,6 @@ public final class PiperModel implements Closeable {
         return group.supertonic.textIds(text, config.supertonicLang);
     }
 
-    /** Why a Supertonic voice runs on the CPU, or null. */
-    String supertonicNpuProblem() {
-        return group.supertonic != null ? group.supertonic.npuProblem : null;
-    }
-
     /** Whether this and {@code other} run on one shared session (see {@link #withConfig}). */
     boolean sharesSessionWith(PiperModel other) {
         return other != null && group == other.group;

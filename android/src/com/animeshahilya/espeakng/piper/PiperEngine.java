@@ -504,17 +504,10 @@ public final class PiperEngine {
     }
 
     /**
-     * Natural voices switched off: frees every loaded model. On the loader
-     * thread - closing waits for an inference in flight, and the caller is
-     * the main thread - and queued after any load already started.
-     */
-    public void unloadAll() {
-        mLoader.execute(() -> trim(true));
-    }
-
-    /**
-     * As {@link #unloadAll}, unless {@code stillNeeded} says otherwise when
-     * the unload's turn comes: a client that rebinds right after the last one
+     * Frees every loaded model, unless {@code stillNeeded} says otherwise when
+     * the unload's turn comes. On the loader thread - closing waits for an
+     * inference in flight, and the caller is the main thread - and queued
+     * after any load already started: a client that rebinds right after the last one
      * left starts a new service whose preload finds the voices still loading
      * and skips them, and the unload queued behind those loads then emptied
      * them (its first requests went to eSpeak).

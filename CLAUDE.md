@@ -176,7 +176,7 @@ asked for, so NVDA parity for eSpeak voices is unaffected.
 **Off by default** (`piper_enabled` defaults false in both
 `preferences.xml` and `PiperVoiceStore.isEnabled`): opt-in, for users who
 want plain eSpeak. Off means nothing natural-voice runs: `resolve()` returns
-null, TtsService's preference listener calls `PiperEngine.unloadAll()` on
+null, TtsService's preference listener calls `PiperEngine.unloadAllUnless()` on
 the switch, and ONNX Runtime is never even loaded (see Network). The
 language, download and screen-reader rows depend on the switch; "Downloaded
 voices" does not, so voices can still be deleted to free space.

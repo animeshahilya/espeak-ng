@@ -100,25 +100,6 @@ public final class SpeechLinks {
     }
 
     /**
-     * Returns the end index of the link containing {@code index}, or -1 if not in a link.
-     */
-    public static int linkEndAt(List<Range> ranges, int index) {
-        if (ranges == null || ranges.isEmpty()) {
-            return -1;
-        }
-        for (int i = 0; i < ranges.size(); i++) {
-            final Range r = ranges.get(i);
-            if (index >= r.start && index < r.end) {
-                return r.end;
-            }
-            if (index < r.start) {
-                break;
-            }
-        }
-        return -1;
-    }
-
-    /**
      * Trims sentence-ending punctuation and balances closing parentheses/brackets
      * that might have been greedily captured at the end of a URL in running prose.
      * Example: "(see https://example.com/page)." -> trims trailing ")."

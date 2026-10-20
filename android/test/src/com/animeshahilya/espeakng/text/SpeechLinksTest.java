@@ -58,7 +58,6 @@ public class SpeechLinksTest {
         final List<SpeechLinks.Range> links = SpeechLinks.find(text);
         assertTrue(links.isEmpty());
         assertFalse(SpeechLinks.isInLink(links, 5));
-        assertEquals(-1, SpeechLinks.linkEndAt(links, 5));
     }
 
     @Test
