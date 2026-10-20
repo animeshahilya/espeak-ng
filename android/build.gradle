@@ -70,6 +70,10 @@ dependencies {
     // color. 1.14.0 adds keyboard support to the exposed dropdowns (voice
     // variant and user dictionary dialogs).
     implementation 'com.google.android.material:material:1.14.0'
+    // User-dictionary regex rules run on RE2/J: linear time whatever the
+    // pattern, so an imported rule can never freeze speech (Android's regex
+    // engine backtracks and cannot be interrupted). Pure Java, BSD-style.
+    implementation 'com.google.re2j:re2j:1.8'
     // Piper natural voices: ONNX Runtime runs the VITS models on the CPU.
     // A full (not "minimal") build: Piper models are plain ONNX files from
     // the voice catalog, optimized on the phone. Only arm64-v8a ships.

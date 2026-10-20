@@ -16,13 +16,11 @@
 
 package com.animeshahilya.espeakng.text;
 import com.animeshahilya.espeakng.R;
-import com.animeshahilya.espeakng.TtsService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Represents a single pronunciation replacement rule (matching NVDA speech dictionary semantics).
@@ -58,7 +56,7 @@ public class UserDictionary {
     /** ISO 639-2 language its matches are read in ("" = the usual voice): {@link ReadIn}. */
     private String mReadIn = "";
 
-    private Pattern mCompiledPattern = null;
+    private SafeRegex.Compiled mCompiledPattern = null;
     private String mPreparedReplacement = "";
 
     public UserDictionary(String pattern, String replacement, boolean caseSensitive, boolean isRegex, boolean wholeWord) {
@@ -207,7 +205,7 @@ public class UserDictionary {
     /**
      * True when this rule has a valid, compiled pattern ready to match.
      * False if the pattern was empty, exceeded limits, failed regex syntax,
-     * or triggered catastrophic backtracking guards.
+     * or could freeze speech ({@link SafeRegex}).
      */
     public boolean isValid() {
         return mCompiledPattern != null;
@@ -217,20 +215,6 @@ public class UserDictionary {
         if (mPattern.isEmpty()) {
             mCompiledPattern = null;
             return;
-        }
-
-        // Reject patterns that could cause catastrophic backtracking (ReDoS).
-        // Nested quantifiers like (a+)+ or (a*)* cause exponential backtracking.
-        // Also enforce a reasonable length limit.
-        if (mIsRegex) {
-            if (mPattern.length() > 200) {
-                mCompiledPattern = null;
-                return;
-            }
-            if (hasNestedQuantifier(mPattern)) {
-                mCompiledPattern = null;
-                return;
-            }
         }
 
         try {
@@ -253,7 +237,9 @@ public class UserDictionary {
 
             String regexStr;
             if (mIsRegex) {
-                regexStr = mPattern;
+                // The user's own pattern: never one that could freeze speech.
+                mCompiledPattern = SafeRegex.compile(mPattern, !mCaseSensitive);
+                regexStr = null;
             } else if (mWholeWord && !CATEGORY_CHARACTER.equals(mCategory)) {
                 // \b is only ever exercised through applyRules() (continuous-text
                 // substring matching), which already excludes CATEGORY_CHARACTER
@@ -270,7 +256,9 @@ public class UserDictionary {
                 regexStr = Pattern.quote(mPattern);
             }
 
-            mCompiledPattern = Pattern.compile(regexStr, flags);
+            if (regexStr != null) {
+                mCompiledPattern = SafeRegex.of(Pattern.compile(regexStr, flags));
+            }
         } catch (Exception e) {
             mCompiledPattern = null;
         }
@@ -312,7 +300,7 @@ public class UserDictionary {
             }
         }
         try {
-            return mCompiledPattern.matcher(text).replaceAll(mPreparedReplacement);
+            return mCompiledPattern.replaceAll(text, mPreparedReplacement);
         } catch (Throwable t) {
             return text;
         }
@@ -325,62 +313,6 @@ public class UserDictionary {
         for (int i = 0; i <= max; i++) {
             if (source.regionMatches(true, i, target, 0, targetLen)) {
                 return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isQuantifierChar(char c) {
-        return c == '*' || c == '+' || c == '?' || c == '{';
-    }
-
-    /**
-     * Detects nested quantifiers that cause catastrophic backtracking.
-     * Looks for patterns like (a+)+, (a*)*, (a?)*, ((a)+)+, etc.
-     * Accurately distinguishes between a quantified group like (\d+) or ([a-z]+)
-     * (valid, safe) and a quantified group that is ITSELF quantified like (\d+)+ (unsafe).
-     */
-    private static boolean hasNestedQuantifier(String pattern) {
-        int depth = 0;
-        boolean inCharClass = false;
-        boolean[] groupHasQuantifier = new boolean[64];
-
-        for (int i = 0; i < pattern.length(); i++) {
-            char c = pattern.charAt(i);
-            if (c == '\\' && i + 1 < pattern.length()) {
-                i++; // skip escaped char
-                continue;
-            }
-            if (c == '[') {
-                inCharClass = true;
-            } else if (c == ']' && inCharClass) {
-                inCharClass = false;
-            } else if (!inCharClass) {
-                if (c == '(') {
-                    depth++;
-                    if (depth < groupHasQuantifier.length) {
-                        groupHasQuantifier[depth] = false;
-                    }
-                } else if (c == ')') {
-                    boolean innerQuantified = (depth < groupHasQuantifier.length) && groupHasQuantifier[depth];
-                    if (depth > 0) {
-                        depth--;
-                    }
-                    if (i + 1 < pattern.length() && isQuantifierChar(pattern.charAt(i + 1))) {
-                        if (innerQuantified) {
-                            return true;
-                        }
-                        if (depth > 0 && depth < groupHasQuantifier.length) {
-                            groupHasQuantifier[depth] = true;
-                        }
-                    } else if (innerQuantified && depth > 0 && depth < groupHasQuantifier.length) {
-                        groupHasQuantifier[depth] = true;
-                    }
-                } else if (isQuantifierChar(c)) {
-                    if (depth > 0 && depth < groupHasQuantifier.length) {
-                        groupHasQuantifier[depth] = true;
-                    }
-                }
             }
         }
         return false;

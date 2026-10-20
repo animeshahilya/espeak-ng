@@ -53,19 +53,36 @@ public class UserDictionaryTest {
         assertEquals("Weight: 10 kilograms total", rule.apply("Weight: 10 kg total"));
     }
 
+    @Test(timeout = 10000)
+    public void testNoPatternCanFreezeSpeech() {
+        // Each of these runs for minutes or forever on a backtracking engine.
+        final String text = "a".repeat(20000) + "!" + "x".repeat(20000) + "#";
+        for (String p : new String[] {"\\w*\\w*\\w*\\w*#", "(a+)+$", "(a*)*b", "((a)+)+c",
+                "(a|aa)+$", "(a|a?)+$", "(\\w|\\d)+$", "(.*a){12}$", "a?a?a?a?a?a?a?a?a?a?aaaaaaaaaa$"}) {
+            final UserDictionary rule = new UserDictionary(p, "b", false, true, false);
+            assertTrue(p, rule.isValid()); // RE2/J runs them in linear time
+            rule.apply(text);
+        }
+        // Lookarounds and backreferences need Android's engine: only simple ones.
+        assertTrue(new UserDictionary("(?<=Dr)\\.", "", false, true, false).isValid());
+        assertTrue(new UserDictionary("(\\w)\\1", "$1", false, true, false).isValid());
+        assertTrue(new UserDictionary("\\bMrs?\\.?\\b", "Mister", false, true, false).isValid());
+        for (String p : new String[] {"(?=x)\\w*\\w*#", "(?=x)(a+)+$", "\\b(\\w+\\s?)+$",
+                "(?=x)a?a?a?a?b"}) {
+            assertFalse(p, new UserDictionary(p, "b", false, true, false).isValid());
+        }
+    }
+
     @Test
-    public void testReDoSProtectionNestedQuantifiers() {
-        // (a+)+ should be rejected to protect against catastrophic backtracking
-        UserDictionary rule1 = new UserDictionary("(a+)+", "b", false, true, false);
-        assertFalse(rule1.isValid());
-
-        // (a*)* should be rejected
-        UserDictionary rule2 = new UserDictionary("(a*)*", "b", false, true, false);
-        assertFalse(rule2.isValid());
-
-        // ((a)+)+ should be rejected
-        UserDictionary rule3 = new UserDictionary("((a)+)+", "b", false, true, false);
-        assertFalse(rule3.isValid());
+    public void testRegexClassesKeepUnicodeMeaning() {
+        // Android's engine reads \w \d \s as Unicode; so does a rule on RE2/J.
+        assertEquals("X X", new UserDictionary("\\w+", "X", false, true, false).apply("नमस्ते दुनिया"));
+        assertEquals("N", new UserDictionary("\\d+", "N", false, true, false).apply("१२३"));
+        assertEquals("a_b", new UserDictionary("\\s", "_", false, true, false).apply("a b"));
+        assertEquals("#-#", new UserDictionary("[\\w]+", "#", false, true, false).apply("कल-आज"));
+        // \b stays Unicode too (Android's engine).
+        assertEquals("India है", new UserDictionary("\\bभारत\\b", "India", false, true, false)
+                .apply("भारत है"));
     }
 
     @Test
