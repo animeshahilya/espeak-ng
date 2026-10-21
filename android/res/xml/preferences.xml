@@ -155,6 +155,12 @@
             android:summary="@string/setting_punctuation_sounds_summary"
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_name_quoted_symbols"
+            android:title="@string/setting_name_quoted_symbols"
+            android:summary="@string/setting_name_quoted_symbols_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
         <ListPreference
             android:key="espeak_repeated_chars"
             android:title="@string/setting_repeated_chars"
@@ -703,6 +709,29 @@
       <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_speech_control"
           app:iconSpaceReserved="false">
+        <!-- not on Wear -->
+        <PreferenceScreen
+            android:key="sub_app_cards"
+            android:title="@string/screen_app_cards_title"
+            android:summary="@string/screen_app_cards_summary"
+            app:iconSpaceReserved="false">
+          <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
+              android:key="category_app_cards"
+              android:title="@string/category_app_cards"
+              app:iconSpaceReserved="false" />
+        </PreferenceScreen>
+        <!-- not on Wear -->
+        <Preference
+            android:key="action_recent_speech"
+            android:title="@string/recent_speech_title"
+            android:summary="@string/setting_recent_speech_summary"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_allow_other_apps"
+            android:title="@string/setting_allow_other_apps"
+            android:summary="@string/setting_allow_other_apps_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
         <!-- not on Wear -->
         <ListPreference
             android:key="espeak_sleep_timer"

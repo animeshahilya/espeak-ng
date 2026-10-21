@@ -339,6 +339,11 @@ public final class TextPreprocessor {
         // repeat collapsing. It runs before emoji condensing so the ", "
         // separators the condensing inserts are never mistaken for content
         // punctuation. Single-character utterances returned early above.
+        // Opt-in first: a lone symbol in quotes ("press '_' to") is named,
+        // whatever the level, so the quotes never hold silence.
+        if (normalReading && settings.isNameQuotedSymbolsEnabled()) {
+            text = edits.track(text, nameQuotedSymbols(text, lang));
+        }
         if (!isSsml) {
             // Opt-in: brackets and quotes the level would name become sounds
             // (markers TtsService turns into tones); the pass below then
@@ -398,6 +403,28 @@ public final class TextPreprocessor {
         }
         return NvdaSymbolProcessor.processText(text, symbolLevel(settings, readingMode), collapse,
                 lang);
+    }
+
+    private static final String QUOTES = "'\"‘’“”«»‹›";
+    /** One symbol between quotes, not inside a word (espeak-ng issue #150). */
+    private static final Pattern QUOTED_SYMBOL = Pattern.compile("(?<![\\p{L}\\p{N}])[" + QUOTES
+            + "]([\\p{P}\\p{S}])[" + QUOTES + "](?![\\p{L}\\p{N}])");
+
+    /**
+     * "press '_' to" -> "press 'line' to": the symbol's name in the
+     * voice's language (NVDA's table, as for character navigation); a symbol
+     * with no name is left alone.
+     */
+    static String nameQuotedSymbols(String text, String lang) {
+        return AsciiUtils.replaceMatches(QUOTED_SYMBOL, text, m -> {
+            final String symbol = m.group(1);
+            final String name = NvdaSymbolProcessor.processSingleSymbol(symbol, lang).trim();
+            if (name.isEmpty() || name.equals(symbol)) {
+                return null;
+            }
+            final String all = m.group();
+            return all.charAt(0) + name + all.charAt(all.length() - 1);
+        });
     }
 
     /** The NVDA symbol level the preset (or code mode) selects. */

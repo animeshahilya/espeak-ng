@@ -19,11 +19,15 @@
 package com.animeshahilya.espeakng.ui;
 
 import android.app.Activity;
+import android.app.StatusBarManager;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -280,6 +284,7 @@ public final class SettingsBuilder {
                     "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER,
                     "action_save_profile", "action_load_profile",
                     VoiceSettings.PREF_READING_HISTORY, "action_recent_reading",
+                    "sub_app_cards", "action_recent_speech",
                     "category_presets", "category_data",
                     // Neural voices need more memory and CPU than a watch
                     // should spend on a screen reader voice.
@@ -338,6 +343,7 @@ public final class SettingsBuilder {
             onClick(screen, "action_export_log", () -> exportLog(context));
             PiperSettings.configure(context, screen, fragment, prefs);
             com.animeshahilya.espeakng.ui.LanguageCards.configure(context, screen, fragment, prefs, voices);
+            AppCards.configure(context, screen, fragment, prefs);
             final ImportVoicePreference importVoice = screen.findPreference("action_import_voice");
             importVoice.setOnPreferenceChangeListener(mOnPreferenceChanged);
             importVoice.setDescription(R.string.import_voice_description);
@@ -415,9 +421,36 @@ public final class SettingsBuilder {
             });
             onClick(screen, "action_recent_reading", () ->
                     SettingsDialogs.showRecentReadingDialog(context));
+            onClick(screen, "action_recent_speech", () -> openRecentSpeech(context, prefs));
             refreshFavoritesSummary(screen, prefs);
         }
         return screen;
+    }
+
+    /**
+     * Recent speech: without the tile, Android 13+ offers to add it (the
+     * tile is the opt-in); otherwise the screen opens, and says how to add
+     * the tile where it is missing.
+     */
+    private static void openRecentSpeech(Context context, SharedPreferences prefs) {
+        if (!prefs.getBoolean(RecentSpeech.PREF_ON, false)
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            final StatusBarManager bar = context.getSystemService(StatusBarManager.class);
+            if (bar != null) {
+                bar.requestAddTileService(new ComponentName(context, RecentSpeechTile.class),
+                        context.getString(R.string.recent_speech_title),
+                        Icon.createWithResource(context, R.drawable.ic_record_voice_over),
+                        context.getMainExecutor(), result -> {
+                            if (result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED
+                                    || result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED) {
+                                RecentSpeech.setOn(prefs, true);
+                            }
+                            context.startActivity(new Intent(context, RecentSpeechActivity.class));
+                        });
+                return;
+            }
+        }
+        context.startActivity(new Intent(context, RecentSpeechActivity.class));
     }
 
     /**

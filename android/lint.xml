@@ -6,12 +6,13 @@
          The library is frozen at 1.2.1 (maintenance mode since 2023). -->
     <issue id="RestrictedApi">
         <ignore path="src/com/animeshahilya/espeakng/ui/preference/InsetGroupedItemDecoration.java" />
-        <ignore path="src/com/animeshahilya/espeakng/TtsSettingsActivity.java" />
+        <ignore path="src/com/animeshahilya/espeakng/ui/SettingsFragment.java" />
+        <ignore path="src/com/animeshahilya/espeakng/ui/SettingsBuilder.java" />
     </issue>
     <!-- Sub-screen navigation moves TalkBack focus to the first row on
          purpose: an announcement alone leaves focus on the previous screen. -->
     <issue id="AccessibilityFocus">
-        <ignore path="src/com/animeshahilya/espeakng/TtsSettingsActivity.java" />
+        <ignore path="src/com/animeshahilya/espeakng/ui/SettingsFragment.java" />
     </issue>
     <!-- The androidx.startup provider comes from a library (not exported);
          the manifest entry only removes its EmojiCompat initializer. -->

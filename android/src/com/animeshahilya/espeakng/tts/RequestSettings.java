@@ -34,6 +34,7 @@ import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.piper.PiperEngine;
 import com.animeshahilya.espeakng.piper.PiperVoiceStore;
 import com.animeshahilya.espeakng.text.Earcons;
+import com.animeshahilya.espeakng.ui.AppCards;
 import com.animeshahilya.espeakng.ui.LanguageCards;
 import com.animeshahilya.espeakng.ui.VoiceSettings;
 
@@ -144,6 +145,12 @@ public final class RequestSettings {
         if (!settings.isForceRateEnabled()) {
             rate = (int)(((long)rate * rateScale) / 100);
         }
+        // The calling app's card (Speech by app) applies even when locked:
+        // it is the user's own choice, not the app's.
+        final float appSpeed = settings.appFactor(AppCards.SPEED);
+        if (appSpeed != 1f) {
+            rate = Math.round(rate * appSpeed);
+        }
         if (!settings.isRateBoostEnabled() && rate > 450) {
             rate = 450;
         }
@@ -165,7 +172,7 @@ public final class RequestSettings {
         } else if (volumeScale > 1.0f) {
             volumeScale = 1.0f;
         }
-        return Math.round(settings.getVolume() * volumeScale);
+        return Math.min(200, Math.round(settings.getVolume() * volumeScale * settings.appFactor(AppCards.VOLUME)));
     }
 
     /** The speaker and speed of the voice speaking next (both chosen per voice). */
@@ -188,6 +195,7 @@ public final class RequestSettings {
         if (pitchScale <= 0 || settings.isForcePitchEnabled()) {
             pitchScale = 100;
         }
+        pitchScale = Math.round(pitchScale * settings.appFactor(AppCards.PITCH));
         // eSpeak pitch 0-100 around 50 -> about half an octave down/up,
         // times the caller's pitch. A neural voice has its own natural
         // pitch; this only shifts it, it never flattens intonation.

@@ -28,6 +28,7 @@ package com.animeshahilya.espeakng;
 import com.animeshahilya.espeakng.tts.RequestSettings;
 import com.animeshahilya.espeakng.text.AsciiUtils;
 import com.animeshahilya.espeakng.tts.RunPlan;
+import com.animeshahilya.espeakng.ui.AppCards;
 import com.animeshahilya.espeakng.tts.AudioOptimizer;
 import com.animeshahilya.espeakng.tts.CheckVoiceData;
 import com.animeshahilya.espeakng.tts.DownloadVoiceData;
@@ -45,6 +46,7 @@ import com.animeshahilya.espeakng.piper.PiperModel;
 import com.animeshahilya.espeakng.tts.PiperVoiceEngine;
 import com.animeshahilya.espeakng.piper.PiperVoiceStore;
 import com.animeshahilya.espeakng.ui.ReadingHistory;
+import com.animeshahilya.espeakng.ui.RecentSpeech;
 import com.animeshahilya.espeakng.text.ScriptLanguages;
 import com.animeshahilya.espeakng.text.TextOffsetMap;
 import com.animeshahilya.espeakng.text.TextPreprocessor;
@@ -1158,6 +1160,16 @@ public class TtsService extends TextToSpeechService {
             return;
         }
 
+        // Speech by app: the calling app's card, if it has one. This app's
+        // own requests (previews, Recent speech) have no caller, so they
+        // keep the main settings and are never kept as recent speech.
+        final String caller = AppCards.callerPackage(this, request.getCallerUid());
+        settings.setCaller(caller);
+        if (caller != null) {
+            AppCards.noteCaller(prefs, caller);
+            RecentSpeech.record(prefs, text);
+        }
+
         // Languages the user chose for words in other scripts (Settings ->
         // Mixed languages). None chosen leaves eSpeak's own switching.
         final Map<String, String> scriptLanguages = ScriptLanguages.chosen(prefs);
@@ -1190,6 +1202,7 @@ public class TtsService extends TextToSpeechService {
         // characters: character navigation is where a screen reader user
         // notices latency most.
         final boolean espeakOnly = isSsml || !PiperVoiceStore.isEnabled(prefs) || voice.isScriptVariant()
+                || settings.isAppEspeakOnly()
                 || (isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs));
         final List<SynthUnit> units = espeakOnly ? buildUnits(text, voice, isSsml)
                 : planUnits(buildUnits(text, voice, false), voice, natural, prefs, settings, scriptLanguages);
@@ -1242,6 +1255,7 @@ public class TtsService extends TextToSpeechService {
         if (settings.isForcePitchEnabled()) {
             pitchScale = 100;
         }
+        pitchScale = Math.round(pitchScale * settings.appFactor(AppCards.PITCH));
         final int pitch = settings.getPitch() * pitchScale / 100;
 
         // Optional accessibility aid (espeak-ng community issue #1658): widen

@@ -101,6 +101,9 @@ public final class BackupRestoreHelper {
     static boolean isSetting(String key) {
         return key != null && !PiperDownloads.isDeviceLocalPref(key)
                 && !ReadingHistory.PREF_HISTORY_ITEMS.equals(key)
+                // which apps spoke, and whether this phone has the tile
+                && !com.animeshahilya.espeakng.ui.AppCards.PREF_SEEN.equals(key)
+                && !com.animeshahilya.espeakng.ui.RecentSpeech.PREF_ON.equals(key)
                 && !EspeakApp.PREF_PREFERENCES_MIGRATED.equals(key)
                 && !VoiceSettings.PREF_WHATS_NEW_SEEN.equals(key);
     }

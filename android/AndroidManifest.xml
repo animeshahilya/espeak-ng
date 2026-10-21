@@ -111,6 +111,35 @@
             </intent-filter>
         </receiver>
 
+        <!-- Settings from Tasker and other apps (espeak-ng #2085). Exported,
+             but it does nothing until the user turns on Settings ->
+             Advanced -> "Let other apps change settings". See the class. -->
+        <receiver
+            android:name=".tts.SettingsReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.animeshahilya.espeakng.SET_SETTINGS" />
+            </intent-filter>
+        </receiver>
+        <!-- Recent speech: adding the tile is the opt-in (ui/RecentSpeech). -->
+        <service
+            android:name=".ui.RecentSpeechTile"
+            android:label="@string/recent_speech_title"
+            android:icon="@drawable/ic_record_voice_over"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <activity
+            android:name=".ui.RecentSpeechActivity"
+            android:label="@string/recent_speech_title"
+            android:theme="@style/AppTheme.Translucent"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

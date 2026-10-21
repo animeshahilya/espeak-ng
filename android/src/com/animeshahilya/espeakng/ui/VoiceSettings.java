@@ -85,6 +85,10 @@ public class VoiceSettings {
     public static final String PREF_READ_ORDINALS = "espeak_read_ordinals";
     public static final String PREF_PUNCTUATION_SOUNDS = "espeak_punctuation_sounds";
     public static final String PREF_PHRASE_PAUSES = "espeak_phrase_pauses";
+    /** A lone symbol in quotes is named ("press '_' to"), espeak-ng #150. */
+    public static final String PREF_NAME_QUOTED_SYMBOLS = "espeak_name_quoted_symbols";
+    /** Other apps (Tasker...) may change settings by broadcast: {@code tts.SettingsReceiver}. */
+    public static final String PREF_ALLOW_OTHER_APPS = "espeak_allow_other_apps";
     public static final String PREF_EXPAND_ABBREVIATIONS = "espeak_expand_abbreviations";
     /** Language numbers and times are read in: {@link #NUMBERS_AUTO} and the other NUMBERS_ values. */
     public static final String PREF_NUMBERS_LANGUAGE = "espeak_numbers_language";
@@ -232,9 +236,27 @@ public class VoiceSettings {
     public static final int DEFAULT_PITCH_RANGE = 75;
     public static final int DEFAULT_CAPITALS = 3;
 
+    /** The app this request is for (Speech by app), or null. */
+    private String mCaller;
+
     public VoiceSettings(SharedPreferences preferences, SpeechSynthesis engine) {
         mPreferences = TolerantPreferences.of(preferences);
         mEngine = engine;
+    }
+
+    /** Applies that app's card ({@link AppCards}) to this request's settings; null for none. */
+    public void setCaller(String packageName) {
+        mCaller = packageName;
+    }
+
+    /** The calling app's speed, pitch or volume as a factor of the main setting: 1 without a card. */
+    public float appFactor(String field) {
+        return mCaller == null ? 1f : AppCards.factor(mPreferences, mCaller, field);
+    }
+
+    /** True when the calling app's card keeps natural voices out of its speech. */
+    public boolean isAppEspeakOnly() {
+        return mCaller != null && AppCards.VOICES_ESPEAK.equals(AppCards.voices(mPreferences, mCaller));
     }
 
     /**
@@ -312,11 +334,27 @@ public class VoiceSettings {
     }
 
     public int getPunctuationLevel() {
+        final String app = appPunctuation();
+        if (!app.isEmpty()) {
+            return PUNCTUATION_PRESET_ALL.equals(app) ? SpeechSynthesis.PUNCT_ALL
+                    : PUNCTUATION_PRESET_NONE.equals(app) ? SpeechSynthesis.PUNCT_NONE
+                    : SpeechSynthesis.PUNCT_SOME;
+        }
         return clamp(mEngine.Punctuation, getPreferenceValue(PREF_PUNCTUATION_LEVEL, mEngine.Punctuation));
     }
 
     public String getPunctuationCharacters() {
+        final String app = appPunctuation();
+        if (!app.isEmpty()) {
+            return PUNCTUATION_PRESET_SOME.equals(app) ? PUNCTUATION_CHARS_SOME
+                    : PUNCTUATION_PRESET_MOST.equals(app) ? PUNCTUATION_CHARS_MOST : null;
+        }
         return mPreferences.getString(PREF_PUNCTUATION_CHARACTERS, null);
+    }
+
+    /** The calling app's punctuation preset (none/some/most/all), "" for the main setting. */
+    private String appPunctuation() {
+        return mCaller == null ? "" : AppCards.punctuation(mPreferences, mCaller);
     }
 
     private static int clamp(SpeechSynthesis.Parameter parameter, int value) {
@@ -494,6 +532,10 @@ public class VoiceSettings {
 
     public boolean isPunctuationSoundsEnabled() {
         return mPreferences.getBoolean(PREF_PUNCTUATION_SOUNDS, false);
+    }
+
+    public boolean isNameQuotedSymbolsEnabled() {
+        return mPreferences.getBoolean(PREF_NAME_QUOTED_SYMBOLS, false);
     }
 
     public boolean isPhrasePausesEnabled() {

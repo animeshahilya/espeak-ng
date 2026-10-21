@@ -62,9 +62,14 @@ public final class LanguageCards {
         if (prefs == null || language == null || language.isEmpty()) {
             return 1f;
         }
+        return percentFactor(prefs, key(language, field));
+    }
+
+    /** A stored "50"-"200" percent as a factor: 1 when unset or unreadable (shared with {@link AppCards}). */
+    static float percentFactor(SharedPreferences prefs, String key) {
         int percent = 100;
         try {
-            final String raw = prefs.getString(key(language, field), null);
+            final String raw = prefs.getString(key, null);
             if (raw != null && !raw.isEmpty()) {
                 percent = Integer.parseInt(raw);
             }
@@ -222,33 +227,7 @@ public final class LanguageCards {
                              SharedPreferences prefs, String lang, String name) {
         final PreferenceScreen page = f.getPreferenceManager().createPreferenceScreen(context);
         page.setTitle(name);
-        final int[] titles = {R.string.language_card_speed, R.string.language_card_pitch,
-                R.string.language_card_volume};
-        final int steps = (MAX_PERCENT - MIN_PERCENT) / 10;
-        final CharSequence[] entries = new CharSequence[steps + 1];
-        final CharSequence[] values = new CharSequence[steps + 1];
-        entries[0] = context.getString(R.string.language_card_same);
-        values[0] = "";
-        for (int i = 0, p = MIN_PERCENT; p <= MAX_PERCENT; p += 10) {
-            if (p == 100) {
-                continue; // that is "same as main"
-            }
-            i++;
-            entries[i] = context.getString(R.string.language_card_percent, p);
-            values[i] = String.valueOf(p);
-        }
-        for (int i = 0; i < FIELDS.length; i++) {
-            final ListPreference setting = new ListPreference(context);
-            setting.setKey(key(lang, FIELDS[i]));
-            setting.setTitle(titles[i]);
-            setting.setDialogTitle(titles[i]);
-            setting.setEntries(entries);
-            setting.setEntryValues(values);
-            setting.setDefaultValue("");
-            setting.setIconSpaceReserved(false);
-            setting.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
-            page.addPreference(setting);
-        }
+        addProsody(context, page, field -> key(lang, field));
         final java.util.List<CharSequence> mixedEntries = new java.util.ArrayList<>();
         final java.util.List<CharSequence> mixedValues = new java.util.ArrayList<>();
         mixedEntries.add(context.getString(R.string.language_card_mixed_default));
@@ -295,12 +274,48 @@ public final class LanguageCards {
         f.pushScreen(page);
     }
 
+    /** Names the stored key of one card field. */
+    interface FieldKey {
+        String of(String field);
+    }
+
+    /** Speed, pitch and volume rows, each "same as main" or 50-200% (shared with {@link AppCards}). */
+    static void addProsody(Context context, PreferenceScreen page, FieldKey key) {
+        final int[] titles = {R.string.language_card_speed, R.string.language_card_pitch,
+                R.string.language_card_volume};
+        final int steps = (MAX_PERCENT - MIN_PERCENT) / 10;
+        final CharSequence[] entries = new CharSequence[steps + 1];
+        final CharSequence[] values = new CharSequence[steps + 1];
+        entries[0] = context.getString(R.string.language_card_same);
+        values[0] = "";
+        for (int i = 0, p = MIN_PERCENT; p <= MAX_PERCENT; p += 10) {
+            if (p == 100) {
+                continue; // that is "same as main"
+            }
+            i++;
+            entries[i] = context.getString(R.string.language_card_percent, p);
+            values[i] = String.valueOf(p);
+        }
+        for (int i = 0; i < FIELDS.length; i++) {
+            final ListPreference setting = new ListPreference(context);
+            setting.setKey(key.of(FIELDS[i]));
+            setting.setTitle(titles[i]);
+            setting.setDialogTitle(titles[i]);
+            setting.setEntries(entries);
+            setting.setEntryValues(values);
+            setting.setDefaultValue("");
+            setting.setIconSpaceReserved(false);
+            setting.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
+            page.addPreference(setting);
+        }
+    }
+
     /**
      * A choice that defaults to the main setting: "Same as main setting"
      * first, then the main setting's own entries ({@code auto} stands in for
      * an entry whose value is "", which here means "same as main").
      */
-    private static ListPreference choice(Context context, String key, int title, int entriesRes,
+    static ListPreference choice(Context context, String key, int title, int entriesRes,
                                          int valuesRes, String auto) {
         final CharSequence[] mainEntries = context.getResources().getTextArray(entriesRes);
         final CharSequence[] mainValues = context.getResources().getTextArray(valuesRes);
