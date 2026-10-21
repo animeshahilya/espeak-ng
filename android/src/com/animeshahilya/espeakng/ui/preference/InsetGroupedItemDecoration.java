@@ -162,8 +162,12 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         int shapeKey = (isFirst ? 1 : 0) | (isLast ? 2 : 0) | (isScreen ? 4 : 0);
-        Object currentTag = view.getTag(R.id.tag_card_shape);
-        if (currentTag instanceof Integer && ((Integer) currentTag) == shapeKey) {
+        // Checked on the background itself, not a tag: every rebind (a
+        // summary update, a switch toggled) runs PreferenceViewHolder
+        // .resetState(), which puts the row's own background back, and a
+        // tag left behind kept the card from being redrawn (white rows lost).
+        if (view.getBackground() instanceof CardBackground
+                && ((CardBackground) view.getBackground()).shapeKey == shapeKey) {
             return;
         }
 
@@ -189,10 +193,7 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
         mask.setColor(0xFFFFFFFF);
         mask.setCornerRadii(radii);
 
-        RippleDrawable ripple = new RippleDrawable(
-                ColorStateList.valueOf(mRippleColor), contentBg, mask);
-        view.setBackground(ripple);
-        view.setTag(R.id.tag_card_shape, shapeKey);
+        view.setBackground(new CardBackground(ColorStateList.valueOf(mRippleColor), contentBg, mask, shapeKey));
 
         if (isScreen) {
             ViewCompat.setAccessibilityDelegate(view, new AccessibilityDelegateCompat() {
@@ -206,6 +207,16 @@ public class InsetGroupedItemDecoration extends RecyclerView.ItemDecoration {
             });
         } else {
             ViewCompat.setAccessibilityDelegate(view, null);
+        }
+    }
+
+    /** A row's card background, carrying the shape it was drawn for. */
+    private static final class CardBackground extends RippleDrawable {
+        final int shapeKey;
+
+        CardBackground(ColorStateList color, GradientDrawable content, GradientDrawable mask, int shapeKey) {
+            super(color, content, mask);
+            this.shapeKey = shapeKey;
         }
     }
 }
