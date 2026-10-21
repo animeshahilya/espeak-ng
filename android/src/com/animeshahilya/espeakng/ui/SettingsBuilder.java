@@ -283,7 +283,7 @@ public final class SettingsBuilder {
                     VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.PREF_SIMPLIFY_URLS,
                     "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER,
                     "action_save_profile", "action_load_profile",
-                    "category_app_cards", "action_recent_speech",
+                    "category_app_cards", "action_recent_speech", "sub_voice_list",
                     "category_presets", "category_data",
                     // Neural voices need more memory and CPU than a watch
                     // should spend on a screen reader voice.
@@ -317,13 +317,13 @@ public final class SettingsBuilder {
             setEntries(screen, VoiceSettings.PREF_DIGIT_GROUP_THRESHOLD, digitEntries, digitValues);
 
             onClick(screen, KEY_TEST_VOICE, () -> SpeechPreview.speakPreview(context, context.getString(R.string.test_voice_sample), "sample_utterance"));
-            onClick(screen, "action_preview_numbers", () -> SpeechPreview.speakPreview(context, context.getString(R.string.test_numbers_sample), "sample_numbers"));
-            onClick(screen, "action_preview_pauses", () -> SpeechPreview.speakPreview(context, context.getString(R.string.test_pauses_sample), "sample_pauses"));
-            onClick(screen, "action_preview_punctuation", () -> SpeechPreview.speakPreview(context, context.getString(R.string.test_punctuation_sample), "sample_punctuation"));
-            onClick(screen, "action_preview_reading", () -> SpeechPreview.speakPreview(context, context.getString(R.string.test_reading_sample), "sample_reading"));
+            onClick(screen, "action_preview_numbers", () -> SpeechPreview.previewText(context, R.string.test_numbers_title, context.getString(R.string.test_numbers_sample), "sample_numbers"));
+            onClick(screen, "action_preview_pauses", () -> SpeechPreview.previewText(context, R.string.test_pauses_title, context.getString(R.string.test_pauses_sample), "sample_pauses"));
+            onClick(screen, "action_preview_punctuation", () -> SpeechPreview.previewText(context, R.string.test_punctuation_title, context.getString(R.string.test_punctuation_sample), "sample_punctuation"));
+            onClick(screen, "action_preview_reading", () -> SpeechPreview.previewText(context, R.string.test_reading_title, context.getString(R.string.test_reading_sample), "sample_reading"));
             onClick(screen, "action_preview_mixed_languages", () -> SpeechPreview.speakPreview(context, context.getString(R.string.test_mixed_languages_sample), "sample_mixed_languages"));
             onClick(screen, "action_preview_routing", () -> SpeechPreview.previewRouting(context));
-            onClick(screen, "action_preview_audio_optimizer", () -> SpeechPreview.speakPreview(context, context.getString(R.string.test_audio_optimizer_sample), "sample_audio_optimizer"));
+            onClick(screen, "action_preview_audio_optimizer", () -> SpeechPreview.previewText(context, R.string.setting_audio_optimizer, context.getString(R.string.test_audio_optimizer_sample), "sample_audio_optimizer"));
             onClick(screen, VoiceSettings.PREF_USER_DICTIONARY, () -> UserDictionaryScreen.show(context));
             onClick(screen, "action_recommended_defaults", () -> applyRecommendedDefaults(context));
             onClick(screen, "action_backup", () -> {
@@ -343,6 +343,7 @@ public final class SettingsBuilder {
             PiperSettings.configure(context, screen, fragment, prefs);
             com.animeshahilya.espeakng.ui.LanguageCards.configure(context, screen, fragment, prefs, voices);
             AppCards.configure(context, screen, fragment, prefs);
+            VoicePresets.configure(context, screen, prefs);
             final ImportVoicePreference importVoice = screen.findPreference("action_import_voice");
             importVoice.setOnPreferenceChangeListener(mOnPreferenceChanged);
             importVoice.setDescription(R.string.import_voice_description);

@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.util.AttributeSet;
 
 import com.animeshahilya.espeakng.R;
+import com.animeshahilya.espeakng.tts.ImportedVariants;
 import com.animeshahilya.espeakng.ui.VoiceSettings;
 import com.animeshahilya.espeakng.VoiceVariant;
 
@@ -35,6 +36,8 @@ public class VoiceVariantPreference extends PersistingDialogPreference {
     static class VariantData {
         private final int name;
         private final Object arg;
+        /** An imported variant's own name, shown as is (else 0 for {@link #name}). */
+        private final String label;
         private final VoiceVariant variant;
 
         protected VariantData(int name, String variant) {
@@ -44,10 +47,22 @@ public class VoiceVariantPreference extends PersistingDialogPreference {
         protected VariantData(int name, Object arg, String variant) {
             this.name = name;
             this.arg = arg;
+            this.label = null;
             this.variant = VoiceVariant.parseVoiceVariant(variant);
         }
 
+        /** An imported variant: its file name is both label and variant. */
+        VariantData(String fileName) {
+            this.name = 0;
+            this.arg = null;
+            this.label = fileName;
+            this.variant = VoiceVariant.parseVoiceVariant(fileName);
+        }
+
         public String getDisplayName(Context context) {
+            if (label != null) {
+                return label;
+            }
             String text = context.getText(name).toString();
             if (arg == null) {
                 return text;
@@ -318,8 +333,8 @@ public class VoiceVariantPreference extends PersistingDialogPreference {
     }
 
     public void setVoiceVariant(VoiceVariant variant) {
-        for (int i = 0; i < variants.length; ++i) {
-            VariantData[] items = variants[i];
+        for (int i = 0; i < getCategoryCount(); ++i) {
+            VariantData[] items = getVariants(i);
             for (int j = 0; j < items.length; ++j) {
                 if (items[j].getVariant().equals(variant)) {
                     mCategoryIndex = i;
@@ -338,26 +353,42 @@ public class VoiceVariantPreference extends PersistingDialogPreference {
      */
     int[] getSelectedIndices() {
         int category = mCategoryIndex;
-        if (category < 0 || category >= categories.length) {
+        if (category < 0 || category >= getCategoryCount()) {
             category = 0;
         }
         int variant = mVariantIndex;
-        if (variant < 0 || variant >= variants[category].length) {
+        if (variant < 0 || variant >= getVariants(category).length) {
             variant = 0;
         }
         return new int[] { category, variant };
     }
 
+    // Imported variants (tts.ImportedVariants) come last, as their own
+    // category, only while there are some.
+
     static int getCategoryCount() {
-        return categories.length;
+        return categories.length + (ImportedVariants.names().isEmpty() ? 0 : 1);
     }
 
     static VariantData[] getVariants(int category) {
-        return variants[category];
+        if (category < categories.length) {
+            return variants[category];
+        }
+        final java.util.List<String> names = ImportedVariants.names();
+        final VariantData[] imported = new VariantData[names.size()];
+        for (int i = 0; i < imported.length; i++) {
+            imported[i] = new VariantData(names.get(i));
+        }
+        return imported;
     }
 
     static Integer[] getCategories() {
-        return categories;
+        if (getCategoryCount() == categories.length) {
+            return categories;
+        }
+        final Integer[] all = java.util.Arrays.copyOf(categories, categories.length + 1);
+        all[categories.length] = R.string.variant_imported;
+        return all;
     }
 
     /** Apply a dialog's confirmed selection: update indices, label, listeners. */
@@ -373,7 +404,7 @@ public class VoiceVariantPreference extends PersistingDialogPreference {
         if (editor == null) {
             return;
         }
-        VoiceVariant variant = variants[mCategoryIndex][mVariantIndex].getVariant();
+        VoiceVariant variant = getVariants(mCategoryIndex)[mVariantIndex].getVariant();
         // apply(), not commit(): same dialog-OK main-thread callback as
         // SpeakPunctuationPreference.persistPunctuation() - see its comment.
         editor.putString(VoiceSettings.PREF_VARIANT, variant.toString()).apply();
@@ -381,14 +412,14 @@ public class VoiceVariantPreference extends PersistingDialogPreference {
 
     private void onDataChanged() {
         Context context = getContext();
-        if (mCategoryIndex < 0 || mCategoryIndex >= categories.length) {
+        if (mCategoryIndex < 0 || mCategoryIndex >= getCategoryCount()) {
             mCategoryIndex = 0;
         }
-        if (mVariantIndex < 0 || mVariantIndex >= variants[mCategoryIndex].length) {
+        if (mVariantIndex < 0 || mVariantIndex >= getVariants(mCategoryIndex).length) {
             mVariantIndex = 0;
         }
-        CharSequence category = context.getText(categories[mCategoryIndex]);
-        CharSequence variant  = variants[mCategoryIndex][mVariantIndex].getDisplayName(context);
+        CharSequence category = context.getText(getCategories()[mCategoryIndex]);
+        CharSequence variant  = getVariants(mCategoryIndex)[mVariantIndex].getDisplayName(context);
         String catStr = category.toString().trim();
         String varStr = variant.toString().trim();
         String label;

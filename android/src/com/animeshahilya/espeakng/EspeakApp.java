@@ -19,6 +19,7 @@ import com.animeshahilya.espeakng.text.BundledData;
 import com.animeshahilya.espeakng.text.NvdaCharacterDescriptions;
 import com.animeshahilya.espeakng.text.HinglishReader;
 import com.animeshahilya.espeakng.text.NvdaEmoji;
+import com.animeshahilya.espeakng.tts.ImportedVariants;
 import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
 import com.animeshahilya.espeakng.text.TextPreprocessor;
 import com.animeshahilya.espeakng.text.UserDictionaryManager;
@@ -51,6 +52,9 @@ public class EspeakApp extends Application {
      * start and a stray credential-encrypted file can never be adopted.
      */
     public static final String PREF_PREFERENCES_MIGRATED = "espeak_preferences_migrated";
+
+    /** Now part of the intonation choice; converted (also from an older backup) at start. */
+    private static final String OLD_EMPHASIZE_QUESTIONS = "espeak_emphasize_questions";
 
     /**
      * Keys of removed features, deleted at start and never restored from a
@@ -168,7 +172,7 @@ public class EspeakApp extends Application {
         // Tolerant: a wrongly typed setting must not crash every process start.
         final android.content.SharedPreferences settings = TolerantPreferences.of(
                 prefs(EspeakApp.storageContext));
-        dropRemovedPrefs(settings);
+        migrateSettings(settings);
         final PiperCrashGuard crashGuard = new PiperCrashGuard(EspeakApp.storageContext, settings);
         crashGuard.checkPreviousExit(appContext);
         PiperEngine.get().setNativeGuard(crashGuard);
@@ -287,37 +291,52 @@ public class EspeakApp extends Application {
                 }
             });
 
-    /** Dispatches a task to the shared background worker pool. */
     /**
-     * The text tables every utterance needs (preprocessor patterns, the
-     * system language's symbols, the user dictionary; emoji, Hinglish and
-     * compounds when used). Each builds once; a request that comes first
-     * waits for the build in progress rather than repeating it.
+     * Settings of removed or merged features: Emphasize questions became
+     * the intonation choice's "clearer questions" (2026-10-21), the
+     * intonation group's "Custom group" reads as Natural, and
+     * {@link #REMOVED_PREFS} go.
      */
-    private static void dropRemovedPrefs(android.content.SharedPreferences settings) {
-        android.content.SharedPreferences.Editor editor = null;
+    private static void migrateSettings(android.content.SharedPreferences settings) {
+        final android.content.SharedPreferences.Editor editor = settings.edit();
+        boolean changed = false;
+        final String style = settings.getString(VoiceSettings.PREF_INTONATION_STYLE, null);
+        if ("custom".equals(style)) {
+            editor.remove(VoiceSettings.PREF_INTONATION_STYLE);
+            changed = true;
+        }
+        if (settings.contains(OLD_EMPHASIZE_QUESTIONS)) {
+            if (settings.getBoolean(OLD_EMPHASIZE_QUESTIONS, false)) {
+                editor.putString(VoiceSettings.PREF_INTONATION_STYLE,
+                        VoiceSettings.withClearerQuestions("custom".equals(style) ? null : style));
+            }
+            editor.remove(OLD_EMPHASIZE_QUESTIONS);
+            changed = true;
+        }
         for (String key : REMOVED_PREFS) {
             if (settings.contains(key)) {
-                editor = editor != null ? editor : settings.edit();
                 editor.remove(key);
+                changed = true;
             }
         }
-        // The intonation group's "Custom group" style reads as Natural now.
-        if ("custom".equals(settings.getString(VoiceSettings.PREF_INTONATION_STYLE, null))) {
-            editor = editor != null ? editor : settings.edit();
-            editor.remove(VoiceSettings.PREF_INTONATION_STYLE);
-        }
-        if (editor != null) {
+        if (changed) {
             editor.apply();
         }
     }
 
+    /**
+     * The text tables every utterance needs (preprocessor patterns, the
+     * system language's symbols, the user dictionary; emoji, Hinglish when
+     * used). Each builds once; a request that comes first
+     * waits for the build in progress rather than repeating it.
+     */
     private static void warmUpText(android.content.SharedPreferences settings) {
         try {
             TextPreprocessor.isSingleCharacter("a"); // compiles its patterns
             NvdaSymbolProcessor.warmup(java.util.Locale.getDefault().toLanguageTag());
             UserDictionaryManager.getInstance(storageContext);
             NvdaEmoji.warmup();
+            ImportedVariants.refresh(storageContext); // the voice picker lists them
             if (settings.getBoolean(VoiceSettings.PREF_HINGLISH, false)) {
                 HinglishReader.warmup();
             }
@@ -326,6 +345,7 @@ public class EspeakApp extends Application {
         }
     }
 
+    /** Dispatches a task to the shared background worker pool. */
     public static void runAsync(Runnable task) {
         // Unbounded on purpose: tasks include NPU compiles (~30 s) and network
         // checks, and a voice reload or download receiver must not queue behind them.

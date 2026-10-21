@@ -483,6 +483,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // The Voice preset tile or Tasker may have switched presets while
+        // this screen was in the background: "In use" follows.
+        final PreferenceScreen shown = getPreferenceScreen();
+        if (shown != null && getContext() != null) {
+            VoicePresets.refresh(getContext(), shown, TtsSettingsActivity.getPrefs());
+        }
+    }
+
+    @Override
     public void onDisplayPreferenceDialog(Preference preference) {
         if (preference instanceof VoiceVariantPreference) {
             showDialogTargeted(VoiceVariantDialogFragment.newInstance(preference.getKey()));

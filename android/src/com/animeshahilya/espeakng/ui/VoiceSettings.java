@@ -58,7 +58,6 @@ public class VoiceSettings {
     public static final String PREF_NORMALIZE_UNICODE = "espeak_normalize_unicode";
     public static final String PREF_EMOJI_PROCESSING = "espeak_emoji_processing";
     public static final String PREF_CAPITALS = "espeak_capitals";
-    public static final String PREF_EMPHASIZE_QUESTIONS = "espeak_emphasize_questions";
     public static final String PREF_WORD_GAP = "espeak_wordgap";
     public static final String PREF_PAUSE_SCALE = "espeak_pause_scale";
     /** Which voices get lakh/crore and rupee reading: off, Indian voices or all voices. */
@@ -168,6 +167,8 @@ public class VoiceSettings {
     public static final String INTONATION_NATURAL = "natural";
     public static final String INTONATION_FLAT = "flat";
     public static final String INTONATION_EXPRESSIVE = "expressive";
+    /** Suffix of the styles with clearer questions ("flat_questions"). */
+    public static final String INTONATION_QUESTIONS = "_questions";
 
     /** Capital letter announcement scope. */
     public static final String CAPITALS_SCOPE_CHAR = "char_only";
@@ -709,8 +710,13 @@ public class VoiceSettings {
      * changes the character of the intonation, so it's opt-in like the other
      * perceptible-audio toggles here.
      */
+    /**
+     * The intonation choice's "clearer questions" (espeak-ng #1658): a wider
+     * pitch rise on questions and exclamations, for hard-of-hearing or fast
+     * listeners. Was its own switch until 2026-10-21.
+     */
     public boolean isEmphasizeQuestionsEnabled() {
-        return mPreferences.getBoolean(PREF_EMPHASIZE_QUESTIONS, false);
+        return mPreferences.getString(PREF_INTONATION_STYLE, "").endsWith(INTONATION_QUESTIONS);
     }
 
     public boolean isForceVolumeEnabled() {
@@ -725,12 +731,23 @@ public class VoiceSettings {
         return REPEATED_CHARS_OFF;
     }
 
+    /** Natural, Flat or Expressive, without the "clearer questions" part. */
     public String getIntonationStyle() {
         String style = mPreferences.getString(PREF_INTONATION_STYLE, INTONATION_NATURAL);
+        if (style.endsWith(INTONATION_QUESTIONS)) {
+            style = style.substring(0, style.length() - INTONATION_QUESTIONS.length());
+        }
         if (INTONATION_FLAT.equals(style) || INTONATION_EXPRESSIVE.equals(style)) {
             return style;
         }
         return INTONATION_NATURAL;
+    }
+
+    /** {@code style} (null for Natural) with clearer questions. */
+    public static String withClearerQuestions(String style) {
+        final String base = INTONATION_FLAT.equals(style) || INTONATION_EXPRESSIVE.equals(style)
+                ? style : INTONATION_NATURAL;
+        return base + INTONATION_QUESTIONS;
     }
 
     public String getCapitalsScope() {

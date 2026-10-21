@@ -33,6 +33,7 @@ import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.TtsSettingsActivity;
 import com.animeshahilya.espeakng.text.AsciiUtils;
 import com.animeshahilya.espeakng.tts.CheckVoiceData;
+import com.animeshahilya.espeakng.tts.ImportedVariants;
 import com.animeshahilya.espeakng.tts.DownloadVoiceData;
 import com.animeshahilya.espeakng.util.FileUtils;
 import java.io.File;
@@ -142,11 +143,23 @@ public final class PickedFiles {
         return result != null ? result : "imported_data";
     }
 
+    /** Up to {@code max} bytes from the stream (fewer only at its end). */
+    private static byte[] readUpTo(InputStream in, int max) throws java.io.IOException {
+        final byte[] buf = new byte[max];
+        int n = 0;
+        int r;
+        while (n < max && (r = in.read(buf, n, max - n)) > 0) {
+            n += r;
+        }
+        return java.util.Arrays.copyOf(buf, n);
+    }
+
     /** Voice data is ~30 MB in all; an import far past that is not voice data. */
     private static final long MAX_VOICE_IMPORT_BYTES = 200L * 1024 * 1024;
 
     public static void importVoiceUri(final Activity activity, final Uri uri) {
         final Context storage = EspeakApp.requireStorageContext(activity);
+        final String[] variant = new String[1]; // set when the file was a voice variant
         runInBackground(new BackgroundWork<Boolean>() {
             @Override public Boolean run() {
                 boolean success = false;
@@ -172,13 +185,24 @@ public final class PickedFiles {
                             // able to write outside the voice data directory.
                             if (outFile.getCanonicalPath()
                                     .startsWith(targetDir.getCanonicalPath() + File.separator)) {
-                                try (OutputStream fos = new FileOutputStream(outFile)) {
-                                    byte[] buffer = new byte[8192];
-                                    int len;
-                                    while ((len = inputStream.read(buffer)) > 0) {
-                                        fos.write(buffer, 0, len);
-                                    }
+                                // A small text file may be a voice variant (NVDA users
+                                // share them); it goes where eSpeak finds variants.
+                                final byte[] head = readUpTo(inputStream, ImportedVariants.MAX_BYTES + 1);
+                                if (head.length <= ImportedVariants.MAX_BYTES) {
+                                    variant[0] = ImportedVariants.add(storage, fileName, head);
+                                }
+                                if (variant[0] != null) {
                                     success = true;
+                                } else {
+                                    try (OutputStream fos = new FileOutputStream(outFile)) {
+                                        fos.write(head);
+                                        byte[] buffer = new byte[8192];
+                                        int len;
+                                        while ((len = inputStream.read(buffer)) > 0) {
+                                            fos.write(buffer, 0, len);
+                                        }
+                                        success = true;
+                                    }
                                 }
                             }
                         }
@@ -201,7 +225,9 @@ public final class PickedFiles {
                     // app's TtsService should act on it.
                     updated.setPackage(activity.getPackageName());
                     activity.sendBroadcast(updated);
-                    Toast.makeText(activity, R.string.import_voice_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, variant[0] != null
+                            ? activity.getString(R.string.import_variant_success, variant[0])
+                            : activity.getString(R.string.import_voice_success), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(activity, R.string.import_voice_error, Toast.LENGTH_SHORT).show();
                 }

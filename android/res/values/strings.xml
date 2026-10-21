@@ -107,7 +107,7 @@
   <string name="variant_character">Character voices</string>
   <string name="variant_fast">Fast</string>
   <string name="import_voice_title">Import voice or dictionary</string>
-  <string name="import_voice_description">An eSpeak dictionary (_dict) or voice archive (.zip)</string>
+  <string name="import_voice_description">A voice variant file (as NVDA users share), an eSpeak dictionary (_dict) or a voice archive (.zip)</string>
   <string name="setting_emoji_processing">Emoji</string>
   <string name="emoji_announce">Announce emojis</string>
   <string name="emoji_ignore">Skip emojis</string>
@@ -121,8 +121,6 @@
   <string name="capitals_pitch_moderate">Raise pitch, moderate</string>
   <string name="capitals_pitch_strong">Raise pitch, strong</string>
   <string name="capitals_say">Say \"capital\"</string>
-  <string name="setting_emphasize_questions">Emphasize questions</string>
-  <string name="setting_emphasize_questions_summary">Higher pitch at the end of questions and exclamations</string>
   <string name="setting_wordgap">Pause between words</string>
   <string name="formatter_gap_ms">%s ms</string>
   <string name="setting_pause_scale">Pause length</string>
@@ -388,13 +386,19 @@
   <string name="setting_intonation_style">Intonation</string>
   <string-array name="intonation_style_entries">
     <item>Natural</item>
+    <item>Natural, clearer questions</item>
     <item>Flat, clearer when fast</item>
+    <item>Flat, clearer questions</item>
     <item>Expressive</item>
+    <item>Expressive, clearer questions</item>
   </string-array>
   <string-array name="intonation_style_values">
     <item>natural</item>
+    <item>natural_questions</item>
     <item>flat</item>
+    <item>flat_questions</item>
     <item>expressive</item>
+    <item>expressive_questions</item>
   </string-array>
 
   <!-- Customization: Capital letter announcement scope -->
@@ -497,8 +501,6 @@
   <string name="languages_sample_hint">Touch and hold a language to hear a sample.</string>
   <string name="language_sample_playing">Playing %1$s sample…</string>
 
-  <!-- Intonation group reveal announcement -->
-
   <!-- Settings search -->
   <string name="search_settings_title">Search settings</string>
   <string name="search_settings_hint">Search settings</string>
@@ -507,10 +509,10 @@
   <string name="search_not_ready">Settings are still loading.</string>
 
   <!-- Voice profiles: named preset files (variant, rate, pitch, punctuation) -->
-  <string name="setting_save_profile">Save voice profile</string>
-  <string name="setting_save_profile_summary">Variant, rate, pitch and punctuation, to a file</string>
-  <string name="setting_load_profile">Load voice profile</string>
-  <string name="setting_load_profile_summary">From a saved file</string>
+  <string name="setting_save_profile">Save to a file</string>
+  <string name="setting_save_profile_summary">Current voice settings, to share as a file</string>
+  <string name="setting_load_profile">Load from a file</string>
+  <string name="setting_load_profile_summary">Use a voice profile someone shared</string>
   <string name="profile_saved">Voice profile saved.</string>
   <string name="profile_save_failed">Could not save the voice profile. Try another location.</string>
   <string name="profile_applied">Voice profile applied.</string>
@@ -544,6 +546,8 @@
   <string name="whats_new_body">NEW IN 2.10 BETA 2\n• Simpler settings: the first page has the voice, speed, rate boost, pitch and punctuation, and everything people rarely change is under Advanced.\n• Short, plain descriptions with examples, like \"$5.50 as 5 dollars 50 cents\".\n• Punctuation and symbols and Reading are one page now, Text and symbols. Acoustic conditioning is now Sound enhancement, under Advanced.\n• Settings search works again and takes you straight to the setting.\n• Clearer icons on the first page.\n• Web links and email addresses stay in one piece when text mixes languages.\n• When an app or TalkBack marks text as a language, that language\'s voice reads it.\n• New, off by default (Advanced): recognise Spanish, French, German, Italian and Portuguese phrases inside other text, and read typed letters in the keyboard\'s language.\n• Natural voices start faster on the NPU and take less space: their NPU files now come ready-made.\n• Installing an app update opens more reliably.</string>
 
   <!-- Favorite voices: pinned to the top of the system voice list -->
+  <string name="screen_voice_list_title">Voice list</string>
+  <string name="screen_voice_list_summary">Which languages show, and which voices come first</string>
   <string name="setting_favorite_voices">Favorite voices</string>
   <string name="setting_favorite_voices_summary">Shown first in voice lists</string>
   <string name="favorites_summary_none">None. Pinned voices are listed first.</string>
@@ -716,6 +720,7 @@
   <string name="test_routing_nothing">Nothing was read. Type some text and try again.</string>
   <string name="test_routing_edit">Try other text</string>
   <string name="test_routing_close">Close</string>
+  <string name="preview_last_heard">Last heard</string>
   <string name="dict_label_read_in">Read in</string>
   <string name="dict_read_in_usual">The usual voice</string>
   <string name="dict_rule_read_in">%1$s, read in %2$s</string>
@@ -754,4 +759,23 @@
   <string name="recent_speech_copied">Copied</string>
   <string name="recent_speech_close">Close</string>
   <string name="recent_speech_back">Back</string>
+  <string name="screen_presets_title">Presets</string>
+  <string name="screen_presets_summary">Switch voice setups in one tap, here, from a Quick Settings tile or Tasker</string>
+  <string name="category_preset_files">Files</string>
+  <string name="preset_save">Save current settings as a preset</string>
+  <string name="preset_save_summary">Voice, speed, pitch, intonation, reading mode and punctuation</string>
+  <string name="preset_save_button">Save</string>
+  <string name="preset_name">Preset name</string>
+  <string name="preset_name_hint">Like Fast navigation</string>
+  <string name="preset_saved">Saved %1$s.</string>
+  <string name="preset_in_use">In use</string>
+  <string name="preset_use">Use</string>
+  <string name="preset_replace">Replace with current settings</string>
+  <string name="preset_delete">Delete</string>
+  <string name="preset_using">Using %1$s.</string>
+  <string name="import_variant_success">Added voice variant %1$s. Choose it under Voice variant, Imported.</string>
+  <string name="variant_imported">Imported</string>
+  <string name="preset_tile">Voice preset</string>
+  <string name="preset_tile_none">No presets yet</string>
+  <string name="preset_tile_own">Own settings</string>
 </resources>

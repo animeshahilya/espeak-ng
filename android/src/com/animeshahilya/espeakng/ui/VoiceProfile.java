@@ -17,7 +17,7 @@
 package com.animeshahilya.espeakng.ui;
 import com.animeshahilya.espeakng.util.BackupRestoreHelper;
 import com.animeshahilya.espeakng.EspeakApp;
-import com.animeshahilya.espeakng.Voice;
+import com.animeshahilya.espeakng.util.TolerantPreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -35,9 +35,10 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Named voice profiles: the small sharable slice of the settings (variant,
- * rate, pitch, pitch range, volume, punctuation) saved as a JSON file, so
- * users can trade NVDA-style voice setups. Full settings plus the dictionary
+ * Voice profiles: the small sharable slice of the settings (variant, rate,
+ * rate boost, pitch, pitch range, volume, intonation, reading mode,
+ * punctuation) saved as a JSON file, so users can trade NVDA-style voice
+ * setups; {@link VoicePresets} keeps named ones in the app. Full settings plus the dictionary
  * stay in backup/restore ({@link BackupRestoreHelper}).
  *
  * <p>Unknown keys are ignored on load and missing keys keep their current
@@ -52,45 +53,76 @@ public final class VoiceProfile {
     private VoiceProfile() {
     }
 
-    private static final String[] STRING_KEYS = {
+    /**
+     * What a profile or preset holds. All are stored as strings, as the
+     * settings screen stores them: the punctuation level used to be read
+     * back with putInt, which the settings then could not read, so loading
+     * a profile silently reset punctuation to the default.
+     */
+    private static final String[] KEYS = {
             VoiceSettings.PREF_VARIANT,
             VoiceSettings.PREF_RATE,
+            VoiceSettings.PREF_RATE_BOOST_LEVEL,
             VoiceSettings.PREF_PITCH,
             VoiceSettings.PREF_PITCH_RANGE,
             VoiceSettings.PREF_VOLUME,
+            VoiceSettings.PREF_INTONATION_STYLE,
+            VoiceSettings.PREF_READING_MODE,
+            VoiceSettings.PREF_PUNCTUATION_LEVEL,
             VoiceSettings.PREF_PUNCTUATION_CHARACTERS,
     };
 
-    private static final String[] INT_KEYS = {
-            VoiceSettings.PREF_PUNCTUATION_LEVEL,
-    };
+    /**
+     * The current values of {@link #KEYS}; one never set is JSON null
+     * ("the default"), so applying the profile puts the default back
+     * instead of keeping whatever the setting holds by then.
+     */
+    static JSONObject capture(SharedPreferences prefs) throws Exception {
+        final SharedPreferences tolerant = TolerantPreferences.of(prefs);
+        final JSONObject profile = new JSONObject();
+        for (String key : KEYS) {
+            final String value = tolerant.getString(key, null);
+            profile.put(key, value != null ? value : JSONObject.NULL);
+        }
+        return profile;
+    }
+
+    /**
+     * Writes a profile's known keys (numbers from older files become strings,
+     * null means the default); returns true when at least one was applied.
+     * Keys a file lacks keep their current values, except punctuation
+     * characters, which belong to the level beside them.
+     */
+    static boolean apply(SharedPreferences prefs, JSONObject profile) {
+        final SharedPreferences.Editor ed = prefs.edit();
+        boolean applied = false;
+        for (String key : KEYS) {
+            if (!profile.has(key)) {
+                continue;
+            }
+            if (profile.isNull(key)) {
+                ed.remove(key);
+            } else {
+                ed.putString(key, profile.optString(key, ""));
+            }
+            applied = true;
+        }
+        if (profile.has(VoiceSettings.PREF_PUNCTUATION_LEVEL)
+                && !profile.has(VoiceSettings.PREF_PUNCTUATION_CHARACTERS)) {
+            ed.remove(VoiceSettings.PREF_PUNCTUATION_CHARACTERS);
+        }
+        if (applied) {
+            ed.apply();
+        }
+        return applied;
+    }
 
     public static void saveToStream(Context context, OutputStream os) throws Exception {
-        SharedPreferences prefs = EspeakApp.prefs(context);
-        JSONObject profile = new JSONObject();
-        for (String key : STRING_KEYS) {
-            String value = prefs.getString(key, null);
-            if (value != null) {
-                profile.put(key, value);
-            }
-        }
-        for (String key : INT_KEYS) {
-            if (prefs.contains(key)) {
-                try {
-                    profile.put(key, prefs.getInt(key, 0));
-                } catch (ClassCastException e) {
-                    String value = prefs.getString(key, null);
-                    if (value != null) {
-                        profile.put(key, value);
-                    }
-                }
-            }
-        }
         JSONObject root = new JSONObject();
         root.put("version", PROFILE_VERSION);
         root.put("package", context.getPackageName());
         root.put("exportedAt", System.currentTimeMillis());
-        root.put("profile", profile);
+        root.put("profile", capture(EspeakApp.prefs(context)));
         try (Writer w = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
             w.write(root.toString(2));
             w.flush();
@@ -104,49 +136,28 @@ public final class VoiceProfile {
      */
     public static boolean loadFromStream(Context context, InputStream is) {
         try {
-            StringBuilder sb = new StringBuilder(8192);
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(is, StandardCharsets.UTF_8), 4096)) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line).append('\n');
-                    if (sb.length() > 1024 * 1024) {
-                        return false; // not a profile; refuse, don't parse
-                    }
-                }
-            }
-            JSONObject root = new JSONObject(sb.toString());
-            JSONObject profile = root.optJSONObject("profile");
-            if (profile == null) {
-                return false;
-            }
-            SharedPreferences prefs = EspeakApp.prefs(context);
-            SharedPreferences.Editor ed = prefs.edit();
-            boolean applied = false;
-            for (String key : STRING_KEYS) {
-                if (profile.has(key) && !profile.isNull(key)) {
-                    ed.putString(key, profile.optString(key, ""));
-                    applied = true;
-                }
-            }
-            for (String key : INT_KEYS) {
-                if (profile.has(key) && !profile.isNull(key)) {
-                    try {
-                        ed.putInt(key, profile.getInt(key));
-                    } catch (Exception e) {
-                        ed.putString(key, profile.optString(key, ""));
-                    }
-                    applied = true;
-                }
-            }
-            if (applied) {
-                ed.apply();
-            }
-            return applied;
+            JSONObject profile = read(is);
+            return profile != null && apply(EspeakApp.prefs(context), profile);
         } catch (Exception e) {
             Log.w(TAG, "Profile load failed", e);
             return false;
         }
+    }
+
+    /** A profile file's settings, or null when it is not one. */
+    static JSONObject read(InputStream is) throws Exception {
+        StringBuilder sb = new StringBuilder(8192);
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(is, StandardCharsets.UTF_8), 4096)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+                if (sb.length() > 1024 * 1024) {
+                    return null; // not a profile; refuse, don't parse
+                }
+            }
+        }
+        return new JSONObject(sb.toString()).optJSONObject("profile");
     }
 }
 

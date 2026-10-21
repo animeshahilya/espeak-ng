@@ -133,6 +133,17 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
+        <!-- Voice preset: each tap switches to the next preset (ui/VoicePresets). -->
+        <service
+            android:name=".ui.VoicePresetTile"
+            android:label="@string/preset_tile"
+            android:icon="@drawable/ic_tune"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
         <activity
             android:name=".ui.RecentSpeechActivity"
             android:label="@string/recent_speech_title"

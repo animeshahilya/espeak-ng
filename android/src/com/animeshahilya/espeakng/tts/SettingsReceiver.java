@@ -26,6 +26,7 @@ import android.util.Log;
 import com.animeshahilya.espeakng.EspeakApp;
 import com.animeshahilya.espeakng.SpeechSynthesis;
 import com.animeshahilya.espeakng.piper.PiperVoiceStore;
+import com.animeshahilya.espeakng.ui.VoicePresets;
 import com.animeshahilya.espeakng.ui.VoiceSettings;
 
 import java.util.HashMap;
@@ -40,7 +41,8 @@ import java.util.Map;
  *     0-200 - a number, or "+20" / "-20" to change the current value;
  * <li>{@code punctuation} none / some / most / all;
  * <li>{@code reading_mode} normal / spelling / code;
- * <li>{@code natural_voices} true / false.
+ * <li>{@code natural_voices} true / false;
+ * <li>{@code preset} a preset's name (Backup and about -> Presets).
  * </ul>
  * Off unless the user turns on {@link VoiceSettings#PREF_ALLOW_OTHER_APPS}:
  * any app can send it. Values are clamped, unknown extras ignored.
@@ -104,6 +106,11 @@ public class SettingsReceiver extends BroadcastReceiver {
                     if (VoiceSettings.READING_NORMAL.equals(value) || VoiceSettings.READING_SPELLING.equals(value)
                             || VoiceSettings.READING_CODE.equals(value)) {
                         editor.putString(VoiceSettings.PREF_READING_MODE, value);
+                        applied++;
+                    }
+                    break;
+                case "preset":
+                    if (VoicePresets.use(prefs, value)) {
                         applied++;
                     }
                     break;

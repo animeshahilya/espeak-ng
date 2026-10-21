@@ -206,11 +206,13 @@
             android:defaultValue="normal"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
-        <SwitchPreferenceCompat
-            android:key="espeak_emphasize_questions"
-            android:title="@string/setting_emphasize_questions"
-            android:summary="@string/setting_emphasize_questions_summary"
-            android:defaultValue="false"
+        <ListPreference
+            android:key="espeak_intonation_style"
+            android:title="@string/setting_intonation_style"
+            android:entries="@array/intonation_style_entries"
+            android:entryValues="@array/intonation_style_values"
+            android:defaultValue="natural"
+            app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
         <!-- not on Wear -->
         <ListPreference
@@ -533,14 +535,6 @@
             android:key="espeak_pitch_range"
             android:title="@string/espeak_pitch_range"
             app:iconSpaceReserved="false" />
-        <ListPreference
-            android:key="espeak_intonation_style"
-            android:title="@string/setting_intonation_style"
-            android:entries="@array/intonation_style_entries"
-            android:entryValues="@array/intonation_style_values"
-            android:defaultValue="natural"
-            app:useSimpleSummaryProvider="true"
-            app:iconSpaceReserved="false" />
         <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
             android:key="espeak_volume"
             android:title="@string/espeak_volume"
@@ -680,16 +674,21 @@
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <!-- not on Wear -->
-        <com.animeshahilya.espeakng.ui.preference.SupportedLanguagesPreference
-            android:key="espeak_supported_languages"
-            android:title="@string/espeak_supported_languages"
-            app:iconSpaceReserved="false" />
-        <!-- not on Wear -->
-        <Preference
-            android:key="action_favorite_voices"
-            android:title="@string/setting_favorite_voices"
-            android:summary="@string/setting_favorite_voices_summary"
-            app:iconSpaceReserved="false" />
+        <PreferenceScreen
+            android:key="sub_voice_list"
+            android:title="@string/screen_voice_list_title"
+            android:summary="@string/screen_voice_list_summary"
+            app:iconSpaceReserved="false">
+          <com.animeshahilya.espeakng.ui.preference.SupportedLanguagesPreference
+              android:key="espeak_supported_languages"
+              android:title="@string/espeak_supported_languages"
+              app:iconSpaceReserved="false" />
+          <Preference
+              android:key="action_favorite_voices"
+              android:title="@string/setting_favorite_voices"
+              android:summary="@string/setting_favorite_voices_summary"
+              app:iconSpaceReserved="false" />
+        </PreferenceScreen>
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_speech_control"
@@ -763,17 +762,30 @@
             android:summary="@string/setting_recommended_defaults_summary"
             app:iconSpaceReserved="false" />
         <!-- not on Wear -->
-        <Preference
-            android:key="action_save_profile"
-            android:title="@string/setting_save_profile"
-            android:summary="@string/setting_save_profile_summary"
-            app:iconSpaceReserved="false" />
-        <!-- not on Wear -->
-        <Preference
-            android:key="action_load_profile"
-            android:title="@string/setting_load_profile"
-            android:summary="@string/setting_load_profile_summary"
-            app:iconSpaceReserved="false" />
+        <PreferenceScreen
+            android:key="sub_presets"
+            android:title="@string/screen_presets_title"
+            android:summary="@string/screen_presets_summary"
+            app:iconSpaceReserved="false">
+          <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
+              android:key="category_preset_list"
+              android:title="@string/screen_presets_title"
+              app:iconSpaceReserved="false" />
+          <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
+              android:title="@string/category_preset_files"
+              app:iconSpaceReserved="false">
+            <Preference
+                android:key="action_save_profile"
+                android:title="@string/setting_save_profile"
+                android:summary="@string/setting_save_profile_summary"
+                app:iconSpaceReserved="false" />
+            <Preference
+                android:key="action_load_profile"
+                android:title="@string/setting_load_profile"
+                android:summary="@string/setting_load_profile_summary"
+                app:iconSpaceReserved="false" />
+          </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+        </PreferenceScreen>
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:key="category_data"

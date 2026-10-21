@@ -166,6 +166,8 @@ public class CheckVoiceData extends Activity {
                     version = FileUtils.read(versionStream);
                 }
                 FileUtils.write(new File(getDataPath(context), "version"), version);
+                // The tree was deleted above: put the user's imported variants back.
+                ImportedVariants.restore(context, getDataPath(context));
 
                 // A crash or full disk mid-extract used to leave a half-written
                 // data dir behind: only report success when the base resources

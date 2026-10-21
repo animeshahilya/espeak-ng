@@ -136,6 +136,52 @@ public final class SpeechPreview {
         }
     }
 
+    /**
+     * A "Hear …" preview: its sample in an editable field, so a setting can
+     * be heard on the user's own text, or on the last thing said ("Last
+     * heard", from Recent speech, when it holds something). Play keeps the
+     * dialog open to try several texts; a second Play while speaking stops,
+     * as everywhere in the previews.
+     */
+    public static void previewText(final Context context, int title, final String sample,
+                                   final String utteranceId) {
+        final float density = context.getResources().getDisplayMetrics().density;
+        final LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        final int pad = (int) (24 * density + 0.5f);
+        layout.setPadding(pad, (int) (8 * density + 0.5f), pad, 0);
+        final EditText input = UserDictionaryScreen.labeledInput(context, layout,
+                context.getString(R.string.test_routing_hint), null, sample,
+                android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        final List<RecentSpeech.Item> recent = RecentSpeech.items(System.currentTimeMillis());
+        final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context)
+                .setTitle(title)
+                .setView(layout)
+                .setPositiveButton(R.string.test_routing_play, null)
+                .setNegativeButton(R.string.test_routing_close, null);
+        if (!recent.isEmpty()) {
+            builder.setNeutralButton(R.string.preview_last_heard, null);
+        }
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(d -> {
+            SettingsDialogs.markAlertTitleHeading(dialog);
+            // Set here, not on the builder: those listeners close the dialog.
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                final String text = input.getText().toString();
+                if (!VoiceSettings.isBlank(text)) {
+                    speakPreview(context, text, utteranceId);
+                }
+            });
+            if (!recent.isEmpty()) {
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
+                    input.setText(recent.get(0).text);
+                    input.setSelection(input.length());
+                });
+            }
+        });
+        dialog.show();
+    }
+
     private static final String ROUTING_UTTERANCE = "routing_preview";
     /** The routing preview's last text, offered again for the next try. */
     private static String sRoutingText;
