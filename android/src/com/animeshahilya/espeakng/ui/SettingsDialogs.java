@@ -28,16 +28,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import com.animeshahilya.espeakng.BuildConfig;
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.TtsSettingsActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import java.util.List;
 
 /**
- * The settings screen's dialogs: About, recent reading, what's new, and the TalkBack heading every dialog title gets.
+ * The settings screen's dialogs: About, what's new, and the TalkBack heading every dialog title gets.
  */
 public final class SettingsDialogs {
     private static final String TAG = "SettingsDialogs";
@@ -132,45 +130,6 @@ public final class SettingsDialogs {
                 // no browser or WhatsApp installed; nothing to open
             }
         });
-    }
-
-    /**
-     * Recent reading: re-hear what the engine said. Entries are stored
-     * snippets (see {@link ReadingHistory}); tapping one speaks it through
-     * the preview engine with the current settings.
-     */
-    public static void showRecentReadingDialog(final Context context) {
-        final SharedPreferences prefs = TtsSettingsActivity.getPrefs();
-        final List<ReadingHistory.Entry> items = ReadingHistory.get(prefs);
-        if (items.isEmpty()) {
-            new MaterialAlertDialogBuilder(context)
-                    .setTitle(R.string.setting_recent_reading)
-                    .setMessage(R.string.history_empty)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show();
-            return;
-        }
-        // setItems rows announce their title only; the snippet itself
-        // identifies each entry, so voice/time stay out of the tree.
-        final CharSequence[] titles = new CharSequence[items.size()];
-        for (int i = 0; i < items.size(); i++) {
-            titles[i] = items.get(i).text;
-        }
-        final AlertDialog dialog = new MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.setting_recent_reading)
-                .setItems(titles, (d, which) -> {
-                    if (which >= 0 && which < items.size()) {
-                        SpeechPreview.speakPreview(context, items.get(which).text, "history_rehear");
-                    }
-                })
-                .setNeutralButton(R.string.history_clear, (d, which) -> {
-                    ReadingHistory.clear(prefs);
-                    Toast.makeText(context, R.string.history_cleared, Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton(R.string.dict_back, null)
-                .create();
-        dialog.setOnShowListener(d -> markAlertTitleHeading(dialog));
-        dialog.show();
     }
 
     /**

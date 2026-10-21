@@ -18,7 +18,6 @@ package com.animeshahilya.espeakng.util;
 import com.animeshahilya.espeakng.tts.DownloadVoiceData;
 import com.animeshahilya.espeakng.EspeakApp;
 import com.animeshahilya.espeakng.piper.PiperDownloads;
-import com.animeshahilya.espeakng.ui.ReadingHistory;
 import com.animeshahilya.espeakng.ui.VoiceSettings;
 import com.animeshahilya.espeakng.TtsService;
 import com.animeshahilya.espeakng.text.UserDictionary;
@@ -96,11 +95,11 @@ public final class BackupRestoreHelper {
      * A user's choice, as opposed to this app's own state: exported, and the
      * only kind of key a restore writes. Backups get shared, so a restored
      * file must not reach download bookkeeping, crash guards, migration
-     * flags or reading history (what the phone read aloud).
+     * flags or removed features' data (Reading history: what the phone read aloud).
      */
     static boolean isSetting(String key) {
         return key != null && !PiperDownloads.isDeviceLocalPref(key)
-                && !ReadingHistory.PREF_HISTORY_ITEMS.equals(key)
+                && !java.util.Arrays.asList(EspeakApp.REMOVED_PREFS).contains(key)
                 // which apps spoke, and whether this phone has the tile
                 && !com.animeshahilya.espeakng.ui.AppCards.PREF_SEEN.equals(key)
                 && !com.animeshahilya.espeakng.ui.RecentSpeech.PREF_ON.equals(key)

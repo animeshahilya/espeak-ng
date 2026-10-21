@@ -45,7 +45,6 @@ import com.animeshahilya.espeakng.piper.PiperEngine;
 import com.animeshahilya.espeakng.piper.PiperModel;
 import com.animeshahilya.espeakng.tts.PiperVoiceEngine;
 import com.animeshahilya.espeakng.piper.PiperVoiceStore;
-import com.animeshahilya.espeakng.ui.ReadingHistory;
 import com.animeshahilya.espeakng.ui.RecentSpeech;
 import com.animeshahilya.espeakng.text.ScriptLanguages;
 import com.animeshahilya.espeakng.text.TextOffsetMap;
@@ -144,8 +143,6 @@ public class TtsService extends TextToSpeechService {
     private EspeakVoiceEngine mEspeakVoiceEngine;
     private PiperVoiceEngine mPiperVoiceEngine;
 
-    /** Caller text as handed to the preprocessor: what reading history keeps. */
-    private String mHistoryText;
     /** Length of the original text passed by the caller for boundary clamping. */
     private int mOriginalTextLength;
 
@@ -1039,17 +1036,10 @@ public class TtsService extends TextToSpeechService {
     }
 
     /**
-     * Shared request tail: record reading history (opt-in, never SSML),
-     * release any render-ahead piece, note used natural voices and signal
-     * completion. The natural path always passes {@code isSsml} false (SSML
-     * stays with eSpeak), so one guard covers both paths.
+     * Shared request tail: release any render-ahead piece, note used natural
+     * voices and signal completion.
      */
-    private void finishWithHistory(SharedPreferences prefs, String voiceName, List<String> used,
-                                   NaturalAhead ahead, boolean isSsml) {
-        if (!mIsStopped.get() && mHistoryText != null && !isSsml) {
-            ReadingHistory.record(prefs, mHistoryText, voiceName);
-        }
-        mHistoryText = null;
+    private void finishUnits(SharedPreferences prefs, List<String> used, NaturalAhead ahead) {
         ahead.discard(); // stopped with the next natural piece still rendering
         PiperVoiceStore.noteUsed(prefs, used);
         finishRequest();
@@ -1193,8 +1183,6 @@ public class TtsService extends TextToSpeechService {
         text = prep.text;
         offsetMap = prep.offsetMap;
         final boolean isSingleCharacterUtterance = prep.isSingleCharacterUtterance;
-
-        mHistoryText = com.animeshahilya.espeakng.text.ReadIn.strip(text);
 
         // Who reads each part (RunPlan): natural voices where the user chose
         // one and it is in memory, eSpeak for the rest. SSML stays with
@@ -1405,7 +1393,7 @@ public class TtsService extends TextToSpeechService {
         // Reading history (opt-in): what was spoken, for re-hearing later.
         // Recorded once per completed request; stopped requests and SSML
         // markup are skipped inside, along with short/code-like text.
-        finishWithHistory(prefs, voice != null ? voice.name : null, naturalUsed, ahead, isSsml);
+        finishUnits(prefs, naturalUsed, ahead);
     }
 
     /**
@@ -1471,7 +1459,7 @@ public class TtsService extends TextToSpeechService {
     /**
      * Speaks a request with a Piper voice. Same text pipeline, same units
      * (watchdog chunks, earcons), same callback plumbing as eSpeak -
-     * reading history, word ranges, audio optimizer and stop all behave the
+     * word ranges, audio optimizer and stop all behave the
      * same - only the audio comes from the neural model, phonemized by this
      * fork's own eSpeak rules.
      */
@@ -1542,7 +1530,7 @@ public class TtsService extends TextToSpeechService {
                 return;
             }
         }
-        finishWithHistory(prefs, voice.name, used, ahead, false);
+        finishUnits(prefs, used, ahead);
     }
 
     /** {@link PiperEngine#play} into a request at {@code rate}, resampled where the voice's differs. */

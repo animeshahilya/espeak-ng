@@ -828,7 +828,6 @@ public class VoiceSettings {
     }
 
     // Reading history (opt-in): keep recently spoken text on this device.
-    public static final String PREF_READING_HISTORY = "espeak_reading_history";
 
     // What's-new dialog: last version code the user has seen. Not a UI row.
     public static final String PREF_WHATS_NEW_SEEN = "espeak_whats_new_seen";

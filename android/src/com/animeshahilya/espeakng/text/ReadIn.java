@@ -67,7 +67,7 @@ public final class ReadIn {
         return new String(lang);
     }
 
-    /** {@code text} without its marks (reading history, previews). */
+    /** {@code text} without its marks (direct synthesis, previews). */
     public static String strip(String text) {
         if (text == null) {
             return null;

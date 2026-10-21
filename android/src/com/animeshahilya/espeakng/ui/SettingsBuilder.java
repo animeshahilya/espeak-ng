@@ -283,7 +283,6 @@ public final class SettingsBuilder {
                     VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.PREF_SIMPLIFY_URLS,
                     "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER,
                     "action_save_profile", "action_load_profile",
-                    VoiceSettings.PREF_READING_HISTORY, "action_recent_reading",
                     "sub_app_cards", "action_recent_speech",
                     "category_presets", "category_data",
                     // Neural voices need more memory and CPU than a watch
@@ -419,8 +418,6 @@ public final class SettingsBuilder {
                 i.setType("application/json");
                 startForResult(context, i, TtsSettingsActivity.REQUEST_CODE_IMPORT_PROFILE);
             });
-            onClick(screen, "action_recent_reading", () ->
-                    SettingsDialogs.showRecentReadingDialog(context));
             onClick(screen, "action_recent_speech", () -> openRecentSpeech(context, prefs));
             refreshFavoritesSummary(screen, prefs);
         }

@@ -593,13 +593,6 @@
   <string name="sleep_timer_resumed">Speech resumed.</string>
 
   <!-- Reading history (opt-in): re-hear recently spoken text -->
-  <string name="setting_reading_history">Reading history</string>
-  <string name="setting_reading_history_summary">Keep recent speech on this device to hear again</string>
-  <string name="setting_recent_reading">Recent reading</string>
-  <string name="setting_recent_reading_summary">Hear recent speech again</string>
-  <string name="history_empty">Nothing here yet. Turn on Reading history to keep recent speech.</string>
-  <string name="history_clear">Clear history</string>
-  <string name="history_cleared">Reading history cleared.</string>
 
   <!-- Watch: some rows are phone-only -->
   <string name="note_wear_limited_title">Fewer settings on watch</string>

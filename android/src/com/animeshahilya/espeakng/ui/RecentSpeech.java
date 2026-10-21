@@ -27,8 +27,8 @@ import java.util.List;
  * again slowly, spelled out, or to copy (a code, a name, an address TalkBack
  * read once). NVDA users ask for its speech viewer for the same reason.
  *
- * <p>Unlike {@link ReadingHistory} it keeps short text too - that is its
- * point - so it is held tighter: only while the Quick Settings tile is added
+ * <p>It keeps short text too (codes, names) - that is its point - so it is
+ * held tightly: only while the Quick Settings tile is added
  * ({@link #PREF_ON}, set by {@link RecentSpeechTile}), in memory only (gone
  * with the process, never written or backed up), the last
  * {@link #MAX_ITEMS} for {@link #KEEP_MS}, and shown only after unlock.

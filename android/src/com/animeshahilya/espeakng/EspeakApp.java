@@ -53,6 +53,13 @@ public class EspeakApp extends Application {
      */
     public static final String PREF_PREFERENCES_MIGRATED = "espeak_preferences_migrated";
 
+    /**
+     * Keys of removed features, deleted at start and never restored from a
+     * backup: Reading history (2026-10-21, replaced by Recent speech) kept
+     * snippets of what was read aloud.
+     */
+    public static final String[] REMOVED_PREFS = {"espeak_reading_history", "espeak_reading_history_items"};
+
     @SuppressLint("StaticFieldLeak")
     private static Context storageContext;
 
@@ -158,6 +165,7 @@ public class EspeakApp extends Application {
         // Tolerant: a wrongly typed setting must not crash every process start.
         final android.content.SharedPreferences settings = TolerantPreferences.of(
                 prefs(EspeakApp.storageContext));
+        dropRemovedPrefs(settings);
         final PiperCrashGuard crashGuard = new PiperCrashGuard(EspeakApp.storageContext, settings);
         crashGuard.checkPreviousExit(appContext);
         PiperEngine.get().setNativeGuard(crashGuard);
@@ -283,6 +291,19 @@ public class EspeakApp extends Application {
      * compounds when used). Each builds once; a request that comes first
      * waits for the build in progress rather than repeating it.
      */
+    private static void dropRemovedPrefs(android.content.SharedPreferences settings) {
+        android.content.SharedPreferences.Editor editor = null;
+        for (String key : REMOVED_PREFS) {
+            if (settings.contains(key)) {
+                editor = editor != null ? editor : settings.edit();
+                editor.remove(key);
+            }
+        }
+        if (editor != null) {
+            editor.apply();
+        }
+    }
+
     private static void warmUpText(android.content.SharedPreferences settings) {
         try {
             TextPreprocessor.isSingleCharacter("a"); // compiles its patterns

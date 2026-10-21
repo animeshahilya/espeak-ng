@@ -16,7 +16,6 @@
 
 package com.animeshahilya.espeakng.util;
 import com.animeshahilya.espeakng.EspeakApp;
-import com.animeshahilya.espeakng.ui.ReadingHistory;
 import com.animeshahilya.espeakng.text.UserDictionaryManager;
 
 import android.content.Context;
@@ -85,12 +84,6 @@ public final class LogExporter {
             SharedPreferences prefs = EspeakApp.prefs(context);
             sb.append("--- Preferences ---\n");
             for (Map.Entry<String, ?> e : prefs.getAll().entrySet()) {
-                if (ReadingHistory.PREF_HISTORY_ITEMS.equals(e.getKey())) {
-                    // What the phone read aloud (messages, names, codes): never
-                    // in a log people share for troubleshooting.
-                    sb.append(e.getKey()).append("=(not included)\n");
-                    continue;
-                }
                 sb.append(e.getKey()).append('=').append(String.valueOf(e.getValue())).append('\n');
             }
             sb.append('\n');

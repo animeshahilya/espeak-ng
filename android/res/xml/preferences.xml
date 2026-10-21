@@ -809,19 +809,6 @@
             android:title="@string/setting_export_log"
             android:summary="@string/setting_export_log_summary"
             app:iconSpaceReserved="false" />
-        <!-- not on Wear -->
-        <SwitchPreferenceCompat
-            android:key="espeak_reading_history"
-            android:title="@string/setting_reading_history"
-            android:summary="@string/setting_reading_history_summary"
-            android:defaultValue="false"
-            app:iconSpaceReserved="false" />
-        <!-- not on Wear -->
-        <Preference
-            android:key="action_recent_reading"
-            android:title="@string/setting_recent_reading"
-            android:summary="@string/setting_recent_reading_summary"
-            app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
       <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
           android:title="@string/category_about"
