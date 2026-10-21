@@ -58,6 +58,21 @@ public class SpeechByAppTest {
     }
 
     @Test
+    public void sleepTimerStopTimeIsBounded() {
+        final Map<String, Object> values = new HashMap<>();
+        final long now = 1_000_000_000L;
+        assertEquals(0L, VoiceSettings.sleepStopAt(prefs(values), now));
+        values.put(VoiceSettings.PREF_SLEEP_STOP_AT, now + 30 * 60_000L);
+        assertEquals(now + 30 * 60_000L, VoiceSettings.sleepStopAt(prefs(values), now)); // armed
+        values.put(VoiceSettings.PREF_SLEEP_STOP_AT, now - 60_000L);
+        assertEquals(now - 60_000L, VoiceSettings.sleepStopAt(prefs(values), now)); // stopped
+        values.put(VoiceSettings.PREF_SLEEP_STOP_AT, now - VoiceSettings.SLEEP_HOLD_MS);
+        assertEquals(0L, VoiceSettings.sleepStopAt(prefs(values), now)); // ended by itself
+        values.put(VoiceSettings.PREF_SLEEP_STOP_AT, now + 24 * 60 * 60_000L);
+        assertEquals(0L, VoiceSettings.sleepStopAt(prefs(values), now)); // impossible: ignored
+    }
+
+    @Test
     public void sharedUidIsNamedSteadily() {
         assertEquals("", AppCards.cardPackage(null));
         assertEquals("com.reader", AppCards.cardPackage(new String[] {"com.reader"}));

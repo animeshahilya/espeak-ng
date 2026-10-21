@@ -134,8 +134,8 @@ public final class PiperDownloads {
                 || key.equals("piper_cache_hits_total") || key.equals("piper_cache_chunks_total")
                 // Last auto-update check time: a clock time on this phone.
                 || key.equals(PREF_UPDATE_CHECKED)
-                // A running sleep timer's deadline: a clock time on this phone.
-                || key.equals(VoiceSettings.PREF_SLEEP_MUTE_UNTIL));
+                // A running sleep timer's stop time: a clock time on this phone.
+                || key.equals(VoiceSettings.PREF_SLEEP_STOP_AT));
     }
 
     /** The shared store's files and their lengths, for {@link CatalogVoice#downloadBytes}. */

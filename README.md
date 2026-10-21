@@ -246,7 +246,6 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting and our disclosure po
 - eSpeak NG: [GPL v3 or later](COPYING)
 - getopt compatibility code: [BSD 2-Clause](COPYING.BSD2)
 - Hinglish word list (`android/assets/hinglish/hi.tsv`): built by `android/tools/build_hinglish.py` from Google's [Dakshina dataset](https://github.com/google-research-datasets/dakshina), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). English words were identified with CMUdict.
-- English compound splits (`android/assets/compounds/en.tsv`): vendored from [TGSpeechBox](https://github.com/tgeczy/TGSpeechBox) `packs/dict/en-compounds.tsv`, [MIT](https://github.com/tgeczy/TGSpeechBox/blob/main/LICENSE).
 - Urdu word pronunciations (generated block at the end of `dictsource/ur_list`): built by `android/tools/urdu/ur_from_hindi.py` from the same Dakshina dataset, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
 
 Android is a trademark of Google LLC.

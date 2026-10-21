@@ -283,7 +283,7 @@ public final class SettingsBuilder {
                     VoiceSettings.PREF_EMOJI_PROCESSING, VoiceSettings.PREF_SIMPLIFY_URLS,
                     "action_favorite_voices", VoiceSettings.PREF_SLEEP_TIMER,
                     "action_save_profile", "action_load_profile",
-                    "sub_app_cards", "action_recent_speech",
+                    "category_app_cards", "action_recent_speech",
                     "category_presets", "category_data",
                     // Neural voices need more memory and CPU than a watch
                     // should spend on a screen reader voice.
@@ -374,10 +374,6 @@ public final class SettingsBuilder {
         // Rows that only matter under another setting are hidden, not
         // greyed out, while that setting is off: a disabled row is still a
         // TalkBack stop that reads "disabled" and does nothing.
-        showWhile(screen, VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.PREF_INTONATION_GROUP,
-                value -> VoiceSettings.INTONATION_CUSTOM.equals(value),
-                prefs.getString(VoiceSettings.PREF_INTONATION_STYLE, VoiceSettings.INTONATION_NATURAL),
-                fragment, context.getString(R.string.setting_intonation_group_shown));
         showWhile(screen, VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL, "category_optimizer_modules",
                 value -> VoiceSettings.AUDIO_PROFILE_CUSTOM.equals(value),
                 prefs.getString(VoiceSettings.PREF_AUDIO_OPTIMIZER_LEVEL, VoiceSettings.AUDIO_PROFILE_OFF),
@@ -517,10 +513,9 @@ public final class SettingsBuilder {
 
     /**
      * Sleep timer choices, generated like the rate-boost list so the UI
-     * cannot drift from {@link VoiceSettings#SLEEP_MAX_MINUTES}. Arming
-     * applies the mute a few seconds later (not instantly): the "pausing"
-     * toast must itself be spoken first, and it travels through the very
-     * engine about to go silent. Clearing the timer unmutes at once.
+     * cannot drift from {@link VoiceSettings#SLEEP_MAX_MINUTES}. Reading
+     * apps stop at the chosen time; the screen reader never does, so the
+     * row stays reachable. Off lets them talk again at once.
      */
     private static void configureSleepTimer(final Context context, PreferenceScreen screen,
                                             final SharedPreferences prefs) {
@@ -544,7 +539,7 @@ public final class SettingsBuilder {
         pref.setOnPreferenceChangeListener((p, value) -> {
             final String v = String.valueOf(value);
             if (VoiceSettings.SLEEP_OFF.equals(v)) {
-                VoiceSettings.clearSleepMute(prefs);
+                VoiceSettings.clearSleepTimer(prefs);
                 Toast.makeText(context, R.string.sleep_timer_resumed, Toast.LENGTH_SHORT).show();
             } else {
                 int minutes;
@@ -554,29 +549,30 @@ public final class SettingsBuilder {
                 } catch (NumberFormatException e) {
                     return false;
                 }
-                Toast.makeText(context, R.string.sleep_timer_armed, Toast.LENGTH_SHORT).show();
-                final Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(() -> VoiceSettings.armSleepMute(prefs, minutes), 3000);
+                final long at = VoiceSettings.armSleepTimer(prefs, minutes);
+                Toast.makeText(context, context.getString(R.string.sleep_stops_at, clock(context, at)),
+                        Toast.LENGTH_SHORT).show();
             }
             updateSleepSummary(context, (ListPreference) p, prefs);
-            // The persisted duration is written by the preference itself;
-            // refresh the summary again once a delayed arm lands.
-            new Handler(Looper.getMainLooper()).postDelayed(
-                    () -> updateSleepSummary(context, (ListPreference) p, prefs), 3500);
             return true;
         });
     }
 
     public static void updateSleepSummary(Context context, ListPreference pref,
                                            SharedPreferences prefs) {
-        if (VoiceSettings.isSleepMuted(prefs)) {
-            final long until = prefs.getLong(VoiceSettings.PREF_SLEEP_MUTE_UNTIL, 0);
-            final String time = android.text.format.DateFormat.getTimeFormat(context)
-                    .format(new java.util.Date(until));
-            pref.setSummary(context.getString(R.string.sleep_paused_until, time));
-        } else {
+        final long at = VoiceSettings.sleepStopAt(prefs, System.currentTimeMillis());
+        if (at == 0) {
+            pref.setValue(VoiceSettings.SLEEP_OFF); // a timer that ended by itself
             pref.setSummary(context.getString(R.string.setting_sleep_timer_summary));
+        } else if (VoiceSettings.isSleepStopped(prefs)) {
+            pref.setSummary(context.getString(R.string.sleep_stopped));
+        } else {
+            pref.setSummary(context.getString(R.string.sleep_stops_at, clock(context, at)));
         }
+    }
+
+    private static String clock(Context context, long millis) {
+        return android.text.format.DateFormat.getTimeFormat(context).format(new java.util.Date(millis));
     }
 
     /** Favorites summary: how many voices are pinned, for sighted scanners. */

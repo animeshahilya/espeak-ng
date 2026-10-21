@@ -160,9 +160,6 @@ public final class HinglishReader {
 
     /**
      * "OTP", "UPI": spelled-out acronyms stay English.
-     *
-     * <p>Package-visible: shared with {@link CompoundSplitter}, which must
-     * skip acronyms the same way.
      */
     static boolean isAcronym(String text, int start, int end) {
         final int len = end - start;
@@ -180,8 +177,6 @@ public final class HinglishReader {
 
     /**
      * Part of "abc123", "user_name" or "a@b.com": not a word to translate.
-     *
-     * <p>Package-visible: shared with {@link CompoundSplitter}.
      */
     static boolean touchesDigitOrSymbol(String text, int start, int end) {
         final char before = start > 0 ? text.charAt(start - 1) : ' ';
@@ -189,7 +184,6 @@ public final class HinglishReader {
         return isGlue(before) || isGlue(after);
     }
 
-    /** Package-visible: shared with {@link CompoundSplitter}. */
     static boolean isGlue(char c) {
         return (c >= '0' && c <= '9') || c == '_' || c == '@' || c == '/' || c == '\\'
                 || c == '#' || c == '=' || c == '&';

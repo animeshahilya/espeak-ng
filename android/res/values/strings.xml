@@ -348,8 +348,6 @@
   <string name="setting_read_math_summary">5 + 3 = 8 with plus and equals</string>
   <string name="setting_split_camel_case">Split joined words</string>
   <string name="setting_split_camel_case_summary">getUserName as get User Name</string>
-  <string name="setting_split_compounds">Split compound words</string>
-  <string name="setting_split_compounds_summary">aftermath as after math. English.</string>
   <string name="setting_clean_markdown">Clean up Markdown</string>
   <string name="setting_clean_markdown_summary">Skips *, ` and #, reads checkboxes as checked or not</string>
   <string name="setting_read_fractions">Read fractions</string>
@@ -392,36 +390,11 @@
     <item>Natural</item>
     <item>Flat, clearer when fast</item>
     <item>Expressive</item>
-    <item>Custom group</item>
   </string-array>
   <string-array name="intonation_style_values">
     <item>natural</item>
     <item>flat</item>
     <item>expressive</item>
-    <item>custom</item>
-  </string-array>
-
-  <!-- Customization: Intonation style - Custom group (advanced) -->
-  <string name="setting_intonation_group">Custom intonation group</string>
-  <string-array name="intonation_group_entries">
-    <item>0 (engine default)</item>
-    <item>1 (same as Expressive)</item>
-    <item>2</item>
-    <item>3 (same as Flat)</item>
-    <item>4</item>
-    <item>5</item>
-    <item>6</item>
-    <item>7</item>
-  </string-array>
-  <string-array name="intonation_group_values">
-    <item>0</item>
-    <item>1</item>
-    <item>2</item>
-    <item>3</item>
-    <item>4</item>
-    <item>5</item>
-    <item>6</item>
-    <item>7</item>
   </string-array>
 
   <!-- Customization: Capital letter announcement scope -->
@@ -525,7 +498,6 @@
   <string name="language_sample_playing">Playing %1$s sample…</string>
 
   <!-- Intonation group reveal announcement -->
-  <string name="setting_intonation_group_shown">Custom intonation group is now shown.</string>
 
   <!-- Settings search -->
   <string name="search_settings_title">Search settings</string>
@@ -583,14 +555,14 @@
 
   <!-- Sleep timer: pause all eSpeak speech until a deadline -->
   <string name="setting_sleep_timer">Sleep timer</string>
-  <string name="setting_sleep_timer_summary">Pause all speech after a set time</string>
+  <string name="setting_sleep_timer_summary">Reading apps stop after a set time. The screen reader keeps talking.</string>
   <plurals name="sleep_minutes">
     <item quantity="one">%1$d minute</item>
     <item quantity="other">%1$d minutes</item>
   </plurals>
-  <string name="sleep_paused_until" formatted="false">Speech paused until %1$s</string>
-  <string name="sleep_timer_armed">All speech pauses in a few seconds…</string>
-  <string name="sleep_timer_resumed">Speech resumed.</string>
+  <string name="sleep_stops_at">Reading apps stop at %1$s</string>
+  <string name="sleep_stopped">Reading apps stopped. Choose Off to let them talk again.</string>
+  <string name="sleep_timer_resumed">Reading apps can talk again.</string>
 
   <!-- Reading history (opt-in): re-hear recently spoken text -->
 
@@ -762,7 +734,8 @@
   <string name="setting_allow_other_apps">Let other apps change settings</string>
   <string name="setting_allow_other_apps_summary">Tasker and similar apps can set speed, pitch, volume and punctuation</string>
   <string name="screen_app_cards_title">Speech by app</string>
-  <string name="screen_app_cards_summary">Own speed, pitch and punctuation for each app, like TalkBack or a book reader</string>
+  <string name="screen_app_cards_summary">Own speed, pitch and punctuation for each app, or keep apps from changing yours</string>
+  <string name="category_all_apps">All apps</string>
   <string name="category_app_cards">Apps that have spoken</string>
   <string name="app_card_none">Apps show here once they have spoken with this engine.</string>
   <string name="app_card_punctuation">Punctuation</string>

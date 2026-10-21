@@ -541,15 +541,6 @@
             android:defaultValue="natural"
             app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
-        <!-- shown only for the Custom intonation style -->
-        <ListPreference
-            android:key="espeak_intonation_group"
-            android:title="@string/setting_intonation_group"
-            android:entries="@array/intonation_group_entries"
-            android:entryValues="@array/intonation_group_values"
-            android:defaultValue="0"
-            app:useSimpleSummaryProvider="true"
-            app:iconSpaceReserved="false" />
         <com.animeshahilya.espeakng.ui.preference.SeekBarPreference
             android:key="espeak_volume"
             android:title="@string/espeak_volume"
@@ -659,12 +650,6 @@
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
-            android:key="espeak_split_compounds"
-            android:title="@string/setting_split_compounds"
-            android:summary="@string/setting_split_compounds_summary"
-            android:defaultValue="false"
-            app:iconSpaceReserved="false" />
-        <SwitchPreferenceCompat
             android:key="espeak_unicode_normalization"
             android:title="@string/setting_unicode_normalization"
             android:summary="@string/setting_unicode_normalization_summary"
@@ -716,6 +701,28 @@
             android:summary="@string/screen_app_cards_summary"
             app:iconSpaceReserved="false">
           <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
+              android:title="@string/category_all_apps"
+              app:iconSpaceReserved="false">
+            <SwitchPreferenceCompat
+                android:key="espeak_force_rate"
+                android:title="@string/setting_force_rate"
+                android:summary="@string/setting_force_rate_summary"
+                android:defaultValue="false"
+                app:iconSpaceReserved="false" />
+            <SwitchPreferenceCompat
+                android:key="espeak_force_pitch"
+                android:title="@string/setting_force_pitch"
+                android:summary="@string/setting_force_pitch_summary"
+                android:defaultValue="false"
+                app:iconSpaceReserved="false" />
+            <SwitchPreferenceCompat
+                android:key="espeak_force_volume"
+                android:title="@string/setting_force_volume"
+                android:summary="@string/setting_force_volume_summary"
+                android:defaultValue="false"
+                app:iconSpaceReserved="false" />
+          </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
+          <com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory
               android:key="category_app_cards"
               android:title="@string/category_app_cards"
               app:iconSpaceReserved="false" />
@@ -738,24 +745,6 @@
             android:title="@string/setting_sleep_timer"
             android:defaultValue="off"
             android:summary="@string/setting_sleep_timer_summary"
-            app:iconSpaceReserved="false" />
-        <SwitchPreferenceCompat
-            android:key="espeak_force_rate"
-            android:title="@string/setting_force_rate"
-            android:summary="@string/setting_force_rate_summary"
-            android:defaultValue="false"
-            app:iconSpaceReserved="false" />
-        <SwitchPreferenceCompat
-            android:key="espeak_force_pitch"
-            android:title="@string/setting_force_pitch"
-            android:summary="@string/setting_force_pitch_summary"
-            android:defaultValue="false"
-            app:iconSpaceReserved="false" />
-        <SwitchPreferenceCompat
-            android:key="espeak_force_volume"
-            android:title="@string/setting_force_volume"
-            android:summary="@string/setting_force_volume_summary"
-            android:defaultValue="false"
             app:iconSpaceReserved="false" />
       </com.animeshahilya.espeakng.ui.preference.AccessiblePreferenceCategory>
     </PreferenceScreen>

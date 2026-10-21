@@ -17,7 +17,6 @@
 package com.animeshahilya.espeakng;
 import com.animeshahilya.espeakng.text.BundledData;
 import com.animeshahilya.espeakng.text.NvdaCharacterDescriptions;
-import com.animeshahilya.espeakng.text.CompoundSplitter;
 import com.animeshahilya.espeakng.text.HinglishReader;
 import com.animeshahilya.espeakng.text.NvdaEmoji;
 import com.animeshahilya.espeakng.text.NvdaSymbolProcessor;
@@ -56,9 +55,13 @@ public class EspeakApp extends Application {
     /**
      * Keys of removed features, deleted at start and never restored from a
      * backup: Reading history (2026-10-21, replaced by Recent speech) kept
-     * snippets of what was read aloud.
+     * snippets of what was read aloud; compound splitting (measured no
+     * better) and the raw intonation group (untuned) went the same day.
      */
-    public static final String[] REMOVED_PREFS = {"espeak_reading_history", "espeak_reading_history_items"};
+    public static final String[] REMOVED_PREFS = {"espeak_reading_history", "espeak_reading_history_items",
+            "espeak_split_compounds", "espeak_intonation_group",
+            // the old sleep timer's mute window (now VoiceSettings.PREF_SLEEP_STOP_AT)
+            "espeak_sleep_mute_until"};
 
     @SuppressLint("StaticFieldLeak")
     private static Context storageContext;
@@ -299,6 +302,11 @@ public class EspeakApp extends Application {
                 editor.remove(key);
             }
         }
+        // The intonation group's "Custom group" style reads as Natural now.
+        if ("custom".equals(settings.getString(VoiceSettings.PREF_INTONATION_STYLE, null))) {
+            editor = editor != null ? editor : settings.edit();
+            editor.remove(VoiceSettings.PREF_INTONATION_STYLE);
+        }
         if (editor != null) {
             editor.apply();
         }
@@ -312,9 +320,6 @@ public class EspeakApp extends Application {
             NvdaEmoji.warmup();
             if (settings.getBoolean(VoiceSettings.PREF_HINGLISH, false)) {
                 HinglishReader.warmup();
-            }
-            if (settings.getBoolean(VoiceSettings.PREF_SPLIT_COMPOUNDS, false)) {
-                CompoundSplitter.warmup();
             }
         } catch (Throwable t) {
             Log.w(TAG, "Text warm-up failed", t);

@@ -72,7 +72,7 @@ The Gradle build has custom tasks that run automatically:
    zstd-jni at build time, stored uncompressed; variant API) - every
    language ships in the APK, there is no core/extra split; it packs the
    text data in `android/data/` (symbols, chardesc, emoji, hinglish,
-   compounds, numbers - plain text in git, written by `tools/`) the same way, as
+   numbers - plain text in git, written by `tools/`) the same way, as
    `assets/data/<path>.zst`, which `text/BundledData` opens for every
    loader (`SpeechSynthesis.unpackAsset`, the same native decoder). JVM
    tests read `android/data/` directly
@@ -1098,7 +1098,7 @@ text with marks stripped. Tests: `ReadInTest`,
 Packages (split 2026-10-10, 89c1dcaa; tests mirror them so package-private
 access still works):
 - root: `EspeakApp`, `SpeechSynthesis`, `TtsService`, `TtsSettingsActivity`, `Voice`, `VoiceVariant`
-- `text/`: the text pipeline - `TextPreprocessor`, `TextOffsetMap`, `UnicodeNormalization`, `Nvda*`, `NumberReading`, `Abbreviations`, `PhrasePauses`, `Earcons`, `TechWordsNormalizer`, `CompoundSplitter`, `HinglishReader`, `LanguageRuns`, `DevanagariClassifier`, `ScriptLanguages`, `Tashkeel`, `UserDictionary`/`UserDictionaryManager`, `AsciiUtils`
+- `text/`: the text pipeline - `TextPreprocessor`, `TextOffsetMap`, `UnicodeNormalization`, `Nvda*`, `NumberReading`, `Abbreviations`, `PhrasePauses`, `Earcons`, `TechWordsNormalizer`, `HinglishReader`, `LanguageRuns`, `DevanagariClassifier`, `ScriptLanguages`, `Tashkeel`, `UserDictionary`/`UserDictionaryManager`, `AsciiUtils`
 - `tts/`: audio and framework entry points - `VoiceEngine`/`VoiceEngineRegistry`/`EspeakVoiceEngine`/`PiperVoiceEngine`, `TtsAudioDispatcher`, `AudioOptimizer`, `PcmResampler`, `RequestSettings` (rate, volume, per-language prosody and natural-voice parameters of one request), `CheckVoiceData`, `DownloadVoiceData`, `GetSampleText`, `PiperDownloadReceiver`
 - `piper/`: natural voices (see above)
 - `ui/`: `VoiceSettings`, `LanguageSettings`, `VoiceProfile`, `UserDictionaryScreen`, and the settings screen's parts (`SettingsFragment`, `SettingsBuilder`, `SettingsDialogs`, `SpeechPreview`, `PickedFiles`, `LanguageLabels`, split out of `TtsSettingsActivity` 2026-10-20); `ui/preference/`: custom preference widgets (14, incl. `AccessiblePreferenceCategory`, `VoiceVariantPreference`)
@@ -1132,7 +1132,6 @@ words would replace running text). The native engine is forced to `PUNCT_NONE` o
 - **Piper\*** — natural voices (see "Natural voices (Piper)" above): `PiperEngine` (model cache + text->audio), `PiperModel` (ORT sessions and inference), `NpuFiles` (QNN plugin, NPU sessions, hosted NPU files and what they compile into), `ModelFiles` (optimized and shared model copies on disk), `PiperPhonemes` (records -> chunks -> ids), `PiperAudio` (PCM post-processing, word timing), `PiperVoiceConfig` (`.onnx.json`), `PiperVoiceStore` (installed voices + per-language prefs), `PiperDownloads`/`PiperDownloadReceiver` (catalog, DownloadManager, verify/install), `PiperSettings` (the settings page). Everything except the store/downloads/settings is Android-free and unit-tested on the JVM.
 - **NumberReading (everyday + STEM)** — besides money/digit grouping/codes, opt-in rows for phone numbers, dates, maths, fractions, sub/superscripts, dimensions and Roman numerals (`espeak_read_*`, all default false, on the Numbers page with a live preview)
 - **TechWordsNormalizer** — spells tech acronyms and brand names (OTP -> "O T P", ATMs -> "A-T M's", PhonePe -> "Phone Pay"); always on for natural voices, opt-in for eSpeak (see "Acronyms, app names, phone numbers")
-- **CompoundSplitter** — opt-in (`espeak_split_compounds`, default off) English whole-word compound splits from TGSpeechBox's MIT table (`data/compounds/en.tsv`, 3676 entries); blanket splitting measured net-zero on Whisper, so entries that read worse split (cowboy, pitchman, undergarment) were pruned - A/B any change with `CompoundVoiceCheckDeviceTest`
 - **HinglishReader** — Latin-script Hindi read as Hindi on English voices (Dakshina lexicon, `data/hinglish/`), decided per sentence; never a lone word
 - **LanguageRuns** fast path and sensitivity — text wholly in the speaking language's own (unambiguous) script skips the resolver/classifier; `espeak_switching_sensitivity` = words (default, unchanged behaviour) / phrases (absorbs one-word foreign runs) / sentences
 - **AudioOptimizer** — opt-in DSP on PCM in `TtsAudioDispatcher` (`espeak_audio_optimizer_level`, default "off"; per-module `espeak_opt_*` toggles: glottal tilt, ZCR sibilant bypass, warmth, presence, leveler, limiter, de-clicker; in-app preview). Changes audio, so a profile is a listening decision, never a default - NVDA parity
@@ -1214,7 +1213,7 @@ android/
 │   └── include/                      # config.h, Log.h
 ├── res/                              # Resources (75 locale translations, plus night/v29/watch)
 ├── assets/                           # Bundled as-is: piper catalog JSON
-├── data/                             # Packed (zstd) by the build: symbols, chardesc, emoji, hinglish, compounds, numbers
+├── data/                             # Packed (zstd) by the build: symbols, chardesc, emoji, hinglish, numbers
 ├── tools/                            # Data regenerators (NVDA symbols, emoji, piper spellings, ort-voices)
 ├── build.gradle                      # Gradle config (AGP 9.4.1, Gradle 9.8.1, Java 17 toolchain)
 └── AndroidManifest.xml               # Services, activities, intents
@@ -1227,7 +1226,7 @@ android/
 `./gradlew testDebugUnitTest` - 40 classes (~650 tests) in `test/src/`,
 mirroring the source subpackages:
 - root: `TtsRoutingPreviewTest` (routing preview merge over the planned runs)
-- `text/`: pipeline steps and fuzzing (`TextSanitizeTest`, `TextStepsFuzzTest`, `TextOffsetMapTest`), NVDA symbols/character descriptions, `NumberReadingTest`, `AbbreviationsTest`, `TechWordsNormalizerTest`, `CompoundSplitterTest`, `EarconsTest`, `PhrasePausesTest`, language runs/switching, `DevanagariClassifierTest` + `DevanagariCorpusTest`, `ScriptLanguagesTest`, `UserDictionaryTest`, `AsciiUtilsTest`
+- `text/`: pipeline steps and fuzzing (`TextSanitizeTest`, `TextStepsFuzzTest`, `TextOffsetMapTest`), NVDA symbols/character descriptions, `NumberReadingTest`, `AbbreviationsTest`, `TechWordsNormalizerTest`, `EarconsTest`, `PhrasePausesTest`, language runs/switching, `DevanagariClassifierTest` + `DevanagariCorpusTest`, `ScriptLanguagesTest`, `UserDictionaryTest`, `AsciiUtilsTest`
 - `tts/`: `TtsAudioDispatcherTest` (slice clamping, sample alignment), `VoiceEngineRegistryTest`, `AudioOptimizerTest`, `AcousticSampleGeneratorTest`, `PcmResamplerTest`
 - `piper/`: phonemes/id encoding, split, alignment, audio, catalog, compact policy, phrase cache, shared models, model files
 - `ui/`: `DicFormatTest`
@@ -1256,7 +1255,7 @@ pipeline (`TextPipelineDeviceTest`: paragraph breaks survive preprocessing),
 Indian features, natural voices (`PiperE2EDeviceTest` - keep `j_*` passing,
 `PiperLatencyDeviceTest`, `PiperBenchDeviceTest`), latency
 (`EspeakLatencyDeviceTest`), word ranges (`RangeFramesDeviceTest`) and A/B
-harnesses (`EnUsProbeDeviceTest`, `CompoundVoiceCheckDeviceTest`,
+harnesses (`EnUsProbeDeviceTest`,
 `PhraseCacheReplayDeviceTest`).
 
 Lint (`./gradlew lintDebug`) reports 0 errors (2026-10-12); deliberate

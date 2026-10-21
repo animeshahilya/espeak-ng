@@ -16,11 +16,13 @@
 
 package com.animeshahilya.espeakng.ui;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Process;
+import android.view.accessibility.AccessibilityManager;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
@@ -110,6 +112,22 @@ public final class AppCards {
             }
         }
         return first;
+    }
+
+    /** True when the app is a running screen reader (an enabled spoken-feedback accessibility service). */
+    public static boolean isScreenReader(Context context, String packageName) {
+        final AccessibilityManager am = context.getSystemService(AccessibilityManager.class);
+        if (am == null || packageName == null) {
+            return false;
+        }
+        for (AccessibilityServiceInfo info
+                : am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN)) {
+            if (info.getResolveInfo() != null
+                    && packageName.equals(info.getResolveInfo().serviceInfo.packageName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Remembers an app for the settings list; one write per app per process. */

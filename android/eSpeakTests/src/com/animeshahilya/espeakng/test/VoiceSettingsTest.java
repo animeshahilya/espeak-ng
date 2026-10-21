@@ -95,20 +95,23 @@ public class VoiceSettingsTest
     // No Settings (New Install)
 
     @Test
-    public void sleepMuteIgnoresImpossibleDeadlines() {
+    public void sleepTimerStopsOnlyOnceItsTimeComes() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         try {
-            VoiceSettings.armSleepMute(prefs, 30);
-            assertThat(VoiceSettings.isSleepMuted(prefs), is(true));
-            // A day out: the clock went back, or a backup carried it. Never silent for that.
-            prefs.edit().putLong(VoiceSettings.PREF_SLEEP_MUTE_UNTIL,
-                    System.currentTimeMillis() + 24 * 60 * 60_000L).commit();
-            assertThat(VoiceSettings.isSleepMuted(prefs), is(false));
-            prefs.edit().putLong(VoiceSettings.PREF_SLEEP_MUTE_UNTIL,
+            VoiceSettings.armSleepTimer(prefs, 30);
+            assertThat(VoiceSettings.isSleepStopped(prefs), is(false)); // still reading
+            prefs.edit().putLong(VoiceSettings.PREF_SLEEP_STOP_AT,
                     System.currentTimeMillis() - 1000).commit();
-            assertThat(VoiceSettings.isSleepMuted(prefs), is(false));
+            assertThat(VoiceSettings.isSleepStopped(prefs), is(true));
+            // Ends by itself after the hold, and a day out (clock moved, backup) never counts.
+            prefs.edit().putLong(VoiceSettings.PREF_SLEEP_STOP_AT,
+                    System.currentTimeMillis() - VoiceSettings.SLEEP_HOLD_MS - 1000).commit();
+            assertThat(VoiceSettings.isSleepStopped(prefs), is(false));
+            prefs.edit().putLong(VoiceSettings.PREF_SLEEP_STOP_AT,
+                    System.currentTimeMillis() + 24 * 60 * 60_000L).commit();
+            assertThat(VoiceSettings.sleepStopAt(prefs, System.currentTimeMillis()), is(0L));
         } finally {
-            VoiceSettings.clearSleepMute(prefs);
+            VoiceSettings.clearSleepTimer(prefs);
         }
     }
 
@@ -835,25 +838,6 @@ public class VoiceSettingsTest
         assertThat(settings.getReadingMode(), is(VoiceSettings.READING_NORMAL));
     }
 
-    @Test
-    public void testIntonationGroup() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SpeechSynthesis synth = new SpeechSynthesis(getContext(), mCallback);
-        VoiceSettings settings = new VoiceSettings(prefs, synth);
-
-        prefs.edit().clear().commit();
-        assertThat(settings.getIntonationGroup(), is(0)); // no preference set
-
-        prefs.edit().putString(VoiceSettings.PREF_INTONATION_GROUP, "12").commit();
-        assertThat(settings.getIntonationGroup(), is(7)); // clamped to maximum
-
-        prefs.edit().putString(VoiceSettings.PREF_INTONATION_GROUP, "-3").commit();
-        assertThat(settings.getIntonationGroup(), is(0)); // clamped to minimum
-
-        prefs.edit().putString(VoiceSettings.PREF_INTONATION_GROUP, "5").commit();
-        assertThat(settings.getIntonationGroup(), is(5));
-    }
-
     /** The old lakh/crore toggle becomes the voice choice without changing behaviour. */
     @Test
     public void testIndianNumberingMigration()
@@ -880,12 +864,12 @@ public class VoiceSettingsTest
         prefs.edit().clear().commit();
         SpeechSynthesis synth = new SpeechSynthesis(getContext(), mCallback);
         VoiceSettings settings = new VoiceSettings(prefs, synth);
-        assertThat(VoiceSettings.isSleepMuted(prefs), is(false));
+        assertThat(VoiceSettings.isSleepStopped(prefs), is(false));
 
-        long until = VoiceSettings.armSleepMute(prefs, 15);
-        assertThat(VoiceSettings.isSleepMuted(prefs), is(true));
-        assertThat(until > System.currentTimeMillis(), is(true));
-        VoiceSettings.clearSleepMute(prefs);
-        assertThat(VoiceSettings.isSleepMuted(prefs), is(false));
+        long at = VoiceSettings.armSleepTimer(prefs, 15);
+        assertThat(VoiceSettings.sleepStopAt(prefs, System.currentTimeMillis()), is(at));
+        assertThat(at > System.currentTimeMillis(), is(true));
+        VoiceSettings.clearSleepTimer(prefs);
+        assertThat(VoiceSettings.sleepStopAt(prefs, System.currentTimeMillis()), is(0L));
     }
 }

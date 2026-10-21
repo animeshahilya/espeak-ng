@@ -307,7 +307,7 @@ tasks.register('createDataArchive', Zip) {
 //   (espeak_SetDictionaryReader in jni/jni/eSpeakService.c), never copied into
 //   app storage;
 // - the text data in android/data/ (NVDA symbols, character descriptions and
-//   emoji names, Hinglish, compounds), data/<path>.zst, read by
+//   emoji names, Hinglish, number words), data/<path>.zst, read by
 //   text/BundledData.
 // .zst is kept stored (noCompress), so the engine maps it instead of inflating
 // a copy. Registered through the variant API, which wires the asset tasks'

@@ -78,7 +78,6 @@ public class VoiceSettings {
     public static final String PREF_READ_PHONE_NUMBERS = "espeak_read_phone_numbers";
     public static final String PREF_READ_MATH = "espeak_read_math";
     public static final String PREF_SPLIT_CAMEL_CASE = "espeak_split_camel_case";
-    public static final String PREF_SPLIT_COMPOUNDS = "espeak_split_compounds";
     public static final String PREF_CLEAN_MARKDOWN = "espeak_clean_markdown";
     public static final String PREF_READ_FRACTIONS = "espeak_read_fractions";
     public static final String PREF_READ_SUB_SUPER = "espeak_read_sub_super";
@@ -159,7 +158,6 @@ public class VoiceSettings {
     public static final String PREF_CAPITALS_SCOPE = "espeak_capitals_scope";
     public static final String PREF_SIMPLIFY_URLS = "espeak_simplify_urls";
     public static final String PREF_NORMALIZE_TECH_WORDS = "espeak_normalize_tech_words";
-    public static final String PREF_INTONATION_GROUP = "espeak_intonation_group";
 
     /** Repeated character handling modes. */
     public static final String REPEATED_CHARS_OFF = "off";
@@ -170,7 +168,6 @@ public class VoiceSettings {
     public static final String INTONATION_NATURAL = "natural";
     public static final String INTONATION_FLAT = "flat";
     public static final String INTONATION_EXPRESSIVE = "expressive";
-    public static final String INTONATION_CUSTOM = "custom";
 
     /** Capital letter announcement scope. */
     public static final String CAPITALS_SCOPE_CHAR = "char_only";
@@ -510,10 +507,6 @@ public class VoiceSettings {
         return mPreferences.getBoolean(PREF_SPLIT_CAMEL_CASE, false);
     }
 
-    public boolean isSplitCompoundsEnabled() {
-        return mPreferences.getBoolean(PREF_SPLIT_COMPOUNDS, false);
-    }
-
     public boolean isCleanMarkdownEnabled() {
         return mPreferences.getBoolean(PREF_CLEAN_MARKDOWN, false);
     }
@@ -734,28 +727,10 @@ public class VoiceSettings {
 
     public String getIntonationStyle() {
         String style = mPreferences.getString(PREF_INTONATION_STYLE, INTONATION_NATURAL);
-        if (INTONATION_FLAT.equals(style) || INTONATION_EXPRESSIVE.equals(style)
-                || INTONATION_CUSTOM.equals(style)) {
+        if (INTONATION_FLAT.equals(style) || INTONATION_EXPRESSIVE.equals(style)) {
             return style;
         }
         return INTONATION_NATURAL;
-    }
-
-    /**
-     * Raw espeakINTONATION group (0-7), used only when {@link #getIntonationStyle()}
-     * is {@link #INTONATION_CUSTOM}. Groups 0, 1 and 3 are the ones this app
-     * already exposes by name (Natural/Expressive/Flat); the remaining groups
-     * (2, 4-7) are tone-mapping variants the engine ships internally but that
-     * this app has never listened through and named - one of them (group 6)
-     * is even labelled "test" in upstream's own default tone table - so they
-     * are exposed as a raw number for advanced users to try rather than
-     * guessing at descriptive names for behavior nobody here has verified.
-     */
-    public int getIntonationGroup() {
-        int value = getPreferenceValue(PREF_INTONATION_GROUP, 0);
-        if (value < 0) value = 0;
-        if (value > 7) value = 7;
-        return value;
     }
 
     public String getCapitalsScope() {
@@ -802,32 +777,43 @@ public class VoiceSettings {
     public static final String PREF_SLEEP_TIMER = "espeak_sleep_timer";
     public static final String SLEEP_OFF = "off";
     /** Internal: wall-clock millis when the mute window ends. Not a UI row. */
-    public static final String PREF_SLEEP_MUTE_UNTIL = "espeak_sleep_mute_until";
+    /** When reading apps stop (millis), set by the sleep timer. Not a UI row. */
+    public static final String PREF_SLEEP_STOP_AT = "espeak_sleep_stop_at";
     public static final int SLEEP_MAX_MINUTES = 60;
+    /** How long reading apps stay stopped before the timer ends by itself. */
+    public static final long SLEEP_HOLD_MS = 6 * 60 * 60_000L;
 
     /**
-     * True while the mute window covers now; expired windows read as off, and
-     * so does a deadline further out than any timer can set (the clock was
-     * moved back, or a restored backup carried it): otherwise eSpeak would
-     * stay silent for days, with no speech left to switch it back on.
+     * The sleep timer's stop time, or 0 when none is running: never set,
+     * over (stopped longer than {@link #SLEEP_HOLD_MS}), or further out than
+     * any timer can set (the clock was moved back, or a backup carried it).
      */
-    public static boolean isSleepMuted(SharedPreferences prefs) {
-        final long left = prefs.getLong(PREF_SLEEP_MUTE_UNTIL, 0) - System.currentTimeMillis();
-        return left > 0 && left <= (SLEEP_MAX_MINUTES + 1) * 60000L;
+    public static long sleepStopAt(SharedPreferences prefs, long now) {
+        final long at = prefs.getLong(PREF_SLEEP_STOP_AT, 0);
+        return at > 0 && at - now <= (SLEEP_MAX_MINUTES + 1) * 60000L && now - at < SLEEP_HOLD_MS ? at : 0;
     }
 
-    /** Arms a mute window {@code minutes} out; returns the deadline millis. */
-    public static long armSleepMute(SharedPreferences prefs, int minutes) {
-        long until = System.currentTimeMillis() + Math.max(1, minutes) * 60000L;
-        prefs.edit().putLong(PREF_SLEEP_MUTE_UNTIL, until).apply();
-        return until;
+    /**
+     * True once the timer's time has come: reading apps stay silent until it
+     * is turned off or {@link #SLEEP_HOLD_MS} passes. The screen reader and
+     * this app's own speech never stop (TtsService).
+     */
+    public static boolean isSleepStopped(SharedPreferences prefs) {
+        final long now = System.currentTimeMillis();
+        final long at = sleepStopAt(prefs, now);
+        return at > 0 && now >= at;
     }
 
-    public static void clearSleepMute(SharedPreferences prefs) {
-        prefs.edit().remove(PREF_SLEEP_MUTE_UNTIL).apply();
+    /** Reading apps stop {@code minutes} from now; returns that time. */
+    public static long armSleepTimer(SharedPreferences prefs, int minutes) {
+        final long at = System.currentTimeMillis() + Math.max(1, minutes) * 60000L;
+        prefs.edit().putLong(PREF_SLEEP_STOP_AT, at).apply();
+        return at;
     }
 
-    // Reading history (opt-in): keep recently spoken text on this device.
+    public static void clearSleepTimer(SharedPreferences prefs) {
+        prefs.edit().remove(PREF_SLEEP_STOP_AT).apply();
+    }
 
     // What's-new dialog: last version code the user has seen. Not a UI row.
     public static final String PREF_WHATS_NEW_SEEN = "espeak_whats_new_seen";

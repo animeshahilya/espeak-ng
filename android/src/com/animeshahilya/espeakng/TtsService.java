@@ -1142,18 +1142,21 @@ public class TtsService extends TextToSpeechService {
                 : EspeakApp.prefs(mStorageContext));
         final VoiceSettings settings = new VoiceSettings(prefs, engine);
 
-        // Sleep timer: while the mute window covers now, complete the request
-        // as a successful empty utterance (the blank-text fast path's shape),
-        // never an error, so clients keep working silently until expiry.
-        if (VoiceSettings.isSleepMuted(prefs)) {
-            completeAsEmpty(callback, engine);
-            return;
-        }
-
         // Speech by app: the calling app's card, if it has one. This app's
         // own requests (previews, Recent speech) have no caller, so they
         // keep the main settings and are never kept as recent speech.
         final String caller = AppCards.callerPackage(this, request.getCallerUid());
+
+        // Sleep timer, once its time has come: reading apps stop, the screen
+        // reader never does (it used to mute everything, TalkBack included,
+        // leaving a blind user no speech to turn it off with). An error, not
+        // silent success: an empty utterance completes at once, so a book
+        // reader would race through its pages instead of stopping on one.
+        if (caller != null && VoiceSettings.isSleepStopped(prefs) && !AppCards.isScreenReader(this, caller)) {
+            reportError(callback, TextToSpeech.ERROR_SERVICE);
+            return;
+        }
+
         settings.setCaller(caller);
         if (caller != null) {
             AppCards.noteCaller(prefs, caller);
@@ -1264,13 +1267,6 @@ public class TtsService extends TextToSpeechService {
             int maxRange = engine.PitchRange.getMaxValue();
             pitchRange = Math.min(maxRange, pitchRange + Math.max(5, pitchRange / 4));
             engine.Intonation.setValue(1);
-        } else if (VoiceSettings.INTONATION_CUSTOM.equals(intonationStyle)) {
-            // No pitchRange adjustment here: the +/- scaling above is tuned
-            // specifically to how Flat/Expressive map to groups 3/1, and this
-            // is an untuned raw group (see getIntonationGroup()), so leave
-            // pitchRange at the user's own configured value instead of
-            // guessing at a scaling that fits an unverified tone mapping.
-            engine.Intonation.setValue(settings.getIntonationGroup());
         } else {
             engine.Intonation.setValue(0);
         }
