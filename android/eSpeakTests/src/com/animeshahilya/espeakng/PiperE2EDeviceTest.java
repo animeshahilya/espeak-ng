@@ -42,10 +42,12 @@ import java.util.concurrent.TimeUnit;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PiperE2EDeviceTest {
     // Needs every language: the phone's "Supported languages" filter is lifted, then restored.
+    // So is its speech rate: at the 450 cap (S25 Ultra), 2x could not speed anything up.
     @org.junit.ClassRule
     public static final com.animeshahilya.espeakng.test.KeepUserSettings KEEP =
             new com.animeshahilya.espeakng.test.KeepUserSettings(
-                    com.animeshahilya.espeakng.ui.LanguageSettings.PREF_SUPPORTED_LANGUAGES);
+                    com.animeshahilya.espeakng.ui.LanguageSettings.PREF_SUPPORTED_LANGUAGES,
+                    com.animeshahilya.espeakng.ui.VoiceSettings.PREF_RATE);
 
     private static final String TAG = "PiperE2E";
     private static final int ESPEAK_RATE = 22050;

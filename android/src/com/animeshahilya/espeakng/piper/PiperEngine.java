@@ -293,6 +293,22 @@ public final class PiperEngine {
      * eSpeak meanwhile: a screen reader must never go silent waiting.
      */
     public void preload(final String key, final File onnx, final PiperVoiceConfig config) {
+        preload(key, onnx, config, false);
+    }
+
+    /**
+     * As {@link #preload}, for a voice that may be wanted (the recently used
+     * ones, at service start): only into a free place, never evicting one.
+     * Otherwise those guesses pushed out the voice a request had just asked
+     * for (S25 Ultra: Marathi loaded, then Hindi, English and English again
+     * from the recent list, and two Marathi requests went to eSpeak).
+     */
+    public void preloadIfRoom(final String key, final File onnx, final PiperVoiceConfig config) {
+        preload(key, onnx, config, true);
+    }
+
+    private void preload(final String key, final File onnx, final PiperVoiceConfig config,
+                         final boolean ifRoom) {
         if (key == null || onnx == null || config == null || getLoaded(key) != null) {
             return;
         }
@@ -306,8 +322,11 @@ public final class PiperEngine {
         mLoader.execute(() -> {
             final long t0 = System.currentTimeMillis();
             try {
+                if (ifRoom && !hasRoom()) {
+                    return;
+                }
                 if (getLoaded(key) == null) {
-                    install(key, loadModel(key, onnx, config));
+                    install(key, loadModel(key, onnx, config), ifRoom);
                 }
                 mFailed.remove(key);
                 final Listener l = mListener;
@@ -451,8 +470,39 @@ public final class PiperEngine {
         return false;
     }
 
-    /** Makes a freshly loaded model current, evicting beyond {@link #setMaxLoaded}. */
+    /** Whether another model fits without evicting one. */
+    private boolean hasRoom() {
+        synchronized (mLoaded) {
+            return distinctModels() < mMaxLoaded;
+        }
+    }
+
     private void install(String key, PiperModel model) {
+        install(key, model, false);
+    }
+
+    /**
+     * Makes a freshly loaded model current, evicting beyond {@link #setMaxLoaded};
+     * with {@code ifRoom}, a model that no longer fits (a request's voice
+     * loaded meanwhile) is dropped instead.
+     */
+    private void install(String key, PiperModel model, boolean ifRoom) {
+        if (ifRoom) {
+            boolean kept = false;
+            synchronized (mLoaded) {
+                if (!mLoaded.containsKey(key)) {
+                    mLoaded.put(key, model);
+                    kept = distinctModels() <= mMaxLoaded;
+                    if (!kept) {
+                        mLoaded.remove(key);
+                    }
+                }
+            }
+            if (!kept) {
+                model.close();
+            }
+            return;
+        }
         final List<PiperModel> evicted = new ArrayList<>();
         synchronized (mLoaded) {
             final PiperModel old = mLoaded.put(key, model);

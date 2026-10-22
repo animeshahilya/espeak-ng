@@ -468,6 +468,7 @@ public class TtsService extends TextToSpeechService {
      * Then the voices used most recently, as many as the phone keeps loaded:
      * after Android restarts the speech service, a Hindi word in English text
      * is read by the Hindi voice at once instead of by eSpeak while it loads.
+     * Only into free places: a voice a request asked for meanwhile stays.
      */
     private void preloadRecentNaturalVoices() {
         final SharedPreferences prefs = TolerantPreferences.of(mPreferences);
@@ -484,7 +485,7 @@ public class TtsService extends TextToSpeechService {
             }
             final PiperVoiceStore.Installed v = PiperVoiceStore.find(mStorageContext, key);
             if (v != null && !PiperCrashGuard.isSuspended(prefs, key)) {
-                mPiper.preload(v.key, v.model(), v.config);
+                mPiper.preloadIfRoom(v.key, v.model(), v.config);
                 budget--;
             }
         }
@@ -502,7 +503,7 @@ public class TtsService extends TextToSpeechService {
                 final PiperVoiceStore.Installed v = PiperVoiceStore.assignedFor(mStorageContext, prefs, lang);
                 if (v != null && !PiperCrashGuard.isSuspended(prefs, v.key)
                         && !mPiper.isLoading(v.key) && mPiper.getLoaded(v.key) == null) {
-                    mPiper.preload(v.key, v.model(), v.config);
+                    mPiper.preloadIfRoom(v.key, v.model(), v.config);
                     budget--;
                 }
             }
