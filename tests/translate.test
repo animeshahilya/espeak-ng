@@ -71,10 +71,10 @@ test_phon hi "H,IndUst'a:n,i: s'In^cIt" "हिंदुस्तानी स�
 test_phon te "'aNkam p'an^ca m'an.t.a" "అంకం పంచ మంట"
 # Gujarati: weight-based stress lets medial schwa go; ળ is [ɭ]
 test_phon gu "d'e:k#v,u~ m'a:ml,o: k'a:l.o:" "દેખવું મામલો કાળો"
-# Malayalam: final virama is a short vowel
-test_phon ml "v'il.impy p'a:t.:y" "വിളിമ്പ് പാട്ട്"
-# Tamil: ட் is voiceless before a voiceless stop
-test_phon ta "'a:jUt.k,a:lVm" "ஆயுட்காலம்"
+# Malayalam: ഴ is [ɻ]; final virama is a short vowel
+test_phon ml "v'il.impy p'a:t.:y v'a:z.a" "വിളിമ്പ് പാട്ട് വാഴ"
+# Tamil: ழ is [ɻ]; ட் is voiceless before a voiceless stop
+test_phon ta "'a:jUt.k,a:lVm t'Vmiz." "ஆயுட்காலம் தமிழ்"
 # Punjabi: ਹ after a vowel is a tone, not [h]
 test_phon pa "n'i~ s'on.a" "ਨੀਂਹ ਸੋਹਣਾ"
 
