@@ -1003,20 +1003,6 @@ public class TtsService extends TextToSpeechService {
         }
     }
 
-    /**
-     * Completes a request as a successful empty utterance (the blank-text and
-     * sleep-timer fast paths' shared shape), never an error, so clients keep
-     * working silently.
-     */
-    private void completeAsEmpty(SynthesisCallback callback, SpeechSynthesis engine) {
-        if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
-                != TextToSpeech.SUCCESS) {
-            reportError(callback, TextToSpeech.ERROR_SERVICE);
-        } else {
-            callback.done();
-        }
-    }
-
     /** Builds the request's audio dispatcher and publishes it for the synth callbacks. */
     private TtsAudioDispatcher newDispatcher(SynthesisCallback callback, AudioOptimizer optimizer,
                                              TextOffsetMap offsetMap, String text, int textOffset) {
@@ -1101,8 +1087,14 @@ public class TtsService extends TextToSpeechService {
 
         // Fast-path empty or whitespace-only utterances: avoid full voice/param setup
         // and JNI overhead for TalkBack spacers, empty lines, and blank elements.
+        // A successful empty utterance, never an error, so clients keep working.
         if (VoiceSettings.isBlank(text)) {
-            completeAsEmpty(callback, engine);
+            if (callback.start(engine.getSampleRate(), AudioFormat.ENCODING_PCM_16BIT, engine.getChannelCount())
+                    != TextToSpeech.SUCCESS) {
+                reportError(callback, TextToSpeech.ERROR_SERVICE);
+            } else {
+                callback.done();
+            }
             return;
         }
 
@@ -1386,9 +1378,6 @@ public class TtsService extends TextToSpeechService {
         // error, empty string, or early stop), finalize here so the framework
         // is never hung waiting for the request to end.
         //
-        // Reading history (opt-in): what was spoken, for re-hearing later.
-        // Recorded once per completed request; stopped requests and SSML
-        // markup are skipped inside, along with short/code-like text.
         finishUnits(prefs, naturalUsed, ahead);
     }
 

@@ -705,12 +705,6 @@ public class VoiceSettings {
     }
 
     /**
-     * espeak-ng community issue #1658: widen the pitch rise on questions and
-     * exclamations for listeners with hearing difficulty. Off by default -
-     * changes the character of the intonation, so it's opt-in like the other
-     * perceptible-audio toggles here.
-     */
-    /**
      * The intonation choice's "clearer questions" (espeak-ng #1658): a wider
      * pitch rise on questions and exclamations, for hard-of-hearing or fast
      * listeners. Was its own switch until 2026-10-21.
@@ -782,18 +776,16 @@ public class VoiceSettings {
         return prefs != null && prefs.getBoolean(PREF_DETECT_LATIN_LANGUAGES, false);
     }
 
-    // Sleep timer: pause all eSpeak speech until a deadline.
+    // Sleep timer: reading apps stop at a chosen time.
     //
     // A TTS engine cannot "stop after the current book" the way a player app
-    // can: every utterance arrives as a fresh client request, so the only
-    // honest engine-side semantic is a mute window with a guaranteed expiry.
-    // While muted, requests complete as successful empty utterances (the same
-    // shape as the blank-text fast path), never errors, so screen readers do
-    // not surface failures. The window is bounded (max 60 minutes) and the
-    // settings screen always offers Off to cancel early.
+    // can: every utterance arrives as a fresh client request. Once the time
+    // has come, requests from other apps fail (TtsService), so a book reader
+    // stops on its page instead of racing through silent ones; the screen
+    // reader and this app's own speech always go on. It ends by itself after
+    // SLEEP_HOLD_MS, and the settings screen offers Off to end it early.
     public static final String PREF_SLEEP_TIMER = "espeak_sleep_timer";
     public static final String SLEEP_OFF = "off";
-    /** Internal: wall-clock millis when the mute window ends. Not a UI row. */
     /** When reading apps stop (millis), set by the sleep timer. Not a UI row. */
     public static final String PREF_SLEEP_STOP_AT = "espeak_sleep_stop_at";
     public static final int SLEEP_MAX_MINUTES = 60;

@@ -568,8 +568,6 @@
   <string name="sleep_stopped">Reading apps stopped. Choose Off to let them talk again.</string>
   <string name="sleep_timer_resumed">Reading apps can talk again.</string>
 
-  <!-- Reading history (opt-in): re-hear recently spoken text -->
-
   <!-- Watch: some rows are phone-only -->
   <string name="note_wear_limited_title">Fewer settings on watch</string>
   <string name="note_wear_limited_summary">Rate boost, dictionary, languages and other phone-only settings are hidden here.</string>
