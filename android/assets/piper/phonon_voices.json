@@ -1,0 +1,1519 @@
+{
+ "en_US-phonon_alfie-medium": {
+  "key": "en_US-phonon_alfie-medium",
+  "name": "phonon_alfie",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-alfie.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "8321c7d5e41a01118f10e6b6fad0fc86"
+   },
+   "phonon-v1/en_US-phonon_alfie-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "29c243d9b0e1006b8db7e3fbc8b18ee9"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_azgorath-medium": {
+  "key": "en_US-phonon_azgorath-medium",
+  "name": "phonon_azgorath",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-azgorath.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "da2f22daaa70357113452fc189fe555e"
+   },
+   "phonon-v1/en_US-phonon_azgorath-medium.onnx.json": {
+    "size_bytes": 1002,
+    "md5_digest": "bd39bfd3fb5c823389dd03babc1c9e75"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_bryony-medium": {
+  "key": "en_US-phonon_bryony-medium",
+  "name": "phonon_bryony",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-bryony.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "60ee7eb7c237e2b23eab093ede3829be"
+   },
+   "phonon-v1/en_US-phonon_bryony-medium.onnx.json": {
+    "size_bytes": 1000,
+    "md5_digest": "6699eea6b13426b6c5f17cddabbab9d9"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_GB-phonon_captain_silas_blackwater-medium": {
+  "key": "en_GB-phonon_captain_silas_blackwater-medium",
+  "name": "phonon_captain_silas_blackwater",
+  "language": {
+   "code": "en_GB",
+   "family": "en",
+   "region": "GB",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "Great Britain"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-captain_silas_blackwater.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "99a81bc604c1199df2eb9d378542a1b0"
+   },
+   "phonon-v1/en_GB-phonon_captain_silas_blackwater-medium.onnx.json": {
+    "size_bytes": 1018,
+    "md5_digest": "0ab8fa1674c5e17c781e422bc24e9547"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_delia-medium": {
+  "key": "en_US-phonon_delia-medium",
+  "name": "phonon_delia",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-delia.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "a421b515c1387a3f367b8ba4c2e04712"
+   },
+   "phonon-v1/en_US-phonon_delia-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "71668d292e918394e6669d58533a941d"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_easton-medium": {
+  "key": "en_US-phonon_easton-medium",
+  "name": "phonon_easton",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-easton.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "fd54b2b7b988b70cd44de1a0b838601c"
+   },
+   "phonon-v1/en_US-phonon_easton-medium.onnx.json": {
+    "size_bytes": 1000,
+    "md5_digest": "d4496aa9a2442f1fa8a3963f5a6e2bf7"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_edwin-medium": {
+  "key": "en_US-phonon_edwin-medium",
+  "name": "phonon_edwin",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-edwin.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "4282a671da0414ea5c7719428a29fb22"
+   },
+   "phonon-v1/en_US-phonon_edwin-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "7ae2d5ed26929002f1e8cd6274dba5c9"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_GB-phonon_elodie_rose-medium": {
+  "key": "en_GB-phonon_elodie_rose-medium",
+  "name": "phonon_elodie_rose",
+  "language": {
+   "code": "en_GB",
+   "family": "en",
+   "region": "GB",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "Great Britain"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-elodie_rose.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "100cb1d9f3d93511d41ee346f9ec7a5d"
+   },
+   "phonon-v1/en_GB-phonon_elodie_rose-medium.onnx.json": {
+    "size_bytes": 1005,
+    "md5_digest": "ac1b9bdb57811a6802df67f3840cefb1"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_everly-medium": {
+  "key": "en_US-phonon_everly-medium",
+  "name": "phonon_everly",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-everly.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "2a34342b1300999f17b4b197394c0142"
+   },
+   "phonon-v1/en_US-phonon_everly-medium.onnx.json": {
+    "size_bytes": 1000,
+    "md5_digest": "b558b287a3d44d7833e8483095d6cadf"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_fairy_godmother-medium": {
+  "key": "en_US-phonon_fairy_godmother-medium",
+  "name": "phonon_fairy_godmother",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-fairy_godmother.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "4f93f78f8c245dbe61a356049ecd51cc"
+   },
+   "phonon-v1/en_US-phonon_fairy_godmother-medium.onnx.json": {
+    "size_bytes": 1009,
+    "md5_digest": "7edfda046cdd15d3b015ef9306fb6e2e"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_fennick_the_young_elf-medium": {
+  "key": "en_US-phonon_fennick_the_young_elf-medium",
+  "name": "phonon_fennick_the_young_elf",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-fennick_the_young_elf.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "e87df1b03a0384eca1a7445cf8483fe5"
+   },
+   "phonon-v1/en_US-phonon_fennick_the_young_elf-medium.onnx.json": {
+    "size_bytes": 1015,
+    "md5_digest": "9c69acc3c63e441af3bd2fe2de8e6f0b"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_GB-phonon_freya-medium": {
+  "key": "en_GB-phonon_freya-medium",
+  "name": "phonon_freya",
+  "language": {
+   "code": "en_GB",
+   "family": "en",
+   "region": "GB",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "Great Britain"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-freya.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "117e1cf4c4f6a405b8580feee32d2c83"
+   },
+   "phonon-v1/en_GB-phonon_freya-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "6abb0f7ab437f0d94820d9d31716e5f9"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_grub_the_ogre-medium": {
+  "key": "en_US-phonon_grub_the_ogre-medium",
+  "name": "phonon_grub_the_ogre",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-grub_the_ogre.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "98508240ca0452e88de756d627ba2dff"
+   },
+   "phonon-v1/en_US-phonon_grub_the_ogre-medium.onnx.json": {
+    "size_bytes": 1007,
+    "md5_digest": "50e1236272e04afc3ba9d938e635581b"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_hadley-medium": {
+  "key": "en_US-phonon_hadley-medium",
+  "name": "phonon_hadley",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-hadley.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "1cf352119eed7753fd170d9741f46111"
+   },
+   "phonon-v1/en_US-phonon_hadley-medium.onnx.json": {
+    "size_bytes": 1000,
+    "md5_digest": "3c66a92313df1515def095e4b370cd83"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_harper-medium": {
+  "key": "en_US-phonon_harper-medium",
+  "name": "phonon_harper",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-harper.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "c35040ec8727920c311309f1e26d459c"
+   },
+   "phonon-v1/en_US-phonon_harper-medium.onnx.json": {
+    "size_bytes": 1000,
+    "md5_digest": "c40625bd5df1089e14b2aea7d9ab81ad"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_hugh-medium": {
+  "key": "en_US-phonon_hugh-medium",
+  "name": "phonon_hugh",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-hugh.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "651dd2617bcb729596ac281a359a1abc"
+   },
+   "phonon-v1/en_US-phonon_hugh-medium.onnx.json": {
+    "size_bytes": 998,
+    "md5_digest": "888b0e6f7b8137c585adc9673ffc707d"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_GB-phonon_imogen-medium": {
+  "key": "en_GB-phonon_imogen-medium",
+  "name": "phonon_imogen",
+  "language": {
+   "code": "en_GB",
+   "family": "en",
+   "region": "GB",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "Great Britain"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-imogen.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "768f89f500ece7e51eda57c70ab962f8"
+   },
+   "phonon-v1/en_GB-phonon_imogen-medium.onnx.json": {
+    "size_bytes": 1000,
+    "md5_digest": "ba1934354a52931f85c5ffb327c34972"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_juniper-medium": {
+  "key": "en_US-phonon_juniper-medium",
+  "name": "phonon_juniper",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-juniper.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "4851467ba47c0635b980487bf05e387b"
+   },
+   "phonon-v1/en_US-phonon_juniper-medium.onnx.json": {
+    "size_bytes": 1001,
+    "md5_digest": "067fb7dad7e6979e34d3cfee096a0f36"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_lottie-medium": {
+  "key": "en_US-phonon_lottie-medium",
+  "name": "phonon_lottie",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-lottie.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "db1b37c624ff03b7736b6d643703debc"
+   },
+   "phonon-v1/en_US-phonon_lottie-medium.onnx.json": {
+    "size_bytes": 1000,
+    "md5_digest": "2303eb110ba22953fbbb741119c483c2"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_GB-phonon_maeve-medium": {
+  "key": "en_GB-phonon_maeve-medium",
+  "name": "phonon_maeve",
+  "language": {
+   "code": "en_GB",
+   "family": "en",
+   "region": "GB",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "Great Britain"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-maeve.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "af7a36469ba98615c7069f5d7613c323"
+   },
+   "phonon-v1/en_GB-phonon_maeve-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "e99b1a37352bc4343660a8aecdb72a5f"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_GB-phonon_master_aldric-medium": {
+  "key": "en_GB-phonon_master_aldric-medium",
+  "name": "phonon_master_aldric",
+  "language": {
+   "code": "en_GB",
+   "family": "en",
+   "region": "GB",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "Great Britain"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-master_aldric.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "5b1ca9e8288fc805ea0d959bb5c0a574"
+   },
+   "phonon-v1/en_GB-phonon_master_aldric-medium.onnx.json": {
+    "size_bytes": 1007,
+    "md5_digest": "b4a56fa304642bbbcdaa5d1c1376d1ff"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_micah-medium": {
+  "key": "en_US-phonon_micah-medium",
+  "name": "phonon_micah",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-micah.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "7d5dd456e54584f72674c9d9d932cd5d"
+   },
+   "phonon-v1/en_US-phonon_micah-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "737f21d60090638be66e988fbecf3822"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_miles-medium": {
+  "key": "en_US-phonon_miles-medium",
+  "name": "phonon_miles",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-miles.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "ba2a2a6b65f407b602e87aa57094ac13"
+   },
+   "phonon-v1/en_US-phonon_miles-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "559497468f8d5f7d820c72b1c97e86e8"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_morwenna_of_the_deep-medium": {
+  "key": "en_US-phonon_morwenna_of_the_deep-medium",
+  "name": "phonon_morwenna_of_the_deep",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-morwenna_of_the_deep.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "a7e87221fadca2a6d40dad7a8654a986"
+   },
+   "phonon-v1/en_US-phonon_morwenna_of_the_deep-medium.onnx.json": {
+    "size_bytes": 1014,
+    "md5_digest": "46c93f64c093612d8f240b5fad93c70a"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_old_mortlake-medium": {
+  "key": "en_US-phonon_old_mortlake-medium",
+  "name": "phonon_old_mortlake",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-old_mortlake.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "ce2f2d69267487e7c70f570f95ee97a1"
+   },
+   "phonon-v1/en_US-phonon_old_mortlake-medium.onnx.json": {
+    "size_bytes": 1006,
+    "md5_digest": "7fe93fe5e124b2a48ffb68a48d8ef692"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_GB-phonon_pippa-medium": {
+  "key": "en_GB-phonon_pippa-medium",
+  "name": "phonon_pippa",
+  "language": {
+   "code": "en_GB",
+   "family": "en",
+   "region": "GB",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "Great Britain"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-pippa.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "8b194dd736e4f0f1ceb1ece3d335ecc6"
+   },
+   "phonon-v1/en_GB-phonon_pippa-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "926fda4534996ff15a11ff6853a3ed23"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_preston-medium": {
+  "key": "en_US-phonon_preston-medium",
+  "name": "phonon_preston",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-preston.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "ff996b75e783f9390092bcfb88f337a9"
+   },
+   "phonon-v1/en_US-phonon_preston-medium.onnx.json": {
+    "size_bytes": 1001,
+    "md5_digest": "7fc36e0e4c7806e8dee656b756c4e5cd"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_russell-medium": {
+  "key": "en_US-phonon_russell-medium",
+  "name": "phonon_russell",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-russell.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "89d267ae389ad2fc1289174fc5aef10c"
+   },
+   "phonon-v1/en_US-phonon_russell-medium.onnx.json": {
+    "size_bytes": 1001,
+    "md5_digest": "a1fe101f111cb162e0fa7723ada149b4"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_sir_bramwell-medium": {
+  "key": "en_US-phonon_sir_bramwell-medium",
+  "name": "phonon_sir_bramwell",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-sir_bramwell.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "93871054c0dd9e7e833d12637ba27531"
+   },
+   "phonon-v1/en_US-phonon_sir_bramwell-medium.onnx.json": {
+    "size_bytes": 1006,
+    "md5_digest": "68b0dee482cd00192a1dcf7f7873d162"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_spencer-medium": {
+  "key": "en_US-phonon_spencer-medium",
+  "name": "phonon_spencer",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-spencer.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "cef336fa63466ad586d507ef5a8c2566"
+   },
+   "phonon-v1/en_US-phonon_spencer-medium.onnx.json": {
+    "size_bytes": 1001,
+    "md5_digest": "ca386e3d78cf5830322922c7736ad429"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_teddy-medium": {
+  "key": "en_US-phonon_teddy-medium",
+  "name": "phonon_teddy",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-teddy.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "e5c9dbdb7bfa7d4e0529e4c284fc740b"
+   },
+   "phonon-v1/en_US-phonon_teddy-medium.onnx.json": {
+    "size_bytes": 999,
+    "md5_digest": "d8ca7e80c8e901525557fcfd40d6ac3b"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_the_snow_queen-medium": {
+  "key": "en_US-phonon_the_snow_queen-medium",
+  "name": "phonon_the_snow_queen",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-the_snow_queen.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "1bc55b16dbb6003f8bf278300502fd39"
+   },
+   "phonon-v1/en_US-phonon_the_snow_queen-medium.onnx.json": {
+    "size_bytes": 1008,
+    "md5_digest": "f4b0f7055bb28fc5c0901c49e9b9e5ff"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_the_thing_under_the_stairs-medium": {
+  "key": "en_US-phonon_the_thing_under_the_stairs-medium",
+  "name": "phonon_the_thing_under_the_stairs",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-the_thing_under_the_stairs.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "6c9cec5f81a6606891b86ea8c916678f"
+   },
+   "phonon-v1/en_US-phonon_the_thing_under_the_stairs-medium.onnx.json": {
+    "size_bytes": 1020,
+    "md5_digest": "07968b619cb66db02424d9dc6b643efe"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_GB-phonon_toby-medium": {
+  "key": "en_GB-phonon_toby-medium",
+  "name": "phonon_toby",
+  "language": {
+   "code": "en_GB",
+   "family": "en",
+   "region": "GB",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "Great Britain"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-toby.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "1af6dd44ef996e7273b8f6bd2fd8549c"
+   },
+   "phonon-v1/en_GB-phonon_toby-medium.onnx.json": {
+    "size_bytes": 998,
+    "md5_digest": "a6dc36b1171123b5a2633ea6c7340509"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_trevor-medium": {
+  "key": "en_US-phonon_trevor-medium",
+  "name": "phonon_trevor",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-trevor.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "654950d561b7b12b14d9db93942491d6"
+   },
+   "phonon-v1/en_US-phonon_trevor-medium.onnx.json": {
+    "size_bytes": 1000,
+    "md5_digest": "439d941eb1d891ea46c5da3b4056b0bb"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_vyrmathrax_the_ancient-medium": {
+  "key": "en_US-phonon_vyrmathrax_the_ancient-medium",
+  "name": "phonon_vyrmathrax_the_ancient",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-vyrmathrax_the_ancient.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "62dd13b8a3d54a94ebceced326076469"
+   },
+   "phonon-v1/en_US-phonon_vyrmathrax_the_ancient-medium.onnx.json": {
+    "size_bytes": 1016,
+    "md5_digest": "27879d47b52cb5d3479c07d8bf7a2630"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ },
+ "en_US-phonon_zoey-medium": {
+  "key": "en_US-phonon_zoey-medium",
+  "name": "phonon_zoey",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Gradium Phonon 31M",
+  "license": "Apache-2.0",
+  "files": {
+   "phonon-v1/phonon-31m-en-voice-zoey.bin": {
+    "size_bytes": 1536000,
+    "md5_digest": "4d91465baccf7c4297c9b8c2db6becf1"
+   },
+   "phonon-v1/en_US-phonon_zoey-medium.onnx.json": {
+    "size_bytes": 998,
+    "md5_digest": "8edaa7d34c2406eca4055917b3c785b1"
+   }
+  },
+  "extra_files": {
+   "metadata.json": {
+    "size_bytes": 20359,
+    "md5_digest": "a2894af39685e7d7ba7fd3d95db73a43"
+   },
+   "tokenizer.json": {
+    "size_bytes": 277967,
+    "md5_digest": "5f40a7619edaa2493c1875437fa4e8c2"
+   },
+   "bos.bin": {
+    "size_bytes": 1024,
+    "md5_digest": "d499f72378e57f24b3f32d729733e474"
+   }
+  }
+ }
+}

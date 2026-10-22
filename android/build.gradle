@@ -121,7 +121,7 @@ android {
 
     defaultConfig {
         // The Snapdragon APK: Qualcomm's QNN plugin needs API 27. It is only
-        // offered from the Snapdragon 8 Gen 1 on, which shipped with Android 12.
+        // offered on the 8 Gen 3 and later (NpuFiles.TARGETS), all Android 14+.
         minSdk = project.hasProperty('snapdragon') ? 27 : 26
         targetSdk = 36
         versionCode = 34
@@ -144,6 +144,12 @@ android {
                 arguments.addAll(["-DUSE_ASYNC:BOOL=OFF", "-DUSE_LIBSONIC:BOOL=ON", "-DUSE_KLATT:BOOL=ON"])
                 abiFilters.addAll(["arm64-v8a"])
                 targets.addAll(["ttsespeak", "espeak-data"])
+                // Phonon (Snapdragon build only): needs a local QAIRT 2.50 SDK for
+                // QNN's headers, -Pqairt=<.../qairt/2.50.0.260828> (jni/CMakeLists.txt).
+                if (project.hasProperty('snapdragon') && project.hasProperty('qairt')) {
+                    arguments.add("-DPHONON_QAIRT=" + project.property('qairt'))
+                    targets.add("phonon_jni")
+                }
             }
         }
     }
@@ -201,6 +207,11 @@ android {
             java.srcDirs = ['src']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
+            // Phonon's text front end (Gradium's Rust text-ffi, built by
+            // tools/phonon/build_text.sh): shipped in the APK, never downloaded.
+            if (project.hasProperty('snapdragon') && project.hasProperty('qairt')) {
+                jniLibs.srcDirs += ['libs/phonon-jni']
+            }
         }
         test {
             java.srcDirs = ['test/src']

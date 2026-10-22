@@ -33,6 +33,10 @@ public final class PiperVoiceConfig {
     static final String PHONEME_TYPE_TEXT = "text";
     /** Supertone Supertonic 3: plain text through its own tokenizer ({@link Supertonic}). */
     static final String PHONEME_TYPE_SUPERTONIC = "supertonic";
+    /** Gradium Phonon 31m: plain English text, normalized and tokenized by its runtime ({@link Phonon}). */
+    static final String PHONEME_TYPE_PHONON = "phonon";
+    /** A Phonon voice's shared files beside its own (model.onnx): the bundle's metadata, tokenizer, BOS data. */
+    static final List<String> PHONON_FILES = Arrays.asList("metadata.json", "tokenizer.json", "bos.bin");
 
     /**
      * English language names from catalogs and configs, for languages the
@@ -154,13 +158,15 @@ public final class PiperVoiceConfig {
     public final String supertonicLang;
     public final String supertonicStyle;
     public final int supertonicSteps;
+    /** Phonon: the bundle's name for this voice ("Easton"); null for other voices. */
+    public final String phononVoice;
     /**
-     * Supertonic: the files that go beside model.onnx, by name in the voice
-     * folder ("vocoder.onnx", "style.json"...), each {path, size, md5} on
-     * the release the catalog points at. Fetched into the shared store by
-     * PiperDownloads.fetchVoiceExtras.
+     * Supertonic and Phonon: the files that go beside model.onnx, by name in
+     * the voice folder ("vocoder.onnx", "tokenizer.json"...), each {path,
+     * size, md5} on the release the catalog points at. Fetched into the
+     * shared store by PiperDownloads.fetchVoiceExtras.
      */
-    public final Map<String, String[]> supertonicFiles;
+    public final Map<String, String[]> companionFiles;
 
     private PiperVoiceConfig(Builder b) {
         key = b.key;
@@ -198,11 +204,16 @@ public final class PiperVoiceConfig {
         supertonicLang = b.supertonicLang;
         supertonicStyle = b.supertonicStyle;
         supertonicSteps = b.supertonicSteps;
-        supertonicFiles = Collections.unmodifiableMap(b.supertonicFiles);
+        companionFiles = Collections.unmodifiableMap(b.companionFiles);
+        phononVoice = b.phononVoice;
     }
 
     public boolean isSupertonic() {
         return PHONEME_TYPE_SUPERTONIC.equals(phonemeType);
+    }
+
+    public boolean isPhonon() {
+        return PHONEME_TYPE_PHONON.equals(phonemeType);
     }
 
     /**
@@ -212,10 +223,14 @@ public final class PiperVoiceConfig {
      * are refused before the model is downloaded.
      */
     public boolean isSupported() {
+        if (isPhonon()) {
+            return sampleRate > 0 && phononVoice != null && Phonon.available()
+                    && companionFiles.keySet().containsAll(PHONON_FILES);
+        }
         if (isSupertonic()) {
             return sampleRate > 0 && supertonicSteps > 0 && supertonicLang != null
                     && Supertonic.LANGUAGES.contains(supertonicLang)
-                    && supertonicFiles.keySet().containsAll(Arrays.asList(Supertonic.DURATION_PREDICTOR,
+                    && companionFiles.keySet().containsAll(Arrays.asList(Supertonic.DURATION_PREDICTOR,
                             Supertonic.TEXT_ENCODER, Supertonic.VOCODER, Supertonic.INDEXER,
                             Supertonic.TTS_JSON, Supertonic.STYLE));
         }
@@ -372,20 +387,30 @@ public final class PiperVoiceConfig {
             b.supertonicLang = st.optString("lang", null);
             b.supertonicStyle = st.optString("style", null);
             b.supertonicSteps = st.optInt("steps", 8);
-            final JSONObject files = st.optJSONObject("files");
-            if (files != null) {
-                final Iterator<String> names = files.keys();
-                while (names.hasNext()) {
-                    final String name = names.next();
-                    final JSONObject f = files.optJSONObject(name);
-                    if (f != null && name.matches("[a-z_]+\\.(onnx|json)")) {
-                        b.supertonicFiles.put(name, new String[] {f.optString("path", ""),
-                                String.valueOf(f.optLong("size_bytes", 0)), f.optString("md5_digest", "")});
-                    }
-                }
-            }
+            putFiles(b, st.optJSONObject("files"));
+        }
+        final JSONObject phonon = root.optJSONObject("phonon");
+        if (phonon != null) {
+            b.phononVoice = phonon.optString("voice", null);
+            putFiles(b, phonon.optJSONObject("files"));
         }
         return new PiperVoiceConfig(b);
+    }
+
+    /** A config's companion files: name in the voice folder -> {path, size, md5}. */
+    private static void putFiles(Builder b, JSONObject files) {
+        if (files == null) {
+            return;
+        }
+        final Iterator<String> names = files.keys();
+        while (names.hasNext()) {
+            final String name = names.next();
+            final JSONObject f = files.optJSONObject(name);
+            if (f != null && name.matches("[a-z_]+\\.(onnx|json|bin)")) {
+                b.companionFiles.put(name, new String[] {f.optString("path", ""),
+                        String.valueOf(f.optLong("size_bytes", 0)), f.optString("md5_digest", "")});
+            }
+        }
     }
 
     private static final class Builder {
@@ -412,7 +437,8 @@ public final class PiperVoiceConfig {
         String supertonicLang;
         String supertonicStyle;
         int supertonicSteps;
-        final Map<String, String[]> supertonicFiles = new HashMap<>();
+        final Map<String, String[]> companionFiles = new HashMap<>();
+        String phononVoice;
     }
 }
 

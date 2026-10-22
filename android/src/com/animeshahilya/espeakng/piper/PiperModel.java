@@ -186,9 +186,24 @@ public final class PiperModel implements Closeable {
         volatile double decodeSpeed;
         /** Supertonic voices: their runtime instead of the VITS sessions (all of these null). */
         final Supertonic supertonic;
+        /** Phonon voices: one runtime for every installed Phonon voice (PhononBundle). */
+        final Phonon phonon;
+
+        SessionGroup(Phonon phonon) {
+            this.phonon = phonon;
+            this.supertonic = null;
+            this.session = null;
+            this.mapped = null;
+            this.decoder = null;
+            this.mappedDecoder = null;
+            this.hasSpeakerInput = false;
+            this.boundary = new String[0];
+            this.hasDurations = false;
+        }
 
         SessionGroup(Supertonic supertonic) {
             this.supertonic = supertonic;
+            this.phonon = null;
             this.session = null;
             this.mapped = null;
             this.decoder = null;
@@ -201,6 +216,7 @@ public final class PiperModel implements Closeable {
         SessionGroup(OrtSession session, ByteBuffer mapped, OrtSession decoder,
                      ByteBuffer mappedDecoder) {
             this.supertonic = null;
+            this.phonon = null;
             this.session = session;
             this.mapped = mapped;
             this.decoder = decoder;
@@ -268,6 +284,9 @@ public final class PiperModel implements Closeable {
                 }
                 if (supertonic != null) {
                     supertonic.close();
+                }
+                if (phonon != null) {
+                    phonon.close();
                 }
             } finally {
                 lock.writeLock().unlock();
@@ -350,6 +369,21 @@ public final class PiperModel implements Closeable {
         return m;
     }
 
+    /** True for a Phonon voice (text in, its own runtime on the NPU). */
+    boolean isPhonon() {
+        return group.phonon != null;
+    }
+
+    /** True when this voice's Phonon runtime has {@code voice} (one loaded before it was installed may not). */
+    boolean phononHas(String voice) {
+        return group.phonon != null && Arrays.asList(group.phonon.voices()).contains(voice);
+    }
+
+    /** A chunk's text for Phonon, carried as code points through the id-based pipeline. */
+    static long[] phononIds(String text) {
+        return text.codePoints().asLongStream().toArray();
+    }
+
     /** True for a Supertonic voice (text in, its own runtime). */
     boolean isSupertonic() {
         return group.supertonic != null;
@@ -388,6 +422,22 @@ public final class PiperModel implements Closeable {
      */
     static PiperModel load(File onnx, PiperVoiceConfig config, int threads)
             throws OrtException {
+        if (config.isPhonon()) {
+            final Phonon runtime;
+            try {
+                runtime = PhononBundle.load(onnx.getParentFile().getParentFile());
+            } catch (IOException e) {
+                throw new OrtException("Phonon: " + e.getMessage());
+            }
+            final PiperModel model = new PiperModel(config, onnx, new SessionGroup(runtime));
+            try {
+                model.warmUp();
+            } catch (OrtException | RuntimeException e) {
+                model.close();
+                throw e;
+            }
+            return model;
+        }
         if (config.isSupertonic()) {
             final Supertonic.Style style;
             try {
@@ -773,6 +823,10 @@ public final class PiperModel implements Closeable {
 
     /** A few phonemes through the model: first-run setup off the speech path, and a real test. */
     private void warmUp() throws OrtException {
+        if (group.phonon != null) {
+            infer(phononIds("Hello."), config.lengthScale, 0, 1f, 1f, null);
+            return;
+        }
         if (group.supertonic != null) {
             infer(supertonicIds("a"), config.lengthScale, 0, 1f, 1f, null);
             return;
@@ -912,6 +966,9 @@ public final class PiperModel implements Closeable {
         if (group.supertonic != null) {
             return inferSupertonic(ids, lengthScale, handle);
         }
+        if (group.phonon != null) {
+            return inferPhonon(ids, handle);
+        }
         if (group.decoder != null) {
             final Encoded e = encode(ids, lengthScale, speakerId, noise, noiseW, handle);
             final float[] audio = e == null ? null : decode(e, 0, e.frames, handle);
@@ -935,6 +992,27 @@ public final class PiperModel implements Closeable {
                             ? durations : null);
                 }
             });
+        } finally {
+            group.lock.readLock().unlock();
+        }
+    }
+
+    /** A Phonon chunk: the text in this voice; speed and pitch are libsonic's (no rate input). */
+    private Output inferPhonon(long[] ids, RunHandle handle) throws OrtException {
+        group.lock.readLock().lock();
+        try {
+            if (closed || group.isClosed() || cancelled(handle)) {
+                return null;
+            }
+            final int[] cps = new int[ids.length];
+            for (int i = 0; i < ids.length; i++) {
+                cps[i] = (int) ids[i];
+            }
+            final float[] audio = group.phonon.synthesize(new String(cps, 0, cps.length), config.phononVoice,
+                    () -> cancelled(handle));
+            return audio == null ? null : new Output(audio, null);
+        } catch (IOException e) {
+            throw new OrtException("Phonon: " + e.getMessage());
         } finally {
             group.lock.readLock().unlock();
         }

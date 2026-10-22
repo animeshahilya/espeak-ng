@@ -38,3 +38,11 @@
     java.nio.ByteBuffer mappedDecoder;
     java.nio.ByteBuffer mappedMid;
 }
+
+# Phonon's native runner (jni/phonon/phonon_jni.cpp) polls the stop flag by
+# name - GetMethodID(..., "stopped", "()Z") - with no Java call site R8 can
+# see: keep the method on every implementation. Phonon's own native methods
+# are kept by the default rules.
+-keepclassmembers class * implements com.animeshahilya.espeakng.piper.Phonon$Stop {
+    boolean stopped();
+}

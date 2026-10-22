@@ -297,7 +297,8 @@ public final class PiperDownloads {
                 if (f == null) {
                     continue;
                 }
-                if (path.endsWith(".onnx")) {
+                // A Phonon voice's own file is its voice data (.bin), not ONNX.
+                if (path.endsWith(".onnx") || path.endsWith(".bin")) {
                     c.modelPath = path;
                     c.modelSize = f.optLong("size_bytes", 0);
                     c.modelMd5 = f.optString("md5_digest", null);
@@ -344,7 +345,8 @@ public final class PiperDownloads {
     private static List<CatalogVoice> withExtras(Context context, List<CatalogVoice> catalog) {
         final List<CatalogVoice> out = mergeExtras(catalog, bundledExtras(context));
         sort(out);
-        return keptOnly(out, keptVoices(context));
+        final List<CatalogVoice> kept = keptOnly(out, keptVoices(context));
+        return phononOffered() ? phononForEnglish(kept) : kept;
     }
 
     /**
@@ -402,7 +404,7 @@ public final class PiperDownloads {
         final List<CatalogVoice> out = new ArrayList<>(voices.size());
         for (CatalogVoice v : voices) {
             final java.util.Set<String> keys = kept.get(v.family);
-            if (keys == null || keys.contains(v.key) || isSupertonic(v)) {
+            if (keys == null || keys.contains(v.key) || isSupertonic(v) || isPhonon(v)) {
                 out.add(v);
             }
         }
@@ -422,6 +424,46 @@ public final class PiperDownloads {
                 out.addAll(parseCatalog(readAsset(context, SUPERTONIC_CATALOG_ASSET), true));
             } catch (IOException | JSONException e) {
                 Log.w(TAG, "Supertonic voices unavailable", e);
+            }
+        }
+        if (phononOffered()) {
+            try {
+                out.addAll(parseCatalog(readAsset(context, PHONON_CATALOG_ASSET), true));
+            } catch (IOException | JSONException e) {
+                Log.w(TAG, "Phonon voices unavailable", e);
+            }
+        }
+        return out;
+    }
+
+    /** Gradium Phonon 31M English voices (phonon-v1, build_phonon_catalog.py): Snapdragon NPU only. */
+    public static final String PHONON_CATALOG_ASSET = "piper/phonon_voices.json";
+    static final String PHONON_RELEASE_PREFIX = "phonon-v";
+
+    /** A Phonon catalog entry (its key names it). */
+    static boolean isPhonon(CatalogVoice v) {
+        return v.key != null && v.key.contains("-phonon_");
+    }
+
+    /**
+     * Phonon voices run only on the NPU (~30x real time on an 8 Elite; ~3x
+     * on a Pixel 8's CPU, too slow for a screen reader): the Snapdragon build
+     * with its runtime, on a chip it is compiled for.
+     */
+    public static boolean phononOffered() {
+        return BuildConfig.SNAPDRAGON && NpuFiles.target() != null && Phonon.available();
+    }
+
+    /**
+     * Where Phonon is offered it is the English natural voice: the US and UK
+     * Piper voices leave the list (installed copies keep working). Indian
+     * English (Rahul, also English words in Hindi text) stays. Pure for JVM tests.
+     */
+    public static List<CatalogVoice> phononForEnglish(List<CatalogVoice> voices) {
+        final List<CatalogVoice> out = new ArrayList<>(voices.size());
+        for (CatalogVoice v : voices) {
+            if (!"en".equals(v.family) || isPhonon(v) || "IN".equals(v.region)) {
+                out.add(v);
             }
         }
         return out;
@@ -542,8 +584,11 @@ public final class PiperDownloads {
                 Log.w(TAG, "Catalog fetch failed; using cached copy", e);
                 return withExtras(storageContext, parseCatalog(FileUtils.readText(cache)));
             }
-            final List<CatalogVoice> extras = keptOnly(bundledExtras(storageContext),
+            List<CatalogVoice> extras = keptOnly(bundledExtras(storageContext),
                     keptVoices(storageContext));
+            if (phononOffered()) {
+                extras = phononForEnglish(extras);
+            }
             if (!extras.isEmpty()) {
                 Log.w(TAG, "Catalog fetch failed; falling back to bundled extras", e);
                 return extras;
@@ -906,8 +951,8 @@ public final class PiperDownloads {
         }
         // Supertonic voices' companion files (vocoder, text encoder...) live in the store too.
         for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
-            if (v.config != null && v.config.isSupertonic()) {
-                for (String[] f : v.config.supertonicFiles.values()) {
+            if (v.config != null && (v.config.isSupertonic() || v.config.isPhonon())) {
+                for (String[] f : v.config.companionFiles.values()) {
                     if (isMd5(f[2])) {
                         referenced.add(f[2].toLowerCase(Locale.ROOT));
                     }
@@ -1302,12 +1347,12 @@ public final class PiperDownloads {
     public static void fetchSupertonicFiles(Context appContext, Context storageContext) {
         final File sharedDir = PiperVoiceStore.sharedDir(storageContext);
         for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
-            if (v.config == null || !v.config.isSupertonic()) {
+            if (v.config == null || !(v.config.isSupertonic() || v.config.isPhonon())) {
                 continue;
             }
             boolean added = false;
             try {
-                for (Map.Entry<String, String[]> e : v.config.supertonicFiles.entrySet()) {
+                for (Map.Entry<String, String[]> e : v.config.companionFiles.entrySet()) {
                     final String path = e.getValue()[0];
                     final long size = Long.parseLong(e.getValue()[1]);
                     final String md5 = e.getValue()[2].toLowerCase(Locale.ROOT);
@@ -1315,7 +1360,7 @@ public final class PiperDownloads {
                     if (target.isFile() && target.length() == size) {
                         continue;
                     }
-                    if (!isMd5(md5) || !isSafePath(path) || !path.startsWith(SUPERTONIC_RELEASE_PREFIX)
+                    if (!isMd5(md5) || !isSafePath(path) || !(path.startsWith(SUPERTONIC_RELEASE_PREFIX) || path.startsWith(PHONON_RELEASE_PREFIX))
                             || !isSafeKey(e.getKey()) || e.getKey().indexOf('.') < 0) {
                         throw new IOException("Bad Supertonic file entry " + e.getKey());
                     }
@@ -1398,6 +1443,7 @@ public final class PiperDownloads {
         fetchNpuList(appContext, storageContext, NPU_DECODERS_ASSET, false, compiled, changed);
         fetchNpuList(appContext, storageContext, NPU_FILES_ASSET, true, compiled, changed);
         changed.addAll(fetchSupertonicNpu(storageContext, compiled));
+        changed.addAll(fetchPhononNpu(storageContext, compiled));
         for (String key : changed) {
             Log.i(TAG, "NPU files for " + key + " installed");
             broadcastChanged(appContext, key, null);
@@ -1586,6 +1632,53 @@ public final class PiperDownloads {
             }
         } catch (IOException | JSONException | RuntimeException e) {
             Log.w(TAG, "Supertonic NPU files not fetched; tried again later", e);
+            return new ArrayList<>();
+        }
+        return fetched ? reload : new ArrayList<>();
+    }
+
+    /**
+     * Phonon's model compiled for this chip (one ~84 MB file, from Gradium's
+     * bundle) into {@code piper/phonon/} when a Phonon voice is installed;
+     * the folder goes when none is. Returns the voices to reload.
+     */
+    private static List<String> fetchPhononNpu(Context storageContext, JSONObject compiled) {
+        final List<String> reload = new ArrayList<>();
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            if (v.config != null && v.config.isPhonon()) {
+                reload.add(v.key);
+            }
+        }
+        final File dir = PhononBundle.dir(PiperVoiceStore.voicesDir(storageContext));
+        if (reload.isEmpty()) {
+            FileUtils.deleteRecursively(dir);
+            return reload;
+        }
+        final JSONObject phonon = compiled.optJSONObject("phonon");
+        boolean fetched = false;
+        try {
+            final org.json.JSONArray files = phonon == null ? new org.json.JSONArray() : phonon.getJSONArray("files");
+            for (int i = 0; i < files.length(); i++) {
+                final JSONObject f = files.getJSONObject(i);
+                final String name = f.getString("name");
+                final String fileMd5 = f.getString("md5_digest");
+                if (!isSafeKey(name) || !name.startsWith("phonon-")) {
+                    throw new IOException("bad Phonon file " + name);
+                }
+                final File target = new File(dir, name);
+                final File stamp = new File(dir, name + ".md5");
+                if (target.isFile() && stamp.isFile() && fileMd5.equalsIgnoreCase(FileUtils.readText(stamp).trim())) {
+                    continue;
+                }
+                //noinspection ResultOfMethodCallIgnored
+                dir.mkdirs();
+                fetchFile(RESPIN_SYSPIN_RELEASES + compiled.getString("release") + "/" + name,
+                        f.getLong("size_bytes"), fileMd5, target);
+                FileUtils.write(stamp, fileMd5.getBytes(StandardCharsets.UTF_8));
+                fetched = true;
+            }
+        } catch (IOException | JSONException | RuntimeException e) {
+            Log.w(TAG, "Phonon NPU model not fetched; tried again later", e);
             return new ArrayList<>();
         }
         return fetched ? reload : new ArrayList<>();

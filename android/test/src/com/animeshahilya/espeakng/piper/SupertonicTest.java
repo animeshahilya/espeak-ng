@@ -99,7 +99,7 @@ public class SupertonicTest {
         assertFalse(c.usesEspeak());
         assertEquals("hi", c.supertonicLang);
         assertEquals(8, c.supertonicSteps);
-        assertEquals(6, c.supertonicFiles.size());
+        assertEquals(6, c.companionFiles.size());
 
         files.remove(Supertonic.VOCODER);
         assertFalse(PiperVoiceConfig.parse("x", cfg.toString()).isSupported());

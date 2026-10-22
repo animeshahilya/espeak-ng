@@ -398,8 +398,11 @@ public final class PiperEngine {
         try {
             synchronized (mLoaded) {
                 for (PiperModel existing : mLoaded.values()) {
+                    // One session per model file; one Phonon runtime for every Phonon
+                    // voice it was loaded with (PhononBundle).
                     if (existing != null && !existing.isClosed()
-                            && existing.stamp.equals(ModelFiles.stamp(onnx))) {
+                            && (existing.stamp.equals(ModelFiles.stamp(onnx))
+                            || config.isPhonon() && existing.phononHas(config.phononVoice))) {
                         final PiperModel cloned = existing.withConfig(config, onnx);
                         if (cloned != null) {
                             return cloned;
@@ -878,17 +881,19 @@ public final class PiperEngine {
             final List<PiperPhonemes.Clause> aligned =
                     PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), said);
             clauses = vowelled != null ? PiperPhonemes.remap(aligned, vowelled.toOriginal) : aligned;
-        } else if (config.isSupertonic()) {
+        } else if (config.isSupertonic() || config.isPhonon()) {
             clauses = null; // Supertonic.chunks below
         } else {
             clauses = PiperPhonemes.textClauses(text, numberWords(config.languageFamily), config.shortChunks);
         }
         final float speed = shortInputSpeed(text, config, Math.max(0.1f, params.speed))
                 * (config.isSupertonic() ? Supertonic.RATE_FACTOR : 1f);
-        final float modelSpeed = Math.max(MIN_MODEL_SPEED, Math.min(maxModelSpeed(config), speed));
-        // Supertonic reads numbers, currency and units itself, from whole sentences.
-        final List<PiperPhonemes.Chunk> chunks = config.isSupertonic()
-                ? Supertonic.chunks(text, config.supertonicLang, modelSpeed)
+        // Phonon has no rate input: libsonic does all of it.
+        final float modelSpeed = config.isPhonon() ? 1f
+                : Math.max(MIN_MODEL_SPEED, Math.min(maxModelSpeed(config), speed));
+        // Supertonic and Phonon read numbers, currency and units themselves, from whole sentences.
+        final List<PiperPhonemes.Chunk> chunks = config.isSupertonic() || config.isPhonon()
+                ? Supertonic.chunks(text, config.isPhonon() ? "en" : config.supertonicLang, modelSpeed)
                 : PiperPhonemes.chunk(clauses, PiperPhonemes.FIRST_CHUNK_PHONEMES,
                 config.shortChunks ? PiperPhonemes.SHORT_CHUNK : PiperPhonemes.CHUNK_PHONEMES, config.finalStop);
 
@@ -914,10 +919,12 @@ public final class PiperEngine {
             final List<Integer> wordStarts = new ArrayList<>();
             // Supertonic: its own text ids; no per-id durations, so word
             // timing is estimated over the chunk (PiperAudio.estimateWordFrames).
-            final long[] ids = model.isSupertonic() ? model.supertonicIds(chunk.ipa)
+            final long[] ids = model.isPhonon() ? PiperModel.phononIds(chunk.ipa)
+                    : model.isSupertonic() ? model.supertonicIds(chunk.ipa)
                     : PiperPhonemes.toIds(PiperPhonemes.tokenize(chunk.ipa, config),
                     config, missing, wordStarts);
-            if (ids.length > 3) { // more than BOS PAD EOS: something to say
+            // More than BOS PAD EOS (a Phonon chunk is its text: any character).
+            if (model.isPhonon() ? ids.length > 0 : ids.length > 3) {
                 final int lead = needsLeadIn(model) ? LEAD_IN : 0;
                 jobs.add(new Job(chunk, withLeadIn(ids, config, lead, wordStarts), wordStarts, lead,
                         text, cpToIndex));

@@ -54,6 +54,7 @@ public final class RequestSettings {
      */
     public static boolean needsDigitHelp(PiperVoiceStore.Installed natural) {
         return natural != null && !natural.config.usesEspeak() && !natural.config.isSupertonic()
+                && !natural.config.isPhonon()
                 && PiperEngine.numberWords(natural.config.languageFamily) == null;
     }
 

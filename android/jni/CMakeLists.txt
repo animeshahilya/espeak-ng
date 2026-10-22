@@ -86,3 +86,22 @@ target_link_options(ttsespeak PRIVATE
 set_property(TARGET ttsespeak APPEND PROPERTY LINK_DEPENDS
         ${CMAKE_CURRENT_SOURCE_DIR}/ttsespeak.map
 )
+
+# Snapdragon build with a local QAIRT SDK (-Pqairt=<root>): Gradium's Phonon
+# English voices on the NPU (piper/Phonon.java). QNN's headers are Qualcomm's
+# and not in this repository; the libraries load at run time from the app's
+# qnn-runtime. Without PHONON_QAIRT the app simply has no Phonon voices.
+if(PHONON_QAIRT)
+  include(FetchContent)
+  FetchContent_Declare(nlohmann_json
+    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+    URL_HASH SHA256=d6c65aca6b1ed68e7a182f4757257b107ae403032760ed6ef121c9d55e81757d)
+  set(JSON_BuildTests OFF CACHE INTERNAL "")
+  set(JSON_Install OFF CACHE INTERNAL "")
+  FetchContent_MakeAvailable(nlohmann_json)
+  add_library(phonon_jni SHARED
+          phonon/phonon_jni.cpp phonon/phonon.cpp phonon/qnn_model.cpp phonon/ptts_text.cpp)
+  set_target_properties(phonon_jni PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+  target_include_directories(phonon_jni PRIVATE phonon "${PHONON_QAIRT}/include/QNN")
+  target_link_libraries(phonon_jni PRIVATE nlohmann_json::nlohmann_json ${A_LOG} dl)
+endif()

@@ -746,6 +746,27 @@ voices" does not, so voices can still be deleted to free space.
   LayerNormalization/MatMulNBits (`tools/ort-voices/voices_ops.config`).
   Kokoro (Apache-2.0) is next but only ~2.3x on the S25 NPU after six QNN
   fixes (see the user's memory notes); not added.
+- **Phonon 31M** (2026-10-22, Snapdragon build on `NpuFiles.TARGETS` only,
+  `PiperDownloads.phononOffered`): Gradium's English TTS (Apache-2.0 weights and
+  37 voices, all offered; xn-ptts v0.4.0) on the NPU through its own QNN runner,
+  vendored in `jni/phonon/` (`libphonon_jni.so`, built only with
+  `-Pqairt=<QAIRT 2.50 root>`: QNN's headers are Qualcomm-confidential and stay
+  out of the repo) plus its Rust text front end `libs/phonon-jni/.../libptts_text.so`
+  (`tools/phonon/build_text.sh`). `piper/Phonon` (JNI) and `PhononBundle`: each
+  voice installs its own ~1.5 MB file (model.onnx) plus shared metadata, tokenizer
+  and BOS data (companion files, like Supertonic's); the chip's compiled model
+  (~84 MB, from Gradium's bundle) comes through `npu_ctx.json` into `piper/phonon/`;
+  every load assembles `piper/phonon/bundle/` from the installed voices (the runtime
+  reads every voice its metadata lists) and one runtime serves them all. Text in
+  (code points through the id pipeline), numbers read by Phonon itself, model speed
+  fixed at 1 (libsonic does rate and pitch), 24 kHz resampled. `Phonon.load` sets
+  `ADSP_LIBRARY_PATH` to the app's library folder only if unset - exactly what ONNX
+  Runtime's QNN plugin sets; any other value broke ONNX Runtime's NPU graphs.
+  Where offered, US/UK Piper English voices leave the download list
+  (`phononForEnglish`); Rahul (Indian English) stays. S25 Ultra: "Button" 56 ms
+  end to end, ~30x real time, PiperE2E 10/10 with Easton as English; release
+  `phonon-v1` + per-chip models in `npu-ctx-v1-*` (`build_phonon_catalog.py`).
+  The user listened: "sounds nice including other voices".
 - **NPU decoders** (Snapdragon build): `assets/piper/npu_decoders.json`
   (voice key -> `npu-v1/<model>-npu.onnx` on sherpa-onnx-respin-syspin, made
   by its `build_npu.py`): each voice's decoder fully INT8 (Conv, ConvTranspose,
