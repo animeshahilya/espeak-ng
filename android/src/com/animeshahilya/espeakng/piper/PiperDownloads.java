@@ -434,7 +434,7 @@ public final class PiperDownloads {
 
     /**
      * Supertonic voices are offered only where they keep up: the Snapdragon
-     * build on an 8-series Snapdragon from SM8450 on (its NPU; on a Pixel 8
+     * build on a Snapdragon with compiled NPU graphs (NpuFiles.TARGETS; on a Pixel 8
      * CPU they ran 1.0-1.5x real time, so a screen reader would pause).
      */
     public static boolean supertonicOffered(Context context) {
@@ -445,10 +445,7 @@ public final class PiperDownloads {
 
     /** The phone can run Supertonic well (whether or not the beta is on). */
     public static boolean supertonicCapable() {
-        return com.animeshahilya.espeakng.BuildConfig.SNAPDRAGON
-                && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
-                && "QTI".equalsIgnoreCase(android.os.Build.SOC_MANUFACTURER)
-                && PiperSettings.hasModernNpu(android.os.Build.SOC_MODEL);
+        return com.animeshahilya.espeakng.BuildConfig.SNAPDRAGON && NpuFiles.target() != null;
     }
 
     private static String readAsset(Context context, String name) throws IOException {
@@ -556,6 +553,40 @@ public final class PiperDownloads {
     }
 
     public static byte[] fetch(String urlString, int maxBytes) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        fetchTo(urlString, maxBytes, out);
+        return out.toByteArray();
+    }
+
+    /**
+     * Streams a download into {@code target} (through a .tmp file), keeping it
+     * only when its MD5 is {@code md5}: for files too big to hold in memory
+     * (a compiled NPU graph is up to 140 MB).
+     */
+    static void fetchFile(String urlString, long maxBytes, String md5, File target) throws IOException {
+        final File tmp = new File(target.getParentFile(), target.getName() + ".tmp");
+        final java.security.MessageDigest digest;
+        try {
+            digest = java.security.MessageDigest.getInstance("MD5");
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IOException(e);
+        }
+        try (OutputStream out = new java.security.DigestOutputStream(
+                new java.io.BufferedOutputStream(new FileOutputStream(tmp)), digest)) {
+            fetchTo(urlString, maxBytes, out);
+        } catch (IOException e) {
+            //noinspection ResultOfMethodCallIgnored
+            tmp.delete();
+            throw e;
+        }
+        if (!md5.equalsIgnoreCase(FileUtils.hex(digest.digest())) || !tmp.renameTo(target)) {
+            //noinspection ResultOfMethodCallIgnored
+            tmp.delete();
+            throw new IOException("Checksum mismatch or cannot store " + target.getName());
+        }
+    }
+
+    private static void fetchTo(String urlString, long maxBytes, OutputStream out) throws IOException {
         String currentUrl = urlString;
         for (int redirects = 0; redirects < 5; redirects++) {
             final HttpURLConnection conn = (HttpURLConnection) new URL(currentUrl).openConnection();
@@ -583,16 +614,17 @@ public final class PiperDownloads {
                     throw new IOException("HTTP " + code + " for " + currentUrl);
                 }
                 try (InputStream in = conn.getInputStream()) {
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
                     final byte[] buf = new byte[16384];
+                    long total = 0;
                     int n;
                     while ((n = in.read(buf)) > 0) {
-                        if (out.size() + n > maxBytes) {
+                        total += n;
+                        if (total > maxBytes) {
                             throw new IOException("Response too large: " + currentUrl);
                         }
                         out.write(buf, 0, n);
                     }
-                    return out.toByteArray();
+                    return;
                 }
             } finally {
                 conn.disconnect();
@@ -1356,14 +1388,16 @@ public final class PiperDownloads {
      * service start and after an install. Blocking; off the main thread.
      */
     public static void fetchNpuDecoders(Context appContext, Context storageContext) {
-        if (!NpuFiles.hasNpuRuntime()) {
+        final JSONObject compiled = NpuFiles.hasNpuRuntime() ? compiledForThisChip(appContext) : null;
+        if (compiled == null) {
             return;
         }
         // One reload per voice that got files, after both lists: each list
         // reloading on its own loaded a new SYSPIN/Rasa voice twice.
         final java.util.Set<String> changed = new java.util.LinkedHashSet<>();
-        fetchNpuList(appContext, storageContext, NPU_DECODERS_ASSET, false, changed);
-        fetchNpuList(appContext, storageContext, NPU_FILES_ASSET, true, changed);
+        fetchNpuList(appContext, storageContext, NPU_DECODERS_ASSET, false, compiled, changed);
+        fetchNpuList(appContext, storageContext, NPU_FILES_ASSET, true, compiled, changed);
+        changed.addAll(fetchSupertonicNpu(storageContext, compiled));
         for (String key : changed) {
             Log.i(TAG, "NPU files for " + key + " installed");
             broadcastChanged(appContext, key, null);
@@ -1388,7 +1422,7 @@ public final class PiperDownloads {
      * stamp already matches; a voice that got a file is reloaded.
      */
     private static void fetchNpuList(Context appContext, Context storageContext, String asset, boolean sets,
-                                     java.util.Set<String> changedKeys) {
+                                     JSONObject compiled, java.util.Set<String> changedKeys) {
         final JSONObject list;
         try (InputStream in = appContext.getAssets().open(asset)) {
             list = new JSONObject(FileUtils.read(in));
@@ -1409,13 +1443,17 @@ public final class PiperDownloads {
             boolean changed = false;
             try {
                 if (!sets) {
-                    changed = fetchNpuFile(base, entry, new File(v.dir, PiperModel.NPU_DECODER_FILE));
+                    changed = fetchCompiled(compiled, entry, new File(v.dir, PiperModel.NPU_DECODER_FILE));
                 } else {
                     for (String[] f : NPU_FILE_NAMES) {
                         final JSONObject file = entry.optJSONObject(f[0]);
-                        if (file != null) {
-                            changed |= fetchNpuFile(base, file, new File(v.dir, f[1]));
+                        if (file == null) {
+                            continue;
                         }
+                        // The middle part runs on the CPU: the phone makes its own copy.
+                        final File target = new File(v.dir, f[1]);
+                        changed |= "mid".equals(f[0]) ? fetchNpuFile(base, file, target)
+                                : fetchCompiled(compiled, file, target);
                     }
                 }
             } catch (IOException | JSONException | RuntimeException e) {
@@ -1425,6 +1463,132 @@ public final class PiperDownloads {
                 changedKeys.add(v.key);
             }
         }
+    }
+
+    /**
+     * NPU graphs compiled on the PC per Snapdragon (sherpa-onnx-respin-syspin
+     * build_npu_ctx.py / build_supertonic_ctx.py), one release per chip:
+     * {"targets": {"SM8750": {"release", "graphs": {source md5: [files]},
+     * "supertonic": {"source_md5", "files"}}}}. A graph's files are named as
+     * the phone used to name what it compiled itself, so NpuFiles finds them.
+     */
+    public static final String NPU_CTX_ASSET = "piper/npu_ctx.json";
+
+    /** This chip's entry in {@link #NPU_CTX_ASSET}, or null (no compiled graphs: the CPU speaks). */
+    private static JSONObject compiledForThisChip(Context appContext) {
+        try (InputStream in = appContext.getAssets().open(NPU_CTX_ASSET)) {
+            final JSONObject list = new JSONObject(FileUtils.read(in));
+            final JSONObject targets = list.optJSONObject("targets");
+            return targets == null || NpuFiles.target() == null ? null : targets.optJSONObject(NpuFiles.target());
+        } catch (IOException | JSONException e) {
+            Log.w(TAG, "Compiled NPU list unavailable", e);
+            return null;
+        }
+    }
+
+    /**
+     * A hosted NPU part ({@code src}: the source graph's md5 and size) as
+     * graphs compiled for this chip, into the voice folder under the names
+     * NpuFiles looks for; the source itself is not downloaded. Skipped when
+     * its stamp matches and the compiled graph is here. False when nothing
+     * is compiled for it (that part stays on the CPU).
+     */
+    private static boolean fetchCompiled(JSONObject compiled, JSONObject src, File hosted)
+            throws IOException, JSONException {
+        final String md5 = src.optString("md5_digest", "").toLowerCase(Locale.ROOT);
+        final JSONObject graphs = compiled.optJSONObject("graphs");
+        final org.json.JSONArray files = graphs == null ? null : graphs.optJSONArray(md5);
+        if (files == null || !isMd5(md5)) {
+            return false;
+        }
+        final File stamp = new File(hosted.getParentFile(), hosted.getName() + ".md5");
+        if (stamp.isFile() && md5.equals(FileUtils.readText(stamp).trim().toLowerCase(Locale.ROOT))
+                && NpuFiles.compiledAvailable(hosted)) {
+            return false;
+        }
+        NpuFiles.forgetCompiled(hosted);
+        //noinspection ResultOfMethodCallIgnored
+        hosted.delete(); // a source from before: the compiled graph takes its place
+        NpuFiles.recordHostedSize(hosted, src.getLong("size_bytes"));
+        // Named for this app's runtime version: another version's names would never be found.
+        final String expected = NpuFiles.compiledOf(hosted).getName();
+        final String stem = expected.substring(0, expected.length() - ".onnx".length());
+        boolean found = false;
+        for (int i = 0; i < files.length(); i++) {
+            final String name = files.getJSONObject(i).getString("name");
+            if (!isSafeKey(name) || !name.startsWith(stem)) {
+                NpuFiles.forgetCompiled(hosted);
+                throw new IOException("compiled " + name + " is not " + expected);
+            }
+            found |= name.equals(expected);
+        }
+        if (!found) {
+            NpuFiles.forgetCompiled(hosted);
+            throw new IOException("no " + expected + " in the compiled list");
+        }
+        final String release = compiled.getString("release");
+        for (int i = 0; i < files.length(); i++) {
+            final JSONObject f = files.getJSONObject(i);
+            fetchFile(RESPIN_SYSPIN_RELEASES + release + "/" + md5 + "-" + f.getString("name"),
+                    f.getLong("size_bytes"), f.getString("md5_digest"),
+                    new File(hosted.getParentFile(), f.getString("name")));
+        }
+        FileUtils.write(stamp, md5.getBytes(StandardCharsets.UTF_8));
+        return true;
+    }
+
+    /**
+     * Supertonic's compiled buckets (flow and vocoder, each sharing one weights
+     * file) into the shared store, when a Supertonic voice is installed;
+     * returns the voices to reload.
+     */
+    private static List<String> fetchSupertonicNpu(Context storageContext, JSONObject compiled) {
+        final List<String> reload = new ArrayList<>();
+        final JSONObject st = compiled.optJSONObject("supertonic");
+        if (st == null) {
+            return reload;
+        }
+        final String md5 = st.optString("source_md5", "").toLowerCase(Locale.ROOT);
+        for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
+            if (v.config != null && v.config.isSupertonic() && md5.equals(ModelFiles.sourceMd5(v.dir))) {
+                reload.add(v.key);
+            }
+        }
+        if (reload.isEmpty()) {
+            return reload;
+        }
+        final File shared = PiperVoiceStore.sharedDir(storageContext);
+        final String prefix = md5 + "." + PiperModel.env().getVersion() + ".st-";
+        boolean fetched = false;
+        try {
+            final org.json.JSONArray files = st.getJSONArray("files");
+            for (int i = 0; i < files.length(); i++) {
+                final JSONObject f = files.getJSONObject(i);
+                final String name = f.getString("name");
+                if (!isSafeKey(name) || !name.startsWith(prefix)) {
+                    throw new IOException("compiled " + name + " is not for " + prefix);
+                }
+                // Stamped, not sized: a wrapper and the weights file it names
+                // must come from one build (two builds' files can match in size
+                // and still name different graphs).
+                final File target = new File(shared, name);
+                final File stamp = new File(shared, name + ".md5");
+                final String fileMd5 = f.getString("md5_digest");
+                if (target.isFile() && stamp.isFile() && fileMd5.equalsIgnoreCase(FileUtils.readText(stamp).trim())) {
+                    continue;
+                }
+                //noinspection ResultOfMethodCallIgnored
+                shared.mkdirs();
+                fetchFile(RESPIN_SYSPIN_RELEASES + compiled.getString("release") + "/" + name,
+                        f.getLong("size_bytes"), fileMd5, target);
+                FileUtils.write(stamp, fileMd5.getBytes(StandardCharsets.UTF_8));
+                fetched = true;
+            }
+        } catch (IOException | JSONException | RuntimeException e) {
+            Log.w(TAG, "Supertonic NPU files not fetched; tried again later", e);
+            return new ArrayList<>();
+        }
+        return fetched ? reload : new ArrayList<>();
     }
 
     /** One hosted file into {@code target} unless its MD5 stamp already matches; true when written. */

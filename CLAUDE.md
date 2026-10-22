@@ -358,7 +358,7 @@ voices" does not, so voices can still be deleted to free space.
   reference CPU driver (15% slower) and failed the run for the unoptimized
   graph. Snapdragon phones get the NPU directly from the Snapdragon build
   (QNN) instead. Not yet measured: NNAPI on a Snapdragon too old to be
-  offered that build (below SM8450).
+  offered NPU voices (outside NpuFiles.TARGETS).
 - **Stop.** `onStop()` -> `PiperEngine.stop()` -> ORT `RunOptions.setTerminate`,
   plus the chunk loop checks between chunks.
 - **Customization.** `piper_style` (Steady/Natural/Lively) multiplies the
@@ -581,9 +581,11 @@ voices" does not, so voices can still be deleted to free space.
   `addNpu` puts a session on its device; `backend_path` must be the full
   path of `libQnnHtp.so` (by `backend_type` alone the DSP could not open
   `libQnnHtpV79Skel.so`: QNN_DEVICE_ERROR_INVALID_CONFIG on a Galaxy S25
-  Ultra). The plugin needs minSdk 27, so the Snapdragon APK has 27 (it is
-  offered from SM8450 on, Android 12+). GPU, DSP and HTP v68 libraries are
-  left out (`packaging.jniLibs.excludes`, -10 MB). Same speed as before on
+  Ultra). The plugin needs minSdk 27, so the Snapdragon APK has 27. NPU only
+  on the chips we compile for (`NpuFiles.TARGETS`: SM8650 8 Gen 3, SM8750
+  8 Elite, SM8850 8 Elite Gen 5; Android 12+); other chips get CPU voices.
+  GPU, DSP, HTP v68/v69/v73 libraries and QNN's compiler are left out
+  (`packaging.jniLibs.excludes`). Same speed as before on
   the S25 Ultra (Hindi first audio 123-132 ms). **Hosted NPU files, no
   graph cutting on the phone (2026-10-15):** every voice we host has its NPU
   graphs built on the PC (sherpa-onnx-respin-syspin `build_npu_enc.py` /
@@ -594,9 +596,20 @@ voices" does not, so voices can still be deleted to free space.
   NPU cannot run its data-dependent NonZero), the flow fixed to 512 frames
   (SYSPIN 2048, ~6.8 frames per id; `npuflow.onnx`) and, for voices with no
   INT8 decoder (`npu.onnx`, npu_decoders.json), the decoder with its latent
-  fixed to 80 frames (`npudec.onnx`). `PiperModel.attachNpu` only compiles
-  them (fp16 HTP, `session.disable_quant_qdq` for their INT8 weights,
-  cached as `model.<ort>.<file>.<size>.ctx.onnx`, failures as `-r1` markers)
+  fixed to 80 frames (`npudec.onnx`). **Compiled on the PC, never on the
+  phone (2026-10-22):** sherpa-onnx-respin-syspin `build_npu_ctx.py` compiles
+  every such graph and the INT8 decoders for each target (fp16 HTP,
+  `session.disable_quant_qdq`; INT8 with `offload_graph_io_quantization`;
+  the wrapper's compatibility tag gets the target's HTP arch - the PC writes
+  0, which the phone rejects), `build_supertonic_ctx.py` Supertonic's
+  shared-weight buckets, `build_npu_ctx_catalog.py` the app's
+  `assets/piper/npu_ctx.json`; releases `npu-ctx-v1-<sm8650|sm8750|sm8850>`
+  (assets `<source md5>-<name>`). `PiperDownloads.fetchCompiled` downloads the
+  phone's chip's pair under the names the phone used to give its own compiles
+  (`model.<ort>.<file>.<size>.ctx.onnx` + `_qnn.bin`; INT8 `npuq.<size>`),
+  writing the source's size (`<name>.size`) instead of the source, so the
+  cache logic is unchanged; only `npumid.onnx` (a CPU graph) still downloads
+  as a source. `PiperModel.attachNpu` loads them (failures as `-r1` markers)
   and checks they hand the decoder exactly this voice's boundary tensors;
   `encode()` runs text encoder (NPU) -> middle (CPU) -> flow (NPU) for a
   chunk within the buckets, else the CPU encoder. Older exports that name
@@ -629,17 +642,15 @@ voices" does not, so voices can still be deleted to free space.
   Voice folders also lose dangling links and copies another runtime made
   once this runtime's exist (`PiperDownloads.collectVoiceGarbage`, service
   start).
-  **APK size:** `libQnnHtpPrepare.so` (QNN's on-phone graph compiler) is
-  85 MB of the ~225 MB unpacked (35 of 88 MB in the APK). It can go only if
-  every NPU graph comes pre-compiled per HTP generation (v69/v73/v75/v79/v81),
-  which needs an offline QNN context-binary toolchain on the PC - not done.
-  `decodeOnNpu` runs fixed windows with `DECODE_OVERLAP` context. A compile (FP16 13-17 s on the S25 Ultra,
-  INT8 ~1.6 s) never holds up the voice: `attachNpuLater` speaks with the
-  CPU decoder and switches on the `piper-npu-compile` thread when ready
-  (logged "decoder moved to the NPU"), and `PiperEngine.prepare` builds a
-  voice's optimized copy and NPU graph right after its download
-  (`PiperDownloads.prepare`, after its extras), so even its first use is
-  quick (Rahul: 674 ms, NPU). All of the graph on the NPU or none
+  **APK size:** without QNN's compiler (`libQnnHtpPrepare.so`, 81 MB
+  unpacked) and the v69/v73 libraries the Snapdragon APK went 88 -> ~52 MB
+  (2026-10-22); a voice's first use no longer waits for a 13-17 s compile.
+  Supertonic's wrappers and the weights file they share must come from one
+  build: its files are MD5-stamped (`<name>.md5`), never trusted by size
+  (two builds' files matched in size and named different graphs: "context
+  node name not exists in table qnn_models"). Rapunzelina's hosted npu-v2
+  files are invalid ("scales" undefined), so it stays on the CPU.
+  `decodeOnNpu` runs fixed windows with `DECODE_OVERLAP` context. All of the graph on the NPU or none
   (`disable_cpu_ep_fallback`); a failure keeps the CPU part and writes a
   `.failed` marker with the reason (bump the revision after NPU code changes
   so phones retry). The load log says where the decoder and encoder run.
@@ -665,12 +676,12 @@ voices" does not, so voices can still be deleted to free space.
   both URLs, both SHA-256s, one plain-text `notes` line) and push it: that file
   is what the in-app updater reads (`util/AppUpdater`, below), so a release
   without it is invisible to installed apps. The standard
-  app on an 8-series Snapdragon from SM8450 (8 Gen 1) on shows "Faster on this
+  app on a chip in `NpuFiles.TARGETS` shows "Faster on this
   phone: Snapdragon version" (`PiperSettings.offersSnapdragonBuild`), opening
   the latest release; same package and key, so it installs over and keeps
   voices.
-- **Supertonic 3** (2026-10-13), a BETA: Snapdragon build on an 8-series from
-  SM8450 (`PiperDownloads.supertonicCapable`) and only with the opt-in switch
+- **Supertonic 3** (2026-10-13), a BETA: Snapdragon build on a chip in
+  `NpuFiles.TARGETS` (`PiperDownloads.supertonicCapable`) and only with the opt-in switch
   `piper_supertonic_beta` on (off by default; user, after testing the release
   build on the S25: "sometimes a jarring sound, does not read well - fine as a
   beta, not for stable users"). Off hides it from the download list;
@@ -698,11 +709,11 @@ voices" does not, so voices can still be deleted to free space.
   (`Supertonic.LAZY_BUCKET`), so screen-reader use stays at two buckets'
   memory - PSS 564 MB before, 545-553 with three buckets lazily, 742 with
   all three loaded; long text loads it while its first chunk plays, 30 s
-  of audio in 4.5 s), padded with masks, each compiled
-  once into the shared store (`<md5>.<ort>.st-flow96.ctx.onnx` ...); the
-  phone pins `latent_length`/`text_length` at load
-  (`setSymbolicDimensionValue`) and ORT folds the shape arithmetic, so one
-  hosted file serves every bucket; `session.disable_quant_qdq` widens the
+  of audio in 4.5 s), padded with masks, compiled on the PC per target
+  (`build_supertonic_ctx.py`: lengths pinned, each stage's buckets sharing one
+  weights file, 184 MB instead of 561) and downloaded into the shared store
+  (`<md5>.<ort>.st-flow96.ctx.onnx` ... + `st-<flow|voc>-shared_qnn.bin`,
+  `PiperDownloads.fetchSupertonicNpu`); `session.disable_quant_qdq` widens the
   INT8 weights for the fp16 graph. NPU-readiness rewrites done on the PC
   (both CPU-exact): Softplus -> log(1+exp) (QNN has none) and the 4-D
   attention MatMuls -> 3-D (the 4-D form crashed the HTP: DSP restart,

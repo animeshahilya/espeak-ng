@@ -489,11 +489,7 @@ public final class PiperModel implements Closeable {
             if (NpuFiles.hasNpuRuntime() && group.boundaryShapes != null) {
                 NpuFiles.Boundary.write(NpuFiles.boundaryFile(onnx), encoder, group);
             }
-            if (model.npuCompiled(onnx) || !NpuFiles.hasNpuRuntime()) {
-                model.attachNpu(onnx); // a compiled graph loads in ~0.15 s
-            } else {
-                model.attachNpuLater(onnx);
-            }
+            model.attachNpu(onnx); // compiled graphs load in ~0.15 s
         }
         if (mapped != null) {
             ModelFiles.dropOriginal(onnx);
@@ -501,72 +497,12 @@ public final class PiperModel implements Closeable {
         return model;
     }
 
-    /** One low-priority thread compiles NPU graphs, one voice at a time. */
-    private static final java.util.concurrent.ExecutorService NPU_COMPILER =
-            java.util.concurrent.Executors.newSingleThreadExecutor(r -> {
-                final Thread t = new Thread(r, "piper-npu-compile");
-                t.setDaemon(true);
-                t.setPriority(Thread.MIN_PRIORITY);
-                return t;
-            });
-
     /**
-     * True when this voice's NPU graph is already compiled, so attaching it
-     * is quick. Mirrors {@link #attachNpu}'s choice of INT8 or FP16 graph.
-     */
-    private boolean npuCompiled(File onnx) {
-        final File dir = onnx.getParentFile();
-        final File int8 = new File(dir, NPU_DECODER_FILE);
-        if (group.boundaryShapes != null && NpuFiles.hasHosted(int8)
-                && !ModelFiles.derivedFile(onnx, ".npuq-r3." + NpuFiles.hostedSize(int8) + ".failed").exists()
-                && !ModelFiles.derivedFile(onnx, ".npuq." + NpuFiles.hostedSize(int8) + ".onnx").isFile()) {
-            return false;
-        }
-        if (!NpuFiles.hasHosted(int8) && !NpuFiles.hostedReady(onnx, new File(dir, NPU_DECODER16_FILE))) {
-            return false;
-        }
-        // One failure marker (the text encoder's) stands for all three parts:
-        // a flow that never compiled because its encoder failed is not waited on.
-        final File enc = new File(dir, NPU_ENC_FILE);
-        return NpuFiles.failedFile(onnx, enc).exists()
-                || NpuFiles.hostedReady(onnx, enc) && NpuFiles.hostedReady(onnx, new File(dir, NPU_FLOW_FILE));
-    }
-
-    /**
-     * The first load of a voice (or the first after an update) has to compile
-     * its NPU graph, 2-17 s. The voice speaks with its CPU decoder meanwhile
-     * and moves to the NPU when the graph is ready, instead of the whole voice
-     * waiting (and eSpeak speaking) that long. The compile holds a reference,
-     * so a voice unloaded meanwhile closes the NPU session with the rest.
-     */
-    private void attachNpuLater(File onnx) {
-        group.npuProblem = "on the CPU until its NPU graph is compiled";
-        if (!group.acquire()) {
-            return;
-        }
-        NPU_COMPILER.execute(() -> {
-            try {
-                if (!group.isClosed()) {
-                    final long t0 = System.nanoTime();
-                    attachNpu(onnx);
-                    android.util.Log.i("PiperVoices", "Natural voice " + config.key + " decoder "
-                            + (onNpu() ? "moved to the NPU (" + npuKind() + ") after "
-                                    + (System.nanoTime() - t0) / 1_000_000 + " ms of compiling"
-                                    : npuProblem())
-                            + (group.npuEnc != null ? ", encoder on the NPU" : ", encoder on the CPU"));
-                }
-            } finally {
-                group.release();
-            }
-        });
-    }
-
-    /**
-     * Moves the decoder to Qualcomm's NPU when this build and phone have it.
-     * The first time, writes the decoder with fixed input shapes and lets
-     * QNN compile it (2-9 s), saving the compiled graph beside the model;
-     * later loads read that (~0.15 s). Any failure keeps the CPU decoder
-     * and is remembered, so a phone without the NPU pays for it once.
+     * Moves the decoder (and the encoder's two NPU parts) to Qualcomm's NPU
+     * when this build and phone have it, from the graphs compiled for this
+     * chip on the PC and downloaded (PiperDownloads.fetchNpuDecoders); until
+     * they are here the CPU speaks. Any failure keeps the CPU part and is
+     * remembered until a new file is published for the voice.
      */
     private void attachNpu(File onnx) {
         if (!NpuFiles.hasNpuRuntime() || group.boundaryShapes == null) {
@@ -635,8 +571,9 @@ public final class PiperModel implements Closeable {
             group.npuProblem = "on the CPU (no NPU decoder for this voice)";
             return;
         }
-        if (NpuFiles.awaitingSource(onnx, hosted, NpuFiles.compiledFile(onnx, hosted))) {
-            group.npuProblem = "on the CPU until its NPU file downloads again";
+        final File compiled = NpuFiles.compiledFile(onnx, hosted);
+        if (!compiled.isFile()) {
+            group.npuProblem = "on the CPU until its NPU files download";
             return;
         }
         final File failed = NpuFiles.failedFile(onnx, hosted);
@@ -646,7 +583,7 @@ public final class PiperModel implements Closeable {
         }
         OrtSession npu = null;
         try {
-            npu = NpuFiles.npuSession(hosted, NpuFiles.compiledFile(onnx, hosted), true);
+            npu = NpuFiles.npuSession(compiled, true);
             useNpuDecoder(npu, "FP16");
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
@@ -672,17 +609,16 @@ public final class PiperModel implements Closeable {
         if (failed.exists()) {
             return;
         }
-        if (NpuFiles.awaitingSource(onnx, encFile, NpuFiles.compiledFile(onnx, encFile))
-                || NpuFiles.awaitingSource(onnx, flowFile, NpuFiles.compiledFile(onnx, flowFile))
-                || NpuFiles.awaitingSource(onnx, midFile, NpuFiles.compiledOf(midFile))) {
-            return; // the CPU encoder speaks until the files download again
+        if (!NpuFiles.compiledFile(onnx, encFile).isFile() || !NpuFiles.compiledFile(onnx, flowFile).isFile()
+                || !NpuFiles.compiledOf(midFile).isFile() && !midFile.isFile()) {
+            return; // the CPU encoder speaks until the files download
         }
         OrtSession enc = null;
         OrtSession mid = null;
         OrtSession flow = null;
         try {
-            enc = NpuFiles.npuSession(encFile, NpuFiles.compiledFile(onnx, encFile), true);
-            flow = NpuFiles.npuSession(flowFile, NpuFiles.compiledFile(onnx, flowFile), true);
+            enc = NpuFiles.npuSession(NpuFiles.compiledFile(onnx, encFile), true);
+            flow = NpuFiles.npuSession(NpuFiles.compiledFile(onnx, flowFile), true);
             // Its optimized ORT-format copy, made at the first load, opens in a
             // fraction of the time (the .onnx took 110-260 ms every load).
             final File midOrt = NpuFiles.compiledOf(midFile);
@@ -736,29 +672,24 @@ public final class PiperModel implements Closeable {
         }
     }
 
-    /**
-     * The downloaded INT8 decoder on the NPU. Its graph is already fixed-size
-     * and quantized, so QNN only compiles it (cached beside the model, keyed
-     * by the file's size so an updated file recompiles).
-     */
+    /** The voice's INT8 decoder on the NPU, compiled for this chip on the PC. */
     private boolean attachInt8Npu(File onnx, File int8) {
         final File failed = ModelFiles.derivedFile(onnx, ".npuq-r3." + NpuFiles.hostedSize(int8) + ".failed");
         if (failed.exists()) {
             return false;
         }
         final File compiled = NpuFiles.compiledOf(int8);
-        if (NpuFiles.awaitingSource(onnx, int8, compiled)) {
-            group.npuProblem = "on the CPU until its NPU file downloads again";
+        if (!compiled.isFile()) {
+            group.npuProblem = "on the CPU until its NPU files download";
             return false;
         }
         OrtSession npu = null;
         try {
-            npu = NpuFiles.npuSession(int8, compiled, false);
+            npu = NpuFiles.npuSession(compiled, false);
             useNpuDecoder(npu, "INT8");
             return true;
         } catch (IOException | OrtException | RuntimeException e) {
             closeQuietly(npu);
-            compiled.delete();
             NpuFiles.remember(failed, e);
             return false;
         }

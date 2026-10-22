@@ -76,9 +76,35 @@ public final class NpuFiles {
                 .getApplicationInfo().nativeLibraryDir, "libQnnHtp.so").getAbsolutePath();
     }
 
-    /** True when the NPU runtime is here: the Snapdragon build on a phone QNN accepts. */
+    /**
+     * The Snapdragons whose NPU graphs are compiled for the app on the PC
+     * (sherpa-onnx-respin-syspin build_npu_ctx.py): 8 Gen 3, 8 Elite, 8 Elite
+     * Gen 5. The phone compiles nothing - the APK leaves QNN's compiler out
+     * (35 MB) - so any other chip runs natural voices on the CPU.
+     */
+    static final String[] TARGETS = {"SM8650", "SM8750", "SM8850"};
+
+    /** This phone's compile target, or null when its chip has no compiled graphs. */
+    public static String target() {
+        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+                ? targetFor(android.os.Build.SOC_MANUFACTURER, android.os.Build.SOC_MODEL) : null;
+    }
+
+    static String targetFor(String manufacturer, String socModel) {
+        if (!"QTI".equalsIgnoreCase(manufacturer) || socModel == null) {
+            return null;
+        }
+        for (String t : TARGETS) {
+            if (socModel.toUpperCase(java.util.Locale.ROOT).startsWith(t)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    /** True when the NPU runtime is here: the Snapdragon build on a chip with compiled graphs. */
     static boolean hasNpuRuntime() {
-        return !npuDevices().isEmpty();
+        return target() != null && !npuDevices().isEmpty();
     }
 
     /** Puts the session on the NPU through the QNN plugin with these options. */
@@ -200,11 +226,6 @@ public final class NpuFiles {
         }
     }
 
-    /** A hosted NPU file compiled already, failed before, or absent: nothing to wait for. */
-    static boolean hostedReady(File onnx, File hosted) {
-        return !hasHosted(hosted) || compiledFile(onnx, hosted).isFile() || failedFile(onnx, hosted).exists();
-    }
-
     /** Where a hosted NPU file's compiled graph is kept: keyed by its size, so an update recompiles. */
     static File compiledFile(File onnx, File hosted) {
         return ModelFiles.derivedFile(onnx, "." + hosted.getName().replace(".onnx", "") + "." + hostedSize(hosted) + ".ctx.onnx");
@@ -234,6 +255,12 @@ public final class NpuFiles {
 
     static boolean hasHosted(File hosted) {
         return hostedSize(hosted) >= 0;
+    }
+
+    /** Records a hosted file's size without the file: its compiled graphs are downloaded instead. */
+    static void recordHostedSize(File hosted, long size) throws IOException {
+        java.nio.file.Files.write(sizeFile(hosted).toPath(),
+                String.valueOf(size).getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
     private static File sizeFile(File hosted) {
@@ -277,18 +304,16 @@ public final class NpuFiles {
         }
     }
 
-    /** No compiled form for this runtime and the file to make one from is gone: it downloads again. */
-    static boolean awaitingSource(File onnx, File hosted, File compiled) {
-        return !compiled.isFile() && !hosted.isFile();
-    }
-
     /**
-     * An NPU session over a fixed-shape graph, compiled once into
-     * {@code compiled}: fp16 on the HTP (a hosted graph, its INT8 weights
-     * widened) or fully INT8 (a downloaded decoder).
+     * An NPU session over a graph compiled for this chip on the PC and
+     * downloaded ({@link #TARGETS}): fp16 on the HTP (a hosted graph, its INT8
+     * weights widened) or fully INT8 (a downloaded decoder). The options are
+     * the ones it was compiled with.
      */
-    static OrtSession npuSession(File source, File compiled, boolean fp16) throws OrtException {
-        final boolean compile = !compiled.isFile();
+    static OrtSession npuSession(File compiled, boolean fp16) throws OrtException {
+        if (!compiled.isFile()) {
+            throw new OrtException("no compiled NPU graph " + compiled.getName());
+        }
         try (OrtSession.SessionOptions options = new OrtSession.SessionOptions()) {
             final Map<String, String> qnn = new HashMap<>();
             qnn.put("backend_path", npuBackend());
@@ -305,14 +330,7 @@ public final class NpuFiles {
             addNpu(options, qnn);
             // All of it on the NPU or not at all: a half-offloaded graph is slower.
             options.addConfigEntry("session.disable_cpu_ep_fallback", "1");
-            if (compile) {
-                options.addConfigEntry("ep.context_enable", "1");
-                options.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
-            }
-            return PiperModel.env().createSession((compile ? source : compiled).getAbsolutePath(), options);
-        } catch (OrtException | RuntimeException e) {
-            compiled.delete();
-            throw e;
+            return PiperModel.env().createSession(compiled.getAbsolutePath(), options);
         }
     }
 

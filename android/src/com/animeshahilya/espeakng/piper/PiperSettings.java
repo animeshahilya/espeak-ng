@@ -78,25 +78,13 @@ public final class PiperSettings {
     static final String SNAPDRAGON_RELEASES = "https://github.com/animeshahilya/espeak-ng/releases/latest";
 
     /**
-     * A Snapdragon with a modern NPU, running the standard build. Only the
-     * 8-series from 8 Gen 1 (SM8450, 2022) on: QNN's HTP libraries start at
-     * that generation's NPU, and older or mid-range chips are unmeasured. The
-     * Snapdragon build itself still checks the speed (PiperModel.MIN_NPU_SPEED)
-     * and keeps the CPU where the NPU isn't clearly faster.
+     * A Snapdragon whose NPU graphs are compiled for the app
+     * ({@link NpuFiles#TARGETS}), running the standard build. The Snapdragon
+     * build itself still checks the speed (PiperModel.MIN_NPU_SPEED) and keeps
+     * the CPU where the NPU isn't clearly faster.
      */
     static boolean offersSnapdragonBuild() {
-        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
-                && "QTI".equalsIgnoreCase(android.os.Build.SOC_MANUFACTURER)
-                && hasModernNpu(android.os.Build.SOC_MODEL)
-                && !NpuFiles.hasNpuRuntime();
-    }
-
-    /** SM8450 and later 8-series ("SM8450", "SM8550", "SM8650", "SM8750", ...). */
-    static boolean hasModernNpu(String socModel) {
-        if (socModel == null || !socModel.matches("SM8\\d{3}.*")) {
-            return false;
-        }
-        return Integer.parseInt(socModel.substring(2, 6)) >= 8450;
+        return NpuFiles.target() != null && !NpuFiles.hasNpuRuntime();
     }
     private static final long PROGRESS_POLL_MS = 1500;
     private static final Handler POLL_HANDLER = new Handler(Looper.getMainLooper());

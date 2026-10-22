@@ -688,16 +688,16 @@ final class Supertonic implements Closeable {
     }
 
     /**
-     * A bucket's NPU graph: lengths pinned (ONNX Runtime then folds the
-     * shape arithmetic before QNN sees the graph), INT8 weights widened
-     * (session.disable_quant_qdq), all on the NPU or nothing. Compiled once
-     * into the shared store, next to the shared model.
+     * A bucket's NPU graph, compiled for this chip on the PC with its lengths
+     * pinned and INT8 weights widened, all buckets of a stage sharing one
+     * weights file (sherpa-onnx-respin-syspin build_supertonic_ctx.py), and
+     * downloaded into the shared store (PiperDownloads.fetchSupertonicNpu).
      */
     private static OrtSession npuSession(File model, int[] bucket, String what) throws OrtException, IOException {
         final File compiled = ModelFiles.sharedDerivedFile(model,
                 ".st-" + what + bucket[0] + ".ctx.onnx");
-        if (compiled == null) {
-            throw new IOException("no shared store for " + model);
+        if (compiled == null || !compiled.isFile()) {
+            throw new IOException("no compiled NPU graph for " + what + bucket[0]);
         }
         try (OrtSession.SessionOptions o = PiperModel.options(1)) {
             o.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.BASIC_OPT);
@@ -708,23 +708,7 @@ final class Supertonic implements Closeable {
             qnn.put("enable_htp_fp16_precision", "1");
             qnn.put("htp_performance_mode", "burst");
             NpuFiles.addNpu(o, qnn);
-            if (compiled.isFile()) {
-                try {
-                    return env().createSession(compiled.getAbsolutePath(), o);
-                } catch (OrtException e) {
-                    //noinspection ResultOfMethodCallIgnored
-                    compiled.delete(); // stale (runtime update) or damaged: compiled again below
-                }
-            }
-            o.setSymbolicDimensionValue("batch_size", 1);
-            o.setSymbolicDimensionValue("latent_length", bucket[0]);
-            o.setSymbolicDimensionValue("text_length", bucket[1]);
-            o.addConfigEntry("ep.context_enable", "1");
-            o.addConfigEntry("ep.context_embed_mode", "1");
-            o.addConfigEntry("ep.context_file_path", compiled.getAbsolutePath());
-            final OrtSession s = env().createSession(model.getAbsolutePath(), o);
-            android.util.Log.i("PiperVoices", "Supertonic " + what + " " + bucket[0] + " compiled for the NPU");
-            return s;
+            return env().createSession(compiled.getAbsolutePath(), o);
         }
     }
 

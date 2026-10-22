@@ -3,7 +3,6 @@ package com.animeshahilya.espeakng.piper;
 import com.animeshahilya.espeakng.piper.PiperDevice;
 import com.animeshahilya.espeakng.piper.PiperDownloads;
 import com.animeshahilya.espeakng.piper.PiperEngine;
-import com.animeshahilya.espeakng.piper.PiperSettings;
 import com.animeshahilya.espeakng.piper.PiperVoiceConfig;
 
 import org.junit.Test;
@@ -58,13 +57,15 @@ public class PiperEngineTest {
     }
 
     @Test
-    public void snapdragonBuildIsOfferedOnlyForModernNpus() {
-        assertTrue(PiperSettings.hasModernNpu("SM8750"));   // 8 Elite (measured: ~22x)
-        assertTrue(PiperSettings.hasModernNpu("SM8450"));   // 8 Gen 1
-        assertFalse(PiperSettings.hasModernNpu("SM8350")); // 888: older NPU, unmeasured
-        assertFalse(PiperSettings.hasModernNpu("SM7450")); // mid-range
-        assertFalse(PiperSettings.hasModernNpu("Tensor G3"));
-        assertFalse(PiperSettings.hasModernNpu(null));
+    public void npuOnlyOnChipsWithCompiledGraphs() {
+        assertEquals("SM8750", NpuFiles.targetFor("QTI", "SM8750"));  // 8 Elite
+        assertEquals("SM8650", NpuFiles.targetFor("QTI", "SM8650"));  // 8 Gen 3
+        assertEquals("SM8850", NpuFiles.targetFor("qti", "sm8850"));  // 8 Elite Gen 5
+        assertEquals(null, NpuFiles.targetFor("QTI", "SM8550"));      // 8 Gen 2: nothing compiled
+        assertEquals(null, NpuFiles.targetFor("QTI", "SM8450"));      // 8 Gen 1
+        assertEquals(null, NpuFiles.targetFor("QTI", "SM7450"));      // mid-range
+        assertEquals(null, NpuFiles.targetFor("Google", "Tensor G3"));
+        assertEquals(null, NpuFiles.targetFor("QTI", null));
     }
 
     @Test

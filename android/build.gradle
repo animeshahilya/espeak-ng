@@ -221,12 +221,16 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
-            // The Snapdragon APK uses QNN's HTP (NPU) backend only, and is only
-            // offered from the SM8450 (HTP v69) on: drop the GPU and DSP
-            // backends and the v68 NPU libraries (~10 MB of the APK, ~26 MB
-            // installed).
+            // The Snapdragon APK uses QNN's HTP (NPU) backend only, with graphs
+            // compiled on the PC for the 8 Gen 3, 8 Elite and 8 Elite Gen 5
+            // (HTP v75, v79, v81; NpuFiles.TARGETS): no GPU or DSP backends, no
+            // older NPU libraries, and no on-phone compiler (libQnnHtpPrepare,
+            // 81 MB unpacked).
             excludes += ['**/libQnnGpu.so', '**/libQnnDsp.so', '**/libQnnDspV*.so',
-                         '**/libQnnHtpV68Skel.so', '**/libQnnHtpV68Stub.so']
+                         '**/libQnnHtpPrepare.so',
+                         '**/libQnnHtpV68Skel.so', '**/libQnnHtpV68Stub.so',
+                         '**/libQnnHtpV69Skel.so', '**/libQnnHtpV69Stub.so',
+                         '**/libQnnHtpV73Skel.so', '**/libQnnHtpV73Stub.so']
         }
     }
 
