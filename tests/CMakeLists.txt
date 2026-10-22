@@ -62,6 +62,7 @@ shell_test(translate)
 shell_test(variants)
 shell_test(voices)
 shell_test(crash)
+shell_test(truncated-data)
 
 # shell_test(windows-data)
 # shell_test(windows-installer)
