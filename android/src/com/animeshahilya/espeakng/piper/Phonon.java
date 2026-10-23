@@ -44,6 +44,11 @@ public final class Phonon implements AutoCloseable {
         boolean stopped();
     }
 
+    /** Takes each frame of audio as it is made; false stops the text early. */
+    public interface Frames {
+        boolean frame(float[] audio);
+    }
+
     private Phonon(long handle) {
         this.handle = handle;
         this.sampleRate = nativeSampleRate(handle);
@@ -78,12 +83,38 @@ public final class Phonon implements AutoCloseable {
         return nativeVoices(handle);
     }
 
-    /** The text in {@code voice} (numbers and symbols read in English), or null when stopped. */
-    public synchronized float[] synthesize(String text, String voice, Stop stop) throws IOException {
-        if (handle == 0) {
+    /**
+     * The text in {@code voice} (numbers and symbols read in English), each
+     * 80 ms frame handed to {@code frames} as soon as it is made.
+     *
+     * @return true when the whole text was said, false when stopped
+     */
+    public synchronized boolean synthesize(String text, String voice, Stop stop, Frames frames)
+            throws IOException {
+        return handle != 0 && nativeSynthesize(handle, text, voice, stop, frames);
+    }
+
+    /** The whole text's audio, or null when stopped. */
+    public float[] synthesize(String text, String voice, Stop stop) throws IOException {
+        final java.util.List<float[]> parts = new java.util.ArrayList<>();
+        if (!synthesize(text, voice, stop, a -> parts.add(a))) {
             return null;
         }
-        return nativeSynthesize(handle, text, voice, stop);
+        return concat(parts);
+    }
+
+    static float[] concat(java.util.List<float[]> parts) {
+        int length = 0;
+        for (float[] p : parts) {
+            length += p.length;
+        }
+        final float[] out = new float[length];
+        int at = 0;
+        for (float[] p : parts) {
+            System.arraycopy(p, 0, out, at, p.length);
+            at += p.length;
+        }
+        return out;
     }
 
     @Override
@@ -101,8 +132,8 @@ public final class Phonon implements AutoCloseable {
 
     private static native int nativeSampleRate(long handle);
 
-    private static native float[] nativeSynthesize(long handle, String text, String voice, Stop stop)
-            throws IOException;
+    private static native boolean nativeSynthesize(long handle, String text, String voice, Stop stop,
+                                                   Frames frames) throws IOException;
 
     private static native void nativeFree(long handle);
 }

@@ -94,6 +94,9 @@ class Phonon {
   std::vector<Voice> voices_;
   std::vector<f16> bos_;
   std::mt19937_64 rng_;
+  // The cache holds kv_voice_'s prompt; slots from kv_used_ on are zero.
+  const Voice* kv_voice_ = nullptr;
+  int kv_used_ = 0;
 
   int sample_rate_ = 24000;
   double frame_rate_ = 12.5;

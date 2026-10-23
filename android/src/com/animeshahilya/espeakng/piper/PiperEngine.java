@@ -19,11 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -212,6 +214,12 @@ public final class PiperEngine {
 
     private final ExecutorService mRenderer = Executors.newSingleThreadExecutor(r -> {
         final Thread t = new Thread(r, "piper-render");
+        t.setPriority(Thread.NORM_PRIORITY + 2);
+        return t;
+    });
+    /** Makes Phonon chunks played while they are made ({@code Pass.renderStream}). */
+    private final ExecutorService mStreamer = Executors.newSingleThreadExecutor(r -> {
+        final Thread t = new Thread(r, "phonon-stream");
         t.setPriority(Thread.NORM_PRIORITY + 2);
         return t;
     });
@@ -405,15 +413,36 @@ public final class PiperEngine {
                             || config.isPhonon() && existing.phononHas(config.phononVoice))) {
                         final PiperModel cloned = existing.withConfig(config, onnx);
                         if (cloned != null) {
-                            return cloned;
+                            return learnStreamLevel(cloned);
                         }
                     }
                 }
             }
-            return PiperModel.load(onnx, config, inferenceThreads());
+            return learnStreamLevel(PiperModel.load(onnx, config, inferenceThreads()));
         } finally {
             exitNative(key);
         }
+    }
+
+    /**
+     * A Phonon voice says a sentence while it loads, so its first chunk can
+     * already stream ({@code Pass.renderStream} needs the voice's level);
+     * without it every service start's first utterance waited for its whole
+     * chunk (~110 ms for a phrase instead of ~30, Galaxy S25 Ultra).
+     */
+    private PiperModel learnStreamLevel(PiperModel model) {
+        if (model.isPhonon() && !mVoiceLevel.containsKey(model.config.key)) {
+            try {
+                final PiperModel.Output o = model.infer(PiperModel.phononIds("Hello, this is a test."),
+                        model.config.lengthScale, 0, 1f, 1f, null);
+                if (o != null) {
+                    noteLevel(model.config.key, o.audio, model.config.sampleRate);
+                }
+            } catch (OrtException e) {
+                // Its first chunk then renders whole, which also learns the level.
+            }
+        }
+        return model;
     }
 
     public void setMaxLoaded(int voices) {
@@ -1110,6 +1139,15 @@ public final class PiperEngine {
      * the piece, so a short piece is not a loudness risk.
      */
     static final float FIRST_PIECE_S = 0.3f;
+    /**
+     * A streamed chunk's first piece ({@code Pass.renderStream}): this much
+     * speech, then each piece twice the one before, up to the last value.
+     * Phonon makes ~30x real time, so the next piece is always ready first.
+     */
+    static final float STREAM_FIRST_PIECE_S = 0.15f;
+    static final float STREAM_MAX_PIECE_S = 2.4f;
+    /** A streamed voice's pace before it has said a chunk: English at ~13 letters a second. */
+    static final double STREAM_S_PER_CHAR = 0.075;
 
     /**
      * Where to cut a chunk of {@code frames} latent frames so the rest decodes
@@ -1217,6 +1255,8 @@ public final class PiperEngine {
      * the level for pieces too short to measure their own.
      */
     private final Map<String, Double> mVoiceLevel = new ConcurrentHashMap<>();
+    /** A streamed voice's pace: samples of speech per code point of text, averaged over chunks. */
+    private final Map<String, Double> mSamplesPerChar = new ConcurrentHashMap<>();
 
     private void noteLevel(String key, float[] whole, int rate) {
         final double p = PiperAudio.speechPower(whole, rate);
@@ -1274,6 +1314,10 @@ public final class PiperEngine {
                         true, true, 0, passage, trebleCut());
                 timed(true, started);
                 return r;
+            }
+            final Double streamLevel = split && model.isPhonon() ? mVoiceLevel.get(key) : null;
+            if (streamLevel != null) {
+                return renderStream(job, streamLevel, passage, cacheKey, started);
             }
             if (!split || !model.streams() || job.wordStarts.size() != words || words < 2) {
                 final PiperModel.Output o;
@@ -1457,6 +1501,136 @@ public final class PiperEngine {
                 return null;
             });
             return first;
+        }
+
+        /**
+         * A Phonon chunk played while it is made: its 80 ms frames arrive on
+         * {@link #mStreamer} and go out in growing pieces at the voice's usual
+         * level, each ending where the speech so far ends, so a pause waits
+         * for the speech after it and only the last piece is trimmed of the
+         * chunk's trailing silence. Phonon gives no durations: a piece's
+         * words are the ones its audio reaches at the voice's pace so far.
+         */
+        private Rendered renderStream(Job job, double level, double passage,
+                                      PiperPhraseCache.Key cacheKey, long started) throws OrtException {
+            final String key = model.config.key;
+            final int rate = model.config.sampleRate;
+            final CompletableFuture<Rendered> first = new CompletableFuture<>();
+            final Stream stream = new Stream(job, level, passage, trebleCut(), first,
+                    mSamplesPerChar.getOrDefault(key, rate * STREAM_S_PER_CHAR));
+            final Future<?> task = mStreamer.submit(() -> {
+                try {
+                    if (!model.streamPhonon(job.ids, handle, stream::frame)) {
+                        stream.slot.complete(null); // stopped: nothing more to play
+                        return null;
+                    }
+                    stream.emit(stream.length, true);
+                } catch (Throwable t) {
+                    stream.slot.completeExceptionally(t);
+                    throw t;
+                }
+                final float[] whole = Phonon.concat(stream.raws);
+                mCache.offer(cacheKey, whole, null);
+                noteLevel(key, whole, rate);
+                final int[] span = PiperAudio.speechSpan(whole, whole.length, rate, level);
+                if (span != null) {
+                    final double perChar = (span[1] - span[0])
+                            / (double) Math.max(1, job.chunkEnd - job.chunkStart);
+                    mSamplesPerChar.merge(key, perChar, (old, now) -> 0.7 * old + 0.3 * now);
+                }
+                return null;
+            });
+            final Rendered r;
+            try {
+                r = await(first);
+            } catch (OrtException | RuntimeException e) {
+                awaitQuietly(task);
+                throw e;
+            }
+            if (r == null) {
+                awaitQuietly(task);
+                return null;
+            }
+            r.restTask = task;
+            timed(false, started);
+            return r;
+        }
+
+        /** {@link #renderStream}'s frames, on the stream thread. */
+        private final class Stream {
+            final Job job;
+            final double level;
+            final double passage;
+            final PiperAudio.TrebleCut treble;
+            final double perChar;
+            final List<float[]> raws = new ArrayList<>();
+            /** Audio not yet in a piece. */
+            float[] pending = new float[0];
+            int length;
+            /** Samples already in pieces, and where speech starts in the chunk (-1 before). */
+            long before;
+            long onset = -1;
+            int pieces;
+            int wordAt;
+            /** Where the next piece goes. */
+            CompletableFuture<Rendered> slot;
+
+            Stream(Job job, double level, double passage, PiperAudio.TrebleCut treble,
+                   CompletableFuture<Rendered> first, double perChar) {
+                this.job = job;
+                this.level = level;
+                this.passage = passage;
+                this.treble = treble;
+                this.slot = first;
+                this.perChar = perChar;
+            }
+
+            boolean frame(float[] audio) {
+                raws.add(audio);
+                if (pending.length < length + audio.length) {
+                    pending = Arrays.copyOf(pending, Math.max(2 * pending.length, length + audio.length));
+                }
+                System.arraycopy(audio, 0, pending, length, audio.length);
+                length += audio.length;
+                final int rate = model.config.sampleRate;
+                final int[] span = PiperAudio.speechSpan(pending, length, rate, level);
+                if (span != null) {
+                    if (onset < 0) {
+                        onset = before + span[0];
+                    }
+                    final double target = Math.min(STREAM_MAX_PIECE_S,
+                            STREAM_FIRST_PIECE_S * (1 << Math.min(pieces, 8)));
+                    if (span[1] - (pieces == 0 ? span[0] : 0) >= target * rate) {
+                        emit(span[1], false);
+                    }
+                }
+                return !handle.isCancelled();
+            }
+
+            /** The first {@code end} samples not yet played as the next piece ({@code last}: the chunk's end). */
+            void emit(int end, boolean last) {
+                final float[] audio = Arrays.copyOf(pending, end);
+                System.arraycopy(pending, end, pending, 0, length - end);
+                length -= end;
+                before += end;
+                final int words = job.words.length / 2;
+                int wordTo = wordAt;
+                if (last) {
+                    wordTo = words;
+                } else if (onset >= 0) {
+                    while (wordTo < words && onset + job.words[2 * wordTo] * perChar < before) {
+                        wordTo++;
+                    }
+                }
+                final Rendered r = finish(audio, null, Collections.emptyList(), wordAt, wordTo,
+                        pieces == 0, last, level, passage, treble);
+                wordAt = wordTo;
+                pieces++;
+                final CompletableFuture<Rendered> next = last ? null : new CompletableFuture<>();
+                r.rest = next;
+                slot.complete(r);
+                slot = next;
+            }
         }
 
         /** Piece {@code i} of {@link #renderPieces}, post-processed. */

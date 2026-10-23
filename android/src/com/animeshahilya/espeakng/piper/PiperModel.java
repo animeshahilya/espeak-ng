@@ -997,6 +997,34 @@ public final class PiperModel implements Closeable {
         }
     }
 
+    /**
+     * A Phonon chunk as {@link #inferPhonon}, each 80 ms frame handed to
+     * {@code frames} as it is made.
+     *
+     * @return true when the whole chunk was made, false when stopped
+     */
+    boolean streamPhonon(long[] ids, RunHandle handle, Phonon.Frames frames) throws OrtException {
+        group.lock.readLock().lock();
+        try {
+            if (closed || group.isClosed() || cancelled(handle)) {
+                return false;
+            }
+            return group.phonon.synthesize(phononText(ids), config.phononVoice, () -> cancelled(handle), frames);
+        } catch (IOException e) {
+            throw new OrtException("Phonon: " + e.getMessage());
+        } finally {
+            group.lock.readLock().unlock();
+        }
+    }
+
+    private static String phononText(long[] ids) {
+        final int[] cps = new int[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            cps[i] = (int) ids[i];
+        }
+        return new String(cps, 0, cps.length);
+    }
+
     /** A Phonon chunk: the text in this voice; speed and pitch are libsonic's (no rate input). */
     private Output inferPhonon(long[] ids, RunHandle handle) throws OrtException {
         group.lock.readLock().lock();
@@ -1004,11 +1032,7 @@ public final class PiperModel implements Closeable {
             if (closed || group.isClosed() || cancelled(handle)) {
                 return null;
             }
-            final int[] cps = new int[ids.length];
-            for (int i = 0; i < ids.length; i++) {
-                cps[i] = (int) ids[i];
-            }
-            final float[] audio = group.phonon.synthesize(new String(cps, 0, cps.length), config.phononVoice,
+            final float[] audio = group.phonon.synthesize(phononText(ids), config.phononVoice,
                     () -> cancelled(handle));
             return audio == null ? null : new Output(audio, null);
         } catch (IOException e) {

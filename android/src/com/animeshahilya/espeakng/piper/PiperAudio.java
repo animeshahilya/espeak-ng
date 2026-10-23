@@ -311,6 +311,37 @@ public final class PiperAudio {
         return audio == null || audio.length == 0 ? 0 : speech(framePowers(audio, frameSize(sampleRate)));
     }
 
+    /**
+     * Samples [start, end) from the first to the last 10 ms frame of the
+     * first {@code length} samples that {@link #process} would not trim as
+     * silence for speech at {@code level}, end with the trim margin; null
+     * when all of it is silence.
+     */
+    static int[] speechSpan(float[] audio, int length, int sampleRate, double level) {
+        final int frame = frameSize(sampleRate);
+        final double silence = level * SILENCE_FACTOR;
+        int first = -1;
+        int last = -1;
+        for (int f = 0; f * frame < length; f++) {
+            final int end = Math.min(length, (f + 1) * frame);
+            double sum = 0;
+            for (int i = f * frame; i < end; i++) {
+                sum += audio[i] * (double) audio[i];
+            }
+            if (sum / (end - f * frame) >= silence) {
+                if (first < 0) {
+                    first = f;
+                }
+                last = f;
+            }
+        }
+        if (first < 0) {
+            return null;
+        }
+        return new int[] {first * frame,
+                Math.min(length, (last + 1) * frame + sampleRate * TRIM_MARGIN_MS / 1000)};
+    }
+
     private static int frameSize(int sampleRate) {
         return Math.max(1, sampleRate * FRAME_MS / 1000);
     }

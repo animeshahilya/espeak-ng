@@ -105,6 +105,7 @@ Phonon::Phonon(const Options& o) : rng_(o.seed) {
   }
   model_ = std::make_unique<QnnModel>(lib(o, backend_lib), lib(o, "libQnnSystem.so"), files);
   alloc_buffers();
+  kv_used_ = cache_slots_;  // fresh buffers hold anything: the first chunk clears all
 }
 
 void Phonon::alloc_buffers() {
@@ -200,18 +201,29 @@ void Phonon::generate_chunk(const Chunk& chunk, const Voice& voice,
   const int frames_after_eos = chunk.frames_after_eos;
   const int max_frames = std::min(chunk.frame_budget, cache_slots_ - voice.length - n);
 
-  // The cache starts as the voice prompt, in slots 0..length-1. Each chunk starts
-  // from the voice again, as ptts does.
+  // The cache starts as the voice prompt, in slots 0..length-1, and zeros after
+  // it. Each chunk starts from the voice again, as ptts does. Only the slots
+  // written since are cleared, the rest being zero still: the same cache as
+  // clearing all 6 MB, which took 9-18 ms before every chunk (Galaxy S25 Ultra).
   const size_t row = size_t(head_dim_);
   const size_t plane = size_t(cache_slots_) * row;  // one (layer, k/v, head)
   f16* kv = buf_.kv;
-  std::fill(kv, kv + buf_.kv_count, f16(0));
-  for (int lh = 0; lh < layers2_ * heads_; lh++)
-    std::memcpy(&kv[lh * plane], &voice.kv[size_t(lh) * voice.length * row], voice.length * row * sizeof(f16));
+  const bool same_voice = kv_voice_ == &voice;
+  const int clear_from = same_voice ? voice.length : 0;
+  kv_voice_ = nullptr;  // until the prompt is in place
+  for (int lh = 0; lh < layers2_ * heads_; lh++) {
+    if (kv_used_ > clear_from)
+      std::fill(&kv[lh * plane + size_t(clear_from) * row], &kv[lh * plane + size_t(kv_used_) * row], f16(0));
+    if (!same_voice)
+      std::memcpy(&kv[lh * plane], &voice.kv[size_t(lh) * voice.length * row], voice.length * row * sizeof(f16));
+  }
+  kv_voice_ = &voice;
+  kv_used_ = voice.length;
   int pos = voice.length;
 
   // Writes a [2L, H, s, D] block's first `count` positions into the cache at `at`.
   auto write_kv = [&](const f16* block, int s, int count, int at) {
+    kv_used_ = std::max(kv_used_, at + count);
     for (int lh = 0; lh < layers2_ * heads_; lh++)
       std::memcpy(&kv[lh * plane + size_t(at) * row], &block[size_t(lh) * s * row], count * row * sizeof(f16));
   };

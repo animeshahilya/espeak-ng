@@ -75,22 +75,32 @@ JNIEXPORT jint JNICALL Java_com_animeshahilya_espeakng_piper_Phonon_nativeSample
   return model(handle)->sample_rate();
 }
 
-// The whole text's audio, or null when stop.stopped() turned true (polled every frame).
-JNIEXPORT jfloatArray JNICALL Java_com_animeshahilya_espeakng_piper_Phonon_nativeSynthesize(
-    JNIEnv* env, jclass, jlong handle, jstring text, jstring voice, jobject stop) {
+// Hands each 80 ms frame to sink.frame(float[]) as it is made; false from it,
+// or stop.stopped() (polled every frame), ends the text early. True when the
+// whole text was said.
+JNIEXPORT jboolean JNICALL Java_com_animeshahilya_espeakng_piper_Phonon_nativeSynthesize(
+    JNIEnv* env, jclass, jlong handle, jstring text, jstring voice, jobject stop, jobject sink) {
   jmethodID stopped = env->GetMethodID(env->GetObjectClass(stop), "stopped", "()Z");
+  jmethodID frame = env->GetMethodID(env->GetObjectClass(sink), "frame", "([F)Z");
   try {
     phonon::Stats stats;
-    const std::vector<float> audio = model(handle)->synthesize(
-        str(env, text), str(env, voice), nullptr, &stats,
-        [&]() { return env->CallBooleanMethod(stop, stopped) == JNI_TRUE; });
-    if (stats.cancelled) return nullptr;
-    jfloatArray out = env->NewFloatArray(static_cast<jsize>(audio.size()));
-    if (out != nullptr) env->SetFloatArrayRegion(out, 0, static_cast<jsize>(audio.size()), audio.data());
-    return out;
+    model(handle)->synthesize(
+        str(env, text), str(env, voice),
+        [&](const float* pcm, size_t n) {
+          jfloatArray out = env->NewFloatArray(static_cast<jsize>(n));
+          if (out == nullptr) return false;
+          env->SetFloatArrayRegion(out, 0, static_cast<jsize>(n), pcm);
+          const bool more = env->CallBooleanMethod(sink, frame, out) == JNI_TRUE;
+          env->DeleteLocalRef(out);
+          return more && !env->ExceptionCheck();
+        },
+        &stats,
+        [&]() { return env->ExceptionCheck() || env->CallBooleanMethod(stop, stopped) == JNI_TRUE; },
+        false);
+    return stats.cancelled ? JNI_FALSE : JNI_TRUE;
   } catch (const std::exception& e) {
-    throwIo(env, e.what());
-    return nullptr;
+    if (!env->ExceptionCheck()) throwIo(env, e.what());
+    return JNI_FALSE;
   }
 }
 

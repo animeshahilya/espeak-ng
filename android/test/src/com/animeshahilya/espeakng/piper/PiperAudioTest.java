@@ -30,6 +30,20 @@ public class PiperAudioTest {
 
     /** A quiet voice and a loud one come out at the same level. */
     @Test
+    public void speechSpanFindsWhatTrimmingWouldKeep() {
+        final float[] audio = new float[4000];
+        for (int i = 1000; i < 2000; i++) {
+            audio[i] = (float) Math.sin(i * 0.3) * 0.25f;
+        }
+        final double level = PiperAudio.speechPower(audio, 16000);
+        // 10 ms frames at 16 kHz; the end gets the 20 ms trim margin.
+        assertArrayEquals(new int[] {960, 2080 + 320}, PiperAudio.speechSpan(audio, 4000, 16000, level));
+        // Only the samples given count: none of them speech yet.
+        assertNull(PiperAudio.speechSpan(audio, 900, 16000, level));
+        assertArrayEquals(new int[] {960, 1500}, PiperAudio.speechSpan(audio, 1500, 16000, level));
+    }
+
+    @Test
     public void voicesOfDifferentLevelsMatch() {
         final float[] quiet = new float[2205];
         final float[] loud = new float[2205];

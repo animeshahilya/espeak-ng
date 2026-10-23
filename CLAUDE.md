@@ -767,6 +767,20 @@ voices" does not, so voices can still be deleted to free space.
   end to end, ~30x real time, PiperE2E 10/10 with Easton as English; release
   `phonon-v1` + per-chip models in `npu-ctx-v1-*` (`build_phonon_catalog.py`).
   The user listened: "sounds nice including other voices".
+  **Streamed** (2026-10-23, user: "a little slow compared to Piper"): the
+  runner hands each 80 ms frame to Java (`Phonon.Frames`), and a first chunk
+  plays while it is made (`PiperEngine.Pass.renderStream`, on its own
+  `phonon-stream` thread): growing pieces from 0.15 s of speech, each ending
+  where the speech so far ends (`PiperAudio.speechSpan`), so silence is
+  never played ahead of the speech after it and only the last piece trims
+  the chunk's tail. It needs the voice's level, so each Phonon voice says a
+  sentence at load (`learnStreamLevel`, +~90 ms to the load). Words are
+  placed by the voice's measured pace (`mSamplesPerChar`). The runner also
+  clears only the KV-cache slots the last chunk wrote (it zeroed all 6 MB:
+  9-18 ms before every chunk). S25 Ultra, fresh text, first audio: phrases
+  110-120 -> 24-25 ms, sentences 174-186 -> 24-25, long text 185-199 -> 44-49
+  (Rahul, Piper on the NPU: 54-57 / 154-199 / 62-66), 30 stops mid-stream
+  clean, PiperE2E 10/10 with Everly as English.
 - **NPU decoders** (Snapdragon build): `assets/piper/npu_decoders.json`
   (voice key -> `npu-v1/<model>-npu.onnx` on sherpa-onnx-respin-syspin, made
   by its `build_npu.py`): each voice's decoder fully INT8 (Conv, ConvTranspose,
