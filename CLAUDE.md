@@ -377,9 +377,11 @@ voices" does not, so voices can still be deleted to free space.
   libsonic already linked into espeak-ng), one stream per chunk across its
   pieces (`PiperEngine.Pass.Effects`, with the treble cut): until 2026-10-24
   each piece was stretched and flushed alone, leaving 3-6 ms of digital
-  silence and a click at every piece join. The pitch setting is centred on
-  `VoiceSettings.DEFAULT_PITCH` (40); centred on 50 it pitched every voice
-  7% down through libsonic by default (Kannada user: "annoying sound"). SSML stays on eSpeak; single
+  silence and a click at every piece join. Pitch settings 40 (this app's
+  default) to 50 (eSpeak's, carried over from older installs) all keep the
+  voice's own pitch (`RequestSettings.naturalPitch`); centred on 50 alone,
+  the default 40 pitched every voice 7% down through libsonic (Kannada user:
+  "annoying sound"). SSML stays on eSpeak; single
   characters too unless `piper_espeak_for_characters` is off. In Indian
   scripts a "character" is an akshara (`TextPreprocessor.isSingleIndicCluster`:
   a letter with its vowel signs, nukta, and virama-joined consonants), as
@@ -665,6 +667,14 @@ voices" does not, so voices can still be deleted to free space.
   (`disable_cpu_ep_fallback`); a failure keeps the CPU part and writes a
   `.failed` marker with the reason (bump the revision after NPU code changes
   so phones retry). The load log says where the decoder and encoder run.
+  A missing weights file is never marked (`NpuFiles.remember`: a download
+  replacing the compiled files under a load), a compiled graph counts only
+  with its `_qnn.bin` (`compiledAvailable`), and downloads write weights
+  before wrappers (`PiperDownloads.wrappersLast`). 2026-10-24, Galaxy S25:
+  `restoreMissing` took a voice installed from the shared optimized copy
+  (second Rasa voice) for missing and reinstalled it at every start, wiping
+  its NPU files under a load; the marker then kept Chetan and Spoorthi (one
+  session) on the CPU for good. It now counts the shared copy.
   Measured on the S25 Ultra, no gain, not used: `rpc_control_latency` 100,
   `htp_share_resource_optimization` (two voices loaded), ONNX Runtime 1.31
   (renders the same, loads voices 40-100% slower). Needs `<uses-native-library libcdsprpc.so>` in the

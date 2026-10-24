@@ -724,12 +724,12 @@ public final class PiperModel implements Closeable {
 
     /** The voice's INT8 decoder on the NPU, compiled for this chip on the PC. */
     private boolean attachInt8Npu(File onnx, File int8) {
-        final File failed = ModelFiles.derivedFile(onnx, ".npuq-r3." + NpuFiles.hostedSize(int8) + ".failed");
+        final File failed = NpuFiles.int8FailedFile(onnx, int8);
         if (failed.exists()) {
             return false;
         }
         final File compiled = NpuFiles.compiledOf(int8);
-        if (!compiled.isFile()) {
+        if (!NpuFiles.compiledAvailable(int8)) {
             group.npuProblem = "on the CPU until its NPU files download";
             return false;
         }

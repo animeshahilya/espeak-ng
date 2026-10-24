@@ -1573,14 +1573,28 @@ public final class PiperDownloads {
             throw new IOException("no " + expected + " in the compiled list");
         }
         final String release = compiled.getString("release");
-        for (int i = 0; i < files.length(); i++) {
-            final JSONObject f = files.getJSONObject(i);
+        for (JSONObject f : wrappersLast(files)) {
             fetchFile(RESPIN_SYSPIN_RELEASES + release + "/" + md5 + "-" + f.getString("name"),
                     f.getLong("size_bytes"), f.getString("md5_digest"),
                     new File(hosted.getParentFile(), f.getString("name")));
         }
         FileUtils.write(stamp, md5.getBytes(StandardCharsets.UTF_8));
         return true;
+    }
+
+    /**
+     * Compiled files with each graph's weights (_qnn.bin) before the wrapper
+     * (.onnx) naming them: a voice loading meanwhile finds a wrapper only with
+     * its weights. The list order put the wrapper first, and a load in that
+     * gap failed and kept the voice off the NPU (Galaxy S25, Kannada Chetan).
+     */
+    static List<JSONObject> wrappersLast(org.json.JSONArray files) throws JSONException {
+        final List<JSONObject> out = new ArrayList<>();
+        for (int i = 0; i < files.length(); i++) {
+            out.add(files.getJSONObject(i));
+        }
+        out.sort(java.util.Comparator.comparing(f -> f.optString("name").endsWith(".onnx")));
+        return out;
     }
 
     /**
@@ -1607,9 +1621,7 @@ public final class PiperDownloads {
         final String prefix = md5 + "." + PiperModel.env().getVersion() + ".st-";
         boolean fetched = false;
         try {
-            final org.json.JSONArray files = st.getJSONArray("files");
-            for (int i = 0; i < files.length(); i++) {
-                final JSONObject f = files.getJSONObject(i);
+            for (JSONObject f : wrappersLast(st.getJSONArray("files"))) {
                 final String name = f.getString("name");
                 if (!isSafeKey(name) || !name.startsWith(prefix)) {
                     throw new IOException("compiled " + name + " is not for " + prefix);
@@ -1914,8 +1926,15 @@ public final class PiperDownloads {
         final List<String> started = new ArrayList<>();
         final List<PiperVoiceStore.Installed> missing = new ArrayList<>();
         final List<String> pending = pendingKeys(storageContext);
+        final File shared = PiperVoiceStore.sharedDir(storageContext);
         for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
-            if (!ModelFiles.hasModel(v.dir) && !pending.contains(v.key)) {
+            // A voice installed from the shared store's optimized copy (a second
+            // Rasa voice) has nothing of its own until it loads; reinstalling it
+            // wiped its folder at every start, NPU files too, under a load
+            // (Galaxy S25: Kannada Chetan read by eSpeak, then kept on the CPU).
+            final String md5 = ModelFiles.sourceMd5(v.dir);
+            if (!ModelFiles.hasModel(v.dir) && !pending.contains(v.key)
+                    && (md5 == null || !ModelFiles.hasSharedOptimized(shared, md5))) {
                 missing.add(v);
             }
         }

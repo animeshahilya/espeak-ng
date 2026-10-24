@@ -11,9 +11,11 @@ The espeak-ng project is a fork of the espeak project.
 
 *  **Natural voices**:
    *  Kannada voices Vikram and Ananya are back, next to Spoorthi and Chetan.
-   *  Natural voices no longer click or crackle in the middle of sentences.
+   *  Natural voices, Phonon voices too, no longer click or crackle in the middle of sentences.
    *  Natural voices keep their own pitch at the default setting.
    *  Less hiss on Kannada Spoorthi.
+*  **Snapdragon version**:
+   *  Voices that share one download, like Kannada Spoorthi and Chetan, stay on the NPU after installing them together, and no longer fall back to eSpeak for a moment.
 
 ### 2.10 beta 2 (Android)
 

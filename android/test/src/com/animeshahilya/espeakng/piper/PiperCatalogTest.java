@@ -200,6 +200,20 @@ public class PiperCatalogTest {
         assertTrue(keptAsset().get("kn").contains("kn_IN-vikram-medium"));
     }
 
+    /** Weights before the wrapper naming them, list order kept otherwise. */
+    @Test
+    public void compiledWrappersComeLast() throws Exception {
+        final List<org.json.JSONObject> out = PiperDownloads.wrappersLast(new org.json.JSONArray(
+                "[{\"name\":\"a.ctx.onnx\"},{\"name\":\"a.ctx_qnn.bin\"},{\"name\":\"b.ctx.onnx\"},"
+                        + "{\"name\":\"b.ctx_qnn.bin\"}]"));
+        final List<String> names = new java.util.ArrayList<>();
+        for (org.json.JSONObject f : out) {
+            names.add(f.getString("name"));
+        }
+        assertEquals(java.util.Arrays.asList("a.ctx_qnn.bin", "b.ctx_qnn.bin", "a.ctx.onnx", "b.ctx.onnx"),
+                names);
+    }
+
     @Test
     public void nameFromKey() {
         assertEquals("Libritts R", PiperDownloads.nameFromKey("en_US-libritts_r-medium"));

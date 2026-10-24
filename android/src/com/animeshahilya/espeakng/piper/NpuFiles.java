@@ -131,8 +131,7 @@ public final class NpuFiles {
         }
         final File int8 = new File(dir, PiperModel.NPU_DECODER_FILE);
         if (hasHosted(int8)) {
-            return compiledAvailable(int8)
-                    && !ModelFiles.derivedFile(onnx, ".npuq-r3." + hostedSize(int8) + ".failed").exists();
+            return compiledAvailable(int8) && !int8FailedFile(onnx, int8).exists();
         }
         final File dec = new File(dir, PiperModel.NPU_DECODER16_FILE);
         return compiledAvailable(dec) && !failedFile(onnx, dec).exists();
@@ -231,8 +230,17 @@ public final class NpuFiles {
         return ModelFiles.derivedFile(onnx, "." + hosted.getName().replace(".onnx", "") + "." + hostedSize(hosted) + ".ctx.onnx");
     }
 
+    /*
+     * Failure markers carry a revision: bump it when a cause is fixed, so
+     * phones try again. r2/r4 (2026-10-24): a wrapper fetched before its
+     * _qnn.bin made a voice loading meanwhile fail for good.
+     */
     static File failedFile(File onnx, File hosted) {
-        return ModelFiles.derivedFile(onnx, "." + hosted.getName().replace(".onnx", "") + "-r1." + hostedSize(hosted) + ".failed");
+        return ModelFiles.derivedFile(onnx, "." + hosted.getName().replace(".onnx", "") + "-r2." + hostedSize(hosted) + ".failed");
+    }
+
+    static File int8FailedFile(File onnx, File int8) {
+        return ModelFiles.derivedFile(onnx, ".npuq-r4." + hostedSize(int8) + ".failed");
     }
 
     /**
@@ -282,9 +290,13 @@ public final class NpuFiles {
     /**
      * True when this runtime's compiled form of a hosted file is here, so the
      * file itself is not needed (PiperDownloads fetches it again otherwise).
+     * A compiled graph is its .onnx wrapper and the _qnn.bin weights it names.
      */
     static boolean compiledAvailable(File hosted) {
-        return hasHosted(hosted) && compiledOf(hosted).isFile();
+        final File compiled = compiledOf(hosted);
+        return hasHosted(hosted) && compiled.isFile() && (!compiled.getName().endsWith(".onnx")
+                || new File(compiled.getParentFile(),
+                compiled.getName().replaceFirst("\\.onnx$", "_qnn.bin")).isFile());
     }
 
     /** Deletes hosted files whose compiled forms loaded, keeping their sizes. */
@@ -334,7 +346,16 @@ public final class NpuFiles {
         }
     }
 
+    /**
+     * Marks an NPU part failed, so loads stop trying it - unless its weights
+     * file was missing: a download replacing the compiled files while this
+     * load opened them (Galaxy S25: two Rasa voices installed together kept
+     * Kannada Chetan and Spoorthi on the CPU for good). Tried again next load.
+     */
     static void remember(File failed, Exception e) {
+        if (String.valueOf(e).contains("ep_cache_context does not exist")) {
+            return;
+        }
         try (java.io.FileWriter w = new java.io.FileWriter(failed)) {
             w.write(String.valueOf(e));
         } catch (IOException ignored) {
