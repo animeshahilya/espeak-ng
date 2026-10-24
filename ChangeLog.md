@@ -7,6 +7,14 @@
 
 The espeak-ng project is a fork of the espeak project.
 
+### Unreleased (Android)
+
+*  **Natural voices**:
+   *  Kannada voices Vikram and Ananya are back, next to Spoorthi and Chetan.
+   *  Natural voices no longer click or crackle in the middle of sentences.
+   *  Natural voices keep their own pitch at the default setting.
+   *  Less hiss on Kannada Spoorthi.
+
 ### 2.10 beta 2 (Android)
 
 *  **Settings**:

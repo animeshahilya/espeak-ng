@@ -28,6 +28,7 @@ import com.animeshahilya.espeakng.text.AsciiUtils;
 import com.animeshahilya.espeakng.tts.CheckVoiceData;
 import com.animeshahilya.espeakng.tts.DownloadVoiceData;
 import com.animeshahilya.espeakng.tts.GetSampleText;
+import com.animeshahilya.espeakng.piper.PiperEngine;
 import com.animeshahilya.espeakng.piper.PiperPhonemes;
 import com.animeshahilya.espeakng.text.ScriptLanguages;
 
@@ -497,14 +498,37 @@ public class SpeechSynthesis {
     }
 
     /**
-     * Speed and pitch change of 16-bit mono PCM with libsonic (stateless,
-     * thread-safe: no eSpeak state involved). Null on failure.
+     * Speed and pitch change of 16-bit mono PCM with libsonic, one stream per
+     * chunk fed in pieces (no eSpeak state; one thread at a time). Null on failure.
      */
-    public static short[] sonicStretch(short[] samples, int sampleRate, float speed, float pitch) {
-        if (samples == null || samples.length == 0) {
+    public static PiperEngine.TimeStretcher.Stream sonicStream(int sampleRate, float speed, float pitch) {
+        final long handle = nativeSonicOpen(sampleRate, speed, pitch);
+        if (handle == 0) {
             return null;
         }
-        return nativeSonicStretch(samples, sampleRate, speed, pitch);
+        return new PiperEngine.TimeStretcher.Stream() {
+            private long mHandle = handle;
+
+            @Override
+            public synchronized short[] write(short[] samples, boolean last) {
+                if (mHandle == 0) {
+                    return null;
+                }
+                final short[] out = nativeSonicWrite(mHandle, samples, last);
+                if (last) {
+                    close();
+                }
+                return out;
+            }
+
+            @Override
+            public synchronized void close() {
+                if (mHandle != 0) {
+                    nativeSonicClose(mHandle);
+                    mHandle = 0;
+                }
+            }
+        };
     }
 
     /**
@@ -648,8 +672,11 @@ public class SpeechSynthesis {
 
     private native String nativePhonemizeForPiper(String espeakVoice, String text);
 
-    private static native short[] nativeSonicStretch(short[] samples, int sampleRate,
-                                                     float speed, float pitch);
+    private static native long nativeSonicOpen(int sampleRate, float speed, float pitch);
+
+    private static native short[] nativeSonicWrite(long handle, short[] samples, boolean last);
+
+    private static native void nativeSonicClose(long handle);
 
     public interface SynthReadyCallback {
         void onSynthDataReady(byte[] audioData);

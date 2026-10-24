@@ -197,10 +197,13 @@ public final class RequestSettings {
             pitchScale = 100;
         }
         pitchScale = Math.round(pitchScale * settings.appFactor(AppCards.PITCH));
-        // eSpeak pitch 0-100 around 50 -> about half an octave down/up,
-        // times the caller's pitch. A neural voice has its own natural
-        // pitch; this only shifts it, it never flattens intonation.
-        final float userPitch = (float) Math.pow(2.0, (settings.getPitch() - 50) / 100.0);
+        // eSpeak pitch 0-100 around the default -> about half an octave
+        // down/up, times the caller's pitch. A neural voice has its own natural
+        // pitch; this only shifts it, it never flattens intonation. Centred on
+        // 50 until 2026-10-24, the default 40 pitched every voice 7% down
+        // through libsonic, which also clicked where a chunk's pieces joined.
+        final float userPitch = (float) Math.pow(2.0,
+                (settings.getPitch() - VoiceSettings.DEFAULT_PITCH) / 100.0);
         params.pitch = Math.max(0.5f, Math.min(2.0f, userPitch * pitchScale / 100f));
         params.volume = effectiveVolume(settings, request) / 100f;
         params.pauseScale = settings.getPauseScale();

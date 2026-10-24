@@ -115,7 +115,7 @@ back to an unsigned APK rather than failing.
 The release build type has `minifyEnabled true`. This is safe only because
 `proguard-rules.pro` explicitly `-keep`s the whole `SpeechSynthesis` class:
 `jni/jni/eSpeakService.c` binds to it by exact unmangled name -
-`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 14 `native`
+`Java_com_animeshahilya_espeakng_SpeechSynthesis_*` for its 17 `native`
 methods, plus explicit `GetMethodID()` lookups in `nativeClassInit()` for
 `nativeSynthCallback`/`nativeSynthWordCallback` (private methods invoked
 *from* native code, with no Java-side call site R8 can see marking them
@@ -149,7 +149,7 @@ Android TTS Framework
         │                                   ▼
         │                          PiperEngine ── PiperModel (ONNX Runtime, VITS)
         │                                   │ phonemes
-   SpeechSynthesis (Java JNI wrapper) ◄─────┘ phonemizeForPiper / sonicStretch
+   SpeechSynthesis (Java JNI wrapper) ◄─────┘ phonemizeForPiper / sonicStream
         │  JNI calls
    eSpeakService.c + piperPhonemizer.c (jni/jni/) — bridge layer
         │  C API (espeak_*)
@@ -373,8 +373,13 @@ voices" does not, so voices can still be deleted to free space.
   language's, up to the tier's loaded-voice budget. Before, after a service
   restart the first Hindi words were eSpeak's while the voice loaded (~1 s).
 - **Speed/pitch.** Model speed via `length_scale` clamped to 0.5-1.8x; the
-  rest (rate boost) and pitch via `SpeechSynthesis.sonicStretch` (the
-  libsonic already linked into espeak-ng). SSML stays on eSpeak; single
+  rest (rate boost) and pitch via `SpeechSynthesis.sonicStream` (the
+  libsonic already linked into espeak-ng), one stream per chunk across its
+  pieces (`PiperEngine.Pass.Effects`, with the treble cut): until 2026-10-24
+  each piece was stretched and flushed alone, leaving 3-6 ms of digital
+  silence and a click at every piece join. The pitch setting is centred on
+  `VoiceSettings.DEFAULT_PITCH` (40); centred on 50 it pitched every voice
+  7% down through libsonic by default (Kannada user: "annoying sound"). SSML stays on eSpeak; single
   characters too unless `piper_espeak_for_characters` is off. In Indian
   scripts a "character" is an akshara (`TextPreprocessor.isSingleIndicCluster`:
   a letter with its vowel signs, nukta, and virama-joined consonants), as
@@ -482,6 +487,12 @@ voices" does not, so voices can still be deleted to free space.
   CC BY-SA 3.0, pinned 6283b705; INT8 in int8-v1, 114 -> 28 MB, log-mel
   0.75 dB): Whisper CER 7.3% vs upc_ona-medium 8.8%, user listened. Turkish
   ozgurguler antalia was rejected (55% CER).
+  2026-10-24: Kannada keeps four - SYSPIN Vikram/Ananya back beside Rasa
+  Spoorthi/Chetan at a Kannada user's request (they liked them; the ASR
+  ranking had dropped them). They ship their old `syspin-v2` Compact model
+  (never rebuilt for int8-v1) under the `-medium` key and config, so an
+  installed `-compact` copy migrates through `mergeCompactTwins` without a
+  download. No hosted NPU files: CPU on Snapdragon too.
 - **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
   voice misses that the language's other voices say fine; scratch/voice-eval
   findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,
@@ -1198,7 +1209,7 @@ redundant aliases or runtime PackageManager modifications.
 
 ### JNI Layer (`jni/jni/eSpeakService.c`)
 
-15 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (two of them for Piper: `nativePhonemizeForPiper`, `nativeSonicStretch`; `nativeUnpackAsset` for packed assets) (plus `JNI_OnLoad`/`JNI_OnUnload`, which aren't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
+17 JNI functions mapping `SpeechSynthesis.native*()` Java methods to `espeak_*()` C API calls (two of them for Piper: `nativePhonemizeForPiper`, `nativeSonicOpen`/`Write`/`Close`; `nativeUnpackAsset` for packed assets) (plus `JNI_OnLoad`/`JNI_OnUnload`, which aren't Java-callable). Audio flows back via `SynthCallback` → `nativeSynthCallback()` → `SynthesisCallback.audioAvailable()`.
 
 ### Voice Data Lifecycle
 
@@ -1257,7 +1268,7 @@ android/
 │   └── res/                          # Test resources
 ├── jni/
 │   ├── CMakeLists.txt                # Native build (links espeak-ng + JNI, builds libsonic)
-│   ├── jni/eSpeakService.c           # JNI bridge (15 native methods)
+│   ├── jni/eSpeakService.c           # JNI bridge (17 native methods)
 │   ├── jni/piperPhonemizer.c         # eSpeak -> Piper phonemizer (clause records)
 │   └── include/                      # config.h, Log.h
 ├── res/                              # Resources (75 locale translations, plus night/v29/watch)

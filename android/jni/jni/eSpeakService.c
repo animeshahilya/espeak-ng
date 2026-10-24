@@ -786,53 +786,60 @@ JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativePhonemizeForPiper(
 /* Speed/pitch change of already-synthesized PCM with libsonic - the same
  * library eSpeak uses above 450 wpm - for Piper speeds past what the model
  * can do itself, and for the pitch setting (a VITS model has no pitch knob).
- * Stateless: one stream per call, sized to the input. */
-JNIEXPORT jshortArray
-JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSonicStretch(
-    JNIEnv *env, jclass clazz, jshortArray samples, jint sampleRate, jfloat speed, jfloat pitch) {
-  if (samples == NULL || sampleRate <= 0 || speed <= 0.0f || pitch <= 0.0f) return NULL;
-  const jsize n = (*env)->GetArrayLength(env, samples);
-  if (n <= 0) return NULL;
-
+ * One stream per chunk: a chunk played in pieces is fed piece by piece and
+ * flushed only at its end. Flushing every piece padded each with silence
+ * and restarted the waveform at the next: a click at every join. */
+JNIEXPORT jlong
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSonicOpen(
+    JNIEnv *env, jclass clazz, jint sampleRate, jfloat speed, jfloat pitch) {
+  if (sampleRate <= 0 || speed <= 0.0f || pitch <= 0.0f) return 0;
   sonicStream stream = sonicCreateStream(sampleRate, 1);
-  if (stream == NULL) return NULL;
+  if (stream == NULL) return 0;
   sonicSetSpeed(stream, speed);
   sonicSetPitch(stream, pitch);
   sonicSetQuality(stream, 0);
+  return (jlong)(intptr_t)stream;
+}
 
-  jshort *in = (*env)->GetShortArrayElements(env, samples, NULL);
-  if (in == NULL) {
-    sonicDestroyStream(stream);
-    return NULL;
+/* Feeds samples (may be null) and returns what the stream has ready - all of it when last. */
+JNIEXPORT jshortArray
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSonicWrite(
+    JNIEnv *env, jclass clazz, jlong handle, jshortArray samples, jboolean last) {
+  sonicStream stream = (sonicStream)(intptr_t)handle;
+  if (stream == NULL) return NULL;
+  const jsize n = samples != NULL ? (*env)->GetArrayLength(env, samples) : 0;
+  if (n > 0) {
+    jshort *in = (*env)->GetShortArrayElements(env, samples, NULL);
+    if (in == NULL) return NULL;
+    const int ok = sonicWriteShortToStream(stream, in, n);
+    (*env)->ReleaseShortArrayElements(env, samples, in, JNI_ABORT);
+    if (!ok) return NULL;
   }
-  const int ok = sonicWriteShortToStream(stream, in, n);
-  (*env)->ReleaseShortArrayElements(env, samples, in, JNI_ABORT);
-  if (!ok || !sonicFlushStream(stream)) {
-    sonicDestroyStream(stream);
-    return NULL;
-  }
+  if (last && !sonicFlushStream(stream)) return NULL;
 
   const int available = sonicSamplesAvailable(stream);
-  jshortArray result = NULL;
-  if (available > 0) {
-    short *out = (short *)malloc((size_t)available * sizeof(short));
-    if (out != NULL) {
-      const int got = sonicReadShortFromStream(stream, out, available);
-      if (got > 0) {
-        result = (*env)->NewShortArray(env, got);
-        if (result != NULL) {
-          (*env)->SetShortArrayRegion(env, result, 0, got, out);
-          if (check_jni_exception(env)) {
-            (*env)->DeleteLocalRef(env, result);
-            result = NULL;
-          }
-        }
-      }
-      free(out);
-    }
+  jshortArray result = (*env)->NewShortArray(env, available > 0 ? available : 0);
+  if (result == NULL || available <= 0) return result;
+  short *out = (short *)malloc((size_t)available * sizeof(short));
+  if (out == NULL) return NULL;
+  const int got = sonicReadShortFromStream(stream, out, available);
+  if (got != available) {
+    free(out);
+    return NULL;
   }
-  sonicDestroyStream(stream);
+  (*env)->SetShortArrayRegion(env, result, 0, got, out);
+  free(out);
+  if (check_jni_exception(env)) {
+    (*env)->DeleteLocalRef(env, result);
+    return NULL;
+  }
   return result;
+}
+
+JNIEXPORT void
+JNICALL Java_com_animeshahilya_espeakng_SpeechSynthesis_nativeSonicClose(
+    JNIEnv *env, jclass clazz, jlong handle) {
+  if (handle != 0) sonicDestroyStream((sonicStream)(intptr_t)handle);
 }
 
 #ifdef __cplusplus

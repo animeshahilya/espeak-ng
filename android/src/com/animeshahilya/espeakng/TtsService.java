@@ -1604,7 +1604,7 @@ public class TtsService extends TextToSpeechService {
             if (!used.contains(unit.modelKey)) {
                 used.add(unit.modelKey);
             }
-            return mPiper.prepare(unit.model, unit.text, phonemizer, SpeechSynthesis::sonicStretch,
+            return mPiper.prepare(unit.model, unit.text, phonemizer, SpeechSynthesis::sonicStream,
                     params);
         }
 

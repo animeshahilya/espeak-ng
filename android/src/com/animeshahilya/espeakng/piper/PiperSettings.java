@@ -1146,7 +1146,7 @@ public final class PiperSettings {
                 params.noiseScale = style[0];
                 params.noiseW = style[1];
                 PiperEngine.get().synthesize(model, text, espeak::phonemizeForPiper,
-                        SpeechSynthesis::sonicStretch, params,
+                        SpeechSynthesis::sonicStream, params,
                         new PiperEngine.Output() {
                             @Override
                             public void word(int position, int length, int frame) {

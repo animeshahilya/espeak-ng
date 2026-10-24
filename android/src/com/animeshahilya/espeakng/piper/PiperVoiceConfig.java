@@ -59,11 +59,13 @@ public final class PiperVoiceConfig {
      * treble than the other voices; the two SYSPIN ones also breathe ~250 ms
      * of noise before each first word). Their treble is cut and that lead-in
      * trimmed ({@link PiperAudio.TrebleCut}); each judged better by ear.
-     * Their Compact versions share the recordings.
+     * Their Compact versions share the recordings. Kannada Spoorthi (Rasa)
+     * added 2026-10-24 after a user heard "an annoying sound": 6-11 kHz at
+     * -16 dB of speech, like Hetal and Priya (Chetan -24, Vikram -25).
      */
     private static final java.util.Set<String> HISSY = new java.util.HashSet<>(Arrays.asList(
             "gu_IN-hetal-medium", "gu_IN-hetal-compact", "en_IN-priya-medium", "en_IN-priya-compact",
-            "en_US-ljspeech-high", "en_US-ljspeech-compact"));
+            "en_US-ljspeech-high", "en_US-ljspeech-compact", "kn_IN-spoorthi-medium"));
 
     /**
      * Voices that garble a request with no closing punctuation (a label, a

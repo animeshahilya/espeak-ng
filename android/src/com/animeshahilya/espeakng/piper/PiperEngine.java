@@ -82,9 +82,17 @@ public final class PiperEngine {
         String phonemize(String espeakVoice, String text);
     }
 
-    /** Speed and pitch change without re-synthesis; null result = unchanged. */
+    /** Speed and pitch change without re-synthesis. */
     public interface TimeStretcher {
-        short[] process(short[] samples, int sampleRate, float speed, float pitch);
+        /** A stream for one chunk, fed its pieces in order; null = unchanged. */
+        Stream open(int sampleRate, float speed, float pitch);
+
+        interface Stream {
+            /** @return the audio ready so far (all of it when {@code last}, which also closes); null on failure */
+            short[] write(short[] samples, boolean last);
+
+            void close();
+        }
     }
 
     /** Where audio and word positions go (TtsService's synthesis callback). */
@@ -1311,7 +1319,7 @@ public final class PiperEngine {
             if (cached != null) {
                 noteLevel(key, cached.audio, model.config.sampleRate);
                 final Rendered r = finish(cached.audio, cached.durations, job.wordStarts, 0, words,
-                        true, true, 0, passage, trebleCut());
+                        true, true, 0, passage, new Effects());
                 timed(true, started);
                 return r;
             }
@@ -1339,7 +1347,7 @@ public final class PiperEngine {
                 mCache.offer(cacheKey, audio, o.durations); // before finish() alters the audio
                 noteLevel(key, audio, model.config.sampleRate);
                 final Rendered r = finish(audio, o.durations, job.wordStarts, 0, words, true, true, 0,
-                        passage, trebleCut());
+                        passage, new Effects());
                 timed(false, started);
                 return r;
             }
@@ -1377,7 +1385,7 @@ public final class PiperEngine {
                 mCache.offer(cacheKey, audio, e.durations);
                 noteLevel(key, audio, rate);
                 final Rendered r = finish(audio, e.durations, job.wordStarts, 0, words, true, true, 0,
-                        passage, trebleCut());
+                        passage, new Effects());
                 timed(false, started);
                 return r;
             }
@@ -1391,9 +1399,9 @@ public final class PiperEngine {
                 return null;
             }
             final float[] headRaw = head.clone(); // finish() may alter head; the cache needs it as made
-            final PiperAudio.TrebleCut treble = trebleCut(); // one filter across both pieces
+            final Effects fx = new Effects(); // one filter and stretch across both pieces
             final Rendered first = finish(head, Arrays.copyOfRange(e.durations, 0, splitId),
-                    job.wordStarts.subList(0, cut), 0, cut, true, false, 0, passage, treble);
+                    job.wordStarts.subList(0, cut), 0, cut, true, false, 0, passage, fx);
             timed(false, started);
             final List<Integer> restStarts = new ArrayList<>();
             for (int w = cut; w < words; w++) {
@@ -1402,17 +1410,21 @@ public final class PiperEngine {
             final int from = splitFrame;
             // Queued now, so it runs before the next chunk's render.
             first.rest = mRenderer.submit(() -> {
-                final float[] tail = decode(e, from, e.frames);
-                if (tail == null) {
-                    return null;
+                try {
+                    final float[] tail = decode(e, from, e.frames);
+                    if (tail == null) {
+                        return null;
+                    }
+                    final float[] whole = Arrays.copyOf(headRaw, headRaw.length + tail.length);
+                    System.arraycopy(tail, 0, whole, headRaw.length, tail.length);
+                    mCache.offer(cacheKey, whole, e.durations);
+                    noteLevel(key, whole, rate);
+                    return finish(tail, Arrays.copyOfRange(e.durations, splitId, e.durations.length),
+                            restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate), passage,
+                            fx);
+                } finally {
+                    fx.close(); // stopped before the last piece
                 }
-                final float[] whole = Arrays.copyOf(headRaw, headRaw.length + tail.length);
-                System.arraycopy(tail, 0, whole, headRaw.length, tail.length);
-                mCache.offer(cacheKey, whole, e.durations);
-                noteLevel(key, whole, rate);
-                return finish(tail, Arrays.copyOfRange(e.durations, splitId, e.durations.length),
-                        restStarts, cut, words, false, true, PiperAudio.speechPower(whole, rate), passage,
-                        treble);
             });
             first.restTask = first.rest;
             return first;
@@ -1446,14 +1458,14 @@ public final class PiperEngine {
                 }
                 frameAt[i] = f;
             }
-            final PiperAudio.TrebleCut treble = trebleCut(); // one filter across all pieces
             final float[] head = decode(e, frameAt[0], frameAt[1]);
             if (head == null) {
                 return null;
             }
+            final Effects fx = new Effects(); // one filter and stretch across all pieces
             final List<float[]> raws = new ArrayList<>();
             raws.add(head.clone()); // finish() may alter head; the cache needs it as made
-            final Rendered first = piece(job, e, wordAt, idAt, 0, head, level, passage, treble);
+            final Rendered first = piece(job, e, wordAt, idAt, 0, head, level, passage, fx);
             timed(false, started);
             final List<java.util.concurrent.CompletableFuture<Rendered>> next = new ArrayList<>();
             for (int i = 1; i < n; i++) {
@@ -1469,7 +1481,7 @@ public final class PiperEngine {
                             break;
                         }
                         raws.add(audio.clone());
-                        final Rendered r = piece(job, e, wordAt, idAt, i, audio, level, passage, treble);
+                        final Rendered r = piece(job, e, wordAt, idAt, i, audio, level, passage, fx);
                         if (i + 1 < n) {
                             r.rest = next.get(i);
                         }
@@ -1494,6 +1506,8 @@ public final class PiperEngine {
                         next.get(k - 1).completeExceptionally(t);
                     }
                     throw t;
+                } finally {
+                    fx.close(); // stopped before the last piece
                 }
                 for (int k = i; k < n; k++) {
                     next.get(k - 1).complete(null); // stopped: nothing more to play
@@ -1516,7 +1530,7 @@ public final class PiperEngine {
             final String key = model.config.key;
             final int rate = model.config.sampleRate;
             final CompletableFuture<Rendered> first = new CompletableFuture<>();
-            final Stream stream = new Stream(job, level, passage, trebleCut(), first,
+            final Stream stream = new Stream(job, level, passage, new Effects(), first,
                     mSamplesPerChar.getOrDefault(key, rate * STREAM_S_PER_CHAR));
             final Future<?> task = mStreamer.submit(() -> {
                 try {
@@ -1528,6 +1542,8 @@ public final class PiperEngine {
                 } catch (Throwable t) {
                     stream.slot.completeExceptionally(t);
                     throw t;
+                } finally {
+                    stream.fx.close(); // stopped before the last piece
                 }
                 final float[] whole = Phonon.concat(stream.raws);
                 mCache.offer(cacheKey, whole, null);
@@ -1561,7 +1577,7 @@ public final class PiperEngine {
             final Job job;
             final double level;
             final double passage;
-            final PiperAudio.TrebleCut treble;
+            final Effects fx;
             final double perChar;
             final List<float[]> raws = new ArrayList<>();
             /** Audio not yet in a piece. */
@@ -1575,12 +1591,12 @@ public final class PiperEngine {
             /** Where the next piece goes. */
             CompletableFuture<Rendered> slot;
 
-            Stream(Job job, double level, double passage, PiperAudio.TrebleCut treble,
+            Stream(Job job, double level, double passage, Effects fx,
                    CompletableFuture<Rendered> first, double perChar) {
                 this.job = job;
                 this.level = level;
                 this.passage = passage;
-                this.treble = treble;
+                this.fx = fx;
                 this.slot = first;
                 this.perChar = perChar;
             }
@@ -1623,7 +1639,7 @@ public final class PiperEngine {
                     }
                 }
                 final Rendered r = finish(audio, null, Collections.emptyList(), wordAt, wordTo,
-                        pieces == 0, last, level, passage, treble);
+                        pieces == 0, last, level, passage, fx);
                 wordAt = wordTo;
                 pieces++;
                 final CompletableFuture<Rendered> next = last ? null : new CompletableFuture<>();
@@ -1635,14 +1651,14 @@ public final class PiperEngine {
 
         /** Piece {@code i} of {@link #renderPieces}, post-processed. */
         private Rendered piece(Job job, PiperModel.Encoded e, int[] wordAt, int[] idAt, int i,
-                               float[] audio, double level, double passage, PiperAudio.TrebleCut treble) {
+                               float[] audio, double level, double passage, Effects fx) {
             final List<Integer> starts = new ArrayList<>();
             for (int w = wordAt[i]; w < wordAt[i + 1]; w++) {
                 starts.add(job.wordStarts.get(w) - idAt[i]);
             }
             final int last = wordAt.length - 2;
             return finish(audio, Arrays.copyOfRange(e.durations, idAt[i], idAt[i + 1]), starts,
-                    wordAt[i], wordAt[i + 1], i == 0, i == last, level, passage, treble);
+                    wordAt[i], wordAt[i + 1], i == 0, i == last, level, passage, fx);
         }
 
         private float[] decode(PiperModel.Encoded e, int from, int to) throws OrtException {
@@ -1654,9 +1670,24 @@ public final class PiperEngine {
             }
         }
 
-        /** The treble cut for a hissy voice ({@link PiperVoiceConfig#hissy}), else null. */
-        private PiperAudio.TrebleCut trebleCut() {
-            return model.config.hissy ? new PiperAudio.TrebleCut(model.config.sampleRate) : null;
+        /**
+         * What one chunk's pieces share, so they join as if processed whole:
+         * the treble cut of a hissy voice ({@link PiperVoiceConfig#hissy}) and
+         * the time stretch (one libsonic stream; stretching each piece on its
+         * own left a few ms of silence and a click at every join). Either may
+         * be null. The stream closes with the last piece, or by {@link #close}.
+         */
+        private final class Effects {
+            final PiperAudio.TrebleCut treble = model.config.hissy
+                    ? new PiperAudio.TrebleCut(model.config.sampleRate) : null;
+            final TimeStretcher.Stream stretch = stretcher == null ? null
+                    : stretcher.open(model.config.sampleRate, residualSpeed, pitch);
+
+            void close() {
+                if (stretch != null) {
+                    stretch.close();
+                }
+            }
         }
 
         /**
@@ -1667,10 +1698,10 @@ public final class PiperEngine {
          */
         private Rendered finish(float[] audio, float[] durations, List<Integer> wordStarts,
                                 int wordFrom, int wordTo, boolean lead, boolean tail, double level,
-                                double passage, PiperAudio.TrebleCut treble) {
+                                double passage, Effects fx) {
             final int rate = model.config.sampleRate;
-            if (treble != null) {
-                audio = treble.apply(audio);
+            if (fx.treble != null) {
+                audio = fx.treble.apply(audio);
             }
             level = PiperAudio.passageLevel(passage, level > 0 ? level : PiperAudio.speechPower(audio, rate));
             if (tail && level > 0) {
@@ -1680,8 +1711,8 @@ public final class PiperEngine {
                     params.trimSilence && lead, params.trimSilence && tail, maxPauseMs, level,
                     model.config.hissy);
             short[] samples = pcm.samples;
-            if (stretcher != null && samples.length > 0) {
-                final short[] stretched = stretcher.process(samples, rate, residualSpeed, pitch);
+            if (fx.stretch != null) {
+                final short[] stretched = fx.stretch.write(samples, tail);
                 if (stretched != null) {
                     samples = stretched;
                 }
