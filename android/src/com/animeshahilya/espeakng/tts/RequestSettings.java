@@ -184,6 +184,20 @@ public final class RequestSettings {
                 * PiperVoiceStore.speedFactor(prefs, key);
     }
 
+    /**
+     * The pitch setting (0-100) as a natural voice's pitch factor: about half
+     * an octave down/up. A neural voice has its own natural pitch; this only
+     * shifts it, it never flattens intonation. 40 (this app's default) to 50
+     * (eSpeak's, and what older installs carry over) both keep the voice's
+     * own pitch. Centred on 50 until 2026-10-24, the default 40 pitched every
+     * voice 7% down through libsonic, which also clicked at piece joins.
+     */
+    static float naturalPitch(int pitch) {
+        final int shift = pitch < VoiceSettings.DEFAULT_PITCH ? pitch - VoiceSettings.DEFAULT_PITCH
+                : Math.max(0, pitch - 50);
+        return (float) Math.pow(2.0, shift / 100.0);
+    }
+
     public static PiperEngine.Params naturalParams(VoiceSettings settings, SynthesisRequest request,
                                                     SharedPreferences prefs) {
         final PiperEngine.Params params = new PiperEngine.Params();
@@ -197,13 +211,7 @@ public final class RequestSettings {
             pitchScale = 100;
         }
         pitchScale = Math.round(pitchScale * settings.appFactor(AppCards.PITCH));
-        // eSpeak pitch 0-100 around the default -> about half an octave
-        // down/up, times the caller's pitch. A neural voice has its own natural
-        // pitch; this only shifts it, it never flattens intonation. Centred on
-        // 50 until 2026-10-24, the default 40 pitched every voice 7% down
-        // through libsonic, which also clicked where a chunk's pieces joined.
-        final float userPitch = (float) Math.pow(2.0,
-                (settings.getPitch() - VoiceSettings.DEFAULT_PITCH) / 100.0);
+        final float userPitch = naturalPitch(settings.getPitch());
         params.pitch = Math.max(0.5f, Math.min(2.0f, userPitch * pitchScale / 100f));
         params.volume = effectiveVolume(settings, request) / 100f;
         params.pauseScale = settings.getPauseScale();
