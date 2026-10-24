@@ -93,7 +93,7 @@ public class AudioOptimizerTest {
         AudioOptimizer optimizer = new AudioOptimizer(sampleRate, "custom",
                 false, false, false, false, true, false, false, 175, false);
 
-        byte[] pcmData = new byte[80];
+        byte[] pcmData = new byte[160];
         // Fill with constant DC value 10000
         for (int i = 0; i < pcmData.length; i += 2) {
             short val = 10000;
@@ -107,10 +107,48 @@ public class AudioOptimizerTest {
         short firstSample = (short) (((pcmData[1] & 0xFF) << 8) | (pcmData[0] & 0xFF));
         assertEquals("First sample must be 0 after de-clicker soft attack fade-in", 0, firstSample);
 
-        // Later sample (sample index 35) should reach full amplitude (fade-in window is 32 samples)
-        int idx = 35 * 2;
+        // Sample past fade-in window (sample index 65) should reach full amplitude (fade-in window is 64 samples)
+        int idx = 65 * 2;
         short lateSample = (short) (((pcmData[idx + 1] & 0xFF) << 8) | (pcmData[idx] & 0xFF));
         assertEquals("Sample past fade-in window should be at full amplitude", 10000, lateSample);
+    }
+
+    @Test
+    public void testDeclickerTrailingFadeOut() {
+        int sampleRate = 22050;
+        AudioOptimizer optimizer = new AudioOptimizer(sampleRate, "custom",
+                false, false, false, false, true, false, false, 175, false);
+
+        // Initially no samples processed, tail is quiet: returns null
+        assertNull(optimizer.generateTrailingFade());
+
+        // Process a block that ends on non-zero DC amplitude
+        byte[] pcmData = new byte[200];
+        for (int i = 0; i < pcmData.length; i += 2) {
+            short val = 12000;
+            pcmData[i] = (byte) (val & 0xFF);
+            pcmData[i + 1] = (byte) ((val >> 8) & 0xFF);
+        }
+        optimizer.process(pcmData, pcmData.length);
+        assertEquals(12000f, optimizer.getPrevOutputSample(), 1.0f);
+
+        // generateTrailingFade should emit smooth fade-out decaying to 0
+        byte[] tail = optimizer.generateTrailingFade();
+        assertNotNull(tail);
+        assertEquals(AudioOptimizer.DECLICK_FADE_SAMPLES * 2, tail.length);
+
+        // First sample in tail is near last rendered sample
+        short firstTail = (short) (((tail[1] & 0xFF) << 8) | (tail[0] & 0xFF));
+        assertTrue("First tail sample must be close to last rendered sample", firstTail > 11000 && firstTail <= 12000);
+
+        // Last sample in tail must reach 0 (smooth Hann decay)
+        int lastIdx = (AudioOptimizer.DECLICK_FADE_SAMPLES - 1) * 2;
+        short lastTail = (short) (((tail[lastIdx + 1] & 0xFF) << 8) | (tail[lastIdx] & 0xFF));
+        assertEquals("Final tail sample must decay to 0 to prevent pop", 0, lastTail);
+
+        // After fade-out, prevOutputSample is reset to 0
+        assertEquals(0f, optimizer.getPrevOutputSample(), 0.0f);
+        assertNull("Subsequent call should return null since tail is now quiet", optimizer.generateTrailingFade());
     }
 
     @Test
@@ -171,5 +209,60 @@ public class AudioOptimizerTest {
 
         assertArrayEquals(prefix, java.util.Arrays.copyOfRange(pcmData, 0, 20));
         assertArrayEquals(suffix, java.util.Arrays.copyOfRange(pcmData, 60, pcmData.length));
+    }
+
+    @Test
+    public void testResetClearsInternalState() {
+        int sampleRate = 22050;
+        AudioOptimizer optimizer = new AudioOptimizer(sampleRate, "custom",
+                false, false, false, false, true, false, false, 175, false);
+
+        byte[] pcmData = new byte[160];
+        for (int i = 0; i < pcmData.length; i += 2) {
+            short val = 10000;
+            pcmData[i] = (byte) (val & 0xFF);
+            pcmData[i + 1] = (byte) ((val >> 8) & 0xFF);
+        }
+        optimizer.process(pcmData, pcmData.length);
+        assertEquals(10000f, optimizer.getPrevOutputSample(), 1.0f);
+
+        // Reset should clear previous output sample and restart attack fade
+        optimizer.reset();
+        assertEquals(0f, optimizer.getPrevOutputSample(), 0.0f);
+        assertNull(optimizer.generateTrailingFade());
+
+        // Process a new buffer: first sample should be faded in from 0 again
+        byte[] nextPcm = new byte[160];
+        for (int i = 0; i < nextPcm.length; i += 2) {
+            short val = 10000;
+            nextPcm[i] = (byte) (val & 0xFF);
+            nextPcm[i + 1] = (byte) ((val >> 8) & 0xFF);
+        }
+        optimizer.process(nextPcm, nextPcm.length);
+        short firstSample = (short) (((nextPcm[1] & 0xFF) << 8) | (nextPcm[0] & 0xFF));
+        assertEquals(0, firstSample);
+    }
+
+    @Test
+    public void testSample16HelpersAndClamping() {
+        assertEquals(0, AudioOptimizer.clamp16(0));
+        assertEquals(32767, AudioOptimizer.clamp16(40000));
+        assertEquals(-32768, AudioOptimizer.clamp16(-40000));
+        assertEquals(15000, AudioOptimizer.clamp16(15000));
+        assertEquals(-15000, AudioOptimizer.clamp16(-15000));
+
+        byte[] buf = new byte[4];
+        AudioOptimizer.putSample16(buf, 0, 12345);
+        assertEquals((short) 12345, AudioOptimizer.getSample16(buf, 0));
+
+        AudioOptimizer.putSample16(buf, 2, -23456);
+        assertEquals((short) -23456, AudioOptimizer.getSample16(buf, 2));
+
+        // Over-range clamping on putSample16
+        AudioOptimizer.putSample16(buf, 0, 50000);
+        assertEquals(32767, AudioOptimizer.getSample16(buf, 0));
+
+        AudioOptimizer.putSample16(buf, 2, -50000);
+        assertEquals(-32768, AudioOptimizer.getSample16(buf, 2));
     }
 }

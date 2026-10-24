@@ -146,8 +146,46 @@ public final class TtsAudioDispatcher {
         return mCallbackDone.get();
     }
 
+    private int getSafeChunkSize() {
+        int max = mSink != null ? mSink.getMaxBufferSize() : 512;
+        if (max <= 0) {
+            max = 512;
+        }
+        if ((max & 1) != 0) {
+            max--;
+        }
+        return Math.max(2, max);
+    }
+
+    private void flushTrailingFadeLocked() {
+        if (mSink != null && mOptimizer != null) {
+            byte[] tail = mOptimizer.generateTrailingFade();
+            if (tail != null && tail.length > 0) {
+                try {
+                    int maxBytes = getSafeChunkSize();
+                    int offset = 0;
+                    while (offset < tail.length) {
+                        int chunk = Math.min(maxBytes, tail.length - offset);
+                        if (mSink.audioAvailable(tail, offset, chunk) != TextToSpeech.SUCCESS) {
+                            break;
+                        }
+                        offset += chunk;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+    }
+
     public void setStopped(boolean stopped) {
-        mIsStopped.set(stopped);
+        boolean wasStopped = mIsStopped.getAndSet(stopped);
+        if (stopped && !wasStopped) {
+            synchronized (this) {
+                if (!mCallbackDone.get()) {
+                    flushTrailingFadeLocked();
+                }
+            }
+        }
     }
 
     public void reportError(int errorCode) {
@@ -159,8 +197,11 @@ public final class TtsAudioDispatcher {
 
     public void finish() {
         mPendingRanges = null;
-        if (mSink != null && mCallbackDone.compareAndSet(false, true)) {
-            mSink.done();
+        synchronized (this) {
+            if (mSink != null && mCallbackDone.compareAndSet(false, true)) {
+                flushTrailingFadeLocked();
+                mSink.done();
+            }
         }
     }
 
@@ -193,18 +234,7 @@ public final class TtsAudioDispatcher {
             mOptimizer.process(audioData, safeOffset, safeEnd - safeOffset);
         }
 
-        int maxBytesToCopy = mSink.getMaxBufferSize();
-        if (maxBytesToCopy <= 0) {
-            maxBytesToCopy = 512;
-        }
-        // Keep 16-bit sample alignment across chunks: an odd chunk would split
-        // a sample between two audioAvailable() calls.
-        if ((maxBytesToCopy & 1) != 0) {
-            maxBytesToCopy--;
-        }
-        if (maxBytesToCopy < 2) {
-            maxBytesToCopy = 512;
-        }
+        int maxBytesToCopy = getSafeChunkSize();
         int currentOffset = safeOffset;
         int endOffset = safeEnd;
         // Drop a trailing odd byte: 16-bit PCM never has one, and the

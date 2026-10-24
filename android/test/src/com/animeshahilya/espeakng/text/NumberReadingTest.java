@@ -307,4 +307,40 @@ public class NumberReadingTest {
         assertEquals("todo: Buy groceries", TextPreprocessor.cleanMarkdown("- [ ] Buy groceries"));
         assertEquals("done: Pay electric bill", TextPreprocessor.cleanMarkdown("- [x] Pay electric bill"));
     }
+
+    @Test
+    public void testReadCodesMultilingual() {
+        assertEquals("Ваш код: 4 8 2 9", NumberReading.readCodes("Ваш код: 4829"));
+        assertEquals("Ваш пароль 1 2 3 4 5 6 для входа",
+                NumberReading.readCodes("Ваш пароль 123456 для входа"));
+        assertEquals("Google verification code: 9 1 0 2 3 4",
+                NumberReading.readCodes("Google verification code: 910234"));
+        assertEquals("Your 2FA code is 8 4 9 2",
+                NumberReading.readCodes("Your 2FA code is 8492"));
+        assertEquals("Security token: 7 3 9 1 2 0",
+                NumberReading.readCodes("Security token: 739120"));
+    }
+
+    @Test
+    public void testReadTemperatures() {
+        assertEquals("25 degrees Celsius", NumberReading.readTemperatures("25°C"));
+        assertEquals("minus 5 degrees Celsius", NumberReading.readTemperatures("-5°C"));
+        assertEquals("minus 5 degrees Celsius", NumberReading.readTemperatures("−5°C"));
+        assertEquals("72 degrees Fahrenheit", NumberReading.readTemperatures("72°F"));
+        assertEquals("1 degree Celsius", NumberReading.readTemperatures("1°C"));
+        assertEquals("minus 1 degree Celsius", NumberReading.readTemperatures("-1°C"));
+        assertEquals("Today is 30 degrees outside", NumberReading.readTemperatures("Today is 30° outside"));
+        assertEquals("Freezing at minus 10 degrees", NumberReading.readTemperatures("Freezing at -10°"));
+        assertEquals("Set oven to 180 degrees Celsius", NumberReading.readTemperatures("Set oven to 180 deg C"));
+        assertEquals("Normal body temp is 98.6 degrees Fahrenheit",
+                NumberReading.readTemperatures("Normal body temp is 98.6°F"));
+
+        // Temperature ranges
+        assertEquals("15 to 20 degrees Celsius", NumberReading.readTemperatures("15-20°C"));
+        assertEquals("70 to 80 degrees Fahrenheit", NumberReading.readTemperatures("70–80°F"));
+        assertEquals("minus 5 to 5 degrees Celsius", NumberReading.readTemperatures("-5 to 5°C"));
+        assertEquals("Expect 10 to 15 degrees tonight", NumberReading.readTemperatures("Expect 10-15° tonight"));
+        assertEquals("0 to 1 degree Celsius", NumberReading.readTemperatures("0-1°C"));
+        assertEquals("minus 10 to minus 5 degrees Celsius", NumberReading.readTemperatures("-10 - -5°C"));
+    }
 }

@@ -73,6 +73,7 @@ public class VoiceSettings {
     public static final String PREF_READ_CODES = "espeak_read_codes";
     public static final String PREF_READ_DATES = "espeak_read_dates";
     public static final String PREF_READ_DIMENSIONS = "espeak_read_dimensions";
+    public static final String PREF_READ_TEMPERATURES = "espeak_read_temperatures";
     public static final String PREF_READ_ROMAN_NUMERALS = "espeak_read_roman_numerals";
     public static final String PREF_READ_PHONE_NUMBERS = "espeak_read_phone_numbers";
     public static final String PREF_READ_MATH = "espeak_read_math";
@@ -490,6 +491,10 @@ public class VoiceSettings {
 
     public boolean isReadDimensionsEnabled() {
         return mPreferences.getBoolean(PREF_READ_DIMENSIONS, false);
+    }
+
+    public boolean isReadTemperaturesEnabled() {
+        return mPreferences.getBoolean(PREF_READ_TEMPERATURES, false);
     }
 
     public boolean isReadRomanNumeralsEnabled() {

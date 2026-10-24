@@ -153,8 +153,10 @@ public final class NumberReading {
 
     // Words that mark a nearby number as a code rather than a quantity.
     private static final Pattern CODE_KEYWORD = Pattern.compile(
-            "(?iu)(?<![\\p{L}])(otp|one[- ]time|pin|passcode|password|code|cvv|pnr|token"
-                    + "|txn|transaction|ref|reference|a/c|acct|account|card|id"
+            "(?iu)(?<![\\p{L}])(otp|one[- ]time|pin|passcode|password|code|cvv|cvv2|pnr|token"
+                    + "|txn|transaction|ref|reference|a/c|acct|account|card|id|serial|auth|2fa|iban|swift"
+                    + "|verification|verify"
+                    + "|код|кода|коду|кодом|пин|пароль|пароля|карта|карты|карте|карту|картой|счет|счета|счету|счетом|артикул"
                     + "|ओटीपी|कोड|पिन|पासवर्ड|खाता)(?![\\p{L}])");
 
     // 4-12 digits, optionally in groups split by one space or hyphen
@@ -279,6 +281,80 @@ public final class NumberReading {
             if (!matched) break;
         }
         return current;
+    }
+
+    // ==========================================
+    // Temperatures ("25°C" -> "25 degrees Celsius", "15-20°C" -> "15 to 20 degrees Celsius")
+    // ==========================================
+
+    private static final String TEMP_SIGN_AMOUNT =
+            "(?:(?<![\\p{L}\\d])([-−])\\s*)?\\b(\\d+(?:\\.\\d+)?)";
+    private static final String TEMP_UNIT =
+            "(?:°\\s*([CFcf])|°(?![A-Za-z0-9])|deg(?:rees?)?\\s*([CFcf])\\b)";
+
+    private static final Pattern TEMPERATURE_RANGE = Pattern.compile(
+            TEMP_SIGN_AMOUNT + "\\s*(?:[-–—]|\\bto\\b)\\s*" + TEMP_SIGN_AMOUNT + "\\s*" + TEMP_UNIT);
+
+    private static final Pattern TEMPERATURE = Pattern.compile(
+            TEMP_SIGN_AMOUNT + "\\s*" + TEMP_UNIT);
+
+    private static boolean containsDegIgnoreCase(String s) {
+        if (s == null || s.length() < 3) return false;
+        final int len = s.length() - 2;
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if ((c == 'd' || c == 'D')
+                    && (s.charAt(i + 1) == 'e' || s.charAt(i + 1) == 'E')
+                    && (s.charAt(i + 2) == 'g' || s.charAt(i + 2) == 'G')) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void appendTemperatureAmount(StringBuilder sb, String sign, String amount) {
+        if (sign != null) {
+            sb.append("minus ");
+        }
+        sb.append(amount);
+    }
+
+    private static void appendTemperatureUnit(StringBuilder sb, String amount, String unit) {
+        boolean singular = "1".equals(amount) || "1.0".equals(amount);
+        sb.append(singular ? "degree" : "degrees");
+        if (unit != null) {
+            char u = Character.toUpperCase(unit.charAt(0));
+            if (u == 'C') {
+                sb.append(" Celsius");
+            } else if (u == 'F') {
+                sb.append(" Fahrenheit");
+            }
+        }
+    }
+
+    public static String readTemperatures(String text) {
+        if (text == null || text.isEmpty() || !containsAsciiDigit(text)) return text;
+        if (text.indexOf('°') < 0 && !containsDegIgnoreCase(text)) return text;
+
+        // Process ranges first ("15-20°C" -> "15 to 20 degrees Celsius")
+        text = AsciiUtils.replaceMatches(TEMPERATURE_RANGE, text, m -> {
+            StringBuilder sb = new StringBuilder();
+            appendTemperatureAmount(sb, m.group(1), m.group(2));
+            sb.append(" to ");
+            appendTemperatureAmount(sb, m.group(3), m.group(4));
+            sb.append(' ');
+            appendTemperatureUnit(sb, m.group(4), m.group(5) != null ? m.group(5) : m.group(6));
+            return sb.toString();
+        });
+
+        // Single temperatures ("25°C" -> "25 degrees Celsius", "-5°C" -> "minus 5 degrees Celsius")
+        return AsciiUtils.replaceMatches(TEMPERATURE, text, m -> {
+            StringBuilder sb = new StringBuilder();
+            appendTemperatureAmount(sb, m.group(1), m.group(2));
+            sb.append(' ');
+            appendTemperatureUnit(sb, m.group(2), m.group(3) != null ? m.group(3) : m.group(4));
+            return sb.toString();
+        });
     }
 
     // ==========================================

@@ -225,4 +225,55 @@ public class TextSanitizeTest {
         assertEquals("strikethrough text",
                 TextPreprocessor.cleanMarkdown("~~strikethrough text~~"));
     }
+
+    @Test
+    public void testScriptPunctuationSeparation() {
+        // Arabic and Urdu punctuation: comma, semicolon, question mark and Urdu full stop
+        assertEquals("مرحبا، بك", TextPreprocessor.preprocessScriptPunctuation("مرحبا،بك"));
+        assertEquals("نعم؛ صحيح", TextPreprocessor.preprocessScriptPunctuation("نعم؛صحيح"));
+        assertEquals("كيف حالك؟ بخير", TextPreprocessor.preprocessScriptPunctuation("كيف حالك؟بخير"));
+        assertEquals("یہ کتاب ہے۔ وہ", TextPreprocessor.preprocessScriptPunctuation("یہ کتاب ہے۔وہ"));
+
+        // Indic Danda and Double Danda
+        assertEquals("राम। शाम", TextPreprocessor.preprocessScriptPunctuation("राम।शाम"));
+        assertEquals("सत्य। धर्म", TextPreprocessor.preprocessScriptPunctuation("सत्य।धर्म"));
+
+        // CJK comma and full stop
+        assertEquals("苹果、 Google", TextPreprocessor.preprocessScriptPunctuation("苹果、Google"));
+        assertEquals("2026年。 This is", TextPreprocessor.preprocessScriptPunctuation("2026年。This is"));
+
+        // Khmer and Tibetan
+        assertEquals("កខ។ គឃ", TextPreprocessor.preprocessScriptPunctuation("កខ។គឃ"));
+        assertEquals("བོད། ཡིག", TextPreprocessor.preprocessScriptPunctuation("བོད།ཡིག"));
+
+        // Closing quotes and brackets are not separated
+        assertEquals("“राम।”", TextPreprocessor.preprocessScriptPunctuation("“राम।”"));
+        assertEquals("(كلمة،) أخرى", TextPreprocessor.preprocessScriptPunctuation("(كلمة،) أخرى"));
+
+        // Already spaced remains unchanged
+        assertEquals("مرحبا، بك", TextPreprocessor.preprocessScriptPunctuation("مرحبا، بك"));
+    }
+
+    @Test
+    public void testIsScriptPunctuation() {
+        assertTrue(TextPreprocessor.isScriptPunctuation('।'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('॥'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('،'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('؛'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('؟'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('۔'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('。'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('、'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('！'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('？'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('，'));
+        assertTrue(TextPreprocessor.isScriptPunctuation('．'));
+        assertFalse(TextPreprocessor.isScriptPunctuation('a'));
+        assertFalse(TextPreprocessor.isScriptPunctuation('1'));
+        assertFalse(TextPreprocessor.isScriptPunctuation('.'));
+        assertFalse(TextPreprocessor.isScriptPunctuation(','));
+
+        assertTrue(TextPreprocessor.containsScriptPunctuation("Hello।World"));
+        assertFalse(TextPreprocessor.containsScriptPunctuation("Hello World"));
+    }
 }

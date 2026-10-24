@@ -78,8 +78,32 @@ public final class TextPreprocessor {
             "(?<=[\\u0900-\\u0963]):(?=[\\u0915-\\u0939\\u0958-\\u095F])"
             + "|(?<![\\u0900-\\u097F])(अत|पुन|प्रात|प्राय|नम|स्वत|क्रमश|मुख्यत|सामान्यत|विशेषत|अंतत"
             + "|अन्तत|वस्तुत|संभवत|सम्भवत|पूर्णत|मूलत|अंशत|प्रथमत|फलत|तत):");
-    private static final Pattern DANDA_BOUNDARY =
-            Pattern.compile("([।॥]+)([^\\s\\p{Pe}\\p{Pf}\"\'”’।॥])");
+    // Multi-script punctuation marks (Arabic, Urdu, Indic, CJK, Khmer, Tibetan, fullwidth)
+    // that require a trailing space to prevent merging with subsequent words.
+    private static final Pattern SCRIPT_PUNCTUATION_BOUNDARY = Pattern.compile(
+            "([।॥،؛؟۔。、།༎។៕！？，．]+)([^\\s\\p{Pe}\\p{Pf}\"\'”’।॥،؛؟۔。、།༎។៕！？，．])");
+
+    public static boolean isScriptPunctuation(char c) {
+        return c == '।' || c == '॥' || c == '\u060C' || c == '\u061B' || c == '\u061F'
+                || c == '\u06D4' || c == '\u3002' || c == '\u3001' || c == '\u0F0D'
+                || c == '\u0F0E' || c == '\u17D4' || c == '\u17D5' || c == '\uFF01'
+                || c == '\uFF1F' || c == '\uFF0C' || c == '\uFF0E';
+    }
+
+    public static boolean containsScriptPunctuation(String text) {
+        if (text == null) return false;
+        for (int i = 0, n = text.length(); i < n; i++) {
+            if (isScriptPunctuation(text.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String preprocessScriptPunctuation(String text) {
+        if (!containsScriptPunctuation(text)) return text;
+        return SCRIPT_PUNCTUATION_BOUNDARY.matcher(text).replaceAll("$1 $2");
+    }
     private static final Pattern BANKING_SLASH_TXN =
             Pattern.compile("(?i)\\b(UPI|TXN|REF|IMPS|NEFT|RTGS)/([A-Za-z0-9/]+)");
     private static final Pattern CURRENCY_PREFIX =
@@ -173,6 +197,10 @@ public final class TextPreprocessor {
 
         text = edits.track(text, sanitizeForWatchdog(text, isSsml));
 
+        if (!isSsml && containsScriptPunctuation(text)) {
+            text = edits.track(text, preprocessScriptPunctuation(text));
+        }
+
         UserDictionaryManager dictManager = null;
         if (!isSsml && settings.isUserDictionaryEnabled() && storageContext != null) {
             // Resolved once: getInstance() is static synchronized, and the
@@ -256,17 +284,20 @@ public final class TextPreprocessor {
 
         // Opt-in extras, off by default. Codes run first so a code is never
         // read as money; money keeps its digits for the Indian pass below.
+        if (normalReading && settings.isReadCodesEnabled()) {
+            text = edits.track(text, NumberReading.readCodes(text));
+        }
         if (normalReading && settings.isReadDatesEnabled()) {
             text = edits.track(text, NumberReading.readDates(text));
         }
         if (normalReading && settings.isReadDimensionsEnabled()) {
             text = edits.track(text, NumberReading.readDimensions(text));
         }
+        if (normalReading && settings.isReadTemperaturesEnabled()) {
+            text = edits.track(text, NumberReading.readTemperatures(text));
+        }
         if (normalReading && settings.isReadPhoneNumbersEnabled()) {
             text = edits.track(text, NumberReading.readPhoneNumbers(text));
-        }
-        if (normalReading && settings.isReadCodesEnabled()) {
-            text = edits.track(text, NumberReading.readCodes(text));
         }
         if (normalReading && settings.isExpandAbbreviationsEnabled()
                 && readsEnglishText) {
@@ -1334,7 +1365,7 @@ public final class TextPreprocessor {
         // the trigger is present.
         text = normalizeIndicDigits(text);
         if (text.indexOf('।') >= 0 || text.indexOf('॥') >= 0) {
-            text = DANDA_BOUNDARY.matcher(text).replaceAll("$1 $2");
+            text = preprocessScriptPunctuation(text);
         }
         if (text.indexOf(':') >= 0) {
             // $1 is empty for a colon inside a word, the word for a visarga word.
@@ -1756,9 +1787,7 @@ public final class TextPreprocessor {
     }
 
     private static boolean isPunctOrNewline(char c) {
-        return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n'
-                || c == '\u0964' || c == '\u0965' || c == '\u3002' || c == '\uFF01' || c == '\uFF1F'
-                || c == '\u061F' || c == '\u06D4';
+        return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n' || isScriptPunctuation(c);
     }
 
     public static String languageTag(Voice voice) {

@@ -75,10 +75,21 @@ public final class AudioOptimizer {
 
     // Boundary De-Clicker & Slew Limiter parameters:
     // Eliminates sudden DC phase clicks at chunk / phoneme boundaries.
-    // Soft fade-in over first 32 samples (approx 1.5ms at 22kHz) and limits
-    // sample-to-sample delta step to MAX_SLEW_DELTA.
-    private static final int DECLICK_FADE_IN_SAMPLES = 32;
+    // Soft raised-cosine (Hann) fade-in over first 64 samples (~2.9ms at 22kHz)
+    // with continuous first-derivative, trailing fade-out at utterance completion,
+    // and sample-to-sample slew limiting capped at MAX_SLEW_DELTA.
+    public static final int DECLICK_FADE_SAMPLES = 64;
     public static final float MAX_SLEW_DELTA = 28000f;
+    private static final float[] FADE_IN_RAMP = new float[DECLICK_FADE_SAMPLES];
+    private static final float[] FADE_OUT_RAMP = new float[DECLICK_FADE_SAMPLES];
+
+    static {
+        for (int i = 0; i < DECLICK_FADE_SAMPLES; i++) {
+            float factor = 0.5f * (1.0f - (float) Math.cos((Math.PI * i) / (DECLICK_FADE_SAMPLES - 1)));
+            FADE_IN_RAMP[i] = factor;
+            FADE_OUT_RAMP[i] = 1.0f - factor;
+        }
+    }
 
     // Leveler: alphas tuned at a 44.1kHz reference rate, scaled to stream rate.
     private static final int LEVELER_REFERENCE_RATE_HZ = 44100;
@@ -325,11 +336,11 @@ public final class AudioOptimizer {
             i++;
         }
         while (i + 1 < end) {
-            float sample = (short) (((data[i + 1] & 0xFF) << 8) | (data[i] & 0xFF));
+            float sample = getSample16(data, i);
 
-            // Stage 1: Boundary De-Clicker Initial Fade-In
-            if (mDeclickerEnabled && mSamplesProcessed < DECLICK_FADE_IN_SAMPLES) {
-                sample *= ((float) mSamplesProcessed / DECLICK_FADE_IN_SAMPLES);
+            // Stage 1: Boundary De-Clicker Raised-Cosine Fade-In
+            if (mDeclickerEnabled && mSamplesProcessed < DECLICK_FADE_SAMPLES) {
+                sample *= FADE_IN_RAMP[mSamplesProcessed];
                 mSamplesProcessed++;
             }
 
@@ -389,13 +400,74 @@ public final class AudioOptimizer {
                 prevOutputSample = sample;
             }
 
-            int out = (int) sample;
-            if (out < -32768) out = -32768;
-            if (out > 32767) out = 32767;
-            data[i] = (byte) (out & 0xFF);
-            data[i + 1] = (byte) ((out >> 8) & 0xFF);
+            putSample16(data, i, (int) sample);
             i += 2;
         }
+    }
+
+    /**
+     * Emits a smooth raised-cosine trailing fade-out buffer decaying from
+     * the last rendered sample to zero. Call at utterance completion or stop
+     * to eliminate boundary DC step clicks on DACs and AudioTracks.
+     * Returns null if de-clicker is disabled or the tail is already quiet.
+     */
+    public byte[] generateTrailingFade() {
+        if (!mDeclickerEnabled || Math.abs(prevOutputSample) < 16f) {
+            return null;
+        }
+        final byte[] tail = new byte[DECLICK_FADE_SAMPLES * 2];
+        final float last = prevOutputSample;
+        for (int i = 0; i < DECLICK_FADE_SAMPLES; i++) {
+            float sample = last * FADE_OUT_RAMP[i];
+            putSample16(tail, i * 2, Math.round(sample));
+        }
+        prevOutputSample = 0f;
+        return tail;
+    }
+
+    public static short getSample16(byte[] data, int offset) {
+        return (short) (((data[offset + 1] & 0xFF) << 8) | (data[offset] & 0xFF));
+    }
+
+    public static int clamp16(int sample) {
+        if (sample < -32768) return -32768;
+        if (sample > 32767) return 32767;
+        return sample;
+    }
+
+    public static void putSample16(byte[] data, int offset, int sample) {
+        int clamped = clamp16(sample);
+        data[offset] = (byte) (clamped & 0xFF);
+        data[offset + 1] = (byte) ((clamped >> 8) & 0xFF);
+    }
+
+    public float getPrevOutputSample() {
+        return prevOutputSample;
+    }
+
+    public void setPrevOutputSample(float sample) {
+        prevOutputSample = sample;
+    }
+
+    /**
+     * Resets internal DSP filter states, envelopes, and sample counters
+     * to initial neutral conditions.
+     */
+    public void reset() {
+        glottalLowPass = 0f;
+        prevHighPass = 0f;
+        prevInput = 0f;
+        presenceBand = 0f;
+        prevPresenceBand = 0f;
+        warmthLowPass = 0f;
+        prevWarmthLowPass = 0f;
+        zcrEnvelope = 0f;
+        prevRawSample = 0f;
+        levelEnvelope = 0f;
+        levelerSmoothedGain = 1.0f;
+        smoothedGain = 1.0f;
+        prevOutputSample = 0f;
+        mSamplesProcessed = 0;
     }
 }
 

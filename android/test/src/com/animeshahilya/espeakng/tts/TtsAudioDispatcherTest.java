@@ -288,4 +288,92 @@ public class TtsAudioDispatcherTest {
         }
         assertEquals(20, total);
     }
+
+    @Test
+    public void trailingFadeFlushedOnFinishWhenAudioEndsAbruptly() {
+        RecordingSink sink = new RecordingSink(512);
+        AudioOptimizer optimizer = new AudioOptimizer(22050, "custom",
+                false, false, false, false, true, false, false, 175, false);
+
+        TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                sink, optimizer, null, "Hello", 0, 5,
+                null, null, null
+        );
+
+        byte[] pcm = new byte[200];
+        for (int i = 0; i < pcm.length; i += 2) {
+            short val = 12000;
+            pcm[i] = (byte) (val & 0xFF);
+            pcm[i + 1] = (byte) ((val >> 8) & 0xFF);
+        }
+        assertTrue(dispatcher.writeAudio(pcm));
+        assertEquals(1, sink.writtenChunks.size());
+
+        // Calling finish() must flush a trailing fade-out chunk before done()
+        dispatcher.finish();
+        assertTrue(sink.doneCalled);
+        assertEquals(2, sink.writtenChunks.size());
+
+        byte[] tail = sink.writtenChunks.get(1);
+        assertEquals(AudioOptimizer.DECLICK_FADE_SAMPLES * 2, tail.length);
+        int lastSampleIdx = (AudioOptimizer.DECLICK_FADE_SAMPLES - 1) * 2;
+        short lastTailSample = (short) (((tail[lastSampleIdx + 1] & 0xFF) << 8) | (tail[lastSampleIdx] & 0xFF));
+        assertEquals(0, lastTailSample);
+    }
+
+    @Test
+    public void trailingFadeFlushedOnSetStopped() {
+        RecordingSink sink = new RecordingSink(512);
+        AudioOptimizer optimizer = new AudioOptimizer(22050, "custom",
+                false, false, false, false, true, false, false, 175, false);
+
+        TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                sink, optimizer, null, "Hello", 0, 5,
+                null, null, null
+        );
+
+        byte[] pcm = new byte[200];
+        for (int i = 0; i < pcm.length; i += 2) {
+            short val = 12000;
+            pcm[i] = (byte) (val & 0xFF);
+            pcm[i + 1] = (byte) ((val >> 8) & 0xFF);
+        }
+        assertTrue(dispatcher.writeAudio(pcm));
+        assertEquals(1, sink.writtenChunks.size());
+
+        // Stopping mid-utterance flushes trailing fade
+        dispatcher.setStopped(true);
+        assertEquals(2, sink.writtenChunks.size());
+
+        // Calling finish() later does not flush duplicate trailing fade
+        dispatcher.finish();
+        assertEquals(2, sink.writtenChunks.size());
+    }
+
+    @Test
+    public void trailingFadeRespectsMaxBufferSize() {
+        RecordingSink sink = new RecordingSink(32); // Max buffer size smaller than 128-byte tail
+        AudioOptimizer optimizer = new AudioOptimizer(22050, "custom",
+                false, false, false, false, true, false, false, 175, false);
+
+        TtsAudioDispatcher dispatcher = new TtsAudioDispatcher(
+                sink, optimizer, null, "Hello", 0, 5,
+                null, null, null
+        );
+
+        byte[] pcm = new byte[64];
+        for (int i = 0; i < pcm.length; i += 2) {
+            short val = 12000;
+            pcm[i] = (byte) (val & 0xFF);
+            pcm[i + 1] = (byte) ((val >> 8) & 0xFF);
+        }
+        assertTrue(dispatcher.writeAudio(pcm));
+
+        dispatcher.finish();
+        assertTrue(sink.doneCalled);
+        for (byte[] chunk : sink.writtenChunks) {
+            assertTrue("Chunk size must not exceed max buffer size", chunk.length <= 32);
+            assertEquals("Chunk length must be 16-bit aligned", 0, chunk.length % 2);
+        }
+    }
 }

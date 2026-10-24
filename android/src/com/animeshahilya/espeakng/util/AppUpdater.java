@@ -154,12 +154,12 @@ public final class AppUpdater {
 
     /** Settings opened: at most daily, quiet unless a newer version (not skipped) is out. */
     public static void checkIfDue(Context activity) {
-        final SharedPreferences prefs = prefs(activity);
-        cleanUpInstalled(activity);
-        if (!isCheckDue(prefs.getLong(KEY_LAST_CHECKED, 0), System.currentTimeMillis())) {
-            return;
-        }
         EspeakApp.runAsync(() -> {
+            final SharedPreferences prefs = prefs(activity);
+            if (!isCheckDue(prefs.getLong(KEY_LAST_CHECKED, 0), System.currentTimeMillis())) {
+                return;
+            }
+            cleanUpInstalled(activity);
             try {
                 final Release r = fetchNewer(activity);
                 if (r != null && prefs.getInt(KEY_SKIPPED, 0) != r.versionCode) {
@@ -173,8 +173,8 @@ public final class AppUpdater {
 
     /** About -> Check for updates: always asks the network and always answers. */
     public static void checkNow(Context activity) {
-        cleanUpInstalled(activity);
         EspeakApp.runAsync(() -> {
+            cleanUpInstalled(activity);
             Release r = null;
             boolean failed = false;
             try {

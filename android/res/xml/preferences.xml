@@ -369,6 +369,12 @@
             android:defaultValue="false"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
+            android:key="espeak_read_temperatures"
+            android:title="@string/setting_read_temperatures"
+            android:summary="@string/setting_read_temperatures_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
             android:key="espeak_read_roman_numerals"
             android:title="@string/setting_read_roman_numerals"
             android:summary="@string/setting_read_roman_numerals_summary"

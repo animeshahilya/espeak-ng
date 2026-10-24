@@ -491,4 +491,77 @@ public class TextPipelineDeviceTest {
             engine.stop();
         }
     }
+
+    @Test
+    public void testReadTemperatures() {
+        assertThat(NumberReading.readTemperatures("Current weather is 25°C in the afternoon."),
+                is("Current weather is 25 degrees Celsius in the afternoon."));
+        assertThat(NumberReading.readTemperatures("It dipped to -5°C overnight."),
+                is("It dipped to minus 5 degrees Celsius overnight."));
+        assertThat(NumberReading.readTemperatures("Bake at 350°F for 30 mins."),
+                is("Bake at 350 degrees Fahrenheit for 30 mins."));
+        assertThat(NumberReading.readTemperatures("Range is 15-20°C."),
+                is("Range is 15 to 20 degrees Celsius."));
+        assertThat(NumberReading.readTemperatures("Range from -10 to -5°C."),
+                is("Range from minus 10 to minus 5 degrees Celsius."));
+        assertThat(NumberReading.readTemperatures("Only 1°C outside."),
+                is("Only 1 degree Celsius outside."));
+    }
+
+    @Test
+    public void testMultilingualReadCodes() {
+        assertThat(NumberReading.readCodes("Ваш код: 4829"),
+                is("Ваш код: 4 8 2 9"));
+        assertThat(NumberReading.readCodes("Ваш пароль 123456 для входа"),
+                is("Ваш пароль 1 2 3 4 5 6 для входа"));
+        assertThat(NumberReading.readCodes("Google verification code: 910234"),
+                is("Google verification code: 9 1 0 2 3 4"));
+        assertThat(NumberReading.readCodes("Your 2FA code is 8492"),
+                is("Your 2FA code is 8 4 9 2"));
+    }
+
+    @Test
+    public void testScriptPunctuationClauseBoundaries() {
+        assertThat(TextPreprocessor.preprocessScriptPunctuation("राम घर गया।वह सो गया।"),
+                is("राम घर गया। वह सो गया।"));
+        assertThat(TextPreprocessor.preprocessScriptPunctuation("مرحبا،كيف حالك؟أنا بخير"),
+                is("مرحبا، كيف حالك؟ أنا بخير"));
+        assertThat(TextPreprocessor.preprocessScriptPunctuation("你好。世界！很高兴。"),
+                is("你好。 世界！ 很高兴。"));
+    }
+
+    @Test
+    public void testTemperatureInFullPipeline() {
+        final Context context = androidx.test.platform.app.InstrumentationRegistry
+                .getInstrumentation().getTargetContext();
+        final SpeechSynthesis engine = new SpeechSynthesis(context, new SpeechSynthesis.SynthReadyCallback() {
+            @Override
+            public void onSynthDataReady(byte[] audioData) {}
+            @Override
+            public void onSynthDataComplete() {}
+            @Override
+            public void onSynthWordBoundary(int textPosition, int textLength, int markerInFrames) {}
+        });
+        try {
+            final Voice voice = new Voice("en", "eng", 0, 0, new java.util.Locale("en", "US"));
+            final android.content.SharedPreferences prefs =
+                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+            final VoiceSettings settings = new VoiceSettings(prefs, engine);
+            final String input = "Current temperature is 24°C outside.";
+
+            // Disabled by default (NVDA parity: unannounced symbols become a space)
+            prefs.edit().remove(VoiceSettings.PREF_READ_TEMPERATURES).commit();
+            assertThat(TextPreprocessor.process(input, voice, settings, false, null, context).text,
+                    is("Current temperature is 24 C outside."));
+
+            // Enabled
+            prefs.edit().putBoolean(VoiceSettings.PREF_READ_TEMPERATURES, true).commit();
+            assertThat(TextPreprocessor.process(input, voice, settings, false, null, context).text,
+                    is("Current temperature is 24 degrees Celsius outside."));
+        } finally {
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit()
+                    .remove(VoiceSettings.PREF_READ_TEMPERATURES).commit();
+            engine.stop();
+        }
+    }
 }

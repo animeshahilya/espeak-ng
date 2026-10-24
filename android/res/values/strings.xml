@@ -338,6 +338,8 @@
   <string name="setting_read_dates_summary">2026-10-08 as 8 October 2026</string>
   <string name="setting_read_dimensions">Read dimensions</string>
   <string name="setting_read_dimensions_summary">1920x1080 as 1920 by 1080</string>
+  <string name="setting_read_temperatures">Read temperatures</string>
+  <string name="setting_read_temperatures_summary">25°C as 25 degrees Celsius, -5°C as minus 5 degrees Celsius</string>
   <string name="setting_read_roman_numerals">Read Roman numerals</string>
   <string name="setting_read_roman_numerals_summary">Chapter IV as Chapter 4, Henry VIII as Henry the Eighth</string>
   <string name="setting_read_phone_numbers">Read phone numbers</string>
