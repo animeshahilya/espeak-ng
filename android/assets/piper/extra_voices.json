@@ -179,6 +179,36 @@
       "piper-v2/kn_IN-chetan-medium.onnx.json": {"size_bytes": 28198, "md5_digest": "904e40eaab464de757be9af0db0faa64"}
     }
   },
+  "kn_IN-ananya-medium": {
+    "key": "kn_IN-ananya-medium",
+    "name": "ananya",
+    "language": {"code": "kn_IN", "family": "kn", "region": "IN",
+      "name_native": "ಕನ್ನಡ", "name_english": "Kannada", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "SYSPIN (IISc SPIRE Lab)",
+    "license": "MIT",
+    "files": {
+      "syspin-v2/vits-syspin-kn-female-compact.onnx": {"size_bytes": 44353455, "md5_digest": "fdfe235e0dd910252d181eabdc715141"},
+      "piper-v2/kn_IN-ananya-medium.onnx.json": {"size_bytes": 2111, "md5_digest": "d448c64dc313f21bf26efdd8423c2b1a"}
+    }
+  },
+  "kn_IN-vikram-medium": {
+    "key": "kn_IN-vikram-medium",
+    "name": "vikram",
+    "language": {"code": "kn_IN", "family": "kn", "region": "IN",
+      "name_native": "ಕನ್ನಡ", "name_english": "Kannada", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "SYSPIN (IISc SPIRE Lab)",
+    "license": "MIT",
+    "files": {
+      "syspin-v2/vits-syspin-kn-male-compact.onnx": {"size_bytes": 44354600, "md5_digest": "d592dddc668bccdd4304d117d2967e35"},
+      "piper-v2/kn_IN-vikram-medium.onnx.json": {"size_bytes": 2196, "md5_digest": "3156ef757eeace1e8ac83bf49083561a"}
+    }
+  },
   "mr_IN-mrunal-medium": {
     "key": "mr_IN-mrunal-medium",
     "name": "mrunal",

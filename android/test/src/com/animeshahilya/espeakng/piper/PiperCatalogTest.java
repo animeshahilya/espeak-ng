@@ -109,16 +109,22 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(104, voices.size());
+        assertEquals(106, voices.size());
         // Only kept voices are bundled: none is filtered out again.
         assertEquals(voices.size(), PiperDownloads.keptOnly(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
-                // Every model is the INT8-weight build (int8-v1).
+                // Every model is the INT8-weight build (int8-v1), but the two below.
                 // One version of every voice: no Compact twins listed
                 assertFalse(v.key, PiperDownloads.isCompact(v.quality));
-                if (v.modelPath.startsWith("int8-v1/vits-")) {
+                if (v.modelPath.startsWith("syspin-v2/")) {
+                    // Kannada Vikram/Ananya, restored 2026-10-24 on users' request: their
+                    // earlier Compact model (never rebuilt for int8-v1), Standard key and config
+                    assertTrue(v.key, v.key.matches("kn_IN-(vikram|ananya)-medium"));
+                    assertTrue(v.key, v.modelPath.matches("syspin-v2/vits-syspin-kn-[a-z]+-compact\\.onnx"));
+                    assertEquals(v.key, "piper-v2/" + v.key + ".onnx.json", v.configPath);
+                } else if (v.modelPath.startsWith("int8-v1/vits-")) {
                     // SYSPIN / Rasa: one version, the Compact model under the Standard key
                     assertTrue(v.key, v.key.endsWith("-medium"));
                     assertTrue(v.key, v.modelPath.matches("int8-v1/vits-[^/]+-compact\\.onnx"));
@@ -185,11 +191,13 @@ public class PiperCatalogTest {
             assertNotEquals("hi_IN-pratham-medium", v.key);
         }
         // The shipped list: two voices at most per language, plus Indian
-        // English Rahul for English.
+        // English Rahul for English and Kannada's SYSPIN pair (users asked back).
         for (java.util.Map.Entry<String, java.util.Set<String>> e : keptAsset().entrySet()) {
-            assertTrue(e.getKey(), e.getValue().size() <= ("en".equals(e.getKey()) ? 3 : 2));
+            final int most = "en".equals(e.getKey()) ? 3 : "kn".equals(e.getKey()) ? 4 : 2;
+            assertTrue(e.getKey(), e.getValue().size() <= most);
         }
         assertTrue(keptAsset().get("en").contains("en_IN-rahul-medium"));
+        assertTrue(keptAsset().get("kn").contains("kn_IN-vikram-medium"));
     }
 
     @Test
