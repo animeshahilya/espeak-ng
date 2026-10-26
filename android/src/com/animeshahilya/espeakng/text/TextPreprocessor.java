@@ -1787,7 +1787,9 @@ public final class TextPreprocessor {
     }
 
     private static boolean isPunctOrNewline(char c) {
-        return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n' || isScriptPunctuation(c);
+        // Commas (Arabic, CJK) never end a chunk: a cut there breaks the sentence's tune.
+        return c == '.' || c == '!' || c == '?' || c == ';' || c == '\n'
+                || (isScriptPunctuation(c) && c != '،' && c != '、' && c != '，');
     }
 
     public static String languageTag(Voice voice) {

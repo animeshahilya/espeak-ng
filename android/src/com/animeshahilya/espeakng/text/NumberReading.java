@@ -289,8 +289,9 @@ public final class NumberReading {
 
     private static final String TEMP_SIGN_AMOUNT =
             "(?:(?<![\\p{L}\\d])([-−])\\s*)?\\b(\\d+(?:\\.\\d+)?)";
+    // A spelled-out unit is taken whole: "30°Celsius" was read "Celsiuselsius".
     private static final String TEMP_UNIT =
-            "(?:°\\s*([CFcf])|°(?![A-Za-z0-9])|deg(?:rees?)?\\s*([CFcf])\\b)";
+            "(?:°\\s*([CFcf])(?:elsius|ahrenheit)?(?![A-Za-z])|°(?![A-Za-z0-9])|deg(?:rees?)?\\s*([CFcf])\\b)";
 
     private static final Pattern TEMPERATURE_RANGE = Pattern.compile(
             TEMP_SIGN_AMOUNT + "\\s*(?:[-–—]|\\bto\\b)\\s*" + TEMP_SIGN_AMOUNT + "\\s*" + TEMP_UNIT);

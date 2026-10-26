@@ -47,6 +47,18 @@ public class TextSanitizeTest {
     }
 
     @Test
+    public void chunksEndAtFullStopsNotCommas() {
+        // Arabic: one full stop early on, then a long comma-separated sentence.
+        final StringBuilder sb = new StringBuilder("مرحبا. ");
+        while (sb.length() < TextPreprocessor.MAX_CHUNK_CHARS + 200) {
+            sb.append("كلمة، ");
+        }
+        final List<String> chunks = TextPreprocessor.chunkForWatchdog(sb.toString());
+        assertEquals("مرحبا. ", chunks.get(0));
+        assertEquals(sb.toString(), String.join("", chunks));
+    }
+
+    @Test
     public void stripUnpairedSurrogates() {
         assertEquals("Valid 😀 text", TextPreprocessor.stripUnpairedSurrogates("Valid 😀 text"));
         assertEquals("ab", TextPreprocessor.stripUnpairedSurrogates("a\uD800b"));

@@ -342,5 +342,7 @@ public class NumberReadingTest {
         assertEquals("Expect 10 to 15 degrees tonight", NumberReading.readTemperatures("Expect 10-15° tonight"));
         assertEquals("0 to 1 degree Celsius", NumberReading.readTemperatures("0-1°C"));
         assertEquals("minus 10 to minus 5 degrees Celsius", NumberReading.readTemperatures("-10 - -5°C"));
+        assertEquals("30 degrees Celsius today", NumberReading.readTemperatures("30°Celsius today"));
+        assertEquals("98 degrees Fahrenheit", NumberReading.readTemperatures("98 °Fahrenheit"));
     }
 }
