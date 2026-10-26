@@ -115,16 +115,11 @@ public class PiperCatalogTest {
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
-                // Every model is the INT8-weight build (int8-v1), but the two below.
+                // Every model is the INT8-weight build (int8-v1).
                 // One version of every voice: no Compact twins listed
                 assertFalse(v.key, PiperDownloads.isCompact(v.quality));
-                if (v.modelPath.startsWith("syspin-v2/")) {
-                    // Kannada Vikram/Ananya, restored 2026-10-24 on users' request: their
-                    // earlier Compact model (never rebuilt for int8-v1), Standard key and config
-                    assertTrue(v.key, v.key.matches("kn_IN-(vikram|ananya)-medium"));
-                    assertTrue(v.key, v.modelPath.matches("syspin-v2/vits-syspin-kn-[a-z]+-compact\\.onnx"));
-                    assertEquals(v.key, "piper-v2/" + v.key + ".onnx.json", v.configPath);
-                } else if (v.modelPath.startsWith("int8-v1/vits-")) {
+                assertFalse(v.key, v.modelPath.startsWith("syspin-v2/"));
+                if (v.modelPath.startsWith("int8-v1/vits-")) {
                     // SYSPIN / Rasa: one version, the Compact model under the Standard key
                     assertTrue(v.key, v.key.endsWith("-medium"));
                     assertTrue(v.key, v.modelPath.matches("int8-v1/vits-[^/]+-compact\\.onnx"));

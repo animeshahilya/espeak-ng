@@ -491,10 +491,11 @@ voices" does not, so voices can still be deleted to free space.
   ozgurguler antalia was rejected (55% CER).
   2026-10-24: Kannada keeps four - SYSPIN Vikram/Ananya back beside Rasa
   Spoorthi/Chetan at a Kannada user's request (they liked them; the ASR
-  ranking had dropped them). They ship their old `syspin-v2` Compact model
-  (never rebuilt for int8-v1) under the `-medium` key and config, so an
-  installed `-compact` copy migrates through `mergeCompactTwins` without a
-  download. No hosted NPU files: CPU on Snapdragon too.
+  ranking had dropped them). Since 2026-10-26 they ship int8-v1 like the
+  other SYSPIN voices (44 -> 30 MB; PC log-mel to the original 1.91/2.71 dB
+  vs 1.45/2.51 for the old Compact, ASR CER unchanged) under the `-medium`
+  key and config; an installed old copy is replaced by the daily update
+  check. No hosted NPU files: CPU on Snapdragon too.
 - **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
   voice misses that the language's other voices say fine; scratch/voice-eval
   findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,

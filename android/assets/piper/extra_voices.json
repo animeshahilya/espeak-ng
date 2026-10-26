@@ -190,7 +190,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-kn-female-compact.onnx": {"size_bytes": 44353455, "md5_digest": "fdfe235e0dd910252d181eabdc715141"},
+      "int8-v1/vits-syspin-kn-female-compact.onnx": {"size_bytes": 30483394, "md5_digest": "5ed51564552858ca9ccd848ea562ee46"},
       "piper-v2/kn_IN-ananya-medium.onnx.json": {"size_bytes": 2111, "md5_digest": "d448c64dc313f21bf26efdd8423c2b1a"}
     }
   },
@@ -205,7 +205,7 @@
     "source": "SYSPIN (IISc SPIRE Lab)",
     "license": "MIT",
     "files": {
-      "syspin-v2/vits-syspin-kn-male-compact.onnx": {"size_bytes": 44354600, "md5_digest": "d592dddc668bccdd4304d117d2967e35"},
+      "int8-v1/vits-syspin-kn-male-compact.onnx": {"size_bytes": 30483979, "md5_digest": "9acbb14de0100124a4fbb4786ca81d22"},
       "piper-v2/kn_IN-vikram-medium.onnx.json": {"size_bytes": 2196, "md5_digest": "3156ef757eeace1e8ac83bf49083561a"}
     }
   },
