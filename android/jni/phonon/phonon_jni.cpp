@@ -13,6 +13,7 @@
 
 #include <jni.h>
 
+#include <cstdint>
 #include <exception>
 #include <string>
 #include <vector>
@@ -21,11 +22,39 @@
 
 namespace {
 
+// Standard UTF-8. GetStringUTFChars gives modified UTF-8, where a character
+// past U+FFFF (an emoji) is two 3-byte surrogates: invalid text that made
+// seconds of noise in sherpa-onnx's TTS (k2-fsa/sherpa-onnx#4062).
 std::string str(JNIEnv* env, jstring s) {
   if (s == nullptr) return {};
-  const char* c = env->GetStringUTFChars(s, nullptr);
-  std::string out(c != nullptr ? c : "");
-  if (c != nullptr) env->ReleaseStringUTFChars(s, c);
+  const jsize n = env->GetStringLength(s);
+  std::u16string u(size_t(n), u'\0');
+  env->GetStringRegion(s, 0, n, reinterpret_cast<jchar*>(u.data()));
+  std::string out;
+  out.reserve(u.size());
+  for (size_t i = 0; i < u.size(); i++) {
+    uint32_t c = u[i];
+    if (c >= 0xD800 && c <= 0xDBFF && i + 1 < u.size() && u[i + 1] >= 0xDC00 && u[i + 1] <= 0xDFFF) {
+      c = 0x10000 + ((c - 0xD800) << 10) + (u[++i] - 0xDC00);
+    } else if (c >= 0xD800 && c <= 0xDFFF) {
+      c = 0xFFFD;  // unpaired
+    }
+    if (c < 0x80) {
+      out += char(c);
+    } else if (c < 0x800) {
+      out += char(0xC0 | (c >> 6));
+      out += char(0x80 | (c & 0x3F));
+    } else if (c < 0x10000) {
+      out += char(0xE0 | (c >> 12));
+      out += char(0x80 | ((c >> 6) & 0x3F));
+      out += char(0x80 | (c & 0x3F));
+    } else {
+      out += char(0xF0 | (c >> 18));
+      out += char(0x80 | ((c >> 12) & 0x3F));
+      out += char(0x80 | ((c >> 6) & 0x3F));
+      out += char(0x80 | (c & 0x3F));
+    }
+  }
   return out;
 }
 
