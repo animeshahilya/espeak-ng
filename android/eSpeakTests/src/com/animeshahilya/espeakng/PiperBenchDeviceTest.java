@@ -188,7 +188,10 @@ public class PiperBenchDeviceTest {
         for (File k : keys) {
             final File model = new File(k, "model.onnx");
             final File json = new File(k, "model.onnx.json");
-            if (copied < 2 && model.isFile() && json.isFile()) {
+            // Phoneme voices only: letter voices (SYSPIN, Rasa, Rahul) have
+            // no "espeak" section for the bench's phonemizer.
+            if (copied < 2 && model.isFile() && json.isFile() && new JSONObject(new String(
+                    Files.readAllBytes(json.toPath()), StandardCharsets.UTF_8)).has("espeak")) {
                 Files.copy(model.toPath(), new File(dir, k.getName() + ".onnx").toPath());
                 Files.copy(json.toPath(), new File(dir, k.getName() + ".onnx.json").toPath());
                 Log.i(TAG, "copied installed voice " + k.getName());
