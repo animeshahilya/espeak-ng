@@ -138,6 +138,14 @@ only to keep native memory alive needs such a rule; check the release dex
 tests hide this: it takes a garbage collection. A release APK repro: Natural
 voices -> Downloaded voices -> Test voice, a few times.
 
+Methods native code calls by name need the same care. Phonon's runner calls
+`Phonon.Stop.stopped()` and `Phonon.Frames.frame(float[])`; both are lambdas,
+which R8 merged into one class and renamed, so every Phonon request in a
+release build aborted the process ("no non-static method Lnp;.stopped()Z",
+Galaxy S25, 2026-10-24, until the crash guard suspended the voice).
+`proguard-rules.pro` keeps the interface methods, which holds for every
+implementation; a rule on implementing classes alone did not.
+
 ## Architecture
 
 ```
@@ -495,7 +503,10 @@ voices" does not, so voices can still be deleted to free space.
   other SYSPIN voices (44 -> 30 MB; PC log-mel to the original 1.91/2.71 dB
   vs 1.45/2.51 for the old Compact, ASR CER unchanged) under the `-medium`
   key and config; an installed old copy is replaced by the daily update
-  check. No hosted NPU files: CPU on Snapdragon too.
+  check. NPU files since 2026-10-27: the INT8 decoders npu-v1 already had
+  (vits-syspin-kn-*-npu.onnx), encoder/flow built by build_npu_set.py and
+  compiled for the three chips (Galaxy S25 Ultra, Vikram, fresh text, first
+  audio: phrases 407 -> 70 ms, sentences 313 -> 65 ms vs the CPU).
 - **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
   voice misses that the language's other voices say fine; scratch/voice-eval
   findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,
@@ -1074,6 +1085,33 @@ voices" does not, so voices can still be deleted to free space.
   script) before shipping a new kind of model or a new runtime version.
   Pixel 8: same speed as Microsoft's build (SYSPIN fp16 decoder 2.7-3.2x
   for all; Priyamvada whole equal); a session takes ~80 ms longer to create.
+- **Imported voices** (2026-10-27, `piper/VoiceImport`, Natural voices ->
+  Import a voice file): a voice the user downloaded elsewhere - a sherpa-onnx
+  archive (`vits-piper-*.tar.bz2`, `vits-coqui-*.tar.bz2`), a .zip or .tar.gz
+  of one, or the files themselves (multiple selection: the .onnx with its
+  .onnx.json or tokens.txt). Two kinds run like catalog voices: Piper voices
+  (eSpeak phonemes) and Coqui VITS letter voices (sherpa-onnx metadata
+  `frontend` "characters", `add_blank` 1). Without a Piper config one is
+  written from tokens.txt and the model's sherpa-onnx metadata the way
+  build_piper_configs.py made the SYSPIN/Rasa ones (`_ ^ $` -> the blank; CR
+  stripped from tokens.txt, SYSPIN's is CRLF). The model is opened once with
+  this app's ONNX Runtime and must take Piper's inputs (`input`,
+  `input_lengths`, `scales`): MMS, Kokoro, Matcha... are refused with a
+  reason, as is a voice whose language the config, its eSpeak voice, the
+  metadata or the file name (`en_US-name...`) do not tell. Key
+  `<code>-<name>-imported`, quality "imported" (label "Imported"), which no
+  catalog lists, so updates and restores pass it by; the `imported` file
+  marks the folder and `ModelFiles.dropOriginal` keeps its model (it could
+  not be downloaded again: twice the space, Amy low 127 MB). No NPU files:
+  CPU only. Archives are read by bytes, not names (content providers rename
+  files); only .onnx, .onnx.json and tokens.txt are kept, 1 GB at most.
+  bzip2 decodes natively (`util/Bzip2InputStream`, the vendored bzip2 1.0.8
+  in `src/bzip2`, `jni/bzip2Stream.c`), tar in `VoiceImport.unpackTar`:
+  with commons-compress in Java a first import took 65 s on a Pixel 8 (ART
+  had not compiled the decoder; 15 s once it had), natively 9 s.
+  `VoiceImportDeviceTest -e archives a.tar.bz2,b.tar.bz2` (files in the
+  app's external files folder) imports and speaks each. Checked with
+  sherpa-onnx's Amy low (Piper) and Bengali custom_female (Coqui).
 - Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
 
 ### Mixed languages (per-script languages)
@@ -1281,6 +1319,7 @@ android/
 │   ├── CMakeLists.txt                # Native build (links espeak-ng + JNI, builds libsonic)
 │   ├── jni/eSpeakService.c           # JNI bridge (17 native methods)
 │   ├── jni/piperPhonemizer.c         # eSpeak -> Piper phonemizer (clause records)
+│   ├── jni/bzip2Stream.c             # bzip2 decoding for imported voice archives (src/bzip2)
 │   └── include/                      # config.h, Log.h
 ├── res/                              # Resources (75 locale translations, plus night/v29/watch)
 ├── assets/                           # Bundled as-is: piper catalog JSON
@@ -1327,7 +1366,9 @@ Indian features, natural voices (`PiperE2EDeviceTest` - keep `j_*` passing,
 `PiperLatencyDeviceTest`, `PiperBenchDeviceTest`), latency
 (`EspeakLatencyDeviceTest`), word ranges (`RangeFramesDeviceTest`) and A/B
 harnesses (`EnUsProbeDeviceTest`,
-`PhraseCacheReplayDeviceTest`).
+`PhraseCacheReplayDeviceTest`). `NpuAuditDeviceTest` (run alone on a Snapdragon
+phone, `-e fetch true` to fetch missing NPU files first) loads every
+installed voice and logs where each runs.
 
 Lint (`./gradlew lintDebug`) reports 0 errors (2026-10-12); deliberate
 findings (androidx.preference internals, TalkBack focus on sub-screens, the
