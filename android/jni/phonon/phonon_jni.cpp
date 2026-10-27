@@ -109,8 +109,12 @@ JNIEXPORT jint JNICALL Java_com_animeshahilya_espeakng_piper_Phonon_nativeSample
 // whole text was said.
 JNIEXPORT jboolean JNICALL Java_com_animeshahilya_espeakng_piper_Phonon_nativeSynthesize(
     JNIEnv* env, jclass, jlong handle, jstring text, jstring voice, jobject stop, jobject sink) {
+  // A missing method (a shrinker renamed it) leaves NoSuchMethodError pending:
+  // return so Java throws it. Another JNI call first aborts the process.
   jmethodID stopped = env->GetMethodID(env->GetObjectClass(stop), "stopped", "()Z");
+  if (stopped == nullptr) return JNI_FALSE;
   jmethodID frame = env->GetMethodID(env->GetObjectClass(sink), "frame", "([F)Z");
+  if (frame == nullptr) return JNI_FALSE;
   try {
     phonon::Stats stats;
     model(handle)->synthesize(

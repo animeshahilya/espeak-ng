@@ -39,10 +39,19 @@
     java.nio.ByteBuffer mappedMid;
 }
 
-# Phonon's native runner (jni/phonon/phonon_jni.cpp) polls the stop flag by
-# name - GetMethodID(..., "stopped", "()Z") - with no Java call site R8 can
-# see: keep the method on every implementation. Phonon's own native methods
-# are kept by the default rules.
+# Phonon's native runner (jni/phonon/phonon_jni.cpp) calls its callbacks by
+# name - GetMethodID(..., "stopped", "()Z") and (..., "frame", "([F)Z") - with
+# no Java call site R8 can see. Both are lambdas (PiperModel.streamPhonon),
+# which R8 merged into one class and renamed: every Phonon request in the
+# release build aborted ("no non-static method Lnp;.stopped()Z", Galaxy S25,
+# 2026-10-24) and the crash guard suspended the voice. Keeping the interface
+# methods keeps the names on every implementation, merged or not. Phonon's
+# own native methods are kept by the default rules.
+-keep interface com.animeshahilya.espeakng.piper.Phonon$Stop { boolean stopped(); }
+-keep interface com.animeshahilya.espeakng.piper.Phonon$Frames { boolean frame(float[]); }
 -keepclassmembers class * implements com.animeshahilya.espeakng.piper.Phonon$Stop {
     boolean stopped();
+}
+-keepclassmembers class * implements com.animeshahilya.espeakng.piper.Phonon$Frames {
+    boolean frame(float[]);
 }
