@@ -73,6 +73,12 @@
             android:summary="@string/setting_piper_download_summary"
             android:dependency="piper_enabled"
             app:iconSpaceReserved="false" />
+        <Preference
+            android:key="action_piper_import"
+            android:title="@string/setting_piper_import"
+            android:summary="@string/setting_piper_import_summary"
+            android:dependency="piper_enabled"
+            app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             android:key="piper_supertonic_beta"
             android:title="@string/setting_piper_supertonic_beta"

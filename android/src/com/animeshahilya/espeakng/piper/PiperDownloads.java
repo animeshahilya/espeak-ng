@@ -1252,10 +1252,7 @@ public final class PiperDownloads {
             if (!staging.renameTo(dest)) {
                 throw new IOException("Cannot move " + staging + " to " + dest);
             }
-            PiperVoiceStore.invalidate();
-
-            final String assigned = assignIfFirst(storageContext, key);
-            broadcastChanged(appContext, key, assigned);
+            announceInstalled(appContext, storageContext, key);
             // Files that go with some voices: NPU decoders (Snapdragon build), Arabic vowel marks.
             EspeakApp.runAsync(() -> {
                 fetchVoiceExtras(appContext, storageContext);
@@ -2010,6 +2007,12 @@ public final class PiperDownloads {
         if (v != null) {
             PiperEngine.get().prepare(v.key, v.model(), v.config);
         }
+    }
+
+    /** A voice folder just moved in (download or import): list it, give its language to it if first, tell the app. */
+    static void announceInstalled(Context appContext, Context storageContext, String key) {
+        PiperVoiceStore.invalidate();
+        broadcastChanged(appContext, key, assignIfFirst(storageContext, key));
     }
 
     public static void broadcastChanged(Context context, String key, String assignedLanguage) {

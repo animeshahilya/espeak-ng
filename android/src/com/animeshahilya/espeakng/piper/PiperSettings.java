@@ -73,6 +73,7 @@ public final class PiperSettings {
     private static final String KEY_LANGUAGES = "category_piper_languages";
     private static final String KEY_DOWNLOAD = "action_piper_download";
     private static final String KEY_MANAGE = "action_piper_manage";
+    private static final String KEY_IMPORT = "action_piper_import";
     private static final String KEY_SNAPDRAGON = "action_piper_snapdragon";
     /** Where both builds are published; the Snapdragon one is espeak-snapdragon-*.apk. */
     static final String SNAPDRAGON_RELEASES = "https://github.com/animeshahilya/espeak-ng/releases/latest";
@@ -138,6 +139,22 @@ public final class PiperSettings {
             });
             manage.setOnPreferenceClickListener(p -> {
                 openManage(f, prefs);
+                return true;
+            });
+        }
+        final Preference importVoice = screen.findPreference(KEY_IMPORT);
+        if (importVoice != null && context instanceof android.app.Activity) {
+            importVoice.setOnPreferenceClickListener(p -> {
+                // Several files: a voice's .onnx with its .onnx.json or tokens.txt.
+                final Intent pick = new Intent(Intent.ACTION_OPEN_DOCUMENT)
+                        .addCategory(Intent.CATEGORY_OPENABLE).setType("*/*")
+                        .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                try {
+                    ((android.app.Activity) context).startActivityForResult(pick,
+                            com.animeshahilya.espeakng.TtsSettingsActivity.REQUEST_CODE_IMPORT_NATURAL_VOICE);
+                } catch (android.content.ActivityNotFoundException e) {
+                    Toast.makeText(context, R.string.no_file_picker, Toast.LENGTH_LONG).show();
+                }
                 return true;
             });
         }
@@ -440,6 +457,7 @@ public final class PiperSettings {
 
     private static String qualityLabel(Context context, String quality) {
         return context.getString(PiperDownloads.isEnhanced(quality) ? R.string.piper_quality_enhanced
+                : VoiceImport.QUALITY.equals(quality) ? R.string.piper_quality_imported
                 : R.string.piper_quality_standard);
     }
 

@@ -76,6 +76,11 @@ public final class PiperVoiceStore {
     public static final String MODEL_FILE = "model.onnx";
     public static final String CONFIG_FILE = "model.onnx.json";
     /**
+     * Marks a voice the user imported ({@link VoiceImport}; holds the file name
+     * it came from): no catalog can restore it, so its model is never deleted.
+     */
+    public static final String IMPORTED_FILE = "imported";
+    /**
      * Content-addressed model store: voices sharing one upstream file (all 20
      * Rasa voices share {@code vits-rasa-13-piper-model.onnx}) keep a single
      * copy here, and each voice directory links it as {@link #MODEL_FILE}.

@@ -29,11 +29,13 @@ public final class ModelFiles {
      * phone kept both, twice the space (Piper medium 17 + 18 MB). A shared
      * model (all Rasa voices) goes too; its optimized copy stays in the
      * shared store. Kept where a voice has no {@code source} record: it could
-     * not be matched to its catalog entry again. (The Snapdragon build kept
-     * originals to cut NPU graphs from until its NPU files came hosted.)
+     * not be matched to its catalog entry again, or was imported (no catalog
+     * has it). (The Snapdragon build kept originals to cut NPU graphs from
+     * until its NPU files came hosted.)
      */
     static void dropOriginal(File onnx) {
-        if (!new File(onnx.getParentFile(), PiperModel.SOURCE_FILE).isFile()) {
+        if (!new File(onnx.getParentFile(), PiperModel.SOURCE_FILE).isFile()
+                || new File(onnx.getParentFile(), PiperVoiceStore.IMPORTED_FILE).isFile()) {
             return;
         }
         try {

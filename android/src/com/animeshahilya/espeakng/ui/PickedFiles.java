@@ -31,6 +31,9 @@ import android.widget.Toast;
 import com.animeshahilya.espeakng.EspeakApp;
 import com.animeshahilya.espeakng.R;
 import com.animeshahilya.espeakng.TtsSettingsActivity;
+import com.animeshahilya.espeakng.piper.PiperSettings;
+import com.animeshahilya.espeakng.piper.PiperVoiceStore;
+import com.animeshahilya.espeakng.piper.VoiceImport;
 import com.animeshahilya.espeakng.text.AsciiUtils;
 import com.animeshahilya.espeakng.tts.CheckVoiceData;
 import com.animeshahilya.espeakng.tts.ImportedVariants;
@@ -141,6 +144,31 @@ public final class PickedFiles {
             }
         }
         return result != null ? result : "imported_data";
+    }
+
+    /** Installs the natural voice the user picked (an archive, or its files); says how it went. */
+    public static void importNaturalVoice(final Activity activity, final java.util.List<Uri> uris) {
+        final Context storage = EspeakApp.requireStorageContext(activity);
+        final Context app = activity.getApplicationContext();
+        final java.util.List<String> names = new java.util.ArrayList<>();
+        for (Uri uri : uris) {
+            names.add(getFileNameFromUri(activity, uri));
+        }
+        Toast.makeText(activity, R.string.piper_import_started, Toast.LENGTH_LONG).show();
+        runInBackground(() -> {
+            try {
+                final PiperVoiceStore.Installed v = VoiceImport.install(app, storage, uris, names);
+                return activity.getString(R.string.piper_import_done, v.config.displayName(),
+                        PiperSettings.languageName(v.config.languageFamily));
+            } catch (VoiceImport.ImportException e) {
+                Log.w(TAG, "Voice import refused: " + e.getMessage());
+                return activity.getString(e.messageRes);
+            }
+        }, message -> {
+            if (!TtsSettingsActivity.isGone(activity)) {
+                Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /** Up to {@code max} bytes from the stream (fewer only at its end). */

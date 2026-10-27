@@ -92,6 +92,8 @@ dependencies {
         implementation 'com.qualcomm.qti:qnn-runtime:2.50.0'
     }
     testImplementation 'junit:junit:4.13.2'
+    // Writes the tar archives VoiceImportTest reads (the app reads them itself).
+    testImplementation 'org.apache.commons:commons-compress:1.27.1'
     // Real org.json for the JVM unit tests: android.jar's is a stub, and
     // returnDefaultValues would make every Piper config parse come back empty.
     testImplementation 'org.json:json:20250517'

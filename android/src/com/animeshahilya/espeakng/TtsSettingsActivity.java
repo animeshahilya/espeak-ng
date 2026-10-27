@@ -344,10 +344,26 @@ public class TtsSettingsActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_IMPORT_BACKUP = 1005;
     public static final int REQUEST_CODE_EXPORT_PROFILE = 1006;
     public static final int REQUEST_CODE_IMPORT_PROFILE = 1007;
+    public static final int REQUEST_CODE_IMPORT_NATURAL_VOICE = 1008;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_IMPORT_NATURAL_VOICE && resultCode == RESULT_OK && data != null) {
+            // One archive, or several files (multiple selection fills clip data).
+            final java.util.List<Uri> uris = new java.util.ArrayList<>();
+            if (data.getClipData() != null) {
+                for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                    uris.add(data.getClipData().getItemAt(i).getUri());
+                }
+            } else if (data.getData() != null) {
+                uris.add(data.getData());
+            }
+            if (!uris.isEmpty()) {
+                PickedFiles.importNaturalVoice(this, uris);
+            }
+            return;
+        }
         if (resultCode != RESULT_OK || data == null || data.getData() == null) {
             return;
         }

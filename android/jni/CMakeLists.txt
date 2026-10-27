@@ -62,10 +62,24 @@ target_compile_definitions(zstddec PRIVATE
 # slower (Russian 225 ms on a Pixel 8), and nobody debugs inside zstd.
 target_compile_options(zstddec PRIVATE -O2)
 
+# bzip2 library (vendored, src/bzip2): natural voices imported as .tar.bz2
+# (jni/bzip2Stream.c). Only decompression is reached; the linker drops the
+# rest. Optimized in every build, like zstd.
+set(BZIP2_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../src/bzip2")
+add_library(bz2dec OBJECT
+        "${BZIP2_DIR}/bzlib.c" "${BZIP2_DIR}/decompress.c" "${BZIP2_DIR}/huffman.c"
+        "${BZIP2_DIR}/crctable.c" "${BZIP2_DIR}/randtable.c" "${BZIP2_DIR}/compress.c"
+        "${BZIP2_DIR}/blocksort.c")
+set_property(TARGET bz2dec PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(bz2dec PRIVATE BZ_NO_STDIO)
+target_compile_options(bz2dec PRIVATE -O2)
+
 add_library(ttsespeak SHARED
         jni/eSpeakService.c
         jni/piperPhonemizer.c
+        jni/bzip2Stream.c
         $<TARGET_OBJECTS:zstddec>
+        $<TARGET_OBJECTS:bz2dec>
         )
 # SONIC_DIR: the Piper path time-stretches its audio with the libsonic that
 # is already linked into espeak-ng (see nativeSonicStretch), so only the
@@ -75,6 +89,7 @@ target_include_directories(ttsespeak PRIVATE
         jni
         "${SONIC_DIR}"
         "${ZSTD_DIR}"
+        "${BZIP2_DIR}"
 )
 target_link_libraries(ttsespeak PRIVATE
         espeak-ng ${A_LOG} ${A_ANDROID}

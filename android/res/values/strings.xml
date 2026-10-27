@@ -617,6 +617,16 @@
     <item quantity="other">%d voices</item>
   </plurals>
   <string name="piper_quality_standard">Standard</string>
+  <string name="piper_quality_imported">Imported</string>
+  <string name="setting_piper_import">Import a voice file</string>
+  <string name="setting_piper_import_summary">A Piper or sherpa-onnx voice you downloaded: its .tar.bz2 or .zip, or the .onnx file with its .onnx.json or tokens.txt</string>
+  <string name="piper_import_started">Importing the voice…</string>
+  <string name="piper_import_done">%1$s imported for %2$s</string>
+  <string name="piper_import_no_model">No voice model (.onnx file) in what you picked.</string>
+  <string name="piper_import_no_config">The voice\'s .onnx.json or tokens.txt is missing. Pick it together with the .onnx file.</string>
+  <string name="piper_import_unsupported">This kind of voice is not supported. Piper voices and Coqui VITS voices are.</string>
+  <string name="piper_import_language">Could not tell which language this voice speaks. Keep the language in its file name, like en_US-name.onnx.</string>
+  <string name="piper_import_failed">Could not import the voice. The file may be damaged, incomplete or too large.</string>
   <string name="piper_quality_enhanced">Enhanced</string>
   <string name="piper_quality_enhanced_recommended">Enhanced, recommended for this phone</string>
   <string name="piper_quality_enhanced_slow">Enhanced, may pause on this phone</string>
