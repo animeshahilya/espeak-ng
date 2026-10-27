@@ -1012,6 +1012,13 @@ Translator *SelectTranslator(const char *name)
 		} else if (name2 == L('o', 'r'))
 			tr->letter_bits_offset = OFFSET_ORIYA;
 		SetIndicLetters(tr);
+		if (name2 == L('p', 'a')) {
+			// ਕ਼ (qaf) has no precomposed letter, so its nukta stays in the
+			// word: counted with the consonant, the vowel sign after it reads
+			// as a vowel (C) context) instead of its letter name.
+			static const char gurmukhi_nukta[] = { 0x3c, 0 };
+			SetLetterBits(tr, LETTERGP_C, gurmukhi_nukta);
+		}
 	}
 		break;
 	case L('h', 'r'): // Croatian

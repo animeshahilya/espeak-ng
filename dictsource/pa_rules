@@ -194,6 +194,9 @@ C)        ੌੰ         O~
         ਕ          kV        // inherent vowel
         ਕ (B       k         // no inherent vowel if vowel or virama follows
         ਕ (_       k         // omit inherent vowel at end of word
+        ਕ਼          qV        // qaf has no precomposed letter: ਕ + nukta, as Hindi क़
+        ਕ਼ (B       q
+        ਕ਼ (_       q
      ੱ) ਕ          k:V
      ੱ) ਕ (B       k:
      ੱ) ਕ (_       k:
