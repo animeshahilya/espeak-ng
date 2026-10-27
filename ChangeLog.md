@@ -10,73 +10,52 @@ The espeak-ng project is a fork of the espeak project.
 ### 2.10 (Android)
 
 *  **Natural voices**:
-   *  Voices start speaking sooner: the Indian voices about twice as fast on phones without a Snapdragon NPU, and short screen reader phrases faster on all phones.
-   *  The Indian voices read numbers themselves in Bengali, Gujarati, Hindi, Kannada, Malayalam, Marathi, Nepali, Punjabi, Tamil and Telugu, and in Bhojpuri, Chhattisgarhi, Magahi, Maithili, Sanskrit, Dogri and Bodo, instead of switching to eSpeak for them.
-   *  Each SYSPIN and Rasa voice now comes in one version, the smaller and faster one. Voices you already have move over by themselves.
-   *  Kannada voices Vikram and Ananya are back, next to Spoorthi and Chetan, and download 30 MB instead of 44.
-   *  New: import a voice you downloaded elsewhere (Natural voices, Import a voice file). Piper and Coqui voices from sherpa-onnx work, as an archive or as separate files. Imported voices are never replaced by updates.
-   *  Natural voices no longer click or crackle in the middle of sentences, and keep their own pitch at the default setting.
-   *  Less hiss on Kannada Spoorthi.
-   *  Long text keeps a steadier loudness, with a slightly longer pause between sentences.
-   *  Speech no longer stops partway, or falls back to eSpeak for a while, when another voice loads in the background or when natural voices are switched off and on.
-   *  The first words after speech restarts come faster.
-*  **Snapdragon version**:
-   *  New: 37 Phonon English voices that start speaking almost instantly. On these phones they replace the US and UK natural voices in the download list; Indian English stays.
-   *  Natural voices and Supertonic run on the NPU of the Snapdragon 8 Gen 3, 8 Elite and 8 Elite Gen 5. Their NPU files come ready-made for each chip, so a voice is ready at once instead of after a wait, and takes less space.
-   *  Natural voices load about twice as fast.
-   *  Kannada Vikram and Ananya now run on the NPU too, about five times faster to start.
-   *  If the NPU stops working while speaking, the voice carries on without it instead of going silent.
+   *  They start speaking sooner, on every phone.
+   *  Indian voices read numbers themselves instead of switching to eSpeak.
+   *  Import your own voice: Natural voices, Import a voice file. Piper and Coqui voices from sherpa-onnx work.
+   *  Kannada Vikram and Ananya are back, and smaller to download.
+   *  Each SYSPIN and Rasa voice comes in one smaller, faster version. Your voices switch over by themselves.
+   *  No more clicks or crackles mid-sentence, and the voice keeps its own pitch at the default setting.
+   *  Steadier loudness in long text, and less hiss on Kannada Spoorthi.
+   *  Speech no longer stops or falls back to eSpeak while another voice loads.
+*  **Recent Snapdragon phones** (8 Gen 3, 8 Elite and 8 Elite Gen 5):
+   *  New: 37 Phonon English voices that start almost instantly.
+   *  Voices are ready on the NPU right after download, with no wait, and load faster.
+   *  Kannada Vikram and Ananya run on the NPU too.
+   *  If the NPU fails while speaking, the voice keeps talking.
    *  The Snapdragon download is half the size: 46 MB instead of 94.
-   *  New, off by default: Supertonic voices (beta), 10 voices in each of 31 languages. Turn them on in Natural voices.
-   *  Leftover voice files from older versions are removed, freeing space.
-*  **Speech by app and other apps**:
-   *  Speech by app: give any app its own speed, pitch, volume and punctuation, or let it use eSpeak only. Keep my speech rate, pitch and volume moved here, under All apps.
-   *  Recent speech: a Quick Settings tile that lists the last things apps said, to hear again slowly, spelled out, or to copy. It keeps them in memory for five minutes only. It replaces Reading history.
-   *  Presets: save your voice setup under a name and switch from Backup and about, a Quick Settings tile or Tasker.
-   *  Let other apps change settings (off by default): Tasker and similar apps can set speed, pitch, volume, punctuation and more.
-   *  The sleep timer now stops reading apps at the chosen time and never silences TalkBack.
-*  **Speech by language** (Mixed-language text):
-   *  Give each language its own speed, pitch and volume.
-   *  Play a short pause or tone where speech switches language.
-   *  Choose who reads a language inside other text: its own voice, eSpeak, or the voice around it.
-   *  Choose per language how readily speech switches language and how numbers are read.
-   *  Try your own text to hear and see which voice reads each part.
-   *  User dictionary entries can be read in a chosen language.
-   *  How readily speech switches language: word by word, by phrase or by sentence.
-   *  Web links and email addresses stay in one piece when text mixes languages.
-   *  When an app or TalkBack marks text as a language, that language's voice reads it.
-   *  New, off by default (Advanced): recognise Spanish, French, German, Italian and Portuguese phrases inside other text, and read typed letters in the keyboard's language.
-*  **Reading** (new options, all off by default):
-   *  A Numbers and math page: dates, phone numbers, temperatures, math expressions, fractions, superscripts and subscripts, dimensions like 1920x1080, Roman numerals and ordinals.
-   *  Split words joined by capitals (getUserName).
-   *  Name a symbol in quotes: "press '_'" reads the symbol's name instead of skipping it.
-   *  Sound enhancement: optional sound shaping with a preview, now with softer starts and ends.
-   *  Intonation is one choice: Natural, Flat or Expressive, each with clearer questions if you like.
+   *  Supertonic voices (beta, off by default): 10 voices in each of 31 languages.
+*  **New ways to control speech**:
+   *  Speech by app: give any app its own speed, pitch, volume and punctuation.
+   *  Speech by language: give each language its own speed, pitch, volume and voice, choose how readily speech switches language, and hear a pause or tone where it does.
+   *  Recent speech tile: hear the last things apps said again, slowly or spelled out, or copy them. It replaces Reading history.
+   *  Presets: save your voice setup and switch from a Quick Settings tile or Tasker.
+   *  Tasker and other apps can change settings, if you allow it.
+   *  The sleep timer stops reading apps at the chosen time and never silences TalkBack.
+*  **Reading** (new options, off by default):
+   *  Dates, phone numbers, temperatures, math, fractions, Roman numerals and more.
+   *  Split joined words like getUserName.
+   *  Recognise Spanish, French, German, Italian and Portuguese phrases inside other text.
+   *  Sound enhancement, with a preview.
 *  **Settings**:
-   *  Simpler settings: the first page has the voice, speed, rate boost, pitch and punctuation, and everything people rarely change is under Advanced.
-   *  Short, plain descriptions with examples, like "$5.50 as 5 dollars 50 cents".
-   *  Punctuation and symbols and Reading are one page now, Text and symbols. Supported languages and Favorite voices share one Voice list page.
-   *  Previews play your own text, or the last thing you heard.
-   *  Settings search works again and takes you straight to the setting.
-   *  Clearer icons on the first page.
-   *  Settings no longer show through the status bar, and cards stay whole after a switch changes.
-   *  Loading a voice profile keeps your punctuation setting.
-   *  Voice variant files shared by NVDA users can be imported, and appear under Voice variant, Imported.
+   *  Simpler: the first page has the essentials, and rarely used options are under Advanced.
+   *  Short descriptions with examples, and clearer icons.
+   *  Search works again and takes you straight to the setting.
+   *  Previews can play your own text.
+   *  Voice variant files shared by NVDA users can be imported.
 *  **Languages**:
-   *  Numbers like 1,00,000 and ₹500 in Bengali, Kannada, Tamil and other Indian scripts are read in the language, without English words in between.
-   *  Hindi plurals and some short words, and several Urdu sounds, are pronounced better.
-   *  Malayalam: words like മേസ്തിരി are pronounced better.
-   *  Punjabi: ਕ਼ is pronounced right, and the vowel sign after it is no longer read by name.
-   *  A short pause after Indian, Arabic, Chinese and other full stops and commas even without a space after them.
+   *  Indian numbers like 1,00,000 and ₹500 are read in the language itself.
+   *  Better Hindi, Urdu, Malayalam and Punjabi pronunciation.
+   *  Web links and email addresses stay whole in mixed-language text.
+   *  Text an app marks as a language is read by that language's voice.
+   *  A short pause after Indian, Arabic and Chinese punctuation, even with no space after it.
    *  Swiss German phonetic letters read correctly again.
-   *  Symbol names updated from NVDA, for English and Taiwanese Chinese.
+   *  Updated symbol names from NVDA.
 *  **App**:
-   *  Updates from inside the app: Backup and about, Check for updates. The app also checks once a day while settings are open.
-   *  Speech starts sooner after the phone or the app starts.
-   *  About 4 MB smaller to download.
-   *  A shared dictionary or backup file can no longer freeze speech or change anything but settings.
-   *  Settings headings work better with TalkBack, and the main page no longer offers "Navigate up" when opened from the app icon.
-   *  Many stability fixes, including crashes and missing word highlighting at the start of speech.
+   *  Update from inside the app: Backup and about, Check for updates.
+   *  Faster start, and about 4 MB smaller.
+   *  A shared dictionary or backup file can no longer freeze speech.
+   *  Better with TalkBack, and many stability fixes.
 
 ### 2.9 (Android)
 
