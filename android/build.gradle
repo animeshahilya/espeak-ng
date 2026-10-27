@@ -126,8 +126,8 @@ android {
         // offered on the 8 Gen 3 and later (NpuFiles.TARGETS), all Android 14+.
         minSdk = project.hasProperty('snapdragon') ? 27 : 26
         targetSdk = 36
-        versionCode = 34
-        versionName = "2.10 beta 2"
+        versionCode = 35
+        versionName = "2.10"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // PiperModel.hasNpuRuntime: known here, so the standard build never
         // loads ONNX Runtime just to ask (it did on every settings open).
