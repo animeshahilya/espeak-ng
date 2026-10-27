@@ -1,9 +1,9 @@
 {
-  "versionCode": 34,
-  "versionName": "2.10 beta 2",
-  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.10-beta.2/espeak-ng-2.10-beta.2.apk",
-  "sha256": "12146f259d817290d7e6250f7bb7e619d111212fa0223f629130502ff9a5e7be",
-  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.10-beta.2/espeak-ng-2.10-beta.2-snapdragon.apk",
-  "snapdragonSha256": "542be1a4e3929b6e422b201fcf036797d4249c86d278474519b38c43ff215b02",
-  "notes": "Simpler settings with rare options under Advanced, settings search works again, web links stay whole in mixed-language text, and faster natural voices on Snapdragon."
+  "versionCode": 35,
+  "versionName": "2.10",
+  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.10/espeak-ng-2.10.apk",
+  "sha256": "792604ad1c96a26a722421b8739466809b7a3ee2f2563dda57ef36598d3dd7e9",
+  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.10/espeak-ng-2.10-snapdragon.apk",
+  "snapdragonSha256": "7f01a873c10a59454ac72a0ebf0c09c9cbc304ba5b29a712e6f93f8b78591b43",
+  "notes": "Import your own natural voices, speech settings per app, a Recent speech tile, presets, Phonon English voices and a much smaller download on recent Snapdragon phones, and many fixes."
 }
