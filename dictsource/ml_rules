@@ -6,7 +6,8 @@
 // B means a combining vowel sign or a virama
 
 // change (k t. t p) to (g d. d b) if followed by a vowel, unless at start of a word or preceeded by an unvoiced stop consonant ??
-.L01 _ ക്  ച്  ട്  ത്  പ്  
+// A stop after a sibilant stays voiceless too: സ്ത [st̪], not [sd̪].
+.L01 _ ക്  ച്  ട്  ത്  പ്  സ്  ഷ്  ശ്  
 
 
 .replace

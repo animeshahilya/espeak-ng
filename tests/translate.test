@@ -73,10 +73,14 @@ test_phon te "'aNkam p'an^ca m'an.t.a" "అంకం పంచ మంట"
 test_phon gu "d'e:k#v,u~ m'a:ml,o: k'a:l.o:" "દેખવું મામલો કાળો"
 # Malayalam: ഴ is [ɻ]; final virama is a short vowel
 test_phon ml "v'il.impy p'a:t.:y v'a:z.a" "വിളിമ്പ് പാട്ട് വാഴ"
+# Malayalam: a stop after a sibilant stays voiceless (സ്ത is [st], not [sd])
+test_phon ml "m'e:stiri st'o:tr@m" "മേസ്തിരി സ്തോത്രം"
 # Tamil: ழ is [ɻ]; ட் is voiceless before a voiceless stop
 test_phon ta "'a:jUt.k,a:lVm t'Vmiz." "ஆயுட்காலம் தமிழ்"
 # Punjabi: ਹ after a vowel is a tone, not [h]
 test_phon pa "n'i~ s'on.a" "ਨੀਂਹ ਸੋਹਣਾ"
+# Punjabi: ਕ਼ (ਕ + nukta, no precomposed letter) is [q] and keeps its vowel sign
+test_phon pa "b'aqi" "ਬਾਕ਼ੀ"
 
 # pull request: MatchRule: Do not overflow the text https://github.com/espeak-ng/espeak-ng/pull/1126
 test_phon en "k'apIt@Lz" "capitals"
