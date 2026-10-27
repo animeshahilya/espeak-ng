@@ -57,6 +57,15 @@ public class NvdaSymbolProcessorTest {
         assertEquals("at", NvdaSymbolProcessor.processSingleSymbol("@", "xx"));
     }
 
+    /** NVDA's corrected English names (nvaccess/nvda#20859). */
+    @Test
+    public void englishNamesFollowNvdaCorrections() {
+        assertEquals("multiset multiplication", NvdaSymbolProcessor.processSingleSymbol("⊍", "en"));
+        assertEquals("superscript minus", NvdaSymbolProcessor.processSingleSymbol("⁻", "en"));
+        assertEquals("orthogonal to", NvdaSymbolProcessor.processSingleSymbol("⟂", "en"));
+        assertEquals("braille 4 5 6 7", NvdaSymbolProcessor.processSingleSymbol("⡸", "en"));
+    }
+
     /** Region tags and eSpeak names find NVDA's locale: pt-br, pt, zh, ku. */
     @Test
     public void localesResolveLikeNvda() {

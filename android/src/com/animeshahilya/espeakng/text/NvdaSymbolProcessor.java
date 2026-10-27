@@ -494,7 +494,7 @@ public final class NvdaSymbolProcessor {
         sym("\u220a", "small element of", N, n);
         sym("\u2201", "complement of the set", N, n);
         sym("\u2216", "set minus", N, n);
-        sym("\u228d", "set union", N, n);
+        sym("\u228d", "multiset multiplication", N, n);
         sym("\u2118", "power set of the set", N, n);
         sym("\ud835\udcab", "power set of the set", N, n); // U+1D4AB
         sym("\ud835\udd13", "power set of the set", N, n); // U+1D493
@@ -562,7 +562,7 @@ public final class NvdaSymbolProcessor {
         sym("\u25ad", "rectangle", N, n);
         sym("\u2226", "not parallel to", N, n);
         sym("\u27c2", "orthogonal to", N, n);
-        sym("\u207b", "inverse", S, n);
+        sym("\u207b", "superscript minus", S, n);
         sym("\u25b3", "triangle", N, n);
         sym("\u25ad", "rectangle", N, n);
         sym("\u221f", "right angle", N, n);
@@ -570,7 +570,6 @@ public final class NvdaSymbolProcessor {
         sym("\u2225", "parallel to", N, n);
         sym("\u2226", "not parallel to", N, n);
         sym("\u22a5", "perpendicular to", N, n);
-        sym("\u27c2", "perpendicular to", N, n);
         sym("\u2016", "norm of vector", N, n);
         sym("\u0302", "hat", N, n);
         sym("\u223f", "sine wave", N, n);
