@@ -1113,6 +1113,25 @@
     "size_bytes": 1065484
    }
   },
+  "kn_IN-ananya-medium": {
+   "enc": {
+    "md5_digest": "64bfaf4bc08b02d1fa63e5a9af17ee29",
+    "path": "npu-v2/vits-syspin-kn-female-compact-enc256.onnx",
+    "size_bytes": 7183269
+   },
+   "flow": {
+    "md5_digest": "80745912331388348f45467e927faeae",
+    "path": "npu-v2/vits-syspin-kn-female-compact-flow2048.onnx",
+    "size_bytes": 7321097
+   },
+   "frames": 2048,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "0f65eae9e3462fde4ff19d5563f1e1e9",
+    "path": "npu-v2/vits-syspin-kn-female-compact-mid.onnx",
+    "size_bytes": 1301246
+   }
+  },
   "kn_IN-chetan-medium": {
    "enc": {
     "md5_digest": "6fc322b9150d206f89abec472679b524",
@@ -1149,6 +1168,25 @@
     "md5_digest": "d5e305dcc91838da18d5b5a06845f780",
     "path": "npu-v2/vits-rasa-13-compact-mid.onnx",
     "size_bytes": 1616473
+   }
+  },
+  "kn_IN-vikram-medium": {
+   "enc": {
+    "md5_digest": "975b6afb31f79d5956519f0413d87e49",
+    "path": "npu-v2/vits-syspin-kn-male-compact-enc256.onnx",
+    "size_bytes": 7183861
+   },
+   "flow": {
+    "md5_digest": "ff4dd7eabe2a7bad2213614b63c4cf48",
+    "path": "npu-v2/vits-syspin-kn-male-compact-flow2048.onnx",
+    "size_bytes": 7321097
+   },
+   "frames": 2048,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "8e770d7e7c183def552a3ce997aac94b",
+    "path": "npu-v2/vits-syspin-kn-male-compact-mid.onnx",
+    "size_bytes": 1301246
    }
   },
   "ko_KR-kss-medium": {

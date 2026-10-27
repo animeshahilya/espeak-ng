@@ -91,6 +91,16 @@
    "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
    "path": "npu-v1/vits-rasa-13-npu.onnx"
   },
+  "kn_IN-vikram-medium": {
+   "size_bytes": 14759312,
+   "md5_digest": "7067b7dfc951dee356776e4c28d4481d",
+   "path": "npu-v1/vits-syspin-kn-male-npu.onnx"
+  },
+  "kn_IN-ananya-medium": {
+   "size_bytes": 14759312,
+   "md5_digest": "4d4f9250fdff9a7e8ba25127619949cc",
+   "path": "npu-v1/vits-syspin-kn-female-npu.onnx"
+  },
   "kn_IN-spoorthi-medium": {
    "size_bytes": 14873545,
    "md5_digest": "db474bb900fd9a4244afb3235a58a1c2",
