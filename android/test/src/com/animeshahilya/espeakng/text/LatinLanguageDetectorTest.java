@@ -84,4 +84,59 @@ public class LatinLanguageDetectorTest {
         assertNull(LatinLanguageDetector.detect("The quick brown fox jumps over the lazy dog.", "eng"));
         assertNull(LatinLanguageDetector.detect("Please click the button to continue.", "eng"));
     }
+
+    // Written after the 2026-10-29 lists, never tuned on.
+    private static final String[][] NEW_LANGUAGES = {
+            {"nld", "Ik ben niet thuis, maar ik bel straks."},
+            {"nld", "Dank je wel voor je hulp, het was fijn."},
+            {"nld", "Waar is het station van de stad?"},
+            {"pol", "Dziękuję bardzo za pomoc."},
+            {"pol", "Nie wiem, gdzie jest dworzec."},
+            {"pol", "Jestem w domu, ale nie mam czasu."},
+            {"tur", "Çok teşekkür ederim, çok güzel."},
+            {"tur", "Bu kitap benim için çok önemli."},
+            {"tur", "Nasılsın, iyi misin?"},
+            {"ind", "Terima kasih atas bantuan kamu."},
+            {"ind", "Saya tidak tahu di mana stasiunnya."},
+            {"ind", "Apa kabar, semua baik di sana?"},
+    };
+
+    @Test
+    public void dutchPolishTurkishIndonesian() {
+        for (String[] c : NEW_LANGUAGES) {
+            assertEquals(c[1], c[0], LatinLanguageDetector.detect(c[1], "eng"));
+        }
+    }
+
+    @Test
+    public void englishWithTheirLookalikesStaysEnglish() {
+        // Words left out on purpose, and ones the new lists do have.
+        final String[] english = {
+                "I met Ada at the ale house, she broke a heel.",
+                "Var x is a variable, set it to zero.",
+                "Dan and Ben went to the market at nine.",
+                "The data is in the box, ok?",
+                "Ale and wine are on the menu tonight.",
+                "Bu Jin and Apa Sherpa climbed Everest."};
+        for (String e : english) {
+            assertNull(e, LatinLanguageDetector.detect(e, "eng"));
+        }
+        // The older five still win their own sentences.
+        assertEquals("spa", LatinLanguageDetector.detect("Muchas gracias por todo, mi amigo.", "eng"));
+        assertEquals("deu", LatinLanguageDetector.detect("Das ist ein sehr gutes Buch.", "eng"));
+        assertEquals("fra", LatinLanguageDetector.detect("Merci beaucoup pour votre aide.", "eng"));
+        assertEquals("ita", LatinLanguageDetector.detect("Grazie mille, sono molto contento.", "eng"));
+        assertEquals("por", LatinLanguageDetector.detect("Muito obrigado, estou bem.", "eng"));
+    }
+
+    @Test
+    public void eachSentenceOfEnglishTextIsJudged() {
+        // Judged whole, English and Spanish outweighed each other.
+        final StringBuilder b = new StringBuilder();
+        for (LanguageRuns.Run r : LanguageRuns.split("See you soon. Muchas gracias por todo, mi amigo. Bye now.",
+                "eng")) {
+            b.append(r.language).append(' ');
+        }
+        assertEquals("eng spa eng", b.toString().trim());
+    }
 }

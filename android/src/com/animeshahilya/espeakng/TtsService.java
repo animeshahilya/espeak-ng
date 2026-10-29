@@ -1172,6 +1172,10 @@ public class TtsService extends TextToSpeechService {
         // Mixed languages). None chosen leaves eSpeak's own switching.
         final Map<String, String> scriptLanguages = ScriptLanguages.chosen(prefs);
         engine.setScriptLanguages(scriptLanguages);
+        // Read here, not only on the natural-voice path: the text steps
+        // (emoji names) and the eSpeak path split by language too, and saw
+        // whatever the last natural-voice request had set.
+        LatinLanguageDetector.setEnabled(VoiceSettings.isDetectLatinLanguages(prefs));
 
         // Detect SSML before normalizing. Real markup is ASCII, which NFKC
         // leaves untouched, but normalization can turn lookalikes such as a
@@ -1200,12 +1204,15 @@ public class TtsService extends TextToSpeechService {
         final boolean espeakOnly = isSsml || !PiperVoiceStore.isEnabled(prefs) || voice.isScriptVariant()
                 || settings.isAppEspeakOnly()
                 || (isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs));
-        // "Detect the language of each sentence" also works with eSpeak alone:
-        // Arabic, Cyrillic and Bengali script text is split by sentence and
-        // each part read by its language's eSpeak voice.
+        // Language detection also works with eSpeak alone: "Detect the
+        // language of each sentence" (Arabic, Cyrillic, Bengali, Devanagari
+        // script) and "Recognise European languages" split the text and each
+        // part is read by its language's eSpeak voice. Before 2026-10-29 the
+        // European one did nothing without natural voices.
         final boolean detectOnly = espeakOnly && !isSsml && !voice.isScriptVariant()
-                && !isSingleCharacterUtterance && VoiceSettings.isDetectScriptLanguages(prefs)
-                && hasLetterTableScript(text);
+                && !isSingleCharacterUtterance
+                && ((VoiceSettings.isDetectScriptLanguages(prefs) && hasDetectableScript(text))
+                        || (VoiceSettings.isDetectLatinLanguages(prefs) && hasLatinLetter(text)));
         final List<SynthUnit> units = espeakOnly && !detectOnly ? buildUnits(text, voice, isSsml)
                 : planUnits(buildUnits(text, voice, false), voice, detectOnly ? null : natural, prefs, settings,
                         scriptLanguages, detectOnly);
@@ -1663,7 +1670,6 @@ public class TtsService extends TextToSpeechService {
                                                Map<UnicodeScript, String> runLanguages,
                                                String numbers, SharedPreferences prefs) {
         final String sensitivity = ScriptLanguages.switchingSensitivity(prefs);
-        LatinLanguageDetector.setEnabled(VoiceSettings.isDetectLatinLanguages(prefs));
         // A SYSPIN/Rasa voice reads only its own script's letters: words in
         // another script must not be folded into it, or they go unspoken.
         final PiperVoiceStore.Installed ownNatural = PiperVoiceStore.assignedFor(mStorageContext, prefs, own);
@@ -1790,7 +1796,8 @@ public class TtsService extends TextToSpeechService {
             final LanguageRuns.Run whole = new LanguageRuns.Run(0, unit.text, own);
             final List<LanguageRuns.Run> runs = unit.readIn != null
                     ? Collections.singletonList(new LanguageRuns.Run(0, unit.text, unit.readIn))
-                    : espeakOnly ? LanguageRuns.detectedRuns(unit.text, own, runLanguages)
+                    : espeakOnly ? LanguageRuns.detectedRuns(unit.text, own, runLanguages,
+                            VoiceSettings.isDetectScriptLanguages(prefs))
                     : naturalSwitching
                     ? naturalRuns(unit.text, own, runLanguages, numbers, prefs)
                     : digitHelp ? LanguageRuns.splitDigits(whole, ESPEAK_ONLY)
@@ -1807,12 +1814,22 @@ public class TtsService extends TextToSpeechService {
         return out;
     }
 
-    /** Whether {@code text} has a letter of a script {@link LanguageRuns#hasLetterTable} covers. */
-    private static boolean hasLetterTableScript(String text) {
+    /** Whether {@code text} has a letter of a script {@link LanguageRuns#isDetectable} covers. */
+    private static boolean hasDetectableScript(String text) {
         for (int i = 0; i < text.length(); ) {
             final int c = text.codePointAt(i);
             i += Character.charCount(c);
-            if (c >= 0x0400 && Character.isLetter(c) && LanguageRuns.hasLetterTable(UnicodeScript.of(c))) {
+            if (c >= 0x0400 && Character.isLetter(c) && LanguageRuns.isDetectable(UnicodeScript.of(c))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasLatinLetter(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            final char c = text.charAt(i);
+            if ((c | 0x20) >= 'a' && (c | 0x20) <= 'z') {
                 return true;
             }
         }

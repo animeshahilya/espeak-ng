@@ -335,6 +335,9 @@ public final class PiperModel implements Closeable {
         this.file = file;
         this.stamp = ModelFiles.stamp(file);
         this.group = group;
+        if (config.tashkeel) {
+            Tashkeel.retain(file.getParentFile());
+        }
     }
 
     /**

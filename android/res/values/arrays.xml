@@ -4,10 +4,12 @@
 <resources>
   <string-array name="emoji_processing_entries" translatable="false">
     <item>@string/emoji_announce</item>
+    <item>@string/emoji_no_skin_tone</item>
     <item>@string/emoji_ignore</item>
   </string-array>
   <string-array name="emoji_processing_values" translatable="false">
     <item>announce</item>
+    <item>no_skin_tone</item>
     <item>ignore</item>
   </string-array>
 

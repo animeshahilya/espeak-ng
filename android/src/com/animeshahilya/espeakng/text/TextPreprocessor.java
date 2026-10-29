@@ -235,8 +235,8 @@ public final class TextPreprocessor {
                 // A lone emoji has no words around it: the voice's language,
                 // or English if that is the choice.
                 text = edits.track(text, settings.isEmojiIgnoreEnabled() ? filterEmojis(text)
-                        : clarifyEmojiAnnouncements(text, VoiceSettings.EMOJI_ENGLISH.equals(
-                                settings.getEmojiLanguage()) ? "en" : lang));
+                        : clarifyEmojiAnnouncements(skinTones(text, settings), VoiceSettings.EMOJI_ENGLISH.equals(
+                                settings.getEmojiLanguage(numbersKey)) ? "en" : lang));
             }
             // A lone digit keeps the two number settings the full path applies.
             if (containsDigit(text)) {
@@ -1489,7 +1489,9 @@ public final class TextPreprocessor {
      * the voice reading that sentence, not as English words between them.
      */
     static String nameEmoji(String text, String lang, String ownIso3, VoiceSettings settings) {
-        final String choice = settings.getEmojiLanguage();
+        text = skinTones(text, settings);
+        // The voice language's card (Speech by language), else the main setting.
+        final String choice = settings.getEmojiLanguage(ownIso3);
         if (VoiceSettings.EMOJI_ENGLISH.equals(choice)) {
             return clarifyEmojiAnnouncements(text, "en");
         }
@@ -1506,6 +1508,29 @@ public final class TextPreprocessor {
             final String tag = run.language.equals(ownIso3) || "zxx".equals(run.language)
                     ? lang : LanguageRuns.languageTag(run.language);
             out.append(containsPotentialEmoji(run.text) ? clarifyEmojiAnnouncements(run.text, tag) : run.text);
+        }
+        return out.toString();
+    }
+
+    /**
+     * The emoji without their skin-tone modifiers (U+1F3FB..U+1F3FF) when
+     * the user chose names without them; a lone modifier stays (it is named).
+     * Both halves are surrogates, so a single pass over chars suffices.
+     */
+    static String skinTones(String text, VoiceSettings settings) {
+        if (!settings.isEmojiSkinToneSkipped() || text.indexOf('\uD83C') < 0) {
+            return text;
+        }
+        final StringBuilder out = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); ) {
+            final int c = text.codePointAt(i);
+            final int n = Character.charCount(c);
+            if (c >= 0x1F3FB && c <= 0x1F3FF && i > 0 && isEmojiCodePoint(text.codePointBefore(i))) {
+                i += n;
+                continue;
+            }
+            out.appendCodePoint(c);
+            i += n;
         }
         return out.toString();
     }

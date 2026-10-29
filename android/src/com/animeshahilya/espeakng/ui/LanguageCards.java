@@ -45,6 +45,10 @@ public final class LanguageCards {
     public static final String NUMBERS = "numbers";
     /** Stored for an explicit "automatic", which is "" in the main setting. */
     public static final String NUMBERS_AUTO = "auto";
+    /** VoiceSettings.EMOJI_* ({@link #EMOJI_VOICE} for the voice's language) in its text; "" = the main setting. */
+    public static final String EMOJI = "emoji";
+    /** Stored for an explicit "in the voice's language", which is "" in the main setting. */
+    public static final String EMOJI_VOICE = "voice";
     private static final String[] FIELDS = {SPEED, PITCH, VOLUME};
     private static final int MIN_PERCENT = 50;
     private static final int MAX_PERCENT = 200;
@@ -87,6 +91,11 @@ public final class LanguageCards {
     /** The language's switching sensitivity: "" for the main setting. */
     public static String switchAt(SharedPreferences prefs, String language) {
         return string(prefs, language, SWITCH_AT);
+    }
+
+    /** The language's emoji-name choice: "" for the main setting. */
+    public static String emoji(SharedPreferences prefs, String language) {
+        return string(prefs, language, EMOJI);
     }
 
     /** The language's numbers choice: "" for the main setting. */
@@ -257,6 +266,8 @@ public final class LanguageCards {
                 R.array.switching_sensitivity_entries, R.array.switching_sensitivity_values, ""));
         page.addPreference(choice(context, key(lang, NUMBERS), R.string.language_card_numbers,
                 R.array.numbers_language_entries, R.array.numbers_language_values, NUMBERS_AUTO));
+        page.addPreference(choice(context, key(lang, EMOJI), R.string.language_card_emoji,
+                R.array.emoji_language_entries, R.array.emoji_language_values, EMOJI_VOICE));
         final ListPreference cue = new ListPreference(context);
         cue.setKey(key(lang, SWITCH_CUE));
         cue.setTitle(R.string.language_card_cue);

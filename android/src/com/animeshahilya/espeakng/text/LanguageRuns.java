@@ -408,6 +408,11 @@ public final class LanguageRuns {
         if (chosen != null && chosen.containsKey(ownScript)) {
             return false;
         }
+        // European languages are told apart within Latin script: all-Latin
+        // English requests skipped "Recognise European languages" here.
+        if (ownScript == UnicodeScript.LATIN && LatinLanguageDetector.isEnabled()) {
+            return false;
+        }
         final int len = text.length();
         for (int i = 0; i < len; ) {
             final int c = text.codePointAt(i);
@@ -645,16 +650,23 @@ public final class LanguageRuns {
     }
 
     /**
-     * The runs eSpeak alone needs for "Detect the language of each sentence":
-     * only Cyrillic, Arabic and Bengali script parts keep a language of their
-     * own; the rest is the request's language, so eSpeak switches there by
-     * itself exactly as without the setting.
+     * The runs eSpeak alone needs for language detection: with {@code scripts}
+     * ("Detect the language of each sentence") Cyrillic, Arabic, Bengali and
+     * Devanagari parts keep a language of their own (Marathi in Hindi text
+     * was read with Hindi rules), and the European languages
+     * {@link LatinLanguageDetector} finds while it is on. The rest is the
+     * request's language, so eSpeak switches there by itself exactly as
+     * without the settings.
      */
-    public static List<Run> detectedRuns(String text, String language, Map<UnicodeScript, String> chosen) {
-        final List<Run> runs = split(text, language, chosen, null, l -> null, false, true);
+    public static List<Run> detectedRuns(String text, String language, Map<UnicodeScript, String> chosen,
+                                         boolean scripts) {
+        final List<Run> runs = split(text, language, chosen, null, l -> null, false, scripts);
         final List<Run> out = new ArrayList<>(runs.size());
         for (Run run : runs) {
-            final String lang = hasLetterTable(scriptOf(run.language)) ? run.language : language;
+            // A European language is in the runs only while its detector is on.
+            final boolean keep = (scripts && isDetectable(scriptOf(run.language)))
+                    || LatinLanguageDetector.detects(run.language);
+            final String lang = keep ? run.language : language;
             final Run last = out.isEmpty() ? null : out.get(out.size() - 1);
             if (last != null && last.language.equals(lang)) {
                 out.set(out.size() - 1, new Run(last.start, last.text + run.text, lang));
@@ -683,6 +695,11 @@ public final class LanguageRuns {
         }
         final String tag = tags.get(iso3);
         return tag != null ? tag : iso3;
+    }
+
+    /** Scripts whose languages are told apart: {@link #hasLetterTable}, and Devanagari ({@link DevanagariClassifier}). */
+    public static boolean isDetectable(UnicodeScript script) {
+        return hasLetterTable(script) || script == UnicodeScript.DEVANAGARI;
     }
 
     /** Whether {@code script} is told apart by letters ({@link #identify}): Cyrillic, Arabic, Bengali. */
@@ -725,6 +742,23 @@ public final class LanguageRuns {
                     previous = better;
                     changed |= !better.equals(run.language);
                     out.add(new Run(sentence.start, sentence.text, better));
+                }
+                continue;
+            }
+            final List<Run> latinSentences = "eng".equals(run.language) && LatinLanguageDetector.isEnabled()
+                    && (chosen == null || !chosen.containsKey(UnicodeScript.LATIN)) ? sentences(run) : null;
+            if (latinSentences != null && latinSentences.size() > 1) {
+                // English and a European language in one Latin run ("See you
+                // soon. Muchas gracias por todo."): judged whole, one language
+                // outweighed the other, so each sentence is judged alone.
+                String previous = null;
+                for (Run sentence : latinSentences) {
+                    String found = previous != null && !hasLetter(sentence.text) ? previous
+                            : LatinLanguageDetector.detect(sentence.text, run.language);
+                    found = found != null ? found : run.language;
+                    previous = found;
+                    changed |= !found.equals(run.language);
+                    out.add(new Run(sentence.start, sentence.text, found));
                 }
                 continue;
             }

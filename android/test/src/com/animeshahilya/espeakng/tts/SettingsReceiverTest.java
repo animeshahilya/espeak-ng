@@ -94,4 +94,22 @@ public class SettingsReceiverTest {
         assertEquals(0, SettingsReceiver.apply(prefs(values), extras("reading_mode", "fast")));
         assertFalse(values.containsKey("voice"));
     }
+
+    @Test
+    public void languageAndEmojiChoices() {
+        final Map<String, Object> values = new HashMap<>();
+        assertEquals(5, SettingsReceiver.apply(prefs(values), extras("detect_languages", "true",
+                "detect_european", "false", "numbers_language", "auto", "emoji", "no_skin_tone",
+                "emoji_language", "around")));
+        assertEquals(true, values.get(VoiceSettings.PREF_DETECT_SCRIPT_LANGUAGES));
+        assertEquals(false, values.get(VoiceSettings.PREF_DETECT_LATIN_LANGUAGES));
+        assertEquals("", values.get(VoiceSettings.PREF_NUMBERS_LANGUAGE));
+        assertEquals(VoiceSettings.EMOJI_NO_SKIN_TONE, values.get(VoiceSettings.PREF_EMOJI_PROCESSING));
+        assertEquals(VoiceSettings.EMOJI_AROUND, values.get(VoiceSettings.PREF_EMOJI_LANGUAGE));
+        SettingsReceiver.apply(prefs(values), extras("emoji_language", "voice", "numbers_language", "en"));
+        assertEquals("", values.get(VoiceSettings.PREF_EMOJI_LANGUAGE));
+        assertEquals(VoiceSettings.NUMBERS_ENGLISH, values.get(VoiceSettings.PREF_NUMBERS_LANGUAGE));
+        assertEquals(0, SettingsReceiver.apply(prefs(values), extras("emoji", "loud", "detect_languages", "yes",
+                "emoji_language", "loud")));
+    }
 }

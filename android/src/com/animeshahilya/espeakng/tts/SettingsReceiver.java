@@ -42,6 +42,11 @@ import java.util.Map;
  * <li>{@code punctuation} none / some / most / all;
  * <li>{@code reading_mode} normal / spelling / code;
  * <li>{@code natural_voices} true / false;
+ * <li>{@code detect_languages} (each sentence's language, Mixed languages)
+ *     and {@code detect_european} (Spanish, French...) true / false;
+ * <li>{@code numbers_language} auto / around / voice / en;
+ * <li>{@code emoji} announce / no_skin_tone / ignore, {@code emoji_language}
+ *     voice / around / en;
  * <li>{@code preset} a preset's name (Backup and about -> Presets).
  * </ul>
  * Off unless the user turns on {@link VoiceSettings#PREF_ALLOW_OTHER_APPS}:
@@ -115,10 +120,27 @@ public class SettingsReceiver extends BroadcastReceiver {
                     }
                     break;
                 case "natural_voices":
-                    if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-                        editor.putBoolean(PiperVoiceStore.PREF_ENABLED, Boolean.parseBoolean(value));
-                        applied++;
-                    }
+                    applied += bool(editor, PiperVoiceStore.PREF_ENABLED, value);
+                    break;
+                case "detect_languages":
+                    applied += bool(editor, VoiceSettings.PREF_DETECT_SCRIPT_LANGUAGES, value);
+                    break;
+                case "detect_european":
+                    applied += bool(editor, VoiceSettings.PREF_DETECT_LATIN_LANGUAGES, value);
+                    break;
+                case "numbers_language":
+                    applied += choice(editor, VoiceSettings.PREF_NUMBERS_LANGUAGE, "auto".equals(value) ? ""
+                            : value, "", VoiceSettings.NUMBERS_AROUND, VoiceSettings.NUMBERS_VOICE,
+                            VoiceSettings.NUMBERS_ENGLISH);
+                    break;
+                case "emoji":
+                    applied += choice(editor, VoiceSettings.PREF_EMOJI_PROCESSING, value,
+                            VoiceSettings.EMOJI_ANNOUNCE, VoiceSettings.EMOJI_NO_SKIN_TONE, VoiceSettings.EMOJI_IGNORE);
+                    break;
+                case "emoji_language":
+                    applied += choice(editor, VoiceSettings.PREF_EMOJI_LANGUAGE, "voice".equals(value) ? ""
+                            : value, VoiceSettings.EMOJI_IN_VOICE, VoiceSettings.EMOJI_AROUND,
+                            VoiceSettings.EMOJI_ENGLISH);
                     break;
                 default:
                     break;
@@ -126,6 +148,26 @@ public class SettingsReceiver extends BroadcastReceiver {
         }
         editor.apply();
         return applied;
+    }
+
+    /** "true" / "false" (any case). 1 if applied. */
+    private static int bool(SharedPreferences.Editor editor, String key, String value) {
+        if (!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value)) {
+            return 0;
+        }
+        editor.putBoolean(key, Boolean.parseBoolean(value));
+        return 1;
+    }
+
+    /** One of {@code allowed}, stored as is. 1 if applied. */
+    private static int choice(SharedPreferences.Editor editor, String key, String value, String... allowed) {
+        for (String a : allowed) {
+            if (a.equals(value)) {
+                editor.putString(key, value);
+                return 1;
+            }
+        }
+        return 0;
     }
 
     /** An absolute value, or "+n"/"-n" from the current one; clamped. 1 if applied. */

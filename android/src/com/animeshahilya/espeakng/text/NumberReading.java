@@ -156,7 +156,9 @@ public final class NumberReading {
             "(?iu)(?<![\\p{L}])(otp|one[- ]time|pin|passcode|password|code|cvv|cvv2|pnr|token"
                     + "|txn|transaction|ref|reference|a/c|acct|account|card|id|serial|auth|2fa|iban|swift"
                     + "|verification|verify"
-                    + "|код|кода|коду|кодом|пин|пароль|пароля|карта|карты|карте|карту|картой|счет|счета|счету|счетом|артикул"
+                    // Not счёт alone: it is also a bill or a score ("счёт 1500 рублей", "счёт 2:1").
+                    + "|код|кода|коду|кодом|пин|пароль|пароля|карта|карты|карте|карту|картой|артикул"
+                    + "|лицевой|лицевого|расчетный|расчётный|расчетного|расчётного"
                     + "|ओटीपी|कोड|पिन|पासवर्ड|खाता)(?![\\p{L}])");
 
     // 4-12 digits, optionally in groups split by one space or hyphen

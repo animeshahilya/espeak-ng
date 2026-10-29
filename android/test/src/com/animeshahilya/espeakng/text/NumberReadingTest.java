@@ -311,6 +311,9 @@ public class NumberReadingTest {
     @Test
     public void testReadCodesMultilingual() {
         assertEquals("Ваш код: 4 8 2 9", NumberReading.readCodes("Ваш код: 4829"));
+        // счёт is also a bill: its amount stays a number; an account still reads as a code.
+        assertEquals("Ваш счет 1500 рублей", NumberReading.readCodes("Ваш счет 1500 рублей"));
+        assertEquals("лицевой счет 4 0 8 1 7 8 1 0", NumberReading.readCodes("лицевой счет 40817810"));
         assertEquals("Ваш пароль 1 2 3 4 5 6 для входа",
                 NumberReading.readCodes("Ваш пароль 123456 для входа"));
         assertEquals("Google verification code: 9 1 0 2 3 4",

@@ -183,6 +183,8 @@ public class VoiceSettings {
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
+    /** Names without the skin tone: 👍🏽 is "thumbs up", not "thumbs up medium skin tone". */
+    public static final String EMOJI_NO_SKIN_TONE = "no_skin_tone";
     /** Language emoji are named in: {@link #EMOJI_IN_VOICE} and the other EMOJI_ values. */
     public static final String PREF_EMOJI_LANGUAGE = "espeak_emoji_language";
     /** The voice's language, as NVDA names them (default). */
@@ -465,6 +467,15 @@ public class VoiceSettings {
         return mPreferences.getString(PREF_EMOJI_PROCESSING, EMOJI_ANNOUNCE);
     }
 
+    /** The emoji choice in {@code language}'s text: its card (Speech by language), else the main setting. */
+    public String getEmojiLanguage(String language) {
+        final String card = LanguageCards.emoji(mPreferences, language);
+        if (card.isEmpty()) {
+            return getEmojiLanguage();
+        }
+        return LanguageCards.EMOJI_VOICE.equals(card) ? EMOJI_IN_VOICE : card;
+    }
+
     /** See {@link #PREF_EMOJI_LANGUAGE}. */
     public String getEmojiLanguage() {
         final String value = mPreferences.getString(PREF_EMOJI_LANGUAGE, EMOJI_IN_VOICE);
@@ -483,6 +494,10 @@ public class VoiceSettings {
 
     public boolean detectsScriptLanguages() {
         return isDetectScriptLanguages(mPreferences);
+    }
+
+    public boolean isEmojiSkinToneSkipped() {
+        return EMOJI_NO_SKIN_TONE.equals(getEmojiProcessingMode());
     }
 
     public boolean isEmojiIgnoreEnabled() {

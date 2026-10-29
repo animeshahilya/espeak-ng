@@ -17,7 +17,9 @@ import java.util.Set;
 
 /**
  * Stopword-based language detector for Latin-script text: Spanish, French,
- * German, Italian and Portuguese phrases inside text in another script.
+ * German, Italian, Portuguese, Dutch, Polish, Turkish and Indonesian phrases
+ * inside other text (since 2026-10-29 also sentence by sentence inside
+ * English, and without natural voices).
  *
  * <p>Opt-in ({@link #setEnabled}): eSpeak NG and NVDA read all Latin text as
  * the voice's Latin language. Words that are also everyday English or
@@ -76,6 +78,42 @@ public final class LatinLanguageDetector {
                 "este", "esta", "estes", "estas", "muito", "mais", "obrigado", "obrigada", "voce", "você",
                 "tudo", "todos", "estou", "está", "estao", "estão", "fazer", "bom", "nao", "não"
         });
+
+        // Added 2026-10-29. Left out: words English, Hinglish or another list
+        // also writes ("met", "heel", "hoe", "is", "op"... "ben" and "dan" are
+        // Turkish and Indonesian here, "var" is code, "anda" Spanish).
+        addWords("nld", new String[] {
+                "het", "een", "van", "niet", "ik", "wij", "jullie", "zijn", "voor", "maar", "ook",
+                "nog", "wel", "dank", "bedankt", "goed", "graag", "alstublieft", "deze", "waar", "wat",
+                "waarom", "bent", "hebben", "heeft", "naar", "uit", "dat", "zo", "goedemorgen", "fijn"
+        });
+
+        addWords("pol", new String[] {
+                "nie", "jest", "się", "że", "jak", "ale", "czy", "dla", "przez", "jestem", "dziękuję",
+                "proszę", "bardzo", "też", "już", "mam", "może", "który", "która", "dzień", "dobry",
+                "cześć", "jesteś", "gdzie", "kiedy", "dlaczego", "teraz", "tylko", "jeszcze", "wiem"
+        });
+
+        addWords("tur", new String[] {
+                "ve", "bir", "bu", "için", "ile", "çok", "teşekkür", "ederim", "teşekkürler", "merhaba",
+                "nasıl", "nasılsın", "değil", "ben", "sen", "yok", "ama", "gibi", "daha", "evet",
+                "hayır", "şey", "olarak", "şimdi", "neden", "nerede", "güzel", "iyi", "lütfen", "misin"
+        });
+
+        addWords("ind", new String[] {
+                "dan", "yang", "ini", "itu", "dengan", "untuk", "tidak", "saya", "kamu", "terima",
+                "kasih", "apa", "akan", "sudah", "bisa", "juga", "dari", "selamat", "pagi", "bagaimana",
+                "kabar", "baik", "sekarang", "kenapa", "tolong", "sangat", "tahu", "mana"
+        });
+    }
+
+    public static boolean isEnabled() {
+        return sEnabled;
+    }
+
+    /** Whether {@code language} is one this detector finds (never English). */
+    public static boolean detects(String language) {
+        return language != null && !ENGLISH.equals(language) && STOPWORDS.containsKey(language);
     }
 
     private static void addWords(String lang, String[] words) {

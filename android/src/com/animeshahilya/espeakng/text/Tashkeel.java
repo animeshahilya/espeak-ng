@@ -74,6 +74,12 @@ public final class Tashkeel {
     }
 
     private static final Map<String, OrtSession> sSessions = new HashMap<>();
+    /**
+     * Loaded models of each voice using its session: a second copy of a
+     * voice (a preload racing a load) closed the session the live copy was
+     * running when it was dropped. Guarded by {@link #sSessions}.
+     */
+    private static final Map<String, Integer> sUsers = new HashMap<>();
 
     private Tashkeel() {
     }
@@ -105,6 +111,14 @@ public final class Tashkeel {
         if (!model.isFile()) {
             return null;
         }
+        // Under the lock: a close() never frees the session mid-run (a few ms
+        // per sentence, one Arabic voice: nothing waits on it in practice).
+        synchronized (sSessions) {
+            return vowel(model, text);
+        }
+    }
+
+    private static Result vowel(File model, String text) {
         try {
             final OrtSession session = session(model);
             final int[] cps = text.codePoints().toArray();
@@ -191,10 +205,32 @@ public final class Tashkeel {
         }
     }
 
-    /** Releases the model of a voice that is unloaded or deleted. */
+    /** For tests: how many loaded models of the voice use its session. */
+    static int users(File voiceDir) {
+        synchronized (sSessions) {
+            final Integer n = sUsers.get(new File(voiceDir, MODEL_FILE).getAbsolutePath());
+            return n != null ? n : 0;
+        }
+    }
+
+    /** A loaded model of the voice in {@code voiceDir} that may use its model; see {@link #close}. */
+    public static void retain(File voiceDir) {
+        synchronized (sSessions) {
+            sUsers.merge(new File(voiceDir, MODEL_FILE).getAbsolutePath(), 1, Integer::sum);
+        }
+    }
+
+    /** Releases the model once the last loaded copy of its voice is unloaded or deleted. */
     public static void close(File voiceDir) {
         synchronized (sSessions) {
-            final OrtSession s = sSessions.remove(new File(voiceDir, MODEL_FILE).getAbsolutePath());
+            final String key = new File(voiceDir, MODEL_FILE).getAbsolutePath();
+            final Integer users = sUsers.get(key);
+            if (users != null && users > 1) {
+                sUsers.put(key, users - 1);
+                return;
+            }
+            sUsers.remove(key);
+            final OrtSession s = sSessions.remove(key);
             if (s != null) {
                 try {
                     s.close();

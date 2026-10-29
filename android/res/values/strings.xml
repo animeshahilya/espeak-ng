@@ -110,6 +110,7 @@
   <string name="import_voice_description">A voice variant file (as NVDA users share), an eSpeak dictionary (_dict) or a voice archive (.zip)</string>
   <string name="setting_emoji_processing">Emoji</string>
   <string name="emoji_announce">Announce emojis</string>
+  <string name="emoji_no_skin_tone">Announce, without skin tones</string>
   <string name="emoji_ignore">Skip emojis</string>
   <string name="setting_audio_optimizer">Sound enhancement</string>
   <string name="import_voice_success">Successfully imported voice data.</string>
@@ -479,7 +480,7 @@
   <string name="numbers_language_around">In the language of the words around them</string>
   <string name="numbers_language_voice">Always in the voice\'s language</string>
   <string name="numbers_language_english">Always in English</string>
-  <string name="setting_emoji_language">Emoji</string>
+  <string name="setting_emoji_language">Language of emoji names</string>
   <string name="emoji_language_voice">In the voice\'s language (default)</string>
   <string name="setting_switching_sensitivity">Switch language for</string>
   <string name="switching_sensitivity_words">Every word (default)</string>
@@ -711,6 +712,7 @@
   <string name="language_card_summary_mixed_only">Own voice choice inside other text</string>
   <string name="language_card_switch_at">Switch into this language for</string>
   <string name="language_card_numbers">Numbers and times in this language\'s text</string>
+  <string name="language_card_emoji">Emoji names in this language\'s text</string>
   <string name="language_card_main_setting">Same as main setting</string>
   <string name="test_routing_title">Try your own text</string>
   <string name="test_routing_summary">Then shows which voice read each part</string>

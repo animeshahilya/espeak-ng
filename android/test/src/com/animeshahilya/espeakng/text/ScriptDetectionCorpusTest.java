@@ -164,10 +164,40 @@ public class ScriptDetectionCorpusTest {
         assertEquals("ckb ara ckb", route(text.substring(13), "ckb", Collections.emptyMap(), true));
         // eSpeak alone: only the Arabic-script parts get their own voice.
         final StringBuilder b = new StringBuilder();
-        for (LanguageRuns.Run r : LanguageRuns.detectedRuns(text, "eng", arabicScriptAs("ckb"))) {
+        for (LanguageRuns.Run r : LanguageRuns.detectedRuns(text, "eng", arabicScriptAs("ckb"), true)) {
             b.append(r.language).append(' ');
         }
         assertEquals("eng ckb ara ckb", b.toString().trim());
+    }
+
+    private static String languages(List<LanguageRuns.Run> runs) {
+        final List<String> out = new ArrayList<>();
+        for (LanguageRuns.Run r : runs) {
+            if (!r.text.trim().isEmpty()) {
+                out.add(r.language);
+            }
+        }
+        return String.join(" ", out);
+    }
+
+    @Test
+    public void espeakAloneFollowsEveryDetector() {
+        // Marathi in Hindi text: eSpeak read it with Hindi rules; detection gives it its voice.
+        final String marathi = "आज बहुत गर्मी है। मी उद्या पुण्याला जाणार आहे।";
+        assertEquals("hin mar", languages(LanguageRuns.detectedRuns(marathi, "hin", Collections.emptyMap(), true)));
+        assertEquals("hin", languages(LanguageRuns.detectedRuns(marathi, "hin", Collections.emptyMap(), false)));
+        assertEquals("eng mar", languages(LanguageRuns.detectedRuns(
+                "Meeting at ten. मी उद्या पुण्याला जाणार आहे।", "eng", Collections.emptyMap(), true)));
+        // "Recognise European languages" did nothing without natural voices.
+        final String spanish = "See you soon. Muchas gracias por todo, mi amigo.";
+        try {
+            LatinLanguageDetector.setEnabled(true);
+            assertEquals("eng spa", languages(LanguageRuns.detectedRuns(spanish, "eng", Collections.emptyMap(), false)));
+            LatinLanguageDetector.setEnabled(false);
+            assertEquals("eng", languages(LanguageRuns.detectedRuns(spanish, "eng", Collections.emptyMap(), false)));
+        } finally {
+            LatinLanguageDetector.setEnabled(false);
+        }
     }
 
     @Test

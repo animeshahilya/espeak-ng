@@ -35,7 +35,16 @@ public class EmojiLanguageTest {
     }
 
     private static VoiceSettings settings(String emoji, boolean detect) {
-        final Map<String, Object> values = new HashMap<>();
+        return settings(emoji, detect, VoiceSettings.EMOJI_ANNOUNCE);
+    }
+
+    private static VoiceSettings settings(String emoji, boolean detect, String processing) {
+        return settings(emoji, detect, processing, new HashMap<>());
+    }
+
+    private static VoiceSettings settings(String emoji, boolean detect, String processing,
+                                          Map<String, Object> values) {
+        values.put(VoiceSettings.PREF_EMOJI_PROCESSING, processing);
         values.put(VoiceSettings.PREF_EMOJI_LANGUAGE, emoji);
         values.put(VoiceSettings.PREF_DETECT_SCRIPT_LANGUAGES, detect);
         final SharedPreferences prefs = (SharedPreferences) Proxy.newProxyInstance(
@@ -85,6 +94,36 @@ public class EmojiLanguageTest {
         final String out = TextPreprocessor.nameEmoji("Как дела? " + SMILE, "ru", "rus",
                 settings(VoiceSettings.EMOJI_ENGLISH, false));
         assertTrue(out, out.contains(name("en")));
+    }
+
+    @Test
+    public void skinTonesSkipped() {
+        final VoiceSettings plain = settings(VoiceSettings.EMOJI_IN_VOICE, false, VoiceSettings.EMOJI_NO_SKIN_TONE);
+        // 👍🏽, 👩🏻‍💻 (a ZWJ sequence) and a lone tone, which stays named.
+        final String out = TextPreprocessor.nameEmoji("ok 👍🏽 and "
+                + "👩🏻‍💻 done 🏾", "en", "eng", plain);
+        assertTrue(out, out.contains("thumbs up") && out.contains("woman technologist"));
+        assertEquals(out, 1, out.split("skin tone", -1).length - 1);
+        final String toned = TextPreprocessor.nameEmoji("ok 👍🏽", "en", "eng",
+                settings(VoiceSettings.EMOJI_IN_VOICE, false));
+        assertTrue(toned, toned.contains("medium skin tone"));
+    }
+
+    @Test
+    public void languageCardOverridesTheMainChoice() {
+        final Map<String, Object> values = new HashMap<>();
+        values.put(com.animeshahilya.espeakng.ui.LanguageCards.key("rus",
+                com.animeshahilya.espeakng.ui.LanguageCards.EMOJI), "en");
+        final VoiceSettings cards = settings(VoiceSettings.EMOJI_IN_VOICE, false, VoiceSettings.EMOJI_ANNOUNCE,
+                values);
+        // Russian text: its card says English; Ukrainian has no card, so the voice's language.
+        assertTrue(TextPreprocessor.nameEmoji("Как дела? " + SMILE, "ru", "rus", cards).contains(name("en")));
+        assertTrue(TextPreprocessor.nameEmoji("Як справи? " + SMILE, "uk", "ukr", cards).contains(name("uk")));
+        values.put(com.animeshahilya.espeakng.ui.LanguageCards.key("rus",
+                com.animeshahilya.espeakng.ui.LanguageCards.EMOJI),
+                com.animeshahilya.espeakng.ui.LanguageCards.EMOJI_VOICE);
+        values.put(VoiceSettings.PREF_EMOJI_LANGUAGE, VoiceSettings.EMOJI_ENGLISH);
+        assertTrue(TextPreprocessor.nameEmoji("Как дела? " + SMILE, "ru", "rus", cards).contains(name("ru")));
     }
 
     @Test

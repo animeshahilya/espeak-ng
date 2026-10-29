@@ -1187,6 +1187,22 @@ emoji names (ckb.txt is empty), so those stay English. The routing preview
 now records each part's reader (`PlanPart.readerLanguage`) and says
 "eSpeak, Arabic voice" when it differs from the text's language.
 
+Detection without natural voices (2026-10-29): "Recognise European
+languages" only ran on the natural-voice path, and English requests in
+Latin script took `isPurelyOwnScript`'s fast path, so it never ran for
+them at all; a Latin run is now also judged sentence by sentence when it
+has several ("See you soon. Muchas gracias..." judged whole went one way
+or the other). `TtsService` `detectOnly` now covers it and Devanagari
+(Marathi/Nepali sentences in Hindi text kept Hindi rules):
+`LanguageRuns.detectedRuns(..., scripts)`. `LatinLanguageDetector` is set
+once per request in `onSynthesizeText` (the text steps split too) and also
+knows Dutch, Polish, Turkish and Indonesian (lists leave out words English
+or another list writes; `LatinLanguageDetectorTest`). Emoji: "Announce,
+without skin tones" (`TextPreprocessor.skinTones`) and a per-language
+choice on the Speech by language cards (`LanguageCards.EMOJI`). Tasker
+keys `detect_languages`, `detect_european`, `numbers_language`, `emoji`,
+`emoji_language`. `DetectionWithoutNaturalVoicesDeviceTest`.
+
 ### Per-language speech (language cards)
 
 Settings -> Mixed languages -> Speech by language (`ui/LanguageCards`):
