@@ -7,6 +7,26 @@
 
 The espeak-ng project is a fork of the espeak project.
 
+### 2.11 (Android)
+
+*  **Updates**:
+   *  Google Play Protect no longer blocks the app. Update now opens the new version in your browser.
+*  **Mixed languages**:
+   *  New: Detect the language of each sentence. Arabic, Central Kurdish, Persian and Urdu, Russian and Ukrainian, Bengali and Assamese, Hindi, Marathi and Nepali are each read in their own language, also when you chose a language for the script and with natural voices off.
+   *  Short Ukrainian and Russian sentences are told apart too, and one foreign word no longer switches a whole sentence.
+   *  Recognise European languages now works with natural voices off and sentence by sentence inside English text, and adds Dutch, Polish, Turkish and Indonesian.
+   *  Try your own text shows which voice reads each part.
+*  **Emoji**:
+   *  Choose the language of emoji names: the voice's, the words around them, or English. Each language can have its own choice in Speech by language.
+   *  New: announce emoji without skin tones.
+*  **Natural voices**:
+   *  They use less battery: up to a fifth less processor work.
+   *  Importing a voice asks which language it speaks when its files do not say.
+   *  Fixed a rare problem that could stop the Arabic voice while it loaded.
+*  **Other**:
+   *  Tasker and other apps can change language detection, numbers and emoji settings.
+   *  With code reading on, Russian bill amounts are no longer read digit by digit.
+
 ### 2.10 (Android)
 
 *  **Natural voices**:
