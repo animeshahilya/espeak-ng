@@ -81,10 +81,15 @@ public final class VoiceImport {
      * Installs the voice in {@code uris} (one archive, or its files).
      * Blocking: off the main thread.
      *
+     * @param language the language the user said the voice speaks (ISO 639,
+     *                 "hi"), used only where its files do not say; null to
+     *                 refuse such a voice with {@code piper_import_language},
+     *                 so the caller can ask (as VoxSherpa's import does)
      * @return the installed voice
      */
     public static synchronized PiperVoiceStore.Installed install(Context appContext, Context storageContext,
-                                                                 List<Uri> uris, List<String> names)
+                                                                 List<Uri> uris, List<String> names,
+                                                                 String language)
             throws ImportException { // synchronized: one staging folder
         final File staging = new File(PiperVoiceStore.root(storageContext), "import");
         FileUtils.deleteRecursively(staging);
@@ -103,7 +108,10 @@ public final class VoiceImport {
             if (model == null) {
                 throw new ImportException(R.string.piper_import_no_model, "no .onnx");
             }
-            final Hint hint = Hint.of(names.size() == 1 ? names.get(0) : model.getName());
+            Hint hint = Hint.of(names.size() == 1 ? names.get(0) : model.getName());
+            if (language != null && hint.family == null) {
+                hint = hint.withFamily(language);
+            }
             File json = new File(staging, model.getName() + ".json");
             final File[] configs = staging.listFiles((d, n) -> n.endsWith(JSON_SUFFIX));
             if (!json.isFile() && configs != null && configs.length == 1) {
@@ -123,11 +131,11 @@ public final class VoiceImport {
             audio.put("quality", QUALITY);
             config.put("audio", audio);
 
-            final JSONObject language = config.getJSONObject("language");
+            final String code = config.getJSONObject("language").getString("code");
             final File voices = PiperVoiceStore.voicesDir(storageContext);
-            String key = language.getString("code") + "-" + hint.slug + "-" + QUALITY;
+            String key = code + "-" + hint.slug + "-" + QUALITY;
             for (int n = 2; new File(voices, key).exists(); n++) {
-                key = language.getString("code") + "-" + hint.slug + "_" + n + "-" + QUALITY;
+                key = code + "-" + hint.slug + "_" + n + "-" + QUALITY;
             }
             final String text = config.toString(1);
             if (!PiperVoiceConfig.parse(key, text).isSupported()) {
@@ -538,6 +546,11 @@ public final class VoiceImport {
                 slug = "voice";
             }
             return new Hint(original, family, region, slug);
+        }
+
+        /** The same file, in the language the user chose for it. */
+        Hint withFamily(String family) {
+            return new Hint(original, family, null, slug);
         }
     }
 }

@@ -113,8 +113,12 @@ public class VoiceImportTest {
             VoiceImport.fillLanguage(c, VoiceImport.Hint.of("model.onnx"));
             fail();
         } catch (VoiceImport.ImportException expected) {
-            // refused
+            // refused: the settings screen then asks the user
         }
+        // The language the user picked.
+        VoiceImport.fillLanguage(c, VoiceImport.Hint.of("model.onnx").withFamily("bho"));
+        assertEquals("bho", c.getJSONObject("language").getString("family"));
+        assertEquals("bho", c.getJSONObject("language").getString("code"));
         assertEquals("ta", VoiceImport.familyOf("Tamil"));
         assertNull(VoiceImport.familyOf("Klingonese"));
     }

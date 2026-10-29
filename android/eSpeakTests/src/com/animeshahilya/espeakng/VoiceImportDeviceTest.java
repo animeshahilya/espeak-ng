@@ -61,7 +61,7 @@ public class VoiceImportDeviceTest {
             assertTrue(file + " missing", file.isFile());
             final long t0 = System.nanoTime();
             final PiperVoiceStore.Installed v = VoiceImport.install(app, storage,
-                    Collections.singletonList(Uri.fromFile(file)), Collections.singletonList(name));
+                    Collections.singletonList(Uri.fromFile(file)), Collections.singletonList(name), null);
             Log.i(TAG, name + " -> " + v.key + " (" + v.config.phonemeType + ", " + v.config.sampleRate
                     + " Hz) in " + (System.nanoTime() - t0) / 1_000_000 + " ms");
             assertTrue(new File(v.dir, PiperVoiceStore.IMPORTED_FILE).isFile());

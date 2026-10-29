@@ -1098,8 +1098,10 @@ voices" does not, so voices can still be deleted to free space.
   stripped from tokens.txt, SYSPIN's is CRLF). The model is opened once with
   this app's ONNX Runtime and must take Piper's inputs (`input`,
   `input_lengths`, `scales`): MMS, Kokoro, Matcha... are refused with a
-  reason, as is a voice whose language the config, its eSpeak voice, the
-  metadata or the file name (`en_US-name...`) do not tell. Key
+  reason. When the config, its eSpeak voice, the metadata and the file name
+  (`en_US-name...`) do not tell its language, the user picks it from a list
+  and the import runs again with it (`PickedFiles.askLanguage`; VoxSherpa's
+  import asks every time, here only then). Key
   `<code>-<name>-imported`, quality "imported" (label "Imported"), which no
   catalog lists, so updates and restores pass it by; the `imported` file
   marks the folder and `ModelFiles.dropOriginal` keeps its model (it could

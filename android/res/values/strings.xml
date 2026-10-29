@@ -613,7 +613,7 @@
   <string name="piper_import_no_model">No voice model (.onnx file) in what you picked.</string>
   <string name="piper_import_no_config">The voice\'s .onnx.json or tokens.txt is missing. Pick it together with the .onnx file.</string>
   <string name="piper_import_unsupported">This kind of voice is not supported. Piper voices and Coqui VITS voices are.</string>
-  <string name="piper_import_language">Could not tell which language this voice speaks. Keep the language in its file name, like en_US-name.onnx.</string>
+  <string name="piper_import_language">Which language does this voice speak?</string>
   <string name="piper_import_failed">Could not import the voice. The file may be damaged, incomplete or too large.</string>
   <string name="piper_quality_enhanced">Enhanced</string>
   <string name="piper_quality_enhanced_recommended">Enhanced, recommended for this phone</string>

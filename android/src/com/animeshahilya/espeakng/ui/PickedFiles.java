@@ -148,6 +148,16 @@ public final class PickedFiles {
 
     /** Installs the natural voice the user picked (an archive, or its files); says how it went. */
     public static void importNaturalVoice(final Activity activity, final java.util.List<Uri> uris) {
+        importNaturalVoice(activity, uris, null);
+    }
+
+    /**
+     * As above, in {@code language} where the voice's files do not say. If
+     * they do not and {@code language} is null, the user picks it (VoxSherpa
+     * asks for every import; here only when it is needed).
+     */
+    private static void importNaturalVoice(final Activity activity, final java.util.List<Uri> uris,
+                                           final String language) {
         final Context storage = EspeakApp.requireStorageContext(activity);
         final Context app = activity.getApplicationContext();
         final java.util.List<String> names = new java.util.ArrayList<>();
@@ -157,18 +167,55 @@ public final class PickedFiles {
         Toast.makeText(activity, R.string.piper_import_started, Toast.LENGTH_LONG).show();
         runInBackground(() -> {
             try {
-                final PiperVoiceStore.Installed v = VoiceImport.install(app, storage, uris, names);
+                final PiperVoiceStore.Installed v = VoiceImport.install(app, storage, uris, names, language);
                 return activity.getString(R.string.piper_import_done, v.config.displayName(),
                         PiperSettings.languageName(v.config.languageFamily));
             } catch (VoiceImport.ImportException e) {
                 Log.w(TAG, "Voice import refused: " + e.getMessage());
-                return activity.getString(e.messageRes);
+                return e.messageRes == R.string.piper_import_language && language == null
+                        ? null : activity.getString(e.messageRes);
             }
         }, message -> {
-            if (!TtsSettingsActivity.isGone(activity)) {
+            if (TtsSettingsActivity.isGone(activity)) {
+                return;
+            }
+            if (message == null) {
+                askLanguage(activity, chosen -> importNaturalVoice(activity, uris, chosen));
+            } else {
                 Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /** Languages letter voices exist for that have no two-letter code (SYSPIN/Rasa). */
+    private static final String[] THREE_LETTER_LANGUAGES = {"bho", "brx", "doi", "hne", "mag", "mai"};
+
+    /** Every language the phone can name, by name; {@code then} gets the chosen ISO code. */
+    private static void askLanguage(Activity activity, java.util.function.Consumer<String> then) {
+        final java.util.Locale ui = java.util.Locale.getDefault();
+        final java.util.List<String[]> languages = new java.util.ArrayList<>();
+        final java.util.List<String> codes = new java.util.ArrayList<>(
+                java.util.Arrays.asList(java.util.Locale.getISOLanguages()));
+        codes.addAll(java.util.Arrays.asList(THREE_LETTER_LANGUAGES));
+        for (String code : codes) {
+            final String name = new java.util.Locale(code).getDisplayLanguage(ui);
+            if (!name.isEmpty() && !name.equalsIgnoreCase(code)) {
+                languages.add(new String[] {code, name});
+            }
+        }
+        final java.text.Collator collator = java.text.Collator.getInstance(ui);
+        languages.sort((a, b) -> collator.compare(a[1], b[1]));
+        final String[] labels = new String[languages.size()];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = languages.get(i)[1];
+        }
+        final androidx.appcompat.app.AlertDialog dialog =
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(activity)
+                        .setTitle(R.string.piper_import_language)
+                        .setItems(labels, (d, which) -> then.accept(languages.get(which)[0]))
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
+        SettingsDialogs.markAlertTitleHeading(dialog);
     }
 
     /** Up to {@code max} bytes from the stream (fewer only at its end). */
