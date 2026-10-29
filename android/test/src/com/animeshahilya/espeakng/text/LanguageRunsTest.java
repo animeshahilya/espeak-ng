@@ -290,6 +290,31 @@ public class LanguageRunsTest {
     }
 
     @Test
+    public void languageIsToldApartPerSentence() {
+        // In the speaking language's own script too, one sentence at a time.
+        assertEquals("rus@0[Это Россия. ]ukr@12[Це Україна, і я тут. ]rus@33[Пока.]",
+                describe(LanguageRuns.split("Это Россия. Це Україна, і я тут. Пока.", "rus")));
+        assertEquals("ukr@0[Добрий день. Как дела? ]rus@23[Всё хорошо, спасибо.]",
+                describe(LanguageRuns.split("Добрий день. Как дела? Всё хорошо, спасибо.", "ukr")));
+        assertEquals("rus@8[ Привет мир. ]ukr@21[Привіт світ.]",
+                describe(LanguageRuns.split("नमस्कार. Привет мир. Привіт світ.", "hin").subList(1, 3)));
+        assertEquals("urd@0[یہ ایک کتاب ہے۔ ]ara@16[قال الله تعالى في كتابه الكريم۔ ]urd@48[کیا؟]",
+                describe(LanguageRuns.split("یہ ایک کتاب ہے۔ قال الله تعالى في كتابه الكريم۔ کیا؟", "urd")));
+        assertEquals("ara@0[هذا كتاب. ]urd@10[یہ ایک کتاب ہے۔]",
+                describe(LanguageRuns.split("هذا كتاب. یہ ایک کتاب ہے۔", "ara")));
+        // One marker letter no longer moves a whole request: ё is not Ukrainian.
+        assertEquals("rus@0[Он сказал: «Слава Україні!» и ушёл.]",
+                describe(LanguageRuns.split("Он сказал: «Слава Україні!» и ушёл.", "rus")));
+        // Letters the speaking language also writes never move it (Belarusian ы).
+        assertEquals("bel@0[Добры дзень. Как дела?]",
+                describe(LanguageRuns.split("Добры дзень. Как дела?", "bel")));
+        // A short Urdu sentence has only Persian's ی ک: it stays Urdu.
+        assertEquals("urd@0[کیا یہ ہے؟ کیا؟]", describe(LanguageRuns.split("کیا یہ ہے؟ کیا؟", "urd")));
+        // "3.5" ends no sentence.
+        assertEquals(1, LanguageRuns.sentences(new LanguageRuns.Run(0, "цена 3.5 рубля.", "rus")).size());
+    }
+
+    @Test
     public void hanFollowsKanaAndHangul() {
         assertEquals("jpn@0[東京タワー]", describe(LanguageRuns.split("東京タワー", "eng")));
         assertEquals("jpn@0[東京]eng@2[ and]jpn@6[ すし]",

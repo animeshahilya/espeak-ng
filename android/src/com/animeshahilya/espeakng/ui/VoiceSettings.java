@@ -100,6 +100,12 @@ public class VoiceSettings {
     public static final String PREF_FOLLOW_KEYBOARD_LANGUAGE = "espeak_follow_keyboard_language";
     /** Spanish, French, German, Italian and Portuguese phrases inside other text get their own voice. */
     public static final String PREF_DETECT_LATIN_LANGUAGES = "espeak_detect_latin_languages";
+    /**
+     * Arabic, Cyrillic and Bengali script: each sentence's language from its
+     * letters, also in a script the user chose a language for (then only the
+     * usual one), and with natural voices off.
+     */
+    public static final String PREF_DETECT_SCRIPT_LANGUAGES = "espeak_detect_script_languages";
     /** The "Numbers in English text" switch it replaced; on reads as {@link #NUMBERS_AROUND}. */
     private static final String LEGACY_ENGLISH_NUMBERS = "espeak_english_numbers";
     /** As eSpeak reads them (the voice's language), and natural voices (the words around them). */
@@ -779,6 +785,10 @@ public class VoiceSettings {
 
     public static boolean isDetectLatinLanguages(SharedPreferences prefs) {
         return prefs != null && prefs.getBoolean(PREF_DETECT_LATIN_LANGUAGES, false);
+    }
+
+    public static boolean isDetectScriptLanguages(SharedPreferences prefs) {
+        return prefs != null && prefs.getBoolean(PREF_DETECT_SCRIPT_LANGUAGES, false);
     }
 
     // Sleep timer: reading apps stop at a chosen time.

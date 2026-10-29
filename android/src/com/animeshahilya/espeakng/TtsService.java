@@ -1188,8 +1188,15 @@ public class TtsService extends TextToSpeechService {
         final boolean espeakOnly = isSsml || !PiperVoiceStore.isEnabled(prefs) || voice.isScriptVariant()
                 || settings.isAppEspeakOnly()
                 || (isSingleCharacterUtterance && PiperVoiceStore.espeakForCharacters(prefs));
-        final List<SynthUnit> units = espeakOnly ? buildUnits(text, voice, isSsml)
-                : planUnits(buildUnits(text, voice, false), voice, natural, prefs, settings, scriptLanguages);
+        // "Detect the language of each sentence" also works with eSpeak alone:
+        // Arabic, Cyrillic and Bengali script text is split by sentence and
+        // each part read by its language's eSpeak voice.
+        final boolean detectOnly = espeakOnly && !isSsml && !voice.isScriptVariant()
+                && !isSingleCharacterUtterance && VoiceSettings.isDetectScriptLanguages(prefs)
+                && hasLetterTableScript(text);
+        final List<SynthUnit> units = espeakOnly && !detectOnly ? buildUnits(text, voice, isSsml)
+                : planUnits(buildUnits(text, voice, false), voice, detectOnly ? null : natural, prefs, settings,
+                        scriptLanguages, detectOnly);
         final Bundle requestParams = request.getParams();
         if (requestParams != null && requestParams.getBoolean(PARAM_SHOW_PLAN)) {
             recordPlan(units);
@@ -1652,7 +1659,7 @@ public class TtsService extends TextToSpeechService {
         final List<LanguageRuns.Run> runs = LanguageRuns.split(text, own, runLanguages, numbers, language -> {
             final String card = LanguageCards.switchAt(prefs, language);
             return card.isEmpty() ? sensitivity : card;
-        }, ownNatural != null && !ownNatural.config.usesEspeak());
+        }, ownNatural != null && !ownNatural.config.usesEspeak(), VoiceSettings.isDetectScriptLanguages(prefs));
         List<LanguageRuns.Run> out = null;
         for (int i = 0; i < runs.size(); i++) {
             final LanguageRuns.Run run = runs.get(i);
@@ -1685,9 +1692,10 @@ public class TtsService extends TextToSpeechService {
      */
     private List<SynthUnit> planUnits(List<SynthUnit> units, final Voice voice,
                                       final PiperVoiceStore.Installed ownNatural, final SharedPreferences prefs,
-                                      VoiceSettings settings, Map<String, String> scriptLanguages) {
-        final boolean naturalSwitching = ScriptLanguages.naturalSwitching(prefs);
-        final Map<UnicodeScript, String> runLanguages = naturalSwitching
+                                      VoiceSettings settings, Map<String, String> scriptLanguages,
+                                      final boolean espeakOnly) {
+        final boolean naturalSwitching = ScriptLanguages.naturalSwitching(prefs) && !espeakOnly;
+        final Map<UnicodeScript, String> runLanguages = naturalSwitching || espeakOnly
                 ? ScriptLanguages.runLanguages(scriptLanguages) : null;
         final String own = PiperVoiceStore.languageKey(voice.locale);
         final String numbers = naturalSwitching ? RequestSettings.numbersRunLanguage(settings, own) : null;
@@ -1702,6 +1710,9 @@ public class TtsService extends TextToSpeechService {
         final RunPlan.Readers<Voice> readers = new RunPlan.Readers<Voice>() {
             @Override
             public String naturalFor(String language) {
+                if (espeakOnly) {
+                    return null;
+                }
                 final PiperVoiceStore.Installed v = language.equals(own) ? ownNatural
                         : PiperVoiceStore.assignedFor(mStorageContext, prefs, language);
                 if (v == null) {
@@ -1730,7 +1741,7 @@ public class TtsService extends TextToSpeechService {
 
             @Override
             public String whenMixed(String language) {
-                if (language.equals(readIn[0])) {
+                if (espeakOnly || language.equals(readIn[0])) {
                     return RunPlan.MIXED_DEFAULT;
                 }
                 final String mixed = LanguageCards.whenMixed(prefs, language);
@@ -1767,6 +1778,7 @@ public class TtsService extends TextToSpeechService {
             final LanguageRuns.Run whole = new LanguageRuns.Run(0, unit.text, own);
             final List<LanguageRuns.Run> runs = unit.readIn != null
                     ? Collections.singletonList(new LanguageRuns.Run(0, unit.text, unit.readIn))
+                    : espeakOnly ? LanguageRuns.detectedRuns(unit.text, own, runLanguages)
                     : naturalSwitching
                     ? naturalRuns(unit.text, own, runLanguages, numbers, prefs)
                     : digitHelp ? LanguageRuns.splitDigits(whole, ESPEAK_ONLY)
@@ -1781,6 +1793,18 @@ public class TtsService extends TextToSpeechService {
             }
         }
         return out;
+    }
+
+    /** Whether {@code text} has a letter of a script {@link LanguageRuns#hasLetterTable} covers. */
+    private static boolean hasLetterTableScript(String text) {
+        for (int i = 0; i < text.length(); ) {
+            final int c = text.codePointAt(i);
+            i += Character.charCount(c);
+            if (c >= 0x0400 && Character.isLetter(c) && LanguageRuns.hasLetterTable(UnicodeScript.of(c))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** True when natural voices read every unit (earcons aside). */

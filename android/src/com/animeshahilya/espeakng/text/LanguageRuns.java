@@ -620,6 +620,19 @@ public final class LanguageRuns {
     public static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
                            String numbers, java.util.function.Function<String, String> sensitivityFor,
                            boolean lettersOnly) {
+        return split(text, language, chosen, numbers, sensitivityFor, lettersOnly, false);
+    }
+
+    /**
+     * As above. {@code detect} (Mixed languages -> "Detect the language of
+     * each sentence", off by default) also tells languages apart in a script
+     * the user chose a language for, which is then only the usual one: with
+     * Arabic script set to Central Kurdish, an Arabic sentence is still
+     * Arabic (a Kurdish tester could not have both).
+     */
+    public static List<Run> split(String text, String language, Map<UnicodeScript, String> chosen,
+                           String numbers, java.util.function.Function<String, String> sensitivityFor,
+                           boolean lettersOnly, boolean detect) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
@@ -627,8 +640,35 @@ public final class LanguageRuns {
             return Collections.singletonList(new Run(0, text, language));
         }
         final List<Run> runs = identify(split(text, language,
-                new FastLanguageResolver(text, language, chosen, numbers)), text, chosen);
+                new FastLanguageResolver(text, language, chosen, numbers)), text, chosen, detect);
         return applySensitivity(runs, language, sensitivityFor, lettersOnly);
+    }
+
+    /**
+     * The runs eSpeak alone needs for "Detect the language of each sentence":
+     * only Cyrillic, Arabic and Bengali script parts keep a language of their
+     * own; the rest is the request's language, so eSpeak switches there by
+     * itself exactly as without the setting.
+     */
+    public static List<Run> detectedRuns(String text, String language, Map<UnicodeScript, String> chosen) {
+        final List<Run> runs = split(text, language, chosen, null, l -> null, false, true);
+        final List<Run> out = new ArrayList<>(runs.size());
+        for (Run run : runs) {
+            final String lang = hasLetterTable(scriptOf(run.language)) ? run.language : language;
+            final Run last = out.isEmpty() ? null : out.get(out.size() - 1);
+            if (last != null && last.language.equals(lang)) {
+                out.set(out.size() - 1, new Run(last.start, last.text + run.text, lang));
+            } else {
+                out.add(lang.equals(run.language) ? run : new Run(run.start, run.text, lang));
+            }
+        }
+        return out;
+    }
+
+    /** Whether {@code script} is told apart by letters ({@link #identify}): Cyrillic, Arabic, Bengali. */
+    public static boolean hasLetterTable(UnicodeScript script) {
+        return script == UnicodeScript.CYRILLIC || script == UnicodeScript.ARABIC
+                || script == UnicodeScript.BENGALI;
     }
 
     /**
@@ -639,38 +679,52 @@ public final class LanguageRuns {
      * Assamese. Han is Japanese when the text has kana, Korean when it has
      * Hangul. A script the user chose a language for keeps it. Runs that end
      * up in the same language are joined (東京 + タワー).
+     *
+     * <p>Cyrillic, Arabic and Bengali script are decided per sentence, in
+     * the speaking language's own script too: a Ukrainian sentence in a
+     * Russian request, an Arabic quotation in Urdu. Before, one marker letter
+     * moved the whole run ("Слава Україні" read a Russian request in
+     * Ukrainian) and the speaking language's own text was never looked at.
      */
-    private static List<Run> identify(List<Run> runs, String text, Map<UnicodeScript, String> chosen) {
+    private static List<Run> identify(List<Run> runs, String text, Map<UnicodeScript, String> chosen,
+                                      boolean detect) {
         boolean changed = false;
-        for (int i = 0; i < runs.size(); i++) {
-            final Run run = runs.get(i);
-            final String better = identify(run.language, run.text, text, chosen);
-            if (!better.equals(run.language)) {
-                runs.set(i, new Run(run.start, run.text, better));
-                changed = true;
+        final List<Run> out = new ArrayList<>(runs.size());
+        for (Run run : runs) {
+            final UnicodeScript script = letterScript(run.language);
+            if (script != null && (detect || chosen == null || !chosen.containsKey(script))) {
+                // With detection on, the language the user chose for the
+                // script settles what letters alone cannot.
+                final String preferred = detect && chosen != null ? chosen.get(script) : null;
+                for (Run sentence : sentences(run)) {
+                    final String better = bySentence(script, run.language, sentence.text, preferred);
+                    changed |= !better.equals(run.language);
+                    out.add(new Run(sentence.start, sentence.text, better));
+                }
+                continue;
             }
+            final String better = identify(run.language, run.text, text, chosen);
+            changed |= !better.equals(run.language);
+            out.add(better.equals(run.language) ? run : new Run(run.start, run.text, better));
         }
         if (!changed) {
             return runs;
         }
-        final List<Run> out = new ArrayList<>(runs.size());
-        for (Run run : runs) {
-            final Run last = out.isEmpty() ? null : out.get(out.size() - 1);
+        final List<Run> joined = new ArrayList<>(out.size());
+        for (Run run : out) {
+            final Run last = joined.isEmpty() ? null : joined.get(joined.size() - 1);
             if (last != null && last.language.equals(run.language)) {
-                out.set(out.size() - 1, new Run(last.start, last.text + run.text, last.language));
+                joined.set(joined.size() - 1, new Run(last.start, last.text + run.text, last.language));
             } else {
-                out.add(run);
+                joined.add(run);
             }
         }
-        return out;
+        return joined;
     }
 
     private static String identify(String language, String run, String text, Map<UnicodeScript, String> chosen) {
         final UnicodeScript script;
         switch (language) {
-            case "rus": script = UnicodeScript.CYRILLIC; break;
-            case "ara": script = UnicodeScript.ARABIC; break;
-            case "ben": script = UnicodeScript.BENGALI; break;
             case "zho": script = UnicodeScript.HAN; break;
             case "eng": script = UnicodeScript.LATIN; break;
             default: return language;
@@ -682,8 +736,115 @@ public final class LanguageRuns {
             final String found = LatinLanguageDetector.detect(run, language);
             return found != null ? found : language;
         }
-        final String found = script == UnicodeScript.HAN ? hanLanguage(text) : byLetters(script, run);
+        final String found = hanLanguage(text);
         return found != null ? found : language;
+    }
+
+    /** The script whose letter table tells {@code language} from its neighbours, or null. */
+    private static UnicodeScript letterScript(String language) {
+        final UnicodeScript script = scriptOf(language);
+        if (!hasLetterTable(script)) {
+            return null;
+        }
+        if (language.equals(SCRIPT_LANGUAGE.get(script))) {
+            return script;
+        }
+        for (String entry : table(script)) {
+            if (entry.startsWith(language + ":", entry.charAt(0) == '~' ? 1 : 0)) {
+                return script;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The sentences of a run, each with its terminator and the spaces after
+     * it: a full stop, ? or ! (also the Arabic, Urdu, Devanagari and
+     * Armenian ones) before a space or the end, or a line break. "3.5" is
+     * one word.
+     */
+    static List<Run> sentences(Run run) {
+        final String t = run.text;
+        final List<Run> out = new ArrayList<>();
+        int from = 0;
+        int fromCp = run.start;
+        int cp = run.start;
+        for (int i = 0; i < t.length(); ) {
+            final int c = t.codePointAt(i);
+            i += Character.charCount(c);
+            cp++;
+            final boolean end = c == '\n' || ((c == '.' || c == '?' || c == '!' || c == '۔'
+                    || c == '؟' || c == '।' || c == '॥' || c == '։')
+                    && (i == t.length() || Character.isWhitespace(t.codePointAt(i))));
+            if (!end) {
+                continue;
+            }
+            while (i < t.length() && Character.isWhitespace(t.codePointAt(i))) {
+                i += Character.charCount(t.codePointAt(i));
+                cp++;
+            }
+            out.add(new Run(fromCp, t.substring(from, i), run.language));
+            from = i;
+            fromCp = cp;
+        }
+        if (from < t.length()) {
+            out.add(new Run(fromCp, t.substring(from), run.language));
+        }
+        return out;
+    }
+
+    /**
+     * The language of one sentence labelled {@code language}. Letters only
+     * one language uses decide. A label with a {@link #NOT_WRITTEN} list
+     * stays unless the sentence has one of its letters (a Belarusian
+     * "Добры дзень" has ы, which Russian shares). Otherwise the weaker shared
+     * letters (Persian's ی ک) count only where the label is just the
+     * script's default, or for Arabic with two of its letters: a short Urdu
+     * sentence ("کیا؟") has only ی ک and must stay Urdu.
+     */
+    private static String bySentence(UnicodeScript script, String language, String sentence,
+                                     String preferred) {
+        final int[] count = new int[1];
+        final boolean[] weak = new boolean[1];
+        final String found = byLetters(script, sentence, count, weak);
+        if (language.equals(found)) {
+            return language;
+        }
+        if (preferred != null && !preferred.equals(language) && (found == null || weak[0])
+                && writes(preferred, sentence) && hasNotWritten(preferred)) {
+            // Only shared letters ("من کوردم." is Persian or Sorani): the
+            // chosen language, when it can be written this way at all.
+            return preferred;
+        }
+        if (found != null && !weak[0]) {
+            return found; // letters only that language writes (Urdu's ہ ے in Sorani text)
+        }
+        if (hasNotWritten(language)) {
+            if (writes(language, sentence)) {
+                return language;
+            }
+            // Not this language, and no other one's own letters: the script's
+            // usual one ("الحمد لله رب العالمين" in Sorani text is Arabic).
+            final String usual = SCRIPT_LANGUAGE.get(script);
+            return found != null ? found : usual != null ? usual : language;
+        }
+        if (found == null) {
+            return language;
+        }
+        if (weak[0] && !language.equals(SCRIPT_LANGUAGE.get(script))
+                && !("ara".equals(found) && count[0] >= 2)) {
+            return language;
+        }
+        return found;
+    }
+
+    private static boolean hasNotWritten(String language) {
+        for (String entry : NOT_WRITTEN) {
+            if (entry.startsWith(language + ":")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Japanese or Korean when the text around the Han has kana or Hangul, else null. */
@@ -713,36 +874,81 @@ public final class LanguageRuns {
      */
     private static final String[] CYRILLIC_LETTERS = {
             "ukr:їєґ", "bel:ў", "srp:ђћјљњџ", "mkd:ѓќѕјљњџ", "kaz:әғқңөұүһ", "tat:әөүҗңһ", "bak:ҙҫҡғәөүңһ",
-            "~ukr:і", "~bel:і"};
+            "~ukr:і", "~bel:і", "~rus:ыэъё"};
     private static final String[] ARABIC_LETTERS = {
             // Persian: ی/ک (not Arabic's ي/ك) and پ چ ژ گ; Arabic: ة ي ك ى.
             "urd:ٹڈڑںےۓہھ", "pus:ټډړښږځڅۍې", "snd:ٻڀٺٽٿڃڄڇڊڌڍڏڙڦڱڳ", "ckb:ڵۆێڕە",
             "uig:ۈۋۇېەڭ", "~fas:یکپچژگ", "~ara:ةيكى"};
-    private static final String[] BENGALI_LETTERS = {"asm:ৰৱ"};
+    private static final String[] BENGALI_LETTERS = {"asm:ৰৱ", "~ben:র"};
+    /**
+     * Letters a language never writes, as "language:letters": a run with
+     * one of them is not that language, whatever its other letters say
+     * ("Слава Україні и ушёл" has ё, which Ukrainian lacks).
+     */
+    private static final String[] NOT_WRITTEN = {
+            "ukr:ыэъё", "bel:ищъ", "srp:йщъыьэюяёєїі", "mkd:йщъыьэюяёєїі",
+            "rus:іїєґўђћјљњџѓќѕәғқңөұүһҗҙҫҡ", "asm:র", "ben:ৰৱ",
+            // Sorani: ی ک and ە, never Arabic's ي ك ة ى, its ث ذ ض ظ أ إ or
+            // vowel marks; a word never starts with a bare ا (see writes).
+            "ckb:ةيكىثذضظأإًٌٍَُِّْ"};
 
-    private static String byLetters(UnicodeScript script, String run) {
-        final String[] table = script == UnicodeScript.CYRILLIC ? CYRILLIC_LETTERS
+    private static String[] table(UnicodeScript script) {
+        return script == UnicodeScript.CYRILLIC ? CYRILLIC_LETTERS
                 : script == UnicodeScript.ARABIC ? ARABIC_LETTERS : BENGALI_LETTERS;
+    }
+
+    /** False if {@code run} has a letter {@code language} never writes. */
+    private static boolean writes(String language, String run) {
+        if ("ckb".equals(language)) {
+            // Sorani writes a vowel at a word's start after ئ: ئەمڕۆ, ئاو.
+            // A bare ا there is Arabic or Persian (the article ال...).
+            for (int i = 0; i < run.length(); i++) {
+                if (run.charAt(i) == 'ا' && (i == 0 || !isArabicLetter(run.charAt(i - 1)))) {
+                    return false;
+                }
+            }
+        }
+        for (String entry : NOT_WRITTEN) {
+            if (entry.startsWith(language + ":")) {
+                for (int i = 0; i < run.length(); i++) {
+                    if (entry.indexOf(Character.toLowerCase(run.charAt(i)), language.length() + 1) >= 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isArabicLetter(char c) {
+        return Character.isLetter(c) && UnicodeScript.of(c) == UnicodeScript.ARABIC;
+    }
+
+    /** The language of {@code run} by its letters, or null; {@code count} and {@code weak} describe the win. */
+    private static String byLetters(UnicodeScript script, String run, int[] count, boolean[] weak) {
         String best = null;
         int bestCount = 0;
-        for (boolean weak : new boolean[] {false, true}) {
-            for (String entry : table) {
-                if ((entry.charAt(0) == '~') != weak) {
+        for (boolean w : new boolean[] {false, true}) {
+            for (String entry : table(script)) {
+                if ((entry.charAt(0) == '~') != w) {
                     continue;
                 }
                 final int colon = entry.indexOf(':');
-                int count = 0;
+                final String language = entry.substring(w ? 1 : 0, colon);
+                int n = 0;
                 for (int i = 0; i < run.length(); i++) {
                     if (entry.indexOf(Character.toLowerCase(run.charAt(i)), colon + 1) >= 0) {
-                        count++;
+                        n++;
                     }
                 }
-                if (count > bestCount) {
-                    best = entry.substring(weak ? 1 : 0, colon);
-                    bestCount = count;
+                if (n > bestCount && writes(language, run)) {
+                    best = language;
+                    bestCount = n;
                 }
             }
             if (best != null) {
+                count[0] = bestCount;
+                weak[0] = w;
                 return best;
             }
         }
@@ -762,9 +968,21 @@ public final class LanguageRuns {
         if (language == null) {
             return false;
         }
-        if (language.equals(own) || "zxx".equals(language)
-                || (chosen != null && chosen.containsValue(language))) {
+        if (language.equals(own) || "zxx".equals(language)) {
             return true;
+        }
+        if (chosen != null && chosen.containsValue(language)) {
+            // eSpeak switches into the chosen language only from another
+            // script: an Arabic voice reads Arabic script with its own rules,
+            // whatever Arabic script is set to (Sorani was spelled out).
+            return !writtenIn(own, scriptOf(language));
+        }
+        // eSpeak reads this script in the language chosen for it, so another
+        // language detected in it (Arabic with Arabic script set to Sorani)
+        // needs its own voice.
+        final String chosenForScript = chosen != null ? chosen.get(scriptOf(language)) : null;
+        if (chosenForScript != null) {
+            return false;
         }
         switch (language) {
             case "eng": case "hin": case "ben": case "pan": case "guj": case "tam": case "kan":

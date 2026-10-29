@@ -1035,7 +1035,17 @@ voices" does not, so voices can still be deleted to free space.
   letters, else Persian or Arabic by the weaker ی ک پ گ vs ة ي ك markers;
   Bengali script with ৰ/ৱ is Assamese; Han is Japanese when the text has
   kana, Korean when it has Hangul. A script the user chose a language for
-  is never second-guessed. On the eSpeak path (natural voices on), a run
+  is never second-guessed. Since 2026-10-29 Cyrillic, Arabic and Bengali
+  script are decided per sentence, in the request's own script too (a
+  Ukrainian sentence in a Russian request, an Arabic quotation in Urdu):
+  before, one marker letter moved the whole run ("Слава Україні" read a
+  Russian request in Ukrainian; one Urdu sentence an Arabic one in Urdu).
+  `NOT_WRITTEN` lists letters a language never uses (ё is not Ukrainian):
+  a sentence never goes to such a language, and a request language with a
+  list stays unless the sentence has one of them (Belarusian ы stays
+  Belarusian). Weak shared letters (Persian ی ک) move a sentence only out
+  of the script's default language, or to Arabic with two of its letters,
+  so a short Urdu "کیا؟" stays Urdu. `languageIsToldApartPerSentence`. On the eSpeak path (natural voices on), a run
   eSpeak would not switch to by itself (`LanguageRuns.espeakReadsItself`:
   it spells Cyrillic, Telugu, Thai... letter by letter and reads Marathi or
   Urdu with the wrong rules) gets that language's eSpeak voice;
@@ -1138,6 +1148,28 @@ Ancient Greek and Western Armenian did not, so they are not offered).
 `TtsService` applies them per request through the memoized
 `SpeechSynthesis.setScriptLanguages`. `ScriptLanguagesDeviceTest` checks the
 engine end to end.
+
+**Detect the language of each sentence** (`espeak_detect_script_languages`,
+top of that page, off by default; 2026-10-29, a Kurdish tester: with Arabic
+script set to Central Kurdish they could not have Arabic too). Measured on a
+Pixel 8 before it, seconds: English voice with Arabic script as eSpeak's
+default, Arabic 1.48 but Sorani 15.69 (letters named); set to Kurdish,
+Sorani 1.38 but Arabic 4.73; the Arabic voice reads Sorani in 10.11; each
+language's own voice 1.61 / 1.34. On, `LanguageRuns.identify` runs for
+Arabic, Cyrillic and Bengali script even where a language is chosen, which
+then only settles sentences whose letters fit both (`bySentence`
+`preferred`); Sorani's `NOT_WRITTEN` letters (Arabic's ي ك ة ى ث ذ ض ظ أ إ,
+vowel marks) and its rule that no word starts with a bare ا tell Arabic
+from it. With natural voices off such a request is planned anyway
+(`TtsService` `detectOnly`, `LanguageRuns.detectedRuns`): only those
+scripts' parts get their own eSpeak voice, the rest reads as before.
+`espeakReadsItself` trap found by length, not by the routing preview (which
+shows each part's text language, not its reader): a chosen language was
+taken as "eSpeak switches into it", but never inside the voice's own
+script - the Arabic voice spelled Sorani out. `ScriptDetectionCorpusTest`
+(18 Sorani, 15 Arabic, Persian and Urdu sentences under English, Arabic and
+Kurdish voices) and `SoraniArabicDeviceTest` (routing + lengths: everything
+within 15% of its own voice).
 
 ### Per-language speech (language cards)
 

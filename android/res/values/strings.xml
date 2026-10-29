@@ -484,6 +484,8 @@
   <string name="switching_sensitivity_phrases">Phrases (2+ words)</string>
   <string name="switching_sensitivity_sentences">Whole sentences</string>
   <string name="setting_detect_latin_languages">Recognise European languages</string>
+  <string name="setting_detect_script_languages">Detect the language of each sentence</string>
+  <string name="setting_detect_script_languages_summary">Arabic, Kurdish, Persian, Urdu in Arabic script; Russian, Ukrainian in Cyrillic; Bengali, Assamese. The language chosen below is used when a sentence could be either</string>
   <string name="setting_detect_latin_languages_summary">Spanish, French, German, Italian, Portuguese phrases in their own voice</string>
   <string name="setting_follow_keyboard_language">Follow keyboard language</string>
   <string name="setting_follow_keyboard_language_summary">Typed letters use the keyboard\'s language</string>

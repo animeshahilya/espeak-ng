@@ -430,6 +430,12 @@
             android:title="@string/screen_script_languages_title"
             android:summary="@string/screen_script_languages_summary"
             app:iconSpaceReserved="false">
+          <SwitchPreferenceCompat
+              android:key="espeak_detect_script_languages"
+              android:title="@string/setting_detect_script_languages"
+              android:summary="@string/setting_detect_script_languages_summary"
+              android:defaultValue="false"
+              app:iconSpaceReserved="false" />
           <ListPreference
               android:key="espeak_script_latin"
               android:title="@string/setting_script_latin"
