@@ -665,6 +665,26 @@ public final class LanguageRuns {
         return out;
     }
 
+    private static volatile Map<String, String> sTags;
+
+    /** "rus" -> "ru", for data keyed by two-letter codes; a language without one keeps its code ("ckb"). */
+    public static String languageTag(String iso3) {
+        Map<String, String> tags = sTags;
+        if (tags == null) {
+            tags = new HashMap<>();
+            for (String code : java.util.Locale.getISOLanguages()) {
+                try {
+                    tags.put(new java.util.Locale(code).getISO3Language(), code);
+                } catch (java.util.MissingResourceException ignored) {
+                    // no three-letter code
+                }
+            }
+            sTags = tags;
+        }
+        final String tag = tags.get(iso3);
+        return tag != null ? tag : iso3;
+    }
+
     /** Whether {@code script} is told apart by letters ({@link #identify}): Cyrillic, Arabic, Bengali. */
     public static boolean hasLetterTable(UnicodeScript script) {
         return script == UnicodeScript.CYRILLIC || script == UnicodeScript.ARABIC
@@ -696,8 +716,13 @@ public final class LanguageRuns {
                 // With detection on, the language the user chose for the
                 // script settles what letters alone cannot.
                 final String preferred = detect && chosen != null ? chosen.get(script) : null;
+                String previous = null;
                 for (Run sentence : sentences(run)) {
-                    final String better = bySentence(script, run.language, sentence.text, preferred);
+                    // No letters (an emoji or number after "?"): it belongs
+                    // to the sentence before it, not to the script's default.
+                    final String better = previous != null && !hasLetter(sentence.text) ? previous
+                            : bySentence(script, run.language, sentence.text, preferred);
+                    previous = better;
                     changed |= !better.equals(run.language);
                     out.add(new Run(sentence.start, sentence.text, better));
                 }
@@ -810,6 +835,12 @@ public final class LanguageRuns {
         if (language.equals(found)) {
             return language;
         }
+        if (found == null || weak[0]) {
+            final String byWords = byWords(script, language, sentence);
+            if (byWords != null) {
+                return byWords;
+            }
+        }
         if (preferred != null && !preferred.equals(language) && (found == null || weak[0])
                 && writes(preferred, sentence) && hasNotWritten(preferred)) {
             // Only shared letters ("من کوردم." is Persian or Sorani): the
@@ -836,6 +867,66 @@ public final class LanguageRuns {
             return language;
         }
         return found;
+    }
+
+    /**
+     * Common words only one language of a pair uses, for sentences whose
+     * letters do not decide: "Як справи? Дякую, добре." has no і, ї, є or ґ
+     * and was read as Russian (4 of 18 short Ukrainian sentences were
+     * Ukrainian). Words both languages write ("так", "все", "тебе", "де",
+     * "зараз") are left out. Written from general vocabulary, then checked
+     * on held-out sentences (ScriptDetectionCorpusTest).
+     */
+    private static final String[] WORDS = {
+            "ukr:як що це ця цей ми ви вона воно вони його йому мене але або щоб тому чому дуже вже ще"
+                    + " теж також буде була було був можна добре дякую будь ласка звичайно ось нема хто куди"
+                    + " завжди котра котрий робити робиш роблю бачу гарна гарний гарно звати кохаю година"
+                    + " тиждень ранок мова мову чекати",
+            "rus:как что это этот он она оно они его ему меня мне тебя но или если чтобы потому почему"
+                    + " когда где очень уже тоже также будет была было можно нужно хорошо спасибо"
+                    + " пожалуйста конечно да нет вот сейчас всегда никогда кто куда сколько который"
+                    + " которая делать делаешь делаю вижу говорю красивая красивый зовут неделя год утро"
+                    + " вечер ночь язык привет пока сегодня здравствуйте свидания ждать",
+            // Arabic script: letters settle most sentences; these settle short ones.
+            "ara:نعم هل قد مع عن لقد لم لن",
+            "fas:که را خیلی چه هست هستم نیست برای",
+            "ckb:سوپاس باش باشم باشی چی کوا"};
+
+    /**
+     * The language whose {@link #WORDS} the sentence has more of than any
+     * other's, if it can be written this way; null when none leads. In
+     * Cyrillic only Russian and Ukrainian sentences are judged (Belarusian
+     * shares "як").
+     */
+    private static String byWords(UnicodeScript script, String language, String sentence) {
+        if (script == UnicodeScript.CYRILLIC && !"rus".equals(language) && !"ukr".equals(language)) {
+            return null;
+        }
+        String best = null;
+        int bestCount = 0;
+        int second = 0;
+        final String[] words = sentence.toLowerCase(java.util.Locale.ROOT).split("[^\\p{L}\\p{M}]+");
+        for (String entry : WORDS) {
+            final int colon = entry.indexOf(':');
+            final String lang = entry.substring(0, colon);
+            if (scriptOf(lang) != script) {
+                continue;
+            }
+            int n = 0;
+            for (String w : words) {
+                if (!w.isEmpty() && (" " + entry.substring(colon + 1) + " ").contains(" " + w + " ")) {
+                    n++;
+                }
+            }
+            if (n > bestCount) {
+                second = bestCount;
+                best = lang;
+                bestCount = n;
+            } else if (n > second) {
+                second = n;
+            }
+        }
+        return best != null && bestCount > second && writes(best, sentence) ? best : null;
     }
 
     private static boolean hasNotWritten(String language) {
@@ -918,6 +1009,17 @@ public final class LanguageRuns {
             }
         }
         return true;
+    }
+
+    private static boolean hasLetter(String text) {
+        for (int i = 0; i < text.length(); ) {
+            final int c = text.codePointAt(i);
+            if (Character.isLetter(c)) {
+                return true;
+            }
+            i += Character.charCount(c);
+        }
+        return false;
     }
 
     private static boolean isArabicLetter(char c) {

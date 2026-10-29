@@ -479,6 +479,8 @@
   <string name="numbers_language_around">In the language of the words around them</string>
   <string name="numbers_language_voice">Always in the voice\'s language</string>
   <string name="numbers_language_english">Always in English</string>
+  <string name="setting_emoji_language">Emoji</string>
+  <string name="emoji_language_voice">In the voice\'s language (default)</string>
   <string name="setting_switching_sensitivity">Switch language for</string>
   <string name="switching_sensitivity_words">Every word (default)</string>
   <string name="switching_sensitivity_phrases">Phrases (2+ words)</string>
@@ -717,6 +719,7 @@
   <string name="test_routing_result_title">How it was read</string>
   <string name="test_routing_part">%1$s\n%2$s, %3$s</string>
   <string name="test_routing_espeak">eSpeak</string>
+  <string name="test_routing_espeak_voice">eSpeak, %1$s voice</string>
   <string name="test_routing_nothing">Nothing was read. Type some text and try again.</string>
   <string name="test_routing_edit">Try other text</string>
   <string name="test_routing_close">Close</string>

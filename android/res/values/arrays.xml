@@ -53,6 +53,16 @@
     <item>voice</item>
     <item>en</item>
   </string-array>
+  <string-array name="emoji_language_entries" translatable="false">
+    <item>@string/emoji_language_voice</item>
+    <item>@string/numbers_language_around</item>
+    <item>@string/numbers_language_english</item>
+  </string-array>
+  <string-array name="emoji_language_values" translatable="false">
+    <item></item>
+    <item>around</item>
+    <item>en</item>
+  </string-array>
   <string-array name="switching_sensitivity_entries" translatable="false">
     <item>@string/switching_sensitivity_words</item>
     <item>@string/switching_sensitivity_phrases</item>

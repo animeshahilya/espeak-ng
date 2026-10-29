@@ -1171,6 +1171,22 @@ script - the Arabic voice spelled Sorani out. `ScriptDetectionCorpusTest`
 Kurdish voices) and `SoraniArabicDeviceTest` (routing + lengths: everything
 within 15% of its own voice).
 
+Refinements (2026-10-29, later): sentences whose letters do not decide are
+judged by common words only one language of a pair uses
+(`LanguageRuns.WORDS`, `byWords`; Cyrillic: Russian and Ukrainian only,
+Belarusian shares "як"). Ukrainian without і ї є ґ was read as Russian:
+held-out set 13 -> 16 of 20, Russian inside Ukrainian 7 -> 15 of 20, no
+Russian sentence lost (`ukrainianAndRussianByWords`, tuning and held-out
+sets kept apart). A piece without letters (an emoji or number after "?")
+joins the sentence before it instead of falling to the script's default.
+Emoji (`espeak_emoji_language`, Mixed languages): the voice's language
+(default, NVDA's way), the words around them (`TextPreprocessor.nameEmoji`
+splits as speech will, `LanguageRuns.languageTag` maps ISO 639-2 to the
+emoji files' codes), or English. NVDA's CLDR data has no Central Kurdish
+emoji names (ckb.txt is empty), so those stay English. The routing preview
+now records each part's reader (`PlanPart.readerLanguage`) and says
+"eSpeak, Arabic voice" when it differs from the text's language.
+
 ### Per-language speech (language cards)
 
 Settings -> Mixed languages -> Speech by language (`ui/LanguageCards`):

@@ -252,7 +252,13 @@ public final class SpeechPreview {
         if (plan != null) {
             for (TtsService.PlanPart part : plan) {
                 String reader = context.getString(R.string.test_routing_espeak);
-                if (part.naturalKey != null) {
+                if (part.naturalKey == null && part.readerLanguage != null
+                        && !part.readerLanguage.equals(part.language)) {
+                    // eSpeak in another language's voice: say which, it is
+                    // what reads it (an English voice switching by itself).
+                    reader = context.getString(R.string.test_routing_espeak_voice,
+                            PiperSettings.languageName(part.readerLanguage));
+                } else if (part.naturalKey != null) {
                     final PiperVoiceStore.Installed v =
                             PiperVoiceStore.find(EspeakApp.getStorageContext(), part.naturalKey);
                     reader = v != null ? v.config.displayName() : part.naturalKey;

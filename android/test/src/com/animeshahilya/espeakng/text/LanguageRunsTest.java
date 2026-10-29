@@ -294,7 +294,8 @@ public class LanguageRunsTest {
         // In the speaking language's own script too, one sentence at a time.
         assertEquals("rus@0[Это Россия. ]ukr@12[Це Україна, і я тут. ]rus@33[Пока.]",
                 describe(LanguageRuns.split("Это Россия. Це Україна, і я тут. Пока.", "rus")));
-        assertEquals("ukr@0[Добрий день. Как дела? ]rus@23[Всё хорошо, спасибо.]",
+        // "Как дела?" has no Russian letter, but Russian words (WORDS).
+        assertEquals("ukr@0[Добрий день. ]rus@13[Как дела? Всё хорошо, спасибо.]",
                 describe(LanguageRuns.split("Добрий день. Как дела? Всё хорошо, спасибо.", "ukr")));
         assertEquals("rus@8[ Привет мир. ]ukr@21[Привіт світ.]",
                 describe(LanguageRuns.split("नमस्कार. Привет мир. Привіт світ.", "hin").subList(1, 3)));

@@ -232,8 +232,11 @@ public final class TextPreprocessor {
                 text = edits.track(text, NvdaSymbolProcessor.processSingleSymbol(text, lang));
             }
             if (containsPotentialEmoji(text)) {
-                text = edits.track(text, settings.isEmojiIgnoreEnabled()
-                        ? filterEmojis(text) : clarifyEmojiAnnouncements(text, lang));
+                // A lone emoji has no words around it: the voice's language,
+                // or English if that is the choice.
+                text = edits.track(text, settings.isEmojiIgnoreEnabled() ? filterEmojis(text)
+                        : clarifyEmojiAnnouncements(text, VoiceSettings.EMOJI_ENGLISH.equals(
+                                settings.getEmojiLanguage()) ? "en" : lang));
             }
             // A lone digit keeps the two number settings the full path applies.
             if (containsDigit(text)) {
@@ -407,8 +410,8 @@ public final class TextPreprocessor {
         }
 
         if (!isSsml && containsPotentialEmoji(text)) {
-            text = edits.track(text, settings.isEmojiIgnoreEnabled()
-                    ? filterEmojis(text) : clarifyEmojiAnnouncements(text, lang));
+            text = edits.track(text, settings.isEmojiIgnoreEnabled() ? filterEmojis(text)
+                    : nameEmoji(text, lang, numbersKey, settings));
         }
 
         return new Result(text, edits.map, false);
@@ -1476,6 +1479,35 @@ public final class TextPreprocessor {
         return script == Character.UnicodeScript.HAN || script == Character.UnicodeScript.HANGUL
                 || script == Character.UnicodeScript.HIRAGANA
                 || script == Character.UnicodeScript.KATAKANA;
+    }
+
+    /**
+     * Emoji names in the language the user chose (Mixed languages -> Emoji):
+     * the voice's (NVDA's way), English, or the words around each emoji,
+     * from the same language runs speech uses ({@link LanguageRuns#split}),
+     * so a 😊 after a Russian sentence in English text is read in Russian by
+     * the voice reading that sentence, not as English words between them.
+     */
+    static String nameEmoji(String text, String lang, String ownIso3, VoiceSettings settings) {
+        final String choice = settings.getEmojiLanguage();
+        if (VoiceSettings.EMOJI_ENGLISH.equals(choice)) {
+            return clarifyEmojiAnnouncements(text, "en");
+        }
+        if (!VoiceSettings.EMOJI_AROUND.equals(choice) || ownIso3 == null) {
+            return clarifyEmojiAnnouncements(text, lang);
+        }
+        final List<LanguageRuns.Run> runs = LanguageRuns.split(text, ownIso3, settings.scriptRunLanguages(),
+                null, l -> null, false, settings.detectsScriptLanguages());
+        if (runs.size() <= 1) {
+            return clarifyEmojiAnnouncements(text, lang);
+        }
+        final StringBuilder out = new StringBuilder(text.length() + 32);
+        for (LanguageRuns.Run run : runs) {
+            final String tag = run.language.equals(ownIso3) || "zxx".equals(run.language)
+                    ? lang : LanguageRuns.languageTag(run.language);
+            out.append(containsPotentialEmoji(run.text) ? clarifyEmojiAnnouncements(run.text, tag) : run.text);
+        }
+        return out.toString();
     }
 
     /** {@link #clarifyEmojiAnnouncements(String, String)} with English names. */

@@ -169,12 +169,20 @@ public class TtsService extends TextToSpeechService {
         public final String text;
         public final String language;
         public final String naturalKey;
+        /**
+         * Language of the voice that read it (ISO 639-2): the eSpeak voice's,
+         * which can differ from {@link #language} (an Arabic voice reading
+         * Sorani was invisible here until 2026-10-29), or the natural voice's.
+         */
+        public final String readerLanguage;
         public final List<LanguageRuns.Run> runs;
 
-        PlanPart(String text, String language, String naturalKey, List<LanguageRuns.Run> runs) {
+        PlanPart(String text, String language, String naturalKey, String readerLanguage,
+                 List<LanguageRuns.Run> runs) {
             this.text = text;
             this.language = language;
             this.naturalKey = naturalKey;
+            this.readerLanguage = readerLanguage;
             this.runs = runs != null
                     ? Collections.unmodifiableList(new ArrayList<>(runs))
                     : Collections.<LanguageRuns.Run>emptyList();
@@ -204,6 +212,7 @@ public class TtsService extends TextToSpeechService {
         String pendingText = null;
         String pendingLanguage = null;
         String pendingKey = null;
+        String pendingReader = null;
         List<LanguageRuns.Run> pendingRuns = null;
         for (SynthUnit unit : units) {
             if (unit.isEarcon()) {
@@ -219,23 +228,26 @@ public class TtsService extends TextToSpeechService {
                 // Digits moved out for eSpeak are read in its voice's language.
                 final String language = ESPEAK_ONLY.equals(run.language) ? unit.language : run.language;
                 if (pendingText != null && pendingLanguage.equals(language)
-                        && java.util.Objects.equals(pendingKey, unit.modelKey)) {
+                        && java.util.Objects.equals(pendingKey, unit.modelKey)
+                        && java.util.Objects.equals(pendingReader, unit.language)) {
                     pendingText = pendingText + " " + text;
                     pendingRuns.add(run);
                 } else {
                     if (pendingText != null) {
-                        plan.add(new PlanPart(pendingText, pendingLanguage, pendingKey, pendingRuns));
+                        plan.add(new PlanPart(pendingText, pendingLanguage, pendingKey, pendingReader,
+                                pendingRuns));
                     }
                     pendingText = text;
                     pendingLanguage = language;
                     pendingKey = unit.modelKey;
+                    pendingReader = unit.language;
                     pendingRuns = new ArrayList<>();
                     pendingRuns.add(run);
                 }
             }
         }
         if (pendingText != null) {
-            plan.add(new PlanPart(pendingText, pendingLanguage, pendingKey, pendingRuns));
+            plan.add(new PlanPart(pendingText, pendingLanguage, pendingKey, pendingReader, pendingRuns));
         }
         synchronized (SHOWN_PLAN_LOCK) {
             sShownPlan = plan;

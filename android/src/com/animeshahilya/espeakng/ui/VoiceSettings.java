@@ -183,6 +183,13 @@ public class VoiceSettings {
 
     public static final String EMOJI_ANNOUNCE = "announce";
     public static final String EMOJI_IGNORE = "ignore";
+    /** Language emoji are named in: {@link #EMOJI_IN_VOICE} and the other EMOJI_ values. */
+    public static final String PREF_EMOJI_LANGUAGE = "espeak_emoji_language";
+    /** The voice's language, as NVDA names them (default). */
+    public static final String EMOJI_IN_VOICE = "";
+    /** The language of the words before them (a 😊 in a Russian sentence of English text: in Russian). */
+    public static final String EMOJI_AROUND = "around";
+    public static final String EMOJI_ENGLISH = "en";
 
     /** Digit grouping modes for long numbers. */
     public static final String DIGIT_GROUP_OFF = "off";
@@ -456,6 +463,26 @@ public class VoiceSettings {
 
     public String getEmojiProcessingMode() {
         return mPreferences.getString(PREF_EMOJI_PROCESSING, EMOJI_ANNOUNCE);
+    }
+
+    /** See {@link #PREF_EMOJI_LANGUAGE}. */
+    public String getEmojiLanguage() {
+        final String value = mPreferences.getString(PREF_EMOJI_LANGUAGE, EMOJI_IN_VOICE);
+        return value != null ? value : EMOJI_IN_VOICE;
+    }
+
+    /**
+     * The languages the user chose for scripts, as language runs use them,
+     * and whether each sentence's language is detected: what text steps that
+     * follow the language of the words need to split it as speech will.
+     */
+    public java.util.Map<Character.UnicodeScript, String> scriptRunLanguages() {
+        return com.animeshahilya.espeakng.text.ScriptLanguages.runLanguages(
+                com.animeshahilya.espeakng.text.ScriptLanguages.chosen(mPreferences));
+    }
+
+    public boolean detectsScriptLanguages() {
+        return isDetectScriptLanguages(mPreferences);
     }
 
     public boolean isEmojiIgnoreEnabled() {

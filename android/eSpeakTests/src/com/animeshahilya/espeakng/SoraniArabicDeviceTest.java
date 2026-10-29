@@ -129,8 +129,12 @@ public class SoraniArabicDeviceTest {
         final List<String> out = new ArrayList<>();
         for (TtsService.PlanPart p : parts) {
             assertNull(id + ": eSpeak reads it", p.naturalKey);
-            out.add(p.language);
-            Log.i(TAG, id + " part " + p.language + ": " + p.text);
+            Log.i(TAG, id + " part " + p.language + " read by " + p.readerLanguage + ": " + p.text);
+            // The voice that read it: the routing preview showed only the
+            // text's language, which hid the Arabic voice spelling Sorani.
+            // An English request's own voice may switch by itself (eng).
+            out.add(p.language.equals(p.readerLanguage) || "eng".equals(p.readerLanguage)
+                    ? p.language : p.language + "/" + p.readerLanguage);
         }
         return out;
     }
@@ -157,6 +161,33 @@ public class SoraniArabicDeviceTest {
         assertEquals("[ckb]", plan("ar_one_" + n, SORANI_1, arabic).toString());
         assertEquals("[ara]", plan("ckb_one_" + n, ARABIC, sorani).toString());
         assertEquals("[ara]", plan("en_one_" + n, ARABIC, english).toString());
+    }
+
+    @Test
+    public void emojiFollowTheWordsAroundThem() throws Exception {
+        mPrefs.edit().putBoolean("piper_enabled", false).putBoolean("espeak_detect_script_languages", true)
+                .putString("espeak_emoji_language", "around").commit();
+        try {
+            final String smile = "😊";
+            // NVDA's CLDR data names no emoji in Central Kurdish (English is
+            // used): Ukrainian has them.
+            final String ukrainian = com.animeshahilya.espeakng.text.NvdaEmoji.substitute(smile, "uk").trim();
+            final String english = com.animeshahilya.espeakng.text.NvdaEmoji.substitute(smile, "en").trim();
+            assertTrue(ukrainian + " / " + english, !ukrainian.equals(english) && !ukrainian.equals(smile));
+            final Bundle show = new Bundle();
+            show.putBoolean(TtsService.PARAM_SHOW_PLAN, true);
+            TtsService.takeShownPlan();
+            seconds("emoji", "Message: Привіт, як справи? " + smile, voiceFor("en"), show);
+            final List<TtsService.PlanPart> parts = TtsService.takeShownPlan();
+            assertNotNull(parts);
+            final TtsService.PlanPart last = parts.get(parts.size() - 1);
+            Log.i(TAG, "emoji part " + last.language + " read by " + last.readerLanguage + ": " + last.text);
+            assertEquals("ukr", last.language);
+            assertEquals("ukr", last.readerLanguage);
+            assertTrue(last.text, last.text.contains(ukrainian) && !last.text.contains(english));
+        } finally {
+            mPrefs.edit().remove("espeak_emoji_language").commit();
+        }
     }
 
     @Test
