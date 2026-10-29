@@ -1,9 +1,9 @@
 {
-  "versionCode": 35,
-  "versionName": "2.10",
-  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.10/espeak-ng-2.10.apk",
-  "sha256": "792604ad1c96a26a722421b8739466809b7a3ee2f2563dda57ef36598d3dd7e9",
-  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.10/espeak-ng-2.10-snapdragon.apk",
-  "snapdragonSha256": "7f01a873c10a59454ac72a0ebf0c09c9cbc304ba5b29a712e6f93f8b78591b43",
-  "notes": "Import your own natural voices, speech settings per app, a Recent speech tile, presets, Phonon English voices and a much smaller download on recent Snapdragon phones, and many fixes."
+  "versionCode": 36,
+  "versionName": "2.11",
+  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.11/espeak-ng-2.11.apk",
+  "sha256": "75a0691f9a59dd647aa9d190aff776887bc328bd0f2f361570c4eaaebdf726d5",
+  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.11/espeak-ng-2.11-snapdragon.apk",
+  "snapdragonSha256": "582c7c284d6348d320ba9f828736343c145de5dee75751992cb4e13efcd0e300",
+  "notes": "Play Protect no longer blocks the app, each sentence can be read in its own language (Arabic and Kurdish, Russian and Ukrainian, Hindi and Marathi and more), European languages without natural voices, emoji options, and natural voices use less battery."
 }
