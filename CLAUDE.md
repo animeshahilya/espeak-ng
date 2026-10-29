@@ -1059,13 +1059,14 @@ voices" does not, so voices can still be deleted to free space.
   **App updates** (`util/AppUpdater`, 2026-10-15, modelled on Tarang's): the
   settings screen fetches `latest.json` from raw.githubusercontent.com at most
   daily (and About -> Check for updates on demand), offers a newer versionCode
-  with its notes (Update / Later / Skip this version), downloads the APK of the
-  running build's kind (`BuildConfig.SNAPDRAGON`) with DownloadManager into
-  `getExternalFilesDir("updates")` (no storage permission; FileProvider path
-  `updates`), refuses hosts other than GitHub's and any SHA-256 mismatch, and
-  hands it to the installer after a "ready to install" step
-  (`REQUEST_INSTALL_PACKAGES`; Android asks the user every time). Only one
-  update APK is kept; it is deleted once that version is installed. Never from
+  with its notes (Update / Later / Skip this version), and Update opens the
+  APK of the running build's kind (`BuildConfig.SNAPDRAGON`) in the browser;
+  Android's installer takes it from there. 2.10 downloaded and installed the
+  APK itself (`REQUEST_INSTALL_PACKAGES`, DownloadManager, SHA-256 check,
+  FileProvider) and Play Protect blocked it as an unsafe app; Tarang has the
+  same in-app installer and is not blocked, so most likely it is the pairing with a
+  speech engine that hears everything the screen reader says (and Recent
+  speech) that looks like spyware (the likely cause, not confirmed by Google). Do not add the permission back. Never from
   the speech service. Microsoft's
   onnxruntime-android merged in a `TelemetryInitializer` content provider
   and `ACCESS_NETWORK_STATE` (the provider ran at every process start and

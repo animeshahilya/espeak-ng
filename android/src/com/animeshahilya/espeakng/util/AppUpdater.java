@@ -16,17 +16,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.FileProvider;
-import androidx.core.view.ViewCompat;
 
 import com.animeshahilya.espeakng.BuildConfig;
 import com.animeshahilya.espeakng.EspeakApp;
@@ -50,12 +45,11 @@ import java.util.Set;
  * App updates for this sideloaded app, the way Tarang does them: a small
  * manifest ({@link #MANIFEST_URL}, latest.json in this public repo) names the
  * newest release; the settings screen checks it at most daily and from
- * About -> Check for updates, shows the release notes, downloads the APK the
- * running build is (standard or Snapdragon, {@link BuildConfig#SNAPDRAGON})
- * with the system DownloadManager, checks its SHA-256 and hands it to the
- * package installer - which always asks the user, as Android requires for an
- * app outside a store. Never from the speech service: checks only happen
- * while the settings screen is open.
+ * About -> Check for updates, shows the release notes,
+ * and Update opens the APK the running build is (standard or Snapdragon,
+ * {@link BuildConfig#SNAPDRAGON}) in the browser; Android's installer takes
+ * it from there. Never from the speech service: checks only happen while the
+ * settings screen is open.
  */
 public final class AppUpdater {
     private static final String TAG = "AppUpdater";
@@ -67,15 +61,13 @@ public final class AppUpdater {
     static final Set<String> ALLOWED_HOSTS = new HashSet<>(Arrays.asList(
             "github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com"));
     static final long CHECK_INTERVAL_MS = 24L * 60 * 60 * 1000;
-    private static final long DOWNLOAD_TIMEOUT_MS = 10L * 60 * 1000;
 
     private static final String PREFS = "app_update";
     private static final String KEY_LAST_CHECKED = "last_checked";
     private static final String KEY_SKIPPED = "skipped_version_code";
+    /** Left by 2.10's own downloads; see {@link #removeOldDownloads}. */
     private static final String KEY_DOWNLOAD_ID = "download_id";
     private static final String KEY_DOWNLOAD_VERSION = "download_version_code";
-    /** Inside getExternalFilesDir: no storage permission on any Android version; shared via FileProvider. */
-    private static final String DIR = "updates";
 
     private AppUpdater() {
     }
@@ -159,7 +151,7 @@ public final class AppUpdater {
             if (!isCheckDue(prefs.getLong(KEY_LAST_CHECKED, 0), System.currentTimeMillis())) {
                 return;
             }
-            cleanUpInstalled(activity);
+            removeOldDownloads(activity);
             try {
                 final Release r = fetchNewer(activity);
                 if (r != null && prefs.getInt(KEY_SKIPPED, 0) != r.versionCode) {
@@ -174,7 +166,7 @@ public final class AppUpdater {
     /** About -> Check for updates: always asks the network and always answers. */
     public static void checkNow(Context activity) {
         EspeakApp.runAsync(() -> {
-            cleanUpInstalled(activity);
+            removeOldDownloads(activity);
             Release r = null;
             boolean failed = false;
             try {
@@ -229,203 +221,35 @@ public final class AppUpdater {
     }
 
     /**
-     * The release the user chose Update for while the app could not install
-     * apps: going to Android's setting closes every dialog, so coming back
-     * would leave nothing to tap (found on a Galaxy S25 Ultra). {@link #onResume}
-     * carries on once the permission is there. Process memory only: if Android
-     * drops the process meanwhile, the next check offers it again.
+     * Opens the APK's GitHub link in the browser, which downloads it; opening
+     * the download hands it to Android's installer. The app does not download
+     * or install APKs itself (it did in 2.10, with REQUEST_INSTALL_PACKAGES):
+     * a speech engine that hears what the screen reader says and can also
+     * install apps is what Play Protect blocked as an unsafe app.
      */
-    private static volatile Release sAwaitingPermission;
-
-    /** The settings screen came back to the front: an update waiting for the permission goes on. */
-    public static void onResume(Context activity) {
-        final Release r = sAwaitingPermission;
-        if (r != null && activity.getPackageManager().canRequestPackageInstalls()) {
-            sAwaitingPermission = null;
-            startUpdate(activity, r);
-        }
-    }
-
     private static void startUpdate(Context activity, Release r) {
-        if (!activity.getPackageManager().canRequestPackageInstalls()) {
-            sAwaitingPermission = r;
-            show(new MaterialAlertDialogBuilder(activity)
-                    .setTitle(R.string.update_title)
-                    .setMessage(R.string.update_permission_body)
-                    .setPositiveButton(R.string.update_action_open_settings, (d, w) -> {
-                        try {
-                            activity.startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
-                                    Uri.parse("package:" + activity.getPackageName())));
-                        } catch (ActivityNotFoundException e) {
-                            message(activity, activity.getString(R.string.update_permission_missing));
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, null));
-            return;
-        }
-        final File ready = verifiedDownload(activity, r);
-        if (ready != null) {
-            showReady(activity, ready);
-            return;
-        }
-        download(activity, r);
-    }
-
-    private static File apkFile(Context context, Release r) {
-        return new File(context.getExternalFilesDir(DIR), "espeak-ng-" + r.versionCode + ".apk");
-    }
-
-    /** A copy of this release downloaded earlier and still intact, or null. */
-    private static File verifiedDownload(Context context, Release r) {
-        final File f = apkFile(context, r);
-        return f.isFile() && r.sha256.equals(sha256(f)) ? f : null;
-    }
-
-    private static void download(Context activity, Release r) {
-        final DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
-        final File target = apkFile(activity, r);
-        removeOldDownloads(activity);
-        final long id;
         try {
-            id = dm.enqueue(new DownloadManager.Request(Uri.parse(r.apkUrl))
-                    .setTitle(activity.getString(R.string.update_download_title, r.versionName))
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                    .setDestinationUri(Uri.fromFile(target)));
-        } catch (RuntimeException e) {
-            message(activity, activity.getString(R.string.update_download_failed));
-            return;
-        }
-        prefs(activity).edit().putLong(KEY_DOWNLOAD_ID, id).putInt(KEY_DOWNLOAD_VERSION, r.versionCode).apply();
-
-        final AlertDialog progress = show(new MaterialAlertDialogBuilder(activity)
-                .setTitle(activity.getString(R.string.update_downloading_title, r.versionName))
-                .setMessage(activity.getString(R.string.update_progress_unknown))
-                .setCancelable(false)
-                .setNegativeButton(android.R.string.cancel, (d, w) -> {
-                    dm.remove(id);
-                    prefs(activity).edit().remove(KEY_DOWNLOAD_ID).remove(KEY_DOWNLOAD_VERSION).apply();
-                }));
-        final TextView text = progress.findViewById(android.R.id.message);
-        if (text != null) {
-            // TalkBack hears the percentage as it changes, without moving focus.
-            ViewCompat.setAccessibilityLiveRegion(text, ViewCompat.ACCESSIBILITY_LIVE_REGION_POLITE);
-        }
-        EspeakApp.runAsync(() -> {
-            final long deadline = System.currentTimeMillis() + DOWNLOAD_TIMEOUT_MS;
-            int lastTens = -1;
-            String error = null;
-            while (true) {
-                int status;
-                long done;
-                long total;
-                try (Cursor c = dm.query(new DownloadManager.Query().setFilterById(id))) {
-                    if (c == null || !c.moveToFirst()) {
-                        status = -1; // removed: cancelled
-                        done = total = 0;
-                    } else {
-                        status = c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
-                        done = c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-                        total = c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-                    }
-                }
-                if (status == -1) {
-                    return;
-                }
-                if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                    break;
-                }
-                if (status == DownloadManager.STATUS_FAILED || System.currentTimeMillis() > deadline) {
-                    dm.remove(id);
-                    error = activity.getString(R.string.update_download_failed);
-                    break;
-                }
-                // Every 10%: often enough to see it move, rarely enough not to chatter.
-                final int tens = total > 0 ? (int) (done * 10 / total) : -1;
-                if (tens != lastTens) {
-                    lastTens = tens;
-                    final String line = total > 0
-                            ? activity.getString(R.string.update_progress, tens * 10)
-                            : activity.getString(R.string.update_progress_unknown);
-                    onMain(activity, () -> progress.setMessage(line));
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-            if (error == null && !r.sha256.equals(sha256(target))) {
-                dm.remove(id);
-                error = activity.getString(R.string.update_verify_failed);
-            }
-            final String failure = error;
-            onMain(activity, () -> {
-                progress.dismiss();
-                if (failure != null) {
-                    message(activity, failure);
-                } else {
-                    showReady(activity, target);
-                }
-            });
-        });
-    }
-
-    /** A checkpoint before the installer, so it never appears out of nowhere. */
-    private static void showReady(Context activity, File apk) {
-        show(new MaterialAlertDialogBuilder(activity)
-                .setTitle(R.string.update_title)
-                .setMessage(R.string.update_ready_body)
-                .setPositiveButton(R.string.update_action_install, (d, w) -> install(activity, apk))
-                .setNegativeButton(R.string.update_action_not_now, null));
-    }
-
-    private static void install(Context activity, File apk) {
-        try {
-            final Uri uri = FileProvider.getUriForFile(activity,
-                    activity.getPackageName() + ".fileprovider", apk);
-            activity.startActivity(new Intent(Intent.ACTION_VIEW)
-                    .setDataAndType(uri, "application/vnd.android.package-archive")
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK));
-        } catch (ActivityNotFoundException | IllegalArgumentException e) {
-            message(activity, activity.getString(R.string.update_install_failed));
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(r.apkUrl))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        } catch (ActivityNotFoundException e) {
+            message(activity, activity.getString(R.string.update_no_browser));
         }
     }
 
-    /** Once the update (or a newer build) is installed, its APK goes. */
-    private static void cleanUpInstalled(Context context) {
-        if (prefs(context).getInt(KEY_DOWNLOAD_VERSION, 0) <= currentVersionCode(context)) {
-            removeOldDownloads(context);
-        }
-    }
-
-    /** At most one update APK on the phone: earlier ones go before a new download. */
+    /** Update APKs 2.10 downloaded itself: gone once the app no longer does that. */
     private static void removeOldDownloads(Context context) {
         final SharedPreferences prefs = prefs(context);
         final long id = prefs.getLong(KEY_DOWNLOAD_ID, -1);
-        if (id >= 0) {
-            final DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-            try {
-                dm.remove(id);
-            } catch (RuntimeException ignored) {
-                // Already gone.
-            }
+        if (id < 0) {
+            return;
+        }
+        final DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        try {
+            dm.remove(id);
+        } catch (RuntimeException ignored) {
+            // Already gone.
         }
         prefs.edit().remove(KEY_DOWNLOAD_ID).remove(KEY_DOWNLOAD_VERSION).apply();
-        final File dir = context.getExternalFilesDir(DIR);
-        final File[] files = dir != null ? dir.listFiles() : null;
-        if (files != null) {
-            for (File f : files) {
-                //noinspection ResultOfMethodCallIgnored
-                f.delete();
-            }
-        }
-    }
-
-    static String sha256(File f) {
-        try {
-            return FileUtils.hash(f, "SHA-256");
-        } catch (IOException e) {
-            return null;
-        }
+        FileUtils.deleteRecursively(new File(context.getExternalFilesDir(null), "updates"));
     }
 }

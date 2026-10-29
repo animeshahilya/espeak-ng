@@ -213,7 +213,6 @@ public class TtsSettingsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         applySystemBarAppearance(getWindow(), this);
-        com.animeshahilya.espeakng.util.AppUpdater.onResume(this);
         // Time-based rows go stale while the screen sits open (a sleep-timer
         // mute expires with no callback to refresh it). Recompute on every
         // return rather than running a live timer for one row.

@@ -51,7 +51,7 @@ public class AppUpdaterTest {
     }
 
     @Test
-    public void newerDueAndHash() throws Exception {
+    public void newerAndDue() throws Exception {
         final AppUpdater.Release r = AppUpdater.parse(manifest(BASE + "espeak-ng-2.9.apk", SHA), false);
         assertTrue(AppUpdater.isNewer(r, 31));
         assertFalse(AppUpdater.isNewer(r, 32));
@@ -60,10 +60,6 @@ public class AppUpdaterTest {
         assertTrue(AppUpdater.isCheckDue(0, day));
         assertFalse(AppUpdater.isCheckDue(day, day + day / 2));
         assertTrue("a clock set back still checks", AppUpdater.isCheckDue(day * 3, day));
-        final File f = File.createTempFile("apk", ".bin");
-        Files.write(f.toPath(), "abc".getBytes(StandardCharsets.UTF_8));
-        assertEquals("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", AppUpdater.sha256(f));
-        f.delete();
     }
 
     @Test

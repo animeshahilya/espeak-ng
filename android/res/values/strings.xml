@@ -529,21 +529,9 @@
   <string name="update_action_update">Update</string>
   <string name="update_action_later">Later</string>
   <string name="update_action_skip">Skip this version</string>
-  <string name="update_action_install">Install</string>
-  <string name="update_action_not_now">Not now</string>
-  <string name="update_action_open_settings">Open settings</string>
   <string name="update_up_to_date">You have the latest version, %1$s.</string>
+  <string name="update_no_browser">No browser found to download the update. Get it from github.com/animeshahilya/espeak-ng/releases.</string>
   <string name="update_check_failed">Could not check for updates. Check your internet connection and try again.</string>
-  <string name="update_permission_body">To install updates, allow this app to install apps. Open settings, turn on Allow from this source, then come back: the update continues by itself.</string>
-  <string name="update_permission_missing">This phone has no setting to allow installing apps from this app.</string>
-  <string name="update_download_title">eSpeak NG Advanced %1$s</string>
-  <string name="update_downloading_title">Downloading version %1$s</string>
-  <string name="update_progress">%1$d percent downloaded</string>
-  <string name="update_progress_unknown">Downloading…</string>
-  <string name="update_download_failed">The download did not finish. Try again later.</string>
-  <string name="update_verify_failed">The downloaded file was damaged, so it was not installed. Try again.</string>
-  <string name="update_ready_body">The update is downloaded. Install it now? Android will ask you to confirm.</string>
-  <string name="update_install_failed">This phone could not open the installer.</string>
   <string name="whats_new_title">What\'s new in 2.10</string>
   <string name="whats_new_body">NEW IN 2.10\n• Natural voices start speaking sooner, and the Indian voices read numbers themselves.\n• Import a natural voice you downloaded elsewhere: Natural voices, Import a voice file.\n• Kannada Vikram and Ananya are back, and smaller.\n• Snapdragon 8 Gen 3, 8 Elite and 8 Elite Gen 5: 37 Phonon English voices that start almost instantly, natural voices ready at once on the NPU, and a smaller download.\n• Speech by app: each app can have its own speed, pitch, volume and punctuation.\n• Recent speech tile: hear the last things apps said again, slowly or spelled out.\n• Presets: save your voice setup and switch from a Quick Settings tile.\n• Speech by language: each language can have its own speed, pitch, volume and voice.\n• Simpler settings, with rare options under Advanced, and settings search works again.\n• New reading options, off by default: dates, phone numbers, temperatures, math and more.\n• The sleep timer stops reading apps and never silences TalkBack.\n• Updates from inside the app, and many stability fixes.</string>
 
