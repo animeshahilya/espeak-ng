@@ -343,7 +343,31 @@ voices" does not, so voices can still be deleted to free space.
   `mlas.enable_gemm_fastmath_arm64_bfloat16` (same speed, VITS is not
   GEMM-bound), `session.dynamic_block_base` (0-10% slower) and
   `session.intra_op.allow_spinning=0` (Hindi 11x -> 8x, first clause 80 ->
-  390 ms). eSpeak's own code already builds -O3 + ThinLTO; no -mcpu flag,
+  390 ms). `session.force_spinning_stop=1` (2026-10-29, kept): threads
+  still spin during a run but stop at its end, instead of spinning on after
+  every run. Pixel 8, 30 TalkBack-like phrases on natural voices, phrase
+  cache cleared, A/B/A/B: CPU 8.44/8.40 -> 7.33/7.34 s (-13%), runtime pool
+  threads 4.8 -> 3.7 s; first audio unchanged or better (Hindi phrase
+  145/149 -> 127/139 ms). Idle measured too: 60 s after speaking, the
+  process used 80-90 ms CPU, all ART's own daemons: nothing in the app
+  wakes or spins while silent. One shared ONNX Runtime pool for all sessions
+  (`ThreadingOptions` + `disablePerSessionThreads`) was measured too and
+  rejected: 41 -> 27 threads but more CPU (phrases 7.36/7.85 -> 7.98/8.33 s)
+  and contention (3 sentences once 1.6 -> 2.45 s). Galaxy S25 Ultra, Rohan (encoder on
+  6 CPU threads, decoder on the NPU), same A/B: CPU 2.47/2.78 -> 1.95/2.30 s
+  (-21%/-17%), wall unchanged. NPU, measured on the S25 and rejected (its
+  battery draw cannot be read while it charges over USB, so only speed
+  counted): ORT QNN run options `qnn.htp_perf_mode` burst +
+  `qnn.htp_perf_mode_post_run` power_saver (Priyamvada, 30 phrases 749/872
+  -> 790/903 ms, sentences 254/259 -> 273/358 ms, same CPU); Phonon's
+  `rpcPollingTimeConfig` 9999 -> 1000 us (30% slower, CPU unchanged). The
+  NPU path's remaining CPU is Qualcomm's own RPC queue read loop
+  (`libcdsprpc` dspqueue_read_nonblocking + pthread_mutex_unlock, simpleperf
+  --app), not a setting of ours. The NPU path is already cheap: Priyamvada
+  ~30 ms wall and ~40 ms CPU per TalkBack phrase vs ~250 ms CPU on a Pixel 8
+  CPU. Method: a throwaway device test reading
+  /proc/self/task/*/stat before and after (clear files/piper/phrase-cache
+  first: it survives the process and turns renders into replays). eSpeak's own code already builds -O3 + ThinLTO; no -mcpu flag,
   since the arm64 baseline (armv8.0) is all Android guarantees.
 - **Word timing.** Exact from the model's durations when the IPA words pair
   up one to one with the text's words, else proportional
@@ -1076,7 +1100,11 @@ voices" does not, so voices can still be deleted to free space.
   FileProvider) and Play Protect blocked it as an unsafe app; Tarang has the
   same in-app installer and is not blocked, so most likely it is the pairing with a
   speech engine that hears everything the screen reader says (and Recent
-  speech) that looks like spyware (the likely cause, not confirmed by Google). Do not add the permission back. Never from
+  speech) that looks like spyware. Confirmed 2026-10-29 on a Galaxy S25 Ultra
+  (installed through My Files, as users sideload): the published 2.10
+  Snapdragon APK says "Harmful app blocked"; this build, the same apart from
+  the updater, says "App scan recommended" and after Google's scan "This app
+  looks safe". Do not add the permission back. Never from
   the speech service. Microsoft's
   onnxruntime-android merged in a `TelemetryInitializer` content provider
   and `ACCESS_NETWORK_STATE` (the provider ran at every process start and

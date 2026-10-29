@@ -821,6 +821,7 @@ public final class PiperModel implements Closeable {
         // One utterance at a time, of varying length: the memory
         // pattern planner only helps fixed-shape batch inference.
         options.setMemoryPatternOptimization(false);
+        options.addConfigEntry("session.force_spinning_stop", "1");
         return options;
     }
 
