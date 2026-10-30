@@ -1130,12 +1130,12 @@ voices" does not, so voices can still be deleted to free space.
   of one, or the files themselves (multiple selection: the .onnx with its
   .onnx.json or tokens.txt). Two kinds run like catalog voices: Piper voices
   (eSpeak phonemes) and Coqui VITS letter voices (sherpa-onnx metadata
-  `frontend` "characters", `add_blank` 1). Without a Piper config one is
+  `frontend` "characters", `add_blank` 1), MMS among them (below). Without a Piper config one is
   written from tokens.txt and the model's sherpa-onnx metadata the way
   build_piper_configs.py made the SYSPIN/Rasa ones (`_ ^ $` -> the blank; CR
   stripped from tokens.txt, SYSPIN's is CRLF). The model is opened once with
   this app's ONNX Runtime and must take Piper's inputs (`input`,
-  `input_lengths`, `scales`): MMS, Kokoro, Matcha... are refused with a
+  `input_lengths`, `scales`) or MMS's: Kokoro, Matcha... are refused with a
   reason. When the config, its eSpeak voice, the metadata and the file name
   (`en_US-name...`) do not tell its language, the user picks it from a list
   and the import runs again with it (`PickedFiles.askLanguage`; VoxSherpa's
@@ -1160,6 +1160,64 @@ voices" does not, so voices can still be deleted to free space.
   (`Hint.of(model, picked)`), the picked file's only when the model's says
   none (Coqui's `model.onnx`); before, that export got the key
   `en_GB-multivoice_sherpa_onnx_vits_piper_en_gb_jenny_dioco-imported`.
+  **Configs by content** (2026-10-30): every .json up to 4 MB is kept and a
+  Piper config is the one with a `phoneme_id_map` (`pickConfig`), so
+  Hugging Face's `model.onnx` + `config.json` and a browser's
+  "voice (1).onnx.json" import; with no name in the files the key takes the
+  config's `dataset`. A survey of 200 "piper" repos found 184 voices with
+  `<model>.onnx.json`; the 25 text-to-speech repos with only config.json were
+  Kokoro, Kitten, CosyVoice... Two voices in one pick are refused
+  (`piper_import_several`), not half imported. Messages say what is wrong:
+  the model's settings file by name, only a config picked, the model kind
+  when its names tell (`otherKind`: Kokoro, Kitten, MMS, Matcha, MeloTTS...,
+  and Hugging Face's Kokoro config by its `istftnet` key), a file the app
+  may not read (`piper_import_unreadable`, not "damaged"), and "turn on
+  Natural voices" when they are off.
+  **Open or share from other apps** (`ui/ImportVoiceActivity`, "Import as
+  natural voice"): VIEW/SEND of archive types, and SEND_MULTIPLE of
+  `application/*` (a file manager sends a voice's .onnx + .onnx.json as
+  that; it also lists the entry for several PDFs - accepted). Asks first,
+  imports over the sending app, result dialog with Open settings. Only
+  content:// URIs from other apps (not file://, not this app's own
+  FileProvider); no recreation on rotation (the sender's read grant lives
+  with the instance). `am start -a SEND --eu android.intent.extra.STREAM`
+  grants nothing (apps' shares do, through ClipData): test with VIEW and
+  `--grant-read-uri-permission`, a MediaStore downloads URI.
+  **MMS voices** (2026-10-30, Facebook's Massively Multilingual Speech as
+  sherpa-onnx exports it: `vits-mms-<iso3>` archives, and willwade/
+  mms-tts-multilingual-models-onnx's ~800 languages, the only source of
+  the Indian ones; CC BY-NC 4.0, so imports only, never hosted). The same
+  VITS reading letters (metadata `frontend` characters, `add_blank` 1,
+  `comment` mms), so the Coqui letter path writes its config; what differs:
+  inputs `x`/`x_length` and the three scales as separate one-value inputs
+  (`PiperModel.hasMmsInputs`, `SessionGroup.mmsInputs`, read at load), the
+  audio named `y` (`PiperSplit.audioOutput`: "output" if present, else the
+  first graph output - before this MMS silently did not split), languages
+  as ISO 639-3 (`VoiceImport.twoLetter`: "eng" -> "en"; willwade's Hindi
+  says "unknown", so the archive name or the user's pick decides; a bare
+  code in a name, "vits-mms-hin", is a language), 16 kHz, key
+  `<lang>-mms-imported` shown "MMS" (`PiperVoiceConfig.titleCase` ACRONYMS).
+  willwade's copies tap the durations through an Identity (opset 13) as a
+  graph output, which the slim runtime lacked: `voices_ops.config` gained
+  `Identity` at 13 (AAR +581 bytes; old one kept at
+  C:/tmp/onnxruntime-voices-1.30.0.before-mms.aar). Measured: the app's id
+  layout (one extra blank at each end, as SYSPIN) vs MMS's own
+  intersperse, PC, Omnilingual/Parakeet, 64 Hindi renders: 11.3% vs 12.4%
+  CER, English equal - no special case. The lead-in does not help MMS
+  (Hindi first word 3/32 -> 1/32, English 26 -> 23/32), so `needsLeadIn`
+  stays off for it (16 kHz). Split halves equal the whole model exactly
+  (noise 0, PC). Speed is the model's: decoder twice Piper medium's width
+  (conv_pre 512), PC 5.7x vs Jenny 25.8x real time; Pixel 8 first audio,
+  fresh text, Hindi MMS phrases 432 / sentences 482 ms vs Priyamvada
+  140 / 199 ms; renders ~2x real time. Pixel 8: Hindi and English MMS
+  import, split and speak (Parakeet: the English sentence word for word);
+  PiperE2E 10/10 on the new runtime. Galaxy S25 Ultra (Snapdragon build of
+  the same tree, release-key debug over 2.11): NpuAudit as before (every
+  hosted voice's decoder on the NPU, encoder too except Rohan; Phonon
+  loads), PiperE2E 10/10, fresh-text first audio Priyamvada 40/39 ms,
+  Ananya 63/79 ms, Phonon Juniper 40 ms; imported voices load with "decoder
+  on the CPU (no NPU decoder for this voice)", MMS Hindi on its CPU 214/220
+  ms first audio, ~4.3x real time.
 - Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
 
 ### Mixed languages (per-script languages)

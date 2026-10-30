@@ -260,20 +260,24 @@ public final class PiperVoiceConfig {
     }
 
     /** "Libritts R" from "libritts_r": the one name style for voices everywhere. */
+    /** Names written in capitals: MMS (Facebook's Massively Multilingual Speech voices). */
+    private static final java.util.Set<String> ACRONYMS = java.util.Collections.singleton("mms");
+
     public static String titleCase(String name) {
         if (name == null || name.isEmpty()) {
             return "";
         }
         final StringBuilder sb = new StringBuilder(name.length());
-        boolean upper = true;
-        for (int i = 0; i < name.length(); i++) {
-            final char c = name.charAt(i);
-            if (c == '_' || c == '-') {
-                sb.append(' ');
-                upper = true;
-            } else {
-                sb.append(upper ? Character.toUpperCase(c) : c);
-                upper = false;
+        final String[] words = name.split("[_-]", -1);
+        for (int i = 0; i < words.length; i++) {
+            final String word = words[i];
+            if (i > 0) {
+                sb.append(' '); // one per separator, as written
+            }
+            if (ACRONYMS.contains(word)) {
+                sb.append(word.toUpperCase(java.util.Locale.ROOT)); // "mms" -> "MMS", not "Mms"
+            } else if (!word.isEmpty()) {
+                sb.append(Character.toUpperCase(word.charAt(0))).append(word, 1, word.length());
             }
         }
         return sb.toString();

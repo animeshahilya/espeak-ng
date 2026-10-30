@@ -110,8 +110,9 @@ public final class PiperSplit {
                     }
                 }
             }
+            final String audio = audioOutput(entries);
             final List<String> boundary = boundary(entries, producers);
-            if (boundary == null || !producers.containsKey(AUDIO_OUTPUT)) {
+            if (boundary == null || audio == null || !producers.containsKey(audio)) {
                 return false;
             }
             String durations = null;
@@ -126,7 +127,7 @@ public final class PiperSplit {
             }
 
             final Set<Entry> encoderNodes = needed(encoderOutputs, producers, Collections.emptySet());
-            final Set<Entry> decoderNodes = needed(Collections.singletonList(AUDIO_OUTPUT), producers,
+            final Set<Entry> decoderNodes = needed(Collections.singletonList(audio), producers,
                     new HashSet<>(boundary));
             final List<byte[]> encoderExtra = new ArrayList<>();
             for (String name : encoderOutputs) {
@@ -136,7 +137,7 @@ public final class PiperSplit {
             for (String name : boundary) {
                 decoderExtra.add(floatInput(name));
             }
-            decoderExtra.add(PiperAlignment.outputEntry(AUDIO_OUTPUT));
+            decoderExtra.add(PiperAlignment.outputEntry(audio));
 
             write(channel, graph, entries, encoderNodes, true, encoderExtra, encoderOut);
             write(channel, graph, entries, decoderNodes, false, decoderExtra, decoderOut);
@@ -153,13 +154,13 @@ public final class PiperSplit {
             final long tag = PiperAlignment.readVarint(buf, pos);
             final int field = (int) (tag >>> 3);
             final int wire = (int) (tag & 7);
-            if (wire == WIRE_LEN && (field == GRAPH_NODE || field == GRAPH_INITIALIZER)) {
+            if (wire == WIRE_LEN && (field == GRAPH_NODE || field == GRAPH_INITIALIZER || field == GRAPH_OUTPUT)) {
                 final int length = (int) PiperAlignment.readVarint(buf, pos);
                 final Entry e = new Entry(field, start, pos[0] + length);
                 if (field == GRAPH_NODE) {
                     readNode(buf, pos[0], e);
                 } else {
-                    e.name = string(buf, pos[0], e.end, TENSOR_NAME);
+                    e.name = string(buf, pos[0], e.end, field == GRAPH_OUTPUT ? VALUE_INFO_NAME : TENSOR_NAME);
                 }
                 pos[0] = e.end;
                 out.add(e);
@@ -204,6 +205,26 @@ public final class PiperSplit {
             PiperAlignment.skip(buf, pos, (int) (tag & 7));
         }
         return "";
+    }
+
+    /**
+     * The audio: "output" (Piper's and Coqui's exports, every voice that split
+     * before MMS), else the graph's first output ("y" in MMS's; a durations
+     * output comes after it).
+     */
+    private static String audioOutput(List<Entry> entries) {
+        String first = null;
+        for (Entry e : entries) {
+            if (e.field == GRAPH_OUTPUT) {
+                if (AUDIO_OUTPUT.equals(e.name)) {
+                    return AUDIO_OUTPUT;
+                }
+                if (first == null) {
+                    first = e.name;
+                }
+            }
+        }
+        return first;
     }
 
     static boolean isDecoder(String nodeName) {

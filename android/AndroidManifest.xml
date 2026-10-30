@@ -141,6 +141,40 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
+        <!-- A voice file opened or shared from another app ("Import as natural
+             voice"). Archives by type; several files (a voice's .onnx with its
+             .onnx.json) arrive as application/* from file managers, so only
+             SEND_MULTIPLE takes that. It asks before importing. No recreation
+             on rotation: the sender's read grant lives with this instance. -->
+        <activity
+            android:name=".ui.ImportVoiceActivity"
+            android:label="@string/piper_import_share_label"
+            android:theme="@style/AppTheme.Translucent"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density|fontScale"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/x-zip-compressed" />
+                <data android:mimeType="application/x-bzip2" />
+                <data android:mimeType="application/x-bzip" />
+                <data android:mimeType="application/gzip" />
+                <data android:mimeType="application/x-gzip" />
+                <data android:mimeType="application/x-compressed-tar" />
+                <data android:mimeType="application/x-tar" />
+                <data android:mimeType="application/x-gtar" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/*" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.RecentSpeechActivity"
             android:label="@string/recent_speech_title"

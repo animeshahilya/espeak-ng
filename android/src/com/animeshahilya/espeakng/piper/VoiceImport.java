@@ -43,10 +43,12 @@ import java.util.zip.ZipInputStream;
  * a .zip or .tar.gz of one, or the files themselves (the .onnx with its
  * .onnx.json or tokens.txt). Two kinds load like the catalog's voices:
  * Piper voices (eSpeak phonemes) and Coqui VITS voices that read letters
- * (like SYSPIN). Without a Piper config, one is written from tokens.txt and
- * the model's sherpa-onnx metadata, the way the SYSPIN/Rasa configs were
- * (sherpa-onnx-respin-syspin build_piper_configs.py). Other sherpa-onnx
- * models (MMS, Kokoro, Matcha...) take other inputs and are refused.
+ * (like SYSPIN), Facebook's MMS among them (its own input names, see
+ * {@link PiperModel#hasMmsInputs}). Without a Piper config, one is written
+ * from tokens.txt and the model's sherpa-onnx metadata, the way the
+ * SYSPIN/Rasa configs were (sherpa-onnx-respin-syspin build_piper_configs.py).
+ * Other sherpa-onnx models (Kokoro, Matcha...) take other inputs and are
+ * refused.
  *
  * <p>An imported voice is an ordinary installed voice under the key
  * "&lt;language&gt;-&lt;name&gt;-imported", which no catalog lists: update
@@ -61,16 +63,24 @@ public final class VoiceImport {
     /** Larger than any VITS voice (Piper high ~120 MB, SYSPIN ~115). */
     static final long MAX_BYTES = 1024L * 1024 * 1024;
     private static final String TOKENS = "tokens.txt";
-    private static final String JSON_SUFFIX = ".onnx.json";
+    private static final String JSON_SUFFIX = ".json";
     private static final String ONNX_SUFFIX = ".onnx";
+    /** A voice config is a few kB (a multi-speaker one ~100 kB); larger .json files are kept out. */
+    static final long MAX_JSON_BYTES = 4L * 1024 * 1024;
 
     /** Why an import failed, as a message for the user. */
     public static final class ImportException extends Exception {
         public final int messageRes;
+        private final Object[] args;
 
-        ImportException(int messageRes, String detail) {
+        ImportException(int messageRes, String detail, Object... args) {
             super(detail);
             this.messageRes = messageRes;
+            this.args = args;
+        }
+
+        public String message(Context context) {
+            return context.getString(messageRes, args);
         }
     }
 
@@ -98,32 +108,44 @@ public final class VoiceImport {
         try {
             final long[] budget = {MAX_BYTES};
             for (int i = 0; i < uris.size(); i++) {
-                try (InputStream in = appContext.getContentResolver().openInputStream(uris.get(i))) {
+                final InputStream opened;
+                try {
+                    opened = appContext.getContentResolver().openInputStream(uris.get(i));
+                } catch (SecurityException | java.io.FileNotFoundException e) {
+                    // The sending app's permission ended or never covered it: not a damaged file.
+                    throw new ImportException(R.string.piper_import_unreadable, String.valueOf(e));
+                }
+                try (InputStream in = opened) {
                     if (in != null) {
                         unpack(in, names.get(i), staging, budget);
                     }
                 }
             }
             final File model = pickModel(staging);
+            final File json = model == null ? null : pickConfig(staging, model);
+            final File tokens = new File(staging, TOKENS);
+            if (json == null) {
+                // Not a Piper voice by its files: say what it is when its names tell.
+                final String kind = otherKind(names, staging);
+                if (kind != null) {
+                    throw new ImportException(R.string.piper_import_other_kind, "kind " + kind, kind);
+                }
+            }
             if (model == null) {
-                throw new ImportException(R.string.piper_import_no_model, "no .onnx");
+                throw new ImportException(hasConfig(staging) ? R.string.piper_import_only_config
+                        : R.string.piper_import_no_model, "no .onnx");
+            }
+            if (json == null && !tokens.isFile()) {
+                throw new ImportException(R.string.piper_import_no_config, "no config or tokens",
+                        model.getName());
             }
             final String picked = names.size() == 1 ? names.get(0) : model.getName();
             Hint hint = Hint.of(model.getName(), picked);
             if (language != null && hint.family == null) {
                 hint = hint.withFamily(language);
             }
-            File json = new File(staging, model.getName() + ".json");
-            final File[] configs = staging.listFiles((d, n) -> n.endsWith(JSON_SUFFIX));
-            if (!json.isFile() && configs != null && configs.length == 1) {
-                json = configs[0]; // picked files a browser saved under other names
-            }
-            final File tokens = new File(staging, TOKENS);
-            if (!json.isFile() && !tokens.isFile()) {
-                throw new ImportException(R.string.piper_import_no_config, "no config or tokens");
-            }
             final Map<String, String> meta = checkModel(model);
-            final JSONObject config = json.isFile()
+            final JSONObject config = json != null
                     ? new JSONObject(FileUtils.readText(json))
                     : configFromTokens(FileUtils.readText(tokens), meta);
             fillLanguage(config, hint);
@@ -134,9 +156,10 @@ public final class VoiceImport {
 
             final String code = config.getJSONObject("language").getString("code");
             final File voices = PiperVoiceStore.voicesDir(storageContext);
-            String key = code + "-" + hint.slug + "-" + QUALITY;
+            final String slug = slugOf(hint, config);
+            String key = code + "-" + slug + "-" + QUALITY;
             for (int n = 2; new File(voices, key).exists(); n++) {
-                key = code + "-" + hint.slug + "_" + n + "-" + QUALITY;
+                key = code + "-" + slug + "_" + n + "-" + QUALITY;
             }
             final String text = config.toString(1);
             if (!PiperVoiceConfig.parse(key, text).isSupported()) {
@@ -320,23 +343,147 @@ public final class VoiceImport {
         }
     }
 
-    /** Writes {@code in} to the staging folder if its name is a voice file; skips it otherwise. */
+    /**
+     * Writes {@code in} to the staging folder if its name is a voice file;
+     * skips it otherwise. Every small .json is kept: a config is known by
+     * what it holds, not its name (Hugging Face repos also use config.json,
+     * and a browser may save "voice (1).onnx.json").
+     */
     private static void keep(InputStream in, String path, File staging, long[] budget) throws IOException {
         final String name = path == null ? "" : path.substring(Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')) + 1);
-        if (!(name.endsWith(ONNX_SUFFIX) || name.endsWith(JSON_SUFFIX) || name.equals(TOKENS))
-                || name.startsWith(".")) {
+        final boolean json = name.endsWith(JSON_SUFFIX);
+        if (!(name.endsWith(ONNX_SUFFIX) || json || name.equals(TOKENS)) || name.startsWith(".")) {
             return; // espeak-ng-data, scripts, model cards: not needed
         }
-        try (OutputStream out = new FileOutputStream(new File(staging, name))) {
+        final File file = new File(staging, name);
+        long written = 0;
+        try (OutputStream out = new FileOutputStream(file)) {
             final byte[] buf = new byte[64 * 1024];
             for (int r; (r = in.read(buf)) > 0; ) {
                 budget[0] -= r;
                 if (budget[0] < 0) {
                     throw new IOException("Import larger than " + MAX_BYTES + " bytes");
                 }
+                written += r;
+                if (json && written > MAX_JSON_BYTES) {
+                    break; // not a config; the caller skips the rest of the entry
+                }
                 out.write(buf, 0, r);
             }
         }
+        if (json && written > MAX_JSON_BYTES) {
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+        }
+    }
+
+    /**
+     * The voice's Piper config: the model's own ("x.onnx" + ".json"), else
+     * the one Piper config among the picked files, whatever its name; null
+     * if there is none.
+     *
+     * @throws ImportException when the files hold several voices
+     */
+    static File pickConfig(File staging, File model) throws ImportException {
+        final File[] models = staging.listFiles((d, n) -> n.endsWith(ONNX_SUFFIX));
+        int voices = 0;
+        for (File m : models != null ? models : new File[0]) {
+            if (piperConfig(new File(staging, m.getName() + JSON_SUFFIX)) != null) {
+                voices++;
+            }
+        }
+        if (voices > 1) {
+            throw new ImportException(R.string.piper_import_several, voices + " voices");
+        }
+        final File own = new File(staging, model.getName() + JSON_SUFFIX);
+        if (piperConfig(own) != null) {
+            return own;
+        }
+        File found = null;
+        for (File f : jsonFiles(staging)) {
+            if (piperConfig(f) != null) {
+                if (found != null) {
+                    throw new ImportException(R.string.piper_import_several, "several configs");
+                }
+                found = f;
+            }
+        }
+        return found;
+    }
+
+    /** Whether the picked files hold a voice config but no model. */
+    static boolean hasConfig(File staging) {
+        if (new File(staging, TOKENS).isFile()) {
+            return true;
+        }
+        for (File f : jsonFiles(staging)) {
+            if (piperConfig(f) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static File[] jsonFiles(File staging) {
+        final File[] files = staging.listFiles((d, n) -> n.endsWith(JSON_SUFFIX));
+        return files != null ? files : new File[0];
+    }
+
+    /** {@code file} as a Piper config (the phoneme id map is what only it has), else null. */
+    static JSONObject piperConfig(File file) {
+        if (!file.isFile() || file.length() > MAX_JSON_BYTES) {
+            return null;
+        }
+        try {
+            final JSONObject config = new JSONObject(FileUtils.readText(file));
+            return config.optJSONObject("phoneme_id_map") != null ? config : null;
+        } catch (IOException | JSONException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Voice kinds this app cannot run, by a word in their files' names
+     * (sherpa-onnx's "kokoro-multi-lang-v1_0", "vits-mms-hin", Hugging Face's
+     * "kitten_tts_nano_v0_8.onnx"). Short words must be a whole word.
+     */
+    private static final String[][] OTHER_KINDS = {
+            {"kokoro", "Kokoro"}, {"kitten", "Kitten TTS"}, {"matcha", "Matcha-TTS"},
+            {"supertonic", "Supertonic"}, {"zipvoice", "ZipVoice"}, {"cosyvoice", "CosyVoice"},
+            {"pocket", "Pocket TTS"}, {"=melo", "MeloTTS"}, {"=f5", "F5-TTS"},
+    };
+
+    /**
+     * What kind of voice the picked files are, when their names (or a
+     * Kokoro config's own keys) say it is one this app cannot run; null
+     * otherwise.
+     */
+    static String otherKind(List<String> picked, File staging) {
+        final java.util.List<String> names = new java.util.ArrayList<>(picked);
+        final String[] staged = staging.list();
+        if (staged != null) {
+            names.addAll(java.util.Arrays.asList(staged));
+        }
+        for (String name : names) {
+            for (String word : name.toLowerCase(Locale.ROOT).split("[^a-z0-9]+")) {
+                for (String[] kind : OTHER_KINDS) {
+                    final boolean whole = kind[0].startsWith("=");
+                    if (whole ? word.equals(kind[0].substring(1)) : word.startsWith(kind[0])) {
+                        return kind[1];
+                    }
+                }
+            }
+        }
+        for (File f : jsonFiles(staging)) { // Hugging Face's Kokoro: model.onnx + config.json
+            try {
+                if (f.length() < MAX_JSON_BYTES && new JSONObject(FileUtils.readText(f)).has("istftnet")) {
+                    return "Kokoro";
+                }
+            } catch (IOException | JSONException ignored) {
+                // not JSON: not a kind we know
+            }
+        }
+        return null;
     }
 
     /** The voice's model: the .onnx with a config beside it, else the largest. */
@@ -367,7 +514,7 @@ public final class VoiceImport {
         try (ai.onnxruntime.OrtSession.SessionOptions options = new ai.onnxruntime.OrtSession.SessionOptions()) {
             options.setOptimizationLevel(ai.onnxruntime.OrtSession.SessionOptions.OptLevel.NO_OPT);
             try (ai.onnxruntime.OrtSession s = PiperModel.env().createSession(model.getAbsolutePath(), options)) {
-                if (!s.getInputNames().containsAll(java.util.Arrays.asList("input", "input_lengths", "scales"))) {
+                if (!PiperModel.hasPiperInputs(s.getInputNames()) && !PiperModel.hasMmsInputs(s.getInputNames())) {
                     throw new ImportException(R.string.piper_import_unsupported, "inputs " + s.getInputNames());
                 }
                 return s.getMetadata().getCustomMetadata();
@@ -443,6 +590,9 @@ public final class VoiceImport {
         if (family != null) {
             config.put("language", new JSONObject().put("family", family));
         }
+        if ("mms".equals(comment)) {
+            config.put("dataset", "mms"); // its name when the files give none ("model.onnx")
+        }
         return config;
     }
 
@@ -466,11 +616,24 @@ public final class VoiceImport {
         if (family == null || !family.matches("[a-z]{2,3}")) {
             throw new ImportException(R.string.piper_import_language, "language unknown");
         }
+        family = twoLetter(family);
         String code = language.optString("code", "");
         if (!code.matches("[a-z]{2,3}_[A-Z]{2}")) {
             code = hint.region != null && family.equals(hint.family) ? family + "_" + hint.region : family;
         }
         language.put("family", family).put("code", code);
+    }
+
+    /**
+     * The key's name part: the file name's, else (model.onnx + config.json,
+     * as Hugging Face repos name them) the config's dataset.
+     */
+    static String slugOf(Hint hint, JSONObject config) {
+        if (!Hint.NO_NAME.equals(hint.slug)) {
+            return hint.slug;
+        }
+        final String dataset = Hint.slug(config.optString("dataset", ""));
+        return dataset.isEmpty() ? hint.slug : dataset;
     }
 
     /** "Bengali" -> "bn" (sherpa-onnx's metadata names languages in English); null if unknown. */
@@ -480,7 +643,7 @@ public final class VoiceImport {
         }
         final String name = englishName.trim();
         if (name.matches("[a-z]{2,3}")) {
-            return name;
+            return twoLetter(name); // MMS writes ISO 639-3: "eng"
         }
         for (String iso : Locale.getISOLanguages()) {
             if (new Locale(iso).getDisplayLanguage(Locale.ENGLISH).equalsIgnoreCase(name)) {
@@ -488,6 +651,31 @@ public final class VoiceImport {
             }
         }
         return null;
+    }
+
+    /**
+     * A language's two-letter code where it has one ("hin" -> "hi"), as the
+     * app keys voices; the code itself otherwise ("bho" stays).
+     */
+    static String twoLetter(String code) {
+        if (code.length() == 3) {
+            for (String iso : Locale.getISOLanguages()) {
+                try {
+                    if (code.equals(new Locale(iso).getISO3Language())) {
+                        return iso;
+                    }
+                } catch (java.util.MissingResourceException ignored) {
+                    // no ISO 639-3 code known for it
+                }
+            }
+        }
+        return code;
+    }
+
+    /** Whether {@code code} names a language ("en", "hin"), not a voice ("amy"). */
+    static boolean isLanguage(String code) {
+        return !twoLetter(code).equals(code)
+                || !new Locale(code).getDisplayLanguage(Locale.ENGLISH).equals(code);
     }
 
     private static int intOf(Map<String, String> meta, String key, int fallback) {
@@ -533,20 +721,30 @@ public final class VoiceImport {
             String region = null;
             final Matcher m = LANG.matcher(s);
             // A language the platform knows: in "amy-low.onnx", "amy" is the voice's name.
-            if (m.matches() && !new Locale(m.group(1)).getDisplayLanguage(Locale.ENGLISH).equals(m.group(1))) {
-                family = m.group(1);
+            if (m.matches() && isLanguage(m.group(1))) {
+                family = twoLetter(m.group(1));
                 region = m.group(2);
                 s = m.group(3);
+            } else if (s.matches("[a-z]{2,3}") && isLanguage(s)) {
+                family = twoLetter(s); // "vits-mms-hin": the language alone
+                s = "";
             }
             for (String prev = null; !s.equals(prev); ) {
                 prev = s;
                 s = QUALITY_SUFFIX.matcher(s).replaceAll("");
             }
-            String slug = s.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "_").replaceAll("^_+|_+$", "");
+            String slug = slug(s);
             if (slug.isEmpty() || "model".equals(slug)) {
-                slug = "voice";
+                slug = NO_NAME;
             }
             return new Hint(original, family, region, slug);
+        }
+
+        /** The name part of a voice's file when it names none ("model.onnx"). */
+        static final String NO_NAME = "voice";
+
+        static String slug(String name) {
+            return name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "_").replaceAll("^_+|_+$", "");
         }
 
         /**

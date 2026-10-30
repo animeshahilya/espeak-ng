@@ -120,6 +120,11 @@ public final class PickedFiles {
         });
     }
 
+    /** The name the providing app gives the file. */
+    static String displayName(Context context, Uri uri) {
+        return getFileNameFromUri(context, uri);
+    }
+
     private static String getFileNameFromUri(Context context, Uri uri) {
         String result = null;
         if ("content".equals(uri.getScheme())) {
@@ -148,41 +153,56 @@ public final class PickedFiles {
 
     /** Installs the natural voice the user picked (an archive, or its files); says how it went. */
     public static void importNaturalVoice(final Activity activity, final java.util.List<Uri> uris) {
-        importNaturalVoice(activity, uris, null);
+        Toast.makeText(activity, R.string.piper_import_started, Toast.LENGTH_LONG).show();
+        importNaturalVoice(activity, uris, null,
+                (message, imported) -> Toast.makeText(activity, message, Toast.LENGTH_LONG).show(), null);
+    }
+
+    /** How a natural-voice import ended: the message for the user, and whether a voice was installed. */
+    public interface ImportResult {
+        void done(String message, boolean imported);
     }
 
     /**
-     * As above, in {@code language} where the voice's files do not say. If
-     * they do not and {@code language} is null, the user picks it (VoxSherpa
-     * asks for every import; here only when it is needed).
+     * Installs the natural voice in {@code uris} and hands {@code result}
+     * what to tell the user, on the main thread, unless the activity is gone.
+     * Where the voice's files do not tell its language the user picks it
+     * (VoxSherpa asks for every import; here only when it is needed);
+     * {@code cancelled} runs if they don't.
      */
-    private static void importNaturalVoice(final Activity activity, final java.util.List<Uri> uris,
-                                           final String language) {
+    public static void importNaturalVoice(final Activity activity, final java.util.List<Uri> uris,
+                                          final String language, final ImportResult result,
+                                          final Runnable cancelled) {
         final Context storage = EspeakApp.requireStorageContext(activity);
         final Context app = activity.getApplicationContext();
         final java.util.List<String> names = new java.util.ArrayList<>();
         for (Uri uri : uris) {
             names.add(getFileNameFromUri(activity, uri));
         }
-        Toast.makeText(activity, R.string.piper_import_started, Toast.LENGTH_LONG).show();
+        final boolean[] imported = new boolean[1];
         runInBackground(() -> {
             try {
                 final PiperVoiceStore.Installed v = VoiceImport.install(app, storage, uris, names, language);
-                return activity.getString(R.string.piper_import_done, v.config.displayName(),
+                imported[0] = true;
+                final String done = activity.getString(R.string.piper_import_done, v.config.displayName(),
                         PiperSettings.languageName(v.config.languageFamily));
+                // Imported while natural voices are off, it would stay silent with no hint why.
+                return PiperVoiceStore.isEnabled(EspeakApp.prefs(storage)) ? done
+                        : done + ". " + activity.getString(R.string.piper_import_turn_on);
             } catch (VoiceImport.ImportException e) {
                 Log.w(TAG, "Voice import refused: " + e.getMessage());
                 return e.messageRes == R.string.piper_import_language && language == null
-                        ? null : activity.getString(e.messageRes);
+                        ? null : e.message(activity);
             }
         }, message -> {
             if (TtsSettingsActivity.isGone(activity)) {
                 return;
             }
             if (message == null) {
-                askLanguage(activity, chosen -> importNaturalVoice(activity, uris, chosen));
+                askLanguage(activity, chosen -> importNaturalVoice(activity, uris, chosen, result, cancelled),
+                        cancelled);
             } else {
-                Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+                result.done(message, imported[0]);
             }
         });
     }
@@ -190,8 +210,12 @@ public final class PickedFiles {
     /** Languages letter voices exist for that have no two-letter code (SYSPIN/Rasa). */
     private static final String[] THREE_LETTER_LANGUAGES = {"bho", "brx", "doi", "hne", "mag", "mai"};
 
-    /** Every language the phone can name, by name; {@code then} gets the chosen ISO code. */
-    private static void askLanguage(Activity activity, java.util.function.Consumer<String> then) {
+    /**
+     * Every language the phone can name, by name; {@code then} gets the
+     * chosen ISO code, {@code cancelled} (if any) runs when none is chosen.
+     */
+    private static void askLanguage(Activity activity, java.util.function.Consumer<String> then,
+                                    Runnable cancelled) {
         final java.util.Locale ui = java.util.Locale.getDefault();
         final java.util.List<String[]> languages = new java.util.ArrayList<>();
         final java.util.List<String> codes = new java.util.ArrayList<>(
@@ -214,7 +238,19 @@ public final class PickedFiles {
                         .setTitle(R.string.piper_import_language)
                         .setItems(labels, (d, which) -> then.accept(languages.get(which)[0]))
                         .setNegativeButton(android.R.string.cancel, null)
+                        .setOnCancelListener(d -> {
+                            if (cancelled != null) {
+                                cancelled.run();
+                            }
+                        })
                         .show();
+        if (cancelled != null) {
+            // The Cancel button dismisses without cancelling; a choice dismisses too.
+            dialog.getButton(android.content.DialogInterface.BUTTON_NEGATIVE).setOnClickListener(v -> {
+                dialog.dismiss();
+                cancelled.run();
+            });
+        }
         SettingsDialogs.markAlertTitleHeading(dialog);
     }
 

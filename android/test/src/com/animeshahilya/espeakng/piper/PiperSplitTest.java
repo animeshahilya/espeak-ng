@@ -94,6 +94,31 @@ public class PiperSplitTest {
                 Files.readAllBytes(dec.toPath()));
     }
 
+    /**
+     * MMS (sherpa-onnx's export) names its audio "y", and willwade's copies tap
+     * the durations through an Identity as a second output: both split, the
+     * decoder writing "y" and the tap left out.
+     */
+    @Test
+    public void mmsAudioCalledYSplitsToo() throws Exception {
+        final File in = tmp.newFile("mms.onnx");
+        final File enc = tmp.newFile("mms_enc.onnx");
+        final File dec = tmp.newFile("mms_dec.onnx");
+        final byte[] tanh = node("/dec/Tanh", "Tanh", "y", "/dec/a");
+        final byte[] tap = node("floravox_durations_tap", "Identity", "durations", "/Ceil_output_0");
+        Files.write(in.toPath(), model(cat(ENC, CEIL, MASK, CONV, tanh, tap, ENC_W, DEC_W, INPUT,
+                field(12, str(1, "y")), field(12, str(1, "durations")))));
+
+        assertTrue(PiperSplit.split(in, enc, dec));
+        assertArrayEquals(model(cat(ENC, CEIL, MASK, ENC_W, INPUT,
+                        PiperAlignment.outputEntry("/Mul_7_output_0"),
+                        PiperAlignment.outputEntry("/Ceil_output_0"))),
+                Files.readAllBytes(enc.toPath()));
+        assertArrayEquals(model(cat(CONV, tanh, DEC_W, PiperSplit.floatInput("/Mul_7_output_0"),
+                        PiperAlignment.outputEntry("y"))),
+                Files.readAllBytes(dec.toPath()));
+    }
+
     /** INT8 (Compact) Rasa lists its speaker "cond" Conv before conv_pre: still cut at the latent. */
     @Test
     public void theLatentIsWhatConvPreReadsEvenWhenAnotherConvComesFirst() throws Exception {

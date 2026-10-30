@@ -160,6 +160,8 @@ public final class PiperModel implements Closeable {
         final String[] boundary;
         volatile boolean hasSpeakerInput;
         volatile boolean hasDurations;
+        /** The model takes MMS's inputs ({@link #hasMmsInputs}), not Piper's. */
+        volatile boolean mmsInputs;
         final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         private int refCount = 1;
         private boolean closed;
@@ -228,6 +230,7 @@ public final class PiperModel implements Closeable {
         }
 
         private void readNames(OrtSession session) {
+            mmsInputs = hasMmsInputs(session.getInputNames());
             hasSpeakerInput = session.getInputNames().contains("sid");
             hasDurations = session.getOutputNames().size() > (decoder != null ? boundary.length : 1);
         }
@@ -1409,15 +1412,39 @@ public final class PiperModel implements Closeable {
         });
     }
 
+    /** Piper's input names (piper's export, also Coqui's through sherpa-onnx). */
+    static boolean hasPiperInputs(java.util.Set<String> names) {
+        return names.containsAll(java.util.Arrays.asList("input", "input_lengths", "scales"));
+    }
+
+    /**
+     * Facebook's MMS (and icefall) VITS, as sherpa-onnx exports it: the same
+     * model with ids as "x"/"x_length" and the three scales as separate
+     * one-value inputs (offline-tts-vits-model.cc, RunVits).
+     */
+    static boolean hasMmsInputs(java.util.Set<String> names) {
+        return names.containsAll(java.util.Arrays.asList(
+                "x", "x_length", "noise_scale", "length_scale", "noise_scale_w"));
+    }
+
     private void putInputs(OrtEnvironment env, Map<String, OnnxTensor> inputs, long[] ids,
                            float lengthScale, int speakerId, float noise, float noiseW)
             throws OrtException {
-        inputs.put("input", OnnxTensor.createTensor(env, LongBuffer.wrap(ids),
+        final boolean mms = group.mmsInputs;
+        inputs.put(mms ? "x" : "input", OnnxTensor.createTensor(env, LongBuffer.wrap(ids),
                 new long[] {1, ids.length}));
-        inputs.put("input_lengths", OnnxTensor.createTensor(env,
+        inputs.put(mms ? "x_length" : "input_lengths", OnnxTensor.createTensor(env,
                 LongBuffer.wrap(new long[] {ids.length}), new long[] {1}));
-        inputs.put("scales", OnnxTensor.createTensor(env, FloatBuffer.wrap(new float[] {
-                config.noiseScale * noise, lengthScale, config.noiseW * noiseW}), new long[] {3}));
+        final float noiseScale = config.noiseScale * noise;
+        final float noiseWScale = config.noiseW * noiseW;
+        if (mms) {
+            inputs.put("noise_scale", scalar(env, noiseScale));
+            inputs.put("length_scale", scalar(env, lengthScale));
+            inputs.put("noise_scale_w", scalar(env, noiseWScale));
+        } else {
+            inputs.put("scales", OnnxTensor.createTensor(env, FloatBuffer.wrap(new float[] {
+                    noiseScale, lengthScale, noiseWScale}), new long[] {3}));
+        }
         if (group.hasSpeakerInput) {
             // A one-voice config over a multi-speaker file (each Rasa voice)
             // names its speaker as the default.
@@ -1425,6 +1452,10 @@ public final class PiperModel implements Closeable {
             inputs.put("sid", OnnxTensor.createTensor(env,
                     LongBuffer.wrap(new long[] {sid}), new long[] {1}));
         }
+    }
+
+    private static OnnxTensor scalar(OrtEnvironment env, float value) throws OrtException {
+        return OnnxTensor.createTensor(env, FloatBuffer.wrap(new float[] {value}), new long[] {1});
     }
 
     private static float[] floats(OnnxValue value) {

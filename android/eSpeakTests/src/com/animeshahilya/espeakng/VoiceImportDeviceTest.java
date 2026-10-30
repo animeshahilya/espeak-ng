@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +28,8 @@ import static org.junit.Assert.*;
 
 /**
  * Imports voice archives pushed to the phone (instrumentation argument
- * "archives": comma-separated file names in the app's external files folder,
+ * "archives": comma-separated file names in the app's external files folder
+ * ("a.onnx+config.json" for one voice's loose files),
  * e.g. vits-piper-en_US-amy-low.tar.bz2 from sherpa-onnx's tts-models
  * release) through {@link VoiceImport}, as Import a voice file does, then
  * speaks a sentence with each through the TTS framework. The render stays in
@@ -57,11 +57,16 @@ public class VoiceImportDeviceTest {
         prefs.edit().putBoolean(PiperVoiceStore.PREF_ENABLED, true)
                 .putString("espeak_rate", "175").putString(PiperVoiceStore.PREF_SPEED, "100").commit();
         for (String name : archives.split(",")) {
-            final File file = new File(app.getExternalFilesDir(null), name);
-            assertTrue(file + " missing", file.isFile());
+            // "a.onnx+config.json": one voice's loose files, picked together.
+            final java.util.List<Uri> uris = new java.util.ArrayList<>();
+            final java.util.List<String> names = java.util.Arrays.asList(name.split("\\+"));
+            for (String part : names) {
+                final File file = new File(app.getExternalFilesDir(null), part);
+                assertTrue(file + " missing", file.isFile());
+                uris.add(Uri.fromFile(file));
+            }
             final long t0 = System.nanoTime();
-            final PiperVoiceStore.Installed v = VoiceImport.install(app, storage,
-                    Collections.singletonList(Uri.fromFile(file)), Collections.singletonList(name), null);
+            final PiperVoiceStore.Installed v = VoiceImport.install(app, storage, uris, names, null);
             Log.i(TAG, name + " -> " + v.key + " (" + v.config.phonemeType + ", " + v.config.sampleRate
                     + " Hz) in " + (System.nanoTime() - t0) / 1_000_000 + " ms");
             assertTrue(new File(v.dir, PiperVoiceStore.IMPORTED_FILE).isFile());
@@ -75,6 +80,8 @@ public class VoiceImportDeviceTest {
                         : new Locale(v.config.languageFamily);
                 final String text = "bn".equals(v.config.languageFamily)
                         ? "আমি বাংলায় কথা বলি। আজ আবহাওয়া খুব ভালো, তাই আমরা বাজারে যাব।"
+                        : "hi".equals(v.config.languageFamily)
+                        ? "आज मौसम बहुत अच्छा है, इसलिए हम बाज़ार जाएँगे। रेलगाड़ी 10 बजे पहुँचेगी।"
                         : "The quick brown fox jumps over the lazy dog, and then it runs back home.";
                 final long[] r = speak(app, v.key, text, locale);
                 assertEquals(v.key + " was read by eSpeak", 1, r[2]);
