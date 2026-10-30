@@ -1151,8 +1151,15 @@ voices" does not, so voices can still be deleted to free space.
   with commons-compress in Java a first import took 65 s on a Pixel 8 (ART
   had not compiled the decoder; 15 s once it had), natively 9 s.
   `VoiceImportDeviceTest -e archives a.tar.bz2,b.tar.bz2` (files in the
-  app's external files folder) imports and speaks each. Checked with
-  sherpa-onnx's Amy low (Piper) and Bengali custom_female (Coqui).
+  app's external files folder) imports and speaks each, and checks through
+  the routing record that the imported voice read it. Checked with
+  sherpa-onnx's Amy low (Piper) and Bengali custom_female (Coqui), and
+  (2026-10-30) a MultiVoice export (`MultiVoice-Sherpa-ONNX-vits-piper-...zip`,
+  files in `voice/` beside `multivoice.json` and espeak-ng-data): the
+  language and name come from the model's file name first
+  (`Hint.of(model, picked)`), the picked file's only when the model's says
+  none (Coqui's `model.onnx`); before, that export got the key
+  `en_GB-multivoice_sherpa_onnx_vits_piper_en_gb_jenny_dioco-imported`.
 - Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
 
 ### Mixed languages (per-script languages)

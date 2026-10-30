@@ -108,7 +108,8 @@ public final class VoiceImport {
             if (model == null) {
                 throw new ImportException(R.string.piper_import_no_model, "no .onnx");
             }
-            Hint hint = Hint.of(names.size() == 1 ? names.get(0) : model.getName());
+            final String picked = names.size() == 1 ? names.get(0) : model.getName();
+            Hint hint = Hint.of(model.getName(), picked);
             if (language != null && hint.family == null) {
                 hint = hint.withFamily(language);
             }
@@ -154,7 +155,7 @@ public final class VoiceImport {
                 throw new IOException("Cannot rename " + model);
             }
             FileUtils.write(new File(staging, PiperVoiceStore.CONFIG_FILE), text);
-            FileUtils.write(new File(staging, PiperVoiceStore.IMPORTED_FILE), hint.original);
+            FileUtils.write(new File(staging, PiperVoiceStore.IMPORTED_FILE), picked);
             final File dest = new File(voices, key);
             //noinspection ResultOfMethodCallIgnored
             voices.mkdirs();
@@ -170,7 +171,7 @@ public final class VoiceImport {
             }
             // Its optimized copy now, not at its first use (as after a download).
             EspeakApp.runAsync(() -> PiperEngine.get().prepare(installed.key, installed.model(), installed.config));
-            Log.i(TAG, "Imported " + key + " from " + hint.original);
+            Log.i(TAG, "Imported " + key + " from " + picked);
             return installed;
         } catch (JSONException | IOException | RuntimeException e) {
             Log.w(TAG, "Import failed", e);
@@ -546,6 +547,17 @@ public final class VoiceImport {
                 slug = "voice";
             }
             return new Hint(original, family, region, slug);
+        }
+
+        /**
+         * The model's own name first: Piper names it "en_GB-jenny_dioco-medium.onnx"
+         * whatever the archive is called (a MultiVoice export is
+         * "MultiVoice-Sherpa-ONNX-vits-piper-....zip"); the picked file's name
+         * when the model's says no language ("model.onnx" in Coqui archives).
+         */
+        static Hint of(String modelName, String picked) {
+            final Hint model = of(modelName);
+            return model.family != null ? model : of(picked);
         }
 
         /** The same file, in the language the user chose for it. */

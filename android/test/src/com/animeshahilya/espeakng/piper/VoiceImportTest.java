@@ -45,6 +45,20 @@ public class VoiceImportTest {
         assertEquals("voice", h.slug);
     }
 
+    @Test
+    public void modelNameComesBeforeArchiveName() {
+        // A MultiVoice export: the archive's name does not start with the voice's.
+        VoiceImport.Hint h = VoiceImport.Hint.of("en_GB-jenny_dioco-medium.onnx",
+                "MultiVoice-Sherpa-ONNX-vits-piper-en_GB-jenny_dioco-medium.zip");
+        assertEquals("en", h.family);
+        assertEquals("GB", h.region);
+        assertEquals("jenny_dioco", h.slug);
+        // Coqui archives name the model "model.onnx": the archive tells.
+        h = VoiceImport.Hint.of("model.onnx", "vits-coqui-bn-custom_female.tar.bz2");
+        assertEquals("bn", h.family);
+        assertEquals("custom_female", h.slug);
+    }
+
     private static Map<String, String> meta(String... kv) {
         final Map<String, String> m = new HashMap<>();
         for (int i = 0; i < kv.length; i += 2) {

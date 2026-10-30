@@ -68,7 +68,11 @@ public class VoiceImportDeviceTest {
             final String previous = PiperVoiceStore.assignedKey(prefs, v.languageKey());
             PiperVoiceStore.assign(prefs, v.languageKey(), v.key);
             try {
-                final Locale locale = new Locale(v.config.languageFamily);
+                // With its region: plain "en" would be read by the US voice.
+                final String code = v.config.languageCode;
+                final Locale locale = code != null && code.contains("_")
+                        ? new Locale(v.config.languageFamily, code.substring(code.indexOf('_') + 1))
+                        : new Locale(v.config.languageFamily);
                 final String text = "bn".equals(v.config.languageFamily)
                         ? "আমি বাংলায় কথা বলি। আজ আবহাওয়া খুব ভালো, তাই আমরা বাজারে যাব।"
                         : "The quick brown fox jumps over the lazy dog, and then it runs back home.";
@@ -101,10 +105,17 @@ public class VoiceImportDeviceTest {
                 });
                 final long chunks = PiperEngine.renderedChunks();
                 final long t0 = System.nanoTime();
-                assertEquals(TextToSpeech.SUCCESS, t.synthesizeToFile(text, new Bundle(), out, "u" + attempt));
+                final Bundle params = new Bundle();
+                params.putBoolean(TtsService.PARAM_SHOW_PLAN, true); // records who read it
+                assertEquals(TextToSpeech.SUCCESS, t.synthesizeToFile(text, params, out, "u" + attempt));
                 assertTrue(done.await(120, TimeUnit.SECONDS));
                 final long ms = (System.nanoTime() - t0) / 1_000_000;
+                final java.util.List<TtsService.PlanPart> plan = TtsService.takeShownPlan();
                 if (PiperEngine.renderedChunks() > chunks) {
+                    assertNotNull(plan);
+                    for (TtsService.PlanPart part : plan) {
+                        assertEquals("read by another voice: " + part.text, key, part.naturalKey);
+                    }
                     try (java.io.RandomAccessFile raf = new java.io.RandomAccessFile(out, "r")) {
                         final byte[] h = new byte[44];
                         raf.readFully(h);
