@@ -615,6 +615,7 @@
   <string name="setting_piper_import_summary">A Piper or sherpa-onnx voice you downloaded: its .tar.bz2 or .zip, or the .onnx file with its .onnx.json or tokens.txt. You can also open or share a voice file with this app.</string>
   <string name="piper_import_started">Importing the voice…</string>
   <string name="piper_import_done">%1$s imported for %2$s</string>
+  <string name="piper_import_lite">This version of the app is for 32-bit phones and has no natural voices.</string>
   <string name="piper_import_no_model">No voice model (.onnx file) in what you picked.</string>
   <string name="piper_import_no_config">%1$s needs its settings file, %1$s.json (or tokens.txt). Pick both files together.</string>
   <string name="piper_import_only_config">This is only the voice\'s settings file. Pick its .onnx file together with it.</string>

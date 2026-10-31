@@ -291,6 +291,10 @@ public final class SettingsBuilder {
                 screen.removePreferenceRecursively(key);
             }
         } else {
+            if (!BuildConfig.NATURAL_VOICES) { // the lite APK
+                screen.removePreferenceRecursively(PiperSettings.KEY_SCREEN);
+                screen.removePreferenceRecursively("category_natural_switching");
+            }
             configureSupportedLanguages(context, screen.findPreference(LanguageSettings.PREF_SUPPORTED_LANGUAGES), voices);
 
             // Generated from VoiceSettings' own limits, so the list cannot

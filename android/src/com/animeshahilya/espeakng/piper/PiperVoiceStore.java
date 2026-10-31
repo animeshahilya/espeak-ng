@@ -357,8 +357,9 @@ public final class PiperVoiceStore {
         return languageKey(new Locale(family.toLowerCase(Locale.ROOT)));
     }
 
+    /** Never in the lite APK, which has no ONNX Runtime to run them. */
     public static boolean isEnabled(SharedPreferences prefs) {
-        return prefs.getBoolean(PREF_ENABLED, false);
+        return com.animeshahilya.espeakng.BuildConfig.NATURAL_VOICES && prefs.getBoolean(PREF_ENABLED, false);
     }
 
     /** Voice key chosen for a language, or null for eSpeak. */

@@ -101,6 +101,9 @@ public final class VoiceImport {
                                                                  List<Uri> uris, List<String> names,
                                                                  String language)
             throws ImportException { // synchronized: one staging folder
+        if (!com.animeshahilya.espeakng.BuildConfig.NATURAL_VOICES) {
+            throw new ImportException(R.string.piper_import_lite, "lite build");
+        }
         final File staging = new File(PiperVoiceStore.root(storageContext), "import");
         FileUtils.deleteRecursively(staging);
         //noinspection ResultOfMethodCallIgnored

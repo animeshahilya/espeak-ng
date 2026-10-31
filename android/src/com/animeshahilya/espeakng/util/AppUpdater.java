@@ -90,13 +90,14 @@ public final class AppUpdater {
     }
 
     /**
-     * Parses latest.json for the standard or the Snapdragon APK; null when it
-     * names no APK for this kind, or its URL or hash is unusable.
+     * Parses latest.json for one kind of APK ("" standard, "snapdragon",
+     * "lite"); null when it names no APK for this kind, or its URL or hash
+     * is unusable.
      */
-    static Release parse(String json, boolean snapdragon) throws JSONException {
+    static Release parse(String json, String kind) throws JSONException {
         final JSONObject o = new JSONObject(json);
-        final String url = o.optString(snapdragon ? "snapdragonApkUrl" : "apkUrl", "");
-        final String sha = o.optString(snapdragon ? "snapdragonSha256" : "sha256", "");
+        final String url = o.optString(kind.isEmpty() ? "apkUrl" : kind + "ApkUrl", "");
+        final String sha = o.optString(kind.isEmpty() ? "sha256" : kind + "Sha256", "");
         if (!allowedUrl(url) || !sha.matches("[0-9a-fA-F]{64}")) {
             return null;
         }
@@ -140,7 +141,8 @@ public final class AppUpdater {
         prefs(context).edit().putLong(KEY_LAST_CHECKED, System.currentTimeMillis()).apply();
         final byte[] body = PiperDownloads.fetch(MANIFEST_URL + "?t=" + System.currentTimeMillis() / 60000,
                 64 * 1024);
-        final Release r = parse(new String(body, StandardCharsets.UTF_8), BuildConfig.SNAPDRAGON);
+        final Release r = parse(new String(body, StandardCharsets.UTF_8),
+                BuildConfig.SNAPDRAGON ? "snapdragon" : BuildConfig.NATURAL_VOICES ? "" : "lite");
         return isNewer(r, currentVersionCode(context)) ? r : null;
     }
 

@@ -26,33 +26,35 @@ public class AppUpdaterTest {
     @Test
     public void eachBuildGetsItsOwnApk() throws Exception {
         final String json = manifest(BASE + "espeak-ng-2.9.apk", SHA);
-        final AppUpdater.Release standard = AppUpdater.parse(json, false);
+        final AppUpdater.Release standard = AppUpdater.parse(json, "");
         assertEquals(32, standard.versionCode);
         assertEquals("2.9", standard.versionName);
         assertEquals(BASE + "espeak-ng-2.9.apk", standard.apkUrl);
         assertEquals(SHA, standard.sha256);
         assertEquals("Faster voices.", standard.notes);
-        final AppUpdater.Release snapdragon = AppUpdater.parse(json, true);
+        final AppUpdater.Release snapdragon = AppUpdater.parse(json, "snapdragon");
         assertEquals(BASE + "espeak-ng-2.9-snapdragon.apk", snapdragon.apkUrl);
         assertEquals(SD_SHA, snapdragon.sha256);
+        // A lite (32-bit) phone is never offered an arm64 APK.
+        assertNull("no lite APK listed", AppUpdater.parse(json, "lite"));
     }
 
     @Test
     public void untrustedOrUnverifiableReleasesAreRefused() throws Exception {
-        assertNull(AppUpdater.parse(manifest("https://example.com/espeak.apk", SHA), false));
-        assertNull(AppUpdater.parse(manifest("http://github.com/x.apk", SHA), false));
-        assertNull(AppUpdater.parse(manifest(BASE + "espeak-ng-2.9.apk", ""), false));
-        assertNull(AppUpdater.parse(manifest(BASE + "espeak-ng-2.9.apk", "abc"), false));
+        assertNull(AppUpdater.parse(manifest("https://example.com/espeak.apk", SHA), ""));
+        assertNull(AppUpdater.parse(manifest("http://github.com/x.apk", SHA), ""));
+        assertNull(AppUpdater.parse(manifest(BASE + "espeak-ng-2.9.apk", ""), ""));
+        assertNull(AppUpdater.parse(manifest(BASE + "espeak-ng-2.9.apk", "abc"), ""));
         // A manifest without a Snapdragon APK offers the Snapdragon build nothing.
         assertNull(AppUpdater.parse("{\"versionCode\": 33, \"apkUrl\": \"" + BASE + "a.apk\", \"sha256\": \""
-                + SHA + "\"}", true));
+                + SHA + "\"}", "snapdragon"));
         assertNotNull(AppUpdater.parse("{\"versionCode\": 33, \"apkUrl\": \"" + BASE + "a.apk\", \"sha256\": \""
-                + SHA + "\"}", false));
+                + SHA + "\"}", ""));
     }
 
     @Test
     public void newerAndDue() throws Exception {
-        final AppUpdater.Release r = AppUpdater.parse(manifest(BASE + "espeak-ng-2.9.apk", SHA), false);
+        final AppUpdater.Release r = AppUpdater.parse(manifest(BASE + "espeak-ng-2.9.apk", SHA), "");
         assertTrue(AppUpdater.isNewer(r, 31));
         assertFalse(AppUpdater.isNewer(r, 32));
         assertFalse(AppUpdater.isNewer(null, 1));
@@ -66,7 +68,7 @@ public class AppUpdaterTest {
     public void shippedManifestParses() throws Exception {
         final String json = new String(Files.readAllBytes(new File("../latest.json").toPath()),
                 StandardCharsets.UTF_8);
-        assertNotNull("standard APK", AppUpdater.parse(json, false));
-        assertNotNull("Snapdragon APK", AppUpdater.parse(json, true));
+        assertNotNull("standard APK", AppUpdater.parse(json, ""));
+        assertNotNull("Snapdragon APK", AppUpdater.parse(json, "snapdragon"));
     }
 }

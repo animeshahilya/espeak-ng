@@ -1219,6 +1219,16 @@ voices" does not, so voices can still be deleted to free space.
   on the CPU (no NPU decoder for this voice)", MMS Hindi on its CPU 214/220
   ms first audio, ~4.3x real time.
 - Not on Wear (`PiperSettings.KEY_SCREEN` is dropped there).
+- **Lite build** (`./gradlew assembleRelease -Plite` -> `espeak-lite-release.apk`,
+  2026-10-31): armeabi-v7a for 32-bit phones, eSpeak only (18.5 MB vs 28.4).
+  Our ONNX Runtime is arm64 only, so the AAR is `compileOnly` there and
+  `BuildConfig.NATURAL_VOICES` is false: `PiperVoiceStore.isEnabled` is
+  always false, the Natural voices page and switching row are dropped
+  (`SettingsBuilder`), `VoiceImport.install` refuses (`piper_import_lite`),
+  `ImportVoiceActivity` is disabled (`${naturalVoices}` manifest
+  placeholder), and `AppUpdater` reads `liteApkUrl`/`liteSha256` from
+  latest.json (none listed means no update offered). Not with `-Psnapdragon`.
+  Never run on a 32-bit device yet (the Pixel 8 and S25 are 64-bit only).
 
 ### Mixed languages (per-script languages)
 

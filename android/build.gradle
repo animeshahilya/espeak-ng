@@ -31,6 +31,15 @@ if (keystorePropertiesFile.exists()) {
     keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
 }
 
+// -Plite builds the 32-bit APK for older phones: armeabi-v7a, eSpeak only.
+// ONNX Runtime is built for arm64 alone (tools/ort-voices), so natural
+// voices are left out (BuildConfig.NATURAL_VOICES) and so is its library.
+def lite = project.hasProperty('lite')
+if (lite && project.hasProperty('snapdragon')) {
+    throw new GradleException('-Plite and -Psnapdragon are separate APKs')
+}
+def abi = lite ? 'armeabi-v7a' : 'arm64-v8a'
+
 
 // AGP's built-in Kotlin support pulls in kotlin-stdlib as a runtime
 // dependency of every com.android.application project by default, even one
@@ -80,8 +89,13 @@ dependencies {
     // ONNX Runtime 1.30.0 built for this app by tools/ort-voices/build.sh:
     // arm64 only, only the operators the natural voices use, no
     // NNAPI/XNNPACK/WebGPU/telemetry - libonnxruntime.so 16 MB instead of
-    // Microsoft's 33 (APK 34.7 -> 28.4 MB). Both APKs use it.
-    implementation files('libs/onnxruntime-voices-1.30.0.aar')
+    // Microsoft's 33 (APK 34.7 -> 28.4 MB). Both arm64 APKs use it; the lite
+    // APK only compiles against it and never runs it.
+    if (lite) {
+        compileOnly files('libs/onnxruntime-voices-1.30.0.aar')
+    } else {
+        implementation files('libs/onnxruntime-voices-1.30.0.aar')
+    }
     // -Psnapdragon builds the Snapdragon APK: Qualcomm's QNN plugin for ONNX
     // Runtime (loaded at run time, PiperModel.npuDevices) and the QNN runtime
     // it was built with (QAIRT 2.50), so natural-voice decoders run on the
@@ -132,9 +146,12 @@ android {
         // PiperModel.hasNpuRuntime: known here, so the standard build never
         // loads ONNX Runtime just to ask (it did on every settings open).
         buildConfigField "boolean", "SNAPDRAGON", project.hasProperty('snapdragon') ? "true" : "false"
+        buildConfigField "boolean", "NATURAL_VOICES", lite ? "false" : "true"
+        // ImportVoiceActivity: the lite APK offers no "open with" for voice archives.
+        manifestPlaceholders = [naturalVoices: lite ? "false" : "true"]
 
         ndk {
-            abiFilters 'arm64-v8a'
+            abiFilters abi
         }
 
         externalNativeBuild {
@@ -144,7 +161,7 @@ android {
                 // (No USE_MBROLA flag: MBROLA support was removed entirely,
                 // there is no such CMake option anymore.)
                 arguments.addAll(["-DUSE_ASYNC:BOOL=OFF", "-DUSE_LIBSONIC:BOOL=ON", "-DUSE_KLATT:BOOL=ON"])
-                abiFilters.addAll(["arm64-v8a"])
+                abiFilters.addAll([abi])
                 targets.addAll(["ttsespeak", "espeak-data"])
                 // Phonon (Snapdragon build only): needs a local QAIRT 2.50 SDK for
                 // QNN's headers, -Pqairt=<.../qairt/2.50.0.260828> (jni/CMakeLists.txt).
@@ -422,9 +439,9 @@ project.afterEvaluate {
     }
 }
 
-// The Snapdragon build (see the onnxruntime dependency) is its own APK file.
-if (project.hasProperty('snapdragon')) {
+// The Snapdragon and lite builds (see the onnxruntime dependency) are their own APK files.
+if (project.hasProperty('snapdragon') || lite) {
     base {
-        archivesName = 'espeak-snapdragon'
+        archivesName = lite ? 'espeak-lite' : 'espeak-snapdragon'
     }
 }

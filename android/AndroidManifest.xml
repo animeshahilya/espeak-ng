@@ -148,6 +148,7 @@
              on rotation: the sender's read grant lives with this instance. -->
         <activity
             android:name=".ui.ImportVoiceActivity"
+            android:enabled="${naturalVoices}"
             android:label="@string/piper_import_share_label"
             android:theme="@style/AppTheme.Translucent"
             android:excludeFromRecents="true"
