@@ -129,6 +129,26 @@ public class LatinLanguageDetectorTest {
         assertEquals("por", LatinLanguageDetector.detect("Muito obrigado, estou bem.", "eng"));
     }
 
+    // Written after the list, never tuned on.
+    @Test
+    public void detectsKurmanji() {
+        for (String k : new String[] {
+                "Ez ji te pir hez dikim.",
+                "Spas, ez baş im, tu çawa yî?",
+                "Em ê sibê biçin bajêr û li wir bimînin.",
+                "Zimanê kurdî gelek xweş e."}) {
+            assertEquals(k, "kur", LatinLanguageDetector.detect(k, "eng"));
+        }
+        // Turkish shares ç and ş but keeps its own sentences.
+        assertEquals("tur", LatinLanguageDetector.detect("Bu kitap benim için çok önemli.", "eng"));
+        assertEquals("ita", LatinLanguageDetector.detect("Grazie mille, sono molto contento di te.", "eng"));
+        final StringBuilder b = new StringBuilder();
+        for (LanguageRuns.Run r : LanguageRuns.split("Thank you. Spas, ez baş im. See you soon.", "eng")) {
+            b.append(r.language).append(' ');
+        }
+        assertEquals("eng kur eng", b.toString().trim());
+    }
+
     @Test
     public void eachSentenceOfEnglishTextIsJudged() {
         // Judged whole, English and Spanish outweighed each other.

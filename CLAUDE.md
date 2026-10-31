@@ -1299,7 +1299,7 @@ or the other). `TtsService` `detectOnly` now covers it and Devanagari
 (Marathi/Nepali sentences in Hindi text kept Hindi rules):
 `LanguageRuns.detectedRuns(..., scripts)`. `LatinLanguageDetector` is set
 once per request in `onSynthesizeText` (the text steps split too) and also
-knows Dutch, Polish, Turkish and Indonesian (lists leave out words English
+knows Dutch, Polish, Turkish, Indonesian and, since 2026-10-31, Kurmanji (`kur`, read by eSpeak's ku voice; lists leave out words English
 or another list writes; `LatinLanguageDetectorTest`). Emoji: "Announce,
 without skin tones" (`TextPreprocessor.skinTones`) and a per-language
 choice on the Speech by language cards (`LanguageCards.EMOJI`). Tasker

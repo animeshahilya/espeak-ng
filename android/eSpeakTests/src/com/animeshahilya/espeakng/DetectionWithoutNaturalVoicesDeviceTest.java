@@ -124,6 +124,9 @@ public class DetectionWithoutNaturalVoicesDeviceTest {
         assertEquals("[eng]", plan("latin_off", text, english).toString());
         mPrefs.edit().putBoolean("espeak_detect_latin_languages", true).commit();
         assertEquals("[eng, spa, nld]", plan("latin_on", text, english).toString());
+        // Kurmanji gets eSpeak's Kurdish (ku) voice, not the English one.
+        assertEquals("[eng, kur]", plan("kurmanji", "See you soon. Spas, ez baş im, tu çawa yî?",
+                english).toString());
     }
 
     @Test

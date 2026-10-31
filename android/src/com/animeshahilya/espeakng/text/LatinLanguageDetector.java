@@ -17,7 +17,8 @@ import java.util.Set;
 
 /**
  * Stopword-based language detector for Latin-script text: Spanish, French,
- * German, Italian, Portuguese, Dutch, Polish, Turkish and Indonesian phrases
+ * German, Italian, Portuguese, Dutch, Polish, Turkish, Indonesian and Kurdish
+ * (Kurmanji) phrases
  * inside other text (since 2026-10-29 also sentence by sentence inside
  * English, and without natural voices).
  *
@@ -104,6 +105,17 @@ public final class LatinLanguageDetector {
                 "dan", "yang", "ini", "itu", "dengan", "untuk", "tidak", "saya", "kamu", "terima",
                 "kasih", "apa", "akan", "sudah", "bisa", "juga", "dari", "selamat", "pagi", "bagaimana",
                 "kabar", "baik", "sekarang", "kenapa", "tolong", "sangat", "tahu", "mana"
+        });
+
+        // Kurmanji, added 2026-10-31 (a Kurdish tester). Left out: "di" (Italian,
+        // Indonesian), "em" (Portuguese), "tu"/"ne"/"na"/"te" (Hinglish), "an",
+        // "me", "min", "tune", "were", "here" (English), "wir" (German), "ser" (Spanish).
+        addWords("kur", new String[] {
+                "û", "ê", "jî", "ji", "bi", "li", "ku", "ev", "ew", "ez", "hûn", "çi", "çima", "çawa",
+                "kî", "kengê", "erê", "belê", "heye", "hene", "nîne", "bû", "dibe", "nabe", "dike",
+                "dikim", "dikin", "dikarim", "dixwazim", "wê", "wî", "vê", "vî", "gelek", "pir", "spas",
+                "silav", "rojbaş", "baş", "xweş", "xwe", "hev", "niha", "lê", "heta", "piştî", "berî",
+                "tiştek", "tişt", "kurdî", "zimanê", "gelo", "bila", "bê", "dema", "çend"
         });
     }
 
