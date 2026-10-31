@@ -7,6 +7,17 @@
 
 The espeak-ng project is a fork of the espeak project.
 
+### 2.12 (Android)
+
+*  **Mixed languages**:
+   *  Recognise European languages adds Kurdish (Kurmanji), read by eSpeak's Kurdish voice.
+*  **Natural voices**:
+   *  Import MMS voices (Facebook's Massively Multilingual Speech), with voices for hundreds of languages.
+   *  Open or share a voice file from another app to import it as a natural voice.
+   *  More voice files import, such as Hugging Face downloads with a config.json and renamed files like "voice (1).onnx.json".
+   *  Import messages say what is wrong, for example a missing settings file or a kind of voice the app can't use yet.
+   *  Imported voices are named from the voice file, not the archive it came in.
+
 ### 2.11 (Android)
 
 *  **Updates**:
