@@ -976,9 +976,9 @@ static int NormalizeStyledLatin(unsigned int c)
 	// Map a stylized Latin letter or digit to plain ASCII so it is read as
 	// text instead of spelled out as a Unicode codepoint. Covers the
 	// Mathematical Alphanumeric Symbols (bold, italic, script, fraktur,
-	// double-struck, sans-serif, monospace), the Letterlike Symbols that fill
-	// the holes in that block, and the fullwidth Latin forms. Returns 0 if c
-	// is not one of these.
+	// double-struck, sans-serif, monospace), the Letterlike Symbols used for
+	// script letters (including the holes in that block), and the fullwidth
+	// Latin forms. Returns 0 if c is not one of these.
 
 	// Mathematical Alphanumeric Symbols
 	if (c >= 0x1d400 && c <= 0x1d7ff) {
@@ -1003,6 +1003,8 @@ static int NormalizeStyledLatin(unsigned int c)
 	// Letterlike Symbols block; the Letterlike codepoint is what appears.
 	switch (c) {
 	case 0x210e: return 'h'; // italic small h (PLANCK CONSTANT)
+	case 0x2113: return 'l'; // script small l (litre, length)
+	case 0x2118: return 'P'; // script capital P (power set, Weierstrass p)
 	case 0x212c: return 'B'; case 0x2130: return 'E'; case 0x2131: return 'F';
 	case 0x210b: return 'H'; case 0x2110: return 'I'; case 0x2112: return 'L';
 	case 0x2133: return 'M'; case 0x211b: return 'R'; // script capitals
