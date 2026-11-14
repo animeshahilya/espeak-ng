@@ -610,7 +610,7 @@ Translator *SelectTranslator(const char *name)
 	{
 		static const unsigned char stress_amps_be[8] = { 12, 10, 8, 8, 0, 0, 16, 17 };
 		static const short stress_lengths_be[8] = { 160, 140, 200, 140, 0, 0, 240, 160 };
-		static const wchar_t vowels_be[] = { // offset by 0x420 -- а е ё о у ы э ю я і
+		static const unsigned char vowels_be[] = { // offset by 0x420 -- а е ё о у ы э ю я і
 			0x10, 0x15, 0x31, 0x1e, 0x23, 0x2b, 0x2d, 0x2e, 0x2f, 0x36, 0
 		};
 		static const unsigned char consonants_be[] = { // б в г д ж з й к л м н п р с т ф х ц ч ш ў
@@ -1281,7 +1281,7 @@ Translator *SelectTranslator(const char *name)
 
 		tr->langopts.stress_rule = STRESSPOSN_1RU; // stress on the last syllable, before any explicitly unstressed syllable
 
-		tr->langopts.numbers = NUM_HUNDRED_AND | NUM_AND_UNITS | NUM_OMIT_1_HUNDRED | NUM_AND_HUNDRED;
+		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_HUNDRED_AND | NUM_AND_UNITS | NUM_OMIT_1_HUNDRED | NUM_AND_HUNDRED;
 		tr->langopts.max_initial_consonants = 2;
 	}
 		break;
