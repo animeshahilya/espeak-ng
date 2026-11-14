@@ -2,7 +2,7 @@ list(APPEND _dict_compile_list
   ab af am an ar as az
   ba be bg bn bpy bs
   ca chr ckb cmn crh cs cv cy
-  da de
+  da de de_ch
   el en eo es et eu
   fa fi fo fr
   ga gd gn grc gu
@@ -17,7 +17,7 @@ list(APPEND _dict_compile_list
   pap pa piqd pl ps pt py
   qdb quc qu qya
   ro ru rup
-  scn sd shn si sjn sk sl smj sq sr sv sw
+  sc scn sd shn si sjn sk sl smj sq sr sv sw
   ta te ti th tk tn tr tt
   ug uk ur uz
   vi

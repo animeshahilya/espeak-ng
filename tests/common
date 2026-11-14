@@ -1,4 +1,6 @@
 #!/bin/sh
+: ${ESPEAK_BIN:=src/espeak-ng}
+
 # Test a command for presence and ability to output the sha1 hash of a file
 is_hash() {
     echo -n "checking for SHA1 hashing command ... "
@@ -45,8 +47,8 @@ test_phon() {
 
     echo "testing ${TEST_LANG} $MESSAGE"
     RESULT=$(
-        ESPEAK_DATA_PATH=`pwd` LD_LIBRARY_PATH=src:${LD_LIBRARY_PATH} \
-        $VALGRIND src/espeak-ng -xq ${OPTIONS} -v ${TEST_LANG} "${TEST_TEXT}" || exit 1
+        ESPEAK_DATA_PATH="${ESPEAK_DATA_PATH:-$(pwd)}" LD_LIBRARY_PATH=src:${LD_LIBRARY_PATH} \
+        $VALGRIND "$ESPEAK_BIN" -xq ${OPTIONS} -v ${TEST_LANG} "${TEST_TEXT}" || exit 1
     )
     if [ "x$RESULT" != "x$EXPECTED" ] ; then
         echo "$RESULT != $EXPECTED"
@@ -67,8 +69,8 @@ test_wav () {
 
     echo "testing ${VOICE} ${MESSAGE}"
     RESULT=$(
-        ESPEAK_DATA_PATH=`pwd` LD_LIBRARY_PATH=src:${LD_LIBRARY_PATH} \
-        $VALGRIND src/espeak-ng -D --stdout -v ${VOICE} "${TEST_TEXT}" | $sha1sum | awk '{ print $1 }' || exit 1
+        ESPEAK_DATA_PATH="${ESPEAK_DATA_PATH:-$(pwd)}" LD_LIBRARY_PATH=src:${LD_LIBRARY_PATH} \
+        $VALGRIND "$ESPEAK_BIN" -D --stdout -v ${VOICE} "${TEST_TEXT}" | $sha1sum | awk '{ print $1 }' || exit 1
     )
     if [ "x$RESULT" != "x$EXPECTED" ] ; then
         echo "$RESULT != $EXPECTED"
@@ -88,8 +90,8 @@ test_wav_grep () {
     MESSAGE=$4
     echo "testing ${VOICE} ${MESSAGE}"
     $()
-    ESPEAK_DATA_PATH=`pwd` LD_LIBRARY_PATH=src:${LD_LIBRARY_PATH} \
-            $VALGRIND src/espeak-ng -D --stdout -v ${VOICE} "${TEST_TEXT}" \
+    ESPEAK_DATA_PATH="${ESPEAK_DATA_PATH:-$(pwd)}" LD_LIBRARY_PATH=src:${LD_LIBRARY_PATH} \
+            $VALGRIND "$ESPEAK_BIN" -D --stdout -v ${VOICE} "${TEST_TEXT}" \
             > actual.txt || exit 1
     < actual.txt $sha1sum | awk '{ print $1 }' > sum.txt
     if [ "$MESSAGE" = "Ignore" ] ; then
@@ -119,8 +121,8 @@ test_replace() {
 
     echo "testing ${TEST_LANG}"
     RESULT=$(
-        ESPEAK_DATA_PATH=`pwd` LD_LIBRARY_PATH=src:${LD_LIBRARY_PATH} \
-        $VALGRIND src/espeak-ng -Xq -v ${TEST_LANG} "${TEST_TEXT}" | \
+        ESPEAK_DATA_PATH="${ESPEAK_DATA_PATH:-$(pwd)}" LD_LIBRARY_PATH=src:${LD_LIBRARY_PATH} \
+        $VALGRIND "$ESPEAK_BIN" -Xq -v ${TEST_LANG} "${TEST_TEXT}" | \
         grep -a -E "(Translate|Found:) " | sed -e 's/ \[.*][ ]*$//g' || exit 1
     )
     if [ "x$RESULT" != "x$EXPECTED" ] ; then

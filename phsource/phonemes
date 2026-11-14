@@ -1981,6 +1981,10 @@ include ph_catalan_va
 phonemetable ca-ba ca
 include ph_catalan_ba
 
+phonemetable ca-al ca
+
+phonemetable ca-ro ca
+
 phonemetable an es
 include ph_aragon
 
