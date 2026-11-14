@@ -43,10 +43,10 @@ All from `android/`:
 # Build release APK (signed if android/keystore.properties exists, unsigned otherwise)
 ./gradlew assembleRelease
 
-# Run JVM unit tests (no device required, 40 test classes)
+# Run JVM unit tests (no device required, 56 test classes)
 ./gradlew testDebugUnitTest
 
-# Run on-device instrumentation tests (requires connected device/emulator, 32 classes / ~180 tests)
+# Run on-device instrumentation tests (requires connected device/emulator, 42 classes / ~210 tests)
 ./gradlew connectedAndroidTest
 ```
 
@@ -55,7 +55,7 @@ Output APKs land in `build/outputs/apk/debug/` and `build/outputs/apk/release/`.
 ## Build Configuration
 
 - Package/namespace `com.animeshahilya.espeakng`; app label "eSpeak NG Advanced" (`R.string.app_name`, translatable="false" - single source, no per-locale override)
-- compileSdk 37, minSdk 26 (Android 8.0+; the Snapdragon APK 27, for Qualcomm's QNN plugin), targetSdk 37
+- compileSdk 36, minSdk 26 (Android 8.0+; the Snapdragon APK 27, for Qualcomm's QNN plugin), targetSdk 36
 - NDK 30.0.16248370 (r30), CMake 3.22.1
 - JDK 17 (Temurin) toolchain across dev and CI
 - Native binaries built with 16 KB ELF page alignment for Android 15+ compatibility
@@ -65,7 +65,7 @@ Output APKs land in `build/outputs/apk/debug/` and `build/outputs/apk/release/`.
 Note: The app ships 153 languages.
 
 The Gradle build has custom tasks that run automatically:
-1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/` (all ~120 languages)
+1. CMake builds `libttsespeak.so` (JNI) + generates `espeak-ng-data/` (all 153 languages)
 2. `createDataArchive` zips the tree except the compiled dictionaries into
    `res/raw/espeakdata.zip` (~0.5 MB); `createPackedAssets` puts every
    `*_dict` in the APK as `assets/espeak-dicts/<name>_dict.zst` (zstd 19 - 20/22 measured, no smaller,
@@ -1473,16 +1473,106 @@ NVDA as the source of specific fixes (control-character stripping, symbol
 expansion, the Sonic-engagement rate cap) stay, since those are provenance
 notes, not user-facing branding.
 
+The Character voices category holds 248 entries (2026-11-14). 79 of them
+were added by `b34f8ab1`, whose commit message calls them "79 Klatt 6 voice
+variants": they are ordinary `voices/!v/` files exposed through new
+`VariantData` entries and `variant_*` strings in
+`android/res/values/donottranslate.xml`. Klatt itself is unchanged at six
+models. Keep the three in sync (voice file, `VariantData`, string); the
+catalog test compares the picker against the shipped `!v/` files.
+
+### Core text, dictionary and voice updates (2026-11-14)
+
+Four commits since the 2026-10-31 revision (`b34f8ab1`, `dc99ac21`,
+`a0786998`, `9b6f6eb4`): core pronunciation and bounds fixes, voice and
+dictionary integration, and the tests around them. No Android service or
+UI behaviour changed except the new character voices.
+
+- **Stylized Latin** (`translate.c`). `NormalizeStyledLatin` maps
+  Mathematical Alphanumeric Symbols (`U+1D400`-`U+1D7FF`: 13 styles of
+  A-Z/a-z plus five sets of digits), the Letterlike Symbols that fill the
+  holes in that block (`U+2102`-`U+2134`), the compatibility script letters
+  `ℓ` (`U+2113`) and `℘` (`U+2118`), and fullwidth Latin/digits
+  (`U+FF10`-`U+FF5A`) to ASCII in `TranslateChar`. `𝐇𝐞𝐥𝐥𝐨`, `ℍ𝕖𝕝𝕝𝕠` and
+  `Ｈｅｌｌｏ` therefore reach the dictionary as "hello" instead of being
+  spelled codepoint by codepoint. Greek mathematical styles are left
+  unchanged, as are the other fullwidth forms.
+- **Clause and punctuation bounds** (`readclause.c`). Phoneme scratch
+  buffers use `N_PHONEME_BYTES` (160); decoded mnemonics and the
+  bracket-wrapped character name use `N_DECODED_PHONEMES`
+  (`N_PHONEME_BYTES * 4 + 4`) and `N_CHARNAME_BUF` (+40). `AnnouncePunctuation`
+  now receives the clause's `n_buf`, reduces repeated long emoji names to
+  one name and then to nothing rather than writing past the clause, and
+  `ReadClause` copies a symbol name only when it fits. Long Marathi,
+  Telugu, Malayalam and Georgian names had overflowed the old 74-byte
+  stack buffer and the 800-byte clause (`N_TR_SOURCE`).
+- **Dictionary and word building** (`dictionary.c`, `translateword.c`).
+  `LookupDict2` checks the untransposed `word1` for the end of a
+  one-letter word (the old code re-pointed `word` first), so `FLAG_MAX3`
+  lands on the word actually looked up. `TranslateWord3` keeps the original
+  `word_with_prefix` pointer through the spelled-leading-letters path, so
+  the retry lookup that includes the prefix no longer starts at the letter
+  that was just spoken.
+- **Decimal fractions** (`numbers.c`). The `NUM_DFRACTION_*` branch used
+  `atoi` on the whole fraction and expected `LookupNum3` to make sense of
+  any length; long fractions overflowed `atoi` and produced nonsense
+  hundreds. The suffix now comes from only the last two digits, fractions
+  up to five digits keep `LookupNum3`, and longer ones use the new
+  `LookupDecimal`, which walks them in groups of three through
+  `LookupThousands`/`LookupNum3` (fraction gender preserved, up to
+  `thousandplex` 10) with explicit size checks; if the result cannot fit,
+  eSpeak falls back to speaking single digits. Covered for Russian,
+  Italian, Hungarian and Kazakh. `ESPEAK_FALLTHROUGH` replaces the comment
+  fallthrough in the same switch. Kurdish Kurmanji gains
+  `NUM_DECIMAL_COMMA`; Belarusian's `vowels_be` is `unsigned char` like
+  `consonants_be`, so byte-wise `SetLetterBits` reads the entries instead
+  of the padding of a `wchar_t` array.
+- **Dictionary compiler** (`compiledict.c`). `output_rule_group` strips the
+  group name only when the match string really starts with it (a rule
+  reported by `compile_rule()` may be shorter). `compile_lettergroup`
+  parses with `strtol` and clamps to `N_LETTER_GROUPS` instead of `atoi`
+  (overflow produced a negative group that passed the range check), stops
+  the directive scan at `NUL` for a last line without a newline, and breaks
+  the item loop at `NUL` instead of stepping past the input.
+- **Screen-reader pronunciation** (`dc99ac21`). Hindi and Marathi name
+  their matras when a vowel sign is read alone (`hi_list`, `mr_list`);
+  `ScriptOfLetter` plus `FLAG_NOSPACE` split at an apostrophe between two
+  scripts (`कुलदीप's`), so each side keeps its own language instead of the
+  word being spelled, and `dictionary.c` does not treat that leading
+  apostrophe as a bracket pause. Kurdish `_dpt` is `behn'ok` (the decimal
+  separator, not `xal`); Polish adds `ul. al. tel. godz. nr ok` and
+  `AGD RTV SMS MMS PKP`; Bosnian `nj` stays a digraph except across the
+  listed morpheme boundaries (`konjunktiv`, `injekcija`, `anjon`, while
+  `kanjon`, `konj`, `tanjir` keep `n^`).
+- **Voices and dictionaries** (`b34f8ab1`, `a0786998`). Swiss German
+  (`lang/gmw/de-CH`, `phsource/ph_german_ch`, `dictsource/de_ch_*`, with
+  both `language de_ch` and `dictionary de_ch`), Sardinian
+  (`lang/roa/sc`, `phsource/ph_sardinian`, `sc_{list,rules}`, Roman
+  ordinals), and Catalan Algherese/Rossellonese (`ca-al`, `ca-ro`, both
+  `phonemetable ... ca`). Hindi/Marathi add candra-a `ॲ` -> `E` and the
+  anusvara naming fixes. Upstream dictionary updates land for ku, nl, pl,
+  sl, it, en and cmn. `de_ch` and `sc` must stay in
+  `_dict_compile_list` (`cmake/data.cmake`), or the data tree has no
+  compiled `_dict` for them.
+- **Tests.** `tests/common` honours `ESPEAK_BIN` and `ESPEAK_DATA_PATH`, so
+  the shell cases can run against a host build outside the source tree.
+  New coverage: Bosnian `nj`, the Indic matras, Polish abbreviations,
+  cross-script possessives (`translate.test`), `tests/belarusian_vowels.c`,
+  Russian decimal fractions, English prefix/stylized-Latin cases, and a
+  crash vector for punctuation-name overflow. CMake registers the
+  `tests/*.test` shell cases only on UNIX (`tests/CMakeLists.txt`:
+  `if (SHELL AND UNIX)`); on Windows only the C test binary runs.
+
 ## Source Layout
 
 ```
 android/
 ├── src/com/animeshahilya/espeakng/   # Java: 6 root classes + text/ tts/ piper/ ui/ util/ (see Key Classes)
 │   └── ui/preference/                # Custom preference widgets (14 classes)
-├── test/                             # Host JVM unit tests (40 classes)
+├── test/                             # Host JVM unit tests (56 classes)
 │   ├── src/                          # Same subpackages as the sources
 │   └── resources/                    # Fixtures (TSV cases, Devanagari corpus)
-├── eSpeakTests/                      # On-device instrumentation tests (32 classes, ~180 tests)
+├── eSpeakTests/                      # On-device instrumentation tests (42 classes, ~210 tests)
 │   ├── src/                          # Root package plus test/ subpackage
 │   └── res/                          # Test resources
 ├── jni/
@@ -1503,8 +1593,8 @@ android/
 
 ### JVM Unit Tests
 
-`./gradlew testDebugUnitTest` - 40 classes (~650 tests) in `test/src/`,
-mirroring the source subpackages:
+`./gradlew testDebugUnitTest` - 56 classes (500 `@Test` methods, more cases
+through parameterization) in `test/src/`, mirroring the source subpackages:
 - root: `TtsRoutingPreviewTest` (routing preview merge over the planned runs)
 - `text/`: pipeline steps and fuzzing (`TextSanitizeTest`, `TextStepsFuzzTest`, `TextOffsetMapTest`), NVDA symbols/character descriptions, `NumberReadingTest`, `AbbreviationsTest`, `TechWordsNormalizerTest`, `EarconsTest`, `PhrasePausesTest`, language runs/switching, `DevanagariClassifierTest` + `DevanagariCorpusTest`, `ScriptLanguagesTest`, `UserDictionaryTest`, `AsciiUtilsTest`
 - `tts/`: `TtsAudioDispatcherTest` (slice clamping, sample alignment), `VoiceEngineRegistryTest`, `AudioOptimizerTest`, `AcousticSampleGeneratorTest`, `PcmResamplerTest`
@@ -1524,7 +1614,7 @@ regexes, Locale or platform APIs needs a device run.
 
 ### Device Instrumentation Tests
 
-`./gradlew connectedAndroidTest` - 32 classes, ~180 tests, in
+`./gradlew connectedAndroidTest` - 42 classes, ~210 tests, in
 `eSpeakTests/src/com/animeshahilya/espeakng/` (plus its `test/` subpackage):
 voice enumeration, settings and `PreferenceStorageTest`, variant parsing and
 `VoiceVariantCatalogTest` (hardcoded picker vs shipped `voices/!v/` files -

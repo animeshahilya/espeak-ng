@@ -14,8 +14,8 @@ Thank you for your interest in contributing! This project is a fork of [espeak-n
 
 ### Prerequisites
 - JDK 17 (Temurin recommended)
-- Android SDK (compileSdk 37)
-- NDK 29.0.14206865
+- Android SDK (compileSdk 36)
+- NDK 30.0.16248370
 - CMake 3.22.1
 - Git
 

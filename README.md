@@ -63,7 +63,7 @@ On top of that there are a few extras NVDA doesn't have, such as money and code 
 
 - **Languages**: choose which of the 153 languages show up in Android's voice list. Includes a search box. Touch and hold a language to hear a sample of it.
 - **Favorite voices**: pin voices to the top of the voice list.
-- **Voice variant**: male 1–8, female 1–6, Klatt, about 170 character voices (such as Max and Edward), young, old, croak and whisper.
+- **Voice variant**: male 1–8, female 1–6, Klatt, about 250 character voices (such as Max and Edward), young, old, croak and whisper.
 - **Test voice**: hear what your current settings sound like.
 - **Settings search**: find any setting from the top bar. Results jump straight to the matching row.
 
@@ -120,16 +120,16 @@ Stops other apps from changing your **rate**, **pitch** or **volume**.
 
 eSpeak is built for speed: it starts talking instantly and stays clear at very high rates, which is what most screen reader users want. Some people would rather hear a human-sounding voice for reading, at least in some languages. **Settings → Natural voices** lets you choose, language by language.
 
-- **Download natural voices**: browse the official [Piper voice catalog](https://huggingface.co/rhasspy/piper-voices) by language, play a recorded sample, and download. Voices come in two qualities: **Standard**, and **Enhanced** where a voice has it (marked as recommended on fast phones, and as possibly slow on low-end ones). Each download is about 60–140 MB; on the phone a voice takes about twice that, because a faster-loading copy is kept beside it. Downloads run in the background with a progress notification, and every file is checked against the catalog's checksum before it can be used.
+- **Download natural voices**: browse the official [Piper voice catalog](https://huggingface.co/rhasspy/piper-voices) by language, play a recorded sample, and download. Voices come in two qualities: **Standard**, and **Enhanced** where a voice has it (marked as recommended on fast phones, and as possibly slow on low-end ones). Each download is about 20–50 MB. Downloads run in the background with a progress notification, and every file is checked against the catalog's checksum before it can be used.
 - **Voice for each language**: every language you have a natural voice for gets a row. Choose eSpeak or one of its natural voices. The first voice you download for a language is chosen for it automatically.
 - **Use natural voices**: one switch to go back to eSpeak everywhere without losing your choices.
 - **Switch natural voices by script** (on by default, in Mixed-language text): Hindi words in English text go to your Hindi natural voice, and so on, following your choices for each script. Turn it off to have one voice read everything.
 - **eSpeak for single letters** (on by default): moving by character and spelling stay on eSpeak, which starts instantly.
 - **Natural voice speed**: natural voices follow your eSpeak rate; this makes them a little slower or faster than it.
-- **Community voices**: besides the Piper catalog, vetted community voices for Arabic (Emirati female), Tamil, Sinhala, Australian English (10 speakers), Kurdish Kurmanji (90 speakers) and Latvian. Each is pinned to an exact file and checked before use.
+- **Community voices**: besides the Piper catalog, vetted community voices for the languages it lacks — Indian languages (SYSPIN and Rasa), Tamil, Sinhala, Emirati Arabic, Kurdish Kurmanji and Latvian. Each is pinned to an exact file and checked before use.
 - **Speaking style**: Steady (even and clear, fewer glitches), Natural (as the voice was made), or Lively (more varied tone and rhythm).
 - **Downloaded voices**: test or delete a voice, give it its own speed, and pick the speaker of voices that hold several (some English voices hold dozens or hundreds). Every change plays a sample.
-- **Hardware acceleration** (off by default): lets the phone's AI chip (NNAPI) try to run the voices. On the phones tested it made them slower, so it is off; a voice it can't run uses the processor anyway.
+- **Hardware acceleration**: a separate Snapdragon build lets the phone's NPU run the natural voices. The standard app runs them on the processor; on the phones tested, the old NNAPI path was slower and has been removed.
 
 How it fits with the rest of the app:
 
@@ -172,8 +172,8 @@ The only changes that go beyond NVDA are here, and they apply to Indian voices o
 You need:
 
 - JDK 17
-- the Android SDK (compileSdk 37, minSdk 26)
-- NDK 29.0.14206865
+- the Android SDK (compileSdk 36, minSdk 26)
+- NDK 30.0.16248370
 - CMake 3.22.1
 
 Run these from `android/`:
@@ -188,7 +188,7 @@ Run these from `android/`:
 
 The release build is signed when `android/keystore.properties` exists. APKs go to `android/build/outputs/apk/`.
 
-The app supports Android 8.0 and newer (minSdk 26, targetSdk 37), phones and Wear OS. The native library is built with 16 KB page alignment for Android 15+. Edge-to-edge layouts and predictive back gestures are fully supported.
+The app supports Android 8.0 and newer (minSdk 26, targetSdk 36), phones and Wear OS. The native library is built with 16 KB page alignment for Android 15+. Edge-to-edge layouts and predictive back gestures are fully supported.
 
 For architecture and contributor notes, see [CLAUDE.md](CLAUDE.md).
 
@@ -206,7 +206,7 @@ Fast host-based JVM unit tests run without requiring a connected device or emula
 
 ### Instrumentation tests (Device / Emulator)
 
-There are 122 instrumentation tests in `android/eSpeakTests/`. They cover synthesis, settings, voice data, the text pipeline, Direct Boot storage, and the dictionary on a connected device or emulator:
+There are about 210 instrumentation tests in 42 classes in `android/eSpeakTests/`. They cover synthesis, settings, voice data, the text pipeline, Direct Boot storage, and the dictionary on a connected device or emulator:
 
 ```bash
 ./gradlew connectedAndroidTest
@@ -256,7 +256,7 @@ Android is a trademark of Google LLC.
 
 - Upstream [espeak-ng/espeak-ng](https://github.com/espeak-ng/espeak-ng) for the core synthesis engine
 - [NVDA](https://www.nvaccess.org/) for symbol/emoji processing reference
-- [Transifex translators](https://www.transifex.com/espeak-ng/espeak-ng-android/) for 46 locale translations
+- [Transifex translators](https://www.transifex.com/espeak-ng/espeak-ng-android/) for 75 locale translations
 - Google's [Dakshina dataset](https://github.com/google-research-datasets/dakshina) for Hinglish/Urdu data
 - [Piper](https://github.com/OHF-Voice/piper1-gpl) and the [piper-voices](https://huggingface.co/rhasspy/piper-voices) contributors for the natural voices (each voice has its own license; see its MODEL_CARD in the catalog)
 - [ONNX Runtime](https://onnxruntime.ai/) for running them on the phone
