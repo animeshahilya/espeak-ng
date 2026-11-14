@@ -1892,6 +1892,9 @@ include ph_romanian
 phonemetable rup base2
 include ph_aromanian
 
+phonemetable sc base2
+include ph_sardinian
+
 phonemetable tk base2
 include ph_turkmen
 
@@ -1944,6 +1947,9 @@ phonemetable nso base1 // from af
 include ph_northern-sotho
 
 // *** Tables extending other language tables ***
+
+phonemetable de-ch de
+include ph_german_ch
 
 phonemetable ia eo
 include ph_interlingua
