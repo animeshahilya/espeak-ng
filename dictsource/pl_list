@@ -339,6 +339,8 @@ arcus		arkus
 jebut		$2
 babach		$2
 cv		siv'i
+okej		Ok'Ej
+tarzan		t'aRzan
 maximum		$1
 maxima		$1
 maksimum	$1
@@ -537,6 +539,11 @@ kpr		kapRal	$dot
 
 ekg		Ekag;'E	$abbrev
 usg		u_Esg;'E	$abbrev
+agd		$abbrev
+rtv		$abbrev
+sms		$abbrev
+mms		$abbrev
+pkp		$abbrev
 
 tzn		tO||znatSy	$dot
 itd		i||tak||dalEj	$dot
@@ -545,10 +552,16 @@ etc		Ets'EtERa	$dot
 św		S;v;Enty $dot
 śp		S;v;EntEj||pam;En^ts;i $dot
 
-ok		OkOwO	$dot
+ok		Ok'Ej
+ok		OkOwO	$hasdot
 ok		Ok'Ej $allcaps
 
 np		napS'ykwad $dot
+ul		ul'itsa	$hasdot
+al		al'Eja	$hasdot
+tel		tEl'EfOn	$hasdot
+godz		gOdz;'ina	$dot
+nr		n'umER	$dot
 tys		tyS;E~tsy $dot
 mln		miljOnuf
 mld		miljaRduf
