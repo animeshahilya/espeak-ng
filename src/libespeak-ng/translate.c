@@ -1924,11 +1924,11 @@ void TranslateClauseWithTerminator(Translator *tr, int *tone_out, char **voice_c
 		if (dict_flags & FLAG_SKIPWORDS) {
 			// dictionary indicates skip next word(s)
 			while (dictionary_skipwords > 0) {
-				if (dictionary_skipwords >= word_count - ix) {
-					dictionary_skipwords = 0;
-					break;
-				}
-				words[ix+dictionary_skipwords].flags |= FLAG_DELETE_WORD;
+				// Mark only words that exist in this clause. Cancelling the whole
+				// skip when it runs past the end also un-skips the words that do
+				// exist, so Arabic "د.ج" was read with an extra "jim".
+				if (ix + dictionary_skipwords < word_count)
+					words[ix+dictionary_skipwords].flags |= FLAG_DELETE_WORD;
 				dictionary_skipwords--;
 			}
 		}
@@ -2073,7 +2073,8 @@ static void SwitchLanguage(char *word, char *word_phonemes) {
 		c1 = *word++;
 		if ((c1 == ' ') || (c1 == 0))
 			break;
-		lang_name[ix++] = tolower(c1);
+		if (ix < (int)sizeof(lang_name) - 1)
+			lang_name[ix++] = tolower((unsigned char)c1);
 	}
 	lang_name[ix] = 0;
 

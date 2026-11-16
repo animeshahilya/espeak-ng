@@ -158,6 +158,11 @@ test_phon en "p'INk h'A@t" "🩷"
 test_phon en "bl'ak k'at" "🐈‍⬛" # U+2B1B in a ZWJ sequence
 test_phon en "h'Ed S'eIkIN v'3:tIkli" "🙂‍↕️" # U+2195 in a ZWJ sequence
 test_phon de "Sv'arts@ k'ats@" "🐈‍⬛"
+# an emoji with no name in the language is read by its English name; the
+# words after it are read once (an entry with no replacement text repeated
+# them, and overflowed the word buffer in a long clause)
+test_phon qu "_:(en)'aks(qu) w'asi" "🪓 wasi"
+test_phon ti "_:(en)'0m(ti) s'@lam" "🕉 ሰላም"
 
 # ED-7/ED-14 - emoji flag sequence: a flag is exactly two regional indicator
 # symbols (U+1F1E6..U+1F1FF). A run of flags written without whitespace must be
@@ -256,6 +261,12 @@ test_phon en "f'u:" "foo.."
 test_phon en "Ign'o@rINg,u: pl'Vs 'ad" "Ignoring­u+ad"
 # note 0x200c between 1 and 1
 test_phon fa "j'ek j'ek" "1‌1"
+
+# Dutch ordinal indicator: 3e is "derde", the e is not spoken as a letter
+test_phon nl "d'Erd@" "3e"
+test_phon nl "t'ind@" "10e"
+test_phon nl "d@ d'Erd@ d'Ax" "de 3e dag"
+test_phon nl "tv#'e:d@kl'As" "2e-klas"
 
 # Mandarin and Cantonese Chinese with different Latin character fallback
 test_phon yue "n'ei5_| h'ou2_| m'aa5_| (en)h@1l'oU1_| D'e@1(yue)_|" "你好馬 hello there"
@@ -359,3 +370,7 @@ test_phon ta "m'Vn.i (en)z b'Uk(ta)" "மணி's book" "Tamil name with 's in t
 # an apostrophe between letters of one script stays inside the word
 test_phon hi "k,Uld'i:p@s" "कुलदीप'स" "Hindi apostrophe within one script"
 
+# a dictionary entry that covers the last words of a clause skips them,
+# and the letter names are not read again
+test_phon ar "d,i:na:r dZaz'a:?ir,ij" "د.ج" "Arabic abbreviation د.ج at the end of a clause"
+test_phon ar "r,ija:l s'a:u:d,i:" "ر.س" "Arabic abbreviation ر.س at the end of a clause"

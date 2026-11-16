@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 #include <locale.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -282,6 +283,9 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_InitializeOutput(espeak_ng_OUTPUT_MODE 
 	if (buffer_length < min_buffer_length)
 		buffer_length = min_buffer_length;
 
+	if ((samplerate > 0) && (buffer_length > (INT_MAX - 1000) / samplerate))
+		return EINVAL;
+
 	// allocate 2 bytes per sample
 	// Always round up to the nearest sample and the nearest byte.
 	int millisamples = buffer_length * samplerate;
@@ -324,7 +328,8 @@ ESPEAK_NG_API void espeak_ng_InitializePath(const char *path)
 		RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\WOW6432Node\\eSpeak NG", 0, KEY_READ, &RegKey);
 	size = sizeof(buf);
 	var_type = REG_SZ;
-	RegQueryValueExA(RegKey, "Path", 0, &var_type, buf, &size);
+	if (RegKey != NULL)
+		RegQueryValueExA(RegKey, "Path", 0, &var_type, buf, &size);
 
 	if (check_data_path(buf, 1))
 		return;
@@ -831,6 +836,8 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_SpeakCharacter(wchar_t character)
 ESPEAK_API int espeak_GetParameter(espeak_PARAMETER parameter, int current)
 {
 	// current: 0=default value, 1=current value
+	if (parameter < 0 || parameter >= N_SPEECH_PARAM)
+		return -1;
 	if (current)
 		return param_stack[0].parameter[parameter];
 	return param_defaults[parameter];
@@ -906,7 +913,7 @@ ESPEAK_API const char* espeak_TextToPhonemesWithTerminator(const void** textptr,
 	if (textptr == NULL || *textptr == NULL)
 		return NULL;
 
-	if (translator == NULL)
+	if (translator == NULL && espeak_ng_SetVoiceByName(ESPEAKNG_DEFAULT_VOICE) != ENS_OK)
 		return NULL;
 
 	if (p_decoder == NULL)
@@ -996,6 +1003,11 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Terminate(void)
 
 	DeleteTranslator(translator);
 	translator = NULL;
+	DeleteTranslator(translator2);
+	translator2 = NULL;
+	DeleteTranslator(translator3);
+	translator3 = NULL;
+	InitNamedata();
 
 	if (translator2 != NULL) {
 		DeleteTranslator(translator2);
