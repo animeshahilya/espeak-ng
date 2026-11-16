@@ -91,10 +91,10 @@ _	vijë e ulët	-
 ↡	shigjetë dymajëshe poshtë	-
 ↢	shigjetë majtas me bisht	-
 ↣	shigjetë djathtas me bisht	-
-↤	shigjetë majtas me shufër	-
-↥	shigjetë lart me shufër	-
-↦	shigjetë djathtas me shufër	-
-↧	shigjetë poshtë me shufër	-
+↤	shigjetë majtas nga vija vertikale	-
+↥	shigjetë lart nga vija vertikale	-
+↦	shigjetë djathtas nga vija vertikale	-
+↧	shigjetë poshtë nga vija vertikale	-
 ↨	shigjetë lart-poshtë me bazament	-
 ↫	shigjetë majtas me lak	-
 ↬	shigjetë djathtas me lak	-
@@ -108,8 +108,8 @@ _	vijë e ulët	-
 ↵	shigjetë poshtë me kënd majtas	-
 ↶	shigjetë gjysmëhark lart me drejtim kundërorar	-
 ↷	shigjetë gjysmëhark lart me drejtim orar	-
-↸	shigjetë veriperëndim me tra të gjatë	-
-↹	shigjetë majtas me shufër mbi shigjetë djathtas me shufër	-
+↸	shigjetë nga veriperëndimi me vijë vertikale	-
+↹	shigjetë majtas e djathtas kundrejt vijave vertikale	-
 ↺	shigjetë rrethhapur me drejtim kundërorar	-
 ↻	shigjetë rrethhapur me drejtim orar	-
 ↼	fuzhnjë majtas me grep lart	-
@@ -137,9 +137,9 @@ _	vijë e ulët	-
 ⇓	shigjetë dyshe poshtë	-
 ⇔	shigjetë dyshe majtas-djathtas	-
 ⇎	shigjetë dyshe majtas-djathtas me fraksion	-
-⇖	shigjetë dyshe veriperëndim	-
-⇗	shigjetë dyshe verilindje	-
-⇘	shigjetë dyshe juglindje	-
+⇖	shigjetë dyshe në veriperëndim	-
+⇗	shigjetë dyshe në verilindje	-
+⇘	shigjetë dyshe në juglindje	-
 ⇙	shigjetë dyshe drejt jugperëndimit	-
 ⇚	shigjetë treshe majtas	-
 ⇛	shigjetë treshe djathtas	-
@@ -151,13 +151,13 @@ _	vijë e ulët	-
 ⇡	shigjetë lart me ndërprerje	-
 ⇢	shigjetë djathtas me ndërprerje	-
 ⇣	shigjetë poshtë me ndërprerje	-
-⇤	shigjetë me shufër majtas	-
-⇥	shigjetë me shufër djathtas	-
+⇤	shigjetë majtas me vijë vertikale	-
+⇥	shigjetë djathtas me vijë vertikale	-
 ⇦	shigjetë bosh majtas	-
 ⇧	shigjetë bosh lart	-
 ⇨	shigjetë bosh djathtas	-
 ⇩	shigjetë bosh poshtë	-
-⇪	shigjetë bosh lart nga shufër	-
+⇪	shigjetë bosh lart nga vija	-
 ⇵	shigjetë poshtë majtas shigjetë lart	-
 ∀	për të gjitha	-
 ∂	diferencial i pjesshëm	-

@@ -39,9 +39,15 @@ hol trekant med rett vinkel nede til høgre
 
 
 
+
+
+
+
+
 motgåande bil
 
 
+seglbåt
 
 
 
@@ -56,6 +62,9 @@ fly som landar
 
 
 
+
+
+viskelêr
 
 
 
@@ -133,6 +142,7 @@ rullar rundt på golvet i latter
 fjes som smiler litt
 
 fjes som smeltar
+
 blunkande fjes
 smil med smilande auge
 
@@ -320,6 +330,8 @@ peikar opp
 peikefinger peiker på lesaren
 
 
+
+tommelfinger til høgre
 heva knyttneve
 
 
@@ -731,6 +743,7 @@ hummar
 
 snigel
 sommarfugl
+monarksommarfugl
 
 
 
@@ -874,7 +887,6 @@ softis
 slikkepinne
 
 
-
 mjølkeglas
 
 
@@ -890,7 +902,6 @@ glas som skåler
 whiskyglas
 
 kopp med sugerøyr
-
 
 
 spisepinnar
@@ -955,10 +966,8 @@ kyrkje
 
 
 
-
 bru om natta
 varme kjelder
-
 
 
 
@@ -1012,7 +1021,7 @@ motorveg
 
 
 
-seglbåt
+
 
 
 
@@ -1102,6 +1111,7 @@ høgspenning
 
 snømann utan snø
 
+
 eld
 drope
 bølgje
@@ -1150,10 +1160,8 @@ inngangsbillettar
 
 
 
-
 fiskestong
 dykkarmaske
-
 
 
 
@@ -1373,6 +1381,7 @@ papirkorg
 
 
 gamaldags nøkkel
+
 hammar
 
 
@@ -1885,6 +1894,16 @@ peikefinger peiker på lesaren hudtype 6
 
 
 
+
+
+
+
+
+tommelfinger til høgre hudtype 1–2
+tommelfinger til høgre hudtype 3
+tommelfinger til høgre hudtype 4
+tommelfinger til høgre hudtype 5
+tommelfinger til høgre hudtype 6
 heva knyttneve hudtype 1–2
 heva knyttneve hudtype 3
 heva knyttneve hudtype 4

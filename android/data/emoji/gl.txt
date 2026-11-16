@@ -32,16 +32,22 @@ muller en cadeira de rodas motorizada
 paxaro negro
 berenxena
 pemento
+cogombriño
 xenxibre
 lata de comida
+flan
+brik
 mate
 monte Fuji
 templo hindú
+santuario xintoísta
 Kaaba
+vagón
 coche
 coche de fronte
 cadeira de rodas motorizada
 salvavidas
+veleiro
 barco a motor
 avión
 avioneta
@@ -49,13 +55,16 @@ avión despegando
 avión aterrando
 campaíña de recepción
 balón de fútbol
+crícket
 pimpón
+camiseta de correr
 zorra
 bonecas rusas
 gravata
 chancleta
 corneta postal
 tambor alto
+goma de borrar
 bastón guía
 apósito
 ascensor
@@ -133,6 +142,7 @@ cara chorando de risa
 cara cun leve sorriso
 cara ao revés
 cara derreténdose
+cara facéndose cachiños
 cara chiscando un ollo
 cara alegre con ollos riseiros
 cara riseira con auréola
@@ -320,6 +330,8 @@ dedo apuntando cara abaixo
 dedo índice apuntando de fronte
 polgar cara arriba
 polgar cara abaixo
+polgar cara á esquerda
+polgar cara á dereita
 puño en alto
 puñada
 puño cara á esquerda
@@ -731,6 +743,7 @@ lura
 ostra
 caracol
 bolboreta
+bolboreta monarca
 cempés
 formiga
 abella
@@ -872,7 +885,6 @@ pastel
 chocolate
 caramelo
 piruleta
-flan
 tarro de mel
 biberón
 vaso de leite
@@ -891,7 +903,6 @@ vaso con xeo
 derramamento de líquido
 vaso con palla
 té de burbullas
-brik
 cubo de xeo
 paíños chineses
 prato e cubertos
@@ -946,7 +957,6 @@ Estatua da Liberdade
 igrexa
 mesquita
 sinagoga
-santuario xintoísta
 fonte
 tenda de campaña
 paisaxe nebulosa
@@ -965,7 +975,6 @@ montaña rusa
 poste de barbeiro
 carpa do circo
 locomotora de vapor
-vagón
 tren de alta velocidade
 tren bala
 tren
@@ -1011,8 +1020,8 @@ semáforo horizontal
 semáforo
 sinal de stop
 en construción
+faro
 áncora
-veleiro
 canoa
 lancha motora
 barco de pasaxeiros
@@ -1102,6 +1111,7 @@ copo de neve
 nevando e boneco de neve
 boneco de neve
 cometa
+meteoro
 lume
 pinga
 onda
@@ -1141,7 +1151,6 @@ balón de rugby
 tenis
 disco voante
 birlos
-crícket
 hóckey sobre herba
 hóckey sobre xeo
 lacrosse
@@ -1153,7 +1162,6 @@ golf
 patinaxe sobre xeo
 cana de pescar
 máscara de mergullo
-camiseta de correr
 esquís
 pedra de curling
 diana
@@ -1373,6 +1381,7 @@ cadeado con pluma
 cadeado con chave
 chave
 chave antiga
+rede con mango
 martelo
 machado
 pico
@@ -1885,6 +1894,16 @@ polgar cara abaixo ton de pel claro
 polgar cara abaixo ton de pel medio
 polgar cara abaixo ton de pel escuro
 polgar cara abaixo ton de pel moi escuro
+polgar cara á esquerda ton de pel moi claro
+polgar cara á esquerda ton de pel claro
+polgar cara á esquerda ton de pel medio
+polgar cara á esquerda ton de pel escuro
+polgar cara á esquerda ton de pel moi escuro
+polgar cara á dereita ton de pel moi claro
+polgar cara á dereita ton de pel claro
+polgar cara á dereita ton de pel medio
+polgar cara á dereita ton de pel escuro
+polgar cara á dereita ton de pel moi escuro
 puño en alto ton de pel moi claro
 puño en alto ton de pel claro
 puño en alto ton de pel medio

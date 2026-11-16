@@ -32,16 +32,22 @@ mulher em cadeira de rodas elétrica
 pássaro preto
 beringela
 pimento
+pickle
 gengibre
 comida enlatada
+pudim
+pacote de sumo
 mate
 monte Fuji
 templo hindu
+templo xintoísta
 caaba
+carruagem
 automóvel
 automóvel a aproximar-se
 cadeira de rodas elétrica
 boia circular
+veleiro
 barco a motor
 avião
 avioneta
@@ -49,13 +55,16 @@ avião a levantar
 avião a aterrar
 campainha de receção
 bola de futebol
+críquete
 pingue-pongue
+camisola de corrida
 trenó
 boneca russa
 gravata
 chinelo
 trompa dos correios
 tambor alto
+borracha
 bengala para invisuais
 penso rápido
 elevador
@@ -133,6 +142,7 @@ cara com lágrimas de felicidade
 cara a sorrir ligeiramente
 cara ao contrário
 cara a derreter
+rosto a despedaçar-se
 cara a piscar o olho
 cara a sorrir com olhos sorridentes
 cara a sorrir com auréola
@@ -320,6 +330,8 @@ dedo indicador a apontar para cima
 indicador a apontar para o espetador
 polegar para cima
 polegar para baixo
+sinal de polegar para a esquerda
+sinal de polegar para a direita
 punho erguido
 punho a aproximar-se
 punho voltado para a esquerda
@@ -731,6 +743,7 @@ lula
 ostra
 caracol
 borboleta
+borboleta-monarca
 lagarta
 formiga
 abelha
@@ -872,7 +885,6 @@ tarte
 tablete de chocolate
 rebuçado
 chupa-chupa
-pudim
 pote de mel
 biberão
 copo de leite
@@ -891,7 +903,6 @@ copo de whisky
 a derramar líquido
 copo com palhinha
 chá bubble
-pacote de sumo
 gelo
 pauzinhos
 faca e garfo com prato
@@ -946,7 +957,6 @@ Estátua da Liberdade
 igreja
 mesquita
 sinagoga
-templo xintoísta
 fonte
 tenda
 enevoado
@@ -965,7 +975,6 @@ montanha-russa
 símbolo de barbearia
 tenda de circo
 locomotiva
-carruagem
 comboio de alta velocidade
 comboio bala
 comboio
@@ -1011,8 +1020,8 @@ semáforo horizontal
 semáforo vertical
 sinal de stop
 obras
+farol
 âncora
-veleiro
 canoa
 lancha
 navio de passageiros
@@ -1102,6 +1111,7 @@ floco de neve
 boneco de neve
 boneco de neve sem neve
 cometa
+meteoro
 fogo
 gota
 onda
@@ -1141,7 +1151,6 @@ bola de râguebi
 ténis
 frisbee
 bowling
-críquete
 hóquei em campo
 stick e disco de hóquei no gelo
 lacrosse
@@ -1153,7 +1162,6 @@ bandeira no buraco
 patim de gelo
 cana de pesca
 máscara de mergulho
-camisola de corrida
 esquis
 pedra de curling
 em cheio no alvo
@@ -1373,6 +1381,7 @@ cadeado com caneta
 cadeado fechado com chave
 chave
 chave antiga
+rede com cabo
 martelo
 machado
 picareta
@@ -1885,6 +1894,16 @@ polegar para baixo tipo de pele 3
 polegar para baixo tipo de pele 4
 polegar para baixo tipo de pele 5
 polegar para baixo tipo de pele 6
+sinal de polegar para a esquerda tipo de pele 1–2
+sinal de polegar para a esquerda tipo de pele 3
+sinal de polegar para a esquerda tipo de pele 4
+sinal de polegar para a esquerda tipo de pele 5
+sinal de polegar para a esquerda tipo de pele 6
+sinal de polegar para a direita tipo de pele 1–2
+sinal de polegar para a direita tipo de pele 3
+sinal de polegar para a direita tipo de pele 4
+sinal de polegar para a direita tipo de pele 5
+sinal de polegar para a direita tipo de pele 6
 punho erguido tipo de pele 1–2
 punho erguido tipo de pele 3
 punho erguido tipo de pele 4

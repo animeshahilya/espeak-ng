@@ -8,10 +8,10 @@ rreth gjysmë i mbushur poshtë
 rreth gjysmë i mbushur lart
 rreth me sektor të mbushur djathtas lart
 rreth i mbushur përveç sektorit majtas lart
-hark sektori majtas lart
-hark sektori djathtas lart
+hark rrethor në kuadratin e sipërm majtas
+hark rrethor në kuadratin e sipërm djathtas
 hark rrethor në çerekrrethin e djathtë poshtë
-hark sektori majtas poshtë
+hark rrethor në kuadratin e poshtëm majtas
 trekëndësh i mbushur djathtas poshtë
 trekëndësh i mbushur majtas poshtë
 trekëndësh i mbushur majtas lart
@@ -29,19 +29,25 @@ grua me shkop gjurmimi
 person në karrocë të motorizuar invalidi
 burrë në karrocë të motorizuar invalidi
 grua në karrocë të motorizuar invalidi
-zog i zi
+korb
 patëllxhan
 patëllxhanë për mbushje
+kastravec turshi
 rrënjë xhenxhefili
 ushqim i konservuar
+krem-karamel
+kuti pijeje
 kimarrao
 mali i Fuxhit
 tempull indian
+faltore shinto
 qabeja
+vagon
 automobil
 automobil që vjen
 karrocë invalidi me motor
 bovë rrethore
+varkë me vela
 motobarkë
 aeroplan
 aeroplan i vogël
@@ -49,13 +55,16 @@ nisje aeroplani
 mbërritje aeroplani
 zile shërbimi
 top futbolli
+kriket
 pingpong
+bluzë vrapimi
 sajë
 matrioshka
 kravatë
 sandale me rrip përpara
 briri i postës
 daulle e gjatë
+gomë fshirëse
 shkop gjurmimi
 fashë ngjitëse
 ashensor
@@ -90,11 +99,11 @@ trekëndësh i mbushur i vogël me drejtim lart
 trekëndësh i zbrazët i vogël me drejtim lart
 trekëndësh i zbrazët i me drejtim djathtas
 trekëndësh i mbushur i vogël me drejtim djathtas
-trekëndësh i mbushur i zbrazët me drejtim djathtas
+trekëndësh i vogël i zbrazët me drejtim djathtas
 tregues i mbushur me drejtim djathtas
 tregues i zbrazët me drejtim djathtas
 trekëndësh i mbushur, me drejtim poshtë
-tregues i mbushur me drejtim poshtë
+tregues bosh me drejtim poshtë
 trekëndësh i mbushur i vogël me drejtim poshtë
 trekëndësh i zbrazët i vogël me drejtim poshtë
 trekëndësh i zbrazët me drejtim majtas
@@ -112,8 +121,8 @@ rreth i pikëzuar
 rreth me mbushje vertikale
 rrathë bashkëqendrorë
 rreth i mbushur
-gjysmërreth i mbushur i majtë
-gjysmërreth i mbushur i djathtë
+gjysmërreth i mbushur nga ana e majtë
+gjysmërreth i mbushur nga ana e djathtë
 pikë e anasjellë
 katror i mbushur me rreth të zbrazët
 gjysmëhark lart
@@ -133,6 +142,7 @@ fytyrë me lot gëzimi
 fytyrë pak e qeshur
 fytyrë përmbys
 fytyrë që shkrin
+fytyrë që çahet
 fytyrë që shkel syrin
 fytyrë e qeshur me sy të qeshur
 fytyrë e qeshur me aureolë
@@ -320,6 +330,8 @@ gisht tregues që tregon lart
 gishti tregues nga shikuesi
 gishti i madh lart
 gishti i madh poshtë
+shenja e gishtit të madh majtas
+shenja e gishtit të madh djathtas
 grusht i ngritur
 grusht që vjen
 grusht i majtë në anën e përparme
@@ -731,6 +743,7 @@ kallamar
 gocë deti
 kërmill
 flutur
+flutur monarke
 shumëkëmbësh
 milingonë
 bletë
@@ -872,7 +885,6 @@ byrek
 çokollatë
 ëmbëlsirë
 lëpirëse
-krem-karamel
 vazo me mjaltë
 shishe për bebe
 gotë me qumësht
@@ -891,14 +903,13 @@ gotë
 hedhje lëngu
 gotë me pipë
 çaj me flluska
-kuti pijeje
 kub akulli
 shkopinj (për të ngrënë)
 pirun dhe thikë me pjatë
 pirun dhe thikë
 lugë
 thikë kuzhine
-kanë
+kavanoz
 amforë
 globi që tregon Evropën dhe Afrikën
 globi që tregon Amerikat
@@ -946,7 +957,6 @@ Statuja e Lirisë
 kishë
 xhami
 sinagogë
-faltore shinto
 shatërvan
 tendë
 me mjegull
@@ -965,7 +975,6 @@ tren lojërash me valëzim
 shenja e berberit
 tendë cirku
 lokomotivë
-vagon
 tren me shpejtësi të madhe
 tren-plumb
 tren
@@ -1011,8 +1020,8 @@ semafor horizontal
 semafor vertikal
 shenja “ndalo”
 ndërtim
+far
 spirancë
-varkë me vela
 kaike
 motobarkë e shpejtë
 anije udhëtarësh
@@ -1102,6 +1111,7 @@ flokë bore
 njeri prej bore
 njeri prej bore pa borë
 kometë
+meteor
 zjarr
 pikëz
 dallgë uji
@@ -1141,7 +1151,6 @@ regbi
 tenis
 hedhje disku
 bouling
-kriket
 hokej në fushë
 shkopi dhe disku i hokejit në akull
 lakros
@@ -1153,7 +1162,6 @@ flamur në vrimë
 patina akulli
 grep
 maskë zhytjeje
-bluzë vrapimi
 ski
 gur kurlingu
 goditje e drejtpërdrejtë
@@ -1373,6 +1381,7 @@ kyç me penë
 kyç i mbyllur me çelës
 çelës
 çelës i vjetër
+rrjetë me dorezë
 çekiç
 sëpatë
 kazmë
@@ -1519,8 +1528,8 @@ butoni i nxjerrjes
 kinema
 butoni i zbehjes
 butoni i ndriçimit
-shiritat e antenës
-lidhje me valë
+vijat e antenës
+wireless
 modaliteti i dridhjeve
 fik celularin
 shenja femër
@@ -1530,7 +1539,7 @@ shenja x e shumëzimit e trashë
 shenja plus e trashë
 shenja minus e trashë
 shenja e pjesëtimit e trashë
-shenjë e fortë barazie
+shenjë barazimi e trashë
 pafundësi
 dy pikëçuditje
 shenja e pikëpyetjes dhe pikëçuditjes
@@ -1885,6 +1894,16 @@ gishti i madh poshtë nuancë lëkure gjysmë e çelët
 gishti i madh poshtë nuancë lëkure zeshkane
 gishti i madh poshtë nuancë lëkure gjysmë e errët
 gishti i madh poshtë nuancë lëkure e errët
+shenja e gishtit të madh majtas nuancë lëkure e çelët
+shenja e gishtit të madh majtas nuancë lëkure gjysmë e çelët
+shenja e gishtit të madh majtas nuancë lëkure zeshkane
+shenja e gishtit të madh majtas nuancë lëkure gjysmë e errët
+shenja e gishtit të madh majtas nuancë lëkure e errët
+shenja e gishtit të madh djathtas nuancë lëkure e çelët
+shenja e gishtit të madh djathtas nuancë lëkure gjysmë e çelët
+shenja e gishtit të madh djathtas nuancë lëkure zeshkane
+shenja e gishtit të madh djathtas nuancë lëkure gjysmë e errët
+shenja e gishtit të madh djathtas nuancë lëkure e errët
 grusht i ngritur nuancë lëkure e çelët
 grusht i ngritur nuancë lëkure gjysmë e çelët
 grusht i ngritur nuancë lëkure zeshkane

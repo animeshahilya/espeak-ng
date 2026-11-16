@@ -32,16 +32,22 @@ vrou in motoraangedrewe rolstoel
 swart voël
 eiervrug
 soetrissie
+agurkie
 gemmerwortel
 geblikte kos
+vla
+koeldrankboksie
 maté
 berg foedji
 Hindoetempel
+sjinto-altaar
 Kaäba
+treintrok
 motor
 aankomende motor
 motoraangedrewe rolstoel
 boei
+seilboot
 motorboot
 vliegtuig
 klein vliegtuig
@@ -49,13 +55,16 @@ vliegtuig styg op
 vliegtuig land
 klokkie vir hoteljoggie
 sokkerbal
+krieket
 tafeltennis
+drafhemp
 slee
 ineenpassende poppe
 das
 tussentoonplakkie
 poshoring
 lang drom
+uitveër
 gidsstok
 plakpleister
 hysbak
@@ -133,6 +142,7 @@ gesig met trane van vreugde
 gesig wat effens glimlag
 onderstebo gesig
 gesig wat smelt
+gekraakte gesig
 gesig wat knipoog
 glimlaggende gesig met glimlaggende oë
 glimlaggende gesig met stralekrans
@@ -320,6 +330,8 @@ wysvinger wat op wys
 wysvinger na kyker
 laaik baie
 laaik niks
+links duimgooi
+regs duimgooi
 vuis in die lug
 vuishou
 vuis links
@@ -731,6 +743,7 @@ inkvis
 oester
 slak
 skoenlapper
+koningvlinder
 gogga
 mier
 heuningby
@@ -872,7 +885,6 @@ pastei
 sjokoladestaaf
 lekker
 suiglekker
-vla
 heuningpot
 bababottel
 glas melk
@@ -891,7 +903,6 @@ whiskeyglas
 gooi vloeistof
 beker met strooitjie
 borreltee
-koeldrankboksie
 ysblokkie
 eetstokkies
 bord met mes en vurk
@@ -946,7 +957,6 @@ vryheidstandbeeld
 kerk
 moskee
 sinagoge
-sjinto-altaar
 fontein
 tent
 mistig
@@ -965,7 +975,6 @@ tuimeltrein
 barbierpaal
 sirkustent
 lokomotief
-treintrok
 sneltrein
 supersneltrein
 trein
@@ -1011,8 +1020,8 @@ horisontale verkeerslig
 vertikale verkeerslig
 stopteken
 konstruksieteken
+lugtoring
 anker
-seilboot
 kano
 snelboot
 passasierskip
@@ -1102,6 +1111,7 @@ sneeuvlokkie
 sneeuman
 sneeuman sonder sneeu
 komeet
+meteoor
 vuur
 druppel
 brander
@@ -1141,7 +1151,6 @@ rugbyvoetbal
 tennis
 diskus
 kegelbal
-krieket
 hokkie
 yshokkie
 lacrosse
@@ -1153,7 +1162,6 @@ vlag in putjie
 ysskaats
 visstok
 duikmasker
-drafhemp
 ski’s
 ysbal
 kolskoot
@@ -1373,6 +1381,7 @@ slot met pen
 toe slot met sleutel
 sleutel
 ou sleutel
+vangnet met steel
 hamer
 byl
 pik
@@ -1885,6 +1894,16 @@ laaik niks medium-ligte velkleur
 laaik niks medium velkleur
 laaik niks medium-donker velkleur
 laaik niks donker velkleur
+links duimgooi ligte velkleur
+links duimgooi medium-ligte velkleur
+links duimgooi medium velkleur
+links duimgooi medium-donker velkleur
+links duimgooi donker velkleur
+regs duimgooi ligte velkleur
+regs duimgooi medium-ligte velkleur
+regs duimgooi medium velkleur
+regs duimgooi medium-donker velkleur
+regs duimgooi donker velkleur
 vuis in die lug ligte velkleur
 vuis in die lug medium-ligte velkleur
 vuis in die lug medium velkleur

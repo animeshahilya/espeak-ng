@@ -32,16 +32,22 @@ donna su sedia a rotelle motorizzata
 merlo
 melanzana
 peperone
+sottaceto
 radice di zenzero
 cibo in scatola
+budino
+bevanda monodose
 mate
 Monte Fuji
 tempio indù
+santuario shintoista
 Kaaba
+vagone
 auto
 auto in arrivo
 sedia a rotelle motorizzata
 salvagente
+barca a vela
 barca a motore
 aeroplano
 aereo turistico
@@ -49,13 +55,16 @@ decollo
 atterraggio
 campanello da hotel
 pallone da calcio
+cricket
 ping pong
+maglia da corsa
 slitta
 matrioska
 cravatta
 infradito
 corno postale
 tamburo lungo
+gomma per cancellare
 bastone per non vedenti
 cerotto
 ascensore
@@ -133,6 +142,7 @@ faccina con lacrime di gioia
 faccina con sorriso accennato
 faccina sottosopra
 faccina che si scioglie
+faccia screpolata
 faccina che fa l’occhiolino
 faccina con occhi sorridenti
 faccina con sorriso e aureola
@@ -320,6 +330,8 @@ indice verso l’alto
 indice verso l’osservatore
 pollice in su
 pollice verso
+segno del pollice a sinistra
+segno del pollice a destra
 pugno
 pugno chiuso
 pugno a sinistra
@@ -731,6 +743,7 @@ calamaro
 ostrica
 lumaca
 farfalla
+farfalla monarca
 insetto
 formica
 ape
@@ -872,7 +885,6 @@ torta
 cioccolato
 caramella
 lecca lecca
-budino
 barattolo di miele
 biberon
 bicchiere di latte
@@ -891,7 +903,6 @@ bicchiere tumbler
 liquido versato
 bicchiere con cannuccia
 bubble tea
-bevanda monodose
 cubetto di ghiaccio
 bacchette
 piatto e posate
@@ -946,7 +957,6 @@ Statua della Libertà
 chiesa
 moschea
 sinagoga
-santuario shintoista
 fontana
 tenda
 nebbioso
@@ -965,7 +975,6 @@ montagne russe
 barbiere
 circo
 locomotiva
-vagone
 treno alta velocità
 treno alta velocità punta arrotondata
 treno
@@ -1011,8 +1020,8 @@ semaforo orizzontale
 semaforo verticale
 segnale di stop
 area cantiere
+faro
 ancora
-barca a vela
 canoa
 motoscafo
 nave da crociera
@@ -1075,7 +1084,7 @@ termometro
 sole
 faccina luna piena
 faccina sole
-pianeta con satellite
+pianeta con anelli
 stella che brilla
 stella cadente
 Via Lattea
@@ -1102,6 +1111,7 @@ fiocco di neve
 pupazzo di neve
 pupazzo di neve senza neve
 cometa
+meteora
 fuoco
 goccia
 onda
@@ -1141,7 +1151,6 @@ pallone da rugby
 tennis
 frisbee
 bowling
-cricket
 hockey su prato
 hockey su ghiaccio
 lacrosse
@@ -1153,7 +1162,6 @@ bandiera in buca
 pattinaggio su ghiaccio
 canna da pesca
 maschera da sub
-maglia da corsa
 sci
 stone da curling
 bersaglio
@@ -1373,6 +1381,7 @@ lucchetto con penna stilo
 lucchetto chiuso con chiave
 chiave
 chiave antica
+retino
 martello
 ascia
 piccone
@@ -1493,14 +1502,14 @@ Segno zodiacale del Leone
 Segno zodiacale della Vergine
 Segno zodiacale della Bilancia
 Segno zodiacale dello Scorpione
-Segno zodiacale del Saggitario
+Segno zodiacale del Sagittario
 Segno zodiacale del Capricorno
 Segno zodiacale dell’Acquario
 Segno zodiacale dei Pesci
 Segno zodiacale dell’Ofiuco
 pulsante di riproduzione casuale
 pulsante di ripetizione della riproduzione
-pulsante di ripetizione della riproduzione di una traccia
+pulsante di ripetizione di una traccia
 pulsante di riproduzione
 pulsante di avanzamento rapido
 traccia successiva
@@ -1885,6 +1894,16 @@ pollice verso carnagione abbastanza chiara
 pollice verso carnagione olivastra
 pollice verso carnagione abbastanza scura
 pollice verso carnagione scura
+segno del pollice a sinistra carnagione chiara
+segno del pollice a sinistra carnagione abbastanza chiara
+segno del pollice a sinistra carnagione olivastra
+segno del pollice a sinistra carnagione abbastanza scura
+segno del pollice a sinistra carnagione scura
+segno del pollice a destra carnagione chiara
+segno del pollice a destra carnagione abbastanza chiara
+segno del pollice a destra carnagione olivastra
+segno del pollice a destra carnagione abbastanza scura
+segno del pollice a destra carnagione scura
 pugno carnagione chiara
 pugno carnagione abbastanza chiara
 pugno carnagione olivastra

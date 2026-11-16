@@ -32,16 +32,22 @@ muž na elektrickém invalidním vozíku
 černý pták
 lilek
 paprika
+nakládačka
 zázvor
 jídlo v plechovce
+pudink
+nápoj v krabičce
 maté
 hora Fudži
 hinduistický chrám
+šintoistická svatyně
 Kába
+vagón
 auto
 přijíždějící auto
 elektrický invalidní vozík
 záchranný kruh
+plachetnice
 motorová jachta
 letadlo
 malé letadlo
@@ -49,13 +55,16 @@ vzlétající letadlo
 přistávající letadlo
 portýrský zvonek
 fotbalový míč
+kriket
 stolní tenis
+běžecké tričko
 sáňky
 matrjoška
 kravata
 žabka
 poštovní roh
 protáhlý buben
+guma
 slepecká hůl
 náplast
 výtah
@@ -133,6 +142,7 @@ obličej slzící smíchy
 obličej s mírným úsměvem
 převrácený obličej
 tající obličej
+praskající obličej
 mrkající obličej
 smějící se obličej s usměvavýma očima
 usmívající se obličej se svatozáří
@@ -320,6 +330,8 @@ ruka ukazující nahoru
 ukazováček namířený na diváka
 palec nahoru
 palec dolů
+gesto palcem doleva
+gesto palcem doprava
 zvednutá pěst
 namířená pěst
 pěst mířící doleva
@@ -731,6 +743,7 @@ oliheň
 ústřice
 hlemýžď
 motýl
+motýl monarcha
 housenka
 mravenec
 včela
@@ -872,7 +885,6 @@ koláč
 tabulka čokolády
 bonbon
 lízátko
-pudink
 sklenice medu
 kojenecká láhev
 sklenice mléka
@@ -891,7 +903,6 @@ sklenice whisky
 vylévání tekutiny
 pohárek s brčkem
 bublinkový čaj
-nápoj v krabičce
 kostka ledu
 jídelní hůlky
 talíř s vidličkou a nožem
@@ -946,7 +957,6 @@ socha Svobody
 kostel
 mešita
 synagoga
-šintoistická svatyně
 fontána
 stan
 mlha
@@ -965,7 +975,6 @@ horská dráha
 značka holičství
 cirkusový stan
 lokomotiva
-vagón
 pendolino
 japonský rychlovlak
 vlak
@@ -1011,8 +1020,8 @@ vodorovný semafor
 svislý semafor
 značka stop
 stavební zábrana
+maják
 kotva
-plachetnice
 kánoe
 motorový člun
 zaoceánská loď
@@ -1102,6 +1111,7 @@ sněhová vločka
 sněhulák
 sněhulák bez sněhu
 kometa
+meteorit
 oheň
 kapka
 vodní vlna
@@ -1141,7 +1151,6 @@ míč na rugby
 tenis
 frisbee
 bowling
-kriket
 pozemní hokej
 lední hokej
 lakros
@@ -1153,7 +1162,6 @@ jamka s vlajkou
 brusle
 rybářský prut
 potápěčská maska
-běžecké tričko
 lyže
 curlingový kámen
 přesný zásah do terče
@@ -1373,6 +1381,7 @@ zamknutý zámek s plnicím perem
 zamknutý zámek s klíčem
 klíč
 starý klíč
+podběrák
 kladivo
 sekera
 krumpáč
@@ -1885,6 +1894,16 @@ palec dolů středně světlý odstín pleti
 palec dolů střední odstín pleti
 palec dolů středně tmavý odstín pleti
 palec dolů tmavý odstín pleti
+gesto palcem doleva světlý odstín pleti
+gesto palcem doleva středně světlý odstín pleti
+gesto palcem doleva střední odstín pleti
+gesto palcem doleva středně tmavý odstín pleti
+gesto palcem doleva tmavý odstín pleti
+gesto palcem doprava světlý odstín pleti
+gesto palcem doprava středně světlý odstín pleti
+gesto palcem doprava střední odstín pleti
+gesto palcem doprava středně tmavý odstín pleti
+gesto palcem doprava tmavý odstín pleti
 zvednutá pěst světlý odstín pleti
 zvednutá pěst středně světlý odstín pleti
 zvednutá pěst střední odstín pleti

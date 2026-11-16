@@ -32,16 +32,22 @@ kobieta na elektrycznym wózku inwalidzkim
 czarny ptak
 bakłażan
 papryka
+ogórek kiszony
 korzeń imbiru
 jedzenie w puszce
+deser typu krem angielski
+napój w kartoniku
 yerba mate
 góra Fudżi
 świątynia hinduistyczna
+świątynia shinto
 kaaba
+wagon kolejowy
 samochód
 nadjeżdżający samochód
 wózek inwalidzki elektryczny
 koło ratunkowe
+żaglówka
 motorówka
 samolot
 mały samolot
@@ -49,13 +55,16 @@ odlot samolotu
 przylot samolotu
 dzwonek w recepcji
 piłka nożna
+krykiet
 tenis stołowy
+koszulka do biegania
 sanie
 matrioszki
 krawat
 japonka
 trąbka pocztowa
 konga
+gumka
 biała laska
 plaster
 winda
@@ -133,6 +142,7 @@ twarz ze łzami radości
 lekko uśmiechnięta twarz
 odwrócona twarz
 roztapiająca się twarz
+popękana twarz
 twarz puszczająca oko
 uśmiechnięta twarz o roześmianych oczach
 uśmiechnięta twarz z aureolą
@@ -320,6 +330,8 @@ palec wskazujący w górę
 palec wskazujący skierowany na patrzącego
 kciuk w górę
 kciuk w dół
+gest kciuka w lewo
+gest kciuka w prawo
 wzniesiona pięść
 pięść od przodu
 pięść skierowana w lewo
@@ -731,6 +743,7 @@ kałamarnica
 ostryga
 ślimak
 motyl
+monarcha
 gąsienica
 mrówka
 pszczoła
@@ -872,7 +885,6 @@ ciasto
 tabliczka czekolady
 cukierek
 lizak
-deser typu krem angielski
 garnek miodu
 butelka ze smoczkiem
 szklanka mleka
@@ -891,7 +903,6 @@ szklanka z grubym dnem
 nalewanie płynu
 szklanka ze słomką
 napój bubble tea
-napój w kartoniku
 kostka lodu
 pałeczki
 talerz z nożem i widelcem
@@ -946,7 +957,6 @@ Statua Wolności
 kościół
 meczet
 synagoga
-świątynia shinto
 fontanna
 namiot
 zamglenie
@@ -965,7 +975,6 @@ kolejka górska
 słup fryzjerski
 namiot cyrkowy
 lokomotywa
-wagon kolejowy
 szybki pociąg
 szybki pociąg z zaokrąglonym przodem
 pociąg
@@ -1011,8 +1020,8 @@ pozioma sygnalizacja uliczna
 pionowa sygnalizacja uliczna
 znak stopu
 prace drogowe
+latarnia morska
 kotwica
-żaglówka
 kajak
 ścigacz wodny
 statek pasażerski
@@ -1102,6 +1111,7 @@ płatek śniegu
 bałwanek i płatki śniegu
 bałwanek bez śniegu
 kometa
+meteor
 ogień
 kropla
 fala
@@ -1141,7 +1151,6 @@ piłka do rugby
 tenis
 frisbee
 kręgle
-krykiet
 hokej na trawie
 hokej na lodzie
 lacrosse
@@ -1153,7 +1162,6 @@ flaga w dołku
 but z łyżwą
 wędka
 maska do nurkowania
-koszulka do biegania
 narty
 kamień do curlingu
 strzał w 10
@@ -1373,6 +1381,7 @@ zamknięta kłódka z piórem
 zamknięta kłódka z kluczem
 klucz
 staroświecki klucz
+siatka z rączką
 młotek
 siekiera
 kilof
@@ -1885,6 +1894,16 @@ kciuk w dół karnacja średnio jasna
 kciuk w dół karnacja średnia
 kciuk w dół karnacja średnio ciemna
 kciuk w dół karnacja ciemna
+gest kciuka w lewo karnacja jasna
+gest kciuka w lewo karnacja średnio jasna
+gest kciuka w lewo karnacja średnia
+gest kciuka w lewo karnacja średnio ciemna
+gest kciuka w lewo karnacja ciemna
+gest kciuka w prawo karnacja jasna
+gest kciuka w prawo karnacja średnio jasna
+gest kciuka w prawo karnacja średnia
+gest kciuka w prawo karnacja średnio ciemna
+gest kciuka w prawo karnacja ciemna
 wzniesiona pięść karnacja jasna
 wzniesiona pięść karnacja średnio jasna
 wzniesiona pięść karnacja średnia

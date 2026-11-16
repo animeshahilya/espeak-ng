@@ -28,12 +28,13 @@ import sys
 
 def utf8(data):
     """NVDA's files are UTF-8, except de_CH characterDescriptions.dic, which
-    is Windows-1252 (checked at NVDA 7e3f795, 2026-10-15)."""
+    is Windows-1252 (checked at NVDA 7e3f795, 2026-10-15). Line ends become
+    LF: zh_CN characterDescriptions.dic mixes in CRLF (NVDA e397db8)."""
     try:
         data.decode("utf-8")
-        return data
     except UnicodeDecodeError:
-        return data.decode("cp1252").encode("utf-8")
+        data = data.decode("cp1252").encode("utf-8")
+    return data.replace(b"\r\n", b"\n")
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from update_emoji_names import is_emoji  # noqa: E402

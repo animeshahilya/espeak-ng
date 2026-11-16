@@ -7,7 +7,7 @@ sirkel med høyre halvdel fylt
 sirkel med nedre halvdel fylt
 sirkel med øvre halvdel fylt
 sirkel med øvre høyre kvadrant fylt
-sirkel med alt unntatt øvre venstre kvadrant fylt
+fylt sirkel med øvre venstre kvadrant tom
 sirkelbue øvre venstre kvadrant
 sirkelbue øvre høyre kvadrant
 sirkelbue nedre høyre kvadrant
@@ -32,16 +32,22 @@ kvinne i motorisert rullestol
 svart fugl
 aubergine
 paprika
+sylteagurk
 ingefærrot
 hermetikk
+pudding
+drikkekartong
 mate
 Fuji-fjellet
 hindutempel
+Shinto-alter
 Kaba
+togvogn
 bil
 motgående bil
 motorisert rullestol
 livbøye
+seilbåt
 motorbåt
 fly
 lite fly
@@ -49,13 +55,16 @@ fly som tar av
 fly som lander
 resepsjonsklokke
 fotball
+cricket
 bordtennis
+treningstrøye
 kjelke
 matrjosjka
 slips
 flippflopp
 posthorn
 langtromme
+viskelær
 blindestokk
 plaster
 heis
@@ -133,6 +142,7 @@ gledestårer
 smiler litt
 fjes som er opp-ned
 fjes som smelter
+krakelert fjes
 blunkende ansikt
 smil med smilende øyne
 smil med glorie
@@ -320,6 +330,8 @@ peker opp
 pekefinger peker på leseren
 tommel opp
 tommel ned
+tommelfinger til venstre
+tommelfinger til høyre
 hevet knyttneve
 knyttneve
 knyttneve mot venstre
@@ -731,6 +743,7 @@ akkar
 østers
 snegle
 sommerfugl
+monarksommerfugl
 insekt
 maur
 honningbie
@@ -872,7 +885,6 @@ pai
 sjokoladeplate
 godteri
 kjærlighet på pinne
-pudding
 honningkrukke
 tåteflaske
 melkeglass
@@ -891,7 +903,6 @@ whiskyglass
 helle væske
 kopp med sugerør
 boble-te
-drikkekartong
 isterning
 spisepinner
 tallerken med kniv og gaffel
@@ -946,7 +957,6 @@ Frihetsgudinnen
 kirke
 moské
 synagoge
-Shinto-alter
 fontene
 telt
 tåkete
@@ -965,7 +975,6 @@ berg-og-dal-bane
 barberskilt
 sirkustelt
 lokomotiv
-togvogn
 høyhastighetstog
 høyhastighetstog med kulenese
 tog
@@ -1011,8 +1020,8 @@ horisontale trafikklys
 vertikale trafiklys
 stoppskilt
 anleggsarbeid
+fyrtårn
 anker
-seilbåt
 kano
 speedbåt
 passasjerskip
@@ -1102,6 +1111,7 @@ snøfnugg
 snømann
 snømann uten snø
 komet
+meteor
 ild
 dråpe
 bølge
@@ -1141,7 +1151,6 @@ rugby
 tennis
 frisbee
 bowling
-cricket
 landhockey
 ishockey
 lacrosse
@@ -1153,7 +1162,6 @@ golfflagg
 skøyter
 fiskestang
 dykkermaske
-treningstrøye
 ski
 curlingstein
 blink
@@ -1373,6 +1381,7 @@ låst med penn
 låst med nøkkel
 nøkkel
 gammeldags nøkkel
+håv
 hammer
 øks
 hakke
@@ -1885,6 +1894,16 @@ tommel ned hudtype 3
 tommel ned hudtype 4
 tommel ned hudtype 5
 tommel ned hudtype 6
+tommelfinger til venstre hudtype 1–2
+tommelfinger til venstre hudtype 3
+tommelfinger til venstre hudtype 4
+tommelfinger til venstre hudtype 5
+tommelfinger til venstre hudtype 6
+tommelfinger til høyre hudtype 1–2
+tommelfinger til høyre hudtype 3
+tommelfinger til høyre hudtype 4
+tommelfinger til høyre hudtype 5
+tommelfinger til høyre hudtype 6
 hevet knyttneve hudtype 1–2
 hevet knyttneve hudtype 3
 hevet knyttneve hudtype 4

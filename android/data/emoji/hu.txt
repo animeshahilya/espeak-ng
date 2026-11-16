@@ -32,16 +32,22 @@ nő motoros kerekesszékben
 fekete madár
 padlizsán
 kaliforniai paprika
+csemegeuborka
 gyömbérgyökér
 konzerv
+puding
+italos doboz
 maté
 Fudzsi-hegy
 hindu templom
+sintó szentély
 kába
+vasúti kocsi
 autó
 érkező autó
 motoros kerekesszék
 mentőöv
+vitorlás hajó
 motorcsónak
 repülőgép
 kisrepülő
@@ -49,13 +55,16 @@ repülőgép indulása
 repülőgép érkezése
 londinerhívó csengő
 foci
+krikett
 pingpong
+futómez
 szán
 matrjoska
 nyakkendő
 tangapapucs
 postakürt
 hosszú dob
+radír
 fehér bot
 ragtapasz
 lift
@@ -133,6 +142,7 @@ arc örömkönnyekkel
 finoman mosolygó arc
 arc fejjel lefelé
 elolvadó arc
+repedezett arc
 kacsintó arc
 mosolygó arc mosolygó szemmel
 mosolygó arc glóriával
@@ -320,6 +330,8 @@ kéz felfelé mutató ujjal
 felhasználóra mutató ujj
 felfelé mutató hüvelykujj
 lefelé mutató hüvelykujj
+balra mutató hüvelykujj
+jobbra mutató hüvelykujj
 felemelt ököl
 ütésre emelt ököl
 balra néző ököl
@@ -731,6 +743,7 @@ tintahal
 osztriga
 csiga
 pillangó
+királylepke
 rovar
 hangya
 méh
@@ -872,7 +885,6 @@ pite
 csokoládé
 cukorka
 nyalóka
-puding
 mézes csupor
 cumisüveg
 egy pohár tej
@@ -891,7 +903,6 @@ feles pohár
 ömlő folyadék
 pohár szívószállal
 buborékos tea
-italos doboz
 jégkocka
 evőpálcikák
 kés és villa tányérral
@@ -946,7 +957,6 @@ Szabadság-szobor
 templom
 mecset
 zsinagóga
-sintó szentély
 szökőkút
 sátor
 ködös
@@ -965,7 +975,6 @@ hullámvasút
 fodrászcégér
 cirkuszsátor
 mozdony
-vasúti kocsi
 gyorsvasút
 golyóorrú gyorsvasút
 vonat
@@ -1011,8 +1020,8 @@ vízszintes közlekedési lámpa
 függőleges közlekedési lámpa
 stoptábla
 útépítés
+világítótorony
 vasmacska
-vitorlás hajó
 kenu
 motoros siklócsónak
 utasszállító hajó
@@ -1102,6 +1111,7 @@ hópehely
 hóember
 hóember hó nélkül
 üstökös
+meteor
 tűz
 csepp
 vízhullám
@@ -1141,7 +1151,6 @@ rögbi
 tenisz
 frizbi
 bowling
-krikett
 gyeplabda
 hokiütő és korong
 lacrosse
@@ -1153,7 +1162,6 @@ zászló a lyuknál
 jégkorcsolya
 horgászbot
 búvármaszk
-futómez
 sílécek
 curlingkő
 telitalálat
@@ -1373,6 +1381,7 @@ lakat tollal
 zárt lakat kulccsal
 kulcs
 régi kulcs
+nyeles háló
 kalapács
 balta
 csákány
@@ -1885,6 +1894,16 @@ lefelé mutató hüvelykujj közepesen világos bőrtónus
 lefelé mutató hüvelykujj közepes bőrtónus
 lefelé mutató hüvelykujj közepesen sötét bőrtónus
 lefelé mutató hüvelykujj sötét bőrtónus
+balra mutató hüvelykujj világos bőrtónus
+balra mutató hüvelykujj közepesen világos bőrtónus
+balra mutató hüvelykujj közepes bőrtónus
+balra mutató hüvelykujj közepesen sötét bőrtónus
+balra mutató hüvelykujj sötét bőrtónus
+jobbra mutató hüvelykujj világos bőrtónus
+jobbra mutató hüvelykujj közepesen világos bőrtónus
+jobbra mutató hüvelykujj közepes bőrtónus
+jobbra mutató hüvelykujj közepesen sötét bőrtónus
+jobbra mutató hüvelykujj sötét bőrtónus
 felemelt ököl világos bőrtónus
 felemelt ököl közepesen világos bőrtónus
 felemelt ököl közepes bőrtónus

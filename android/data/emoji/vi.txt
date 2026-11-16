@@ -32,16 +32,22 @@ người phụ nữ trên xe lăn điện
 chim hoét đen
 cà tím
 ớt chuông
+dưa muối
 củ gừng
 thực phẩm đóng hộp
+bánh trứng
+hộp đồ uống
 trà nhựa ruồi
 núi Phú Sĩ
 đền hindu
+đền thờ Nhật Bản
 kaaba
+toa tàu
 ô tô
 ô tô đang tới
 xe lăn tự động
 phao cứu sinh
+thuyền buồm
 thuyền máy
 máy bay
 máy bay nhỏ
@@ -49,13 +55,16 @@ máy bay khởi hành
 máy bay đến nơi
 chuông gọi phục vụ
 bóng đá
+trò chơi cricket
 bóng bàn
+áo chạy bộ
 xe trượt tuyết
 búp bê matryoshka
 cà vạt
 dép xỏ ngón
 kèn bưu chính
 trống dài
+cục tẩy
 gậy dò đường
 băng dính
 thang máy
@@ -133,6 +142,7 @@ mặt cười với nước mắt vui sướng
 mặt cười mỉm
 mặt lộn ngược
 mặt tan chảy
+mặt rạn nứt
 mặt nháy mắt
 mặt cười híp mắt
 mặt cười có hào quang
@@ -320,6 +330,8 @@ ngón trỏ chỉ lên trên
 ngón trỏ chỉ vào người xem
 dấu ra hiệu đồng ý
 dấu ra hiệu từ chối
+biểu tượng ngón tay cái chỉ sang trái
+biểu tượng ngón tay cái chỉ sang phải
 nắm đấm giơ lên
 nắm đấm
 nắm đấm hướng phía trái
@@ -731,6 +743,7 @@ mực ống
 hàu
 ốc sên
 bướm
+bướm chúa
 con bọ
 kiến
 ong mật
@@ -872,7 +885,6 @@ bánh nướng
 thanh sô cô la
 kẹo
 kẹo mút
-bánh trứng
 hũ mật ong
 bình sữa trẻ em
 cốc sữa
@@ -891,7 +903,6 @@ ly đáy phẳng
 đổ chất lỏng
 cốc và ống hút
 trà sữa trân châu
-hộp đồ uống
 viên đá
 đũa
 dĩa và dao với đĩa
@@ -946,7 +957,6 @@ Tượng Nữ thần Tự do
 nhà thờ
 nhà thờ hồi giáo
 giáo đường Do thái
-đền thờ Nhật Bản
 đài phun nước
 lều
 có sương
@@ -965,7 +975,6 @@ tàu lượn siêu tốc
 biển hiệu của thợ cắt tóc
 lều rạp xiếc
 đầu máy xe lửa
-toa tàu
 tàu cao tốc
 tàu viên đạn
 tàu hỏa
@@ -1011,8 +1020,8 @@ bánh xe
 đèn giao thông dọc
 ký hiệu dừng
 công trường
+hải đăng
 mỏ neo
-thuyền buồm
 xuồng
 xuồng cao tốc
 tàu chở khách
@@ -1102,6 +1111,7 @@ bông tuyết
 người tuyết
 người tuyết không có tuyết
 sao chổi
+thiên thạch
 lửa
 giọt nước
 sóng nước
@@ -1141,7 +1151,6 @@ bóng bầu dục
 quần vợt
 đĩa bay trò chơi
 bowling
-trò chơi cricket
 khúc côn cầu trên cỏ
 khúc côn cầu trên băng
 bóng vợt
@@ -1153,7 +1162,6 @@ cờ trong lỗ
 giày trượt băng
 cần câu cá
 mặt nạ lặn
-áo chạy bộ
 ván trượt tuyết
 bi đá trên băng
 trúng đích
@@ -1373,6 +1381,7 @@ khóa với bút
 khóa với chìa
 chìa khóa
 chìa khóa cũ
+vợt bắt côn trùng
 búa
 rìu
 búa chim
@@ -1885,6 +1894,16 @@ dấu ra hiệu từ chối màu da sáng trung bình
 dấu ra hiệu từ chối màu da trung bình
 dấu ra hiệu từ chối màu da tối trung bình
 dấu ra hiệu từ chối màu da tối
+biểu tượng ngón tay cái chỉ sang trái màu da sáng
+biểu tượng ngón tay cái chỉ sang trái màu da sáng trung bình
+biểu tượng ngón tay cái chỉ sang trái màu da trung bình
+biểu tượng ngón tay cái chỉ sang trái màu da tối trung bình
+biểu tượng ngón tay cái chỉ sang trái màu da tối
+biểu tượng ngón tay cái chỉ sang phải màu da sáng
+biểu tượng ngón tay cái chỉ sang phải màu da sáng trung bình
+biểu tượng ngón tay cái chỉ sang phải màu da trung bình
+biểu tượng ngón tay cái chỉ sang phải màu da tối trung bình
+biểu tượng ngón tay cái chỉ sang phải màu da tối
 nắm đấm giơ lên màu da sáng
 nắm đấm giơ lên màu da sáng trung bình
 nắm đấm giơ lên màu da trung bình

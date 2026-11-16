@@ -32,16 +32,22 @@ kvinna i permobil
 koltrast
 aubergine
 paprika
+smörgåsgurka
 ingefära
 konserv
+brylépudding
+dryckeskartong
 mate-te
 Fuji
 hindutempel
+shintohelgedom
 kaba
+tågvagn
 bil
 mötande bil
 eldriven rullstol
 livboj
+segelbåt
 motorbåt
 flygplan
 litet flygplan
@@ -49,13 +55,16 @@ avgång med flyg
 ankomst med flyg
 receptionsklocka
 fotboll
+cricket
 bordtennis
+löparlinne
 kälke
 ryska dockor
 skjorta med slips
 flip-flops
 postsymbol
 congatrumma
+suddgummi
 blindkäpp
 plåster
 hiss
@@ -133,6 +142,7 @@ ansikte med glädjetårar
 småleende ansikte
 upp-och-nervänt ansikte
 smältande ansikte
+ansikte som spricker
 ansikte som blinkar med ett öga
 leende ansikte och ögon
 leende ansikte med gloria
@@ -152,7 +162,7 @@ ansikte räcker ut tungan med stängda ögon
 ansikte med dollarögon
 ansikte som kramas
 ansikte med handen för munnen
-ansikte med öppna ögon och hand för munnen
+ansikte med stora ögon och hand för mun
 ansikte med kikande öga
 hyssjande ansikte
 ansikte som tänker
@@ -320,6 +330,8 @@ finger upp
 finger som pekar på mig
 tummen upp
 tummen ned
+tumme åt vänster
+tumme åt höger
 knytnäve i luften
 knuten hand
 vänstervänd näve
@@ -731,6 +743,7 @@ mindre bläckfisk
 ostron
 snigel
 fjäril
+monarkfjäril
 tusenfoting
 myra
 bi
@@ -872,7 +885,6 @@ paj
 chokladkaka
 godis
 klubba
-brylépudding
 honungsburk
 nappflaska
 mjölkglas
@@ -891,7 +903,6 @@ whiskyglas
 hälla vätska
 mugg med sugrör
 bubbelte
-dryckeskartong
 isbit
 ätpinnar
 tallrik, kniv och gaffel
@@ -946,7 +957,6 @@ Frihetsgudinnan
 kyrka
 moské
 synagoga
-shintohelgedom
 fontän
 tält
 dimmigt
@@ -965,7 +975,6 @@ berg- och dalbana
 barberarstolpe
 cirkustält
 ånglok
-tågvagn
 snabbtåg
 höghastighetståg
 tåg
@@ -1011,8 +1020,8 @@ vågräta trafikljus
 lodräta trafikljus
 stoppskylt
 skylt för byggområde
+fyr
 ankare
-segelbåt
 kanot
 racerbåt
 passagerarfartyg
@@ -1102,6 +1111,7 @@ snöflinga
 snögubbe
 snögubbe utan snö
 komet
+meteor
 eld
 droppe
 våg
@@ -1141,7 +1151,6 @@ rugbyboll
 tennis
 frisbee
 bowling
-cricket
 landhockey
 ishockey
 lacrosse
@@ -1153,7 +1162,6 @@ flagga i hål
 skridsko
 fiskespö
 dykmask
-löparlinne
 skidor
 curlingsten
 mitt i prick
@@ -1373,6 +1381,7 @@ lås med bläckpenna
 lås med nyckel
 nyckel
 gammal nyckel
+håv
 hammare
 yxa
 hacka
@@ -1885,6 +1894,16 @@ tummen ned mellanljus hy
 tummen ned mellanfärgad hy
 tummen ned mellanmörk hy
 tummen ned mörk hy
+tumme åt vänster ljus hy
+tumme åt vänster mellanljus hy
+tumme åt vänster mellanfärgad hy
+tumme åt vänster mellanmörk hy
+tumme åt vänster mörk hy
+tumme åt höger ljus hy
+tumme åt höger mellanljus hy
+tumme åt höger mellanfärgad hy
+tumme åt höger mellanmörk hy
+tumme åt höger mörk hy
 knytnäve i luften ljus hy
 knytnäve i luften mellanljus hy
 knytnäve i luften mellanfärgad hy

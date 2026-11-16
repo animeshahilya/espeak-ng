@@ -32,16 +32,22 @@ moški na motoriziranem invalidskem vozičku
 kos
 jajčevec
 paprika
+kisla kumarica
 korenina ingverja
 konzervirana hrana
+vanilijev puding
+tetrapak s pijačo
 mate čaj
 gora Fuji
 hindujski tempelj
+šintoistično svetišče
 kaaba
+železniški vagon
 avtomobil
 prihajajoči avtomobil
 motoriziran invalidski voziček
 rešilni obroč
+jadrnica
 motorni čoln
 letalo
 manjše letalo
@@ -49,13 +55,16 @@ odhod letala
 prihod letala
 hotelski zvonec
 nogometna žoga
+kriket
 namizni tenis
+tekaška majica
 sanke
 babuška
 kravata
 japonke
 poštni rog
 visok boben
+radirka
 palica za slepe
 samolepilni obliž
 dvigalo
@@ -133,6 +142,7 @@ obraz s solzami veselja
 rahlo smejoči obraz
 na glavo obrnjen obraz
 taleči se obraz
+razpočen obraz
 obraz s pomežikom
 smejoči obraz s smejočimi očmi
 smejoči obraz s svetniškim sijem
@@ -205,7 +215,7 @@ obraz z odprtimi usti
 osupljen obraz
 začuden obraz
 zardeli obraz
-
+popačen obraz
 proseč obraz
 obraz, ki zadržuje jok
 namrščen obraz z odprtimi usti
@@ -320,6 +330,8 @@ kazalec, ki kaže gor
 kazalec, usmerjen v opazovalca
 palec gor
 palec dol
+znak palca, ki kaže v levo
+znak palca, ki kaže v desno
 dvignjena pest
 bližajoča se pest
 pest, obrnjena levo
@@ -731,6 +743,7 @@ ligenj
 ostriga
 polž
 metulj
+metulj monarh
 žuželka
 mravlja
 čebela
@@ -872,7 +885,6 @@ pita
 tablica čokolade
 bonbon
 lizika
-vanilijev puding
 vrč medu
 steklenička
 kozarec mleka
@@ -891,7 +903,6 @@ kozarec žgane pijače
 zlivanje tekočine
 kozarec s slamico
 čaj s kroglicami
-tetrapak s pijačo
 ledena kocka
 jedilne paličice
 vilice, nož in krožnik
@@ -946,7 +957,6 @@ kip svobode
 cerkev
 mošeja
 sinagoga
-šintoistično svetišče
 fontana
 šotor
 megleno
@@ -965,7 +975,6 @@ vlakec smrti
 brivski izvesek
 cirkuški šotor
 lokomotiva
-železniški vagon
 hitri vlak
 hitri vlak s koničastim nosom
 vlak
@@ -1011,8 +1020,8 @@ vodoravni semafor
 navpični semafor
 znak stop
 zaprto zaradi gradnje
+svetilnik
 sidro
-jadrnica
 kanu
 gliser
 potniška ladja
@@ -1102,6 +1111,7 @@ snežinka
 snežak
 snežak brez snega
 komet
+meteor
 ogenj
 kapljica
 vodni val
@@ -1141,7 +1151,6 @@ košarkarska žoga
 tenis
 frizbi
 kegljanje
-kriket
 hokej na travi
 hokejska palica in plošček
 lacrosse
@@ -1153,7 +1162,6 @@ zastavica v luknji
 drsalka
 ribiška palica
 potapljaška maska
-tekaška majica
 smučke
 curling
 zadetek v polno
@@ -1275,7 +1283,7 @@ tiskalnik
 tipkovnica
 računalniška miška
 sledilna kroglica
-minidisk
+računalniški disk
 disketa
 optični disk
 dvd
@@ -1373,6 +1381,7 @@ ključavnica s peresom
 zaprta ključavnica s ključem
 ključ
 star ključ
+mreža z ročajem
 kladivo
 sekira
 kramp
@@ -1650,67 +1659,67 @@ oseba s palico za slepe srednje svetel ten kože
 oseba s palico za slepe srednji ten kože
 oseba s palico za slepe srednje temen ten kože
 oseba s palico za slepe temen ten kože
-oseba s palico za slepe , obrnjen v desno
-oseba s palico za slepe svetel ten kože in , obrnjen v desno
-oseba s palico za slepe srednje svetel ten kože in , obrnjen v desno
-oseba s palico za slepe srednji ten kože in , obrnjen v desno
-oseba s palico za slepe srednje temen ten kože in , obrnjen v desno
-oseba s palico za slepe temen ten kože in , obrnjen v desno
+oseba s palico za slepe , obrnjeno v desno
+oseba s palico za slepe svetel ten kože in , obrnjeno v desno
+oseba s palico za slepe srednje svetel ten kože in , obrnjeno v desno
+oseba s palico za slepe srednji ten kože in , obrnjeno v desno
+oseba s palico za slepe srednje temen ten kože in , obrnjeno v desno
+oseba s palico za slepe temen ten kože in , obrnjeno v desno
 moški s palico za slepe svetel ten kože
 moški s palico za slepe srednje svetel ten kože
 moški s palico za slepe srednji ten kože
 moški s palico za slepe srednje temen ten kože
 moški s palico za slepe temen ten kože
-moški s palico za slepe , obrnjen v desno
-moški s palico za slepe svetel ten kože in , obrnjen v desno
-moški s palico za slepe srednje svetel ten kože in , obrnjen v desno
-moški s palico za slepe srednji ten kože in , obrnjen v desno
-moški s palico za slepe srednje temen ten kože in , obrnjen v desno
-moški s palico za slepe temen ten kože in , obrnjen v desno
+moški s palico za slepe , obrnjeno v desno
+moški s palico za slepe svetel ten kože in , obrnjeno v desno
+moški s palico za slepe srednje svetel ten kože in , obrnjeno v desno
+moški s palico za slepe srednji ten kože in , obrnjeno v desno
+moški s palico za slepe srednje temen ten kože in , obrnjeno v desno
+moški s palico za slepe temen ten kože in , obrnjeno v desno
 ženska s palico za slepe svetel ten kože
 ženska s palico za slepe srednje svetel ten kože
 ženska s palico za slepe srednji ten kože
 ženska s palico za slepe srednje temen ten kože
 ženska s palico za slepe temen ten kože
-ženska s palico za slepe , obrnjen v desno
-ženska s palico za slepe svetel ten kože in , obrnjen v desno
-ženska s palico za slepe srednje svetel ten kože in , obrnjen v desno
-ženska s palico za slepe srednji ten kože in , obrnjen v desno
-ženska s palico za slepe srednje temen ten kože in , obrnjen v desno
-ženska s palico za slepe temen ten kože in , obrnjen v desno
+ženska s palico za slepe , obrnjeno v desno
+ženska s palico za slepe svetel ten kože in , obrnjeno v desno
+ženska s palico za slepe srednje svetel ten kože in , obrnjeno v desno
+ženska s palico za slepe srednji ten kože in , obrnjeno v desno
+ženska s palico za slepe srednje temen ten kože in , obrnjeno v desno
+ženska s palico za slepe temen ten kože in , obrnjeno v desno
 oseba na motoriziranem invalidskem vozičku svetel ten kože
 oseba na motoriziranem invalidskem vozičku srednje svetel ten kože
 oseba na motoriziranem invalidskem vozičku srednji ten kože
 oseba na motoriziranem invalidskem vozičku srednje temen ten kože
 oseba na motoriziranem invalidskem vozičku temen ten kože
-oseba na motoriziranem invalidskem vozičku , obrnjen v desno
-oseba na motoriziranem invalidskem vozičku svetel ten kože in , obrnjen v desno
-oseba na motoriziranem invalidskem vozičku srednje svetel ten kože in , obrnjen v desno
-oseba na motoriziranem invalidskem vozičku srednji ten kože in , obrnjen v desno
-oseba na motoriziranem invalidskem vozičku srednje temen ten kože in , obrnjen v desno
-oseba na motoriziranem invalidskem vozičku temen ten kože in , obrnjen v desno
+oseba na motoriziranem invalidskem vozičku , obrnjeno v desno
+oseba na motoriziranem invalidskem vozičku svetel ten kože in , obrnjeno v desno
+oseba na motoriziranem invalidskem vozičku srednje svetel ten kože in , obrnjeno v desno
+oseba na motoriziranem invalidskem vozičku srednji ten kože in , obrnjeno v desno
+oseba na motoriziranem invalidskem vozičku srednje temen ten kože in , obrnjeno v desno
+oseba na motoriziranem invalidskem vozičku temen ten kože in , obrnjeno v desno
 moški na motoriziranem invalidskem vozičku svetel ten kože
 moški na motoriziranem invalidskem vozičku srednje svetel ten kože
 moški na motoriziranem invalidskem vozičku srednji ten kože
 moški na motoriziranem invalidskem vozičku srednje temen ten kože
 moški na motoriziranem invalidskem vozičku temen ten kože
-moški na motoriziranem invalidskem vozičku , obrnjen v desno
-moški na motoriziranem invalidskem vozičku svetel ten kože in , obrnjen v desno
-moški na motoriziranem invalidskem vozičku srednje svetel ten kože in , obrnjen v desno
-moški na motoriziranem invalidskem vozičku srednji ten kože in , obrnjen v desno
-moški na motoriziranem invalidskem vozičku srednje temen ten kože in , obrnjen v desno
-moški na motoriziranem invalidskem vozičku temen ten kože in , obrnjen v desno
+moški na motoriziranem invalidskem vozičku , obrnjeno v desno
+moški na motoriziranem invalidskem vozičku svetel ten kože in , obrnjeno v desno
+moški na motoriziranem invalidskem vozičku srednje svetel ten kože in , obrnjeno v desno
+moški na motoriziranem invalidskem vozičku srednji ten kože in , obrnjeno v desno
+moški na motoriziranem invalidskem vozičku srednje temen ten kože in , obrnjeno v desno
+moški na motoriziranem invalidskem vozičku temen ten kože in , obrnjeno v desno
 ženska na motoriziranem invalidskem vozičku svetel ten kože
 ženska na motoriziranem invalidskem vozičku srednje svetel ten kože
 ženska na motoriziranem invalidskem vozičku srednji ten kože
 ženska na motoriziranem invalidskem vozičku srednje temen ten kože
 ženska na motoriziranem invalidskem vozičku temen ten kože
-ženska na motoriziranem invalidskem vozičku , obrnjen v desno
-ženska na motoriziranem invalidskem vozičku svetel ten kože in , obrnjen v desno
-ženska na motoriziranem invalidskem vozičku srednje svetel ten kože in , obrnjen v desno
-ženska na motoriziranem invalidskem vozičku srednji ten kože in , obrnjen v desno
-ženska na motoriziranem invalidskem vozičku srednje temen ten kože in , obrnjen v desno
-ženska na motoriziranem invalidskem vozičku temen ten kože in , obrnjen v desno
+ženska na motoriziranem invalidskem vozičku , obrnjeno v desno
+ženska na motoriziranem invalidskem vozičku svetel ten kože in , obrnjeno v desno
+ženska na motoriziranem invalidskem vozičku srednje svetel ten kože in , obrnjeno v desno
+ženska na motoriziranem invalidskem vozičku srednji ten kože in , obrnjeno v desno
+ženska na motoriziranem invalidskem vozičku srednje temen ten kože in , obrnjeno v desno
+ženska na motoriziranem invalidskem vozičku temen ten kože in , obrnjeno v desno
 zastava Sveti Bartolomej
 zastava Sveti Krištof in Nevis
 zastava Sveta Lucija
@@ -1885,6 +1894,16 @@ palec dol srednje svetel ten kože
 palec dol srednji ten kože
 palec dol srednje temen ten kože
 palec dol temen ten kože
+znak palca, ki kaže v levo svetel ten kože
+znak palca, ki kaže v levo srednje svetel ten kože
+znak palca, ki kaže v levo srednji ten kože
+znak palca, ki kaže v levo srednje temen ten kože
+znak palca, ki kaže v levo temen ten kože
+znak palca, ki kaže v desno svetel ten kože
+znak palca, ki kaže v desno srednje svetel ten kože
+znak palca, ki kaže v desno srednji ten kože
+znak palca, ki kaže v desno srednje temen ten kože
+znak palca, ki kaže v desno temen ten kože
 dvignjena pest svetel ten kože
 dvignjena pest srednje svetel ten kože
 dvignjena pest srednji ten kože
@@ -3172,24 +3191,24 @@ moški, ki hodi temen ten kože
 ženska, ki hodi srednji ten kože
 ženska, ki hodi srednje temen ten kože
 ženska, ki hodi temen ten kože
-pešec , obrnjen v desno
-pešec svetel ten kože in , obrnjen v desno
-pešec srednje svetel ten kože in , obrnjen v desno
-pešec srednji ten kože in , obrnjen v desno
-pešec srednje temen ten kože in , obrnjen v desno
-pešec temen ten kože in , obrnjen v desno
-ženska, ki hodi , obrnjen v desno
-ženska, ki hodi svetel ten kože in , obrnjen v desno
-ženska, ki hodi srednje svetel ten kože in , obrnjen v desno
-ženska, ki hodi srednji ten kože in , obrnjen v desno
-ženska, ki hodi srednje temen ten kože in , obrnjen v desno
-ženska, ki hodi temen ten kože in , obrnjen v desno
-moški, ki hodi , obrnjen v desno
-moški, ki hodi svetel ten kože in , obrnjen v desno
-moški, ki hodi srednje svetel ten kože in , obrnjen v desno
-moški, ki hodi srednji ten kože in , obrnjen v desno
-moški, ki hodi srednje temen ten kože in , obrnjen v desno
-moški, ki hodi temen ten kože in , obrnjen v desno
+pešec , obrnjeno v desno
+pešec svetel ten kože in , obrnjeno v desno
+pešec srednje svetel ten kože in , obrnjeno v desno
+pešec srednji ten kože in , obrnjeno v desno
+pešec srednje temen ten kože in , obrnjeno v desno
+pešec temen ten kože in , obrnjeno v desno
+ženska, ki hodi , obrnjeno v desno
+ženska, ki hodi svetel ten kože in , obrnjeno v desno
+ženska, ki hodi srednje svetel ten kože in , obrnjeno v desno
+ženska, ki hodi srednji ten kože in , obrnjeno v desno
+ženska, ki hodi srednje temen ten kože in , obrnjeno v desno
+ženska, ki hodi temen ten kože in , obrnjeno v desno
+moški, ki hodi , obrnjeno v desno
+moški, ki hodi svetel ten kože in , obrnjeno v desno
+moški, ki hodi srednje svetel ten kože in , obrnjeno v desno
+moški, ki hodi srednji ten kože in , obrnjeno v desno
+moški, ki hodi srednje temen ten kože in , obrnjeno v desno
+moški, ki hodi temen ten kože in , obrnjeno v desno
 stoječa oseba svetel ten kože
 stoječa oseba srednje svetel ten kože
 stoječa oseba srednji ten kože
@@ -3220,57 +3239,57 @@ klečeča ženska srednje svetel ten kože
 klečeča ženska srednji ten kože
 klečeča ženska srednje temen ten kože
 klečeča ženska temen ten kože
-klečeča oseba , obrnjen v desno
-klečeča oseba svetel ten kože in , obrnjen v desno
-klečeča oseba srednje svetel ten kože in , obrnjen v desno
-klečeča oseba srednji ten kože in , obrnjen v desno
-klečeča oseba srednje temen ten kože in , obrnjen v desno
-klečeča oseba temen ten kože in , obrnjen v desno
-klečeča ženska , obrnjen v desno
-klečeča ženska svetel ten kože in , obrnjen v desno
-klečeča ženska srednje svetel ten kože in , obrnjen v desno
-klečeča ženska srednji ten kože in , obrnjen v desno
-klečeča ženska srednje temen ten kože in , obrnjen v desno
-klečeča ženska temen ten kože in , obrnjen v desno
-klečeč moški , obrnjen v desno
-klečeč moški svetel ten kože in , obrnjen v desno
-klečeč moški srednje svetel ten kože in , obrnjen v desno
-klečeč moški srednji ten kože in , obrnjen v desno
-klečeč moški srednje temen ten kože in , obrnjen v desno
-klečeč moški temen ten kože in , obrnjen v desno
+klečeča oseba , obrnjeno v desno
+klečeča oseba svetel ten kože in , obrnjeno v desno
+klečeča oseba srednje svetel ten kože in , obrnjeno v desno
+klečeča oseba srednji ten kože in , obrnjeno v desno
+klečeča oseba srednje temen ten kože in , obrnjeno v desno
+klečeča oseba temen ten kože in , obrnjeno v desno
+klečeča ženska , obrnjeno v desno
+klečeča ženska svetel ten kože in , obrnjeno v desno
+klečeča ženska srednje svetel ten kože in , obrnjeno v desno
+klečeča ženska srednji ten kože in , obrnjeno v desno
+klečeča ženska srednje temen ten kože in , obrnjeno v desno
+klečeča ženska temen ten kože in , obrnjeno v desno
+klečeč moški , obrnjeno v desno
+klečeč moški svetel ten kože in , obrnjeno v desno
+klečeč moški srednje svetel ten kože in , obrnjeno v desno
+klečeč moški srednji ten kože in , obrnjeno v desno
+klečeč moški srednje temen ten kože in , obrnjeno v desno
+klečeč moški temen ten kože in , obrnjeno v desno
 oseba na ročnem invalidskem vozičku svetel ten kože
 oseba na ročnem invalidskem vozičku srednje svetel ten kože
 oseba na ročnem invalidskem vozičku srednji ten kože
 oseba na ročnem invalidskem vozičku srednje temen ten kože
 oseba na ročnem invalidskem vozičku temen ten kože
-oseba na ročnem invalidskem vozičku , obrnjen v desno
-oseba na ročnem invalidskem vozičku svetel ten kože in , obrnjen v desno
-oseba na ročnem invalidskem vozičku srednje svetel ten kože in , obrnjen v desno
-oseba na ročnem invalidskem vozičku srednji ten kože in , obrnjen v desno
-oseba na ročnem invalidskem vozičku srednje temen ten kože in , obrnjen v desno
-oseba na ročnem invalidskem vozičku temen ten kože in , obrnjen v desno
+oseba na ročnem invalidskem vozičku , obrnjeno v desno
+oseba na ročnem invalidskem vozičku svetel ten kože in , obrnjeno v desno
+oseba na ročnem invalidskem vozičku srednje svetel ten kože in , obrnjeno v desno
+oseba na ročnem invalidskem vozičku srednji ten kože in , obrnjeno v desno
+oseba na ročnem invalidskem vozičku srednje temen ten kože in , obrnjeno v desno
+oseba na ročnem invalidskem vozičku temen ten kože in , obrnjeno v desno
 moški na ročnem invalidskem vozičku svetel ten kože
 moški na ročnem invalidskem vozičku srednje svetel ten kože
 moški na ročnem invalidskem vozičku srednji ten kože
 moški na ročnem invalidskem vozičku srednje temen ten kože
 moški na ročnem invalidskem vozičku temen ten kože
-moški na ročnem invalidskem vozičku , obrnjen v desno
-moški na ročnem invalidskem vozičku svetel ten kože in , obrnjen v desno
-moški na ročnem invalidskem vozičku srednje svetel ten kože in , obrnjen v desno
-moški na ročnem invalidskem vozičku srednji ten kože in , obrnjen v desno
-moški na ročnem invalidskem vozičku srednje temen ten kože in , obrnjen v desno
-moški na ročnem invalidskem vozičku temen ten kože in , obrnjen v desno
+moški na ročnem invalidskem vozičku , obrnjeno v desno
+moški na ročnem invalidskem vozičku svetel ten kože in , obrnjeno v desno
+moški na ročnem invalidskem vozičku srednje svetel ten kože in , obrnjeno v desno
+moški na ročnem invalidskem vozičku srednji ten kože in , obrnjeno v desno
+moški na ročnem invalidskem vozičku srednje temen ten kože in , obrnjeno v desno
+moški na ročnem invalidskem vozičku temen ten kože in , obrnjeno v desno
 ženska na ročnem invalidskem vozičku svetel ten kože
 ženska na ročnem invalidskem vozičku srednje svetel ten kože
 ženska na ročnem invalidskem vozičku srednji ten kože
 ženska na ročnem invalidskem vozičku srednje temen ten kože
 ženska na ročnem invalidskem vozičku temen ten kože
-ženska na ročnem invalidskem vozičku , obrnjen v desno
-ženska na ročnem invalidskem vozičku svetel ten kože in , obrnjen v desno
-ženska na ročnem invalidskem vozičku srednje svetel ten kože in , obrnjen v desno
-ženska na ročnem invalidskem vozičku srednji ten kože in , obrnjen v desno
-ženska na ročnem invalidskem vozičku srednje temen ten kože in , obrnjen v desno
-ženska na ročnem invalidskem vozičku temen ten kože in , obrnjen v desno
+ženska na ročnem invalidskem vozičku , obrnjeno v desno
+ženska na ročnem invalidskem vozičku svetel ten kože in , obrnjeno v desno
+ženska na ročnem invalidskem vozičku srednje svetel ten kože in , obrnjeno v desno
+ženska na ročnem invalidskem vozičku srednji ten kože in , obrnjeno v desno
+ženska na ročnem invalidskem vozičku srednje temen ten kože in , obrnjeno v desno
+ženska na ročnem invalidskem vozičku temen ten kože in , obrnjeno v desno
 tekač svetel ten kože
 tekač srednje svetel ten kože
 tekač srednji ten kože
@@ -3286,24 +3305,24 @@ moški, ki teče temen ten kože
 ženska, ki teče srednji ten kože
 ženska, ki teče srednje temen ten kože
 ženska, ki teče temen ten kože
-tekač , obrnjen v desno
-tekač svetel ten kože in , obrnjen v desno
-tekač srednje svetel ten kože in , obrnjen v desno
-tekač srednji ten kože in , obrnjen v desno
-tekač srednje temen ten kože in , obrnjen v desno
-tekač temen ten kože in , obrnjen v desno
-ženska, ki teče , obrnjen v desno
-ženska, ki teče svetel ten kože in , obrnjen v desno
-ženska, ki teče srednje svetel ten kože in , obrnjen v desno
-ženska, ki teče srednji ten kože in , obrnjen v desno
-ženska, ki teče srednje temen ten kože in , obrnjen v desno
-ženska, ki teče temen ten kože in , obrnjen v desno
-moški, ki teče , obrnjen v desno
-moški, ki teče svetel ten kože in , obrnjen v desno
-moški, ki teče srednje svetel ten kože in , obrnjen v desno
-moški, ki teče srednji ten kože in , obrnjen v desno
-moški, ki teče srednje temen ten kože in , obrnjen v desno
-moški, ki teče temen ten kože in , obrnjen v desno
+tekač , obrnjeno v desno
+tekač svetel ten kože in , obrnjeno v desno
+tekač srednje svetel ten kože in , obrnjeno v desno
+tekač srednji ten kože in , obrnjeno v desno
+tekač srednje temen ten kože in , obrnjeno v desno
+tekač temen ten kože in , obrnjeno v desno
+ženska, ki teče , obrnjeno v desno
+ženska, ki teče svetel ten kože in , obrnjeno v desno
+ženska, ki teče srednje svetel ten kože in , obrnjeno v desno
+ženska, ki teče srednji ten kože in , obrnjeno v desno
+ženska, ki teče srednje temen ten kože in , obrnjeno v desno
+ženska, ki teče temen ten kože in , obrnjeno v desno
+moški, ki teče , obrnjeno v desno
+moški, ki teče svetel ten kože in , obrnjeno v desno
+moški, ki teče srednje svetel ten kože in , obrnjeno v desno
+moški, ki teče srednji ten kože in , obrnjeno v desno
+moški, ki teče srednje temen ten kože in , obrnjeno v desno
+moški, ki teče temen ten kože in , obrnjeno v desno
 baletka svetel ten kože
 baletka srednje svetel ten kože
 baletka srednji ten kože

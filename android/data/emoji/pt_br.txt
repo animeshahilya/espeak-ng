@@ -32,16 +32,22 @@ mulher em cadeira de rodas motorizada
 pássaro preto
 berinjela
 pimentão
+picles
 gengibre
 comida enlatada
+pudim
+suco de caixa
 mate
 Monte Fuji
 templo hindu
+santuário japonês
 caaba islã
+vagão de trem
 carro
 carro se aproximando
 cadeira de rodas motorizada
 boia
+barco a vela
 barco
 avião
 avião pequeno
@@ -49,13 +55,16 @@ avião decolando
 avião aterrissando
 sineta
 bola de futebol
+críquete
 pingue-pongue
+camiseta de corrida
 trenó
 boneca russa
 gravata
 chinelo
 corneta postal
 tambor comprido
+borracha
 bengala para cegos
 atadura adesiva
 elevador
@@ -133,6 +142,7 @@ rosto chorando de rir
 rosto levemente sorridente
 rosto de cabeça para baixo
 rosto derretendo
+rosto rachando
 rosto com olho piscando
 rosto sorridente com olhos sorridentes
 rosto sorridente com auréola
@@ -320,6 +330,8 @@ indicador apontando para cima
 indicador apontando para o visualizador
 polegar para cima
 polegar para baixo
+sinal de polegar para a esquerda
+sinal de polegar para a direita
 punho levantado
 soco
 punho esquerdo
@@ -731,6 +743,7 @@ lula
 ostra
 caracol
 borboleta
+borboleta-monarca
 inseto
 formiga
 abelha
@@ -872,7 +885,6 @@ torta
 chocolate
 bala
 pirulito
-pudim
 pote de mel
 mamadeira
 copo de leite
@@ -891,7 +903,6 @@ copo
 derramando líquido
 copo com canudo
 chá perolado
-suco de caixa
 cubo de gelo
 hashi
 prato com talheres
@@ -946,7 +957,6 @@ Estátua da Liberdade
 igreja
 mesquita
 sinagoga
-santuário japonês
 fonte
 barraca
 enevoado
@@ -965,7 +975,6 @@ montanha russa
 barbearia
 circo
 locomotiva
-vagão de trem
 trem de alta velocidade
 trem de alta velocidade japonês
 trem
@@ -1011,8 +1020,8 @@ semáforo horizontal
 semáforo vertical
 sinal de pare
 em construção
+farol
 âncora
-barco a vela
 canoa
 lancha
 cruzeiro
@@ -1087,7 +1096,7 @@ nublado
 sol com chuva
 nuvem com chuva
 nuvem com neve
-nuvem com trovão
+nuvem com relâmpago
 tornado
 nevoeiro
 rosto de vento
@@ -1102,6 +1111,7 @@ floco de neve
 boneco de neve
 boneco de neve sem neve
 cometa
+meteoro
 fogo
 gota
 onda
@@ -1141,7 +1151,6 @@ bola de rugby
 tênis
 frisbee
 boliche
-críquete
 hóquei de campo
 hóquei no gelo
 lacrosse
@@ -1153,7 +1162,6 @@ bandeira no buraco
 patins de gelo
 pesca
 máscara de mergulho
-camiseta de corrida
 esqui
 pedra de curling
 no alvo
@@ -1373,6 +1381,7 @@ cadeado com caneta
 cadeado fechado com chave
 chave
 chave antiga
+rede com cabo
 martelo
 machado
 picareta
@@ -1885,6 +1894,16 @@ polegar para baixo pele morena clara
 polegar para baixo pele morena
 polegar para baixo pele morena escura
 polegar para baixo pele escura
+sinal de polegar para a esquerda pele clara
+sinal de polegar para a esquerda pele morena clara
+sinal de polegar para a esquerda pele morena
+sinal de polegar para a esquerda pele morena escura
+sinal de polegar para a esquerda pele escura
+sinal de polegar para a direita pele clara
+sinal de polegar para a direita pele morena clara
+sinal de polegar para a direita pele morena
+sinal de polegar para a direita pele morena escura
+sinal de polegar para a direita pele escura
 punho levantado pele clara
 punho levantado pele morena clara
 punho levantado pele morena

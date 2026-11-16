@@ -32,16 +32,22 @@ muž na elektrickom invalidnom vozíku
 čierny vták
 baklažán
 kapia
+nakladačka
 koreň ďumbiera
 konzerva
+puding
+nápoj v krabičke
 maté
 Fudžisan
 hinduistický chrám
+šintoistická svätyňa
 kába
+vozeň
 auto
 prichádzajúce auto
 elektrický invalidný vozík
 záchranné koleso
+plachetnica
 motorový čln
 lietadlo
 malé lietadlo
@@ -49,13 +55,16 @@ odlet lietadla
 prílet lietadla
 recepčný zvonček
 futbal
+kriket
 stolný tenis
+bežecké tričko
 sane
 matriošky
 kravata
 žabky
 poštová trúba
 kongo
+guma
 slepecká palica
 náplasť
 výťah
@@ -133,6 +142,7 @@ plačem od smiechu
 usmievajúca sa tvár
 prevrátená tvár
 roztopená tvár
+praskajúca tvár
 žmurkajúca tvár
 smejúca sa tvár s prižmúrenými očami
 smejúca sa tvár so svätožiarou
@@ -320,6 +330,8 @@ ukazovák nahor
 ukazovanie ukazovákom
 palec nahor
 palec nadol
+palec vľavo
+palec vpravo
 zdvihnutá päsť
 päsť spredu
 päsť doľava
@@ -731,6 +743,7 @@ kalmár
 ustrica
 slimák
 motýľ
+babôčka smradľavá
 húsenica
 mravec
 včela
@@ -872,7 +885,6 @@ koláč
 čokoláda
 cukrík
 lízanka
-puding
 pohár medu
 detská fľaša
 pohár mlieka
@@ -891,7 +903,6 @@ pohár na whisky
 liatie
 pohár so slamkou
 perlivý čaj
-nápoj v krabičke
 kocka ľadu
 paličky
 vidlička, nôž a tanier
@@ -946,7 +957,6 @@ socha slobody
 kostol
 mešita
 synagóga
-šintoistická svätyňa
 fontána
 stan
 hmlisto
@@ -965,7 +975,6 @@ horská dráha
 pútač holičstva
 šapito
 rušeň
-vozeň
 rýchlovlak
 japonský rýchlovlak
 vlak
@@ -1011,8 +1020,8 @@ vodorovný semafor
 zvislý semafor
 značka stop
 práce na ceste
+maják
 kotva
-plachetnica
 kanoe
 rýchly čln
 zaoceánska loď
@@ -1102,6 +1111,7 @@ snehová vločka
 snehuliak
 snehuliak bez snehu
 kométa
+meteor
 oheň
 kvapka
 morská vlna
@@ -1141,7 +1151,6 @@ ragby
 tenis
 lietajúci disk
 bowling
-kriket
 pozemný hokej
 ľadový hokej
 lakros
@@ -1153,7 +1162,6 @@ zástava v jamke
 korčuľa
 udica
 potápačská maska
-bežecké tričko
 lyže
 curlingový kameň
 presný zásah
@@ -1373,6 +1381,7 @@ zámka s perom
 zámka s kľúčom
 kľúč
 starý kľúč
+sieťka na motýle
 kladivo
 sekera
 krompáč
@@ -1885,6 +1894,16 @@ palec nadol stredne svetlý tón pleti
 palec nadol stredný tón pleti
 palec nadol stredne tmavý tón pleti
 palec nadol tmavý tón pleti
+palec vľavo svetlý tón pleti
+palec vľavo stredne svetlý tón pleti
+palec vľavo stredný tón pleti
+palec vľavo stredne tmavý tón pleti
+palec vľavo tmavý tón pleti
+palec vpravo svetlý tón pleti
+palec vpravo stredne svetlý tón pleti
+palec vpravo stredný tón pleti
+palec vpravo stredne tmavý tón pleti
+palec vpravo tmavý tón pleti
 zdvihnutá päsť svetlý tón pleti
 zdvihnutá päsť stredne svetlý tón pleti
 zdvihnutá päsť stredný tón pleti

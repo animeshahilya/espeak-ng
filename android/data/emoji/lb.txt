@@ -33,15 +33,21 @@ Dem Kleesche seng Fra
 Aubergine
 
 
+
 Iessen an der Béchs
+Pudding
+
 
 Mount Fuji
 
+Shinto-Schräin
 Kaaba
+Zuchwaggon
 Auto
 entgéintkommenden Auto
 
 
+Segelboot
 Motorboot
 Fliger
 klenge Fliger
@@ -49,12 +55,15 @@ Fligersdepart
 Fligersarrivée
 Hotelpageschell
 Fussball
+Cricketmatch
 Pingpong
+Laftricot
 Schlitt
 
 Krawatt
 
 Posttroter
+
 
 
 
@@ -132,6 +141,7 @@ vu Laache rullend
 Gesiicht mat Freedtréinen
 Gesiicht mat engem liichte Laachen
 op der Kopp
+
 
 A zoudréckend
 laachend Gesiicht mat laachenden Aen
@@ -320,6 +330,8 @@ no uewe weisende Fanger
 
 Daum no uewen
 Daum no ënnen
+
+
 héichgehale Fauscht
 entgéintkommend Fauscht
 lénksgeriicht Fauscht
@@ -731,6 +743,7 @@ Calamar
 
 Schleek
 Päiperlek
+
 Kiewerlek
 Seejomes
 Bei
@@ -872,7 +885,6 @@ Taart
 Tablett Schockela
 Kamell
 Lutsch
-Pudding
 Hunneg
 Biberon
 Glas Mëllech
@@ -890,7 +902,6 @@ prostend Glieser
 Whiskyglas
 
 Glas mat Stréihallem
-
 
 
 asiatesch Béngelen
@@ -946,7 +957,6 @@ Fräiheetsstatu
 Kierch
 Moschee
 Synagog
-Shinto-Schräin
 Sprangbuer
 Zelt
 niwweleg
@@ -965,7 +975,6 @@ Achterbahn
 Coifferssail
 Zirkuszelt
 Lokomotiv
-Zuchwaggon
 Schnellzuch
 Schnellzuch mat Fligernues
 Zuch
@@ -1011,8 +1020,8 @@ horizontal rout Luucht
 vertikal rout Luucht
 Stoppschëld
 Stroossebarrière
+
 Anker
-Segelboot
 Kanu
 Schnellboot
 Passagéierschëff
@@ -1102,6 +1111,7 @@ Schnéiflack
 Schnéimännchen
 Schnéimännchen ouni Schnéi
 Komet
+
 Feier
 Drëpschen
 Waasserwell
@@ -1141,7 +1151,6 @@ Rugby
 Tennis
 
 Bowling
-Cricketmatch
 Feldhockey
 Äishockey
 
@@ -1153,7 +1162,6 @@ Golflach mat Fändel
 Schlittschong
 Fëscheraangel
 
-Laftricot
 Skier
 Curling-Steen
 an d’Mëtt getraff
@@ -1373,6 +1381,7 @@ zouent Schlass mat Bic
 zouent Schlass mat Schlëssel
 Schlëssel
 ale Schlëssel
+
 Hummer
 
 Piosch
@@ -1885,6 +1894,16 @@ Daum no ënnen mëttelhell Hautfaarf
 Daum no ënnen mëttel Hautfaarf
 Daum no ënnen mëtteldäischter Hautfaarf
 Daum no ënnen däischter Hautfaarf
+
+
+
+
+
+
+
+
+
+
 héichgehale Fauscht hell Hautfaarf
 héichgehale Fauscht mëttelhell Hautfaarf
 héichgehale Fauscht mëttel Hautfaarf

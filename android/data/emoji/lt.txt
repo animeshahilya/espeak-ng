@@ -32,16 +32,22 @@ moteris motorizuotame vežimėlyje
 juodas paukštis
 baklažanas
 paprika
+raugintas agurkas
 imbiero šaknis
 konservai
+saldus kremas
+gėrimo pakelis
 matė
 Fudžio kalnas
 induistų šventykla
+Šintoizmo šventykla
 kaaba
+traukinio vagonas
 automobilis
 artėjantis automobilis
 motorizuotas vežimėlis
 gelbėjimo ratas
+burlaivis
 motorinė valtis
 lėktuvas
 mažas lėktuvas
@@ -49,13 +55,16 @@ lėktuvo pakilimas
 lėktuvo nusileidimas
 skambutis
 futbolo kamuolys
+kriketas
 stalo tenisas
+bėgimo marškinėliai
 rogės
 matrioškos
 kaklaraištis
 sandalai su dirželiu
 pašto ragas
 ilgas būgnas
+trintukas
 neregio lazda
 pleistras
 elevatorius
@@ -133,6 +142,7 @@ veidas su džiaugsmo ašaromis
 šiek tiek besišypsantis veidas
 apverstas veidas
 tirpstantis veidas
+lūžtantis veidas
 mirksintis veidas
 besišypsantis veidas su besišypsančiomis akimis
 besišypsantis veidas su aureole
@@ -320,6 +330,8 @@ delnu atsukta aukštyn pirštu rodanti ranka
 į žiūrovą rodantis smilius
 nykštys į viršų
 nykštys į apačią
+nykštys į kairę
+nykštys į dešinę
 iškeltas kumštis
 artėjantis kumštis
 į kairę nukreiptas kumštis
@@ -731,6 +743,7 @@ kalmaras
 austrė
 sraigė
 drugelis
+drugelis monarchas
 vabalas
 skruzdėlė
 bitė
@@ -872,7 +885,6 @@ pyragas
 šokolado batonėlis
 saldainis
 ledinukas ant pagaliuko
-saldus kremas
 medaus puodynė
 kūdikio buteliukas
 pieno stiklinė
@@ -891,7 +903,6 @@ stiklinė
 pilamas skystis
 puodelis su šiaudeliu
 burbulinė arbata
-gėrimo pakelis
 ledo kubelis
 lazdelės
 šakutė ir peilis su lėkšte
@@ -946,7 +957,6 @@ laisvės statula
 bažnyčia
 mečetė
 sinagoga
-Šintoizmo šventykla
 fontanas
 palapinė
 rūkas
@@ -965,7 +975,6 @@ linksmieji kalneliai
 kirpėjo suktukas
 cirko palapinė
 lokomotyvas
-traukinio vagonas
 greitasis traukinys
 greitasis traukinys su smailu priekiu
 traukinys
@@ -1011,8 +1020,8 @@ horizontalus šviesoforas
 vertikalus šviesoforas
 sustojimo ženklas
 statybos
+švyturys
 inkaras
-burlaivis
 kanoja
 motorinis kateris
 keleivinis laivas
@@ -1102,6 +1111,7 @@ snaigė
 sniego senis
 sniego senis be sniego
 kometa
+meteoras
 ugnis
 lašas
 vandens banga
@@ -1141,7 +1151,6 @@ regbio kamuolys
 teniso kamuoliukas
 skraidantis diskas
 boulingas
-kriketas
 žolės riedulys
 ledo ritulio lazda ir ritulys
 lakrosas
@@ -1153,7 +1162,6 @@ vėliava skylutėje
 pačiūžos
 meškerė
 nardymo kaukė
-bėgimo marškinėliai
 slidės
 akmenslydis
 smūgis tiesiai į taikinį
@@ -1373,6 +1381,7 @@ spyna ir rašiklis
 užrakinta spyna su raktu
 raktas
 senas raktas
+tinklas su rankena
 plaktukas
 kirvis
 kirstuvas
@@ -1885,6 +1894,16 @@ nykštys į apačią vidutinio gymio
 nykštys į apačią rusvos odos
 nykštys į apačią tamsios odos
 nykštys į apačią itin tamsios odos
+nykštys į kairę šviesios odos
+nykštys į kairę vidutinio gymio
+nykštys į kairę rusvos odos
+nykštys į kairę tamsios odos
+nykštys į kairę itin tamsios odos
+nykštys į dešinę šviesios odos
+nykštys į dešinę vidutinio gymio
+nykštys į dešinę rusvos odos
+nykštys į dešinę tamsios odos
+nykštys į dešinę itin tamsios odos
 iškeltas kumštis šviesios odos
 iškeltas kumštis vidutinio gymio
 iškeltas kumštis rusvos odos

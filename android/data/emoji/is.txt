@@ -32,16 +32,22 @@ kona í vélknúnum hjólastól
 svartur fugl
 eggaldin
 paprika
+súrkrás
 engiferrót
 dósamatur
+búðingur
+ferna
 mate
 fuji-fjall
 hindúahof
+sjintó-hof
 kaaba-byggingin
+járnbrautarlest
 bíll
 bíll á móti
 vélknúinn hjólastóll
 björgunarhringur
+seglskúta
 mótorbátur
 flugvél
 lítil flugvél
@@ -49,13 +55,16 @@ flugvél í flugtaki
 flugvél í lendingu
 hótelbjalla
 fótbolti
+krikket
 borðtennis
+hlaupabolur
 sleði
 babúskur
 hálsbindi
 sandali með ól
 póstlúður
 handtromma
+strokleður
 blindrastafur
 plástur
 lyfta
@@ -133,6 +142,7 @@ andlit tárast af gleði
 milt bros
 andlit á hvolfi
 andlit að bráðna
+andlit með sprungur
 blikkandi andlit
 bros
 brosandi andlit með geislabaug
@@ -320,6 +330,8 @@ vísifingur bendir upp
 vísifingur bendir á áhorfandann
 þumall upp
 þumall niður
+þumall til vinstri
+þumall til hægri
 hnefi
 krepptur hnefi
 hægri hnefi
@@ -339,13 +351,13 @@ vélhandleggur
 vélfótleggur
 fótleggur
 fótur
-eyru
+eyra
 eyra með heyrnartæki
 nef
 heili
 hjartavöðvi
 lungu
-tennur
+tönn
 bein
 augu
 auga
@@ -456,7 +468,7 @@ vörður
 karlkyns vörður
 kvenkyns vörður
 ninja
-verkamaður
+byggingaverkamaður
 karlkyns byggingarstarfsmaður
 kvenkyns byggingarstarfsmaður
 manneskja með kórónu
@@ -591,7 +603,7 @@ maður kastar boltum
 kona kastar boltum
 maður í lótuspósu
 karl í lótuspósu
-kona í lótusp´ósu
+kona í lótuspósu
 bað
 manneskja í rúmi
 fólk að leiðast
@@ -644,7 +656,7 @@ hjartardýr
 vísundur
 kýrhöfuð
 uxi
-vatnabuffaló
+vatnabuffall
 kýr
 svínshöfuð
 svín
@@ -731,6 +743,7 @@ smokkfiskur
 ostra
 snigill
 fiðrildi
+kóngafiðrildi
 skordýr
 maur
 hunangsfluga
@@ -872,7 +885,6 @@ baka
 súkkulaði
 nammi
 sleikibrjóstsykur
-búðingur
 hunang
 peli
 mjólkurglas
@@ -891,7 +903,6 @@ viskíglas
 hellir vökva
 glas og rör
 kúlute
-ferna
 ísmoli
 matprjónar
 gaffall og hnífur við disk
@@ -946,7 +957,6 @@ frelsisstyttan
 kirkja
 moska
 sýnagóga
-sjintó-hof
 gosbrunnur
 tjald
 þokukennt
@@ -965,7 +975,6 @@ rússíbani
 rakarastofa
 sirkus
 eimreið
-járnbrautarlest
 hraðlest
 háhraðalest
 lest
@@ -1011,8 +1020,8 @@ lárétt umferðarljós
 lóðrétt umferðarljós
 stöðvunarskylda
 vegavinna
+viti
 akkeri
-seglskúta
 kanó
 hraðbátur
 farþegaskip
@@ -1102,6 +1111,7 @@ snjókorn
 snjókarl í snjókomu
 snjókarl
 halastjarna
+vígahnöttur
 eldur
 dropi
 alda
@@ -1141,7 +1151,6 @@ rúgbíbolti
 tennis
 frisbídiskur
 keila
-krikket
 grashokkí
 íshokkí
 háfleikur
@@ -1153,7 +1162,6 @@ golf
 skauti
 veiðistöng
 köfunargríma
-hlaupabolur
 skíði
 krullusteinn
 skotmark
@@ -1233,7 +1241,7 @@ hringur
 gimsteinn
 hljóðlaus hátalari
 lágvær hátalari
-hátalari í gangi
+hátalari á meðalstyrk
 hávær hátalari
 Almannavarnahátalari
 gjallarhorn
@@ -1336,7 +1344,7 @@ lokaður póstkassi með niðurdregnum fána
 opinn póstkassi með reistum fána
 opinn póstkassi með niðurdregnum fána
 póstkassi
-kjörseðlakassi með kjörseðli
+kjörkassi með kjörseðli
 blýantur
 svartur pennaoddur
 sjálfblekungur
@@ -1373,6 +1381,7 @@ lás með penna
 lokaður lás
 lykill
 gamall lykill
+háfur
 hamar
 öxi
 haki
@@ -1487,16 +1496,16 @@ sexhyrnd stjarna
 khanda
 hrúturinn
 nautið
-tvíburar
+tvíburarnir
 krabbinn
 ljónið
-meyja
+meyjan
 vogin
 sporðdrekinn
-bogmaður
-steingeit
-vatnsberi
-fiskar
+bogmaðurinn
+steingeitin
+vatnsberinn
+fiskarnir
 naðurvaldi
 fléttaðar örvar til hægri
 endurtaka
@@ -1885,6 +1894,16 @@ vísifingur bendir á áhorfandann dökkur húðlitur
 þumall niður millihúðlitur
 þumall niður meðaldökkur húðlitur
 þumall niður dökkur húðlitur
+þumall til vinstri ljós húðlitur
+þumall til vinstri meðalljós húðlitur
+þumall til vinstri millihúðlitur
+þumall til vinstri meðaldökkur húðlitur
+þumall til vinstri dökkur húðlitur
+þumall til hægri ljós húðlitur
+þumall til hægri meðalljós húðlitur
+þumall til hægri millihúðlitur
+þumall til hægri meðaldökkur húðlitur
+þumall til hægri dökkur húðlitur
 hnefi ljós húðlitur
 hnefi meðalljós húðlitur
 hnefi millihúðlitur
@@ -1970,11 +1989,11 @@ fótur meðalljós húðlitur
 fótur millihúðlitur
 fótur meðaldökkur húðlitur
 fótur dökkur húðlitur
-eyru ljós húðlitur
-eyru meðalljós húðlitur
-eyru millihúðlitur
-eyru meðaldökkur húðlitur
-eyru dökkur húðlitur
+eyra ljós húðlitur
+eyra meðalljós húðlitur
+eyra millihúðlitur
+eyra meðaldökkur húðlitur
+eyra dökkur húðlitur
 eyra með heyrnartæki ljós húðlitur
 eyra með heyrnartæki meðalljós húðlitur
 eyra með heyrnartæki millihúðlitur
@@ -2887,11 +2906,11 @@ ninja meðalljós húðlitur
 ninja millihúðlitur
 ninja meðaldökkur húðlitur
 ninja dökkur húðlitur
-verkamaður ljós húðlitur
-verkamaður meðalljós húðlitur
-verkamaður millihúðlitur
-verkamaður meðaldökkur húðlitur
-verkamaður dökkur húðlitur
+byggingaverkamaður ljós húðlitur
+byggingaverkamaður meðalljós húðlitur
+byggingaverkamaður millihúðlitur
+byggingaverkamaður meðaldökkur húðlitur
+byggingaverkamaður dökkur húðlitur
 karlkyns byggingarstarfsmaður ljós húðlitur
 karlkyns byggingarstarfsmaður meðalljós húðlitur
 karlkyns byggingarstarfsmaður millihúðlitur
@@ -3584,11 +3603,11 @@ karl í lótuspósu meðalljós húðlitur
 karl í lótuspósu millihúðlitur
 karl í lótuspósu meðaldökkur húðlitur
 karl í lótuspósu dökkur húðlitur
-kona í lótusp´ósu ljós húðlitur
-kona í lótusp´ósu meðalljós húðlitur
-kona í lótusp´ósu millihúðlitur
-kona í lótusp´ósu meðaldökkur húðlitur
-kona í lótusp´ósu dökkur húðlitur
+kona í lótuspósu ljós húðlitur
+kona í lótuspósu meðalljós húðlitur
+kona í lótuspósu millihúðlitur
+kona í lótuspósu meðaldökkur húðlitur
+kona í lótuspósu dökkur húðlitur
 bað ljós húðlitur
 bað meðalljós húðlitur
 bað millihúðlitur

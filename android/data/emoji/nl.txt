@@ -32,16 +32,22 @@ vrouw in elektrische rolstoel
 merel
 aubergine
 paprika
+augurk
 gemberwortel
 blikvoedsel
+vla
+pakje drinken
 maté
 berg Fuji
 hindoetempel
+shinto-tempel
 kaäba
+treinwagon
 auto
 naderende auto
 elektrische rolstoel
 reddingsboei
+zeilboot
 motorboot
 vliegtuig
 vliegtuigje
@@ -49,13 +55,16 @@ vertrek van vliegtuig
 aankomst van vliegtuig
 piccolobel
 voetbal
+cricket
 pingpong
+hardloopshirt
 slee
 matroesjka
 stropdas
 teenslipper
 posthoorn
 hoge trom
+gum
 taststok
 pleister
 lift
@@ -126,13 +135,14 @@ grijnzend gezicht
 grijnzend gezicht met grote ogen
 grijnzend gezicht met lachende ogen
 stralend gezicht met lachende ogen
-grijnzend gezicht met stijf dichtgeknepen ogen
+grijnzend gezicht met dichtgeknepen ogen
 grijnzend gezicht met zweetdruppels
 gezicht dat op de grond rolt van het lachen
 gezicht met tranen van vreugde
 enigszins lachend gezicht
 omgekeerd gezicht
 smeltend gezicht
+barstend gezicht
 knipogend gezicht
 lachend gezicht met lachende ogen
 lachend gezicht met halo
@@ -320,6 +330,8 @@ omhoog wijzende wijsvinger
 wijsvinger die naar de kijker wijst
 duim omhoog
 duim omlaag
+duim naar links
+duim naar rechts
 opgeheven vuist
 stotende vuist
 naar links gerichte vuist
@@ -731,6 +743,7 @@ inktvis
 oester
 slak
 vlinder
+monarchvlinder
 insect
 mier
 honingbij
@@ -872,7 +885,6 @@ taart
 chocoladereep
 snoep
 lolly
-vla
 honingpot
 babyflesje
 glas melk
@@ -891,7 +903,6 @@ tumblerglas
 vloeistof uitgieten
 beker met rietje
 bubbelthee
-pakje drinken
 ijsklontje
 chopsticks
 mes en vork met bord
@@ -946,7 +957,6 @@ vrijheidsbeeld
 kerk
 moskee
 synagoge
-shinto-tempel
 fontein
 tent
 mistig
@@ -965,7 +975,6 @@ achtbaan
 kapperspaal
 circustent
 locomotief
-treinwagon
 hogesnelheidstrein
 hogesnelheidstrein met kogelneus
 trein
@@ -1011,8 +1020,8 @@ horizontaal verkeerslicht
 verticaal verkeerslicht
 stopteken
 bouwwerkzaamheden
+vuurtoren
 anker
-zeilboot
 kano
 speedboot
 passagiersschip
@@ -1102,6 +1111,7 @@ sneeuwvlok
 sneeuwpop
 sneeuwpop zonder sneeuwvlokken
 komeet
+meteoor
 vuur
 druppel
 golf
@@ -1141,7 +1151,6 @@ rugby
 tennis
 frisbee
 bowlen
-cricket
 hockey
 ijshockeystick en puck
 lacrosse
@@ -1153,7 +1162,6 @@ vlag in hole
 schaats
 vishengel
 duikbril
-hardloopshirt
 ski’s
 curlingsteen
 directe treffer
@@ -1373,6 +1381,7 @@ slot met pen
 gesloten slot met sleutel
 sleutel
 oude sleutel
+net met steel
 hamer
 bijl
 pikhouweel
@@ -1885,6 +1894,16 @@ duim omlaag lichtgetinte huidskleur
 duim omlaag getinte huidskleur
 duim omlaag donkergetinte huidskleur
 duim omlaag donkere huidskleur
+duim naar links lichte huidskleur
+duim naar links lichtgetinte huidskleur
+duim naar links getinte huidskleur
+duim naar links donkergetinte huidskleur
+duim naar links donkere huidskleur
+duim naar rechts lichte huidskleur
+duim naar rechts lichtgetinte huidskleur
+duim naar rechts getinte huidskleur
+duim naar rechts donkergetinte huidskleur
+duim naar rechts donkere huidskleur
 opgeheven vuist lichte huidskleur
 opgeheven vuist lichtgetinte huidskleur
 opgeheven vuist getinte huidskleur

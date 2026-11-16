@@ -32,16 +32,22 @@ bean i gcathaoir rothaí innealta
 lon dubh
 ubhthoradh
 piobar
+gircín picilte
 sinséar fréimhe
 bia stánaithe
+custard
+bosca dí
 maité
 Sliabh Fuji
 teampall hiondúch
+scrín Sinteochais
 cába
+carráiste iarnróid
 gluaisteán
 gluaisteán atá ag teacht
 cathaoir rothaí mheicniúil
 baoi fáinneach
+bád seoil
 mótarbhád
 eitleán
 eitleán beag
@@ -49,13 +55,16 @@ imeacht eitleáin
 teacht eitleáin
 clog óstáin
 liathróid sacair
+cruicéad
 ping pang
+léine reatha
 sleamhnán
 bábóga Rúiseacha
 carbhat
 cuarán
 corn poist
 druma fada
+scriosán
 cána bán
 bindealán greamaitheach
 ardaitheoir
@@ -133,6 +142,7 @@ straoiseog le deora áthais
 straoiseog ag miongháire de bheagán
 straoiseog bun os cionn
 straoiseog atá ag leá
+straoiseog ag scoilteadh
 straoiseog ag caochadh
 straoiseog aoibhiúil le súile le miongháire
 straoiseog ag gáire le luan
@@ -320,6 +330,8 @@ corrmhéar ag díriú suas
 corrmhéar ag díriú ar an mbreathnóir
 ordóg suas
 ordóg síos
+ordóg ag díriú ar chlé
+ordóg ag díriú ar dheis
 dorn ardaithe
 dorn atá chugat
 dorn ar chlé
@@ -731,6 +743,7 @@ scuid
 oisre
 seilide
 féileacán
+bleachtfhéileacán
 míol
 seangán
 beach mheala
@@ -872,7 +885,6 @@ pióg
 seacláid
 milseán
 líreacán
-custard
 pota meala
 buidéal babaí
 gloine bainne
@@ -891,7 +903,6 @@ gloine
 leacht a dhoirteadh
 cupán le sop
 tae bolgán
-bosca dí
 ciúb oighir
 cipíní itheacháin
 forc agus scian le pláta
@@ -946,7 +957,6 @@ Dealbh na Saoirse
 séipéal
 mosc
 sionagóg
-scrín Sinteochais
 scairdeán
 puball
 ceomhar
@@ -965,7 +975,6 @@ rollchóstóir
 cuaille bearbóra
 sorcas
 inneall traenach
-carráiste iarnróid
 traein ardluais
 traein philéir
 traein
@@ -1011,8 +1020,8 @@ soilse tráchta cothrománacha
 soilse tráchta ceartingearacha
 comhartha stop
 suíomh tógála
+teach solais
 ancaire
-bád seoil
 canú
 luasbhád
 long paisinéirí
@@ -1102,6 +1111,7 @@ calóg shneachta
 fear sneachta
 fear sneachta gan sneachta
 cóiméad
+dreige
 tine
 braoinín
 tonn san uisce
@@ -1141,7 +1151,6 @@ rugbaí
 leadóg
 diosca eitilte
 babhláil
-cruicéad
 haca
 haca oighir
 crosógaíocht
@@ -1153,7 +1162,6 @@ brat i bpoll
 scátáil oighir
 slat iascaireachta
 masc tumadóireachta
-léine reatha
 scíonna
 cloch churlála
 buille díreach
@@ -1373,6 +1381,7 @@ glasáilte le peann
 glasáilte le heochair
 eochair
 sean-eochair
+líon le lámh
 casúr
 tua
 piocóid
@@ -1885,6 +1894,16 @@ ordóg síos ton cnis mheánach-gheal
 ordóg síos ton cnis meánach
 ordóg síos ton cnis meándorcha
 ordóg síos ton cnis dorcha
+ordóg ag díriú ar chlé ton cnis geal
+ordóg ag díriú ar chlé ton cnis mheánach-gheal
+ordóg ag díriú ar chlé ton cnis meánach
+ordóg ag díriú ar chlé ton cnis meándorcha
+ordóg ag díriú ar chlé ton cnis dorcha
+ordóg ag díriú ar dheis ton cnis geal
+ordóg ag díriú ar dheis ton cnis mheánach-gheal
+ordóg ag díriú ar dheis ton cnis meánach
+ordóg ag díriú ar dheis ton cnis meándorcha
+ordóg ag díriú ar dheis ton cnis dorcha
 dorn ardaithe ton cnis geal
 dorn ardaithe ton cnis mheánach-gheal
 dorn ardaithe ton cnis meánach

@@ -32,16 +32,22 @@ kvinde i elektrisk kørestol
 sort fugl
 aubergine
 peberfrugt
+drueagurk
 ingefærrod
 konserves
+dessert
+brik
 mate
 Fuji-bjerget
 hindutempel
+Shinto-helligdom
 Kabaen
+togvogn
 bil
 bil forfra
 elektrisk kørestol
 redningskrans
+sejlbåd
 motorbåd
 fly
 lille fly
@@ -49,13 +55,16 @@ flyafgang
 flyankomst
 hotelklokke
 fodbold
+cricket
 bordtennis
+løbetrøje
 kælk
 russiske dukker
 slips
 klipklapper
 posthorn
 høj tromme
+viskelæder
 blindestok
 plaster
 elevator
@@ -133,6 +142,7 @@ ansigt med glædestårer
 let smilende ansigt
 omvendt ansigt
 smeltende ansigt
+krakelerende ansigt
 blinkende ansigt
 smilende ansigt og øjne
 smilende ansigt med glorie
@@ -320,6 +330,8 @@ rækker finger op
 peger på seeren
 tommelfinger op
 tommelfinger ned
+tommelfinger til venstre
+tommelfinger til højre
 løftet knytnæve
 knytnæve
 venstrevendt knytnæve
@@ -731,6 +743,7 @@ sprutte
 østers
 snegl
 sommerfugl
+monark (sommerfugl)
 larve
 myre
 honningbi
@@ -872,7 +885,6 @@ tærte
 chokolade
 bolsje
 slikkepind
-dessert
 honning
 sutteflaske
 glas mælk
@@ -891,7 +903,6 @@ fladbundet glas
 hælde vand
 bæger med sugerør
 bubble tea
-brik
 isterning
 spisepinde
 kniv og gaffel med tallerken
@@ -946,7 +957,6 @@ Frihedsgudinden
 kirke
 moské
 synagoge
-Shinto-helligdom
 springvand
 telt
 tåget
@@ -965,7 +975,6 @@ rutsjebane
 barber
 cirkus
 lokomotiv
-togvogn
 lyntog
 højhastighedstog
 tog
@@ -1011,8 +1020,8 @@ liggende trafiklys
 trafiklys
 stopskilt
 byggeri
+fyrtårn
 anker
-sejlbåd
 kano
 speedbåd
 passagerskib
@@ -1102,6 +1111,7 @@ snefnug
 snemand
 snemand uden snevejr
 komet
+meteor
 ild
 dråbe
 bølge
@@ -1141,7 +1151,6 @@ rugbybold
 tennis
 frisbee
 bowling
-cricket
 hockey
 ishockey
 lacrosse
@@ -1153,7 +1162,6 @@ golfhul med flag
 skøjte
 fiskestang
 dykkermaske
-løbetrøje
 ski
 curlingsten
 pletskud
@@ -1373,6 +1381,7 @@ lukket hængelås med pen
 lukket hængelås med nøgle
 nøgle
 gammel nøgle
+net med skaft
 hammer
 økse
 hakke
@@ -1575,21 +1584,21 @@ parkering
 SOS
 UP!-knap
 versus
-kvadratisk ideogram for her
-kvadratisk ideogram for serviceafgift
-kvadratisk ideogram for månedligt beløb
-kvadratisk ideogram for ikke gratis
-kvadratisk ideogram for reserveret
-cirkulært ideogram for tilbud
-kvadratisk ideogram for rabat
-kvadratisk ideogram for gratis
-kvadratisk ideogram for forbud
-cirkulært ideogram for accept
-kvadratisk ideogram for anvendelse
-kvadratisk ideogram for bestået
-kvadratisk ideogram for ledig
-kvadratisk ideogram for åben
-kvadratisk ideogram for optaget
+japansk knap for her
+japansk knap for serviceafgift
+japansk knap for månedligt beløb
+japansk knap for ikke gratis
+japansk knap for reserveret
+japansk knap for tilbud
+japansk knap for rabat
+japansk knap for gratis
+japansk knap for forbud
+japansk knap for acceptabelt
+japansk knap for anvendelse
+japansk knap for bestået
+japansk knap for ledig
+japansk knap for åben
+japansk knap for optaget
 rød cirkel
 orange cirkel
 gul cirkel
@@ -1885,6 +1894,16 @@ tommelfinger ned medium til lys teint
 tommelfinger ned medium teint
 tommelfinger ned medium til mørk teint
 tommelfinger ned mørk teint
+tommelfinger til venstre lys teint
+tommelfinger til venstre medium til lys teint
+tommelfinger til venstre medium teint
+tommelfinger til venstre medium til mørk teint
+tommelfinger til venstre mørk teint
+tommelfinger til højre lys teint
+tommelfinger til højre medium til lys teint
+tommelfinger til højre medium teint
+tommelfinger til højre medium til mørk teint
+tommelfinger til højre mørk teint
 løftet knytnæve lys teint
 løftet knytnæve medium til lys teint
 løftet knytnæve medium teint

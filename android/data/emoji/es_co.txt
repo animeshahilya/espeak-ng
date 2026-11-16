@@ -38,6 +38,11 @@ cara con la boca cerrada con cierre
 
 
 
+
+
+
+
+tren eléctrico
 auto
 auto se aproxima
 
@@ -47,14 +52,18 @@ auto se aproxima
 
 
 
+
 campanilla de hotel
 pelota de fútbol
+cricket
 
+camiseta para correr
 
 
 
 
 corneta de correo
+
 
 
 
@@ -120,6 +129,7 @@ cuadrado relleno con círculo vacío dentro
 
 
 círculo vacío grande
+
 
 
 
@@ -316,6 +326,8 @@ gesto de llamada
 dorso de mano con dedo índice hacia arriba
 dorso de mano con dedo medio hacia arriba
 dorso de mano con dedo índice hacia abajo
+
+
 
 
 
@@ -731,6 +743,7 @@ camarón
 
 
 
+
 oruga
 
 
@@ -883,13 +896,11 @@ paleta dulce
 
 
 
-
 tarro de cerveza
 brindis con cerveza
 
 
 líquido que se vierte
-
 
 
 
@@ -947,7 +958,6 @@ casamiento en capilla
 
 
 
-
 carpa
 niebla
 
@@ -965,7 +975,6 @@ noria
 barbería
 circo
 
-tren eléctrico
 
 
 
@@ -1104,6 +1113,7 @@ muñeco de nieve nevado
 
 
 
+
 ola
 calabaza
 
@@ -1141,7 +1151,6 @@ pelota de rugby
 
 
 
-cricket
 
 
 
@@ -1153,7 +1162,6 @@ cricket
 patinaje sobre hielo
 
 
-camiseta para correr
 
 
 dardo en el centro
@@ -1370,6 +1378,7 @@ organizador de tarjetas
 
 
 candado y lapicera
+
 
 
 
@@ -1719,7 +1728,7 @@ tecla mayús 9
 
 Bandera Islas Ultramarinas de EE.UU.
 
-
+Bandera Islas Vírgenes de EE.UU.
 
 
 
@@ -1865,6 +1874,16 @@ dorso de mano con dedo índice hacia abajo tono de piel claro medio
 dorso de mano con dedo índice hacia abajo tono de piel medio
 dorso de mano con dedo índice hacia abajo tono de piel oscuro medio
 dorso de mano con dedo índice hacia abajo tono de piel oscuro
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3783,7 +3802,7 @@ Bandera Bosnia-Herzegovina
 
 
 
-Bandera República del Congo
+
 
 Bandera Costa de Marfil
 

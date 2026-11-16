@@ -32,16 +32,22 @@ dona amb una cadira de rodes elèctrica
 ocell negre
 albergínia
 pebrot verd
+cogombret en vinagre
 arrel de gingebre
 llauna de conserva
+flam
+bric
 mate
 mont Fuji
 temple hindú
+santuari xintoista
 Ka’ba
+vagó de tren elèctric
 automòbil
 automòbil que arriba
 cadira de rodes elèctrica
 salvavides
+veler
 llanxa de motor
 avió
 avioneta
@@ -49,13 +55,16 @@ enlairament d’avió
 aterratge d’avió
 timbre del grum
 pilota de futbol
+criquet
 tennis de taula
+samarreta per córrer
 trineu
 nines russes
 corbata
 xancleta de dit
 corn de posta
 conga
+goma d’esborrar
 bastó per a invidents
 tireta
 ascensor
@@ -133,6 +142,7 @@ cara amb llàgrimes d’alegria
 cara que somriu una mica
 cara de cap per avall
 cara que es desfà
+cara que s’esquerda
 cara que pica l’ullet
 cara somrient amb els ulls alegres
 cara somrient amb aurèola
@@ -320,6 +330,8 @@ dit índex que apunta cap avall
 índex que assenyala l’espectador
 polze cap amunt
 polze cap avall
+polze cap a l’esquerra
+polze cap a la dreta
 puny alçat
 cop de puny
 puny dret
@@ -731,6 +743,7 @@ calamar
 ostra
 cargol
 papallona
+papallona monarca
 eruga
 formiga
 abella
@@ -872,7 +885,6 @@ coca
 rajola de xocolata
 caramel
 piruleta
-flam
 pot de mel
 biberó
 got de llet
@@ -891,7 +903,6 @@ got de licor
 got que aboca un líquid
 got amb canya
 te amb bombolles
-bric
 glaçó
 bastonets xinesos
 forquilla, ganivet i plat
@@ -909,7 +920,7 @@ mapa del Japó
 brúixola
 muntanya amb neu al cim
 muntanya
-esllevissada
+esllavissada
 volcà
 acampada
 platja amb para-sol
@@ -946,7 +957,6 @@ estàtua de la Llibertat
 església
 mesquita
 sinagoga
-santuari xintoista
 font
 tenda
 paisatge emboirat
@@ -959,13 +969,12 @@ posta de sol
 pont de nit
 fonts termals
 cavallets
-togoban
+tobogan
 roda de fira
 muntanya russa
 barberia
 carpa de circ
 locomotora
-vagó de tren elèctric
 tren d’alta velocitat
 tren bala
 tren
@@ -1011,8 +1020,8 @@ semàfor horitzontal
 semàfor vertical
 senyal d’estop
 obres
+far
 àncora
-veler
 canoa
 llanxa ràpida
 vaixell de passatgers
@@ -1102,6 +1111,7 @@ floc de neu
 ninot de neu
 ninot de neu sense neu
 cometa
+meteorit
 foc
 gota
 onada
@@ -1141,7 +1151,6 @@ pilota de rugbi
 tennis
 disc volador
 bitlles
-criquet
 hoquei sobre herba
 hoquei sobre gel
 lacrosse
@@ -1153,7 +1162,6 @@ banderí al forat
 patinatge sobre gel
 canya de pescar
 ulleres de busseig
-samarreta per córrer
 esquís
 pedra de cúrling
 dards
@@ -1373,6 +1381,7 @@ cadenat amb ploma
 cadenat tancat amb clau
 clau
 clau antiga
+caçapapallones
 martell
 destral
 pic
@@ -1717,9 +1726,9 @@ bandera Saint Lucia
 bandera Saint Martin
 bandera Saint-Pierre-et-Miquelon
 bandera Santa Helena
-bandera Illes Menors Allunyades dels Estats Units
+bandera illes Menors Allunyades dels Estats Units
 bandera Saint Vincent i les Grenadines
-bandera Illes Verges dels Estats Units
+bandera illes Verges dels Estats Units
 mà que saluda pell molt clara
 mà que saluda pell bastant clara
 mà que saluda pell morena
@@ -1885,6 +1894,16 @@ polze cap avall pell bastant clara
 polze cap avall pell morena
 polze cap avall pell fosca
 polze cap avall pell molt fosca
+polze cap a l’esquerra pell molt clara
+polze cap a l’esquerra pell bastant clara
+polze cap a l’esquerra pell morena
+polze cap a l’esquerra pell fosca
+polze cap a l’esquerra pell molt fosca
+polze cap a la dreta pell molt clara
+polze cap a la dreta pell bastant clara
+polze cap a la dreta pell morena
+polze cap a la dreta pell fosca
+polze cap a la dreta pell molt fosca
 puny alçat pell molt clara
 puny alçat pell bastant clara
 puny alçat pell morena
@@ -3742,7 +3761,7 @@ família dona, noia i noi
 família dona, noia i noia
 tecla *
 tecla 10
-bandera Illa de l’Ascensió
+bandera illa de l’Ascensió
 bandera Andorra
 bandera Emirats Àrabs Units
 bandera Afganistan
@@ -3757,7 +3776,7 @@ bandera Samoa Americana
 bandera Àustria
 bandera Austràlia
 bandera Aruba
-bandera Illes Åland
+bandera illes Åland
 bandera Azerbaidjan
 bandera Bòsnia i Hercegovina
 bandera Barbados
@@ -3775,29 +3794,29 @@ bandera Carib Neerlandès
 bandera Brasil
 bandera Bahames
 bandera Bhutan
-bandera Illa Bouvet
+bandera illa Bouvet
 bandera Botswana
 bandera Belarús
 bandera Belize
 bandera Canadà
-bandera Illes Cocos (Keeling)
+bandera illes Cocos (Keeling)
 bandera Congo - Kinshasa
 bandera República Centreafricana
 bandera Congo - Brazzaville
 bandera Suïssa
 bandera Côte d’Ivoire
-bandera Illes Cook
+bandera illes Cook
 bandera Xile
 bandera Camerun
 bandera Xina
 bandera Colòmbia
-bandera Illa Clipperton
+bandera illa Clipperton
 bandera Sark
 bandera Costa Rica
 bandera Cuba
 bandera Cap Verd
 bandera Curaçao
-bandera Illa Christmas
+bandera illa Christmas
 bandera Xipre
 bandera Txèquia
 bandera Alemanya
@@ -3818,9 +3837,9 @@ bandera Etiòpia
 bandera Unió Europea
 bandera Finlàndia
 bandera Fiji
-bandera Illes Falkland
+bandera illes Falkland
 bandera Micronèsia
-bandera Illes Fèroe
+bandera illes Fèroe
 bandera França
 bandera Gabon
 bandera Regne Unit
@@ -3836,22 +3855,22 @@ bandera Guinea
 bandera Guadalupe
 bandera Guinea Equatorial
 bandera Grècia
-bandera Illes Geòrgia del Sud i Sandwich del Sud
+bandera illes Geòrgia del Sud i Sandwich del Sud
 bandera Guatemala
 bandera Guam
 bandera Guinea Bissau
 bandera Guyana
 bandera Hong Kong (RAE Xina)
-bandera Illes Heard i McDonald
+bandera illes Heard i McDonald
 bandera Hondures
 bandera Croàcia
 bandera Haití
 bandera Hongria
-bandera Illes Canàries
+bandera illes Canàries
 bandera Indonèsia
 bandera Irlanda
 bandera Israel
-bandera Illa de Man
+bandera illa de Man
 bandera Índia
 bandera Territori Britànic de l’Oceà Índic
 bandera Iraq
@@ -3870,7 +3889,7 @@ bandera Comores
 bandera Corea del Nord
 bandera Corea del Sud
 bandera Kuwait
-bandera Illes Caiman
+bandera illes Caiman
 bandera Kazakhstan
 bandera Lao
 bandera Líban
@@ -3887,13 +3906,13 @@ bandera Mònaco
 bandera Moldàvia
 bandera Montenegro
 bandera Madagascar
-bandera Illes Marshall
+bandera illes Marshall
 bandera Macedònia del Nord
 bandera Mali
 bandera Myanmar (Birmània)
 bandera Mongòlia
 bandera Macau (RAE Xina)
-bandera Illes Marianes del Nord
+bandera illes Marianes del Nord
 bandera Martinica
 bandera Mauritània
 bandera Montserrat
@@ -3907,7 +3926,7 @@ bandera Moçambic
 bandera Namíbia
 bandera Nova Caledònia
 bandera Níger
-bandera Illa Norfolk
+bandera illa Norfolk
 bandera Nigèria
 bandera Nicaragua
 bandera Països Baixos
@@ -3924,20 +3943,20 @@ bandera Papua Nova Guinea
 bandera Filipines
 bandera Pakistan
 bandera Polònia
-bandera Illes Pitcairn
+bandera illes Pitcairn
 bandera Puerto Rico
 bandera Territoris palestins
 bandera Portugal
 bandera Palau
 bandera Paraguai
 bandera Qatar
-bandera Illa de la Reunió
+bandera Reunió
 bandera Romania
 bandera Sèrbia
 bandera Rússia
 bandera Ruanda
 bandera Aràbia Saudí
-bandera Illes Salomó
+bandera illes Salomó
 bandera Seychelles
 bandera Sudan
 bandera Suècia
@@ -3957,7 +3976,7 @@ bandera Sint Maarten
 bandera Síria
 bandera Eswatini
 bandera Tristan da Cunha
-bandera Illes Turks i Caicos
+bandera illes Turks i Caicos
 bandera Txad
 bandera Terres Australs Antàrtiques Franceses
 bandera Togo
@@ -3981,7 +4000,7 @@ bandera Uruguai
 bandera Uzbekistan
 bandera Ciutat del Vaticà
 bandera Veneçuela
-bandera Illes Verges Britàniques
+bandera illes Verges Britàniques
 bandera Vietnam
 bandera Vanuatu
 bandera Wallis i Futuna

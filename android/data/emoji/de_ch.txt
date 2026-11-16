@@ -31,6 +31,12 @@ Gesicht mit Reissverschlussmund
 
 
 
+Peperoni
+saure Gurke
+
+
+
+
 
 
 
@@ -49,6 +55,9 @@ Gesicht mit Reissverschlussmund
 
 
 Fussball
+
+
+
 
 
 
@@ -133,6 +142,7 @@ grinsendes Gesicht mit Schweisstropfen
 
 
 
+zersplitterndes Gesicht
 
 
 
@@ -167,6 +177,7 @@ grinsendes Gesicht mit Schweisstropfen
 
 
 
+ausatmendes Gesicht
 
 
 
@@ -191,8 +202,7 @@ grinsendes Gesicht mit Schweisstropfen
 
 
 
-
-
+verkleidetes Gesicht
 
 
 
@@ -310,6 +320,8 @@ vulkanischer Gruss
 
 
 Teufelsgruss
+
+
 
 
 
@@ -745,6 +757,7 @@ weisses Haar
 
 
 
+
 Blumenstrauss
 
 
@@ -798,7 +811,7 @@ Blumenstrauss
 
 
 
-
+Chili
 
 
 
@@ -851,7 +864,6 @@ Blumenstrauss
 
 
 geröstete Süsskartoffel
-
 
 
 
@@ -955,10 +967,7 @@ Flüssigkeit ausgiessen
 
 
 
-
-
 heisse Quellen
-
 
 
 
@@ -1102,8 +1111,7 @@ Sonne hinter grosser Wolke
 
 
 
-
-
+Meteorit
 
 
 
@@ -1358,6 +1366,7 @@ Abreisskalender
 
 
 Reisszwecke
+
 
 
 
@@ -1835,6 +1844,16 @@ Teufelsgruss mittelhelle Hautfarbe
 Teufelsgruss mittlere Hautfarbe
 Teufelsgruss mitteldunkle Hautfarbe
 Teufelsgruss dunkle Hautfarbe
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3769,12 +3788,14 @@ Fussgänger dunkle Hautfarbe, nach rechts
 
 
 
+Flagge Brunei
 
 
 
 
 
 
+Flagge Botswana
 
 
 
@@ -3793,6 +3814,7 @@ Fussgänger dunkle Hautfarbe, nach rechts
 
 
 
+Flagge Kapverden
 
 
 
@@ -3934,6 +3956,7 @@ Fussgänger dunkle Hautfarbe, nach rechts
 
 
 
+Flagge Salomon-Inseln
 
 
 
@@ -3960,6 +3983,7 @@ Fussgänger dunkle Hautfarbe, nach rechts
 
 
 
+Flagge Osttimor
 
 
 
@@ -3986,12 +4010,7 @@ Fussgänger dunkle Hautfarbe, nach rechts
 
 
 
-
-
-
-
-
-
+Flagge Zimbabwe
 
 
 

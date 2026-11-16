@@ -8,10 +8,10 @@ cercle avec moitié inférieure pleine
 cercle avec moitié supérieure pleine
 cercle avec quadrant supérieur droit plein
 cercle avec quadrant supérieur gauche vide
-arc de cercle dans le quadrant supérieur gauche
-arc de cercle dans le quadrant supérieur droit
-arc de cercle dans le quadrant inférieur droit
-arc de cercle dans le quadrant inférieur gauche
+arc de cercle quadrant supérieur gauche
+arc de cercle quadrant supérieur droit
+arc de cercle quadrant inférieur droit
+arc de cercle quadrant inférieur gauche
 triangle rectangle inférieur droit plein
 triangle rectangle inférieur gauche plein
 triangle rectangle supérieur gauche plein
@@ -32,16 +32,22 @@ femme en fauteuil motorisé
 oiseau noir
 aubergine
 poivron
+cornichon
 racine de gingembre
 aliments en conserve
+crème renversée
+briquette de jus
 maté
 mont Fuji
 temple hindou
+sanctuaire shinto
 kaaba
+wagon
 voiture
 voiture de face
 fauteuil motorisé
 bouée de sauvetage
+voilier
 bateau à moteur
 avion
 petit avion
@@ -49,13 +55,16 @@ avion au décollage
 avion à l’atterrissage
 cloche de comptoir
 ballon de football
+cricket
 ping-pong
+maillot de course
 luge
 poupées russes
 cravate
 tong
 cor postal
 djembé
+gomme
 canne blanche
 sparadrap
 ascenseur
@@ -133,6 +142,7 @@ visage riant aux larmes
 visage avec un léger sourire
 tête à l’envers
 visage qui fond
+visage craquelé
 visage faisant un clin d’œil
 visage souriant avec yeux rieurs
 visage souriant avec auréole
@@ -320,6 +330,8 @@ index pointant vers le haut
 index pointant vers l’utilisateur
 pouce vers le haut
 pouce vers le bas
+pouce vers la gauche
+pouce vers la droite
 poing levé
 poing de face
 poing à gauche
@@ -731,6 +743,7 @@ calamar
 huître
 escargot
 papillon
+monarque
 chenille
 fourmi
 abeille
@@ -872,7 +885,6 @@ tarte
 barre chocolatée
 bonbon
 sucette
-crème renversée
 pot de miel
 biberon
 verre de lait
@@ -891,7 +903,6 @@ verre tumbler
 verser un liquide
 gobelet avec paille
 thé aux perles
-briquette de jus
 glaçon
 baguettes
 fourchette et couteau avec assiette
@@ -946,7 +957,6 @@ statue de la Liberté
 église
 mosquée
 synagogue
-sanctuaire shinto
 fontaine
 tente
 brume
@@ -965,7 +975,6 @@ montagnes russes
 enseigne de barbier
 chapiteau
 locomotive
-wagon
 TGV
 train à grande vitesse
 train
@@ -1011,8 +1020,8 @@ feu tricolore horizontal
 feu tricolore vertical
 stop
 travaux
+phare
 ancre
-voilier
 canoë
 hors-bord
 paquebot
@@ -1102,6 +1111,7 @@ flocon
 bonhomme de neige
 bonhomme de neige sans neige
 comète
+météorite
 feu
 goutte d’eau
 vague
@@ -1141,7 +1151,6 @@ rugby
 tennis
 disque volant
 bowling
-cricket
 hockey sur gazon
 hockey sur glace
 crosse
@@ -1153,7 +1162,6 @@ drapeau de golf
 patin à glace
 pêche à la ligne
 masque de plongée
-maillot de course
 ski
 pierre de curling
 dans le mille
@@ -1373,6 +1381,7 @@ cadenas fermé avec stylo
 cadenas fermé avec clé
 clé
 clé ancienne
+filet avec manche
 marteau
 hache
 pioche
@@ -1885,6 +1894,16 @@ pouce vers le bas  peau moyennement claire
 pouce vers le bas  peau légèrement mate
 pouce vers le bas  peau mate
 pouce vers le bas  peau foncée
+pouce vers la gauche  peau claire
+pouce vers la gauche  peau moyennement claire
+pouce vers la gauche  peau légèrement mate
+pouce vers la gauche  peau mate
+pouce vers la gauche  peau foncée
+pouce vers la droite  peau claire
+pouce vers la droite  peau moyennement claire
+pouce vers la droite  peau légèrement mate
+pouce vers la droite  peau mate
+pouce vers la droite  peau foncée
 poing levé  peau claire
 poing levé  peau moyennement claire
 poing levé  peau légèrement mate

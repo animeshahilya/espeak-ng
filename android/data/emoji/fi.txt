@@ -32,16 +32,22 @@ nainen moottoroidussa pyörätuolissa
 mustarastas
 munakoiso
 paprika
+suolakurkku
 inkivääri
 säilyketölkki
+vanukas
+juomatetra
 mate
 Fuji-vuori
 hindutemppeli
+shinto-temppeli
 Kaaba
+junavaunu
 auto
 saapuva auto
 moottoroitu pyörätuoli
 pelastusrengas
+purjevene
 moottorivene
 lentokone
 pienkone
@@ -49,13 +55,16 @@ lähtevä lentokone
 saapuva lentokone
 soittokello
 jalkapallo
+kriketti
 pingis
+juoksupaita
 kelkka
 maatuskanuket
 solmio
 varvassandaali
 postitorvi
 congarumpu
+pyyhekumi
 valkoinen keppi
 laastari
 hissi
@@ -133,6 +142,7 @@ kasvot naurunkyynelissä
 pieni hymy
 ylösalainen naama
 sulava naama
+halkeileva naama
 silmänisku
 punastunut hymy
 hymy ja sädekehä
@@ -320,6 +330,8 @@ ylös osoittava etusormi
 etusormi osoittaa katsojaa
 peukalo ylös
 peukalo alas
+peukalo vasemmalle
+peukalo oikealle
 nostettu nyrkki
 kohti tuleva nyrkki
 nyrkki vasemmalle
@@ -731,6 +743,7 @@ kalmari
 osteri
 etana
 perhonen
+monarkkiperhonen
 ötökkä
 muurahainen
 mehiläinen
@@ -872,7 +885,6 @@ piirakka
 suklaapatukka
 karkki
 tikkari
-vanukas
 hunaja
 tuttipullo
 maitolasi
@@ -891,7 +903,6 @@ juomalasi
 nesteen kaataminen
 lasi ja pilli
 kuplatee
-juomatetra
 jääkuutio
 syömäpuikot
 haarukka, veitsi ja lautanen
@@ -946,7 +957,6 @@ Vapaudenpatsas
 kirkko
 moskeija
 synagoga
-shinto-temppeli
 suihkulähde
 teltta
 sumuinen
@@ -965,7 +975,6 @@ vuoristorata
 punasiniraitainen pylväs
 sirkusteltta
 veturi
-junavaunu
 pikajuna
 luotipikajuna
 juna
@@ -1011,8 +1020,8 @@ vaakasuuntaiset liikennevalot
 pystysuuntaiset liikennevalot
 pysähtymismerkki
 rakennustyömaan merkki
+majakka
 ankkuri
-purjevene
 kanootti
 pikavene
 matkustajalaiva
@@ -1102,6 +1111,7 @@ lumihiutale
 lumiukko
 lumiukko ilman lunta
 komeetta
+meteori
 tuli
 pisara
 aalto
@@ -1141,7 +1151,6 @@ rugby-pallo
 tennis
 liitokiekko
 keilailu
-kriketti
 maahockey
 jääkiekko ja maila
 lacrosse
@@ -1153,7 +1162,6 @@ lippu reiän päällä
 luistin
 onkivapa
 sukellusmaski
-juoksupaita
 sukset
 curling-kivi
 napakymppi
@@ -1373,6 +1381,7 @@ lukko ja kynä
 avain ja lukko kiinni
 avain
 vanha avain
+haavi
 vasara
 kirves
 hakku
@@ -1716,7 +1725,7 @@ lippu Saint Kitts ja Nevis
 lippu Saint Lucia
 lippu Saint-Martin
 lippu Saint-Pierre ja Miquelon
-lippu Saint Helena
+lippu Saint Helena, Ascension ja Tristan da Cunha
 lippu Yhdysvaltain erillissaaret
 lippu Saint Vincent ja Grenadiinit
 lippu Yhdysvaltain Neitsytsaaret
@@ -1885,6 +1894,16 @@ peukalo alas keskivaalea iho
 peukalo alas tummanvaalea iho
 peukalo alas keskitumma iho
 peukalo alas tumma iho
+peukalo vasemmalle vaalea iho
+peukalo vasemmalle keskivaalea iho
+peukalo vasemmalle tummanvaalea iho
+peukalo vasemmalle keskitumma iho
+peukalo vasemmalle tumma iho
+peukalo oikealle vaalea iho
+peukalo oikealle keskivaalea iho
+peukalo oikealle tummanvaalea iho
+peukalo oikealle keskitumma iho
+peukalo oikealle tumma iho
 nostettu nyrkki vaalea iho
 nostettu nyrkki keskivaalea iho
 nostettu nyrkki tummanvaalea iho

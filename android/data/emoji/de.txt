@@ -32,16 +32,22 @@ Frau in elektrischem Rollstuhl
 schwarzer Vogel
 Aubergine
 Paprika
+Saure Gurke
 Ingwer
 Konserve
+Pudding
+Trinkpäckchen
 Mate-Tee
 Fuji
 Hindutempel
+Shinto-Schrein
 Kaaba
+Eisenbahnwagen
 Auto
 Auto von vorne
 elektrischer Rollstuhl
 Rettungsring
+Segelboot
 Motorboot
 Flugzeug
 kleines Flugzeug
@@ -49,13 +55,16 @@ Abflug
 Landung eines Flugzeugs
 Rezeptionsklingel
 Fußball
+Kricket
 Tischtennis
+Laufshirt
 Schlitten
 Matroschka
 Hemd mit Krawatte
 Zehensandale
 Posthorn
 afrikanische Trommel
+Radiergummi
 Blindenstock
 Heftpflaster
 Fahrstuhl
@@ -133,6 +142,7 @@ Gesicht mit Freudentränen
 leicht lächelndes Gesicht
 umgekehrtes Gesicht
 schmelzendes Gesicht
+Zerbrechendes Gesicht
 zwinkerndes Gesicht
 lächelndes Gesicht mit lachenden Augen
 lächelndes Gesicht mit Heiligenschein
@@ -320,6 +330,8 @@ nach oben weisender Zeigefinger von vorne
 auf Betrachter zeigender Zeigefinger
 Daumen hoch
 Daumen runter
+Daumen nach links
+Daumen nach rechts
 erhobene Faust
 geballte Faust
 Faust nach links
@@ -731,6 +743,7 @@ Tintenfisch
 Auster
 Schnecke
 Schmetterling
+Monarchfalter
 Raupe
 Ameise
 Biene
@@ -872,7 +885,6 @@ Kuchen
 Schokoladentafel
 Bonbon
 Lutscher
-Pudding
 Honigtopf
 Babyflasche
 Glas Milch
@@ -891,7 +903,6 @@ Trinkglas
 Flüssigkeit ausgießen
 Becher mit Strohhalm
 Bubble Tea
-Trinkpäckchen
 Eiswürfel
 Essstäbchen
 Teller mit Messer und Gabel
@@ -946,7 +957,6 @@ Freiheitsstatue
 Kirche
 Moschee
 Synagoge
-Shinto-Schrein
 Springbrunnen
 Zelt
 neblig
@@ -965,7 +975,6 @@ Achterbahn
 Barbershop-Säule
 Zirkuszelt
 Dampflokomotive
-Eisenbahnwagen
 Hochgeschwindigkeitszug mit spitzer Nase
 Hochgeschwindigkeitszug
 Zug
@@ -1011,8 +1020,8 @@ horizontale Verkehrsampel
 vertikale Verkehrsampel
 Stoppschild
 Baustellenabsperrung
+Leuchtturm
 Anker
-Segelboot
 Kanu
 Schnellboot
 Passagierschiff
@@ -1102,6 +1111,7 @@ Schneeflocke
 Schneemann im Schnee
 Schneemann ohne Schneeflocken
 Komet
+Meteor
 Feuer
 Tropfen
 Welle
@@ -1141,7 +1151,6 @@ Rugbyball
 Tennisball
 Frisbee
 Bowling
-Kricket
 Feldhockey
 Eishockey
 Lacrosse
@@ -1153,7 +1162,6 @@ Golffahne
 Schlittschuh
 Angel mit Fisch
 Tauchmaske
-Laufshirt
 Ski
 Curlingstein
 Darts
@@ -1373,6 +1381,7 @@ Schloss mit Füller
 Schloss mit Schlüssel
 Schlüssel
 alter Schlüssel
+Kescher
 Hammer
 Axt
 Pickel
@@ -1885,6 +1894,16 @@ Daumen runter mittelhelle Hautfarbe
 Daumen runter mittlere Hautfarbe
 Daumen runter mitteldunkle Hautfarbe
 Daumen runter dunkle Hautfarbe
+Daumen nach links helle Hautfarbe
+Daumen nach links mittelhelle Hautfarbe
+Daumen nach links mittlere Hautfarbe
+Daumen nach links mitteldunkle Hautfarbe
+Daumen nach links dunkle Hautfarbe
+Daumen nach rechts helle Hautfarbe
+Daumen nach rechts mittelhelle Hautfarbe
+Daumen nach rechts mittlere Hautfarbe
+Daumen nach rechts mitteldunkle Hautfarbe
+Daumen nach rechts dunkle Hautfarbe
 erhobene Faust helle Hautfarbe
 erhobene Faust mittelhelle Hautfarbe
 erhobene Faust mittlere Hautfarbe

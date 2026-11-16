@@ -32,16 +32,22 @@ woman in motorized wheelchair
 black bird
 eggplant
 bell pepper
+pickle
 ginger root
 canned food
+custard
+beverage box
 mate
 mount fuji
 hindu temple
+shinto shrine
 kaaba
+railway car
 automobile
 oncoming automobile
 motorized wheelchair
 ring buoy
+sailboat
 motor boat
 airplane
 small airplane
@@ -49,13 +55,16 @@ airplane departure
 airplane arrival
 bellhop bell
 soccer ball
+cricket game
 ping pong
+running shirt
 sled
 nesting dolls
 necktie
 thong sandal
 postal horn
 long drum
+eraser
 white cane
 adhesive bandage
 elevator
@@ -133,6 +142,7 @@ face with tears of joy
 slightly smiling face
 upside-down face
 melting face
+cracking face
 winking face
 smiling face with smiling eyes
 smiling face with halo
@@ -320,6 +330,8 @@ index pointing up
 index pointing at the viewer
 thumbs up
 thumbs down
+leftwards thumb sign
+rightwards thumb sign
 raised fist
 oncoming fist
 left-facing fist
@@ -731,6 +743,7 @@ squid
 oyster
 snail
 butterfly
+monarch butterfly
 bug
 ant
 honeybee
@@ -872,7 +885,6 @@ pie
 chocolate bar
 candy
 lollipop
-custard
 honey pot
 baby bottle
 glass of milk
@@ -891,7 +903,6 @@ tumbler glass
 pouring liquid
 cup with straw
 bubble tea
-beverage box
 ice
 chopsticks
 fork and knife with plate
@@ -946,7 +957,6 @@ Statue of Liberty
 church
 mosque
 synagogue
-shinto shrine
 fountain
 tent
 foggy
@@ -965,7 +975,6 @@ roller coaster
 barber pole
 circus tent
 locomotive
-railway car
 high-speed train
 bullet train
 train
@@ -1011,8 +1020,8 @@ horizontal traffic light
 vertical traffic light
 stop sign
 construction
+lighthouse
 anchor
-sailboat
 canoe
 speedboat
 passenger ship
@@ -1102,6 +1111,7 @@ snowflake
 snowman
 snowman without snow
 comet
+meteor
 fire
 droplet
 water wave
@@ -1141,7 +1151,6 @@ rugby football
 tennis
 flying disc
 bowling
-cricket game
 field hockey
 ice hockey
 lacrosse
@@ -1153,7 +1162,6 @@ flag in hole
 ice skate
 fishing pole
 diving mask
-running shirt
 skis
 curling stone
 bullseye
@@ -1373,6 +1381,7 @@ locked with pen
 locked with key
 key
 old key
+net with handle
 hammer
 axe
 pick
@@ -1716,7 +1725,7 @@ flag St. Kitts & Nevis
 flag St. Lucia
 flag St. Martin
 flag St. Pierre & Miquelon
-flag St. Helena
+flag St. Helena, Ascension & Tristan da Cunha
 flag U.S. Outlying Islands
 flag St. Vincent & Grenadines
 flag U.S. Virgin Islands
@@ -1885,6 +1894,16 @@ thumbs down medium-light skin tone
 thumbs down medium skin tone
 thumbs down medium-dark skin tone
 thumbs down dark skin tone
+leftwards thumb sign light skin tone
+leftwards thumb sign medium-light skin tone
+leftwards thumb sign medium skin tone
+leftwards thumb sign medium-dark skin tone
+leftwards thumb sign dark skin tone
+rightwards thumb sign light skin tone
+rightwards thumb sign medium-light skin tone
+rightwards thumb sign medium skin tone
+rightwards thumb sign medium-dark skin tone
+rightwards thumb sign dark skin tone
 raised fist light skin tone
 raised fist medium-light skin tone
 raised fist medium skin tone
@@ -3842,7 +3861,7 @@ flag Guam
 flag Guinea-Bissau
 flag Guyana
 flag Hong Kong SAR China
-flag Heard & McDonald Islands
+flag Heard Island & McDonald Islands
 flag Honduras
 flag Croatia
 flag Haiti
@@ -3959,7 +3978,7 @@ flag Eswatini
 flag Tristan da Cunha
 flag Turks & Caicos Islands
 flag Chad
-flag French Southern Territories
+flag French Southern and Antarctic Lands
 flag Togo
 flag Thailand
 flag Tajikistan

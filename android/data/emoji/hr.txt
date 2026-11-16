@@ -32,16 +32,22 @@ muškarac u motornim invalidskim kolicima
 crna ptica
 patlidžan
 paprika
+kiseli krastavac
 đumbir
 konzerva
+krema od jaja
+sok u tetrapaku
 mate
 planina Fuji
 hinduski hram
+šintoistički hram
 kaba
+vagon
 automobil
 automobil u dolasku
 invalidska kolica na motorni pogon
 kolut za spašavanje
+jedrilica
 motorni čamac
 zrakoplov
 mali zrakoplov
@@ -49,13 +55,16 @@ polijetanje zrakoplova
 slijetanje zrakoplova
 zvono za recepciju
 nogometna lopta
+kriket
 stolni tenis
+majica za trčanje
 sanjke
 babuška
 kravata
 japanka
 poštanski rog
 visoki bubanj
+gumica za brisanje
 bijeli štap
 flaster
 dizalo
@@ -133,6 +142,7 @@ lice sa suzama radosnicama
 blago nasmiješeno lice
 naopačke okrenuto lice
 lice koje se topi
+ispucalo lice
 lice koje namiguje
 nasmiješeno lice s nasmiješenim očima
 nasmiješeno lice s aureolom
@@ -320,6 +330,8 @@ kažiprst pokazuje gore
 kažiprst uperen prema gledatelju
 palac gore
 palac dolje
+znak ulijevo palcem
+znak udesno palcem
 podignuta šaka
 stisnuta šaka
 šaka ulijevo
@@ -731,6 +743,7 @@ lignja
 kamenica
 puž
 leptir
+kraljevski leptir
 gusjenica
 mrav
 pčela
@@ -872,7 +885,6 @@ pita
 tabla čokolade
 bombon
 lizalica
-krema od jaja
 tegla meda
 bočica za bebe
 čaša mlijeka
@@ -891,7 +903,6 @@ zdravica
 izlijevanje tekućine
 čaša sa slamkom
 mjehuričasti čaj
-sok u tetrapaku
 kocka leda
 štapići
 vilica i nož s tanjurom
@@ -946,7 +957,6 @@ kip slobode
 crkva
 džamija
 sinagoga
-šintoistički hram
 fontana
 šator
 maglovito
@@ -965,7 +975,6 @@ vlak smrti
 stup koji označava brijačnicu
 cirkuski šator
 lokomotiva
-vagon
 brzi vlak
 japanski brzi vlak shinkansen
 vlak
@@ -1011,8 +1020,8 @@ vodoravni semafor
 okomiti semafor
 znak stop
 znak radova
+svjetionik
 sidro
-jedrilica
 kanu
 gliser
 putnički brod
@@ -1102,6 +1111,7 @@ snježna pahulja
 snjegović
 snjegović bez snijega
 komet
+meteor
 vatra
 kapljica
 vodeni val
@@ -1141,7 +1151,6 @@ ragbi
 tenis
 frizbi
 kuglanje
-kriket
 hokej na travi
 palica i pak za hokej na ledu
 lacrosse
@@ -1153,7 +1162,6 @@ zastavica u rupi
 klizaljka
 ribički štap
 maska za ronjenje
-majica za trčanje
 skije
 kamen za karling
 pogodak u sredinu
@@ -1373,6 +1381,7 @@ zatvoreni lokot s nalivperom
 zatvoreni lokot s ključem
 ključ
 starinski ključ
+mrežica s drškom
 čekić
 sjekira
 pijuk
@@ -1885,6 +1894,16 @@ palac dolje svijetlo maslinasta boja kože
 palac dolje maslinasta boja kože
 palac dolje smeđa boja kože
 palac dolje tamno smeđa boja kože
+znak ulijevo palcem svijetla boja kože
+znak ulijevo palcem svijetlo maslinasta boja kože
+znak ulijevo palcem maslinasta boja kože
+znak ulijevo palcem smeđa boja kože
+znak ulijevo palcem tamno smeđa boja kože
+znak udesno palcem svijetla boja kože
+znak udesno palcem svijetlo maslinasta boja kože
+znak udesno palcem maslinasta boja kože
+znak udesno palcem smeđa boja kože
+znak udesno palcem tamno smeđa boja kože
 podignuta šaka svijetla boja kože
 podignuta šaka svijetlo maslinasta boja kože
 podignuta šaka maslinasta boja kože

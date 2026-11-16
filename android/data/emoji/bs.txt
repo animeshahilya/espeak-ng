@@ -32,16 +32,22 @@ muškarac u motornim invalidskim kolicima
 crna ptica
 patlidžan
 paprika babura
+kiseli krastavac
 korijen đumbira
 konzervirana hrana
+puding
+sok u tetrapaku
 mate čaj
 planina fudži
 hinduistički hram
+shinto oltar
 kaba
+vagon
 automobil
 dolazeći automobil
 elektromotorna invalidska kolica
 kolut za spašavanje
+jedrilica
 motorni čamac
 avion
 mali avion
@@ -49,13 +55,16 @@ uzlijetanje
 slijetanje
 ručno zvono
 fudbalska lopta
+kriket
 stoni tenis
+majica za trčanje
 sanke
 babuške
 kravata
 japanke
 poštanski rog
 kongo bubnjevi
+gumica za brisanje
 štap za slabovidne i slijepe
 ljepljivi flaster
 lift
@@ -133,6 +142,7 @@ plakanje od smijeha
 diskretni osmijeh
 naglavačke
 lice koje se topi
+ispucalo lice
 namigivanje
 širok osmijeh
 oreol iznad glave
@@ -320,6 +330,8 @@ kažiprst pokazuje gore
 kažiprst uperen u gledaoca
 palac gore
 palac dolje
+palac pokazuje ulijevo
+palac pokazuje udesno
 podignuta pesnica
 nabacivanje pesnicom
 šaka ulijevo
@@ -731,6 +743,7 @@ lignja
 kamenica
 puž
 leptir
+leptir monarh
 buba
 mrav
 pčela
@@ -872,7 +885,6 @@ slatka pita
 čokolada
 bombona
 lizalo
-puding
 tegla meda
 flašica za bebu
 mlijeko
@@ -891,7 +903,6 @@ uzdravlje
 sipanje tečnosti
 čaša sa slamkom
 boba čaj
-sok u tetrapaku
 kocka leda
 štapići
 viljuška i nož uz tanjir
@@ -946,7 +957,6 @@ kip slobode
 crkva
 džamija
 sinagoga
-shinto oltar
 fontana
 šator
 maglovito
@@ -965,7 +975,6 @@ voz smrti
 oznaka berbernice
 cirkuski šator
 lokomotiva
-vagon
 brzi voz
 brzi voz metak
 voz
@@ -1011,8 +1020,8 @@ horizontalni semafor
 semafor
 stop
 konstrukcija
+svjetionik
 sidro
-jedrilica
 kanu
 gliser
 putnički brod
@@ -1102,6 +1111,7 @@ pahuljica snijega
 snješko bijelić
 snješko bijelić bez snijega
 kometa
+meteor
 vatra
 kapljica vode
 val
@@ -1141,7 +1151,6 @@ ragbi
 tenis
 leteći disk
 kuglanje
-kriket
 hokej na travi
 hokej na ledu
 lakros
@@ -1153,7 +1162,6 @@ golf
 klizaljke
 štap za pecanje
 maska za ronjenje
-majica za trčanje
 skije
 kamen za karling
 pikado
@@ -1373,6 +1381,7 @@ katanac sa olovkom
 zatvoren katanac sa ključem
 ključ
 stari ključ
+mreža s ručkom
 čekić
 sjekira
 krampa
@@ -1885,6 +1894,16 @@ palac dolje umjereno svijetla boja kože
 palac dolje umjerena boja kože
 palac dolje umjereno tamna boja kože
 palac dolje tamna boja kože
+palac pokazuje ulijevo svijetla boja kože
+palac pokazuje ulijevo umjereno svijetla boja kože
+palac pokazuje ulijevo umjerena boja kože
+palac pokazuje ulijevo umjereno tamna boja kože
+palac pokazuje ulijevo tamna boja kože
+palac pokazuje udesno svijetla boja kože
+palac pokazuje udesno umjereno svijetla boja kože
+palac pokazuje udesno umjerena boja kože
+palac pokazuje udesno umjereno tamna boja kože
+palac pokazuje udesno tamna boja kože
 podignuta pesnica svijetla boja kože
 podignuta pesnica umjereno svijetla boja kože
 podignuta pesnica umjerena boja kože

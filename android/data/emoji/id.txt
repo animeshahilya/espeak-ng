@@ -32,16 +32,22 @@ wanita dengan kursi roda bermotor
 burung hitam
 terung
 paprika
+acar ketimun
 akar jahe
 makanan kaleng
+puding susu
+kotak minuman
 teh mate
 gunung Fuji
 pura
+kuil Shinto
 ka’bah
+gerbong
 mobil
 mobil datang
 kursi roda bermotor
 ban pelampung
+perahu layar
 perahu bermotor
 pesawat
 pesawat kecil
@@ -49,13 +55,16 @@ pesawat lepas landas
 pesawat mendarat
 bel meja
 bola sepak
+kriket
 ping pong
+kaos lari
 kereta luncur
 boneka bersarang
 dasi
 sandal jepit
 trompet pos
 gendang
+penghapus
 tongkat tunanetra
 plester luka
 elevator
@@ -133,6 +142,7 @@ wajah gembira berurai air mata
 wajah agak tersenyum
 wajah terbalik
 wajah meleleh
+wajah retak
 wajah berkedip
 wajah tersenyum dengan mata bahagia
 wajah malaikat
@@ -320,6 +330,8 @@ menunjuk ke atas
 jari telunjuk menunjuk penonton
 jempol ke atas
 jempol ke bawah
+isyarat jempol ke kiri
+isyarat jempol ke kanan
 tangan terkepal ke atas
 tangan terkepal ke depan
 tinju kiri
@@ -731,6 +743,7 @@ cumi-cumi
 tiram
 siput
 kupu-kupu
+kupu-kupu raja
 serangga kecil
 semut
 lebah madu
@@ -872,7 +885,6 @@ pai
 sebatang cokelat
 permen
 permen lolipop
-puding susu
 toples madu
 botol bayi
 gelas susu
@@ -891,7 +903,6 @@ gelas tumbler
 menuang cairan
 cangkir dengan sedotan
 teh bubble
-kotak minuman
 es batu
 sumpit
 garpu dan pisau dengan piring
@@ -946,7 +957,6 @@ Patung Liberty
 gereja
 masjid
 sinagog
-kuil Shinto
 air mancur
 tenda
 berkabut
@@ -965,7 +975,6 @@ roller coaster
 tanda salon
 tenda sirkus
 lokomotif
-gerbong
 kereta ekspres
 kereta ekspres peluru
 kereta
@@ -1011,8 +1020,8 @@ lampu lalu lintas horizontal
 lampu lalu lintas vertikal
 rambu stop
 konstruksi
+mercusuar
 jangkar
-perahu layar
 kano
 perahu cepat
 kapal penumpang
@@ -1102,6 +1111,7 @@ serpihan salju
 boneka salju dengan hujan salju
 boneka salju tanpa salju
 komet
+meteor
 api
 tetesan air
 ombak
@@ -1141,7 +1151,6 @@ sepak bola rugbi
 tenis
 lempar cakram
 bowling
-kriket
 hoki lapangan
 hoki es
 lacrosse
@@ -1153,7 +1162,6 @@ bendera di lubang golf
 seluncur es
 tongkat pancing
 kacamata selam
-kaos lari
 ski
 batu curling
 dart
@@ -1373,6 +1381,7 @@ gembok terkunci dengan pena
 gembok terkunci dengan kunci
 kunci
 kunci antik
+jaring dengan gagang
 palu
 kapak
 beliung
@@ -1885,6 +1894,16 @@ jempol ke bawah warna kulit cerah-sedang
 jempol ke bawah warna kulit sedang
 jempol ke bawah warna kulit gelap-sedang
 jempol ke bawah warna kulit gelap
+isyarat jempol ke kiri warna kulit cerah
+isyarat jempol ke kiri warna kulit cerah-sedang
+isyarat jempol ke kiri warna kulit sedang
+isyarat jempol ke kiri warna kulit gelap-sedang
+isyarat jempol ke kiri warna kulit gelap
+isyarat jempol ke kanan warna kulit cerah
+isyarat jempol ke kanan warna kulit cerah-sedang
+isyarat jempol ke kanan warna kulit sedang
+isyarat jempol ke kanan warna kulit gelap-sedang
+isyarat jempol ke kanan warna kulit gelap
 tangan terkepal ke atas warna kulit cerah
 tangan terkepal ke atas warna kulit cerah-sedang
 tangan terkepal ke atas warna kulit sedang
@@ -3769,7 +3788,7 @@ bendera Bahrain
 bendera Burundi
 bendera Benin
 bendera Bermuda
-bendera Brunei
+bendera Brunei Darussalam
 bendera Bolivia
 bendera Belanda Karibia
 bendera Brasil

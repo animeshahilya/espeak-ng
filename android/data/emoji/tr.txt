@@ -32,16 +32,22 @@ elektrikli tekerlekli sandalyede kadın
 siyah kuş
 patlıcan
 dolma biber
+turşu
 kök zencefil
 konserve gıda
+krem karamel
+içecek kutusu
 mate çayı
 Fuji Dağı
 Hindu tapınağı
+Şinto tapınağı
 Kâbe
+vagon
 araba
 yaklaşan araba
 elektrikli tekerlekli sandalye
 cankurtaran simidi
+yelkenli tekne
 motorlu tekne
 uçak
 küçük uçak
@@ -49,13 +55,16 @@ kalkan uçak
 inen uçak
 resepsiyon zili
 futbol topu
+kriket
 masa tenisi
+koşu tişörtü
 kızak
 matruşka
 kravat
 parmak arası terlik
 posta klaksonu
 uzun davul
+silgi
 görme engelli bastonu
 yara bandı
 asansör
@@ -133,6 +142,7 @@ sevinç gözyaşları
 hafifçe gülümseyen yüz
 ters yüz
 eriyen yüz
+çatlayan yüz
 göz kırpan yüz
 ağzı açık gülme
 ışık halkalı gülümseme
@@ -320,6 +330,8 @@ yukarıyı gösteren işaret parmağı
 karşıyı işaret eden işaret parmağı
 baş parmak yukarıda
 baş parmak aşağıda
+baş parmak solda
+başparmak sağda
 yumruk kaldırma
 yaklaşan yumruk
 sola bakan yumruk
@@ -731,6 +743,7 @@ mürekkep balığı
 istiridye
 salyangoz
 kelebek
+kral kelebeği
 tırtıl
 karınca
 bal arısı
@@ -872,7 +885,6 @@ tart
 çikolata
 şekerleme
 lolipop
-krem karamel
 bal kabı
 biberon
 süt bardağı
@@ -891,7 +903,6 @@ kısa ve geniş bardak
 dökülen sıvı
 pipetli bardak
 bubble tea
-içecek kutusu
 buz küpü
 yemek çubukları
 tabakla birlikte çatal ve bıçak
@@ -946,7 +957,6 @@ Tokyo kulesi
 kilise
 cami
 sinagog
-Şinto tapınağı
 fıskiye
 çadır
 sisli
@@ -965,7 +975,6 @@ hız treni
 berber dükkanı
 sirk çadırı
 buharlı lokomotif
-vagon
 yüksek hızlı tren
 yuvarlak uçlu yüksek hızlı tren
 tren
@@ -1011,8 +1020,8 @@ yatay trafik ışıkları
 dikey trafik ışıkları
 dur işareti
 inşaat
+deniz feneri
 çıpa
-yelkenli tekne
 kano
 sürat teknesi
 yolcu gemisi
@@ -1102,6 +1111,7 @@ kar tanesi
 kardan adam
 kar yağmadan kardan adam
 kuyruklu yıldız
+gök taşı
 ateş
 damlacık
 dalga
@@ -1141,7 +1151,6 @@ ragbi
 tenis
 frizbi
 bovling
-kriket
 çim hokeyi
 buz hokeyi
 lakros
@@ -1153,7 +1162,6 @@ delikteki bayrak
 buz pateni
 olta
 dalgıç maskesi
-koşu tişörtü
 kayak
 curling taşı
 tam isabet
@@ -1373,6 +1381,7 @@ kilit ve kalem
 anahtarlı kapalı kilit
 anahtar
 eski anahtar
+kelebek ağı
 çekiç
 balta
 kazma
@@ -1885,6 +1894,16 @@ baş parmak aşağıda orta açık cilt tonu
 baş parmak aşağıda orta cilt tonu
 baş parmak aşağıda orta koyu cilt tonu
 baş parmak aşağıda koyu cilt tonu
+baş parmak solda açık cilt tonu
+baş parmak solda orta açık cilt tonu
+baş parmak solda orta cilt tonu
+baş parmak solda orta koyu cilt tonu
+baş parmak solda koyu cilt tonu
+başparmak sağda açık cilt tonu
+başparmak sağda orta açık cilt tonu
+başparmak sağda orta cilt tonu
+başparmak sağda orta koyu cilt tonu
+başparmak sağda koyu cilt tonu
 yumruk kaldırma açık cilt tonu
 yumruk kaldırma orta açık cilt tonu
 yumruk kaldırma orta cilt tonu

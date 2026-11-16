@@ -32,16 +32,22 @@ femeie în scaun cu rotile motorizat
 pasăre neagră
 vânătă
 ardei gras
+murătură
 rădăcină de ghimbir
 mâncare la conservă
+șarlotă
+cutie de băutură
 mate
 muntele Fuji
 templu hindus
+altar shinto
 lăcaș de cult islamic kaaba
+vagon feroviar
 automobil
 automobil care se apropie
 scaun cu rotile motorizat
 colac de salvare
+barcă cu pânze
 barcă cu motor
 avion
 aeronavă mică
@@ -49,13 +55,16 @@ plecare avion
 sosire avion
 sonerie de recepție
 minge de fotbal
+crichet
 ping pong
+tricou de alegare
 sanie
 matrioșka
 cravată
 șlap
 corn poștal
 tobă înaltă
+radieră
 baston pentru nevăzători
 leucoplast
 lift
@@ -133,6 +142,7 @@ față cu lacrimi de bucurie
 față ușor zâmbitoare
 față cu susul în jos
 față care se topește
+față care se crapă
 față care face cu ochiul
 față zâmbitoare cu ochi zâmbitori
 față zâmbitoare cu aură
@@ -320,6 +330,8 @@ deget arătător îndreptat în sus
 deget arătător îndreptat spre privitor
 semn de aprobare
 semn de dezaprobare
+semn cu degetul mare spre stânga
+semn cu degetul mare spre dreapta
 pumn ridicat
 lovitură de pumn
 pumn spre stânga
@@ -731,6 +743,7 @@ calmar
 stridie
 melc
 fluture
+fluture monarh
 gândac
 furnică
 albină
@@ -872,7 +885,6 @@ plăcintă
 baton de ciocolată
 bomboană
 acadea
-șarlotă
 borcan cu miere
 biberon
 pahar cu lapte
@@ -891,7 +903,6 @@ pahar de whisky
 lichid turnat
 pahar cu pai
 ceai cu perle
-cutie de băutură
 cub de gheață
 bețișoare japoneze
 furculiță și cuțit cu farfurie
@@ -946,7 +957,6 @@ Statuia Libertății
 biserică
 moschee
 sinagogă
-altar shinto
 fântână arteziană
 cort
 încețoșat
@@ -965,7 +975,6 @@ montagne russe
 semn de frizerie
 cort de circ
 locomotivă
-vagon feroviar
 tren de mare viteză
 tren de mare viteză cu vârf aerodinamic
 tren
@@ -1011,8 +1020,8 @@ semafor orizontal
 semafor vertical
 semnul stop
 șantier
+far
 ancoră
-barcă cu pânze
 canoe
 barcă de viteză
 vas de pasageri
@@ -1102,6 +1111,7 @@ fulg de nea
 om de zăpadă
 om de zăpadă fără zăpadă
 cometă
+meteor
 foc
 picătură
 val
@@ -1141,7 +1151,6 @@ rugby
 tenis
 disc zburător
 bowling
-crichet
 hochei de câmp
 hochei pe gheață
 lacrosse
@@ -1153,7 +1162,6 @@ steag în gaură la golf
 patină de gheață
 undiță
 mască de scufundări
-tricou de alegare
 schiuri
 piatră de curling
 fix la țintă
@@ -1373,6 +1381,7 @@ lacăt cu stilou
 lacăt închis cu cheie
 cheie
 cheie veche
+plasă cu mâner
 ciocan
 topor
 târnăcop
@@ -1885,6 +1894,16 @@ semn de dezaprobare ton semi‑deschis al pielii
 semn de dezaprobare ton mediu al pielii
 semn de dezaprobare ton semi‑închis al pielii
 semn de dezaprobare ton închis al pielii
+semn cu degetul mare spre stânga ton deschis al pielii
+semn cu degetul mare spre stânga ton semi‑deschis al pielii
+semn cu degetul mare spre stânga ton mediu al pielii
+semn cu degetul mare spre stânga ton semi‑închis al pielii
+semn cu degetul mare spre stânga ton închis al pielii
+semn cu degetul mare spre dreapta ton deschis al pielii
+semn cu degetul mare spre dreapta ton semi‑deschis al pielii
+semn cu degetul mare spre dreapta ton mediu al pielii
+semn cu degetul mare spre dreapta ton semi‑închis al pielii
+semn cu degetul mare spre dreapta ton închis al pielii
 pumn ridicat ton deschis al pielii
 pumn ridicat ton semi‑deschis al pielii
 pumn ridicat ton mediu al pielii
