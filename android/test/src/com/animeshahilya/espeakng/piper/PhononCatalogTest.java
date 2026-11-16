@@ -36,23 +36,22 @@ public class PhononCatalogTest {
         assertEquals("a voice file each", voices.size(), files.size());
     }
 
-    /** Where Phonon is offered, US/UK Piper voices leave the list; Indian English and other languages stay. */
+    /** Phonon voices sit beside the Piper English voices: none is hidden for them. */
     @Test
-    public void phononReplacesUsAndUkPiperVoices() throws Exception {
+    public void phononLeavesEveryPiperVoiceListed() throws Exception {
         final List<PiperDownloads.CatalogVoice> all = new ArrayList<>(bundled());
         all.add(voice("en_US-amy-medium", "en", "US"));
         all.add(voice("en_GB-cori-high", "en", "GB"));
         all.add(voice("en_IN-rahul-medium", "en", "IN"));
         all.add(voice("hi_IN-priyamvada-medium", "hi", "IN"));
-        final List<String> kept = new ArrayList<>();
-        for (PiperDownloads.CatalogVoice v : PiperDownloads.phononForEnglish(all)) {
-            kept.add(v.key);
+        final List<String> listed = new ArrayList<>();
+        for (PiperDownloads.CatalogVoice v : PiperDownloads.keptFirst(all, PiperDownloads.parseKept(
+                "{\"en\": [\"en_US-amy-medium\", \"en_IN-rahul-medium\"]}"))) {
+            listed.add(v.key);
         }
-        assertEquals(37 + 2, kept.size());
-        assertTrue(kept.contains("en_IN-rahul-medium"));
-        assertTrue(kept.contains("hi_IN-priyamvada-medium"));
-        assertFalse(kept.contains("en_US-amy-medium"));
-        assertFalse(kept.contains("en_GB-cori-high"));
+        assertEquals(37 + 4, listed.size());
+        assertTrue(listed.contains("en_US-amy-medium"));
+        assertTrue(listed.contains("en_GB-cori-high"));
     }
 
     @Test

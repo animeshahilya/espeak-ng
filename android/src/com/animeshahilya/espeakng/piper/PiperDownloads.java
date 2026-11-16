@@ -93,10 +93,9 @@ public final class PiperDownloads {
     public static final String EXTRA_CATALOG_ASSET = "piper/extra_voices.json";
     /**
      * Supertonic 3 voices (build_supertonic_catalog.py): every style in every
-     * language, all on one shared model. A beta: listed only where they run
-     * well (the Snapdragon build on a phone with a modern NPU,
-     * {@link #supertonicCapable}) and only once the user turns on
-     * {@link #PREF_SUPERTONIC_BETA}.
+     * language, all on one shared model. A beta: listed once the user turns on
+     * {@link #PREF_SUPERTONIC_BETA}, on every phone; without the NPU
+     * ({@link #npuHere}) they are marked as possibly slow.
      */
     public static final String SUPERTONIC_CATALOG_ASSET = "piper/supertonic_voices.json";
     /**
@@ -337,16 +336,20 @@ public final class PiperDownloads {
             if (d != 0) return d;
             d = a.name.compareTo(b.name);
             if (d != 0) return d;
-            return Boolean.compare(isEnhanced(a.quality), isEnhanced(b.quality));
+            return qualityRank(a.quality) - qualityRank(b.quality);
         });
     }
 
-    /** Piper's catalog plus the bundled extras, best voices only. */
+    /** One voice's versions: Standard, then Enhanced, then Light (low, x_low). */
+    private static int qualityRank(String quality) {
+        return isEnhanced(quality) ? 1 : "low".equals(quality) ? 2 : "x_low".equals(quality) ? 3 : 0;
+    }
+
+    /** Piper's catalog plus the bundled extras, every voice, the best-graded first. */
     private static List<CatalogVoice> withExtras(Context context, List<CatalogVoice> catalog) {
         final List<CatalogVoice> out = mergeExtras(catalog, bundledExtras(context));
         sort(out);
-        final List<CatalogVoice> kept = keptOnly(out, keptVoices(context));
-        return phononOffered() ? phononForEnglish(kept) : kept;
+        return keptFirst(out, keptVoices(context));
     }
 
     /**
@@ -397,18 +400,49 @@ public final class PiperDownloads {
     }
 
     /**
-     * Drops the voices a tested language did not keep. Supertonic voices all
-     * stay (the user's choice: every style in every language). Pure for JVM tests.
+     * Every voice stays listed (user, 2026-11-16: "no voice should be hidden");
+     * within a language, the ones its ASR grading kept come first, the rest in
+     * their usual order. Pure for JVM tests.
      */
-    public static List<CatalogVoice> keptOnly(List<CatalogVoice> voices, Map<String, java.util.Set<String>> kept) {
-        final List<CatalogVoice> out = new ArrayList<>(voices.size());
+    public static List<CatalogVoice> keptFirst(List<CatalogVoice> voices, Map<String, java.util.Set<String>> kept) {
+        final List<CatalogVoice> out = new ArrayList<>(voices);
+        final List<String> families = new ArrayList<>();
         for (CatalogVoice v : voices) {
-            final java.util.Set<String> keys = kept.get(v.family);
-            if (keys == null || keys.contains(v.key) || isSupertonic(v) || isPhonon(v)) {
-                out.add(v);
+            if (!families.contains(v.family)) {
+                families.add(v.family);
             }
         }
+        // Stable: languages keep their order, and so do voices within each group.
+        Collections.sort(out, (a, b) -> {
+            final int d = families.indexOf(a.family) - families.indexOf(b.family);
+            return d != 0 ? d : Boolean.compare(!isKept(a, kept), !isKept(b, kept));
+        });
         return out;
+    }
+
+    private static boolean isKept(CatalogVoice v, Map<String, java.util.Set<String>> kept) {
+        final java.util.Set<String> keys = kept.get(v.family);
+        return keys != null && keys.contains(v.key);
+    }
+
+    /**
+     * Whether a voice may fall behind speech on this phone, so the list says
+     * so instead of hiding it: Supertonic without the NPU (Pixel 8 CPU
+     * 1.0-1.5x real time), and SYSPIN/Rasa letter voices (decoders 7-15x
+     * heavier than Piper's) without the NPU on a phone below flagship speed.
+     * Heavy Enhanced voices have their own label (PiperDevice.enhancedFit).
+     * Pure for JVM tests.
+     */
+    public static boolean mayBeSlow(CatalogVoice v, boolean npu, boolean fastCpu) {
+        if (isSupertonic(v)) {
+            return !npu;
+        }
+        return isLetterVoice(v) && !npu && !fastCpu;
+    }
+
+    /** A SYSPIN or Rasa voice (letters in, not eSpeak phonemes): hosted as vits-*. */
+    static boolean isLetterVoice(CatalogVoice v) {
+        return v.modelPath != null && v.modelPath.contains("/vits-");
     }
 
     /** The app's own list (assets): needs no network, so also for Compact lookups. */
@@ -454,39 +488,26 @@ public final class PiperDownloads {
         return BuildConfig.SNAPDRAGON && NpuFiles.target() != null && Phonon.available();
     }
 
-    /**
-     * Where Phonon is offered it is the English natural voice: the US and UK
-     * Piper voices leave the list (installed copies keep working). Indian
-     * English (Rahul, also English words in Hindi text) stays. Pure for JVM tests.
-     */
-    public static List<CatalogVoice> phononForEnglish(List<CatalogVoice> voices) {
-        final List<CatalogVoice> out = new ArrayList<>(voices.size());
-        for (CatalogVoice v : voices) {
-            if (!"en".equals(v.family) || isPhonon(v) || "IN".equals(v.region)) {
-                out.add(v);
-            }
-        }
-        return out;
-    }
-
     /** A Supertonic catalog entry (its key names it). */
     static boolean isSupertonic(CatalogVoice v) {
         return v.key != null && v.key.contains("-supertonic_");
     }
 
     /**
-     * Supertonic voices are offered only where they keep up: the Snapdragon
-     * build on a Snapdragon with compiled NPU graphs (NpuFiles.TARGETS; on a Pixel 8
-     * CPU they ran 1.0-1.5x real time, so a screen reader would pause).
+     * Supertonic voices are listed on every phone once the beta switch is on;
+     * without the NPU they are marked as possibly slow ({@link #mayBeSlow}).
      */
     public static boolean supertonicOffered(Context context) {
-        return supertonicCapable() && com.animeshahilya.espeakng.EspeakApp.prefs(
+        return com.animeshahilya.espeakng.EspeakApp.prefs(
                 com.animeshahilya.espeakng.EspeakApp.requireStorageContext(context))
                 .getBoolean(PREF_SUPERTONIC_BETA, false);
     }
 
-    /** The phone can run Supertonic well (whether or not the beta is on). */
-    public static boolean supertonicCapable() {
+    /**
+     * The hosted voices run on this phone's NPU: the Snapdragon build on a chip
+     * the graphs are compiled for (NpuFiles.TARGETS).
+     */
+    public static boolean npuHere() {
         return com.animeshahilya.espeakng.BuildConfig.SNAPDRAGON && NpuFiles.target() != null;
     }
 
@@ -515,7 +536,12 @@ public final class PiperDownloads {
      * real time on a phone - there is no speed left to trade quality for.
      */
     public static boolean isOffered(String quality) {
-        return "medium".equals(quality) || isEnhanced(quality) || isCompact(quality);
+        return "medium".equals(quality) || isEnhanced(quality) || isCompact(quality) || isLight(quality);
+    }
+
+    /** Piper's "low" and "x_low": smaller and faster, plainer sound; listed as Light. */
+    public static boolean isLight(String quality) {
+        return "low".equals(quality) || "x_low".equals(quality);
     }
 
     /**
@@ -584,11 +610,8 @@ public final class PiperDownloads {
                 Log.w(TAG, "Catalog fetch failed; using cached copy", e);
                 return withExtras(storageContext, parseCatalog(FileUtils.readText(cache)));
             }
-            List<CatalogVoice> extras = keptOnly(bundledExtras(storageContext),
+            final List<CatalogVoice> extras = keptFirst(bundledExtras(storageContext),
                     keptVoices(storageContext));
-            if (phononOffered()) {
-                extras = phononForEnglish(extras);
-            }
             if (!extras.isEmpty()) {
                 Log.w(TAG, "Catalog fetch failed; falling back to bundled extras", e);
                 return extras;

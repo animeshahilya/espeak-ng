@@ -121,10 +121,11 @@ public class SupertonicTest {
             models.add(v.modelMd5);
         }
         assertEquals("one shared model for all of them", 1, models.size());
-        // Kept-voice filtering never hides them.
-        final java.util.Map<String, java.util.Set<String>> kept = new java.util.HashMap<>();
-        kept.put("hi", new java.util.HashSet<>(Arrays.asList("hi_IN-rohan-medium")));
-        assertEquals(voices.size(), PiperDownloads.keptOnly(voices, kept).size());
+        // Listed everywhere; without the NPU each is marked as possibly slow.
+        for (PiperDownloads.CatalogVoice v : voices) {
+            assertTrue(v.key, PiperDownloads.mayBeSlow(v, false, true));
+            assertFalse(v.key, PiperDownloads.mayBeSlow(v, true, false));
+        }
     }
 
     private static java.util.List<String> said(String text, float speed) {

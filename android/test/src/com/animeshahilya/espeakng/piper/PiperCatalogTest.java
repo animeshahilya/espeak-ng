@@ -69,18 +69,20 @@ public class PiperCatalogTest {
     }
 
     @Test
-    public void offersStandardAndEnhancedOnly() throws Exception {
+    public void offersEveryQuality() throws Exception {
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog("{"
                 + entry("en_US-amy-high", "high") + ","
                 + entry("en_US-amy-low", "low") + ","
                 + entry("en_US-amy-x_low", "x_low") + ","
                 + entry("en_US-amy-medium", "medium") + "}");
-        assertEquals(2, voices.size());
-        // Same voice: Standard (medium) listed before Enhanced (high).
+        assertEquals(4, voices.size());
+        // Same voice: Standard, Enhanced, then the Light ones.
         assertEquals("en_US-amy-medium", voices.get(0).key);
         assertEquals("en_US-amy-high", voices.get(1).key);
+        assertEquals("en_US-amy-low", voices.get(2).key);
+        assertEquals("en_US-amy-x_low", voices.get(3).key);
         assertTrue(PiperDownloads.isEnhanced(voices.get(1).quality));
-        assertFalse(PiperDownloads.isEnhanced(voices.get(0).quality));
+        assertTrue(PiperDownloads.isLight(voices.get(3).quality));
     }
 
     /** base_url is honored only in the bundled list: the remote catalog cannot redirect downloads. */
@@ -111,11 +113,12 @@ public class PiperCatalogTest {
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
         assertEquals(106, voices.size());
         // Only kept voices are bundled: none is filtered out again.
-        assertEquals(voices.size(), PiperDownloads.keptOnly(voices, keptAsset()).size());
+        assertEquals(voices.size(), PiperDownloads.keptFirst(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
-                // Every model is the INT8-weight build (int8-v1).
+                // Every model is the INT8-weight build (int8-v1; int8-v2 for the
+                // voices rhasspy retrained in 2026-11).
                 // One version of every voice: no Compact twins listed
                 assertFalse(v.key, PiperDownloads.isCompact(v.quality));
                 assertFalse(v.key, v.modelPath.startsWith("syspin-v2/"));
@@ -130,9 +133,10 @@ public class PiperCatalogTest {
                     assertEquals(v.key, "int8-v1/" + v.key.replace("-high", "-compact") + ".onnx", v.modelPath);
                     assertEquals(v.key, "int8-v1/" + v.key + ".onnx.json", v.configPath);
                 } else {
-                    // A Piper or community voice under its own key
-                    assertEquals(v.key, "int8-v1/" + v.key + ".onnx", v.modelPath);
-                    assertEquals(v.key, "int8-v1/" + v.key + ".onnx.json", v.configPath);
+                    // A Piper or community voice under its own key, model and
+                    // config from the same release
+                    assertTrue(v.key, v.modelPath.matches("int8-v[12]/" + java.util.regex.Pattern.quote(v.key) + "\\.onnx"));
+                    assertEquals(v.key, v.modelPath + ".json", v.configPath);
                 }
             } else {
                 assertTrue(v.key, v.baseUrl.matches("https://huggingface\\.co/[^/]+/[^/]+/resolve/[0-9a-f]{40}/"));
@@ -168,23 +172,45 @@ public class PiperCatalogTest {
         assertEquals("hi_IN-pratham-medium", out.get(1).key);
     }
 
+    /** A slow voice is listed and marked, never hidden; Light (low/x_low) voices are offered. */
     @Test
-    public void keptOnlyFiltersTestedLanguages() throws Exception {
+    public void slowVoicesAreMarkedNotHidden() throws Exception {
+        final String json = new String(java.nio.file.Files.readAllBytes(
+                java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
+        int letters = 0;
+        for (PiperDownloads.CatalogVoice v : PiperDownloads.parseCatalog(json, true)) {
+            final boolean letter = v.modelPath.contains("/vits-");
+            letters += letter ? 1 : 0;
+            // SYSPIN/Rasa: slow only without the NPU on a phone below flagship speed.
+            assertEquals(v.key, letter, PiperDownloads.mayBeSlow(v, false, false));
+            assertFalse(v.key, PiperDownloads.mayBeSlow(v, false, true));
+            assertFalse(v.key, PiperDownloads.mayBeSlow(v, true, false));
+        }
+        assertTrue(letters > 10);
+        assertTrue(PiperDownloads.isOffered("low"));
+        assertTrue(PiperDownloads.isOffered("x_low"));
+        assertFalse(PiperDownloads.isOffered("unknown"));
+    }
+
+    @Test
+    public void keptVoicesComeFirstAndNoneIsHidden() throws Exception {
         final java.util.Map<String, java.util.Set<String>> kept =
                 PiperDownloads.parseKept("{\"hi\": [\"hi_IN-rohan-medium\", \"hi_IN-priyamvada-medium\"]}");
         final List<PiperDownloads.CatalogVoice> in = new java.util.ArrayList<>();
-        for (String key : new String[] {"hi_IN-rohan-medium", "hi_IN-pratham-medium",
-                "bho_IN-kajal-medium"}) {
+        for (String key : new String[] {"bho_IN-kajal-medium", "hi_IN-pratham-medium",
+                "hi_IN-rohan-medium", "hi_IN-arjun-medium"}) {
             final PiperDownloads.CatalogVoice v = new PiperDownloads.CatalogVoice();
             v.key = key;
             v.family = key.substring(0, key.indexOf('_'));
             in.add(v);
         }
-        final List<PiperDownloads.CatalogVoice> out = PiperDownloads.keptOnly(in, kept);
-        assertEquals(2, out.size());  // a kept voice and an untested language
-        for (PiperDownloads.CatalogVoice v : out) {
-            assertNotEquals("hi_IN-pratham-medium", v.key);
+        final List<String> out = new java.util.ArrayList<>();
+        for (PiperDownloads.CatalogVoice v : PiperDownloads.keptFirst(in, kept)) {
+            out.add(v.key);
         }
+        // Every voice stays; within Hindi the kept one first, the rest in order.
+        assertEquals(java.util.Arrays.asList("bho_IN-kajal-medium", "hi_IN-rohan-medium",
+                "hi_IN-pratham-medium", "hi_IN-arjun-medium"), out);
         // The shipped list: two voices at most per language, plus Indian
         // English Rahul for English and Kannada's SYSPIN pair (users asked back).
         for (java.util.Map.Entry<String, java.util.Set<String>> e : keptAsset().entrySet()) {

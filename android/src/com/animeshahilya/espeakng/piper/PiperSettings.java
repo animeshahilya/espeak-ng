@@ -169,11 +169,6 @@ public final class PiperSettings {
                 return true;
             });
         }
-        final Preference supertonic = screen.findPreference(PiperDownloads.PREF_SUPERTONIC_BETA);
-        if (supertonic != null) {
-            // Beta, and only where it runs well (Snapdragon build, modern NPU).
-            supertonic.setVisible(PiperDownloads.supertonicCapable());
-        }
         final Preference snapdragon = screen.findPreference(KEY_SNAPDRAGON);
         if (snapdragon != null) {
             // The standard app on a Snapdragon phone: point to the faster build
@@ -458,10 +453,15 @@ public final class PiperSettings {
     private static String qualityLabel(Context context, String quality) {
         return context.getString(PiperDownloads.isEnhanced(quality) ? R.string.piper_quality_enhanced
                 : VoiceImport.QUALITY.equals(quality) ? R.string.piper_quality_imported
+                : PiperDownloads.isLight(quality) ? R.string.piper_quality_light
                 : R.string.piper_quality_standard);
     }
 
-    /** In the catalog, Enhanced also says whether this phone suits it (PiperDevice). */
+    /**
+     * In the catalog the label also says whether this phone suits the voice:
+     * Enhanced by PiperDevice, Supertonic and SYSPIN/Rasa by whether the NPU
+     * runs them here. Every voice is listed; a slow one is only marked.
+     */
     private static String catalogQualityLabel(Context context, PiperDownloads.CatalogVoice v) {
         if (PiperDownloads.isEnhanced(v.quality)) {
             switch (PiperDevice.enhancedFit(PiperDevice.tier(context),
@@ -471,7 +471,10 @@ public final class PiperSettings {
                 default: break;
             }
         }
-        return qualityLabel(context, v.quality);
+        final String label = qualityLabel(context, v.quality);
+        final boolean fastCpu = PiperDevice.performanceClass() >= android.os.Build.VERSION_CODES.TIRAMISU;
+        return PiperDownloads.mayBeSlow(v, PiperDownloads.npuHere(), fastCpu)
+                ? context.getString(R.string.piper_quality_may_pause, label) : label;
     }
 
     /** "Priyamvada, India, Standard" for an installed voice. */

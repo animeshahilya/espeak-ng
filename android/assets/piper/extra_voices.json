@@ -580,8 +580,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/bg_BG-dimitar-medium.onnx": {"size_bytes": 16632978, "md5_digest": "311b53c5f9c16c26e46cfe5064df50d3"},
-      "int8-v1/bg_BG-dimitar-medium.onnx.json": {"size_bytes": 5123, "md5_digest": "5fb4aa5e5b20d4ed515d40f0b4ce16f0"}
+      "int8-v2/bg_BG-dimitar-medium.onnx": {"size_bytes": 16632978, "md5_digest": "e7aa759959d5500da427d02516d07317"},
+      "int8-v2/bg_BG-dimitar-medium.onnx.json": {"size_bytes": 5474, "md5_digest": "f5e173c52f660420594271a47af1177e"}
     }
   },
   "ca_ES-upc_ona-medium": {
@@ -775,8 +775,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC-BY-NC-SA-4.0",
     "files": {
-      "int8-v1/en_US-hfc_female-medium.onnx": {"size_bytes": 16612288, "md5_digest": "d637486e815d7ff014b973514b258e63"},
-      "int8-v1/en_US-hfc_female-medium.onnx.json": {"size_bytes": 5033, "md5_digest": "c3d00f54dac3b4068f2576c15c5da3bc"}
+      "int8-v2/en_US-hfc_female-medium.onnx": {"size_bytes": 16632978, "md5_digest": "41eb86d427b0ac854bb8f0e09c93c17e"},
+      "int8-v2/en_US-hfc_female-medium.onnx.json": {"size_bytes": 5472, "md5_digest": "4d41f7299169aa23a460aafdf3ce59c6"}
     }
   },
   "es_ES-sharvard-medium": {
@@ -790,8 +790,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC-BY-3.0",
     "files": {
-      "int8-v1/es_ES-sharvard-medium.onnx": {"size_bytes": 20050568, "md5_digest": "a975483a6590d9f616460c51347fc6aa"},
-      "int8-v1/es_ES-sharvard-medium.onnx.json": {"size_bytes": 4903, "md5_digest": "e49cab310ce362145f7d94b347c291ff"}
+      "int8-v2/es_ES-sharvard-medium.onnx": {"size_bytes": 20070794, "md5_digest": "9285e811f1b73f65ad02b0f309da3902"},
+      "int8-v2/es_ES-sharvard-medium.onnx.json": {"size_bytes": 5486, "md5_digest": "695ad6a14e8d98dff56a04276ced7b4c"}
     }
   },
   "es_MX-claude-high": {
@@ -820,8 +820,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC-BY",
     "files": {
-      "int8-v1/et_EE-news-medium.onnx": {"size_bytes": 20071828, "md5_digest": "2d005f2c4c5b591ccfbb7dfe1a295b15"},
-      "int8-v1/et_EE-news-medium.onnx.json": {"size_bytes": 5320, "md5_digest": "28fea16b0e4d26a445906e83d6de7ac6"}
+      "int8-v2/et_EE-news-medium.onnx": {"size_bytes": 20071828, "md5_digest": "18c05dcf4bbcb10daa5a4b1fe3e7661d"},
+      "int8-v2/et_EE-news-medium.onnx.json": {"size_bytes": 5522, "md5_digest": "7c66a1187cd52cc042d2d54e6397174f"}
     }
   },
   "eu_ES-antton-medium": {
@@ -895,8 +895,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/fi_FI-harri-medium.onnx": {"size_bytes": 16612288, "md5_digest": "e5f91eda3cfba01f5a8c88021e837775"},
-      "int8-v1/fi_FI-harri-medium.onnx.json": {"size_bytes": 4873, "md5_digest": "d944b7607e545ee3a0d06887c3e4ccc4"}
+      "int8-v2/fi_FI-harri-medium.onnx": {"size_bytes": 16632978, "md5_digest": "bebed6f98891129cf9c50e30f70ea428"},
+      "int8-v2/fi_FI-harri-medium.onnx.json": {"size_bytes": 5456, "md5_digest": "0ccd0cb734d2f5fddda2851b6cc7c387"}
     }
   },
   "fr_FR-siwis-medium": {
@@ -970,8 +970,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/hu_HU-anna-medium.onnx": {"size_bytes": 16612288, "md5_digest": "778096b9e9d07864de193eae0dfe4055"},
-      "int8-v1/hu_HU-anna-medium.onnx.json": {"size_bytes": 5018, "md5_digest": "ae63867e2c2cb6695555a17bdee8b751"}
+      "int8-v2/hu_HU-anna-medium.onnx": {"size_bytes": 16632978, "md5_digest": "fd9cbd6467015d506603af8b146ead2e"},
+      "int8-v2/hu_HU-anna-medium.onnx.json": {"size_bytes": 5458, "md5_digest": "afee8b14a958adb0a8b8f50644da6d25"}
     }
   },
   "hu_HU-imre-medium": {
@@ -985,8 +985,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/hu_HU-imre-medium.onnx": {"size_bytes": 16612288, "md5_digest": "624011a3f9a28c7c9b81a69ee24fa374"},
-      "int8-v1/hu_HU-imre-medium.onnx.json": {"size_bytes": 5019, "md5_digest": "9b6974c685cd8289619660f5e078de06"}
+      "int8-v2/hu_HU-imre-medium.onnx": {"size_bytes": 16632978, "md5_digest": "86a05157e01c47a99bd9a4ce9ad39f75"},
+      "int8-v2/hu_HU-imre-medium.onnx.json": {"size_bytes": 5458, "md5_digest": "562d656e3746b0cada5d13e8f1b11a56"}
     }
   },
   "hy_AM-gor-medium": {
@@ -1060,8 +1060,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
     "files": {
-      "int8-v1/it_IT-paola-medium.onnx": {"size_bytes": 16922032, "md5_digest": "2958fa68aa015200fef0f8af490f8afe"},
-      "int8-v1/it_IT-paola-medium.onnx.json": {"size_bytes": 7099, "md5_digest": "cd471a3757c88a7a4baee6207248b5d5"}
+      "int8-v2/it_IT-paola-medium.onnx": {"size_bytes": 16632978, "md5_digest": "6cb262619a9684ea73dc0b32ce339544"},
+      "int8-v2/it_IT-paola-medium.onnx.json": {"size_bytes": 5457, "md5_digest": "6f48c37f0e7765fa834f4193933e1120"}
     }
   },
   "it_IT-serena-medium": {
@@ -1195,8 +1195,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/ne_NP-chitwan-medium.onnx": {"size_bytes": 16361382, "md5_digest": "c591f48443f8b0960dcfcc343a3298be"},
-      "int8-v1/ne_NP-chitwan-medium.onnx.json": {"size_bytes": 5043, "md5_digest": "7ddc520e24a862016f6d22cde4b70ac1"}
+      "int8-v2/ne_NP-chitwan-medium.onnx": {"size_bytes": 16632978, "md5_digest": "c907756309e32ca627579389c007c0e4"},
+      "int8-v2/ne_NP-chitwan-medium.onnx.json": {"size_bytes": 5468, "md5_digest": "7c60e107bb9de730172957533c040dad"}
     }
   },
   "nl_BE-nathalie-medium": {
@@ -1225,8 +1225,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/nl_NL-pim-medium.onnx": {"size_bytes": 16927044, "md5_digest": "2ffb903527c50642c9b089f87426efb5"},
-      "int8-v1/nl_NL-pim-medium.onnx.json": {"size_bytes": 5037, "md5_digest": "c4d22097fefa2afe275b9bb6ff4db865"}
+      "int8-v2/nl_NL-pim-medium.onnx": {"size_bytes": 16632978, "md5_digest": "7d344d3c045fd6b68321a9ed2ffb4d3a"},
+      "int8-v2/nl_NL-pim-medium.onnx.json": {"size_bytes": 5461, "md5_digest": "cc616f5346d070dc6e4ee752927084b7"}
     }
   },
   "no_NO-talesyntese-medium": {
@@ -1240,8 +1240,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/no_NO-talesyntese-medium.onnx": {"size_bytes": 16612288, "md5_digest": "e4f81bf10ba56c00fd82cf72e411653f"},
-      "int8-v1/no_NO-talesyntese-medium.onnx.json": {"size_bytes": 4880, "md5_digest": "94b938e1bd319e6a084dc8380fb53619"}
+      "int8-v2/no_NO-talesyntese-medium.onnx": {"size_bytes": 16632978, "md5_digest": "482b827e2cffff186488820e2a3ae8ea"},
+      "int8-v2/no_NO-talesyntese-medium.onnx.json": {"size_bytes": 5463, "md5_digest": "134793a174befbc161190ffe9acd7164"}
     }
   },
   "pl_PL-gosia-medium": {
@@ -1285,8 +1285,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/pt_BR-cadu-medium.onnx": {"size_bytes": 16361382, "md5_digest": "b9b3f16ae1ac10c38b719fd1c437ee0d"},
-      "int8-v1/pt_BR-cadu-medium.onnx.json": {"size_bytes": 5040, "md5_digest": "3d35f13df6a2f7dc9b7b7924befbe7bb"}
+      "int8-v2/pt_BR-cadu-medium.onnx": {"size_bytes": 16632978, "md5_digest": "f8d00c68e562324783ee18285eee850d"},
+      "int8-v2/pt_BR-cadu-medium.onnx.json": {"size_bytes": 5465, "md5_digest": "a2574c3160c93068f39492088fd1362d"}
     }
   },
   "pt_BR-faber-medium": {
@@ -1300,8 +1300,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/pt_BR-faber-medium.onnx": {"size_bytes": 16612288, "md5_digest": "eddb121e9b33c8a45e1c3cef59739735"},
-      "int8-v1/pt_BR-faber-medium.onnx.json": {"size_bytes": 4855, "md5_digest": "a1258e1e113c47d9a1486a9bef1daab4"}
+      "int8-v2/pt_BR-faber-medium.onnx": {"size_bytes": 16632978, "md5_digest": "a55ada682f11e6b51471441b4c3c2532"},
+      "int8-v2/pt_BR-faber-medium.onnx.json": {"size_bytes": 5466, "md5_digest": "f2d60b12ff36d58f6112be7536a9fb9f"}
     }
   },
   "ro_RO-mihai-medium": {
@@ -1360,8 +1360,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/sk_SK-lili-medium.onnx": {"size_bytes": 16612288, "md5_digest": "c8dd247fc91978e84f8c825bfdeff080"},
-      "int8-v1/sk_SK-lili-medium.onnx.json": {"size_bytes": 4963, "md5_digest": "e49cbd13cb5ce5b8f7e1c1479ec2cc91"}
+      "int8-v2/sk_SK-lili-medium.onnx": {"size_bytes": 16632978, "md5_digest": "c9464d2c156db26ba526c42025eca157"},
+      "int8-v2/sk_SK-lili-medium.onnx.json": {"size_bytes": 5461, "md5_digest": "a6f7f62fb5a9b79d48d1858677227579"}
     }
   },
   "sl_SI-artur-medium": {
@@ -1450,8 +1450,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "see the voice's MODEL_CARD in rhasspy/piper-voices",
     "files": {
-      "int8-v1/sw_CD-lanfrica-medium.onnx": {"size_bytes": 16612288, "md5_digest": "da87bcd42f383a18deae3e68b1841bf4"},
-      "int8-v1/sw_CD-lanfrica-medium.onnx.json": {"size_bytes": 4905, "md5_digest": "fee67ee6bbb0ad9d9376b0d1cf2923d1"}
+      "int8-v2/sw_CD-lanfrica-medium.onnx": {"size_bytes": 16632978, "md5_digest": "df8db837f366bf00e30a4d563dab7031"},
+      "int8-v2/sw_CD-lanfrica-medium.onnx.json": {"size_bytes": 5488, "md5_digest": "dd4ef04d99693f4c8394c4390f1f82b4"}
     }
   },
   "te_IN-maya-medium": {

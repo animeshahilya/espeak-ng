@@ -633,6 +633,8 @@
   <string name="piper_quality_enhanced">Enhanced</string>
   <string name="piper_quality_enhanced_recommended">Enhanced, recommended for this phone</string>
   <string name="piper_quality_enhanced_slow">Enhanced, may pause on this phone</string>
+  <string name="piper_quality_light">Light</string>
+  <string name="piper_quality_may_pause">%1$s, may pause on this phone</string>
   <string name="setting_piper_snapdragon">Faster on this phone: Snapdragon version</string>
   <string name="setting_piper_snapdragon_summary">This phone\'s NPU can run natural voices much faster. Installs over this app and keeps your voices.</string>
   <string name="piper_catalog_voice_row">%1$s, %2$s</string>
