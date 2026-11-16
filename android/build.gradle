@@ -208,6 +208,13 @@ android {
             shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            // -PreleaseKey: a debug build signed like the release, so it installs over a
+            // tester's release app and keeps its voices and settings (device tests).
+            if (keystorePropertiesFile.exists() && project.hasProperty('releaseKey')) {
+                signingConfig = signingConfigs.release
+            }
+        }
     }
 
     externalNativeBuild {

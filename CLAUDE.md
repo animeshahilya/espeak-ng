@@ -382,9 +382,14 @@ voices" does not, so voices can still be deleted to free space.
   settings screen's test) all run on the one loader thread.
 - **Device fit.** Intra-op threads = cores with at least half the top
   core's `cpu_capacity`, max 4 (`PiperEngine.threadsFor`): 4 on a Pixel 8,
-  2 on a 2+6 phone. The catalog offers Piper "medium" as Standard and "high"
-  as Enhanced (low/x_low dropped; every language keeps a voice); Enhanced
-  says "recommended" on HIGH tier and "may be slow" on LOW.
+  2 on a 2+6 phone. The catalog offers Piper "medium" as Standard, "high"
+  as Enhanced and "low"/"x_low" as Light. **No voice is hidden** (user,
+  2026-11-16: "no voice should be hidden, just add a warning on the phones
+  where it may be slow"): Enhanced says "recommended" on HIGH tier and
+  "may pause" on LOW; Supertonic without the NPU, and SYSPIN/Rasa letter
+  voices without the NPU on a phone below performance class 33, say "may
+  pause on this phone" (`PiperDownloads.mayBeSlow`, `npuHere`). Phonon is
+  the one exception: it runs only on the NPU of `NpuFiles.TARGETS`.
 - **No NNAPI** (removed 2026-10-08 with its opt-in switch, user's call):
   on a Pixel 8 it took ~10 of ~2700 VITS nodes, ran them on Android's
   reference CPU driver (15% slower) and failed the run for the unoptimized
@@ -501,10 +506,9 @@ voices" does not, so voices can still be deleted to free space.
   best (character error rate over six levels: lone words, random words,
   rare words, short and long sentences, a paragraph; close calls rerun on
   a second corpus; harness and full results in scratch/voice-eval).
-  `PiperDownloads.keptOnly` hides the rest of a tested language's voices,
-  rhasspy's included, plus their Compact versions; untested languages
-  (Bhojpuri, Maithili, Kurmanji...) keep all. Voices already downloaded keep
-  working. The other bundled extras and NPU decoders were removed.
+  `PiperDownloads.keptFirst` lists them first in their language; since
+  2026-11-16 the rest stay listed after them (they were hidden before). The
+  other bundled extras and NPU decoders were removed.
   2026-10-06: Norwegian keeps only talesyntese (nvcc garbled plain
   sentences: 171 words only it missed vs 5). Whisper cannot judge Indian
   languages (it writes Malayalam in Devanagari or English, Assamese in
@@ -531,6 +535,21 @@ voices" does not, so voices can still be deleted to free space.
   (vits-syspin-kn-*-npu.onnx), encoder/flow built by build_npu_set.py and
   compiled for the three chips (Galaxy S25 Ultra, Vikram, fresh text, first
   audio: phrases 407 -> 70 ms, sentences 313 -> 65 ms vs the CPU).
+  2026-11-16: rhasspy retrained 21 kept voices (piper 1.5, 2026-10-30..11-15).
+  Each was made INT8 (`build_small.py`) and graded against its int8-v1 copy
+  through the app's own pipeline (scratch/voice-eval/refresh_*.py, report in
+  refresh/report.md). The 15 that scored better ship from release `int8-v2`
+  with rhasspy's new configs: hu anna/imre, pt_BR cadu/faber, et news, sw
+  lanfrica, sk lili, es sharvard, bg dimitar, fi harri, en_US hfc_female, no
+  talesyntese, ne chitwan, nl_NL pim, it paola. NPU graphs from `npu-v3`
+  (same file names as npu-v2: `build_npu_ctx.py` finds sources by release
+  tag), compiled contexts added to `npu-ctx-v1-*`. Kept as they were: amy,
+  siwis, jirka, nathalie, mihai (even), and Urdu Fasih (lone words 33 -> 67%;
+  its new export is opset 18 with Greater/Max/ScatterElements, which the slim
+  runtime lacks). Never replace an int8-v1 asset: older app versions pin its
+  MD5s. piper 1.5+ trains on upstream eSpeak NG 724808c (1.3-1.4: 212928b);
+  respelling its ɾ / iʲ quirks raised exact spellings but not ASR, so there
+  are no rules for it.
 - **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
   voice misses that the language's other voices say fine; scratch/voice-eval
   findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,
@@ -681,6 +700,13 @@ voices" does not, so voices can still be deleted to free space.
   out of use and the call is redone on the CPU; before, every request of the
   voice failed until the process restarted. Checked by injecting a fault
   into every NPU run: full E2E suite passed on the CPU.
+  **A new voice's first load keeps its NPU files** (2026-11-16): building the
+  optimized CPU copy deleted every `model.*` file containing `.npu`, a rule
+  from when the phone compiled its own graphs. The compiled graphs now
+  download right after install, before that first load, so every new voice
+  on a Snapdragon ran on the CPU until a later start downloaded them again
+  (~30 MB). `ModelFiles.staleBeforeOptimizing` leaves `.npu` files alone;
+  S25: freshly installed Anna, Cadu and HFC Female came up on the NPU.
   **Hosted sources go once compiled** (`dropHostedSources`, ~16 MB a voice):
   their size, which names the compiled files, stays in `<name>.size`
   (`hostedSize`); `fetchNpuFile` fetches a file again only when this runtime
@@ -737,11 +763,11 @@ voices" does not, so voices can still be deleted to free space.
   phone: Snapdragon version" (`PiperSettings.offersSnapdragonBuild`), opening
   the latest release; same package and key, so it installs over and keeps
   voices.
-- **Supertonic 3** (2026-10-13), a BETA: Snapdragon build on a chip in
-  `NpuFiles.TARGETS` (`PiperDownloads.supertonicCapable`) and only with the opt-in switch
+- **Supertonic 3** (2026-10-13), a BETA: listed with the opt-in switch
   `piper_supertonic_beta` on (off by default; user, after testing the release
   build on the S25: "sometimes a jarring sound, does not read well - fine as a
-  beta, not for stable users"). Off hides it from the download list;
+  beta, not for stable users"), on every phone since 2026-11-16; without the
+  NPU (`PiperDownloads.npuHere`) marked "may pause". Off hides it from the download list;
   downloaded voices keep working. Supertone's flow-matching TTS
   (OpenRAIL-M), 31 languages x 10 styles (F1-F5, M1-M5) = 310 voices, all
   listed (user's call; exempt from `kept_voices`). Like the Rasa speakers each
@@ -819,8 +845,8 @@ voices" does not, so voices can still be deleted to free space.
   fixed at 1 (libsonic does rate and pitch), 24 kHz resampled. `Phonon.load` sets
   `ADSP_LIBRARY_PATH` to the app's library folder only if unset - exactly what ONNX
   Runtime's QNN plugin sets; any other value broke ONNX Runtime's NPU graphs.
-  Where offered, US/UK Piper English voices leave the download list
-  (`phononForEnglish`); Rahul (Indian English) stays. S25 Ultra: "Button" 56 ms
+  The US/UK Piper English voices stay listed beside it (they were hidden
+  where Phonon was offered until 2026-11-16). S25 Ultra: "Button" 56 ms
   end to end, ~30x real time, PiperE2E 10/10 with Easton as English; release
   `phonon-v1` + per-chip models in `npu-ctx-v1-*` (`build_phonon_catalog.py`).
   The user listened: "sounds nice including other voices".
@@ -1563,6 +1589,46 @@ UI behaviour changed except the new character voices.
   `tests/*.test` shell cases only on UNIX (`tests/CMakeLists.txt`:
   `if (SHELL AND UNIX)`); on Windows only the C test binary runs.
 
+### Upstream engine fixes (2026-11-16)
+
+This fork shares no git history with espeak-ng/espeak-ng (`git merge-base`
+is empty), so "commits behind upstream" counts are meaningless. Check upstream
+by content: for each upstream commit, `git show <c> -- src dictsource phsource
+espeak-ng-data | git apply --check -R` (present) or `--check` (missing). Leave
+out MBROLA, Windows-only and deleted-test files.
+
+Taken on 2026-11-16 from upstream's 2026-10/11 fixes: `a21e5a6e` (harden the
+library against unchecked copies, bad parameters and hangs, with its C bounds
+tests), `cb7ad996`, `6b96deb4`, `241ab9c6`, `446e860b`, `1555c5a9`,
+`23c44017`, `5b8a7d45`, `4aec427c`, `9eda585f`, `70091c20`, `6be74343`, the
+SSML fixes `b1327ef9`, `0cbe1340`, `b0c4ca3a`, `34de100c`, and the leak half of
+`6739057b` (`WcmdqFreePendingVoices` on stop and shutdown). Not taken from
+`6739057b`: `WcmdqReplaceLastVoice`, which collapses a new voice change into
+the last queued one. `piperPhonemizer.c` rolls back what it queued with
+`WcmdqTail`/`WcmdqDropFrom`, and a collapse into an entry from before its
+mark would survive that rollback. Where the fork already had its own,
+stricter version (dictionary loader keeping the old dictionary on a bad file,
+`InitGroups` skipping a group past `N_RULE_GROUP2`, `espeak_command.c` NULL
+checks, the voice-name suffix check), the fork's version stays and only
+upstream's extra bound was added (`length > 0x8000000` on `_dict` files).
+`ungot_string` (readclause.c) is `wchar_t` now, because `swprintf` fills it;
+as `char` with `sprintf` it cut non-ASCII characters after an `&name;`
+sequence. Also fixed on top: `AnnouncePunctuation` shortened a too-long name
+only while announcing (it had also replaced the clause-end space with a
+name), and `NUM_DFRACTION_1/5/6` stop on an empty fraction. Not taken:
+`3fa99a2d` (upstream reverted its Portuguese update, ~8000 lines; the
+natural voices' `trainedSpellings` depend on Portuguese phonemes) and the
+remaining Dutch/Italian/Hindi/Kurmanji list edits that conflict with
+hand-ported versions.
+
+Host check, Windows: build with MSVC (`vcvarsall.bat x64`, `cmake -G "NMake
+Makefiles"`) and run the shell suites with `ESPEAK_BIN` pointing at a wrapper
+that passes the text through a UTF-8 file (`-f`): Windows converts argv to the
+ANSI code page, so non-ASCII test text arrives mangled. Exact WAV hashes
+(`language-phonemes`) differ on Windows (floating point) and multi-line
+expectations differ through `-f`; compare against a build of the previous
+commit rather than against the expectations.
+
 ## Source Layout
 
 ```
@@ -1643,6 +1709,14 @@ utterance to the next, so after any earlier synthesis in the same process
 every hash differs (checked 2026-10-12: resetting all parameters, script
 languages and the voice did not help; only test classes that synthesize
 affect it). Stock eSpeak behaves the same, so it is not a parity issue.
+
+On a tester's phone, build the debug app and test APKs with `-PreleaseKey`
+(signed with the release key from keystore.properties): they install over
+the release app and keep its voices and settings, and `run-as` can then back
+up `/data/user_de/0/<package>/shared_prefs` before tests (restore by writing a
+temp file and renaming it). Galaxy S25 Ultra over wireless debugging: Windows'
+default mDNS resolves the phone to 0.0.0.0; `ADB_MDNS_OPENSCREEN=1 adb
+start-server` then `adb connect <ip:port>`.
 
 Tests that clear the app's settings carry `@ClassRule KeepUserSettings` (eSpeakTests `test/`), which puts the phone's own settings back afterwards: before 2026-10-12 a suite run switched natural voices off and dropped every voice assignment on the tester's phone, and later `PiperE2EDeviceTest` runs skipped. Run single classes with `adb shell am instrument` to keep app data. Note `connectedAndroidTest` reinstalls the app (wiping extracted data), so data-dependent tests must ensure extraction first - see `CheckVoiceDataTest.ensureVoiceData()` and the `ensureVoiceData()` calls in the direct-engine test setups. CI runs API 34; also run on API 35+ when possible (Locale canonicalizes legacy codes like `in`&#8594;`id` there - see `VoiceData.expectedEngineLanguage()`).
 

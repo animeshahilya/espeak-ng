@@ -445,10 +445,6 @@ public final class AudioOptimizer {
         return prevOutputSample;
     }
 
-    public void setPrevOutputSample(float sample) {
-        prevOutputSample = sample;
-    }
-
     /**
      * Resets internal DSP filter states, envelopes, and sample counters
      * to initial neutral conditions.
