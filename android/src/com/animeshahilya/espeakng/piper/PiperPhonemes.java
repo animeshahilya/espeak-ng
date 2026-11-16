@@ -282,20 +282,10 @@ public final class PiperPhonemes {
 
     /** Word end: no letter, mark or length follows. */
     private static final String END = "(?![\\p{L}\\p{M}ː])";
-    /** Before a consonant or a word boundary, past a stress mark. */
-    private static final String BEFORE_CONSONANT = "(?=[ˈˌ]?[^\\p{L}\\p{M}ːˈˌ ]|[ˈˌ]?"
-            + "[bcdfɡhjklmnpqrstvwxzʃʒθðŋɲɟʎʁɾɹʋβɣçʝɕʑʈɖɳɭɻɽ])";
 
     private static final Spelling[] NO_SPELLINGS = {};
     /** ड़/ढ़ and breathy stops in the languages built on the Hindi phoneme table. */
     private static final String[] FLAP = {"ɽʱ", "r.h", "ɽ", "r.", "ʱ", "ʰ"};
-    /** Portuguese nasal vowels before a consonant, as the 2023 eSpeak wrote them. */
-    private static final String[] PT_NASALS = {"ẽn", "eɪŋ", "ẽm", "eɪm", "ĩn", "iŋ", "ũn", "ũŋ",
-            "ɐ̃n" + BEFORE_CONSONANT, "ɐ̃ŋ"};
-    /** Portuguese r after a consonant, and the schwa the 2023 eSpeak put after a coda r. */
-    private static String[] ptR(String clusterR) {
-        return new String[] {"(?<=[ptkbdɡfv])ɾ", clusterR, "ɾ(?=[ptkbdɡfvszʃʒmnl])", "ɾə"};
-    }
 
     /** Key: eSpeak voice, plus ":old" for voices trained on the 2023 eSpeak. */
     private static final Map<String, Spelling[]> SPELLINGS = new java.util.HashMap<>();
@@ -326,9 +316,10 @@ public final class PiperPhonemes {
         put("ca:old", new String[] {"ʃ", "ɕ", "ʒ", "ʑ", "ɱ", "n", "ə" + END, "ɐ",
                 "(?<!ˈ[^\\s\\p{M}aeiouɛɔəɐ]{0,3})u", "ʊ", "i(?=[ˈˌ]?[aeoɔɛɐə])", "j"});
         put("de:old", new String[] {"ʏ", "y", "ʊɐ", "??"});
-        put("pt-br:old", new String[] {"ʎ", "lj", "ɐ" + END, "æ", "ɾ" + END, "r", "ɪ" + END, "y",
-                "õn", "oŋ"}, PT_NASALS, ptR("r"));
-        put("pt:old", new String[] {"ɾ" + END, "ɹ", "õn", "uŋ"}, PT_NASALS, ptR("ɹ"));
+        // No Portuguese rules since 2026-11-16: with upstream's revert of its
+        // January Portuguese update (taken to stay with NVDA) the fork writes
+        // what the 2023 eSpeak did, and the old rules only cost matches
+        // (pt-br 956 -> 942 of 1479, Faber by ASR 11.5/12.2% without vs 13.3/12.4% with).
     }
 
     /**

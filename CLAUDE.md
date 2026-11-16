@@ -538,10 +538,14 @@ voices" does not, so voices can still be deleted to free space.
   2026-11-16: rhasspy retrained 21 kept voices (piper 1.5, 2026-10-30..11-15).
   Each was made INT8 (`build_small.py`) and graded against its int8-v1 copy
   through the app's own pipeline (scratch/voice-eval/refresh_*.py, report in
-  refresh/report.md). The 15 that scored better ship from release `int8-v2`
-  with rhasspy's new configs: hu anna/imre, pt_BR cadu/faber, et news, sw
-  lanfrica, sk lili, es sharvard, bg dimitar, fi harri, en_US hfc_female, no
-  talesyntese, ne chitwan, nl_NL pim, it paola. NPU graphs from `npu-v3`
+  refresh/report.md). The 13 that scored better ship from release `int8-v2`
+  with rhasspy's new configs: hu anna/imre, et news, sw lanfrica, sk lili, es
+  sharvard, bg dimitar, fi harri, en_US hfc_female, no talesyntese, ne
+  chitwan, nl_NL pim, it paola. pt_BR Cadu and Faber also scored better at
+  first, but they learned upstream's January Portuguese update; after the fork
+  took upstream's revert of it (below) their int8-v1 copies, trained on the
+  older Portuguese, won clearly (Cadu 9.5 vs 15.1%, Faber 13.1 vs 17.0%, two
+  rounds) and stay. Their int8-v2/npu-v3 assets are published but unused. NPU graphs from `npu-v3`
   (same file names as npu-v2: `build_npu_ctx.py` finds sources by release
   tag), compiled contexts added to `npu-ctx-v1-*`. Kept as they were: amy,
   siwis, jirka, nathalie, mihai (even), and Urdu Fasih (lone words 33 -> 67%;
@@ -1632,11 +1636,21 @@ upstream's extra bound was added (`length > 0x8000000` on `_dict` files).
 as `char` with `sprintf` it cut non-ASCII characters after an `&name;`
 sequence. Also fixed on top: `AnnouncePunctuation` shortened a too-long name
 only while announcing (it had also replaced the clause-end space with a
-name), and `NUM_DFRACTION_1/5/6` stop on an empty fraction. Not taken:
-`3fa99a2d` (upstream reverted its Portuguese update, ~8000 lines; the
-natural voices' `trainedSpellings` depend on Portuguese phonemes) and the
-remaining Dutch/Italian/Hindi/Kurmanji list edits that conflict with
-hand-ported versions.
+name), and `NUM_DFRACTION_1/5/6` stop on an empty fraction. The
+Dutch/Italian/Hindi/Kurmanji list edits were already hand-ported; only their
+test cases were added (Hindi pinned to the fork's schwa, @4).
+
+**Portuguese reverted like NVDA (2026-11-16, user's call).** Upstream
+reverted its January Portuguese update (`3fa99a2d`, #2620) after Brazilian
+users found eSpeak's Portuguese much worse, and NVDA took that revert
+(nvaccess/nvda#21077, eSpeak tag release-2026.3.1rc1). The fork's pt_list,
+pt_rules, ph_portugal, ph_pt_brazil and lang/roa/pt-BR are now upstream
+master's, byte for byte. Natural voices: the reverted rules write what
+rhasspy's 2023 eSpeak did, so the `pt-br:old`/`pt:old` respellings were
+removed (they cost exact matches, pt-br 956 -> 942 of 1479, and Faber by ASR
+11.5/12.2% without vs 13.3/12.4% with); piper 1.5 Portuguese voices, trained
+on the updated rules, now hear mismatched phonemes (1127 -> 231 of 1500
+exact), which is why the bundled Cadu and Faber are their int8-v1 copies.
 
 Host check, Windows: build with MSVC (`vcvarsall.bat x64`, `cmake -G "NMake
 Makefiles"`) and run the shell suites with `ESPEAK_BIN` pointing at a wrapper

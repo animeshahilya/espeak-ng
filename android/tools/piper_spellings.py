@@ -11,7 +11,7 @@ Build this fork and both references with CMake, then:
       words spelled exactly as trained, before -> after the rules, and what
       each rule contributes (keep a rule only if it raises the count);
       --offset 1500 scores held-out words
-  ... residual pt:old      the commonest differences left after the rules
+  ... residual ca:old      the commonest differences left after the rules
   ... fixture              rewrite test/resources/piper_spellings_cases.tsv,
                            which PiperPhonemesTest checks the Java table against
 
@@ -34,15 +34,7 @@ import unicodedata
 import regex  # pip install regex: \p{L}, variable-length lookbehind
 
 END = r"(?![\p{L}\p{M}ː])"
-BEFORE_CONSONANT = (r"(?=[ˈˌ]?[^\p{L}\p{M}ːˈˌ ]|[ˈˌ]?"
-                    r"[bcdfɡhjklmnpqrstvwxzʃʒθðŋɲɟʎʁɾɹʋβɣçʝɕʑʈɖɳɭɻɽ])")
 FLAP = [("ɽʱ", "r.h"), ("ɽ", "r."), ("ʱ", "ʰ")]
-PT_NASALS = [("ẽn", "eɪŋ"), ("ẽm", "eɪm"), ("ĩn", "iŋ"), ("ũn", "ũŋ"),
-             ("ɐ̃n" + BEFORE_CONSONANT, "ɐ̃ŋ")]
-
-
-def pt_r(cluster_r):
-    return [(r"(?<=[ptkbdɡfv])ɾ", cluster_r), (r"ɾ(?=[ptkbdɡfvszʃʒmnl])", "ɾə")]
 
 
 RULES = {lang: FLAP for lang in "pa gu mr or as sd bn kn ta si kok bpy".split()}
@@ -58,9 +50,6 @@ RULES.update({
     "ca:old": [("ʃ", "ɕ"), ("ʒ", "ʑ"), ("ɱ", "n"), ("ə" + END, "ɐ"),
                (r"(?<!ˈ[^\s\p{M}aeiouɛɔəɐ]{0,3})u", "ʊ"), (r"i(?=[ˈˌ]?[aeoɔɛɐə])", "j")],
     "de:old": [("ʏ", "y"), ("ʊɐ", "??")],
-    "pt-br:old": [("ʎ", "lj"), ("ɐ" + END, "æ"), ("ɾ" + END, "r"), ("ɪ" + END, "y"),
-                  ("õn", "oŋ")] + PT_NASALS + pt_r("r"),
-    "pt:old": [("ɾ" + END, "ɹ"), ("õn", "uŋ")] + PT_NASALS + pt_r("ɹ"),
 })
 
 
@@ -169,7 +158,7 @@ def main():
     ap.add_argument("--tmp", default=os.environ.get("TMP", "/tmp"))
     ap.add_argument("--offset", type=int, default=0, help="skip this many words (held-out)")
     ap.add_argument("command", choices=["score", "residual", "fixture"])
-    ap.add_argument("specs", nargs="*", help="voice:old|new, e.g. pt-br:old")
+    ap.add_argument("specs", nargs="*", help="voice:old|new, e.g. ca:old")
     args = ap.parse_args()
     args.refs = dict(r.split("=", 1) for r in args.ref)
     if args.command == "fixture":

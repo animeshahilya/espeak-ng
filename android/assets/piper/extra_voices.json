@@ -1285,8 +1285,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v2/pt_BR-cadu-medium.onnx": {"size_bytes": 16632978, "md5_digest": "f8d00c68e562324783ee18285eee850d"},
-      "int8-v2/pt_BR-cadu-medium.onnx.json": {"size_bytes": 5465, "md5_digest": "a2574c3160c93068f39492088fd1362d"}
+      "int8-v1/pt_BR-cadu-medium.onnx": {"size_bytes": 16361382, "md5_digest": "b9b3f16ae1ac10c38b719fd1c437ee0d"},
+      "int8-v1/pt_BR-cadu-medium.onnx.json": {"size_bytes": 5040, "md5_digest": "3d35f13df6a2f7dc9b7b7924befbe7bb"}
     }
   },
   "pt_BR-faber-medium": {
@@ -1300,8 +1300,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v2/pt_BR-faber-medium.onnx": {"size_bytes": 16632978, "md5_digest": "a55ada682f11e6b51471441b4c3c2532"},
-      "int8-v2/pt_BR-faber-medium.onnx.json": {"size_bytes": 5466, "md5_digest": "f2d60b12ff36d58f6112be7536a9fb9f"}
+      "int8-v1/pt_BR-faber-medium.onnx": {"size_bytes": 16612288, "md5_digest": "eddb121e9b33c8a45e1c3cef59739735"},
+      "int8-v1/pt_BR-faber-medium.onnx.json": {"size_bytes": 4855, "md5_digest": "a1258e1e113c47d9a1486a9bef1daab4"}
     }
   },
   "ro_RO-mihai-medium": {

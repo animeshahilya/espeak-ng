@@ -1639,50 +1639,35 @@
   },
   "pt_BR-cadu-medium": {
    "dec": {
-    "md5_digest": "054716fcee8aeb4b332a9e8f1a859fb1",
-    "path": "npu-v3/pt_BR-cadu-medium-dec80.onnx",
-    "size_bytes": 1703754
-   },
-   "enc": {
-    "md5_digest": "5cec3d8e3f7377bab31b174daee39338",
-    "path": "npu-v3/pt_BR-cadu-medium-enc256.onnx",
-    "size_bytes": 6734038
-   },
-   "flow": {
-    "md5_digest": "095d4a9f0b09953f6fb76843be2f571c",
-    "path": "npu-v3/pt_BR-cadu-medium-flow512.onnx",
-    "size_bytes": 7264948
+    "md5_digest": "0d6f30acfdc875206a1af730412e5ac3",
+    "path": "npu-v2/pt_BR-cadu-medium-dec80.onnx",
+    "size_bytes": 1696466
    },
    "frames": 512,
-   "ids": 256,
-   "mid": {
-    "md5_digest": "a00ad00494992cff0a90f97452c0a6eb",
-    "path": "npu-v3/pt_BR-cadu-medium-mid.onnx",
-    "size_bytes": 939329
-   }
+   "ids": 256
   },
   "pt_BR-faber-medium": {
    "dec": {
-    "md5_digest": "b2d6274a17be148c5cdc6e576235079b",
-    "path": "npu-v3/pt_BR-faber-medium-dec80.onnx",
-    "size_bytes": 1703754
+    "md5_digest": "82a674a208e994c1b338e11f88fc983a",
+    "path": "npu-v2/pt_BR-faber-medium-dec80.onnx",
+    "size_bytes": 1703753
    },
    "enc": {
-    "md5_digest": "a92397698007db4a62444417401c5caa",
-    "path": "npu-v3/pt_BR-faber-medium-enc256.onnx",
-    "size_bytes": 6734038
+    "md5_digest": "3b47b5a063c7e3336c0c5a2ffc571211",
+    "path": "npu-v2/pt_BR-faber-medium-enc256.onnx",
+    "size_bytes": 6739950
    },
    "flow": {
-    "md5_digest": "8266979561f168ea4dce5a2b108bfd59",
-    "path": "npu-v3/pt_BR-faber-medium-flow512.onnx",
-    "size_bytes": 7264948
+    "md5_digest": "02001e963aa1afc921394f6ea314b016",
+    "path": "npu-v2/pt_BR-faber-medium-flow512.onnx",
+    "size_bytes": 7268507
    },
    "frames": 512,
    "ids": 256,
    "mid": {
-    "md5_digest": "e8f80b11ecc34eba86acff8a08b7cd46",
-    "path": "npu-v3/pt_BR-faber-medium-mid.onnx",
-    "size_bytes": 939329
+    "md5_digest": "b4ff7eb985b32c1cfac02483a36d04f0",
+    "path": "npu-v2/pt_BR-faber-medium-mid.onnx",
+    "size_bytes": 958846
    }
   },
   "ro_RO-mihai-medium": {

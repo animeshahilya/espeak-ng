@@ -212,11 +212,12 @@ public class PiperPhonemesTest {
         // skiljetecken
         assertEquals("sxˈɪljə", String.join("", PiperPhonemes.tokenize("ɧˈɪljə", nst)));
         assertEquals("ɧˈɪljə", String.join("", PiperPhonemes.tokenize("ɧˈɪljə", alma)));
-        // Word-final and pre-consonant rules: abertura, atenção, produto.
+        // Portuguese: none since upstream's Portuguese revert, which writes what the
+        // 2023 eSpeak did (abertura, atenção, produto pass through as eSpeak says them).
         final PiperVoiceConfig faber = PiperVoiceConfig.parse("pt_BR-faber-medium",
                 "{\"espeak\": {\"voice\": \"pt-br\"}, \"piper_version\": \"1.0.0\"," + map);
-        assertEquals(nfd("ˌabeɾətˈuɾæ ateɪŋsɐ̃ʊ̃ prˌodˈutʊ"),
-                String.join("", PiperPhonemes.tokenize("ˌabeɾtˈuɾɐ atẽnsɐ̃ʊ̃ pɾˌodˈutʊ", faber)));
+        assertEquals(nfd("ˌabeɾətˈuɾæ ˌateɪŋsˈɐ̃ʊ̃ prˌodˈutʊ"),
+                String.join("", PiperPhonemes.tokenize("ˌabeɾətˈuɾæ ˌateɪŋsˈɐ̃ʊ̃ prˌodˈutʊ", faber)));
         // Ukrainian в before a voiceless consonant and elsewhere, soft consonants: вовк, вона, пря.
         final PiperVoiceConfig uk = PiperVoiceConfig.parse("uk_UA-lada-x",
                 "{\"espeak\": {\"voice\": \"uk\"}, \"piper_version\": \"1.0.0\"," + map);
@@ -257,7 +258,7 @@ public class PiperPhonemesTest {
                 cases++;
             }
         }
-        assertTrue(cases > 400);
+        assertTrue(cases >= 400); // 10 rule sets x 40 (Portuguese's went 2026-11-16)
         assertEquals(Collections.emptyList(), failures);
     }
 
