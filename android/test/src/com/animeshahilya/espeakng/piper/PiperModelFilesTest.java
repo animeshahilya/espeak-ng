@@ -34,6 +34,23 @@ public class PiperModelFilesTest {
     }
 
     @Test
+    public void optimizingKeepsDownloadedNpuFiles() {
+        // Earlier optimized copies of model.onnx and unfinished ones go...
+        assertTrue(ModelFiles.staleBeforeOptimizing("model.1.30.0.enc.ort"));
+        assertTrue(ModelFiles.staleBeforeOptimizing("model.1.29.0.whole.ort"));
+        assertTrue(ModelFiles.staleBeforeOptimizing("model.encoder.tmp"));
+        // ...the NPU graphs downloaded right after install stay (Galaxy S25 Ultra,
+        // 2026-11-16: a new voice's first load deleted them, so it ran on the CPU).
+        assertFalse(ModelFiles.staleBeforeOptimizing("model.1.30.0.npuenc.6734038.ctx.onnx"));
+        assertFalse(ModelFiles.staleBeforeOptimizing("model.1.30.0.npuenc.6734038.ctx_qnn.bin"));
+        assertFalse(ModelFiles.staleBeforeOptimizing("model.1.30.0.npuq.1703754.onnx"));
+        assertFalse(ModelFiles.staleBeforeOptimizing("model.1.30.0.npumid.939329.ort"));
+        assertFalse(ModelFiles.staleBeforeOptimizing("model.1.30.0.npudec.1703754.ctx_qnn.bin.tmp"));
+        assertFalse(ModelFiles.staleBeforeOptimizing("model.onnx"));
+        assertFalse(ModelFiles.staleBeforeOptimizing("npuenc.onnx.md5"));
+    }
+
+    @Test
     public void aFolderWithAnOptimizedCopyStillHasAModel() throws Exception {
         final File dir = tmp.newFolder("v");
         assertFalse(ModelFiles.hasModel(dir));

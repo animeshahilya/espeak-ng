@@ -197,14 +197,28 @@ public final class ModelFiles {
     }
 
     /**
+     * What a new optimized copy replaces: earlier optimized copies of
+     * model.onnx and unfinished ones. Not the NPU files (".npu"): those are
+     * compiled from hosted graphs, not from model.onnx, and arrive right
+     * after a voice installs, before its first load - deleting them here put
+     * every new voice on the CPU until a later start downloaded them again
+     * (Galaxy S25 Ultra, 2026-11-16). Partial NPU downloads (.tmp) are being
+     * written at that moment too. Stale NPU files have their own clean-ups
+     * (PiperModel.attachNpu, NpuFiles.forgetCompiled, collectVoiceGarbage).
+     */
+    static boolean staleBeforeOptimizing(String name) {
+        return name.startsWith(PiperModel.OPTIMIZED_PREFIX) && !name.contains(".npu")
+                && (name.endsWith(".ort") || name.endsWith(".tmp"));
+    }
+
+    /**
      * Writes the optimized copy: encoder and decoder if the model splits,
      * else one alignment-enabled model. On any failure there is simply none.
      */
     static void buildOptimized(File onnx, File optimized, File encoder, File decoder,
                                        int threads) {
         final File dir = onnx.getParentFile();
-        final File[] stale = dir.listFiles((d, n) -> n.startsWith(PiperModel.OPTIMIZED_PREFIX)
-                && (n.endsWith(".ort") || n.endsWith(".tmp") || n.contains(".npu")) && !n.equals(PiperModel.NPU_DECODER_FILE));
+        final File[] stale = dir.listFiles((d, n) -> staleBeforeOptimizing(n));
         if (stale != null) {
             for (File f : stale) {
                 f.delete();
