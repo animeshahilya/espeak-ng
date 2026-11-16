@@ -1,14 +1,21 @@
 language variant
 name Baby
-klatt 6
-breath 5
-voicing 55
-speed 60
-pitch 340 450
-consonants 40 50
-formant 1 120 50 100
-formant 2 130  100 100 100
-formant 3 80  100 300
-formant 4 114  100 40
-formant 5 25  100 100
-stressAdd 10 20 10 10 0 0 10 20
+gender female 3
+
+pitch 320 400
+flutter 25
+intonation 4
+
+formant 0 130 140 110
+formant 1 145 110 100
+formant 2 150 100 100
+formant 3 140 90 100
+formant 4 130 80 90
+formant 5 120 70 90
+formant 6 110 60 90
+formant 7 105 55 90
+formant 8 100 50 90
+
+roughness 0
+voicing 85
+consonants 70 55

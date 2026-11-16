@@ -3,7 +3,7 @@ name Susan
 gender female
 
 
-:##echo 130 15
+//echo 130 15
 
 pitch 142 200
 formant 0 120  80 150
