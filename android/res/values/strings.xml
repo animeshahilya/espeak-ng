@@ -456,6 +456,7 @@
   <string name="about_feature_dict">• Custom user dictionary with regex, whole-word, and phoneme rules</string>
   <string name="about_feature_locks">• Caller-proof locks to prevent apps from overriding rate, pitch, or volume</string>
   <string name="about_license">Licensed under GNU General Public License v3.0 or later</string>
+  <string name="about_data_credits">Lithuanian stress dictionary from the LIEPA corpus (Vilnius University) and g2p-lt-lexicon (Arūnas Smaliukas), CC BY 4.0, via piper1-gpl</string>
 
   <!-- Settings load / export failure feedback (uncaught worker used to crash silently) -->
   <string name="settings_load_failed">Failed to load settings. Close and reopen the screen.</string>

@@ -146,7 +146,11 @@ public class EnglishVoicesDeviceTest {
         final Bundle args = InstrumentationRegistry.getArguments();
         final Locale locale = Locale.forLanguageTag(args.getString("locale", "en-US"));
         final String tag = args.getString("tag", "run");
-        final String[] items = "fixes".equals(args.getString("set")) ? FIX_ITEMS : ITEMS;
+        // -e items "a|b|c": these sentences instead (any language, with -e locale)
+        final String own = args.getString("items");
+        final String[] items = own != null ? java.util.Arrays.stream(own.split("\\|"))
+                .map(s -> "s " + s).toArray(String[]::new)
+                : "fixes".equals(args.getString("set")) ? FIX_ITEMS : ITEMS;
         final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         // -e voice <key>: English assigned to that natural voice for this run only.
         final android.content.SharedPreferences prefs = androidx.preference.PreferenceManager

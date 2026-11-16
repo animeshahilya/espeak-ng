@@ -550,6 +550,23 @@ voices" does not, so voices can still be deleted to free space.
   MD5s. piper 1.5+ trains on upstream eSpeak NG 724808c (1.3-1.4: 212928b);
   respelling its ɾ / iʲ quirks raised exact spellings but not ASR, so there
   are no rules for it.
+- **Lithuanian voices** (2026-11-16, `"phoneme_type": "lithuanian"`: rhasspy's
+  lt_LT ingute and reginute1). piper1-gpl's phonemize_lithuanian.py (GPL-3.0,
+  main branch, not yet in piper-tts 1.8.0) keeps eSpeak's IPA per word and moves
+  the stress to the syllable its dictionary names, with one of three pitch-accent
+  marks (ˈ ˌ and ˋ, id 166 in these voices' maps); plus letter-name fixes and a
+  vocative rule. `LithuanianPhonemes` ports it; `PiperEngine.prepare` re-phonemizes
+  each eSpeak clause from its own text span word by word, so spans and word
+  timing stay eSpeak's. `usesEspeak()` is true for it. Data in
+  `android/data/lithuanian/` (SOURCE.txt; the stress dictionary is CC BY 4.0,
+  credited in About). `LithuanianPhonemesTest` checks the port against piper's
+  own output for the same per-word IPA (`tools/lithuanian_fixture.py`, 69
+  sentences); the fork's eSpeak gives the same per-word IPA as piper's for all
+  354 fixture words. Other rhasspy voices with their own phonemizers (thai,
+  hebrew, japanese, pinyin) stay refused (`isSupported`).
+  Not every rhasspy voice may be re-hosted: fa_IR-magnoliasis has no licence
+  at all (its model card says so), so it is not bundled or ranked, only listed
+  from rhasspy like any other voice.
 - **Per-voice fixes** (2026-10-06, from a per-voice diagnosis: words one
   voice misses that the language's other voices say fine; scratch/voice-eval
   findings.md, diag.py, exp_fix.py). Applied only where Whisper showed a gain,

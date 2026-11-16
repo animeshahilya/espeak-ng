@@ -1,0 +1,636 @@
+{
+"words": {
+"LATIN": "l̩ˈatʲin",
+"centras": "tsʲˈentras",
+"bet": "bʲet",
+"metu": "mʲˈetu",
+"apie": "ˈapʲie",
+"jos": "jˈoːs",
+"kalnas": "kˈal̩nas",
+"to": "tˈoː",
+"lietuvos": "ɭietˈuvoːs",
+"ir": "ir",
+"jo": "jˈoː",
+"kartu": "kˈartu",
+"kalbos": "kˈal̩boːs",
+"kurios": "kˈurʲoːs",
+"būti": "bˈuːtʲi",
+"pietuose": "pʲietˈuose",
+"kalba": "kˈal̩ba",
+"todėl": "toːdʲˈeel̩",
+"administracinis": "admʲinʲistratsʲˈɪnʲis",
+"rajono": "rajˈoːnoː",
+"sudaro": "sudˈaroː",
+"karo": "kˈaroː",
+"vieta": "vʲˈieta",
+"kurie": "kˈurʲie",
+"tyrimų": "tʲiːrʲˈɪmuː",
+"kitos": "kʲˈɪtoːs",
+"kilęs": "kʲˈɪɭeɑs",
+"ant": "ˈant",
+"ramone": "ramˈoːnʲe",
+"spalvos": "spˈal̩voːs",
+"ar": "ˈar",
+"vadinama": "vadʲinˈama",
+"jūrų": "jˈuːruː",
+"užsiima": "usʲˈɪma",
+"karinių": "karʲˈɪnʲʲuː",
+"per": "pʲˈer",
+"patenka": "patʲˈenka",
+"savo": "sˈavoː",
+"kitų": "kʲˈɪtuː",
+"dažniausiai": "daʒnʲeusˈei",
+"grupės": "ɡrˈupʲees",
+"paplitusi": "papɭitˈusi",
+"miškų": "mʲˈɪʃkuː",
+"įsikūrusi": "iːsikuːrˈusi",
+"nors": "nˈoːrs",
+"italijos": "itaɭˈɪjoːs",
+"vakaruose": "vakarˈuose",
+"paveldo": "pavʲˈel̩doː",
+"pagrindinis": "paɡrʲinʲdʲˈɪnʲis",
+"kautynių": "kautʲˈiːnʲʲuː",
+"pagrindu": "paɡrʲˈɪndu",
+"geriausių": "ɡerʲeˈusʲuː",
+"pagrindą": "paɡrʲˈɪndaː",
+"sistemos": "sistʲˈemoːs",
+"donžonai": "doːnʒˈoːnai",
+"rizikas": "rʲizˈɪkas",
+"bangos": "bˈanɡoːs",
+"aukštumose": "aukʃtumˈoːse",
+"football": "foːoːdbˈal̩l̩",
+"grenadinų": "ɡrʲenadʲˈɪnuː",
+"esančių": "esˈanʲtɕʲuː",
+"esperansos": "espʲerˈansoːs",
+"valstybinis": "vaɭstʲiːbʲˈɪnʲis",
+"tundra": "tˈundra",
+"pripažintas": "prʲipaʒˈɪntas",
+"dievas": "dʲˈievas",
+"atabradas": "atabrˈadas",
+"trimis": "tʲrʲˈɪmʲis",
+"prieskonis": "prʲieskˈoːnʲis",
+"išvystyta": "iɕvʲiːstʲˈiːta",
+"aukštuose": "aukʃtˈuose",
+"tėrvetės": "tʲeervʲˈetʲees",
+"pilietinių": "pʲiɭietʲˈɪnʲʲuː",
+"suteiktas": "sutʲeˈɪktas",
+"šonuose": "ʃoːnˈuose",
+"aukščiau": "aukɕtɕˈeu",
+"muzika": "muzˈɪka",
+"augmenija": "auɡmʲenʲˈɪja",
+"šiurkščiais": "ɕʲurkɕtɕˈeis",
+"šriftas": "ɕrʲˈɪftas",
+"tvenkinys": "tʲvʲenʲkʲˈɪnʲiːs",
+"pusėje": "pusˈeeje",
+"apskrita": "apskrʲˈɪta",
+"kanalų": "kˈanal̩uː",
+"liekanos": "ɭiekˈanoːs",
+"kritikų": "krʲitʲˈɪkuː",
+"paskutinės": "paskutʲˈɪnʲees",
+"žmonės": "ʒmˈoːnʲees",
+"Maža": "mˈaʒa",
+"dalelė": "daɭˈeɭee",
+"yra": "ˈiːra",
+"atitekusi": "atʲitʲekˈusi",
+"Kinijai": "kʲinʲˈɪjai",
+"kur": "kˈur",
+"Aksai": "ˈaksai",
+"Čino": "tɕˈɪnoː",
+"administracinį": "admʲinʲistratsʲˈɪnʲiː",
+"vienetą": "vʲienʲˈetaː",
+"Trondheimo": "troːnʲdheˈɪmoː",
+"fjordas": "fjˈoːrdas",
+"dalina": "daɭˈɪna",
+"apskritį": "apskrʲˈɪtʲiː",
+"į": "ˈiː",
+"šiaurinę": "ɕeurʲˈɪnʲeɑ",
+"pietinę": "pʲietʲˈɪnʲeɑ",
+"dalį": "dˈaɭiː",
+"Tai": "tˈai",
+"gausiai": "ɡausˈei",
+"turistų": "turʲˈɪstuː",
+"lankomas": "l̩ˈankoːmas",
+"kalnynas": "kaɭnʲˈiːnas",
+"Liublino": "ɭʲubɭˈɪnoː",
+"unijos": "unʲˈɪjoːs",
+"priklausė": "prʲikl̩ˈausee",
+"Lietuvos": "ɭietˈuvoːs",
+"Didžiajai": "dʲidʑˈejai",
+"kunigaikštystei": "kunʲiɡaikɕtʲiːstʲˈei",
+"Vėliau": "vʲeeɭˈeu",
+"tarybiniu": "tarʲiːbʲˈɪnʲʲu",
+"laikotarpiu": "l̩aikoːtˈarpʲu",
+"jų": "jˈuː",
+"skaičius": "skˈaitɕʲus",
+"sumažėjo": "sumaʒˈeejoː",
+"Potamas": "poːtˈamas",
+"Traudo": "trˈaudoː",
+"upės": "ˈupʲees",
+"upė": "ˈupʲee",
+"Okeano": "oːkʲeˈanoː",
+"Tetijos": "tʲetʲˈɪjoːs",
+"sūnus": "sˈuːnus",
+"Robert": "rˈoːbʲert",
+"Oppenheimer": "oːppʲenʲheˈɪmʲer",
+"vadovavo": "vadoːvˈavoː",
+"JAV": "jˈav",
+"branduolinio": "branduoɭˈɪnʲʲoː",
+"ginklo": "ɡˈɪnkl̩oː",
+"sukūrimo": "sukuːrʲˈɪmoː",
+"programai": "proːɡrˈamai",
+"Taip": "tˈaip",
+"pat": "pˈat",
+"valsčiuje": "vaɭstɕʲˈuje",
+"Kanistano": "kˈanistanoː",
+"draustinis": "draustʲˈɪnʲis",
+"Lokiečo": "l̩oːkʲˈietʃoː",
+"Dalys": "dˈaɭiːs",
+"dabartinės": "dabartʲˈɪnʲees",
+"Čekijos": "tɕekʲˈɪjoːs",
+"regionų": "rʲeɡʲˈoːnuː",
+"tokių": "tˈoːkʲuː",
+"kaip": "kˈaip",
+"Karlovi": "karl̩ˈoːvʲi",
+"Varai": "vˈarai",
+"Liberecas": "ɭibʲerʲˈetsas",
+"Olomoucas": "oːl̩oːmoːˈutsas",
+"MoravijosSilezijos": "moːravʲˈɪjoːs siɭezˈɪjoːs",
+"kraštas": "krˈaʃtas",
+"Ūstis": "ˈuːstʲis",
+"prie": "prʲˈie",
+"Labės": "l̩ˈabʲees",
+"buvusio": "buvˈusʲoː",
+"Sudetų": "sudʲˈetuː",
+"krašto": "krˈaʃtoː",
+"teritorijoje": "tʲerʲitoːrʲijˈoːje",
+"Karo": "kˈaroː",
+"eigoje": "eiɡˈoːje",
+"tiek": "tʲˈiek",
+"nacionalistai": "natsʲoːnaɭˈɪstai",
+"komunistai": "koːmunʲˈɪstai",
+"vykdė": "vʲˈiːkdʲee",
+"didžiulio": "dʲidʑʲˈuɭʲoː",
+"masto": "mˈastoː",
+"žiaurumus": "ʒeurˈumus",
+"dėl": "dʲˈeel̩",
+"ko": "kˈoː",
+"milijonai": "mʲiɭijˈoːnai",
+"civilių": "tsʲivʲˈɪɭʲuː",
+"buvo": "bˈuvoː",
+"išžudyta": "iʒʒudʲˈiːta",
+"abiejų": "abʲˈiejuː",
+"kariaujančių": "karʲeujˈanʲtɕʲuː",
+"pusių": "pˈusʲuː",
+"pilietinio": "pʲiɭietʲˈɪnʲʲoː",
+"Lapai": "l̩ˈapai",
+"pailgai": "pˈail̩ɡai",
+"kiaušiniški": "kʲeuɕinʲˈɪɕkʲi",
+"du": "dˈu",
+"kartus": "kˈartus",
+"plunksniški": "pl̩unksnʲˈɪɕkʲi",
+"lapeliai": "l̩apʲˈeɭei",
+"plunksniškai": "pl̩unksnʲˈɪʃkai",
+"suskaldyti": "suskaɭdʲˈiːtʲi",
+"arba": "ˈarba",
+"dantyti": "dˈantʲiːtʲi",
+"link": "ɭˈɪnk",
+"viršūnės": "vʲirʃˈuːnʲees",
+"lapai": "l̩ˈapai",
+"mažėja": "maʒˈeeja",
+"ne": "nʲˈe",
+"taip": "tˈaip",
+"Su": "sˈu",
+"Pietų": "pʲˈietuː",
+"Indijoje": "inʲdʲijˈoːje",
+"paplitusiomis": "papɭitusʲˈoːmʲis",
+"dravidų": "dravʲˈɪduː",
+"kalbomis": "kal̩bˈoːmʲis",
+"indų": "ˈɪnduː",
+"nėra": "nʲˈeera",
+"susijusios": "susijˈusʲoːs",
+"tačiau": "tatɕˈeu",
+"tūkstančius": "tuːkstˈanʲtɕʲus",
+"metų": "mʲˈetuː",
+"trukusių": "trukˈusʲuː",
+"artimų": "artʲˈɪmuː",
+"kalbinių": "kaɭbʲˈɪnʲʲuː",
+"kontaktų": "koːntˈaktuː",
+"turi": "tˈurʲi",
+"tam": "tˈam",
+"tikrų": "tʲˈɪkruː",
+"bendrų": "bʲˈendruː",
+"bruožų": "brˈuoʒuː",
+"Jų": "jˈuː",
+"pasižymėjo": "pasiʒiːmʲˈeejoː",
+"paprastumu": "paprastˈumu",
+"tiesmukiškumu": "tʲiesmukʲiʃkˈumu",
+"greitumu": "ɡrʲeitˈumu",
+"tai": "tˈai",
+"priešingybė": "prʲieɕinʲɡˈiːbʲee",
+"tais": "tˈais",
+"laikais": "l̩ˈaikais",
+"įsivyravusiai": "iːsivʲiːravusˈei",
+"progresyviojo": "proːɡrʲesiːvʲˈoːjoː",
+"roko": "rˈoːkoː",
+"muzikai": "muzˈɪkai",
+"kad": "kˈat",
+"Ramones": "ramˈoːnʲes",
+"kūrybai": "kuːrʲˈiːbai",
+"didelės": "dʲidʲˈeɭees",
+"įtakos": "iːtˈakoːs",
+"turėjo": "turʲˈeejoː",
+"populiarioji": "poːpuɭerʲˈoːji",
+"šeštojo": "ɕeʃtˈoːjoː",
+"septintojo": "septʲintˈoːjoː",
+"dešimtmečio": "dʲeɕimtʲmʲˈetɕʲoː",
+"rokenrolo": "roːkʲenrˈoːl̩oː",
+"nariai": "narʲˈei",
+"klausėsi": "kl̩ausˈeesi",
+"nuo": "nˈuo",
+"vaikystės": "vaikʲˈiːstʲees",
+"Elvis": "ˈeɭvʲis",
+"Presley": "prʲesɭˈeiː",
+"The": "tʲhˈe",
+"Beach": "bʲˈeax",
+"Boys": "bˈoːiːs",
+"Beatles": "bʲeˈatʲɭes",
+"Kinks": "kʲˈɪnks",
+"Ronettes": "roːnʲˈetʲtʲes",
+"daugelis": "dauɡˈeɭis",
+"svarbu": "svˈarbu",
+"tiesiog": "tʲˈiesʲoːk",
+"išreikšti": "iɕrʲeˈɪkɕtʲi",
+"save": "savʲˈɛ",
+"o": "oː",
+"sukurti": "sukˈurtʲi",
+"virtuozišką": "vʲirtuozˈɪʃkaː",
+"šedevrą": "ɕedʲˈevraː",
+"Nors": "nˈoːrs",
+"laikomi": "l̩aikˈoːmʲi",
+"pankroko": "pˈankroːkoː",
+"pradininkais": "pradʲinʲˈɪnkais",
+"reikia": "rʲeˈɪkʲe",
+"turėti": "turʲˈeetʲi",
+"omenyje": "oːmʲenʲˈiːje",
+"keletą": "kʲeɭˈetaː",
+"dalykų": "daɭˈiːkuː",
+"Pirma": "pʲˈɪrma",
+"muzikoje": "muzikˈoːje",
+"daugiau": "dauɡˈeu",
+"atsispindi": "atʲsispʲˈɪnʲdʲi",
+"pop": "pˈoːp",
+"muzikos": "muzˈɪkoːs",
+"įtaka": "iːtˈaka",
+"dvasia": "dvˈase",
+"tuo": "tˈuo",
+"tarpu": "tˈarpu",
+"Sex": "sˈeks",
+"Pistols": "pʲistˈoːl̩s",
+"labiau": "l̩abʲˈeu",
+"panašu": "pˈanaʃu",
+"Stooges": "stoːˈoːɡes",
+"Antra": "ˈantra",
+"dainų": "dˈainuː",
+"tekstai": "tʲˈekstai",
+"nihilistiniai": "nʲihiɭistʲinʲˈei",
+"daugelio": "dauɡˈeɭʲoː",
+"grupių": "ɡrˈupʲuː",
+"Galima": "ɡaɭˈɪma",
+"daryti": "darʲˈiːtʲi",
+"išvadą": "iʃvˈadaː",
+"pradininkai": "pradʲinʲˈɪnkai",
+"ta": "tˈa",
+"prasme": "prˈasmʲe",
+"pateikė": "patʲeˈɪkʲee",
+"naują": "nˈaujaː",
+"požiūrį": "poːʒʲˈuːrʲiː",
+"muziką": "muzˈɪkaː",
+"būdą": "bˈuːdaː",
+"groti": "ɡrˈoːtʲi",
+"greitai": "ɡrʲeˈɪtai",
+"paprastai": "paprˈastai",
+"naudojant": "naudˈoːjant",
+"vos": "vˈoːs",
+"barre": "bˈarrʲe",
+"akordų": "akˈoːrduː",
+"be": "bʲˈe",
+"jokių": "jˈoːkʲuː",
+"soluočių": "soːl̩ˈuotɕʲuː",
+"Labas": "l̩ˈabas",
+"mama": "mˈama",
+"Mano": "mˈanoː",
+"grįžo": "ɡrʲˈiːʒoː",
+"Ačiū": "ˈatɕʲuː",
+"tėti": "tʲˈeetʲi",
+"Kur": "kˈur",
+"tu": "tˈʊ",
+"eini": "eˈɪnʲi",
+"vaikeli": "vaikʲˈeɭi",
+"Rašyk": "rˈaɕiːk",
+"el": "eɭektronʲˈinʲis",
+"paštu": "pˈaʃtu",
+"Raidė": "rˈaidʲee",
+"raidė": "rˈaidʲee",
+"z": "ʑˈee",
+"Šiandien": "ɕˈenʲdʲien",
+"diena": "dʲˈiena",
+"graži": "ɡrˈaʒi",
+"Vaikai": "vaːjˈɪkai",
+"žaidžia": "ʒˈaidʑe",
+"kieme": "kʲˈiemʲe",
+"Kalbėdamas": "kaɭbʲeedˈamas",
+"jis": "jˈɪs",
+"šypsojosi": "ɕiːpsoːjˈoːsi",
+"Ar": "ˈar",
+"maistas": "mˈaistas",
+"skanus": "skˈanus",
+"Valdyba": "vaɭdʲˈiːba",
+"posėdžiavo": "poːseedʑˈevoː",
+"žalias": "ʒˈaɭes",
+"planas": "pl̩ˈanas",
+"patvirtintas": "patʲvʲirtʲˈɪntas",
+"1990": "tˈuːkstantʲis dʲeviːnʲˈɪɕimtai dʲevʲˈiːnʲeʑdʲeɕimt",
+"m": "ˈem",
+"kovo": "kˈoːvoː",
+"11": "vʲienˈuoɭika",
+"d": "dʲˈee"
+},
+"cases": [
+[
+"LATIN",
+"l̩ˈatʲin"
+],
+[
+"centras",
+"ˌtsʲentras"
+],
+[
+"bet",
+"bʲˈet"
+],
+[
+"metu",
+"mʲeˋtu"
+],
+[
+"apie",
+"ˈapʲie"
+],
+[
+"jos",
+"ˌjoːs"
+],
+[
+"kalnas",
+"ˈkal̩nas"
+],
+[
+"to",
+"ˌtoː"
+],
+[
+"lietuvos",
+"ɭietuˌvoːs"
+],
+[
+"ir",
+"ˈir"
+],
+[
+"jo",
+"ˌjoː"
+],
+[
+"kartu",
+"karˋtu"
+],
+[
+"kalbos",
+"kal̩ˌboːs"
+],
+[
+"kurios",
+"kuˌrʲoːs"
+],
+[
+"būti",
+"ˈbuːtʲi"
+],
+[
+"pietuose",
+"pʲietuoˋse"
+],
+[
+"kalba",
+"kˈal̩ba"
+],
+[
+"todėl",
+"toːˌdʲeel̩"
+],
+[
+"administracinis",
+"admʲinʲistˌratsʲɪnʲis"
+],
+[
+"rajono",
+"raˋjoːnoː"
+],
+[
+"sudaro",
+"suˌdaroː"
+],
+[
+"karo vieta kurie tyrimų",
+"ˌkaroː vʲieˋta kuˌrʲie tʲiːˋrʲɪmuː"
+],
+[
+"kitos kilęs ant ramone",
+"kʲˈɪtoːs ˋkʲɪɭeɑs ˈant ramˈoːnʲe"
+],
+[
+"spalvos vieta ar vadinama",
+"spal̩ˌvoːs vʲieˋta ˈar vaˋdʲinama"
+],
+[
+"jūrų užsiima jo karinių",
+"ˈjuːruː uˋsʲɪma ˌjoː kaˋrʲɪnʲʲuː"
+],
+[
+"per patenka savo būti",
+"pʲˈer paˌtʲenka ˋsavoː ˈbuːtʲi"
+],
+[
+"kitų dažniausiai savo grupės",
+"kʲɪˌtuː daʒˈnʲeusei ˋsavoː ˋɡrupʲees"
+],
+[
+"paplitusi miškų įsikūrusi sudaro",
+"papˋɭitusi mʲɪʃˌkuː iːsiˈkuːrusi suˌdaroː"
+],
+[
+"nors italijos vakaruose paveldo",
+"nˈoːrs iˌtaɭɪjoːs vakaruoˋse ˌpavʲel̩doː"
+],
+[
+"pagrindinis kautynių pagrindu geriausių pagrindą",
+"paɡrʲinʲˋdʲɪnʲis kauˌtʲiːnʲʲuː ˌpaɡrʲɪndu ɡeˈrʲeusʲuː ˌpaɡrʲɪndaː"
+],
+[
+"sistemos donžonai rizikas bangos aukštumose",
+"sisˋtʲemoːs doːnʒˈoːnai ˋrʲizɪkas banˌɡoːs aukʃtumoːˋse"
+],
+[
+"football grenadinų esančių esperansos valstybinis",
+"foːoːdbˈal̩l̩ ɡrʲenadʲˈɪnuː ˌesanʲtɕʲuː espʲerˈansoːs vaɭsˈtʲiːbʲɪnʲis"
+],
+[
+"tundra pripažintas dievas atabradas trimis",
+"ˋtundra prʲipaˈʒɪntas ˌdʲievas atabrˈadas tʲrʲɪˋmʲis"
+],
+[
+"prieskonis išvystyta aukštuose tėrvetės pilietinių",
+"ˈprʲieskoːnʲis iɕˈvʲiːstʲiːta aukʃtˈuose tʲeervʲˈetʲees pʲiˌɭietʲɪnʲʲuː"
+],
+[
+"suteiktas šonuose aukščiau muzika augmenija",
+"ˋsutʲeɪktas ˈʃoːnuose aukɕtˌɕeu ˋmuzɪka auɡmʲenʲɪˋja"
+],
+[
+"šiurkščiais šriftas tvenkinys pusėje apskrita",
+"ɕʲurkɕtɕˈeis ˋɕrʲɪftas tʲvʲenʲkʲɪˌnʲiːs ˋpuseeje apskrʲˈɪta"
+],
+[
+"kanalų liekanos kritikų paskutinės žmonės",
+"kaˌnal̩uː ˌɭiekanoːs ˋkrʲitʲɪkuː paskuˋtʲɪnʲees ˈʒmoːnʲees"
+],
+[
+"Maža dalelė yra atitekusi Kinijai, kur sudaro Aksai Čino administracinį vienetą.",
+"mˈaʒa daˌɭeɭee iːˋra atʲitʲekˈusi ˋkʲinʲɪjai, ˌkur suˌdaroː ˈaksai tɕˈɪnoː admʲinʲistˌratsʲɪnʲiː ˈvʲienʲetaː."
+],
+[
+"Trondheimo fjordas dalina apskritį į šiaurinę ir pietinę dalį.",
+"troːnʲdheˈɪmoː fjˈoːrdas daˋɭɪna ˌapskrʲɪtʲiː ˈiː ɕeuˋrʲɪnʲeɑ ˈir pʲieˋtʲɪnʲeɑ ˌdaɭiː."
+],
+[
+"Tai gausiai turistų lankomas kalnynas.",
+"tˈai ˌɡausei tuˋrʲɪstuː ˌl̩ankoːmas kaɭnʲˈiːnas."
+],
+[
+"Liublino unijos priklausė Lietuvos Didžiajai kunigaikštystei.",
+"ˋɭʲubɭɪnoː ˋunʲɪjoːs prʲikl̩ˈausee ɭietuˌvoːs ˋdʲidʑejai kunʲiɡaikɕˌtʲiːstʲei."
+],
+[
+"Vėliau, tarybiniu laikotarpiu, jų skaičius sumažėjo.",
+"vʲeeˌɭeu, taˈrʲiːbʲɪnʲʲu l̩aiˈkoːtarpʲu, ˌjuː ˌskaitɕʲus sumaˈʒeejoː."
+],
+[
+"Potamas, Traudo upės dievas ir upė, Okeano ir Tetijos sūnus.",
+"poːtˈamas, trˈaudoː ˋupʲees ˌdʲievas ˈir ˋupʲee, oːˌkʲeanoː ˈir tʲetʲˈɪjoːs suːˋnus."
+],
+[
+"Robert Oppenheimer vadovavo JAV branduolinio ginklo sukūrimo programai.",
+"rˈoːbʲert oːppʲenʲheˈɪmʲer vadoːˌvavoː jˈav branduoˋɭɪnʲʲoː ˌɡɪnkl̩oː sukuːˋrʲɪmoː proːɡˌramai."
+],
+[
+"Taip pat valsčiuje yra Kanistano miškų draustinis ir Lokiečo miškų draustinis.",
+"ˌtaip ˋpat ˌvaɭstɕʲuje iːˋra kˈanistanoː mʲɪʃˌkuː drausˋtʲɪnʲis ˈir l̩oːkʲˈietʃoː mʲɪʃˌkuː drausˋtʲɪnʲis."
+],
+[
+"Dalys dabartinės Čekijos regionų, tokių kaip Karlovi Varai, Liberecas, Olomoucas, Moravijos-Silezijos kraštas ir Ūstis prie Labės yra buvusio Sudetų krašto teritorijoje.",
+"ˌdaɭiːs dabarˋtʲɪnʲees ˋtɕekʲɪjoːs rʲeˋɡʲoːnuː, toːˌkʲuː ˌkaip karl̩ˈoːvʲi vaˌrai, ɭibʲerʲˈetsas, oːl̩oːmoːˈutsas, moːravʲˈɪjoːs siɭezˈɪjoːs ˌkraʃtas ˈir ˈuːstʲis prʲˈie l̩ˈabʲees iːˋra ˋbuvusʲoː sudʲˈetuː ˌkraʃtoː tʲerʲiˋtoːrʲijoːje."
+],
+[
+"Karo eigoje tiek nacionalistai, tiek komunistai vykdė didžiulio masto žiaurumus, dėl ko milijonai civilių buvo išžudyta abiejų kariaujančių pusių pilietinio karo metu.",
+"ˌkaroː eiɡoːˋje ˈtʲiek natsʲoːnaˋɭɪstai, ˈtʲiek koːmuˋnʲɪstai ˈvʲiːkdʲee dʲidˋʑʲuɭʲoː ˌmastoː ʒeuruˋmus, dʲˈeel̩ ˌkoː mʲiɭiˌjoːnai tsʲiˋvʲɪɭʲuː ˋbuvoː iʒʒuˈdʲiːta abʲieˌjuː kaˈrʲeujanʲtɕʲuː ˋpusʲuː pʲiˌɭietʲɪnʲʲoː ˌkaroː mʲeˋtu."
+],
+[
+"Lapai pailgai kiaušiniški, du kartus plunksniški; lapeliai plunksniškai suskaldyti arba dantyti link viršūnės lapai mažėja ir ne taip suskaldyti.",
+"ˌl̩apai pˈail̩ɡai kʲeuɕinʲˈɪɕkʲi, ˋdu karˋtus pl̩unksnʲˈɪɕkʲi; l̩aˌpʲeɭei pl̩unksnʲˈɪʃkai susˈkaɭdʲiːtʲi ˈarba dˈantʲiːtʲi ˌɭɪnk vʲirˈʃuːnʲees ˌl̩apai maˈʒeeja ˈir ˋnʲe ˌtaip susˈkaɭdʲiːtʲi."
+],
+[
+"Su Pietų Indijoje paplitusiomis dravidų kalbomis indų kalbos nėra susijusios, tačiau dėl tūkstančius metų trukusių artimų kalbinių kontaktų turi tam tikrų bendrų bruožų.",
+"sˈu pʲieˌtuː ˋinʲdʲijoːje papɭitusʲˈoːmʲis dravʲˈɪduː kal̩boːˋmʲis ˌɪnduː kal̩ˌboːs nʲeeˋra suˋsijusʲoːs, tatɕˈeu dʲˈeel̩ ˈtuːkstanʲtɕʲus ˌmʲetuː ˋtrukusʲuː artʲɪˌmuː kaɭˋbʲɪnʲʲuː koːnˌtaktuː ˋturʲi ˈtam tʲɪkˌruː bʲendˌruː ˈbruoʒuː."
+],
+[
+"Jų muzika pasižymėjo paprastumu, tiesmukiškumu ir greitumu – tai yra priešingybė tais laikais įsivyravusiai progresyviojo roko muzikai.",
+"ˌjuː ˋmuzɪka pasiʒiːˈmʲeejoː paprastuˋmu, tʲiesmukʲiʃkˈumu ˈir ɡrʲeituˋmu tˈai iːˋra prʲieɕinʲˈɡiːbʲee ˌtais l̩aiˌkais iːsivʲiːravusˈei proːɡrʲeˌsiːvʲoːjoː ˌroːkoː ˋmuzɪkai."
+],
+[
+"Taip yra dėl to, kad Ramones kūrybai didelės įtakos turėjo populiarioji šeštojo ir septintojo dešimtmečio roko ir rokenrolo muzika, kurios grupės nariai klausėsi nuo vaikystės, – tai yra Elvis Presley, The Beach Boys, The Beatles, The Kinks, The Ronettes ir daugelis kitų, – ir Ramones buvo svarbu tiesiog išreikšti save, o ne sukurti virtuozišką šedevrą.",
+"ˌtaip iːˋra dʲˈeel̩ ˌtoː, kˈat ramˈoːnʲes kuːˈrʲiːbai dʲidʲˈeɭees ˈiːtakoːs tuˈrʲeejoː poːpuɭeˈrʲoːji ˌɕeʃtoːjoː ˈir sepˌtʲintoːjoː dʲeˌɕimtʲmʲetɕʲoː ˌroːkoː ˈir roːkʲenˋroːl̩oː ˋmuzɪka, kuˌrʲoːs ˋɡrupʲees naˌrʲei kl̩ausˈeesi nˈuo vaiˌkʲiːstʲees, tˈai iːˋra ˋeɭvʲis prʲesɭˈeiː, tʲhˈe bʲˈeax bˈoːiːs, tʲhˈe bʲeˈatʲɭes, tʲhˈe kʲˈɪnks, tʲhˈe roːnʲˈetʲtʲes ˈir ˌdauɡeɭis kʲɪˌtuː, ˈir ramˈoːnʲes ˋbuvoː svarˋbu tʲieˈsʲoːk iɕˈrʲeɪkɕtʲi saˋvʲɛ, ˈoː ˋnʲe suˈkurtʲi vʲirtuozˈɪʃkaː ɕedʲˈevraː."
+],
+[
+"Nors Ramones yra laikomi pankroko pradininkais, reikia turėti omenyje keletą dalykų.",
+"nˈoːrs ramˈoːnʲes iːˋra ˌl̩aikoːmʲi pˈankroːkoː pradʲinʲˈɪnkais, ˌrʲeɪkʲe tuˈrʲeetʲi oːmʲenʲiːˋje ˌkʲeɭetaː daˌɭiːkuː."
+],
+[
+"Pirma, jų muzikoje daugiau atsispindi rokenrolo ir pop muzikos įtaka, dvasia, tuo tarpu The Sex Pistols labiau panašu į The Stooges.",
+"pʲɪrˋma, ˌjuː ˋmuzikoːje dauˌɡeu atʲsisˌpʲɪnʲdʲi roːkʲenˋroːl̩oː ˈir pˈoːp ˋmuzɪkoːs ˈiːtaka, dvaˋse, ˌtuo ˈtarpu tʲhˈe sˈeks pʲistˈoːl̩s l̩aˌbʲeu panaˋʃu ˈiː tʲhˈe stoːˈoːɡes."
+],
+[
+"Antra, Ramones dainų tekstai nėra nihilistiniai kaip Sex Pistols, The Stooges ir daugelio kitų pankroko grupių.",
+"ˈantra, ramˈoːnʲes daiˌnuː ˋtʲekstai nʲeeˋra nʲihiɭistʲinʲˈei ˌkaip sˈeks pʲistˈoːl̩s, tʲhˈe stoːˈoːɡes ˈir ˌdauɡeɭʲoː kʲɪˌtuː pˈankroːkoː ˋɡrupʲuː."
+],
+[
+"Galima daryti išvadą, kad Ramones yra pankroko pradininkai ta prasme, kad pateikė naują požiūrį į muziką ir naują būdą groti – greitai ir paprastai, naudojant vos keletą barre akordų ir be jokių soluočių.",
+"ˌɡaɭɪma daˈrʲiːtʲi ˋiʃvadaː, kˈat ramˈoːnʲes iːˋra pˈankroːkoː ˌpradʲinʲɪnkai ˋta prasˋmʲe, kˈat ˋpatʲeɪkʲee ˌnaujaː ˈpoːʒʲuːrʲiː ˈiː ˋmuzɪkaː ˈir ˌnaujaː ˌbuːdaː ˈɡroːtʲi ˌɡrʲeɪtai ˈir paprasˌtai, nauˈdoːjant ˌvoːs ˌkʲeɭetaː bˈarrʲe aˋkoːrduː ˈir bʲˈe joːˌkʲuː soːl̩ˈuotɕʲuː."
+],
+[
+"Labas, mama.",
+"ˌl̩abas, ˈmaːːma."
+],
+[
+"Mano mama grįžo.",
+"ˋmanoː maˋma ˌɡrʲiːʒoː."
+],
+[
+"Ačiū, tėti!",
+"ˌatɕʲuː, ˈtʲeetʲi!"
+],
+[
+"Kur tu eini, vaikeli?",
+"ˌkur ˋtʊ eɪˋnʲi, ˈvaikʲeɭi?"
+],
+[
+"Rašyk el.",
+"raˈɕiːk ˈel̩."
+],
+[
+"paštu.",
+"paʃˋtu."
+],
+[
+"Raidė el ir raidė z.",
+"ˌraidʲee ˈel̩ ˈir ˌraidʲee zˈee."
+],
+[
+"Šiandien diena graži.",
+"ˌɕenʲdʲien dʲieˋna ɡraˋʒi."
+],
+[
+"Vaikai žaidžia kieme.",
+"vaːjɪˌkai ˌʒaidʑe kʲieˋmʲe."
+],
+[
+"Kalbėdamas jis šypsojosi.",
+"kaɭˈbʲeedamas ˋjɪs ɕiːpˈsoːjoːsi."
+],
+[
+"Ar maistas skanus?",
+"ˈar ˌmaistas skaˋnus?"
+],
+[
+"Valdyba posėdžiavo: žalias planas patvirtintas.",
+"vaɭˈdʲiːba poːseedˌʑevoː: ˌʒaɭes ˌpl̩anas patʲˋvʲirtʲɪntas."
+],
+[
+"1990 m.",
+"tˈuːkstantʲis dʲeviːnʲˈɪɕimtai dʲevʲˈiːnʲeʑdʲeɕimt ˋem."
+],
+[
+"kovo 11 d.",
+"ˈkoːvoː vʲienˈuoɭika dʲˈee."
+]
+]
+}

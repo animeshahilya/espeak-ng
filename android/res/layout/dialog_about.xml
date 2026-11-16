@@ -115,6 +115,16 @@
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
+        <!-- Credit the CC BY 4.0 data the app ships (attribution is its condition). -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/about_data_credits"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant" />
+
         <!-- Feedback and GitHub buttons: outlined (the positive OK button
              already owns the filled/tonal primary slot in the dialog footer). -->
         <Button

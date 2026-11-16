@@ -31,6 +31,11 @@ import java.util.Map;
 public final class PiperVoiceConfig {
     static final String PHONEME_TYPE_ESPEAK = "espeak";
     static final String PHONEME_TYPE_TEXT = "text";
+    /**
+     * piper1-gpl's Lithuanian voices: eSpeak's IPA per word with the stress
+     * moved to the dictionary's syllable and pitch accent ({@link LithuanianPhonemes}).
+     */
+    static final String PHONEME_TYPE_LITHUANIAN = "lithuanian";
     /** Supertone Supertonic 3: plain text through its own tokenizer ({@link Supertonic}). */
     static final String PHONEME_TYPE_SUPERTONIC = "supertonic";
     /** Gradium Phonon 31m: plain English text, normalized and tokenized by its runtime ({@link Phonon}). */
@@ -222,7 +227,8 @@ public final class PiperVoiceConfig {
      * Whether this app can phonemize for the voice. Newer Piper voices for
      * Chinese, Japanese, Thai and Hebrew bring their own phonemizers
      * (pinyin, OpenJTalk, ...) that have nothing to do with eSpeak; those
-     * are refused before the model is downloaded.
+     * are refused before the model is downloaded. Lithuanian's builds on
+     * eSpeak and is ported ({@link LithuanianPhonemes}).
      */
     public boolean isSupported() {
         if (isPhonon()) {
@@ -236,14 +242,19 @@ public final class PiperVoiceConfig {
                             Supertonic.TEXT_ENCODER, Supertonic.VOCODER, Supertonic.INDEXER,
                             Supertonic.TTS_JSON, Supertonic.STYLE));
         }
-        return (PHONEME_TYPE_ESPEAK.equals(phonemeType) || PHONEME_TYPE_TEXT.equals(phonemeType))
+        return (usesEspeak() || PHONEME_TYPE_TEXT.equals(phonemeType))
                 && sampleRate > 0
                 && phonemeIdMap.containsKey(PAD)
                 && (PHONEME_TYPE_TEXT.equals(phonemeType) || espeakVoice != null);
     }
 
+    /** Phonemes from eSpeak NG: plain, or Lithuanian's accented ones built on them. */
     public boolean usesEspeak() {
-        return PHONEME_TYPE_ESPEAK.equals(phonemeType);
+        return PHONEME_TYPE_ESPEAK.equals(phonemeType) || isLithuanian();
+    }
+
+    public boolean isLithuanian() {
+        return PHONEME_TYPE_LITHUANIAN.equals(phonemeType);
     }
 
     /**

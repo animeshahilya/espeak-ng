@@ -1,0 +1,16 @@
+From piper1-gpl (https://github.com/OHF-Voice/piper1-gpl) d76f335d,
+src/piper/lithuanian/, read by LithuanianPhonemes for Lithuanian natural voices.
+
+lt_kirciai.tsv    stress dictionary: word, vowel group index, pitch accent mark
+                  [, IPA vowel group index where eSpeak splits a diphthong].
+                  Derived from two works under Creative Commons Attribution 4.0
+                  International (https://creativecommons.org/licenses/by/4.0/):
+                    LIEPA corpus annotation - Vilnius University
+                      (https://huggingface.co/datasets/meldynamics/liepa-tts)
+                    g2p-lt-lexicon - Arunas Smaliukas
+                      (https://github.com/svogunas/g2p-lt-lexicon)
+                  Changes by piper1-gpl: merged and re-encoded as (word, vowel
+                  group index, accent mark), with manual corrections
+                  (https://github.com/RobertasTa/reginute, sudaryk_zodyna.py).
+lt_raides.tsv     letter names eSpeak gets wrong (piper1-gpl, GPL-3.0).
+lt_kreipiniai.tsv nouns used as direct address (piper1-gpl, GPL-3.0).

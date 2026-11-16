@@ -915,8 +915,12 @@ public final class PiperEngine {
             if (raw == null) {
                 return null;
             }
-            final List<PiperPhonemes.Clause> aligned =
+            List<PiperPhonemes.Clause> aligned =
                     PiperPhonemes.alignToText(PiperPhonemes.parseRecords(raw), said);
+            final LithuanianPhonemes lt = config.isLithuanian() ? LithuanianPhonemes.shared() : null;
+            if (lt != null) {
+                aligned = lt.clauses(aligned, said, w -> phonemizer.phonemize(config.espeakVoice, w));
+            }
             clauses = vowelled != null ? PiperPhonemes.remap(aligned, vowelled.toOriginal) : aligned;
         } else if (config.isSupertonic() || config.isPhonon()) {
             clauses = null; // Supertonic.chunks below
