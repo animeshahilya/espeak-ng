@@ -173,6 +173,10 @@ test_phon hi "'E: ki m'a:tra:" "ै" "hi vowel sign ai"
 test_phon hi "'o: ki m'a:tra:" "ो" "hi vowel sign o"
 test_phon hi "'O: ki m'a:tra:" "ौ" "hi vowel sign au"
 test_phon hi "'O ki m'a:tra:" "ॉ" "hi vowel sign oo"
+Vj'o:d#ja: ke: m,aha:*'a:J d'VS@*,@t# ke: b'Vr.e: s@p'Utr@- t#e:" "ऋषियों को सताने वाले दुष्ट राक्षसों के राजा रावण का सर्वनाश करने वाले विष्णुवतार भगवान श्रीराम, अयोध्या के महाराज दशरथ के बड़े सपुत्र थे।" "Deva"
+# the fork's Hindi rules write this schwa as @4 (upstream: @2)
+test_phon hi "n'e:tr@4H,i:n" "नेत्रहीन" "hi netraheen"
+test_phon hi "n'e:tr@4d,a:n" "नेत्रदान" "hi netradaan"
 test_phon hy "k@rn'am ,apak'i ut'el j'ev ints'i ,anhang'ist tS#@n'er" "Կրնամ ապակի ուտել և ինծի անհանգիստ չըներ։" "Armn"
 test_phon hyw "g@rn'am ,abag'i ud'el j'ev indz'i ,anhank#'isd tS#@n'er" "Կրնամ ապակի ուտել և ինծի անհանգիստ չըներ։" "Armn"
 test_phon hr "l^'ub&znI f'En^eRdZ,Ij& tS'adZ;&vog l'its& x'otS;E d'a m'i p'ok&ZE St'os" "Љубазни фењерџија чађавог лица хоће да ми покаже штос." "Cyrl"
@@ -229,6 +233,15 @@ test_phon scn "E 'ERE 'O n'OvI" "e
 erre
 o
 novi" "Latn"
+# English loanwords and acronyms
+test_phon it "sp'eIs" "space" "Latn"
+test_phon it "sp'eIsIz" "spaces" "Latn"
+test_phon it "(en)sp'eIsbA@(it)" "spacebar" "Latn"
+test_phon it "(en)sp'eIskraaft(it)" "spacecraft" "Latn"
+test_phon it "(en)w'3:kspeIs(it)" "workspace" "Latn"
+test_phon it "k'O:l" "call" "Latn"
+test_phon it "r'i:dIN" "reading" "Latn"
+test_phon it ",a:,Effek'ap:a" "afk" "Latn"
 test_phon ja ",ir\`oh,anihoh'eto
 t_s\\,ir\`inur\`'uo
 w,akaj,otar\`'eso
@@ -301,6 +314,13 @@ test_phon ku "hun kURd'i d,Izan'In" "hûn kurdî dizanin."
 test_phon ku "mIlj'on" "1.000.000"
 test_phon ku "hEz'ar_! _up'endZs'Ed_u d'U" "1.502"
 test_phon ku "d'U _behn'ok p'endZ" "2,5"
+# Kurmanji large numbers: milyar (10^9) and trilyon (10^12)
+test_phon ku "mIlj'on" "1000000"
+test_phon ku "mIlj'ar" "1000000000"
+test_phon ku "d'U mIlj'ar" "2000000000"
+test_phon ku "p'endZ mIlj'ar" "5000000000"
+test_phon ku "trIlj'on" "1000000000000"
+test_phon ku "s'e trIlj'on" "3000000000000"
 test_phon la  "s'Ik_ f'UgI;Ens_
 d'Uks_
 zElOt'ypOs_
