@@ -59,6 +59,8 @@ test_crash_vector phoneme-table-switch-appendvowel -v el
 test_crash_vector phoneme-table-switch-appendvowel -v ja
 test_crash_vector suffix-chain-end-phonemes-oob -v en
 test_crash_vector embedded-punctlist-oob -v en
+test_crash_vector ssml-break-time-wrap -m -v en
+test_crash_vector hangul-letter-pre-context-oob -m -v en
 test_crash_vector punctuation-name-overflow -v te --punct
 test_crash_vector punctuation-name-overflow -v mr --punct
 test_crash_vector punctuation-name-overflow -v ml --punct

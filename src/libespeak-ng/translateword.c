@@ -1057,7 +1057,7 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 		if ((chosen != NULL) || (language != tr->translator_name) || (language == L('k', 'o'))) {
 			char *p3;
 			//int initial, code;
-			char hangul_buf[12];
+			char hangul_buf[13];
 
 			// speak in the language for this alphabet (or English)
 			char word_buf[5];
@@ -1069,8 +1069,10 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 					// Special case for Korean letters.
 					// break a syllable hangul into 2 or 3 individual jamo
 
-					hangul_buf[0] = ' ';
-					p3 = &hangul_buf[1];
+					// a leading NUL: TranslateRules looks one byte before the word (#2692)
+					hangul_buf[0] = 0;
+					hangul_buf[1] = ' ';
+					p3 = &hangul_buf[2];
 					int initial;
 					if ((initial = (code/28)/21) != 11) {
 						p3 += utf8_out(initial + 0x1100, p3);
@@ -1080,7 +1082,7 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 					p3[6] = ' ';
 					p3[7] = 0;
 					ph_buf[3] = 0;
-					TranslateRules(translator3, &hangul_buf[1], &ph_buf[3], sizeof(ph_buf)-3, NULL, 0, NULL);
+					TranslateRules(translator3, &hangul_buf[2], &ph_buf[3], sizeof(ph_buf)-3, NULL, 0, NULL);
 					SetWordStress(translator3, &ph_buf[3], NULL, -1, 0);
 				} else
 					LookupLetter(translator3, letter, word[n_bytes], &ph_buf[3], sizeof(ph_buf) - 3, control & 1);
@@ -1116,7 +1118,7 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 				Lookup(translator, "_??", ph_buf, sizeof(ph_buf));
 
 			if (ph_buf[0] == 0)
-				EncodePhonemes("l'et@", ph_buf, NULL);
+				EncodePhonemes("l'et@", ph_buf, sizeof(ph_buf), NULL);
 		}
 
 		if (!(control & 4) && (al_flags & AL_NOT_CODE)) {
@@ -1147,7 +1149,7 @@ static int TranslateLetter(Translator *tr, char *word, char *phonemes, int contr
 				LookupLetter(translator, *p2, 0, pbuf, sizeof(ph_buf) - (pbuf - ph_buf), 1);
 				if (((pbuf[0] == 0) || (pbuf[0] == phonSWITCH)) && (*p2 >= 'a')) {
 					// This language has no translation for 'a' to 'f', speak English names using base phonemes
-					EncodePhonemes(hex_letters[*p2 - 'a'], pbuf, NULL);
+					EncodePhonemes(hex_letters[*p2 - 'a'], pbuf, sizeof(ph_buf) - (pbuf - ph_buf), NULL);
 				}
 			}
 			strcat(pbuf, pause_string);
