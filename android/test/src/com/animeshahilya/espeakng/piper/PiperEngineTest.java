@@ -54,6 +54,12 @@ public class PiperEngineTest {
         assertEquals(PiperDevice.Fit.RECOMMENDED, PiperDevice.enhancedFit(PiperDevice.Tier.HIGH, 0, light));
         assertEquals(PiperDevice.Fit.NEUTRAL, PiperDevice.enhancedFit(PiperDevice.Tier.MID, 0, light));
         assertEquals(PiperDevice.Fit.SLOW, PiperDevice.enhancedFit(PiperDevice.Tier.LOW, 34, light));
+        // Galaxy S25 Ultra: Samsung declares no class; its 8 Elite counts as a flagship.
+        assertEquals(33, PiperDevice.effectiveClass(0, "SM8750"));
+        assertEquals(PiperDevice.Fit.RECOMMENDED, PiperDevice.enhancedFit(PiperDevice.Tier.HIGH,
+                PiperDevice.effectiveClass(0, "SM8750"), heavy));
+        assertEquals(0, PiperDevice.effectiveClass(0, null)); // other chips: as declared
+        assertEquals(34, PiperDevice.effectiveClass(34, "SM8650"));
     }
 
     @Test

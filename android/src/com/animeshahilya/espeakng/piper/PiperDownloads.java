@@ -1348,8 +1348,11 @@ public final class PiperDownloads {
         // ("Cannot write ...json.tmp"); the second now finds them stamped.
         synchronized (EXTRAS_LOCK) {
             fetchTashkeel(storageContext);
-            fetchNpuDecoders(appContext, storageContext);
+            // Supertonic's companion files (a few MB) before the NPU files
+            // (~184 MB): without its style a new voice cannot load even on the
+            // CPU, and it waited out the whole NPU download (Galaxy S25, 36 s).
             fetchSupertonicFiles(appContext, storageContext);
+            fetchNpuDecoders(appContext, storageContext);
         }
     }
 

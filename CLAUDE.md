@@ -91,10 +91,10 @@ Native build disables `USE_ASYNC` (not needed on Android) and
 enables `USE_LIBSONIC` for speech rates above `espeakRATE_MAXIMUM`.
 MBROLA support was removed entirely from this fork (proprietary binary,
 not viable/redistributable on Android); Klatt voices are the alternative. libsonic has
-no NDK sysroot package, so `jni/CMakeLists.txt` fetches and builds it from
-source (pinned to a specific commit, bumped occasionally for upstream fixes
-in `sonic.c` itself - that's the only file of the library actually compiled
-here) and pre-seeds `SONIC_LIB`/`SONIC_INC` for `cmake/deps.cmake`.
+no NDK sysroot package, so it is vendored in `src/sonic/` (sonic.c, sonic.h,
+LICENSE; identical to waywardgeek/sonic b93885dc, checked 2026-11-16) and
+`jni/CMakeLists.txt` builds `sonic.c` and pre-seeds `SONIC_LIB`/`SONIC_INC`
+for `cmake/deps.cmake`.
 
 `libttsespeak.so` exports only its JNI functions (`jni/ttsespeak.map`), so the linker drops engine code JNI never reaches (the dictionary/phoneme compilers among it). If a new `native` method is added, it is exported automatically (`Java_*`).
 
@@ -390,6 +390,11 @@ voices" does not, so voices can still be deleted to free space.
   voices without the NPU on a phone below performance class 33, say "may
   pause on this phone" (`PiperDownloads.mayBeSlow`, `npuHere`). Phonon is
   the one exception: it runs only on the NPU of `NpuFiles.TARGETS`.
+  Samsung declares no media performance class, even on the Galaxy S25 Ultra
+  (8 Elite, 12 GB), so every heavy Enhanced voice there said "may pause"
+  (screen check, 2026-11-19); `PiperDevice.effectiveClass` counts an
+  undeclared `NpuFiles.TARGETS` chip as class 33, and they now say
+  "recommended for this phone".
 - **No NNAPI** (removed 2026-10-08 with its opt-in switch, user's call):
   on a Pixel 8 it took ~10 of ~2700 VITS nodes, ran them on Android's
   reference CPU driver (15% slower) and failed the run for the unoptimized
@@ -885,6 +890,52 @@ voices" does not, so voices can still be deleted to free space.
   110-120 -> 24-25 ms, sentences 174-186 -> 24-25, long text 185-199 -> 44-49
   (Rahul, Piper on the NPU: 54-57 / 154-199 / 62-66), 30 stops mid-stream
   clean, PiperE2E 10/10 with Everly as English.
+- **tiny-voca** (2026-11-19, `"phoneme_type": "tiny_voca"`, keys
+  `en_US-tiny_voca_<f2|m2>-medium`, release `tinyvoca-v1`, samples in
+  samples-v1): n4ze3m/tiny-voca (Apache-2.0, 4.5M parameters, 24 kHz, two
+  voices over one shared model). Added beside the English voices, not instead
+  of any: kept_voices is unchanged. A deliberate exception to the community
+  vetting rule above: its training audio is all Qwen3-TTS output (Apache-2.0);
+  the user listened and chose to keep both. Its phonemes are eSpeak-style
+  American IPA plus a stress input, so it reads this fork's en-us IPA as is
+  (`usesEspeak()`, but no trained-spelling rules; its own phonemizer, dizione,
+  is not used): `TinyVoca.ids` matches greedily, puts eSpeak's ˈ/ˌ on the next
+  vowel, adds `<sp>` between words and a closing '.', and packs the stress
+  above bit 16 of each id. A few sounds eSpeak's en-us writes have no token
+  (en_list, 4463 words: r, x, ç, ɬ, ʲ, ɑ̃, e, u in Kyrgyz, Ahmed, Utrecht,
+  blanc, Bologna...): `TinyVoca.FALLBACK` gives the nearest American one
+  (r->ɹ, x/ç->k, ɬ->l, ʲ->j, ɑ->ɑː, e->eɪ, u->uː) instead of dropping the sound;
+  build_tinyvoca.py's `tokenize` mirrors it. `PiperModel.putInputs` (`tinyVocaInputs`) splits
+  them into `tokens`/`stress` and feeds `voice` = the config's
+  `default_speaker_id` and `speed` = 1/length scale (pitch stays libsonic's).
+  Its vocabulary is the config's `phoneme_id_map` (`_ ^ $` = pad/start/end),
+  so warm-up and lead-in code work unchanged. Durations are int64 frames of
+  256 samples (`floats` reads them). `TinyVocaTest` pins the ids to the PC
+  adapter the voices were graded with (scratch/voice-eval/tinyvoca.py).
+  The published export uses operators the slim runtime lacks (Abs, Flatten,
+  Floor, Greater, IsNaN, Mod, Or, Round, Xor, and LessOrEqual at opset 17's
+  kernel version 16 - the list has 12/13/15) and ORT fused its
+  MatMul+bias+Gelu into BiasGelu, which it lacks too: sherpa-onnx-respin-syspin
+  `build_tinyvoca.py` rewrites them exactly (and gives the Gelu biases shape
+  [1, 1, C] so the fusion does not fire) instead of growing the runtime;
+  output bit-identical to the original over 48 inputs. Two traps the Galaxy
+  S25 found (the voice failed to load, "no implementation for Or(7)"): a
+  missing kernel *version* makes ORT expand ONNX's function body instead
+  (LessOrEqual -> Or(Less, Equal)), and ORT 1.30 folds Not(And(Not, Not))
+  back into Or - so "or" is done as numbers, and the script checks every
+  operator at its exact kernel version, as written and after ORT 1.30's
+  optimizer (run it with ONNX Runtime 1.30, the app's; 1.29 hid both).
+  **Model speed stops at 1.25** (`TinyVoca.MAX_SPEED`, like Supertonic; libsonic
+  does the rest). S25, the user's 450 wpm, English check set rendered through
+  the TTS framework (EnglishVoicesDeviceTest) at Amy's length (per-voice speed
+  70%), Parakeet: at the 1.8 cap M2 29/68 lone words, phrases 7/17, sentences
+  8.0% CER; at 1.25 M2 38/68, 12/17, 5.8%; F2 41/68, 12/17, 5.8%, paragraph
+  1.1% - Amy 37/68, 13/17, 5.8%, 1.9%. At the same rate setting tiny-voca reads
+  faster than Piper voices (paragraph 12.6 s vs Amy 17.8 s): it keeps the
+  asked rate, while VITS durations bottom out at one frame per phoneme. S25:
+  loads in ~0.3 s (first load ~3 s to optimize), first audio ~18 ms. PC: ~66x
+  real time on one thread. ASR at normal pace (PC, two rounds): M2 2.9/3.4%,
+  F2 3.8/4.9% vs Amy 6.4/5.3, HFC 7.9/4.8. No NPU files (CPU everywhere).
 - **NPU decoders** (Snapdragon build): `assets/piper/npu_decoders.json`
   (voice key -> `npu-v1/<model>-npu.onnx` on sherpa-onnx-respin-syspin, made
   by its `build_npu.py`): each voice's decoder fully INT8 (Conv, ConvTranspose,

@@ -90,8 +90,11 @@ public class SupertonicDeviceTest {
             INSTALLED_HERE.add(key);
         }
         final long t0 = System.nanoTime();
-        PiperDownloads.fetchSupertonicFiles(app(), storage());
-        Log.i(TAG, key + " companion files ready in " + (System.nanoTime() - t0) / 1_000_000 + " ms");
+        // What an install starts in the background: companion files and, on the
+        // Snapdragon build, the compiled NPU graphs. Waited for here, or the
+        // speed check measured the CPU while the NPU files were still downloading.
+        PiperDownloads.fetchVoiceExtras(app(), storage());
+        Log.i(TAG, key + " companion and NPU files ready in " + (System.nanoTime() - t0) / 1_000_000 + " ms");
         assertNotNull(PiperVoiceStore.find(storage(), key));
     }
 

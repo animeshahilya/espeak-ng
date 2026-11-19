@@ -41,8 +41,19 @@ public final class PiperDevice {
     }
 
     static int performanceClass() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+        final int declared = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                 ? Build.VERSION.MEDIA_PERFORMANCE_CLASS : 0;
+        return effectiveClass(declared, NpuFiles.target());
+    }
+
+    /**
+     * Samsung declares no performance class, even on a Galaxy S25 Ultra
+     * (Snapdragon 8 Elite, 12 GB): every heavy Enhanced voice there said
+     * "may pause". The flagship chips the NPU graphs are built for (8 Gen 3
+     * and later, {@link NpuFiles#TARGETS}) count as class 33 when undeclared.
+     */
+    static int effectiveClass(int declared, String npuTarget) {
+        return declared == 0 && npuTarget != null ? Build.VERSION_CODES.TIRAMISU : declared;
     }
 
     enum Fit { RECOMMENDED, NEUTRAL, SLOW }
