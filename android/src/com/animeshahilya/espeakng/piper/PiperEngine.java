@@ -74,7 +74,8 @@ public final class PiperEngine {
 
     /** {@link #MAX_MODEL_SPEED}, or Supertonic's own limit ({@link Supertonic#MAX_SPEED}). */
     static float maxModelSpeed(PiperVoiceConfig config) {
-        return config.isSupertonic() ? Supertonic.MAX_SPEED : MAX_MODEL_SPEED;
+        return config.isSupertonic() ? Supertonic.MAX_SPEED
+                : config.isTinyVoca() ? TinyVoca.MAX_SPEED : MAX_MODEL_SPEED;
     }
 
     /** This fork's eSpeak NG as Piper's phonemizer (piperPhonemizer.c records). */
@@ -962,6 +963,7 @@ public final class PiperEngine {
             // timing is estimated over the chunk (PiperAudio.estimateWordFrames).
             final long[] ids = model.isPhonon() ? PiperModel.phononIds(chunk.ipa)
                     : model.isSupertonic() ? model.supertonicIds(chunk.ipa)
+                    : config.isTinyVoca() ? TinyVoca.ids(chunk.ipa, config, wordStarts)
                     : PiperPhonemes.toIds(PiperPhonemes.tokenize(chunk.ipa, config),
                     config, missing, wordStarts);
             // More than BOS PAD EOS (a Phonon chunk is its text: any character).

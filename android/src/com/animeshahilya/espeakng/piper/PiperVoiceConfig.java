@@ -40,6 +40,11 @@ public final class PiperVoiceConfig {
     static final String PHONEME_TYPE_SUPERTONIC = "supertonic";
     /** Gradium Phonon 31m: plain English text, normalized and tokenized by its runtime ({@link Phonon}). */
     static final String PHONEME_TYPE_PHONON = "phonon";
+    /**
+     * tiny-voca: this app's eSpeak IPA as given (no trained-spelling rules), its
+     * phonemes as the phoneme_id_map, stress as a second input ({@link TinyVoca}).
+     */
+    static final String PHONEME_TYPE_TINY_VOCA = "tiny_voca";
     /** A Phonon voice's shared files beside its own (model.onnx): the bundle's metadata, tokenizer, BOS data. */
     static final List<String> PHONON_FILES = Arrays.asList("metadata.json", "tokenizer.json", "bos.bin");
 
@@ -248,9 +253,13 @@ public final class PiperVoiceConfig {
                 && (PHONEME_TYPE_TEXT.equals(phonemeType) || espeakVoice != null);
     }
 
-    /** Phonemes from eSpeak NG: plain, or Lithuanian's accented ones built on them. */
+    /** Phonemes from eSpeak NG: plain, Lithuanian's accented ones built on them, or tiny-voca's. */
     public boolean usesEspeak() {
-        return PHONEME_TYPE_ESPEAK.equals(phonemeType) || isLithuanian();
+        return PHONEME_TYPE_ESPEAK.equals(phonemeType) || isLithuanian() || isTinyVoca();
+    }
+
+    public boolean isTinyVoca() {
+        return PHONEME_TYPE_TINY_VOCA.equals(phonemeType);
     }
 
     public boolean isLithuanian() {

@@ -1753,5 +1753,35 @@
       "int8-v3/or_IN-ananya-medium.onnx": {"size_bytes": 16927045, "md5_digest": "4b8004e667e9c5a4c4601bdd9ec24afb"},
       "int8-v3/or_IN-ananya-medium.onnx.json": {"size_bytes": 5261, "md5_digest": "aaf85183c82b9a8ff1d7ffd3c8892214"}
     }
+  },
+  "en_US-tiny_voca_f2-medium": {
+    "key": "en_US-tiny_voca_f2-medium",
+    "name": "tiny_voca_f2",
+    "language": {"code": "en_US", "family": "en", "region": "US",
+      "name_native": "English", "name_english": "English", "country_english": "United States"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "n4ze3m/tiny-voca (trained on Qwen3-TTS speech)",
+    "license": "Apache-2.0",
+    "files": {
+      "tinyvoca-v1/tiny-voca.onnx": {"size_bytes": 21394879, "md5_digest": "111756ec428107e84d2016afbc642f08"},
+      "tinyvoca-v1/en_US-tiny_voca_f2-medium.onnx.json": {"size_bytes": 2308, "md5_digest": "bd83a9c037a56c89f3170b826ae7ff9a"}
+    }
+  },
+  "en_US-tiny_voca_m2-medium": {
+    "key": "en_US-tiny_voca_m2-medium",
+    "name": "tiny_voca_m2",
+    "language": {"code": "en_US", "family": "en", "region": "US",
+      "name_native": "English", "name_english": "English", "country_english": "United States"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "n4ze3m/tiny-voca (trained on Qwen3-TTS speech)",
+    "license": "Apache-2.0",
+    "files": {
+      "tinyvoca-v1/tiny-voca.onnx": {"size_bytes": 21394879, "md5_digest": "111756ec428107e84d2016afbc642f08"},
+      "tinyvoca-v1/en_US-tiny_voca_m2-medium.onnx.json": {"size_bytes": 2308, "md5_digest": "b75e936960c0dc844a45547ec22f0b95"}
+    }
   }
 }

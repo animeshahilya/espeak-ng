@@ -111,7 +111,7 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(117, voices.size());
+        assertEquals(119, voices.size());
         // Only kept voices are bundled: none is filtered out again.
         assertEquals(voices.size(), PiperDownloads.keptFirst(voices, keptAsset()).size());
         for (PiperDownloads.CatalogVoice v : voices) {
@@ -128,6 +128,10 @@ public class PiperCatalogTest {
                     assertTrue(v.key, v.key.endsWith("-medium"));
                     assertTrue(v.key, v.modelPath.matches("int8-v1/vits-[^/]+-compact\\.onnx"));
                     assertEquals(v.key, "piper-v2/" + v.key + ".onnx.json", v.configPath);
+                } else if (v.modelPath.startsWith("tinyvoca-v1/")) {
+                    // tiny-voca: one shared two-voice model, a config per voice
+                    assertEquals(v.key, "tinyvoca-v1/tiny-voca.onnx", v.modelPath);
+                    assertEquals(v.key, "tinyvoca-v1/" + v.key + ".onnx.json", v.configPath);
                 } else if (v.modelPath.endsWith("-compact.onnx")) {
                     // Piper "high": the Compact model under the Standard key and config
                     assertTrue(v.key, v.key.endsWith("-high"));

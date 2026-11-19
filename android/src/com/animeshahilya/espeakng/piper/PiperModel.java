@@ -162,6 +162,8 @@ public final class PiperModel implements Closeable {
         volatile boolean hasDurations;
         /** The model takes MMS's inputs ({@link #hasMmsInputs}), not Piper's. */
         volatile boolean mmsInputs;
+        /** The model takes tiny-voca's inputs ({@link #hasTinyVocaInputs}). */
+        volatile boolean tinyVocaInputs;
         final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         private int refCount = 1;
         private boolean closed;
@@ -231,6 +233,7 @@ public final class PiperModel implements Closeable {
 
         private void readNames(OrtSession session) {
             mmsInputs = hasMmsInputs(session.getInputNames());
+            tinyVocaInputs = hasTinyVocaInputs(session.getInputNames());
             hasSpeakerInput = session.getInputNames().contains("sid");
             hasDurations = session.getOutputNames().size() > (decoder != null ? boundary.length : 1);
         }
@@ -1427,9 +1430,27 @@ public final class PiperModel implements Closeable {
                 "x", "x_length", "noise_scale", "length_scale", "noise_scale_w"));
     }
 
+    /** tiny-voca ({@link TinyVoca}): tokens and stress, its voice index, a speed instead of scales. */
+    static boolean hasTinyVocaInputs(java.util.Set<String> names) {
+        return names.containsAll(java.util.Arrays.asList("tokens", "stress", "voice", "speed",
+                "pitch_shift", "pitch_range"));
+    }
+
     private void putInputs(OrtEnvironment env, Map<String, OnnxTensor> inputs, long[] ids,
                            float lengthScale, int speakerId, float noise, float noiseW)
             throws OrtException {
+        if (group.tinyVocaInputs) {
+            final long[] shape = {1, ids.length};
+            inputs.put("tokens", OnnxTensor.createTensor(env, LongBuffer.wrap(TinyVoca.tokens(ids)), shape));
+            inputs.put("stress", OnnxTensor.createTensor(env, LongBuffer.wrap(TinyVoca.stress(ids)), shape));
+            // One voice per config over the shared two-voice file, as the Rasa speakers
+            inputs.put("voice", OnnxTensor.createTensor(env,
+                    LongBuffer.wrap(new long[] {config.defaultSpeakerId}), new long[] {1}));
+            inputs.put("speed", scalar(env, config.lengthScale / Math.max(0.05f, lengthScale)));
+            inputs.put("pitch_shift", scalar(env, 0f)); // pitch is libsonic's, as for every voice
+            inputs.put("pitch_range", scalar(env, 1f));
+            return;
+        }
         final boolean mms = group.mmsInputs;
         inputs.put(mms ? "x" : "input", OnnxTensor.createTensor(env, LongBuffer.wrap(ids),
                 new long[] {1, ids.length}));
@@ -1464,7 +1485,16 @@ public final class PiperModel implements Closeable {
         }
         final FloatBuffer buffer = ((OnnxTensor) value).getFloatBuffer();
         if (buffer == null) {
-            return null;
+            // tiny-voca's durations are int64 frames
+            final LongBuffer longs = ((OnnxTensor) value).getLongBuffer();
+            if (longs == null) {
+                return null;
+            }
+            final float[] out = new float[longs.remaining()];
+            for (int i = 0; i < out.length; i++) {
+                out[i] = longs.get();
+            }
+            return out;
         }
         final float[] out = new float[buffer.remaining()];
         buffer.get(out);
