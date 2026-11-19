@@ -393,6 +393,198 @@
     "size_bytes": 958846
    }
   },
+  "de_CH-aargau-medium": {
+   "dec": {
+    "md5_digest": "248b3afe08b3ca31ec2135504be70c03",
+    "path": "npu-v4/de_CH-aargau-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "30d3fb190437a77eee32f4730dc7ab73",
+    "path": "npu-v4/de_CH-aargau-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "3727f398144b97fa9d307de0b4d8c3af",
+    "path": "npu-v4/de_CH-aargau-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "a8bbd7ac4522bfa3fa3367840e330dc0",
+    "path": "npu-v4/de_CH-aargau-medium-mid.onnx",
+    "size_bytes": 1171733
+   }
+  },
+  "de_CH-basel-medium": {
+   "dec": {
+    "md5_digest": "1c587f48c50172fa41ae95ba4aec8624",
+    "path": "npu-v4/de_CH-basel-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "c901539cc396c47a08249ce969fff2a5",
+    "path": "npu-v4/de_CH-basel-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "0787c5e8a59d51466de7d1ec018487d5",
+    "path": "npu-v4/de_CH-basel-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "0927ceadfd36e9a9cbe930671300ba4d",
+    "path": "npu-v4/de_CH-basel-medium-mid.onnx",
+    "size_bytes": 1171733
+   }
+  },
+  "de_CH-bern-medium": {
+   "dec": {
+    "md5_digest": "67cbc2bbaefab4a209b3c60b702296b3",
+    "path": "npu-v4/de_CH-bern-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "c33b16f19a31eb572565b0cfc0310c2c",
+    "path": "npu-v4/de_CH-bern-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "101afda2ff69db5549c450a760d817b5",
+    "path": "npu-v4/de_CH-bern-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "6d50bf22b69dead43f681720342e0cfd",
+    "path": "npu-v4/de_CH-bern-medium-mid.onnx",
+    "size_bytes": 1171733
+   }
+  },
+  "de_CH-graubuenden-medium": {
+   "dec": {
+    "md5_digest": "02b898b1d737d107fb2c6d764595c0fb",
+    "path": "npu-v4/de_CH-graubuenden-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "210432bfff92823f161e19d8cd6e4d21",
+    "path": "npu-v4/de_CH-graubuenden-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "cff23fbeb46ae912c0daae89dbac37a0",
+    "path": "npu-v4/de_CH-graubuenden-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "1f04554bf745af35fe4084eb5b6ab3e5",
+    "path": "npu-v4/de_CH-graubuenden-medium-mid.onnx",
+    "size_bytes": 1171733
+   }
+  },
+  "de_CH-luzern-medium": {
+   "dec": {
+    "md5_digest": "ce0190bae73a17678f2501583349b810",
+    "path": "npu-v4/de_CH-luzern-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "aaf69e58546f0a2fb293705e5e77ffff",
+    "path": "npu-v4/de_CH-luzern-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "6ff9f4b023d2e39a4f598853e86b792b",
+    "path": "npu-v4/de_CH-luzern-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "2dee8482a332bf13b6ca402523437c9e",
+    "path": "npu-v4/de_CH-luzern-medium-mid.onnx",
+    "size_bytes": 1171733
+   }
+  },
+  "de_CH-st_gallen-medium": {
+   "dec": {
+    "md5_digest": "591aecd229e7d830501d034916f14fb4",
+    "path": "npu-v4/de_CH-st_gallen-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "477ab3d7cffa8232d7187ba99d3fb59d",
+    "path": "npu-v4/de_CH-st_gallen-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "1a3452da9a5909c9c3a44168e86e154a",
+    "path": "npu-v4/de_CH-st_gallen-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "afcd31b3b264b09b4da7c1564e0bd39e",
+    "path": "npu-v4/de_CH-st_gallen-medium-mid.onnx",
+    "size_bytes": 1171733
+   }
+  },
+  "de_CH-wallis-medium": {
+   "dec": {
+    "md5_digest": "440c8e503a386f533f3456d1d348e2d2",
+    "path": "npu-v4/de_CH-wallis-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "0d6c1b8fbd84517b9a968671ddaa09ef",
+    "path": "npu-v4/de_CH-wallis-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "c32d3aea6d42d310169efc7fbdb94dd7",
+    "path": "npu-v4/de_CH-wallis-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "6214bfb694e5b594d5ec1a079f6c8216",
+    "path": "npu-v4/de_CH-wallis-medium-mid.onnx",
+    "size_bytes": 1171733
+   }
+  },
+  "de_CH-zuerich-medium": {
+   "dec": {
+    "md5_digest": "d267c2bb6a46e399a81cba484d4a84d2",
+    "path": "npu-v4/de_CH-zuerich-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "eb2ba94ba13f896747bb9dacb2302e5a",
+    "path": "npu-v4/de_CH-zuerich-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "7bac6467642bb85659232dee7dccd539",
+    "path": "npu-v4/de_CH-zuerich-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "b7569e93af71acc641e4acd97df46424",
+    "path": "npu-v4/de_CH-zuerich-medium-mid.onnx",
+    "size_bytes": 1171733
+   }
+  },
   "de_DE-thorsten-high": {
    "enc": {
     "md5_digest": "d881cca138c20e82d3471076262e7003",
@@ -434,6 +626,30 @@
     "md5_digest": "87f969ad5c86df8daa2b4997d54ff93e",
     "path": "npu-v2/de_DE-thorsten_emotional-medium-mid.onnx",
     "size_bytes": 1064232
+   }
+  },
+  "de_DE-thorsten_scratch-medium": {
+   "dec": {
+    "md5_digest": "5e8d3c3f4d49153d47d7eeeabfc3f910",
+    "path": "npu-v4/de_DE-thorsten_scratch-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "e21c47147df782314b4175bf5cc115d4",
+    "path": "npu-v4/de_DE-thorsten_scratch-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "96dffedcf9317f7c65836ee9c5754258",
+    "path": "npu-v4/de_DE-thorsten_scratch-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "8094aaed1fcfaab1db32224f27de90c5",
+    "path": "npu-v4/de_DE-thorsten_scratch-medium-mid.onnx",
+    "size_bytes": 1150982
    }
   },
   "doi_IN-sheetal-medium": {
@@ -850,6 +1066,30 @@
     "md5_digest": "088552c9be85cb734be3f78060c33b6e",
     "path": "npu-v2/vits-syspin-gu-male-compact-mid.onnx",
     "size_bytes": 1301246
+   }
+  },
+  "gu_IN-nita-medium": {
+   "dec": {
+    "md5_digest": "0ceee43093e4de12fb258b111b582ef5",
+    "path": "npu-v4/gu_IN-nita-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "1c060d26b4c04beb368d53340e3aa4ba",
+    "path": "npu-v4/gu_IN-nita-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "99684236f3f4abbe7278a888c19cb19b",
+    "path": "npu-v4/gu_IN-nita-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "bde1fd7ee48d0cad584a7ef2e7715f77",
+    "path": "npu-v4/gu_IN-nita-medium-mid.onnx",
+    "size_bytes": 1150982
    }
   },
   "hi_IN-priyamvada-medium": {
@@ -1549,6 +1789,30 @@
     "md5_digest": "32dd640c94c88ffba21cd752e21ff1b1",
     "path": "npu-v3/no_NO-talesyntese-medium-mid.onnx",
     "size_bytes": 939329
+   }
+  },
+  "or_IN-ananya-medium": {
+   "dec": {
+    "md5_digest": "5f67d1d1b2b2babbafdad934d853ef39",
+    "path": "npu-v4/or_IN-ananya-medium-dec80.onnx",
+    "size_bytes": 1704120
+   },
+   "enc": {
+    "md5_digest": "83fa8d18db509152a5f556c7ad50f592",
+    "path": "npu-v4/or_IN-ananya-medium-enc256.onnx",
+    "size_bytes": 7133467
+   },
+   "flow": {
+    "md5_digest": "744509a51e9f442d2057a4609b853604",
+    "path": "npu-v4/or_IN-ananya-medium-flow512.onnx",
+    "size_bytes": 7328756
+   },
+   "frames": 512,
+   "ids": 256,
+   "mid": {
+    "md5_digest": "9e58caaf70825a4ac84c8b2e1cc63c85",
+    "path": "npu-v4/or_IN-ananya-medium-mid.onnx",
+    "size_bytes": 1150982
    }
   },
   "pa_IN-harpreet-medium": {

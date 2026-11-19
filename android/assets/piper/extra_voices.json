@@ -1588,5 +1588,170 @@
       "int8-v1/zh_CN-huayan-medium.onnx": {"size_bytes": 16612288, "md5_digest": "af54adb2b2db99dfae5e9b1efd85b7b9"},
       "int8-v1/zh_CN-huayan-medium.onnx.json": {"size_bytes": 4822, "md5_digest": "1fda3ec1d0d3a5a74064397ea8fe0af0"}
     }
+  },
+  "de_CH-aargau-medium": {
+    "key": "de_CH-aargau-medium",
+    "name": "aargau",
+    "language": {"code": "de_CH", "family": "de", "region": "CH",
+      "name_native": "Schwiizerdütsch", "name_english": "Swiss German", "country_english": "Switzerland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "d41k4n/piper-swissdial (SwissDial; INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v3/de_CH-aargau-medium.onnx": {"size_bytes": 16942470, "md5_digest": "d576a7f89e861f51fe967ea7397942e2"},
+      "int8-v3/de_CH-aargau-medium.onnx.json": {"size_bytes": 5007, "md5_digest": "f66d7eebf41ebf2a7cba61e9c4b5392e"}
+    }
+  },
+  "de_CH-bern-medium": {
+    "key": "de_CH-bern-medium",
+    "name": "bern",
+    "language": {"code": "de_CH", "family": "de", "region": "CH",
+      "name_native": "Schwiizerdütsch", "name_english": "Swiss German", "country_english": "Switzerland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "d41k4n/piper-swissdial (SwissDial; INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v3/de_CH-bern-medium.onnx": {"size_bytes": 16942470, "md5_digest": "54c300c72a32f1460fc73ca3a65722a2"},
+      "int8-v3/de_CH-bern-medium.onnx.json": {"size_bytes": 5007, "md5_digest": "1afd4d602c4ea22695f8db172b922db8"}
+    }
+  },
+  "de_CH-basel-medium": {
+    "key": "de_CH-basel-medium",
+    "name": "basel",
+    "language": {"code": "de_CH", "family": "de", "region": "CH",
+      "name_native": "Schwiizerdütsch", "name_english": "Swiss German", "country_english": "Switzerland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "d41k4n/piper-swissdial (SwissDial; INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v3/de_CH-basel-medium.onnx": {"size_bytes": 16942470, "md5_digest": "9d28b556dacdf0e3bae147cbf2c848f6"},
+      "int8-v3/de_CH-basel-medium.onnx.json": {"size_bytes": 5007, "md5_digest": "33dc301ca735d45ca5b5a00e1414e92f"}
+    }
+  },
+  "de_CH-graubuenden-medium": {
+    "key": "de_CH-graubuenden-medium",
+    "name": "graubuenden",
+    "language": {"code": "de_CH", "family": "de", "region": "CH",
+      "name_native": "Schwiizerdütsch", "name_english": "Swiss German", "country_english": "Switzerland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "d41k4n/piper-swissdial (SwissDial; INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v3/de_CH-graubuenden-medium.onnx": {"size_bytes": 16942470, "md5_digest": "63fe9ef554619092f9b93011bcf59461"},
+      "int8-v3/de_CH-graubuenden-medium.onnx.json": {"size_bytes": 5005, "md5_digest": "62957060c9bc9bdb42019fa32ef1710e"}
+    }
+  },
+  "de_CH-luzern-medium": {
+    "key": "de_CH-luzern-medium",
+    "name": "luzern",
+    "language": {"code": "de_CH", "family": "de", "region": "CH",
+      "name_native": "Schwiizerdütsch", "name_english": "Swiss German", "country_english": "Switzerland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "d41k4n/piper-swissdial (SwissDial; INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v3/de_CH-luzern-medium.onnx": {"size_bytes": 16942470, "md5_digest": "1ce43c3bf0147a8e4307d738a545d75d"},
+      "int8-v3/de_CH-luzern-medium.onnx.json": {"size_bytes": 5005, "md5_digest": "ce6feac73d313b366099aa074d04b7a5"}
+    }
+  },
+  "de_CH-st_gallen-medium": {
+    "key": "de_CH-st_gallen-medium",
+    "name": "st_gallen",
+    "language": {"code": "de_CH", "family": "de", "region": "CH",
+      "name_native": "Schwiizerdütsch", "name_english": "Swiss German", "country_english": "Switzerland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "d41k4n/piper-swissdial (SwissDial; INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v3/de_CH-st_gallen-medium.onnx": {"size_bytes": 16942470, "md5_digest": "11b7f4b0e99f9991b6734c378b9163c7"},
+      "int8-v3/de_CH-st_gallen-medium.onnx.json": {"size_bytes": 5005, "md5_digest": "fca68b8218b4cef545106dca8902df06"}
+    }
+  },
+  "de_CH-wallis-medium": {
+    "key": "de_CH-wallis-medium",
+    "name": "wallis",
+    "language": {"code": "de_CH", "family": "de", "region": "CH",
+      "name_native": "Schwiizerdütsch", "name_english": "Swiss German", "country_english": "Switzerland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "d41k4n/piper-swissdial (SwissDial; INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v3/de_CH-wallis-medium.onnx": {"size_bytes": 16942470, "md5_digest": "5fd930c3e84b005ef993632d0055c890"},
+      "int8-v3/de_CH-wallis-medium.onnx.json": {"size_bytes": 5007, "md5_digest": "16320db624136e00f49b94e73232de4e"}
+    }
+  },
+  "de_CH-zuerich-medium": {
+    "key": "de_CH-zuerich-medium",
+    "name": "zuerich",
+    "language": {"code": "de_CH", "family": "de", "region": "CH",
+      "name_native": "Schwiizerdütsch", "name_english": "Swiss German", "country_english": "Switzerland"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "d41k4n/piper-swissdial (SwissDial; INT8: animeshahilya)",
+    "license": "CC-BY-NC-4.0",
+    "files": {
+      "int8-v3/de_CH-zuerich-medium.onnx": {"size_bytes": 16942470, "md5_digest": "c019b9c22834c322f552ddd9e92d04c7"},
+      "int8-v3/de_CH-zuerich-medium.onnx.json": {"size_bytes": 5007, "md5_digest": "9b9c89c7e65e4646b89a0bbeac7ed595"}
+    }
+  },
+  "de_DE-thorsten_scratch-medium": {
+    "key": "de_DE-thorsten_scratch-medium",
+    "name": "thorsten_scratch",
+    "language": {"code": "de_DE", "family": "de", "region": "DE",
+      "name_native": "Deutsch", "name_english": "German", "country_english": "Germany"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "Thorsten-Voice/Piper-Scratch (INT8: animeshahilya)",
+    "license": "CC0",
+    "files": {
+      "int8-v3/de_DE-thorsten_scratch-medium.onnx": {"size_bytes": 16927045, "md5_digest": "fef7cfd2a575962bfbe3fc94dd1e2df8"},
+      "int8-v3/de_DE-thorsten_scratch-medium.onnx.json": {"size_bytes": 5033, "md5_digest": "702a1290eafb8a9d92c30e25292809d3"}
+    }
+  },
+  "gu_IN-nita-medium": {
+    "key": "gu_IN-nita-medium",
+    "name": "nita",
+    "language": {"code": "gu_IN", "family": "gu", "region": "IN",
+      "name_native": "ગુજરાતી", "name_english": "Gujarati", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "IhorShevchuk/piper-voice-gu-nita (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v3/gu_IN-nita-medium.onnx": {"size_bytes": 16927045, "md5_digest": "bdd0d398ebbe8944bcc27caee07663e3"},
+      "int8-v3/gu_IN-nita-medium.onnx.json": {"size_bytes": 5268, "md5_digest": "0faac9de333b42988845089bdfed270f"}
+    }
+  },
+  "or_IN-ananya-medium": {
+    "key": "or_IN-ananya-medium",
+    "name": "ananya",
+    "language": {"code": "or_IN", "family": "or", "region": "IN",
+      "name_native": "ଓଡ଼ିଆ", "name_english": "Odia", "country_english": "India"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "IhorShevchuk/piper-voice-or-ananya (INT8: animeshahilya)",
+    "license": "CC-BY-NC-SA-4.0",
+    "files": {
+      "int8-v3/or_IN-ananya-medium.onnx": {"size_bytes": 16927045, "md5_digest": "4b8004e667e9c5a4c4601bdd9ec24afb"},
+      "int8-v3/or_IN-ananya-medium.onnx.json": {"size_bytes": 5261, "md5_digest": "aaf85183c82b9a8ff1d7ffd3c8892214"}
+    }
   }
 }

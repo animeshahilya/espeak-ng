@@ -31,7 +31,7 @@
  ],
  "de": [
   "de_DE-thorsten-high",
-  "de_DE-thorsten_emotional-medium"
+  "de_DE-thorsten_scratch-medium"
  ],
  "el": [
   "el_GR-joy-medium",
@@ -65,7 +65,7 @@
   "fr_FR-siwis-medium"
  ],
  "gu": [
-  "gu_IN-hetal-medium",
+  "gu_IN-nita-medium",
   "gu_IN-jay-medium"
  ],
  "hi": [
@@ -130,6 +130,9 @@
  ],
  "no": [
   "no_NO-talesyntese-medium"
+ ],
+ "or": [
+  "or_IN-ananya-medium"
  ],
  "pa": [
   "pa_IN-simran-medium",
