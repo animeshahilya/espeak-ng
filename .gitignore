@@ -96,3 +96,6 @@ espeak-ng-data/phondata
 espeak-ng-data/phondata-manifest
 espeak-ng-data/phonindex
 espeak-ng-data/phontab
+
+# Python bytecode from the tools/ scripts
+__pycache__/
