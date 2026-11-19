@@ -21,6 +21,29 @@ final class TinyVoca {
     private static final long ID_MASK = (1L << STRESS_SHIFT) - 1;
     private static final String WORD_GAP = "<sp>";
     private static final String END_MARKS = ",.?!;:";
+    /**
+     * Speed factors that give tiny-voca the Piper voices' pace (user's call):
+     * it keeps the asked speed exactly (speed x length constant, 121 s on the
+     * scratch/voice-eval tinyvoca_pace.py set), while a Piper model's lengths
+     * bottom out at a frame per phoneme, so Amy and HFC fall short of it the
+     * faster they go (1.8 asked, ~1.58 made). Their mean, per Piper model
+     * speed (1.0 ... {@link PiperEngine#MAX_MODEL_SPEED}; beyond it libsonic
+     * stretches both alike); tiny-voca at 1.0 is already 14% quicker.
+     */
+    private static final float[] PACE_AT = {1.0f, 1.1f, 1.2f, 1.3f, 1.6f, 1.8f};
+    private static final float[] PACE = {0.876f, 0.833f, 0.808f, 0.801f, 0.796f, 0.772f};
+
+    /** The speed that makes tiny-voca as fast as a Piper voice asked for {@code speed}. */
+    static float pace(float speed) {
+        final float m = Math.max(PACE_AT[0], Math.min(PACE_AT[PACE_AT.length - 1], speed));
+        int i = 1;
+        while (i < PACE_AT.length - 1 && m > PACE_AT[i]) {
+            i++;
+        }
+        final float t = (m - PACE_AT[i - 1]) / (PACE_AT[i] - PACE_AT[i - 1]);
+        return speed * (PACE[i - 1] + t * (PACE[i] - PACE[i - 1]));
+    }
+
     /** eSpeak symbols the voice lacks -> its nearest phoneme (see {@link #ids}). */
     private static final java.util.Map<Character, String> FALLBACK = new java.util.HashMap<>();
     static {

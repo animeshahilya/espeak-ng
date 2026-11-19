@@ -930,9 +930,16 @@ voices" does not, so voices can still be deleted to free space.
   the TTS framework (EnglishVoicesDeviceTest) at Amy's length (per-voice speed
   70%), Parakeet: at the 1.8 cap M2 29/68 lone words, phrases 7/17, sentences
   8.0% CER; at 1.25 M2 38/68, 12/17, 5.8%; F2 41/68, 12/17, 5.8%, paragraph
-  1.1% - Amy 37/68, 13/17, 5.8%, 1.9%. At the same rate setting tiny-voca reads
-  faster than Piper voices (paragraph 12.6 s vs Amy 17.8 s): it keeps the
-  asked rate, while VITS durations bottom out at one frame per phoneme. S25:
+  1.1% - Amy 37/68, 13/17, 5.8%, 1.9%. **Piper's pace** (2026-11-19, user's
+  call): tiny-voca keeps the asked rate exactly, while VITS durations bottom
+  out at one frame per phoneme (Amy/HFC asked 1.8 make ~1.58), so at the same
+  setting it read much faster (450 wpm paragraph 12.6 s vs Amy 17.8 s).
+  `TinyVoca.pace` scales the asked speed by the Amy/HFC mean's shortfall per
+  Piper model speed (0.876 at 1.0 - tiny-voca is 14% quicker there - to 0.772
+  at 1.8; scratch/voice-eval tinyvoca_pace.py, noise off), applied where
+  Supertonic applies its RATE_FACTOR. S25 at 450 wpm, sentences + paragraph:
+  M2 33.9 s, F2 35.8 s vs Amy 37.6, HFC 34.6 (was 26.1); sentence CER
+  5.9/5.8% vs 5.8/7.6%, lone words 31/30 of 68 vs 37/37. S25:
   loads in ~0.3 s (first load ~3 s to optimize), first audio ~18 ms. PC: ~66x
   real time on one thread. ASR at normal pace (PC, two rounds): M2 2.9/3.4%,
   F2 3.8/4.9% vs Amy 6.4/5.3, HFC 7.9/4.8. No NPU files (CPU everywhere).

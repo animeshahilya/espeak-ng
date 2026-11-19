@@ -928,8 +928,9 @@ public final class PiperEngine {
         } else {
             clauses = PiperPhonemes.textClauses(text, numberWords(config.languageFamily), config.shortChunks);
         }
-        final float speed = shortInputSpeed(text, config, Math.max(0.1f, params.speed))
-                * (config.isSupertonic() ? Supertonic.RATE_FACTOR : 1f);
+        final float asked = shortInputSpeed(text, config, Math.max(0.1f, params.speed));
+        final float speed = config.isTinyVoca() ? TinyVoca.pace(asked)
+                : asked * (config.isSupertonic() ? Supertonic.RATE_FACTOR : 1f);
         // Phonon has no rate input: libsonic does all of it.
         final float modelSpeed = config.isPhonon() ? 1f
                 : Math.max(MIN_MODEL_SPEED, Math.min(maxModelSpeed(config), speed));

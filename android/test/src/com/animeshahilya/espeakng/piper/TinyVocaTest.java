@@ -72,6 +72,21 @@ public class TinyVocaTest {
     }
 
     @Test
+    public void paceFollowsThePiperVoices() {
+        assertEquals(0.876f, TinyVoca.pace(1f), 1e-4f);
+        assertEquals(0.5f * 0.876f, TinyVoca.pace(0.5f), 1e-4f);      // slower: the 1.0 factor
+        assertEquals(1.8f * 0.772f, TinyVoca.pace(1.8f), 1e-4f);
+        assertEquals(2.57f * 0.772f, TinyVoca.pace(2.57f), 1e-4f);    // the user's 450 wpm
+        assertEquals(1.15f * (0.833f + 0.808f) / 2, TinyVoca.pace(1.15f), 1e-4f);
+        float last = 0f;
+        for (float s = 0.3f; s < 4f; s += 0.01f) {
+            final float p = TinyVoca.pace(s);
+            assertTrue("faster asked must stay faster at " + s, p > last);
+            last = p;
+        }
+    }
+
+    @Test
     public void tinyVocaInputsAreRecognised() {
         assertTrue(PiperModel.hasTinyVocaInputs(new java.util.HashSet<>(Arrays.asList(
                 "tokens", "stress", "voice", "speed", "pitch_shift", "pitch_range"))));
