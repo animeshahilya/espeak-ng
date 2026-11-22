@@ -1,9 +1,9 @@
 {
-  "versionCode": 37,
-  "versionName": "2.12",
-  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.12/espeak-ng-2.12.apk",
-  "sha256": "79da8eca308e2b777933df52a81825577deb0b9d0ba599a65e35f7f2d93c97f5",
-  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.12/espeak-ng-2.12-snapdragon.apk",
-  "snapdragonSha256": "10b9ebf1c4343fe2085d1ee8ac5205bedec483c2e4c04d47069f8263ecb88864",
-  "notes": "Recognise European languages adds Kurdish (Kurmanji), and natural voices can be imported from more places: MMS voices for hundreds of languages, voice files shared from other apps, and clearer messages when a file can't be used."
+  "versionCode": 38,
+  "versionName": "2.13",
+  "apkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.13/espeak-ng-2.13.apk",
+  "sha256": "06dab3b3eb774ee35ad87ae85834ea2d51c6c3add2c58dbfe6b5be88332b5c77",
+  "snapdragonApkUrl": "https://github.com/animeshahilya/espeak-ng/releases/download/v2.13/espeak-ng-2.13-snapdragon.apk",
+  "snapdragonSha256": "927a900ca54e19eceee7d1a2cefe700a4b60a748d259c06aa1335ff9b103016b",
+  "notes": "Swiss German and Sardinian, new natural voices (tiny-voca English, Lithuanian, Swiss German dialects, Odia and more), an optional smoother eSpeak sound, fancy Unicode text read as words, and many engine fixes."
 }
