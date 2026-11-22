@@ -198,18 +198,20 @@ public class SpeechSynthesis {
             return new ArrayList<Voice>(cached);
         }
 
+        // Lock order everywhere: EXTRACT_LOCK, then the class. The extraction
+        // lock waits out a data re-extraction (listing mid-rmdir returns a
+        // partial set of voices); CheckVoiceData.onCreate holds it while it
+        // creates an engine (class lock). Taken the other way round here,
+        // startup's prewarm() and that check deadlocked right after an app
+        // update (Pixel 8, 2.13 release build: TtsService ANR).
+        synchronized (CheckVoiceData.EXTRACT_LOCK) {
         synchronized (SpeechSynthesis.class) {
             cached = sCachedVoices;
             if (cached != null) {
                 return new ArrayList<Voice>(cached);
             }
 
-            // Waits out a data re-extraction: listing mid-rmdir returns a
-            // partial set of voices (see CheckVoiceData.EXTRACT_LOCK).
-            final String[] results;
-            synchronized (CheckVoiceData.EXTRACT_LOCK) {
-                results = nativeGetAvailableVoices();
-            }
+            final String[] results = nativeGetAvailableVoices();
             final List<Voice> voices = new ArrayList<Voice>();
             if (results != null) {
                 mVoiceCount = results.length / 4;
@@ -272,6 +274,7 @@ public class SpeechSynthesis {
                 sCachedVoices = Collections.unmodifiableList(voices);
             }
             return new ArrayList<Voice>(voices);
+        }
         }
     }
 

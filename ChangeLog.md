@@ -7,6 +7,35 @@
 
 The espeak-ng project is a fork of the espeak project.
 
+### 2.13 (Android)
+
+*  **New languages**:
+   *  Swiss German and Sardinian, plus the Algherese and Roussillon accents of Catalan.
+*  **Natural voices**:
+   *  New English voices: tiny-voca F2 and M2, small and quick to load.
+   *  Lithuanian natural voices: Ingute and Reginute.
+   *  Swiss German voices in eight dialects (Aargau, Basel, Bern, Graubünden, Lucerne, St. Gallen, Valais, Zurich), German Thorsten Scratch, Gujarati Nita and the first Odia voice, Ananya.
+   *  15 voices update themselves to clearer new versions, among them Hungarian, Spanish, Finnish, Dutch, Italian, Nepali and US English HFC Female.
+   *  Every voice is now listed on every phone. Voices that may be slow on yours say so.
+   *  On Samsung flagships, Enhanced voices no longer say they may pause.
+   *  A new Supertonic voice works right after download instead of waiting for its phone-specific files.
+   *  On Snapdragon phones, new voices use the NPU from their first use.
+*  **Sound**:
+   *  New: Smoother sound, a softer and less buzzy eSpeak voice (Advanced, Sound). Off by default, so eSpeak still sounds exactly like NVDA.
+   *  Five character voices are back to their own sound (Baby, Alien, Caveman, Chipmunk, Giant Monster), and Bill, Denture, George, Jason, Leann, Zira and Susan sound as designed again.
+*  **Reading**:
+   *  Fancy Unicode text such as 𝐇𝐞𝐥𝐥𝐨, ℍ𝕖𝕝𝕝𝕠 and fullwidth letters is read as words, not spelled out.
+   *  Portuguese pronunciation goes back to the earlier rules, as NVDA did, after Brazilian users found the update worse.
+   *  Hindi and Marathi name vowel signs when you move by character, and keep the final sound of words like अस्तित्व and महत्त्व.
+   *  Hindi names with an English 's (कुलदीप's) are read in each language instead of being spelled.
+   *  Bengali letters with a dot below are read correctly (পড়া, বাড়ি, হয়েছে).
+   *  Long decimal numbers read properly in Russian, Italian, Hungarian and Kazakh.
+   *  Polish abbreviations such as ul., tel. and nr, and Bosnian nj, read correctly. Kurdish says the decimal point properly.
+   *  Symbol, character and emoji names updated from NVDA.
+*  **Fixes**:
+   *  Speech could stop responding right after the app updated. Fixed.
+   *  Many rare crashes and freezes fixed in the speech engine, including long symbol names, long pauses in SSML and unusual text.
+
 ### 2.12 (Android)
 
 *  **Mixed languages**:
