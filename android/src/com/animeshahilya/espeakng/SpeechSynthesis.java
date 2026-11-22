@@ -460,6 +460,9 @@ public class SpeechSynthesis {
      */
     public final Parameter PauseScale = new Parameter(11, 50, 100, UnitType.Percentage);
 
+    /** Engine options (espeakOPTIONS, fork): bit 0 = smoother harmonics. 0 = upstream's sound. */
+    public final Parameter Options = new Parameter(8, 0, 1, UnitType.Percentage);
+
     public void synthesize(String text, boolean isSsml) {
         if (text == null) {
             return;

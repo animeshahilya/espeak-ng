@@ -44,6 +44,7 @@ typedef struct {
 } wavegen_peaks_t;
 
 
+extern int option_wavegen_flags; // espeakOPTIONS bit 0: smoother harmonics (off = upstream sound)
 int GetAmplitude(void);
 void InitBreath(void);
 int PeaksToHarmspect(wavegen_peaks_t *peaks,

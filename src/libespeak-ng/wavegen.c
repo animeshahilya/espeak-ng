@@ -75,8 +75,22 @@ static int echo_length = 0; // period (in sample\) to ensure completion of echo 
 static int voicing;
 static RESONATOR rbreath[N_PEAKS];
 
+#define N_LOWHARM  30
 #define MAX_HARMONIC 400 // 400 * 50Hz = 20 kHz, more than enough
-static int harm_inc[MAX_HARMONIC]; // interpolate amplitude across all active harmonics between steps
+static int harm_inc[MAX_HARMONIC]; // amplitude increments between steps (N_LOWHARM of them unless smoothing)
+
+// Fork extension (espeakOPTIONS): bit 0 = smoother harmonics (amplitude
+// interpolated across every harmonic, taper below Nyquist, sign switch
+// follows pitch). Off (0) is upstream's sound, bit for bit (NVDA parity).
+int option_wavegen_flags = 0;
+#define SMOOTH_HARMONICS (option_wavegen_flags & 1)
+
+// Peak-shape index; a zero width divides to 0, as ARM's sdiv does (the
+// Android build's old output) instead of trapping on x86.
+static inline int ShapeIx(int d, int width)
+{
+	return width ? d / width : 0;
+}
 static int *harmspect;
 static int hswitch = 0;
 static int hspect[2][MAX_HARMONIC]; // 2 copies, we interpolate between then
@@ -473,7 +487,9 @@ static void WavegenSetEcho(void)
 
 int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 {
-	if (wvoice == NULL || pitch <= 0)
+	if (wvoice == NULL)
+		return 1;
+	if (pitch <= 0)
 		return 0;
 
 	// Calculate the amplitude of each  harmonics from the formants
@@ -507,32 +523,40 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 	if (hmax < 0)
 		hmax = 0;
 
-	memset(htab, 0, sizeof(int) * MAX_HARMONIC);
+	if (SMOOTH_HARMONICS)
+		memset(htab, 0, sizeof(int) * MAX_HARMONIC);
+	else
+		for (h = 0; h <= hmax; h++)
+			htab[h] = 0;
 
 	for (pk = 0; pk <= wvoice->n_harmonic_peaks; pk++) {
 		p = &peaks[pk];
 		if ((p->height == 0) || (fp = p->freq) == 0)
 			continue;
 
-		if (p->left < 256) p->left = 256;
-		if (p->right < 256) p->right = 256;
+		if (SMOOTH_HARMONICS) {
+			if (p->left < 256) p->left = 256;
+			if (p->right < 256) p->right = 256;
+		}
+		const int lw = p->left >> 8;
+		const int rw = p->right >> 8;
 
 		fhi = p->freq + p->right;
 		h = ((p->freq - p->left) / pitch) + 1;
 		if (h <= 0) h = 1;
 
 		for (f = pitch*h; f < fp && h < MAX_HARMONIC;) {
-			htab[h++] += pk_shape[(fp-f)/(p->left>>8)] * p->height;
+			htab[h++] += pk_shape[ShapeIx(fp-f, lw)] * p->height;
 			f += pitch;
 			if (f >= fp || h >= MAX_HARMONIC) break;
-			htab[h++] += pk_shape[(fp-f)/(p->left>>8)] * p->height;
+			htab[h++] += pk_shape[ShapeIx(fp-f, lw)] * p->height;
 			f += pitch;
 		}
 		for (; f < fhi && h < MAX_HARMONIC;) {
-			htab[h++] += pk_shape[(f-fp)/(p->right>>8)] * p->height;
+			htab[h++] += pk_shape[ShapeIx(f-fp, rw)] * p->height;
 			f += pitch;
 			if (f >= fhi || h >= MAX_HARMONIC) break;
-			htab[h++] += pk_shape[(f-fp)/(p->right>>8)] * p->height;
+			htab[h++] += pk_shape[ShapeIx(f-fp, rw)] * p->height;
 			f += pitch;
 		}
 	}
@@ -576,21 +600,24 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 		x = htab[h] >> 15;
 		htab[h] = (x * x) >> 8;
 		int ix = f >> 19;
-		if (ix >= N_TONE_ADJUST) ix = N_TONE_ADJUST - 1;
-		htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13;
+		if (ix >= N_TONE_ADJUST && SMOOTH_HARMONICS) ix = N_TONE_ADJUST - 1;
+		if (ix < N_TONE_ADJUST)
+			htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13;
 		x = htab[h + 1] >> 15;
 		htab[h + 1] = (x * x) >> 8;
 		int ix2 = (f + pitch) >> 19;
-		if (ix2 >= N_TONE_ADJUST) ix2 = N_TONE_ADJUST - 1;
-		htab[h + 1] = (htab[h + 1] * wvoice->tone_adjust[ix2]) >> 13;
+		if (ix2 >= N_TONE_ADJUST && SMOOTH_HARMONICS) ix2 = N_TONE_ADJUST - 1;
+		if (ix2 < N_TONE_ADJUST)
+			htab[h + 1] = (htab[h + 1] * wvoice->tone_adjust[ix2]) >> 13;
 	}
 	for (; h <= hmax; h++, f += pitch) {
 		x = htab[h] >> 15;
 		htab[h] = (x * x) >> 8;
 
 		int ix = f >> 19;
-		if (ix >= N_TONE_ADJUST) ix = N_TONE_ADJUST - 1;
-		htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13; // index tone_adjust with Hz/8
+		if (ix >= N_TONE_ADJUST && SMOOTH_HARMONICS) ix = N_TONE_ADJUST - 1;
+		if (ix < N_TONE_ADJUST)
+			htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13; // index tone_adjust with Hz/8
 	}
 
 	// adjust the amplitude of the first harmonic, affects tonal quality
@@ -598,7 +625,7 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 	htab[1] = h1/8;
 
 	// Smooth anti-aliasing taper for harmonics approaching Nyquist
-	if (hmax_samplerate > 6) {
+	if (SMOOTH_HARMONICS && hmax_samplerate > 6) {
 		int taper_start = hmax_samplerate - 4;
 		for (h = taper_start; h <= hmax && h < MAX_HARMONIC; h++) {
 			int scale = (hmax_samplerate - h + 1);
@@ -608,7 +635,7 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 
 	// calc intermediate increments of harmonics across the full audible spectrum
 	if (control & 1) {
-		int max_interp = hmax;
+		int max_interp = SMOOTH_HARMONICS ? hmax : N_LOWHARM - 1;
 		if (max_interp >= MAX_HARMONIC)
 			max_interp = MAX_HARMONIC - 1;
 		for (h = 1; h <= max_interp; h++)
@@ -656,19 +683,19 @@ static void AdvanceParameters(void)
 
 	for (ix = 0; ix <= wvoice->n_harmonic_peaks; ix++) {
 		peaks[ix].freq1 += peaks[ix].freq_inc;
-		if ((peaks[ix].freq = (int)peaks[ix].freq1) < 0)
+		if ((peaks[ix].freq = (int)peaks[ix].freq1) < 0 && SMOOTH_HARMONICS)
 			peaks[ix].freq = 0;
 		peaks[ix].height1 += peaks[ix].height_inc;
 		if ((peaks[ix].height = (int)peaks[ix].height1) < 0)
 			peaks[ix].height = 0;
 		peaks[ix].left1 += peaks[ix].left_inc;
-		if ((peaks[ix].left = (int)peaks[ix].left1) < 256) {
+		if ((peaks[ix].left = (int)peaks[ix].left1) < 256 && SMOOTH_HARMONICS) {
 			peaks[ix].left = 256;
 			peaks[ix].left1 = 256;
 		}
 		if (ix < 3) {
 			peaks[ix].right1 += peaks[ix].right_inc;
-			if ((peaks[ix].right = (int)peaks[ix].right1) < 256) {
+			if ((peaks[ix].right = (int)peaks[ix].right1) < 256 && SMOOTH_HARMONICS) {
 				peaks[ix].right = 256;
 				peaks[ix].right1 = 256;
 			}
@@ -679,7 +706,7 @@ static void AdvanceParameters(void)
 		// formants 6,7,8 don't have a width parameter
 		if (ix < 7) {
 			peaks[ix].freq1 += peaks[ix].freq_inc;
-			if ((peaks[ix].freq = (int)peaks[ix].freq1) < 0)
+			if ((peaks[ix].freq = (int)peaks[ix].freq1) < 0 && SMOOTH_HARMONICS)
 				peaks[ix].freq = 0;
 		}
 		peaks[ix].height1 += peaks[ix].height_inc;
@@ -818,7 +845,10 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 				amplitude2 = (wdata.amplitude * (wdata.pitch >> 8) * wdata.amplitude_fmt)/(10000 << 3);
 
 				// switch sign of harmonics above about 900Hz, to reduce max peak amplitude
-				if ((wdata.pitch >> 12) > 0) {
+				if (!SMOOTH_HARMONICS) {
+					h_switch_sign = ShapeIx(890, wdata.pitch >> 12);
+					if (h_switch_sign >= MAX_HARMONIC) h_switch_sign = MAX_HARMONIC - 1;
+				} else if ((wdata.pitch >> 12) > 0) {
 					h_switch_sign = 890 / (wdata.pitch >> 12);
 					if (h_switch_sign < 1) h_switch_sign = 1;
 					if (h_switch_sign >= MAX_HARMONIC) h_switch_sign = MAX_HARMONIC - 1;
@@ -838,11 +868,12 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 
 			SetBreath();
 		} else if ((samplecount & 0x07) == 0) {
-			for (h = 1; h + 1 < MAX_HARMONIC && h + 1 <= maxh2 && h + 1 <= maxh; h += 2) {
+			const int n_inc = SMOOTH_HARMONICS ? MAX_HARMONIC : N_LOWHARM;
+			for (h = 1; h + 1 < n_inc && h + 1 <= maxh2 && h + 1 <= maxh; h += 2) {
 				harmspect[h] += harm_inc[h];
 				harmspect[h + 1] += harm_inc[h + 1];
 			}
-			for (; h < MAX_HARMONIC && h <= maxh2 && h <= maxh; h++)
+			for (; h < n_inc && h <= maxh2 && h <= maxh; h++)
 				harmspect[h] += harm_inc[h];
 
 			// bring automatic gain control back towards unity
@@ -867,7 +898,7 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 					if (peak_harmonic[pk] >= MAX_HARMONIC)
 						peak_harmonic[pk] = MAX_HARMONIC - 1;
 				}
-				if ((wdata.pitch >> 12) > 0) {
+				if (SMOOTH_HARMONICS && (wdata.pitch >> 12) > 0) {
 					int new_switch = 890 / (wdata.pitch >> 12);
 					if (new_switch < 1) new_switch = 1;
 					if (new_switch >= MAX_HARMONIC) new_switch = MAX_HARMONIC - 1;
@@ -948,7 +979,7 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 		theta = waveph;
 
 		int limit1 = h_switch_sign;
-		if (limit1 > maxh) limit1 = maxh;
+		if (limit1 > maxh && SMOOTH_HARMONICS) limit1 = maxh;
 
 		for (h = 1; h + 1 <= limit1; h += 2) {
 			total += ((int)sin_tab[theta >> 5] * harmspect[h]);

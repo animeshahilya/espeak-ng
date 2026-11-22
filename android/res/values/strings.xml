@@ -359,6 +359,8 @@
   <string name="setting_read_ordinals_summary">1st, 2nd as first, second</string>
   <string name="setting_punctuation_sounds">Sounds for brackets and quotes</string>
   <string name="setting_punctuation_sounds_summary">A short tone instead of the name</string>
+  <string name="setting_smooth_harmonics">Smoother sound</string>
+  <string name="setting_smooth_harmonics_summary">Softer, less buzzy eSpeak voice. Off sounds exactly like NVDA.</string>
   <string name="setting_phrase_pauses">Pauses in long sentences</string>
   <string name="setting_phrase_pauses_summary">A short pause before \"and\" or \"because\" when there are no commas. English and Hindi.</string>
   <string name="setting_expand_abbreviations">Expand abbreviations</string>

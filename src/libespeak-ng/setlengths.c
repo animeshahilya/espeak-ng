@@ -346,6 +346,9 @@ espeak_ng_STATUS SetParameter(int parameter, int value, int relative)
 		break;
   case espeakSSML_BREAK_MUL:
     break;
+	case espeakOPTIONS:
+		option_wavegen_flags = new_value;
+		break;
 	case espeakPUNCTUATION:
 	case espeakCAPITALS:
 		// No immediate side effect needed here: the value is already stored

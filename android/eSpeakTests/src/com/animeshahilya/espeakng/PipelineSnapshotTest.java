@@ -114,6 +114,9 @@ public class PipelineSnapshotTest {
             voices.put(v.name, v);
         }
         final VoiceVariant variant = VoiceVariant.parseVoiceVariant(VoiceVariant.MALE);
+        // -e options 1 snapshots the opt-in "Smoother sound"; default 0 is NVDA's sound.
+        engine.Options.setValue(Integer.parseInt(androidx.test.platform.app.InstrumentationRegistry
+                .getArguments().getString("options", "0")));
 
         for (String name : VOICES) {
             final Voice voice = voices.get(name);

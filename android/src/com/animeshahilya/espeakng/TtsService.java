@@ -1321,6 +1321,7 @@ public class TtsService extends TextToSpeechService {
         engine.Capitals.setValue(applyCapitals ? settings.getCapitals() : 0);
         engine.WordGap.setValue(settings.getWordGap());
         engine.PauseScale.setValue(settings.getPauseScale());
+        engine.Options.setValue(settings.isSmoothHarmonicsEnabled() ? 1 : 0);
 
         // No setVoice() for the units: the call at the top of setup already
         // applied this exact voice+variant (SpeechSynthesis memoizes it),

@@ -414,7 +414,7 @@ typedef enum {
   espeakPUNCTUATION=5,
   espeakCAPITALS=6,
   espeakWORDGAP=7,
-  espeakOPTIONS=8,   // reserved for misc. options.  not yet used
+  espeakOPTIONS=8,   // fork: bit 0 = smoother harmonics (wavegen.c); 0 = upstream sound
   espeakINTONATION=9,
   espeakSSML_BREAK_MUL=10,
 

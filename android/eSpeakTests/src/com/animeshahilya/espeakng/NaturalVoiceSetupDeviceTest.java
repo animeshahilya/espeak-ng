@@ -69,5 +69,7 @@ public class NaturalVoiceSetupDeviceTest {
             assertNotNull(key + " did not install", PiperVoiceStore.find(storage, key));
             PiperVoiceStore.assign(prefs, voice.languageKey(), key);
         }
+        // assign() applies asynchronously; the process ends with the test, so flush.
+        prefs.edit().commit();
     }
 }

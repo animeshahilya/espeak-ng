@@ -1792,6 +1792,14 @@ the reason, so a new error is a real one.
 
 Performance work on the native engine must stay bit-exact: compare
 `PipelineSnapshotTest` hash dumps before and after (18 voices, zero diff).
+A sound change to the generator goes behind an option, off by default:
+"Smoother sound" (`espeak_smooth_harmonics`, Advanced -> Sound) sets
+`espeakOPTIONS` bit 0 (`option_wavegen_flags`, wavegen.c: interpolation over
+every harmonic, Nyquist taper, sign switch following pitch). Off is the old
+output bit for bit (Pixel 8, 2026-11-22: 234/234 hashes); on, all 234 differ.
+`-e options 1` snapshots it on. Bounds checks that only fire where the old
+code overran memory stay unconditional; a zero peak width divides to 0 as
+ARM did (`ShapeIx`).
 Run that class on its own (`am instrument -e class ...PipelineSnapshotTest`),
 never inside the full suite: eSpeak's audio generator carries state from one
 utterance to the next, so after any earlier synthesis in the same process

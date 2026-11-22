@@ -84,6 +84,7 @@ public class VoiceSettings {
     public static final String PREF_READ_ORDINALS = "espeak_read_ordinals";
     public static final String PREF_PUNCTUATION_SOUNDS = "espeak_punctuation_sounds";
     public static final String PREF_PHRASE_PAUSES = "espeak_phrase_pauses";
+    public static final String PREF_SMOOTH_HARMONICS = "espeak_smooth_harmonics";
     /** A lone symbol in quotes is named ("press '_' to"), espeak-ng #150. */
     public static final String PREF_NAME_QUOTED_SYMBOLS = "espeak_name_quoted_symbols";
     /** Other apps (Tasker...) may change settings by broadcast: {@code tts.SettingsReceiver}. */
@@ -587,6 +588,11 @@ public class VoiceSettings {
 
     public boolean isPhrasePausesEnabled() {
         return mPreferences.getBoolean(PREF_PHRASE_PAUSES, false);
+    }
+
+    /** Smoother eSpeak sound (native espeakOPTIONS bit 0); off keeps NVDA's sound. */
+    public boolean isSmoothHarmonicsEnabled() {
+        return mPreferences.getBoolean(PREF_SMOOTH_HARMONICS, false);
     }
 
     public boolean isExpandAbbreviationsEnabled() {

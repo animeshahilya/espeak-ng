@@ -565,6 +565,12 @@
             android:key="espeak_volume"
             android:title="@string/espeak_volume"
             app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            android:key="espeak_smooth_harmonics"
+            android:title="@string/setting_smooth_harmonics"
+            android:summary="@string/setting_smooth_harmonics_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
         <PreferenceScreen
             android:key="sub_audio_optimizer"
             android:title="@string/setting_audio_optimizer"
