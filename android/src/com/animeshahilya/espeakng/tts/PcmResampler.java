@@ -12,6 +12,7 @@ import com.animeshahilya.espeakng.Voice;
 public final class PcmResampler {
     /** Taps on each side of the output position. */
     private static final int HALF = 16;
+    private static final short[] EMPTY_SHORTS = new short[0];
 
     /** Coefficients are pure function of (from,to): shared across runs. */
     private static final java.util.Map<Long, float[][]> COEF_CACHE =
@@ -74,7 +75,7 @@ public final class PcmResampler {
     /** Feeds {@code count} samples from {@code in}. */
     public short[] process(short[] in, int count) {
         if (in == null || count <= 0) {
-            return new short[0];
+            return EMPTY_SHORTS;
         }
         append(in, count);
         return produce(false);
@@ -102,6 +103,9 @@ public final class PcmResampler {
                 ? (inputTotal * up + down - 1) / down          // every output the input covers
                 : outputsBefore(inputTotal - HALF);            // only those with all taps present
         final int count = (int) Math.max(0, last - next);
+        if (count == 0) {
+            return EMPTY_SHORTS;
+        }
         final short[] out = new short[count];
         for (int o = 0; o < count; o++, next++) {
             final long num = next * down;
@@ -156,7 +160,17 @@ public final class PcmResampler {
         private final double scale;
         private long written;
         private short[] inBuf = new short[512];
+        private byte[] outBuf = new byte[1024];
         private int leftoverByte = -1;
+
+        private byte[] ensureOutBuf(int bytesNeeded) {
+            byte[] b = outBuf;
+            if (b == null || b.length < bytesNeeded) {
+                b = new byte[Math.max(bytesNeeded, (b != null ? b.length * 2 : 1024))];
+                outBuf = b;
+            }
+            return b;
+        }
 
         public Output(PiperEngine.Output target, int fromRate, int toRate) {
             this.target = target;
@@ -209,7 +223,13 @@ public final class PcmResampler {
                 return !target.stopped();
             }
             written += out.length;
-            return target.audio(bytes(out));
+            final int outBytes = out.length * 2;
+            final byte[] b = ensureOutBuf(outBytes);
+            for (int i = 0; i < out.length; i++) {
+                b[2 * i] = (byte) out[i];
+                b[2 * i + 1] = (byte) (out[i] >> 8);
+            }
+            return target.audio(b, 0, outBytes);
         }
 
         @Override
@@ -223,18 +243,15 @@ public final class PcmResampler {
             final short[] tail = resampler.flush();
             if (tail.length > 0 && !target.stopped()) {
                 written += tail.length;
-                target.audio(bytes(tail));
+                final int tailBytes = tail.length * 2;
+                final byte[] b = ensureOutBuf(tailBytes);
+                for (int i = 0; i < tail.length; i++) {
+                    b[2 * i] = (byte) tail[i];
+                    b[2 * i + 1] = (byte) (tail[i] >> 8);
+                }
+                target.audio(b, 0, tailBytes);
             }
             return (int) written;
-        }
-
-        private static byte[] bytes(short[] s) {
-            final byte[] b = new byte[s.length * 2];
-            for (int i = 0; i < s.length; i++) {
-                b[2 * i] = (byte) s[i];
-                b[2 * i + 1] = (byte) (s[i] >> 8);
-            }
-            return b;
         }
     }
 }

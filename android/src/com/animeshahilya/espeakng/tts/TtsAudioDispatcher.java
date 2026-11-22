@@ -226,6 +226,11 @@ public final class TtsAudioDispatcher {
         if ((safeOffset & 1) != 0) {
             safeOffset++;
         }
+        // Drop a trailing odd byte: 16-bit PCM never has one, and keeping it
+        // would split a sample across audioAvailable() calls.
+        if (((safeEnd - safeOffset) & 1) != 0) {
+            safeEnd--;
+        }
         if (safeEnd <= safeOffset) {
             return !isStopped() && !mCallbackDone.get();
         }
@@ -237,11 +242,6 @@ public final class TtsAudioDispatcher {
         int maxBytesToCopy = getSafeChunkSize();
         int currentOffset = safeOffset;
         int endOffset = safeEnd;
-        // Drop a trailing odd byte: 16-bit PCM never has one, and the
-        // optimizer leaves it untouched. Sending it would split a sample.
-        if (((endOffset - currentOffset) & 1) != 0) {
-            endOffset--;
-        }
 
         while (currentOffset < endOffset) {
             if (mIsStopped.get() || mCallbackDone.get()) {
@@ -249,9 +249,11 @@ public final class TtsAudioDispatcher {
             }
             int bytesToWrite = Math.min(maxBytesToCopy, endOffset - currentOffset);
             // Never split a sample across audioAvailable() calls.
-            if (bytesToWrite > 2 && ((bytesToWrite & 1) != 0)
-                    && endOffset - currentOffset > bytesToWrite) {
+            if ((bytesToWrite & 1) != 0) {
                 bytesToWrite--;
+            }
+            if (bytesToWrite <= 0) {
+                break;
             }
             if (mSink.audioAvailable(audioData, currentOffset, bytesToWrite) != TextToSpeech.SUCCESS) {
                 mIsStopped.set(true);

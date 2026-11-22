@@ -473,8 +473,8 @@ static void WavegenSetEcho(void)
 
 int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 {
-	if (wvoice == NULL)
-		return 1;
+	if (wvoice == NULL || pitch <= 0)
+		return 0;
 
 	// Calculate the amplitude of each  harmonics from the formants
 	// Only for formants 0 to 5
@@ -504,6 +504,8 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 
 	if (hmax > hmax_samplerate)
 		hmax = hmax_samplerate;
+	if (hmax < 0)
+		hmax = 0;
 
 	memset(htab, 0, sizeof(int) * MAX_HARMONIC);
 
@@ -512,21 +514,24 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 		if ((p->height == 0) || (fp = p->freq) == 0)
 			continue;
 
+		if (p->left < 256) p->left = 256;
+		if (p->right < 256) p->right = 256;
+
 		fhi = p->freq + p->right;
 		h = ((p->freq - p->left) / pitch) + 1;
 		if (h <= 0) h = 1;
 
-		for (f = pitch*h; f < fp;) {
+		for (f = pitch*h; f < fp && h < MAX_HARMONIC;) {
 			htab[h++] += pk_shape[(fp-f)/(p->left>>8)] * p->height;
 			f += pitch;
-			if (f >= fp) break;
+			if (f >= fp || h >= MAX_HARMONIC) break;
 			htab[h++] += pk_shape[(fp-f)/(p->left>>8)] * p->height;
 			f += pitch;
 		}
-		for (; f < fhi;) {
+		for (; f < fhi && h < MAX_HARMONIC;) {
 			htab[h++] += pk_shape[(f-fp)/(p->right>>8)] * p->height;
 			f += pitch;
-			if (f >= fhi) break;
+			if (f >= fhi || h >= MAX_HARMONIC) break;
 			htab[h++] += pk_shape[(f-fp)/(p->right>>8)] * p->height;
 			f += pitch;
 		}
@@ -540,7 +545,7 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 	if (h2 > 0) {
 		x = y/h2;
 		h = 1;
-		while (y > 0) {
+		while (y > 0 && h < MAX_HARMONIC) {
 			htab[h++] += y;
 			y -= x;
 		}
@@ -555,6 +560,8 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 		if (control == 0) {
 			// set this initially, but make changes only at the quiet point
 			peak_harmonic[pk] = peaks[pk].freq / pitch;
+			if (peak_harmonic[pk] >= MAX_HARMONIC)
+				peak_harmonic[pk] = MAX_HARMONIC - 1;
 		}
 		// only use harmonics up to half the samplerate
 		if (peak_harmonic[pk] >= hmax_samplerate)
@@ -857,6 +864,8 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 				for (pk = wvoice->n_harmonic_peaks+1; pk < N_PEAKS; pk++) {
 					// find the nearest harmonic for HF peaks where we don't use shape
 					peak_harmonic[pk] = ((peaks[pk].freq / (wdata.pitch*8)) + 1) / 2;
+					if (peak_harmonic[pk] >= MAX_HARMONIC)
+						peak_harmonic[pk] = MAX_HARMONIC - 1;
 				}
 				if ((wdata.pitch >> 12) > 0) {
 					int new_switch = 890 / (wdata.pitch >> 12);
@@ -938,13 +947,16 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 		// overhead is halved on this hottest path (see profile).
 		theta = waveph;
 
-		for (h = 1; h + 1 <= h_switch_sign; h += 2) {
+		int limit1 = h_switch_sign;
+		if (limit1 > maxh) limit1 = maxh;
+
+		for (h = 1; h + 1 <= limit1; h += 2) {
 			total += ((int)sin_tab[theta >> 5] * harmspect[h]);
 			theta += waveph;
 			total += ((int)sin_tab[theta >> 5] * harmspect[h + 1]);
 			theta += waveph;
 		}
-		for (; h <= h_switch_sign; h++) {
+		for (; h <= limit1; h++) {
 			total += ((int)sin_tab[theta >> 5] * harmspect[h]);
 			theta += waveph;
 		}

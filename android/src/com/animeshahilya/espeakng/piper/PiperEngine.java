@@ -237,13 +237,25 @@ public final class PiperEngine {
     }
 
     private final ExecutorService mRenderer = Executors.newSingleThreadExecutor(r -> {
-        final Thread t = new Thread(r, "piper-render");
+        final Thread t = new Thread(() -> {
+            try {
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
+            } catch (Throwable ignored) {
+            }
+            r.run();
+        }, "piper-render");
         t.setPriority(Thread.NORM_PRIORITY + 2);
         return t;
     });
     /** Makes Phonon chunks played while they are made ({@code Pass.renderStream}). */
     private final ExecutorService mStreamer = Executors.newSingleThreadExecutor(r -> {
-        final Thread t = new Thread(r, "phonon-stream");
+        final Thread t = new Thread(() -> {
+            try {
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
+            } catch (Throwable ignored) {
+            }
+            r.run();
+        }, "phonon-stream");
         t.setPriority(Thread.NORM_PRIORITY + 2);
         return t;
     });
@@ -1154,19 +1166,25 @@ public final class PiperEngine {
         return frames;
     }
 
-    /** Reusable zeroed silence buffer to eliminate heap churn on sentence and clause pauses. */
-    private static final byte[] ZERO_CHUNK = new byte[2048];
-
     private static boolean deliverSilence(Output out, int bytesNeeded) {
+        if (bytesNeeded <= 0) {
+            return !out.stopped();
+        }
+        // Small bounded slice buffer to prevent thread-safety data races and
+        // prevent downstream in-place DSP processors from corrupting shared silence.
+        final byte[] buffer = new byte[Math.min(bytesNeeded, 2048)];
         while (bytesNeeded > 0) {
             if (out.stopped()) {
                 return false;
             }
-            final int toWrite = Math.min(bytesNeeded, ZERO_CHUNK.length);
-            if (!out.audio(ZERO_CHUNK, 0, toWrite)) {
+            final int toWrite = Math.min(bytesNeeded, buffer.length);
+            if (!out.audio(buffer, 0, toWrite)) {
                 return false;
             }
             bytesNeeded -= toWrite;
+            if (bytesNeeded > 0) {
+                java.util.Arrays.fill(buffer, (byte) 0);
+            }
         }
         return true;
     }
