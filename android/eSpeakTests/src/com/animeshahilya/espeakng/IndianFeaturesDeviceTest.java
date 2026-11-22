@@ -343,4 +343,132 @@ public class IndianFeaturesDeviceTest {
             Log.i(TAG, "Phrase synthesized successfully: " + mAudioBytesReceived.get() + " bytes");
         }
     }
+
+    @Test
+    public void testIndicSchwaRetentionTva() throws InterruptedException {
+        // Test Hindi schwa retention on abstract nouns with conjunct suffix -त्व
+        // Note: phonemizeForPiper outputs IPA phonemes where 'v' is 'ʋ' and schwa is 'ə'.
+        String phonAstitvaHi = mEngine.phonemizeForPiper("hi", "अस्तित्व");
+        assertThat("Hindi अस्तित्व should be phonemized", phonAstitvaHi, is(notNullValue()));
+        Log.i(TAG, "Hindi अस्तित्व phonemes: " + phonAstitvaHi);
+        assertThat("Hindi अस्तित्व should retain final schwa after ʋ", phonAstitvaHi, containsString("ʋə"));
+
+        String phonMahattvaHi = mEngine.phonemizeForPiper("hi", "महत्त्व");
+        assertThat("Hindi महत्त्व should be phonemized", phonMahattvaHi, is(notNullValue()));
+        Log.i(TAG, "Hindi महत्त्व phonemes: " + phonMahattvaHi);
+        assertThat("Hindi महत्त्व should retain final schwa after ʋ", phonMahattvaHi, containsString("ʋə"));
+
+        String phonVyaktitvaHi = mEngine.phonemizeForPiper("hi", "व्यक्तित्व");
+        assertThat("Hindi व्यक्तित्व should be phonemized", phonVyaktitvaHi, is(notNullValue()));
+        Log.i(TAG, "Hindi व्यक्तित्व phonemes: " + phonVyaktitvaHi);
+        assertThat("Hindi व्यक्तित्व should retain final schwa after ʋ", phonVyaktitvaHi, containsString("ʋə"));
+
+        // Normal stems ending in व must delete the final schwa (ends in ʋ without trailing ə)
+        String phonManavHi = mEngine.phonemizeForPiper("hi", "मानव");
+        assertThat("Hindi मानव should be phonemized", phonManavHi, is(notNullValue()));
+        Log.i(TAG, "Hindi मानव phonemes: " + phonManavHi);
+        assertThat("Hindi मानव should not retain final schwa after ʋ", phonManavHi, not(containsString("ʋə")));
+
+        // Test Marathi schwa retention on abstract nouns with conjunct suffix -त्व
+        // Marathi phondata maps व to phoneme 'v', followed by schwa 'ə'.
+        String phonAstitvaMr = mEngine.phonemizeForPiper("mr", "अस्तित्व");
+        assertThat("Marathi अस्तित्व should be phonemized", phonAstitvaMr, is(notNullValue()));
+        Log.i(TAG, "Marathi अस्तित्व phonemes: " + phonAstitvaMr);
+        assertThat("Marathi अस्तित्व should retain final schwa after v", phonAstitvaMr, containsString("və"));
+
+        String phonManavMr = mEngine.phonemizeForPiper("mr", "मानव");
+        assertThat("Marathi मानव should be phonemized", phonManavMr, is(notNullValue()));
+        Log.i(TAG, "Marathi मानव phonemes: " + phonManavMr);
+        assertThat("Marathi मानव should not retain final schwa after v", phonManavMr, not(containsString("və")));
+
+        // Live synthesis check for both
+        List<Voice> availableVoices = mEngine.getAvailableVoices();
+        Voice hiVoice = null;
+        Voice mrVoice = null;
+        for (Voice v : availableVoices) {
+            if ("hi".equals(v.name)) hiVoice = v;
+            if ("mr".equals(v.name)) mrVoice = v;
+        }
+        assertThat("hiVoice available", hiVoice, is(notNullValue()));
+        assertThat("mrVoice available", mrVoice, is(notNullValue()));
+
+        VoiceVariant defaultVariant = VoiceVariant.parseVoiceVariant(VoiceVariant.MALE);
+        mEngine.setVoice(hiVoice, defaultVariant);
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+        mEngine.synthesize("मानव का अस्तित्व और उसका महत्त्व।", false);
+        assertThat(mLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(mAudioBytesReceived.get(), greaterThan(0));
+
+        mEngine.setVoice(mrVoice, defaultVariant);
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+        mEngine.synthesize("मानवाचे अस्तित्व आणि त्याचे महत्त्व.", false);
+        assertThat(mLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(mAudioBytesReceived.get(), greaterThan(0));
+    }
+
+    @Test
+    public void testFormantEngineHarmonicsAndRateStress() throws InterruptedException {
+        // Stress test the Milestone 2 harmonic interpolation and pitch-sync tracking
+        // with extreme rates, pitches, and bursts.
+        List<Voice> availableVoices = mEngine.getAvailableVoices();
+        Voice enVoice = null;
+        for (Voice v : availableVoices) {
+            if ("en".equals(v.name) || "en-in".equals(v.name)) {
+                enVoice = v;
+                break;
+            }
+        }
+        assertThat("enVoice available", enVoice, is(notNullValue()));
+        VoiceVariant defaultVariant = VoiceVariant.parseVoiceVariant(VoiceVariant.MALE);
+        mEngine.setVoice(enVoice, defaultVariant);
+
+        // Extreme fast rate (450 wpm)
+        mEngine.Rate.setValue(450);
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+        mEngine.synthesize("Testing ultra fast 450 words per minute speech with full harmonic interpolation.", false);
+        assertThat(mLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(mAudioBytesReceived.get(), greaterThan(0));
+
+        // Extreme slow rate (80 wpm)
+        mEngine.Rate.setValue(80);
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+        mEngine.synthesize("Slow speech.", false);
+        assertThat(mLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(mAudioBytesReceived.get(), greaterThan(0));
+
+        // Extreme high pitch (99) and low pitch (0)
+        mEngine.Rate.setValue(175);
+        mEngine.Pitch.setValue(99);
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+        mEngine.synthesize("High pitch test with pitch sync quiet points.", false);
+        assertThat(mLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(mAudioBytesReceived.get(), greaterThan(0));
+
+        mEngine.Pitch.setValue(0);
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+        mEngine.synthesize("Low pitch test with Nyquist anti-aliasing filter.", false);
+        assertThat(mLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(mAudioBytesReceived.get(), greaterThan(0));
+
+        // Rapid burst: 15 rapid synthesize & stop calls must not crash, deadlock, or leak native memory
+        for (int i = 0; i < 15; i++) {
+            mEngine.synthesize("Rapid burst iteration number " + i, false);
+            if (i % 2 == 0) {
+                mEngine.stop();
+            }
+        }
+        // Final utterance completes cleanly
+        mEngine.Pitch.setValue(50);
+        mAudioBytesReceived.set(0);
+        mLatch = new CountDownLatch(1);
+        mEngine.synthesize("Rapid burst completed successfully.", false);
+        assertThat(mLatch.await(5, TimeUnit.SECONDS), is(true));
+        assertThat(mAudioBytesReceived.get(), greaterThan(0));
+    }
 }
