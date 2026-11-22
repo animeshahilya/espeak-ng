@@ -1046,6 +1046,10 @@ public class TtsService extends TextToSpeechService {
 
     @Override
     protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
+        try {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
+        } catch (Throwable ignored) {
+        }
         // One request at a time (see mSynthLock); the reload path never takes it.
         synchronized (mSynthLock) {
             onSynthesizeTextLocked(request, callback);

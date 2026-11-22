@@ -104,6 +104,21 @@ public final class PiperEngine {
         /** @return false once the caller no longer wants audio (stopped) */
         boolean audio(byte[] pcm);
 
+        /**
+         * Streaming chunk write without requiring slice allocation.
+         */
+        default boolean audio(byte[] pcm, int offset, int length) {
+            if (pcm == null || length <= 0) {
+                return !stopped();
+            }
+            if (offset == 0 && length == pcm.length) {
+                return audio(pcm);
+            }
+            byte[] slice = new byte[length];
+            System.arraycopy(pcm, offset, slice, 0, length);
+            return audio(slice);
+        }
+
         /** True once the request was stopped, even before any audio. */
         default boolean stopped() {
             return false;
@@ -1102,7 +1117,7 @@ public final class PiperEngine {
                     final int pause = PiperAudio.pauseSamples(rate, job.chunk.endsSentence,
                             params.pauseScale, speed);
                     if (pause > 0) {
-                        if (!out.audio(new byte[pause * 2])) {
+                        if (!deliverSilence(out, pause * 2)) {
                             break;
                         }
                         frames += pause;
@@ -1137,6 +1152,23 @@ public final class PiperEngine {
             }
         }
         return frames;
+    }
+
+    /** Reusable zeroed silence buffer to eliminate heap churn on sentence and clause pauses. */
+    private static final byte[] ZERO_CHUNK = new byte[2048];
+
+    private static boolean deliverSilence(Output out, int bytesNeeded) {
+        while (bytesNeeded > 0) {
+            if (out.stopped()) {
+                return false;
+            }
+            final int toWrite = Math.min(bytesNeeded, ZERO_CHUNK.length);
+            if (!out.audio(ZERO_CHUNK, 0, toWrite)) {
+                return false;
+            }
+            bytesNeeded -= toWrite;
+        }
+        return true;
     }
 
     /**

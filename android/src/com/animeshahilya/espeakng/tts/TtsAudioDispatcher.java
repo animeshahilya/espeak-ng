@@ -374,6 +374,14 @@ public final class TtsAudioDispatcher {
             }
 
             @Override
+            public boolean audio(byte[] pcm, int offset, int length) {
+                if (pcm == null || length <= 0) {
+                    return !isStopped();
+                }
+                return writeAudio(pcm, offset, length);
+            }
+
+            @Override
             public boolean stopped() {
                 return isStopped();
             }

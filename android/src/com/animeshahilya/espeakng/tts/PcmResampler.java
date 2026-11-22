@@ -171,13 +171,18 @@ public final class PcmResampler {
 
         @Override
         public boolean audio(byte[] pcm) {
-            if (pcm == null || pcm.length == 0) {
+            return audio(pcm, 0, pcm != null ? pcm.length : 0);
+        }
+
+        @Override
+        public boolean audio(byte[] pcm, int offset, int length) {
+            if (pcm == null || length <= 0) {
                 return !target.stopped();
             }
-            final int totalBytes = (leftoverByte >= 0 ? 1 : 0) + pcm.length;
+            final int totalBytes = (leftoverByte >= 0 ? 1 : 0) + length;
             final int inLen = totalBytes / 2;
             if (inLen == 0) {
-                leftoverByte = pcm[0] & 0xFF;
+                leftoverByte = pcm[offset] & 0xFF;
                 return !target.stopped();
             }
             short[] in = inBuf;
@@ -185,17 +190,18 @@ public final class PcmResampler {
                 in = new short[inLen];
                 inBuf = in;
             }
-            int pcmIdx = 0;
+            int pcmIdx = offset;
+            int endIdx = offset + length;
             int sampleIdx = 0;
             if (leftoverByte >= 0) {
                 in[sampleIdx++] = (short) (leftoverByte | (pcm[pcmIdx++] << 8));
                 leftoverByte = -1;
             }
-            while (sampleIdx < inLen) {
+            while (sampleIdx < inLen && pcmIdx + 1 < endIdx) {
                 in[sampleIdx++] = (short) ((pcm[pcmIdx] & 0xFF) | (pcm[pcmIdx + 1] << 8));
                 pcmIdx += 2;
             }
-            if (pcmIdx < pcm.length) {
+            if (pcmIdx < endIdx) {
                 leftoverByte = pcm[pcmIdx] & 0xFF;
             }
             final short[] out = resampler.process(in, inLen);
