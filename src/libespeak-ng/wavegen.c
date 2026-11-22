@@ -75,9 +75,8 @@ static int echo_length = 0; // period (in sample\) to ensure completion of echo 
 static int voicing;
 static RESONATOR rbreath[N_PEAKS];
 
-#define N_LOWHARM  30
 #define MAX_HARMONIC 400 // 400 * 50Hz = 20 kHz, more than enough
-static int harm_inc[N_LOWHARM]; // only for these harmonics do we interpolate amplitude between steps
+static int harm_inc[MAX_HARMONIC]; // interpolate amplitude across all active harmonics between steps
 static int *harmspect;
 static int hswitch = 0;
 static int hspect[2][MAX_HARMONIC]; // 2 copies, we interpolate between then
@@ -506,8 +505,7 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 	if (hmax > hmax_samplerate)
 		hmax = hmax_samplerate;
 
-	for (h = 0; h <= hmax; h++)
-		htab[h] = 0;
+	memset(htab, 0, sizeof(int) * MAX_HARMONIC);
 
 	for (pk = 0; pk <= wvoice->n_harmonic_peaks; pk++) {
 		p = &peaks[pk];
@@ -570,31 +568,43 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 	for (h = 0; h + 1 <= hmax; h += 2, f += pitch*2) {
 		x = htab[h] >> 15;
 		htab[h] = (x * x) >> 8;
-		int ix;
-		if ((ix = (f >> 19)) < N_TONE_ADJUST)
-			htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13;
+		int ix = f >> 19;
+		if (ix >= N_TONE_ADJUST) ix = N_TONE_ADJUST - 1;
+		htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13;
 		x = htab[h + 1] >> 15;
 		htab[h + 1] = (x * x) >> 8;
-		int ix2;
-		if ((ix2 = ((f + pitch) >> 19)) < N_TONE_ADJUST)
-			htab[h + 1] = (htab[h + 1] * wvoice->tone_adjust[ix2]) >> 13;
+		int ix2 = (f + pitch) >> 19;
+		if (ix2 >= N_TONE_ADJUST) ix2 = N_TONE_ADJUST - 1;
+		htab[h + 1] = (htab[h + 1] * wvoice->tone_adjust[ix2]) >> 13;
 	}
 	for (; h <= hmax; h++, f += pitch) {
 		x = htab[h] >> 15;
 		htab[h] = (x * x) >> 8;
 
-		int ix;
-		if ((ix = (f >> 19)) < N_TONE_ADJUST)
-			htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13; // index tone_adjust with Hz/8
+		int ix = f >> 19;
+		if (ix >= N_TONE_ADJUST) ix = N_TONE_ADJUST - 1;
+		htab[h] = (htab[h] * wvoice->tone_adjust[ix]) >> 13; // index tone_adjust with Hz/8
 	}
 
 	// adjust the amplitude of the first harmonic, affects tonal quality
 	h1 = htab[1] * option_harmonic1;
 	htab[1] = h1/8;
 
-	// calc intermediate increments of LF harmonics
+	// Smooth anti-aliasing taper for harmonics approaching Nyquist
+	if (hmax_samplerate > 6) {
+		int taper_start = hmax_samplerate - 4;
+		for (h = taper_start; h <= hmax && h < MAX_HARMONIC; h++) {
+			int scale = (hmax_samplerate - h + 1);
+			htab[h] = (htab[h] * scale) / 5;
+		}
+	}
+
+	// calc intermediate increments of harmonics across the full audible spectrum
 	if (control & 1) {
-		for (h = 1; h < N_LOWHARM; h++)
+		int max_interp = hmax;
+		if (max_interp >= MAX_HARMONIC)
+			max_interp = MAX_HARMONIC - 1;
+		for (h = 1; h <= max_interp; h++)
 			harm_inc[h] = (htab[h] - harmspect[h]) >> 3;
 	}
 
@@ -639,15 +649,22 @@ static void AdvanceParameters(void)
 
 	for (ix = 0; ix <= wvoice->n_harmonic_peaks; ix++) {
 		peaks[ix].freq1 += peaks[ix].freq_inc;
-		peaks[ix].freq = (int)peaks[ix].freq1;
+		if ((peaks[ix].freq = (int)peaks[ix].freq1) < 0)
+			peaks[ix].freq = 0;
 		peaks[ix].height1 += peaks[ix].height_inc;
 		if ((peaks[ix].height = (int)peaks[ix].height1) < 0)
 			peaks[ix].height = 0;
 		peaks[ix].left1 += peaks[ix].left_inc;
-		peaks[ix].left = (int)peaks[ix].left1;
+		if ((peaks[ix].left = (int)peaks[ix].left1) < 256) {
+			peaks[ix].left = 256;
+			peaks[ix].left1 = 256;
+		}
 		if (ix < 3) {
 			peaks[ix].right1 += peaks[ix].right_inc;
-			peaks[ix].right = (int)peaks[ix].right1;
+			if ((peaks[ix].right = (int)peaks[ix].right1) < 256) {
+				peaks[ix].right = 256;
+				peaks[ix].right1 = 256;
+			}
 		} else
 			peaks[ix].right = peaks[ix].left;
 	}
@@ -655,7 +672,8 @@ static void AdvanceParameters(void)
 		// formants 6,7,8 don't have a width parameter
 		if (ix < 7) {
 			peaks[ix].freq1 += peaks[ix].freq_inc;
-			peaks[ix].freq = (int)peaks[ix].freq1;
+			if ((peaks[ix].freq = (int)peaks[ix].freq1) < 0)
+				peaks[ix].freq = 0;
 		}
 		peaks[ix].height1 += peaks[ix].height_inc;
 		if ((peaks[ix].height = (int)peaks[ix].height1) < 0)
@@ -793,7 +811,11 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 				amplitude2 = (wdata.amplitude * (wdata.pitch >> 8) * wdata.amplitude_fmt)/(10000 << 3);
 
 				// switch sign of harmonics above about 900Hz, to reduce max peak amplitude
-				h_switch_sign = 890 / (wdata.pitch >> 12);
+				if ((wdata.pitch >> 12) > 0) {
+					h_switch_sign = 890 / (wdata.pitch >> 12);
+					if (h_switch_sign < 1) h_switch_sign = 1;
+					if (h_switch_sign >= MAX_HARMONIC) h_switch_sign = MAX_HARMONIC - 1;
+				}
 			} else
 				AdvanceParameters();
 
@@ -809,11 +831,11 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 
 			SetBreath();
 		} else if ((samplecount & 0x07) == 0) {
-			for (h = 1; h + 1 < N_LOWHARM && h + 1 <= maxh2 && h + 1 <= maxh; h += 2) {
+			for (h = 1; h + 1 < MAX_HARMONIC && h + 1 <= maxh2 && h + 1 <= maxh; h += 2) {
 				harmspect[h] += harm_inc[h];
 				harmspect[h + 1] += harm_inc[h + 1];
 			}
-			for (; h < N_LOWHARM && h <= maxh2 && h <= maxh; h++)
+			for (; h < MAX_HARMONIC && h <= maxh2 && h <= maxh; h++)
 				harmspect[h] += harm_inc[h];
 
 			// bring automatic gain control back towards unity
@@ -835,6 +857,12 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 				for (pk = wvoice->n_harmonic_peaks+1; pk < N_PEAKS; pk++) {
 					// find the nearest harmonic for HF peaks where we don't use shape
 					peak_harmonic[pk] = ((peaks[pk].freq / (wdata.pitch*8)) + 1) / 2;
+				}
+				if ((wdata.pitch >> 12) > 0) {
+					int new_switch = 890 / (wdata.pitch >> 12);
+					if (new_switch < 1) new_switch = 1;
+					if (new_switch >= MAX_HARMONIC) new_switch = MAX_HARMONIC - 1;
+					h_switch_sign = new_switch;
 				}
 
 				// adjust amplitude to compensate for fewer harmonics at higher pitch
