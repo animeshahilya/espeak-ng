@@ -122,7 +122,9 @@ dependencies {
 }
 
 android {
-    compileSdk = 36
+    compileSdk {
+        version = release(37) { minorApiLevel = 2 }
+    }
     ndkVersion = "30.0.16248370"
     namespace = "com.animeshahilya.espeakng"
 
@@ -139,7 +141,7 @@ android {
         // The Snapdragon APK: Qualcomm's QNN plugin needs API 27. It is only
         // offered on the 8 Gen 3 and later (NpuFiles.TARGETS), all Android 14+.
         minSdk = project.hasProperty('snapdragon') ? 27 : 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 38
         versionName = "2.13"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
