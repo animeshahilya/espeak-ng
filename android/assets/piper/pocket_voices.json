@@ -1,0 +1,947 @@
+{
+ "en_US-pocket_alba-medium": {
+  "key": "en_US-pocket_alba-medium",
+  "name": "pocket_alba",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (Alba MacKenna)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_alba-medium.onnx.json": {
+    "size_bytes": 1157,
+    "md5_digest": "0a35a8c13b4a2c1c1bcc4b0f377fbc1f"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2080768,
+    "md5_digest": "8097fdec9d7deef8970bc28d5efda907"
+   }
+  }
+ },
+ "en_US-pocket_anna-medium": {
+  "key": "en_US-pocket_anna-medium",
+  "name": "pocket_anna",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_anna-medium.onnx.json": {
+    "size_bytes": 1157,
+    "md5_digest": "1f104b96148bef8beca7b421f7cc4d28"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2539520,
+    "md5_digest": "888034679a3f53d2b980dfef398f5118"
+   }
+  }
+ },
+ "en_US-pocket_azelma-medium": {
+  "key": "en_US-pocket_azelma-medium",
+  "name": "pocket_azelma",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_azelma-medium.onnx.json": {
+    "size_bytes": 1163,
+    "md5_digest": "9e3cdd7df7c3aa01cfbada5d747f54dd"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2392064,
+    "md5_digest": "5d44fc38637f329736922d19aa9bcc3d"
+   }
+  }
+ },
+ "en_US-pocket_bill_boerst-medium": {
+  "key": "en_US-pocket_bill_boerst-medium",
+  "name": "pocket_bill_boerst",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC0 (Voice-Zero, LibriVox)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_bill_boerst-medium.onnx.json": {
+    "size_bytes": 1178,
+    "md5_digest": "ee14e1082c98fd206ce1cf1ef3276972"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2179072,
+    "md5_digest": "bc409848f2f2e3ceeed78f28790aa180"
+   }
+  }
+ },
+ "en_US-pocket_caro_davy-medium": {
+  "key": "en_US-pocket_caro_davy-medium",
+  "name": "pocket_caro_davy",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC0 (Voice-Zero, LibriVox)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_caro_davy-medium.onnx.json": {
+    "size_bytes": 1172,
+    "md5_digest": "80740b50d8a8dea0034bdadbf78f1f32"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 1687552,
+    "md5_digest": "d5073179a5427aa341da3203a2a4f52e"
+   }
+  }
+ },
+ "en_US-pocket_charles-medium": {
+  "key": "en_US-pocket_charles-medium",
+  "name": "pocket_charles",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_charles-medium.onnx.json": {
+    "size_bytes": 1166,
+    "md5_digest": "ee2465fc3b57c99dc112b00e7f75a0b3"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2064384,
+    "md5_digest": "9ab03300b7f725e956ac87c0a37976eb"
+   }
+  }
+ },
+ "en_US-pocket_cosette-medium": {
+  "key": "en_US-pocket_cosette-medium",
+  "name": "pocket_cosette",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY-NC 4.0 (Expresso)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_cosette-medium.onnx.json": {
+    "size_bytes": 1166,
+    "md5_digest": "44f558b0e22d48d59f442fecf946c17c"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2080768,
+    "md5_digest": "758afe2d34af82ad025d008a9d571d33"
+   }
+  }
+ },
+ "en_US-pocket_eponine-medium": {
+  "key": "en_US-pocket_eponine-medium",
+  "name": "pocket_eponine",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_eponine-medium.onnx.json": {
+    "size_bytes": 1166,
+    "md5_digest": "155346b10c8928d89c4cd5342fe51a63"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2310144,
+    "md5_digest": "740b9e5465a8802704235431202263fa"
+   }
+  }
+ },
+ "en_US-pocket_eve-medium": {
+  "key": "en_US-pocket_eve-medium",
+  "name": "pocket_eve",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_eve-medium.onnx.json": {
+    "size_bytes": 1154,
+    "md5_digest": "d7f2b07c5310b19a081fe56599a7efe6"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2048000,
+    "md5_digest": "fed8e8d08df29846e59211f1ec5522a3"
+   }
+  }
+ },
+ "en_US-pocket_fantine-medium": {
+  "key": "en_US-pocket_fantine-medium",
+  "name": "pocket_fantine",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_fantine-medium.onnx.json": {
+    "size_bytes": 1166,
+    "md5_digest": "656a8174a77de3c9fa7094b550d6a277"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2146304,
+    "md5_digest": "75f516e7cdb3e08b0a4d413975a5a3da"
+   }
+  }
+ },
+ "en_US-pocket_george-medium": {
+  "key": "en_US-pocket_george-medium",
+  "name": "pocket_george",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_george-medium.onnx.json": {
+    "size_bytes": 1163,
+    "md5_digest": "4c6c9139bce1b44d1d03a2e0e6ff9c05"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 1966080,
+    "md5_digest": "f89bff9110400524dd53d5f18069588a"
+   }
+  }
+ },
+ "en_US-pocket_jane-medium": {
+  "key": "en_US-pocket_jane-medium",
+  "name": "pocket_jane",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_jane-medium.onnx.json": {
+    "size_bytes": 1157,
+    "md5_digest": "9f5dfec198abddb9f8621d7a44383b79"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2441216,
+    "md5_digest": "cc79e797b155234b668686e89e66ad50"
+   }
+  }
+ },
+ "en_US-pocket_javert-medium": {
+  "key": "en_US-pocket_javert-medium",
+  "name": "pocket_javert",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC0 (Unmute voice donations)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_javert-medium.onnx.json": {
+    "size_bytes": 1163,
+    "md5_digest": "0f140ed146ce9e5a538613da4c84e68b"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2048000,
+    "md5_digest": "2c97e538f334220c9e6a57b7a2e493c2"
+   }
+  }
+ },
+ "en_US-pocket_jean-medium": {
+  "key": "en_US-pocket_jean-medium",
+  "name": "pocket_jean",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY-NC 4.0 (EARS)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_jean-medium.onnx.json": {
+    "size_bytes": 1157,
+    "md5_digest": "4e302e809eefd03155d6577561f68611"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2031616,
+    "md5_digest": "b4519414a0264e63749df02549e63018"
+   }
+  }
+ },
+ "en_US-pocket_marius-medium": {
+  "key": "en_US-pocket_marius-medium",
+  "name": "pocket_marius",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC0 (Unmute voice donations)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_marius-medium.onnx.json": {
+    "size_bytes": 1163,
+    "md5_digest": "d26648422ab9fdae3e9f239d243d489b"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2080768,
+    "md5_digest": "90466f191efa2b8d8fc2b3a41a2c289b"
+   }
+  }
+ },
+ "en_US-pocket_mary-medium": {
+  "key": "en_US-pocket_mary-medium",
+  "name": "pocket_mary",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_mary-medium.onnx.json": {
+    "size_bytes": 1157,
+    "md5_digest": "b78607b48fcf4ba33fe5e8b4fcd2851c"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 1982464,
+    "md5_digest": "df020b2723457d7401e8845f20dd19c8"
+   }
+  }
+ },
+ "en_US-pocket_michael-medium": {
+  "key": "en_US-pocket_michael-medium",
+  "name": "pocket_michael",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_michael-medium.onnx.json": {
+    "size_bytes": 1166,
+    "md5_digest": "854d220578203c4eababf10690d7c891"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2375680,
+    "md5_digest": "5a440be5280d11e386dda6df676e1808"
+   }
+  }
+ },
+ "en_US-pocket_paul-medium": {
+  "key": "en_US-pocket_paul-medium",
+  "name": "pocket_paul",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_paul-medium.onnx.json": {
+    "size_bytes": 1157,
+    "md5_digest": "8867e3715ed842813e5c4c716f80008c"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2277376,
+    "md5_digest": "dd4b34734a48c3f1a84b79325e13cbce"
+   }
+  }
+ },
+ "en_US-pocket_peter_yearsley-medium": {
+  "key": "en_US-pocket_peter_yearsley-medium",
+  "name": "pocket_peter_yearsley",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC0 (Voice-Zero, LibriVox)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_peter_yearsley-medium.onnx.json": {
+    "size_bytes": 1187,
+    "md5_digest": "ef7c1dd6c071b4cdf1894ca83d069632"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 1212416,
+    "md5_digest": "ef1721a9afde591de29d6a0b0936aa01"
+   }
+  }
+ },
+ "en_US-pocket_stuart_bell-medium": {
+  "key": "en_US-pocket_stuart_bell-medium",
+  "name": "pocket_stuart_bell",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC0 (Voice-Zero, LibriVox)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_stuart_bell-medium.onnx.json": {
+    "size_bytes": 1178,
+    "md5_digest": "d10962d223296f7d796a9ca6d81095ae"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 1687552,
+    "md5_digest": "87c0a8185b39ae5dcc5f8ead04cdd9ac"
+   }
+  }
+ },
+ "en_US-pocket_vera-medium": {
+  "key": "en_US-pocket_vera-medium",
+  "name": "pocket_vera",
+  "language": {
+   "code": "en_US",
+   "family": "en",
+   "region": "US",
+   "name_native": "English",
+   "name_english": "English",
+   "country_english": "United States"
+  },
+  "quality": "medium",
+  "num_speakers": 1,
+  "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+  "source": "Kyutai Pocket TTS 18M (english_18m_refl_2026-10)",
+  "license": "model CC BY 4.0; voice CC BY 4.0 (VCTK)",
+  "files": {
+   "pocket-v1/pocket-flow.int8.onnx": {
+    "size_bytes": 16239325,
+    "md5_digest": "4e36cb332f0c47ea4347d13ad2b2b865"
+   },
+   "pocket-v1/en_US-pocket_vera-medium.onnx.json": {
+    "size_bytes": 1157,
+    "md5_digest": "ab2c04fd9aac086b46115e456839fe14"
+   }
+  },
+  "extra_files": {
+   "decoder.onnx": {
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "size_bytes": 2228224,
+    "md5_digest": "56f21e51ba40b05fadf92bf73984cdfb"
+   }
+  }
+ }
+}

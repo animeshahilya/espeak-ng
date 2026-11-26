@@ -625,8 +625,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/cs_CZ-jirka-medium.onnx": {"size_bytes": 16612288, "md5_digest": "e3b2b8febadda3c0f8f049f56e25044e"},
-      "int8-v1/cs_CZ-jirka-medium.onnx.json": {"size_bytes": 5025, "md5_digest": "2762e45c5b084694093c683a5da7cf94"}
+      "int8-v4/cs_CZ-jirka-medium.onnx": {"size_bytes": 16632978, "md5_digest": "f98e05ba5fe02f5a030953c34a055a7f"},
+      "int8-v4/cs_CZ-jirka-medium.onnx.json": {"size_bytes": 6154, "md5_digest": "a7fd2172d55ad75dccd398adb0494698"}
     }
   },
   "cs_CZ-kasandra-medium": {
@@ -910,8 +910,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC-BY-4.0",
     "files": {
-      "int8-v1/fr_FR-siwis-medium.onnx": {"size_bytes": 16612288, "md5_digest": "915e53211d71f026da729a3f34c91dd4"},
-      "int8-v1/fr_FR-siwis-medium.onnx.json": {"size_bytes": 4875, "md5_digest": "a407e7e6901feb79c2ea2a5466076cce"}
+      "int8-v4/fr_FR-siwis-medium.onnx": {"size_bytes": 16632978, "md5_digest": "16e7760c8d1fd7bb348ca5b285f2c0f1"},
+      "int8-v4/fr_FR-siwis-medium.onnx.json": {"size_bytes": 6369, "md5_digest": "9b6d1fac88510aa90c0cfc5a74e224fe"}
     }
   },
   "fr_FR-tom-medium": {
@@ -1120,8 +1120,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC-BY-NC-SA-4.0",
     "files": {
-      "int8-v1/ko_KR-kss-medium.onnx": {"size_bytes": 16632978, "md5_digest": "775b853adc62728336d92aab6abf263d"},
-      "int8-v1/ko_KR-kss-medium.onnx.json": {"size_bytes": 5232, "md5_digest": "427c0b8d93211ba2ffea1f565819058a"}
+      "int8-v4/ko_KR-kss-medium.onnx": {"size_bytes": 16632978, "md5_digest": "a889133174dd5813b711c3d76a8047a2"},
+      "int8-v4/ko_KR-kss-medium.onnx.json": {"size_bytes": 6222, "md5_digest": "4bf2dd167ed2f8b971da24a9c4cb2891"}
     }
   },
   "lb_LU-marylux-medium": {
@@ -1255,8 +1255,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC0",
     "files": {
-      "int8-v1/pl_PL-gosia-medium.onnx": {"size_bytes": 16612288, "md5_digest": "35eeb044a141a3470408ccac38eebd0a"},
-      "int8-v1/pl_PL-gosia-medium.onnx.json": {"size_bytes": 4814, "md5_digest": "e57055b9eec14e570617af2b716bd5c3"}
+      "int8-v4/pl_PL-gosia-medium.onnx": {"size_bytes": 16632978, "md5_digest": "9b4243d0adac05b2aebb21a7ec7c32d1"},
+      "int8-v4/pl_PL-gosia-medium.onnx.json": {"size_bytes": 6131, "md5_digest": "5fc8335375e53d5bee8bb99363a78fe0"}
     }
   },
   "pl_PL-mc_speech-medium": {
@@ -1559,6 +1559,21 @@
       "int8-v1/ur_PK-fasih-medium.onnx.json": {"size_bytes": 3146, "md5_digest": "e9d386b28cc8da844e6342325e04608b"}
     }
   },
+  "ur_PK-tiny_urdu-medium": {
+    "key": "ur_PK-tiny_urdu-medium",
+    "name": "tiny_urdu",
+    "language": {"code": "ur_PK", "family": "ur", "region": "PK",
+      "name_native": "اردو", "name_english": "Urdu", "country_english": "Pakistan"},
+    "quality": "medium",
+    "num_speakers": 1,
+    "base_url": "https://github.com/animeshahilya/sherpa-onnx-respin-syspin/releases/download/",
+    "source": "zafar205/tiny-urdu-tts (tiny-voca fine-tuned on UrduTTS)",
+    "license": "Apache-2.0 (training data UrduTTS: CC BY-NC 4.0)",
+    "files": {
+      "tinyurdu-v1/tiny-urdu-tts.onnx": {"size_bytes": 21428761, "md5_digest": "6e7e6fd4bceecf15661f1943abe6b49f"},
+      "tinyurdu-v1/ur_PK-tiny_urdu-medium.onnx.json": {"size_bytes": 3516, "md5_digest": "91667e0a2989a556de44a3299c28d5e3"}
+    }
+  },
   "vi_VN-vais1000-medium": {
     "key": "vi_VN-vais1000-medium",
     "name": "vais1000",
@@ -1570,8 +1585,8 @@
     "source": "rhasspy/piper-voices (INT8: animeshahilya)",
     "license": "CC-BY-4.0",
     "files": {
-      "int8-v1/vi_VN-vais1000-medium.onnx": {"size_bytes": 16612288, "md5_digest": "24caeb3326a1390e8920b6007fc8a321"},
-      "int8-v1/vi_VN-vais1000-medium.onnx.json": {"size_bytes": 4860, "md5_digest": "5ec9669253541d64ba97f60e422f1ad0"}
+      "int8-v4/vi_VN-vais1000-medium.onnx": {"size_bytes": 16632978, "md5_digest": "7840e62ba3d7fcae4aaf1b42ea992005"},
+      "int8-v4/vi_VN-vais1000-medium.onnx.json": {"size_bytes": 6197, "md5_digest": "e134ef2bd72ef0a316de9b7285c52c93"}
     }
   },
   "zh_CN-huayan-medium": {

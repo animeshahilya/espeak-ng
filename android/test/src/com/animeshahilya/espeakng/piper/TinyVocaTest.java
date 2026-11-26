@@ -62,6 +62,37 @@ public class TinyVocaTest {
         }
     }
 
+    /**
+     * tiny-urdu-tts (a tiny-voca fine-tune): eSpeak's Urdu IPA respelled as its
+     * Roman Urdu front end wrote it (short a "a", r "r", breathy ʱ as ʰ, no
+     * aspirated ɽ so "h"), no stress. Expected ids from the hosted config's
+     * mirror, sherpa-onnx-respin-syspin build_tinyurdu.py tokenize, which gives
+     * the graded adapter's phonemes on all 49 corpus items.
+     */
+    @Test
+    public void urduFineTuneRespellsAndDropsStress() throws Exception {
+        final PiperVoiceConfig c = PiperVoiceConfig.parse("ur_PK-tiny_urdu-medium", new String(Files.readAllBytes(
+                Paths.get("test", "resources", "tiny_urdu.onnx.json")), StandardCharsets.UTF_8));
+        assertTrue(c.isTinyVoca());
+        assertEquals("ur", c.espeakVoice);
+        assertEquals(1, c.defaultSpeakerId);
+        final Object[][] cases = {
+            {"ˌaːp kˈɛːseː hẽ",
+                new long[] {1, 102, 17, 3, 21, 107, 27, 104, 3, 31, 111, 6, 2}},
+            {"mˈẽː ˈʊrdˌuː pˈʌɽʱnaː cˈaːhtaː hũ",
+                new long[] {1, 32, 112, 3, 56, 83, 20, 57, 3, 17, 101, 78, 31, 33, 102, 3, 85, 102, 31, 19, 102, 3,
+                    31, 115, 6, 2}},
+            {"bˈʌɽaː ɡʰˈʌɾ ʈʰˈʌnɖaː pˈaːnˌiː",
+                new long[] {1, 18, 101, 78, 102, 3, 98, 101, 83, 3, 94, 101, 33, 77, 102, 3, 17, 102, 33, 49, 6, 2}},
+            {"qˈʊʋʋət ɔr mʊhˈəbːət",
+                new long[] {1, 79, 56, 82, 82, 101, 19, 3, 54, 83, 3, 32, 56, 31, 101, 18, 101, 19, 6, 2}},
+            {"ʋˈəqt", new long[] {1, 82, 101, 79, 19, 6, 2}},
+        };
+        for (Object[] t : cases) {
+            assertArrayEquals((String) t[0], (long[]) t[1], TinyVoca.ids((String) t[0], c, null));
+        }
+    }
+
     @Test
     public void wordStartsAndUnpacking() throws Exception {
         final List<Integer> starts = new ArrayList<>();

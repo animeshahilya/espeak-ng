@@ -559,6 +559,15 @@ voices" does not, so voices can still be deleted to free space.
   MD5s. piper 1.5+ trains on upstream eSpeak NG 724808c (1.3-1.4: 212928b);
   respelling its ɾ / iʲ quirks raised exact spellings but not ASR, so there
   are no rules for it.
+  2026-11-26: rhasspy retrained more (11-17..11-24). Of the 14 that differ
+  from what the catalog serves, 5 scored better and ship from `int8-v4`
+  (NPU parts `npu-v5`, contexts added to `npu-ctx-v1-*`): cs jirka 16.4 ->
+  11.8%, fr siwis 13.0 -> 10.5, ko kss 15.4 -> 13.1, pl gosia 12.3 -> 8.1, vi
+  vais1000 50.5 -> 44.1 (scratch/voice-eval grade_refresh.py,
+  refresh/retrained.json). Worse and kept as they were: eu antton, pt cadu
+  and faber, ro mihai, ur fasih v2; even: ca upc_ona, amy, eu maider, nl_BE
+  nathalie. Pixel 8: Gosia downloads, loads (1.7 s) and reads Polish
+  word for word. NPU contexts not yet run on a Snapdragon phone.
 - **Lithuanian voices** (2026-11-16, `"phoneme_type": "lithuanian"`: rhasspy's
   lt_LT ingute and reginute1). piper1-gpl's phonemize_lithuanian.py (GPL-3.0,
   main branch, not yet in piper-tts 1.8.0) keeps eSpeak's IPA per word and moves
@@ -943,6 +952,22 @@ voices" does not, so voices can still be deleted to free space.
   loads in ~0.3 s (first load ~3 s to optimize), first audio ~18 ms. PC: ~66x
   real time on one thread. ASR at normal pace (PC, two rounds): M2 2.9/3.4%,
   F2 3.8/4.9% vs Amy 6.4/5.3, HFC 7.9/4.8. No NPU files (CPU everywhere).
+  **tiny-urdu-tts** (2026-11-26, key `ur_PK-tiny_urdu-medium`, release
+  `tinyurdu-v1`): zafar205's tiny-voca fine-tune on 8 h of UrduTTS (model
+  Apache-2.0, data CC BY-NC 4.0), voice M2, made by sherpa-onnx-respin-syspin
+  `build_tinyurdu.py` (build_tinyvoca's rewrites; bit-identical over 48 runs).
+  It was trained on its own Roman Urdu front end, so its config's `tiny_voca`
+  block (`PiperVoiceConfig.tinyVocaReplace/Fallback/Stress`) respells eSpeak's
+  Urdu IPA first (ʌ ə ɐ ɑ -> a, ɾ ɹ -> r, w v -> ʋ, ɪ̃ ʊ̃ -> ĩ ũ, breathy ʱ -> ʰ),
+  stands h in for an aspiration it has no token for (ɽʰ), and sends no
+  stress. `TinyVocaTest.urduFineTuneRespellsAndDropsStress` pins the ids to
+  `build_tinyurdu.tokenize`, which gives the graded adapter's phonemes on all
+  49 corpus items (scratch/voice-eval grade_tinyurdu.py). IndicConformer: 7.0%
+  (lone words 15.8%) vs Fasih 12.9% (25.0%) and Fasih v2 21.6% (73.7%; its
+  opset-18 export also lacks slim-runtime kernels). Urdu now lists only it
+  (`PiperDownloads.ONLY_KEPT`, user: "for Urdu just keep the tiny voca");
+  Fasih and Aegis stay bundled so installed copies stay pinned and working.
+  Pixel 8 through the TTS framework: 4 Urdu sentences, IndicConformer 0%.
 - **NPU decoders** (Snapdragon build): `assets/piper/npu_decoders.json`
   (voice key -> `npu-v1/<model>-npu.onnx` on sherpa-onnx-respin-syspin, made
   by its `build_npu.py`): each voice's decoder fully INT8 (Conv, ConvTranspose,

@@ -140,6 +140,8 @@ public final class PiperModel implements Closeable {
     private boolean closed;
     /** A Supertonic voice's style (each voice of the shared runtime has its own); null otherwise. */
     volatile Supertonic.Style style;
+    /** A Pocket voice's starting state (each voice of the shared runtime has its own); null otherwise. */
+    volatile Pocket.Voice pocketVoice;
 
     /**
      * Group of ONNX Runtime sessions and memory-mapped buffers.
@@ -192,9 +194,25 @@ public final class PiperModel implements Closeable {
         final Supertonic supertonic;
         /** Phonon voices: one runtime for every installed Phonon voice (PhononBundle). */
         final Phonon phonon;
+        /** Pocket TTS voices: one runtime per model file, a voice state per voice. */
+        final Pocket pocket;
+
+        SessionGroup(Pocket pocket) {
+            this.pocket = pocket;
+            this.phonon = null;
+            this.supertonic = null;
+            this.session = null;
+            this.mapped = null;
+            this.decoder = null;
+            this.mappedDecoder = null;
+            this.hasSpeakerInput = false;
+            this.boundary = new String[0];
+            this.hasDurations = false;
+        }
 
         SessionGroup(Phonon phonon) {
             this.phonon = phonon;
+            this.pocket = null;
             this.supertonic = null;
             this.session = null;
             this.mapped = null;
@@ -208,6 +226,7 @@ public final class PiperModel implements Closeable {
         SessionGroup(Supertonic supertonic) {
             this.supertonic = supertonic;
             this.phonon = null;
+            this.pocket = null;
             this.session = null;
             this.mapped = null;
             this.decoder = null;
@@ -221,6 +240,7 @@ public final class PiperModel implements Closeable {
                      ByteBuffer mappedDecoder) {
             this.supertonic = null;
             this.phonon = null;
+            this.pocket = null;
             this.session = session;
             this.mapped = mapped;
             this.decoder = decoder;
@@ -293,6 +313,9 @@ public final class PiperModel implements Closeable {
                 }
                 if (phonon != null) {
                     phonon.close();
+                }
+                if (pocket != null) {
+                    pocket.close();
                 }
             } finally {
                 lock.writeLock().unlock();
@@ -368,6 +391,14 @@ public final class PiperModel implements Closeable {
                 return null; // its style is missing: loaded on its own, which reports why
             }
         }
+        Pocket.Voice newVoice = null;
+        if (group.pocket != null) {
+            try {
+                newVoice = Pocket.Voice.load((voiceFile != null ? voiceFile : file).getParentFile(), group.pocket);
+            } catch (IOException e) {
+                return null; // its voice state is missing: loaded on its own, which reports why
+            }
+        }
         synchronized (this) {
             if (closed || !group.acquire()) {
                 return null;
@@ -375,6 +406,7 @@ public final class PiperModel implements Closeable {
         }
         final PiperModel m = new PiperModel(newConfig, file, group);
         m.style = newStyle;
+        m.pocketVoice = newVoice;
         return m;
     }
 
@@ -391,6 +423,16 @@ public final class PiperModel implements Closeable {
     /** A chunk's text for Phonon, carried as code points through the id-based pipeline. */
     static long[] phononIds(String text) {
         return text.codePoints().asLongStream().toArray();
+    }
+
+    /** True for a Pocket TTS voice (text in, its own runtime). */
+    boolean isPocket() {
+        return group.pocket != null;
+    }
+
+    /** Pocket ids for a chunk: {frames after its end, tokens...} ({@link Pocket#ids}). */
+    long[] pocketIds(String text) {
+        return group.pocket.ids(text);
     }
 
     /** True for a Supertonic voice (text in, its own runtime). */
@@ -441,6 +483,21 @@ public final class PiperModel implements Closeable {
             final PiperModel model = new PiperModel(config, onnx, new SessionGroup(runtime));
             try {
                 model.warmUp();
+            } catch (OrtException | RuntimeException e) {
+                model.close();
+                throw e;
+            }
+            return model;
+        }
+        if (config.isPocket()) {
+            final Pocket runtime = Pocket.load(onnx, threads);
+            final PiperModel model = new PiperModel(config, onnx, new SessionGroup(runtime));
+            try {
+                model.pocketVoice = Pocket.Voice.load(onnx.getParentFile(), runtime);
+                model.warmUp();
+            } catch (IOException e) {
+                model.close();
+                throw new OrtException("No Pocket voice for " + onnx.getParent() + ": " + e);
             } catch (OrtException | RuntimeException e) {
                 model.close();
                 throw e;
@@ -841,6 +898,10 @@ public final class PiperModel implements Closeable {
             infer(supertonicIds("a"), config.lengthScale, 0, 1f, 1f, null);
             return;
         }
+        if (group.pocket != null) {
+            infer(pocketIds("Hi."), config.lengthScale, 0, 1f, 1f, null);
+            return;
+        }
         final int[] pad = config.phonemeIdMap.get(PiperVoiceConfig.PAD);
         final int[] bos = config.phonemeIdMap.get(PiperVoiceConfig.BOS);
         final int[] eos = config.phonemeIdMap.get(PiperVoiceConfig.EOS);
@@ -979,6 +1040,9 @@ public final class PiperModel implements Closeable {
         if (group.phonon != null) {
             return inferPhonon(ids, handle);
         }
+        if (group.pocket != null) {
+            return inferPocket(ids, handle);
+        }
         if (group.decoder != null) {
             final Encoded e = encode(ids, lengthScale, speakerId, noise, noiseW, handle);
             final float[] audio = e == null ? null : decode(e, 0, e.frames, handle);
@@ -1047,6 +1111,27 @@ public final class PiperModel implements Closeable {
             return audio == null ? null : new Output(audio, null);
         } catch (IOException e) {
             throw new OrtException("Phonon: " + e.getMessage());
+        } finally {
+            group.lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * A Pocket chunk: noise seeded by the chunk (the same chunk reads the same
+     * way each time, which the phrase cache relies on); rate and pitch are libsonic's.
+     */
+    private Output inferPocket(long[] ids, RunHandle handle) throws OrtException {
+        group.lock.readLock().lock();
+        try {
+            final Pocket.Voice v = pocketVoice;
+            if (closed || group.isClosed() || v == null || cancelled(handle)) {
+                return null;
+            }
+            return cancellable(handle, null, run -> {
+                final float[] audio = group.pocket.synthesize(ids, v, Arrays.hashCode(ids), run,
+                        () -> cancelled(handle));
+                return audio == null ? null : new Output(audio, null);
+            });
         } finally {
             group.lock.readLock().unlock();
         }

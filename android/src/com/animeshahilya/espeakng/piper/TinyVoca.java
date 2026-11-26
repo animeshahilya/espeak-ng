@@ -100,11 +100,12 @@ final class TinyVoca {
         out.add((long) map.get(PiperVoiceConfig.BOS)[0]);
         int pending = 0;
         boolean inWord = false;
-        final String s = ipa.trim();
+        final String s = trained(ipa.trim(), config);
+        final Map<Character, String> fallback = config.tinyVocaFallback != null ? config.tinyVocaFallback : FALLBACK;
         for (int i = 0; i < s.length(); ) {
             final char c = s.charAt(i);
             if (c == 'ˈ' || c == 'ˌ') {
-                pending = c == 'ˈ' ? 1 : 2;
+                pending = !config.tinyVocaStress ? 0 : c == 'ˈ' ? 1 : 2;
                 i++;
                 continue;
             }
@@ -130,7 +131,7 @@ final class TinyVoca {
                 // for (en_list, 4463 words: Kyrgyz r, Ahmed x, Utrecht ç, blanc ɑ̃,
                 // Bologna nʲ...): the nearest American one rather than nothing.
                 // Others (a lone length mark, the nasal tilde) are dropped.
-                final String near = FALLBACK.get(c);
+                final String near = fallback.get(c);
                 if (near == null || !map.containsKey(near)) {
                     i++;
                     continue;
@@ -169,6 +170,30 @@ final class TinyVoca {
             ids[j] = out.get(j);
         }
         return ids;
+    }
+
+    /**
+     * eSpeak IPA in the phonemes a fine-tuned voice learned
+     * ({@link PiperVoiceConfig#tinyVocaReplace}, longest first at each place).
+     */
+    static String trained(String ipa, PiperVoiceConfig config) {
+        final List<String[]> replace = config.tinyVocaReplace;
+        if (replace.isEmpty()) {
+            return ipa;
+        }
+        final StringBuilder out = new StringBuilder(ipa.length());
+        outer:
+        for (int i = 0; i < ipa.length(); ) {
+            for (String[] r : replace) {
+                if (ipa.startsWith(r[0], i)) {
+                    out.append(r[1]);
+                    i += r[0].length();
+                    continue outer;
+                }
+            }
+            out.append(ipa.charAt(i++));
+        }
+        return out.toString();
     }
 
     /** The model's token ids from packed ids. */

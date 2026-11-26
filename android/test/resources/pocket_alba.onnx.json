@@ -1,0 +1,49 @@
+{
+ "audio": {
+  "sample_rate": 24000,
+  "quality": "medium"
+ },
+ "language": {
+  "code": "en_US",
+  "family": "en",
+  "region": "US",
+  "name_native": "English",
+  "name_english": "English",
+  "country_english": "United States"
+ },
+ "dataset": "pocket_alba",
+ "phoneme_type": "pocket",
+ "num_speakers": 1,
+ "speaker_id_map": {},
+ "inference": {
+  "noise_scale": 0.667,
+  "length_scale": 1.0,
+  "noise_w": 0.8
+ },
+ "pocket": {
+  "voice": "alba",
+  "model": "english_18m_refl_2026-10",
+  "files": {
+   "decoder.onnx": {
+    "path": "pocket-v1/pocket-decoder.int8.onnx",
+    "size_bytes": 3614781,
+    "md5_digest": "a82980ba66249e6920163cd0d65aad12"
+   },
+   "tokenizer.json": {
+    "path": "pocket-v1/pocket-tokenizer.json",
+    "size_bytes": 102239,
+    "md5_digest": "b095df9882b143de02df045452ffd973"
+   },
+   "pocket.json": {
+    "path": "pocket-v1/pocket.json",
+    "size_bytes": 1002,
+    "md5_digest": "0282976080e16a7b95b6e401db901f52"
+   },
+   "voice.bin": {
+    "path": "pocket-v1/pocket-voice-alba.bin",
+    "size_bytes": 2080768,
+    "md5_digest": "8097fdec9d7deef8970bc28d5efda907"
+   }
+  }
+ }
+}

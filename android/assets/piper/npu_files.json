@@ -275,26 +275,26 @@
   },
   "cs_CZ-jirka-medium": {
    "dec": {
-    "md5_digest": "ffa52779fe71f00de9cf062a71e14555",
-    "path": "npu-v2/cs_CZ-jirka-medium-dec80.onnx",
-    "size_bytes": 1703753
+    "md5_digest": "dfa011551888a22953e47805e09401d6",
+    "path": "npu-v5/cs_CZ-jirka-medium-dec80.onnx",
+    "size_bytes": 1703754
    },
    "enc": {
-    "md5_digest": "e30ac041afe549e8b466a640d60a738a",
-    "path": "npu-v2/cs_CZ-jirka-medium-enc256.onnx",
-    "size_bytes": 6739950
+    "md5_digest": "ac7d76420b50fdd206bdf63daa918c97",
+    "path": "npu-v5/cs_CZ-jirka-medium-enc256.onnx",
+    "size_bytes": 6734038
    },
    "flow": {
-    "md5_digest": "aae64e3691cf3c75800cb95eaa068fdc",
-    "path": "npu-v2/cs_CZ-jirka-medium-flow512.onnx",
-    "size_bytes": 7268507
+    "md5_digest": "033bf9044973db0b343c29b249aa0e5a",
+    "path": "npu-v5/cs_CZ-jirka-medium-flow512.onnx",
+    "size_bytes": 7264948
    },
    "frames": 512,
    "ids": 256,
    "mid": {
-    "md5_digest": "b6701bfcd01275cf7a8b678cc00b94f3",
-    "path": "npu-v2/cs_CZ-jirka-medium-mid.onnx",
-    "size_bytes": 958846
+    "md5_digest": "a5f3b50037fb3c7be812ceaa014a25f1",
+    "path": "npu-v5/cs_CZ-jirka-medium-mid.onnx",
+    "size_bytes": 939329
    }
   },
   "cs_CZ-kasandra-medium": {
@@ -984,26 +984,26 @@
   },
   "fr_FR-siwis-medium": {
    "dec": {
-    "md5_digest": "2b813f8b396d1bb6befb49e29a20de13",
-    "path": "npu-v2/fr_FR-siwis-medium-dec80.onnx",
-    "size_bytes": 1703753
+    "md5_digest": "182515281105ec9bf37745a5affefcae",
+    "path": "npu-v5/fr_FR-siwis-medium-dec80.onnx",
+    "size_bytes": 1703754
    },
    "enc": {
-    "md5_digest": "d7e81a0b449e3f06c9f6ede7277b517a",
-    "path": "npu-v2/fr_FR-siwis-medium-enc256.onnx",
-    "size_bytes": 6739950
+    "md5_digest": "8ae19ff862789456a64651ff0ed5f2e9",
+    "path": "npu-v5/fr_FR-siwis-medium-enc256.onnx",
+    "size_bytes": 6734038
    },
    "flow": {
-    "md5_digest": "33a9f051a368a887cd76d062e8a6f2ec",
-    "path": "npu-v2/fr_FR-siwis-medium-flow512.onnx",
-    "size_bytes": 7268507
+    "md5_digest": "135478017268ea83f965cac92c452e25",
+    "path": "npu-v5/fr_FR-siwis-medium-flow512.onnx",
+    "size_bytes": 7264948
    },
    "frames": 512,
    "ids": 256,
    "mid": {
-    "md5_digest": "7c5ea5110cbc7d83ee7c86b8a9b104f3",
-    "path": "npu-v2/fr_FR-siwis-medium-mid.onnx",
-    "size_bytes": 958846
+    "md5_digest": "f5df36800179c8829cf0f14e8ae02f21",
+    "path": "npu-v5/fr_FR-siwis-medium-mid.onnx",
+    "size_bytes": 939329
    }
   },
   "fr_FR-tom-medium": {
@@ -1431,25 +1431,25 @@
   },
   "ko_KR-kss-medium": {
    "dec": {
-    "md5_digest": "6e5637a83746bab086affbfad9e58986",
-    "path": "npu-v2/ko_KR-kss-medium-dec80.onnx",
+    "md5_digest": "11da0e43600e3eadd4040b3f62eb4ea4",
+    "path": "npu-v5/ko_KR-kss-medium-dec80.onnx",
     "size_bytes": 1703754
    },
    "enc": {
-    "md5_digest": "94517f5249dc208cc8acacf194413dce",
-    "path": "npu-v2/ko_KR-kss-medium-enc256.onnx",
+    "md5_digest": "4ae0b3fbbebc7082e55b11c6397b9b2c",
+    "path": "npu-v5/ko_KR-kss-medium-enc256.onnx",
     "size_bytes": 6734038
    },
    "flow": {
-    "md5_digest": "48decb890299ce464012e6a69bd32a41",
-    "path": "npu-v2/ko_KR-kss-medium-flow512.onnx",
+    "md5_digest": "b74317d199ea48bd3f2062dbccbc2a18",
+    "path": "npu-v5/ko_KR-kss-medium-flow512.onnx",
     "size_bytes": 7264948
    },
    "frames": 512,
    "ids": 256,
    "mid": {
-    "md5_digest": "ea6688bca45deb0bc006ad1feccbc3aa",
-    "path": "npu-v2/ko_KR-kss-medium-mid.onnx",
+    "md5_digest": "fe813eb3f50dbd8dc5533d6e260240db",
+    "path": "npu-v5/ko_KR-kss-medium-mid.onnx",
     "size_bytes": 939329
    }
   },
@@ -1855,26 +1855,26 @@
   },
   "pl_PL-gosia-medium": {
    "dec": {
-    "md5_digest": "1615040018d8b25161f48177036513b3",
-    "path": "npu-v2/pl_PL-gosia-medium-dec80.onnx",
-    "size_bytes": 1703753
+    "md5_digest": "835ee635c343bb7662924f078e728098",
+    "path": "npu-v5/pl_PL-gosia-medium-dec80.onnx",
+    "size_bytes": 1703754
    },
    "enc": {
-    "md5_digest": "8762e56c117589f3ca7d7ab91f4bcf23",
-    "path": "npu-v2/pl_PL-gosia-medium-enc256.onnx",
-    "size_bytes": 6739950
+    "md5_digest": "e940c837e9a5383f29bf535c7146520e",
+    "path": "npu-v5/pl_PL-gosia-medium-enc256.onnx",
+    "size_bytes": 6734038
    },
    "flow": {
-    "md5_digest": "a8c993ddfa796e18a57f8e31864bc64d",
-    "path": "npu-v2/pl_PL-gosia-medium-flow512.onnx",
-    "size_bytes": 7268507
+    "md5_digest": "9ade8a947ca4cbe6db40f3af96b519d4",
+    "path": "npu-v5/pl_PL-gosia-medium-flow512.onnx",
+    "size_bytes": 7264948
    },
    "frames": 512,
    "ids": 256,
    "mid": {
-    "md5_digest": "41db065daea9f44c44a292432d15630b",
-    "path": "npu-v2/pl_PL-gosia-medium-mid.onnx",
-    "size_bytes": 958846
+    "md5_digest": "cab9c0018ce2fb7aaf203d6b26daa4af",
+    "path": "npu-v5/pl_PL-gosia-medium-mid.onnx",
+    "size_bytes": 939329
    }
   },
   "pl_PL-mc_speech-medium": {
@@ -2434,26 +2434,26 @@
   },
   "vi_VN-vais1000-medium": {
    "dec": {
-    "md5_digest": "6539174f84108c920ed5382bcfe8c9e8",
-    "path": "npu-v2/vi_VN-vais1000-medium-dec80.onnx",
-    "size_bytes": 1703753
+    "md5_digest": "e2cd5a6767978806bf4a107b4725ca2d",
+    "path": "npu-v5/vi_VN-vais1000-medium-dec80.onnx",
+    "size_bytes": 1703754
    },
    "enc": {
-    "md5_digest": "6c83b4524f62f9ef06e221ce09581f9c",
-    "path": "npu-v2/vi_VN-vais1000-medium-enc256.onnx",
-    "size_bytes": 6739950
+    "md5_digest": "ea93d9ac0d84c6cb87ab42ea77af85f5",
+    "path": "npu-v5/vi_VN-vais1000-medium-enc256.onnx",
+    "size_bytes": 6734038
    },
    "flow": {
-    "md5_digest": "683267bd53affc53fcaabbf1a1fa90c9",
-    "path": "npu-v2/vi_VN-vais1000-medium-flow512.onnx",
-    "size_bytes": 7268507
+    "md5_digest": "36a6efce9da93c127818a0749c81d023",
+    "path": "npu-v5/vi_VN-vais1000-medium-flow512.onnx",
+    "size_bytes": 7264948
    },
    "frames": 512,
    "ids": 256,
    "mid": {
-    "md5_digest": "65f0ed269f255cf20f937d06ccc86d7e",
-    "path": "npu-v2/vi_VN-vais1000-medium-mid.onnx",
-    "size_bytes": 958846
+    "md5_digest": "6c5a0292cff4e19ded9c81e99f4e8627",
+    "path": "npu-v5/vi_VN-vais1000-medium-mid.onnx",
+    "size_bytes": 939329
    }
   },
   "zh_CN-huayan-medium": {

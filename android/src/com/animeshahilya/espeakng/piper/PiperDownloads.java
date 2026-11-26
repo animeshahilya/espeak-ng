@@ -400,12 +400,22 @@ public final class PiperDownloads {
     }
 
     /**
-     * Every voice stays listed (user, 2026-11-16: "no voice should be hidden");
-     * within a language, the ones its ASR grading kept come first, the rest in
-     * their usual order. Pure for JVM tests.
+     * Languages that list only their kept voices. Urdu (user, 2026-11-26: "for
+     * Urdu just keep the tiny voca"): tiny-urdu-tts 7.0% vs Fasih 12.9% and
+     * Fasih v2 21.6% (IndicConformer, lone words 15.8 vs 25.0 / 73.7%), and
+     * Fasih v2 needs kernels the slim runtime lacks. Installed Fasih/Aegis
+     * copies keep working: their bundled entries stay, so updates leave them be.
+     */
+    static final java.util.Set<String> ONLY_KEPT = java.util.Collections.singleton("ur");
+
+    /**
+     * Every voice stays listed (user, 2026-11-16: "no voice should be hidden"),
+     * except in {@link #ONLY_KEPT} languages; within a language, the ones its
+     * ASR grading kept come first, the rest in their usual order. Pure for JVM tests.
      */
     public static List<CatalogVoice> keptFirst(List<CatalogVoice> voices, Map<String, java.util.Set<String>> kept) {
         final List<CatalogVoice> out = new ArrayList<>(voices);
+        out.removeIf(v -> ONLY_KEPT.contains(v.family) && kept.containsKey(v.family) && !isKept(v, kept));
         final List<String> families = new ArrayList<>();
         for (CatalogVoice v : voices) {
             if (!families.contains(v.family)) {
@@ -467,8 +477,25 @@ public final class PiperDownloads {
                 Log.w(TAG, "Phonon voices unavailable", e);
             }
         }
+        if (POCKET_OFFERED) {
+            try {
+                out.addAll(parseCatalog(readAsset(context, POCKET_CATALOG_ASSET), true));
+            } catch (IOException | JSONException e) {
+                Log.w(TAG, "Pocket voices unavailable", e);
+            }
+        }
         return out;
     }
+
+    /**
+     * Kyutai Pocket TTS English 18M voices (pocket-v1, sherpa-onnx-respin-syspin
+     * build_pocket.py): every phone, on the CPU. One shared model and decoder, a
+     * ~2 MB voice state each.
+     */
+    public static final String POCKET_CATALOG_ASSET = "piper/pocket_voices.json";
+    static final String POCKET_RELEASE_PREFIX = "pocket-v";
+    /** Off until release pocket-v1 is published and the voices are device-tested (work paused 2026-11-26). */
+    static final boolean POCKET_OFFERED = false;
 
     /** Gradium Phonon 31M English voices (phonon-v1, build_phonon_catalog.py): Snapdragon NPU only. */
     public static final String PHONON_CATALOG_ASSET = "piper/phonon_voices.json";
@@ -974,7 +1001,7 @@ public final class PiperDownloads {
         }
         // Supertonic voices' companion files (vocoder, text encoder...) live in the store too.
         for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
-            if (v.config != null && (v.config.isSupertonic() || v.config.isPhonon())) {
+            if (v.config != null && v.config.readsText()) {
                 for (String[] f : v.config.companionFiles.values()) {
                     if (isMd5(f[2])) {
                         referenced.add(f[2].toLowerCase(Locale.ROOT));
@@ -1370,7 +1397,7 @@ public final class PiperDownloads {
     public static void fetchSupertonicFiles(Context appContext, Context storageContext) {
         final File sharedDir = PiperVoiceStore.sharedDir(storageContext);
         for (PiperVoiceStore.Installed v : PiperVoiceStore.list(storageContext)) {
-            if (v.config == null || !(v.config.isSupertonic() || v.config.isPhonon())) {
+            if (v.config == null || !v.config.readsText()) {
                 continue;
             }
             boolean added = false;
@@ -1383,7 +1410,8 @@ public final class PiperDownloads {
                     if (target.isFile() && target.length() == size) {
                         continue;
                     }
-                    if (!isMd5(md5) || !isSafePath(path) || !(path.startsWith(SUPERTONIC_RELEASE_PREFIX) || path.startsWith(PHONON_RELEASE_PREFIX))
+                    if (!isMd5(md5) || !isSafePath(path) || !(path.startsWith(SUPERTONIC_RELEASE_PREFIX) || path.startsWith(PHONON_RELEASE_PREFIX)
+                            || path.startsWith(POCKET_RELEASE_PREFIX))
                             || !isSafeKey(e.getKey()) || e.getKey().indexOf('.') < 0) {
                         throw new IOException("Bad Supertonic file entry " + e.getKey());
                     }

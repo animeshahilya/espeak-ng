@@ -40,6 +40,8 @@ public final class PiperVoiceConfig {
     static final String PHONEME_TYPE_SUPERTONIC = "supertonic";
     /** Gradium Phonon 31m: plain English text, normalized and tokenized by its runtime ({@link Phonon}). */
     static final String PHONEME_TYPE_PHONON = "phonon";
+    /** Kyutai Pocket TTS: text in, its own runtime on the CPU ({@link Pocket}). */
+    static final String PHONEME_TYPE_POCKET = "pocket";
     /**
      * tiny-voca: this app's eSpeak IPA as given (no trained-spelling rules), its
      * phonemes as the phoneme_id_map, stress as a second input ({@link TinyVoca}).
@@ -172,6 +174,18 @@ public final class PiperVoiceConfig {
     public final int supertonicSteps;
     /** Phonon: the bundle's name for this voice ("Easton"); null for other voices. */
     public final String phononVoice;
+    /** Pocket TTS: Kyutai's name for this voice ("alba"); null for other voices. */
+    public final String pocketVoice;
+    /**
+     * tiny-voca fine-tunes for another language ("tiny_voca" in the config):
+     * eSpeak IPA rewritten to the phonemes the voice was trained on before
+     * matching ({from, to}, longest first; tiny-urdu-tts learned short a as
+     * "a", r as "r"), the stand-ins for sounds it has no token for (null:
+     * {@link TinyVoca}'s American ones), and whether it reads stress.
+     */
+    public final List<String[]> tinyVocaReplace;
+    public final Map<Character, String> tinyVocaFallback;
+    public final boolean tinyVocaStress;
     /**
      * Supertonic and Phonon: the files that go beside model.onnx, by name in
      * the voice folder ("vocoder.onnx", "tokenizer.json"...), each {path,
@@ -218,6 +232,10 @@ public final class PiperVoiceConfig {
         supertonicSteps = b.supertonicSteps;
         companionFiles = Collections.unmodifiableMap(b.companionFiles);
         phononVoice = b.phononVoice;
+        pocketVoice = b.pocketVoice;
+        tinyVocaReplace = Collections.unmodifiableList(b.tinyVocaReplace);
+        tinyVocaFallback = b.tinyVocaFallback == null ? null : Collections.unmodifiableMap(b.tinyVocaFallback);
+        tinyVocaStress = b.tinyVocaStress;
     }
 
     public boolean isSupertonic() {
@@ -228,6 +246,15 @@ public final class PiperVoiceConfig {
         return PHONEME_TYPE_PHONON.equals(phonemeType);
     }
 
+    public boolean isPocket() {
+        return PHONEME_TYPE_POCKET.equals(phonemeType);
+    }
+
+    /** Text in, read by the voice's own runtime with files beside its model (companionFiles). */
+    public boolean readsText() {
+        return isSupertonic() || isPhonon() || isPocket();
+    }
+
     /**
      * Whether this app can phonemize for the voice. Newer Piper voices for
      * Chinese, Japanese, Thai and Hebrew bring their own phonemizers
@@ -236,6 +263,9 @@ public final class PiperVoiceConfig {
      * eSpeak and is ported ({@link LithuanianPhonemes}).
      */
     public boolean isSupported() {
+        if (isPocket()) {
+            return sampleRate > 0 && pocketVoice != null && companionFiles.keySet().containsAll(Pocket.FILES);
+        }
         if (isPhonon()) {
             return sampleRate > 0 && phononVoice != null && Phonon.available()
                     && companionFiles.keySet().containsAll(PHONON_FILES);
@@ -420,6 +450,37 @@ public final class PiperVoiceConfig {
             b.phononVoice = phonon.optString("voice", null);
             putFiles(b, phonon.optJSONObject("files"));
         }
+        final JSONObject pocket = root.optJSONObject("pocket");
+        if (pocket != null) {
+            b.pocketVoice = pocket.optString("voice", null);
+            putFiles(b, pocket.optJSONObject("files"));
+        }
+        final JSONObject tv = root.optJSONObject("tiny_voca");
+        if (tv != null) {
+            b.tinyVocaStress = tv.optBoolean("stress", true);
+            final JSONObject replace = tv.optJSONObject("replace");
+            if (replace != null) {
+                final Iterator<String> from = replace.keys();
+                while (from.hasNext()) {
+                    final String k = from.next();
+                    if (!k.isEmpty()) {
+                        b.tinyVocaReplace.add(new String[] {k, replace.optString(k, "")});
+                    }
+                }
+                Collections.sort(b.tinyVocaReplace, (x, y) -> y[0].length() - x[0].length());
+            }
+            final JSONObject fallback = tv.optJSONObject("fallback");
+            if (fallback != null) {
+                b.tinyVocaFallback = new HashMap<>();
+                final Iterator<String> from = fallback.keys();
+                while (from.hasNext()) {
+                    final String k = from.next();
+                    if (k.length() == 1) {
+                        b.tinyVocaFallback.put(k.charAt(0), fallback.optString(k, ""));
+                    }
+                }
+            }
+        }
         return new PiperVoiceConfig(b);
     }
 
@@ -465,6 +526,10 @@ public final class PiperVoiceConfig {
         int supertonicSteps;
         final Map<String, String[]> companionFiles = new HashMap<>();
         String phononVoice;
+        String pocketVoice;
+        final List<String[]> tinyVocaReplace = new ArrayList<>();
+        Map<Character, String> tinyVocaFallback;
+        boolean tinyVocaStress = true;
     }
 }
 

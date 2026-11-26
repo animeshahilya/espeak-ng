@@ -1,0 +1,200 @@
+[
+ {
+  "text": "Hello world",
+  "prepared": "Hello world.",
+  "frames_guess": 3,
+  "ids": [
+   2994,
+   578,
+   263
+  ]
+ },
+ {
+  "text": "It's 3.5 km, fine?",
+  "prepared": "It's 3.5 km, fine?",
+  "frames_guess": 3,
+  "ids": [
+   333,
+   264,
+   261,
+   260,
+   450,
+   263,
+   437,
+   965,
+   283,
+   262,
+   1295,
+   292
+  ]
+ },
+ {
+  "text": "Button",
+  "prepared": "Button.",
+  "frames_guess": 3,
+  "ids": [
+   352,
+   767,
+   263
+  ]
+ },
+ {
+  "text": "naïve café ☃ 日本",
+  "prepared": "Naïve café ☃ 日本.",
+  "frames_guess": 3,
+  "ids": [
+   1212,
+   199,
+   179,
+   314,
+   331,
+   2250,
+   745,
+   260,
+   230,
+   156,
+   135,
+   260,
+   234,
+   155,
+   169,
+   234,
+   160,
+   176,
+   263
+  ]
+ },
+ {
+  "text": "OTP is 1234!",
+  "prepared": "OTP is 1234!",
+  "frames_guess": 3,
+  "ids": [
+   705,
+   854,
+   759,
+   277,
+   260,
+   341,
+   365,
+   450,
+   487,
+   682
+  ]
+ },
+ {
+  "text": "“Quoted,” she said—softly…",
+  "prepared": "“Quoted,” she said,softly…",
+  "frames_guess": 3,
+  "ids": [
+   260,
+   230,
+   132,
+   160,
+   2608,
+   1025,
+   278,
+   262,
+   230,
+   132,
+   161,
+   396,
+   425,
+   262,
+   261,
+   2735,
+   274,
+   323,
+   230,
+   132,
+   170
+  ]
+ },
+ {
+  "text": "Wait; what:",
+  "prepared": "Wait; what.",
+  "frames_guess": 3,
+  "ids": [
+   3314,
+   1230,
+   297,
+   263
+  ]
+ },
+ {
+  "text": "  spaced   out\nlines  ",
+  "prepared": "Spaced out lines.",
+  "frames_guess": 3,
+  "ids": [
+   1476,
+   1464,
+   278,
+   321,
+   774,
+   261,
+   263
+  ]
+ },
+ {
+  "text": "ok, (fine)",
+  "prepared": "Ok, (fine).",
+  "frames_guess": 3,
+  "ids": [
+   705,
+   518,
+   262,
+   260,
+   44,
+   601,
+   685,
+   45,
+   263
+  ]
+ },
+ {
+  "text": "Ünïcode test: Ωmega and Ⅻ.",
+  "prepared": "Ünïcode test: Ωmega and Ⅻ.",
+  "frames_guess": 1,
+  "ids": [
+   260,
+   199,
+   160,
+   306,
+   199,
+   179,
+   756,
+   608,
+   1115,
+   3244,
+   260,
+   210,
+   173,
+   680,
+   800,
+   269,
+   260,
+   230,
+   137,
+   175,
+   263
+  ]
+ },
+ {
+  "text": "A long sentence with more than four words in it",
+  "prepared": "A long sentence with more than four words in it.",
+  "frames_guess": 1,
+  "ids": [
+   383,
+   570,
+   1472,
+   599,
+   291,
+   366,
+   468,
+   704,
+   1300,
+   276,
+   275,
+   263
+  ]
+ }
+]

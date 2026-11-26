@@ -111,15 +111,25 @@ public class PiperCatalogTest {
         final String json = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get("assets", PiperDownloads.EXTRA_CATALOG_ASSET)), "UTF-8");
         final List<PiperDownloads.CatalogVoice> voices = PiperDownloads.parseCatalog(json, true);
-        assertEquals(119, voices.size());
-        // Only kept voices are bundled: none is filtered out again.
-        assertEquals(voices.size(), PiperDownloads.keptFirst(voices, keptAsset()).size());
+        assertEquals(120, voices.size());
+        // Every bundled voice stays listed, except Urdu's beside tiny-urdu-tts
+        // (ONLY_KEPT): Aegis and Fasih stay bundled for installed copies.
+        final List<PiperDownloads.CatalogVoice> listed = PiperDownloads.keptFirst(voices, keptAsset());
+        assertEquals(voices.size() - 2, listed.size());
+        final List<String> urdu = new java.util.ArrayList<>();
+        for (PiperDownloads.CatalogVoice v : listed) {
+            if ("ur".equals(v.family)) {
+                urdu.add(v.key);
+            }
+        }
+        assertEquals(java.util.Collections.singletonList("ur_PK-tiny_urdu-medium"), urdu);
         for (PiperDownloads.CatalogVoice v : voices) {
             if (PiperDownloads.RESPIN_SYSPIN_RELEASES.equals(v.baseUrl)) {
                 // Release assets: each path starts with its tag; the MD5s pin the bytes.
                 // Every model is the INT8-weight build (int8-v1; int8-v2 for the
                 // voices rhasspy retrained in 2026-11, int8-v3 for the community voices
-                // added 2026-11-19).
+                // added 2026-11-19, int8-v4 for the voices rhasspy retrained again
+                // that scored better, 2026-11-26).
                 // One version of every voice: no Compact twins listed
                 assertFalse(v.key, PiperDownloads.isCompact(v.quality));
                 assertFalse(v.key, v.modelPath.startsWith("syspin-v2/"));
@@ -128,6 +138,10 @@ public class PiperCatalogTest {
                     assertTrue(v.key, v.key.endsWith("-medium"));
                     assertTrue(v.key, v.modelPath.matches("int8-v1/vits-[^/]+-compact\\.onnx"));
                     assertEquals(v.key, "piper-v2/" + v.key + ".onnx.json", v.configPath);
+                } else if (v.modelPath.startsWith("tinyurdu-v1/")) {
+                    // tiny-urdu-tts: a tiny-voca fine-tune with its own model and config
+                    assertEquals(v.key, "tinyurdu-v1/tiny-urdu-tts.onnx", v.modelPath);
+                    assertEquals(v.key, "tinyurdu-v1/" + v.key + ".onnx.json", v.configPath);
                 } else if (v.modelPath.startsWith("tinyvoca-v1/")) {
                     // tiny-voca: one shared two-voice model, a config per voice
                     assertEquals(v.key, "tinyvoca-v1/tiny-voca.onnx", v.modelPath);
@@ -140,7 +154,7 @@ public class PiperCatalogTest {
                 } else {
                     // A Piper or community voice under its own key, model and
                     // config from the same release
-                    assertTrue(v.key, v.modelPath.matches("int8-v[123]/" + java.util.regex.Pattern.quote(v.key) + "\\.onnx"));
+                    assertTrue(v.key, v.modelPath.matches("int8-v[1234]/" + java.util.regex.Pattern.quote(v.key) + "\\.onnx"));
                     assertEquals(v.key, v.modelPath + ".json", v.configPath);
                 }
             } else {
