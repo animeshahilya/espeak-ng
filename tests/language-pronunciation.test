@@ -13,7 +13,7 @@ test_phon an "t'oT os 'omb**es n'aksen l'iB**es i; iQw'als_! en d,iniD'at# i_! e
 ,aDot'atos De RaT'on i De konT'enTja
 d'eBen ,apatS'as'en 'unos kon 'at**os D'una man'e**a f**,etern'al" "Toz os ombres naxen libres y iguals en dinidat y en dreitos. Adotatos de razón y de conzenzia, deben apachar-sen unos con atros d'una manera freternal." "Latn"
 test_phon ar "?'us[buR A'ala: H'ifZi. X'udHa.R,in wa:'istaS,iR fat[,u.nna:
-w'azudZ: h'ammka fi: baQd'a:d mnTml'a:" "اُصْبُرْ عَلَى حِفْظِ خُضَرٍ وَاِسْتَشِرْ فَطُنًّا، وَزُجَّ هَمِّكَ فِي بغداد منثملَا" "Arab"
+w'azudZ:,a h'ammik,a fi: baQd'a:d mnTml'a:" "اُصْبُرْ عَلَى حِفْظِ خُضَرٍ وَاِسْتَشِرْ فَطُنًّا، وَزُجَّ هَمِّكَ فِي بغداد منثملَا" "Arab"
 test_phon ar "?'iDa: (cmn)z.u35k'uo214 n'i35n j'i55n w'ei51 f'a55n j'i51(ar) ?ann'as[s[" "إذا 如果您因为翻译 النص" "Arabic switches Han ideographs to Mandarin"
 test_phon as "X'OkOl,U m'anuh,e s'ad#in,Ob#aw,e X'Oman m'O*&d,a 'a*u 'od#ik,a*e z'OnmOgr,OhOn k'O*e
 X'ihO~t,Or b'ibek 'a*u b'udd#i 'ase 'a*u X'ihO~t,e p'OrOXp,Or b#atr'itbO*,e 'asOr,On k'o*ib l'age" "সকলো মানুহে স্বাধীনভাৱে সমান মৰ্যদা আৰু অধিকাৰে জন্মগ্ৰহণ কৰে । সিহঁতৰ বিবেক আৰু বুদ্ধি আছে আৰু সিহঁতে পৰস্পৰ ভাতৃত্বৰে আচৰণ কৰিব লাগে ।" "Beng"
@@ -180,7 +180,8 @@ test_phon hi "'E: ki m'a:tra:" "ै" "hi vowel sign ai"
 test_phon hi "'o: ki m'a:tra:" "ो" "hi vowel sign o"
 test_phon hi "'O: ki m'a:tra:" "ौ" "hi vowel sign au"
 test_phon hi "'O ki m'a:tra:" "ॉ" "hi vowel sign oo"
-Vj'o:d#ja: ke: m,aha:*'a:J d'VS@*,@t# ke: b'Vr.e: s@p'Utr@- t#e:" "ऋषियों को सताने वाले दुष्ट राक्षसों के राजा रावण का सर्वनाश करने वाले विष्णुवतार भगवान श्रीराम, अयोध्या के महाराज दशरथ के बड़े सपुत्र थे।" "Deva"
+test_phon hi "r'Is.Ij,o~ ko: s@t'a:ne: v'a:le: d'Us.t. r'a:kS@s,o~ ke: r'a:Ja: r'a:v@n. ka: s,@rv@4n'a:S k'Vrn,e: v'a:le: v,Is.n.Uvt'a:r b#,@gv'a:n Sri*'a:m
+Vj'o:d#ja: ke: m,@Ha:*'a:J d'VSr,@2t# ke: b'Vr.e: s@p'Utr@- t#e:" "ऋषियों को सताने वाले दुष्ट राक्षसों के राजा रावण का सर्वनाश करने वाले विष्णुवतार भगवान श्रीराम, अयोध्या के महाराज दशरथ के बड़े सपुत्र थे।" "Deva"
 # the fork's Hindi rules write this schwa as @4 (upstream: @2)
 test_phon hi "n'e:tr@4H,i:n" "नेत्रहीन" "hi netraheen"
 test_phon hi "n'e:tr@4d,a:n" "नेत्रदान" "hi netradaan"
@@ -450,12 +451,15 @@ SISlid'E_:_: byj'Yk tS'Wp j@:@nLa*'@" "Pijamalı hasta yağız şoföre çabucak
 test_phon tt "b0rL'Vq keSel'&r d'& 0z'0t h'&m 'yz 0brujLAr'V h'&m xoquqLAr'V jAGVnn'An t'iN bup'Vp tuAp'Ar
 0L0rG'A 0q'VL h'&m wWZ;d'An birelQ'&n h'&m b'&rb&rsen'& q0r0t'A tuGAnnArS;'A mWnAs&b&tt'& buLVrG'A tieSl'&r" "Барлык кешеләр дә азат һәм үз абруйлары һәм хокуклары ягыннан тиң бупып туапар. Аларга акыл һәм вөҗдан бирелгән һәм бәр-бәрсенә карата туганнарча мөнасәбәттә булырга тиешләр." "Cyrl"
 test_phon ur "t.#'Vnd. m'e~:
-'e:k q'VH@t z'Vda ga:'o:n se: g'Vz@Rte: v'aqt 'e:k c'Ir.cIr.,e:
+'e:k q'VH@t z'Vda g'a:o~: se: g'Vz@Rte: v'aqt 'e:k c'Ir.cIr.,e:
 b'a:s@R 'o: f'a:RIQ S'Vxs k'o: b'a:z J'Vl p'V*,i: n'Uma: 'aZ@dHe: n'Vz@3r 'a:e:" "ٹھنڈ میں، ایک قحط زدہ گاؤں سے گذرتے وقت ایک چڑچڑے، باأثر و فارغ شخص کو بعض جل پری نما اژدہے نظر آئے۔" "Arab"
 test_phon ur "b'V*f" "برف"
 test_phon ur "b#'u:t" "بھوت"
 test_phon ur "VNg'u:r" "انگور"
 test_phon ur "b,@rs'a:t" "برسات"
+test_phon ur "q'Uvvat
+mUH'ammad
+s'ajjId OR 'avv@l" "قُوَّت، مُحَمَّد، سَیِّد اور اوّل" "vowel sign before shadda"
 test_phon uz "ozb'ektS&
 'ozbek t'yLy" "O‘zbekcha, o‘zbek tili" "Latn"
 test_phon uz "o:zb'ektS&

@@ -925,6 +925,10 @@ static const char *FindReplacementChars(Translator *tr, const char **pfrom, unsi
 // Characters still to skip after a .replace match of more than one character.
 // TranslateClause clears it when it reads a character again.
 static int replace_skip_n = 0;
+// After a replacement of two or more characters by two (Arabic fatha + shadda >
+// shadda + fatha), the inserted second character comes through SubstituteChar
+// before the source characters to skip: let it pass, then skip them.
+static bool replace_pass_inserted = false;
 
 // handle .replace rule in xx_rules file
 static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, const char *next, int *insert, int *wordflags)
@@ -932,6 +936,10 @@ static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, 
 	unsigned int new_c, c2 = ' ', c_lower;
 	int upper_case = 0;
 
+	if (replace_pass_inserted) {
+		replace_pass_inserted = false;
+		return c;
+	}
 	if (replace_skip_n > 0) {
 		replace_skip_n--;
 		return 8;
@@ -965,6 +973,8 @@ static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, 
 		if (upper_case && iswupper(next_in))
 			c2 = ucd_toupper(c2);
 		*insert = c2;
+		if (replace_skip_n > 0)
+			replace_pass_inserted = true;
 	}
 
 	if (upper_case)
@@ -1749,6 +1759,7 @@ void TranslateClauseWithTerminator(Translator *tr, int *tone_out, char **voice_c
 				// it is read again, so a .replace match starting there must be found
 				// again rather than skipped ("৩য়" with য + nukta lost the য)
 				replace_skip_n = 0;
+				replace_pass_inserted = false;
 				space_inserted = false;
 			}
 		} else {

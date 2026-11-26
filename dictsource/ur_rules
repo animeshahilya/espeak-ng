@@ -16,6 +16,10 @@
 ٨	8
 ٩	9
 ي	ی
+َّ	َّ	// zabar + shadda > shadda + zabar: the consonant doubles, not the vowel
+ِّ	ِّ	// zer + shadda > shadda + zer: the consonant doubles, not the vowel
+ُّ	ُّ	// pesh + shadda > shadda + pesh: the consonant doubles, not the vowel
+ّْ	ّْ	// jazm + shadda > shadda + jazm: the consonant doubles, not the vowel
 
 // vowel signs, alif acts as consonants  at start of word if these follow
 .L01  َ ِ ُ و ی ع ا ے آ ٰ ٗ
@@ -45,17 +49,21 @@
 	َی 	E
 	َے	E
 	َو 	aU
+	َ (وّ	a	// قَوّال
+	َ (یّ	a	// سَیّد
 	َع	a:
 
 .group ِ
 	ِ	I
 	ِی	i:
+	ِ (یّ	I
 	ِع(L02	I
 	L03L03) ِ (_S1	'e:
 
 .group ُ
 	ُ	U
 	ُو	u:
+	ُ (وّ	U	// قُوّت
 	ُع	O
 
 .group ٗ
@@ -143,6 +151,7 @@ _) ای	e:
 	_)انط(L02ا	IntI
 	_)انہتر	UnHataR
 	_)او(ا	av
+	_) ا (وّ	a	// اوّل, اوّلین
 	_)انہ(L02L01	InHI
 	_)اٹھتال	at.#ta:l
 	_)اٹھتر	at.#at:aR
@@ -406,6 +415,7 @@ _) ای	e:
 .group ی
 	ی	e:
 	ی (L01	j
+	یّ	j:	// doubled yeh: سیّد, ایّام
 	ی (_	,i:	// final -i is always long; secondary stress (not primary)
 			// needed so ph_hindi_base's i: phoneme doesn't self-demote
 			// back to plain i when this syllable isn't the word's own
